@@ -160,6 +160,10 @@ public final class SetUpDataSourceAction extends Action {
             dataSourceForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.datasrc.create"));
             dataSourceForm.setObjectName(null);
+            dataSourceForm.setActive("4");
+            dataSourceForm.setIdle("2");
+            dataSourceForm.setWait("5000");
+            
         } else {
             dataSourceForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.datasrc.edit"));

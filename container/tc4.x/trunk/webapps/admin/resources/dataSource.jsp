@@ -78,7 +78,7 @@
               <bean:message key="resources.datasrc.url"/>:
             </controls:label>
             <controls:data>
-                <html:text property="url" size="40" maxlength="42"/>
+                <html:text property="url" size="40" maxlength="64"/>
             </controls:data>
           </controls:row>
 
@@ -88,7 +88,7 @@
               <bean:message key="resources.datasrc.jdbcclass"/>:
             </controls:label>
             <controls:data>
-              <html:text property="driverClass" size="32" maxlength="36"/>
+              <html:text property="driverClass" size="40" maxlength="64"/>
             </controls:data>
           </controls:row>
 
@@ -98,7 +98,7 @@
               <bean:message key="users.prompt.username"/>
             </controls:label>
             <controls:data>
-              <html:text property="username" size="15" maxlength="15"/>
+              <html:text property="username" size="15" maxlength="25"/>
             </controls:data>
           </controls:row>
 
@@ -108,7 +108,7 @@
               <bean:message key="users.prompt.password"/>
             </controls:label>
             <controls:data>
-              <html:password property="password" size="15" maxlength="15"/>
+              <html:password property="password" size="15" maxlength="25"/>
             </controls:data>
           </controls:row>
 
