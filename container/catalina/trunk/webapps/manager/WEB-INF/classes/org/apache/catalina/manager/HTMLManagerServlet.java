@@ -84,7 +84,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Host;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 
 /**
@@ -195,7 +195,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String message = "";
 
         // Create a new file upload handler
-        FileUpload upload = new FileUpload();
+        DiskFileUpload upload = new DiskFileUpload();
 
         // Get the tempdir
         File tempdir = (File) getServletContext().getAttribute
@@ -259,7 +259,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                         ("htmlManagerServlet.installUploadWarExists",war);
                     break;
                 }
-                warUpload.write(file.getCanonicalPath());
+                warUpload.write(file);
                 try {
                     URL url = file.toURL();
                     war = url.toString();
