@@ -47,9 +47,9 @@
       <update>
         <bug>32282</bug>: Modify Windows Uninstaller to only remove webapps/ROOT and webapps if user asks to remove everything. (yoavs)
       </update>
-      <update>
-        Add DIGEST authentication support to the JDBC and DataSource realms. Supports both digested and cleartext passwords. (markt)
-      </update>
+      <fix>
+        <bug>32371</bug>: outdated introduction.xml page. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
@@ -73,6 +73,9 @@
      <fix>
         Move processExpiresFrequency check to ManagerBase and reflect change to all subclasses (StandardManager, PersientManagerBase, DeltaManager). (pero)
       </fix>
+      <update>
+        Add DIGEST authentication support to the JDBC and DataSource realms. Supports both digested and cleartext passwords. (markt)
+      </update>
     </changelog>
   </subsection>
 
