@@ -10,4 +10,5 @@
       <home nested="jasper2"/>
   </project>
   
+  <depend project="commons-logging"/>
 </module>
