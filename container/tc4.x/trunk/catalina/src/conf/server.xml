@@ -291,7 +291,7 @@
             </parameter>
           </ResourceParams>
           <ResourceLink name="linkToGlobalResource" 
-                    global="/comp/env/simpleValue"
+                    global="simpleValue"
                     type="java.lang.Integer"/>
         </Context>
 
