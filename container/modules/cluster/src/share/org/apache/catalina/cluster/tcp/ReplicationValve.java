@@ -107,7 +107,8 @@ import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 public class ReplicationValve
     extends ValveBase {
-
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
 
     // ----------------------------------------------------- Instance Variables
 
@@ -285,8 +286,7 @@ public class ReplicationValve
         if (logger != null)
             logger.log(this.toString() + ": " + message, throwable);
         else {
-            System.out.println(this.toString() + ": " + message);
-            throwable.printStackTrace(System.out);
+            log.warn(message,throwable);
         }
 
     }
