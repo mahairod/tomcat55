@@ -68,6 +68,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Properties;
 
 
@@ -170,6 +171,16 @@ public class CatalinaProperties {
         if ((is == null) || (error != null)) {
             // Do something
             System.out.println("Error");
+        }
+
+        // Register the properties as system properties
+        Enumeration enum = properties.propertyNames();
+        while (enum.hasMoreElements()) {
+            String name = (String) enum.nextElement();
+            String value = properties.getProperty(name);
+            if (value != null) {
+                System.setProperty(name, value);
+            }
         }
 
     }
