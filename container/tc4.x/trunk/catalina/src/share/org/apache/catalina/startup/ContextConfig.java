@@ -100,6 +100,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
+import org.apache.catalina.valves.CertificatesValve;
 import org.apache.catalina.valves.ValveBase;
 
 
@@ -308,8 +309,34 @@ public final class ContextConfig
 			     loginConfig.getAuthMethod()));
 	} catch (Throwable t) {
 	    log(sm.getString("contextConfig.authenticatorInstantiate",
-			     authenticatorName));
+			     authenticatorName), t);
 	}
+
+    }
+
+
+    /**
+     * Create and deploy a Valve to expose the SSL certificates presented
+     * by this client, if any.  If we cannot instantiate such a Valve
+     * (because the JSSE classes are not available), silently continue.
+     */
+    private void certificatesConfig() {
+
+        // Instantiate a new CertificatesValve if possible
+        Valve certificates = null;
+        try {
+            certificates = new CertificatesValve();
+        } catch (Throwable t) {
+            return;     // Probably JSSE classes not present
+        }
+
+        // Add this Valve to our Pipeline
+        try {
+            ((Pipeline) context).addValve(certificates);
+            log(sm.getString("contextConfig.certificatesConfig.added"));
+        } catch (Throwable t) {
+            log(sm.getString("contextConfig.certificatesConfig.error"), t);
+        }
 
     }
 
@@ -822,6 +849,9 @@ public final class ContextConfig
 	defaultConfig(mapper);
 	applicationConfig(mapper);
 
+        // Configure a certificates exposer valve, if required
+        certificatesConfig();
+
 	// Configure an authenticator if we need one
 	authenticatorConfig();
 
@@ -831,6 +861,17 @@ public final class ContextConfig
 
 	// Send an application start event to all interested listeners
 	listenerStartEvent();
+
+        // Dump the contents of this pipeline if requested
+        if (debug >= 1) {
+            log("Pipline Configuration:");
+            Valve valve = ((Pipeline) context).findValves();
+            while (valve != null) {
+                log("  " + valve.getInfo());
+                valve = valve.getNext();
+            }
+            log("======================");
+        }
 
     }
 

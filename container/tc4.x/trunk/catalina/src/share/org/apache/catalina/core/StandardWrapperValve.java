@@ -126,10 +126,30 @@ final class StandardWrapperValve
 
 
     /**
+     * The descriptive information related to this implementation.
+     */
+    private static final String info =
+	"org.apache.catalina.core.StandardWrapperValve/1.0";
+
+
+    /**
      * The string manager for this package.
      */
     private static final StringManager sm =
 	StringManager.getManager(Constants.Package);
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return descriptive information about this Valve implementation.
+     */
+    public String getInfo() {
+
+	return (info);
+
+    }
 
 
     // --------------------------------------------------------- Public Methods

@@ -76,6 +76,15 @@ public final class Globals {
 
 
     /**
+     * The request attribute under which we store the array of X509Certificate
+     * objects representing the certificate chain presented by our client,
+     * if any.
+     */
+    public static final String CERTIFICATES_ATTR =
+        "javax.servlet.request.X509Certificate";
+
+
+    /**
      * The servlet context attribute under which we store the class loader
      * used for loading servlets (as an object of type java.lang.ClassLoader).
      */

@@ -1243,6 +1243,7 @@ public abstract class ContainerBase
 		valve.setPrevious(previous);
 		previous.setNext(valve);
 	    }
+            basic.setPrevious(valve);
 	}
 
 	// Report this pipeline change to interested listeners

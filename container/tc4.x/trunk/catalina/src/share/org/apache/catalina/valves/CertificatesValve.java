@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,36 +59,37 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
-package org.apache.catalina.core;
+package org.apache.catalina.valves;
 
 
 import java.io.IOException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.security.cert.X509Certificate;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
-import org.apache.catalina.Host;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Valve;
+import org.apache.catalina.connector.RequestWrapper;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.valves.ValveBase;
 
 
 /**
- * Valve that implements the default basic behavior for the
- * <code>StandardEngine</code> container implementation.
- * <p>
- * <b>USAGE CONSTRAINT</b>:  This implementation is likely to be useful only
- * when processing HTTP requests.
+ * Implementation of a Valve that checks if the socket underlying this
+ * request is an SSLSocket or not.  If it is, and if the client has presented
+ * a certificate chain to authenticate itself, the array of certificates is
+ * exposed as a request attribute.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-final class StandardEngineValve
+public final class CertificatesValve
     extends ValveBase {
 
 
@@ -99,13 +100,13 @@ final class StandardEngineValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.core.StandardEngineValve/1.0";
+	"org.apache.catalina.valves.CertificatesValve/1.0";
 
 
     /**
-     * The string manager for this package.
+     * The StringManager for this package.
      */
-    private static final StringManager sm =
+    protected static StringManager sm =
 	StringManager.getManager(Constants.Package);
 
 
@@ -126,38 +127,62 @@ final class StandardEngineValve
 
 
     /**
-     * Select the appropriate child Host to process this request,
-     * based on the requested server name.  If no matching Host can
-     * be found, return an appropriate HTTP error.
+     * Expose the certificates chain if one was included on this request.
      *
-     * @param request Request to be processed
-     * @param update Update request to reflect this mapping?
+     * @param request The servlet request to be processed
+     * @param response The servlet response to be created
      *
-     * @exception IOException if an input/output error occurred
-     * @exception ServletException if a servlet error occurred
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet error occurs
      */
     public void invoke(Request request, Response response)
 	throws IOException, ServletException {
 
-	// Validate the request and response object types
-	if (!(request.getRequest() instanceof HttpServletRequest) ||
-	    !(response.getResponse() instanceof HttpServletResponse)) {
-	    return;	// NOTE - Not much else we can do generically
-	}
+        // Identify the underlying request if this request was wrapped
+        Request actual = request;
+        while (actual instanceof RequestWrapper)
+            actual = ((RequestWrapper) actual).getWrappedRequest();
 
-	// Select the Host to be used for this Request
-	StandardEngine engine = (StandardEngine) getContainer();
-	Host host = (Host) engine.map(request, true);
-	if (host == null) {
-	    ((HttpServletResponse) response.getResponse()).sendError
-		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-		 sm.getString("standardEngine.notHost"));
-	    return;
-	}
+        // Expose the certificate chain if appropriate
+        expose(request, actual);
 
-	// Ask this Host to process this request
-	host.invoke(request, response);
+        // Invoke the next Valve in our Pipeline
+        invokeNext(request, response);
 
     }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Expose the certificate chain for this request, if there is one.
+     *
+     * @param request The possibly wrapped Request being processed
+     * @param actual The actual underlying Request object
+     */
+    private void expose(Request request, Request actual) {
+
+        if (actual.getSocket() == null)
+            return;
+        if (!(actual.getSocket() instanceof SSLSocket))
+            return;
+        SSLSocket socket = (SSLSocket) actual.getSocket();
+        SSLSession session = socket.getSession();
+        if (session == null)
+            return;
+        X509Certificate certs[] = null;
+        try {
+            certs = session.getPeerCertificateChain();
+        } catch (SSLPeerUnverifiedException e) {
+            return;
+        }
+        if ((certs == null) || (certs.length < 1))
+            return;
+
+        request.getRequest().setAttribute(Globals.CERTIFICATES_ATTR, certs);
+
+    }
+
 
 }
