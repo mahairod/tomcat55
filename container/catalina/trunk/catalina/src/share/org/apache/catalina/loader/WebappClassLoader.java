@@ -1079,29 +1079,15 @@ public class WebappClassLoader
             // Locating the repository for special handling in the case 
             // of a JAR
             ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
-            FileOutputStream os = null;
             try {
                 String repository = entry.codeBase.toString();
                 if (repository.endsWith(".jar")) {
                     // Copy binary content to the work directory if not present
                     File resourceFile = new File(loaderDir, name);
-                    if (entry.lastModified > resourceFile.lastModified()) {
-                        resourceFile.getParentFile().mkdirs();
-                        os = new FileOutputStream(resourceFile);
-                        os.write(entry.binaryContent);
-                    }
                     url = resourceFile.toURL();
                 }
             } catch (Exception e) {
                 // Ignore
-                e.printStackTrace();
-            } finally {
-                if (os != null) {
-                    try {
-                        os.close();
-                    } catch (IOException ex) {
-                    }
-                }
             }
             if (log.isDebugEnabled())
                 log.debug("  --> Returning '" + url.toString() + "'");
@@ -1529,6 +1515,10 @@ public class WebappClassLoader
         permissionList.clear();
         loaderPC.clear();
 
+        if (loaderDir != null) {
+            deleteDir(loaderDir);
+        }
+
     }
 
 
@@ -1815,6 +1805,58 @@ public class WebappClassLoader
                     } catch (IOException e) {
                         return null;
                     }
+
+                    // Extract resources contained in JAR to the workdir
+                    if (!(path.endsWith(".class"))) {
+                        byte[] buf = new byte[1024];
+                        File resourceFile = new File
+                            (loaderDir, jarEntry.getName());
+                        if (!resourceFile.exists()) {
+                            Enumeration entries = jarFiles[i].entries();
+                            while (entries.hasMoreElements()) {
+                                JarEntry jarEntry2 = 
+                                    (JarEntry) entries.nextElement();
+                                if (!(jarEntry2.isDirectory()) 
+                                    && (!jarEntry2.getName().endsWith
+                                        (".class"))) {
+                                    resourceFile = new File
+                                        (loaderDir, jarEntry2.getName());
+                                    resourceFile.getParentFile().mkdirs();
+                                    FileOutputStream os = null;
+                                    InputStream is = null;
+                                    try {
+                                        is = jarFiles[i].getInputStream
+                                            (jarEntry2);
+                                        os = new FileOutputStream
+                                            (resourceFile);
+                                        while (true) {
+                                            int n = is.read(buf);
+                                            if (n <= 0) {
+                                                break;
+                                            }
+                                            os.write(buf, 0, n);
+                                        }
+                                    } catch (IOException e) {
+                                        // Ignore
+                                    } finally {
+                                        try {
+                                            if (is != null) {
+                                                is.close();
+                                            }
+                                        } catch (IOException e) {
+                                        }
+                                        try {
+                                            if (os != null) {
+                                                os.close();
+                                            }
+                                        } catch (IOException e) {
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 }
 
             }
@@ -2078,6 +2120,31 @@ public class WebappClassLoader
         throws MalformedURLException {
 
         return jdkCompat.getURI(file);
+
+    }
+
+
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    protected static void deleteDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
 
     }
 
