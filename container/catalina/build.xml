@@ -497,8 +497,6 @@
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
   </target>
   <target name="copy-fileupload.jar" if="fileupload.jar.present">
-    <copy todir="${catalina.build}/server/lib"
-          file="${commons-fileupload.jar}"/>
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy tofile="${catalina.build}/bin/jmx.jar" file="${jmx.jar}"/>
