@@ -54,7 +54,10 @@ public class StringManager {
      */
 
     private ResourceBundle bundle;
-
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( StringManager.class );
+    
     /**
      * Creates a new StringManager for a given package. This is a
      * private method and all access to it is arbitrated by the
@@ -82,10 +85,12 @@ public class StringManager {
             if( cl==null )
                 cl=this.getClass().getClassLoader();
 
-            System.out.println("Can't find resource " + bundleName +
+            if (log.isDebugEnabled())
+                log.debug("Can't find resource " + bundleName +
                     " " + cl);
             if( cl instanceof URLClassLoader ) {
-                System.out.println( ((URLClassLoader)cl).getURLs());
+                if (log.isDebugEnabled()) 
+                    log.debug( ((URLClassLoader)cl).getURLs());
             }
         }
     }
