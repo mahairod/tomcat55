@@ -63,7 +63,7 @@ fi
 
 # ----- Set Up The Runtime Classpath ------------------------------------------
 
-CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME\xerces.jar
+CP=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar:$XERCES_HOME/xerces.jar
 
 if [ "$CLASSPATH" != "" ] ; then
   CP=$CLASSPATH:$CP
