@@ -427,23 +427,25 @@ public class StandardEngine
             }
         }
         
-        if( service==null ) {
-            try {
-                ObjectName serviceName=getParentName();        
-                if( mserver.isRegistered( serviceName )) {
-                    log.info("Registering with the service ");
-                    try {
-                        mserver.invoke( serviceName, "setContainer",
-                                new Object[] { this },
-                                new String[] { "org.apache.catalina.Container" } );
-                    } catch( Exception ex ) {
-                        ex.printStackTrace();
-                    }
-                }
-            } catch( Exception ex ) {
-                log.error("Error registering with service ");
-            }
-        }
+        // not needed since the following if statement does the same thing the right way
+        // remove later after checking
+        //if( service==null ) {
+        //    try {
+        //        ObjectName serviceName=getParentName();        
+        //        if( mserver.isRegistered( serviceName )) {
+        //            log.info("Registering with the service ");
+        //            try {
+        //                mserver.invoke( serviceName, "setContainer",
+        //                        new Object[] { this },
+        //                        new String[] { "org.apache.catalina.Container" } );
+        //            } catch( Exception ex ) {
+        //               ex.printStackTrace();
+        //            }
+        //        }
+        //    } catch( Exception ex ) {
+        //        log.error("Error registering with service ");
+        //    }
+        //}
         
         if( service==null ) {
             // for consistency...: we are probably in embeded mode
@@ -571,7 +573,11 @@ public class StandardEngine
         return name;
     }
 
+    // FIXME Remove -- not used 
     public ObjectName getParentName() throws MalformedObjectNameException {
+        if (getService()==null) {
+            return null;
+        }
         String name = getService().getName();
         ObjectName serviceName=new ObjectName(domain +
                         ":type=Service,serviceName="+name);
