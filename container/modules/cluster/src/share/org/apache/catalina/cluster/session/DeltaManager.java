@@ -369,8 +369,18 @@ public class DeltaManager
         ReplicationStream ois = null;
         Loader loader = null;
         ClassLoader classLoader = null;
+        //fix to be able to run the DeltaManager
+        //stand alone without a container.
+        //use the Threads context class loader
+        if ( container != null ) 
+            loader = container.getLoader();
+        if ( loader != null ) 
+            classLoader = loader.getClassLoader();
+        else
+            classLoader = Thread.currentThread().getContextClassLoader();
+        //end fix
         fis = new ByteArrayInputStream(data);
-        ois = new ReplicationStream(fis,container.getLoader().getClassLoader());
+        ois = new ReplicationStream(fis,classLoader);
         session.getDeltaRequest().readExternal(ois);
         ois.close();
         return session.getDeltaRequest();
