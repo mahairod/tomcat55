@@ -11,6 +11,9 @@
   <!-- Build Defaults -->
   <!--property name="catalina.build"   value="${basedir}/catalina/build"/-->
 
+  <!-- used by gump to keep from building more that just catalina -->
+  <property name="catalina.target"  value="deploy" >
+
   <!-- Source dependencies -->
   <property name="api.home"
            value="${basedir}/../jakarta-servletapi-5"/>
@@ -42,7 +45,7 @@
   <target name="deploy" depends="deploy-static"
    description="Build and deploy all components">
     <echo>Target: Catalina - Deploy ...</echo>
-    <ant dir="${basedir}/catalina" target="deploy"/>
+    <ant dir="${basedir}/catalina" target="${catalina.target}"/>
     <echo>Target: Webapps - Deploy ...</echo>
     <ant dir="${basedir}/webapps"  target="deploy"/>
   </target>
