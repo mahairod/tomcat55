@@ -34,7 +34,7 @@
          on to the appropriate Host (virtual host). -->
 
     <!-- You should set jvmRoute to support load-balancing via JK/JK2 ie :
-    <Engine name="Standalone" defaultHost="localhost" debug="0" jmvRoute="jvm1">         
+    <Engine name="Standalone" defaultHost="localhost" debug="0" jvmRoute="jvm1">         
     --> 
          
     <!-- Define the top level container in our container hierarchy -->
