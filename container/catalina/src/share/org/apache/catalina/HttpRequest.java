@@ -67,8 +67,10 @@ package org.apache.catalina;
 
 import java.security.Principal;
 import java.util.Locale;
+
 import javax.servlet.http.Cookie;
 
+import org.apache.tomcat.util.buf.MessageBytes;
 
 /**
  * An <b>HttpRequest</b> is the Catalina internal facade for an
@@ -157,6 +159,14 @@ public interface HttpRequest extends Request {
 
 
     /**
+     * Get the context path.
+     * 
+     * @return the context path
+     */
+    public MessageBytes getContextPathMB();
+
+
+    /**
      * Set the context path for this Request.  This will normally be called
      * when the associated Context is mapping the Request to a particular
      * Wrapper.
@@ -181,6 +191,14 @@ public interface HttpRequest extends Request {
      * @param query The query string
      */
     public void setQueryString(String query);
+
+
+    /**
+     * Get the path info.
+     * 
+     * @return the path info
+     */
+    public MessageBytes getPathInfoMB();
 
 
     /**
@@ -245,6 +263,22 @@ public interface HttpRequest extends Request {
      * @return the URL decoded request URI
      */
     public String getDecodedRequestURI();
+
+
+    /**
+     * Get the decoded request URI.
+     * 
+     * @return the URL decoded request URI
+     */
+    public MessageBytes getDecodedRequestURIMB();
+
+
+    /**
+     * Get the servlet path.
+     * 
+     * @return the servlet path
+     */
+    public MessageBytes getServletPathMB();
 
 
     /**
