@@ -332,7 +332,8 @@ public class ContextManager {
      *  session id generator. 
      */
     public void setRandomClass(String randomClass) {
-        System.setProperty("tomcat.sessionid.randomclass", randomClass);
+        Properties sysProp = System.getProperties();
+ 	sysProp.put("tomcat.sessionid.randomclass", randomClass);
     }
 
     /** Get the showDebugInfo property to be used for controlling the display of
