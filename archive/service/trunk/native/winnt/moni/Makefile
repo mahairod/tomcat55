@@ -5,9 +5,9 @@ all: ../bin/vdmoniadm ../bin/vdmonisvc
 	gcc $(INCLUDE) -I../executables/vdmoniadm  vdmoniadm.c \
 	-o ../bin/vdmoniadm -lgdi32
 ../bin/vdmonisvc: vdmonisvc.c vdenv.o kills.o
-	gcc $(INCLUDE) -I../executables/vdmonisvc \
+	gcc -mno-cygwin -I/usr/include $(INCLUDE) -I../executables/vdmonisvc \
 	-DCYGWIN vdmonisvc.c \
-	-o ../bin/vdmonisvc vdenv.o kills.o -lm
+	-o ../bin/vdmonisvc vdenv.o kills.o
 vdenv.o: ../supcalls_nt/vdenv.c
 	gcc $(INCLUDE) -c ../supcalls_nt/vdenv.c
 kills.o: ../signals/kills.c
