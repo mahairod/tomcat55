@@ -66,7 +66,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 
 /**
- * A base class for defnining new tag handlers implementing Tag.
+ * A base class for defining new tag handlers implementing Tag.
  *
  * <p> The TagSupport class is a utility class intended to be used as
  * the base class for new tag handlers.  The TagSupport class
@@ -76,7 +76,7 @@ import java.util.Enumeration;
  * facilitate coordination among cooperating tags.
  *
  * <p> Many tag handlers will extend TagSupport and only redefine a
- * few tags. 
+ * few methods. 
  */
 
 public class TagSupport implements IterationTag, Serializable {
@@ -120,7 +120,7 @@ public class TagSupport implements IterationTag, Serializable {
     }
 
     /**
-     * Default constructor, all subclasses are required to only define
+     * Default constructor, all subclasses are required to define only
      * a public constructor with the same signature, and to call the
      * superclass constructor.
      *
