@@ -1,4 +1,8 @@
 /*
+ * CompressionFilter.java
+ * $Header$
+ * $Revision$
+ * $Date$
  *
  * ====================================================================
  *
@@ -76,6 +80,7 @@ import javax.servlet.http.HttpServletResponse;
  * the ServletResponse if it is bigger than a threshold.
  *
  * @author Amy Roh
+ * @version $Revision$, $Date$
  */
 
 public class CompressionFilter implements Filter{

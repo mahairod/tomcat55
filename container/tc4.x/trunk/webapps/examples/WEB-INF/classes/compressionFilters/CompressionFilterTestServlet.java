@@ -1,4 +1,8 @@
 /*
+ * CompressionFilterTestServlet.java
+ * $Header$
+ * $Revision$
+ * $Date$
  *
  * ====================================================================
  *
@@ -69,6 +73,7 @@ import javax.servlet.http.*;
 /**
  * Very Simple test servlet to test compression filter
  * @author Amy Roh
+ * @version $Revision$, $Date$
  */
 
 public class CompressionFilterTestServlet extends HttpServlet {

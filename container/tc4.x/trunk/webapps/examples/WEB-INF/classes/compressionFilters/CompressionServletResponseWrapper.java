@@ -1,4 +1,8 @@
 /*
+ * CompressionServletResponseWrapper.java
+ * $Header$
+ * $Revision$
+ * $Date$
  *
  * ====================================================================
  *
@@ -73,6 +77,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+/**
+ * Implementation of <b>HttpServletResponseWrapper</b> that works with
+ * the CompressionServletResponseStream implementation..
+ *
+ * @author Amy Roh
+ * @version $Revision$, $Date$
+ */
 
 public class CompressionServletResponseWrapper extends HttpServletResponseWrapper {
 
