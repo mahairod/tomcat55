@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,38 +59,34 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.naming.factory;
 
 import java.net.URL;
-import java.util.Hashtable;
-import javax.naming.Name;
-import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.RefAddr;
 import javax.naming.spi.ObjectFactory;
-import javax.transaction.UserTransaction;
-
-import org.apache.naming.TransactionRef;
-
 import tyrex.tm.TransactionDomain;
+import tyrex.tm.DomainConfigurationException;
+import tyrex.tm.RecoveryException;
 
 /**
- * Object factory for Tyrex User transactions.<br>
+ * Abstract superclass of any factory that creates objects from Tyrex.<br>
+ *
+ * Subclasses can use getTransactionDomain() to handle the retrieval and
+ * creation of the TransactionDomain.
+ *
  * Tyrex is an open-source transaction manager, developed by Assaf Arkin and
  * exolab.org. See the <a href="http://tyrex.exolab.org/">Tyrex homepage</a>
  * for more details about Tyrex and downloads.
- * 
+ *
  * @author David Haraburda
- * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class TyrexTransactionFactory
-    extends TyrexFactory {
+public abstract class TyrexFactory implements ObjectFactory {
 
 
     // ----------------------------------------------------------- Constructors
@@ -102,48 +98,75 @@ public class TyrexTransactionFactory
     // ----------------------------------------------------- Instance Variables
 
 
-    // --------------------------------------------------------- Public Methods
-
-
-    // -------------------------------------------------- ObjectFactory Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
-     * Crete a new UserTransaction.
-     * 
-     * @param obj The reference object
+     * Get (and if necessary, create) the active TransactionDomain
+     *
+     * This class checks to see if there is already a TransactionDomain
+     * setup and instantiated.  If so, it is returned, otherwise one is
+     * created and initialized using properties obtained from JNDI.
      */
-    public Object getObjectInstance(Object obj, Name name, Context nameCtx,
-                                    Hashtable environment)
-        throws NamingException {
-        
-        if (obj instanceof TransactionRef) {
-            Reference ref = (Reference) obj;
-            if (ref.getClassName()
-                .equals("javax.transaction.UserTransaction")) {
-                
-                try {
-                    return getTransactionDomain().getUserTransaction();
-                } catch (Throwable t) {
-                    log("Cannot create Transaction, Exception", t);
-                    throw new NamingException
-                        ("Exception creating Transaction: " + t.getMessage());
-                }
-                
+    protected TransactionDomain getTransactionDomain() throws NamingException {
+        TransactionDomain domain = null;
+        InitialContext initCtx = new InitialContext();
+        String config = initCtx.lookup("java:comp/env/" +
+            Constants.TYREX_DOMAIN_CONFIG).toString();
+        String name = initCtx.lookup("java:comp/env/" +
+            Constants.TYREX_DOMAIN_NAME).toString();
+        if (config != null && name != null) {
+            try {
+                domain = TransactionDomain.getDomain(name);
+            } catch(Throwable t) {
+                // Tyrex throws exceptions if required classes aren't found.
+                log("Error loading Tyrex TransactionDomain", t);
+                throw new NamingException
+                    ("Exception loading TransactionDomain: " + t.getMessage());
             }
-            
+            if ((domain == null)
+                || (domain.getState() == TransactionDomain.TERMINATED)) {
+                URL configURL = Thread.currentThread().getContextClassLoader()
+                    .getResource(config);
+                if (configURL == null)
+                    throw new NamingException
+                        ("Could not load Tyrex domain config file");
+                try {
+                    domain = 
+                        TransactionDomain.createDomain(configURL.toString());
+                } catch(DomainConfigurationException dce) {
+                    throw new NamingException
+                        ("Could not create TransactionDomain: " 
+                         + dce.getMessage());
+                }
+            }
+
+        } else {
+            throw new NamingException
+                ("Specified config file or domain name "
+                 + "parameters are invalid.");
         }
-        
-        return null;
-        
+
+        if (domain.getState() == TransactionDomain.READY) {
+            try {
+                domain.recover();
+            } catch( RecoveryException re ) {
+                throw new NamingException
+                    ("Could not activate TransactionDomain: " 
+                     + re.getMessage() );
+            }
+        }
+
+        return domain;
     }
+
 
 
     // -------------------------------------------------------- Private Methods
 
 
     private void log(String message) {
-        System.out.print("TyrexTransactionFactory:  ");
+        System.out.print("TyrexFactory:  ");
         System.out.println(message);
     }
 
@@ -155,4 +178,3 @@ public class TyrexTransactionFactory
 
 
 }
-

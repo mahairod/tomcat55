@@ -91,8 +91,8 @@ public final class Constants {
     public static final String DBCP_DATASOURCE_FACTORY = 
         "org.apache.commons.dbcp.BasicDataSourceFactory";
 
-    public static final String TYREX_DATASOURCE_FACTORY = 
-        Package + ".TyrexDataSourceFactory";
+    public static final String TYREX_RESOURCE_FACTORY =
+        Package + ".TyrexResourceFactory";
 
     public static final String TYREX_TRANSACTION_FACTORY = 
         Package + ".TyrexTransactionFactory";
@@ -100,5 +100,9 @@ public final class Constants {
     public static final String OBJECT_FACTORIES = "";
 
     public static final String FACTORY = "factory";
+
+    public static final String TYREX_DOMAIN_CONFIG = "tyrexDomainConfig";
+
+    public static final String TYREX_DOMAIN_NAME = "tyrexDomainName";
 
 }
