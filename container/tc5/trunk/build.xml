@@ -48,6 +48,8 @@
 
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="tomcat.embed"     value="${basedir}/embed"/>
+  <property name="tomcat.compat"    value="${basedir}/compat"/>
+  <property name="tomcat.deployer"  value="${basedir}/deployer"/>
   <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
@@ -135,8 +137,9 @@
           todir="${tomcat.build}/common/lib"/>
 
     <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
-    <copy todir="${tomcat.build}/common/lib" file="${jmx.jar}" />
-    <copy todir="${tomcat.build}/common/lib" file="${jmx-tools.jar}" />
+    <copy tofile="${tomcat.build}/common/lib/jmx.jar" file="${jmx.jar}" />
+    <copy tofile="${tomcat.build}/common/lib/jmx-tools.jar" 
+          file="${jmx-tools.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
   </target>
@@ -439,7 +442,6 @@
     <copy file="${commons-digester.jar}" todir="${tomcat.build}/server/lib"/>
     <copy file="${commons-collections.jar}" todir="${tomcat.build}/common/lib"/>
     <copy file="${commons-beanutils.jar}" todir="${tomcat.build}/common/lib"/>
-    <copy file="${jmx.jar}" todir="${tomcat.build}/common/lib"/>
 
     <antcall target="build-tomcatutil"/>
     <antcall target="build-catalina"/>
@@ -484,8 +486,8 @@
     </ant>
   </target>
 
-  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed" 
-          description="build tomcat, webapps, embed" />
+  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed,compat,deployer" 
+          description="build tomcat, webapps, embed, compat, deployer" />
 
 
   <target name="build-depends" depends="init"
@@ -709,6 +711,60 @@
     
   </target>
 
+  <!-- ====================== Deployer target =================== -->
+
+  <target name="deployer" description="Create the Tomcat deployer binary" > 
+
+    <copy todir="${tomcat.deployer}/lib" file="${commons-logging.jar}"/>
+    <copy todir="${tomcat.deployer}/lib" file="${tomcat.build}/common/lib/ant.jar"/>
+
+    <!-- JSP and Servlet runtime -->
+    <copy todir="${tomcat.deployer}/lib">
+      <fileset dir="${tomcat.build}/common/lib">
+        <include name="commons-el.jar"/>
+        <include name="jsp-api.jar"/>
+        <include name="jasper-runtime.jar"/>
+        <include name="jasper-compiler.jar"/>
+        <include name="servlet-api.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${tomcat.deployer}/lib" 
+           file="${tomcat.build}/server/lib/catalina-ant.jar"/>
+
+<!--
+    <copy todir="${tomcat.deployer}/lib" 
+           file="${tomcat.build}/server/lib/catalina-deployer.jar"/>
+-->
+
+    <copy todir="${tomcat.deployer}/lib" file="${xercesImpl.jar}"/>
+    <copy todir="${tomcat.deployer}/lib" file="${xmlParserAPIs.jar}"/>
+
+    <copy todir="${tomcat.deployer}">
+      <fileset dir="${basedir}/resources/deployer" />
+    </copy>
+
+    <!-- Copy deployer documentation -->
+    <copy todir="${tomcat.deployer}">
+      <fileset dir="${tomcat.build}/webapps/tomcat-docs">
+        <include name="images/jakarta-logo.gif" />
+        <include name="images/tomcat.gif" />
+      </fileset>
+    </copy>
+    <copy tofile="${tomcat.deployer}/docs/manual.html"
+      file="${tomcat.build}/webapps/tomcat-docs/printer/deployer-howto.html" />
+
+  </target>
+
+  <!-- ====================== Compat target =================== -->
+
+  <target name="compat" description="Create compatibility binaries for JREs before 1.4" >
+
+    <copy todir="${tomcat.compat}/common/endorsed" file="${xercesImpl.jar}"/>
+    <copy todir="${tomcat.compat}/common/endorsed" file="${xmlParserAPIs.jar}"/>
+
+  </target>
+
   <!-- ====================== DEPLOY: Deploy Components =================== -->
 
   <target name="deploy" depends="deploy-static,build-all,build-webapps"
@@ -767,6 +823,8 @@
     <delete dir="${tomcat.build}"/>
 
     <delete dir="${tomcat.embed}"/>
+    <delete dir="${tomcat.compat}"/>
+    <delete dir="${tomcat.deployer}"/>
 
     <echo>Target: Servlet API - Clean ...</echo>
     <ant dir="${api.home}/jsr154" target="clean"/>
