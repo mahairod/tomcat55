@@ -107,12 +107,12 @@
                 <html:text property="digest" size="30" styleId="digest"/>
             </controls:data>
         </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="localDataSource">
+        
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="localDataSource">
             <controls:label><bean:message key="realm.localDataSource"/>:</controls:label>
             <controls:data>
                <html:select property="localDataSource" styleId="localDataSource">
-                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <bean:define id="booleanVals" name="dataSourceRealmForm" property="booleanVals"/>
                      <html:options collection="booleanVals" property="value"
                    labelProperty="label"/>
                 </html:select>
