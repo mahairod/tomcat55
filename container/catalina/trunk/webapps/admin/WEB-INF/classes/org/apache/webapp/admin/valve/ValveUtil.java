@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -33,8 +35,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
@@ -207,14 +207,14 @@ public final class ValveUtil {
      * @exception IllegalArgumentException if one of the patterns has
      *  invalid syntax
      */
-    public static RE[] precalculate(String list) 
+    public static Pattern[] precalculate(String list) 
                                     throws IllegalArgumentException {
 
         if (list == null)
-            return (new RE[0]);
+            return (new Pattern[0]);
         list = list.trim();
         if (list.length() < 1)
-            return (new RE[0]);
+            return (new Pattern[0]);
         list += ",";
 
         ArrayList reList = new ArrayList();
@@ -224,16 +224,16 @@ public final class ValveUtil {
                 break;
             String pattern = list.substring(0, comma).trim();
             try {
-                reList.add(new RE(pattern));
-            } catch (RESyntaxException e) {
+                reList.add(Pattern.compile(pattern));
+            } catch (PatternSyntaxException e) {
                 throw new IllegalArgumentException
                     ("Syntax error in request filter pattern");
             }
             list = list.substring(comma + 1);
         }
 
-        RE reArray[] = new RE[reList.size()];
-        return ((RE[]) reList.toArray(reArray));
+        Pattern reArray[] = new Pattern[reList.size()];
+        return ((Pattern[]) reList.toArray(reArray));
 
     }    
 
