@@ -128,6 +128,9 @@
       <fix>
         <bug>32866</bug>: Propagate distributable property from context to manager (yoavs)
       </fix>
+      <fix>
+        <bug>32867</bug>: Reset distributable attribute in context for clean reload handling (yoavs)
+      </fix>
     </changelog>
    </subsection>
    
