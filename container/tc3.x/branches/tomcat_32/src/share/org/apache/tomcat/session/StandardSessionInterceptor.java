@@ -123,19 +123,21 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 	    log( "Configuration error in StandardSessionInterceptor - no context " + request );
 	}
 
-      // Added by Hans:
-      // First check if we have a valid session ID from the URL, set by the SessionInterceptor,
-      // and if so, set it as the request session. If we have also received a valid session ID
-      // as a cookie, the next section of code will reset the session to the one matching the
-      // ID found in the cookie.
-      String requestedSessionID = request.getRequestedSessionId();
-      if (requestedSessionID != null) {
-          if (debug > 0) log("Found URL session ID: " + requestedSessionID);
-          sess = sM.findSession(requestedSessionID);
-          if (sess != null)
-              if (debug > 0) log("The URL session ID is valid");
-              request.setSession(sess);
-      }
+	// Added by Hans:
+	// First check if we have a valid session ID from the URL, set by the SessionInterceptor,
+	// and if so, set it as the request session. If we have also received a valid session ID
+	// as a cookie, the next section of code will reset the session to the one matching the
+	// ID found in the cookie.
+	String requestedSessionID = request.getRequestedSessionId();
+	if (requestedSessionID != null) {
+	    if (debug > 0) 
+		log("Found URL session ID: " + requestedSessionID);
+	    sess = sM.findSession(requestedSessionID);
+	    if (sess != null) {
+		if (debug > 0) log("The URL session ID is valid");
+		request.setSession(sess);
+	    }
+	}
 
 	// PF, loop across all cookies named JSESSIONID checking to see if any of them are valid.
 	// There should in most cases be a maximum of 2, and normally there will only be one. The
