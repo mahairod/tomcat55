@@ -5,7 +5,7 @@
    <property name="build.compiler" value="classic"/>
    <property name="watchdog.build" value="../build/watchdog"/>
    <property name="watchdog.dist" value="../dist/watchdog"/>
-   <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../jakarta-servletapi/lib/servlet.jar" />
+   <property name="watchdog-classpath" value="../jakarta-servletapi/lib/servlet.jar:./src/tools" />
 
    <!-- Prepare the unpacked destination directory -->
 
@@ -16,22 +16,17 @@
       <mkdir dir="${watchdog.build}/lib" />
       <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
       <mkdir dir="${watchdog.build}/lib/servlet-golden"/>
-
-<!--
+      <mkdir dir="${watchdog.build}/src/tools/org/apache/tomcat/task" />
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
--->
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
       <copydir  src="src/server/jsp-tests"
                dest="${watchdog.build}/webapps/jsp-tests"/>
-<!--
+
       <copydir  src="src/server/servlet-tests"
                dest="${watchdog.build}/webapps/servlet-tests"/>
--->
-      <copyfile src="../jakarta-tools/moo.jar"
-               dest="${watchdog.build}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-ant/lib/ant.jar"
                 dest="${watchdog.build}/lib/ant.jar"/>
@@ -39,16 +34,14 @@
       <copyfile src="../jakarta-servletapi/lib/servlet.jar"
                 dest="${watchdog.build}/lib/servlet.jar"/>
 
-      <copyfile src="../jakarta-tools/testdriver.jar"
-                dest="${watchdog.build}/lib/testdriver.jar"/>
 
       <copydir  src="src/clients/org/apache/jcheck/jsp/client" 
                 dest="${watchdog.build}/lib/jsp-golden"/>
 
-<!--
+
       <copydir  src="src/clients/org/apache/jcheck/servlet/client" 
                 dest="${watchdog.build}/lib/servlet-golden"/>
--->
+
 
       <copydir  src="src/bin" dest="${watchdog.build}/bin"/>
       <fixcrlf  srcdir="${watchdog.build}/bin" includes="*.sh" cr="remove"/>
@@ -60,10 +53,6 @@
       <copyfile src="Readme" 
                dest="${watchdog.build}/doc/Readme"/>
 
-      <copyfile src="../jakarta-tools/moo.jar" 
-               dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
-      <copyfile src="../jakarta-tools/moo.jar" 
-               dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
    </target>       
 
@@ -71,34 +60,28 @@
 
    <target name="main" depends="prepare">
 
-<!--
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
              classpath="${watchdog-classpath}" 
              deprecation="off" />
--->
 
       <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
              classpath="${watchdog-classpath}" 
              deprecation="off" />
 
-      <!-- Something strange in J2EE, lib/moo.jar is not read - this is a temp. fix -->
-      <javac srcdir="../jakarta-tools/moo/src/share"
-             destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
-             classpath="${watchdog-classpath}" 
-             deprecation="off" />
-<!--
-      <javac srcdir="../jakarta-tools/moo/src/share"
-             destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
-             classpath="${watchdog-classpath}" 
-             deprecation="off" />
--->
       <javac srcdir="src/clients" destdir="${watchdog.build}/clients" 
              classpath="${watchdog-classpath}" 
              deprecation="off" />    
 
-      <copydir src="src/clients" dest="${watchdog.build}/clients">
+<!-- To build testdriver.jar -->
+
+      <javac srcdir="src/tools/org/apache/tomcat/task"
+             destdir="${watchdog.build}/src/tools"
+             classpath="${watchdog-classpath}" 
+             deprecation="off"  />    
+
+      <copydir src="src/clients" dest="${watchdog.build}/clients" >
           <include name="**/MANIFEST.MF" />
           <include name="**/*.properties" />
       </copydir>
@@ -123,17 +106,12 @@
       <copyfile src="Readme" 
                dest="${watchdog.dist}/doc/Readme"/>
 
-      <copyfile src="../jakarta-tools/moo.jar"
-               dest="${watchdog.dist}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-ant/lib/ant.jar"
                dest="${watchdog.dist}/lib/ant.jar"/>
 
       <copyfile src="../jakarta-servletapi/lib/servlet.jar"
                dest="${watchdog.dist}/lib/servlet.jar"/>
-
-      <copyfile src="../jakarta-tools/testdriver.jar"
-               dest="${watchdog.dist}/lib/testdriver.jar"/>
 
       <copydir src="src/clients/org/apache/jcheck/jsp/client" 
               dest="${watchdog.dist}/lib/jsp-golden"/>
@@ -149,6 +127,9 @@
     
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
+        includes="**/org/**" />
+      <jar jarfile="${watchdog.dist}/lib/testdriver.jar"
+        basedir="${watchdog.build}/src/tools" 
         includes="**/org/**" />
 
       <jar jarfile="${watchdog.dist}/webapps/servlet-tests.war"
