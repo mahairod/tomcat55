@@ -361,7 +361,7 @@
        username="${manager.username}"
        password="${manager.password}"
            path="${app.path}"
-            war="file://${build.home}"/>
+       localWar="file://${build.home}"/>
 
   </target>
 
