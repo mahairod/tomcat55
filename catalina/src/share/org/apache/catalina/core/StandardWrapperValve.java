@@ -79,6 +79,9 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.buf.MessageBytes;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -185,6 +188,9 @@ final class StandardWrapperValve
         long t1=System.currentTimeMillis();
         requestCount++;
         StandardWrapper wrapper = (StandardWrapper) getContainer();
+        HttpRequest hrequest = null;
+        if (request instanceof HttpRequest)
+            hrequest = (HttpRequest) request;
         ServletRequest sreq = request.getRequest();
         ServletResponse sres = response.getResponse();
         Servlet servlet = null;
@@ -259,21 +265,16 @@ final class StandardWrapperValve
             exception(request, response, e);
             servlet = null;
         }
-        String requestPath = null;
+        MessageBytes requestPathMB = null;
         if (hreq != null) {
-            String contextPath = hreq.getContextPath();
-            if (contextPath == null)
-                contextPath = "";
-            String requestURI = ((HttpRequest) request).getDecodedRequestURI();
-            if (requestURI.length() >= contextPath.length())
-                requestPath = requestURI.substring(contextPath.length());
+            requestPathMB = hrequest.getRequestPathMB();
         }
         sreq.setAttribute
             (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
-             new Integer(ApplicationFilterFactory.REQUEST));
+             ApplicationFilterFactory.REQUEST_INTEGER);
         sreq.setAttribute
             (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, 
-             requestPath);
+             requestPathMB.toString());
         // Create the filter chain for this request
         ApplicationFilterFactory factory = 
             ApplicationFilterFactory.getInstance();
