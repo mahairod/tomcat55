@@ -106,6 +106,10 @@ public class ApplicationSession implements HttpSession {
         }
     }
 
+    ServerSession getServerSession() {
+	return serverSession;
+    }
+
     /**
      * Called by context when request comes in so that accesses and
      * inactivities can be dealt with accordingly.

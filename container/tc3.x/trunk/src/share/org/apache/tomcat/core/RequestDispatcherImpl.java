@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -252,8 +248,11 @@ public class RequestDispatcherImpl implements RequestDispatcher {
 	}
 
 	this.urlPath = urlPath;
-	this.lookupResult =
-	    context.getContainer().lookupServlet(this.urlPath);
+
+	this.lookupResult = new Request();
+	lookupResult.setLookupPath( this.urlPath );
+	lookupResult.setContext( context );
+	context.getContextManager().internalRequestParsing(lookupResult);
     }
 
     boolean isValid() {

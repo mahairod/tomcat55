@@ -259,16 +259,17 @@ implements HttpServletRequest {
     }
 
     public HttpSession getSession() {
-        return request.getSession();
+        return request.getSession(true);
     }
     
     public HttpSession getSession(boolean create) {
         return request.getSession(create);
     }
 
-    public ServerSession getServerSession(boolean create) {
-        return request.getServerSession(create);
-    }
+    // XXX XXX is it used ?? (costin)
+    //     public ServerSession getServerSession(boolean create) {
+    //         return request.getServerSession(create);
+    //     }
 
     public BufferedReader getReader() throws IOException {
 	if (usingStream) {

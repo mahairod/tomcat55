@@ -194,22 +194,10 @@ class ConnectionHandler extends Thread {
 		}
 
 		HttpServer server = manager.resolveServer(endpoint,hostHeader);
-		String path = request.getRequestURI();
-		int index = path.indexOf("?");
-
 		response.setServerHeader(server.getServerHeader());
 
-		if (index > 0 ) {
-		    path = path.substring(0, index);
-		}
-
-		Context ctx = server.getContextByPath(path);
-		String ctxPath = ctx.getPath();
-		String pathInfo =
-		    path.substring(ctxPath.length(), path.length());
-		
-		ctx.handleRequest(request, response);
-		response.finish();
+		ContextManager cm=server.getContextManager();
+		cm.service( request, response );
 
 		request.recycle();
 		response.recycle();

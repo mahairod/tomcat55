@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -249,9 +245,15 @@ implements ServletContext {
 	// XXX
 	// this could use a once over - after war perhaps
 
+
+	
         URL docBase = context.getDocumentBase();
-	Request lr =
-	    getRealContext().getContainer().lookupServlet(path);
+
+	Request lr = new Request();
+	lr.setLookupPath( path );
+	lr.setContext( getRealContext() );
+	getRealContext().getContextManager().internalRequestParsing(lr);
+
 	String mappedPath = path;
 
 	if (lr != null &&

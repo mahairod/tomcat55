@@ -130,39 +130,7 @@ public class Ajp22ConnectionHandler  implements  TcpConnectionHandler {
 		    break;
 		}
 
-		// XXX
-                //    return if an error was detected in processing the
-                //    request line
-		if (rresponse.getStatus() >= 400) {
-		    rresponse.finish();
-		    rrequest.recycle();
-		    rresponse.recycle();
-		    break;
-		}
-
-		
-		// resolve the server that we are for
-		String path = rrequest.getRequestURI();
-	
-		Context ctx= contextM.getContextByPath(path);
-
-		// final fix on response & request
-		//		rresponse.setServerHeader(server.getServerHeader());
-
-                //    don't do headers if request protocol is http/0.9
-		if (rrequest.getProtocol() == null) {
-		    rresponse.setOmitHeaders(true);
-		}
-
-		// do it
-		//		System.out.println( request + " " + rresponse );
-		ctx.handleRequest(rrequest, rresponse);
-
-		// finish and clean up
-		rresponse.finish();
-
-		// protocol notification
-		msg.endResponse();
+		contextM.service(rrequest, rresponse);
 		
 		rrequest.recycle();
 		rresponse.recycle();
