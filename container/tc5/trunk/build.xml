@@ -10,7 +10,6 @@
   
   <!-- If not set explicitely in one of the user overrides, set it here 
     -->
-  <property name="base.path" location="../repository" />
 
   <property file="build.properties.default"/>
 
@@ -442,6 +441,8 @@
         <property name="commons-logging.jar" location="${tomcat.build}/server/lib/commons-logging.jar" />
         <property name="build.home" value="${tomcat.build}" />
     </ant>
+    <move todir="${tomcat.build}/common/lib/" file="${tomcat.build}/commons-logging-api.jar" />
+    <move todir="${tomcat.build}/server/lib/" file="${tomcat.build}/commons-logging.jar"/>
   </target>
 
   <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
