@@ -80,6 +80,18 @@ import org.apache.tomcat.util.log.*;
 public class JspFactoryImpl extends JspFactory {
     private SimplePool pool=new SimplePool( 100 );
     private static final boolean usePool=true;
+    static String lineSeparator;
+    static {
+	try {
+	    lineSeparator =  System.getProperty("line.separator");
+	} catch( Exception ex ) {
+	    lineSeparator="\r\n";
+	}
+	// This whole things allows us to set the writer line
+	// separator when we init jasper, i.e. in priv. mode -
+	// without it we would need a priviledged action.
+	JspWriterImpl.lineSeparator=lineSeparator;
+    }
     
     Log loghelper = Log.getLog("JASPER_LOG", "JspFactoryImpl");
     

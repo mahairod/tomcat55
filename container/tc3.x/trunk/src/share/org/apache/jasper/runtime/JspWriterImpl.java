@@ -72,7 +72,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.jasper.Constants;
-import org.apache.tomcat.util.compat.*;
 
 /**
  * Write text to a character-output stream, buffering characters so as
@@ -382,18 +381,12 @@ public class JspWriterImpl extends JspWriter {
 	write(s, 0, s.length());
     }
 
-
     static String lineSeparator;
     static {
-	Jdk11Compat jdk11Compat=Jdk11Compat.getJdkCompat();
 	try {
-	    lineSeparator = (String)jdk11Compat.doPrivileged( new Action() {
-		    public Object run() throws Exception {
-			return System.getProperty("line.separator");
-		    }
-		});
+	    lineSeparator =  System.getProperty("line.separator");
 	} catch( Exception ex ) {
-	    lineSeparator="\r\r";
+	    lineSeparator="\r\n";
 	}
     }
 
