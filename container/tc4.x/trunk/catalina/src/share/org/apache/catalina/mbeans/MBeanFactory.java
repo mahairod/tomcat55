@@ -979,7 +979,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
-        String hostName = oname.getKeyProperty("host");
+        String hostName = oname.getKeyProperty("name");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
