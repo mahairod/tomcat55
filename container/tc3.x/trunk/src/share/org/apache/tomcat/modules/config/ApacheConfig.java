@@ -182,6 +182,8 @@ public class ApacheConfig  extends BaseJkConfig {
     private String sslSessionIndicator="SSL_SESSION_ID";
     private String sslCipherIndicator="SSL_CIPHER";
     private String sslCertsIndicator="SSL_CLIENT_CERT";
+
+    Hashtable NamedVirtualHosts=null;
     
     public ApacheConfig() {
     }
@@ -254,7 +256,7 @@ public class ApacheConfig  extends BaseJkConfig {
     */
     protected void initProperties(ContextManager cm) {
         super.initProperties(cm);
-	
+
 	jkConfig=FileUtil.getConfigFile( jkConfig, configHome, MOD_JK_CONFIG);
 	workersConfig=FileUtil.getConfigFile( workersConfig, configHome,
 				     WORKERS_CONFIG);
@@ -279,6 +281,8 @@ public class ApacheConfig  extends BaseJkConfig {
     	try {
 	    initProperties(cm);
 	    initProtocol(cm);
+
+            NamedVirtualHosts = new Hashtable();  
 
 	    StringBuffer sb=new StringBuffer();
     	    PrintWriter mod_jk = new PrintWriter(new FileWriter(jkConfig));
@@ -402,8 +406,10 @@ public class ApacheConfig  extends BaseJkConfig {
             return;
         } 
 	if( vhost != null ) {
-	    generateNameVirtualHost(mod_jk );
-	    mod_jk.println("<VirtualHost *>");
+            String vhostip = getVirtualHostAddress(vhost,
+                                            context.getHostAddress());
+	    generateNameVirtualHost(mod_jk, vhostip);
+	    mod_jk.println("<VirtualHost "+ vhostip + ">");
 	    mod_jk.println("    ServerName " + vhost );
 	    Enumeration aliases=context.getHostAliases();
 	    if( aliases.hasMoreElements() ) {
@@ -426,13 +432,17 @@ public class ApacheConfig  extends BaseJkConfig {
 	    mod_jk.println(indent + "JkMount " +  nPath + "/* " + jkProto );
 	if( vhost != null ) {
 	    mod_jk.println("</VirtualHost>");
+            mod_jk.println();
 	    indent="";
 	}
     }    
 
     
-    private void generateNameVirtualHost( PrintWriter mod_jk ) {
-	mod_jk.println("NameVirtualHost *");
+    private void generateNameVirtualHost( PrintWriter mod_jk, String ip ) {
+        if( !NamedVirtualHosts.containsKey(ip) ) {
+            mod_jk.println("NameVirtualHost " + ip + "");
+            NamedVirtualHosts.put(ip,ip);
+        }
     }
     
     // -------------------- Apache serves static mode --------------------
@@ -454,7 +464,10 @@ public class ApacheConfig  extends BaseJkConfig {
 		       " ####################" );
         mod_jk.println();
 	if( vhost != null ) {
-	    mod_jk.println("<VirtualHost *>");
+            String vhostip = getVirtualHostAddress(vhost,
+                                            context.getHostAddress());
+	    generateNameVirtualHost(mod_jk, vhostip);
+	    mod_jk.println("<VirtualHost " + vhostip + ">");
 	    mod_jk.println("    ServerName " + vhost );
 	    Enumeration aliases=context.getHostAliases();
 	    if( aliases.hasMoreElements() ) {
@@ -614,4 +627,15 @@ public class ApacheConfig  extends BaseJkConfig {
 	}
         return docBase;
     }
+
+    private String getVirtualHostAddress(String vhost, String vhostip) {
+        if( vhostip == null ) {
+            if ( vhost != null && vhost.length() > 0 && Character.isDigit(vhost.charAt(0)) )
+                vhostip=vhost;
+            else
+                vhostip="*";
+        }
+        return vhostip;
+    }
+
 }
