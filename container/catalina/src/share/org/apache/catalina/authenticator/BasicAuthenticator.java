@@ -171,7 +171,7 @@ public class BasicAuthenticator
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);
-        String username = unencoded.substring(0, colon).trim();
+        String username = unencoded.substring(0, colon);
         //        String password = unencoded.substring(colon + 1).trim();
         return (username);
 
@@ -199,7 +199,7 @@ public class BasicAuthenticator
         if (colon < 0)
             return (null);
         //        String username = unencoded.substring(0, colon).trim();
-        String password = unencoded.substring(colon + 1).trim();
+        String password = unencoded.substring(colon + 1);
         return (password);
 
     }
