@@ -186,7 +186,7 @@ public final class SaveUserDatabaseAction extends Action {
             ObjectName oname = null;
 
             try {
-                String domain = (new ObjectName(objectName)).getDomain();
+                String domain = userDatabaseForm.getDomain();
                 // Construct the MBean Name for the naming source
                 oname = new ObjectName(domain + 
                             ResourceUtils.NAMINGRESOURCES_TYPE + 
