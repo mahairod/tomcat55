@@ -134,12 +134,6 @@ public class SimpleTcpCluster
 
 
     /**
-     * The debug level for this Container
-     */
-    protected int debug = 0;
-
-
-    /**
      * The context name <-> manager association for distributed contexts.
      */
     protected HashMap managers = new HashMap();
@@ -183,28 +177,9 @@ public class SimpleTcpCluster
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo() {
-        return(this.info);
+        return(info);
     }
 
-
-    /**
-     * Set the debug level for this component
-     *
-     * @param debug The debug level
-     */
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-
-    /**
-     * Get the debug level for this component
-     *
-     * @return The debug level
-     */
-    public int getDebug() {
-        return(this.debug);
-    }
 
     /**
      * Set the name of the cluster to join, if no cluster with

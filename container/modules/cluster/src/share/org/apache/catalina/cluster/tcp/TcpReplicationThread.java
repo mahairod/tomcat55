@@ -17,13 +17,10 @@
 package org.apache.catalina.cluster.tcp;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.util.List;
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import org.apache.catalina.cluster.io.ObjectReader;
 
-import java.util.LinkedList;
 /**
      * A worker thread class which can drain channels and echo-back
      * the input.  Each instance is constructed with a reference to
@@ -58,7 +55,7 @@ public class TcpReplicationThread extends WorkerThread
             } catch (InterruptedException e) {
                 log.info("TCP worker thread interrupted in cluster",e);
                 // clear interrupt status
-                this.interrupted();
+                Thread.interrupted();
             }
             if (key == null) {
                 continue;	// just in case
