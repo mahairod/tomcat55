@@ -419,15 +419,15 @@ source factory.
 NOTE:  This step is only required if you wish to use the database JDBC data
 source factory.
 
-* Download a binary distribution of version 20011030 or later from:
+* Download a binary distribution of version 1.0 or later from:
 
-    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-pool
+    http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0/
 
   On a Windows platform, you will need:
-    commons-pool-YYYYMMDD.zip
+    commons-pool-1.0.zip
 
   On a Unix platform, you will need:
-    commons-pool-YYYYMMDD.tar.gz
+    commons-pool-1.0.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory.
