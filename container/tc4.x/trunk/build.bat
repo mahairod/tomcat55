@@ -143,7 +143,7 @@ rem @@@ %JMX_HOME%\lib\jmxri.jar
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-%JAVA_HOME%\bin\java %ANT_OPTS% org.apache.tools.ant.Main -Dcatalina.jaxp.home="%CATALINA_JAXP_HOME%" -Dcatalina.jaxp.parser.jar="%CATALINA_JAXP_PARSER_JAR%" -Djasper.jaxp.home="%JASPER_JAXP_HOME%" -Djasper.jaxp.parser.jar="%JASPER_JAXP_PARSER_JAR%" -Djsse.home="%JSSE_HOME%" -Djmx.home="%JMX_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
+%JAVA_HOME%\bin\java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dcatalina.jaxp.home="%CATALINA_JAXP_HOME%" -Dcatalina.jaxp.parser.jar="%CATALINA_JAXP_PARSER_JAR%" -Djasper.jaxp.home="%JASPER_JAXP_HOME%" -Djasper.jaxp.parser.jar="%JASPER_JAXP_PARSER_JAR%" -Djsse.home="%JSSE_HOME%" -Djmx.home="%JMX_HOME%" -Dregexp.home="%REGEXP_HOME%" -Dservletapi.home="%SERVLETAPI_HOME%" -Djava.home="%JAVA_HOME%" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------
