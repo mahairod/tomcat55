@@ -1,0 +1,170 @@
+$Id$
+        
+                           Release Notes for:
+                           ==================
+                           TOMCAT Version 3.1
+                           ==================
+
+
+0.  TABLE OF CONTENTS:
+
+    1.  Introduction
+    2.  Installing and Running Tomcat
+    3.  Application Development Using Tomcat
+    4.  New Features In This Release
+    5.  Known Bugs and Issues
+
+
+=============================================================================
+1.  INTRODUCTION
+
+Tomcat is a servlet container and JavaServer Pages(tm) implementation.  It may
+be used stand alone, or in conjunction with several popular web servers:
+- Apache, version 1.3 or later
+- Microsoft Internet Information Server, version 4.0 or later
+- Microsoft Personal Web Server, version 4.0 or later
+- Netscape Enterprise Server, version 3.0 or later
+
+You should read the License Agreement (in the LICENSE file of the top level
+directory), which applies to all software included in this release.
+
+
+=============================================================================
+2.  INSTALLING AND RUNNING TOMCAT
+
+Tomcat requires a Java Runtime Environment conformant to JRE 1.1 or later,
+including any Java2 platform system.  If you wish to develop applications,
+you will need a Java compiler, such as the one included in a Java Development
+Kit 1.1 or later environment, including JDKs conformant with Java2.
+
+For detailed information about installing and running Tomcat, point your
+browser at file "doc/uguide/tomcat_ug.html" under the directory into which
+you unpacked the Tomcat distribution.
+
+
+=============================================================================
+3.  APPLICATION DEVELOPMENT USING TOMCAT
+
+Preliminary information on using Tomcat for developing Servlet/JSP based
+applications is provided in the included Application Developer's Guide.
+Point your browser at file "doc/appdev/index.html" under the directory into
+which you unpacked the Tomcat distribution.
+
+
+=============================================================================
+4.  NEW FEATURES IN THIS RELEASE
+
+Many new features have been added to Tomcat since the 3.0 release.  Among the
+most important are:
+
+- Connectors for using Tomcat to run servlets with Microsoft's IIS
+  and Netscape's NES web server, as well as Apache and stand-alone.
+
+- Automatic generation of configuration files for Apache integration.
+
+- Automatic deployment of applications delivered as Web ARchive (WAR)
+  files.  To deploy an application, copy the WAR file to the
+  $TOMCAT_HOME/webapps directory and restart Tomcat, after which the
+  WAR file will be automatically expanded.  To remove an application,
+  remove the expanded directory (and the WAR file) for that application.
+
+- Automatic servlet reloading when servlet classes are changed in
+  WEB-INF/classes or WEB-INF/lib/*.jar.  This support can be configured
+  on a per-web-application basis.
+
+- Enhanced support for logging on a per-Tomcat-component basis.
+
+- Minimal administration tool, allowing new web applications to be deployed
+  into a running Tomcat environment, as well as removing existing applications.
+
+- Command line tool (jspc) to compile the JSP pages that comprise your
+  application ahead of time.
+
+- Substantially improved installation and development documentation.
+
+
+=============================================================================
+5.  KNOWN BUGS AND ISSUES
+
+5.1 Using An Absolute Path as Document Root Under Windows
+
+In the TOMCAT_HOME/conf/server.xml file, you can declare a relative or absolute
+directory pathname for the docRoot attribute.  If you wish to use an absolute
+pathname on a Windows system, you MUST include the drive letter in order to
+conform to Java's definition of an absolute path on this platform:
+
+    GOOD:  c:\mydirectory\mydocroot
+    GOOD:  c:/mydirectory/mydocroot
+    BAD:   \mydirectory\mydocroot
+    BAD:   /mydirectory/mydocroot
+
+Under Unix, absolute pathnames must begin with a slash ('/') character.
+
+5.2 Container Managed Security
+
+Tomcat 3.1 has an experimental implementation of container managed security,
+as described in the Servlet API Specification, version 2.2, section 11.  Please
+note the following information about this implementation:
+
+- BASIC authentication appears to work correctly, but has not been
+  extensively tested.  Please report any bugs you encounter here
+  at <http://jakarta.apache.org/bugs>.  The example application has
+  a protected area defined at the following URL:
+
+	http://localhost:8080/examples/jsp/security/protected
+
+  which can be accessed by any user defined in the configuration file
+  $TOMCAT_HOME/conf/tomcat-users.xml that has been granted the
+  appropriate roles.
+
+  WARNING:  Basic authentication is not suitable for general security
+  use across the Internet, or across other insecure networks, because
+  usernames and passwords are sent encoded, but not encrypted, with
+  every single request.
+
+- Form based login is partially supported, but only lightly tested.  To
+  assist in debugging this feature, you can enable the partial support
+  by using a nonstandard <auth-method>EXPERIMENTAL_FORM</auth-method>
+  element in your application deployment descriptor (web.xml) file.  It
+  should not be enabled for any reason other than debugging Tomcat.
+
+- DIGEST authentication and HTTPS client authentication (i.e. SSL)
+  are not supported in this release.
+
+5.3 Using RequestDispatcher.include() on a Welcome File [Bug Report #160]
+
+Using the following technique triggers an IllegalStateException: OutputStream
+is already being used for this request:
+
+- You have a subdirectory under your document root
+  (for example "subdir/").
+
+- This subdirectory contains a welcome file that you
+  have configured to be displayed when that subdirectory
+  is requested on a URL (for example "index.html").
+
+- You request a RequestDispatcher for path "/subdir"
+  or path "/subdir/" and then call include() on it.
+
+The same problem can occur when you do a <jsp:include/> to a page "/subdir"
+or "/subdir/" as well.
+
+A workaround is to ask for a RequestDispatcher on the complete context-
+relative path of the file you wish to have displayed, such as
+"/subdir/index.html".
+
+5.4 Automatic Servlet Reloading
+
+Tomcat 3.1 includes a new feature whereby you can ask it to automatically
+reload servlet classes (loaded from either the WEB-INF/classes directory
+or a JAR file in the WEB-INF/lib directory) that have been changed.  This
+feature is experimental, and may not be completely functional.  In particular,
+changes to classes other than the servlet you are requesting do not trigger
+class reloads -- you will need to restart Tomcat to reflect changes in those
+classes.
+
+Reloading is enabled by including a reloadable="true" attribute on the
+<Context> element in the "conf/server.xml" file.  Note that automatic
+reload support is not recommended for production applications because of
+its experimental nature, and the extra overhead required to perform the
+necessary checks on every request.

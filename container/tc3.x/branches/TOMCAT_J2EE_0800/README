@@ -1,0 +1,175 @@
+			Tomcat Servlet Container
+			========================
+
+
+This subproject contains the source code for the Tomcat servlet container (and
+JSP engine) that conforms to the Java Servlet API Specification (version 2.2)
+and the JavaServer Pages Specificaton (version 1.1).
+
+
+Installing and Building Tomcat
+==============================
+
+In order to successfully build Tomcat, you will need to do the following.  In
+the instructions below, $JAKARTA_HOME is assumed to be the directory into which
+you are installing all of the required distributions.
+
+* Download and install a version 1.1 or later Java Development Kit
+  implementation for your operating system platform.  Set a "JAVA_HOME"
+  environment variable to point at the directory where your JDK is installed,
+  and add "$JAVA_HOME/bin" to your PATH.  Configure the CLASSPATH environment
+  variable as well, if required.
+
+* Download and install the Java API for XML Parsing implementation (current
+  version number is 1.0) from <http://java.sun.com/xml>.  Make sure that the
+  "jaxp.jar" and "parser.jar" files are on your class path.  (NOTE:  In the
+  future it will be possible to use any JAXP-compliant parser).
+
+* Download and install the Ant distribution (subproject "jakarta-ant") into
+  a directory named "$JAKARTA_HOME/jakarta-ant".  If you have downloaded the
+  source distribution, you will need to build the executable version by
+  executing the following commands:
+
+	cd $JAKARTA_HOME/jakarta-ant
+	./bootstrap.sh		<-- Unix
+	bootstrap		<-- Windows
+
+  This should result in the creation of a file "ant.jar" in the "lib"
+  subdirectory, which will be used when building Watchdog.
+
+* Download and install the Servletapi distribution (subproject
+  "jakarta-servletapi") into a subdirectory named
+  "$JAKARTA_HOME/jakarta-servletapi".  If you have downloaded the source
+  distribution, you will need to build the executable version by
+  executing the following commands:
+
+	cd $JAKARTA_HOME/jakarta-servletapi
+	./build.sh dist		<-- Unix
+	build dist		<-- Windows
+
+  This should result in the creation of a file "servlet.jar" in the "lib"
+  subdirectory, which will be used when building Watchdog.
+
+* Download the source distribution of Tomcat (subpackage "jakarta-tomcat"),
+  or check it out via anonymous CVS, into a subdirectory named
+  "$JAKARTA_HOME/jakarta-tomcat".  You can now build an "unpacked" version
+  of Tomcat (quicker builds because no time is spent JARing up results)
+  by executing the following commands:
+
+	cd $JAKARTA_HOME/jakarta-tomcat
+	./build.sh		<-- Unix
+	build			<-- Windows
+
+  This version can be executed as follows:
+
+	cd $JAKARTA_HOME/build/tomcat
+	./bin/startup.sh	<-- Unix
+	bin\startup		<-- Indows
+
+  and it can be shut down as follows:
+
+	cd $JAKARTA_HOME/build/tomcat
+	./bin/shutdown.sh	<-- Unix
+	bin\shutdown		<-- Indows
+
+* You can also build a binary distribution version of Tomcat as follows:
+
+	cd $JAKARTA_HOME/jakarta-tomcat
+	./build.sh dist		<-- Unix
+	build dist		<-- Windows
+
+  This will create a distribution in "$JAKARTA_HOME/dist/tomcat" that is
+  equivalent (in file arrangement) to the binary distribution releases
+  of Tomcat that can be downloaded from the Jakarta web site at
+  <http://jakarta.apache.org>.
+
+* You can delete the generated files in the "build/tomcat" and "dist/tomcat"
+  directories by executing the following:
+
+	cd $JAKARTA_HOME/jakarta-tomcat
+	./build.sh clean	<-- Unix
+	build clean		<-- Windows
+
+
+Running the Build
+=================
+
+You can run the "unpacked" version of Tomcat as follows:
+
+* To start Tomcat, execute the following commands:
+
+	cd $JAKARTA_HOME/build/tomcat
+	./bin/startup.sh	<-- Unix
+	bin\startup		<-- Indows
+
+* You can now access the default web pages from a web browser at URL:
+
+	http://localhost:8080
+
+* To stop Tomcat, execute the following commands:
+
+	cd $JAKARTA_HOME/build/tomcat
+	./bin/shutdown.sh	<-- Unix
+	bin\shutdown		<-- Windows
+
+You can run the "distribution" version of Tomcat as follows:
+
+* To start Tomcat, execute the following commands:
+
+	cd $JAKARTA_HOME/dist/tomcat
+	./bin/startup.sh	<-- Unix
+	bin\startup		<-- Indows
+
+* You can now access the default web pages from a web browser at URL:
+
+	http://localhost:8080
+
+* To stop Tomcat, execute the following commands:
+
+	cd $JAKARTA_HOME/dist/tomcat
+	./bin/shutdown.sh	<-- Unix
+	bin\shutdown		<-- Windows
+
+Alternatively, you can run Tomcat without changing your current working
+directory, by setting the TOMCAT_HOME environment variable to point at the
+Tomcat files you have built (for example, at directory
+"$JAKARTA_HOME/build/tomcat" or "$JAKARTA_HOME/dist/tomcat").  Now, you
+can start Tomcat as follows:
+
+	$TOMCAT_HOME/bin/startup.sh	<-- Unix
+	%TOMCAT_HOME%\bin\startup	<-- Windows
+
+and shut it down likewise:
+
+	$TOMCAT_HOME/bin/shutdown.sh	<-- Unix
+	%TOMCAT_HOME%\bin\shutdown	<-- Windows
+
+
+Testing the Build
+=================
+
+Tomcat includes a small web application with some quick tests to exercize
+the various parts of the server.  It is built automatically, along with the
+rest of Tomcat, by the steps described above.  To run the tests against the
+"unpacked" build, for example, you would do the following:
+
+	cd $JAKARTA_HOME/build/tomcat	<-- Unix
+	./bin/tomcat.sh ant -buildfile conf/test-tomcat.xml
+
+	cd %JAKARTA_HOME%\build\tomcat	<-- Windows
+	bin\tomcat ant -buildfile conf\test-tomcat.xml
+
+You can also use the Watchdog compatibility test suite, also available at
+<http://jakarta.apache.org>, to test Tomcat's compliance to the servlet and
+JSP specifications.
+
+
+
+Before Committing Changes
+=========================
+
+Before committing any changes to the Tomcat CVS repository, you MUST do a
+"build clean" followed by a "build dist" to ensure that the build process runs
+cleanly, and you must ensure that the tests run correctly.
+
+
