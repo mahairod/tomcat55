@@ -76,7 +76,7 @@ import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
-
+import org.apache.catalina.util.SecurityUtil;
 
 /**
  * Implementation of a <code>javax.servlet.FilterConfig</code> useful in
@@ -89,7 +89,9 @@ import org.apache.catalina.util.Enumerator;
 
 final class ApplicationFilterConfig implements FilterConfig {
 
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ApplicationFilterConfig.class );
+ 
     // ----------------------------------------------------------- Constructors
 
 
@@ -273,8 +275,18 @@ final class ApplicationFilterConfig implements FilterConfig {
      */
     void release() {
 
-        if (this.filter != null)
-            filter.destroy();
+        if (this.filter != null){
+             if( System.getSecurityManager() != null) {
+                try{
+                    SecurityUtil.doAsPrivilege("destroy",
+                                               filter);  
+                } catch(java.lang.Exception ex){                    
+                    log.error("ApplicationFilterConfig.doAsPrivilege", ex);
+                }
+            } else { 
+                filter.destroy();
+            }
+        }
         this.filter = null;
 
      }
@@ -304,8 +316,18 @@ final class ApplicationFilterConfig implements FilterConfig {
         if (filterDef == null) {
 
             // Release any previously allocated filter instance
-            if (this.filter != null)
-                this.filter.destroy();
+            if (this.filter != null){
+                 if( System.getSecurityManager() != null) {
+                    try{
+                        SecurityUtil.doAsPrivilege("destroy",
+                                                   filter);  
+                    } catch(java.lang.Exception ex){    
+                        log.error("ApplicationFilterConfig.doAsPrivilege", ex);
+                    }
+                } else { 
+                    filter.destroy();
+                }
+            }
             this.filter = null;
 
         } else {

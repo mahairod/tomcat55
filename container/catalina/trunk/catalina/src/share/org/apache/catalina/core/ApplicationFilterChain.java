@@ -69,6 +69,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.security.AccessController;
+import java.security.Principal;
 import java.security.PrivilegedActionException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -82,7 +83,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
-
+import org.apache.catalina.util.SecurityUtil;
 
 /**
  * Implementation of <code>javax.servlet.FilterChain</code> used to manage
@@ -210,7 +211,25 @@ final class ApplicationFilterChain implements FilterChain {
                 filter = filterConfig.getFilter();
                 support.fireInstanceEvent(InstanceEvent.BEFORE_FILTER_EVENT,
                                           filter, request, response);
-                filter.doFilter(request, response, this);
+                
+                if( System.getSecurityManager() != null ) {
+                    final ServletRequest req = request;
+                    final ServletResponse res = response;
+                    Principal principal = ((HttpServletRequest) req).getUserPrincipal();
+                    Class[] classType = new Class[]{ServletRequest.class, 
+                                                    ServletResponse.class,
+                                                    FilterChain.class};
+                    Object[] args = new Object[]{req, res, this};
+                    SecurityUtil.doAsPrivilege("doFilter",
+                                               filter,
+                                               classType, 
+                                               args);                                                   
+                } else {  
+                    filter.doFilter(request, response, this);
+                }
+                
+                
+                
                 support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
                                           filter, request, response);
             } catch (IOException e) {
@@ -244,8 +263,23 @@ final class ApplicationFilterChain implements FilterChain {
                                       servlet, request, response);
             if ((request instanceof HttpServletRequest) &&
                 (response instanceof HttpServletResponse)) {
-                servlet.service((HttpServletRequest) request,
-                                (HttpServletResponse) response);
+                    
+                if( System.getSecurityManager() != null ) {
+                    final ServletRequest req = request;
+                    final ServletResponse res = response;
+                    Principal principal = ((HttpServletRequest) req).getUserPrincipal();
+                    Class[] classType = new Class[]{ServletRequest.class, 
+                                                     ServletResponse.class};
+                    Object[] args = new Object[]{req, res};
+                    SecurityUtil.doAsPrivilege("service",
+                                               servlet,
+                                               classType, 
+                                               args,
+                                               principal);                                                   
+                } else {  
+                    servlet.service((HttpServletRequest) request,
+                                    (HttpServletResponse) response);
+                }
             } else {
                 servlet.service(request, response);
             }

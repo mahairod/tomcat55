@@ -91,14 +91,19 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.connector.HttpResponseBase;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
+import org.apache.catalina.util.SecurityUtil;
 import org.apache.tomcat.util.log.SystemLogHandler;
 
-
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import javax.security.auth.Subject;
 /**
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
@@ -156,7 +161,7 @@ public final class StandardWrapper
     /**
      * The facade associated with this wrapper.
      */
-    private StandardWrapperFacade facade =
+    private final StandardWrapperFacade facade =
         new StandardWrapperFacade(this);
 
 
@@ -828,7 +833,7 @@ public final class StandardWrapper
 
         PrintStream out = System.out;
         SystemLogHandler.startCapture();
-        Servlet servlet = null;
+        final Servlet servlet;
         try {
             // If this "servlet" is really a JSP file, get the right class.
             // HOLD YOUR NOSE - this is a kludge that avoids having to do special
@@ -921,7 +926,18 @@ public final class StandardWrapper
             try {
                 instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
                                                   servlet);
-                servlet.init(facade);
+                
+                if( System.getSecurityManager() != null) {
+                    Class[] classType = new Class[]{ServletConfig.class};
+                    Object[] args = new Object[]{((ServletConfig)facade)};
+                    SecurityUtil.doAsPrivilege("init",
+                                               servlet,
+                                               classType, 
+                                               args); 
+                } else {
+                    servlet.init(facade);                  
+                }
+                
                 // Invoke jspInit on JSP pages
                 if ((loadOnStartup > 0) && (jspFile != null)) {
                     // Invoking jspInit
@@ -929,13 +945,25 @@ public final class StandardWrapper
                     HttpResponseBase res = new HttpResponseBase();
                     req.setServletPath(jspFile);
                     req.setQueryString("jsp_precompile=true");
-                    servlet.service(req, res);
+                    
+                    if( System.getSecurityManager() != null) {
+                        Class[] classType = new Class[]{ServletRequest.class, 
+                                                        ServletResponse.class};
+                        Object[] args = new Object[]{req, res};
+                        SecurityUtil.doAsPrivilege("service",
+                                                   servlet,
+                                                   classType, 
+                                                   args);  
+                    } else { 
+                        servlet.service(req, res);
+                    }
                 }
                 instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                                   servlet);
             } catch (UnavailableException f) {
                 instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                                   servlet, f);
+                System.out.println("*************************************");
                 unavailable(f);
                 throw f;
             } catch (ServletException f) {
@@ -1102,8 +1130,15 @@ public final class StandardWrapper
         try {
             instanceSupport.fireInstanceEvent
               (InstanceEvent.BEFORE_DESTROY_EVENT, instance);
+            
             Thread.currentThread().setContextClassLoader(classLoader);
-            instance.destroy();
+            if( System.getSecurityManager() != null) {
+                SecurityUtil.doAsPrivilege("destroy",
+                                           instance);  
+            } else { 
+                instance.destroy();
+            }
+            
             instanceSupport.fireInstanceEvent
               (InstanceEvent.AFTER_DESTROY_EVENT, instance);
         } catch (Throwable t) {
@@ -1129,7 +1164,12 @@ public final class StandardWrapper
             try {
                 Thread.currentThread().setContextClassLoader(classLoader);
                 while (!instancePool.isEmpty()) {
-                    ((Servlet) instancePool.pop()).destroy();
+                    if( System.getSecurityManager() != null) {
+                        SecurityUtil.doAsPrivilege("destroy",
+                                                   ((Servlet) instancePool.pop()));  
+                    } else { 
+                        ((Servlet) instancePool.pop()).destroy();
+                    }
                 }
             } catch (Throwable t) {
                 instancePool = null;
