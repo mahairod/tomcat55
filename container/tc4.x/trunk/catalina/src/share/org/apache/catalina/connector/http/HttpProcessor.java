@@ -272,6 +272,24 @@ final class HttpProcessor
     private static final byte[] CRLF = (new String("\r\n")).getBytes();
 
 
+    /**
+     * Line buffer.
+     */
+    private char[] lineBuffer = new char[4096];
+
+
+    /**
+     * Request line buffer.
+     */
+    private HttpRequestLine requestLine = new HttpRequestLine();
+
+
+    /**
+     * HTTP header.
+     */
+    private HttpHeader header = new HttpHeader();
+
+
     // -------------------------------------------------------- Package Methods
 
 
@@ -497,27 +515,33 @@ final class HttpProcessor
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a parsing error occurs
      */
-    private void parseHeaders(InputStream input)
+    private void parseHeaders(SocketInputStream input)
         throws IOException, ServletException {
 
 	while (true) {
 
-	    // Read the next header line
-	    String line = read(input);
-	    if ((line == null) || (line.length() < 1))
-		break;
-
-	    // Parse the header name and value
-	    int colon = line.indexOf(":");
-	    if (colon < 0)
-		throw new ServletException
-		    (sm.getString("httpProcessor.parseHeaders.colon"));
-	    String name = line.substring(0, colon).trim();
-	    String match = name.toLowerCase();
-	    String value = line.substring(colon + 1).trim();
+            try {
+                // Read the next header
+                input.readHeader(header);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+            if (header.nameEnd == 0) {
+                if (header.valueEnd == 0) {
+                    return;
+                } else {
+                    throw new ServletException
+                        (sm.getString("httpProcessor.parseHeaders.colon"));
+                }
+            }
+            
+	    String name = new String(header.name, 0, header.nameEnd);
+	    String match = name;
+	    String value = new String(header.value, 0, header.valueEnd);
+            //System.out.println("  Header:" + name + "_ Value:" + value + "_");
 	    if (debug >= 1)
 	        log(" Header " + name + " = " + value);
-
+            
 	    // Set the corresponding request headers
 	    if (match.equals("authorization")) {
 		request.setAuthorization(value);
@@ -603,26 +627,20 @@ final class HttpProcessor
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a parsing error occurs
      */
-    private void parseRequest(InputStream input, OutputStream output)
+    private void parseRequest(SocketInputStream input, OutputStream output)
         throws IOException, ServletException {
 
 	// Parse the incoming request line
-	String line = read(input);
-	if (line == null)
-	    throw new EOFException
-		(sm.getString("httpProcessor.parseRequest.read"));
-	parser.setString(line);
-
-	int methodStart = parser.skipWhite();
-	int methodEnd = parser.findWhite();
-	int uriStart = parser.skipWhite();
-	int uriEnd = parser.findWhite();
-	int protocolStart = parser.skipWhite();
-	int protocolEnd = parser.findWhite();
-
-	String method = parser.extract(methodStart, methodEnd);
-	String uri = parser.extract(uriStart, uriEnd);
-	String protocol = parser.extract(protocolStart, protocolEnd);
+        input.readRequestLine(requestLine);
+        String method = 
+            new String(requestLine.method, 0, requestLine.methodEnd);
+        String uri = new String(requestLine.uri, 0, requestLine.uriEnd);
+        String protocol = new String(requestLine.protocol, 0, 
+                              requestLine.protocolEnd);
+        
+        //System.out.println(" Method:" + method + "_ Uri:" + uri 
+        //                   + "_ Protocol:" + protocol);
+        
 	if (protocol.length() == 0)
 	    protocol = "HTTP/0.9";
 
@@ -720,13 +738,13 @@ final class HttpProcessor
     private void process(Socket socket) {
 
 	boolean ok = true;
-	InputStream input = null;
+	SocketInputStream input = null;
 	OutputStream output = null;
 
 	// Construct and initialize the objects we will need
 	try {
-	    input = new BufferedInputStream(socket.getInputStream(),
-	    				    connector.getBufferSize());
+	    input = new SocketInputStream(socket.getInputStream(),
+                                          connector.getBufferSize());
 	} catch (Exception e) {
 	    log("process.create", e);
 	    ok = false;
@@ -844,43 +862,6 @@ final class HttpProcessor
 	    ;
 	}
 	socket = null;
-
-    }
-
-
-    /**
-     * Read a line from the specified input stream, and strip off the
-     * trailing carriage return and newline (if any).  Return the remaining
-     * characters that were read as a String.
-     *
-     * @param input The input stream connected to our socket
-     *
-     * @return The line that was read, or <code>null</code> if end-of-file
-     *  was encountered
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    private String read(InputStream input) throws IOException {
-
-	StringBuffer sb = new StringBuffer();
-	while (true) {
-	    int ch = input.read();
-	    if (ch < 0) {
-		if (sb.length() == 0) {
-		    return (null);
-		} else {
-		    break;
-		}
-	    } else if (ch == '\r') {
-		continue;
-	    } else if (ch == '\n') {
-		break;
-	    }
-	    sb.append((char) ch);
-	}
-	if (debug >= 2)
-	    log("  Read: " + sb.toString());
-	return (sb.toString());
 
     }
 
