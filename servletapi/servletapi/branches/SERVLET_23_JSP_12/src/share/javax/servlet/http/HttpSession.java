@@ -319,10 +319,14 @@ public interface HttpSession {
      * If an object of the same name is already bound to the session,
      * the object is replaced.
      *
-     * <p>After this method executes, and if the object
+     * <p>After this method executes, and if the new object
      * implements <code>HttpSessionBindingListener</code>,
      * the container calls 
      * <code>HttpSessionBindingListener.valueBound</code>.
+     
+     * <p>If an object was already bound to this session of this name
+     * that implements <code>HttpSessionBindingListener</code>, its 
+     * <code>HttpSessionBindingListener.valueUnbound</code> method is called.
      *
      * @param name			the name to which the object is bound;
      *					cannot be null

@@ -477,7 +477,7 @@ public interface HttpServletRequest extends ServletRequest {
      * <th>Returned Value
      * <tr><td>POST /some/path.html HTTP/1.1<td><td>/some/path.html
      * <tr><td>GET http://foo.bar/a.html HTTP/1.0
-     * <td><td>http://foo.bar/a.html
+     * <td><td>/a.html
      * <tr><td>HEAD /xyz?a=b HTTP/1.1<td><td>/xyz
      * </table>
      * </blockquote>
