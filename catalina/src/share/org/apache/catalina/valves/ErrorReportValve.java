@@ -48,6 +48,7 @@ import org.apache.tomcat.util.compat.JdkCompat;
  * @author Craig R. McClanahan
  * @author <a href="mailto:nicolaken@supereva.it">Nicola Ken Barozzi</a> Aisa
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
+ * @author Yoav Shapira
  * @version $Revision$ $Date$
  */
 
@@ -284,28 +285,29 @@ public class ErrorReportValve
 
         try {
 
-            Writer writer = response.getReporter();
+          try {
 
-            if (writer != null) {
+            response.setContentType("text/html");
+            response.setCharacterEncoding("utf-8");
 
-                Locale locale = Locale.getDefault();
+          } catch (Throwable t) {
 
-                try {
-                	response.setContentType("text/html");
-                	response.setLocale(locale);
-                } catch (Throwable t) {
-                    if (container.getLogger().isDebugEnabled())
-                        container.getLogger().debug("status.setContentType", t);
-                }
+             if (container.getLogger().isDebugEnabled())
+               container.getLogger().debug("status.setContentType", t);
 
-                // If writer is null, it's an indication that the response has
-                // been hard committed already, which should never happen
-                writer.write(sb.toString());
+          }
 
-            }
+          Writer writer = response.getReporter();
+
+          if (writer != null) {
+            // If writer is null, it's an indication that the response has
+            // been hard committed already, which should never happen
+            writer.write(sb.toString());
+          }
 
         } catch (IOException e) {
             ;
+
         } catch (IllegalStateException e) {
             ;
         }
