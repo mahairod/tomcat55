@@ -200,11 +200,13 @@ public class TldLocationsCache {
     {
 
         Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
-        Iterator it = libSet.iterator();
-        while (it.hasNext()) {
-            String resourcePath = (String) it.next();
-            if (resourcePath.endsWith(".jar")) 
-                tldConfigJar(ctxt, resourcePath);
+        if (libSet != null) {
+            Iterator it = libSet.iterator();
+            while (it.hasNext()) {
+                String resourcePath = (String) it.next();
+                if (resourcePath.endsWith(".jar")) 
+                    tldConfigJar(ctxt, resourcePath);
+            }
         }
 
     }
