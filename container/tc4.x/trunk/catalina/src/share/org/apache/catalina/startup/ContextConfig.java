@@ -1005,13 +1005,24 @@ public final class ContextConfig
             JarURLConnection conn =
                 (JarURLConnection) url.openConnection();
             jarFile = conn.getJarFile();
-            JarEntry jarEntry = jarFile.getJarEntry("META-INF/taglib.tld");
-            if (jarEntry == null)
-                return (false);
-            stream = jarFile.getInputStream(jarEntry);
-            mapper.readXml(stream, context);
-            stream.close();
-            return (true);
+            boolean found = false;
+            Enumeration entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = (JarEntry) entries.nextElement();
+                String name = entry.getName();
+                if (!name.startsWith("META-INF/"))
+                    continue;
+                if (!name.endsWith(".tld"))
+                    continue;
+                if (debug >= 2)
+                    log("    tldConfigJar(" + resourcePath +
+                        "): Processing entry '" + name + "'");
+                stream = jarFile.getInputStream(entry);
+                mapper.readXml(stream, context);
+                stream.close();
+                found = true;
+            }
+            return (found);
         } catch (Exception e) {
             if (debug >= 2)
                 log("    tldConfigJar(" + resourcePath + "): " + e);
