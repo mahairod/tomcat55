@@ -110,8 +110,7 @@ import org.apache.catalina.util.LifecycleSupport;
 
 public class StandardManager
     extends ManagerBase
-    implements Lifecycle, PropertyChangeListener, Runnable 
- {
+    implements Lifecycle, PropertyChangeListener {
 
     // ---------------------------------------------------- Security Classes
     private class PrivilegedDoLoad
@@ -141,12 +140,6 @@ public class StandardManager
 
     
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The interval (in seconds) between checks for expired sessions.
-     */
-    private int checkInterval = 60;
 
 
     /**
@@ -189,54 +182,13 @@ public class StandardManager
      */
     private boolean started = false;
 
-    /**
-     * The background thread.
-     */
-    private Thread thread = null;
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    private boolean threadDone = false;
-
-
-    /**
-     * Name to register for the background thread.
-     */
-    private String threadName = "StandardManager";
 
     int rejectedSessions=0;
     int expiredSessions=0;
     long processingTime=0;
 
+
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the check interval (in seconds) for this Manager.
-     */
-    public int getCheckInterval() {
-
-        return (this.checkInterval);
-
-    }
-
-
-    /**
-     * Set the check interval (in seconds) for this Manager.
-     *
-     * @param checkInterval The new check interval
-     */
-    public void setCheckInterval(int checkInterval) {
-
-        int oldCheckInterval = this.checkInterval;
-        this.checkInterval = checkInterval;
-        support.firePropertyChange("checkInterval",
-                                   new Integer(oldCheckInterval),
-                                   new Integer(this.checkInterval));
-
-    }
 
 
     /**
@@ -742,9 +694,6 @@ public class StandardManager
             log.error(sm.getString("standardManager.managerLoad"), t);
         }
 
-        // Start the background reaper thread
-        threadStart();
-
     }
 
 
@@ -767,9 +716,6 @@ public class StandardManager
                 (sm.getString("standardManager.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-
-        // Stop the background reaper thread
-        threadStop();
 
         // Write out sessions
         try {
@@ -861,7 +807,7 @@ public class StandardManager
     /**
      * Invalidate all sessions that have expired.
      */
-    private void processExpires() {
+    public void processExpires() {
 
         long timeNow = System.currentTimeMillis();
         Session sessions[] = findSessions();
@@ -880,87 +826,15 @@ public class StandardManager
                     expiredSessions++;
                     session.expire();
                 } catch (Throwable t) {
-                    log.error(sm.getString("standardManager.expireException"), t);
+                    log.error(sm.getString
+                              ("standardManager.expireException"), t);
                 }
             }
         }
-        long timeEnd=System.currentTimeMillis();
+        long timeEnd = System.currentTimeMillis();
         processingTime += ( timeEnd - timeNow );
 
     }
 
 
-    /**
-     * Sleep for the duration specified by the <code>checkInterval</code>
-     * property.
-     */
-    private void threadSleep() {
-
-        try {
-            Thread.sleep(checkInterval * 1000L);
-        } catch (InterruptedException e) {
-            ;
-        }
-
-    }
-
-
-    /**
-     * Start the background thread that will periodically check for
-     * session timeouts.
-     */
-    private void threadStart() {
-
-        if (thread != null)
-            return;
-
-        threadDone = false;
-        threadName = "StandardManager[" + container.getName() + "]";
-        thread = new Thread(this, threadName);
-        thread.setDaemon(true);
-        thread.setContextClassLoader(container.getLoader().getClassLoader());
-        thread.start();
-
-    }
-
-
-    /**
-     * Stop the background thread that is periodically checking for
-     * session timeouts.
-     */
-    private void threadStop() {
-
-        if (thread == null)
-            return;
-
-        threadDone = true;
-        thread.interrupt();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        thread = null;
-
-    }
-
-
-    // ------------------------------------------------------ Background Thread
-
-
-    /**
-     * The background thread that checks for session timeouts and shutdown.
-     */
-    public void run() {
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-            threadSleep();
-            processExpires();
-        }
-
-    }
-    
-    
 }
