@@ -63,7 +63,7 @@
     |jsp:plugin"
 >
 
-<!ENTITY % Body "(jsp:text|%Directives;|%Scripts;|%Actions;)*">
+<!ENTITY % Body "(jsp:cdata|%Directives;|%Scripts;|%Actions;)*">
 
 
 <!-- ============================ Elements ============================ -->
@@ -72,8 +72,7 @@
 -->
 <!ELEMENT jsp:root %Body;>
 <!ATTLIST jsp:root
-    xmlns:jsp       CDATA           "http://java.sun.com/JSP/Page"
-    version         CDATA           #REQUIRED
+    xmlns:jsp       CDATA           "http://java.sun.com/dtd/jsp_1_2"
 >
 
 <!ELEMENT jsp:directive.page EMPTY>
@@ -168,5 +167,4 @@
     value           CDATA           #REQUIRED
 >
 
-<!ELEMENT jsp:text #PCDATA>
-
+<!ELEMENT jsp:cdata #PCDATA>
