@@ -72,6 +72,8 @@ import org.apache.jasper34.core.*;
  * @author Costin Manolache
  */
 public abstract class JavaCompiler {
+    static String CPSEP = System.getProperty("path.separator");
+
     protected String encoding;
     protected String classpath;
     protected String compilerPath = "jikes";
@@ -88,7 +90,8 @@ public abstract class JavaCompiler {
      * Specify where the compiler can be found
      */ 
     public void setCompilerPath(String compilerPath) {
-	this.compilerPath = compilerPath;
+	if( compilerPath != null )
+	    this.compilerPath = compilerPath;
     }
 
 
@@ -104,6 +107,15 @@ public abstract class JavaCompiler {
      */ 
     public void setClasspath(String classpath) {
       this.classpath = classpath;
+    }
+
+    public void addClassPath( String path ) {
+	// XXX use StringBuffer
+	classpath=classpath + CPSEP + path;
+    }
+
+    public void addDefaultClassPath() {
+	addClassPath( System.getProperty("java.class.path") );
     }
 
     /**
@@ -149,6 +161,13 @@ public abstract class JavaCompiler {
     /** The main method - compile the source, using the previous settings.
      */
     public  boolean compile(String source) {
+	try {
+	    File f=new File(source);
+	    source=f.getCanonicalPath();
+	} catch(IOException ex ) {
+	    ex.printStackTrace();
+	}
+
 	return doCompile(source);
     }
 

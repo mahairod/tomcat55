@@ -70,7 +70,8 @@ import java.io.ByteArrayOutputStream;
   * @author Hans Bergsten <hans@gefionsoftware.com>
   */
 public class JikesJavaCompiler extends JavaCompiler {
-
+    static final int debug=0;
+    
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;
     static final String q =
@@ -133,6 +134,13 @@ public class JikesJavaCompiler extends JavaCompiler {
         ByteArrayOutputStream tmpErr =
 	    new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
 	try {
+	    if( debug > 0 ) {
+		String msg=""; // Can't believe I'm writing this !
+		for( int i=0; i< compilerCmd.length; i++ )
+		    msg+=compilerCmd[i]+ " ";
+		log( msg );
+	    }
+	    
 	    p = Runtime.getRuntime().exec(compilerCmd);
 	    
 	    BufferedInputStream compilerErr = new
@@ -162,11 +170,13 @@ public class JikesJavaCompiler extends JavaCompiler {
 	    return false;
 	}
 
+	if( debug > 0 ) log( "ExitValue=" + exitValue );
         boolean isOkay = exitValue == 0;
         // Jikes returns 0 even when there are some types of errors. 
         // Check if any error output as well
         if (tmpErr.size() > 0) {
             isOkay = false;
+	    if( debug > 0 ) log("tmpErr:" + tmpErr +":");
         }
         return isOkay;
     }
@@ -211,6 +221,10 @@ public class JikesJavaCompiler extends JavaCompiler {
 	    } catch (IOException ioe) {
 	    }
 	}
+    }
+
+    private static void log(String s) {
+	System.out.println("JikesJavaCompiler: " + s );
     }
 }
 
