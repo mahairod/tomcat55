@@ -16,9 +16,11 @@
 
 package org.apache.catalina.realm;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -40,6 +42,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.util.Base64;
+import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.tomcat.util.buf.CharChunk;
 
 /**
  * <p>Implementation of <strong>Realm</strong> that works with a directory
@@ -1190,6 +1194,44 @@ public class JNDIRealm extends RealmBase {
                         new String(Base64.encode(md.digest()));
                     validated = password.equals(digestedPassword);
                 }
+            } else if (password.startsWith("{SSHA}")) {
+                // Bugzilla 32938
+                /* sync since super.digest() does this same thing */
+                synchronized (this) {
+                    password = password.substring(6);
+
+                    md.reset();
+                    md.update(credentials.getBytes());
+
+                    // Decode stored password.
+                    ByteChunk pwbc = new ByteChunk(password.length());
+                    try {
+                        pwbc.append(password.getBytes(), 0, password.length());
+                    } catch (IOException e) {
+                        // Should never happen
+                        containerLog.error("Could not append password bytes to chunk: ", e);
+                    }
+
+                    CharChunk decoded = new CharChunk();
+                    Base64.decode(pwbc, decoded);
+                    char[] pwarray = decoded.getBuffer();
+
+                    // Split decoded password into hash and salt.
+                    final int saltpos = 20;
+                    byte[] hash = new byte[saltpos];
+                    for (int i=0; i< hash.length; i++) {
+                        hash[i] = (byte) pwarray[i];
+                    }
+
+                    byte[] salt = new byte[pwarray.length - saltpos];
+                    for (int i=0; i< salt.length; i++)
+                        salt[i] = (byte)pwarray[i+saltpos];
+
+                    md.update(salt);
+                    byte[] dp = md.digest();
+
+                    validated = Arrays.equals(dp, hash);
+                } // End synchronized(this) block
             } else {
                 // Hex hashes should be compared case-insensitive
                 validated = (digest(credentials).equalsIgnoreCase(password));

@@ -81,6 +81,9 @@
       <update>
         <bug>33636</bug>: Set lastModified attribute when expanding WAR files. (yoavs)
       </update>
+      <update>
+        <bug>32938</bug>: Allow Salted SHA (SSHA) passwords in JNDIRealm. (yoavs)
+      </update>
     </changelog>
    </subsection>
    
