@@ -108,7 +108,8 @@ z30AoLr/7hwXgedEepBk/Gm9HUsbMnM8
 
 
 Type bits      keyID      Date       User ID
-pub  1024D/307A10A5 2002-07-18 Henri Gomez <hgomez@users.sourceforge.net>
+pub  1024D/307A10A5 2002-07-18 Henri Gomez *** RPM SIGNING KEY ***
+                                           <hgomez@users.sourceforge.net>
 
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.0.6 (GNU/Linux)
