@@ -726,7 +726,7 @@ public class SimpleTcpCluster
      *  during installation
      */
     public void installContext(String contextPath, URL war) {
-        return;
+        System.out.println("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");
     }
 
 
