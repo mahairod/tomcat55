@@ -69,6 +69,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -980,10 +981,20 @@ public abstract class RequestBase
      *
      * @param enc The character encoding to be used
      *
+     * @exception UnsupportedEncodingException if the specified encoding
+     *  is not supported
+     *
      * @since Servlet 2.3
      */
-    public void setCharacterEncoding(String enc) {
+    public void setCharacterEncoding(String enc)
+        throws UnsupportedEncodingException {
 
+        // Ensure that the specified encoding is valid
+        byte buffer[] = new byte[1];
+        buffer[0] = (byte) 'a';
+        String dummy = new String(buffer, enc);
+
+        // Save the validated encoding
         this.characterEncoding = enc;
 
     }
