@@ -1589,6 +1589,11 @@
       <param name="destdir" value="${base.path}"/>
     </antcall>
 
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-httpclient.loc}"/>
+      <param name="destfile" value="${commons-httpclient.jar}"/>
+    </antcall>
+
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
       <param name="destfile" value="${nsis.exe}"/>
