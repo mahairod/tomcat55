@@ -74,14 +74,67 @@ import sun.tools.javac.Main;
  * @author Anil K. Vijendran
  */
 public class SunJavaCompiler implements JavaCompiler {
+
+    String encoding;
+    String classpath; // ignored
+    String compilerPath;
+    String outdir;
     OutputStream out;
-    
+
+    /**
+     * Specify where the compiler can be found
+     */ 
+    public void setCompilerPath(String compilerPath) {
+        // not used by the SunJavaCompiler
+	this.compilerPath = compilerPath;
+    }
+
+    /**
+     * Set the encoding (character set) of the source
+     */ 
+    public void setEncoding(String encoding) {
+      this.encoding = encoding;
+    }
+
+    /**
+     * Set the class path for the compiler
+     */ 
+    public void setClasspath(String classpath) {
+      this.classpath = classpath;
+    }
+
+    /**
+     * Set the output directory
+     */ 
+    public void setOutputDir(String outdir) {
+      this.outdir = outdir;
+    }
+
+    /**
+     * Set where you want the compiler output (messages) to go 
+     */ 
+    public void setMsgOutput(OutputStream out) {
+      this.out = out;
+    }
+
+    /**
+     * Set where you want the compiler output (messages) to go 
+     */ 
     public void setOut(OutputStream out) {
         this.out = out;
     }
     
-    public boolean compile(String[] args) {
+    public boolean compile(String source) {
         Main compiler = new Main(out, "jsp->javac");
+
+        String[] args = new String[]
+        {
+            "-encoding", encoding,
+            "-classpath", classpath,
+            "-d", outdir,
+            source
+        };
+
         return compiler.compile(args);
     }
 }

@@ -118,6 +118,11 @@ public final class Options {
     public String classpath = null;
     
     /**
+     * Plugin class to use to compile JSP pages.
+     */
+    public Class jspCompilerPlugin = null;
+    
+    /**
      * Path of the compiler to use for compiling JSP pages.
      */
     public String jspCompilerPath = null;
@@ -171,6 +176,14 @@ public final class Options {
      */
     public String getClassPath() {
         return classpath;
+    }
+
+    /**
+     * What compiler plugin should I use to compile the servlets
+     * generated from JSP files?
+     */
+    public Class getJspCompilerPlugin() {
+        return jspCompilerPlugin;
     }
 
     /**
@@ -264,8 +277,19 @@ public final class Options {
 	    if (new File(jspCompilerPath).exists()) {
 		this.jspCompilerPath = jspCompilerPath;
 	    } else { 
-		Constants.message("jsp.warning.compiler.notfound",
+		Constants.message("jsp.warning.compiler.path.notfound",
 				  new Object[] { jspCompilerPath }, 
+				  Constants.FATAL_ERRORS);
+	    }
+	}
+  
+	String jspCompilerPlugin = config.getInitParameter("jspCompilerPlugin");
+	if (jspCompilerPlugin != null) {
+            try {
+                this.jspCompilerPlugin = Class.forName(jspCompilerPlugin);
+            } catch (ClassNotFoundException cnfe) {
+		Constants.message("jsp.warning.compiler.class.notfound",
+				  new Object[] { jspCompilerPlugin }, 
 				  Constants.FATAL_ERRORS);
 	    }
 	}

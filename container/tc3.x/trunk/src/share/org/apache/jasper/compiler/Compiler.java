@@ -189,8 +189,19 @@ public abstract class Compiler {
          */
         ByteArrayOutputStream out = new ByteArrayOutputStream (256);
     
-        javac.setOut(out);
-        boolean status = javac.compile(argv);
+        /**
+         * Configure the compiler object
+         */
+        javac.setEncoding(javaEncoding);
+        javac.setClasspath( System.getProperty("java.class.path")+ sep + 
+                            classpath + sep + ctxt.getOutputDir());
+        javac.setOutputDir(ctxt.getOutputDir());
+        javac.setMsgOutput(out);
+
+        /**
+         * Execute the compiler
+         */
+        boolean status = javac.compile(javaFileName);
 
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
