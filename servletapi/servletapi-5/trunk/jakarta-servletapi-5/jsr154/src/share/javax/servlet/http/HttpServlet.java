@@ -465,36 +465,28 @@ public abstract class HttpServlet extends GenericServlet
     }
     
 
+    private static Method[] getAllDeclaredMethods(Class c) {
 
+        if (c.equals(javax.servlet.http.HttpServlet.class)) {
+            return null;
+        }
 
-
-    private Method[] getAllDeclaredMethods(Class c) {
-	if (c.getName().equals("javax.servlet.http.HttpServlet"))
-	    return null;
+        Method[] parentMethods = getAllDeclaredMethods(c.getSuperclass());
+        Method[] thisMethods = c.getDeclaredMethods();
 	
-	int j=0;
-	Method[] parentMethods = getAllDeclaredMethods(c.getSuperclass());
-	Method[] thisMethods = c.getDeclaredMethods();
-	
-	if (parentMethods!=null) {
-	    Method[] allMethods =
-		new Method[parentMethods.length + thisMethods.length];
-	    for (int i=0; i<parentMethods.length; i++) {
-		allMethods[i]=parentMethods[i];
-		j=i;
-	    }
-	    j++;
-	    for (int i=j; i<thisMethods.length+j; i++) {
-		allMethods[i] = thisMethods[i-j];
-	    }
-	    return allMethods;
+        if ((parentMethods != null) && (parentMethods.length > 0)) {
+            Method[] allMethods =
+                new Method[parentMethods.length + thisMethods.length];
+	    System.arraycopy(parentMethods, 0, allMethods, 0,
+                             parentMethods.length);
+	    System.arraycopy(thisMethods, 0, allMethods, parentMethods.length,
+                             thisMethods.length);
+
+	    thisMethods = allMethods;
 	}
+
 	return thisMethods;
     }
-
-
-
-
 
 
     /**
