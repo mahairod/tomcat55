@@ -70,6 +70,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -109,8 +110,10 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ResourceParams;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.session.PersistentManager;
+import org.apache.catalina.session.StandardManager;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.BaseModelMBean;
 
@@ -140,9 +143,14 @@ public class StandardServerMBean extends BaseModelMBean {
      * be persisted because they are automatically calculated.
      */
     private static String exceptions[][] = {
+        { "org.apache.catalina.core.StandardContext", "available" },
         { "org.apache.catalina.core.StandardContext", "configured" },
+        { "org.apache.catalina.core.StandardContext", "distributable" },
         { "org.apache.catalina.core.StandardContext", "name" },
+        { "org.apache.catalina.core.StandardContext", "override" },
         { "org.apache.catalina.core.StandardContext", "publicId" },
+        { "org.apache.catalina.core.StandardContext", "replaceWelcomeFiles" },
+        { "org.apache.catalina.core.StandardContext", "sessionTimeout" },
         { "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
         { "org.apache.catalina.session.StandardManager", "entropy" },
@@ -241,6 +249,22 @@ public class StandardServerMBean extends BaseModelMBean {
             configNew = new File(System.getProperty("catalina.base"),
                                  configFile + ".new");
         }
+        String ts = (new Timestamp(System.currentTimeMillis())).toString();
+        //        yyyy-mm-dd hh:mm:ss
+        //        0123456789012345678
+        StringBuffer sb = new StringBuffer(".");
+        sb.append(ts.substring(0, 10));
+        sb.append('.');
+        sb.append(ts.substring(11, 13));
+        sb.append('-');
+        sb.append(ts.substring(14, 16));
+        sb.append('-');
+        sb.append(ts.substring(17, 19));
+        File configSave = new File(configFile + sb.toString());
+        if (!configSave.isAbsolute()) {
+            configSave = new File(System.getProperty("catalina.base"),
+                                  configFile + sb.toString());
+        }
 
         // Open an output writer for the new configuration file
         PrintWriter writer = null;
@@ -273,7 +297,7 @@ public class StandardServerMBean extends BaseModelMBean {
             throw new MBeanException(e, "Writing conf/server.xml.new");
         }
 
-        // Close the output file and rename to the original
+        // Flush and close the output file
         try {
             writer.flush();
         } catch (Exception e) {
@@ -284,12 +308,78 @@ public class StandardServerMBean extends BaseModelMBean {
         } catch (Exception e) {
             throw new MBeanException(e, "Closing conf/server.xml.new");
         }
-        ; // FIXME - do not rename until 100% of server.xml is being written!
+
+        // Shuffle old->save and new->old
+        if (configOld.renameTo(configSave)) {
+            if (configNew.renameTo(configOld)) {
+                return;
+            } else {
+                configSave.renameTo(configOld);
+                throw new MBeanException
+                    (new IOException("Cannot rename " +
+                                     configNew.getAbsolutePath() + " to " +
+                                     configOld.getAbsolutePath()));
+            }
+        } else {
+            throw new MBeanException
+                (new IOException("Cannot rename " +
+                                 configOld.getAbsolutePath() + " to " +
+                                 configSave.getAbsolutePath()));
+        }
 
     }
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Is this an instance of the default <code>Loader</code> configuration,
+     * with all-default properties?
+     *
+     * @param loader Loader to be tested
+     */
+    private boolean isDefaultLoader(Loader loader) {
+
+        if (!(loader instanceof WebappLoader)) {
+            return (false);
+        }
+        WebappLoader wloader = (WebappLoader) loader;
+        if ((wloader.getCheckInterval() != 15) ||
+            (wloader.getDebug() != 0) ||
+            (wloader.getDelegate() != false) ||
+            !wloader.getLoaderClass().equals
+             ("org.apache.catalina.loader.WebappClassLoader")) {
+            return (false);
+        }
+        return (true);
+
+    }
+
+
+    /**
+     * Is this an instance of the default <code>Manager</code> configuration,
+     * with all-default properties?
+     *
+     * @param manager Manager to be tested
+     */
+    private boolean isDefaultManager(Manager manager) {
+
+        if (!(manager instanceof StandardManager)) {
+            return (false);
+        }
+        StandardManager smanager = (StandardManager) manager;
+        if ((smanager.getDebug() != 0) ||
+            !smanager.getPathname().equals("SESSIONS.ser") ||
+            (smanager.getCheckInterval() != 60) ||
+            !smanager.getRandomClass().equals("java.security.SecureRandom") ||
+            (smanager.getMaxActiveSessions() != -1) ||
+            !smanager.getAlgorithm().equals("MD5")) {
+            return (false);
+        }
+        return (true);
+
+    }
 
 
     /**
@@ -1036,6 +1126,9 @@ public class StandardServerMBean extends BaseModelMBean {
     private void storeLoader(PrintWriter writer, int indent,
                              Loader loader) throws Exception {
 
+        if (isDefaultLoader(loader)) {
+            return;
+        }
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }
@@ -1079,6 +1172,10 @@ public class StandardServerMBean extends BaseModelMBean {
      */
     private void storeManager(PrintWriter writer, int indent,
                               Manager manager) throws Exception {
+
+        if (isDefaultManager(manager)) {
+            return;
+        }
 
         // Store the beginning of this element
         for (int i = 0; i < indent; i++) {

@@ -434,6 +434,16 @@ public class HostConfig
 
                 deployed.add(files[i]);
 
+                // Calculate the context path and make sure it is unique
+                String file = files[i].substring(0, files[i].length() - 4);
+                String contextPath = "/" + file;
+                if (file.equals("ROOT")) {
+                    contextPath = "";
+                }
+                if (host.findChild(contextPath) != null) {
+                    continue;
+                }
+
                 // Assume this is a configuration descriptor and deploy it
                 log(sm.getString("hostConfig.deployDescriptor", files[i]));
                 try {
