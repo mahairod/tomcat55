@@ -181,19 +181,28 @@ public class JspServlet extends HttpServlet {
 		}
 
             } catch (FileNotFoundException ex) {
-		try {
-		    response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-				       ex.getMessage());
-		} catch (IllegalStateException ise) {
-		    Constants.jasperLog.log(Constants.getString
-					    ("jsp.error.file.not.found",
-					     new Object[] {
-						 ex.getMessage()
-					     }), ex,
-					    Logger.ERROR);
+                String includeRequestUri = (String)
+                    request.getAttribute("javax.servlet.include.request_uri");
+                if (includeRequestUri != null) {
+                    // This file was included. Throw an exception as
+                    // a response.sendError() will be ignored by the
+                    // servlet engine.
+                    throw new ServletException(ex);
+                } else {
+                    try {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+					   ex.getMessage());
+		    } catch (IllegalStateException ise) {
+			Constants.jasperLog.log(Constants.getString
+						("jsp.error.file.not.found",
+						 new Object[] {
+						     ex.getMessage()
+						 }), ex,
+						Logger.ERROR);
+		    }
+		    return;
 		}
-                return;
-            }
+	    }
 	}
 
 	public void destroy() {
