@@ -376,9 +376,19 @@ public class SingleSignOn
         if (ssoId == null)
             return;
 
-        // FIXME: Find a way to deregister only a single session in case of 
-        // a timeout
-        deregister(ssoId);
+        // Was the session destroyed as the result of a timeout?
+        // If so, we'll just remove the expired session from the
+        // SSO.  If the session was logged out, we'll log out
+        // of all session associated with the SSO.
+        if (System.currentTimeMillis() - session.getLastAccessedTime() >=
+            session.getMaxInactiveInterval() * 1000) {
+            removeSession(ssoId, session);
+        } else {
+            // The session was logged out.
+            // Deregister this single session id, invalidating 
+            // associated sessions
+            deregister(ssoId);
+        }
 
     }
 
@@ -671,6 +681,41 @@ public class SingleSignOn
     }
 
     //----------------------------------------------  Package-Protected Methods
+
+
+    /**
+     * Remove a single Session from a SingleSignOn.  Called when
+     * a session is timed out and no longer active.
+     *
+     * @param ssoId Single sign on identifier from which to remove the session.
+     * @param session the session to be removed.
+     */
+    void removeSession(String ssoId, Session session) {
+
+        if (debug >= 1)
+            log("Removing session " + session.toString() + " from sso id " + 
+                ssoId );
+
+        // Get a reference to the SingleSignOn
+        SingleSignOnEntry entry = lookup(ssoId);
+        if (entry == null)
+            return;
+
+        // Remove the inactive session from SingleSignOnEntry
+        entry.removeSession(session);
+
+        // Remove the inactive session from the 'reverse' Map.
+        synchronized(reverse) {
+            reverse.remove(session);
+        }
+
+        // If there are not sessions left in the SingleSignOnEntry,
+        // deregister the entry.
+        if (entry.findSessions().length == 0) {
+            deregister(ssoId);
+        }
+    }
+
 
     /**
      * Updates any <code>SingleSignOnEntry</code> found under key
