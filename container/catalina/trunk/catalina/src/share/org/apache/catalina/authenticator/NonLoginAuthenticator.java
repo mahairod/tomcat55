@@ -23,8 +23,7 @@ import java.io.IOException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 
 /**
@@ -37,9 +36,6 @@ import org.apache.commons.logging.LogFactory;
 
 public final class NonLoginAuthenticator
     extends AuthenticatorBase {
-
-
-    private static Log log = LogFactory.getLog(NonLoginAuthenticator.class);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -95,8 +91,8 @@ public final class NonLoginAuthenticator
             associate(ssoId, getSession(request, true));
         */
         
-        if (log.isDebugEnabled())
-            log.debug("User authentication is not required");
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("User authentication is not required");
         return (true);
 
 
