@@ -196,9 +196,7 @@ class Generator {
              */
             public void visit(Node.PageDirective n) throws JasperException {
 
-                if (!getServletInfoGenerated) {
-                    getServletInfoGenerated = true;
-                } else {
+                if (getServletInfoGenerated) {
                     return;
                 }
 
@@ -206,6 +204,7 @@ class Generator {
                 if (info == null)
                     return;
 
+                getServletInfoGenerated = true;
                 out.printil("public String getServletInfo() {");
                 out.pushIndent();
                 out.printin("return ");
@@ -217,8 +216,10 @@ class Generator {
             }
 
             public void visit(Node.Declaration n) throws JasperException {
+                n.setBeginJavaLine(out.getJavaLine());
                 out.printMultiLn(new String(n.getText()));
                 out.println();
+                n.setEndJavaLine(out.getJavaLine());
             }
 
             // Custom Tags may contain declarations from tag plugins.
