@@ -60,20 +60,6 @@ import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
 
     
-    static boolean target14;
-    static boolean source14;
-
-    static {
-        // Detect JDK version we are running under
-        String version = System.getProperty("java.specification.version");
-        try {
-            source14 = target14 = Float.parseFloat(version) >= 1.4;
-        } catch (NumberFormatException e) {
-            source14 = target14 = false;
-        }
-    }
-
-
     /** 
      * Compile the servlet from .java file to .class file
      */
@@ -191,7 +177,7 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
                             ICompilationUnit compilationUnit = 
                                 new CompilationUnit(sourceFile, className);
                             return 
-                                new NameEnvironmentAnswer(compilationUnit);
+                                new NameEnvironmentAnswer(compilationUnit, null);
                         }
                         String resourceName = 
                             className.replace('.', '/') + ".class";
@@ -212,7 +198,7 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
                                 new ClassFileReader(classBytes, fileName, 
                                                     true);
                             return 
-                                new NameEnvironmentAnswer(classFileReader);
+                                new NameEnvironmentAnswer(classFileReader, null);
                         }
                     } catch (IOException exc) {
                         log.error("Compilation error", exc);
@@ -286,17 +272,37 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
             settings.put(CompilerOptions.OPTION_LocalVariableAttribute,
                          CompilerOptions.GENERATE);
         }
-        if (source14) {
-            settings.put(CompilerOptions.OPTION_Source,
-                         CompilerOptions.VERSION_1_4);
-        }
 
-        /* Use target attribute from Options instead
-        if (target14) {
-            settings.put(CompilerOptions.OPTION_TargetPlatform,
-                         CompilerOptions.VERSION_1_4);
+        // Source JVM
+        if(ctxt.getOptions().getCompilerSourceVM() != null) {
+            String opt = ctxt.getOptions().getCompilerSourceVM();
+            if(opt.equals("1.1")) {
+                settings.put(CompilerOptions.OPTION_Source,
+                             CompilerOptions.VERSION_1_1);
+            } else if(opt.equals("1.2")) {
+                settings.put(CompilerOptions.OPTION_Source,
+                             CompilerOptions.VERSION_1_2);
+            } else if(opt.equals("1.3")) { 
+                settings.put(CompilerOptions.OPTION_Source,
+                             CompilerOptions.VERSION_1_3);
+            } else if(opt.equals("1.4")) {
+                settings.put(CompilerOptions.OPTION_Source,
+                             CompilerOptions.VERSION_1_4);
+            } else if(opt.equals("1.5")) {
+                settings.put(CompilerOptions.OPTION_Source,
+                             CompilerOptions.VERSION_1_5);
+            } else {
+                log.warn("Unknown source VM " + opt + " ignored.");
+                settings.put(CompilerOptions.OPTION_Source,
+                        CompilerOptions.VERSION_1_5);
+            }
+        } else {
+            // Default to 1.5
+            settings.put(CompilerOptions.OPTION_Source,
+                    CompilerOptions.VERSION_1_5);
         }
-        */
+        
+        // Target JVM
         if(ctxt.getOptions().getCompilerTargetVM() != null) {
             String opt = ctxt.getOptions().getCompilerTargetVM();
             if(opt.equals("1.1")) {
@@ -316,7 +322,13 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
                              CompilerOptions.VERSION_1_5);
             } else {
                 log.warn("Unknown target VM " + opt + " ignored.");
+                settings.put(CompilerOptions.OPTION_TargetPlatform,
+                        CompilerOptions.VERSION_1_5);
             }
+        } else {
+            // Default to 1.5
+            settings.put(CompilerOptions.OPTION_TargetPlatform,
+                    CompilerOptions.VERSION_1_5);
         }
 
         final IProblemFactory problemFactory = 
