@@ -100,11 +100,6 @@
       <fileset dir="src/conf" excludes="build.xml"/>
     </copy>
 
-    <!-- Documentation files -->
-    <copy    todir="${watchdog.build}/doc">
-      <fileset dir="doc"/>
-    </copy>
-
     <!-- Library files -->
     <copy    todir="${watchdog.build}/lib">
       <fileset dir="${ant.home}/lib" includes="ant.jar"/>
