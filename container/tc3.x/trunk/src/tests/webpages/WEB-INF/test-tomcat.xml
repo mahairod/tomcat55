@@ -133,6 +133,7 @@
       <gtest  description="PrintWriterTest"
              request="GET /test/servlet/dispatch.PrintWriterTest1Servlet HTTP/1.0"
              returnCode="${http.protocol} 500"
+             responseMatchFile="${gdir}/PrintWriterTest.txt"
        />
  
 
