@@ -19,7 +19,6 @@ package org.apache.catalina.connector;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
