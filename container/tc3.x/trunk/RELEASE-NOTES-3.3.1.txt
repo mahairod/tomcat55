@@ -225,6 +225,8 @@ Bug No.  Description
 	 reported bug, it was mostly a nuisance.  In other cases (see 6143)
 	 it was causing major problems.
 
+6234	 Recycle the Writer in the ResponseFacade if it is the error state when
+	 the facade is recycled.
 
 Configuration:
 
