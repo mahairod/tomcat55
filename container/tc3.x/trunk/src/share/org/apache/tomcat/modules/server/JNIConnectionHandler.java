@@ -127,6 +127,8 @@ public class JNIConnectionHandler extends BaseInterceptor {
 	String os=System.getProperty( "os.name" ).toLowerCase();
         if( os.indexOf("windows")>= 0) {
             f = new File(f, "jni_connect.dll");
+        } else if ( os.indexOf("netware")>= 0) {
+            f = new File(f, "jni_conn.nlm");
         } else {
             f = new File(f, "jni_connect.so");
         }
