@@ -233,8 +233,9 @@ class ParserXJspSaxHandler
 
         // If previous node is a custom tag, call its
         // begin tag handler
-        if (!name.equals("jsp:root")) {
-            Node prevNode = (Node)stack.peek();
+        Node prevNode = null;
+        if (!stack.empty()) {
+            prevNode = (Node) stack.peek();
             if (prevNode instanceof NodeTag) {
                 try {
                     processCustomTagBeginDoIt((NodeTag) prevNode, true);
@@ -273,6 +274,16 @@ class ParserXJspSaxHandler
 		}
 		if (!isCustomTag) {
 		    // uninterpreted tag
+                    // If the parent tag is also uninterpreted, then the
+                    // characters have to be flushed, to preserve the order
+                    // of the tags and characters that may appear in a XML
+                    // fragment, such as <a>xyz<b></b></a>.
+                    if ((prevNode != null) && prevNode.isUninterpretedTag() &&
+                        (prevNode.getText() != null)) {
+                        jspHandler.handleCharData(prevNode.start, start,
+                                                  prevNode.getText());
+                        prevNode.clearText();
+                    }
 		    node.setUninterpreted(true);
 		    jspHandler.handleUninterpretedTagBegin(node.start, 
                             node.start, node.rawName, node.attrs);
@@ -645,6 +656,10 @@ class ParserXJspSaxHandler
             return text == null 
 	    ? null
 	    : text.toString().toCharArray();
+        }
+
+        void clearText() {
+            text = null;
         }
 
 	boolean isRoot() {
