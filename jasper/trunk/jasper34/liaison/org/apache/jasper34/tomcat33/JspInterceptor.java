@@ -442,6 +442,9 @@ public class JspInterceptor extends BaseInterceptor {
 	JasperLiaison liasion=new JasperLiaison(getLog(), debug);
 	liasion.processJspFile( req, jspFile, handler, args);
 
+	dep= handler.getServletInfo().getDependManager();
+	dep.reset();
+	
 	if( pre_compile ) {
 	    // we may have compiled the page ( if needed ), but
 	    // we can't execute it. The handler will just
@@ -574,7 +577,7 @@ final class JasperLiaison {
 		if( depM == null )
 		    log.log( "DepM==null ");
 		else
-		    log.log( "DepM.shouldReload()");
+		    log.log( "DepM.shouldReload()" + depM.shouldReload());
 	    Context ctx=req.getContext();
 	    
 	    // Mangle the names - expensive operation, but nothing
@@ -849,7 +852,7 @@ final class JasperLiaison {
 	// create a lastModified checker.
 	if( debug>0) log.log("Registering dependency for " + handler );
 	DependManager depM=new DependManager(4); // jsps have fewer deps
-	
+	depM.setDebug( debug );
 	Dependency dep=new Dependency();
 	File depFile=new File(getJspFilePath(ctx.getAbsolutePath(),
 					     pageInfo));
