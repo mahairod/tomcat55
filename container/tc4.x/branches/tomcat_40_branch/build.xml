@@ -21,6 +21,7 @@
   <property name="javaservice.home" value="../javaservice"/>
   <property name="nsis.home"        value="c:\program files\nsis"/>
   <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
+  <property name="servlet.doc"      value="${servlet.home}/docs/api"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
@@ -187,7 +188,7 @@
     </copy>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
-      <fileset dir="${servlet.home}/docs/api" />
+      <fileset dir="${servlet.doc}" />
     </copy>
   </target>
 
