@@ -160,6 +160,15 @@ public class StandardHostDeployer implements Deployer {
 
 
     /**
+     * The config file which should replace the value set for the config file
+     * of the <code>Context</code>being added in the <code>addChild()</code> 
+     * method, or <code>null</code> if the original value should remain 
+     * untouched.
+     */
+    private String overrideConfigFile = null;
+
+
+    /**
      * The string manager for this package.
      */
     protected static StringManager sm =
@@ -461,6 +470,8 @@ public class StandardHostDeployer implements Deployer {
             throw new IllegalArgumentException
                 (sm.getString("standardHost.configNotAllowed"));
 
+        log.info(sm.getString("standardHost.installingXML", config));
+
         // Calculate the document base for the new web application (if needed)
         String docBase = null; // Optional override for value in config file
         boolean isWAR = false;
@@ -489,6 +500,10 @@ public class StandardHostDeployer implements Deployer {
 
         // Install the new web application
         this.overrideDocBase = docBase;
+        if (config.toString().startsWith("file:")) {
+            this.overrideConfigFile = config.getFile();
+        }
+
         InputStream stream = null;
         try {
             stream = config.openStream();
@@ -512,6 +527,8 @@ public class StandardHostDeployer implements Deployer {
                     ;
                 }
             }
+            this.overrideDocBase = null;
+            this.overrideConfigFile = null;
         }
 
     }
@@ -812,6 +829,8 @@ public class StandardHostDeployer implements Deployer {
                 (sm.getString("standardHost.pathUsed", contextPath));
         if (this.overrideDocBase != null)
             context.setDocBase(this.overrideDocBase);
+        if (this.overrideConfigFile != null)
+            context.setConfigFile(this.overrideConfigFile);
         host.fireContainerEvent(PRE_INSTALL_EVENT, context);
         host.addChild(child);
         host.fireContainerEvent(INSTALL_EVENT, context);
