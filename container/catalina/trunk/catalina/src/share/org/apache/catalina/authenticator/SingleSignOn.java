@@ -37,6 +37,8 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -63,6 +65,9 @@ import org.apache.catalina.valves.ValveBase;
 public class SingleSignOn
     extends ValveBase
     implements Lifecycle, SessionListener {
+
+
+    private static Log log = LogFactory.getLog(SingleSignOn.class);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -280,8 +285,8 @@ public class SingleSignOn
 
         // Look up the single session id associated with this session (if any)
         Session session = event.getSession();
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Process session destroyed on " + session);
+        if (log.isDebugEnabled())
+            log.debug("Process session destroyed on " + session);
 
         String ssoId = null;
         synchronized (reverse) {
@@ -336,19 +341,19 @@ public class SingleSignOn
         request.removeNote(Constants.REQ_SSOID_NOTE);
 
         // Has a valid user already been authenticated?
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Process request for '" + request.getRequestURI() + "'");
+        if (log.isDebugEnabled())
+            log.debug("Process request for '" + request.getRequestURI() + "'");
         if (request.getUserPrincipal() != null) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug(" Principal '" + request.getUserPrincipal().getName() +
+            if (log.isDebugEnabled())
+                log.debug(" Principal '" + request.getUserPrincipal().getName() +
                     "' has already been authenticated");
             getNext().invoke(request, response);
             return;
         }
 
         // Check for the single sign on cookie
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug(" Checking for SSO cookie");
+        if (log.isDebugEnabled())
+            log.debug(" Checking for SSO cookie");
         Cookie cookie = null;
         Cookie cookies[] = request.getCookies();
         if (cookies == null)
@@ -360,19 +365,19 @@ public class SingleSignOn
             }
         }
         if (cookie == null) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug(" SSO cookie is not present");
+            if (log.isDebugEnabled())
+                log.debug(" SSO cookie is not present");
             getNext().invoke(request, response);
             return;
         }
 
         // Look up the cached Principal associated with this cookie value
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug(" Checking for cached principal for " + cookie.getValue());
+        if (log.isDebugEnabled())
+            log.debug(" Checking for cached principal for " + cookie.getValue());
         SingleSignOnEntry entry = lookup(cookie.getValue());
         if (entry != null) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug(" Found cached principal '" +
+            if (log.isDebugEnabled())
+                log.debug(" Found cached principal '" +
                     entry.getPrincipal().getName() + "' with auth type '" +
                     entry.getAuthType() + "'");
             request.setNote(Constants.REQ_SSOID_NOTE, cookie.getValue());
@@ -382,8 +387,8 @@ public class SingleSignOn
                 request.setUserPrincipal(entry.getPrincipal());
             }
         } else {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug(" No cached principal found, erasing SSO cookie");
+            if (log.isDebugEnabled())
+                log.debug(" No cached principal found, erasing SSO cookie");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
@@ -425,8 +430,8 @@ public class SingleSignOn
      */
     protected void associate(String ssoId, Session session) {
 
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Associate sso id " + ssoId + " with session " + session);
+        if (log.isDebugEnabled())
+            log.debug("Associate sso id " + ssoId + " with session " + session);
 
         SingleSignOnEntry sso = lookup(ssoId);
         if (sso != null)
@@ -475,8 +480,8 @@ public class SingleSignOn
      */
     protected void deregister(String ssoId) {
 
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Deregistering sso id '" + ssoId + "'");
+        if (log.isDebugEnabled())
+            log.debug("Deregistering sso id '" + ssoId + "'");
 
         // Look up and remove the corresponding SingleSignOnEntry
         SingleSignOnEntry sso = null;
@@ -490,8 +495,8 @@ public class SingleSignOn
         // Expire any associated sessions
         Session sessions[] = sso.findSessions();
         for (int i = 0; i < sessions.length; i++) {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(" Invalidating session " + sessions[i]);
+            if (log.isTraceEnabled())
+                log.trace(" Invalidating session " + sessions[i]);
             // Remove from reverse cache first to avoid recursion
             synchronized (reverse) {
                 reverse.remove(sessions[i]);
@@ -570,8 +575,8 @@ public class SingleSignOn
     protected void register(String ssoId, Principal principal, String authType,
                   String username, String password) {
 
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Registering sso id '" + ssoId + "' for user '" +
+        if (log.isDebugEnabled())
+            log.debug("Registering sso id '" + ssoId + "' for user '" +
                 principal.getName() + "' with auth type '" + authType + "'");
 
         synchronized (cache) {
@@ -612,8 +617,8 @@ public class SingleSignOn
 
         SingleSignOnEntry sso = lookup(ssoId);
         if (sso != null && !sso.getCanReauthenticate()) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug("Update sso id " + ssoId + " to auth type " + authType);
+            if (log.isDebugEnabled())
+                log.debug("Update sso id " + ssoId + " to auth type " + authType);
 
             synchronized(sso) {
                 sso.updateCredentials(principal, authType, username, password);
@@ -647,8 +652,8 @@ public class SingleSignOn
      */
     protected void removeSession(String ssoId, Session session) {
 
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug("Removing session " + session.toString() + " from sso id " + 
+        if (log.isDebugEnabled())
+            log.debug("Removing session " + session.toString() + " from sso id " + 
                 ssoId );
 
         // Get a reference to the SingleSignOn

@@ -30,7 +30,8 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -43,6 +44,9 @@ import org.apache.catalina.deploy.LoginConfig;
 
 public class SSLAuthenticator
     extends AuthenticatorBase {
+
+
+    private static Log log = LogFactory.getLog(SSLAuthenticator.class);
 
 
     // ------------------------------------------------------------- Properties
@@ -89,8 +93,8 @@ public class SSLAuthenticator
         Principal principal = request.getUserPrincipal();
         //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug("Already authenticated '" + principal.getName() + "'");
+            if (log.isDebugEnabled())
+                log.debug("Already authenticated '" + principal.getName() + "'");
             // Associate the session with any existing SSO session in order
             // to get coordinated session invalidation at logout
             String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
@@ -125,8 +129,8 @@ public class SSLAuthenticator
         */
 
         // Retrieve the certificate chain for this client
-        if (container.getLogger().isDebugEnabled())
-            container.getLogger().debug(" Looking up certificates");
+        if (log.isDebugEnabled())
+            log.debug(" Looking up certificates");
 
         X509Certificate certs[] = (X509Certificate[])
             request.getAttribute(Globals.CERTIFICATES_ATTR);
@@ -137,8 +141,8 @@ public class SSLAuthenticator
                 request.getAttribute(Globals.CERTIFICATES_ATTR);
         }
         if ((certs == null) || (certs.length < 1)) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug("  No certificates included with this request");
+            if (log.isDebugEnabled())
+                log.debug("  No certificates included with this request");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,
                                sm.getString("authenticator.certificates"));
             return (false);
@@ -147,8 +151,8 @@ public class SSLAuthenticator
         // Authenticate the specified certificate chain
         principal = context.getRealm().authenticate(certs);
         if (principal == null) {
-            if (container.getLogger().isDebugEnabled())
-                container.getLogger().debug("  Realm.authenticate() returned false");
+            if (log.isDebugEnabled())
+                log.debug("  Realm.authenticate() returned false");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                sm.getString("authenticator.unauthorized"));
             return (false);
