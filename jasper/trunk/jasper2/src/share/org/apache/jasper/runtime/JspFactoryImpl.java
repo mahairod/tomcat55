@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 public class JspFactoryImpl extends JspFactory {
 
     // Logger
-    private static Log log = LogFactory.getLog(JspFactoryImpl.class);
+    private Log log = LogFactory.getLog(JspFactoryImpl.class);
 
     private static final String SPEC_VERSION = "2.0";
     private static final boolean USE_POOL = true;

@@ -62,7 +62,7 @@ import org.apache.jasper.xmlparser.TreeNode;
 class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
 
     // Logger
-    private static Log log = LogFactory.getLog(TagLibraryInfoImpl.class);
+    private Log log = LogFactory.getLog(TagLibraryInfoImpl.class);
 
     private Hashtable jarEntries;
     private JspCompilationContext ctxt;

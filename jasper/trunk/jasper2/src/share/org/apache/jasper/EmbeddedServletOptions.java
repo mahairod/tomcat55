@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 public final class EmbeddedServletOptions implements Options {
 
     // Logger
-    private static Log log = LogFactory.getLog(EmbeddedServletOptions.class);
+    private Log log = LogFactory.getLog(EmbeddedServletOptions.class);
 
     private Properties settings = new Properties();
     

@@ -52,9 +52,6 @@ import org.xml.sax.SAXParseException;
 
 public class ParserUtils {
 
-    // Logger
-    static Log log = LogFactory.getLog(ParserUtils.class);
-
     /**
      * An error handler for use when parsing XML documents.
      */
@@ -175,52 +172,50 @@ public class ParserUtils {
 // ------------------------------------------------------------ Private Classes
 
 class MyEntityResolver implements EntityResolver {
-    
+
+    // Logger
+    private Log log = LogFactory.getLog(MyEntityResolver.class);
+
     public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException
-    {
-	for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
-	    String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
-	    if (cachedDtdPublicId.equals(publicId)) {
-		String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
-		InputStream input =
-		    this.getClass().getResourceAsStream(resourcePath);
-		if (input == null) {
-		    throw new SAXException(
-                        Localizer.getMessage("jsp.error.internal.filenotfound",
-					     resourcePath));
-		}
-		InputSource isrc = new InputSource(input);
-		return isrc;
-	    }
-	}
-        if (ParserUtils.log.isDebugEnabled())
-            ParserUtils.log.debug("Resolve entity failed"  + publicId + " "
-			   + systemId );
-	ParserUtils.log.error(Localizer.getMessage("jsp.error.parse.xml.invalidPublicId",
-						   publicId));
+            throws SAXException {
+        for (int i = 0; i < Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
+            String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
+            if (cachedDtdPublicId.equals(publicId)) {
+                String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
+                InputStream input = this.getClass().getResourceAsStream(
+                        resourcePath);
+                if (input == null) {
+                    throw new SAXException(Localizer.getMessage(
+                            "jsp.error.internal.filenotfound", resourcePath));
+                }
+                InputSource isrc = new InputSource(input);
+                return isrc;
+            }
+        }
+        if (log.isDebugEnabled())
+            log.debug("Resolve entity failed" + publicId + " " + systemId);
+        log.error(Localizer.getMessage("jsp.error.parse.xml.invalidPublicId",
+                publicId));
         return null;
     }
 }
 
 class MyErrorHandler implements ErrorHandler {
-    public void warning(SAXParseException ex)
-	throws SAXException
-    {
-        if (ParserUtils.log.isDebugEnabled())
-            ParserUtils.log.debug("ParserUtils: warning ", ex );
-	// We ignore warnings
+
+    // Logger
+    private Log log = LogFactory.getLog(MyErrorHandler.class);
+
+    public void warning(SAXParseException ex) throws SAXException {
+        if (log.isDebugEnabled())
+            log.debug("ParserUtils: warning ", ex);
+        // We ignore warnings
     }
 
-    public void error(SAXParseException ex)
-	throws SAXException
-    {
-	throw ex;
+    public void error(SAXParseException ex) throws SAXException {
+        throw ex;
     }
 
-    public void fatalError(SAXParseException ex)
-	throws SAXException
-    {
-	throw ex;
+    public void fatalError(SAXParseException ex) throws SAXException {
+        throw ex;
     }
 }

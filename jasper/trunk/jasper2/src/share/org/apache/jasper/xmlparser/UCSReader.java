@@ -30,7 +30,7 @@ import java.io.Reader;
  */
 public class UCSReader extends Reader {
 
-    private static org.apache.commons.logging.Log log=
+    private org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( UCSReader.class );
     
     //

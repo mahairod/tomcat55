@@ -30,7 +30,7 @@ import org.apache.jasper.compiler.Localizer;
 public class UTF8Reader
     extends Reader {
 
-    private static org.apache.commons.logging.Log log=
+    private org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( UTF8Reader.class );
     
     //

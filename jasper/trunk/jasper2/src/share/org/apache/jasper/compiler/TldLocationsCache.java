@@ -77,7 +77,7 @@ import org.apache.jasper.xmlparser.TreeNode;
 public class TldLocationsCache {
 
     // Logger
-    private static Log log = LogFactory.getLog(TldLocationsCache.class);
+    private Log log = LogFactory.getLog(TldLocationsCache.class);
 
     /**
      * The types of URI one may specify for a tag library

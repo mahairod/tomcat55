@@ -40,9 +40,6 @@ public abstract class HttpJspBase
     
 {
     
-    private static org.apache.commons.logging.Log log=
-        org.apache.commons.logging.LogFactory.getLog( HttpJspBase.class );
-    
     static {
         if( JspFactory.getDefaultFactory() == null ) {
             JspFactoryImpl factory = new JspFactoryImpl();
@@ -62,7 +59,8 @@ public abstract class HttpJspBase
                     factory.getClass().getClassLoader().loadClass( basePackage +
                                                                    "servlet.JspServletWrapper");
                 } catch (ClassNotFoundException ex) {
-                    log.error("Jasper JspRuntimeContext preload of class failed: " +
+                    org.apache.commons.logging.LogFactory.getLog( HttpJspBase.class )
+                        .error("Jasper JspRuntimeContext preload of class failed: " +
                                        ex.getMessage(), ex);
                 }
             }

@@ -43,7 +43,7 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Mark Roth
  */
 public abstract class Compiler {
-    protected static org.apache.commons.logging.Log log=
+    protected org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( Compiler.class );
 
     // ----------------------------------------------------------------- Static

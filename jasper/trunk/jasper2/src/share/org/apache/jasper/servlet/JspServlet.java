@@ -54,7 +54,7 @@ import org.apache.jasper.compiler.Localizer;
 public class JspServlet extends HttpServlet {
 
     // Logger
-    private static Log log = LogFactory.getLog(JspServlet.class);
+    private Log log = LogFactory.getLog(JspServlet.class);
 
     private ServletContext context;
     private ServletConfig config;

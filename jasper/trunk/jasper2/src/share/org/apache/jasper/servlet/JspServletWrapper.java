@@ -59,7 +59,7 @@ import org.apache.jasper.runtime.JspSourceDependent;
 public class JspServletWrapper {
 
     // Logger
-    private static Log log = LogFactory.getLog(JspServletWrapper.class);
+    private Log log = LogFactory.getLog(JspServletWrapper.class);
 
     private Servlet theServlet;
     private String jspUri;

@@ -49,7 +49,7 @@ import org.apache.jasper.JspCompilationContext;
 class JspReader {
 
     // Logger
-    private static Log log = LogFactory.getLog(JspReader.class);
+    private Log log = LogFactory.getLog(JspReader.class);
 
     private Mark current;
     private String master;
