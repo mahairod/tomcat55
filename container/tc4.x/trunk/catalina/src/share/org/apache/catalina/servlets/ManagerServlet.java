@@ -73,8 +73,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Iterator;
+import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -88,9 +91,11 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
+import org.apache.catalina.Role;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Session;
+import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.util.StringManager;
@@ -137,6 +142,9 @@ import org.apache.naming.resources.WARDirContext;
  * <li><b>/resources?type=xxxx</b> - Enumerate the available global JNDI
  *     resources, optionally limited to those of the specified type
  *     (fully qualified Java class name), if available.</li>
+ * <li><b>/roles</b> - Enumerate the available security role names and
+ *     descriptions from the user database connected to the <code>users</code>
+ *     resource reference.
  * <li><b>/sessions?path=/xxx</b> - List session information about the web
  *     application attached to context path <code>/xxx</code> for this
  *     virtual host.</li>
@@ -327,6 +335,8 @@ public class ManagerServlet
             remove(writer, path);
         } else if (command.equals("/resources")) {
             resources(writer, type);
+        } else if (command.equals("/roles")) {
+            roles(writer);
         } else if (command.equals("/sessions")) {
             sessions(writer, path);
         } else if (command.equals("/start")) {
@@ -782,6 +792,55 @@ public class ManagerServlet
             writer.println(sm.getString("managerServlet.exception",
                                         t.toString()));
         }
+
+    }
+
+
+    /**
+     * Render a list of security role names (and corresponding descriptions)
+     * from the <code>org.apache.catalina.UserDatabase</code> resource that is
+     * connected to the <code>users</code> resource reference.  Typically, this
+     * will be the global user database, but can be adjusted if you have
+     * different user databases for different virtual hosts.
+     *
+     * @param writer Writer to render to
+     */
+    protected void roles(PrintWriter writer) {
+
+        if (debug >= 1) {
+            log("roles:  List security roles from user database");
+        }
+
+        // Look up the UserDatabase instance we should use
+        UserDatabase database = null;
+        try {
+            InitialContext ic = new InitialContext();
+            database = (UserDatabase) ic.lookup("java:comp/env/users");
+        } catch (NamingException e) {
+            writer.println(sm.getString("managerServlet.userDatabaseError"));
+            log("java:comp/env/users", e);
+            return;
+        }
+        if (database == null) {
+            writer.println(sm.getString("managerServlet.userDatabaseMissing"));
+            return;
+        }
+
+        // Enumerate the available roles
+        writer.println(sm.getString("managerServlet.rolesList"));
+        Iterator roles = database.getRoles();
+        if (roles != null) {
+            while (roles.hasNext()) {
+                Role role = (Role) roles.next();
+                writer.print(role.getRolename());
+                writer.print(':');
+                if (role.getDescription() != null) {
+                    writer.print(role.getDescription());
+                }
+                writer.println();
+            }
+        }
+
 
     }
 
