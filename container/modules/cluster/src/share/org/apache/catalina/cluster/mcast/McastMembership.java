@@ -76,6 +76,9 @@ public class McastMembership
             entry = new MbrEntry(m);
             map.put(m.getName(),entry);
             result = true;
+        } else {
+            //update the member alive time
+            entry.getMember().setMemberAliveTime(m.getMemberAliveTime());
         }//end if
         entry.accessed();
         return result;
