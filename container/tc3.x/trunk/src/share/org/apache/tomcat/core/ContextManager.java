@@ -284,11 +284,12 @@ public class ContextManager  implements Server {
 	    throw new IllegalStateException(msg);
 	}
 
-	Context context = new Context(this, path);
-
-	if (docBase != null) {
-	    context.setDocumentBase(docBase);
+	if (docBase == null) {
+	    throw new RuntimeException("XXX SHOULD NEVER HAPPEN");
 	}
+
+	Context context = new Context(this, path, docBase);
+
 
 	// check to see if defaultContext
 
