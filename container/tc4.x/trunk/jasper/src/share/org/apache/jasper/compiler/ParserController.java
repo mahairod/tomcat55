@@ -417,12 +417,12 @@ public class ParserController {
      * baseDirStack.
      */
     private String resolveFileName(String inFileName) {
-        boolean isAbsolute = inFileName.startsWith("/");
+        boolean isAbsolute = inFileName.startsWith(File.separator);
 	String fileName = 
 	    isAbsolute ?
 	    inFileName : (String)baseDirStack.peek() + inFileName;
 	String baseDir = 
-	    inFileName.substring(0, inFileName.lastIndexOf("/") + 1);
+	    inFileName.substring(0, inFileName.lastIndexOf(File.separator) + 1);
 	baseDirStack.push(baseDir);
 	return fileName;
     }
