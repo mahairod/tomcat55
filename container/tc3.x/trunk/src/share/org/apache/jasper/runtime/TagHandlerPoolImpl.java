@@ -59,10 +59,11 @@
 
 package org.apache.jasper.runtime;
 
-import javax.servlet.jsp.tagext.Tag;
-import java.util.Stack;
-import java.util.EmptyStackException;
 import java.util.Enumeration;
+import java.util.Stack;
+
+import javax.servlet.jsp.tagext.Tag;
+
 import org.apache.tomcat.util.log.Log;
 
 /**

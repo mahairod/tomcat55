@@ -61,12 +61,9 @@
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
-import org.apache.jasper.JasperException;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.beans.*;
 
 import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
 
 /**
  * Generator for <jsp:setProperty .../>

@@ -65,12 +65,11 @@
 
 package org.apache.jasper;
 
+import java.io.IOException;
+
+import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-//import org.apache.jasper.runtime.JspLoader;
-import org.apache.jasper.compiler.TagLibraries;
-import java.io.IOException;
-import org.apache.jasper.compiler.Compiler;
 
 /**
  * A place holder for various things that are used through out the JSP

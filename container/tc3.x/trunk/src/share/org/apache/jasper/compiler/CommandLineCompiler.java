@@ -60,11 +60,9 @@
 package org.apache.jasper.compiler;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.apache.jasper.Constants;
-import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.CommandLineContext;
+import org.apache.jasper.Constants;
 
 /**
  * Overrides some methods so that we get the desired effects.

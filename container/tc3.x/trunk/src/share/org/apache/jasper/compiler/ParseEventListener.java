@@ -61,7 +61,6 @@
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;

@@ -62,13 +62,11 @@
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 
 import org.apache.jasper.JasperException;
-import org.apache.jasper.Constants;
 
 
 /** 

@@ -61,11 +61,10 @@
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
-import org.apache.jasper.JasperException;
-import org.apache.jasper.runtime.JspRuntimeLibrary;
-import java.lang.reflect.Method;
 
 import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
+import org.apache.jasper.runtime.JspRuntimeLibrary;
 
 /**
  * Generator for <jsp:getProperty.../>

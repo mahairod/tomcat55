@@ -59,12 +59,9 @@
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.lang.reflect.Method;
 
-import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
 
 /**
  * Generate code for useBean.

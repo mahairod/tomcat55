@@ -63,9 +63,6 @@ package org.apache.jasper;
 
 import java.io.File;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
 /**
  * A class to hold all init parameters specific to the JSP engine. 
  *
