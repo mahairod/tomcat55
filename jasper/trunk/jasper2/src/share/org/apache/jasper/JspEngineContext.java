@@ -98,6 +98,7 @@ public class JspEngineContext implements JspCompilationContext {
     ServletWriter writer;
     ServletContext context;
     URLClassLoader loader;
+    Compiler jspCompiler;
     String classpath; // for compiling JSPs.
     boolean isErrPage;
     String jspFile;
@@ -305,6 +306,10 @@ public class JspEngineContext implements JspCompilationContext {
      * SunJavaCompiler is used.
      */
     public Compiler createCompiler() throws JasperException {
+
+        if (jspCompiler != null)
+            return jspCompiler;
+
 	String compilerPath = options.getJspCompilerPath();
 	Class jspCompilerPlugin = options.getJspCompilerPlugin();
         JavaCompiler javac;
@@ -325,10 +330,11 @@ public class JspEngineContext implements JspCompilationContext {
         if (compilerPath != null)
             javac.setCompilerPath(compilerPath);
 
-        Compiler jspCompiler = new JspCompiler(this);
+        jspCompiler = new JspCompiler(this);
 	jspCompiler.setJavaCompiler(javac);
          
         return jspCompiler;
+
     }
     
     /** 

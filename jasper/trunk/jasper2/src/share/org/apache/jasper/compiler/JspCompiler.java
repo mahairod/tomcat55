@@ -88,6 +88,8 @@ public class JspCompiler extends Compiler implements Mangler {
     //    ClassFileData cfd;
     boolean outDated;
 
+    long lastChecked = -1;
+
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspCompiler");
     
     public JspCompiler(JspCompilationContext ctxt) throws JasperException {
@@ -173,6 +175,13 @@ public class JspCompiler extends Compiler implements Mangler {
      * from whence it came
      */
     public boolean isOutDated() {
+
+        long time = System.currentTimeMillis();
+        if (time < lastChecked)
+            return false;
+
+        lastChecked = time + 2000;
+
         long jspRealLastModified = 0;
 
         try {
@@ -193,6 +202,7 @@ public class JspCompiler extends Compiler implements Mangler {
         }
 
         return outDated;
+
     }
 }
 

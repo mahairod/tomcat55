@@ -110,9 +110,6 @@ public class Compiler {
 
         String className = mangler.getClassName();
         ctxt.setServletClassName(className);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
-                          Logger.DEBUG);
 
 	if (!isOutDated())
             return false;

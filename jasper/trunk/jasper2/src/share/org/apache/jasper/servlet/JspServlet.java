@@ -112,6 +112,7 @@ import org.apache.jasper.logging.JasperLogger;
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Remy Maucherat
  */
 public class JspServlet extends HttpServlet {
 
@@ -124,13 +125,36 @@ public class JspServlet extends HttpServlet {
 	// ServletWrapper will set this 
 	Class servletClass;
 	URLClassLoader loader = null;
+        JspCompilationContext ctxt = null;
+        String outDir = null;
 	
 	JspServletWrapper(String jspUri, boolean isErrorPage) {
 	    this.jspUri = jspUri;
 	    this.isErrorPage = isErrorPage;
 	    this.theServlet = null;
+            createOutdir();
 	}
 	
+        private void createOutdir() {
+            File outDir = null;
+            try {
+                URL outURL = options.getScratchDir().toURL();
+                String outURI = outURL.toString();
+                if( outURI.endsWith("/") )
+                    outURI = outURI + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+                else
+                    outURI = outURI + jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+                outURL = new URL(outURI);
+                outDir = new File(outURL.getFile());
+                if( !outDir.exists() ) {
+                    outDir.mkdirs();
+                }
+                this.outDir = outDir.toString() + File.separator;
+            } catch(Exception e) {
+                throw new IllegalStateException("No output directory: " + e.getMessage());
+            }
+        }
+
 	private void load() throws JasperException, ServletException {
 	    try {
 		// This is to maintain the original protocol.
@@ -167,14 +191,7 @@ public class JspServlet extends HttpServlet {
             } else 
                 accordingto = "according to the Servlet Engine";
             
-            Constants.message("jsp.message.cp_is", 
-                              new Object[] { 
-                                  accordingto,
-                                  cp == null ? "" : cp
-                              }, 
-                              Logger.INFORMATION);
-
-            if (loadJSP(jspUri, cp, isErrorPage, req, res) 
+            if (loadJSP(this, jspUri, cp, isErrorPage, req, res) 
                     || theServlet == null) {
                 load();
             }
@@ -371,6 +388,12 @@ public class JspServlet extends HttpServlet {
 				Throwable exception, boolean precompile) 
 	throws ServletException, IOException
     {
+
+	// First check if the requested JSP page exists, to avoid creating
+	// unnecessary directories and files.
+	if (context.getResourceAsStream(jspUri) == null)
+	    throw new FileNotFoundException(jspUri);
+
 	boolean isErrorPage = exception != null;
 	
 	JspServletWrapper wrapper = (JspServletWrapper) jsps.get(jspUri);
@@ -514,36 +537,36 @@ public class JspServlet extends HttpServlet {
 	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
 	throws JasperException, FileNotFoundException 
     {
-	// First check if the requested JSP page exists, to avoid creating
-	// unnecessary directories and files.
-	if (context.getResourceAsStream(jspUri) == null)
-	    throw new FileNotFoundException(jspUri);
 
 	JspServletWrapper jsw=(JspServletWrapper) jsps.get(jspUri);
 	if( jsw==null ) {
 	    throw new JasperException("Can't happen - JspServletWrapper=null");
 	}
-        File outDir = null;
-        try {
-            URL outURL = options.getScratchDir().toURL();
-            String outURI = outURL.toString();
-            if( outURI.endsWith("/") )
-                outURI = outURI + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
-            else
-                outURI = outURI + jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
-            outURL = new URL(outURI);
-            outDir = new File(outURL.getFile());
-            if( !outDir.exists() ) {
-                outDir.mkdirs();
-            }
-        } catch(Exception e) {
-            throw new JasperException("No output directory: " + e.getMessage());
-        }
+        return loadJSP(jsw, jspUri, classpath, isErrorPage, req, res);
+        
+    }
+
+
+    /*  Check if we need to reload a JSP page.
+     *
+     *  Side-effect: re-compile the JSP page.
+     *
+     *  @param classpath explicitly set the JSP compilation path.
+     *  @return true if JSP files is newer
+     */
+    boolean loadJSP(JspServletWrapper jsw, String jspUri, String classpath, 
+	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
+	throws JasperException, FileNotFoundException 
+    {
+
 	boolean firstTime = jsw.servletClass == null;
-        JspCompilationContext ctxt = new JspEngineContext(parentClassLoader, classpath,
-                                                     context, jspUri, outDir.toString() + File.separator,
-                                                     isErrorPage, options,
-                                                     req, res);
+        if (jsw.ctxt == null) {
+            jsw.ctxt = new JspEngineContext
+                (parentClassLoader, classpath, context, jspUri, 
+                 jsw.outDir, isErrorPage, options,
+                 req, res);
+        }
+        JspCompilationContext ctxt = jsw.ctxt;
 	boolean outDated = false; 
 
         Compiler compiler = ctxt.createCompiler();
