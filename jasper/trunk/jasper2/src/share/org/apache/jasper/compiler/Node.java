@@ -889,7 +889,7 @@ public abstract class Node {
 	private TagFileInfo tagFileInfo;
 	private Class tagHandlerClass;
 	private VariableInfo[] varInfos;
-	private VariableInfo[] nestedVarInfos;
+	private TagVariableInfo[] nestedTagVarInfos;
 	private int customNestingLevel;
         private ChildInfo childInfo;
 	private boolean implementsIterationTag;
@@ -897,6 +897,11 @@ public abstract class Node {
 	private boolean implementsTryCatchFinally;
 	private boolean implementsSimpleTag;
 	private boolean implementsDynamicAttributes;
+	private Vector atBeginScriptingVars;
+	private Vector atEndScriptingVars;
+	private Vector nestedScriptingVars;
+	private Node.CustomTag customTagParent;
+	private Integer numCount;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -909,7 +914,7 @@ public abstract class Node {
 	    this.tagInfo = tagInfo;
 	    this.tagFileInfo = tagFileInfo;
 	    this.tagHandlerClass = tagHandlerClass;
-	    this.customNestingLevel = computeCustomNestingLevel();
+	    this.customNestingLevel = makeCustomNestingLevel();
             this.childInfo = new ChildInfo();
 
 	    if (tagHandlerClass != null) {
@@ -923,8 +928,7 @@ public abstract class Node {
 		    SimpleTag.class.isAssignableFrom(tagHandlerClass);
 		this.implementsDynamicAttributes = 
 		    DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
-	    }
-	    else if (tagFileInfo != null) {
+	    } else if (tagFileInfo != null) {
 		// get the info from tag file
 		this.implementsIterationTag = false;
 		this.implementsBodyTag = false;
@@ -975,7 +979,6 @@ public abstract class Node {
 	public void setTagData(TagData tagData) {
 	    this.tagData = tagData;
 	    this.varInfos = tagInfo.getVariableInfo(tagData);
-	    determineNestedVarInfos();
 	}
 
 	public TagData getTagData() {
@@ -1034,8 +1037,56 @@ public abstract class Node {
 	    return varInfos;
 	}
 
-	public VariableInfo[] getNestedVariableInfos() {
-	    return nestedVarInfos;
+	public void setCustomTagParent(Node.CustomTag n) {
+	    this.customTagParent = n;
+	}
+
+	public Node.CustomTag getCustomTagParent() {
+	    return this.customTagParent;
+	}
+
+	public void setNumCount(Integer count) {
+	    this.numCount = count;
+	}
+
+	public Integer getNumCount() {
+	    return this.numCount;
+	}
+
+	public void setScriptingVars(Vector vec, int scope) {
+	    switch (scope) {
+	    case VariableInfo.AT_BEGIN:
+		this.atBeginScriptingVars = vec;
+		break;
+	    case VariableInfo.AT_END:
+		this.atEndScriptingVars = vec;
+		break;
+	    case VariableInfo.NESTED:
+		this.nestedScriptingVars = vec;
+		break;
+	    }
+	}
+
+	/*
+	 * Gets the scripting variables for the given scope that need to be
+	 * declared.
+	 */
+	public Vector getScriptingVars(int scope) {
+	    Vector vec = null;
+
+	    switch (scope) {
+	    case VariableInfo.AT_BEGIN:
+		vec = this.atBeginScriptingVars;
+		break;
+	    case VariableInfo.AT_END:
+		vec = this.atEndScriptingVars;
+		break;
+	    case VariableInfo.NESTED:
+		vec = this.nestedScriptingVars;
+		break;
+	    }
+
+	    return vec;
 	}
 
 	/*
@@ -1105,7 +1156,7 @@ public abstract class Node {
 	 * 
 	 * @return Custom tag's nesting level
 	 */
-	private int computeCustomNestingLevel() {
+	private int makeCustomNestingLevel() {
 	    int n = 0;
 	    Node p = parent;
 	    while (p != null) {
@@ -1116,63 +1167,6 @@ public abstract class Node {
 		p = p.parent;
 	    }
 	    return n;
-	}
-
-	/*
-	 * Determines all the scripting variables with NESTED scope contained
-	 * in this custom action's VariableInfo[] that are not already
-	 * contained in the VariableInfo[] of a custom action of the same type
-	 * in the parent chain.
-	 */
-	private void determineNestedVarInfos() {
-
-	    if (varInfos == null) {
-		return;
-	    }
-
-	    Vector vec = new Vector();
-
-	    if (customNestingLevel == 0) {
-		// tag not nested inside itself
-		for (int i=0; i<varInfos.length; i++) {
-		    if (varInfos[i].getScope() == VariableInfo.NESTED
-			    && varInfos[i].getDeclare()) {
-			vec.add(varInfos[i]);
-		    }
-		}
-	    } else {
-		for (int i=0; i<varInfos.length; i++) {
-		    if (varInfos[i].getScope() != VariableInfo.NESTED
-			    || !varInfos[i].getDeclare()) {
-			continue;
-		    }
-		    Node p = parent;
-		    boolean found = false;
-		    while ((p != null) && !found) {
-			if ((p instanceof Node.CustomTag)
-			        && name.equals(((Node.CustomTag) p).name)) {
-			    VariableInfo[] parentVarInfos
-				= ((Node.CustomTag) p).getVariableInfos();
-			    for (int j=0; j<parentVarInfos.length; j++) {
-				if (varInfos[i].getVarName().equals(
-			                    parentVarInfos[j].getVarName())) {
-				    found = true;
-				    break;
-				}
-			    }
-			}
-			p = p.parent;
-		    }
-		    if (p == null) {
-			vec.add(varInfos[i]);
-		    }
-		}		    
-	    }
-
-	    if (vec.size() > 0) {
-		nestedVarInfos =
-		    (VariableInfo[]) vec.toArray(new VariableInfo[vec.size()]);
-	    }
 	}
     }
 
