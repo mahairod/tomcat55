@@ -23,6 +23,7 @@
   <html:hidden property="adminAction"/>
   <html:hidden property="parentObjectName"/>
   <html:hidden property="objectName"/>
+  <html:hidden property="valveType"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
