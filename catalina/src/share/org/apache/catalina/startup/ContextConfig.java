@@ -480,6 +480,7 @@ public final class ContextConfig
 
         URL url = null;
         Digester tldDigester = new Digester();
+        tldDigester.setNamespaceAware(true);
         tldDigester.setValidating(true);
         url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_11);
         tldDigester.register(Constants.TldDtdPublicId_11,
