@@ -1504,12 +1504,7 @@ public class DefaultServlet
         sb.append(sm.getString("directory.title", name));
         sb.append("</title>\r\n");
         sb.append("<STYLE><!--");
-        sb.append("H1{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
-        sb.append("H3{font-family : sans-serif,Arial,Tahoma;color : white;background-color : #0086b2;} ");
-        sb.append("BODY{font-family : sans-serif,Arial,Tahoma;color : black;background-color : white;} ");
-        sb.append("B{color : white;background-color : #0086b2;} ");
-        sb.append("A{color : black;} ");
-        sb.append("HR{color : #0086b2;} ");
+        sb.append(org.apache.catalina.util.TomcatCSS.TOMCAT_CSS);
         sb.append("--></STYLE> ");
         sb.append("</head>\r\n");
         sb.append("<body>");
