@@ -131,6 +131,19 @@ public class StaticInterceptor extends BaseInterceptor {
 	                        : NO_LOCALIZATION;
     }
 
+    /**
+     * The "suppress directory listings" flag.
+     */
+    private boolean suppress = false;
+
+    public boolean getSuppress() {
+        return (this.suppress);
+    }
+
+    public void setSuppress(boolean suppress) {
+        this.suppress = suppress;
+    }
+
     public void engineInit(ContextManager cm) throws TomcatException {
 	super.engineInit( cm );
 	
@@ -212,6 +225,8 @@ public class StaticInterceptor extends BaseInterceptor {
 
 	// Doesn't matter if we are or not in include
 	if( welcomeFile == null  ) {
+	    if (suppress)
+                return 404;  // Not found
 	    // normal dir, no welcome. 
 	    req.setWrapper( ctx.getServletByName( "tomcat.dirHandler"));
 	    if( debug > 0) log( "Dir handler");

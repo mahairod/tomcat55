@@ -150,11 +150,16 @@
             className="org.apache.tomcat.request.InvokerInterceptor" 
             debug="0" prefix="/servlet/" />
 
-        <!-- "default" handler - static files and dirs
+        <!-- "default" handler - static files and dirs.  Set the
+             "suppress" property to "true" to suppress directory listings
+             when no welcome file is present.
+
+             NOTE:  This setting applies to *all* web applications that
+             are running in this instance of Tomcat.
           -->
         <RequestInterceptor 
             className="org.apache.tomcat.request.StaticInterceptor" 
-            debug="0" />
+            debug="0" suppress="false" />
 
         <!-- Plug a session manager. You can plug in more advanced session
              modules.
