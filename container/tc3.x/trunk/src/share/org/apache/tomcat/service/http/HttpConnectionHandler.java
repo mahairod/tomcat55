@@ -71,7 +71,7 @@ import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.util.net.*;
-import org.apache.tomcat.logging.*;
+import org.apache.tomcat.util.log.*;
 
 public class HttpConnectionHandler  implements  TcpConnectionHandler {
     
@@ -94,7 +94,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
     
     public void setServer( Object  contextM ) {
 	this.contextM=(ContextManager)contextM;
-	loghelper.setProxy(this.contextM.getLoggerHelper());
+	//	loghelper.setProxy(this.contextM.getLoggerHelper());
     }
 
     public Object[] init() {
@@ -244,7 +244,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	//	System.out.print("6");
     }
 
-    Logger.Helper loghelper = new Logger.Helper("tc_log", this);
+    Log loghelper = new Log("tc_log", this);
     // note: as soon as we get a ContextManager, we start using its
     // log stream, see setServer()
 

@@ -68,7 +68,7 @@ import org.apache.tomcat.core.*;
 import org.apache.tomcat.helper.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.util.net.*;
-import org.apache.tomcat.logging.*;
+import org.apache.tomcat.util.log.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -84,7 +84,7 @@ public class HttpRequestAdapter extends Request {
     int count=0;
     public static final String DEFAULT_CHARACTER_ENCODING = "8859_1";
     
-    Logger.Helper loghelper = new Logger.Helper("tc_log", this);
+    Log loghelper = new Log("tc_log", this);
     
     public HttpRequestAdapter() {
         super();

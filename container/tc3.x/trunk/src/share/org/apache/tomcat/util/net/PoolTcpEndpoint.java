@@ -66,7 +66,7 @@ package org.apache.tomcat.util.net;
 
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.util.threads.*;
-import org.apache.tomcat.logging.*;
+import org.apache.tomcat.util.log.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -93,7 +93,7 @@ import java.util.*;
  * @author Costin@eng.sun.com
  * @author Gal Shachor [shachor@il.ibm.com]
  */
-public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
+public class PoolTcpEndpoint { // implements Endpoint {
 
     private StringManager sm = StringManager.getManager("org.apache.tomcat.resources");
 
@@ -118,9 +118,10 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
     static final int debug=0;
 
     ThreadPool tp;
-
+    protected Log _log=new Log("tc_log");
+    
     public PoolTcpEndpoint() {
-	super("tc_log");	// initialize default logger
+	//	super("tc_log");	// initialize default logger
 	tp = new ThreadPool();
     }
     
@@ -330,6 +331,26 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
 
     	return accepted;
     }
+
+    public void log(String msg) 
+    {
+	_log.log(msg, null, Logger.INFORMATION);
+    }
+    
+    public void log(String msg, Throwable t) 
+    {
+	_log.log(msg, t, Logger.ERROR);
+    }
+
+    public void log(String msg, int level) 
+    {
+	_log.log(msg, null, level);
+    }
+
+    public void log(String msg, Throwable t, int level) {
+	_log.log( msg, t, level );
+    }
+
 }
 
 // -------------------- Threads --------------------

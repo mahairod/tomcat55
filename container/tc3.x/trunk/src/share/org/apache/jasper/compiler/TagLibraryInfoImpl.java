@@ -88,7 +88,7 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 //import org.apache.jasper.runtime.JspLoader;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * Implementation of the TagLibraryInfo class from the JSP spec. 

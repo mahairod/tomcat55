@@ -66,7 +66,7 @@ import java.io.File;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 

@@ -67,8 +67,7 @@ import java.util.zip.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
-
-import org.apache.tomcat.logging.*; 
+import org.apache.tomcat.util.log.*; 
 
 /**
  * A thread pool that is trying to copy the apache process management.
@@ -131,7 +130,7 @@ public class ThreadPool  {
     /**
      * Helper object for logging
      **/
-    Logger.Helper loghelper = new Logger.Helper("tc_log", "ThreadPool");
+    Log loghelper = new Log("tc_log", "ThreadPool");
     
     public ThreadPool() {
         maxThreads      = MAX_THREADS;

@@ -71,7 +71,7 @@ import java.util.*;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.net.*;
 import org.apache.tomcat.util.*;
-import org.apache.tomcat.logging.*;
+import org.apache.tomcat.util.log.*;
 
 public class Ajp13ConnectionHandler implements  TcpConnectionHandler
 {
@@ -80,7 +80,7 @@ public class Ajp13ConnectionHandler implements  TcpConnectionHandler
     public static final byte JK_AJP13_FORWARD_REQUEST   = 2;
     public static final byte JK_AJP13_SHUTDOWN          = 7;
 
-    Logger.Helper loghelper = new Logger.Helper("tc_log", "Ajp13ConnectionHandler");
+    Log loghelper = new Log("tc_log", "Ajp13ConnectionHandler");
 
     public Ajp13ConnectionHandler()
     {

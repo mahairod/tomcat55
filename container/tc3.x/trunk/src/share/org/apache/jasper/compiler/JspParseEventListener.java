@@ -81,7 +81,7 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * JSP code generator "backend".

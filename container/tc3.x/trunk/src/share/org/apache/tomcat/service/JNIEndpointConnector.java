@@ -67,7 +67,7 @@ package org.apache.tomcat.service;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.service.connector.*;
-import org.apache.tomcat.logging.*;
+import org.apache.tomcat.util.log.*;
 
 /**
  * Connector for a JNI connections using the API in tomcat.service.
@@ -153,7 +153,7 @@ public class JNIEndpointConnector  extends BaseInterceptor {
         return null;
     }
 
-    private Logger.Helper loghelper = new Logger.Helper("tc_log", "JNIEndpointConnector");
+    private Log loghelper = new Log("tc_log", "JNIEndpointConnector");
 
     /**
      * Set a logger explicitly.

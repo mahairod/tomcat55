@@ -87,7 +87,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.apache.jasper.Constants;
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
@@ -100,7 +100,7 @@ import org.apache.tomcat.logging.Logger;
  */
 public class PageContextImpl extends PageContext {
 
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspFactoryImpl");
+    Log loghelper = new Log("JASPER_LOG", "JspFactoryImpl");
 
     PageContextImpl(JspFactory factory) {
         this.factory = factory;

@@ -73,8 +73,7 @@ import org.apache.jasper.compiler.CommandLineCompiler;
 //import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.servlet.JasperLoader;
 
-import org.apache.tomcat.logging.Logger;
-import org.apache.tomcat.logging.TomcatLogger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the 
@@ -314,7 +313,7 @@ public class JspC implements Options { //, JspCompilationContext {
             }
         }
 
-        Constants.jasperLog = new TomcatLogger();
+        Constants.jasperLog = new QueueLogger();
         Constants.jasperLog.setVerbosityLevel(verbosityLevel);
 
     }

@@ -72,7 +72,7 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.compiler.ParseException;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /**
  * If you want to customize JSP compilation aspects, this class is

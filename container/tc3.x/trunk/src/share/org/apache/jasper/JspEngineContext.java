@@ -81,7 +81,7 @@ import org.apache.jasper.compiler.JspCompiler;
 import org.apache.jasper.compiler.SunJavaCompiler;
 import org.apache.jasper.compiler.JavaCompiler;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 /**
  * A place holder for various things that are used through out the JSP
  * engine. This is a per-request/per-context data structure. Some of

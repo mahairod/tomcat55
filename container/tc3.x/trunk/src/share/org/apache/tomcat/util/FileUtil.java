@@ -67,7 +67,7 @@ package org.apache.tomcat.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.tomcat.logging.Logger;
+import org.apache.tomcat.util.log.*;
 
 /*
  * FileUtil contains utils for dealing with Files. Some of these are 
@@ -126,7 +126,7 @@ public class FileUtil {
 	return lookupPath + "/" + path;
     }
 
-    static Logger.Helper loghelper = new Logger.Helper("tc_log", "FileUtil");
+    static Log loghelper = new Log("tc_log", "FileUtil");
     
     /** All the safety checks from getRealPath() and
 	DefaultServlet.
