@@ -42,6 +42,11 @@
   </subsection>
 
   <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>29779</bug>: Admin/Examples SetCharacterEncodingFilter wrong package. (yoavs)
+      </fix>
+    </changelog>
   </subsection>
 </section>
 
