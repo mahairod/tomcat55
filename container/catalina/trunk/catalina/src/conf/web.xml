@@ -705,6 +705,10 @@
         <mime-type>image/x-portable-pixmap</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>ppt</extension>
+        <mime-type>application/powerpoint</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>ps</extension>
         <mime-type>application/postscript</mime-type>
     </mime-mapping>
@@ -867,6 +871,10 @@
     <mime-mapping>
         <extension>svgz</extension>
         <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>vsd</extension>
+        <mime-type>application/x-visio</mime-type>
     </mime-mapping>
     <mime-mapping>
         <!-- Wireless Bitmap -->
