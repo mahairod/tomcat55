@@ -51,6 +51,8 @@
 <p>
   <ul>
     <li><a href="#adjust"> How do I adjust memory settings?</a></li>
+    <li><a href="#why"> Why do I get OutOfMemoryError errors?</a></li>
+    <li><a href="#howmuch"> How much memory is tomcat/webapp/??? using?</a></li>
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -65,6 +67,75 @@
     Then you can set them via the environment variable <code>JAVA_OPTS</code>.
     Read the files catalina.bat or catalina.sh for
     more information on JAVA_OPTS.
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="why">
+      Why do I get OutOfMemoryError errors?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Many reasons.
+    <ul>
+      <li>
+          Your out of memory. Simple as that - add more to your heap.
+      </li>
+      <li>Your out of memory. You have code which is hanging onto object
+          references and the garbage collector can't do its job. Get a
+          profiler to debug this one.
+      </li>
+      <li>You ran out of file descriptors. If you are on a *nix system,
+          it has been observed that an OutOfMemoryError can be thrown
+          if you run out of file descriptors. This can occur if your
+          threshold is too low. The <code>ulimit</code> program
+          can help you out here. You also may need to account for
+          socket connections too when thinking about these thresholds.
+          Google is your friend for getting more information about this
+          topic.
+      </li>
+      <li>You have too many threads running. Some OS's have a limit to the number
+          of threads which may be executed by a single process. (Which is what the
+          JVM is.) Refer to your OS docs for more information on how to raise this
+          threshold.
+      </li>
+      <li>Your OS limits the amount of memory your process may take. OK, this
+          one is grasping at straws.
+      </li>
+      <li> The JVM has a bug. This has been known to happen with JVM1.2.? and using
+           EJB's with another servlet engine.
+      </li>
+      <li> Not actually a reason - but on your particular platform, look at the
+          <code>java -X</code> options. They may be VERY helpful.
+      </li>
+    </ul>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="howmuch">
+      How much memory is tomcat/webapp/??? using?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <ul>
+      <li>
+        To find out how much memory tomcat is using, you might be able to
+        use the <code>Runtime</code> class provided by the JDK.
+      </li>
+      <li>
+        You can't find out how much memory a webapp is using. The JVM
+        doesn't give us this detail.
+      </li>
+      <li>
+        You can't find out how much memory a <i>???</i> is using. The JVM
+        doesn't give us this detail.
+      </li>
+      <li>
+        That being said, a memory profiling tool might prove the above
+        statements wrong - but you probably don't want to use them
+        in a production environment.
+      </li>
+    </ul>
   </div><br>
 
 

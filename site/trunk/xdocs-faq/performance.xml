@@ -33,13 +33,13 @@
   Other (non-exhaustive) notes:
   <ul>
    <li>
-    Stress test your app. You can do this via
+    Stress test your webapp. You can do this via
         <a href="http://jakarta.apache.org/jmeter/">JMeter</a>,
         <a href="http://www.joedog.org/siege/">siege</a>,
         <a href="http://httpd.apache.org/test/flood/">flood</a>,
         and other tools. Google is your friend.
     </li><li>
-      Tweak you unix box! Look at ulimit and kernel parameters.
+      Tweak you UNIX box! Look at <code>ulimit</code> and kernel parameters.
     </li><li>
       Bad design will hurt performance.
     </li><li>

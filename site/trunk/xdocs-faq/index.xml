@@ -47,7 +47,7 @@
 <section name="Table of Contents">
 
   <p>
-   For your convience, we have tried to break the FAQ out into multiple
+   For your convenience, we have tried to break the FAQ out into multiple
    sections consisting of the following topics:
  </p>
 
@@ -63,11 +63,11 @@
 <li><a href="classnotfound.html">Class Not Found</a> -
     What to do with Class Not Found errors.</li>
 <li><a href="connectors.html">Connectors</a> -
-    You want to connect tomcat to apache, iis, or have questions
+    You want to connect tomcat to Apache, IIS, or have questions
     about tomcat-standalone.</li>
 <li><a href="database.html">Database</a> -
     Getting tomcat to talk to a database.</li>
-<li><a href="howto.html">How To</a> -
+<li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How To</a> -
     Miscellaneous common how to's. </li>
 <li><a href="unix.html">Linux / Unix</a> -
     Common questions for Linux / Unix related platforms. </li>
@@ -79,7 +79,7 @@
     Miscellaneous questions that weren't categorized. </li>
 <li><a href="performance.html">Monitoring &amp; Performance</a> -
     Monitoring and Performance questions. </li>
-<li><a href="links.html">Other Resources</a> -
+<li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a> -
     A lot of links to tomcat related documentation and experiences. </li>
 <li><a href="security.html">Security</a> -
     Common security issues. </li>

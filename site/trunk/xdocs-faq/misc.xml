@@ -16,7 +16,7 @@
 
 <section name="Preface">
 <p>
-Questions that were not catagorized.
+Questions that were not categorized.
 </p>
 </section>
 
@@ -86,7 +86,7 @@ Questions that were not catagorized.
     </li>
     <li>
       <a href="#listing">
-        How do I enable/disable directoty listings?
+        How do I enable/disable directory listings?
       </a>
     </li>
     <li>
@@ -114,6 +114,11 @@ Questions that were not catagorized.
     <li>
       <a href="#tagbroken">
         Is tag pooling broken? It doesn't call release!
+      </a>
+    </li>
+    <li>
+      <a href="#illegalstate">
+        Why do I get <code>java.lang.IllegalStateException</code>?
       </a>
     </li>
   </ul>
@@ -171,6 +176,7 @@ Questions that were not catagorized.
         <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=105526353505541&amp;w=2">
             2
         </a>
+        and make sure you are using the full JDK and not the JRE.
       </li>
      </ul>
 
@@ -239,7 +245,7 @@ Questions that were not catagorized.
         Configuration hiding - There is NO way to determine which servlets are
         used vs which are not used. In web.xml, every servlet is declared
         and mapped.
-        In that one file you instantly have a road map to how the app works.
+        In that one file you instantly have a road map to how the webapp works.
       </li>
       <li>
         Back doors. Servlets which <b>are</b> mapped can be alternately
@@ -258,7 +264,7 @@ Questions that were not catagorized.
       <li>
         Configuration hiding - its important enough to say twice. Explicit
         declaration while a PITA, will be more helpful in the maintenance
-        scheme of your app.
+        scheme of your webapp.
       </li>
     </ul>
   </answer>
@@ -275,7 +281,7 @@ Questions that were not catagorized.
     <a name="cpu">Tomcat eats 100% of the CPU!</a>
   </question>
   <answer>
-    Odds are, it might be the garbage collector going wacky. <br/><br/>
+    Odds are, it might be the garbage collector going wacky. <br /> <br />
 
     In 1.4.1 JVMs there is a memory leak which could hampering the
     garbage collector.
@@ -304,7 +310,7 @@ Questions that were not catagorized.
     <code>SET JAVA_OPTS='-DpropName=propValue'</code>
     <br /><br />
 
-    <em>Example (unix): </em>
+    <em>Example (UNIX): </em>
     <code>export JAVA_OPTS='-DpropName=propValue'</code>
 
     <br /><br />
@@ -405,7 +411,7 @@ Questions that were not catagorized.
 
   <question>
       <a name="listing">
-        How do I enable/disable directoty listings?
+        How do I enable/disable directory listings?
       </a>
   </question>
   <answer>
@@ -440,7 +446,7 @@ Questions that were not catagorized.
       </a>
   </question>
   <answer>
-    You'll need to treak with server.xml and
+    You'll need to tweak with server.xml and
      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=105159411609623&amp;w=2">
          do this.
      </a> (Don't worry - its really easy!)
@@ -464,7 +470,7 @@ Questions that were not catagorized.
 
 
   <question>
-      <a name="#saveas">
+      <a name="saveas">
         How do I change the name of the file in the download Save-As dialog
         from a servlet? (or jsp)
       </a>
@@ -480,7 +486,7 @@ Questions that were not catagorized.
 
 
   <question>
-      <a name="#tagbroken">
+      <a name="tagbroken">
         Is tag pooling broken? It doesn't call release!
       </a>
   </question>
@@ -493,6 +499,57 @@ Questions that were not catagorized.
     is the bug report with all the gory details.
   </answer>
 
+
+
+
+  <question>
+      <a name="illegalstate">
+        Why do I get <code>java.lang.IllegalStateException</code>?
+      </a>
+  </question>
+  <answer>
+    There are the most commong reasons you can get an
+    <code>java.lang.IllegalStateException</code>.
+
+    <ul>
+      <li>Calling <code>setBufferSize</code> and content has been written.</li>
+
+      <li> The response has been committed and you do any of the following:
+       <ul>
+        <li>Calling <code>ServletResponse.reset()</code> or
+            <code>ServletResponse.resetBuffer()</code>
+        </li>
+
+        <li>Calling either <code>HttpServletResponse.sendError()</code>
+            or <code>HttpServletResponse.sendRedirect()</code>.
+        </li>
+
+        <li>Calling <code>RequestDispatcher.forward()</code> which includes performing
+            a <code>jsp:forward</code>
+        </li>
+
+        <li>Calling <code>RequestDispatcher.forward()</code> which includes performing
+            a <code>jsp:forward</code>
+        </li>
+       </ul>
+      </li>
+    </ul>
+
+    Remember that if that when you call <code>forward()</code> or
+    <code>sendRedirect()</code>, any lines of code will still execute. For example:
+    <source>
+        {
+            ...
+            response.sendRedirect("foo.jsp");
+            // At this point, you should probably have a return statement otherwise
+            // the following code will run
+            System.out.println("After redirect - alway should use log() not System.out");
+            response.sendRedirect("bar.jsp"); /* This will throw an error! */
+
+        }
+    </source>
+
+  </answer>
 
 
 </section>

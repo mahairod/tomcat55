@@ -21,13 +21,13 @@
         <item name="Class Not Found"            href="classnotfound.html"/>
         <item name="Connectors"                 href="connectors.html"/>
         <item name="Database"                   href="database.html"/>
-        <item name="How do I"                   href="howto.html"/>
+        <item name="How do I"                   href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto"/>
         <item name="Linux / Unix"               href="unix.html"/>
         <item name="Memory"                     href="memory.html"/>
         <item name="Meta"                       href="meta.html"/>
         <item name="Miscellaneous"              href="misc.html"/>
         <item name="Monitoring / Performance"   href="performance.html"/>
-        <item name="Other Resources"            href="links.html"/>
+        <item name="Other Resources"            href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links"/>
         <item name="Security"                   href="security.html"/>
         <item name="Which Version"              href="version.html"/>
         <item name="Tomcat User List"           href="tomcatuser.html"/>

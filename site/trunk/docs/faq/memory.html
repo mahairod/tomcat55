@@ -3,7 +3,7 @@
       dd {padding-bottom : 10px;}
     </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
       Tomcat FAQ
-    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="howto.html">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="links.html">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Memory</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/memory.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Memory</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/memory.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
   <p>
     This page discusses various memory issues. In a nutshell - if your
@@ -52,6 +52,8 @@
 <p>
   <ul>
     <li><a href="#adjust"> How do I adjust memory settings?</a></li>
+    <li><a href="#why"> Why do I get OutOfMemoryError errors?</a></li>
+    <li><a href="#howmuch"> How much memory is tomcat/webapp/??? using?</a></li>
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -66,6 +68,75 @@
     Then you can set them via the environment variable <code>JAVA_OPTS</code>.
     Read the files catalina.bat or catalina.sh for
     more information on JAVA_OPTS.
+  </div><br>
+
+
+  <b style="font-size: larger">
+    <a name="why">
+      Why do I get OutOfMemoryError errors?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Many reasons.
+    <ul>
+      <li>
+          Your out of memory. Simple as that - add more to your heap.
+      </li>
+      <li>Your out of memory. You have code which is hanging onto object
+          references and the garbage collector can't do its job. Get a
+          profiler to debug this one.
+      </li>
+      <li>You ran out of file descriptors. If you are on a *nix system,
+          it has been observed that an OutOfMemoryError can be thrown
+          if you run out of file descriptors. This can occur if your
+          threshold is too low. The <code>ulimit</code> program
+          can help you out here. You also may need to account for
+          socket connections too when thinking about these thresholds.
+          Google is your friend for getting more information about this
+          topic.
+      </li>
+      <li>You have too many threads running. Some OS's have a limit to the number
+          of threads which may be executed by a single process. (Which is what the
+          JVM is.) Refer to your OS docs for more information on how to raise this
+          threshold.
+      </li>
+      <li>Your OS limits the amount of memory your process may take. OK, this
+          one is grasping at straws.
+      </li>
+      <li> The JVM has a bug. This has been known to happen with JVM1.2.? and using
+           EJB's with another servlet engine.
+      </li>
+      <li> Not actually a reason - but on your particular platform, look at the
+          <code>java -X</code> options. They may be VERY helpful.
+      </li>
+    </ul>
+  </div><br>
+
+  <b style="font-size: larger">
+    <a name="howmuch">
+      How much memory is tomcat/webapp/??? using?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    <ul>
+      <li>
+        To find out how much memory tomcat is using, you might be able to
+        use the <code>Runtime</code> class provided by the JDK.
+      </li>
+      <li>
+        You can't find out how much memory a webapp is using. The JVM
+        doesn't give us this detail.
+      </li>
+      <li>
+        You can't find out how much memory a <i>???</i> is using. The JVM
+        doesn't give us this detail.
+      </li>
+      <li>
+        That being said, a memory profiling tool might prove the above
+        statements wrong - but you probably don't want to use them
+        in a production environment.
+      </li>
+    </ul>
   </div><br>
 
 

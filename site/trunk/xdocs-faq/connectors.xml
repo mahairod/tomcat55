@@ -17,7 +17,7 @@
 <section name="Preface">
   <p>
     Many people have also documented getting the connectors to work in their
-    own enivornment.
+    own environment.
     Each person had their own situation to deal with. Hopefully your situation
     matches one of theirs. Otherwise, we also do provide the
     reference documentation.
@@ -109,6 +109,11 @@
         Why should  I integrate Apache  with Tomcat? (or not)
       </a>
     </li>
+    <li>
+      <a href="#boot">
+        At boot, is order of start up (Apache vs Tomcat) important?
+      </a>
+    </li>
   </ul>
 </p>
 </section>
@@ -149,7 +154,7 @@
       </li>
       <li>
         jk2 is a refactoring of mod_jk and uses the Apache Portable
-        Runtime(apr). If you are using Apache 2.0,
+        Runtime (apr). If you are using Apache 2.0,
         you'll probably want to use jk2. But this may not be production
         worthy for everyone. (YMMV)
       </li>
@@ -173,7 +178,7 @@
     the opinions here.
     With the upcoming performance of Tomcat 5, performance reasons
     become harder to justify. So here are the issues to discuss in
-    intergrating vs not.
+    integrating vs not.
    <br/><br/>
 
   <ul>
@@ -226,7 +231,7 @@
        Socket handling/system stability. Apache has better socket handling
        with respect
        to error conditions than Tomcat. The main reason is Tomcat must perform
-       all its socket handling via the JVM which needs to be cross patform.
+       all its socket handling via the JVM which needs to be cross platform.
        The problem
        is socket optimization is a platform specific ordeal. Most of the
        time the java
@@ -242,6 +247,17 @@
     </li>
     </ul>
   </answer>
+
+  <question>
+    <a name="boot">
+      At boot, is order of start up (Apache vs Tomcat) important?
+    </a>
+  </question>
+  <answer>
+    No. This way - either apache or tomcat can be restarted at any time
+    independent of one another.
+  </answer>
+
 
 </section>
 

@@ -57,7 +57,7 @@
      <b>Other notes:</b>
     <ul>
       <li>
-        Do not use JDBC-ODBC budled with Sun's JDK with Tomcat. It was never
+        Do not use JDBC-ODBC bundled with Sun's JDK with Tomcat. It was never
         meant for a production server environment. If you ask a question about
         it, everyone will tell you to not use it. If you do need to use ODBC,
         there are 3rd party drivers which do a pretty good job at being thread
@@ -66,7 +66,7 @@
 
       <li>
         If you use the oracle thin driver, be sure to rename it to a jar
-        file from a zip file. Tomcat only automagically loads files ending
+        file from a zip file. Tomcat only auto-magically loads files ending
         in .jar
         placed in a lib directory. It ignores all other file
         extensions.

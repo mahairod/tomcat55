@@ -18,7 +18,7 @@
   <p>
     This page discusses the differences between the different tomcat versions.
     If you
-    want to know more about which connetor to use, see the
+    want to know more about which connector to use, see the
     <a href="connectors.html">connectors</a> section.
   </p>
 </section>
@@ -62,7 +62,7 @@
      There are 2 flavors of Tomcat 4, 4.0.X and 4.1.X. The 4.1.x version is
      still slowly receiving new enhancements but this
      trend is subsiding while more attention is made on Tomcat5.
-     Version 4.0.X is only recieving security fixes. Both (4.0 and 4.1)
+     Version 4.0.X is only receiving security fixes. Both (4.0 and 4.1)
      are suitable for production. (YMMV).
      Version 4.1.X is significantly faster than 4.0.X.
     <br/><br/>

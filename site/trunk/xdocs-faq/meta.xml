@@ -21,8 +21,8 @@ The content for this FAQ is usually discovered
 by lurking in the tomcat-user list.
 <br />
 If you wish to make a comment about the FAQ, make the comment on the
-tomcat-user list. Do not email any of the committers directly and do not
-email the tomcat-dev list. (Unless other people liked your suggestion
+tomcat-user list. Do not e-mail any of the committers directly and do not
+e-mail the tomcat-dev list. (Unless other people liked your suggestion
 and it was accidently missed by the committers who read the tomcat-user list)
 Emailing the tomcat-user list will allow a larger audience to immediately
 learn and critique your findings.
@@ -62,9 +62,9 @@ learn and critique your findings.
   <answer>
    <ul>
       <li>Make sure the question has been asked more than once</li>
-      <li>Send an email to the tomcat-user list</li>
+      <li>Send an e-mail to the tomcat-user list</li>
       <li>Make sure the subject has [FAQ] in it</li>
-      <li>Place the email in a question and answer format like this.</li>
+      <li>Place the e-mail in a question and answer format like this.</li>
       <li>Minimize the use of html. Content is more important, the person
           updating the FAQ will make the wonderful stylistic choices.
       </li>
