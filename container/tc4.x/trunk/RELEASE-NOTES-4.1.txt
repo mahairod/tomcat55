@@ -570,6 +570,9 @@ Catalina Bug Fixes:
 [4.1.18] CoyoteWriter, CoyoteResponse:
          SECURITY: Fix writer reuse after an IOException occurred.
 
+[4.1.19] #15544
+         DataSourceRealm:
+         Fixed the Realm-HOWTO docs for the DataSourceRealm.
 
 ----------------
 Coyote Bug Fixes:
@@ -937,7 +940,8 @@ Jasper Bug Fixes:
 [4.1.17] Compiler:
          Make exception reports more detailed.
 
-[4.1.19] Background Thread Recompile:
+[4.1.19] #15531
+         Background Thread Recompile:
          Fixed a thread synchronization bug which could cause the thread which
          does background JSP recompiles (development=false) to die.
         
