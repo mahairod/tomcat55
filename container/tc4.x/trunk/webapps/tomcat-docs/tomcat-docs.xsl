@@ -106,6 +106,9 @@
 
         <xsl:comment>RIGHT SIDE MAIN BODY</xsl:comment>
         <td width="80%" valign="top" align="left">
+          <div align="center">
+            <h1><xsl:value-of select="properties/title"/></h1>
+          </div>
           <xsl:apply-templates select="body/section"/>
         </td>
 
