@@ -105,18 +105,6 @@ public class ManagerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Container) that owns this Manager.
-     */
-    public Container getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Manager manager = (Manager) this.resource;
-        return (manager.getContainer());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 

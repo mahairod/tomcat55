@@ -66,8 +66,12 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Context;
-import org.apache.catalina.Host;
+import org.apache.catalina.Loader;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Realm;
+import org.apache.catalina.Valve;
+import org.apache.catalina.core.StandardContext;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -105,20 +109,128 @@ public class StandardContextMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Host) that owns this Context.
-     */
-    public Host getParent() {
 
-        if (this.resource == null)
-            return (null);
-        Context context = (Context) this.resource;
-        return ((Host) context.getParent());
+    // ------------------------------------------------------------- Operations
+
+
+    /**
+     * Add a new Valve to those assoicated with this Context
+     *
+     * @param valve MBean Name of the Valve to be added
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void addValve(String valve)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        context.addValve(valveObj);
 
     }
 
 
-    // ------------------------------------------------------------- Operations
+    /**
+     * Remove the specified Valve from those associated this Context
+     *
+     * @param valve MBean Name of the Valve to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void removeValve(String valve)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        context.removeValve(valveObj);
+
+    }
+
+
+    /**
+     * Associate the specified Loader with this Context
+     *
+     * @param loader MBean Name of the Loader with this Context
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setLoader(String loader)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up loader's MBean in MBeanServer
+        BaseModelMBean loaderMBean = null;
+        //Loader loaderObj = loaderMBean.getManagedResource();
+        Loader loaderObj = null;
+        context.setLoader(loaderObj);
+
+    }
+
+
+    /**
+     * Associate the specified Logger with this Context
+     *
+     * @param logger MBean Name of the Logger with this Context
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setLogger(String logger)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up logger's MBean in MBeanServer
+        BaseModelMBean loggerMBean = null;
+        //logger loggerObj = loggerMBean.getManagedResource();
+        Logger loggerObj = null;
+        context.setLogger(loggerObj);
+
+    }
+
+
+    /**
+     * Associate the specified Manager with this Context
+     *
+     * @param manager MBean Name of the Manager with this Context
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setManager(String manager)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up manager's MBean in MBeanServer
+        BaseModelMBean managerMBean = null;
+        // Manager managerObj = managerMBean.getManagedResource();
+        Manager managerObj = null;
+        context.setManager(managerObj);
+
+    }
+
+
+    /**
+     * Associate the specified Realm with this Context
+     *
+     * @param realm MBean Name of the Realm with this Context
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setRealm(String realm)
+        throws Exception {
+
+        StandardContext context = (StandardContext) this.resource;
+        // look up realm's MBean in MBeanServer
+        BaseModelMBean realmMBean = null;
+        // Realm realmObj = realmMBean.getManagedResource();
+        Realm realmObj = null;
+        context.setRealm(realmObj);
+
+    }
 
 
 }

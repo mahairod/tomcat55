@@ -65,10 +65,18 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Realm;
+import org.apache.catalina.Valve;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.commons.modeler.BaseModelMBean;
+import org.apache.commons.modeler.Registry;
+import org.apache.commons.modeler.ManagedBean;
 
 
 /**
@@ -105,20 +113,206 @@ public class StandardHostMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Engine) that owns this Host.
-     */
-    public Engine getParent() {
 
-        if (this.resource == null)
-            return (null);
-        Host host = (Host) this.resource;
-        return ((Engine) host.getParent());
+    // ------------------------------------------------------------- Operations
+
+
+   /**
+     * Add an alias name that should be mapped to this Host
+     *
+     * @param alias The alias to be added
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void addAlias(String alias)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        host.addAlias(alias);
 
     }
 
 
-    // ------------------------------------------------------------- Operations
+   /**
+     * Add a new Context to those assoicated with this Host
+     *
+     * @param context MBean Name of the Context to be added
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void addContext(String context)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up context's MBean in MBeanServer
+        StandardContextMBean contextMBean = null;
+        //StandardContext contextObj = contextMBean.getManagedResource();
+        StandardContext contextObj = null;
+        host.addChild(contextObj);
+
+    }
+
+    
+    /**
+     * Add a new Valve to those assoicated with this Host
+     *
+     * @param valve MBean Name of the Valve to be added
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void addValve(String valve)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        host.addValve(valveObj);
+
+    }
+
+
+   /**
+     * Return the set of alias names for this Host
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String [] findAliases()
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        return host.findAliases();
+
+    }
+
+
+   /**
+     * Return the MBean Names of the Valves assoicated with this Host
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String [] getValves()
+        throws Exception {
+
+        Registry registry = MBeanUtils.createRegistry();
+        MBeanServer mserver = MBeanUtils.createServer();
+        StandardHost host = (StandardHost) this.resource;
+
+        String mname = MBeanUtils.createManagedName(host);
+        ManagedBean managed = registry.findManagedBean(mname);
+        String domain = null;
+        if (managed != null) {
+            domain = managed.getDomain();
+        }
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        Valve [] valves = host.getValves();
+        String [] mbeanNames = new String[valves.length];
+        for (int i=0; i<valves.length; i++) {
+            mbeanNames[i] =
+                MBeanUtils.createObjectName(domain, valves[i]).toString();
+        }
+
+        return mbeanNames;
+
+    }
+
+
+   /**
+     * Return the specified alias name from the aliases for this Host
+     *
+     * @param alias Alias name to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void removeAlias(String alias)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        host.removeAlias(alias);
+
+    }
+
+
+   /**
+     * Remove the specified Context from those associated with this Host
+     *
+     * @param context MBean Name of the Context to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void removeContext(String context)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up context's MBean in MBeanServer
+        StandardContextMBean contextMBean = null;
+        //StandardContext contextObj = contextMBean.getManagedResource();
+        StandardContext contextObj = null;
+        host.removeChild(contextObj);
+
+    }
+
+
+    /**
+     * Remove the specified Valve from those associated this Host
+     *
+     * @param valve MBean Name of the Valve to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void removeValve(String valve)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        host.removeValve(valveObj);
+
+    }
+
+
+    /**
+     * Associate the specified Logger with this Host
+     *
+     * @param logger MBean Name of the Logger with this Host
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setLogger(String logger)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up logger's MBean in MBeanServer
+        BaseModelMBean loggerMBean = null;
+        //logger loggerObj = loggerMBean.getManagedResource();
+        Logger loggerObj = null;
+        host.setLogger(loggerObj);
+
+    }
+
+
+    /**
+     * Associate the specified Realm with this Host
+     *
+     * @param realm MBean Name of the Realm with this Host
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void setRealm(String realm)
+        throws Exception {
+
+        StandardHost host = (StandardHost) this.resource;
+        // look up realm's MBean in MBeanServer
+        BaseModelMBean realmMBean = null;
+        // Realm realmObj = realmMBean.getManagedResource();
+        Realm realmObj = null;
+        host.setRealm(realmObj);
+
+    }
 
 
 }

@@ -105,18 +105,6 @@ public class LoaderMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Container) that owns this Loader.
-     */
-    public Container getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Loader loader = (Loader) this.resource;
-        return (loader.getContainer());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 

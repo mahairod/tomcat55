@@ -105,18 +105,6 @@ public class ValveBaseMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Container) that owns this Valve.
-     */
-    public Container getParent() {
-
-        if (this.resource == null)
-            return (null);
-        ValveBase valve = (ValveBase) this.resource;
-        return ((Container) valve.getContainer());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 

@@ -105,18 +105,6 @@ public class HttpConnectorMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Service) that owns this connector.
-     */
-    public Service getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Connector connector = (Connector) this.resource;
-        return (connector.getService());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 

@@ -105,19 +105,6 @@ public class RealmMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Container) that owns this Realm.
-     */
-    public Container getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Realm realm = (Realm) this.resource;
-        return (realm.getContainer());
-
-    }
-
-
     // ------------------------------------------------------------- Operations
 
 

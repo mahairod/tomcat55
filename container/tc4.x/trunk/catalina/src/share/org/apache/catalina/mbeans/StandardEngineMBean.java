@@ -75,17 +75,6 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.logger.FileLogger;
-import org.apache.catalina.logger.SystemErrLogger;
-import org.apache.catalina.logger.SystemOutLogger;
-import org.apache.catalina.realm.JDBCRealm;
-import org.apache.catalina.realm.JNDIRealm;
-import org.apache.catalina.realm.MemoryRealm;
-import org.apache.catalina.valves.AccessLogValve;
-import org.apache.catalina.valves.RemoteAddrValve;
-import org.apache.catalina.valves.RemoteHostValve;
-import org.apache.catalina.valves.RequestDumperValve;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -123,163 +112,126 @@ public class StandardEngineMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Service) that owns this Engine.
-     */
-    public Service getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Engine engine = (Engine) this.resource;
-        return (engine.getService());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 
 
     /**
-     * Create a new <code>AccessLogger<code>.
+     * Add a new Host to those assoicated with this Engine
+     *
+     * @param host MBean Name of the new Host to be added
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createAccessLogger()
+    public void addHost(String host)
         throws Exception {
 
-        AccessLogValve accessLogger = new AccessLogValve();
-
         StandardEngine engine = (StandardEngine) this.resource;
-        accessLogger.setContainer(engine);
-        engine.addValve(accessLogger);
-        MBeanUtils.createMBean(accessLogger);
+        // look up host's MBean in MBeanServer
+        BaseModelMBean hostMBean = null;
+        //Host hostObj = hostMBean.getManagedResource();
+        Host hostObj = null;
+        engine.addChild(hostObj);
 
     }
 
 
     /**
-     * Delete <code>AccessLogger<code>.
+     * Remove the specified Host from those associated with this Engine
      *
-     * @exception Exception if an MBean cannot be deleted or deregistered
+     * @param host MBean Name of the specified Host to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
      */
-    public void deleteAccessLogger(String pattern)
+    public void removeHost(String host)
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        Valve [] valves = engine.getValves();
-        for (int i=0; i<valves.length; i++) {
-            if (valves[i] instanceof AccessLogValve) {
-                if ((((AccessLogValve)valves[i]).getPattern()).equals(pattern)) {
-                    ((AccessLogValve)valves[i]).setContainer(null);
-                    engine.removeValve(valves[i]);
-                    MBeanUtils.destroyMBean(valves[i]);
-                }
-            }
-        }
+        // look up host's MBean in MBeanServer
+        BaseModelMBean hostMBean = null;
+        //Host hostObj = hostMBean.getManagedResource();
+        Host hostObj = null;
+        engine.removeChild(hostObj);
 
     }
 
 
     /**
-     * Create a new <code>Host<code>.
+     * Add a new Valve to those assoicated with this Engine
      *
-     * @param name The new Host's name
+     * @param valve MBean Name of the new Valve to be added
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createHost(String name)
+    public void addValve(String valve)
         throws Exception {
 
-        StandardHost host = new StandardHost();
-
-        host.setName(name);
-        Engine engine = (Engine) this.resource;
-        engine.addChild(host);
-        MBeanUtils.createMBean(host);
+        StandardEngine engine = (StandardEngine) this.resource;
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        engine.addValve(valveObj);
 
     }
 
 
     /**
-     * Create a new <code>Logger<code>.
+     * Remove the specified Valve from those assoicated with this Engine
      *
-     * @param type the type of Logger to be created -- FIX ME
+     * @param valve MBean Name of the Valve to be removed
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createLogger(String type)
+    public void removeValve(String valve)
         throws Exception {
 
-        Logger logger = null;
-
-        if (type.equals("FileLogger")) {
-            logger = new FileLogger();
-        } else if (type.equals("SystemErrLogger")) {
-            logger = new SystemErrLogger();
-        } else if (type.equals("SystemOutLogger")) {
-            logger = new SystemOutLogger();
-        }
-
         StandardEngine engine = (StandardEngine) this.resource;
-        logger.setContainer((Container) engine);
-        engine.setLogger(logger);
-        MBeanUtils.createMBean(logger);
+        // look up valve's MBean in MBeanServer
+        BaseModelMBean valveMBean = null;
+        //Valve valveObj = valveMBean.getManagedResource();
+        Valve valveObj = null;
+        engine.removeValve(valveObj);
 
     }
 
 
     /**
-     * Create a new <code>Realm<code>.
+     * Associate the specified Logger with this Engine
      *
-     * @param type the type of Realm to be created -- FIX ME
+     * @param logger MBean Name of the Logger with this Engine
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createRealm(String type)
+    public void setLogger(String logger)
         throws Exception {
 
-        Realm realm = null;
-
-        if (type.equals("JDBCRealm")) {
-            realm = new JDBCRealm();
-        } else if (type.equals("JNDIRealm")) {
-            realm = new JNDIRealm();
-        } else if (type.equals("MemoryRealm")) {
-            realm = new MemoryRealm();
-        }
-
         StandardEngine engine = (StandardEngine) this.resource;
-        realm.setContainer((Container) engine);
-        engine.setRealm(realm);
-        MBeanUtils.createMBean(realm);
-        
+        // look up logger's MBean in MBeanServer
+        BaseModelMBean loggerMBean = null;
+        //logger loggerObj = loggerMBean.getManagedResource();
+        Logger loggerObj = null;
+        engine.setLogger(loggerObj);
+
     }
 
 
     /**
-     * Create a new RequestFilterValve.
+     * Associate the specified Realm with this Engine
      *
-     * @param type the type of valve to be created -- FIX ME need to pass type
+     * @param realm MBean Name of the Realm with this Engine
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createRequestFilterValve(String type) //type needed?
+    public void setRealm(String realm)
         throws Exception {
 
-        Valve valve = null;
-
-        if (type.equals("RemoteAddrValve")) {
-            valve = new RemoteAddrValve();
-        } else if (type.equals("RemostHostValve")) {
-            valve = new RemoteHostValve();
-        } else if (type.equals("RequestDumperValve")) {
-            valve = new RequestDumperValve();
-        }
-
         StandardEngine engine = (StandardEngine) this.resource;
-        ((ValveBase)valve).setContainer((Container) engine);
-        engine.addValve(valve);
-        MBeanUtils.createMBean(valve);
+        // look up realm's MBean in MBeanServer
+        BaseModelMBean realmMBean = null;
+        // Realm realmObj = realmMBean.getManagedResource();
+        Realm realmObj = null;
+        engine.setRealm(realmObj);
 
     }
 

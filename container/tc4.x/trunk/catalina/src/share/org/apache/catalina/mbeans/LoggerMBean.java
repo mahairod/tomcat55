@@ -105,18 +105,6 @@ public class LoggerMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Container) that owns this logger.
-     */
-    public Container getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Logger logger = (Logger) this.resource;
-        return (logger.getContainer());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 

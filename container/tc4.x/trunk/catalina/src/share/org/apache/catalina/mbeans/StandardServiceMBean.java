@@ -67,9 +67,7 @@ package org.apache.catalina.mbeans;
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Connector;
-import org.apache.catalina.Server;
 import org.apache.catalina.Service;
-import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.commons.modeler.BaseModelMBean;
 
 
@@ -107,65 +105,48 @@ public class StandardServiceMBean extends BaseModelMBean {
     // ------------------------------------------------------------- Attributes
 
 
-    /**
-     * Return the parent (Server) that owns this Service.
-     */
-    public Server getParent() {
-
-        if (this.resource == null)
-            return (null);
-        Service service = (Service) this.resource;
-        return (service.getServer());
-
-    }
-
 
     // ------------------------------------------------------------- Operations
 
 
     /**
-     * Create a new <code>Connector</code>.
+     * Add a new Connector assciate with this Service
      *
-     * @param address The IP address on which to bind
-     * @param port TCP port number to listen on
+     * @param connector MBean Name of the Connector to be added
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createConnector(String address, int port)
+    public void addConnector(String connector)
         throws Exception {
 
-        HttpConnector connector = new HttpConnector();
-
-        connector.setAddress(address);
-        connector.setPort(port);
         Service service = (Service) this.resource;
-        service.addConnector(connector);
-        MBeanUtils.createMBean(connector);
+        // look up connector's MBean in MBeanServer
+        BaseModelMBean connectorMBean = null;
+        //Connector = connectorMBean.getManagedResource();
+        Connector connectorObj = null;
+        service.addConnector(connectorObj);
 
     }
 
 
     /**
-     * Delete <code>Connector<code>.
+     * Remove an existing Connector associated with this Service
      *
-     * @exception Exception if an MBean cannot be deleted or deregistered
+     * @param connector MBean Name of the Connector to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
      */
-    public void deleteConnector(String address, int port)
+    public void removeConnector(String connector)
         throws Exception {
 
         Service service = (Service) this.resource;
-        Connector [] conns = service.findConnectors();
-        for (int i=0; i<conns.length; i++) {
-            if (conns[i] instanceof HttpConnector) {
-                HttpConnector httpcon = (HttpConnector) conns[i];
-                if ((httpcon.getAddress().equals(address)) &&
-                                                (httpcon.getPort()==port)) {
-                    httpcon.setService(null);
-                    service.removeConnector(conns[i]);
-                    MBeanUtils.destroyMBean(conns[i]);
-                }
-            }
-        }
+        // look up connector's MBean in MBeanServer
+        BaseModelMBean connectorMBean = null;
+        //Connector = connectorMBean.getManagedResource();
+        Connector connectorObj = null;
+        service.removeConnector(connectorObj);
 
     }
+
+
 }

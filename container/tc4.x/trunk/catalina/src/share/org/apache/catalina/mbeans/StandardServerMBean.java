@@ -66,10 +66,8 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.RuntimeOperationsException;
-import org.apache.catalina.Container;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
-import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardService;
 import org.apache.commons.modeler.BaseModelMBean;
 
@@ -112,28 +110,44 @@ public class StandardServerMBean extends BaseModelMBean {
 
     // ------------------------------------------------------------- Operations
 
+
     /**
-     * Create a new child <code>Service</code> and <code>Engine</code>.
+     * Add a new Service assciate with this Server
      *
-     * @param name The new Service's name
+     * @param service MBean Name of the Service to be added
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public void createService(String name)
+    public void addService(String service)
         throws Exception {
 
-        StandardService service = new StandardService();
-        
-        service.setName(name);
         Server server = (Server) this.resource;
-        server.addService(service);
-        MBeanUtils.createMBean(service);
-
-        StandardEngine engine = new StandardEngine();
-        service.setContainer(engine);
-        MBeanUtils.createMBean(engine);
+        // look up service's MBean in MBeanServer
+        StandardServiceMBean serviceMBean = null;
+        //Service serviceObj = serviceMBean.getManagedResource();
+        Service serviceObj = null;
+        server.addService(serviceObj);
 
     }
 
+    /**
+     * Remove an existing child Service
+     *
+     * @param service MBean Name of the Service to be removed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public void removeService(String service)
+        throws Exception {
+
+        Server server = (Server) this.resource;
+        // look up service's MBean in MBeanServer
+        StandardServiceMBean serviceMBean = null;
+        //Service service = serviceMBean.getManagedResource();
+        Service serviceObj = null;
+        MBeanUtils.destroyMBean(serviceObj);
+        server.removeService(serviceObj);
+
+    }
 
 }
