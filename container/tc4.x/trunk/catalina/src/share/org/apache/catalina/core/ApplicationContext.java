@@ -909,6 +909,11 @@ public class ApplicationContext
      */
     public void setAttribute(String name, Object value) {
 
+        // Name cannot be null
+        if (name == null)
+            throw new IllegalArgumentException
+                (sm.getString("applicationContext.setAttribute.namenull"));
+
         // Null value is the same as removeAttribute()
         if (value == null) {
             removeAttribute(name);
