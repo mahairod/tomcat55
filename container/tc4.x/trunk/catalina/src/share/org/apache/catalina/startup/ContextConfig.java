@@ -68,13 +68,21 @@ package org.apache.catalina.startup;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.CodeSource;
+import java.security.Permission;
+import java.security.Permissions;
+import java.security.PermissionCollection;
+import java.security.Policy;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Stack;
@@ -84,6 +92,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -907,6 +916,111 @@ public final class ContextConfig
 
 
     /**
+     * Configure permissions for this web application if we are running
+     * under the control of a security manager.
+     */
+    private void permissionsConfig() {
+
+        // Has a security manager been installed?
+        SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager == null)
+            return;
+
+        // Refresh the standard policy permissions
+        if (debug >= 1)
+            log("Retrieving global policy permissions");
+        Policy policy = Policy.getPolicy();
+        policy.refresh();
+
+        // Accumulate the common permissions we will add to all code sources
+        if (debug >= 1)
+            log("Building common permissions to add");
+        Resources resources = context.getResources();
+        Permissions commonPerms = new Permissions();
+        URL baseURL = null;
+        try {
+            baseURL = resources.getResource("/");
+            if (debug >= 1)
+                log(" baseURL=" + baseURL.toString());
+        } catch (MalformedURLException e) {
+            log("permissionsConfig.baseURL", e);
+        }
+        String baseFile = baseURL.toString();
+        if (baseFile.startsWith("file://"))     // FIXME - file dependency
+            baseFile = baseFile.substring(7);
+        else if (baseFile.startsWith("file:"))
+            baseFile = baseFile.substring(5);
+        if (baseFile.endsWith("/"))
+            baseFile += "-";
+        else
+            baseFile += "/-";
+        commonPerms.add(new FilePermission(baseFile, "read"));
+        File workDir = (File)
+            context.getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
+        commonPerms.add(new FilePermission(workDir.getAbsolutePath() + "/-",
+                                           "read,write,delete"));
+        if (debug >= 1)
+            log(" commonPerms=" + commonPerms.toString());
+
+        // Build a CodeSource representing our document root code base
+        if (debug >= 1)
+            log("Building document root code source");
+        URL docURL = null;
+        try {
+            docURL = resources.getResource("/WEB-INF");
+            if (debug >= 1)
+                log(" docURL=" + docURL.toString());
+        } catch (MalformedURLException e) {
+            log("permissionsConfig.docURL", e);
+        }
+        CodeSource docSource = new CodeSource(docURL, null);
+        if (debug >= 1)
+            log(" docSource=" + docSource.toString());
+
+        // Generate the Permissions for the document root code base
+        if (debug >= 1)
+            log("Building document root permissions");
+        PermissionCollection docPerms = policy.getPermissions(docSource);
+        Enumeration docAdds = commonPerms.elements();
+        while (docAdds.hasMoreElements())
+            docPerms.add((Permission) docAdds.nextElement());
+        if (debug >= 1)
+            log(" docPerms=" + docPerms);
+
+        // Generate the ProtectionDomain for the document root code base
+        if (debug >= 1)
+            log("Building document root protection domain");
+        ProtectionDomain docPD = new ProtectionDomain(docSource, docPerms);
+        if (debug >= 1)
+            log(" docPD=" + docPD.toString());
+
+        // Build a CodeSource representing our work directory code base
+        if (debug >= 1)
+            log("Building work directory code source");
+        URL workURL = null;
+        try {
+            workURL = new URL("file", null, workDir.getAbsolutePath());
+            if (debug >= 1)
+                log(" workURL=" + workURL.toString());
+        } catch (MalformedURLException e) {
+            log("permissionsConfig.workURL", e);
+        }
+        CodeSource workSource = new CodeSource(workURL, null);
+
+        // Generate the Permissions for the work directory code base
+        if (debug >= 1)
+            log("Building work directory permissions");
+        PermissionCollection workPerms = policy.getPermissions(workSource);
+        Enumeration workAdds = commonPerms.elements();
+        while (workAdds.hasMoreElements())
+            workPerms.add((Permission) workAdds.nextElement());
+        if (debug >= 1)
+            log(" workPerms=" + workPerms);
+
+    }
+
+
+    /**
      * Process a "start" event for this Context.
      */
     private void start() {
@@ -936,6 +1050,9 @@ public final class ContextConfig
 		log(sm.getString("contextConfig.defaultResources"));
 	    context.setResources(new FileResources());
 	}
+
+        // Configure the Permissions for this Context (if necessary)
+        permissionsConfig();
 
 	// Configure the Loader for this Context
 	loaderConfig();
