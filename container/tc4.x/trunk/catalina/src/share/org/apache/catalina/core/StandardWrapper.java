@@ -969,7 +969,7 @@ public final class StandardWrapper
         
         ClassLoader oldCtxClassLoader = 
             Thread.currentThread().getContextClassLoader();
-        ClassLoader classLoader = loader.getClassLoader();
+        ClassLoader classLoader = instance.getClass().getClassLoader();
 
 	// Call the servlet destroy() method
 	try {
