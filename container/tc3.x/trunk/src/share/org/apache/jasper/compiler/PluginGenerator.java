@@ -222,11 +222,12 @@ public class PluginGenerator
 	writer.indent ();
 	writer.print ("String [][] _jspxNSString = null;"); 
 	writer.println ();
+	writer.indent ();
+	writer.print ("int i = 0;");
+	writer.println ();
 	if (param != null) {
 	    e = param.keys ();
 	    writer.indent ();
-	    writer.print ("int i = 0;");
-	    writer.println ();
 	    writer.indent ();
 	    writer.print ("_jspxNSString = new String [");
 	    Integer temp = new Integer (param.size ());
