@@ -44,6 +44,10 @@ Bug No.  Description
 
 9165	 Fix auto-detection of tomcat.install for certain 1.1.x JDKs.
 
+7654	 Make certain that the Context Classloader is set before a servlet 
+	 class is loaded.  This allows JAXP and log4j classes to be created
+	 in the constructor of the servlet, instead of in init.
+
 Jasper:
 
 Bug No.  Description
