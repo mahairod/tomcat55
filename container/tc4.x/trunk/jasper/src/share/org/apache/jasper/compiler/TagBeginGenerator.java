@@ -202,22 +202,29 @@ public class TagBeginGenerator
                     Class c[] = m.getParameterTypes();
                     // assert(c.length > 0)
 
-                    if (attributes[i].canBeRequestTime()) {
-			if (JspUtil.isExpression(attrValue))
-			    attrValue = JspUtil.getExpr(attrValue);
-			else
-                            attrValue = convertString(c[0], attrValue, writer, attrName);
-		    } else
-			attrValue = convertString(c[0], attrValue, writer, attrName);
+                    if (attributes[i].canBeRequestTime() && 
+			    JspUtil.isExpression(attrValue)) {
+			attrValue = JspUtil.getExpr(attrValue);
+		    } else {
+			attrValue = convertString(c[0], attrValue, writer, attrName,
+						  tc.getPropertyEditorClass(attrName));
+		    }
 		    writer.println(thVarName+"."+m.getName()+"("+attrValue+");");
                 }
             }
     }
 
-    public String convertString(Class c, String s, ServletWriter writer, String attrName)
+    public String convertString(Class c, String s, ServletWriter writer, String attrName,
+				Class propertyEditorClass)
         throws JasperException 
     {
-        if (c == String.class) {
+	if (propertyEditorClass != null) {
+	    return 
+		"(" + c.getName() + 
+		")JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor(" +
+		c.getName() + ".class, \"" + attrName + "\", " + writer.quoteString(s) + ", " +
+		propertyEditorClass.getName() + ".class)";
+	} else if (c == String.class) {
             return writer.quoteString(s);
         } else if (c == boolean.class) {
             return Boolean.valueOf(s).toString();
@@ -261,16 +268,27 @@ public class TagBeginGenerator
             return Integer.valueOf(s).toString();
         } else if (c == Integer.class) {
             return "new Integer(" + Integer.valueOf(s).toString() + ")";
+        } else if (c == short.class) {
+            return Short.valueOf(s).toString();
+        } else if (c == Short.class) {
+            return "new Short(" + Short.valueOf(s).toString() + ")";
         } else if (c == long.class) {
             return Long.valueOf(s).toString() + "l";
         } else if (c == Long.class) {
             return "new Long(" + Long.valueOf(s).toString() + "l)";
+	} else {
+	    return "(" + c.getName() + 
+		")JspRuntimeLibrary.getValueFromPropertyEditorManager(" +
+		c.getName() + ".class, \"" + attrName + "\", " + writer.quoteString(s) + ")";
+        }
+	/* FIXME TOBEREMOVED
         } else {
              throw new CompileException
                     (start, Constants.getString
                      ("jsp.error.unable.to_convert_string",
                       new Object[] { c.getName(), attrName }));
         }
+	*/
     }   
     
     public void generateServiceMethodStatements(ServletWriter writer)
