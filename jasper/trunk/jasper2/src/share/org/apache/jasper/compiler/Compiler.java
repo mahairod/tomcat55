@@ -70,6 +70,8 @@ import org.xml.sax.Attributes;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
@@ -115,7 +117,7 @@ public class Compiler {
     private PageInfo pageInfo;
     private JspServletWrapper jsw;
 
-    protected Project project;
+    protected Project project=null;
 
     protected Options options;
 
@@ -133,11 +135,39 @@ public class Compiler {
         this.ctxt = ctxt;
 	this.errDispatcher = new ErrorDispatcher();
         this.options = ctxt.getOptions();
-        // Initializing project
-        project = new Project();
-        project.init();
     }
 
+    // Lazy eval - if we don't need to compile we probably don't need the project
+    private Project getProject() {
+        if( project!=null ) return project;
+        // Initializing project
+        project = new Project();
+        // XXX We should use a specialized logger to redirect to jasperlog
+        DefaultLogger bl=new JasperAntLogger();
+        bl.setOutputPrintStream(System.out);
+        bl.setErrorPrintStream(System.err);
+
+        if( Constants.jasperLog.getVerbosityLevel() >= Logger.DEBUG ) {
+            bl.setMessageOutputLevel( Project.MSG_VERBOSE );
+        }
+        project.addBuildListener( bl );
+        
+        if( options.getCompiler() != null ) {
+            Constants.jasperLog.log("Compiler " + options.getCompiler(), Logger.ERROR );
+            project.setProperty("build.compiler", options.getCompiler() );
+        }
+        project.init();
+        return project;
+    }
+
+    static class JasperAntLogger extends DefaultLogger {
+        protected void printMessage(final String message,
+                                    final PrintStream stream,
+                                    final int priority) {
+            Constants.jasperLog.log( message, Logger.INFORMATION );
+        }
+
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -209,6 +239,7 @@ public class Compiler {
         boolean success = true;
 
         // Initializing javac task
+        getProject();
         Javac javac = (Javac) project.createTask("javac");
 
         // Initializing classpath
@@ -223,6 +254,7 @@ public class Compiler {
         // Configure the compiler object
         javac.setEncoding(javaEncoding);
         javac.setClasspath(path);
+        //javac.setDestdir(new File(options.getScratchDir().getAbsolutePath()));
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
         javac.setOptimize(true);
@@ -241,21 +273,23 @@ public class Compiler {
         try {
             javac.execute();
         } catch (BuildException e) {
+            e.printStackTrace();
             success = false;
         }
 
         // Stop capturing the System.err output for this thread
         errorReport = SystemLogHandler.unsetThread();
-
+        
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
             javaFile.delete();
         }
 
         if (!success) {
+            Constants.jasperLog.log( "Error compiling file: " + javaFileName + " " + errorReport,
+                               Logger.ERROR);
             errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
-
     }
 
 
