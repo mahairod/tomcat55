@@ -149,7 +149,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         }
     }
 
-    TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, String uriIn) 
+    public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, String uriIn) 
         throws IOException, JasperException
     {
         super(prefix, uriIn);
