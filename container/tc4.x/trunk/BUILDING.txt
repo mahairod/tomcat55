@@ -212,19 +212,26 @@ of Tomcat 4.0.
 * Place the jar in a convenient location.
 
 
-(12) Download and Install the JMX 1.0 Reference Implementation
+(12) Download and Install an implementation of the JMX 1.0 specification. This
+     can be either OpenJMX (http://www.open-jmx.org) or Sun JMX 1.0 Reference 
+     Implementation.
 
 NOTE:  This step is only required if you wish to build the Config/Admin
 web application.
 
-* Download the JMX Instrumentation and Agent Reference Implementation
-  (version 1.0 or later) from
+NOTE:  The Tomcat binaries are distrbuted with OpenJMX.
+
+* Download OpenJMX (version 1.0 beta 2 or later) from
+
+    http://sourceforge.net/project/showfiles.php?group_id=34041
+
+* Alternately, download the JMX Instrumentation and Agent Reference 
+  Implementation (version 1.0 or later) from
 
     http://java.sun.com/products/JavaManagement/download.html
 
-* Unpack the reference implementation into a convenient location so that
-  it resides in its own subdirectory.
-
+* Unpack OpenJMX or the reference implementation into a convenient location 
+  so that it resides in its own subdirectory.
 
 (13) Download and Install the JNDI 1.2.1 Reference Implementation
 
