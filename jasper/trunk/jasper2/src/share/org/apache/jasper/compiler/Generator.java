@@ -1888,9 +1888,8 @@ class Generator {
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
 
 	    n.setBeginJavaLine(out.getJavaLine());
-	    out.printin("/* ----  ");
-	    out.print(n.getQName());
-	    out.println(" ---- */");
+	    out.printin("//  ");
+	    out.println(n.getQName());
 
 	    // Declare AT_BEGIN scripting variables
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
@@ -2094,9 +2093,8 @@ class Generator {
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
 
 	    n.setBeginJavaLine(out.getJavaLine());
-	    out.printin("/* ----  ");
-	    out.print(n.getQName());
-	    out.println(" ---- */");
+	    out.printin("//  ");
+	    out.println(n.getQName());
             
             // Declare AT_BEGIN scripting variables
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
