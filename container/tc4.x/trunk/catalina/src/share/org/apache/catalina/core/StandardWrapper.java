@@ -1177,6 +1177,8 @@ public final class StandardWrapper
             nInstances = 0;
         }
 
+        singleThreadModel = false;
+
         unloading = false;
         fireContainerEvent("unload", this);
 
