@@ -2333,8 +2333,7 @@ public final class StandardServer
 
         // Validate and update our current component state
         if (!started)
-            throw new LifecycleException
-                (sm.getString("standardServer.stop.notStarted"));
+            return;
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, null);
