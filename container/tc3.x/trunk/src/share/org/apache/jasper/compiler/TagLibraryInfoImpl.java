@@ -95,6 +95,7 @@ import org.apache.jasper.runtime.JspLoader;
  * Implementation of the TagLibraryInfo class from the JSP spec. 
  *
  * @author Anil K. Vijendran
+ * @author Mandar Raje
  */
 public class TagLibraryInfoImpl extends TagLibraryInfo {
     static private final String TLD = "META-INF/taglib.tld";
@@ -171,11 +172,16 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			String tname = em.getNodeName();
 			if (tname.equals("taglib-location")) {
 			    tagLoc = ((Text)em.getFirstChild()).getData();
+                            if (tagLoc != null)
+                                tagLoc = tagLoc.trim();
 			}
 			if (tname.equals("taglib-uri")) {
 			    String tmpUri =  ((Text)em.getFirstChild()).getData();
-			    if (tmpUri != null && tmpUri.equals(uriIn))
-				match = true;
+			    if (tmpUri != null) {
+                                tmpUri = tmpUri.trim();
+                                if (tmpUri.equals(uriIn))
+                                    match = true;
+                            }
 			}
 		    }
 		if (match == true && tagLoc != null) this.uri = tagLoc;
@@ -183,7 +189,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
 	    
 	    // "uri" should point to the correct tld location.
-	    System.out.println ("modified uri = " + this.uri);
+
 	    if (!uri.startsWith("/")) {
 		url = new URL(uri);
 		in = url.openStream();
