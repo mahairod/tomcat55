@@ -110,7 +110,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
         }
         computeClassFileName();
         computeJavaFileName();
-    };
+    }
 
 
     /**
@@ -119,7 +119,7 @@ public class CommandLineCompiler extends Compiler implements Mangler {
      */
     public boolean isOutDated() {
         return true;
-    };
+    }
 
 
     public final void computeJavaFileName() {

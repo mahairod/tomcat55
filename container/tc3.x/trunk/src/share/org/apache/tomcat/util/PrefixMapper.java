@@ -227,7 +227,7 @@ public class PrefixMapper {
 	    container = myMap.prefixMappedServlets.get(s);
 	    
 	    if (container == null) {
-		s=URLUtil.removeLast( s );
+		s=FileUtil.removeLast( s );
 	    }  else {
 		if( myMap.mapCacheEnabled ) {
 		    // XXX implement LRU or another replacement alghoritm

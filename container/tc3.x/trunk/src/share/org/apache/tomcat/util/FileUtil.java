@@ -323,5 +323,29 @@ public class FileUtil {
         }
     }
     
+    public static String removeLast( String s) {
+	int i = s.lastIndexOf("/");
+	
+	if (i > 0) {
+	    s = s.substring(0, i);
+	} else if (i == 0 && ! s.equals("/")) {
+	    s = "/";
+	} else {
+	    s = "";
+	}
+	return s;
+    }
+
+    public static String getExtension( String path ) {
+        int i = path.lastIndexOf(".");
+	int j = path.lastIndexOf("/");
+
+	if ((i > 0) && (i > j))
+	    return path.substring(i);
+	else
+	    return null;
+    }
+
+
 
 }
