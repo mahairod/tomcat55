@@ -64,6 +64,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -167,7 +168,8 @@ public final class SaveUserAction extends Action {
 
         // Perform any extra validation that is required
         UserForm userForm = (UserForm) form;
-        String databaseName = userForm.getDatabaseName();
+        String databaseName =
+            URLDecoder.decode(userForm.getDatabaseName());
         String objectName = userForm.getObjectName();
 
         // Perform an "Add User" transaction

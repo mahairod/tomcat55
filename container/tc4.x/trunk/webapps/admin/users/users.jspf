@@ -1,4 +1,4 @@
-<%-- Roles List --%>
+<%-- Users List --%>
 
 <table class="back-table" border="0" cellspacing="0" cellpadding="1"
        width="100%"><tr><td> 
@@ -12,29 +12,29 @@
         </td>
       </logic:present>
       <td><div align="left" class="table-header-text">
-        <bean:message key="users.list.rolename"/>
+        <bean:message key="users.list.username"/>
       </div></td>
       <td><div align="left" class="table-header-text">
-        <bean:message key="users.list.description"/>
+        <bean:message key="users.list.fullName"/>
       </div></td>
     </tr>
-    <logic:iterate name="rolesForm" property="roles"
-                     id="role" type="java.lang.String">
+    <logic:iterate name="usersForm" property="users"
+                     id="user" type="java.lang.String">
       <tr class="line-row">
         <logic:present name="checkboxes">
           <td><div align="center" class="table-normal-text">
-            <input type="checkbox" name="roles"
-                  value="<%= role %>">
+            <input type="checkbox" name="users"
+                  value="<%= user %>">
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">&nbsp;
-          <html:link page='<%= "/users/setUpRole.do?objectName=" + 
-                               URLEncoder.encode(role) %>'>
-            <controls:attribute name="role" attribute="rolename"/>
+          <html:link page='<%= "/users/setUpUser.do?objectName=" + 
+                               URLEncoder.encode(user) %>'>
+            <controls:attribute name="user" attribute="username"/>
           </html:link>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;
-          <controls:attribute name="role" attribute="description"/>
+          <controls:attribute name="user" attribute="fullName"/>
         </div></td>
       </tr>
     </logic:iterate>

@@ -137,21 +137,30 @@ public class UsersTreeBuilder implements TreeBuilder {
             ("Global Administer Groups",
              "folder_16_pad.gif",
              resources.getMessage("users.treeBuilder.groupsNode"),
-             "users/listGroups.do?databaseName=" + databaseName,
+             "users/listGroups.do?databaseName=" +
+             URLEncoder.encode(databaseName) +
+             "&forward=" +
+             URLEncoder.encode("Groups List Setup"),
              "content",
              false);
         TreeControlNode roles = new TreeControlNode
             ("Global Administer Roles",
              "folder_16_pad.gif",
              resources.getMessage("users.treeBuilder.rolesNode"),
-             "users/listRoles.do?databaseName=" + databaseName,
+             "users/listRoles.do?databaseName=" +
+             URLEncoder.encode(databaseName) +
+             "&forward=" +
+             URLEncoder.encode("Roles List Setup"),
              "content",
              false);
         TreeControlNode users = new TreeControlNode
             ("Global Administer Users",
              "folder_16_pad.gif",
              resources.getMessage("users.treeBuilder.usersNode"),
-             "users/listUsers.do?databaseName=" + databaseName,
+             "users/listUsers.do?databaseName=" +
+             URLEncoder.encode(databaseName) +
+             "&forward=" +
+             URLEncoder.encode("Users List Setup"),
              "content",
              false);
 

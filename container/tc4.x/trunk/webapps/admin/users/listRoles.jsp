@@ -27,24 +27,7 @@
       </td>
       <td width="19%"> 
         <div align="right">
-            <controls:actions>
-              <controls:action selected="true">
-                ----<bean:message key="actions.available.actions"/>----
-              </controls:action>
-              <controls:action>
-                ---------------------------------
-              </controls:action>
-              <controls:action url='<%= "/users/setUpRole.do?databaseName=" +
-               URLEncoder.encode(request.getParameter("databaseName")) %>'>
-                <bean:message key="users.actions.role.create"/>
-              </controls:action>
-<%--
-              <controls:action url="">
-                <bean:message key="users.actions.role.delete"/>
-              </controls:action>
---%>
-              <!-- add the urls later once those screens get implemented -->
-            </controls:actions>
+          <%@ include file="listRoles.jspf" %>
         </div>
       </td>
     </tr>

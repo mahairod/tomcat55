@@ -63,6 +63,7 @@
     <form-bean      name="userdbRealmForm"
                     type="org.apache.webapp.admin.realm.UserDBRealmForm"/>
 
+
     <!-- ========== User Database Module ========== -->
 
     <form-bean      name="databaseForm"
@@ -71,12 +72,20 @@
     <form-bean      name="groupForm"
                     type="org.apache.webapp.admin.users.GroupForm"/>
 
+    <form-bean      name="groupsForm"
+                    type="org.apache.webapp.admin.users.GroupsForm"/>
+
     <form-bean      name="roleForm"
                     type="org.apache.webapp.admin.users.RoleForm"/>
+
+    <form-bean      name="rolesForm"
+                    type="org.apache.webapp.admin.users.RolesForm"/>
 
     <form-bean      name="userForm"
                     type="org.apache.webapp.admin.users.UserForm"/>
 
+    <form-bean      name="usersForm"
+                    type="org.apache.webapp.admin.users.UsersForm"/>
 
     <!-- ========== ==================== ========== -->
 
@@ -160,10 +169,15 @@
                     path="/userDBRealm.jsp"
                 redirect="false"/>
 
+
     <!-- ========== User Database Module ========== -->
 
     <forward        name="Group"
                     path="/users/group.jsp"
+                redirect="false"/>
+
+    <forward        name="Groups Delete List"
+                    path="/users/deleteGroups.jsp"
                 redirect="false"/>
 
     <forward        name="Groups List"
@@ -171,11 +185,15 @@
                 redirect="false"/>
 
     <forward        name="Groups List Setup"
-                    path="/users/listGroups.do"
+                    path="/users/listGroups.do?forward=Groups+List"
                 redirect="false"/>
 
     <forward        name="Role"
                     path="/users/role.jsp"
+                redirect="false"/>
+
+    <forward        name="Roles Delete List"
+                    path="/users/deleteRoles.jsp"
                 redirect="false"/>
 
     <forward        name="Roles List"
@@ -183,11 +201,15 @@
                 redirect="false"/>
 
     <forward        name="Roles List Setup"
-                    path="/users/listRoles.do"
+                    path="/users/listRoles.do?forward=Roles+List"
                 redirect="false"/>
 
     <forward        name="User"
                     path="/users/user.jsp"
+                redirect="false"/>
+
+    <forward        name="Users Delete List"
+                    path="/users/deleteUsers.jsp"
                 redirect="false"/>
 
     <forward        name="Users List"
@@ -195,10 +217,11 @@
                 redirect="false"/>
 
     <forward        name="Users List Setup"
-                    path="/users/listUsers.do"
+                    path="/users/listUsers.do?forward=Users+List"
                 redirect="false"/>
 
     <!-- ========== ==================== ========== -->
+
 
   </global-forwards>
 
@@ -427,18 +450,33 @@
 
     <!-- ========== User Database Module ========== -->
 
+    <action    path="/users/deleteGroups"
+               name="groupsForm"
+              scope="request"
+               type="org.apache.webapp.admin.users.DeleteGroupsAction"/>
+
+    <action    path="/users/deleteRoles"
+               name="rolesForm"
+              scope="request"
+                type="org.apache.webapp.admin.users.DeleteRolesAction"/>
+
+    <action    path="/users/deleteUsers"
+               name="usersForm"
+              scope="request"
+               type="org.apache.webapp.admin.users.DeleteUsersAction"/>
+
     <action    path="/users/listGroups"
-               name="databaseForm"
+               name="groupsForm"
               scope="request"
                type="org.apache.webapp.admin.users.ListGroupsAction"/>
 
     <action    path="/users/listRoles"
-               name="databaseForm"
+               name="rolesForm"
               scope="request"
                type="org.apache.webapp.admin.users.ListRolesAction"/>
 
     <action    path="/users/listUsers"
-               name="databaseForm"
+               name="usersForm"
               scope="request"
                type="org.apache.webapp.admin.users.ListUsersAction"/>
 

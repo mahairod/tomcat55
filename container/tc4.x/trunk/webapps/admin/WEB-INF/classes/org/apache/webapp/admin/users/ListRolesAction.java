@@ -64,28 +64,34 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Locale;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * Retrieve the Set of MBean namess for all currently defined roles,
- * and expose them as a request attribute named "roles".  Requires a
- * request parameter <code>databaseName</code> containing the MBean
- * Name of our associated UserDatabase instance.
+ * <p>Retrieve the set of MBean names for all currently defined roles,
+ * and expose them in a request attribute named "rolesForm".  This action
+ * requires the following request parameters to be set:</p>
+ * <ul>
+ * <li><strong>databaseName</strong> - Object name of the UserDatabase
+ *     MBean from which we should retrieve the roles list.</li>
+ * <li><strong>forward</strong> - Global forward to which we should
+ *     go after stashing the roles list.</li>
+ * </ul>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -93,6 +99,21 @@ import org.apache.webapp.admin.ApplicationServlet;
  */
 
 public class ListRolesAction extends Action {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mserver = null;
+
+
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
 
 
     // --------------------------------------------------------- Public Methods
@@ -120,36 +141,48 @@ public class ListRolesAction extends Action {
         throws IOException, ServletException {
 
 
-        // Acquire a reference to the MBeanServer containing our MBeans
-        MBeanServer mserver = null;
-        try {
+        // Look up the components we will be using as needed
+        if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
-        } catch (Throwable t) {
-            throw new ServletException
-                ("Cannot acquire MBeanServer reference", t);
         }
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Acquire the set of user MBean names to be listed
-        // FIXME - limit to global user database
-        // FIXME - pass databaseName reference on
-        // FIXME - set transaction control token
-        String pattern = "Users:type=Role,*";
-        Set results = null;
+
+        // Acquire the set of role object names to be listed
+        String databaseName =
+            URLDecoder.decode(request.getParameter("databaseName"));
+        String results[] = null;
         try {
-            results = mserver.queryNames(new ObjectName(pattern), null);
+            ObjectName dname = new ObjectName(databaseName);
+            results =
+                (String[]) mserver.getAttribute(dname, "roles");
+            if (results == null) {
+                results = new String[0];
+            }
+            Arrays.sort(results);
         } catch (Throwable t) {
-            throw new ServletException("queryNames(" + pattern + ")", t);
-        }
-        TreeSet roles = new TreeSet();
-        Iterator names = results.iterator();
-        while (names.hasNext()) {
-            ObjectName name = (ObjectName) names.next();
-            roles.add(name.toString());
+            getServlet().log(resources.getMessage
+                             (locale,
+                              "users.error.attribute.get", "roles"), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage
+                 (locale, "users.error.attribute.get", "roles"));
         }
 
-        // Forward the Set as a request attribute
-        request.setAttribute("roles", roles);
-        return (mapping.findForward("Roles List"));
+        // Stash the results in a form bean
+        RolesForm rolesForm = new RolesForm();
+        rolesForm.setDatabaseName(databaseName);
+        rolesForm.setRoles(results);
+        request.setAttribute("rolesForm", rolesForm);
+        saveToken(request);
+        String forward =
+            URLDecoder.decode(request.getParameter("forward"));
+        return (mapping.findForward(forward));
 
     }
 

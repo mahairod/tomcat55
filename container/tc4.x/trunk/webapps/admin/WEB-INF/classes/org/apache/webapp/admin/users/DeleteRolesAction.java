@@ -64,7 +64,6 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -93,15 +92,15 @@ import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Implementation of <strong>Action</strong> that saves a new or
- * updated Role back to the underlying database.</p>
+ * <p>Implementation of <strong>Action</strong> that deletes the
+ * specified set of roles.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public final class SaveRoleAction extends Action {
+public final class DeleteRolesAction extends Action {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -167,76 +166,38 @@ public final class SaveRoleAction extends Action {
         }
 
         // Perform any extra validation that is required
-        RoleForm roleForm = (RoleForm) form;
-        String databaseName =
-            URLDecoder.decode(roleForm.getDatabaseName());
-        String objectName = roleForm.getObjectName();
-
-        // Perform an "Add Role" transaction
-        if (objectName == null) {
-
-            String signature[] = new String[2];
-            signature[0] = "java.lang.String";
-            signature[1] = "java.lang.String";
-
-            Object params[] = new Object[2];
-            params[0] = roleForm.getRolename();
-            params[1] = roleForm.getDescription();
-
-            ObjectName oname = null;
-
-            try {
-
-                // Construct the MBean Name for our UserDatabase
-                oname = new ObjectName(databaseName);
-
-                // Create the new object and associated MBean
-                mserver.invoke(oname, "createRole",
-                               params, signature);
-
-            } catch (Throwable t) {
-
-                getServlet().log
-                    (resources.getMessage(locale, "users.error.invoke",
-                                          "createRole"), t);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage(locale, "users.error.invoke",
-                                          "createRole"));
-                return (null);
-            }
-
+        RolesForm rolesForm = (RolesForm) form;
+        String databaseName = rolesForm.getDatabaseName();
+        String roles[] = rolesForm.getRoles();
+        if (roles == null) {
+            roles = new String[0];
         }
 
-        // Perform an "Update Role" transaction
-        else {
+        // Perform "Delete Role" transactions as required
+        try {
 
-            ObjectName oname = null;
-            String attribute = null;
+            ObjectName dname = new ObjectName(databaseName);
+            String signature[] = new String[1];
+            signature[0] = "java.lang.String";
+            Object params[] = new String[1];
 
-            try {
-
-                // Construct an object name for this object
-                oname = new ObjectName(objectName);
-
-                // Update the specified role
-                attribute = "description";
-                mserver.setAttribute
-                    (oname,
-                     new Attribute(attribute, roleForm.getDescription()));
-
-            } catch (Throwable t) {
-
-                getServlet().log
-                    (resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute), t);
-                response.sendError
-                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage(locale, "users.error.set.attribute",
-                                          attribute));
-                return (null);
-
+            for (int i = 0; i < roles.length; i++) {
+                ObjectName oname = new ObjectName(roles[i]);
+                params[0] = oname.getKeyProperty("rolename");
+                mserver.invoke(dname, "removeRole",
+                               params, signature);
             }
+
+        } catch (Throwable t) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      "removeRole"), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      "removeRole"));
+            return (null);
 
         }
 

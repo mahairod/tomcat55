@@ -64,6 +64,7 @@ package org.apache.webapp.admin.users;
 
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -167,7 +168,8 @@ public final class SaveGroupAction extends Action {
 
         // Perform any extra validation that is required
         GroupForm groupForm = (GroupForm) form;
-        String databaseName = groupForm.getDatabaseName();
+        String databaseName =
+            URLDecoder.decode(groupForm.getDatabaseName());
         String objectName = groupForm.getObjectName();
 
         // Perform an "Add Group" transaction

@@ -16,18 +16,18 @@
 
 <html:errors/>
 
-<html:form action="/users/listGroups">
+<html:form action="/users/listRoles">
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
         <div class="page-title-text" align="left">
-          <bean:message key="users.listGroups.title"/>
+          <bean:message key="users.deleteRoles.title"/>
         </div>
       </td>
       <td width="19%"> 
         <div align="right">
-          <%@ include file="listGroups.jspf" %>
+          <%@ include file="listRoles.jspf" %>
         </div>
       </td>
     </tr>
@@ -36,8 +36,17 @@
 </html:form>
 
 <br>
-<%@ include file="groups.jspf" %>
+<bean:define id="checkboxes" scope="page" value="true"/>
+<html:form action="/users/deleteRoles">
+  <%@ include file="../buttons.jsp" %>
+  <br>
+  <html:hidden property="databaseName"/>
+  <%@ include file="roles.jspf" %>
+  <%@ include file="../buttons.jsp" %>
+</html:form>
 <br>
+
+<%@ include file="footer.jsp" %>
 
 </body>
 </html:html>

@@ -22,7 +22,7 @@
     <tr bgcolor="7171A5">
       <td width="81%"> 
         <div class="page-title-text" align="left">
-          <bean:message key="users.listGroups.title"/>
+          <bean:message key="users.deleteGroups.title"/>
         </div>
       </td>
       <td width="19%"> 
@@ -36,8 +36,17 @@
 </html:form>
 
 <br>
-<%@ include file="groups.jspf" %>
+<bean:define id="checkboxes" scope="page" value="true"/>
+<html:form action="/users/deleteGroups">
+  <%@ include file="../buttons.jsp" %>
+  <br>
+  <html:hidden property="databaseName"/>
+  <%@ include file="groups.jspf" %>
+  <%@ include file="../buttons.jsp" %>
+</html:form>
 <br>
+
+<%@ include file="footer.jsp" %>
 
 </body>
 </html:html>
