@@ -599,6 +599,15 @@ public class Http11Processor implements Processor, ActionHook {
             if (!error) {
                 try {
                     adapter.service(request, response);
+                    // Handle when the response was committed before a serious
+                    // error occurred.  Throwing a ServletException should both
+                    // set the status to 500 and set the errorException.
+                    // If we fail here, then the response is likely already 
+                    // committed, so we can't try and set headers.
+                    if(keepAlive && !error) { // Avoid checking twice.
+                        error = response.getErrorException() != null ||
+                                statusDropsConnection(response.getStatus());
+                    }
                 } catch (InterruptedIOException e) {
                     error = true;
                 } catch (Throwable t) {
@@ -1204,6 +1213,9 @@ public class Http11Processor implements Processor, ActionHook {
             keepAlive = false;
         }
 
+        // If we know that the request is bad this early, add the
+        // Connection: close header.
+        keepAlive = keepAlive && statusDropsConnection(statusCode);
         if (!keepAlive) {
             response.addHeader("Connection", "close");
         } else if (!http11) {
@@ -1302,5 +1314,19 @@ public class Http11Processor implements Processor, ActionHook {
 
     }
 
+    /**
+     * Determine if we must drop the connection because of the HTTP status
+     * code.  Use the same list of codes as Apache/httpd.
+     */
+    protected boolean statusDropsConnection(int status) {
+        return status == 400 /* SC_BAD_REQUEST */ ||
+               status == 408 /* SC_REQUEST_TIMEOUT */ ||
+               status == 411 /* SC_LENGTH_REQUIRED */ ||
+               status == 413 /* SC_REQUEST_ENTITY_TOO_LARGE */ ||
+               status == 414 /* SC_REQUEST_URI_TOO_LARGE */ ||
+               status == 500 /* SC_INTERNAL_SERVER_ERROR */ ||
+               status == 503 /* SC_SERVICE_UNAVAILABLE */ ||
+               status == 501 /* SC_NOT_IMPLEMENTED */;
+    }
 
 }
