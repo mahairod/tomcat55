@@ -192,7 +192,11 @@ final class StandardHostValve
             return;
         }
 
-        ErrorPage errorPage = findErrorPage(context, realError);
+        ErrorPage errorPage = findErrorPage(context, throwable);
+
+        if ((errorPage == null) && (throwable instanceof ServletException)) {
+            errorPage = findErrorPage(context, realError);
+        }
 
         if (errorPage != null) {
             response.setAppCommitted(false);
