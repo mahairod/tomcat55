@@ -258,18 +258,6 @@ public abstract class RequestWrapper implements Request {
 
 
     /**
-     * Set the Socket (if any) through which this Request was received.
-     *
-     * @param socket The socket through which this request was received
-     */
-    public void setSocket(Socket socket) {
-
-        request.setSocket(socket);
-
-    }
-
-
-    /**
      * Return the input stream associated with this Request.
      */
     public InputStream getStream() {
