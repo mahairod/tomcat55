@@ -287,7 +287,7 @@ public class ServletWrapper {
 	return context;
     } 
 
-    void handleRequest(final HttpServletRequestFacade request,
+    public void handleRequest(final HttpServletRequestFacade request,
         final HttpServletResponseFacade response)
     throws IOException {
         synchronized (this) {
