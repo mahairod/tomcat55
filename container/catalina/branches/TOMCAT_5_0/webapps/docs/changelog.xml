@@ -41,6 +41,12 @@
       <fix>
         <bug>30073</bug>: NPE when compiling .jspx with broken xml format in jspcmode. (luehe)
       </fix>
+      <fix>
+        <bug>30291</bug>: Smap for a tag should not include its body. (kinman)
+      </fix>
+      <fix>
+        <bug>30289</bug>: Incorrect Smap for multiple line java expression. (kinman)
+      </fix>
     </changelog>
   </subsection>
 
