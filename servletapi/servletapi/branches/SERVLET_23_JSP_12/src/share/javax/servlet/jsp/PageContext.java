@@ -308,15 +308,14 @@ abstract public class PageContext {
     abstract public Object getAttribute(String name);
 
     /**
-     * Return the object associated with the name in the specifed scope or null if not
-     * found.
+     * Return the object associated with the name in the specified
+     * scope or null if not found.
      *
      * @param name the name of the attribute to set
      * @param scope the scope with which to associate the name/object
      * 
      * @throws NullPointerException if the name is null
-     * @throws IllegalArgumentException if the scope is invalid
-     */
+     * @throws IllegalArgumentException if the scope is invalid */
 
     abstract public Object getAttribute(String name, int scope);
 
@@ -534,7 +533,7 @@ abstract public class PageContext {
     /**
      * <p>
      * This method is identical to the handlePageException(Exception),
-     * except that it accepts a Throwable.  This is the prefered method
+     * except that it accepts a Throwable.  This is the preferred method
      * to use as it allows proper implementation of the errorpage
      * semantics.
      *
