@@ -1,18 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE mbeans-descriptors PUBLIC
- "-//Apache Software Foundation//DTD Model MBeans Configuration File"
- "http://jakarta.apache.org/commons/dtds/mbeans-descriptors.dtd">
-
-<!--
-     Descriptions of JMX MBeans for Catalina
-
-     $Id$
- -->
-
 <mbeans-descriptors>
 
   <mbean         name="AccessLogValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that generates a web server access log"
                domain="Catalina"
                 group="Valve"
@@ -57,7 +46,6 @@
 
 
   <mbean         name="BasicAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of HTTP BASIC
                        Authentication"
                domain="Catalina"
@@ -92,7 +80,6 @@
 
 
   <mbean         name="CertificatesValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that exposes SSL certificate information"
                domain="Catalina"
                 group="Valve"
@@ -111,7 +98,6 @@
 
 
   <mbean         name="ContextConfig"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Context that configures the
                        properties of that Context, and the associated defined
                        servlets"
@@ -322,6 +308,11 @@
            description="Should Tomcat ignore setting a timeout for uploads?" 
                   type="boolean"/>
 
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
+
   </mbean>
 
 
@@ -398,7 +389,6 @@
 
 
   <mbean         name="DigestAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of HTTP DIGEST
                         Authentication"
                domain="Catalina"
@@ -432,7 +422,6 @@
   </mbean>
 
   <mbean         name="EngineConfig"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Engine that configures the
                        properties of that Engine, and the associated defined
                        contexts"
@@ -453,7 +442,6 @@
 
 
   <mbean         name="ErrorReportValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that outputs HTML error pages"
                domain="Catalina"
                 group="Valve"
@@ -472,7 +460,6 @@
 
 
   <mbean         name="ErrorDispatcherValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that handles the error
                        dispatch"
                domain="Catalina"
@@ -492,7 +479,6 @@
 
 
   <mbean         name="FileLogger"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Logger that appends log messages to a
                        file"
                domain="Catalina"
@@ -532,7 +518,6 @@
   </mbean>
 
   <mbean         name="FormAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of FORM BASED
                        Authentication"
                domain="Catalina"
@@ -583,12 +568,12 @@
 
     <attribute   name="roles"
           description="MBean Names of roles for this group"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="users"
           description="MBean Names of user members of this group"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <operation   name="addRole"
@@ -619,7 +604,6 @@
 
 
   <mbean         name="HostConfig"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Host that configures the
                        properties of that Host, and the associated defined
                        contexts"
@@ -650,7 +634,6 @@
 
 
   <mbean         name="Http10Connector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="HTTP/1.0 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -724,7 +707,6 @@
 
 
   <mbean         name="Http11Connector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="HTTP/1.1 Connector for Tomcat Standalone"
                domain="Catalina"
                 group="Connector"
@@ -803,7 +785,6 @@
 
 
   <mbean         name="JAASRealm"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implmentation of Realm that authenticates users via the
                        Java Authentication and Authorization Service (JAAS)"
                domain="Catalina"
@@ -845,11 +826,15 @@
                        are presented?"
                  type="java.lang.String"/>
 
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
 
   <mbean         name="JDBCRealm"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with any JDBC
                        supported database"
                domain="Catalina"
@@ -912,6 +897,11 @@
           description="The table that holds user data"
                  type="java.lang.String"/>
 
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
 
@@ -924,17 +914,17 @@
 
     <attribute   name="groups"
           description="MBean Names of all defined groups"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="roles"
           description="MBean Names of all defined roles"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="users"
           description="MBean Names of all defined users"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <operation   name="createGroup"
@@ -1036,11 +1026,15 @@
            returnType="void">
     </operation>
 
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
 
   <mbean         name="JNDIRealm"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with a directory
                        server accessed via the Java Naming and Directory
                        Interface (JNDI) APIs"
@@ -1121,6 +1115,11 @@
                        users?"
                  type="boolean"/>
 
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
 
@@ -1467,7 +1466,6 @@
 
 
   <mbean         name="MemoryRealm"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Realm that reads an XML file to
                        configure the valid users, passwords, and roles"
                domain="Catalina"
@@ -1488,6 +1486,11 @@
                        information"
                  type="java.lang.String"/>
 
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
+
   </mbean>
 
 
@@ -1504,7 +1507,7 @@
 
     <attribute   name="groups"
           description="MBean Names of all defined groups"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="pathname"
@@ -1513,12 +1516,12 @@
 
     <attribute   name="roles"
           description="MBean Names of all defined roles"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="users"
           description="MBean Names of all defined users"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <operation   name="createGroup"
@@ -1620,11 +1623,15 @@
            returnType="void">
     </operation>
 
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
 
   <mbean         name="NamingContextListener"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Helper class used to initialize and populate the JNDI
                        context associated with each context and server"
                domain="Catalina"
@@ -1655,19 +1662,19 @@
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
                        for this web application"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="resources"
           description="MBean Names of all the defined resource references
                        for this application."
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="resourceLinks"
           description="MBean Names of all the defined resource link references
                        for this application."
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <operation   name="addEnvironment"
@@ -1739,7 +1746,6 @@
   </mbean>
 
   <mbean         name="NonLoginAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation that checks
                        only security constraints not involving user authentication"
                domain="Catalina"
@@ -1773,7 +1779,6 @@
   </mbean>
 
   <mbean         name="RemoteAddrValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that
                        filters based on the string representation of the remote
                        client's IP address"
@@ -1802,7 +1807,6 @@
 
 
   <mbean         name="RemoteHostValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that
                        filters based on the string representation of the remote
                        client's host name"
@@ -1830,7 +1834,6 @@
   </mbean>
 
   <mbean         name="RequestDumperValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that logs interesting contents
                        from the specified Request and the corresponding
                        Response"
@@ -1850,7 +1853,6 @@
   </mbean>
 
   <mbean         name="RequestListenerValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that handles request initialization and destroy events"
                domain="Catalina"
                 group="Valve"
@@ -1886,7 +1888,6 @@
 
 
   <mbean         name="SingleSignOn"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="A Valve that supports a 'single signon' user experience"
                domain="Catalina"
                 group="Valve"
@@ -1905,7 +1906,6 @@
 
 
   <mbean         name="SSLAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of
                        authentication that utilizes SSL certificates to
                        identify client users"
@@ -1941,7 +1941,6 @@
 
 
   <mbean         name="StandardContext"
-            className="org.apache.catalina.mbeans.StandardContextMBean"
           description="Standard Context Component"
                domain="Catalina"
                 group="Context"
@@ -1952,15 +1951,14 @@
                        communication?"
                  type="boolean"/>
 
-    <attribute   name="cookies"
-          description="Should we attempt to use cookies for session id
-                       communication?"
-                 type="boolean"/>
-
     <attribute   name="crossContext"
           description="Should we allow the ServletContext.getContext() method to
                        access the context of other web applications in this
                        server?"
+                 type="boolean"/>
+
+    <attribute   name="privileged"
+          description="Access to tomcat internals"
                  type="boolean"/>
 
     <attribute   name="debug"
@@ -1974,7 +1972,7 @@
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
                        for this web application"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="managedResource"
@@ -1994,14 +1992,27 @@
           description="The context path for this Context"
                  type="java.lang.String"/>
 
+    <attribute   name="startupTime"
+          description="Startup time for this context"
+                 type="long"/>
+
+    <attribute   name="tldScanTime"
+          description="Time spend scanning jars for TLDs for this context"
+                 type="long"/>
+
+    <attribute   name="servlets"
+          description="JSR77 list of servlets"
+                 type="[Ljavax.management.ObjectName;"
+            writeable="false"/>
+
     <attribute   name="reloadable"
           description="The reloadable flag for this web application"
                  type="boolean"/>
 
-    <attribute   name="resources"
+    <attribute   name="resourceNames"
           description="MBean Names of all the defined resource references
                        for this application."
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="staticResources"
@@ -2021,12 +2032,16 @@
 
     <attribute   name="welcomeFiles"
           description="The welcome files for this context"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="workDir"
           description="The pathname to the work directory for this context"
                  type="java.lang.String"/>
+
+    <attribute   name="children"
+          description="Object names of all children"
+                 type="[Ljavax.management.ObjectName;"/>
 
     <operation   name="addEnvironment"
           description="Add an environment entry for this web application"
@@ -2064,8 +2079,33 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="setRealm"
+          description="Configures the realm for this webapp"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+
     <operation   name="reload"
           description="Reload the webapplication"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="init"
+          description="Register the context into the running server"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="start"
+          description="Start the contex"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="stop"
+          description="Stop the contex"
                impact="ACTION"
            returnType="void">
     </operation>
@@ -2074,7 +2114,6 @@
 
 
   <mbean         name="StandardContextValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
                        StandardContext container implementation"
                domain="Catalina"
@@ -2094,11 +2133,10 @@
 
 
   <mbean         name="StandardEngine"
-            className="org.apache.catalina.mbeans.StandardEngineMBean"
+            type="org.apache.catalina.core.StandardEngine"
           description="Standard Engine Component"
                domain="Catalina"
-                group="Engine"
-                 type="org.apache.catalina.core.StandardEngine">
+                group="Engine">
 
     <attribute   name="debug"
           description="The debugging detail level for this component"
@@ -2116,11 +2154,38 @@
           description="Unique name of this Engine"
                  type="java.lang.String"/>
 
+    <attribute   name="baseDir"
+          description="Base dir for this engine, typically same as catalina.base system property"
+                 type="java.lang.String"/>
+
+    <attribute   name="jvmRoute"
+          description="Route used for load balancing"
+                 type="java.lang.String"/>
+
+    <operation name="addChild"
+               description="Add a virtual host"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="child"
+                 description="Host object"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+
+    <operation   name="setRealm"
+          description="Configures the realm for this engine"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+
   </mbean>
 
 
   <mbean         name="StandardEngineValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
                        StandardEngine container implementation"
                domain="Catalina"
@@ -2140,7 +2205,6 @@
 
 
   <mbean         name="StandardHost"
-            className="org.apache.catalina.mbeans.StandardHostMBean"
           description="Standard Host Component"
                domain="Catalina"
                 group="Host"
@@ -2188,6 +2252,24 @@
           description="Attribute value used to turn on/off XML validation"
                  type="boolean"/>
 
+    <attribute   name="children"
+          description="Object names of all children"
+                 type="[Ljavax.management.ObjectName;"/>
+
+    <attribute   name="aliases"
+          description="Host aliases"
+                 type="[Ljava.lang.String;"/>
+
+    <attribute   name="valveNames"
+          description="Return the MBean Names of the Valves associated with this
+                       Host"
+                 type="[Ljava.lang.String;"/>
+
+    <attribute   name="valveObjectNames"
+          description="Return the MBean ObjectNames of the Valves associated with this
+                       Host"
+                type="[Ljavax.management.ObjectName;"/>
+
     <operation   name="addAlias"
           description="Add an alias name that should be mapped to this Host"
                impact="ACTION"
@@ -2200,13 +2282,12 @@
     <operation   name="findAliases"
           description="Return the set of alias names for this Host"
                impact="INFO"
-           returnType="java.lang.String[]"/>
+           returnType="[Ljava.lang.String;"/>
 
-    <operation   name="getValves"
-          description="Return the MBean Names of the Valves associated with this
-                       Host"
-               impact="INFO"
-           returnType="java.lang.String[]"/>
+    <operation   name="addChild"
+          description="Add a context"
+               impact="ACTION"
+           returnType="org.apache.catalina.Container"/>
 
     <operation   name="removeAlias"
           description="Remove the specified alias name from the aliases for this
@@ -2218,11 +2299,20 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="setRealm"
+          description="Configures the realm for this host"
+               impact="ACTION" returnType="void">
+      <parameter name="realm"  description="Realm object"
+                 type="org.apache.catalina.Realm"/>
+    </operation>
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
   </mbean>
 
-
   <mbean         name="StandardHostValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
                        StandardHost container implementation"
                domain="Catalina"
@@ -2242,7 +2332,6 @@
 
 
   <mbean         name="StandardManager"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Standard implementation of the Manager interface"
                domain="Catalina"
                 group="Manager"
@@ -2251,6 +2340,11 @@
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
                        session identifiers"
+                 type="java.lang.String"/>
+
+
+    <attribute   name="randomFile"
+          description="File source of random - /dev/urandom or a pipe"
                  type="java.lang.String"/>
 
     <attribute   name="checkInterval"
@@ -2277,7 +2371,8 @@
                        entropy of the initialization of our random number
                        generator"
                  type="java.lang.String"/>
-
+ 
+    <!-- What is that ??? -->
     <attribute   name="managedResource"
           description="The managed resource this MBean is associated with"
                  type="java.lang.Object"/>
@@ -2301,6 +2396,72 @@
     <attribute   name="pathname"
           description="Path name of the disk file in which active sessions"
                  type="java.lang.String"/>
+
+    <attribute   name="activeSessions"
+          description="Number of active sessions at this moment"
+                 type="int" 
+            writeable="false"/>
+
+    <attribute   name="sessionCounter"
+          description="Total number of sessions created by this manager"
+                 type="int" />
+
+    <attribute   name="maxActive"
+          description="Maximum number of active sessions so far"
+                 type="int" />
+
+    <attribute   name="rejectedSessions"
+          description="Number of sessions we rejected due to maxActive beeing reached"
+                 type="int" />
+
+    <attribute   name="expiredSessions"
+          description="Number of sessions that expired ( doesn't include explicit invalidations )"
+                 type="int" />
+
+    <attribute   name="processingTime"
+          description="Time spent doing housekeeping and expiration"
+                 type="long" />
+
+    <attribute   name="duplicates"
+          description="Number of duplicated session ids generated"
+                 type="int" />
+
+    <operation   name="listSessionIds"
+          description="Return the list of active session ids"
+               impact="ACTION"
+           returnType="java.lang.String">
+    </operation>
+
+    <operation   name="getSessionAttribute"
+          description="Return a session attribute"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+      <parameter name="key"
+          description="key of the attribute"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="expireSession"
+          description="Expire a session"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="getLastAccessedTime"
+          description="Get the last access time"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="sessionId"
+          description="Id of the session"
+                 type="java.lang.String"/>
+    </operation>
+
 
   </mbean>
 
@@ -2415,7 +2576,6 @@
 
 
   <mbean         name="StandardService"
-            className="org.apache.catalina.mbeans.StandardServiceMBean"
           description="Standard Service Component"
                domain="Catalina"
                 group="Service"
@@ -2433,11 +2593,40 @@
           description="Unique name of this Service"
                  type="java.lang.String"/>
 
+    <attribute name="connectorNames"
+               description="ObjectNames of the connectors"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false" />
+
+    <attribute name="container"
+               description="ObjectNames of the engine"
+               type="javax.management.ObjectName"
+               writeable="false" />
+
+    <operation   name="addConnector"
+          description="Add a new connector"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="connector"
+          description="Connector object"
+                 type="org.apache.catalina.Connector"/>
+    </operation>
+
+    <operation   name="setContainer"
+          description="Set the servlet engine that will process the requests "
+               impact="ACTION"
+           returnType="void">
+      <parameter name="engine"
+          description="Engine object"
+                 type="org.apache.catalina.Container"/>
+    </operation>
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
   </mbean>
 
 
   <mbean         name="StandardWrapperValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
                        StandardWrapper container implementation"
                domain="Catalina"
@@ -2476,7 +2665,6 @@
 
 
   <mbean         name="SystemErrLogger"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to
                        System.err"
                domain="Catalina"
@@ -2501,7 +2689,6 @@
 
 
   <mbean         name="SystemOutLogger"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to
                        System.out"
                domain="Catalina"
@@ -2538,7 +2725,7 @@
 
     <attribute   name="groups"
           description="MBean Names of groups this user is a member of"
-                 type="java.lang.String[]"/>
+                 type="[Ljava.lang.String;"/>
 
     <attribute   name="password"
           description="Password of this user"
@@ -2546,7 +2733,7 @@
 
     <attribute   name="roles"
           description="MBean Names of roles for this user"
-                 type="java.lang.String[]"
+                 type="[Ljava.lang.String;"
             writeable="false"/>
 
     <attribute   name="username"
@@ -2605,7 +2792,6 @@
 
 
   <mbean         name="UserDatabaseRealm"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Realm connected to a UserDatabase as a global JNDI
                        resource"
                domain="Catalina"
@@ -2629,7 +2815,6 @@
 
 
   <mbean         name="WebappLoader"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Classloader implementation which is specialized for
                        handling web applications"
                domain="Catalina"
@@ -2659,6 +2844,30 @@
           description="The reloadable flag for this Loader"
                  type="boolean"/>
 
+    <attribute   name="repositories"
+          description="Extra repositories managed by this loader"
+                 type="[Ljava.lang.String;"/>
+
+    <attribute   name="repositoriesString"
+          description="Extra repositories managed by this loader"
+             writeable="false" 
+                 type="java.lang.String"/>
+
+    <attribute   name="loaderRepositories"
+          description="Repositories set in the real loader"
+                 type="[Ljava.lang.String;"
+            writeable="false" />
+
+    <attribute   name="loaderRepositoriesString"
+          description="Repositories set in the real loader"
+                 type="java.lang.String"
+             writeable="false" />
+
+    <operation   name="toString"
+          description="Info about the loader"
+               impact="INFO"
+           returnType="String">
+    </operation>
   </mbean>
 
 
