@@ -282,17 +282,9 @@ public class JDBCRealm extends BaseInterceptor {
     public synchronized boolean authenticate(String username, String credentials) {
         try {
 
-            // Establish the database connection if necessary
-            if ((dbConnection == null) || dbConnection.isClosed()) {
-                log(sm.getString("jdbcRealm.authDBClosed"));
-                dbConnection = DriverManager.getConnection(connectionURL);
-                if( (dbConnection == null) || dbConnection.isClosed() ) {
-                    log(sm.getString("jdbcRealm.authDBReOpenFail"));
-                    return false;
-                }
-                dbConnection.setReadOnly(true);
+            if (!checkConnection()) {
+                return false;
             }
-
             // Create the authentication search prepared statement if necessary
             if (preparedAuthenticate == null) {
                 String sql = "SELECT " + userCredCol + " FROM " + userTable +
@@ -352,15 +344,8 @@ public class JDBCRealm extends BaseInterceptor {
 
     public synchronized String[] getUserRoles(String username) {
         try {
-          if( (dbConnection == null) || dbConnection.isClosed() ) {
-            log(sm.getString("jdbcRealm.getUserRolesDBClosed"));
-
-            dbConnection = DriverManager.getConnection(connectionURL);
-
-            if( dbConnection == null || dbConnection.isClosed() ) {
-              log(sm.getString("jdbcRealm.getUserRolesDBReOpenFail"));
-              return null;
-            }
+          if( !checkConnection()) {
+                return null;
           }
           if (preparedRoles == null) {
                 String sql = "SELECT " + roleNameCol + " FROM " +
@@ -419,25 +404,8 @@ public class JDBCRealm extends BaseInterceptor {
     public void contextInit(Context ctx)
             throws org.apache.tomcat.core.TomcatException {
 	// Validate and update our current component state
-      if (!started) {
+      if (!started && checkConnection() ) {
           started = true;
-          try {
-            Class.forName(driverName);
-            if ((connectionName == null || connectionName.equals("")) &&
-                (connectionPassword == null || connectionPassword.equals(""))) {
-                dbConnection = DriverManager.getConnection(connectionURL);
-            } else {
-                dbConnection = DriverManager.getConnection(connectionURL,
-                                                           connectionName,
-                                                           connectionPassword);
-            }
-          }
-          catch( ClassNotFoundException ex ) {
-            throw new RuntimeException("JDBCRealm.start.readXml: " + ex);
-          }
-          catch( SQLException ex ) {
-            throw new RuntimeException("JDBCRealm.start.readXml: " + ex);
-          }
       }
     }
 
@@ -445,6 +413,7 @@ public class JDBCRealm extends BaseInterceptor {
             throws org.apache.tomcat.core.TomcatException {
       // Validate and update our current component state
       if (started) {
+            started=false;
             if( dbConnection != null ) {
               try {
                 dbConnection.close();
@@ -529,6 +498,35 @@ public class JDBCRealm extends BaseInterceptor {
         }
 	return 401; //HttpServletResponse.SC_UNAUTHORIZED
         // XXX check transport
+    }
+
+    private boolean checkConnection(){
+        try {
+            if( (dbConnection == null) || dbConnection.isClosed() ) {
+                Class.forName(driverName);
+                log(sm.getString("jdbcRealm.checkConnectionDBClosed"));
+                if ((connectionName == null || connectionName.equals("")) ||
+                        (connectionPassword == null || connectionPassword.equals(""))) {
+                        dbConnection = DriverManager.getConnection(connectionURL);
+                } else {
+                        dbConnection = DriverManager.getConnection(connectionURL,
+                                                                   connectionName,
+                                                                   connectionPassword);
+                }
+                if( dbConnection == null || dbConnection.isClosed() ) {
+                  log(sm.getString("jdbcRealm.checkConnectionDBReOpenFail"));
+                  return false;
+                }
+            }
+            return true;
+        }catch (SQLException ex){
+            log(sm.getString("jdbcRealm.checkConnectionSQLException"));
+            log ("SQLException: "+ex);
+            return false;
+        }
+        catch( ClassNotFoundException ex ) {
+            throw new RuntimeException("JDBCRealm.checkConnection: " + ex);
+        }
     }
 
 }
