@@ -335,7 +335,7 @@ public class JspEngineContext implements JspCompilationContext {
             String baseURI = actURI.substring(0, actURI.lastIndexOf('/'));
             return baseURI + '/' + uri;
         }
-    };    
+    }    
 
     /**
      * Gets a resource as a stream, relative to the meanings of this
@@ -346,7 +346,7 @@ public class JspEngineContext implements JspCompilationContext {
     public java.io.InputStream getResourceAsStream(String res)
     {
         return context.getResourceAsStream(res);
-    };
+    }
 
     /** 
      * Gets the actual path of a URI relative to the context of
@@ -362,7 +362,7 @@ public class JspEngineContext implements JspCompilationContext {
         {
             return path;
         }
-    };
+    }
 
    
 }
