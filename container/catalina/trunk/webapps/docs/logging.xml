@@ -62,14 +62,11 @@
       <ol>
         <li>Create a file called log4j.properties with the following content 
             and save it into common/classes. </li>
-	<li>Use the appropriate file path convention for your OS.  Below is
-            a Window example, which on *nix might be
-	    <code>/var/jakarta-tomcat-5.5.4/logs/tomcat.log</code>.</li>
         <li>
           <source>
             log4j.rootLogger=debug, R <br />
             log4j.appender.R=org.apache.log4j.RollingFileAppender <br />
-            log4j.appender.R.File=d:/jakarta-tomcat-5.5.4/logs/tomcat.log <br />
+            log4j.appender.R.File=${catalina.home}/logs/tomcat.log <br />
             log4j.appender.R.MaxFileSize=10MB <br />
             log4j.appender.R.MaxBackupIndex=10 <br />
             log4j.appender.R.layout=org.apache.log4j.PatternLayout <br />
@@ -80,6 +77,12 @@
 
 	<li><a href="http://logging.apache.org/log4j">Download Log4J</a> 
             (v1.2 or later) and place the log4j jar in $CATALINA_HOME/common/lib.</li>
+
+        <li><a href="http://jakarta.apache.org/site/binindex.cgi#commons-logging">
+            Download Commons Logging</a> and place the commons-logging.jar 
+            (not commons-logging-api.jar) in $CATALINA_HOME/common/lib with 
+            the log4j jar.</li>
+
 	<li>Start Tomcat</li>
       </ol>
     </p>
@@ -93,24 +96,33 @@
 	
     <p>
       You can (and should) be more picky about which packages to include 
-      in the logging. For example try substituting the
-      last line of the above configuration with one of these:
+      in the logging. Tomcat 5.5 uses defines loggers by Engine and Host names.
+      For example, for a default Catalina localhost log, add this to the
+      end of the log4j.properties above. Note that there are known issues with 
+      using this naming convention (with square brackets) in log4j XML based
+      configuration files, so we recommend you use a properties file as described
+      until a future version of log4j allows this convention.
       
       <ul>
         <li>log4j.logger.org.apache.catalina.core.ContainerBase.[Catalina].[localhost]=DEBUG, R</li>
 	<li>log4j.logger.org.apache.catalina.core=DEBUG, R</li>
 	<li>log4j.logger.org.apache.catalina.session=DEBUG, R</li>
       </ul>
+
+      Be warned a level of DEBUG will produce megabytes of logging and slow startup
+      of Tomcat. This level should be used sparingly when debugging of internal Tomcat
+      operations is required.
     </p>
 	
     <p>
       Your web applications should certainly use their own log4j configuration. 
-      This is valid <i>with</i> the above.  You would place a similar log4j.properties 
+      This is valid <i>with</i> the above configuration.  You would place a similar log4j.properties 
       file in your web application's WEB-INF/classes folder, and log4j1.2.8.jar into
       WEB-INF/lib. Then specify your package level logging. This is a basic setup of log4j 
+      which does *not* require Commons-Logging, 
       and you should consult the 
       <a href="http://logging.apache.org/log4j/docs/documentation.html">log4j documentation</a> 
-      for more options: this page is intended only as a bootstrapping guide.
+      for more options.  This page is intended only as a bootstrapping guide.
     </p>
 	
   </section>
