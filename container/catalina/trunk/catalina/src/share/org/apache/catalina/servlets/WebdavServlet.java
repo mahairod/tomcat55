@@ -714,8 +714,8 @@ public class WebdavServlet
     /**
      * Process a POST request for the specified resource.
      *
-     * @param request The servlet request we are processing
-     * @param response The servlet response we are creating
+     * @param req The servlet request we are processing
+     * @param resp The servlet response we are creating
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet-specified error occurs
@@ -1934,6 +1934,7 @@ public class WebdavServlet
     /**
      * Propfind helper method.
      *
+     * @param req The servlet request
      * @param resources Resources object associated with this context
      * @param generatedXML XML response to the Propfind request
      * @param path Path of the current resource
@@ -2590,8 +2591,6 @@ public class WebdavServlet
 
         /**
          * Constructor.
-         *
-         * @param pathname Path name of the file
          */
         public LockInfo() {
 
