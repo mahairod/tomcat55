@@ -232,11 +232,16 @@ public class PageContextImpl
     }
 
     public Object getAttribute(String name) {
+
+	if (name == null) throw new NullPointerException("Null name");
 	return attributes.get(name);
     }
 
 
     public Object getAttribute(String name, int scope) {
+
+	if (name == null) throw new NullPointerException("Null name");
+
 	switch (scope) {
 	    case PAGE_SCOPE:
 		return attributes.get(name);
@@ -261,11 +266,19 @@ public class PageContextImpl
 
 
     public void setAttribute(String name, Object attribute) {
+
+	if (name == null || attribute == null)
+	    throw new NullPointerException("Null name or attribute value");
+
 	attributes.put(name, attribute);
     }
 
 
     public void setAttribute(String name, Object o, int scope) {
+
+	if (name == null || o == null)
+	    throw new NullPointerException("Null name or attribute value");
+
 	switch (scope) {
 	    case PAGE_SCOPE:
 		attributes.put(name, o);
