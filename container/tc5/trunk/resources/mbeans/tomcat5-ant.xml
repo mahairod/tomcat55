@@ -1,0 +1,97 @@
+<project name="tomcat-embed" default="start" basedir=".">
+
+  <property file="${user.home}/build.properties"/>
+  <property file="build.properties"/>
+
+  <property name="tomcat.home" location="." />
+
+  <path id="tomcatCP-extra" /> 
+
+
+  <target name="init" unless="init.done">
+
+    <path id="tomcatCP" >
+      <path refid="tomcatCP-extra"/>
+
+      <!-- Just include everything for now 
+       -->
+      <fileset dir="${tomcat.home}/lib" includes="*.jar"/>
+    </path>
+
+    <taskdef resource="org/apache/commons/modeler/ant/ant.properties"
+             classpathref="tomcatCP" />
+    <property name="init.done" value="true"/>
+  </target>
+
+
+  <!-- ==================== Console - for debugging. ==================== 
+       Call this target if you want the console added.
+    -->
+
+  <target name="jmx-console-ri" depends="init" description="Enable JMX-RI console ( web interface )" >
+    <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
+           name="jmx-console:type=HtmlAdaptorServer,port=9998">
+    </mbean>
+    <jmx-attribute objectName="jmx-console:type=HtmlAdaptorServer,port=9998" 
+                   attribute="Port" type="int" value="9998"/>
+
+    <jmx-operation objectName="jmx-console:type=HtmlAdaptorServer,port=9998"
+                   operation="start" />
+  </target>
+
+
+  <!-- ======================= Server.xml based ================ -->
+
+  <target name="run" depends="init"
+        description="Start tomcat as an mbean using server.xml config and returns">
+    <property name="domain" value="Catalina" />
+
+    <modeler code="org.apache.catalina.startup.Catalina"
+          name="${domain}:type=server" />
+
+    <jmxSet objectName="${domain}:type=server"
+            attribute="catalinaHome"
+            value="${tomcat.home}"/>
+  
+    <!-- We could also call init and set other properties - 
+         init should load the modules -->
+
+    <jmx objectName="${domain}:type=server"
+         operation="start" />
+
+
+    <echo message="Tomcat5 running"/>
+
+    <!-- let's add a context - using JMX 
+    <property name="admin1Name" 
+              value="${domain}:j2eeType=WebModule,name=//localhost/admin1,J2EEApplication=none,J2EEServer=none" />
+
+    <modeler code="org.apache.catalina.core.StandardContext"
+           name="${admin1Name}" />
+
+    <jmxSet objectName="${admin1Name}"
+            attribute="docBase"
+            value="${tomcat.home}/server/webapps/admin" />
+
+    <jmx objectName="${admin1Name}"
+         operation="init" />
+    -->
+
+    
+  </target>
+
+  <!-- ==================== Await ==================== 
+       Call this target if you want the build file to hung in "await". Tomcat stop or ^C will stop 
+       the ant execution
+    -->
+  <target name="await" depends="init"
+        description="Wait for tomcat stop. Call this target after run">
+
+    <jmx objectName="Catalina:type=server"
+         operation="await" />
+
+  </target>
+
+  <target name="start" depends="init,run,await" description="Start tomcat, wait for stop message"/>
+
+</project>
