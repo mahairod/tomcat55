@@ -94,7 +94,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
-
+import org.xml.sax.InputSource;
 /**
  * Startup event listener for a <b>Context</b> that configures the properties
  * of that Context, and the associated defined servlets.
@@ -149,6 +149,44 @@ public final class TldConfig  {
 
     // --------------------------------------------------------- Public Methods
 
+     /**
+     * Set the validation feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlValidation true to enable xml instance validation
+     */
+    public void setXmlValidation(boolean xmlValidation){
+        this.xmlValidation = xmlValidation;
+    }
+
+    /**
+     * Get the server.xml <host> attribute's xmlValidation.
+     * @return true if validation is enabled.
+     *
+     */
+    public boolean getXmlValidation(){
+        return xmlValidation;
+    }
+
+    /**
+     * Get the server.xml <host> attribute's xmlNamespaceAware.
+     * @return true if namespace awarenes is enabled.
+     *
+     */
+    public boolean getXmlNamespaceAware(){
+        return xmlNamespaceAware;
+    }
+
+
+    /**
+     * Set the namespace aware feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlNamespaceAware true to enable namespace awareness
+     */
+    public void setXmlNamespaceAware(boolean xmlNamespaceAware){
+        this.xmlNamespaceAware=xmlNamespaceAware;
+    }    
+
+
     public boolean isRescan() {
         return rescan;
     }
@@ -176,6 +214,7 @@ public final class TldConfig  {
         listeners.toArray(result);
         return result;
     }
+
 
     /**
      * Scan for and configure all tag library descriptors found in this
@@ -458,7 +497,7 @@ public final class TldConfig  {
 
         JarFile jarFile = null;
         String name = null;
-        InputStream inputStream = null;
+        InputSource inputSource = null;
 
         String jarPath = file.getAbsolutePath();
 
@@ -477,10 +516,9 @@ public final class TldConfig  {
                 if (log.isTraceEnabled()) {
                     log.trace("  Processing TLD at '" + name + "'");
                 }
-                inputStream = jarFile.getInputStream(entry);
-                tldScanStream(inputStream);
-                inputStream.close();
-                inputStream = null;
+                inputSource = new InputSource(jarFile.getInputStream(entry));
+                tldScanStream(inputSource);
+                inputSource = null;
                 name = null;
             }
         } catch (Exception e) {
@@ -494,13 +532,6 @@ public final class TldConfig  {
                           e);
             }
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (Throwable t) {
-                    // Ignore
-                }
-            }
             if (jarFile != null) {
                 try {
                     jarFile.close();
@@ -521,7 +552,7 @@ public final class TldConfig  {
      *
      * @exception Exception if an exception occurs while scanning this TLD
      */
-    private void tldScanStream(InputStream resourceStream)
+    private void tldScanStream(InputSource resourceStream)
         throws Exception {
 
         if (tldDigester == null){
@@ -554,30 +585,23 @@ public final class TldConfig  {
             log.debug(" Scanning TLD at resource path '" + resourcePath + "'");
         }
 
-        InputStream inputStream = null;
+        InputSource inputSource = null;
         try {
-            inputStream =
-                context.getServletContext().getResourceAsStream(resourcePath);
-            if (inputStream == null) {
+            inputSource =
+                new InputSource(
+                    context.getServletContext().getResourceAsStream(resourcePath));
+            if (inputSource == null) {
                 throw new IllegalArgumentException
                     (sm.getString("contextConfig.tldResourcePath",
                                   resourcePath));
             }
-            tldScanStream(inputStream);
+            tldScanStream(inputSource);
         } catch (Exception e) {
              throw new ServletException
                  (sm.getString("contextConfig.tldFileException", resourcePath,
                                context.getPath()),
                   e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (Throwable t) {
-                    // Ignore
-                }
-            }
-        }
+        } 
 
     }
 
