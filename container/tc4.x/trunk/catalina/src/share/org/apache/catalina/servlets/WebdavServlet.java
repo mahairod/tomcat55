@@ -1231,7 +1231,10 @@ public class WebdavServlet
                         lockNulls.addElement(lock.path);
 
                     }
-
+                    // Add the Lock-Token header as by RFC 2518 8.10.1
+                    // - only do this for newly created locks
+                    resp.addHeader("Lock-Token", "<opaquelocktoken:"
+                                   + lockToken + ">");
                 }
 
             }
