@@ -109,7 +109,7 @@ public class CookieManager implements Cloneable {
         reader.close();
 
         } catch (IOException ioe) {
-            ioe.printStackTrace(System.out);
+            //ioe.printStackTrace(System.out);
         }
 
     }
