@@ -18,7 +18,6 @@ package org.apache.catalina.mbeans;
 
 
 import java.lang.reflect.Method;
-import java.net.URLEncoder;
 import java.util.Hashtable;
 
 import javax.management.Attribute;
@@ -111,19 +110,6 @@ public class MBeanUtils {
 
 
     // --------------------------------------------------------- Static Methods
-
-    /**
-     * Translates a string into x-www-form-urlencoded format
-     *
-     * @param t string to be encoded
-     * @return encoded string
-     */
-    private static final String encodeStr(String t) {
-   
-        return URLEncoder.encode(t);
-
-    }
-
 
     /**
      * Create and return the name of the <code>ManagedBean</code> that
@@ -908,13 +894,13 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        String encodedResourceName = encodeStr(resource.getName());
+        String quotedResourceName = ObjectName.quote(resource.getName());
         Object container = 
                 resource.getNamingResources().getContainer();
         if (container instanceof Server) {        
             name = new ObjectName(domain + ":type=Resource" +
                         ",resourcetype=Global,class=" + resource.getType() + 
-                        ",name=" + encodedResourceName);
+                        ",name=" + quotedResourceName);
         } else if (container instanceof Context) {                    
             String path = ((Context)container).getPath();
             if (path.length() < 1)
@@ -926,7 +912,7 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",class=" + resource.getType() +
-                        ",name=" + encodedResourceName);
+                        ",name=" + quotedResourceName);
         } else if (container instanceof DefaultContext) {            
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
@@ -935,13 +921,13 @@ public class MBeanUtils {
                 name = new ObjectName(domain + ":type=Resource" + 
                         ",resourcetype=HostDefaultContext,host=" + host.getName() +
                         ",class=" + resource.getType() +
-                        ",name=" + encodedResourceName);
+                        ",name=" + quotedResourceName);
             } else if (container instanceof Engine) {
                 Engine engine = (Engine) container;
                 Service service = engine.getService();
                 name = new ObjectName(domain + ":type=Resource" + 
                         ",resourcetype=ServiceDefaultContext,class=" + resource.getType() +
-                        ",name=" + encodedResourceName);
+                        ",name=" + quotedResourceName);
             }
         }
         
@@ -964,13 +950,14 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        String encodedResourceLinkName = encodeStr(resourceLink.getName());        
+        String quotedResourceLinkName
+                = ObjectName.quote(resourceLink.getName());        
         Object container = 
                 resourceLink.getNamingResources().getContainer();
         if (container instanceof Server) {        
             name = new ObjectName(domain + ":type=ResourceLink" +
                         ",resourcetype=Global" + 
-                        ",name=" + encodedResourceLinkName);
+                        ",name=" + quotedResourceLinkName);
         } else if (container instanceof Context) {                    
             String path = ((Context)container).getPath();
             if (path.length() < 1)
@@ -981,7 +968,7 @@ public class MBeanUtils {
             name = new ObjectName(domain + ":type=ResourceLink" +
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
-                        ",name=" + encodedResourceLinkName);
+                        ",name=" + quotedResourceLinkName);
         } else if (container instanceof DefaultContext) {            
             container = ((DefaultContext)container).getParent();
             if (container instanceof Host) {
@@ -989,12 +976,12 @@ public class MBeanUtils {
                 Service service = ((Engine)host.getParent()).getService();
                 name = new ObjectName(domain + ":type=ResourceLink" + 
                         ",resourcetype=HostDefaultContext,host=" + host.getName() +
-                        ",name=" + encodedResourceLinkName);
+                        ",name=" + quotedResourceLinkName);
             } else if (container instanceof Engine) {
                 Engine engine = (Engine) container;
                 Service service = engine.getService();
                 name = new ObjectName(domain + ":type=ResourceLink" + 
-                        ",resourcetype=ServiceDefaultContext,name=" + encodedResourceLinkName);
+                        ",resourcetype=ServiceDefaultContext,name=" + quotedResourceLinkName);
             }
         }
         
