@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.Request;
@@ -269,12 +268,8 @@ public abstract class RequestFilterValve
         // Check the deny patterns, if any
         for (int i = 0; i < denies.length; i++) {
             if (denies[i].match(property)) {
-                ServletResponse sres = response.getResponse();
-                if (sres instanceof HttpServletResponse) {
-                    HttpServletResponse hres = (HttpServletResponse) sres;
-                    hres.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
             }
         }
 
@@ -293,12 +288,7 @@ public abstract class RequestFilterValve
         }
 
         // Deny this request
-        ServletResponse sres = response.getResponse();
-        if (sres instanceof HttpServletResponse) {
-            HttpServletResponse hres = (HttpServletResponse) sres;
-            hres.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
     }
 
