@@ -83,6 +83,8 @@ import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.util.StringManager;
 
@@ -140,18 +142,6 @@ public class StandardDefaultContext implements DefaultContext {
 
 
     /**
-     * The EJB resource references for this web application, keyed by name.
-     */
-    private HashMap ejbs = new HashMap();
-
-
-    /**
-     * The environment entries for this web application, keyed by name.
-     */
-    private HashMap envs = new HashMap();
-
-
-    /**
      * The descriptive information string for this implementation.
      */
     private static final String info =
@@ -173,6 +163,12 @@ public class StandardDefaultContext implements DefaultContext {
 
 
     /**
+     * The associated naming resources.
+     */
+    private NamingResources namingResources = new NamingResources();
+
+
+    /**
      * The context initialization parameters for this web application,
      * keyed by name.
      */
@@ -183,25 +179,6 @@ public class StandardDefaultContext implements DefaultContext {
      * The reloadable flag for this web application.
      */
     private boolean reloadable = false;
-
-
-    /**
-     * The resource environment references for this web application,
-     * keyed by name.
-     */
-    private HashMap resourceEnvRefs = new HashMap();
-
-
-    /**
-     * The resource references for this web application, keyed by name.
-     */
-    private HashMap resources = new HashMap();
-
-
-    /**
-     * The resource parameters for this web application, keyed by name.
-     */
-    private HashMap resourceParams = new HashMap();
 
 
     /**
@@ -546,9 +523,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public void addEjb(ContextEjb ejb) {
 
-        synchronized (ejbs) {
-            ejbs.put(ejb.getName(), ejb);
-        }
+        namingResources.addEjb(ejb);
 
     }
 
@@ -559,9 +534,8 @@ public class StandardDefaultContext implements DefaultContext {
      * @param environment New environment entry
      */
     public void addEnvironment(ContextEnvironment environment) {
-        synchronized (envs) {
-            envs.put(environment.getName(), environment);
-        }
+
+        namingResources.addEnvironment(environment);
 
     }
 
@@ -572,10 +546,8 @@ public class StandardDefaultContext implements DefaultContext {
      * @param resourceParameters New resource parameters
      */
     public void addResourceParams(ResourceParams resourceParameters) {
-        synchronized (resourceParams) {
-            resourceParams.put(resourceParameters.getName(),
-                               resourceParameters);
-        }
+
+        namingResources.addResourceParams(resourceParameters);
 
     }
 
@@ -633,9 +605,8 @@ public class StandardDefaultContext implements DefaultContext {
      * @param resource New resource reference
      */
     public void addResource(ContextResource resource) {
-        synchronized (resources) {
-            resources.put(resource.getName(), resource);
-        }
+
+        namingResources.addResource(resource);
 
     }
 
@@ -647,9 +618,20 @@ public class StandardDefaultContext implements DefaultContext {
      * @param type The resource environment reference type
      */
     public void addResourceEnvRef(String name, String type) {
-        synchronized (resourceEnvRefs) {
-            resourceEnvRefs.put(name, type);
-        }
+
+        namingResources.addResourceEnvRef(name, type);
+
+    }
+
+
+    /**
+     * Add a resource link for this web application.
+     *
+     * @param resource New resource link
+     */
+    public void addResourceLink(ContextResourceLink resourceLink) {
+
+        namingResources.addResourceLink(resourceLink);
 
     }
 
@@ -721,9 +703,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextEjb findEjb(String name) {
 
-        synchronized (ejbs) {
-            return ((ContextEjb) ejbs.get(name));
-        }
+        return namingResources.findEjb(name);
 
     }
 
@@ -734,10 +714,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextEjb[] findEjbs() {
 
-        synchronized (ejbs) {
-            ContextEjb results[] = new ContextEjb[ejbs.size()];
-            return ((ContextEjb[]) ejbs.values().toArray(results));
-        }
+        return namingResources.findEjbs();
 
     }
 
@@ -750,9 +727,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextEnvironment findEnvironment(String name) {
 
-        synchronized (envs) {
-            return ((ContextEnvironment) envs.get(name));
-        }
+        return namingResources.findEnvironment(name);
 
     }
 
@@ -764,10 +739,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextEnvironment[] findEnvironments() {
 
-        synchronized (envs) {
-            ContextEnvironment results[] = new ContextEnvironment[envs.size()];
-            return ((ContextEnvironment[]) envs.values().toArray(results));
-        }
+        return namingResources.findEnvironments();
 
     }
 
@@ -779,10 +751,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ResourceParams[] findResourceParams() {
 
-        synchronized (resourceParams) {
-            ResourceParams results[] = new ResourceParams[resourceParams.size()];
-            return ((ResourceParams[]) resourceParams.values().toArray(results));
-        }
+        return namingResources.findResourceParams();
 
     }
 
@@ -836,9 +805,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextResource findResource(String name) {
 
-        synchronized (resources) {
-            return ((ContextResource) resources.get(name));
-        }
+        return namingResources.findResource(name);
 
     }
 
@@ -851,9 +818,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public String findResourceEnvRef(String name) {
 
-        synchronized (resourceEnvRefs) {
-            return ((String) resourceEnvRefs.get(name));
-        }
+        return namingResources.findResourceEnvRef(name);
 
     }
 
@@ -865,10 +830,31 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public String[] findResourceEnvRefs() {
 
-        synchronized (resourceEnvRefs) {
-            String results[] = new String[resourceEnvRefs.size()];
-            return ((String[]) resourceEnvRefs.keySet().toArray(results));
-        }
+        return namingResources.findResourceEnvRefs();
+
+    }
+
+
+    /**
+     * Return the resource link with the specified name, if any;
+     * otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired resource link
+     */
+    public ContextResourceLink findResourceLink(String name) {
+
+        return namingResources.findResourceLink(name);
+
+    }
+
+
+    /**
+     * Return the defined resource links for this application.  If
+     * none have been defined, a zero-length array is returned.
+     */
+    public ContextResourceLink[] findResourceLinks() {
+
+        return namingResources.findResourceLinks();
 
     }
 
@@ -879,10 +865,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public ContextResource[] findResources() {
 
-        synchronized (resources) {
-            ContextResource results[] = new ContextResource[resources.size()];
-            return ((ContextResource[]) resources.values().toArray(results));
-        }
+        return namingResources.findResources();
 
     }
 
@@ -988,9 +971,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public void removeEjb(String name) {
 
-        synchronized (ejbs) {
-            ejbs.remove(name);
-        }
+        namingResources.removeEjb(name);
 
     }
 
@@ -1002,9 +983,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public void removeEnvironment(String name) {
 
-        synchronized (envs) {
-            envs.remove(name);
-        }
+        namingResources.removeEnvironment(name);
 
     }
 
@@ -1066,9 +1045,7 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public void removeResource(String name) {
 
-        synchronized (resources) {
-            resources.remove(name);
-        }
+        namingResources.removeResource(name);
 
     }
 
@@ -1080,9 +1057,19 @@ public class StandardDefaultContext implements DefaultContext {
      */
     public void removeResourceEnvRef(String name) {
 
-        synchronized (resourceEnvRefs) {
-            resourceEnvRefs.remove(name);
-        }
+        namingResources.removeResourceEnvRef(name);
+
+    }
+
+
+    /**
+     * Remove any resource link with the specified name.
+     *
+     * @param name Name of the resource link to remove
+     */
+    public void removeResourceLink(String name) {
+
+        namingResources.removeResourceLink(name);
 
     }
 
