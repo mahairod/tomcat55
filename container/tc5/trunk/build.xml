@@ -288,6 +288,27 @@
 
   </target>
 
+	  <target name="build-juli" 
+	          unless="tomcatjuli.build.notrequired" 
+	          depends="init" description="builds j-t-c/juli">
+	    <echo>========== Building: tomcat-juli </echo>
+
+	    <ant dir="${jtc.home}/juli" target="compile-only">
+	      <property name="build.home" value="${tomcat.build}"/>
+	    </ant>
+	  	
+	  	<!-- Java.util.logging Implementation -->
+		<jar jarfile="${tomcat.build}/bin/tomcat-juli.jar" index="true">
+	      <fileset dir="${tomcat.build}/classes">
+	        <include name="org/apache/juli/**" />
+	        <!-- Javadoc and i18n exclusions -->
+	        <exclude name="**/package.html" />
+	        <exclude name="**/LocalStrings_*" />
+	      </fileset>
+	    </jar>
+
+	  </target>
+
   <target name="build-jasper" 
           unless="jasper.build.notrequired" 
           depends="init" description="build jasper">
@@ -512,6 +533,8 @@
     <antcall target="build-tomcatjk"/>
 
     <antcall target="build-tomcathttp11"/>
+      
+    <antcall target="build-juli"/>
       
     <antcall target="build-jasper"/>
 
