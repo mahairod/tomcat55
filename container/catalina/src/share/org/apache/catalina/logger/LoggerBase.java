@@ -75,14 +75,18 @@ import javax.management.ObjectName;
 import javax.management.MBeanServer;
 import javax.management.MBeanRegistration;
 import org.apache.catalina.Container;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.util.LifecycleSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -95,7 +99,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class LoggerBase
-    implements Logger, MBeanRegistration 
+    implements Lifecycle, Logger, MBeanRegistration 
  {
     private static Log log = LogFactory.getLog(LoggerBase.class);
     
@@ -119,6 +123,12 @@ public class LoggerBase
      */
     protected static final String info =
         "org.apache.catalina.logger.LoggerBase/1.0";
+
+
+    /**
+     * The lifecycle event support for this component.
+     */
+    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
 
     /**
@@ -361,7 +371,7 @@ public class LoggerBase
         support.removePropertyChangeListener(listener);
 
     }
-
+                                                                               
     protected String domain;
     protected String host;
     protected String path;
@@ -380,20 +390,23 @@ public class LoggerBase
     public ObjectName getObjectName() {
         return oname;
     }
-
+          
     public String getDomain() {
         return domain;
     }
-
+    
     public ObjectName preRegister(MBeanServer server,
                                   ObjectName name) throws Exception {
         oname=name;
         mserver=server;
+        // FIXME null pointer exception 
+        if (name == null) {
+            return null;
+        }
         domain=name.getDomain();
-
         host=name.getKeyProperty("host");
         path=name.getKeyProperty("path");
-
+        log("preRegister with "+name);
         if( container== null ) {
             // Register with the parent
             try {
@@ -414,7 +427,7 @@ public class LoggerBase
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
             }
-        }
+        } 
                 
         return name;
     }
@@ -437,6 +450,7 @@ public class LoggerBase
     }
     
     public ObjectName createObjectName() {
+        log("createObjectName with "+container);
         // register
         try {
             StandardEngine engine=null;            
@@ -447,9 +461,14 @@ public class LoggerBase
                 engine=(StandardEngine)container.getParent();
                 suffix=",host=" + container.getName();
             } else if( container instanceof StandardContext ) {
+                String path = ((StandardContext)container).getPath();
+                // add "/" to avoid MalformedObjectName Exception
+                if (path.equals("")) {
+                    path = "/";
+                }
                 engine=(StandardEngine)container.getParent().getParent();
-                suffix=",host=" + container.getParent().getName() + 
-                        ",path=" + ((StandardContext)container).getPath();
+                suffix= ",path=" + path + ",host=" + 
+                        container.getParent().getName();
             } else {
                 log.error("Unknown container " + container );
             }
@@ -463,5 +482,89 @@ public class LoggerBase
         }
         return oname;
     }
+
+
+   // ------------------------------------------------------ Lifecycle Methods
     
+    /**
+     * Add a lifecycle event listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Lifecycle has no listeners registered, a zero-length array is returned.
+     */
+    public LifecycleListener[] findLifecycleListeners() {
+
+        return lifecycle.findLifecycleListeners();
+
+    }
+
+
+    /**
+     * Remove a lifecycle event listener from this component.
+     *
+     * @param listener The listener to add
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+
+        lifecycle.removeLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Prepare for the beginning of active use of the public methods of this
+     * component.  This method should be called after <code>configure()</code>,
+     * and before any of the public methods of the component are utilized.     
+     *
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents this component from being used
+     */
+    public void start() throws LifecycleException {
+                                                                
+        // register this logger
+        if ( getObjectName()==null ) {   
+            ObjectName oname = createObjectName();   
+            try {   
+                Registry.getRegistry().registerComponent(this, oname, null); 
+                log.info( "registering logger " + oname );   
+            } catch( Exception ex ) {   
+                log.error( "Can't register logger " + oname, ex);   
+            }      
+        }     
+
+    }                         
+                              
+                              
+    /**                       
+     * Gracefully terminate the active use of the public methods of this
+     * component.  This method should be the last one called on a given
+     * instance of this component.
+     *                        
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public void stop() throws LifecycleException {
+
+        // unregister this logger
+        if ( getObjectName()!=null ) {   
+            ObjectName oname = createObjectName();   
+            try {   
+                Registry.getRegistry().unregisterComponent(oname); 
+                log.info( "unregistering logger " + oname );   
+            } catch( Exception ex ) {   
+                log.error( "Can't unregister logger " + oname, ex);   
+            }      
+        }  
+    }
+  
 }

@@ -70,10 +70,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -88,8 +85,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class FileLogger
-    extends LoggerBase
-    implements Lifecycle {
+    extends LoggerBase {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -113,12 +109,6 @@ public class FileLogger
      */
     protected static final String info =
         "org.apache.catalina.logger.FileLogger/1.0";
-
-
-    /**
-     * The lifecycle event support for this component.
-     */
-    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
 
     /**
@@ -344,41 +334,6 @@ public class FileLogger
 
 
     /**
-     * Add a lifecycle event listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.addLifecycleListener(listener);
-
-    }
-
-
-    /**
-     * Get the lifecycle listeners associated with this lifecycle. If this 
-     * Lifecycle has no listeners registered, a zero-length array is returned.
-     */
-    public LifecycleListener[] findLifecycleListeners() {
-
-        return lifecycle.findLifecycleListeners();
-
-    }
-
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     *
-     * @param listener The listener to add
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.removeLifecycleListener(listener);
-
-    }
-
-
-    /**
      * Prepare for the beginning of active use of the public methods of this
      * component.  This method should be called after <code>configure()</code>,
      * and before any of the public methods of the component are utilized.
@@ -394,6 +349,8 @@ public class FileLogger
                 (sm.getString("fileLogger.alreadyStarted"));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
+        
+        super.start();
 
     }
 
@@ -416,9 +373,10 @@ public class FileLogger
         started = false;
 
         close();
+        
+        super.stop();
 
     }
 
 
 }
-
