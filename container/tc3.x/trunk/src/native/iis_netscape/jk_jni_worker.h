@@ -54,85 +54,29 @@
  */
 
 /***************************************************************************
- * Description: Global definitions and include files that should exist     *
- *              anywhere                                                   *
+ * Description: jni worker header file                                 *
  * Author:      Gal Shachor <shachor@il.ibm.com>                           *
  * Version:     $Revision$                                               *
  ***************************************************************************/
 
-#ifndef JK_GLOBAL_H
-#define JK_GLOBAL_H
+#ifndef JK_JNI_WORKER_H
+#define JK_JNI_WORKER_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <time.h>
-#include <ctype.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#ifdef WIN32
-    #include <windows.h>
-    #include <winsock.h>
-#else
-    #include <unistd.h>
-    #include <netdb.h>
-
-    #include <netinet/in.h>
-    #include <netinet/tcp.h>
-
-    #include <sys/un.h>
-    #include <sys/socket.h>
-    #include <sys/time.h>
-    #include <sys/socketvar.h>
-    #include <sys/select.h>
-    #include <sys/ioctl.h>
-#endif
+#include "jk_logger.h"
+#include "jk_service.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define JK_WORKER_FILE_TAG      ("worker_file")
-#define JK_MOUNT_FILE_TAG       ("worker_mount_file")
-#define JK_LOG_LEVEL_TAG        ("log_level")
-#define JK_LOG_FILE_TAG         ("log_file")
-#define JK_WORKER_NAME_TAG      ("worker")
+#define JK_JNI_WORKER_NAME ("jni")
 
-#define JK_WORKER_FILE_DEF  ("workers.properties")
-#define JK_LOG_LEVEL_DEF    ("emerg")
-
-#define JK_TRUE  (1)
-#define JK_FALSE (0)
-
-#define JK_LF (10)
-#define JK_CR (13)
-
-#ifdef WIN32
-    #define JK_METHOD __stdcall
-    #define C_LEVEL_TRY_START       __try {
-    #define C_LEVEL_TRY_END         }
-    #define C_LEVEL_FINALLY_START   __finally {
-    #define C_LEVEL_FINALLY_END     }
-    #define PATH_SEPERATOR          (';')
-    #define FILE_SEPERATOR          ('\\')
-    #define PATH_ENV_VARIABLE       ("PATH")
-#else
-    #define JK_METHOD
-    #define C_LEVEL_TRY_START       
-    #define C_LEVEL_TRY_END         
-    #define C_LEVEL_FINALLY_START   
-    #define C_LEVEL_FINALLY_END     
-    #define PATH_SEPERATOR          (':')
-    #define FILE_SEPERATOR          ('/')
-    #define PATH_ENV_VARIABLE       ("LD_LIBRARY_PATH")
-#endif
+int JK_METHOD jni_worker_factory(jk_worker_t **w,
+                                 const char *name,
+                                 jk_logger_t *l);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* JK_GLOBAL_H */
+#endif /* JK_JNI_WORKER_H */

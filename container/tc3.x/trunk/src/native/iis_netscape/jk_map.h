@@ -87,6 +87,10 @@ int map_get_int(jk_map_t *m,
                 const char *name,
                 int def);
 
+double map_get_double(jk_map_t *m,
+                      const char *name,
+                      double def);
+
 char *map_get_string(jk_map_t *m,
                      const char *name,
                      const char *def);
