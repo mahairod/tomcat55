@@ -290,11 +290,27 @@ public class Catalina {
         mapper.addRule("Server", mapper.addChild
                        ("setServer", "org.apache.catalina.Server"));
 
+        mapper.addRule("Server/Listener", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule("Server/Listener",
+                       mapper.setProperties());
+        mapper.addRule("Server/Listener", mapper.addChild
+                       ("addLifecycleListener",
+                        "org.apache.catalina.LifecycleListener"));
+
         mapper.addRule("Server/Service", mapper.objectCreate
                        ("org.apache.catalina.core.StandardService", "className"));
         mapper.addRule("Server/Service", mapper.setProperties());
         mapper.addRule("Server/Service", mapper.addChild
                        ("addService", "org.apache.catalina.Service"));
+
+        mapper.addRule("Server/Service/Listener", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule("Server/Service/Listener",
+                       mapper.setProperties());
+        mapper.addRule("Server/Service/Listener", mapper.addChild
+                       ("addLifecycleListener",
+                        "org.apache.catalina.LifecycleListener"));
 
         mapper.addRule("Server/Service/Connector", mapper.objectCreate
                        ("org.apache.catalina.connector.http.HttpConnector",
@@ -332,6 +348,14 @@ public class Catalina {
                        new SetParentClassLoaderAction(parentClassLoader));
         mapper.addRule("Server/Service/Engine", mapper.addChild
                        ("setContainer", "org.apache.catalina.Container"));
+
+        mapper.addRule("Server/Service/Engine/Listener", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule("Server/Service/Engine/Listener",
+                       mapper.setProperties());
+        mapper.addRule("Server/Service/Engine/Listener", mapper.addChild
+                       ("addLifecycleListener",
+                        "org.apache.catalina.LifecycleListener"));
 
         createStartMapperContext("Server/Service/Engine/Context", mapper);
         createStartMapperDefaultContext(
