@@ -491,7 +491,7 @@ public class HttpResponseBase
         HttpSession session = hreq.getSession(false);
         if (session == null)
             return (false);
-        if (hreq.isRequestedSessionIdFromCookie())
+        if (!hreq.isRequestedSessionIdFromURL())
             return (false);
 
         // Is this a valid absolute URL?
