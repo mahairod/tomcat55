@@ -222,6 +222,11 @@ public final class SaveJDBCRealmAction extends Action {
                 rObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardRealmTypes);
+                                    
+                if (rObjectName==null) {
+                    request.setAttribute("warning", "error.jdbcrealm");
+                    return (mapping.findForward("Save Unsuccessful"));
+                }
 
                 // Add the new Realm to our tree control node
                 TreeControl control = (TreeControl)

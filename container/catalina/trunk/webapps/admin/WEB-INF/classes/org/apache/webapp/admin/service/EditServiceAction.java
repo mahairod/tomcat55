@@ -197,7 +197,7 @@ public class EditServiceAction extends Action {
         serviceFm.setObjectName(sname.toString());
         serviceFm.setEngineObjectName(ename.toString());
         sb = new StringBuffer("Service (");
-        sb.append(sname.getDomain());
+        sb.append(sname.getKeyProperty("serviceName"));
         sb.append(")");
         serviceFm.setNodeLabel(sb.toString());
         serviceFm.setAdminServiceName(adminService);
