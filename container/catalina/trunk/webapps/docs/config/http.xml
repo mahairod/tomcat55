@@ -204,8 +204,8 @@
       <p>The maximum number of HTTP requests which can be pipelined until
       the connection is closed by the server. Setting this attribute to 1 will
       disable HTTP/1.0 keep-alive, as well as HTTP/1.1 keep-alive and 
-      pipelining. Setting this to -1 will cause the server to never close the
-      HTTP connection (unless an error or a timeout occurs). 
+      pipelining. Setting this to -1 will allow an unlimited amount of 
+      pipelined or keep-alive HTTP requests. 
       If not specified, this attribute is set to 100.</p>
     </attribute>
 
