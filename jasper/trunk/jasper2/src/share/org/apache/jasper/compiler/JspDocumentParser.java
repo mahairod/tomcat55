@@ -99,6 +99,7 @@ class JspDocumentParser
     private static final String JSP_VERSION = "version";
     private static final String LEXICAL_HANDLER_PROPERTY =
         "http://xml.org/sax/properties/lexical-handler";
+    private static final String JSP_URI = "http://java.sun.com/JSP/Page";
 
     private static final EnableDTDValidationException ENABLE_DTD_VALIDATION_EXCEPTION =
         new EnableDTDValidationException(
@@ -288,12 +289,13 @@ class JspDocumentParser
 
         checkPrefixes(uri, qName, attrs);
 
-        if (directivesOnly && !localName.startsWith(DIRECTIVE_ACTION)) {
+        if (directivesOnly &&
+            !(JSP_URI.equals(uri) && localName.startsWith(DIRECTIVE_ACTION))) {
             return;
         }
 
         // jsp:text must not have any subelements
-        if (TEXT_ACTION.equals(current.getLocalName())) {
+        if (JSP_URI.equals(uri) && TEXT_ACTION.equals(current.getLocalName())) {
             throw new SAXParseException(
                 Localizer.getMessage("jsp.error.text.has_subelement"),
                 locator);
@@ -357,7 +359,7 @@ class JspDocumentParser
 
         Node node = null;
 
-        if ("http://java.sun.com/JSP/Page".equals(uri)) {
+        if (JSP_URI.equals(uri)) {
             node =
                 parseStandardAction(
                     qName,
@@ -525,7 +527,8 @@ class JspDocumentParser
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
 
-        if (directivesOnly && !localName.startsWith(DIRECTIVE_ACTION)) {
+        if (directivesOnly &&
+            !(JSP_URI.equals(uri) && localName.startsWith(DIRECTIVE_ACTION))) {
             return;
         }
 
