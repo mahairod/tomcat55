@@ -225,6 +225,7 @@ public class JspServletWrapper {
                      ex.getMessage());
             }
         } catch (FileNotFoundException ex) {
+            ctxt.incrementRemoved();
             String includeRequestUri = (String)
                 request.getAttribute("javax.servlet.include.request_uri");
             if (includeRequestUri != null) {
