@@ -1772,4 +1772,7 @@
               out="build/classes/org/apache/coyote/tomcat5/mbeans-descriptors.xml.ser" />
   </target>
 
+  <target name="gumpy-build" description="HACK: to stop gumpy from nagging"
+       depends="prepare-release,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz" />
+
 </project>
