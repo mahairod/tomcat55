@@ -4,8 +4,8 @@
 
   <property name="ant.home" value="../jakarta-ant" />
   <property name="build.compiler"   value="classic"/>
-  <property name="servletapi.build" value="build"/>
-  <property name="servletapi.dist"  value="dist"/>
+  <property name="servletapi.build" value="../build/servletapi"/>
+  <property name="servletapi.dist"  value="../dist/servletapi"/>
   <property name="servletapi.lib"   value="lib"/>
 
   <!-- ===================== Prepare Directories ========================= -->
