@@ -104,6 +104,7 @@ public class JspDocumentParser extends DefaultHandler
     private boolean inDTD;
     private ErrorDispatcher err;
     private boolean isTagFile;
+    private boolean rootSeen;
 
     /*
      * Constructor
@@ -176,9 +177,20 @@ public class JspDocumentParser extends DefaultHandler
 			      locator.getColumnNumber());
 	Attributes attrsCopy = new AttributesImpl(attrs);
 
-	Node node = null;	
+	Node node = null;
+
+	if (!qName.equals(JSP_ROOT) && !rootSeen) {
+	    // create dummy <jsp:root> element
+	    rootSeen = true;
+	    AttributesImpl rootAttrs = new AttributesImpl();
+	    rootAttrs.addAttribute("", "", "version", "CDATA", "2.0");
+	    node = new Node.JspRoot(rootAttrs, null, current, true);
+	    current = node;
+	}
+
 	if (qName.equals(JSP_ROOT)) {
-	    node = new Node.JspRoot(attrsCopy, start, current);
+	    rootSeen = true;
+	    node = new Node.JspRoot(attrsCopy, start, current, false);
 	    try {
 		addCustomTagLibraries(attrsCopy);
 	    } catch (JasperException je) {

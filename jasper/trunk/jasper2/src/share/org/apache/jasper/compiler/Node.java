@@ -304,8 +304,12 @@ public abstract class Node {
      */
     public static class JspRoot extends Root {
 
-	public JspRoot(Attributes attrs, Mark start, Node parent) {
+	private boolean isDummy;
+
+	public JspRoot(Attributes attrs, Mark start, Node parent,
+		       boolean isDummy) {
 	    super(attrs, start, parent);
+	    this.isDummy = isDummy;
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -316,6 +320,9 @@ public abstract class Node {
 	    return true;
 	}
 
+	public boolean isDummy() {
+	    return isDummy;
+	}
     }
 
     /**

@@ -471,21 +471,27 @@ public class SmapUtil {
             int numChildNodes = nodes.size();
             for( int i = 0; i < numChildNodes; i++ ) {
                 Node n = nodes.getNode( i );
-                Mark mark = n.getStart();
+		if (!(n instanceof Node.JspRoot)
+		        || !((Node.JspRoot) n).isDummy()) {
+		    Mark mark = n.getStart();
 
-                if (verbose) {
-                System.out.println("Mark(start): line="+ mark.getLineNumber() +
-                    " col="+mark.getColumnNumber() +"Node: begLine="+
-                    n.getBeginJavaLine() +" endLine="+n.getEndJavaLine());
-                }
-                String unqualifiedName = unqualify(mark.getFile());
-                s.addFile(unqualifiedName);
-                s.addLineData(mark.getLineNumber(),
-                        unqualifiedName,
-                        1,
-                        n.getBeginJavaLine(),
-                        n.getEndJavaLine() - n.getBeginJavaLine());
-                evaluateNodes(nodes.getNode(i).getBody(), s);
+		    if (verbose) {
+			System.out.println("Mark(start): line=" +
+					   mark.getLineNumber() +
+					   " col="+mark.getColumnNumber() +
+					   "Node: begLine=" +
+					   n.getBeginJavaLine() +
+					   " endLine="+n.getEndJavaLine());
+		    }
+		    String unqualifiedName = unqualify(mark.getFile());
+		    s.addFile(unqualifiedName);
+		    s.addLineData(mark.getLineNumber(),
+				  unqualifiedName,
+				  1,
+				  n.getBeginJavaLine(),
+				  n.getEndJavaLine() - n.getBeginJavaLine());
+		}
+		evaluateNodes(nodes.getNode(i).getBody(), s);
             }
         }
     }
