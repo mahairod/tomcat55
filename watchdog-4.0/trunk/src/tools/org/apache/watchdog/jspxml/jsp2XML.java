@@ -154,6 +154,10 @@ public class jsp2XML {
 
         if (!tag_prefix.containsKey(prefix)) {
             tag_prefix.put(prefix , prefix);
+            if (uri.charAt(0) == '/') {
+                // URI is relaitve
+                uri = "urn:jsptld:" + uri;
+            }
             //add to the xml NameSpace
             xml_ns += "xmlns:" + prefix + "=\"" + uri + "\"" + new_line;
         }
