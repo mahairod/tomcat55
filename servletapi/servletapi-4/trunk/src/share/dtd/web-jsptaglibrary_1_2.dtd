@@ -15,6 +15,17 @@
           "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN">
 
 <!--
+This is the XML DTD for the JSP 1.2 Tag Library Descriptor.
+All JSP 1.2 tag library descriptors must include a DOCTYPE
+of the following form:
+
+  <!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd">
+
+-->
+
+<!--
 The taglib tag is the document root, it defines:
 
 tlib-version	the version of the tag library implementation
@@ -44,13 +55,13 @@ listener        optional event listener specification
 
 -->
 
-<!ELEMENT taglib (tlib-version, jsp-version?, short-name, uri?,
+<!ELEMENT taglib (tlib-version, jsp-version, short-name, uri?,
                   display-name?, small-icon?, large-icon?, description?,
                   validator?, listener*, tag+) >
 
 <!ATTLIST taglib id ID #IMPLIED
 	  xmlns CDATA #FIXED
-		"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd"
+		"http://java.sun.com/JSP/TagLibraryDescriptor"
 >
 
 <!--
@@ -101,7 +112,7 @@ Defines an optional validator that can be used to
 validate the conformance of a JSP page to using this tag library.
 -->
 
-<!ELEMENT validator (validator-class, init-param*) >
+<!ELEMENT validator (validator-class, init-param*, description?) >
 
 
 <!--
@@ -183,10 +194,14 @@ variable          Optional scripting variable information
 
 attribute         All attributes of this action
 
+example           Optional informal description of an example of a
+                  use of this tag
+
 -->
 
 <!ELEMENT tag (name, tag-class, tei-class?, body-content?, display-name?,
-               small-icon?, large-icon?, description?, variable*, attribute*) >
+               small-icon?, large-icon?, description?, variable*, attribute*,
+               example?) >
 
 <!--
 Defines the subclass of javax.serlvet.jsp.tagext.Tag that implements
@@ -263,6 +278,14 @@ The icon can be used by tools.
 
 <!--
 
+The example element contains an informal description of an example
+of the use of a tag.
+-->
+
+<!ELEMENT example (#PCDATA) >
+
+<!--
+
 The variable tag provides information on the scripting variables
 defined by this tag.  It is a (translation time) error for a tag
 that has one or more variable subelements to have a TagExtraInfo
@@ -285,10 +308,13 @@ declare                  Whether the variable is declared or not.
 
 scope                    The scope of the scripting varaible
                          defined.  NESTED is default.
+
+description              Optional description of this variable
+
 -->
 
 <!ELEMENT variable ( (name-given | name-from-attribute), variable-class?,
-                    declare?, scope?) >
+                    declare?, scope?, description?) >
 
 <!--
 
@@ -344,6 +370,7 @@ An attribute definition is composed of:
 - if the attributes value may be dynamically calculated at runtime
   by a scriptlet expression (optional)
 - the type of the attributes value (optional)
+- an informal description of the meaning of the attribute (optional)
 
 -->
 
@@ -361,9 +388,11 @@ An attribute definition is composed of:
   by a scriptlet expression (optional)
 
 - the type of the attributes value (optional)
+
+- an informal description of the meaning of the attribute (optional)
 -->
 
-<!ELEMENT attribute (name, required? , rtexprvalue?, type?) >
+<!ELEMENT attribute (name, required? , rtexprvalue?, type?, description?) >
 
 <!--
 Defines the canonical name of a tag or attribute being defined
@@ -416,6 +445,7 @@ java.lang.String.
 <!ATTLIST short-name id ID #IMPLIED>
 <!ATTLIST uri id ID #IMPLIED>
 <!ATTLIST description id ID #IMPLIED>
+<!ATTLIST example id ID #IMPLIED>
 <!ATTLIST tag id ID #IMPLIED>
 <!ATTLIST tag-class id ID #IMPLIED>
 <!ATTLIST tei-class id ID #IMPLIED>
