@@ -279,37 +279,25 @@ grant {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 // For instance, assume that the standard "examples" application
 // included a JDBC driver that needed to establish a network connection to the
 // corresponding database and used the scrape taglib to get the weather from
-// the NOAA web server.&nbsp; You might create a "grant" entries like this:
+// the NOAA web server.  You might create a "grant" entries like this:
 //
 // The permissions granted to the context root directory apply to JSP pages.
 // grant codeBase "file:${catalina.home}/webapps/examples/-" {
-//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
-//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission java.net.SocketPermission "*.noaa.gov:80", "connect";
-//
+//   permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
+//   permission java.net.SocketPermission "*.noaa.gov:80", "connect";
 // };
 //
 // The permissions granted to the context WEB-INF/classes directory
-//
-// Permissions granted to a web applications /WEB-INF/classes
-// need to use the JNDI naming convention Tomcat 4 uses to identify
-// these resources.&nbsp; The naming convention is
-// "jndi:/&lt;virtual host name>/&lt;web application directory>/WEB-INF/classes/
-//
-// grant codeBase "jndi:/localhost/examples/WEB-INF/classes/-" {
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/classes/-" {
 // };
-//
-// Permissions granted to a web applications /WEB-INF/lib
-// need to use the JNDI naming convention Tomcat 4 uses to identify
-// these resources.&nbsp; The naming convention is
-// "jar:jndi:/&lt;virtual host name>/&lt;web application directory>/WEB-INF/lib/
 //
 // The permission granted to your JDBC driver
-// grant codeBase "jar:jndi:/localhost/examples/WEB-INF/lib/driver.jar" {
-//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-" {
+//   permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
 // };
 // The permission granted to the scrape taglib
-// grant codeBase "jar:jndi:localhost/webapps/examples/WEB-INF/lib/scrape.jar" {
-//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; permission java.net.SocketPermission "*.noaa.gov:80", "connect";
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar!/-" {
+//   permission java.net.SocketPermission "*.noaa.gov:80", "connect";          
 // };</pre>
 </td>
 </tr>
