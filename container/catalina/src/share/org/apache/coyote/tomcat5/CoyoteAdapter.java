@@ -225,19 +225,29 @@ public class CoyoteAdapter
         // URI decoding
         MessageBytes decodedURI = req.decodedURI();
         decodedURI.duplicate(req.requestURI());
-        try {
-          req.getURLDecoder().convert(decodedURI, false);
-        } catch (IOException ioe) {
-          res.setStatus(400);
-          res.setMessage("Invalid URI");
-          throw ioe;
-        }
 
-        // Normalize decoded URI
-        if (!normalize(req.decodedURI())) {
-            res.setStatus(400);
-            res.setMessage("Invalid URI");
-            return false;
+        if (decodedURI.getType() == MessageBytes.T_BYTES) {
+            // %xx decoding of the URL
+            try {
+                req.getURLDecoder().convert(decodedURI, false);
+            } catch (IOException ioe) {
+                res.setStatus(400);
+                res.setMessage("Invalid URI");
+                throw ioe;
+            }
+            // Normalization
+            if (!normalize(req.decodedURI())) {
+                res.setStatus(400);
+                res.setMessage("Invalid URI");
+                return false;
+            }
+            // Character decoding
+            convertURI(decodedURI, request);
+        } else {
+            // The URL is chars or String, and has been sent using an in-memory
+            // protocol handler, we have to assume the URL has been properly
+            // decoded already
+            decodedURI.toChars();
         }
 
         // Set the remote principal
@@ -251,9 +261,6 @@ public class CoyoteAdapter
         if (authtype != null) {
             request.setAuthType(authtype);
         }
-
-        // URI character decoding
-        convertURI(decodedURI, request);
 
         // Parse session Id
         parseSessionId(req, request);
