@@ -61,12 +61,10 @@
 	    <td>\${10 mod 4}</td>
 	    <td>${10 mod 4}</td>
 	  </tr>
-<%-- XXX - NOT YET IMPLEMENTED
-          <tr>
-            <td>\${(1==2) ? 3 : 4}</td>
-            <td>${(1==2) ? 3 : 4}</td>
-          </tr>
---%>
+    <tr>
+      <td>\${(1==2) ? 3 : 4}</td>
+      <td>${(1==2) ? 3 : 4}</td>
+    </tr>
 	</table>
       </code>
     </blockquote>
