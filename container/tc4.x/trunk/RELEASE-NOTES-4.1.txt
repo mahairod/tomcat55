@@ -986,6 +986,10 @@ Coyote Bug Fixes:
          Fix regression where connection is always dropped at the end of 
          processing.
 
+[4.1.27] #21984
+         HandlerReqest:
+         Fix potential Dos condition when given a mal-formed URI.
+         
 
 ----------------
 Jasper Bug Fixes:
