@@ -177,7 +177,7 @@
     <servlet>
         <servlet-name>ssi</servlet-name>
         <servlet-class>
-          org.apache.catalina.servlets.SSIServlet
+          org.apache.catalina.ssi.SSIServlet
         </servlet-class>
         <init-param>
           <param-name>buffered</param-name>

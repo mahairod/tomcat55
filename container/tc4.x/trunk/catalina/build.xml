@@ -808,8 +808,6 @@
        unless="compile.jaas"/>
       <exclude name="org/apache/catalina/startup/BootstrapService.java"
        unless="compile.daemon"/>
-      <exclude name="org/apache/catalina/servlets/SsiServlet.java"
-       unless="compile.ssi"/>
       <exclude name="org/apache/catalina/ssi/**"
        unless="compile.ssi"/>
       <exclude name="org/apache/catalina/valves/CertificatesValve.java"
@@ -1169,7 +1167,6 @@
     <!-- Servlets - SSI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.renametojar">
       <fileset dir="${catalina.build}/server/classes">
-        <include name="org/apache/catalina/servlets/Ssi*" />
         <include name="org/apache/catalina/ssi/**" />
       </fileset>
     </jar>
