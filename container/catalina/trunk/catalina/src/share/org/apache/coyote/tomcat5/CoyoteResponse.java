@@ -263,12 +263,22 @@ public class CoyoteResponse
         
         cookies.clear();
 
-        if ((Constants.SECURITY) && (facade != null)) {
-            facade.clear();
-            facade = null;
+        if (Constants.SECURITY) {
+            if (facade != null) {
+                facade.clear();
+                facade = null;
+            }
+            if (outputStream != null) {
+                outputStream.clear();
+                outputStream = null;
+            }
+            if (writer != null) {
+                writer.clear();
+                writer = null;
+            }
+        } else {
+            writer.recycle();
         }
-
-        writer.recycle();
 
     }
 
@@ -376,6 +386,9 @@ public class CoyoteResponse
      * Return the output stream associated with this Response.
      */
     public OutputStream getStream() {
+        if (outputStream == null) {
+            outputStream = new CoyoteOutputStream(outputBuffer);
+        }
         return outputStream;
     }
 
@@ -433,6 +446,9 @@ public class CoyoteResponse
     public ServletOutputStream createOutputStream() 
         throws IOException {
         // Probably useless
+        if (outputStream == null) {
+            outputStream = new CoyoteOutputStream(outputBuffer);
+        }
         return outputStream;
     }
 
@@ -488,6 +504,9 @@ public class CoyoteResponse
     public PrintWriter getReporter() throws IOException {
         if (outputBuffer.isNew()) {
             outputBuffer.checkConverter();
+            if (writer == null) {
+                writer = new CoyoteWriter(outputBuffer);
+            }
             return writer;
         } else {
             return null;
@@ -540,6 +559,9 @@ public class CoyoteResponse
                 (sm.getString("coyoteResponse.getOutputStream.ise"));
 
         usingOutputStream = true;
+        if (outputStream == null) {
+            outputStream = new CoyoteOutputStream(outputBuffer);
+        }
         return outputStream;
 
     }
@@ -569,6 +591,9 @@ public class CoyoteResponse
 
         usingWriter = true;
         outputBuffer.checkConverter();
+        if (writer == null) {
+            writer = new CoyoteWriter(outputBuffer);
+        }
         return writer;
 
     }

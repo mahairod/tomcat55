@@ -45,6 +45,17 @@ public class CoyoteOutputStream
     }
 
 
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Clear facade.
+     */
+    void clear() {
+        ob = null;
+    }
+
+
     // --------------------------------------------------- OutputStream Methods
 
 
