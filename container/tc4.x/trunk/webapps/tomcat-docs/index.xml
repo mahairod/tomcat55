@@ -50,6 +50,12 @@ Tomcat 4, and (if you wish to) building a distribution from the source code.
 <p>The following documents are aimed at <em>System Administrators</em> who
 are responsible for installing, configuring, and operating a Tomcat 4 server.
 </p>
+<ul>
+<li><a href="config/index.html"><strong>Server Configuration Reference</strong></a>
+    - Reference manual that documents all available elements and attributes
+      that may be placed into a Tomcat 4 <code>conf/server.xml</code> file.
+    </li>
+</ul>
 
 </section>
 

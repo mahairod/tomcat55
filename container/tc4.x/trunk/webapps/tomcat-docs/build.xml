@@ -103,6 +103,9 @@
     <copy    todir="${webapp.work}/appdev">
       <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
     </copy>
+    <copy    todir="${webapp.work}/config">
+      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
+    </copy>
 
     <!-- Top Level Directory -->
     <style basedir="${webapp.work}"
@@ -117,6 +120,16 @@
     <!-- Application Developer's Guide -->
     <style basedir="${webapp.work}/appdev"
            destdir="${webapps.build}/${webapp.name}/appdev"
+         extension=".html"
+             style="site.xsl"
+          excludes="project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="."/>
+    </style>
+
+    <!-- Server Configuration Reference -->
+    <style basedir="${webapp.work}/config"
+           destdir="${webapps.build}/${webapp.name}/config"
          extension=".html"
              style="site.xsl"
           excludes="project.xml"

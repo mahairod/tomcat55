@@ -19,9 +19,7 @@
     </menu>
 
     <menu name="Administrators">
-<!--
-        <item name="Configuration"         href="/config/index.html"/>
--->
+        <item name="Config. Reference"     href="/config/index.html"/>
     </menu>
 
     <menu name="App Developers">

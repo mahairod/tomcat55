@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>Overview</title>
+  </properties>
+
+<body>
+
+
+<section name="Overview">
+
+<p>This manual contains reference information about all of the configuration
+directives that can be included in a <code>conf/server.xml</code> file to
+configure the behavior of the Tomcat 4 servlet/JSP container.  It does not
+attempt to describe which configuration directives should be used to perform
+specific tasks - for that, see the <em>Server Configuration Guide</em> and
+related documents.  (TODO - will need hyperlink(s) to this).</p>
+
+<p>TODO - add some verbage about the overall organization of conf/server.xml
+and the valid nesting that is allowed.</p>
+
+<p>TODO - add a brief description of the categories of elements listed in
+the navigation menu (top level, connectors, containers, nested).</p>
+
+</section>
+
+
+</body>
+</document>
