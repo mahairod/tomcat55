@@ -425,6 +425,34 @@ public class MBeanUtils {
 
     }
 
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>MBeanFactory</code> object.
+     *
+     * @param factory The MBeanFactory to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(MBeanFactory factory)
+        throws Exception {
+
+        String mname = createManagedName(factory);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return null;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(factory);
+        ObjectName oname = createObjectName(domain, factory);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+
     /**
      * Create, register, and return an MBean for this
      * <code>Realm</code> object.
@@ -911,6 +939,26 @@ public class MBeanUtils {
     }
 
 
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>MBeanFactory</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param factory The MBeanFactory to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              MBeanFactory factory)
+        throws MalformedObjectNameException {
+
+        ObjectName name = new ObjectName(domain + ":type=MBeanFactory");
+
+        return (name);
+
+    }
+
+    
     /**
      * Create an <code>ObjectName</code> for this
      * <code>Realm</code> object.

@@ -237,6 +237,8 @@ public class ServerLifecycleListener
 
         try {
 
+            MBeanFactory factory = new MBeanFactory();
+            createMBeans(factory);
             createMBeans(ServerFactory.getServer());
 
         } catch (MBeanException t) {
@@ -428,6 +430,23 @@ public class ServerLifecycleListener
         for (int k = 0; k < contexts.length; k++) {
             createMBeans((Context) contexts[k]);
         }
+
+    }
+
+
+    /**
+     * Create the MBeans for MBeanFactory.
+     *
+     * @param factory MBeanFactory for which to create MBean
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void createMBeans(MBeanFactory factory) throws Exception {
+
+        // Create the MBean for the MBeanFactory
+        if (debug >= 2)
+            log("Creating MBean for MBeanFactory " + factory);
+        MBeanUtils.createMBean(factory);
 
     }
 
