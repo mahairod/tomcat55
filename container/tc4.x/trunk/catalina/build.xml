@@ -773,7 +773,6 @@
            file="${tomcat-jk.jar}"/>
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-jk2.jar}"/>
-    <mkdir dir="${catalina.deploy}/webapps/jk/WEB-INF/conf"/>
 
   </target>
 
