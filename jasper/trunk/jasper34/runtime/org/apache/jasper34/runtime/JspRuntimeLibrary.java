@@ -60,6 +60,7 @@ package org.apache.jasper34.runtime;
 
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import java.lang.reflect.Method;
 
@@ -216,6 +217,7 @@ public class JspRuntimeLibrary {
     //-------------------------------------------------------------------
     // functions to convert builtin Java data types to string.
     //-------------------------------------------------------------------
+    // Used by GetProperty 
     // __begin toStringMethod
     public static String toString(Object o) {
         return (o == null) ? "" : o.toString();
@@ -540,11 +542,26 @@ public class JspRuntimeLibrary {
 	    throw new JasperException(ex);
 	}	
     }
+   
+    public static Hashtable readMethodCache=new Hashtable();
+    public static Hashtable writeMethodCache=new Hashtable();
     
-    public static java.lang.reflect.Method getWriteMethod(Class beanClass, String prop)
-    throws JasperException {
+
+    public static java.lang.reflect.Method getWriteMethod(Class beanClass,
+							  String prop)
+	throws JasperException
+    {
 	java.lang.reflect.Method method = null;	
         Class type = null;
+
+	Hashtable methods=(Hashtable)writeMethodCache.get( beanClass );
+	if( methods==null ) {
+	    methods=new Hashtable();
+	    writeMethodCache.put( beanClass, methods );
+	}
+	method=(java.lang.reflect.Method)methods.get( prop );
+	if( method != null ) return method;
+
 	try {
 	    java.beans.BeanInfo info
                 = java.beans.Introspector.getBeanInfo(beanClass);
@@ -578,14 +595,27 @@ public class JspRuntimeLibrary {
                         new Object[] {prop, beanClass.getName()}));
             }
         }
+
+	methods.put( prop, method );
         return method;
     }
 
-    public static java.lang.reflect.Method getReadMethod(Class beanClass, String prop)
-    throws JasperException {
-        java.lang.reflect.Method method = null;        
+    public static java.lang.reflect.Method getReadMethod(Class beanClass,
+							 String prop)
+	throws JasperException
+    {
+	java.lang.reflect.Method method = null;        
         Class type = null;
-        try {
+
+	Hashtable methods=(Hashtable)readMethodCache.get( beanClass );
+	if( methods==null ) {
+	    methods=new Hashtable();
+	    readMethodCache.put( beanClass, methods );
+	}
+	method=(java.lang.reflect.Method)methods.get( prop );
+	if( method != null ) return method;
+	
+	try {
             java.beans.BeanInfo info
                 = java.beans.Introspector.getBeanInfo(beanClass);
             if ( info != null ) {
@@ -619,6 +649,7 @@ public class JspRuntimeLibrary {
             }
         }
 
+	methods.put( prop, method );
 	return method;
     }
     
