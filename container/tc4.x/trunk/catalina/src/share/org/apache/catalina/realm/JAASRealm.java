@@ -182,6 +182,20 @@ public class JAASRealm
 
     // ------------------------------------------------------------- Properties
 
+    
+    /**
+     * setter for the appName member variable
+     */
+    public void setAppName(String name) {
+        appName = name;
+    }
+    
+    /**
+     * getter for the appName member variable
+     */
+    public String getAppName() {
+        return appName;
+    }
 
     /**
      * Comma-delimited list of <code>javax.security.Principal</code> classes
@@ -228,7 +242,7 @@ public class JAASRealm
     public void setUserClassNames(String userClassNames) {
         this.userClassNames = userClassNames;
         userClasses.clear();
-        String temp = this.roleClassNames;
+        String temp = this.userClassNames;
         if (temp == null) {
             return;
         }
@@ -361,7 +375,6 @@ public class JAASRealm
      * @param subject The Subject representing the logged in user
      */
     protected Principal createPrincipal(Subject subject) {
-
         // Prepare to scan the Principals for this Subject
         String username = null;
         String password = null; // Will not be carried forward
