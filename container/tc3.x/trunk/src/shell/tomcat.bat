@@ -20,7 +20,7 @@ set CLASSPATH=%appClassPath%;%sysJars%
 if "%cp%" == "" goto next
 
 rem else
-SET CLASSPATH=%CLASSPATH%;%cp%
+set CLASSPATH=%CLASSPATH%;%cp%
 
 :next
 if "%1" == "start" goto startServer
