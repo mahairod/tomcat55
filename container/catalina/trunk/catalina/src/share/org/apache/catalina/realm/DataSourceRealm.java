@@ -290,7 +290,7 @@ public class DataSourceRealm
             
         } catch (SQLException e) {
             // Log the problem for posterity
-            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
+            containerLog.error(sm.getString("dataSourceRealm.exception"), e);
 
             // Return "not authenticated" for this request
             return (null);
@@ -332,12 +332,14 @@ public class DataSourceRealm
             validated = (digest(credentials).equals(dbCredentials));
 
         if (validated) {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateSuccess",
+            if (containerLog.isTraceEnabled())
+                containerLog.trace(
+                    sm.getString("dataSourceRealm.authenticateSuccess",
                                  username));
         } else {
-            if (container.getLogger().isTraceEnabled())
-                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateFailure",
+            if (containerLog.isTraceEnabled())
+                containerLog.trace(
+                    sm.getString("dataSourceRealm.authenticateFailure",
                                  username));
             return (null);
         }
@@ -368,7 +370,7 @@ public class DataSourceRealm
         	}
             dbConnection.close();
         } catch (SQLException e) {
-            container.getLogger().error(sm.getString("dataSourceRealm.close"), e); // Just log it here
+            containerLog.error(sm.getString("dataSourceRealm.close"), e); // Just log it here
         }
 
     }
@@ -394,7 +396,7 @@ public class DataSourceRealm
 	    return dataSource.getConnection();
         } catch (Exception e) {
             // Log the problem for posterity
-            container.getLogger().error(sm.getString("dataSourceRealm.exception"), e);
+            containerLog.error(sm.getString("dataSourceRealm.exception"), e);
         }  
         return null;
     }
@@ -450,9 +452,9 @@ public class DataSourceRealm
             return (dbCredentials != null) ? dbCredentials.trim() : null;
             
         } catch(SQLException e) {
-        	container.getLogger().error(sm
-	                .getString("dataSourceRealm.getPassword.exception",
-	        		           username));
+            containerLog.error(
+                    sm.getString("dataSourceRealm.getPassword.exception",
+                                 username));
         } finally {
         	try {
 	            if (rs != null) {
@@ -462,9 +464,9 @@ public class DataSourceRealm
 	                stmt.close();
 	            }
         	} catch (SQLException e) {
-            	container.getLogger().error(sm
-                        .getString("dataSourceRealm.getPassword.exception",
-        		                   username));
+                    containerLog.error(
+                        sm.getString("dataSourceRealm.getPassword.exception",
+        		             username));
         		
         	}
         }
@@ -538,9 +540,8 @@ public class DataSourceRealm
     		}
     		return list;
     	} catch(SQLException e) {
-        	container.getLogger().error(sm
-	                .getString("dataSourceRealm.getRoles.exception",
-	        		           username));
+            containerLog.error(
+                sm.getString("dataSourceRealm.getRoles.exception", username));
         }
     	finally {
         	try {
@@ -551,10 +552,9 @@ public class DataSourceRealm
 	                stmt.close();
 	            }
         	} catch (SQLException e) {
-            	container.getLogger().error(sm
-                        .getString("dataSourceRealm.getRoles.exception",
-        		                   username));
-        		
+                    containerLog.error(
+                        sm.getString("dataSourceRealm.getRoles.exception",
+                                     username));
         	}
         }
     	

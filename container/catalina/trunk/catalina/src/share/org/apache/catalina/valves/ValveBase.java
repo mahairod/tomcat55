@@ -67,6 +67,12 @@ public abstract class ValveBase
 
 
     /**
+     * Container log
+     */
+    protected Log containerLog = null;
+
+
+    /**
      * Descriptive information about this Valve implementation.  This value
      * should be overridden by subclasses.
      */
@@ -108,7 +114,7 @@ public abstract class ValveBase
     public void setContainer(Container container) {
 
         this.container = container;
-
+        this.containerLog = container.getLogger();
     }
 
 

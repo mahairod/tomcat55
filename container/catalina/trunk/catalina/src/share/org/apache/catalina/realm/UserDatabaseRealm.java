@@ -221,7 +221,9 @@ public class UserDatabaseRealm
             Context context = server.getGlobalNamingContext();
             database = (UserDatabase) context.lookup(resourceName);
         } catch (Throwable e) {
-            container.getLogger().error(sm.getString("userDatabaseRealm.lookup", resourceName), e);
+            containerLog.error(sm.getString("userDatabaseRealm.lookup",
+                                            resourceName),
+                               e);
             database = null;
         }
         if (database == null) {
