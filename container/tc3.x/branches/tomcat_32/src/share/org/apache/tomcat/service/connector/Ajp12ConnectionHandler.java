@@ -303,6 +303,9 @@ class AJP12RequestAdapter extends RequestImpl {
 		    if( doLog ) log("AJP: serverName=" + serverName );
 		    try {
 			serverPort = Integer.parseInt(ajpin.readString("80")); //server port
+			if (serverPort == 443) {
+				setScheme("https");
+			}
 		    } catch (Exception any) {
 			serverPort = 80;
 		    }
