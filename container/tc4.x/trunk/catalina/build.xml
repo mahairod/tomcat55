@@ -827,7 +827,8 @@
     </javac>
 
     <!-- Copy static resource files -->
-    <copy todir="${catalina.build}/server/classes">
+    <filter token="VERSION" value="${version}"/>
+    <copy todir="${catalina.build}/server/classes" filtering="true">
       <fileset dir="src/share">
         <exclude name="**/*.java"/>
       </fileset>
