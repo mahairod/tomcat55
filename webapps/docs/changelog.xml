@@ -27,11 +27,30 @@
 </section>
 
 <section name="Tomcat 5.5.7 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <add> 
+        Add installer for mod_jk on IIS. (mturk)
+      </add>
+    </changelog>
+  </subsection>
+  
   <subsection name="Catalina">
     <changelog>
       <fix>
         <bug>32694</bug>: Fix bad code to make docBase path aboslute in antiLocking
         method. (remm)
+      </fix>
+      <fix>
+        <bug>32713</bug>: Fix resource-env-ref handling. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+        <bug>32708</bug>: Better handling of bad encoding with the string cache. (remm)
       </fix>
     </changelog>
   </subsection>
