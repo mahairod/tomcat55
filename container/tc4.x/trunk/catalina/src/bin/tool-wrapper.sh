@@ -41,6 +41,9 @@ if [ -z "$CATALINA_HOME" ] ; then
     fi
 fi
 
+# Get user customizable environment variables
+. $CATALINA_HOME/bin/setenv.sh
+
 if [ -z "$TOOL_OPTS" ] ; then
   TOOL_OPTS=""
 fi
