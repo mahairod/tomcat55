@@ -87,7 +87,7 @@ public interface TagPluginContext {
 
     /**
      * Generate an import statement
-     * @param importName Name of the import class, '*' allowed.
+     * @param s Name of the import class, '*' allowed.
      */
     void generateImport(String s);
 

@@ -183,7 +183,7 @@ public class SmapStratum {
     /**
      * Adds record of a new file, by filename.
      *
-     * @param fileName the filename to add, unqualified by path.
+     * @param filename the filename to add, unqualified by path.
      */
     public void addFile(String filename) {
         addFile(filename, filename);
@@ -193,7 +193,7 @@ public class SmapStratum {
      * Adds record of a new file, by filename and path.  The path
      * may be relative to a source compilation path.
      *
-     * @param fileName the filename to add, unqualified by path
+     * @param filename the filename to add, unqualified by path
      * @param filePath the path for the filename, potentially relative
      *                 to a source compilation path
      */

@@ -122,7 +122,7 @@ public interface Options {
     public boolean isSmapSuppressed();
 
     /**
-     * Should SMAP info for JSR45 debugging be dumped to a file?
+     * Indicates that SMAP info for JSR45 debugging should be dumped to a file.
      * Ignored is suppressSmap() is true
      */
     public boolean isSmapDumped();

@@ -74,7 +74,6 @@ public class XMLEncodingDetector {
      * Encoding autodetection is done according to the XML 1.0 specification,
      * Appendix F.1: Detection Without External Encoding Information.
      *
-     * @param in The input stream to read
      * @param err The error dispatcher
      *
      * @return Two-element array, where the first element (of type

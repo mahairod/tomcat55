@@ -89,7 +89,7 @@ import org.apache.jasper.servlet.JspServletWrapper;
 
 /**
  * Class for tracking JSP compile time file dependencies when the
- * &lt;%@include file="..."%&gt; directive is used.
+ * &060;%@include file="..."%&062; directive is used.
  *
  * A background thread periodically checks the files a JSP page
  * is dependent upon.  If a dpendent file changes the JSP page
@@ -122,7 +122,7 @@ public final class JspRuntimeContext implements Runnable {
      *
      * Loads in any previously generated dependencies from file.
      *
-     * @param ServletContext for web application
+     * @param context ServletContext for web application
      */
     public JspRuntimeContext(ServletContext context, Options options) {
 
@@ -215,8 +215,8 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Add a new JspServletWrapper.
      *
-     * @param String uri of JSP
-     * @param JspServletWrapper for JSP
+     * @param jspUri of JSP
+     * @param jsw Servlet wrapper for JSP
      */
     public void addWrapper(String jspUri, JspServletWrapper jsw) {
         jsps.remove(jspUri);
@@ -226,7 +226,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Get an already existing JspServletWrapper.
      *
-     * @param String JSP URI
+     * @param jspUri JSP URI
      * @return JspServletWrapper for JSP
      */
     public JspServletWrapper getWrapper(String jspUri) {
@@ -236,7 +236,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Remove a  JspServletWrapper.
      *
-     * @param String JSP URI of JspServletWrapper to remove
+     * @param jspUri of JspServletWrapper to remove
      */
     public void removeWrapper(String jspUri) {
         jsps.remove(jspUri);

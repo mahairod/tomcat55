@@ -604,7 +604,7 @@ public class JspRuntimeLibrary {
 
     /**
      * Decode an URL formatted string.
-     * @param s The string to decode.
+     * @param encoded The string to decode.
      * @return The decoded string.
      */
 
