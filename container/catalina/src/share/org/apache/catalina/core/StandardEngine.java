@@ -69,6 +69,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -79,6 +81,8 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Service;
 import org.apache.catalina.util.ServerInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
@@ -93,6 +97,7 @@ public class StandardEngine
     extends ContainerBase
     implements Engine {
 
+    private static Log log = LogFactory.getLog(StandardEngine.class);
 
     // ----------------------------------------------------------- Constructors
 
@@ -142,6 +147,11 @@ public class StandardEngine
      */
     private Service service = null;
 
+    /** Allow the base dir to be specified explicitely for
+     * each engine. In time we should stop using catalina.base property -
+     * otherwise we loose some flexibility.
+     */
+    private String baseDir = null;
 
     /**
      * DefaultContext config
@@ -278,6 +288,16 @@ public class StandardEngine
 
     }
 
+    public String getBaseDir() {
+        if( baseDir==null ) {
+            baseDir=System.getProperty("catalina.base");
+        }
+        return baseDir;
+    }
+
+    public void setBaseDir(String baseDir) {
+        this.baseDir = baseDir;
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -345,7 +365,8 @@ public class StandardEngine
     public void start() throws LifecycleException {
 
         // Log our server identification information
-        System.out.println(ServerInfo.getServerInfo());
+        //System.out.println(ServerInfo.getServerInfo());
+        log.info( "Starting Servlet Engine: " + ServerInfo.getServerInfo());
 
         // Standard container startup
         super.start();
@@ -381,5 +402,28 @@ public class StandardEngine
 
     }
 
+    // -------------------- JMX registration  --------------------
 
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception
+    {
+        super.preRegister(server,name);
+
+        // Register with the Service. XXX Do we really need a Service ??
+        // BTW - the connector can go directly here.
+        ObjectName serviceName=new ObjectName(domain +
+                ":type=Service,name=Tomcat-Standalone");
+        if( server.isRegistered( serviceName )) {
+            log.info("Registering with the service ");
+            try {
+                server.invoke( serviceName, "setContainer",
+                        new Object[] { this },
+                    new String[] { "org.apache.catalina.Container" } );
+            } catch( Exception ex ) {
+                ex.printStackTrace();
+            }
+        }
+
+        return name;
+    }
 }
