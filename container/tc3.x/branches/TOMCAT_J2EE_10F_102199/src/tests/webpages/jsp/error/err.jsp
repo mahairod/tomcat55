@@ -1,7 +1,7 @@
 <html>
 <!--
 -->
-	<%@ page errorPage="errorPge.jsp" %>
+	<%@ page errorPage="errorpge.jsp" %>
 	<% 
 		String name = null;
         int i = 10/0;
