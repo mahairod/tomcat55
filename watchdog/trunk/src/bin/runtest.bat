@@ -10,10 +10,10 @@ set host=localhost
 set port=8080
 if "%2"=="" goto nohost
 set host=%2
-:nohost:
+:nohost
 if "%3"=="" goto noport
 set port=%3
-:noport:
+:noport
 set stest=.\conf\servlet-testlist.txt
 set jtest=.\conf\jsp-testlist.txt
 set default=all
