@@ -3516,7 +3516,7 @@ public class Generator {
             }
             
             // Generate postamble:
-            out.printil( "public void invoke( java.io.Writer out, " +
+            out.printil( "public void invoke( java.io.Writer writer, " +
 			 "java.util.Map params )" );
             out.pushIndent();
             out.printil( "throws javax.servlet.jsp.JspException" );
@@ -3529,10 +3529,15 @@ public class Generator {
             out.printil( "_jspx_originalValues = preparePageScope( params );");
             out.popIndent();
             out.printil( "}" );
-            out.printil( "if( out == null ) {" );
+	    out.printil( "java.io.Writer out = null;" );
+            out.printil( "if( writer != null ) {" );
             out.pushIndent();
-            out.printil( "out = this.jspContext.getOut();" );
+	    out.printil( "out = this.jspContext.pushBody(writer);" );
             out.popIndent();
+            out.printil( "} else {" );
+	    out.pushIndent();
+            out.printil( "out = this.jspContext.getOut();" );
+	    out.popIndent();
             out.printil( "}" );
             out.printil( "try {" );
             out.pushIndent();
@@ -3558,6 +3563,13 @@ public class Generator {
             out.printil( "}" ); // catch
             out.printil( "finally {" );
             out.pushIndent();
+
+            out.printil( "if( writer != null ) {" );
+            out.pushIndent();
+            out.printil( "this.jspContext.popBody();");
+            out.popIndent();
+            out.printil( "}" );
+	    
             out.printil( "if( params != null ) {" );
             out.pushIndent();
             out.printil( "restorePageScope( _jspx_originalValues );");

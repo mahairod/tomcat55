@@ -62,6 +62,7 @@
 package org.apache.jasper.runtime;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -231,6 +232,10 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
 
     public BodyContent pushBody() {
 	return pageContext.pushBody();
+    }
+
+    public JspWriter pushBody(Writer writer) {
+	return pageContext.pushBody(writer);
     }
 
     public JspWriter popBody() {

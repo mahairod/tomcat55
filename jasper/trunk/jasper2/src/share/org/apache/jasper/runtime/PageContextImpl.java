@@ -61,8 +61,7 @@
 
 package org.apache.jasper.runtime;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import java.util.EmptyStackException;
 import java.util.Enumeration;
@@ -493,21 +492,27 @@ public class PageContextImpl
         }
     }
 
-    protected BodyContent[] outs = new BodyContentImpl[0];
+    protected BodyContentImpl[] outs = new BodyContentImpl[0];
     protected int depth = -1;
 
     public BodyContent pushBody() {
+	return (BodyContent) pushBody(null);
+    }
+
+    public JspWriter pushBody(Writer writer) {
         depth++;
         if (depth >= outs.length) {
-            BodyContent[] newOuts = new BodyContentImpl[depth + 1];
-            for (int i = 0; i < outs.length; i++) {
+            BodyContentImpl[] newOuts = new BodyContentImpl[depth + 1];
+            for (int i=0; i<outs.length; i++) {
                 newOuts[i] = outs[i];
             }
             newOuts[depth] = new BodyContentImpl(out);
             outs = newOuts;
         }
+
+	outs[depth].setWriter(writer);
         out = outs[depth];
-	outs[depth].clearBody();
+
         return outs[depth];
     }
 
