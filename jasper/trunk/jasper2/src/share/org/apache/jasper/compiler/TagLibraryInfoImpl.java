@@ -244,7 +244,9 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         Vector tagVector = new Vector();
         Vector tagFileVector = new Vector();
         Hashtable functionTable = new Hashtable();
-	
+	boolean tlibVersionSeen = false;
+	boolean jspVersionSeen = false;
+
         // Create an iterator over the child elements of our <taglib> element
         ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(uri, in);
@@ -256,13 +258,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             TreeNode element = (TreeNode) list.next();
             String tname = element.getName();
 
-            if ("tlibversion".equals(tname) ||          // JSP 1.1
-                "tlib-version".equals(tname))           // JSP 1.2
+            if ("tlibversion".equals(tname)                    // JSP 1.1
+		        || "tlib-version".equals(tname)) {     // JSP 1.2
                 this.tlibversion = element.getBody();
-            else if ("jspversion".equals(tname) ||
-                     "jsp-version".equals(tname))
+		tlibVersionSeen = true;
+            } else if ("jspversion".equals(tname)
+		        || "jsp-version".equals(tname)) {
                 this.jspversion = element.getBody();
-            else if ("shortname".equals(tname) ||
+		jspVersionSeen = true;
+            } else if ("shortname".equals(tname) ||
                      "short-name".equals(tname))
                 this.shortname = element.getBody();
             else if ("uri".equals(tname))
@@ -301,6 +305,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             }
 
         }
+
+	if (!tlibVersionSeen) {
+	    err.jspError("jsp.error.tld.mandatory.element.missing", 
+			 "tlib-version");
+	}
+	if (!jspVersionSeen) {
+	    err.jspError("jsp.error.tld.mandatory.element.missing",
+			 "jsp-version");
+	}
 
         this.tags = new TagInfo[tagVector.size()];
         tagVector.copyInto (this.tags);
