@@ -260,7 +260,7 @@ class ConnectionHandler extends Thread {
 	    // away before the response is completely written ... too bad
 	    // there's nothing like an error code we can switch on !!
 	    System.out.println("HANDLER THREAD PROBLEM: " + e);
-	    e.printStackTrace();
+ 	    e.printStackTrace();
 	} finally {
 	    // recycle kernel sockets ASAP
 	    try { socket.close (); }
