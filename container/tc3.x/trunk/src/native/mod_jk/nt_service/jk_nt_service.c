@@ -535,6 +535,11 @@ static void start_jk_service(char *name)
                         /* 
                          * Tomcat died !!!
                          */ 
+                        CloseHandle(hServerStopEvent);
+                        CloseHandle(hTomcat);
+                        exit(0); // exit ungracefully so
+                                 // Service Control Manager 
+                                 // will attempt a restart.
                         break;
                     default:
                         /* 
