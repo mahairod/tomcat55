@@ -645,7 +645,7 @@ public class ManagerServlet
         }
         
         context = (Context) host.findChild(path);
-        if (context != null) {
+        if (context != null && context.getConfigured()) {
             writer.println(sm.getString("managerServlet.deployed", displayPath));
         } else {
             // Something failed
@@ -711,7 +711,7 @@ public class ManagerServlet
         }
         
         context = (Context) host.findChild(path);
-        if (context != null) {
+        if (context != null && context.getConfigured()) {
             writer.println(sm.getString("managerServlet.deployed", displayPath));
         } else {
             // Something failed
@@ -815,8 +815,13 @@ public class ManagerServlet
                     removeServiced(path);
                 }
             }
-            writer.println(sm.getString("managerServlet.deployed",
-                    displayPath));
+            context = (Context) host.findChild(path);
+            if (context != null && context.getConfigured()) {
+                writer.println(sm.getString("managerServlet.deployed", displayPath));
+            } else {
+                // Something failed
+                writer.println(sm.getString("managerServlet.deployFailed", displayPath));
+            }
         } catch (Throwable t) {
             log("ManagerServlet.install[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
