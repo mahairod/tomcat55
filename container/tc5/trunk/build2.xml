@@ -6,6 +6,7 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
+
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
   <property file="build.properties.default"/>
@@ -47,7 +48,7 @@
     <pathelement location="${activation.jar}"/>
     <pathelement location="${jta.jar}"/>
 
-    <pathelement location="${optit.jar}"/>
+    <pathelement location="${jasper.home}/lib/jsp20el.jar"/>
   </path>
   
   <patternset id="static.res">
@@ -98,7 +99,7 @@
         <path location="${commons.home}/logging/src/java" />
         <path location="${commons.home}/discovery/src/java" />
       </src>
-      <exclude name="org/apache/tomcat/util/net/PureTLS*" />
+      <exclude name="org/apache/tomcat/util/net/puretls/PureTLS*" />
       <exclude name="org/apache/commons/logging/impl/LogKitLogger.java" />
       <exclude name="org/apache/commons/modeler/impl/IntrospectionModeler.java" />
 
@@ -282,24 +283,6 @@
   </target>
 
   <target name="discovery" >
-    <path id="discoveryCP" >
-      <path refid="alljars"/>
-      <path refid="jasperjars"/>
-      <pathelement location="${build.dir}/classes"/>
-      <pathelement location="${ant.home}/lib/xercesImpl.jar"/>
-      <pathelement location="${ant.home}/lib/xml-apis.jar"/>
-      <pathelement location="${ant.home}/lib/ant.jar"/>
-      <pathelement location="${tools.jar}"/>
-      <pathelement location="/usr/share/java/xalan-j_2_3_1/bin/xercesImpl.jar"/>
-     </path>
- 
-    <taskdef name="discovery" 
-             classname="org.apache.commons.discovery.ServiceDiscoveryTask" 
-             classpathref="discoveryCP"/>
-      
-    <discovery debug="1" id="myDiscovery"
-               serviceName="javax.xml.parsers.SAXParserFactory" />
-    <echo message="Found ${jxpath:/references[@name='myDiscovery']}" />
   </target>
 
   <target name="jdepend" description="Document the dependency graph ">
