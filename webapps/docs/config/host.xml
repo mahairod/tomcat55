@@ -71,9 +71,9 @@
       </attribute>
 
       <attribute name="autoDeploy" required="false">
-        <p>This flag value indicates if web applications from this host should
-        be automatically deployed by the host configurator.
-        The flag's value defaults to true.  See
+        <p>This flag value indicates if new web applications, dropped in to
+        the <code>appBase</code> directory while Tomcat is running, should
+        be automatically deployed.  The flag's value defaults to true.  See
         <a href="#Automatic Application Deployment">Automatic Application
         Deployment</a> for more information.</p>
       </attribute>
@@ -82,6 +82,14 @@
         <p>Java class name of the implementation to use.  This class must
         implement the <code>org.apache.catalina.Host</code> interface.
         If not specified, the standard value (defined below) will be used.</p>
+      </attribute>
+
+      <attribute name="deployOnStartup" required="false">
+        <p>This flag value indicates if web applications from this host should
+        be automatically deployed by the host configurator.
+        The flag's value defaults to true.  See
+        <a href="#Automatic Application Deployment">Automatic Application
+        Deployment</a> for more information.</p>
       </attribute>
 
       <attribute name="name" required="true">
@@ -119,8 +127,9 @@
         <p>Set to <code>false</code> if you want to disable deploying
         applications using a Context XML config file. This also disables
         the ability to install web application directories or ".war" files
-        with the manager app which are not located in the Host appBase
-        directory. Applications are deployed with the security permissions
+        with the manager app which are not located in the Host config base
+        directory (<code>$CATALINA_HOME/conf/[engine_name]/[host_name]</code>).
+        Applications are deployed with the security permissions
         of catalina, for security this may need to be set to <code>false</code>
         if untrusted users can manage web applications.  The flag's value
         defaults to <code>true</code>.</p>
@@ -135,14 +144,6 @@
         <code>org.apache.catalina.Valve</code> interface. If none is specified,
         the value <code>org.apache.catalina.valves.ErrorReportValve</code>
         will be used by default.</p>
-      </attribute>
-
-      <attribute name="liveDeploy" required="false">
-        <p>This flag value indicates if new web applications, dropped in to
-        the <code>appBase</code> directory while Tomcat is running, should
-        be automatically deployed.  The flag's value defaults to true.  See
-        <a href="#Automatic Application Deployment">Automatic Application
-        Deployment</a> for more information.</p>
       </attribute>
 
       <attribute name="unpackWARs" required="false">
@@ -246,10 +247,12 @@
 
     <p>If you are using the standard <strong>Host</strong> implementation,
     the following actions take place automatically when Catalina is first
-    started, if the <code>autoDeploy</code> property is set to
+    started, if the <code>deployOnStartup</code> property is set to
     <code>true</code> (which is the default value:</p>
     <ul>
-    <li>Any XML file in this directory is assumed to contain a
+    <li>Any XML file in the 
+        <code>$CATALINA_HOME/conf/[engine_name]/[host_name]</code> directory is
+        assumed to contain a
         <a href="context.html">Context</a> element (and its associated
         subelements) for a single web application.  The <code>docBase</code>
         attribute of this <code>&lt;Context&gt;</code> element will typically
@@ -261,7 +264,8 @@
         automatically expanded, unless the <code>unpackWARs</code> property
         is set to <code>false</code>.  If you redeploy an updated WAR file,
         be sure to delete the expanded directory when restarting Tomcat, so
-        that the updated WAR file will be re-expanded.</li>
+        that the updated WAR file will be re-expanded (note that the auto
+        deployer will automatically take care of this if it is enabled).</li>
     <li>Any subdirectory within the <em>application base directory</em>
         that appears to be an unpacked web application (that is, it contains
         a <code>/WEB-INF/web.xml</code> file) will receive an automatically
@@ -278,8 +282,22 @@
     <p>In addition to the automatic deployment that occurs at startup time,
     you can also request that new XML configuration files, WAR files, or
     subdirectories (containing web applications) that are dropped in to the
-    <code>appBase</code> directory while Tomcat is running will be
-    automatically deployed, according to the rules described above.</p>
+    <code>appBase</code> (or 
+    <code>$CATALINA_HOME/conf/[engine_name]/[host_name]</code> in the case of
+    an XML configuration file) directory while Tomcat is running will be
+    automatically deployed, according to the rules described above. The 
+    auto deployer will also track web applications for the following changes:
+    <ul>
+        <li>An update to the conf/web.xml file will trigger a reload of the
+        web application</li>
+        <li>An update to a WAR which has been expanded will trigger 
+        an undeploy (<strong>with a removal of the expanded webapp</strong>), 
+        followed by a deployment</li>
+        <li>An update to a XML configuration file will trigger an undeploy
+        (without the removal of any expanded directory), followed by 
+        a deployment of the associated web application</li>
+    </ul>
+    </p>
 
   </subsection>
 
