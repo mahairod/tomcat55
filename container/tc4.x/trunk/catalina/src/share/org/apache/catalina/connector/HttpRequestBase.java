@@ -429,6 +429,7 @@ public class HttpRequestBase
         requestedSessionId = null;
         requestedSessionURL = false;
         requestURI = null;
+        decodedRequestURI = null;
         secure = false;
         servletPath = null;
         session = null;
