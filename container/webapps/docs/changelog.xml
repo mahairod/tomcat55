@@ -85,6 +85,9 @@
       <fix>
         <bug>32431</bug>: Fix typo in code that passes data to CGI script. (markt)
       </fix>
+      <fix>
+        <bug>32430</bug>: Class cast exception in toString() method within CGI servlet. (markt)
+      </fix>
     </changelog>
   </subsection>
 
