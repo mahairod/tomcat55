@@ -22,10 +22,14 @@ package org.apache.catalina.cluster.tcp;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.net.InetSocketAddress;
+import java.nio.channels.Selector;
+
 import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.io.Jdk13ObjectReader;
 
 /**
+ * @author Filip Hanik
+ * @version $Revision$, $Date$
  */
 public class Jdk13ReplicationListener implements Runnable
 {
@@ -38,21 +42,50 @@ public class Jdk13ReplicationListener implements Runnable
     private java.net.InetAddress bind;
     private int port;
     private long timeout = 0;
-    private boolean synchronous = false;
     ServerSocket serverSocket = null;
+    
+    /**
+     * sendAck
+     */
+    private boolean sendAck = true ;
+    /**
+     * Compress message data bytes
+     */
+    private boolean compress = true ;
+    
 
     public Jdk13ReplicationListener(ListenCallback callback,
                                int poolSize,
                                java.net.InetAddress bind,
                                int port,
                                long timeout,
-                               boolean synchronous)
+                               boolean sendAck)
     {
-        this.synchronous=synchronous;
+        this.sendAck=sendAck;
         this.callback = callback;
         this.bind = bind;
         this.port = port;
         this.timeout = timeout;
+    }
+
+    /**
+     * @return Returns the compress.
+     */
+    public boolean isCompress() {
+        return compress;
+    }
+    
+    /**
+     * @param compress The compress to set.
+     */
+    public void setCompress(boolean compress) {
+        this.compress = compress;
+    }
+    public boolean isSendAck() {
+        return sendAck;
+    }
+    public void setSendAck(boolean sendAck) {
+        this.sendAck = sendAck;
     }
 
     public void run()
@@ -76,7 +109,7 @@ public class Jdk13ReplicationListener implements Runnable
         serverSocket.bind (new InetSocketAddress (bind,port));
         while (doListen) {
             Socket socket = serverSocket.accept();
-            ClusterListenThread t = new ClusterListenThread(socket,new Jdk13ObjectReader(socket,callback));
+            ClusterListenThread t = new ClusterListenThread(socket,new Jdk13ObjectReader(socket,callback,compress),sendAck);
             t.setDaemon(true);
             t.start();
         }//while
@@ -96,10 +129,12 @@ public class Jdk13ReplicationListener implements Runnable
         private Socket socket;
         private Jdk13ObjectReader reader;
         private boolean keepRunning = true;
-        private static byte[] ackMsg = new byte[] {6,2,3};
-        ClusterListenThread(Socket socket, Jdk13ObjectReader reader) {
+        private boolean sendAck ;
+        private static byte[] ACK_COMMAND = new byte[] {6,2,3};
+        ClusterListenThread(Socket socket, Jdk13ObjectReader reader, boolean sendAck) {
             this.socket = socket;
             this.reader = reader;
+            this.sendAck = sendAck ;
         }
 
         public void run() {
@@ -112,9 +147,11 @@ public class Jdk13ReplicationListener implements Runnable
                     if ( cnt > 0 ) {
                         ack = reader.append(buffer, 0, cnt);
                     }
-                    while ( ack > 0 ) {
-                        sendAck();
-                        ack--;
+                    if(sendAck) {
+                        while ( ack > 0 ) {
+                            sendAck();
+                            ack--;
+                        }
                     }
                 }
             } catch ( Exception x ) {
@@ -126,7 +163,7 @@ public class Jdk13ReplicationListener implements Runnable
 
         private void sendAck() throws java.io.IOException {
             //send a reply-acknowledgement
-            socket.getOutputStream().write(ackMsg);
+            socket.getOutputStream().write(ACK_COMMAND);
         }
 
     }
