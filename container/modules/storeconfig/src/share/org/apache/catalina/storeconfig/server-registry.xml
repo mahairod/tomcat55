@@ -95,7 +95,7 @@
 	    tag="Manager"
 		standard="false"
 		default="false" 
-		tagClass="org.apache.catalina.session.Manager"
+		tagClass="org.apache.catalina.Manager"
         storeFactoryClass="org.apache.catalina.storeconfig.ManagerSF">
 	    <TransientAttribute>entropy</TransientAttribute>
 	    <TransientAttribute>distributable</TransientAttribute>
@@ -234,9 +234,9 @@
         <TransientAttribute>cacheTTL</TransientAttribute>
         <TransientAttribute>cached</TransientAttribute>
         <TransientAttribute>caseSensitive</TransientAttribute>
-        <TransientChild>org.apache.naming.resoures.WARDirContext</TransientChild>
-        <TransientChild>org.apache.naming.resoures.FileDirContext</TransientChild>
-        <TransientChild>org.apache.naming.resoures.ProxyDirContext</TransientChild>
+        <TransientChild>org.apache.naming.resources.WARDirContext</TransientChild>
+        <TransientChild>org.apache.naming.resources.FileDirContext</TransientChild>
+        <TransientChild>org.apache.naming.resources.ProxyDirContext</TransientChild>
      </Description>
      <Description
 	    tag="ResourceEnvRef"
