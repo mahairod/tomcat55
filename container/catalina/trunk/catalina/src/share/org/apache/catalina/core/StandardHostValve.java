@@ -174,7 +174,7 @@ final class StandardHostValve
         }
 
         // Ask this Context to process this request
-        context.invoke(request, response);
+        context.getPipeline().invoke(request, response);
 
     }
 
