@@ -477,8 +477,8 @@ public class ServletWrapper {
 	    Object params[]=new Object[1];
 	    params[0]=cl;
 	    setCCL.invoke( t, params );
-	    if( context.getDebug() > 5 ) context.log("Setting system loader " + old + " " + cl );
-	    context.log("Setting system loader " + old + " " + cl );
+	    // 	    if( context.getDebug() > 5 ) context.log("Setting system loader " + old + " " + cl );
+	    // 	    context.log("Setting system loader " + old + " " + cl );
 	    
 	    return old;
 	} catch (NoSuchMethodException ex ) {
