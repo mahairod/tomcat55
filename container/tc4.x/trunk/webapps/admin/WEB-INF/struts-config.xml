@@ -40,6 +40,12 @@
     <form-bean      name="hostsForm"
                     type="org.apache.webapp.admin.host.HostsForm"/>
 
+    <form-bean      name="aliasForm"
+                    type="org.apache.webapp.admin.host.AliasForm"/>
+                    
+    <form-bean      name="aliasesForm"
+                    type="org.apache.webapp.admin.host.AliasesForm"/>
+
    <!-- ============= Logger Module ============= -->
 
     <form-bean      name="loggerForm"
@@ -186,6 +192,14 @@
 
     <forward        name="Hosts"
                     path="/host/hosts.jsp"
+                redirect="false"/>
+
+    <forward        name="Alias"
+                    path="/host/alias.jsp"
+                redirect="false"/>
+
+    <forward        name="Aliases"
+                    path="/host/aliases.jsp"
                 redirect="false"/>
 
     <!-- ============ Logger Module ============== -->
@@ -445,6 +459,30 @@
                type="org.apache.webapp.admin.host.SaveHostAction"
                name="hostForm"
               input="/host/host.jsp"
+               scope="session"/>
+               
+    <!-- Set up Add Alias transaction -->
+    <action    path="/AddAlias"
+               type="org.apache.webapp.admin.host.AddAliasAction">
+    </action>
+
+    <!-- Perform Delete Aliases transaction -->
+    <action    path="/DeleteAlias"
+               type="org.apache.webapp.admin.host.DeleteAliasAction"
+               name="aliasesForm"
+               scope="request"/>
+               
+    <!-- Perform Delete Aliases transaction -->
+    <action    path="/DeleteAliases"
+               type="org.apache.webapp.admin.host.DeleteAliasesAction"
+               name="aliasesForm"
+               scope="request"/>
+               
+    <!-- Perform Save Host transaction -->
+    <action    path="/SaveAlias"
+               type="org.apache.webapp.admin.host.SaveAliasAction"
+               name="aliasForm"
+              input="/host/alias.jsp"
                scope="session"/>
 
     <!-- ============= Realm Module ============== -->
