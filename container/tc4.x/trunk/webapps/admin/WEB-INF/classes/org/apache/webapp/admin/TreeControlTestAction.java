@@ -113,47 +113,33 @@ public class TreeControlTestAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-            
 
-	getServlet().log("Entered TreeControlTestAction:perform()");
+        getServlet().log("Entered TreeControlTestAction:perform()");
+
         String name = null;
-	String encodedName = null;
         HttpSession session = request.getSession();
         TreeControl control =
             (TreeControl) session.getAttribute("treeControlTest");
 
         // Handle a tree expand/contract event
-        encodedName = request.getParameter("tree");
+        name = request.getParameter("tree");
 
-        if (encodedName != null) {
-
-        // HACK to take into account special characters like = and &
-        // in the node name, could remove this code if encode URL
-        // and request.getParameter() could deal with = and &
-        // character in parameter values. 
-            name = URLDecoder.decode(encodedName);
-
-
+        if (name != null) {
             getServlet().log("Tree expand/contract on " + name);
+
             TreeControlNode node = control.findNode(name);
+
             if (node != null){
-		getServlet().log("Found Node: " + name);
+                getServlet().log("Found Node: " + name);
                 node.setExpanded(!node.isExpanded());
-	    }
+            }
         }else{
             getServlet().log("tree param is null");
-	}
+        }
 
         // Handle a select item event
-        encodedName = request.getParameter("select");
-        if (encodedName != null) {
-
-           // HACK to take into account special characters like = and &
-           // in the node name, could remove this code if encode URL
-           // and request.getParameter() could deal with = and &
-           // character in parameter values. 
-            name = URLDecoder.decode(encodedName);
-
+        name = request.getParameter("select");
+        if (name != null) {
             getServlet().log("Select event on " + name);
             control.selectNode(name);
         }
