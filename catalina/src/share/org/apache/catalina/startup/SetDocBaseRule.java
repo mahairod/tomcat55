@@ -136,9 +136,14 @@ public class SetDocBaseRule extends Rule {
             return;
         }
 
-        File canonicalAppBase = 
-            new File(System.getProperty("catalina.base"), appBase)
-            .getCanonicalFile();
+        File canonicalAppBase = new File(appBase);
+        if (canonicalAppBase.isAbsolute()) {
+            canonicalAppBase = canonicalAppBase.getCanonicalFile();
+        } else {
+            canonicalAppBase = 
+                new File(System.getProperty("catalina.base"), appBase)
+                .getCanonicalFile();
+        }
 
         String docBase = child.getDocBase();
         if (docBase == null) {
@@ -160,11 +165,7 @@ public class SetDocBaseRule extends Rule {
 
         File file = new File(docBase);
         if (!file.isAbsolute()) {
-            // Use the "appBase" property of this container
-            file = new File(appBase);
-            if (!file.isAbsolute())
-                file = canonicalAppBase;
-            docBase = (new File(file, docBase)).getPath();
+            docBase = (new File(canonicalAppBase, docBase)).getPath();
         } else {
             docBase = file.getCanonicalPath();
         }
