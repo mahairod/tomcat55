@@ -268,16 +268,11 @@ public class Project {
 	    String msg = "   +Task: " + taskType;
 	    log (msg, MSG_VERBOSE);
 	    return task;
-	} catch (IllegalAccessException iae) {
+	} catch (Exception e) {
 	    String msg = "Could not create task of type: "
-		 + taskType + " due to " + iae;
+		 + taskType + " due to " + e;
 	    throw new BuildException(msg);
-	} catch (InstantiationException ie) {
-	    String msg = "Could not create task of type: "
-		 + taskType + " due to " + ie;
-	    throw new BuildException(msg);
-	}
-	
+    }	
     }
     
     public void executeTarget(String targetName) throws BuildException {
