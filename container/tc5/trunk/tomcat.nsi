@@ -135,6 +135,12 @@ Section "Core" SecTomcatCore
 
   Call configure
   Call findJavaPath
+  Pop $2
+
+  IfSilent +2 0
+  !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
+
+  Push $2
   Call findJVMPath
   Pop $2
 
