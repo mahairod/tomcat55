@@ -355,8 +355,6 @@ public interface EmbeddedManagerMBean {
      *
      * @exception IllegalStateException if this component has already been
      *  started
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
      */
     public void start();
 
@@ -367,8 +365,6 @@ public interface EmbeddedManagerMBean {
      * instance of this component.
      *
      * @exception IllegalStateException if this component has not been started
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
      */
     public void stop();
 
