@@ -26,12 +26,12 @@
           <td scope="row"><div align="center" class="table-normal-text">
             <logic:present name="userForm">
              <label for="groups"></label>
-              <html:multibox property="groups" value="<%= group %>" styleId="groups"/>
+              <html:multibox property="groups" value='<%= group %>' styleId="groups"/>
             </logic:present>
             <logic:notPresent name="userForm">
               <label for="groups"></label>
               <input type="checkbox" name="groups"
-                    value="<%= group %>" styleId="groups">
+                    value='<%= group %>' styleId="groups">
             </logic:notPresent>
           </td>
         </logic:present>

@@ -25,7 +25,7 @@
           <td scope="row"><div align="center" class="table-normal-text">
             <label for="users"></label>
             <input type="checkbox" name="users"
-                  value="<%= user %>" styleId="users">
+                  value='<%= user %>' styleId="users">
           </td>
         </logic:present>
         <td scope="row"><div align="left" class="table-normal-text">&nbsp;
