@@ -310,6 +310,7 @@
              validateXml="false"
              uriroot="${ROOT.base}"
              webXmlFragment="${ROOT.base}/WEB-INF/generated_web.xml"
+             addWebXmlMappings="true"
              outputDir="${ROOT.base}/WEB-INF/src" />
 
     <jasper2 
@@ -317,6 +318,7 @@
              validateXml="false"
              uriroot="${jsp-examples.base}"
 	     webXmlFragment="${jsp-examples.base}/WEB-INF/generated_web.xml"
+             addWebXmlMappings="true"
              outputDir="${jsp-examples.base}/WEB-INF/src" />
 
     <jasper2 
@@ -325,22 +327,8 @@
              validateXml="false"
              uriroot="${admin.base}"
              webXmlFragment="${admin.base}/WEB-INF/generated_web.xml"
+             addWebXmlMappings="true"
              outputDir="${admin.base}/WEB-INF/src/admin" />
-
-    <loadfile property="generated_ROOT_web.xml"
-              srcFile="${ROOT.base}/WEB-INF/generated_web.xml"  />
-    <replace file="${ROOT.base}/WEB-INF/web.xml"
-             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_ROOT_web.xml}" />
-
-    <loadfile property="generated_JSP_web.xml"
-              srcFile="${jsp-examples.base}/WEB-INF/generated_web.xml" />
-    <replace file="${jsp-examples.base}/WEB-INF/web.xml"
-             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_JSP_web.xml}" />
-
-    <loadfile property="generated_admin_web.xml"
-              srcFile="${admin.base}/WEB-INF/generated_web.xml"  />
-    <replace file="${admin.base}/WEB-INF/web.xml"
-             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_admin_web.xml}" />
 
     <javac destdir="${ROOT.base}/WEB-INF/classes"
            optimize="off"
