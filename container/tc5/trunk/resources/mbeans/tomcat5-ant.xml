@@ -16,7 +16,7 @@
       <!-- Just include everything for now 
        -->
       <fileset dir="${tomcat.home}/lib" includes="*.jar"/>
-      <pathelement  path="${tomcat.home}/classes"/>
+      <pathelement  path="${tomcat.home}/conf"/>
     </path>
 
     <taskdef resource="org/apache/commons/modeler/ant/ant.properties"
@@ -92,12 +92,17 @@
          <attribute name="name" value="Tomcat-Standalone"/>
        </mbean>
 
+
        <mbean name="${domain}:type=Engine,name=Tomcat-Standalone" 
               code="org.apache.catalina.core.StandardEngine"
               modeler="true">
          <attribute name="name" value="Tomcat-Standalone"/>
          <attribute name="baseDir" value="/opt/50"/>
          <attribute name="defaultHost" value="localhost"/>
+       </mbean>
+
+       <mbean name="${domain}:type=Realm,service=Tomcat-Standalone" 
+              code="org.apache.catalina.realm.JAASRealm" modeler="true">
        </mbean>
 
 <!--
@@ -109,34 +114,54 @@
        </mbean>
 -->
 
+
        <mbean name="${domain}:type=Connector,port=9080" 
               code="org.apache.coyote.tomcat5.CoyoteConnector"
               modeler="true">
           <attribute name="port" value="9080" />
        </mbean>
 
+
 <!--
-       <mbean name="${domain}:type=DefaultContext,host=localhost,Service=Tomcat-Standalone" 
+       <mbean name="${domain}:type=DefaultContext,host=localhost,service=Tomcat-Standalone" 
               code="org.apache.catalina.core.StandardDefaultContext"
               modeler="true">
        </mbean>
 -->
 
-       <mbean name="${domain}:type=Host,host=localhost,Service=Tomcat-Standalone" 
-              code="org.apache.catalina.core.StandardHost"
-              modeler="true">
-         <attribute name="name" value="localhost1"/>
+
+<!-- Optional: when the context is created it'll create a host if none is found.
+-->
+       <mbean name="${domain}:type=Host,host=localhost,service=Tomcat-Standalone" 
+              code="org.apache.catalina.core.StandardHost" modeler="true">
+         <attribute name="name" value="localhost"/>
        </mbean>
 
+
        <mbean name="${domain}:j2eeType=WebModule,name=//localhost/,J2EEApplication=none,J2EEServer=none" 
-              code="org.apache.catalina.core.StandardContext"
-              modeler="true">
-         <attribute name="docBase"
-                    value="/ws/50/build/webapps/ROOT" />
-         <attribute name="privileged"
-                    value="true" />
+              code="org.apache.catalina.core.StandardContext"  modeler="true">
+         <attribute name="docBase" value="/opt/50/webapps/ROOT" />
+         <!-- Required for now -->
+         <attribute name="privileged" value="true" />
        </mbean>
+
+       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlet-examples,J2EEApplication=none,J2EEServer=none" 
+              code="org.apache.catalina.core.StandardContext"  modeler="true">
+         <attribute name="docBase" value="/opt/50/webapps/servlets-examples" />
+         <!-- Required for now -->
+         <attribute name="privileged" value="true" />
+       </mbean>
+
+       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/jsp-examples,J2EEApplication=none,J2EEServer=none" 
+              code="org.apache.catalina.core.StandardContext"  modeler="true">
+         <attribute name="docBase" value="/opt/50/webapps/jsp-examples" />
+         <!-- Required for now -->
+         <attribute name="privileged" value="true" />
+       </mbean>
+
+
     </jmx-service>
+
 
     <echo message="Tomcat5 running"/>
 
