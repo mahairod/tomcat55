@@ -2661,7 +2661,8 @@ public class Generator {
             // body.  The implementation of this fragment can come from
             // the org.apache.jasper.runtime package as a support class.
             FragmentHelperClass.Fragment fragment = 
-                fragmentHelperClass.openFragment(n, tagHandlerVar);
+                fragmentHelperClass.openFragment(n, tagHandlerVar,
+						 methodNesting);
             ServletWriter outSave = out;
 	    out = fragment.getMethodsBuffer().getOut();
 	    String tmpParent = parent;
@@ -2669,7 +2670,7 @@ public class Generator {
             visitBody( n );
             out = outSave;
 	    parent = tmpParent;
-	    fragmentHelperClass.closeFragment( fragment );
+	    fragmentHelperClass.closeFragment(fragment, methodNesting);
             // XXX - Need to change pageContext to jspContext if
             // we're not in a place where pageContext is defined (e.g.
             // in a fragment or in a tag file.
@@ -3362,7 +3363,8 @@ public class Generator {
             out.printil( "}" );
         }
         
-	public Fragment openFragment(Node parent, String tagHandlerVar) 
+	public Fragment openFragment(Node parent, String tagHandlerVar,
+				     int methodNesting) 
             throws JasperException 
         {
             Fragment result = new Fragment( fragments.size() );
@@ -3378,8 +3380,13 @@ public class Generator {
             // meaning only the fragment is skipped.  The JSR-152
             // expert group is currently discussing what to do in this case.
             // See comment in closeFragment()
-	    out.printil( "public boolean invoke" + result.getId() + "( " +
-			 "java.io.Writer out, java.util.Map params ) " );
+	    if (methodNesting > 0) {
+		out.printin("public boolean invoke");
+	    } else {
+		out.printin("public void invoke");
+	    }
+	    out.println(result.getId() + "( " +
+			"java.io.Writer out, java.util.Map params ) " );
             out.pushIndent();
             // Note: Throwable required because methods like _jspx_meth_*
             // throw Throwable.
@@ -3395,10 +3402,14 @@ public class Generator {
             return result;
         }
         
-        public void closeFragment( Fragment fragment ) {
+        public void closeFragment( Fragment fragment, int methodNesting ) {
             ServletWriter out = fragment.getMethodsBuffer().getOut();
             // XXX - See comment in openFragment()
-            out.printil( "return false;" );
+	    if (methodNesting > 0) {
+		out.printil( "return false;" );
+	    } else {
+		out.printil("return;");
+	    }
             out.popIndent();
             out.printil( "}" );
         }
