@@ -193,8 +193,8 @@ public class ServerLifecycleListener
             for (int i = 0; i < services.length; i++) {
 
                 // FIXME - Warp object hierarchy not currently supported
-                if (services[i].getContainer() instanceof
-                    org.apache.catalina.connector.warp.WarpEngine) {
+                if (services[i].getContainer().getClass().getName().equals
+                    ("org.apache.catalina.connector.warp.WarpEngine")) {
                     if (debug >= 2) {
                         log("Skipping MBean for Service " +
                             services[i]);
