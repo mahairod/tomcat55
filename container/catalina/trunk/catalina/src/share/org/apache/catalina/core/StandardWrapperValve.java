@@ -187,8 +187,7 @@ final class StandardWrapperValve
         ApplicationFilterFactory factory =
             ApplicationFilterFactory.getInstance();
         ApplicationFilterChain filterChain =
-            factory.createFilterChain((ServletRequest) request,
-                                      wrapper, servlet);
+            factory.createFilterChain(request, wrapper, servlet);
 
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
@@ -204,7 +203,8 @@ final class StandardWrapperValve
                 if (context.getSwallowOutput()) {
                     try {
                         SystemLogHandler.startCapture();
-                        filterChain.doFilter(request, response);
+                        filterChain.doFilter(request.getRequest(), 
+                                response.getResponse());
                     } finally {
                         String log = SystemLogHandler.stopCapture();
                         if (log != null && log.length() > 0) {
@@ -212,7 +212,8 @@ final class StandardWrapperValve
                         }
                     }
                 } else {
-                    filterChain.doFilter(request, response);
+                    filterChain.doFilter
+                        (request.getRequest(), response.getResponse());
                 }
 
             }
