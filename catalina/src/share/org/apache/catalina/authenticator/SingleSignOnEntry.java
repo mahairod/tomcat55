@@ -32,21 +32,21 @@ import org.apache.catalina.authenticator.Constants;
  * @see SingleSignOn
  * @see AuthenticatorBase#reauthenticateFromSSO
  */
-class SingleSignOnEntry
+public class SingleSignOnEntry
 {
     // ------------------------------------------------------  Instance Fields
 
-    private String authType = null;
+    protected String authType = null;
 
-    private String password = null;
+    protected String password = null;
 
-    private Principal principal = null;
+    protected Principal principal = null;
 
-    private Session sessions[] = new Session[0];
+    protected Session sessions[] = new Session[0];
 
-    private String username = null;
+    protected String username = null;
 
-    private boolean canReauthenticate = false;
+    protected boolean canReauthenticate = false;
 
     // ---------------------------------------------------------  Constructors
 
@@ -76,7 +76,7 @@ class SingleSignOnEntry
      *                  the SSO session.
      * @param session   The <code>Session</code> being associated with the SSO.
      */
-    synchronized void addSession(SingleSignOn sso, Session session) {
+    public synchronized void addSession(SingleSignOn sso, Session session) {
         for (int i = 0; i < sessions.length; i++) {
             if (session == sessions[i])
                 return;
@@ -94,7 +94,7 @@ class SingleSignOnEntry
      *
      * @param session  the <code>Session</code> to remove.
      */
-    synchronized void removeSession(Session session) {
+    public synchronized void removeSession(Session session) {
         Session[] nsessions = new Session[sessions.length - 1];
         for (int i = 0, j = 0; i < sessions.length; i++) {
             if (session == sessions[i])
@@ -107,7 +107,7 @@ class SingleSignOnEntry
     /**
      * Returns the <code>Session</code>s associated with this SSO.
      */
-    synchronized Session[] findSessions() {
+    public synchronized Session[] findSessions() {
         return (this.sessions);
     }
 
@@ -117,7 +117,7 @@ class SingleSignOnEntry
      *
      * @return "BASIC", "CLIENT-CERT", "DIGEST", "FORM" or "NONE"
      */
-    String getAuthType() {
+    public String getAuthType() {
         return (this.authType);
     }
 
@@ -128,7 +128,7 @@ class SingleSignOnEntry
      * @return  <code>true</code> if <code>getAuthType</code> returns
      *          "BASIC" or "FORM", <code>false</code> otherwise.
      */
-    boolean getCanReauthenticate() {
+    public boolean getCanReauthenticate() {
         return (this.canReauthenticate);
     }
 
@@ -139,7 +139,7 @@ class SingleSignOnEntry
      *          <code>null</code> if the original authentication type
      *          does not involve a password.
      */
-    String getPassword() {
+    public String getPassword() {
         return (this.password);
     }
 
@@ -147,7 +147,7 @@ class SingleSignOnEntry
      * Gets the <code>Principal</code> that has been authenticated by
      * the SSO.
      */
-    Principal getPrincipal() {
+    public Principal getPrincipal() {
         return (this.principal);
     }
 
@@ -155,7 +155,7 @@ class SingleSignOnEntry
      * Gets the username provided by the user as part of the authentication
      * process.
      */
-    String getUsername() {
+    public String getUsername() {
         return (this.username);
     }
 
@@ -171,8 +171,8 @@ class SingleSignOnEntry
      * @param username  the username (if any) used for the authentication
      * @param password  the password (if any) used for the authentication
      */
-    void updateCredentials(Principal principal, String authType,
-                String username, String password) {
+    public void updateCredentials(Principal principal, String authType,
+                                  String username, String password) {
 
         this.principal = principal;
         this.authType = authType;

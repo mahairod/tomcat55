@@ -33,6 +33,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Session;
@@ -559,6 +560,55 @@ public class SingleSignOn
 
 
     /**
+     * Attempts reauthentication to the given <code>Realm</code> using
+     * the credentials associated with the single sign-on session
+     * identified by argument <code>ssoId</code>.
+     * <p>
+     * If reauthentication is successful, the <code>Principal</code> and
+     * authorization type associated with the SSO session will be bound
+     * to the given <code>HttpRequest</code> object via calls to 
+     * {@link HttpRequest#setAuthType HttpRequest.setAuthType()} and 
+     * {@link HttpRequest#setUserPrincipal HttpRequest.setUserPrincipal()}
+     * </p>
+     *
+     * @param ssoId     identifier of SingleSignOn session with which the
+     *                  caller is associated
+     * @param realm     Realm implementation against which the caller is to
+     *                  be authenticated
+     * @param request   the request that needs to be authenticated
+     * 
+     * @return  <code>true</code> if reauthentication was successful,
+     *          <code>false</code> otherwise.
+     */
+    protected boolean reauthenticate(String ssoId, Realm realm,
+                                  HttpRequest request) {
+
+        if (ssoId == null || realm == null)
+            return false;
+
+        boolean reauthenticated = false;
+
+        SingleSignOnEntry entry = lookup(ssoId);
+        if (entry != null && entry.getCanReauthenticate()) {
+            
+            String username = entry.getUsername();
+            if (username != null) {
+                Principal reauthPrincipal =
+                        realm.authenticate(username, entry.getPassword());                
+                if (reauthPrincipal != null) {                    
+                    reauthenticated = true;                    
+                    // Bind the authorization credentials to the request
+                    request.setAuthType(entry.getAuthType());
+                    request.setUserPrincipal(reauthPrincipal);
+                }
+            }
+        }
+
+        return reauthenticated;
+    }
+
+
+    /**
      * Register the specified Principal as being associated with the specified
      * value for the single sign on identifier.
      *
@@ -581,6 +631,47 @@ public class SingleSignOn
                                                    username, password));
         }
 
+    }
+
+
+    /**
+     * Updates any <code>SingleSignOnEntry</code> found under key
+     * <code>ssoId</code> with the given authentication data.
+     * <p>
+     * The purpose of this method is to allow an SSO entry that was
+     * established without a username/password combination (i.e. established
+     * following DIGEST or CLIENT-CERT authentication) to be updated with
+     * a username and password if one becomes available through a subsequent
+     * BASIC or FORM authentication.  The SSO entry will then be usable for
+     * reauthentication.
+     * <p>
+     * <b>NOTE:</b> Only updates the SSO entry if a call to
+     * <code>SingleSignOnEntry.getCanReauthenticate()</code> returns
+     * <code>false</code>; otherwise, it is assumed that the SSO entry already
+     * has sufficient information to allow reauthentication and that no update
+     * is needed.
+     *
+     * @param ssoId     identifier of Single sign to be updated
+     * @param principal the <code>Principal</code> returned by the latest
+     *                  call to <code>Realm.authenticate</code>.
+     * @param authType  the type of authenticator used (BASIC, CLIENT-CERT,
+     *                  DIGEST or FORM)
+     * @param username  the username (if any) used for the authentication
+     * @param password  the password (if any) used for the authentication
+     */
+    protected void update(String ssoId, Principal principal, String authType,
+                          String username, String password) {
+
+        SingleSignOnEntry sso = lookup(ssoId);
+        if (sso != null && !sso.getCanReauthenticate()) {
+            if (debug >= 1)
+                log("Update sso id " + ssoId + " to auth type " + authType);
+
+            synchronized(sso) {
+                sso.updateCredentials(principal, authType, username, password);
+            }
+
+        }
     }
 
 
@@ -633,9 +724,7 @@ public class SingleSignOn
 
     }
 
-    //----------------------------------------------  Package-Protected Methods
-
-
+    
     /**
      * Remove a single Session from a SingleSignOn.  Called when
      * a session is timed out and no longer active.
@@ -643,7 +732,7 @@ public class SingleSignOn
      * @param ssoId Single sign on identifier from which to remove the session.
      * @param session the session to be removed.
      */
-    void removeSession(String ssoId, Session session) {
+    protected void removeSession(String ssoId, Session session) {
 
         if (debug >= 1)
             log("Removing session " + session.toString() + " from sso id " + 
@@ -666,47 +755,6 @@ public class SingleSignOn
         // deregister the entry.
         if (entry.findSessions().length == 0) {
             deregister(ssoId);
-        }
-    }
-
-
-    /**
-     * Updates any <code>SingleSignOnEntry</code> found under key
-     * <code>ssoId</code> with the given authentication data.
-     * <p>
-     * The purpose of this method is to allow an SSO entry that was
-     * established without a username/password combination (i.e. established
-     * following DIGEST or CLIENT-CERT authentication) to be updated with
-     * a username and password if one becomes available through a subsequent
-     * BASIC or FORM authentication.  The SSO entry will then be usable for
-     * reauthentication.
-     * <p>
-     * <b>NOTE:</b> Only updates the SSO entry if a call to
-     * <code>SingleSignOnEntry.getCanReauthenticate()</code> returns
-     * <code>false</code>; otherwise, it is assumed that the SSO entry already
-     * has sufficient information to allow reauthentication and that no update
-     * is needed.
-     *
-     * @param ssoId identifier of Single sign to be updated
-     * @param principal the <code>Principal</code> returned by the latest
-     *                  call to <code>Realm.authenticate</code>.
-     * @param authType  the type of authenticator used (BASIC, CLIENT-CERT,
-     *                  DIGEST or FORM)
-     * @param username  the username (if any) used for the authentication
-     * @param password  the password (if any) used for the authentication
-     */
-    void update(String ssoId, Principal principal, String authType,
-                  String username, String password) {
-
-        SingleSignOnEntry sso = lookup(ssoId);
-        if (sso != null && !sso.getCanReauthenticate()) {
-            if (debug >= 1)
-                log("Update sso id " + ssoId + " to auth type " + authType);
-
-            synchronized(sso) {
-                sso.updateCredentials(principal, authType, username, password);
-            }
-
         }
     }
 
