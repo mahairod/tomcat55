@@ -726,7 +726,7 @@ public class RequestImpl  implements Request {
         protocol="HTTP/1.0";
         headers.clear(); // XXX use recycle pattern
         serverName=null;
-        serverPort=8080;
+        serverPort=-1;
         pathTranslated=null;
         pathInfo=null;
         pathTranslatedIsSet=false;
@@ -834,11 +834,9 @@ public class RequestImpl  implements Request {
     public void setBody( StringBuffer body ) {
 	// ???
     }
-
     public void setServerPort(int serverPort ) {
 	this.serverPort=serverPort;
     }
-
     public void setRemoteAddr( String remoteAddr ) {
 	this.remoteAddr=remoteAddr;
     }
