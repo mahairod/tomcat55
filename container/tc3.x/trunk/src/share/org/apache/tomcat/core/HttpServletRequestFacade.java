@@ -286,7 +286,14 @@ public class HttpServletRequestFacade implements HttpServletRequest {
 	    return null;
 
 	if (! path.startsWith("/")) {
-	    path= FileUtil.catPath( request.getLookupPath(), path );
+	    // The original implementation returned that RD relative
+	    // to lookupPath, which is RequestPath + PathInfo
+	    String pI= request.getPathInfo();
+	    if( pI == null ) 
+		path= FileUtil.catPath( request.getServletPath(), path );
+	    else
+		path= FileUtil.catPath( request.getServletPath() + pI,
+					path);
 	    if( path==null) return null;
 	}
 

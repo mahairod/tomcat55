@@ -69,8 +69,6 @@ import org.apache.tomcat.core.Constants;
 import java.io.*;
 import javax.servlet.ServletOutputStream;
 
-// XXX Find a better name, move to util
-
 /**
  *
  *

@@ -182,7 +182,7 @@ public class ResponseImpl implements Response {
 	    return;  // munch
 	} catch (IOException ex) {
 	    if( "Broken pipe".equals(ex.getMessage())) {
-		if(request!=null) request.getContext().log("Broken pipe " + request.getRequestURI());
+		//		if(request!=null) request.getContext().log("Broken pipe " + request.getRequestURI());
 		return;
 	    }
 	    throw ex;
