@@ -1022,8 +1022,8 @@
     <!-- Naming - Factory JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-factory.jar" index="true">
       <fileset dir="${classes.dir}">
-        <include name="org/apache/naming/*" />
-        <include name="org/apache/naming/factory/**" />
+        <include name="org/apache/naming/**" />
+        <exclude name="org/apache/naming/resources/**" />
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
         <exclude name="**/LocalStrings_*" />
@@ -1039,7 +1039,7 @@
       	<include name="org/apache/naming/NamingContextEnumeration.class" />
       	<include name="org/apache/naming/NamingEntry.class" />
       	<include name="org/apache/naming/StringManager.class" />
-        <include name="org/apache/naming/resources/*" />
+        <include name="org/apache/naming/resources/**" />
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
         <exclude name="**/LocalStrings_*" />
