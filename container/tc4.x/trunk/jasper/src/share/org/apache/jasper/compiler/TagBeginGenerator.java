@@ -99,11 +99,13 @@ public class TagBeginGenerator
     TagData tagData;
     Mark start;
     TagLibraries libraries;
+    boolean isXml;
 
 
     public TagBeginGenerator(Mark start, String prefix, String shortTagName, Attributes attrs,
 			     TagLibraryInfo tli, TagInfo ti, TagLibraries libraries,
-                             Stack tagHandlerStack, Hashtable tagVarNumbers)
+                             Stack tagHandlerStack, Hashtable tagVarNumbers,
+                             boolean isXml)
         throws JasperException
     {
         setTagHandlerStack(tagHandlerStack);
@@ -118,6 +120,7 @@ public class TagBeginGenerator
 	this.thVarName = "_jspx_th_"+baseVarName;
 	this.start = start;
 	this.libraries = libraries;
+	this.isXml = isXml;
     }
 
     public void init(JspCompilationContext ctxt) throws JasperException {
@@ -167,7 +170,7 @@ public class TagBeginGenerator
                 if (attr.equals(attributes[i].getName())) {
                     found = true;
                     if (attributes[i].canBeRequestTime() &&
-			JspUtil.isExpression((String)attribs.get(attr)))
+			JspUtil.isExpression((String)attribs.get(attr), isXml))
                         attribs.put(attr, TagData.REQUEST_TIME_VALUE);
 		}
 
@@ -215,8 +218,8 @@ public class TagBeginGenerator
                 // assert(c.length > 0)
 
                 if (attributes[i].canBeRequestTime() && 
-                        JspUtil.isExpression(attrValue)) {
-                    attrValue = JspUtil.getExpr(attrValue);
+                        JspUtil.isExpression(attrValue, isXml)) {
+                    attrValue = JspUtil.getExpr(attrValue, isXml);
                 } else {
                     attrValue = convertString(c[0], attrValue, writer, attrName,
                                               tc.getPropertyEditorClass(attrName));

@@ -82,13 +82,15 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	boolean genSession;
 	boolean beanRT = false;
 	Mark start;
+        boolean isXml;
   
     public BeanGenerator (Mark start, Attributes attrs, BeanRepository beanInfo,
-			  boolean genSession) {
+			  boolean genSession, boolean isXml) {
 	this.attrs = attrs;
 	this.beanInfo = beanInfo;
 	this.genSession = genSession;
 	this.start = start;
+        this.isXml = isXml;
     }
 	
     public void generate (ServletWriter writer, Class phase)
@@ -171,8 +173,8 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	    if (type == null) type = clsname;
 
 	    // See if beanName is a request-time expression.
-	    if (beanName != null && JspUtil.isExpression (beanName)) {
-		beanName = JspUtil.getExpr (beanName);
+	    if (beanName != null && JspUtil.isExpression (beanName, isXml)) {
+		beanName = JspUtil.getExpr (beanName, isXml);
 		beanRT = true;
 	    }
 	    

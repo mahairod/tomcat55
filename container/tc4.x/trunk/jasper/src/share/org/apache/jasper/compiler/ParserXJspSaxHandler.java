@@ -257,7 +257,7 @@ class ParserXJspSaxHandler
 	    if (name.equals("jsp:root")) {
 		jspHandler.handleRootBegin(node.attrs);
 	    } else if (name.equals("jsp:useBean")) {
-		jspHandler.handleBean(node.start, node.start, node.attrs);
+		jspHandler.handleBean(node.start, node.start, node.attrs, true);
 	    } else if (name.length()<4 || 
 		       !name.substring(0,4).equals("jsp:")) {
 		// custom tag or 'uninterpreted' tag
@@ -347,7 +347,7 @@ class ParserXJspSaxHandler
 		    node = (Node)stack.pop();
 		}
 		node.validate(true, true); //@@@
-		jspHandler.handleInclude(node.start, stop, node.attrs, params);
+		jspHandler.handleInclude(node.start, stop, node.attrs, params, true);
 	    } else if (name.equals("jsp:forward")) {
 		Hashtable params = null;
 		if (!node.rawName.equals("jsp:forward")) {
@@ -357,7 +357,7 @@ class ParserXJspSaxHandler
 		    node = (Node)stack.pop();
 		}
 		node.validate(true, true);
-		jspHandler.handleForward(node.start, stop, node.attrs, params);
+		jspHandler.handleForward(node.start, stop, node.attrs, params, true);
 	    } else if (name.equals("jsp:useBean")) {
 		node.validate(true, true); // @@@
 		jspHandler.handleBeanEnd(node.start, stop, node.attrs);
@@ -366,7 +366,7 @@ class ParserXJspSaxHandler
 		jspHandler.handleGetProperty(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:setProperty")) {
 		node.validate(true, true); // @@@
-		jspHandler.handleSetProperty(node.start, stop, node.attrs);
+		jspHandler.handleSetProperty(node.start, stop, node.attrs, true);
 	    } else if (name.equals("jsp:plugin")) {
 		//@@@ test jsp parser to see if fallback can come first?
 		Hashtable params = null;
@@ -385,7 +385,7 @@ class ParserXJspSaxHandler
 		node.validate(true, true);
 		//p(node);
 		jspHandler.handlePlugin(node.start, stop, node.attrs, params, 
-                        fallback);
+                        fallback, true);
 	    } else {
 		if (node.isUninterpretedTag()) {
 		    // this is an 'uninterpreted' tag
@@ -421,7 +421,7 @@ class ParserXJspSaxHandler
 	node = new NodeTag(node, prefix, shortTagName, tli, ti);
 	stack.push(node);
 	jspHandler.handleTagBegin(node.start, node.start, node.attrs, 
-				  prefix, shortTagName, tli, ti);
+				  prefix, shortTagName, tli, ti, true);
     }
     
     private void processCustomTagEnd(NodeTag node, Mark stop) 

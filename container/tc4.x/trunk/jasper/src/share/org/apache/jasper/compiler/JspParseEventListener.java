@@ -92,9 +92,12 @@ import org.xml.sax.Attributes;
  * @author Pierre Delisle
  * @author Danno Ferrin
  */
-public class JspParseEventListener extends BaseJspListener {
+public class JspParseEventListener implements ParseEventListener {
 
     private static CommentGenerator commentGenerator = new JakartaCommentGenerator();
+
+    protected JspReader reader;
+    protected ServletWriter writer;
 
     JspCompilationContext ctxt;
     ParserController parserCtl;
@@ -156,13 +159,21 @@ public class JspParseEventListener extends BaseJspListener {
 	commentGenerator = generator;
     }
 
+    public void setReader(JspReader reader) {
+	this.reader = reader;
+    }
+
+    public void setTemplateInfo(Mark start, Mark stop) {
+    }
+
     /*
      * Package private since I want everyone to come in through
      * org.apache.jasper.compiler.Main.
      */
     JspParseEventListener(JspCompilationContext ctxt,
 			  ParserController parserCtl) {
-	super(ctxt.getReader(), ctxt.getWriter());
+	this.reader = ctxt.getReader();
+	this.writer = ctxt.getWriter();
         this.ctxt = ctxt;
         this.parserCtl = parserCtl;
 	this.beanInfo = new BeanRepository(ctxt.getClassLoader());
@@ -855,15 +866,22 @@ public class JspParseEventListener extends BaseJspListener {
     }
 
     public void handleBean(Mark start, Mark stop, Attributes attrs)
-	throws JasperException
+        throws JasperException
     {
-        Generator gen
-            = new GeneratorWrapper(new BeanGenerator(start, attrs, beanInfo,
-                                                     genSessionVariable),
-                                   start, stop);
+        handleBean(start, stop, attrs, false);
+    }
 
-	addGenerator(gen);
-	xo.append("jsp:useBean", attrs);
+    public void handleBean(Mark start, Mark stop, Attributes attrs,
+                           boolean isXml)
+        throws JasperException
+    {
+        Generator gen =
+            new GeneratorWrapper(
+                new BeanGenerator(start, attrs, beanInfo,
+                                  genSessionVariable, isXml),
+                start, stop);
+        addGenerator(gen);
+        xo.append("jsp:useBean", attrs);
     }
 
     public void handleBeanEnd(Mark start, Mark stop, Attributes attrs)
@@ -889,52 +907,79 @@ public class JspParseEventListener extends BaseJspListener {
     }
 
     public void handleSetProperty(Mark start, Mark stop, Attributes attrs)
-	throws JasperException
+        throws JasperException
     {
-        Generator gen
-            = new GeneratorWrapper(new SetPropertyGenerator(start, stop, attrs,
-	    			   beanInfo), start, stop);
+        handleSetProperty(start, stop, attrs, false);
+    }
 
-	addGenerator(gen);
-	xo.append("jsp:setProperty", attrs);
+    public void handleSetProperty(Mark start, Mark stop, Attributes attrs, 
+                                  boolean isXml)
+        throws JasperException
+    {
+        Generator gen = 
+            new GeneratorWrapper(
+                new SetPropertyGenerator(start, stop, attrs, beanInfo, isXml),
+                start, stop);
+        addGenerator(gen);
+        xo.append("jsp:setProperty", attrs);
     }
 
     public void handlePlugin(Mark start, Mark stop, Attributes attrs,
-    				Hashtable param, String fallback)
+    			     Hashtable param, String fallback)
 	throws JasperException
     {
-        Constants.message("jsp.message.handling_plugin",
-                          new Object[] { attrs },
-                          Logger.DEBUG);
+	handlePlugin(start, stop, attrs, param, fallback, false);
+    }
 
-	Generator gen = new GeneratorWrapper (new PluginGenerator (start, attrs,
-					      param, fallback), start, stop);
+    public void handlePlugin(Mark start, Mark stop, Attributes attrs,
+    			     Hashtable param, String fallback, boolean isXml)
+	throws JasperException
+    {
+	Generator gen = 
+            new GeneratorWrapper(
+                new PluginGenerator(start, attrs, param, fallback, isXml), 
+                start, stop);
 	addGenerator (gen);
 	//@@@ xo
     }
 
-    public void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param)
+    public void handleForward(Mark start, Mark stop, Attributes attrs, 
+                              Hashtable param)
 	throws JasperException
     {
-        Generator gen
-            = new GeneratorWrapper(new ForwardGenerator(start, attrs, param),
-                                   start, stop);
+	handleForward(start, stop, attrs, param, false);
+    }
 
+    public void handleForward(Mark start, Mark stop, Attributes attrs, 
+                              Hashtable param, boolean isXml)
+	throws JasperException
+    {
+        Generator gen = 
+            new GeneratorWrapper(
+                new ForwardGenerator(start, attrs, param, isXml),
+                start, stop);
 	addGenerator(gen);
 	//@@@ xo
     }
 
-    public void handleInclude(Mark start, Mark stop, Attributes attrs, Hashtable param)
+    public void handleInclude(Mark start, Mark stop, Attributes attrs, 
+                              Hashtable param)
 	throws JasperException
     {
-        Generator gen
-            = new GeneratorWrapper(new IncludeGenerator(start, attrs, param),
-                                   start, stop);
+	handleInclude(start, stop, attrs, param, false);
+    }
 
+    public void handleInclude(Mark start, Mark stop, Attributes attrs, 
+                              Hashtable param, boolean isXml)
+	throws JasperException
+    {
+        Generator gen = 
+            new GeneratorWrapper(
+                new IncludeGenerator(start, attrs, param, isXml),
+                start, stop);
 	addGenerator(gen);
 	//@@@ xo
     }
-
 
     public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
         GeneratorBase cdg;
@@ -955,15 +1000,27 @@ public class JspParseEventListener extends BaseJspListener {
         xo.append(chars);
     }
 
-    public void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix,
+    public void handleTagBegin(Mark start, Mark stop, 
+                               Attributes attrs, String prefix,
 			       String shortTagName, TagLibraryInfo tli,
 			       TagInfo ti)
 	throws JasperException
     {
-        TagBeginGenerator tbg = new TagBeginGenerator(start, prefix, shortTagName, attrs,
-	    tli, ti, libraries, getTagHandlerStack(), getTagVarNumbers());
-        Generator gen = new GeneratorWrapper(tbg, start, stop);
+	handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, 
+                       false);
+    }
 
+    public void handleTagBegin(Mark start, Mark stop, 
+                               Attributes attrs, String prefix,
+			       String shortTagName, TagLibraryInfo tli,
+			       TagInfo ti, boolean isXml)
+	throws JasperException
+    {
+        TagBeginGenerator tbg = 
+            new TagBeginGenerator(start, prefix, shortTagName, attrs,
+	                          tli, ti, libraries, getTagHandlerStack(), 
+                                  getTagVarNumbers(), isXml);
+        Generator gen = new GeneratorWrapper(tbg, start, stop);
 	addGenerator(gen);
         xo.append(prefix+":"+shortTagName, attrs);
     }

@@ -138,10 +138,15 @@ final class DelegatingListener implements ParseEventListener {
 
     public void handleBean(Mark start,Mark stop,Attributes attrs) throws JasperException
     {
-        doAction(this.tmplStart, this.tmplStop);
-        delegate.handleBean(start, stop, attrs);
+        handleBean(start, stop, attrs, false);
     }
-    
+
+    public void handleBean(Mark start,Mark stop,Attributes attrs, boolean isXml) throws JasperException
+    {
+        doAction(this.tmplStart, this.tmplStop);
+        delegate.handleBean(start, stop, attrs, isXml);
+    }
+
     public void handleBeanEnd(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
@@ -156,14 +161,24 @@ final class DelegatingListener implements ParseEventListener {
     
     public void handleSetProperty(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
+        handleSetProperty(start, stop, attrs, false);
+    }
+
+    public void handleSetProperty(Mark start,Mark stop,Attributes attrs,boolean isXml) throws JasperException 
+    {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleSetProperty(start, stop, attrs);
+        delegate.handleSetProperty(start, stop, attrs, isXml);
     }
     
     public void handlePlugin(Mark start,Mark stop,Attributes attrs,Hashtable param,String fallback) throws JasperException 
     {
+        handlePlugin(start, stop, attrs, param, fallback, false);
+    }
+
+    public void handlePlugin(Mark start,Mark stop,Attributes attrs,Hashtable param,String fallback, boolean isXml) throws JasperException 
+    {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handlePlugin(start, stop, attrs, param, fallback);
+        delegate.handlePlugin(start, stop, attrs, param, fallback, isXml);
     }
     
     public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
@@ -172,20 +187,34 @@ final class DelegatingListener implements ParseEventListener {
 
     public void handleForward(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
+        handleForward(start, stop, attrs, param, false);
+    }
+
+    public void handleForward(Mark start,Mark stop,Attributes attrs,Hashtable param, boolean isXml) throws JasperException 
+    {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleForward(start, stop, attrs, param);
+        delegate.handleForward(start, stop, attrs, param, isXml);
     }
 
     public void handleInclude(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
+        handleInclude(start, stop, attrs, param, false);
+    }
+
+    public void handleInclude(Mark start,Mark stop,Attributes attrs,Hashtable param, boolean isXml) throws JasperException 
+    {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleInclude(start, stop, attrs, param);
+        delegate.handleInclude(start, stop, attrs, param, isXml);
     }
 
     public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti) throws JasperException
     {
+        handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, false);
+    }
+    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti, boolean isXml) throws JasperException
+    {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti);
+        delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, isXml);
     }
     
     public void handleTagEnd(Mark start,Mark stop,String prefix,String shortTagName,Attributes attrs,TagLibraryInfo tli,TagInfo ti) throws JasperException

@@ -86,8 +86,10 @@ public class IncludeGenerator
     boolean isExpression = false;
     boolean flush;
     Hashtable params;
+    boolean isXml;
     
-    public IncludeGenerator(Mark start, Attributes attrs, Hashtable param) 
+    public IncludeGenerator(Mark start, Attributes attrs, Hashtable param,
+                            boolean isXml) 
         throws JasperException 
     {
 	if (attrs.getLength() > 2) {
@@ -120,7 +122,8 @@ public class IncludeGenerator
 				   new Object[]{flushString}));
         }
 	this.params = param;
-	isExpression = JspUtil.isExpression (page);
+	this.isXml = isXml;
+	isExpression = JspUtil.isExpression (page, isXml);
     }
     
     public void generate(ServletWriter writer, Class phase) {
@@ -142,9 +145,9 @@ public class IncludeGenerator
 		    initial = false;
 		} else sep = "&";
 		
-		if (value.length == 1 && JspUtil.isExpression(value[0])) {
+		if (value.length == 1 && JspUtil.isExpression(value[0], isXml)) {
 		    writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +
-				   key + "=\" + " + JspUtil.getExpr(value[0]) + ";");
+				   key + "=\" + " + JspUtil.getExpr(value[0], isXml) + ";");
 		} else {
 		    if (value.length == 1) {
 			writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +
@@ -152,12 +155,12 @@ public class IncludeGenerator
 		    } else {
 			writer.println("String [] _tmpS = new String[" + value.length +"];");
 			for (int i = 0; i < value.length; i++) {
-			    if (!JspUtil.isExpression(value[i]))
+			    if (!JspUtil.isExpression(value[i], isXml))
 				writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +
 					       key + "=\" + \"" + value[i] + "\";");
 			    else
 				writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +
-					       key + "=\" +" + JspUtil.getExpr(value[i])+ ";");
+					       key + "=\" +" + JspUtil.getExpr(value[i], isXml)+ ";");
 			    if (sep.equals("?")) sep = "&";
 			    
 			}
@@ -170,7 +173,7 @@ public class IncludeGenerator
 			   writer.quoteString(page) + " + _jspx_qStr);");
 	else
 	    writer.println ("pageContext.include(" + 
-			    JspUtil.getExpr(page) + " + _jspx_qStr);");
+			    JspUtil.getExpr(page, isXml) + " + _jspx_qStr);");
 
 	writer.popIndent();
 	writer.println("}");

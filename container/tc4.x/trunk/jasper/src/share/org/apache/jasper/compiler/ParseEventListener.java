@@ -99,12 +99,17 @@ public interface ParseEventListener {
     void handleExpression(Mark start, Mark stop, Attributes attrs, char[] text) throws JasperException;
     void handleBean(Mark start, Mark stop, Attributes attrs) 
 	throws JasperException;
+    void handleBean(Mark start, Mark stop, Attributes attrs, boolean isXml) 
+	throws JasperException;
     void handleBeanEnd (Mark start, Mark stop, Attributes attrs)
 	throws JasperException;
     void handleGetProperty(Mark start, Mark stop, Attributes attrs) throws JasperException;
     void handleSetProperty(Mark start, Mark stop, Attributes attrs) throws JasperException;
+    void handleSetProperty(Mark start, Mark stop, Attributes attrs, boolean isXml) throws JasperException;
     void handlePlugin(Mark start, Mark stop, Attributes attrs, Hashtable param, 
     			String fallback) throws JasperException;
+    void handlePlugin(Mark start, Mark stop, Attributes attrs, Hashtable param, 
+    			String fallback, boolean isXml) throws JasperException;
     void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException;
 
 
@@ -121,6 +126,9 @@ public interface ParseEventListener {
     void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
 			TagLibraryInfo tli, TagInfo ti) 
 	throws JasperException;
+    void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
+			TagLibraryInfo tli, TagInfo ti, boolean isXml) 
+	throws JasperException;
 
     void handleTagEnd(Mark start, Mark stop, String prefix, String shortTagName,
 		      Attributes attrs, TagLibraryInfo tli, TagInfo ti)
@@ -128,7 +136,11 @@ public interface ParseEventListener {
 
     void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param)
 	throws JasperException;
+    void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param, boolean isXml)
+	throws JasperException;
     void handleInclude(Mark start, Mark stop, Attributes attrs, Hashtable param)
+	throws JasperException;
+    void handleInclude(Mark start, Mark stop, Attributes attrs, Hashtable param, boolean isXml)
 	throws JasperException;
 
     void endPageProcessing() throws JasperException;

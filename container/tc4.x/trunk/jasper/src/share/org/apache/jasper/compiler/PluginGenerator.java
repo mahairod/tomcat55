@@ -86,14 +86,16 @@ public class PluginGenerator
 
     String ieClassId;
     Mark start;
+    boolean isXml;
     
     
     public PluginGenerator(Mark start, Attributes attrs, Hashtable param,
-			   String fallback) {
+			   String fallback, boolean isXml) {
     	this.attrs = attrs;
 	this.param = param;
 	this.fallback = fallback;
 	this.start = start;
+        this.isXml = isXml;
     }
 
     public void init(JspCompilationContext ctxt) throws JasperException {
@@ -202,9 +204,9 @@ public class PluginGenerator
 	 	//Check to see if the param is an expression, if so
 		//evaluate that and put the value.
 		String temp = null;
-		if (JspUtil.isExpression (value[0])) {
-		    temp = JspUtil.getExpr (value[0]);
-		    //value[0] = JspUtil.getExpr(value[0]);
+		if (JspUtil.isExpression (value[0], isXml)) {
+		    temp = JspUtil.getExpr (value[0], isXml);
+		    //value[0] = JspUtil.getExpr(value[0], isXml);
 		    writer.print ("_jspxString =" + temp + ";");
 		} else {
 		    writer.print ("_jspxString = \"" + value[0] + "\";");
@@ -259,8 +261,8 @@ public class PluginGenerator
 		writer.indent ();
 
 	        //value = (String[]) param.get (key);
-		if (JspUtil.isExpression (value[0])) {
-		    value[0] = JspUtil.getExpr(value[0]);
+		if (JspUtil.isExpression(value[0], isXml)) {
+		    value[0] = JspUtil.getExpr(value[0], isXml);
 		    writer.print ("_jspxNSString[i][1] =" + value[0] + ";");
 		} else {
 		    writer.print ("_jspxNSString[i][1] = \"" + value[0] + 

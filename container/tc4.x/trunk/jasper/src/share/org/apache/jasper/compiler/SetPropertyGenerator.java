@@ -83,12 +83,14 @@ public class SetPropertyGenerator
     Attributes attrs;
     BeanRepository beanInfo;
     Mark start;
+    boolean isXml;
     
     public SetPropertyGenerator (Mark start, Mark stop, Attributes attrs,
-				 BeanRepository beanInfo) {
+				 BeanRepository beanInfo, boolean isXml) {
 	this.attrs = attrs;
 	this.beanInfo = beanInfo;
 	this.start = start;
+        this.isXml = isXml;
     }
     
     public void generate (ServletWriter writer, Class phase) 
@@ -123,7 +125,7 @@ public class SetPropertyGenerator
 		} else {
 		    
 		    // value is a constant.
-		    if (!JspUtil.isExpression (value)) {
+		    if (!JspUtil.isExpression (value, isXml)) {
 			writer.println("JspRuntimeLibrary.introspecthelper(pageContext." +
 				       "findAttribute(\"" + name + "\"), \"" + property +
 				       "\",\"" + JspUtil.escapeQueryString(value) +
@@ -134,7 +136,7 @@ public class SetPropertyGenerator
 			// int, boolean, ... are not Object(s).
 			writer.println("JspRuntimeLibrary.handleSetProperty(pageContext." +
 				       "findAttribute(\"" + name + "\"), \"" + property +
-				       "\"," + JspUtil.getExpr(value) + ");");
+				       "\"," + JspUtil.getExpr(value, isXml) + ");");
 		    }
 		}
 	    }

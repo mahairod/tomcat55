@@ -82,8 +82,10 @@ public class ForwardGenerator
     String page;
     boolean isExpression = false;
     Hashtable params;
+    boolean isXml;
     
-    public ForwardGenerator(Mark start, Attributes attrs, Hashtable param)
+    public ForwardGenerator(Mark start, Attributes attrs, Hashtable param,
+                            boolean isXml)
 	throws JasperException {
 	    if (attrs.getLength() != 1)
 		throw new JasperException(Constants.getString("jsp.error.invalid.forward"));
@@ -94,7 +96,8 @@ public class ForwardGenerator
 					   Constants.getString("jsp.error.invalid.forward"));
 	    
 	    this.params = param;
-	    isExpression = JspUtil.isExpression (page);
+            this.isXml = isXml;
+	    isExpression = JspUtil.isExpression (page, isXml);
     }
     
     public void generate(ServletWriter writer, Class phase) {
@@ -115,21 +118,21 @@ public class ForwardGenerator
 		    initial = false;
 		} else sep = "&";
 		
-		if (value.length == 1 && JspUtil.isExpression(value[0]))
+		if (value.length == 1 && JspUtil.isExpression(value[0], isXml))
 		    writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-				   key + "=\" + " + JspUtil.getExpr(value[0]) + ";");
+				   key + "=\" + " + JspUtil.getExpr(value[0], isXml) + ";");
 		else {
 		    if (value.length == 1)
 			writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
 				       key + "=\" + \"" + value[0] + "\";");			
 		    else {
 			for (int i = 0; i < value.length; i++) {
-			    if (!JspUtil.isExpression(value[i]))
+			    if (!JspUtil.isExpression(value[i], isXml))
 				writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
 					       key + "=\" + \"" + value[i] + "\";");
 			    else
 				writer.println("_jspx_qfStr = _jspx_qfStr + \"" + sep +
-					       key + "=\" +" + JspUtil.getExpr(value[i])+ ";");
+					       key + "=\" +" + JspUtil.getExpr(value[i], isXml)+ ";");
 			    if (sep.equals("?")) sep = "&";			    
 			}
 		    }
@@ -141,7 +144,7 @@ public class ForwardGenerator
 			   writer.quoteString(page) + " +  _jspx_qfStr);");
 	else
             writer.println("pageContext.forward(" +
-			   JspUtil.getExpr (page) +  " +  _jspx_qfStr);");
+			   JspUtil.getExpr (page, isXml) +  " +  _jspx_qfStr);");
 	
         writer.println("return;");
         writer.popIndent();

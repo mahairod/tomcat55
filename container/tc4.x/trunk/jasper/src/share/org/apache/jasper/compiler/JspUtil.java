@@ -93,11 +93,15 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Mandar Raje.
  * @author Rajiv Mordani.
  * @author Danno Ferrin
+ * @author Pierre Delisle
  */
 public class JspUtil {
 
+    // Delimiters for request-time expressions (JSP and XML syntax)
     private static final String OPEN_EXPR  = "<%=";
     private static final String CLOSE_EXPR = "%>";
+    private static final String OPEN_EXPR_XML  = "%=";
+    private static final String CLOSE_EXPR_XML = "%";
 
     private static ErrorHandler errorHandler = new MyErrorHandler();
     private static EntityResolver entityResolver = new MyEntityResolver();
@@ -116,27 +120,55 @@ public class JspUtil {
 	return caw.toCharArray();
     }
 
-    // Checks if the token is a runtime expression.
-    public static boolean isExpression (String token) {
-	
-	if (token.startsWith(OPEN_EXPR) && token.endsWith(CLOSE_EXPR)) {
-	    return true;
+    /**
+     * Checks if the token is a runtime expression.
+     * In standard JSP syntax, a runtime expression starts with '<%' and
+     * ends with '%>'. When the JSP document is in XML syntax, a runtime
+     * expression starts with '%=' and ends with '%'.
+     *
+     * @param token The token to be checked
+     * return whether the token is a runtime expression or not.
+     */
+    public static boolean isExpression(String token, boolean isXml) {
+	String openExpr;
+	String closeExpr;
+	if (isXml) {
+	    openExpr = OPEN_EXPR_XML;
+	    closeExpr = CLOSE_EXPR_XML;
+	} else {
+	    openExpr = OPEN_EXPR;
+	    closeExpr = CLOSE_EXPR;
 	}
-
-	return false;
+	if (token.startsWith(openExpr) && token.endsWith(closeExpr)) {
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
-    // Returns the "expression" part -- takin <%= and %> out.
-    public static String getExpr (String expression) {
+    /**
+     * @return the "expression" part of a runtime expression, 
+     * taking the delimiters out.
+     */
+    public static String getExpr (String expression, boolean isXml) {
 	String returnString;
+	String openExpr;
+	String closeExpr;
+	if (isXml) {
+	    openExpr = OPEN_EXPR_XML;
+	    closeExpr = CLOSE_EXPR_XML;
+	} else {
+	    openExpr = OPEN_EXPR;
+	    closeExpr = CLOSE_EXPR;
+	}
 	int length = expression.length();
-	
-	if (expression.startsWith(OPEN_EXPR) && expression.endsWith(CLOSE_EXPR)) {
-	    returnString = expression.substring (OPEN_EXPR.length(), length - CLOSE_EXPR.length());
+	if (expression.startsWith(openExpr) && 
+                expression.endsWith(closeExpr)) {
+	    returnString = expression.substring(
+                               openExpr.length(), length - closeExpr.length());
 	} else {
 	    returnString = "";
 	}
-
 	return returnString;
     }
 
@@ -148,7 +180,7 @@ public class JspUtil {
         int length = expression.length();
 
         if (expression.startsWith(OPEN_EXPR) 
-         && expression.endsWith(CLOSE_EXPR)) {
+                && expression.endsWith(CLOSE_EXPR)) {
             returnString = expression.substring (1, length - 1);
         } else {
             returnString = expression;
