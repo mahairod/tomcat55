@@ -348,13 +348,7 @@ public class TagBeginGenerator
         //        Perhaps, I'll just define an inner classes as necessary for these
         //        types of exceptions? -akv
 
-        if (implementsBodyTag) {
-            writer.println("if ("+evalVar+" == Tag.EVAL_BODY_INCLUDE)");
-            writer.pushIndent();
-            writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
-                           " implements BodyTag, it can't return Tag.EVAL_BODY_INCLUDE\");");
-            writer.popIndent();
-        } else {
+        if (!implementsBodyTag) {
             writer.println("if ("+evalVar+" == BodyTag.EVAL_BODY_BUFFERED)");
             writer.pushIndent();
             writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
