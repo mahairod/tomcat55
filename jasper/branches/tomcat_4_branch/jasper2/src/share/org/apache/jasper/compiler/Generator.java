@@ -360,7 +360,7 @@ public class Generator {
 	out.print  (" extends ");
 	out.print  (pageInfo.getExtends());
 	if (!pageInfo.isThreadSafe()) {
-	    out.print("implements SingleThreadModel");
+	    out.print(" implements SingleThreadModel");
 	}
 	out.println(" {");
 	out.pushIndent();

@@ -200,7 +200,7 @@ public class Validator {
 			pageInfo.setAutoFlush(false);
 		    else
 			err.jspError(n, "jsp.error.autoFlush.invalid");
-		} else if ("isthreadSafe".equals(attr)) {
+		} else if ("isThreadSafe".equals(attr)) {
 		    if (isThreadSafeSeen)
 			err.jspError(n, "jsp.error.page.multiple.threadsafe");
 		    isThreadSafeSeen = true;
