@@ -89,6 +89,10 @@ import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 /**
  * Valve that implements the default basic behavior for the
@@ -122,6 +126,9 @@ final class StandardContextValve
         StringManager.getManager(Constants.Package);
 
 
+    private static Log log = LogFactory.getLog(StandardContextValve.class);
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -150,15 +157,9 @@ final class StandardContextValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public void invoke(Request request, Response response,
-                       ValveContext valveContext)
+    public final void invoke(Request request, Response response,
+                             ValveContext valveContext)
         throws IOException, ServletException {
-
-        // Validate the request and response object types
-        if (!(request.getRequest() instanceof HttpServletRequest) ||
-            !(response.getResponse() instanceof HttpServletResponse)) {
-            return;     // NOTE - Not much else we can do generically
-        }
 
         // Disallow any direct access to resources under WEB-INF or META-INF
         HttpRequest hreq = (HttpRequest) request;
@@ -172,6 +173,15 @@ final class StandardContextValve
             return;
         }
 
+        // Wait if we are reloading
+        while (((StandardContext) container).getPaused()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                ;
+            }
+        }
+
         // Select the Wrapper to be used for this Request
         Wrapper wrapper = request.getWrapper();
         if (wrapper == null) {
@@ -180,7 +190,20 @@ final class StandardContextValve
             return;
         }
 
-        wrapper.invoke(request, response);
+        // Normal request processing
+        if (((StandardContext) container).getSwallowOutput()) {
+            try {
+                SystemLogHandler.startCapture();
+                wrapper.invoke(request, response);
+            } finally {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    container.getLogger().log(log);
+                }
+            }
+        } else {
+            wrapper.invoke(request, response);
+        }
 
     }
 

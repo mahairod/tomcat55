@@ -81,7 +81,7 @@ import org.apache.catalina.util.StringManager;
  * @author Remy Maucherat
  */
 
-public class StandardValveContext
+public final class StandardValveContext
     implements ValveContext {
 
 
@@ -138,7 +138,7 @@ public class StandardValveContext
      * @exception ServletException if there are no further Valves 
      *  configured in the Pipeline currently being processed
      */
-    public void invokeNext(Request request, Response response)
+    public final void invokeNext(Request request, Response response)
         throws IOException, ServletException {
 
         int subscript = stage;
