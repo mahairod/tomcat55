@@ -467,7 +467,8 @@ final class ApplicationDispatcher
 	if (response instanceof HttpServletResponse)
 	    hresponse = (HttpServletResponse) response;
 	Servlet servlet = null;
-	Throwable throwable = null;
+        IOException ioException = null;
+        ServletException servletException = null;
 	boolean unavailable = false;
 
 	// Check for the servlet being marked unavailable
@@ -496,14 +497,14 @@ final class ApplicationDispatcher
 	} catch (ServletException e) {
 	    log(sm.getString("applicationDispatcher.allocateException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+	    servletException = e;
 	    servlet = null;
 	} catch (Throwable e) {
 	    log(sm.getString("applicationDispatcher.allocateException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+	    servletException = new ServletException
+                (sm.getString("applicationDispatcher.allocateException",
+                              wrapper.getName()), e);
 	    servlet = null;
 	}
 
@@ -519,23 +520,22 @@ final class ApplicationDispatcher
 	} catch (IOException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
-	    throwable = e;
+	    ioException = e;
 	} catch (UnavailableException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+	    servletException = e;
 	    wrapper.unavailable(e);
 	} catch (ServletException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+	    servletException = e;
 	} catch (Throwable e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+            servletException = new ServletException
+                (sm.getString("applicationDispatcher.serviceException",
+                              wrapper.getName()), e);
 	}
 
 	// Deallocate the allocated servlet instance
@@ -545,18 +545,20 @@ final class ApplicationDispatcher
 	} catch (ServletException e) {
 	    log(sm.getString("applicationDispatcher.deallocateException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+	    servletException = e;
 	} catch (Throwable e) {
 	    log(sm.getString("applicationDispatcher.deallocateException",
 			     wrapper.getName()), e);
-	    throwable = e;
-	    // exception(request, response, e);
+            servletException = new ServletException
+                (sm.getString("applicationDispatcher.deallocateException",
+                              wrapper.getName()), e);
 	}
 
-	// Generate a response for the generated HTTP status and message
-	// if (throwable == null)
-	//     status(request, response);
+        // Rethrow an exception if one was thrown by the invoked servlet
+        if (ioException != null)
+            throw ioException;
+        if (servletException != null)
+            throw servletException;
 
     }
 
