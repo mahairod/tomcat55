@@ -1098,6 +1098,22 @@ unsafe escape sequences.</p>
       considered &quot;unsafe&quot; and a 403 Forbidden error is returned.</td>
     <td>true</td>
   </tr>
+  <tr valign="top">
+    <td>saveOriginal</td>
+    <td>If <code>true</code>, a copy of the original request URI is saved
+      before it is decoded. This saved copy is later used as the return value
+      HttpServletRequest.getRequestURI(). If <code>false</code>, then
+      HttpServletRequest.getRequestURI() returns a re-encoded version of the
+      decoded request URI.  Setting this attribute to <code>true</code> most
+      closely follows the Servlet 2.2 spec.  However, <code>false</code> is
+      the default because <code>true</code> can't be implemented when
+      Tomcat is connected to Netscape Web Server 4.1 or earlier.  The original
+      un-escaped request URI isn't made available to the connector.  Also,
+      the IIS connector that shipped with Tomcat 3.3(a) did not support
+      passing the original request URI, though the current one does, using
+      the <code>uri_select</code> setting.</td>
+    <td>false</td>
+  </tr>
 </table>
 
 <h4>Example(s)</h4>
