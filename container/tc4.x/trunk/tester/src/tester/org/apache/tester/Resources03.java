@@ -125,6 +125,7 @@ public class Resources03 extends HttpServlet {
                             break;
                         writer.print(ch);
                     }
+                    isr.close();
                 }
                 writer.println();
                 writer.println("url = " + url.toString());
