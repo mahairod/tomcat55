@@ -75,6 +75,7 @@ import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.servlet.JspServletWrapper;
+import org.apache.jasper.servlet.JasperLoader;
 import javax.servlet.ServletContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
 
@@ -118,10 +119,14 @@ public class JspCompilationContext {
     protected int removed = 0;
     protected boolean reload = true;
     
+    protected URLClassLoader jspLoader;
+    protected URL [] outUrls = new URL[1];
+    protected Class servletClass;
+
     // jspURI _must_ be relative to the context
-    protected JspCompilationContext(String jspUri, boolean isErrPage, Options options,
-                                    ServletContext context, JspServletWrapper jsw,
-                                    JspRuntimeContext rctxt) {
+    public JspCompilationContext(String jspUri, boolean isErrPage, Options options,
+                                 ServletContext context, JspServletWrapper jsw,
+                                 JspRuntimeContext rctxt) {
         this.jspUri = jspUri;
         this.isErrPage = isErrPage;
         this.options=options;
@@ -151,7 +156,9 @@ public class JspCompilationContext {
      * The classpath that is passed off to the Java compiler. 
      */
     public String getClassPath() {
-        return classPath;
+        if( classPath != null )
+            return classPath;
+        return rctxt.getClassPath();
     }
 
     /**
@@ -166,7 +173,9 @@ public class JspCompilationContext {
      * this JSP?
      */
     public ClassLoader getClassLoader() {
-        return loader;
+        if( loader != null )
+            return loader;
+        return rctxt.getParentClassLoader();
     }
 
     public void setClassLoader(URLClassLoader loader) {
@@ -475,10 +484,73 @@ public class JspCompilationContext {
         }
     }
 
+    /** True if the servlet needs loading
+     */
     public boolean isReload() {
         return reload;
     }
 
+    // ==================== Manipulating the class ====================
+
+    public Class load() 
+        throws JasperException, FileNotFoundException
+    {
+        try {
+            if (servletClass == null && !options.getDevelopment()) {
+                compile();
+            }
+            jspLoader = new JasperLoader
+                (outUrls,
+                 getServletPackageName() + "." + getServletClassName(),
+                 rctxt.getParentClassLoader(),
+                 rctxt.getPermissionCollection(),
+                 rctxt.getCodeSource());
+            
+            servletClass = jspLoader.loadClass(
+                 getServletPackageName() + "." + getServletClassName());
+        } catch (FileNotFoundException ex) {
+            jspCompiler.removeGeneratedFiles();
+            throw ex;
+        } catch (ClassNotFoundException cex) {
+            throw new JasperException(
+                Constants.getString("jsp.error.unable.load"),cex);
+        } catch (JasperException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new JasperException
+                (Constants.getString("jsp.error.unable.compile"), ex);
+        }
+        removed = 0;
+        reload = false;
+        return servletClass;
+    }
+
+    public void createOutdir() {
+        File outDirF = null;
+        try {
+            URL outURL = options.getScratchDir().toURL();
+            String outURI = outURL.toString();
+            if (outURI.endsWith("/")) {
+                outURI = outURI 
+                    + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            } else {
+                outURI = outURI 
+                    + jspUri.substring(0,jspUri.lastIndexOf("/")+1);
+            }
+            outURL = new URL(outURI);
+            outDirF = new File(outURL.getFile());
+            if (!outDirF.exists()) {
+                outDirF.mkdirs();
+            }
+            this.setOutputDir(  outDirF.toString() + File.separator );
+            
+            outUrls[0] = new URL(outDirF.toURL().toString() + File.separator);
+        } catch (Exception e) {
+            throw new IllegalStateException("No output directory: " +
+                                            e.getMessage());
+        }
+    }
+    
     // ==================== Private methods ==================== 
     // Mangling, etc.
     
