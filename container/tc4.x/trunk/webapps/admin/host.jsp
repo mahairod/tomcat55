@@ -51,7 +51,7 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.host.delete"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.thishost.delete"/> </controls:action>
         </controls:actions>
           </div>
       </td>

@@ -105,6 +105,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String ENGINE_TYPE = "Catalina:type=Engine";
     public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
     public final static String HOST_TYPE = "Catalina:type=Host";
+    public final static String CONTEXT_TYPE = "Catalina:type=Context";
+    public final static String LOADER_TYPE = "Catalina:type=WebappLoader";
+    public final static String MANAGER_TYPE = "Catalina:type=StandardManager";
+
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
@@ -178,7 +182,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             String nodeLabel = "Service (" + serviceName + ")";
             String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-        
+            
             TreeControlNode serviceNode =
             new TreeControlNode(service.getObjectName().toString(),
             "folder_16_pad.gif",
@@ -225,7 +229,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             if (!"warp".equalsIgnoreCase(connectorName)) {
                 connectorNode =
                 new TreeControlNode(connectorObj.getObjectName().toString(),
-                "folder_16_pad.gif", 
+                "folder_16_pad.gif",
                 nodeLabel,
                 "setUpConnector.do?select=" + encodedConnectorName
                 + "&nodeLabel="+ encodedNodeLabel,
@@ -239,18 +243,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     
     public void getHosts(TreeControlNode serviceNode, String serviceName)
     throws JMException{
-        
-        /*
-        System.out.println("** There are " + mBServer.getMBeanCount().intValue() +
-        " registered MBeans **");
-        Iterator instances = mBServer.queryMBeans(null, null).iterator();
-        while (instances.hasNext()) {
-            ObjectInstance instance = (ObjectInstance) instances.next();
-            System.out.println("  objectName=" + instance.getObjectName() +
-            ", className=" + instance.getClassName());
-        }
-        */
-        
+ 
         Iterator HostItr =
         (mBServer.queryMBeans(new ObjectName(HOST_TYPE + WILDCARD +
         ",service=" + serviceName), null)).iterator();
@@ -270,7 +263,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             
             String nodeLabel="Host (" + hostName + ")";
             String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-
+            
             hostNode =
             new TreeControlNode(hostObj.getObjectName().toString(),
             "folder_16_pad.gif",
@@ -280,6 +273,57 @@ public class TomcatTreeBuilder implements TreeBuilder{
             "content", true);
             
             serviceNode.addChild(hostNode);
-        }        
+            
+            getContexts(hostNode, hostName, serviceName);
+        }
+        
+    }
+    
+    public void getContexts(TreeControlNode hostNode, String hostName, String serviceName)
+    throws JMException{
+
+        /*
+        System.out.println("** There are " + mBServer.getMBeanCount().intValue() +
+        " registered MBeans **");
+        Iterator instances = mBServer.queryMBeans(null, null).iterator();
+        while (instances.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) instances.next();
+            System.out.println("  objectName=" + instance.getObjectName() +
+            ", className=" + instance.getClassName());
+        }
+        */
+    
+        Iterator contextItr =
+        (mBServer.queryMBeans(new ObjectName(CONTEXT_TYPE + WILDCARD +
+        ",host=" + hostName + ",service=" + serviceName), null)).iterator();
+        
+        TreeControlNode contextNode = null;
+        String encodedContextName;
+        
+        while(contextItr.hasNext()){
+            
+            ObjectInstance contextObj = (ObjectInstance)contextItr.next();
+            
+            String contextName =
+            (String)mBServer.getAttribute(contextObj.getObjectName(),
+            "name");
+            
+            encodedContextName =  URLEncoder.encode(contextObj.getObjectName().toString());
+            
+            String nodeLabel="Context (" + contextName + ")";
+            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
+            
+            contextNode =
+            new TreeControlNode(contextObj.getObjectName().toString(),
+            "folder_16_pad.gif",
+            nodeLabel,
+            "setUpContext.do?select=" + encodedContextName
+            +"&nodeLabel="+ encodedNodeLabel,
+            "content", true);
+            
+            hostNode.addChild(contextNode);
+            
+        }
+        
     }
 }

@@ -31,6 +31,10 @@
     <form-bean      name="hostForm"
                     type="org.apache.webapp.admin.HostForm"/>
 
+    <!-- Context form bean -->
+    <form-bean      name="contextForm"
+                    type="org.apache.webapp.admin.ContextForm"/>
+
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
@@ -73,7 +77,11 @@
     <forward        name="Host"
                     path="/host.jsp"
                 redirect="false"/>
-                        
+       
+    <forward        name="Context"
+                    path="/context.jsp"
+                redirect="false"/>
+                   
     <forward        name="Save Successful"
                     path="/saved.jsp"
                 redirect="false"/>
@@ -142,6 +150,16 @@
                   redirect="true"/>
     </action>
     
+      <!-- Set up Context datastructure -->
+    <action    path="/setUpContext"
+               type="org.apache.webapp.admin.SetUpContextAction"
+               name="contextForm"
+               scope="session">
+      <forward        name="SetUpContext"
+                      path="/context.jsp"
+                  redirect="true"/>
+    </action>
+    
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -180,6 +198,14 @@
                name="hostForm"
               scope="session"
               input="/host.jsp">
+    </action>
+    
+     <!-- Process a context change -->
+    <action    path="/context"
+               type="org.apache.webapp.admin.ContextAction"
+               name="contextForm"
+              scope="session"
+              input="/context.jsp">
     </action>
     
     <!-- Process a set-locale action -->
