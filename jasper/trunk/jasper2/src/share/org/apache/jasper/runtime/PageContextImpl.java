@@ -162,7 +162,7 @@ public class PageContextImpl
 	this.bufferSize   = bufferSize;
 	this.autoFlush    = autoFlush;
 	this.request      = request;
-	this.response     = response;
+ 	this.response     = response;
 
 	// setup session (if required)
 	if (request instanceof HttpServletRequest && needsSession)
@@ -209,7 +209,12 @@ public class PageContextImpl
 		((JspWriterImpl)out).flushBuffer();
 			// push it into the including jspWriter
 	    } else {
-	        out.flush();
+                // Old code:
+	        //out.flush();
+                // Do not flush the buffer even if we're not included (i.e.
+                // we are the main page. The servlet will flush it and close
+                // the stream.
+                ((JspWriterImpl)out).flushBuffer();
 	    }
 	} catch (IOException ex) {
 	    loghelper.log("Internal error flushing the buffer in release()");
@@ -226,7 +231,7 @@ public class PageContextImpl
         depth = -1;
 	baseOut.recycle();
 	session      = null;
-
+         
 	attributes.clear();
     }
 
