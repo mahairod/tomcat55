@@ -31,7 +31,7 @@
   <property name="tomcat-util.jar"
            value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
   <property name="tomcat-coyote.jar"
-           value="${tomcat-coyote.home}/build/lib/tomcat-coyote.jar"/>
+           value="${tomcat-coyote.home}/build/lib/tomcat4-coyote.jar"/>
   <property name="tomcat-jk.jar"
            value="${tomcat-jk.home}/build/lib/tomcat-jk.jar"/>
   <property name="tomcat-jk2.jar"
