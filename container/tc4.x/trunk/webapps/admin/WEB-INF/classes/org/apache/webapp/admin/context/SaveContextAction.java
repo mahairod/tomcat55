@@ -367,6 +367,16 @@ public final class SaveContextAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("reloadable", new Boolean(reloadable)));
 
+            attribute = "swallowOutput";
+            String swallowOutput = "false";
+            try {
+                swallowOutput = cform.getSwallowOutput();
+            } catch (Throwable t) {
+                swallowOutput = "false";
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute("swallowOutput", new Boolean(swallowOutput)));
+
             attribute = "useNaming";
             String useNaming = "false";
             try {

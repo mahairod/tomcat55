@@ -143,6 +143,7 @@ public class AddContextAction extends Action {
         contextFm.setOverride("false");
         contextFm.setPath("");
         contextFm.setReloadable("false");
+        contextFm.setSwallowOutput("false");
         contextFm.setUseNaming("false");
         contextFm.setWorkDir("");        
         contextFm.setPath("");

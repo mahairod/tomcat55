@@ -250,6 +250,9 @@ public class EditContextAction extends Action {
             attribute = "reloadable";
             contextFm.setReloadable
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "swallowOutput";
+            contextFm.setSwallowOutput
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "override";
             contextFm.setOverride
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());

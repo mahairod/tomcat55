@@ -193,6 +193,17 @@
         </controls:row>
 
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="context.swallowOutput"/>:</controls:label>
+            <controls:data>
+                <html:select property="swallowOutput">
+                     <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.usenaming"/>:</controls:label>
             <controls:data>
                 <html:select property="useNaming">

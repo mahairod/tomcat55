@@ -145,7 +145,12 @@ public final class ContextForm extends ActionForm {
      * The text for reloadable boolean.
      */
     private String reloadable = "false";
-    
+
+    /**
+     * The text for swallowOutput boolean.
+     */
+    private String swallowOutput = "false";
+
     /**
      * The text for use naming boolean.
      */
@@ -472,22 +477,41 @@ public final class ContextForm extends ActionForm {
     /**
      * Return the reloadable boolean value.
      */
-    
+
     public String getReloadable() {
         
         return this.reloadable;
-        
+
     }
-    
+
     /**
      * Set the reloadable value.
      */
     public void setReloadable(String reloadable) {
-        
+
         this.reloadable = reloadable;
-        
+
     }
-    
+
+    /**
+     * Return the swallowOutput boolean value.
+     */
+
+    public String getSwallowOutput() {
+        
+        return this.swallowOutput;
+
+    }
+
+    /**
+     * Set the swallowOutput value.
+     */
+    public void setSwallowOutput(String swallowOutput) {
+
+        this.swallowOutput = swallowOutput;
+
+    }
+
     /**
      * Return the use naming boolean value.
      */
@@ -678,6 +702,7 @@ public final class ContextForm extends ActionForm {
         this.override= "false";
         this.path = null;
         this.reloadable = "false";
+        this.swallowOutput = "false";        
         
         // loader properties
         this.ldrCheckInterval = "15";
@@ -712,6 +737,8 @@ public final class ContextForm extends ActionForm {
         sb.append(override);
         sb.append(",reloadable=");
         sb.append(reloadable);
+        sb.append(",swallowOutput=");
+        sb.append(swallowOutput);
         // loader properties
         sb.append(",ldrCheckInterval=");
         sb.append(ldrCheckInterval);        
