@@ -66,8 +66,6 @@ package org.apache.catalina.authenticator;
 
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -481,8 +479,9 @@ public abstract class AuthenticatorBase
 	if (!checkUserData(hrequest, hresponse, constraint)) {
 	    if (debug >= 1)
 	        log(" Failed checkUserData() test");
-            // ASSERT: Authenticator already set the appropriate
-            // HTTP status code, so we do not have to do anything special
+            ((HttpServletResponse) hresponse.getResponse()).sendError
+                (HttpServletResponse.SC_FORBIDDEN,
+                 ((HttpServletRequest) hrequest.getRequest()).getRequestURI());
 	    return;
 	}
 
@@ -491,13 +490,13 @@ public abstract class AuthenticatorBase
             if (debug >= 1)
                 log(" Calling authenticate()");
             if (!authenticate(hrequest, hresponse, config)) {
-                if (debug >= 1)
-                    log(" Failed authenticate() test");
+	        if (debug >= 1)
+	            log(" Failed authenticate() test");
                 // ASSERT: Authenticator already set the appropriate
                 // HTTP status code, so we do not have to do anything special
                 return;
             }
-        }
+	}
 
 	// Perform access control based on the specified role(s)
         if (constraint.getAuthConstraint()) {
@@ -506,11 +505,11 @@ public abstract class AuthenticatorBase
             if (!accessControl(hrequest, hresponse, constraint)) {
                 if (debug >= 1)
                     log(" Failed accessControl() test");
-                // ASSERT: AccessControl method has already set the appropriate
+                // ASSERT: Access control method has already set the appropriate
                 // HTTP status code, so we do not have to do anything special
                 return;
             }
-        }
+	}
 
 	// Any and all specified constraints have been satisfied
 	if (debug >= 1)
@@ -645,77 +644,22 @@ public abstract class AuthenticatorBase
 	throws IOException {
 
 	// Is there a relevant user data constraint?
-	if (constraint == null) {
-            if (debug >= 2)
-		log("  No applicable security constraint defined");
+	if (constraint == null)
 	    return (true);
-        }
 	String userConstraint = constraint.getUserConstraint();
-	if (userConstraint == null) {
-            if (debug >= 2)
-		log("  No applicable user data constraint defined");
+	if (userConstraint == null)
 	    return (true);
-        }
-	if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
-            if (debug >= 2)
-                log("  User data constraint has no restrictions");
+	if (userConstraint.equals(Constants.NONE_TRANSPORT))
 	    return (true);
-        }
 
 	// Validate the request against the user data constraint
-	if (request.getRequest().isSecure()) {
-            if (debug >= 2)
-                log("  User data constraint already satisfied");
-            return (true);
-        }
-
-        // Initialize variables we need to determine the appropriate action
-        HttpServletRequest hrequest =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hresponse =
-            (HttpServletResponse) response.getResponse();
-        int redirectPort = request.getConnector().getRedirectPort();
-
-        // Is redirecting disabled?
-        if (redirectPort <= 0) {
-            if (debug >= 2)
-                log("  SSL redirect is disabled");
-            hresponse.sendError
-                (HttpServletResponse.SC_FORBIDDEN,
-                 hrequest.getRequestURI());
-            return (false);
-        }
-
-        // Redirect to the corresponding SSL port
-        String protocol = "https";
-        String host = hrequest.getServerName();
-        StringBuffer file = new StringBuffer(hrequest.getRequestURI());
-        String requestedSessionId = hrequest.getRequestedSessionId();
-        if ((requestedSessionId != null) &&
-            hrequest.isRequestedSessionIdFromURL()) {
-            file.append(";jsessionid=");
-            file.append(requestedSessionId);
-        }
-        String queryString = hrequest.getQueryString();
-        if (queryString != null) {
-            file.append('?');
-            file.append(queryString);
-        }
-        URL url = null;
-        try {
-            url = new URL(protocol, host, redirectPort, file.toString());
-            if (debug >= 2)
-                log("  Redirecting to " + url.toString());
-            hresponse.sendRedirect(url.toString());
-            return (false);
-        } catch (MalformedURLException e) {
-            if (debug >= 2)
-                log("  Cannot create new URL", e);
-            hresponse.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 hrequest.getRequestURI());
-            return (false);
-        }
+	if (!request.getRequest().isSecure()) {
+	    ((HttpServletResponse) response.getResponse()).sendError
+		(HttpServletResponse.SC_BAD_REQUEST,
+		 sm.getString("authenticator.userDataConstraint"));
+	    return (false);
+	}
+	return (true);
 
     }
 
