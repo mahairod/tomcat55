@@ -409,6 +409,7 @@ public class DeltaManager extends ManagerBase implements Lifecycle,
                         //make sure that the session gets ready to expire if
                         // needed
                         session.setAccessCount(0);
+                        session.resetDeltaRequest();
                         sessions.put(session.getId(), session);
                     }
                 } catch (ClassNotFoundException e) {
