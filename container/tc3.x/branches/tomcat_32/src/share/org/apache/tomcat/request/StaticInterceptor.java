@@ -332,8 +332,8 @@ class FileHandler extends ServletWrapper  {
 	    subReq=req.getChild();
 
 	Context ctx=subReq.getContext();
-   // If this file is being included, use javax.servlet.include.request_uri.
-   String pathInfo = (String)subReq.getAttribute("javax.servlet.include.request_uri");
+   // If this file is being included, use javax.servlet.include.servlet_path.
+   String pathInfo = (String)subReq.getAttribute("javax.servlet.include.servlet_path");
    if(pathInfo == null)
       pathInfo=subReq.getServletPath();
 	String absPath = (String)subReq.getNote( realFileNote );
