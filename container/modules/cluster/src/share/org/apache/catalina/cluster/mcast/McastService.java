@@ -87,7 +87,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * The implementation specific properties
      */
-    protected Properties properties;
+    protected Properties properties = new Properties();
     /**
      * A handle to the actual low level implementation
      */
@@ -99,7 +99,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * The local member
      */
-    protected McastMember localMember;
+    protected McastMember localMember ;
 
     /**
      * Create a membership service.
@@ -145,6 +145,37 @@ public class McastService implements MembershipService,MembershipListener {
         localMember.setMemberAliveTime(System.currentTimeMillis()-impl.getServiceStartTime());
         return localMember;
     }
+    
+    /**
+     * Sets the local member properties for broadcasting
+     * @return
+     */
+    public void setLocalMemberProperties(String listenHost, int listenPort) {
+        properties.setProperty("tcpListenHost",listenHost);
+        properties.setProperty("tcpListenPort",String.valueOf(listenPort));
+    }
+    
+    public void setMcastAddr(String addr) {
+        properties.setProperty("mcastAddress", addr);
+    }
+
+    public void setMcastBindAddress(String bindaddr) {
+        properties.setProperty("mcastBindAddress", bindaddr);
+    }
+
+    public void setMcastPort(int port) {
+        properties.setProperty("mcastPort", String.valueOf(port));
+    }
+
+    public void setMcastFrequency(long time) {
+        properties.setProperty("msgFrequency", String.valueOf(time));
+    }
+
+    public void setMcastDropTime(long time) {
+        properties.setProperty("memberDropTime", String.valueOf(time));
+    }
+
+
 
 
     /**
@@ -165,7 +196,14 @@ public class McastService implements MembershipService,MembershipListener {
         String host = getProperties().getProperty("tcpListenHost");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         String name = "tcp://"+host+":"+port;
-        localMember = new McastMember(name,host,port,100);
+        if ( localMember == null ) {
+            localMember = new McastMember(name, host, port, 100);
+        } else {
+            localMember.setName(name);
+            localMember.setHost(host);
+            localMember.setPort(port);
+            localMember.setMemberAliveTime(100);
+        }
         java.net.InetAddress bind = null;
         if ( properties.getProperty("mcastBindAddress")!= null ) {
             bind = java.net.InetAddress.getByName(properties.getProperty("mcastBindAddress"));
@@ -178,6 +216,9 @@ public class McastService implements MembershipService,MembershipListener {
                                     this);
 
         impl.start();
+        log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
+        Thread.currentThread().sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
+
     }
 
     /**

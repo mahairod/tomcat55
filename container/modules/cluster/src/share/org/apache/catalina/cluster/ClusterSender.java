@@ -63,46 +63,23 @@
 
 package org.apache.catalina.cluster;
 
-/**
- * The membership factory is used to dynamically instantiate the
- * membership service. This implementation assumes that the
- * membership service class can be loaded by the same classloaded that loaded this class.
- *
- * @author Filip Hanik
- * @version $Revision$, $Date$
- */
 
 
-public class MembershipFactory {
-    public MembershipFactory() {
-    }
+public interface ClusterSender
+{
 
-    public static MembershipService getMembershipService(String classname)
-        throws java.lang.ClassNotFoundException,
-               java.lang.IllegalAccessException,
-               java.lang.InstantiationException {
-        return getMembershipService(classname,new java.util.Properties());
+    public void add(Member member);
 
-    }
+    public void remove(Member member);
 
-    public static MembershipService getMembershipService(String classname,
-                                                         java.util.Properties properties)
-        throws java.lang.ClassNotFoundException,
-               java.lang.IllegalAccessException,
-               java.lang.InstantiationException  {
-        Class clazz = MembershipFactory.class.getClassLoader().loadClass(classname);
-        return getMembershipService(clazz,properties);
-    }
+    public void start() throws java.io.IOException;
 
-    public static MembershipService getMembershipService(Class clazz,
-                                                         java.util.Properties properties)
-        throws java.lang.ClassNotFoundException,
-               java.lang.IllegalAccessException,
-               java.lang.InstantiationException  {
-        MembershipService service = (MembershipService) clazz.newInstance();
-        service.setProperties(properties);
-        return service;
-    }
+    public void stop();
 
+    public void sendMessage(String messageId, byte[] indata, Member member) throws java.io.IOException;
+
+    public void sendMessage(String messageId, byte[] indata) throws java.io.IOException;
+    
+    public boolean getIsSenderSynchronized();
 
 }
