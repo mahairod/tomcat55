@@ -331,6 +331,7 @@ Function configure
   File /r confinstall
 
   ; Build final server.xml
+  Delete "$INSTDIR\conf\server.xml"
   FileOpen $R9 "$INSTDIR\conf\server.xml" w
 
   Push "$TEMP\confinstall\server_1.xml"
@@ -341,9 +342,8 @@ Function configure
 
   FileClose $R9
 
-  CopyFiles "$R9" "$INSTDIR\conf" 18
-
   ; Build final tomcat-users.xml
+  Delete "$INSTDIR\conf\tomcat-users.xml"
   FileOpen $R9 "$INSTDIR\conf\tomcat-users.xml" w
 
   Push "$TEMP\confinstall\tomcat-users_1.xml"
@@ -353,8 +353,6 @@ Function configure
   Call copyFile
 
   FileClose $R9
-
-  CopyFiles "$R9" "$INSTDIR\conf" 5
 
   ; Creating a few shortcuts
   IfFileExists "$SMPROGRAMS\Apache Tomcat 4.1" 0 NoLinks
@@ -389,11 +387,15 @@ Function copyFile
 
   FileOpen $1 $0 r
 
-  NoError:
+ NoError:
+
   FileRead $1 $2
+  IfErrors EOF 0
   FileWrite $R9 $2
 
   IfErrors 0 NoError
+
+ EOF:
 
   FileClose $1
 
