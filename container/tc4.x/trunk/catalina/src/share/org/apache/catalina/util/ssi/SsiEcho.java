@@ -65,30 +65,54 @@
 package org.apache.catalina.util.ssi;
 
 /**
+ * Return the result associated with the supplied Server Variable.
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class SsiEcho
     extends SsiMediator implements SsiCommand {
 
-    public SsiEcho() {}
-
+    /**
+     * Get the value associated with this parameter
+     *
+     * @param strParamType The parameter type
+     * @param strParam The value, only "var" accepted
+     * @return a value The computed result
+     */
     public final String getStream(String[] strParamType,
-				  String[] strParam) {
-	String retString;
+                                  String[] strParam) {
+        String retString;
 
-	if(strParamType[0].equals("var"))
-	    retString =
-		retString = super.getServerVariable(strParam[0]);
-	else
-	    retString = new String(super.getError());
+        if(strParamType[0].equals("var"))
+            retString = super.getServerVariable(strParam[0]);
+        else
+            retString = new String(super.getError());
 
-	return retString;
+        return retString;
     }
 
+    /**
+     * Not used since this SsiCommand return a stream, use
+     * <code>getStream()</code> instead.
+     *
+     * @param strParamType a value of type 'String[]'
+     * @param strParam a value of type 'String[]'
+     */
     public final void process(String[] strParamType, String[] strParam) {}
+
+    /**
+     * Returns <code>true</code> this SsiCommand is always prnitable
+     * and should therefore be accsessed through <code>getStream()</code>
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isPrintable() { return true; }
 
+    /**
+     * Returns <code>false</code>, this SsiCommands is never buffered.
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isModified() { return false; }
 }

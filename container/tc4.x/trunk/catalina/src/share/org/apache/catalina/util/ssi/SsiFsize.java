@@ -70,111 +70,140 @@ import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
 
 /**
+ * Return the size of a given file, subject of formatting.
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class SsiFsize
     extends SsiMediator implements SsiCommand {
 
-    public SsiFsize() {}
-
     /**
      * Figure out the length/size of a given file.
      *
-     * @param strParamType a value of type 'String[]'
-     * @param strParam a value of type 'String[]'
-     * @param req a value of type 'HttpServletRequest'
-     * @param servletContext a value of type 'ServletContext'
-     * @return a value of type 'String'
+     * @param strParamType The parameter type
+     * @param strParam The value, only "var" accepted
+     * @return The result
      */
     public final String getStream(String[] strParamType,
-				  String[] strParam) {
-	String length = "";
-	String retLength = "";
-	String path = "";
-	URL url = null;
-	long lLength = -1;
-
-	if(strParamType[0].equals("file")) {
-	    path = super.getFilePath(strParam[0]);
-	} else if(strParamType[0].equals("virtual")) {
-	    path = super.getVirtualPath(strParam[0]);
-	}
-
-	try {
-	    url = super.servletContext.getResource(path);
-	    lLength = url.openConnection().getContentLength();
-	    length = (new Long(lLength)).toString();
-	} catch (MalformedURLException e){
-	    length = null;
-	} catch (IOException e) {
-	    length = null;
-	} catch (NullPointerException e) {
-	    length = null;
-	}
-
-	if(length == null)
-	    retLength = (new String(super.getError()));
-	else
-	    retLength =
-		formatSize(length,
-			   ((SsiConfig)super.getCommand("config")).getSizefmt());
-
-	return retLength;
+                                  String[] strParam) {
+        String length = "";
+        String retLength = "";
+        String path = "";
+        URL url = null;
+        long lLength = -1;
+        
+        if(strParamType[0].equals("file")) {
+            path = super.getFilePath(strParam[0]);
+        } else if(strParamType[0].equals("virtual")) {
+            path = super.getVirtualPath(strParam[0]);
+        }
+        
+        try {
+            url = super.servletContext.getResource(path);
+            lLength = url.openConnection().getContentLength();
+            length = (new Long(lLength)).toString();
+        } catch (MalformedURLException e){
+            length = null;
+        } catch (IOException e) {
+            length = null;
+        } catch (NullPointerException e) {
+            length = null;
+        }
+        
+        if(length == null)
+            retLength = (new String(super.getError()));
+        else
+            retLength =
+                formatSize(length,
+                           ((SsiConfig)super.getCommand("config")).getSizefmt());
+        
+        return retLength;
     }
-
+    
+    /**
+     * Not used since this SsiCommand return a stream, use
+     * <code>getStream()</code> instead.
+     *
+     * @param strParamType a value of type 'String[]'
+     * @param strParam a value of type 'String[]'
+     */
     public final void process(String[] strParamType, String[] strParam) {}
 
+    /**
+     * Returns <code>true</code> this SsiCommand is always prnitable
+     * and should therefore be accsessed through <code>getStream()</code>
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isPrintable() { return true; }
 
+    /**
+     * Returns <code>false</code>, this SsiCommands is never buffered.
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isModified() { return false; }
 
     //----------------- Private methods
 
+    /**
+     * Format the size with the correct format, either
+     * abbrev or bytes.
+     *
+     * @param length The variable to format
+     * @param format The pattern to use when formatting
+     * @return The result
+     */
     private String formatSize(String length, String format) {
-	String retString = "";
-
-	if(format.equalsIgnoreCase("bytes")) {
-	    retString = commaFormat(length);
-	} else {
-	    double lParse = (new Long(length)).doubleValue();
-
-	    if(lParse>=1048576) {
-	        double abbrevSize = lParse/1048576;
-		long splitSize = (long)abbrevSize;
-		int  catSize = (int)(100 * (abbrevSize - splitSize));
-
-		retString =
-		    commaFormat((new Long(splitSize)).toString())+
-		    "."+catSize+" MB";
-	    } else if(lParse>=1024) {
-	        double abbrevSize = lParse/1024;
-		long splitSize = (long)abbrevSize;
-		int  catSize = (int)(100 * (abbrevSize - splitSize));
-
-		retString =
-		    commaFormat((new Long(splitSize)).toString())+
-		    "."+catSize+" KB";
-	    } else {
-		retString =
-		    commaFormat(length)+" bytes";
-	    }
-	}
-
-	return retString;
+        String retString = "";
+        
+        if(format.equalsIgnoreCase("bytes")) {
+            retString = commaFormat(length);
+        } else {
+            double lParse = (new Long(length)).doubleValue();
+            
+            if(lParse>=1048576) {
+                double abbrevSize = lParse/1048576;
+                long splitSize = (long)abbrevSize;
+                int  catSize = (int)(100 * (abbrevSize - splitSize));
+                
+                retString =
+                    commaFormat((new Long(splitSize)).toString())+
+                    "."+catSize+" MB";
+            } else if(lParse>=1024) {
+                double abbrevSize = lParse/1024;
+                long splitSize = (long)abbrevSize;
+                int  catSize = (int)(100 * (abbrevSize - splitSize));
+                
+                retString =
+                    commaFormat((new Long(splitSize)).toString())+
+                    "."+catSize+" KB";
+            } else {
+                retString =
+                    commaFormat(length)+" bytes";
+            }
+        }
+        
+        return retString;
     }
-
+    
+    /**
+     * Modify the supplied variable to be returned comma formated.
+     *
+     * @param length The variable to modify
+     * @return The modified result
+     */
     private String commaFormat(String length) {
-	String retString = "";
-
-	for(int i = length.length();i-1>=0;i--) {
-	    retString = (length.substring(i-1,i)).concat(retString);
-	    if((length.length()-(i-1))%3==0&&
-	       retString.length()<length.length())
-		retString = ",".concat(retString);
-	}
-
-	return retString;
+        String retString = "";
+        
+        for(int i = length.length();i-1>=0;i--) {
+            retString = (length.substring(i-1,i)).concat(retString);
+            if((length.length()-(i-1))%3==0&&
+               retString.length()<length.length())
+                retString = ",".concat(retString);
+        }
+        
+        return retString;
     }
 }

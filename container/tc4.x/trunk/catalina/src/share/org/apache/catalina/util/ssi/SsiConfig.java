@@ -67,58 +67,90 @@ package org.apache.catalina.util.ssi;
 import java.util.Properties;
 
 /**
+ * Implementation of the SsiCommand config, example of usage:
+ * &lt;!--#config sizefmt="abbrev" errmsg="An error occured!"--&gt;
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class SsiConfig
     extends SsiMediator implements SsiCommand {
 
+    /**
+     * Variable to hold if this SsiCommand modified or not
+     */
     private boolean modified = false;
 
+    /**
+     * Variable to hold the errmsg to return
+     */
     private byte[] errmsg;
 
+    /**
+     * Variable to hold which sizefmt to use
+     */
     private String sizefmt;
 
+    /**
+     * Variable to hold which timefmt to use
+     */
     private String timefmt;
 
+    /**
+     * Variable to hold the patterns for translation
+     */
     private static Properties translate;
 
+    /**
+     * Initialize our pattern translation
+     */
     static {
-	translate = new Properties();
-	translate.put("a","EEE");
-	translate.put("A","EEEE");
-	translate.put("b","MMM");
-	translate.put("h","MMM");
-	translate.put("B","MMMM");
-	translate.put("d","dd");
-	translate.put("D","MM/dd/yy");
-	translate.put("e","d");
-	translate.put("H","HH");
-	translate.put("I","hh");
-	translate.put("j","E");
-	translate.put("m","M");
-	translate.put("M","m");
-	translate.put("p","a");
-	translate.put("r","hh:mm:ss a");
-	translate.put("S","s");
-	translate.put("T","HH:mm:ss");
-	translate.put("U","w");
-	translate.put("W","w");
-	translate.put("w","E");
-	translate.put("y","yy");
-	translate.put("Y","yyyy");
-	translate.put("z","z");
+        translate = new Properties();
+        translate.put("a","EEE");
+        translate.put("A","EEEE");
+        translate.put("b","MMM");
+        translate.put("h","MMM");
+        translate.put("B","MMMM");
+        translate.put("d","dd");
+        translate.put("D","MM/dd/yy");
+        translate.put("e","d");
+        translate.put("H","HH");
+        translate.put("I","hh");
+        translate.put("j","E");
+        translate.put("m","M");
+        translate.put("M","m");
+        translate.put("p","a");
+        translate.put("r","hh:mm:ss a");
+        translate.put("S","s");
+        translate.put("T","HH:mm:ss");
+        translate.put("U","w");
+        translate.put("W","w");
+        translate.put("w","E");
+        translate.put("y","yy");
+        translate.put("Y","yyyy");
+        translate.put("z","z");
     }
 
+    /**
+     * Initialize this SsiCommand
+     *
+     */
     public SsiConfig() {
-	init();
+        init();
     }
-
+    
+    /**
+     * <code>process()</code> should be used since this SsiCommand
+     * does not return anything.
+     *
+     * @param strParamType a value of type 'String[]'
+     * @param strParam a value of type 'String[]'
+     * @return a value of type 'String'
+     */
     public String getStream(String[] strParamType, String[] strParam) {
-	return "";
+        return "";
     }
-
+    
     /**
      * Process request.
      *
@@ -126,34 +158,34 @@ public final class SsiConfig
      * @param strParam a value of type 'String[]'
      */
     public final void process(String[] strParamType, String[] strParam) {
-	modified = true;
-
-	for(int i=0;i<strParamType.length;i++) {
-	    if(strParamType[i].equals("errmsg"))
-		errmsg = strParam[i].getBytes();
-	    else if(strParamType[i].equals("sizefmt"))
-		sizefmt = strParam[i];
-	    else if(strParamType[i].equals("timefmt"))
-		timefmt = convertFormat(strParam[i]);
-	}
+        modified = true;
+        
+        for(int i=0;i<strParamType.length;i++) {
+            if(strParamType[i].equals("errmsg"))
+                errmsg = strParam[i].getBytes();
+            else if(strParamType[i].equals("sizefmt"))
+                sizefmt = strParam[i];
+            else if(strParamType[i].equals("timefmt"))
+                timefmt = convertFormat(strParam[i]);
+        }
     }
-
+    
     /**
      * Return the current error message.
      *
      * @return a value of type 'byte[]'
      */
     public final byte[] getError() {
-	return errmsg;
+        return errmsg;
     }
-
+    
     /**
      * Return the current Size format.
      *
      * @return a value of type 'String'
      */
     public final String getSizefmt() {
-	return sizefmt;
+        return sizefmt;
     }
 
     /**
@@ -162,7 +194,7 @@ public final class SsiConfig
      * @return a value of type 'String'
      */
     public final String getTimefmt() {
-	return timefmt;
+        return timefmt;
     }
 
     /**
@@ -170,7 +202,7 @@ public final class SsiConfig
      *
      */
     public final void flush() {
-	init();
+        init();
     }
 
     /**
@@ -186,64 +218,80 @@ public final class SsiConfig
      * @return a value of type 'boolean'
      */
     public final boolean isModified() { return modified; }
-
-    private String convertFormat(String pattern) {
-	boolean inside = false;
-	boolean mark = false;
-	StringBuffer retString = new StringBuffer();
-	String sRetString = "";
-
-	for(int i = 0; i<pattern.length();i++) {
-	    if(pattern.charAt(i)=='%'&&!mark) {
-		mark=true;
-		continue;
-	    }
-
-	    if(pattern.charAt(i)=='%'&&mark) {
-		mark=false;
-	    }
-
-	    if(mark) {
-		if(inside) {
-		    retString.append("'");
-		    inside=false;
-		}
-
-		retString.append(translateCommand(pattern.charAt(i)));
-		mark=false;
-		continue;
-	    }
-
-	    if(!inside) {
-		retString.append("'");
-		inside = true;
-	    }
-
-	    retString.append(pattern.charAt(i));
-	}
-
-	sRetString = retString.toString();
-
-	if(!sRetString.endsWith("'")&&inside)
-	    sRetString = sRetString.concat("'");
-
-	return sRetString;
-    }
-
-    private String translateCommand(char c) {
-	String retCommand = translate.getProperty("".valueOf(c));
-
-	return retCommand==null?"":retCommand;
-    }
-
+    
     /**
-     * Called from <code>flush</code>.
+     * Search the provided pattern and get the C standard
+     * Date/Time formatting rules and convert them to the
+     * Java equivalent.
+     *
+     * @param pattern The pattern to search
+     * @return The modified pattern
+     */
+    private String convertFormat(String pattern) {
+        boolean inside = false;
+        boolean mark = false;
+        StringBuffer retString = new StringBuffer();
+        String sRetString = "";
+        
+        for(int i = 0; i<pattern.length();i++) {
+            if(pattern.charAt(i)=='%'&&!mark) {
+                mark=true;
+                continue;
+            }
+            
+            if(pattern.charAt(i)=='%'&&mark) {
+                mark=false;
+            }
+            
+            if(mark) {
+                if(inside) {
+                    retString.append("'");
+                    inside=false;
+                }
+                
+                retString.append(translateCommand(pattern.charAt(i)));
+                mark=false;
+                continue;
+            }
+            
+            if(!inside) {
+                retString.append("'");
+                inside = true;
+            }
+            
+            retString.append(pattern.charAt(i));
+        }
+        
+        sRetString = retString.toString();
+        
+        if(!sRetString.endsWith("'")&&inside)
+            sRetString = sRetString.concat("'");
+        
+        return sRetString;
+    }
+    
+    /**
+     * try to get the Java Date/Time formating associated with
+     * the C standard provided
+     *
+     * @param c The C equivalent to translate
+     * @return The Java formatting rule to use
+     */
+    private String translateCommand(char c) {
+        String retCommand = translate.getProperty("".valueOf(c));
+        
+        return retCommand==null?"":retCommand;
+    }
+    
+    /**
+     * Called from <code>flush</code> Initialize internal parameters
+     * in their default setting.
      *
      */
     private void init() {
-	errmsg =
-	    "[an error occurred while processing this directive]".getBytes();
-	sizefmt = "abbrev";
-	timefmt = "EEE, dd MMM yyyyy HH:mm:ss z";
+        errmsg =
+            "[an error occurred while processing this directive]".getBytes();
+        sizefmt = "abbrev";
+        timefmt = "EEE, dd MMM yyyyy HH:mm:ss z";
     }
 }

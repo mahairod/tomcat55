@@ -71,76 +71,107 @@ import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
 
 /**
+ * Get the last modified date for a file, the date is subject
+ * of formatting.
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class SsiFlastmod
     extends SsiMediator implements SsiCommand {
 
-    public SsiFlastmod() {}
-
+    /**
+     * Get the date of a file and format it correctly
+     *
+     * @param strParamType The type of parameter
+     * @param strParam The value of the parameter
+     * @return The date of the file
+     */
     public final String getStream(String[] strParamType,
-				  String[] strParam) {
-	String path = new String();
-	long lastModified;
-	String sLastModified = null;
-	URL url = null;
-
-	if(strParamType[0].equals("file")) {
-	    path = super.getFilePath(strParam[0]);
-	} else if(strParamType[0].equals("virtual")) {
-	    path = super.getVirtualPath(strParam[0]);
-	}
-
-	try {
-	    url = super.servletContext.getResource(path);
-	    lastModified = url.openConnection().getLastModified();
-	} catch (MalformedURLException e){
-	    lastModified = 0;
-	} catch (IOException e) {
-	    lastModified = 0;
-	} catch (NullPointerException e) {
-	    lastModified = 0;
-	}
-
-	if(lastModified==0)
-	    sLastModified = (new String(super.getError()));
-	else
-	    sLastModified = super.timefmt(new Date(lastModified));
-
-	return sLastModified;
+                                  String[] strParam) {
+        String path = new String();
+        long lastModified;
+        String sLastModified = null;
+        URL url = null;
+        
+        if(strParamType[0].equals("file")) {
+            path = super.getFilePath(strParam[0]);
+        } else if(strParamType[0].equals("virtual")) {
+            path = super.getVirtualPath(strParam[0]);
+        }
+        
+        try {
+            url = super.servletContext.getResource(path);
+            lastModified = url.openConnection().getLastModified();
+        } catch (MalformedURLException e){
+            lastModified = 0;
+        } catch (IOException e) {
+            lastModified = 0;
+        } catch (NullPointerException e) {
+            lastModified = 0;
+        }
+        
+        if(lastModified==0)
+            sLastModified = (new String(super.getError()));
+        else
+            sLastModified = super.timefmt(new Date(lastModified));
+        
+        return sLastModified;
     }
-
+    
+    /**
+     * Get the date of a file and format it correctly
+     *
+     * @param path The path to the file
+     * @return The Date to return
+     */
     protected String getDate(String path) {
-	long lastModified;
-	String sLastModified = null;
-	URL url = null;
-
-	path = super.getVirtualPath(path);
-
-	try {
-	    url = super.servletContext.getResource(path);
-	    lastModified = url.openConnection().getLastModified();
-	} catch (MalformedURLException e){
-	    lastModified = 0;
-	} catch (IOException e) {
-	    lastModified = 0;
-	} catch (NullPointerException e) {
-	    lastModified = 0;
-	}
-
-	if(lastModified==0)
-	    sLastModified = (new String(super.getError()));
-	else
-	    sLastModified = super.timefmt(new Date(lastModified));
-
-	return sLastModified;
+        long lastModified;
+        String sLastModified = null;
+        URL url = null;
+        
+        path = super.getVirtualPath(path);
+        
+        try {
+            url = super.servletContext.getResource(path);
+            lastModified = url.openConnection().getLastModified();
+        } catch (MalformedURLException e){
+            lastModified = 0;
+        } catch (IOException e) {
+            lastModified = 0;
+        } catch (NullPointerException e) {
+            lastModified = 0;
+        }
+        
+        if(lastModified==0)
+            sLastModified = (new String(super.getError()));
+        else
+            sLastModified = super.timefmt(new Date(lastModified));
+        
+        return sLastModified;
     }
-
+    
+    /**
+     * Not used since this SsiCommand return a stream, use
+     * <code>getStream()</code> instead.
+     *
+     * @param strParamType a value of type 'String[]'
+     * @param strParam a value of type 'String[]'
+     */
     public final void process(String[] strParamType, String[] strParam) {}
 
+    /**
+     * Returns <code>true</code> this SsiCommand is always prnitable
+     * and should therefore be accsessed through <code>getStream()</code>
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isPrintable() { return true; }
 
+    /**
+     * Returns <code>false</code>, this SsiCommands is never buffered.
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isModified() { return false; }
 }

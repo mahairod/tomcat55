@@ -71,42 +71,73 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
+ * A HttpServletResponseWrapper, used from <code>SsiInclude</code>
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class ResponseIncludeWrapper
     extends HttpServletResponseWrapper {
 
+    /**
+     * Our ServletOutputStream
+     */
     private ServletOutputStream _out;
 
+    /**
+     * Variable to determine if we're using printwriter
+     */
     private boolean printwriter = false;
 
+    /**
+     * Variable to determine if we're using outputstream
+     */
     private boolean outputstream = false;
 
+    /**
+     * Initialize our wrapper with the current HttpServletResponse
+     * and ServletOutputStream.
+     *
+     * @param res The HttpServletResponse to use
+     * @param out The ServletOutputStream' to use
+     */
     public ResponseIncludeWrapper(HttpServletResponse res,
-				  ServletOutputStream out) {
-	super(res);
-	this._out = out;
+                                  ServletOutputStream out) {
+        super(res);
+        this._out = out;
     }
-
+    
+    /**
+     * Return a printwriter, throws and exception if a
+     * OutputStream already been returned.
+     *
+     * @return a PrintWriter object
+     * @exception java.io.IOException if the outputstream already been called
+     */
     public PrintWriter getWriter()
-	throws java.io.IOException {
-	if(!outputstream) {
-	    printwriter=true;
-	    return (new PrintWriter(_out));
-	} else {
-	    throw new IllegalStateException();
-	}
+        throws java.io.IOException {
+        if(!outputstream) {
+            printwriter=true;
+            return (new PrintWriter(_out));
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
+    /**
+     * Return a OutputStream, throws and exception if a
+     * printwriter already been returned.
+     *
+     * @return a OutputStream object
+     * @exception java.io.IOException if the printwriter already been called
+     */
     public ServletOutputStream getOutputStream()
-	throws java.io.IOException {
-	if(!printwriter) {
-	    outputstream=true;
-	    return _out;
-	} else {
-	    throw new IllegalStateException();
-	}
+        throws java.io.IOException {
+        if(!printwriter) {
+            outputstream=true;
+            return _out;
+        } else {
+            throw new IllegalStateException();
+        }
     }
 }

@@ -70,25 +70,46 @@ import java.io.ByteArrayOutputStream;
 import javax.servlet.ServletOutputStream;
 
 /**
+ * Class that extends ServletOuputStream, used as a wrapper
+ * from within <code>SsiInclude</code>
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
+ * @see ServletOutputStream
  */
 public final class ServletOutputStreamWrapper
     extends ServletOutputStream {
 
+    /**
+     * Our buffer to hold the stream
+     */
     private ByteArrayOutputStream _buf = null;
 
+    /**
+     * Construct a new ServletOutputStream
+     *
+     */
     public ServletOutputStreamWrapper() {
-	super();
-	_buf = new ByteArrayOutputStream();
+        super();
+        _buf = new ByteArrayOutputStream();
     }
 
+    /**
+     * Write our stream to the <code>OutputStream</code> provided.
+     *
+     * @param out the OutputStream to write this stream to
+     * @exception IOException if an input/output error occurs
+     */
     public final void writeTo(OutputStream out) throws IOException {
-	out.write(_buf.toByteArray());
+        out.write(_buf.toByteArray());
     }
 
+    /**
+     * Write to our buffer
+     *
+     * @param b The parameter to write
+     */
     public final void write(int b) {
-	_buf.write(b);
+        _buf.write(b);
     }
 }

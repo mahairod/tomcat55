@@ -65,20 +65,48 @@
 package org.apache.catalina.util.ssi;
 
 /**
+ * Interface implemented by the different SsiCommands.
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public interface SsiCommand {
-
+    /**
+     * Get the processed result of this SsiCommands,
+     * called after and only if <code>isPrintable()</code>
+     * returns <code>true</code>
+     *
+     * @param strParamType The type of parameter
+     * @param strParam The value of the parameter
+     * @return result from this SsiCommand
+     */
     public String getStream(String[] strParamType,
-			    String[] strParam);
+                            String[] strParam);
 
+    /**
+     * Process this request, used if <code>isPrintable()</code>
+     * returns false
+     *
+     * @param strParamType The type of parameter
+     * @param strParam The value of the parameter
+     */
     public void process(String[] strParamType,
-			String[] strParam);
+                        String[] strParam);
 
+    /**
+     * Called before <code>getStream()</code> and
+     * <code>process()</code>. Return <code>true</code>
+     * if this SsiCommand provide an output else <code>false</code>
+     *
+     * @return boolean result
+     */
     public boolean isPrintable();
 
+    /**
+     * Return <code>true</code> if this SsiCommand
+     * has been modified since the last request.
+     *
+     * @return a value of type 'boolean'
+     */
     public boolean isModified();
-
 }

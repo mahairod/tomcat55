@@ -71,55 +71,80 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.RequestDispatcher;
 
 /**
+ * SsiCommand to include a file, implemented using
+ * <code>RequestDispatcher.include().</code>
+ *
  * @author Bip Thelin
  * @version $Revision$, $Date$
- *
  */
 public final class SsiInclude
     extends SsiMediator implements SsiCommand {
 
-    public SsiInclude() {}
-
+    /**
+     * Get the stream from the included file.
+     *
+     * @param strParamType The parameter type
+     * @param strParam The file to include
+     * @return The result from the include
+     */
     public final String getStream(String[] strParamType,
-				  String[] strParam) {
-	String retString = "";
-	String path = "";
-
-	if(strParamType[0].equals("file"))
-	    path = super.getFilePath(strParam[0]);
-	else if(strParamType[0].equals("virtual"))
-	    path = super.getVirtualPath(strParam[0]);
-
-	if(path != null) {
-	    try {
-		if(super.servletContext.getResource(path) != null) {
-		    RequestDispatcher rd =
-			super.servletContext.getRequestDispatcher(path);
-		    rd.include(super.req,
-			       new ResponseIncludeWrapper(super.res,
-							  (ServletOutputStream)super.out));
-		} else{
-		    retString = new String(super.getError());
-		}
-	    } catch (IOException e) {
-		retString = new String(super.getError());
-	    } catch (ServletException e) {
-		retString = new String(super.getError());
-	    } catch (IllegalArgumentException e) {
-		retString = new String(super.getError());
-	    } catch (NullPointerException e) {
-		retString = new String(super.getError());
-	    }
-	} else {
-	    retString = new String(super.getError());
-	}
-
-	return retString;
+                                  String[] strParam) {
+        String retString = "";
+        String path = "";
+        
+        if(strParamType[0].equals("file"))
+            path = super.getFilePath(strParam[0]);
+        else if(strParamType[0].equals("virtual"))
+            path = super.getVirtualPath(strParam[0]);
+        
+        if(path != null) {
+            try {
+                if(super.servletContext.getResource(path) != null) {
+                    RequestDispatcher rd =
+                        super.servletContext.getRequestDispatcher(path);
+                    rd.include(super.req,
+                               new ResponseIncludeWrapper(super.res,
+                                                          (ServletOutputStream)super.out));
+                } else{
+                    retString = new String(super.getError());
+                }
+            } catch (IOException e) {
+                retString = new String(super.getError());
+            } catch (ServletException e) {
+                retString = new String(super.getError());
+            } catch (IllegalArgumentException e) {
+                retString = new String(super.getError());
+            } catch (NullPointerException e) {
+                retString = new String(super.getError());
+            }
+        } else {
+            retString = new String(super.getError());
+        }
+        
+        return retString;
     }
 
+    /**
+     * Not used since this SsiCommand return a stream, use
+     * <code>getStream()</code> instead.
+     *
+     * @param strParamType a value of type 'String[]'
+     * @param strParam a value of type 'String[]'
+     */
     public final void process(String[] strParamType, String[] strParam) {}
 
+    /**
+     * Returns <code>true</code> this SsiCommand is always prnitable
+     * and should therefore be accsessed through <code>getStream()</code>
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isPrintable() { return true; }
 
+    /**
+     * Returns <code>false</code>, this SsiCommands is never buffered.
+     *
+     * @return a value of type 'boolean'
+     */
     public final boolean isModified() { return false; }
 }
