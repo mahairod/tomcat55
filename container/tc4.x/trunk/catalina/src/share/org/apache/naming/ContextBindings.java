@@ -361,12 +361,16 @@ public class ContextBindings {
      */
     public static Context getClassLoader()
         throws NamingException {
-        Context context = (Context) clBindings.get
-            (Thread.currentThread().getContextClassLoader());
-        if (context == null)
-            throw new NamingException
-                (sm.getString("contextBindings.noContextBoundToCL"));
-        return context;
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Context context = null;
+        do {
+            context = (Context) clBindings.get(cl);
+            if (context != null) {
+                return context;
+            }
+        } while ((cl = cl.getParent()) != null);
+        throw new NamingException
+            (sm.getString("contextBindings.noContextBoundToCL"));
     }
 
 
@@ -375,12 +379,16 @@ public class ContextBindings {
      */
     static Object getClassLoaderName()
         throws NamingException {
-        Object name = 
-            clNameBindings.get(Thread.currentThread().getContextClassLoader());
-        if (name == null)
-            throw new NamingException
-                (sm.getString("contextBindings.noContextBoundToCL"));
-        return name;
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Object name = null;
+        do {
+            name = clNameBindings.get(cl);
+            if (name != null) {
+                return name;
+            }
+        } while ((cl = cl.getParent()) != null);
+        throw new NamingException
+            (sm.getString("contextBindings.noContextBoundToCL"));
     }
 
 
@@ -388,8 +396,13 @@ public class ContextBindings {
      * Tests if current class loader is bound to a context.
      */
     public static boolean isClassLoaderBound() {
-        return (clBindings.containsKey
-                (Thread.currentThread().getContextClassLoader()));
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        do {
+            if (clBindings.containsKey(cl)) {
+                return true;
+            }
+        } while ((cl = cl.getParent()) != null);
+        return false;
     }
 
 
