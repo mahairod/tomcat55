@@ -1194,10 +1194,9 @@ mod_webapp into mod_jk )
            goldenFile="${gdir}/HelloWorld.txt"
       />
 
-      <gtest description="This URL should return HTML, not JSP source"
+      <gtest description="This URL should return 404 Not Found"
            request="GET /test/jsp/HelloWorld.js%2570 HTTP/1.0"
-           returnCode="${http.protocol} 200" 
-           goldenFile="${gdir}/HelloWorld.txt"
+           returnCode="${http.protocol} 404" 
       />
       <gtest description="This URL should return HTML, not JSP source"
            request="GET /test/jsp/HelloWorld%2Ejsp HTTP/1.0"
@@ -1205,10 +1204,9 @@ mod_webapp into mod_jk )
            goldenFile="${gdir}/HelloWorld.txt"
       />
 
-      <gtest description="This URL should return HTML, not JSP source"
+      <gtest description="This URL should return 404 Not Found"
            request="GET /test/jsp/HelloWorld%252Ejsp HTTP/1.0"
-           returnCode="${http.protocol} 200" 
-           goldenFile="${gdir}/HelloWorld.txt"
+           returnCode="${http.protocol} 404" 
       />
    </target>
 
