@@ -111,60 +111,92 @@ import org.apache.commons.logging.LogFactory;
  * @author Hans Bergsten
  * @author Pierre Delisle
  * @author Mark Roth
+ * @author Jan Luehe
  */
 public class PageContextImpl extends PageContext implements VariableResolver {
 
     // Logger
     private static Log log = LogFactory.getLog(PageContextImpl.class);
 
-    /**
-     * The expression evaluator, for evaluating EL expressions.
-     */
-    private static ExpressionEvaluatorImpl expressionEvaluator
+    // The expression evaluator, for evaluating EL expressions.
+    private static ExpressionEvaluatorImpl elExprEval
 	= new ExpressionEvaluatorImpl();
 
-    /**
-     * The variable resolver, for evaluating EL expressions.
-     */
-    private VariableResolverImpl variableResolver
-	= new VariableResolverImpl(this);
+    // The variable resolver, for evaluating EL expressions.
+    private VariableResolverImpl variableResolver;
 
+    private BodyContentImpl[] outs;
+    private int depth;
+
+    // per-servlet state
+    private Servlet servlet;
+    private ServletConfig config;
+    private ServletContext context;
+    private JspFactory factory;
+    private boolean needsSession;
+    private String errorPageURL;
+    private boolean autoFlush;
+    private int	bufferSize;
+
+    // page-scope attributes
+    private transient Hashtable	attributes;
+
+    // per-request state
+    private transient ServletRequest request;
+    private transient ServletResponse response;
+    private transient Object page;
+    private transient HttpSession session;
+    private boolean isIncluded;
+
+    // initial output stream
+    private transient JspWriter out;
+    private transient JspWriterImpl baseOut;
+
+    /*
+     * Constructor.
+     */
     PageContextImpl(JspFactory factory) {
         this.factory = factory;
+	this.variableResolver = new VariableResolverImpl(this);
+	this.outs = new BodyContentImpl[0];
+	this.attributes = new Hashtable(16);
+	this.depth = -1;
     }
 
-    public void initialize(Servlet servlet, ServletRequest request,
-                           ServletResponse response, String errorPageURL,
-                           boolean needsSession, int bufferSize,
-                           boolean autoFlush)
-        throws IOException, IllegalStateException, IllegalArgumentException
-    {
-	_initialize(servlet, request, response, errorPageURL, needsSession, bufferSize, autoFlush);
+    public void initialize(Servlet servlet,
+			   ServletRequest request,
+                           ServletResponse response,
+			   String errorPageURL,
+                           boolean needsSession,
+			   int bufferSize,
+                           boolean autoFlush) throws IOException {
+
+	_initialize(servlet, request, response, errorPageURL, needsSession,
+		    bufferSize, autoFlush);
     }
 
-    private void _initialize(Servlet servlet, ServletRequest request,
-                           ServletResponse response, String errorPageURL,
-                           boolean needsSession, int bufferSize,
-                           boolean autoFlush)
-        throws IOException, IllegalStateException, IllegalArgumentException
-    {
+    private void _initialize(Servlet servlet,
+			     ServletRequest request,
+			     ServletResponse response,
+			     String errorPageURL,
+			     boolean needsSession,
+			     int bufferSize,
+			     boolean autoFlush) throws IOException {
 
 	// initialize state
-
-	this.servlet      = servlet;
-	this.config	  = servlet.getServletConfig();
-	this.context	  = config.getServletContext();
+	this.servlet = servlet;
+	this.config = servlet.getServletConfig();
+	this.context = config.getServletContext();
 	this.needsSession = needsSession;
 	this.errorPageURL = errorPageURL;
-	this.bufferSize   = bufferSize;
-	this.autoFlush    = autoFlush;
-	this.request      = request;
- 	this.response     = response;
+	this.bufferSize = bufferSize;
+	this.autoFlush = autoFlush;
+	this.request = request;
+ 	this.response = response;
 
-	// setup session (if required)
+	// Setup session (if required)
 	if (request instanceof HttpServletRequest && needsSession)
 	    this.session = ((HttpServletRequest)request).getSession();
-
 	if (needsSession && session == null)
 	    throw new IllegalStateException
                 ("Page needs a session and none is available");
@@ -182,18 +214,17 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	    throw new IllegalStateException("failed initialize JspWriter");
 
 	// register names/values as per spec
-
-	setAttribute(OUT,         this.out);
-	setAttribute(REQUEST,     request);
-	setAttribute(RESPONSE,    response);
+	setAttribute(OUT, this.out);
+	setAttribute(REQUEST, request);
+	setAttribute(RESPONSE, response);
 
 	if (session != null)
 	    setAttribute(SESSION, session);
 
-	setAttribute(PAGE,        servlet);
-	setAttribute(CONFIG,      config);
+	setAttribute(PAGE, servlet);
+	setAttribute(CONFIG, config);
 	setAttribute(PAGECONTEXT, this);
-	setAttribute(APPLICATION,  context);
+	setAttribute(APPLICATION, context);
 
 	isIncluded = request.getAttribute(
 	    "javax.servlet.include.servlet_path") != null;
@@ -217,32 +248,31 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	    log.warn("Internal error flushing the buffer in release()");
 	}
 
-	servlet      = null;
-	config	     = null;
-	context	     = null;
+	servlet = null;
+	config = null;
+	context = null;
 	needsSession = false;
 	errorPageURL = null;
-	bufferSize   = JspWriter.DEFAULT_BUFFER;
-	autoFlush    = true;
-	request      = null;
-	response     = null;
+	bufferSize = JspWriter.DEFAULT_BUFFER;
+	autoFlush = true;
+	request = null;
+	response = null;
         depth = -1;
 	baseOut.recycle();
-	session      = null;
+	session = null;
 
 	attributes.clear();
     }
 
     public Object getAttribute(String name) {
-
-	if (name == null) throw new NullPointerException("Null name");
+	if (name == null)
+	    throw new NullPointerException("Null name");
 	return attributes.get(name);
     }
 
-
     public Object getAttribute(String name, int scope) {
-
-	if (name == null) throw new NullPointerException("Null name");
+	if (name == null)
+	    throw new NullPointerException("Null name");
 
 	switch (scope) {
 	    case PAGE_SCOPE:
@@ -252,11 +282,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 		return request.getAttribute(name);
 
 	    case SESSION_SCOPE:
-		if (session == null)
+		if (session == null) {
 		    throw new IllegalArgumentException(
-                        "can't access SESSION_SCOPE without an HttpSession");
-		else
-		    return session.getAttribute(name);
+		            Localizer.getMessage("jsp.error.page.noSession"));
+		}
+		return session.getAttribute(name);
 
 	    case APPLICATION_SCOPE:
 		return context.getAttribute(name);
@@ -266,9 +296,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	}
     }
 
-
     public void setAttribute(String name, Object attribute) {
-
 	if (name == null) {
 	    throw new NullPointerException("Null name");
 	}
@@ -282,7 +310,6 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 
     public void setAttribute(String name, Object o, int scope) {
-
 	if (name == null) {
 	    throw new NullPointerException("Null name");
 	}
@@ -298,11 +325,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 		break;
 
 	    case SESSION_SCOPE:
-		if (session == null)
+		if (session == null) {
 		    throw new IllegalArgumentException(
-                        "can't access SESSION_SCOPE without an HttpSession");
-		else
-		    session.setAttribute(name, o);
+		            Localizer.getMessage("jsp.error.page.noSession"));
+		}
+		session.setAttribute(name, o);
 		break;
 
 	    case APPLICATION_SCOPE:
@@ -311,8 +338,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
 	    default:
 		throw new IllegalArgumentException("Invalid scope");
-	    } // switch
-
+	    }
 	} else {
 	    removeAttribute(name, scope);
 	}
@@ -320,36 +346,34 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     public void removeAttribute(String name, int scope) {
 	switch (scope) {
-	    case PAGE_SCOPE:
-		attributes.remove(name);
-		break;
+	case PAGE_SCOPE:
+	    attributes.remove(name);
+	    break;
 
-	    case REQUEST_SCOPE:
-		request.removeAttribute(name);
-		break;
+	case REQUEST_SCOPE:
+	    request.removeAttribute(name);
+	    break;
 
-	    case SESSION_SCOPE:
-		if (session == null)
-		    throw new IllegalArgumentException(
-                        "can't access SESSION_SCOPE without an HttpSession");
-		else
-                    session.removeAttribute(name);
-                // was:
-                //		    session.removeValue(name);
-                // REVISIT Verify this is correct - akv
-		break;
+	case SESSION_SCOPE:
+	    if (session == null) {
+		throw new IllegalArgumentException(
+		            Localizer.getMessage("jsp.error.page.noSession"));
+	    }
+	    session.removeAttribute(name);
+	    break;
 
-	    case APPLICATION_SCOPE:
-		context.removeAttribute(name);
-		break;
-
-	    default:
-		throw new IllegalArgumentException("Invalid scope");
+	case APPLICATION_SCOPE:
+	    context.removeAttribute(name);
+	    break;
+	    
+	default:
+	    throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
     public int getAttributesScope(String name) {
-	if (attributes.get(name) != null) return PAGE_SCOPE;
+	if (attributes.get(name) != null)
+	    return PAGE_SCOPE;
 
 	if (request.getAttribute(name) != null)
 	    return REQUEST_SCOPE;
@@ -359,7 +383,8 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	        return SESSION_SCOPE;
 	}
 
-	if (context.getAttribute(name) != null) return APPLICATION_SCOPE;
+	if (context.getAttribute(name) != null)
+	    return APPLICATION_SCOPE;
 
 	return 0;
     }
@@ -385,24 +410,24 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
     public Enumeration getAttributeNamesInScope(int scope) {
 	switch (scope) {
-	    case PAGE_SCOPE:
-		return attributes.keys();
+	case PAGE_SCOPE:
+	    return attributes.keys();
+	    
+	case REQUEST_SCOPE:
+	    return request.getAttributeNames();
 
-	    case REQUEST_SCOPE:
-		return request.getAttributeNames();
+	case SESSION_SCOPE:
+	    if (session == null) {
+		throw new IllegalArgumentException(
+		            Localizer.getMessage("jsp.error.page.noSession"));
+	    }
+	    return session.getAttributeNames();
 
-	    case SESSION_SCOPE:
-		if (session != null) {
-		    return session.getAttributeNames();
-		} else
-		    throw new IllegalArgumentException(
-                        "can't access SESSION_SCOPE without an HttpSession");
+	case APPLICATION_SCOPE:
+	    return context.getAttributeNames();
 
-	    case APPLICATION_SCOPE:
-		return context.getAttributeNames();
-
-	    default:
-		throw new IllegalArgumentException("Invalid scope");
+	default:
+	    throw new IllegalArgumentException("Invalid scope");
 	}
     }
 
@@ -440,7 +465,8 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         String path = relativeUrlPath;
 
         if (!path.startsWith("/")) {
-	    String uri = (String) request.getAttribute("javax.servlet.include.servlet_path");
+	    String uri = (String)
+		request.getAttribute("javax.servlet.include.servlet_path");
 	    if (uri == null)
 		uri = ((HttpServletRequest) request).getServletPath();
             String baseURI = uri.substring(0, uri.lastIndexOf('/'));
@@ -451,22 +477,14 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public void include(String relativeUrlPath)
-	    throws ServletException, IOException {
-
-        JspRuntimeLibrary.include((HttpServletRequest) request,
-                                  (HttpServletResponse) response,
-                                  relativeUrlPath,
-				  out,
+	        throws ServletException, IOException {
+        JspRuntimeLibrary.include(request, response, relativeUrlPath, out,
 				  true);
     }
 
     public void include(String relativeUrlPath, boolean flush)
-	    throws ServletException, IOException {
-
-        JspRuntimeLibrary.include((HttpServletRequest) request,
-                                  (HttpServletResponse) response,
-                                  relativeUrlPath,
-				  out,
+	        throws ServletException, IOException {
+        JspRuntimeLibrary.include(request, response, relativeUrlPath, out,
 				  flush);
     }
 
@@ -503,9 +521,6 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	    request.setAttribute(Constants.FORWARD_SEEN, "true");
         }
     }
-
-    private BodyContentImpl[] outs = new BodyContentImpl[0];
-    private int depth = -1;
 
     public BodyContent pushBody() {
 	return (BodyContent) pushBody(null);
@@ -553,7 +568,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
      * ExpressionEvaluator that can parse EL expressions.
      */
     public ExpressionEvaluator getExpressionEvaluator() {
-        return expressionEvaluator;
+        return elExprEval;
     }
 
     public void handlePageException(Exception ex)
@@ -567,18 +582,20 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     public void handlePageException(Throwable t)
         throws IOException, ServletException
     {
-	if (t == null) throw new NullPointerException("null Throwable");
+	if (t == null)
+	    throw new NullPointerException("null Throwable");
 
 	if (errorPageURL != null && !errorPageURL.equals("")) {
 
-	    // Set request attributes.
-	    // Do not set the javax.servlet.error.exception attribute here
-	    // (instead, set in the generated servlet code for the error page)
-	    // in order to prevent the ErrorReportValve, which is invoked as
-	    // part of forwarding the request to the error page, from
-	    // throwing it if the response has not been committed (the response
-	    // will have been committed if the error page is a JSP page).
-
+	    /*
+	     * Set request attributes.
+	     * Do not set the javax.servlet.error.exception attribute here
+	     * (instead, set in the generated servlet code for the error page)
+	     * in order to prevent the ErrorReportValve, which is invoked as
+	     * part of forwarding the request to the error page, from
+	     * throwing it if the response has not been committed (the response
+	     * will have been committed if the error page is a JSP page).
+	     */
 	    request.setAttribute("javax.servlet.jsp.jspException", t);
 	    request.setAttribute("javax.servlet.error.status_code",
 	        new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
@@ -594,7 +611,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 
             // The error page could be inside an include.
 
-            Object newException=request.getAttribute("javax.servlet.error.exception");
+            Object newException = request.getAttribute("javax.servlet.error.exception");
 
             // t==null means the attribute was not set.
             if( (newException!= null) && (newException==t) ) {
@@ -683,11 +700,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 			new PrivilegedExceptionAction(){
 
                     public Object run() throws Exception{
-                        return expressionEvaluator.evaluate(expression,
-							    expectedType,
-							    pageContext.getVariableResolver(),
-							    functionMap,
-							    defaultPrefix);
+                        return elExprEval.evaluate(expression,
+						   expectedType,
+						   pageContext.getVariableResolver(),
+						   functionMap,
+						   defaultPrefix);
                     }
                 });
             } catch( PrivilegedActionException ex ) {
@@ -695,11 +712,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
                 throw new ELException( e );
             }
         } else {
-	    retValue = expressionEvaluator.evaluate(expression,
-						    expectedType,
-						    pageContext.getVariableResolver(),
-						    functionMap,
-						    defaultPrefix);
+	    retValue = elExprEval.evaluate(expression,
+					   expectedType,
+					   pageContext.getVariableResolver(),
+					   functionMap,
+					   defaultPrefix);
         }
 	if (escape) {
 	    retValue = XmlEscape(retValue.toString());
@@ -709,7 +726,7 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     private JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
-        throws IOException, IllegalArgumentException {
+                throws IOException {
         try {
             return new JspWriterImpl(response, bufferSize, autoFlush);
         } catch( Throwable t ) {
@@ -717,43 +734,4 @@ public class PageContextImpl extends PageContext implements VariableResolver {
             return null;
         }
     }
-
-    /*
-     * fields
-     */
-
-    // per Servlet state
-
-    private 	        Servlet         servlet;
-    private 		ServletConfig   config;
-    private 		ServletContext  context;
-
-    private 		JspFactory	factory;
-
-    private		boolean		needsSession;
-
-    private		String		errorPageURL;
-
-    private		boolean		autoFlush;
-    private		int		bufferSize;
-
-    // page scope attributes
-
-    private transient Hashtable	attributes = new Hashtable(16);
-
-    // per request state
-
-    private transient ServletRequest	request;
-    private transient ServletResponse   response;
-    private transient Object            page;
-
-    private transient HttpSession	session;
-
-    private boolean isIncluded;
-
-    // initial output stream
-
-    private transient JspWriter       out;
-    private transient JspWriterImpl   baseOut;
-
 }
