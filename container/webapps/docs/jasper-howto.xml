@@ -167,6 +167,9 @@ Use the script given below to precompile a webapp:
     &lt;taskdef classname="org.apache.jasper.JspC" name="jasper2" &gt; 
       &lt;classpath id="jspc.classpath"&gt; 
         &lt;pathelement location="${java.home}/../lib/tools.jar"/&gt; 
+        &lt;fileset dir="${tomcat.home}/bin"&gt; 
+          &lt;include name="*.jar"/&gt; 
+        &lt;/fileset&gt; 
         &lt;fileset dir="${tomcat.home}/server/lib"&gt; 
           &lt;include name="*.jar"/&gt; 
         &lt;/fileset&gt; 
@@ -207,6 +210,9 @@ Use the script given below to precompile a webapp:
         &lt;fileset dir="${tomcat.home}/shared/lib"&gt;
           &lt;include name="*.jar"/&gt;
         &lt;/fileset&gt;
+        &lt;fileset dir="${tomcat.home}/bin"&gt; 
+          &lt;include name="*.jar"/&gt; 
+        &lt;/fileset&gt; 
       &lt;/classpath&gt;
       &lt;include name="**" /&gt;
       &lt;exclude name="tags/**" /&gt;
