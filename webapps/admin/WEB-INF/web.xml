@@ -70,7 +70,7 @@
     </init-param>
     <init-param>
       <param-name>validate</param-name>
-      <param-value>true</param-value>
+      <param-value>false</param-value>
     </init-param>
     <!-- Label to be displayed for rootnode. If absent, rootnode is not rendered -->
     <!--
