@@ -1,28 +1,41 @@
 @echo off
+if "%OS%" == "Windows_NT" setlocal
 rem ---------------------------------------------------------------------------
-rem digest.bat - Digest password using the algorithm specified
-rem
-rem   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
-rem                 If not present, the current working directory is assumed.
-rem
-rem   JAVA_HOME     Must point at your Java Development Kit installation.
-rem
-rem   This script is assumed to run from the bin directory or have the
-rem   CATALINA_HOME env variable set.
+rem Script to digest password using the algorithm specified
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
 
-set _CATALINA_HOME=%CATALINA_HOME%
-if not "%CATALINA_HOME%" == "" goto gotCatalinaHome
+rem Guess CATALINA_HOME if not defined
+if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
-if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto gotCatalinaHome
+if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
 set CATALINA_HOME=..
-if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto gotCatalinaHome
-echo Unable to determine the value of CATALINA_HOME
-goto cleanup
-:gotCatalinaHome
-"%CATALINA_HOME%\bin\tool-wrapper" -server org.apache.catalina.realm.RealmBase %1 %2 %3 %4 %5 %6 %7 %8 %9
-:cleanup
-set CATALINA_HOME=%_CATALINA_HOME%
-set _CATALINA_HOME=
+:gotHome
+if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
+echo The CATALINA_HOME environment variable is not defined correctly
+echo This environment variable is needed to run this program
+goto end
+:okHome
+
+set EXECUTABLE=%CATALINA_HOME%\bin\tool-wrapper.bat
+
+rem Check that target executable exists
+if exist "%EXECUTABLE%" goto okExec
+echo Cannot find %EXECUTABLE%
+echo This file is needed to run this program
+goto end
+:okExec
+
+rem Get remaining unshifted command line arguments and save them in the
+set CMD_LINE_ARGS=
+:setArgs
+if ""%1""=="""" goto doneSetArgs
+set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
+shift
+goto setArgs
+:doneSetArgs
+
+call "%EXECUTABLE%" -server org.apache.catalina.realm.RealmBase %CMD_LINE_ARGS%
+
+:end

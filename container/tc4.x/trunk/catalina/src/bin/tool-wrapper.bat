@@ -1,80 +1,59 @@
 @echo off
+if "%OS%" == "Windows_NT" setlocal
 rem ---------------------------------------------------------------------------
-rem tool-wrapper.bat - Wrapper for command line tools
+rem Wrapper script for command line tools
 rem
-rem Environment Variable Prequisites:
+rem Environment Variable Prequisites
 rem
-rem   CATALINA_HOME (Optional) Catalina binary distribution directory.
-rem                 If not present, the directory above this "bin" directory
-rem                 is assumed.
+rem   CATALINA_HOME May point at your Catalina "build" directory.
 rem
-rem   JAVA_HOME     (Required) Java Development Kit installation directory.
+rem   TOOL_OPTS     (Optional) Java runtime options used when the "start",
+rem                 "stop", or "run" command is executed.
 rem
-rem   TOOL_OPTS     (Optional) Java execution options for the tool.
+rem   JAVA_HOME     Must point at your Java Development Kit installation.
+rem
+rem   JAVA_OPTS     (Optional) Java runtime options used when the "start",
+rem                 "stop", or "run" command is executed.
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
 
-
-rem ----- Save Environment Variables That May Change --------------------------
-
-set _CATALINA_HOME=%CATALINA_HOME%
-set _CLASSPATH=%CLASSPATH%
-
-
-rem ----- Verify and Set Required Environment Variables -----------------------
-
+rem Guess CATALINA_HOME if not defined
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
 if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
 set CATALINA_HOME=..
 :gotHome
 if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
-echo Cannot find tool-wrapper.bat in %CATALINA_HOME%\bin
-echo Please check your CATALINA_HOME setting
-goto cleanup
+echo The CATALINA_HOME environment variable is not defined correctly
+echo This environment variable is needed to run this program
+goto end
 :okHome
 
-rem ----- Get user customizable environment variables -------------------------
+rem Get standard environment variables
+if exist "%CATALINA_HOME%\bin\setenv.bat" call "%CATALINA_HOME%\bin\setenv.bat"
 
-if not exist "%CATALINA_HOME%\bin\setenv.bat" goto noSetenv
-call "%CATALINA_HOME%\bin\setenv.bat"
-:noSetenv
+rem Get standard Java environment variables
+if exist "%CATALINA_HOME%\bin\setclasspath.bat" goto okSetclasspath
+echo Cannot find %CATALINA_HOME%\bin\setclasspath.bat
+echo This file is needed to run this program
+goto end
+:okSetclasspath
+set BASEDIR=%CATALINA_HOME%
+call "%CATALINA_HOME%\bin\setclasspath.bat"
 
-if not "%JAVA_HOME%" == "" goto gotJava
-echo You must set JAVA_HOME to point at your Java Development Kit installation
-goto cleanup
-:gotJava
+rem Add on extra jar files to CLASSPATH
+set CLASSPATH=%CLASSPATH%;%CATALINA_HOME%\bin\bootstrap.jar
 
+rem Get remaining unshifted command line arguments and save them in the
+set CMD_LINE_ARGS=
+:setArgs
+if ""%1""=="""" goto doneSetArgs
+set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
+shift
+goto setArgs
+:doneSetArgs
 
-rem ----- Prepare Appropriate Java Execution Commands -------------------------
+%_RUNJAVA% %JAVA_OPTS% %TOOL_OPTS% -Djava.endorsed.dirs="%JAVA_ENDORSED_DIRS%" -classpath "%CLASSPATH%" -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Tool %CMD_LINE_ARGS%
 
-if not "%OS%" == "Windows_NT" goto noTitle
-set _RUNJAVA="%JAVA_HOME%\bin\java"
-goto gotTitle
-:noTitle
-set _RUNJAVA="%JAVA_HOME%\bin\java"
-:gotTitle
-
-rem ----- Set Up The Runtime Classpath ----------------------------------------
-
-set CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar
-rem echo Using CLASSPATH:     %CLASSPATH%
-rem echo Using CATALINA_HOME: %CATALINA_HOME%
-rem echo Using JAVA_HOME:     %JAVA_HOME%
-
-
-rem ----- Execute The Requested Command ---------------------------------------
-
-%_RUNJAVA% %TOOL_OPTS% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Tool %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-
-rem ----- Restore Environment Variables ---------------------------------------
-
-:cleanup
-set CATALINA_HOME=%_CATALINA_HOME%
-set _CATALINA_HOME=
-set CLASSPATH=%_CLASSPATH%
-set _CLASSPATH=
-set _RUNJAVA=
-:finish
+:end

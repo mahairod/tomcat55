@@ -1,17 +1,31 @@
 #!/bin/sh
 # -----------------------------------------------------------------------------
-# digest.bat - Digest password using the algorithm specificied
-#
-#   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
-#                 If not present, the current working directory is assumed.
-#
-#   JAVA_HOME     Must point at your Java Development Kit installation.
-#
-#   This script is assumed to run from the bin directory or have the
-#   CATALINA_HOME env variable set.
+# Script to digest password using the algorithm specificied
 #
 # $Id$
 # -----------------------------------------------------------------------------
 
-BASEDIR=`dirname $0`
-$BASEDIR/tool-wrapper.sh -server org.apache.catalina.realm.RealmBase "$@"
+# resolve links - $0 may be a softlink
+PRG="$0"
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+ 
+PRGDIR=`dirname "$PRG"`
+EXECUTABLE=tool-wrapper.sh
+
+# Check that target executable exists
+if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
+  echo "Cannot find $PRGDIR/$EXECUTABLE"
+  echo "This file is needed to run this program"
+  exit 1
+fi
+
+exec "$PRGDIR"/"$EXECUTABLE" -server org.apache.catalina.realm.RealmBase "$@"
