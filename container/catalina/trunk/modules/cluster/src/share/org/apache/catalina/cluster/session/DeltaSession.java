@@ -898,10 +898,10 @@ public class DeltaSession implements HttpSession, Session, Serializable,
 
     public void resetDeltaRequest() {
         if (deltaRequest == null) {
-            deltaRequest = new DeltaRequest(getId(), false);
+            deltaRequest = new DeltaRequest(getIdInternal(), false);
         } else {
             deltaRequest.reset();
-            deltaRequest.setSessionId(getId());
+            deltaRequest.setSessionId(getIdInternal());
         }
     }
 
