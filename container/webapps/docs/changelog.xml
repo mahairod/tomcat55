@@ -13,6 +13,81 @@
 
 <body>
 
+<section name="Tomcat 5.0.18 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Fix packaging of the source .tar.gz (remm)
+      </fix>
+      <fix>
+      Fix bug in the netbuild where the script would always attempt to
+      checkout the sources (jfclere)
+      </fix>
+      <fix>
+      <bug>26162</bug>: Fix typo in the minimal config (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Remove CGI servlet dependency on JDK 1.4 (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Fix memory leak when spare threads are destroyed (remm, fhanik)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      <bug>26147</bug>: Fix typo in schemaLocation (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <fix>
+      Implemented the ability to not expire sessions on shutdown, since that 
+      will expire them across the cluster (fhanik)
+      </fix>
+      <fix>
+      Fix initialization of the session in delta manager (fhanik)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.17 (remm)">
 
   <subsection name="General">
