@@ -175,7 +175,8 @@ public class Ajp13ConnectionHandler implements  TcpConnectionHandler
             //System.out.println("Closing connection");
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            contextM.doLog("Exception in ProcessConnection", e, org.apache.tomcat.logging.Logger.DEBUG);
+//            e.printStackTrace();
         }
     }
 
