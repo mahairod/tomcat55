@@ -464,7 +464,7 @@ public abstract class RealmBase
         
         String method = hreq.getMethod();
         int i;
-	boolean found = false;
+        boolean found = false;
         for (i = 0; i < constraints.length; i++) {
             SecurityCollection [] collection = constraints[i].findCollections();
                      
@@ -486,7 +486,7 @@ public abstract class RealmBase
                     }
                 }
             }
-	}        
+        }        
         if(found) {
             return resultsToArray(results);
         }
@@ -512,7 +512,7 @@ public abstract class RealmBase
                             matched = true;
                             length = pattern.length();
                         } else if(pattern.regionMatches(0,uri,0,
-							pattern.length()-2)) {
+                                                        pattern.length()-2)) {
                             matched = true;
                             length = pattern.length();
                         }
@@ -554,8 +554,8 @@ public abstract class RealmBase
                         int slash = uri.lastIndexOf("/");
                         int dot = uri.lastIndexOf(".");
                         if(slash >= 0 && dot > slash &&
-			   dot != uri.length()-1 &&
-			   uri.length()-dot == pattern.length()-1) {
+                           dot != uri.length()-1 &&
+                           uri.length()-dot == pattern.length()-1) {
                             if(pattern.regionMatches(1,uri,dot,uri.length()-dot)) {
                                 matched = true;
                             }
