@@ -685,6 +685,11 @@ Catalina Bug Fixes:
 [4.1.20] ApplicationContext:
          Add a workaround to allow retrieving contexts from the root context.
 
+[4.1.21] ErrorDispatcherValve
+         Aborted requests by remote clients are now detected so that a one
+         line entry is logged instead of a complete stack trace and the
+         request is terminated instead of trying to invoke an error page.
+
 
 ----------------
 Coyote Bug Fixes:
