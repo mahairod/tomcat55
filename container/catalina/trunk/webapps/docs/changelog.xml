@@ -85,6 +85,10 @@
       <fix>
         <bug>32832</bug>: request.getSession(false) fails to return null (luehe)
       </fix>
+      <fix>
+        <bug>28222</bug>: request.getRequestURL() in forwarded jsp/servlet returns
+        original url rather than new url as per SRV8.4 (markt)
+      </fix>
     </changelog>
   </subsection>
 
