@@ -208,12 +208,14 @@ public class MapperListener
             if (j2eeType != null) {
                 if ((j2eeType.equals("WebModule")) || 
                     (j2eeType.equals("Servlet"))) {
+                    if (mBeanServer.isRegistered(objectName)) {
                         try {
                             engineName = (String)
                                 mBeanServer.getAttribute(objectName, "engineName");
                         } catch (Exception e) {
                             e.printStackTrace();  
                         }
+                    }
                 }
             }
             if ( ! "*".equals( domain ) &&
