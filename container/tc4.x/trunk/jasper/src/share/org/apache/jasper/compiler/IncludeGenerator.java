@@ -86,29 +86,41 @@ public class IncludeGenerator
 {
     String page;
     boolean isExpression = false;
+    boolean flush;
     Hashtable params;
     
     public IncludeGenerator(Mark start, Hashtable attrs, Hashtable param) 
         throws JasperException 
     {
-	if (attrs.size() != 2)
-	    throw new CompileException(start,
-				       Constants.getString("jsp.error.include.tag"));
+	if (attrs.size() > 2) {
+	    throw new CompileException(
+                start,
+		Constants.getString("jsp.error.include.tag"));
+	}
 
         page = (String) attrs.get("page");
-        if (page == null)
-	    throw new CompileException(start,
-				       Constants.getString("jsp.error.include.tag"));
+        if (page == null) {
+	    throw new CompileException(
+                start,
+		Constants.getString("jsp.error.include.tag"));
+	}
 
-        String flush = (String) attrs.get("flush");
-        if (flush == null)
-            throw new CompileException(start,
-				       Constants.getString("jsp.error.include.noflush"));
-
-        if (!flush.equals("true"))
-            throw new CompileException(start,
-				       Constants.getString("jsp.error.include.badflush"));
-
+        String flushString = (String) attrs.get("flush");
+	if (flushString == null && attrs.size() != 1) {
+	    throw new CompileException(
+               start,
+	       Constants.getString("jsp.error.include.tag"));
+	}
+        if (flushString == null || flushString.equalsIgnoreCase("false")) {
+            flush = false;
+        } else if (flushString.equalsIgnoreCase("true")) {
+            flush = true;
+        } else {
+            throw new CompileException(
+               start,
+	       Constants.getString("jsp.error.include.flush.invalid.value",
+				   new Object[]{flushString}));
+        }
 	this.params = param;
 	isExpression = JspUtil.isExpression (page);
     }
@@ -119,7 +131,9 @@ public class IncludeGenerator
 	writer.println("{");
 	writer.pushIndent();
 	writer.println("String _jspx_qStr = \"\";");
-	
+	if (flush) {
+	    writer.println("out.flush();");
+	}
 	if (params.size() > 0) {
 	    Enumeration en = params.keys();
 	    while (en.hasMoreElements()) {

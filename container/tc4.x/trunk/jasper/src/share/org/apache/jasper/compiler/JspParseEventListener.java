@@ -365,8 +365,6 @@ public class JspParseEventListener extends BaseJspListener {
 	writer.println("} finally {");
 	writer.pushIndent();
 	/* Do stuff here for finally actions... */
-        //writer.println("out.close();");
-	writer.println("out.flush();");
 	writer.println("_jspxFactory.releasePageContext(pageContext);");
 	writer.popIndent();
 	writer.println("}");

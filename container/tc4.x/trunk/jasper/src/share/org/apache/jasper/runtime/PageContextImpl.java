@@ -88,6 +88,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.compiler.ServletResponseWrapperInclude;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
@@ -100,7 +101,7 @@ import org.apache.jasper.logging.Logger;
  */
 public class PageContextImpl extends PageContext {
 
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspFactoryImpl");
+    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "PageContextImpl");
 
     PageContextImpl(JspFactory factory) {
         this.factory = factory;
@@ -203,9 +204,21 @@ public class PageContextImpl extends PageContext {
 	setAttribute(CONFIG,      config);
 	setAttribute(PAGECONTEXT, this);
 	setAttribute(APPLICATION,  context);
+	
+	isIncluded = request.getAttribute(
+	    "javax.servlet.include.servlet_path") != null;	    
     }
 
     public void release() {
+	try {
+	    if (isIncluded) {
+		((JspWriterImpl)out).flushBuffer(); // push it into the including jspWriter
+	    } else {
+		out.flush();
+	    }
+	} catch (IOException ex) {
+	    loghelper.log("Internal error flushing the buffer in release()");
+	}
 	servlet      = null;
 	config	     = null;
 	context	     = null;
@@ -407,8 +420,8 @@ public class PageContextImpl extends PageContext {
         throws ServletException, IOException
     {
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-	out.flush();
-        context.getRequestDispatcher(path).include(request, response);
+        context.getRequestDispatcher(path).include(
+	    request, new ServletResponseWrapperInclude(response, out));
     }
 
     public void forward(String relativeUrlPath)
@@ -494,6 +507,8 @@ public class PageContextImpl extends PageContext {
     protected transient Object          page;
 
     protected transient HttpSession	session;
+
+    protected boolean isIncluded;
 
     // initial output stream
 
