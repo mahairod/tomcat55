@@ -81,7 +81,8 @@ public interface RequestInterceptor {
 
 
     
-    /** Will detect the context path for a request
+    /** Will detect the context path for a request.
+     *  It need to set: context, contextPath, lookupPath
      */
     public int contextMap(Request request);
 
