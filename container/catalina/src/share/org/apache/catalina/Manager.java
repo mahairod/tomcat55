@@ -199,6 +199,26 @@ public interface Manager {
     public void setRejectedSessions(int rejectedSessions);
 
 
+    /**
+     * Gets the longest time (in seconds) that an expired session had been
+     * alive.
+     *
+     * @return Longest time (in seconds) that an expired session had been
+     * alive.
+     */
+    public int getSessionMaxAliveTime();
+
+
+    /**
+     * Sets the longest time (in seconds) that an expired session had been
+     * alive.
+     *
+     * @param sessionMaxAliveTime Longest time (in seconds) that an expired
+     * session had been alive.
+     */
+    public void setSessionMaxAliveTime(int sessionMaxAliveTime);
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -301,7 +321,5 @@ public interface Manager {
       * a method that executes periodic tasks, such as expiring sessions etc.
       */
      public void backgroundProcess();
-
-
 
 }
