@@ -125,35 +125,23 @@ public class SessionIdGenerator {
      * Return the entropy increaser value, or compute a semi-useful value
      * if this String has not yet been set.
      */
-    public static String getEntropy() {
-
-	// Calculate a semi-useful value if this has not been set
-	if (entropy == null)
-	    setEntropy((new Object()).toString());
-
-	return (entropy);
-
+    public static String getEntropy()
+    {
+        return (entropy);
     }
-
 
     /**
      * Set the entropy increaser value.
      *
      * @param entropy The new entropy increaser value
      */
-    public static void setEntropy(String newEntropy) {
-
-	entropy = newEntropy;
-
+    public static void setEntropy(String newEntropy)
+    {
+        entropy = newEntropy;
     }
 
-
-	 // ** NOTE that this must work together with get_jserv_session_balance()
-    // ** in jserv_balance.c
-    static synchronized public String getIdentifier (String jsIdent)
+    public static void initialize()
     {
-        StringBuffer sessionId = new StringBuffer();
-        
         if (randomSource == null) {
             String className = System.getProperty("tomcat.sessionid.randomclass");
             if (className != null) {
@@ -168,19 +156,39 @@ public class SessionIdGenerator {
             if (randomSource == null)
                 randomSource = new java.security.SecureRandom();
 
-				// Set the seed PRNG's seed value
-				long seed = System.currentTimeMillis();
-				char entropy[] = getEntropy().toCharArray();
-				for (int i = 0; i < entropy.length; i++) {
-					 long update = ((byte) entropy[i]) << ((i % 8) * 8);
-					 seed ^= update;		    
-				}
-				randomSource.setSeed(seed);
-		  }
+            String entropyValue = getEntropy();
+            if(entropyValue != null){
+                /*
+                 *  We only do the manual seed generation if there is a user
+                 * supplied entropy value.  This is only for backwards 
+                 * compatibility.  It is expected that very few people
+                 * ever took advantage of this feature and defaulting
+                 * to the normal PRNG seed generator is more secure than this 
+                 * calculation.
+                 */
+                long seed = System.currentTimeMillis();
+                char entropy[] = entropyValue.toCharArray();
+                for (int i = 0; i < entropy.length; i++) {
+                    long update = ((byte) entropy[i]) << ((i % 8) * 8);
+                    seed ^= update;		    
+                }
+                randomSource.setSeed(seed);
+            }else{
+                randomSource.nextInt();
+            }
+        }
+    }
 
+	 // ** NOTE that this must work together with get_jserv_session_balance()
+    // ** in jserv_balance.c
+    static synchronized public String getIdentifier (String jsIdent)
+    {
+        StringBuffer sessionId = new StringBuffer();
+        
+        initialize();
 
-		  // random value ..
-		  long n = randomSource.nextLong();
+        // random value ..
+        long n = randomSource.nextLong();
         if (n < 0) n = -n;
         n %= maxRandomLen;
         // add maxLen to pad the leading characters with '0'; remove

@@ -199,6 +199,11 @@ public class Tomcat {
 	// auto-configured contexts are initialized.
 	generateServerConfig( cm );
 
+    // Initialize the Session ID Generator.  Generating the PRNG seed
+    // can be very time consuming so do we want to do this before 
+    // we start handling requests
+    SessionIdGenerator.initialize();
+
 	cm.start(); // start serving
     }
 
