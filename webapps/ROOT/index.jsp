@@ -100,7 +100,7 @@
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
                         <a href="http://jakarta.apache.org/tomcat/">Home Page</a><br>
                         <a href="http://jakarta.apache.org/tomcat/bugreport.html">Bug Database</a><br>
-                        <a href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED&amp;resolution=LATER&amp;resolution=REMIND&amp;resolution=---&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Tomcat+5&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;order=%27Importance%27">Open Bugs</a><br>
+                        <a href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED&amp;resolution=LATER&amp;resolution=REMIND&amp;resolution=---&amp;bugidtype=include&amp;product=Tomcat+5&amp;cmdtype=doit&amp;order=Importance">Open Bugs</a><br>
                         <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=88">Users Mailing List</a><br>
                         <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listId=46">Developers Mailing List</a><br>
                         <a href="irc://irc.freenode.net/#tomcat">IRC</a><br>

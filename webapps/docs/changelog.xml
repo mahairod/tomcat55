@@ -154,6 +154,10 @@
         <bug>33085</bug>: Add support for setting privileged attribute of context
         to admin webapp. (markt)
       </fix>
+      <fix>
+        <bug>33117</bug>: Fix Open bugs link broken on default homepage.
+        Patch supplied by Sander Temme. (markt)
+      </fix>
     </changelog>
   </subsection>
 </section>
