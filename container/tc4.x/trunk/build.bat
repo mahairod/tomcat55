@@ -29,7 +29,7 @@ rem
 rem   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-rem                    [REQUIRED]
+rem                    [..\jakarta-servletapi-4\dist]
 rem
 rem   CATALINA_JAXP_HOME
 rem                    JAXP 1.0 compliant XML parser installation directory
@@ -59,6 +59,7 @@ set _CATALINA_JAXP_HOME=%CATALINA_JAXP_HOME%
 set _CATALINA_JAXP_PARSER_JAR=%CATALINA_JAXP_PARSER_JAR%
 set _JASPER_JAXP_HOME=%JASPER_JAXP_HOME%
 set _JASPER_JAXP_PARSER_JAR=%JASPER_JAXP_PARSER_JAR%
+set _SERVLETAPI_HOME=%SERVLETAPI_HOME%
 
 
 rem ----- Verify and Set Required Environment Variables -----------------------
@@ -136,8 +137,7 @@ goto cleanup
 :gotRegexpHome
 
 if not "%SERVLETAPI_HOME%" == "" goto gotServletapiHome
-echo You must set SERVLETAPI_HOME to your Servlet API distribution that includes the Servlet 2.3 and JSP 1.2 API classes.
-goto cleanup
+set SERVLETAPI_HOME=..\jakarta-servletapi-4\dist
 :gotServletapiHome
 
 
@@ -171,5 +171,7 @@ set JASPER_JAXP_HOME=%_JASPER_JAXP_HOME%
 set _JASPER_JAXP_HOME=
 set JASPER_JAXP_PARSER_JAR=%_JASPER_JAXP_PARSER_JAR%
 set _JASPER_JAXP_PARSER_JAR=
+set SERVLETAPI_HOME=%_SERVLETAPI_HOME%
+set _SERVLETAPI_HOME=
 :finish
 

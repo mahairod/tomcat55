@@ -5,7 +5,7 @@
   <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="../build"/>
   <property name="webapps.dist"    value="../dist"/>
-  <property name="servletapi.home" value="../../../jakarta-servletapi-4"/>
+  <property name="servletapi.home" value="../../../jakarta-servletapi-4/dist"/>
   <property name="webapp.name"     value="webdav"/>
 
 

@@ -3,7 +3,7 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi-4"/>
+  <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
   <property name="tester.build"    value="build"/>
   <property name="tester.deploy"   value="../build"/>
   <property name="tester.dist"     value="dist"/>

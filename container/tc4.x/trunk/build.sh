@@ -31,7 +31,7 @@
 #   REGEXP_HOME      Must point at your Regexp installation [REQUIRED]
 #
 #   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-#                    [REQUIRED]
+#                    [../jakarta-servletapi-4/dist]
 # 
 #   CATALINA_JAXP_HOME        
 #                    JAXP 1.0 compliant XML parser installation directory 
@@ -81,8 +81,7 @@ if [ "$REGEXP_HOME" = "" ] ; then
 fi
 
 if [ "$SERVLETAPI_HOME" = "" ] ; then
-  echo You must set SERVLETAPI_HOME to your Servlet API distribution that includes the Servlet 2.3 and JSP 1.2 API classes.
-  exit 1
+  SERVLETAPI_HOME=`pwd`/../jakarta-servletapi-4/dist
 fi
 
 if [ "$JAXP_PARSER_JAR" = "" ] ; then

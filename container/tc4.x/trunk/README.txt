@@ -109,7 +109,10 @@ which you are installing all of the required Jakarta distributions.
         ./build.sh dist         <-- Unix
         build dist              <-- Windows
 
-  to create the required servlet.jar file.
+  to create the required servlet.jar file and Javadoc documentation.
+
+  If you do this, you should set your SERVLETAPI_HOME environment variable
+  to point at "$JAKARTA_HOME/jakarta-servletapi-4/dist".
 
 * Download the Tomcat 4.0 source repository (module
   "jakarta-tomcat-4.0") via anonymous CVS into a directory named

@@ -6,6 +6,7 @@
   <property name="jasper.build"    value="build"/>
   <property name="jasper.deploy"   value="../build"/>
   <property name="jasper.dist"     value="dist"/>
+  <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>
