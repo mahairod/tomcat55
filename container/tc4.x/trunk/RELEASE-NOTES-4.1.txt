@@ -876,6 +876,13 @@ Catalina Bug Fixes:
 [4.1.30] ExtendedAccessLogValve:
          Port patch.
 
+[4.1.31] #15463, Duplicates #18609, #20083, #20667
+         StandardSession:
+         Fix idle session timeout bug.
+
+[4.1.31] JDBCStore:
+         Optimize use of database session persistence to improve scaling
+         and performance.
 
 ----------------
 Coyote Bug Fixes:
