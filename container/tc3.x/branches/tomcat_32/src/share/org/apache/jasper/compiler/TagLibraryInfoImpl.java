@@ -364,23 +364,23 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             if (tname.equals("tlibversion")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.tlibversion = t.getData();
+                    this.tlibversion = t.getData().trim();
             } else if (tname.equals("jspversion")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.jspversion = t.getData();
+                    this.jspversion = t.getData().trim();
             } else if (tname.equals("shortname")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.shortname = t.getData();
+                    this.shortname = t.getData().trim();
             } else if (tname.equals("uri")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.urn = t.getData();
+                    this.urn = t.getData().trim();
             } else if (tname.equals("info")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    this.info = t.getData();
+                    this.info = t.getData().trim();
             } else if (tname.equals("tag"))
                 tagVector.addElement(createTagInfo(e));
             else
@@ -411,23 +411,23 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             if (tname.equals("name")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    name = t.getData();
+                    name = t.getData().trim();
             } else if (tname.equals("tagclass")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    tagclass = t.getData();
+                    tagclass = t.getData().trim();
             } else if (tname.equals("teiclass")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    teiclass = t.getData();
+                    teiclass = t.getData().trim();
             } else if (tname.equals("bodycontent")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    bodycontent = t.getData();
+                    bodycontent = t.getData().trim();
             } else if (tname.equals("info")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    info = t.getData();
+                    info = t.getData().trim();
             } else if (tname.equals("attribute"))
                 attributeVector.addElement(createAttribute(e));
             else 
@@ -492,25 +492,25 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             if (tname.equals("name"))  {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    name = t.getData();
+                    name = t.getData().trim();
             } else if (tname.equals("required"))  {
                 Text t = (Text) e.getFirstChild();
                 if (t != null) {
-                    required = Boolean.valueOf(t.getData()).booleanValue();
+                    required = Boolean.valueOf(t.getData().trim()).booleanValue();
                     if( t.getData().equalsIgnoreCase("yes") )
                         required = true;
                 }
             } else if (tname.equals("rtexprvalue")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null) {
-                    rtexprvalue = Boolean.valueOf(t.getData()).booleanValue();
+                    rtexprvalue = Boolean.valueOf(t.getData().trim()).booleanValue();
                     if( t.getData().equalsIgnoreCase("yes") )
                         rtexprvalue = true;
                 }
             } else if (tname.equals("type")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
-                    type = t.getData();
+                    type = t.getData().trim();
             } else 
                 Constants.message("jsp.warning.unknown.element.in.attribute", 
                                   new Object[] {
