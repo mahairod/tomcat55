@@ -163,9 +163,14 @@ public class JspParseEventListener implements ParseEventListener {
 		throw new CompileException(start,
 					   Constants.getString("jsp.error.include.missing.file"));
 
+	    
             // jsp.error.include.bad.file needs taking care of here??
             try {
                 reader.pushFile(file);
+		// Add an IncludeGenerator - only for deps
+		DependGenerator dg=new DependGenerator( start,stop,
+						reader.getCurrentFile());
+		pageInfo.addGenerator( dg );
             } catch (FileNotFoundException fnfe) {
                 throw new CompileException(start,
 					   Constants.getString("jsp.error.include.bad.file"));

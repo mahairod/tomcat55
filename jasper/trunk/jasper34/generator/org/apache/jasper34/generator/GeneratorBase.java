@@ -100,6 +100,8 @@ public abstract class GeneratorBase {
     public static final int INIT_METHOD_HOOK = 3;
     public static final int SERVICE_METHOD_HOOK = 4;
     public static final int STATIC_INITIALIZER_HOOK = 5;
+    public static final int CHUNKS = 5;
+    public static final int DEPENDS = 5;
 
     public static String hookNames[] = {
 	"generateClassDeclaration",
@@ -107,10 +109,12 @@ public abstract class GeneratorBase {
 	"generateFileDeclaration",
 	"generateInitMethod",
 	"generateServiceMethod",
-	"generateStaticInitializer"
+	"generateStaticInitializer",
+	"generateChunks",
+	"generateDepends"
     };
     
-    static final int HOOK_COUNT=6;
+    static final int HOOK_COUNT=8;
     
     public boolean hasHook( int hookId ) {
 	if( hooks==null ) initHooks();
@@ -118,6 +122,23 @@ public abstract class GeneratorBase {
     }
 
     // -------------------- New interface --------------------
+
+    /** Generate content chunks ( not used right now )
+     *  Chunks will be used instead of out.println( String ), to
+     *  enable a number of optimizations and for better support for
+     *  large files.
+     */
+    public void generateChunks( ServletWriter out )
+	throws JasperException
+    {
+    }
+
+    /** Generate depend declarations.
+     */
+    public void generateDepends( ServletWriter out )
+	throws JasperException
+    {
+    }
 
     public void generateClassDeclaration( ServletWriter out )
 	throws JasperException

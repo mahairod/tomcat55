@@ -91,6 +91,10 @@ public class ServletWriter extends JavaSourceGenerator {
 	
 	generateStaticInit(pageInfo );
 
+	generateDepends(pageInfo );
+	
+	generateChunks(pageInfo );
+
 	generateConstructor(pageInfo );
 	
 	generateJspxInit( pageInfo );
@@ -258,6 +262,53 @@ public class ServletWriter extends JavaSourceGenerator {
         this.popIndent();
         this.println("}");
         this.println();
+    }
+
+
+    private void generateDepends(JspPageInfo pageInfo )
+	throws JasperException
+    {
+        this.println("private static final String _depends[] = { ");
+	this.pushIndent();
+
+	for(int i = 0; i < pageInfo.generators.size(); i++) {
+	    GeneratorBase gen=(GeneratorBase)pageInfo.generators.elementAt(i);
+	    gen.generateDepends(this);
+	}
+
+	this.println("null");
+		
+	this.popIndent();
+	this.println("}; ");
+        this.println();
+	this.println("public final String[] _getDepends() " +
+	" { return _depends; }");
+        this.println();
+
+    }
+
+
+    private void generateChunks(JspPageInfo pageInfo )
+	throws JasperException
+    {
+        this.println("private static final String _chunks[] = { ");
+	this.pushIndent();
+
+	for(int i = 0; i < pageInfo.generators.size(); i++) {
+	    GeneratorBase gen=(GeneratorBase)pageInfo.generators.elementAt(i);
+	    gen.generateChunks(this);
+	}
+
+	this.println("null");
+	
+	this.popIndent();
+	this.println("}; ");
+        this.println();
+
+	this.println("public final String[] _getChunks() " +
+	" { return _chunks; }");
+        this.println();
+
     }
 
 

@@ -170,6 +170,14 @@ public class JspReader {
 	}
     }
 
+    public String getCurrentFile() {
+	File file=new File( master );
+	String longName = (context == null)
+	    ? file.getAbsolutePath()
+	    : context.getRealPath(file.toString());
+	return longName;
+    }
+    
     /**
      * Push a new file to be parsed onto the stack.
      * @param inputFile The fully qualified path of the file.
