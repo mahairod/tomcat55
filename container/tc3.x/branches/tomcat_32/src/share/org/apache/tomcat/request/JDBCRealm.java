@@ -92,7 +92,7 @@ import java.sql.*;
  *
  */
 
-public final class JDBCRealm extends BaseInterceptor {
+public class JDBCRealm extends BaseInterceptor {
 
 
     ContextManager cm;
