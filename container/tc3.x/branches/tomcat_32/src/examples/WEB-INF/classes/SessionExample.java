@@ -55,29 +55,41 @@ public class SessionExample extends HttpServlet {
         HttpSession session = request.getSession();
         out.println(rb.getString("sessions.id") + " " + session.getId());
         out.println("<br>");
+		  out.println(rb.getString("sessions.isnew") + " " + session.isNew() + "<br>");
         out.println(rb.getString("sessions.created") + " ");
         out.println(new Date(session.getCreationTime()) + "<br>");
         out.println(rb.getString("sessions.lastaccessed") + " ");
         out.println(new Date(session.getLastAccessedTime()));
+		  out.println("<br>");
+		  out.println(rb.getString("sessions.requestedid") + " " + request.getRequestedSessionId() + "<br>");
+		  out.println(rb.getString("sessions.requestedidvalid") + " " + request.isRequestedSessionIdValid() + "<br>");
+		  out.println(rb.getString("sessions.fromcookie") + " " + request.isRequestedSessionIdFromCookie() + "<br>");
+		  out.println(rb.getString("sessions.fromurl") + " " + request.isRequestedSessionIdFromURL() + "<br>");
 
-        String dataName = request.getParameter("dataname");
-        String dataValue = request.getParameter("datavalue");
-        if (dataName != null && dataValue != null) {
-            session.setAttribute(dataName, dataValue);
-        }
+		  String invalidate = request.getParameter("INVALIDATE");
+		  if(invalidate != null){
+			  session.invalidate();
+		  }else{
+			  String dataName = request.getParameter("dataname");
+			  String dataValue = request.getParameter("datavalue");
+			  if (dataName != null && dataValue != null) {
+					session.setAttribute(dataName, dataValue);
+			  }
 
-        out.println("<P>");
-        out.println(rb.getString("sessions.data") + "<br>");
-        Enumeration names = session.getAttributeNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement(); 
-            String value = session.getAttribute(name).toString();
-            out.println(name + " = " + value + "<br>");
-        }
+			  out.println("<P>");
+			  out.println(rb.getString("sessions.data") + "<br>");
+			  Enumeration names = session.getAttributeNames();
+			  while (names.hasMoreElements()) {
+					String name = (String) names.nextElement(); 
+					String value = session.getAttribute(name).toString();
+					out.println(name + " = " + value + "<br>");
+			  }
+		  }
+
 
         out.println("<P>");
         out.print("<form action=\"");
-	out.print(response.encodeURL("SessionExample"));
+        out.print(response.encodeURL("SessionExample"));
         out.print("\" ");
         out.println("method=POST>");
         out.println(rb.getString("sessions.dataname"));
@@ -91,7 +103,7 @@ public class SessionExample extends HttpServlet {
 
         out.println("<P>GET based form:<br>");
         out.print("<form action=\"");
-	out.print(response.encodeURL("SessionExample"));
+        out.print(response.encodeURL("SessionExample"));
         out.print("\" ");
         out.println("method=GET>");
         out.println(rb.getString("sessions.dataname"));
@@ -103,9 +115,19 @@ public class SessionExample extends HttpServlet {
         out.println("<input type=submit>");
         out.println("</form>");
 
-        out.print("<p><a href=\"");
-	out.print(response.encodeURL("SessionExample?dataname=foo&datavalue=bar"));
-	out.println("\" >URL encoded </a>");
+        out.println("<P>");
+        out.println("<P>Invalidate session:<br>");
+        out.print("<form action=\"");
+		  out.print(response.encodeURL("SessionExample"));
+        out.print("\" ");
+        out.println("method=POST>");
+		  out.println("<input type=\"hidden\" name=INVALIDATE value=TRUE>");
+		  out.println("<input type=submit value=\"Invalidate session\">");
+        out.println("</form>");
+
+		  out.print("<p><a href=\"");
+        out.print(response.encodeURL("SessionExample?dataname=foo&datavalue=bar"));
+        out.println("\" >URL encoded </a>");
 	
         out.println("</body>");
         out.println("</html>");
