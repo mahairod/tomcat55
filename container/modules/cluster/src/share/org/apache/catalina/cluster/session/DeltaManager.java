@@ -308,20 +308,11 @@ public class DeltaManager
       DeltaSession session = getNewDeltaSession();
       String sessionId = generateSessionId();
 
-      String jvmRoute = getJvmRoute();
-      // @todo Move appending of jvmRoute generateSessionId()???
-      if (jvmRoute != null) {
-        sessionId += '.' + jvmRoute;
-      }
       synchronized (sessions) {
         while (sessions.get(sessionId) != null) { // Guarantee uniqueness
           duplicates++;
           sessionId = generateSessionId();
-          // @todo Move appending of jvmRoute generateSessionId()???
-          if (jvmRoute != null) {
-            sessionId += '.' + jvmRoute;
-          }
-        }
+         }
       }
 
       session.setNew(true);

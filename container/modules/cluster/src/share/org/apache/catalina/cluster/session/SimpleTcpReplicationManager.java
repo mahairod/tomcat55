@@ -188,11 +188,6 @@ implements org.apache.catalina.cluster.ClusterManager
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
         String sessionId = generateSessionId();
-        String jvmRoute = getJvmRoute();
-        // @todo Move appending of jvmRoute generateSessionId()???
-        if (jvmRoute != null) {
-            sessionId += '.' + jvmRoute;
-        }
         if ( setId ) session.setId(sessionId);
         if ( notify && (cluster!=null) ) {
             ((ReplicatedSession)session).setIsDirty(true);

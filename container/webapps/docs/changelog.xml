@@ -161,6 +161,9 @@
 
   <subsection name="Cluster">
     <changelog>
+	   <fix>
+	      DeltaManager and SimpleTcpReplicationManager generate double jvmRoute (pero)
+	   </fix>
 	   <add>
 	      Add some missing Getters and log.isXXXEnableds (pero)
 	   </add>
