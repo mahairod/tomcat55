@@ -445,82 +445,6 @@ public final class ContextConfig
 
     }
 
-
-    /**
-     * Create and deploy a Valve to expose the SSL certificates presented
-     * by this client, if any.  If we cannot instantiate such a Valve
-     * (because the JSSE classes are not available), silently continue.
-     * This is only instantiated for those Contexts being served by
-     * a Connector with secure set to true.
-     */
-    private void certificatesConfig() {
-
-        // Only install this valve if there is a Connector installed
-        // which has secure set to true.
-        boolean secure = false;
-        Container container = context.getParent();
-        if (container instanceof Host) {
-            xmlValidation = ((Host)container).getXmlValidation();
-            xmlNamespaceAware = ((Host)container).getXmlNamespaceAware();
-            container = container.getParent();
-        }
-        if (container instanceof Engine) {
-            Service service = ((Engine)container).getService();
-            // The service can be null when Tomcat is run in embedded mode
-            if (service == null) {
-                secure = true;
-            } else {
-                Connector [] connectors = service.findConnectors();
-                for (int i = 0; i < connectors.length; i++) {
-                    secure = connectors[i].getSecure();
-                    if (secure) {
-                        break;
-                    }
-                }
-            }
-        }
-        if (!secure) {
-            return;
-        }
-
-        // Validate that the JSSE classes are present
-        try {
-            Class clazz = this.getClass().getClassLoader().loadClass
-                ("javax.net.ssl.SSLSocket");
-            if (clazz == null)
-                return;
-        } catch (Throwable t) {
-            return;
-        }
-
-        // Instantiate a new CertificatesValve if possible
-        Valve certificates = null;
-        try {
-            Class clazz =
-                Class.forName("org.apache.catalina.valves.CertificatesValve");
-            certificates = (Valve) clazz.newInstance();
-        } catch (Throwable t) {
-            return;     // Probably JSSE classes not present
-        }
-
-        // Add this Valve to our Pipeline
-        try {
-            if (context instanceof ContainerBase) {
-                Pipeline pipeline = ((ContainerBase) context).getPipeline();
-                if (pipeline != null) {
-                    ((ContainerBase) context).addValve(certificates);
-                    log.info(sm.getString
-                        ("contextConfig.certificatesConfig.added"));
-                    
-                }
-            }
-        } catch (Throwable t) {
-            log.error(sm.getString("contextConfig.certificatesConfig.error"), t);
-            ok = false;
-        }
-
-    }
-    
     private static Digester patchXerces(Digester digester){
         // This feature is needed for backward compatibility with old DDs
         // which used Java encoding names such as ISO8859_1 etc.
@@ -799,10 +723,6 @@ public final class ContextConfig
         if (ok) {
             validateSecurityRoles();
         }
-
-        // Configure a certificates exposer valve, if required
-        if (ok)
-            certificatesConfig();
 
         // Configure an authenticator if we need one
         if (ok)
