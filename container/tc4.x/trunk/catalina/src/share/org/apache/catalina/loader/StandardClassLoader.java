@@ -67,11 +67,16 @@ package org.apache.catalina.loader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 
 /**
@@ -194,6 +199,15 @@ public class StandardClassLoader
 
 
     /**
+     * The set of optional packages (formerly standard extensions) that
+     * are available in the repositories associated with this class loader.
+     * Each object in this list is of type
+     * <code>org.apache.catalina.loader.Extension</code>.
+     */
+    protected ArrayList available = new ArrayList();
+
+
+    /**
      * The cache of ClassCacheEntries for classes we have loaded locally,
      * keyed by class name.
      */
@@ -222,6 +236,15 @@ public class StandardClassLoader
      * for locally loaded classes or resources.
      */
     protected String repositories[] = new String[0];
+
+
+    /**
+     * The set of optional packages (formerly standard extensions) that
+     * are required in the repositories associated with this class loader.
+     * Each object in this list is of type
+     * <code>org.apache.catalina.loader.Extension</code>.
+     */
+    protected ArrayList required = new ArrayList();
 
 
     /**
@@ -337,8 +360,6 @@ public class StandardClassLoader
         // Add this repository to our internal list
         addRepositoryInternal(repository);
 
-        ;       // FIXME: addRepository()
-
     }
 
 
@@ -402,6 +423,41 @@ public class StandardClassLoader
 
 
     /**
+     * Return a list of "optional packages" (formerly "standard extensions")
+     * that have been declared to be available in the repositories associated
+     * with this class loader, plus any parent class loader implemented with
+     * the same class.
+     */
+    public Extension[] findAvailable() {
+
+        // Initialize the results with our local available extensions
+        ArrayList results = new ArrayList();
+        Iterator available = this.available.iterator();
+        while (available.hasNext())
+            results.add(available.next());
+
+        // Trace our parentage tree and add declared extensions when possible
+        ClassLoader loader = this;
+        while (true) {
+            loader = loader.getParent();
+            if (loader == null)
+                break;
+            if (!(loader instanceof StandardClassLoader))
+                continue;
+            Extension extensions[] =
+                ((StandardClassLoader) loader).findAvailable();
+            for (int i = 0; i < extensions.length; i++)
+                results.add(extensions[i]);
+        }
+
+        // Return the results as an array
+        Extension extensions[] = new Extension[results.size()];
+        return ((Extension[]) results.toArray(extensions));
+
+    }
+
+
+    /**
      * Return a String array of the current repositories for this class
      * loader.  If there are no repositories, a zero-length array is
      * returned.
@@ -409,6 +465,41 @@ public class StandardClassLoader
     public String[] findRepositories() {
 
         return (repositories);
+
+    }
+
+
+    /**
+     * Return a list of "optional packages" (formerly "standard extensions")
+     * that have been declared to be required in the repositories associated
+     * with this class loader, plus any parent class loader implemented with
+     * the same class.
+     */
+    public Extension[] findRequired() {
+
+        // Initialize the results with our local required extensions
+        ArrayList results = new ArrayList();
+        Iterator required = this.required.iterator();
+        while (required.hasNext())
+            results.add(required.next());
+
+        // Trace our parentage tree and add declared extensions when possible
+        ClassLoader loader = this;
+        while (true) {
+            loader = loader.getParent();
+            if (loader == null)
+                break;
+            if (!(loader instanceof StandardClassLoader))
+                continue;
+            Extension extensions[] =
+                ((StandardClassLoader) loader).findRequired();
+            for (int i = 0; i < extensions.length; i++)
+                results.add(extensions[i]);
+        }
+
+        // Return the results as an array
+        Extension extensions[] = new Extension[results.size()];
+        return ((Extension[]) results.toArray(extensions));
 
     }
 
@@ -885,9 +976,50 @@ public class StandardClassLoader
      * Add a repository to our internal array only.
      *
      * @param repository The new repository
+     *
+     * @exception IllegalArgumentException if the manifest of a JAR file
+     *  cannot be processed correctly
      */
     protected void addRepositoryInternal(String repository) {
 
+        // Validate the manifest of a JAR file repository
+        if (!repository.endsWith("/")) {
+            try {
+                JarFile jarFile = null;
+                if (repository.startsWith("jar:")) {
+                    URL url = new URL(repository);
+                    JarURLConnection conn =
+                        (JarURLConnection) url.openConnection();
+                    conn.setAllowUserInteraction(false);
+                    conn.setDoInput(true);
+                    conn.setDoOutput(false);
+                    conn.connect();
+                    jarFile = conn.getJarFile();
+                } else if (repository.startsWith("file://")) {
+                    jarFile = new JarFile(repository.substring(7));
+                } else if (repository.startsWith("file:")) {
+                    jarFile = new JarFile(repository.substring(5));
+                } else {
+                    throw new IllegalArgumentException
+                        ("addRepositoryInternal:  Invalid URL '" +
+                         repository + "'");
+                }
+                Manifest manifest = jarFile.getManifest();
+                Iterator extensions =
+                    Extension.getAvailable(manifest).iterator();
+                while (extensions.hasNext())
+                    available.add(extensions.next());
+                extensions =
+                    Extension.getRequired(manifest).iterator();
+                while (extensions.hasNext())
+                    required.add(extensions.next());
+                jarFile.close();
+            } catch (Throwable t) {
+                throw new IllegalArgumentException("addRepositoryInternal: " + t);
+            }
+        }
+
+        // Add this repository to our internal list
 	synchronized (repositories) {
 	    String results[] = new String[repositories.length + 1];
             System.arraycopy(repositories, 0, results, 0, repositories.length);

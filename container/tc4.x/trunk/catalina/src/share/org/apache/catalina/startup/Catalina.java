@@ -122,6 +122,12 @@ public class Catalina {
 
 
     /**
+     * The shared extensions class loader for this server.
+     */
+    protected ClassLoader sharedLoader = ClassLoader.getSystemClassLoader();
+
+
+    /**
      * Are we starting a new server?
      */
     protected boolean starting = false;
@@ -176,6 +182,18 @@ public class Catalina {
     public void setServer(Server server) {
 
         this.server = server;
+
+    }
+
+
+    /**
+     * Set the shared extensions class loader.
+     *
+     * @param sharedLoader The shared extensions class loader.
+     */
+    public void setSharedLoader(ClassLoader sharedLoader) {
+
+        this.sharedLoader = sharedLoader;
 
     }
 

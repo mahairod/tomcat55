@@ -70,6 +70,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import org.apache.catalina.loader.Extension;
 import org.apache.catalina.loader.StandardClassLoader;
 
 
@@ -99,31 +100,86 @@ public final class Bootstrap {
      */
     public static void main(String args[]) {
 
-        // Construct the "class path" for a new class loader
+        // Construct the class loaders we will need
+        ClassLoader catalinaLoader = createCatalinaLoader();
+        ClassLoader sharedLoader = createSharedLoader();
+
+	// Load our startup class and call its process() method
+	try {
+
+	    Class startupClass =
+		catalinaLoader.loadClass
+                ("org.apache.catalina.startup.Catalina");
+	    Object startupInstance = startupClass.newInstance();
+
+            // Set the shared extensions class loader
+            String methodName = "setSharedLoader";
+            Class paramTypes[] = new Class[1];
+            paramTypes[0] = Class.forName("java.lang.ClassLoader");
+            Object paramValues[] = new Object[1];
+            paramValues[0] = sharedLoader;
+            Method method =
+                startupInstance.getClass().getMethod(methodName, paramTypes);
+            method.invoke(startupInstance, paramValues);
+
+            // Call the process() method
+	    methodName = "process";
+	    paramTypes = new Class[1];
+	    paramTypes[0] = args.getClass();
+	    paramValues = new Object[1];
+	    paramValues[0] = args;
+	    method =
+		startupInstance.getClass().getMethod(methodName, paramTypes);
+	    method.invoke(startupInstance, paramValues);
+
+	} catch (Exception e) {
+	    System.out.println("Exception during startup processing");
+	    e.printStackTrace(System.out);
+	    System.exit(2);
+	}
+
+	System.exit(0);
+
+    }
+
+
+    /**
+     * Construct and return the class loader to be used for loading
+     * Catalina internal classes.
+     */
+    private static ClassLoader createCatalinaLoader() {
+
+        // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
-	// Add the "classes" subdirectory underneath "catalina.home"
-	File classes = new File(System.getProperty("catalina.home"),
-				"classes");
-	if (classes.exists() && classes.canRead() &&
-	    classes.isDirectory()) {
-	    list.add(classes.getAbsolutePath() + "/");
-	}
+        File classes = new File(System.getProperty("catalina.home"),
+                                "classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {
+            try {
+                URL url = new URL("file", null,
+                                  classes.getAbsolutePath() + "/");
+                list.add(url.toString());
+            } catch (MalformedURLException e) {
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                System.exit(1);
+            }
+        }
 
-	// Add the JAR files in the "server" subdirectory as well
-	File directory = new File(System.getProperty("catalina.home"),
-				  "server");
-	if (!directory.exists() || !directory.canRead() ||
-	    !directory.isDirectory()) {
-	    System.out.println("No 'server' directory to be processed");
-	    System.exit(1);
-	}
+        File directory = new File(System.getProperty("catalina.home"),
+                                  "server");
+        if (!directory.exists() || !directory.canRead() ||
+            !directory.isDirectory()) {
+            System.out.println("Directory " + directory.getAbsolutePath()
+                               + " does not exist");
+            System.exit(1);
+        }
 	String filenames[] = directory.list();
 	for (int i = 0; i < filenames.length; i++) {
 	    if (!filenames[i].toLowerCase().endsWith(".jar"))
 		continue;
             File file = new File(directory, filenames[i]);
-            //	    loader.addRepository(file.getAbsolutePath());
             try {
                 URL url = new URL("file", null, file.getAbsolutePath());
                 list.add(url.toString());
@@ -136,28 +192,62 @@ public final class Bootstrap {
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
-	StandardClassLoader loader = new StandardClassLoader(array);
+        StandardClassLoader loader = new StandardClassLoader(array);
 
-	// Load our startup class and call its process() method
-	try {
-	    Class startupClass =
-		loader.loadClass("org.apache.catalina.startup.Catalina");
-	    Object startupInstance = startupClass.newInstance();
-	    String methodName = "process";
-	    Class paramTypes[] = new Class[1];
-	    paramTypes[0] = args.getClass();
-	    Object paramValues[] = new Object[1];
-	    paramValues[0] = args;
-	    Method method =
-		startupInstance.getClass().getMethod(methodName, paramTypes);
-	    method.invoke(startupInstance, paramValues);
-	} catch (Exception e) {
-	    System.out.println("Exception during startup processing");
-	    e.printStackTrace(System.out);
-	    System.exit(2);
+        return (loader);
+
+    }
+
+
+    /**
+     * Construct and return the class loader to be used for shared
+     * extensions by web applications loaded with Catalina.
+     */
+    private static ClassLoader createSharedLoader() {
+
+        // Construct the "class path" for this class loader
+        ArrayList list = new ArrayList();
+
+        File directory = new File(System.getProperty("catalina.home"),
+                                  "lib");
+        if (!directory.exists() || !directory.canRead() ||
+            !directory.isDirectory()) {
+            System.out.println("Directory " + directory.getAbsolutePath()
+                               + " does not exist");
+            System.exit(1);
+        }
+	String filenames[] = directory.list();
+	for (int i = 0; i < filenames.length; i++) {
+	    if (!filenames[i].toLowerCase().endsWith(".jar"))
+		continue;
+            File file = new File(directory, filenames[i]);
+            try {
+                URL url = new URL("file", null, file.getAbsolutePath());
+                list.add(url.toString());
+            } catch (MalformedURLException e) {
+                System.out.println("Cannot create URL for " +
+                                   filenames[i]);
+                System.exit(1);
+            }
 	}
 
-	System.exit(0);
+        // Construct the class loader itself
+        String array[] = (String[]) list.toArray(new String[list.size()]);
+        StandardClassLoader loader = new StandardClassLoader(array);
+
+        /*
+        System.out.println("AVAILABLE OPTIONAL PACKAGES:");
+        Extension available[] = loader.findAvailable();
+        for (int i = 0; i < available.length; i++)
+            System.out.println(available[i].toString());
+        System.out.println("REQUIRED OPTIONAL PACKAGES:");
+        Extension required[] = loader.findRequired();
+        for (int i = 0; i < required.length; i++)
+            System.out.println(required[i].toString());
+        System.out.println("===========================");
+        */
+
+        return (loader);
 
     }
 
