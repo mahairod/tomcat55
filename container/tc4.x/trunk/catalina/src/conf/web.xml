@@ -672,6 +672,10 @@
     <extension>dtd</extension>
     <mime-type>text/plain</mime-type>
   </mime-mapping>
+  <mime-mapping>
+    <extension>jnlp</extension>
+    <mime-type>x-java-jnlp-file</mime-type>
+  </mime-mapping>
 
   <!-- Establish the default list of welcome files -->
   <welcome-file-list>
