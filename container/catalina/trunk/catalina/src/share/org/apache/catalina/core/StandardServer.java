@@ -79,6 +79,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
+import org.apache.coyote.ProtocolHandler;
+import org.apache.coyote.tomcat5.CoyoteConnector;
 
 
 
@@ -122,6 +124,10 @@ public final class StandardServer
         //{ "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
         { "org.apache.catalina.session.StandardManager", "entropy" },
+        { "org.apache.coyote.http11.Http11Protocol", "port"},
+        { "org.apache.coyote.http11.Http11Protocol", "soTimeout"},
+        { "org.apache.jk.server.JkCoyoteHandler", "name"},
+        
     };
 
 
@@ -176,7 +182,10 @@ public final class StandardServer
         "org.apache.coyote.tomcat5.CoyoteConnector",
         "org.apache.catalina.core.StandardEngine",
         "org.apache.catalina.core.StandardHost",
-        "org.apache.catalina.core.StandardContext"
+        "org.apache.catalina.core.StandardContext",
+        "org.apache.coyote.http11.Http11Protocol",
+        "org.apache.jk.server.JkCoyoteHandler"
+        
     };
 
 
@@ -1016,7 +1025,6 @@ public final class StandardServer
 
         // Render the relevant properties of this bean
         String className = bean.getClass().getName();
-
         // Render a className attribute if requested
         if (include) {
             for (int i = 0; i < standardImplementations.length; i++) {
@@ -1097,6 +1105,13 @@ public final class StandardServer
         }
         writer.print("<Connector");
         storeAttributes(writer, connector);
+    
+        if (connector instanceof CoyoteConnector) {
+            ProtocolHandler protocolHandler = 
+                ((CoyoteConnector)connector).getProtocolHandler();
+            storeAttributes(writer, protocolHandler);
+        }
+        
         writer.println(">");
 
         // Store nested <Factory> element
