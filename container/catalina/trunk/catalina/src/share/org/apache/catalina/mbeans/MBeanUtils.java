@@ -65,8 +65,11 @@ package org.apache.catalina.mbeans;
 
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import javax.management.Attribute;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MalformedObjectNameException;
 import javax.management.MBeanException;
@@ -77,6 +80,7 @@ import javax.management.ObjectName;
 import javax.management.OperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
+
 import org.apache.catalina.Connector;
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
@@ -1619,6 +1623,103 @@ public class MBeanUtils {
             }
         }
         return (mserver);
+
+    }
+
+
+    /**
+     * Create a RMI adapter [MX4J specific].
+     */
+    public static void createRMIAdaptor(String adaptorType)
+        throws Exception {
+
+        String namingProviderObjectName = null;
+        String namingProviderClassName = null;
+        String adaptorObjectName = null;
+        String adaptorClassName = null;
+        String adaptorMbeanClassName = null;
+        boolean delay = false;
+        String jndiName = "jrmp";
+        String contextFactory = null;
+        String providerUrl = null;
+
+        if (adaptorType.equals("jrmp")) {
+            namingProviderObjectName = "Naming:type=rmiregistry";
+            namingProviderClassName = "mx4j.tools.naming.NamingService";
+            adaptorObjectName = "Adaptor:protocol=JRMP";
+            adaptorClassName = "mx4j.adaptor.rmi.jrmp.JRMPAdaptor";
+            adaptorMbeanClassName = "mx4j.adaptor.rmi.jrmp.JRMPAdaptorMBean";
+            contextFactory = 
+                "com.sun.jndi.rmi.registry.RegistryContextFactory";
+            providerUrl = "rmi://localhost:1099";
+        } else if (adaptorType.equals("iiop")) {
+            namingProviderObjectName = "Naming:type=tnameserv";
+            namingProviderClassName = "mx4j.tools.naming.CosNamingService";
+            delay = true;
+            adaptorObjectName = "Adaptor:protocol=IIOP";
+            adaptorClassName = "mx4j.adaptor.rmi.iiop.IIOPAdaptor";
+            adaptorMbeanClassName = "mx4j.adaptor.rmi.iiop.IIOPAdaptorMBean";
+            contextFactory = "com.sun.jndi.cosnaming.CNCtxFactory";
+            providerUrl = "iiop://localhost:900";
+        } else {
+            throw new IllegalArgumentException("Unknown adaptor type");
+        }
+
+        // Create and start the naming service
+        ObjectName naming = new ObjectName(namingProviderObjectName);
+        mserver.createMBean(namingProviderClassName, naming, null);
+        if (delay) {
+            mserver.setAttribute(naming, new Attribute
+                                 ("Delay", new Integer(5000)));
+        }
+        mserver.invoke(naming, "start", null, null);
+
+        // Create the JRMP adaptor
+        ObjectName adaptor = new ObjectName(adaptorObjectName);
+        mserver.createMBean(adaptorClassName, adaptor, null);
+
+        Class proxyClass = Class.forName("mx4j.util.StandardMBeanProxy");
+
+        Object args[] = null;
+        Class types[] = null;
+        Method method = null;
+
+        types = new Class[3];
+        types[0] = Class.class;
+        types[1] = MBeanServer.class;
+        types[2] = ObjectName.class;
+        args = new Object[3];
+        args[0] = Class.forName(adaptorMbeanClassName);
+        args[1] = mserver;
+        args[2] = adaptor;
+        method = proxyClass.getMethod("create", types);
+        Object bean = method.invoke(null, args);
+
+        Class beanClass = bean.getClass();
+
+        args = new Object[1];
+        args[0] = jndiName;
+        types = new Class[1];
+        types[0] = String.class;
+        method = beanClass.getMethod("setJNDIName", types);
+        method.invoke(bean, args);
+
+        args = new Object[2];
+        types = new Class[2];
+        types[0] = Object.class;
+        types[1] = Object.class;
+        method = beanClass.getMethod("putJNDIProperty", types);
+
+        args[0] = javax.naming.Context.INITIAL_CONTEXT_FACTORY;
+        args[1] = contextFactory;
+        method.invoke(bean, args);
+
+        args[0] = javax.naming.Context.PROVIDER_URL;
+        args[1] = providerUrl;
+        method.invoke(bean, args);
+
+        method = beanClass.getMethod("start", null);
+        method.invoke(bean, null);
 
     }
 
