@@ -122,7 +122,6 @@ Section "Core" SecTomcatCore
   File /r work
   File /r temp
   SetOutPath $INSTDIR\webapps
-  File webapps\*.xml
   File /r webapps\ROOT
 
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
@@ -488,7 +487,6 @@ Section Uninstall
   RMDir /r "$INSTDIR\shared"
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
-  Delete "$INSTDIR\webapps\*.xml"
   RMDir /r "$INSTDIR\webapps\ROOT"
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\servlets-examples"
