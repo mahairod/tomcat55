@@ -120,7 +120,8 @@ public class SetDocBaseRule extends Rule {
             docBase = file.getCanonicalPath();
         }
 
-        if (docBase.toLowerCase().endsWith(".war")) {
+        if ((docBase.toLowerCase().endsWith(".war")) &&
+            (file.isFile())) {
             URL war = new URL("jar:" + (new File(docBase)).toURL() + "!/");
             String contextPath = child.getPath();
             if (contextPath.equals("")) {

@@ -57,6 +57,9 @@
       <fix>
         <bug>30636</bug>: NPE in DigesterFactory when resources cannot be located. (yoavs)
       </fix>
+      <fix>
+        <bug>30415</bug>: Directories ending in .war not handled well. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
