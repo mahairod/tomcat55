@@ -1006,6 +1006,14 @@ public class HostConfig
 
         if (host.getDeployOnStartup()) {
             deployApps();
+        } else {
+            // Deploy descriptors anyway (it should be equivalent to being
+            // part of server.xml)
+            File configBase = configBase();
+            if (configBase.exists() && configBase.isDirectory()) {
+                String configFiles[] = configBase.list();
+                deployDescriptors(configBase, configFiles);
+            }
         }
 
     }
