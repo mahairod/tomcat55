@@ -916,8 +916,6 @@
       <fileset dir="${classes.dir}">
 
         <include name="org/apache/catalina/**" />
-        <include name="org/apache/catalina/servlets/Constants.class" />
-        <include name="org/apache/catalina/servlets/LocalStrings.properties" />
 
         <!-- Javadoc and i18n exclusions -->
         <exclude name="**/package.html" />
@@ -1083,6 +1081,8 @@
     <jar jarfile="${catalina.deploy}/server/lib/servlets-default.jar" index="true">
       <fileset dir="${classes.dir}">
         <include name="org/apache/catalina/servlets/Default*" />
+        <include name="org/apache/catalina/servlets/Constants.class" />
+        <include name="org/apache/catalina/servlets/LocalStrings.properties" />
       </fileset>
     </jar>
 
