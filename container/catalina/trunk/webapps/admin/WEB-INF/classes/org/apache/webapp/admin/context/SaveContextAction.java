@@ -78,6 +78,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.modeler.Registry;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -127,7 +128,14 @@ public final class SaveContextAction extends Action {
     private String createStandardManagerTypes[] =
     { "java.lang.String",     // parent
     };
-    
+
+    /**
+     * Signature for the <code>removeContext</code> operation.
+     */
+    private String removeContextTypes[] =
+    { "java.lang.String",      // Object name
+    };
+        
     /**
      * The MBeanServer we will be interacting with.
      */
@@ -231,7 +239,6 @@ public final class SaveContextAction extends Action {
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardContextTypes);
-                getServlet().log("context="+cObjectName+" path="+values[1]+" docbase="+values[2]);
                 // Create a new Loader object
                 values = new String[1];
                 // parent of loader is the newly created context
@@ -251,6 +258,15 @@ public final class SaveContextAction extends Action {
                                     values, createStandardManagerTypes);
                                                                        
                 if (mObjectName==null) {
+                    operation = "removeLoader";
+                    values[0] = lObjectName;
+                    mBServer.invoke(fname, operation, values, 
+                        removeContextTypes);
+                    operation = "removeContext";
+                    values[0] = cObjectName;
+                    mBServer.invoke(fname, operation, values, 
+                        removeContextTypes);
+                    Registry.getRegistry().unregisterComponent(new ObjectName(cObjectName));
                     request.setAttribute("warning", "error.context.directory");
                     return (mapping.findForward("Save Unsuccessful"));
                 }
