@@ -8,7 +8,7 @@
      version="2.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-app_2_4.xsds	1.32 02/07/26
+@(#)web-app_2_4.xsds	1.34 02/08/01
 </xsd:documentation>
 </xsd:annotation>
 
@@ -479,7 +479,7 @@ Used in: filter, filter-mapping
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="xsd:string"/>
+    <xsd:restriction base="j2ee:string"/>
 
 </xsd:simpleType>
 
@@ -694,9 +694,9 @@ such as "ja_JP".  "Country code" is defined by ISO-3166.
 
 <xsd:sequence>
     <xsd:element name="locale"
-        type="xsd:string"/>
+        type="j2ee:string"/>
     <xsd:element name="encoding"
-        type="xsd:string"/>
+        type="j2ee:string"/>
 </xsd:sequence>
 </xsd:complexType>
 
@@ -721,7 +721,7 @@ Used in: web-app
                      type="j2ee:auth-methodType"
                      minOccurs="0"/>
         <xsd:element name="realm-name"
-                     type="xsd:string" minOccurs="0">
+                     type="j2ee:string" minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
 
@@ -763,7 +763,7 @@ Used in: web-app
         </xsd:annotation>
 
         <xsd:element name="extension"
-                     type="xsd:string"/>
+                     type="j2ee:string"/>
         <xsd:element name="mime-type"
                      type="j2ee:mime-typeType"/>
     </xsd:sequence>
@@ -786,7 +786,7 @@ Used in: mime-mapping
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="xsd:string">
+    <xsd:restriction base="j2ee:string">
         <xsd:pattern value="[\p{L}\-\p{Nd}]+/[\p{L}\-\p{Nd}\.]+"/>
     </xsd:restriction>
 
@@ -861,7 +861,7 @@ application.
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="xsd:string"/>
+    <xsd:restriction base="j2ee:string"/>
 
 </xsd:simpleType>
 
@@ -981,7 +981,8 @@ Used in: web-app
         must be expressed in a whole number of minutes.
         If the timeout is 0 or less, the container ensures
         the default behaviour of sessions is never to time
-        out.
+        out. If this element is not specified, the container
+        must set its default timeout period.
 
         </xsd:documentation>
         </xsd:annotation>
@@ -1068,7 +1069,7 @@ Example:
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="xsd:string">
+    <xsd:restriction base="j2ee:string">
         <xsd:enumeration value="2.4"/>
     </xsd:restriction>
 
@@ -1183,14 +1184,14 @@ Example:
                      type="j2ee:message-destinationType"
                      minOccurs="0"
                      maxOccurs="unbounded"/>
-        <xsd:element name="deployment-extension"
-                     type="j2ee:deployment-extensionType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
         <xsd:element name="locale-encoding-mapping-list"
                      type="j2ee:locale-encoding-mapping-listType"
                      minOccurs="0"
                      maxOccurs="1"/>
+        <xsd:element name="deployment-extension"
+                     type="j2ee:deployment-extensionType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
     </xsd:sequence>
 
     <xsd:attribute name="version"
@@ -1218,7 +1219,7 @@ Used in: security-constraint
 
     <xsd:sequence>
         <xsd:element name="web-resource-name"
-                     type="xsd:string">
+                     type="j2ee:string">
         <xsd:annotation>
         <xsd:documentation>
 
@@ -1258,7 +1259,7 @@ Used in: web-app
 
     <xsd:sequence>
         <xsd:element name="welcome-file"
-                     type="xsd:string"
+                     type="j2ee:string"
                      maxOccurs="unbounded">
         <xsd:annotation>
         <xsd:documentation>
