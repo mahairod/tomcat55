@@ -357,63 +357,28 @@ public class DeltaManager
         ObjectInputStream ois = null;
         Loader loader = null;
         ClassLoader classLoader = null;
+        ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
         try {
-            fis = new ByteArrayInputStream(data);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            if (container != null)
-                loader = container.getLoader();
-            if (loader != null)
-                classLoader = loader.getClassLoader();
-            if (classLoader != null) {
-                ois = new CustomObjectInputStream(bis, classLoader);
-            } else {
-                ois = new ObjectInputStream(bis);
-            }
-        } catch (IOException e) {
-            log.error(sm.getString("standardManager.loading.ioe", e), e);
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException f) {
-                    ;
-                }
-                ois = null;
-            }
-            throw e;
-        }
-
-        // Load the previously unloaded active sessions
-        synchronized (sessions) {
+            
             try {
-                Integer count = (Integer) ois.readObject();
-                int n = count.intValue();
-                for (int i = 0; i < n; i++) {
-                    DeltaSession session = getNewDeltaSession();
-                    session.readObjectData(ois);
-                    session.setManager(this);
-                    session.setValid(true);
-                    session.setPrimarySession(false);
-                    //in case the nodes in the cluster are out of 
-                    //time synch, this will make sure that we have the
-                    //correct timestamp, isValid returns true, cause accessCount=1
-                    session.access();
-                    //make sure that the session gets ready to expire if needed
-                    session.setAccessCount(0);
-                    sessions.put(session.getId(), session);
+                fis = new ByteArrayInputStream(data);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                if (container != null)
+                    loader = container.getLoader();
+                if (loader != null)
+                    classLoader = loader.getClassLoader();
+                if (classLoader != null) {
+                    log.debug(
+                        "\n\n\n[CLUSTER] Loading the object data with a class loader.\n\n\n");
+                    ois = new CustomObjectInputStream(bis, classLoader);
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                } else {
+                    log.debug(
+                        "\n\n\n[CLUSTER] Loading the object data without a class loader.\n\n\n");
+                    ois = new ObjectInputStream(bis);
                 }
-            } catch (ClassNotFoundException e) {
-              log.error(sm.getString("standardManager.loading.cnfe", e), e);
-                if (ois != null) {
-                    try {
-                        ois.close();
-                    } catch (IOException f) {
-                        ;
-                    }
-                    ois = null;
-                }
-                throw e;
             } catch (IOException e) {
-              log.error(sm.getString("standardManager.loading.ioe", e), e);
+                log.error(sm.getString("standardManager.loading.ioe", e), e);
                 if (ois != null) {
                     try {
                         ois.close();
@@ -423,16 +388,61 @@ public class DeltaManager
                     ois = null;
                 }
                 throw e;
-            } finally {
-                // Close the input stream
-                try {
-                    if (ois != null)
-                        ois.close();
-                } catch (IOException f) {
-                    // ignored
-                }
-
             }
+            // Load the previously unloaded active sessions
+            synchronized (sessions) {
+                try {
+                    Integer count = (Integer) ois.readObject();
+                    int n = count.intValue();
+                    for (int i = 0; i < n; i++) {
+                        DeltaSession session = getNewDeltaSession();
+                        session.readObjectData(ois);
+                        session.setManager(this);
+                        session.setValid(true);
+                        session.setPrimarySession(false);
+                        //in case the nodes in the cluster are out of
+                        //time synch, this will make sure that we have the
+                        //correct timestamp, isValid returns true, cause accessCount=1
+                        session.access();
+                        //make sure that the session gets ready to expire if needed
+                        session.setAccessCount(0);
+                        sessions.put(session.getId(), session);
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error(sm.getString("standardManager.loading.cnfe", e),
+                              e);
+                    if (ois != null) {
+                        try {
+                            ois.close();
+                        } catch (IOException f) {
+                            ;
+                        }
+                        ois = null;
+                    }
+                    throw e;
+                } catch (IOException e) {
+                    log.error(sm.getString("standardManager.loading.ioe", e), e);
+                    if (ois != null) {
+                        try {
+                            ois.close();
+                        } catch (IOException f) {
+                            ;
+                        }
+                        ois = null;
+                    }
+                    throw e;
+                } finally {
+                    // Close the input stream
+                    try {
+                        if (ois != null)
+                            ois.close();
+                    } catch (IOException f) {
+                        // ignored
+                    }
+                }
+            }
+        } finally {
+            if ( originalLoader != null ) Thread.currentThread().setContextClassLoader(originalLoader);   
         }
 
     }
