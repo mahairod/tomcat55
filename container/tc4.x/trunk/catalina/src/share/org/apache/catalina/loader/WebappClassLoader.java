@@ -77,13 +77,12 @@ import java.net.URLConnection;
 import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
 import java.security.AccessControlException;
-import java.security.PrivilegedAction;
 import java.security.AccessController;
-import java.security.AccessControlContext;
 import java.security.CodeSource;
 import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Policy;
+import java.security.PrivilegedAction;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -130,6 +129,23 @@ public class WebappClassLoader
     extends URLClassLoader
     implements Reloader, Lifecycle {
 
+    protected class PrivilegedFindResource
+        implements PrivilegedAction {
+
+        private String name;
+        private String path;
+                    
+        PrivilegedFindResource(String name, String path) {
+            this.name = name;
+            this.path = path;
+        }           
+                    
+        public Object run() {
+            return findResourceInternal(name, path);
+        }           
+
+    }
+
 
     // ----------------------------------------------------------- Constructors
 
@@ -145,7 +161,6 @@ public class WebappClassLoader
 	this.parent = getParent();
 	system = getSystemClassLoader();
 	securityManager = System.getSecurityManager();
-        accessController = AccessController.getContext();
 
     }
 
@@ -161,7 +176,6 @@ public class WebappClassLoader
 	this.parent = getParent();
 	system = getSystemClassLoader();
 	securityManager = System.getSecurityManager();
-        accessController = AccessController.getContext();
 
     }
 
@@ -316,12 +330,6 @@ public class WebappClassLoader
      * The system class loader.
      */
     private ClassLoader system = null;
-
-
-    /**
-     * Access controller.
-     */
-    private AccessControlContext accessController;
 
 
     /**
@@ -850,12 +858,9 @@ public class WebappClassLoader
         ResourceEntry entry = (ResourceEntry) resourceEntries.get(name);
         if (entry == null) {
             if (securityManager != null) {
-                entry = (ResourceEntry) AccessController.doPrivileged
-                    (new PrivilegedAction() {
-                            public Object run() {
-                                return findResourceInternal(name, name);
-                            }
-                        }, accessController);
+                PrivilegedAction dp =
+                    new PrivilegedFindResource(name, name);
+                entry = (ResourceEntry)AccessController.doPrivileged(dp);
             } else {
                 entry = findResourceInternal(name, name);
             }
@@ -1369,14 +1374,9 @@ public class WebappClassLoader
         ResourceEntry entry = null;
 
         if (securityManager != null) {
-            final String fName = name;
-            final String fClassPath = classPath;
-            entry = (ResourceEntry) AccessController.doPrivileged
-                (new PrivilegedAction() {
-                        public Object run() {
-                            return findResourceInternal(fName, fClassPath);
-                        }
-                    }, accessController);
+            PrivilegedAction dp =
+                new PrivilegedFindResource(name, classPath);
+            entry = (ResourceEntry)AccessController.doPrivileged(dp);
         } else {
             entry = findResourceInternal(name, classPath);
         }
