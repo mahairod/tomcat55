@@ -485,18 +485,11 @@
       <param name="subdir" value="${commons-daemon.home}"/>
       <param name="destfile" value="${commons-daemon.jar}"/>
     </antcall>
-    <antcall target="cvsbuild">
-      <!-- Pool uses name to build the jar file -->
-      <param name="name" value="commons-pool"/>
-      <param name="location" value="${commons-pool.loc}"/>
-      <param name="subdir" value="${commons-pool.home}"/>
+    <!-- Pool 1.0 -->
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-pool.loc}"/>
       <param name="destfile" value="${commons-pool.jar}"/>
     </antcall>
-    <!-- Pool does not put commons-pool.jar in ${commons-pool.home} -->
-    <copy
-      file="${commons-pool.home}/dist/commons-pool.jar"
-      tofile="${commons-pool.jar}"
-    />
 
     <!-- commons-dbcp needs pool and ../LICENSE -->
     <!-- That is ugly XXX needs a review -->
