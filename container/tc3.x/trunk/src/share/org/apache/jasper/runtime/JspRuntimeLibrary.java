@@ -149,8 +149,6 @@ public class JspRuntimeLibrary {
 	while ( e.hasMoreElements() ) {
 	    String name  = (String) e.nextElement();
 	    String value = request.getParameter(name);
-	    if (value == null || value.equals(""))
-		continue;
 	    introspecthelper(bean, name, value, request, name, true);
 	}
     }
@@ -196,7 +194,7 @@ public class JspRuntimeLibrary {
 			createTypedArray (bean, method, values, t); 
 		    }
 		} else {
-		    if(value == null) return;
+		    if(value == null || (param != null && value.equals(""))) return;
 		    Object oval = convert(value, type);
 		    if ( oval != null )
 			method.invoke(bean, new Object[] { oval });
