@@ -29,6 +29,9 @@
   
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        <bug>29133</bug>: Fixed stop -force option processing in bin/catalina.sh.
+      </fix>
     </changelog>
   </subsection>
  
