@@ -136,7 +136,7 @@ public class SocketSender implements IDataSender
                 i = sc.getInputStream().read();
             }
         } catch (java.net.SocketTimeoutException x ) {
-            log.warn("Wasn't able to read acknowledgement from server in "+this.ackTimeout+" ms."+
+            log.warn("Wasn't able to read acknowledgement from server["+getAddress()+":"+getPort()+"] in "+this.ackTimeout+" ms."+
                      " Disconnecting socket, and trying again.");
             throw x;
         }
