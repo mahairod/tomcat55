@@ -2486,7 +2486,7 @@ public class StandardContext
         if (isUseNaming()) {
             // Start
             namingContextListener.lifecycleEvent
-                (new LifecycleEvent(this, Lifecycle.BEFORE_STOP_EVENT));
+                (new LifecycleEvent(this, Lifecycle.STOP_EVENT));
         }
 
         // Binding thread
@@ -2522,7 +2522,7 @@ public class StandardContext
         if (isUseNaming()) {
             // Start
             namingContextListener.lifecycleEvent
-                (new LifecycleEvent(this, Lifecycle.AFTER_START_EVENT));
+                (new LifecycleEvent(this, Lifecycle.START_EVENT));
         }
 
         // Binding thread

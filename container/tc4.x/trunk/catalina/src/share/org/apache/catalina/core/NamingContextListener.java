@@ -293,13 +293,26 @@ public class NamingContextListener
                 log(sm.getString("naming.namingContextCreationFailed", e));
             }
 
+            // Binding the naming context to the class loader
+            if (container instanceof Context) {
+                // Setting the context in read only mode
+                ContextAccessController.setReadOnly(getName());
+                try {
+                    ContextBindings.bindClassLoader
+                        (container, container, 
+                         ((Container) container).getLoader().getClassLoader());
+                } catch (NamingException e) {
+                    log(sm.getString("naming.bindFailed", e));
+                }
+            }
+
             if (container instanceof Server) {
                 namingResources.addPropertyChangeListener(this);
                 org.apache.naming.factory.ResourceLinkFactory.setGlobalContext
                     (namingContext);
                 try {
                     ContextBindings.bindClassLoader
-                        (container, container,
+                        (container, container, 
                          this.getClass().getClassLoader());
                 } catch (NamingException e) {
                     log(sm.getString("naming.bindFailed", e));
@@ -308,47 +321,9 @@ public class NamingContextListener
                     ((StandardServer) container).setGlobalNamingContext
                         (namingContext);
                 }
-            } else if (container instanceof Context) {
-                // Setting the context in read only mode
-                ContextAccessController.setReadOnly(getName());
-                try {
-                    ContextBindings.bindClassLoader
-                        (container, container,
-                         ((Container) container).getLoader().getClassLoader());
-                } catch (NamingException e) {
-                    log(sm.getString("naming.bindFailed", e));
-                }
             }
 
             initialized = true;
-
-        } else if (event.getType() == Lifecycle.AFTER_START_EVENT ) {
-            // Used at end of a Web Application Context reload
-            if (container instanceof Context) {
-                // Setting the context in read only mode
-                ContextAccessController.setReadOnly(getName());
-                try {
-                    ContextBindings.bindClassLoader
-                        (container, container,
-                         ((Container) container).getLoader().getClassLoader());
-                } catch (NamingException e) {
-                    log(sm.getString("naming.bindFailed", e));
-                }
-            }
-
-        } else if (event.getType() == Lifecycle.BEFORE_STOP_EVENT) {
-            // Used when starting a Web Application Context reload
-            if (!initialized)
-                return;
-
-            // Setting the context in read/write mode
-            ContextAccessController.setWritable(getName(), container);
-
-            if (container instanceof Context) {
-                ContextBindings.unbindClassLoader
-                    (container, container,
-                     ((Container) container).getLoader().getClassLoader());
-            }
 
         } else if (event.getType() == Lifecycle.STOP_EVENT) {
 
