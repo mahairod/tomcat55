@@ -631,7 +631,10 @@ static int initialize_extension(void)
                 if(uri_worker_map_alloc(&uw_map, map, logger)) {
                     rc = JK_TRUE;
                 }
-            }
+            }else{
+                jk_log(logger, JK_LOG_ERROR, "Unable to read worker_mount_file %s.\n", 
+                       worker_mount_file);
+				}
             map_free(&map);
         }
 
@@ -642,6 +645,9 @@ static int initialize_extension(void)
                     if(wc_open(map, logger)) {
                         rc = JK_TRUE;
                     }
+                }else{
+                    jk_log(logger, JK_LOG_ERROR, "Unable to read worker_file %s.\n", 
+                    worker_file);
                 }
                 map_free(&map);
             }
