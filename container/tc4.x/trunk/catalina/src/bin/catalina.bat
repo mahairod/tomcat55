@@ -87,7 +87,7 @@ set JPDA=
 
 if not ""%1"" == ""jpda"" goto noJpda
 set JPDA=jpda
-if not "%JPDA_ADDRESS%" == "" got gotJpdaAddress
+if not "%JPDA_ADDRESS%" == "" goto gotJpdaAddress
 set JPDA_ADDRESS=jdbconn
 :gotJpdaAddress
 shift
