@@ -173,7 +173,7 @@ public class Ajp13ConnectorRequest extends Request
             bsc = msg.getByte()) {
             switch(bsc) {
                 case SC_A_CONTEXT      :
-                    contextPath = msg.getString();
+                    contextMB.setString( msg.getString());
                 break;
 
                 case SC_A_SERVLET_PATH :
