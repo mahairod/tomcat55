@@ -98,8 +98,8 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class PersistentManagerBase
     extends ManagerBase
-    implements Lifecycle, PropertyChangeListener, Runnable
- {
+    implements Lifecycle, PropertyChangeListener {
+
     private static Log log = LogFactory.getLog(PersistentManagerBase.class);
 
     // ---------------------------------------------------- Security Classes
@@ -174,12 +174,6 @@ public abstract class PersistentManagerBase
 
 
     /**
-     * The interval (in seconds) between checks for expired sessions.
-     */
-    private int checkInterval = 60;
-
-
-    /**
      * The descriptive information about this implementation.
      */
     private static final String info = "PersistentManagerBase/1.0";
@@ -207,24 +201,6 @@ public abstract class PersistentManagerBase
      * Has this component been started yet?
      */
     private boolean started = false;
-
-
-    /**
-     * The background thread.
-     */
-    private Thread thread = null;
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    protected boolean threadDone = false;
-
-
-    /**
-     * Name to register for the background thread.
-     */
-    private String threadName = "PersistentManagerBase";
 
 
     /**
@@ -263,33 +239,6 @@ public abstract class PersistentManagerBase
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the check interval (in seconds) for this Manager.
-     */
-    public int getCheckInterval() {
-
-        return (this.checkInterval);
-
-    }
-
-
-    /**
-     * Set the check interval (in seconds) for this Manager.
-     *
-     * @param checkInterval The new check interval
-     */
-    public void setCheckInterval(int checkInterval) {
-
-        int oldCheckInterval = this.checkInterval;
-        this.checkInterval = checkInterval;
-        support.firePropertyChange("checkInterval",
-                                   new Integer(oldCheckInterval),
-                                   new Integer(this.checkInterval));
-
-    }
-
 
 
     /**
@@ -596,6 +545,27 @@ public abstract class PersistentManagerBase
         } catch (IOException e) {
             log.error("Exception clearing the Store: " + e);
             e.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * Invalidate all sessions that have expired.
+     */
+    public void processExpires() {
+
+        if (!started)
+            return;
+
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
+
+        for (int i = 0; i < sessions.length; i++) {
+            StandardSession session = (StandardSession) sessions[i];
+            if (!session.isValid()) {
+                session.expire();
+	    }
         }
 
     }
@@ -981,9 +951,6 @@ public abstract class PersistentManagerBase
         else if (store instanceof Lifecycle)
             ((Lifecycle)store).start();
 
-        // Start the background reaper thread
-        threadStart();
-
     }
 
 
@@ -1009,9 +976,6 @@ public abstract class PersistentManagerBase
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         setStarted(false);
 
-        // Stop the background reaper thread
-        threadStop();
-
         if (getStore() != null && saveOnRestart) {
             unload();
         } else {
@@ -1033,7 +997,7 @@ public abstract class PersistentManagerBase
 
         if( initialized )
             destroy();
-        
+
     }
 
 
@@ -1067,27 +1031,6 @@ public abstract class PersistentManagerBase
 
 
     // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Invalidate all sessions that have expired.
-     */
-    protected void processExpires() {
-
-        if (!started)
-            return;
-
-        long timeNow = System.currentTimeMillis();
-        Session sessions[] = findSessions();
-
-        for (int i = 0; i < sessions.length; i++) {
-            StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid()) {
-                session.expire();
-	    }
-        }
-
-    }
 
 
     /**
@@ -1202,79 +1145,6 @@ public abstract class PersistentManagerBase
                     }
                 }
             }
-        }
-
-    }
-
-
-    /**
-     * Sleep for the duration specified by the <code>checkInterval</code>
-     * property.
-     */
-    protected void threadSleep() {
-
-        try {
-            Thread.sleep(checkInterval * 1000L);
-        } catch (InterruptedException e) {
-            ;
-        }
-
-    }
-
-
-    /**
-     * Start the background thread that will periodically check for
-     * session timeouts.
-     */
-    protected void threadStart() {
-
-        if (thread != null)
-            return;
-
-        threadDone = false;
-        threadName = "StandardManager[" + container.getName() + "]";
-        thread = new Thread(this, threadName);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-
-    /**
-     * Stop the background thread that is periodically checking for
-     * session timeouts.
-     */
-    protected void threadStop() {
-
-        if (thread == null)
-            return;
-
-        threadDone = true;
-        thread.interrupt();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        thread = null;
-
-    }
-
-
-    // ------------------------------------------------------ Background Thread
-
-
-    /**
-     * The background thread that checks for session timeouts and shutdown.
-     */
-    public void run() {
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-            threadSleep();
-            processExpires();
-            processPersistenceChecks();
         }
 
     }
