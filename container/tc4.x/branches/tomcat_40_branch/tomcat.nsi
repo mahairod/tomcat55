@@ -40,8 +40,9 @@ Section "Tomcat 4.0 (required)"
   File tomcat.ico
   File LICENSE
   File /r bin
+  File /r classes
   File /r common
-  File /r shared
+  File /r lib
   File /r logs
   File /r server
   File /r work
@@ -248,7 +249,8 @@ Function doUpdate
   File LICENSE
   File /r bin
   File /r common
-  File /r shared
+  File /r lib
+  File /r classes
   File /r logs
   File /r server
   File /r work
@@ -295,9 +297,10 @@ Section Uninstall
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   RMDir /r "$INSTDIR\bin"
+  RMDir /r "$INSTDIR\classes"
   RMDir /r "$INSTDIR\common"
   Delete "$INSTDIR\conf\*.dtd"
-  RMDir /r "$INSTDIR\shared"
+  RMDir /r "$INSTDIR\lib"
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
   RMDir /r "$INSTDIR\webapps\manager"
