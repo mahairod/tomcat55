@@ -118,6 +118,14 @@
       </update>
      </changelog>
    </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>34034</bug>: Jasper does not respect external entities (billbarker)
+      </fix>
+    </changelog>
+  </subsection>
    
    <subsection name="Cluster">
     <changelog>
