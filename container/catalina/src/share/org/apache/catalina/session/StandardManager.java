@@ -143,12 +143,6 @@ public class StandardManager
 
 
     /**
-     * Number of sessions that expired.
-     */
-    protected int expiredSessions = 0;
-
-
-    /**
      * Processing time during session expiration.
      */
     protected long processingTime = 0;
@@ -205,6 +199,7 @@ public class StandardManager
 
     }
 
+
     /** Number of session creations that failed due to maxActiveSessions
      *
      * @return The count
@@ -213,29 +208,21 @@ public class StandardManager
         return rejectedSessions;
     }
 
+
     public void setRejectedSessions(int rejectedSessions) {
         this.rejectedSessions = rejectedSessions;
     }
 
-    /** Number of sessions that expired.
-     *
-     * @return The count
-     */
-    public int getExpiredSessions() {
-        return expiredSessions;
-    }
-
-    public void setExpiredSessions(int expiredSessions) {
-        this.expiredSessions = expiredSessions;
-    }
 
     public long getProcessingTime() {
         return processingTime;
     }
 
+
     public void setProcessingTime(long processingTime) {
         this.processingTime = processingTime;
     }
+
 
     /**
      * Set the maximum number of actives Sessions allowed, or -1 for
