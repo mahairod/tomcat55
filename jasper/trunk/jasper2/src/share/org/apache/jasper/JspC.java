@@ -349,6 +349,13 @@ public class JspC implements Options {
 	return true;
     }
 
+   /**
+     * Should SMAP info for JSR45 debugging be dumped to a file?
+     */
+    public boolean dumpSmap() {
+	return false;
+    }
+
     public String getIeClassId() {
         return ieClassId;
     }

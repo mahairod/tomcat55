@@ -157,6 +157,11 @@ public final class EmbeddedServletOptions implements Options {
     private boolean suppressSmap = false;
 
     /**
+     * Should SMAP info for JSR45 debugging be dumped to a file?
+     */
+    private boolean dumpSmap = false;
+
+    /**
      * I want to see my generated servlets. Which directory are they
      * in?
      */
@@ -282,6 +287,13 @@ public final class EmbeddedServletOptions implements Options {
      */
     public boolean suppressSmap() {
         return suppressSmap;
+    }
+
+    /**
+     * Should SMAP info for JSR45 debugging be dumped to a file?
+     */
+    public boolean dumpSmap() {
+        return dumpSmap;
     }
 
     /**
@@ -509,6 +521,19 @@ public final class EmbeddedServletOptions implements Options {
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage("jsp.warning.suppressSmap"));
+                }
+            }
+        }
+
+        String dumpSmap = config.getInitParameter("dumpSmap");
+        if (dumpSmap != null) {
+            if (dumpSmap.equalsIgnoreCase("true")) {
+                this.dumpSmap = true;
+            } else if (dumpSmap.equalsIgnoreCase("false")) {
+                this.dumpSmap = false;
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.warning.dumpSmap"));
                 }
             }
         }

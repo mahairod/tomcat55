@@ -123,8 +123,15 @@ public class SmapUtil {
         evaluateNodes(pageNodes, s);
         g.addStratum(s, true);
 
-//	System.out.println(g.getString());
-	return g.getString();
+        if (ctxt.getOptions().dumpSmap()) {
+            File outSmap = new File(ctxt.getClassFileName() + ".smap");
+            PrintWriter so = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(outSmap),
+                                   SMAP_ENCODING));
+            so.print(g.getString());
+            so.close();
+        }
+        return g.getString();
     }
     
     public static void installSmap(String classFileName, String smap)
