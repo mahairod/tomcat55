@@ -149,7 +149,7 @@ public class SSLAuthenticator
         if (debug >= 1)
             log(" Looking up certificates");
 
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
+        if ("POST".equalsIgnoreCase(((HttpServletRequest) request.getRequest()).getMethod())) {
             // Causes POST of  application/x-www-form-urlencoded to be read,
             // removing data from socket so that a cert exchange can happen if needed.
             // A more general solution for all POSTs is coming 01-Nov-2002 bobh
