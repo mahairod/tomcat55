@@ -410,8 +410,8 @@ public abstract class HttpServlet extends GenericServlet
      * Content-MD5, and Content-Range). If your method cannot
      * handle a content header, it must issue an error message
      * (HTTP 501 - Not Implemented) and discard the request.
-     * For more information on HTTP 1.1, see RFC 2068
-     * <a href="http://info.internet.isi.edu:80/in-notes/rfc/files/rfc2068.txt"></a>.
+     * For more information on HTTP 1.1, see RFC 2616
+     * <a href="http://www.ietf.org/rfc/rfc2616.txt"></a>.
      *
      * <p>This method does not need to be either safe or idempotent.
      * Operations that <code>doPut</code> performs can have side

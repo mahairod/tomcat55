@@ -176,8 +176,9 @@ public interface HttpServletResponse extends ServletResponse {
 
     /**
      * Sends an error response to the client using the specified
-     * status clearing the buffer.  The server defaults to creating the 
-     * response to look like an HTML-formatted server error page containing the specified message, setting the content type
+     * status.  The server defaults to creating the
+     * response to look like an HTML-formatted server error page
+     * containing the specified message, setting the content type
      * to "text/html", leaving cookies and other headers unmodified.
      *
      * If an error-page declaration has been made for the web application
@@ -229,7 +230,8 @@ public interface HttpServletResponse extends ServletResponse {
      *
      * @param		location	the redirect location URL
      * @exception	IOException	If an input or output exception occurs
-     * @exception	IllegalStateException	If the response was committed
+     * @exception	IllegalStateException	If the response was committed or
+ if a partial URL is given and cannot be converted into a valid URL
      */
 
     public void sendRedirect(String location) throws IOException;
@@ -276,7 +278,9 @@ public interface HttpServletResponse extends ServletResponse {
      * value.
      * 
      * @param	name	the name of the header
-     * @param	value	the header value
+     * @param	value	the header value  If it contains octet string,
+     *		it should be encoded according to RFC 2047
+     *		(http://www.ietf.org/rfc/rfc2047.txt)
      *
      * @see #containsHeader
      * @see #addHeader
@@ -289,7 +293,10 @@ public interface HttpServletResponse extends ServletResponse {
      * This method allows response headers to have multiple values.
      * 
      * @param	name	the name of the header
-     * @param	value	the additional header value
+     * @param	value	the additional header value   If it contains
+     *		octet string, it should be encoded
+     *		according to RFC 2047
+     *		(http://www.ietf.org/rfc/rfc2047.txt)
      *
      * @see #setHeader
      */

@@ -8,7 +8,7 @@
 	    version="2.4">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)web-app_2_4.xsds	1.54 03/02/11
+      @(#)web-app_2_4.xsds	1.55 03/02/19
     </xsd:documentation>
   </xsd:annotation>
 
@@ -109,7 +109,19 @@
       <xsd:documentation>
 
 	The web-app element is the root of the deployment
-	descriptor for a web application.
+	descriptor for a web application.  Note that the sub-elements
+	of this element can be in the arbitrary order. Because of
+	that, the multiplicity of the elements of distributable,
+	session-config, welcome-file-list, jsp-config, login-config,
+	and locale-encoding-mapping-list was changed from "?" to "*"
+	in this schema.  However, the deployment descriptor instance
+	file must not contain multiple elements of session-config,
+	jsp-config, and login-config. When there are multiple elements of
+	welcome-file-list or locale-encoding-mapping-list, the container
+	must concatinate the element contents.  The multiple occurance
+	of the element distributable is redundant and the container
+	treats that case exactly in the same way when there is only
+	one distributable.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -1119,14 +1131,13 @@
 
   <xsd:complexType name="web-appType">
 
-    <xsd:sequence>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:group ref="j2ee:descriptionGroup"/>
       <xsd:element name="distributable"
-		   type="j2ee:emptyType"
-		   minOccurs="0"/>
+		   type="j2ee:emptyType"/>
       <xsd:element name="context-param"
-		   type="j2ee:param-valueType"
-		   minOccurs="0" maxOccurs="unbounded">
+		   type="j2ee:param-valueType">
+
 	<xsd:annotation>
 	  <xsd:documentation>
 
@@ -1139,62 +1150,37 @@
       </xsd:element>
 
       <xsd:element name="filter"
-		   type="j2ee:filterType"
-		   minOccurs="0" maxOccurs="unbounded"/>
+		   type="j2ee:filterType"/>
       <xsd:element name="filter-mapping"
-		   type="j2ee:filter-mappingType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:filter-mappingType"/>
       <xsd:element name="listener"
-		   type="j2ee:listenerType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:listenerType"/>
       <xsd:element name="servlet"
-		   type="j2ee:servletType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:servletType"/>
       <xsd:element name="servlet-mapping"
-		   type="j2ee:servlet-mappingType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:servlet-mappingType"/>
       <xsd:element name="session-config"
-		   type="j2ee:session-configType"
-		   minOccurs="0"/>
+		   type="j2ee:session-configType"/>
       <xsd:element name="mime-mapping"
-		   type="j2ee:mime-mappingType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:mime-mappingType"/>
       <xsd:element name="welcome-file-list"
-		   type="j2ee:welcome-file-listType"
-		   minOccurs="0"/>
+		   type="j2ee:welcome-file-listType"/>
       <xsd:element name="error-page"
-		   type="j2ee:error-pageType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:error-pageType"/>
       <xsd:element name="jsp-config"
-		   type="j2ee:jsp-configType"
-		   minOccurs="0"/>
+		   type="j2ee:jsp-configType"/>
       <xsd:element name="security-constraint"
-		   type="j2ee:security-constraintType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:security-constraintType"/>
       <xsd:element name="login-config"
-		   type="j2ee:login-configType"
-		   minOccurs="0"/>
+		   type="j2ee:login-configType"/>
       <xsd:element name="security-role"
-		   type="j2ee:security-roleType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:security-roleType"/>
       <xsd:group ref="j2ee:jndiEnvironmentRefsGroup"/>
       <xsd:element name="message-destination"
-		   type="j2ee:message-destinationType"
-		   minOccurs="0"
-		   maxOccurs="unbounded"/>
+		   type="j2ee:message-destinationType"/>
       <xsd:element name="locale-encoding-mapping-list"
-		   type="j2ee:locale-encoding-mapping-listType"
-		   minOccurs="0"
-		   maxOccurs="1"/>
-    </xsd:sequence>
+		   type="j2ee:locale-encoding-mapping-listType"/>
+    </xsd:choice>
 
     <xsd:attribute name="version"
 		   type="j2ee:web-app-versionType"
