@@ -307,6 +307,23 @@ public class Catalina {
 	mapper.addRule("Server/Engine/Host/Context", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
 
+        mapper.addRule("Server/Engine/Host/Context/Ejb", mapper.objectCreate
+                       ("org.apache.catalina.deploy.ContextEjb"));
+        mapper.addRule("Server/Engine/Host/Context/Ejb",
+                       mapper.setProperties());
+        mapper.addRule("Server/Engine/Host/Context/Ejb", mapper.addChild
+                       ("addEjb", "org.apache.catalina.deploy.ContextEjb"));
+
+        mapper.addRule("Server/Engine/Host/Context/Environment",
+                       mapper.objectCreate
+                       ("org.apache.catalina.deploy.ContextEnvironment"));
+        mapper.addRule("Server/Engine/Host/Context/Environment",
+                       mapper.setProperties());
+        mapper.addRule("Server/Engine/Host/Context/Environment",
+                       mapper.addChild
+                       ("addEnvironment",
+                        "org.apache.catalina.deploy.ContextEnvironment"));
+
 	mapper.addRule("Server/Engine/Host/Context/InstanceListener",
 		       mapper.methodSetter("addInstanceListener", 0));
 
@@ -344,12 +361,30 @@ public class Catalina {
 	mapper.addRule("Server/Engine/Host/Context/Manager", mapper.addChild
 		       ("setManager", "org.apache.catalina.Manager"));
 
+        mapper.addRule("Server/Engine/Host/Context/Parameter", mapper.objectCreate
+                       ("org.apache.catalina.deploy.ApplicationParameter"));
+        mapper.addRule("Server/Engine/Host/Context/Parameter",
+                       mapper.setProperties());
+        mapper.addRule("Server/Engine/Host/Context/Parameter", mapper.addChild
+                       ("addApplicationParameter",
+                        "org.apache.catalina.deploy.ApplicationParameter"));
+
 	mapper.addRule("Server/Engine/Host/Context/Realm", mapper.objectCreate
 		       (null, "className"));
 	mapper.addRule("Server/Engine/Host/Context/Realm",
 		       mapper.setProperties());
 	mapper.addRule("Server/Engine/Host/Context/Realm", mapper.addChild
 		       ("setRealm", "org.apache.catalina.Realm"));
+
+        mapper.addRule("Server/Engine/Host/Context/Resource",
+                       mapper.objectCreate
+                       ("org.apache.catalina.deploy.ContextResource"));
+        mapper.addRule("Server/Engine/Host/Context/Resource",
+                       mapper.setProperties());
+        mapper.addRule("Server/Engine/Host/Context/Resource",
+                       mapper.addChild
+                       ("addResource",
+                        "org.apache.catalina.deploy.ContextResource"));
 
 	mapper.addRule("Server/Engine/Host/Context/Resources",
 		       mapper.objectCreate

@@ -66,6 +66,7 @@ package org.apache.catalina;
 
 
 import javax.servlet.ServletContext;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -294,6 +295,14 @@ public interface Context extends Container {
 
 
     /**
+     * Add a new application parameter for this application.
+     *
+     * @param parameter The new application parameter
+     */
+    public void addApplicationParameter(ApplicationParameter parameter);
+
+
+    /**
      * Add a security constraint to the set for this web application.
      */
     public void addConstraint(SecurityConstraint constraint);
@@ -452,6 +461,12 @@ public interface Context extends Container {
      * for this application.
      */
     public String[] findApplicationListeners();
+
+
+    /**
+     * Return the set of application parameters for this application.
+     */
+    public ApplicationParameter[] findApplicationParameters();
 
 
     /**
@@ -702,6 +717,15 @@ public interface Context extends Container {
      * @param listener Java class name of the listener to be removed
      */
     public void removeApplicationListener(String listener);
+
+
+    /**
+     * Remove the application parameter with the specified name from
+     * the set for this application.
+     *
+     * @param name Name of the application parameter to remove
+     */
+    public void removeApplicationParameter(String name);
 
 
     /**

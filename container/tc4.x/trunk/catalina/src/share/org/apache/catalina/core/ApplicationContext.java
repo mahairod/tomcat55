@@ -86,6 +86,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Resources;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.HttpRequestBase;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
@@ -140,6 +141,12 @@ public final class ApplicationContext
      * <strong>DO NOT ADD ANY ELEMENTS TO THIS COLLECTION!</strong>
      */
     private static final ArrayList empty = new ArrayList();
+
+
+    /**
+     * The merged context initialization parameters for this Context.
+     */
+    private HashMap parameters = null;
 
 
     /**
@@ -243,7 +250,10 @@ public final class ApplicationContext
      */
     public String getInitParameter(String name) {
 
-	return (context.findParameter(name));
+        mergeParameters();
+        synchronized (parameters) {
+            return ((String) parameters.get(name));
+        }
 
     }
 
@@ -254,8 +264,10 @@ public final class ApplicationContext
      */
     public Enumeration getInitParameterNames() {
 
-	String parameters[] = context.findParameters();
-	return (new Enumerator(Arrays.asList(parameters)));
+        mergeParameters();
+        synchronized (parameters) {
+            return (new Enumerator(parameters.keySet()));
+        }
 
     }
 
@@ -593,6 +605,38 @@ public final class ApplicationContext
 	        log(sm.getString("applicationContext.attributeEvent"), t);
 	    }
 	}
+
+    }
+
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Merge the context initialization parameters specified in the application
+     * deployment descriptor with the application parameters described in the
+     * server configuration, respecting the <code>override</code> property of
+     * the application parameters appropriately.
+     */
+    private void mergeParameters() {
+
+        if (parameters != null)
+            return;
+        HashMap results = new HashMap();
+        String names[] = context.findParameters();
+        for (int i = 0; i < names.length; i++)
+            results.put(names[i], context.findParameter(names[i]));
+        ApplicationParameter params[] =
+            context.findApplicationParameters();
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].getOverride()) {
+                if (results.get(params[i].getName()) == null)
+                    results.put(params[i].getName(), params[i].getValue());
+            } else {
+                results.put(params[i].getName(), params[i].getValue());
+            }
+        }
+        parameters = results;
 
     }
 

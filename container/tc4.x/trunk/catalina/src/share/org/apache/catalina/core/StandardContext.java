@@ -88,6 +88,7 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
@@ -141,6 +142,13 @@ public final class StandardContext
      * correspondence to the class names in <code>applicationListeners</code>.
      */
     private Object applicationListenersObjects[] = new Object[0];
+
+
+    /**
+     * The set of application parameters defined for this application.
+     */
+    private ApplicationParameter applicationParameters[] =
+        new ApplicationParameter[0];
 
 
     /**
@@ -702,6 +710,26 @@ public final class StandardContext
 
 
     /**
+     * Add a new application parameter for this application.
+     *
+     * @param parameter The new application parameter
+     */
+    public void addApplicationParameter(ApplicationParameter parameter) {
+
+        synchronized (applicationParameters) {
+            ApplicationParameter results[] =
+                new ApplicationParameter[applicationParameters.length + 1];
+            System.arraycopy(applicationParameters, 0, results, 0,
+                             applicationParameters.length);
+            results[applicationParameters.length] = parameter;
+            applicationParameters = results;
+        }
+        fireContainerEvent("addApplicationParameter", parameter);
+
+    }
+
+
+    /**
      * Add a child Container, only if the proposed child is an implementation
      * of Wrapper.
      *
@@ -1134,6 +1162,16 @@ public final class StandardContext
     public String[] findApplicationListeners() {
 
         return (applicationListeners);
+
+    }
+
+
+    /**
+     * Return the set of application parameters for this application.
+     */
+    public ApplicationParameter[] findApplicationParameters() {
+
+        return (applicationParameters);
 
     }
 
@@ -1808,6 +1846,45 @@ public final class StandardContext
 	fireContainerEvent("removeApplicationListener", listener);
 
 	// FIXME - behavior if already started?
+
+    }
+
+
+    /**
+     * Remove the application parameter with the specified name from
+     * the set for this application.
+     *
+     * @param name Name of the application parameter to remove
+     */
+    public void removeApplicationParameter(String name) {
+
+	synchronized (applicationParameters) {
+
+	    // Make sure this parameter is currently present
+	    int n = -1;
+	    for (int i = 0; i < applicationParameters.length; i++) {
+		if (name.equals(applicationParameters[i].getName())) {
+		    n = i;
+		    break;
+		}
+	    }
+	    if (n < 0)
+		return;
+
+	    // Remove the specified parameter
+	    int j = 0;
+	    ApplicationParameter results[] =
+                new ApplicationParameter[applicationParameters.length - 1];
+	    for (int i = 0; i < applicationParameters.length; i++) {
+		if (i != n)
+		    results[j++] = applicationParameters[i];
+	    }
+	    applicationParameters = results;
+
+	}
+
+	// Inform interested listeners
+	fireContainerEvent("removeApplicationParameter", name);
 
     }
 

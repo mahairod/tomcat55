@@ -107,6 +107,15 @@
 	<Logger className="org.apache.catalina.logger.FileLogger"
 	        prefix="localhost_examples_log." suffix=".txt"
 		timestamp="true"/>
+        <Ejb   name="ejb/EmplRecord" type="Entity"
+               home="com.wombat.empl.EmployeeRecordHome"
+             remote="com.wombat.empl.EmployeeRecord"/>
+        <Environment name="maxExemptions" type="java.lang.Integer"
+                     value="15"/>
+        <Parameter name="context.param.name" value="context.param.value"
+                   override="false"/>
+        <Resource name="jdbc/EmployeeAppDb" auth="SERVLET"
+                  type="javax.sql.DataSource"/>
       </Context>
 -->
 
