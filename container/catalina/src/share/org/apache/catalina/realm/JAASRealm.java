@@ -65,9 +65,11 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Enumeration;
 import javax.security.auth.Subject;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -76,7 +78,10 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Container;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -135,8 +140,9 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class JAASRealm
-    extends RealmBase {
-
+    extends RealmBase
+ {
+    private static Log log = LogFactory.getLog(JAASRealm.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -145,7 +151,7 @@ public class JAASRealm
      * The application name passed to the JAAS <code>LoginContext</code>,
      * which uses it to select the set of relevant <code>LoginModules</code>.
      */
-    protected String appName = "Tomcat";
+    protected String appName = null;
 
 
     /**
@@ -185,6 +191,7 @@ public class JAASRealm
     
     /**
      * setter for the appName member variable
+     * @deprecated JAAS should use the Engine ( domain ) name and webpp/host overrides
      */
     public void setAppName(String name) {
         appName = name;
@@ -195,6 +202,15 @@ public class JAASRealm
      */
     public String getAppName() {
         return appName;
+    }
+
+    public void setContainer(Container container) {
+        super.setContainer(container);
+        String name=container.getName();
+        if( appName==null  ) {
+            appName=name;
+            log.info("Setting JAAS app name " + appName);
+        }
     }
 
     /**
@@ -280,15 +296,32 @@ public class JAASRealm
     public Principal authenticate(String username, String credentials) {
 
         // Establish a LoginContext to use for authentication
+        try {
         LoginContext loginContext = null;
+        if( appName==null ) appName="Tomcat";
+
+        if( log.isDebugEnabled())
+            log.debug("Authenticating " + appName + " " +  username);
+
+        // What if the LoginModule is in the container class loader ?
+        //
+        ClassLoader ocl=Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
         try {
             loginContext = new LoginContext
                 (appName, new JAASCallbackHandler(this, username,
                                                   credentials));
-        } catch (LoginException e) {
-            log(sm.getString("jaasRealm.loginException", username), e);
+        } catch (Throwable e) {
+            log.debug("Error initializing JAAS: " +  e.toString());
+
+            log.debug(sm.getString("jaasRealm.loginException", username), e);
             return (null);
+        } finally {
+            Thread.currentThread().setContextClassLoader(ocl);
         }
+
+        if( log.isDebugEnabled())
+            log.debug("Login context created " + username);
 
         // Negotiate a login via this LoginContext
         Subject subject = null;
@@ -296,38 +329,48 @@ public class JAASRealm
             loginContext.login();
             subject = loginContext.getSubject();
             if (subject == null) {
-                if (debug >= 2)
-                    log(sm.getString("jaasRealm.failedLogin", username));
+                if( log.isDebugEnabled())
+                    log.debug(sm.getString("jaasRealm.failedLogin", username));
                 return (null);
             }
         } catch (AccountExpiredException e) {
-            if (debug >= 2)
-                log(sm.getString("jaasRealm.accountExpired", username));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("jaasRealm.accountExpired", username));
             return (null);
         } catch (CredentialExpiredException e) {
-            if (debug >= 2)
-                log(sm.getString("jaasRealm.credentialExpired", username));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("jaasRealm.credentialExpired", username));
             return (null);
         } catch (FailedLoginException e) {
-            if (debug >= 2)
-                log(sm.getString("jaasRealm.failedLogin", username));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("jaasRealm.failedLogin", username));
             return (null);
         } catch (LoginException e) {
-            log(sm.getString("jaasRealm.loginException", username), e);
+            log.debug(sm.getString("jaasRealm.loginException", username), e);
+            return (null);
+        } catch (Throwable e) {
+            log.debug("Unexpected error", e);
             return (null);
         }
+
+        if( log.isDebugEnabled())
+            log.debug("Getting principal " + subject);
 
         // Return the appropriate Principal for this authenticated Subject
-        Principal principal = createPrincipal(subject);
+        Principal principal = createPrincipal(username, subject);
         if (principal == null) {
-            log(sm.getString("jaasRealm.authenticateError", username));
+            log.debug(sm.getString("jaasRealm.authenticateFailure", username));
             return (null);
         }
-        if (debug >= 2) {
-            log(sm.getString("jaasRealm.authenticateSuccess", username));
+        if (log.isDebugEnabled()) {
+            log.debug(sm.getString("jaasRealm.authenticateSuccess", username));
         }
-        return (principal);
 
+        return (principal);
+        } catch( Throwable t) {
+            log.error( "error ", t);
+            return null;
+        }
     }
 
 
@@ -374,9 +417,8 @@ public class JAASRealm
      *
      * @param subject The Subject representing the logged in user
      */
-    protected Principal createPrincipal(Subject subject) {
+    protected Principal createPrincipal(String username, Subject subject) {
         // Prepare to scan the Principals for this Subject
-        String username = null;
         String password = null; // Will not be carried forward
         ArrayList roles = new ArrayList();
 
@@ -384,12 +426,34 @@ public class JAASRealm
         Iterator principals = subject.getPrincipals().iterator();
         while (principals.hasNext()) {
             Principal principal = (Principal) principals.next();
+            // No need to look further - that's our own stuff
+            if( principal instanceof GenericPrincipal ) {
+                if( log.isDebugEnabled() )
+                    log.debug("Found old GenericPrincipal " + principal );
+                return principal;
+            }
             String principalClass = principal.getClass().getName();
-            if ((username == null) && userClasses.contains(principalClass)) {
+            if( log.isDebugEnabled() )
+                log.info("Principal: " + principalClass + " " + principal);
+
+            if (userClasses.contains(principalClass)) {
+                // Override the default - which is the original user, accepted by
+                // the friendly LoginManager
                 username = principal.getName();
             }
             if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
+            }
+            // Same as Jboss - that's a pretty clean solution
+            if( (principal instanceof Group) &&
+                 "Roles".equals( principal.getName())) {
+                Group grp=(Group)principal;
+                Enumeration en=grp.members();
+                while( en.hasMoreElements() ) {
+                    Principal roleP=(Principal)en.nextElement();
+                    roles.add( roleP.getName());
+                }
+
             }
         }
 
@@ -399,7 +463,6 @@ public class JAASRealm
         } else {
             return (null);
         }
-
     }
 
 
