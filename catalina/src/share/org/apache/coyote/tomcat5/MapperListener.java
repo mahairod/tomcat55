@@ -311,14 +311,12 @@ public class MapperListener
 
 
     /**
-     * Unregister host (FIXME.
+     * Unregister host.
      */
     private void unregisterHost(ObjectName objectName)
         throws Exception {
         String name=objectName.getKeyProperty("host");
-        String[] aliases = (String[])
-            mBeanServer.invoke(objectName, "findAliases", null, null);
-        mapper.removeHost(name, aliases);
+        mapper.removeHost(name);
     }
 
 
