@@ -157,6 +157,7 @@
       </and>
     </condition>
     <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
+    <available property="jmxri.jar.present" file="${jmxri.jar}" />
     <available property="jcert.jar.present" file="${jcert.jar}" />
     <available property="jndi.jar.present" file="${jndi.jar}" />
     <available property="jnet.jar.present" file="${jnet.jar}" />
@@ -262,6 +263,12 @@
         <equals arg1="${javamail.jar.present}" arg2="true" />
       </or>
     </condition>
+    <condition property="copy.jmxri.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${jmxri.jar.present}" arg2="true" />
+      </or>
+    </condition>
     <condition property="copy.jta.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -346,6 +353,7 @@
 
     <echo message="--- Optional Libraries ---" />
     <echo message="javamail.present=${javamail.present}" />
+    <echo message="jmx.present=${jmx.present}" />
     <echo message="jsse.present=${jsse.present}" />
     <echo message="jta.present=${jta.present}" />
     <echo message="junit.present=${junit.present}" />
@@ -362,6 +370,7 @@
     <echo message="tomcat-ajp.jar.present=${tomcat-ajp.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
     <echo message="jdbc20ext.jar.present=${jdbc20ext.jar.present}" />
+    <echo message="jmxri.jar.present=${jmxri.jar.present}" />
     <echo message="jta.jar.present=${jta.jar.present}" />
     <echo message="junit.jar.present=${junit.jar.present}" />
     <echo message="ldap.jar.present=${ldap.jar.present}" />
@@ -381,8 +390,9 @@
     <echo message="--- Distribution flags ---" />
     <echo message="copy.tomcat-ajp.jar=${copy.tomcat-ajp.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
-    <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.javamail.jar=${copy.javamail.jar}" />
+    <echo message="copy.jmxri.jar=${copy.jmxri.jar}" />
+    <echo message="copy.jndi.jar=${copy.jndi.jar}" />
     <echo message="copy.jta.jar=${copy.jta.jar}" />
     <echo message="copy.ldap.jar=${copy.ldap.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
@@ -419,6 +429,9 @@
   <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
   </target>
+  <target name="copy-jmxri.jar" if="copy.jmxri.jar">
+    <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>
+  </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
   </target>
@@ -450,7 +463,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-jdbc20ext.jar,copy-jmxri.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
