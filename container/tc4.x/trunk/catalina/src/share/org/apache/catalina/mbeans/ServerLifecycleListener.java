@@ -626,7 +626,7 @@ public class ServerLifecycleListener
             for (int l = 0; l < cValves.length; l++) {
                 if (debug >= 4)
                     log("Destroying MBean for Valve " + cValves[l]);
-                MBeanUtils.destroyMBean(cValves[l]);
+                MBeanUtils.destroyMBean(cValves[l], context);
             }
             
         }
@@ -673,7 +673,7 @@ public class ServerLifecycleListener
             for (int k = 0; k < eValves.length; k++) {
                 if (debug >= 3)
                     log("Destroying MBean for Valve " + eValves[k]);
-                MBeanUtils.destroyMBean(eValves[k]);
+                MBeanUtils.destroyMBean(eValves[k], engine);
             }
         }
 
@@ -726,7 +726,7 @@ public class ServerLifecycleListener
             for (int k = 0; k < hValves.length; k++) {
                 if (debug >= 3)
                     log("Destroying MBean for Valve " + hValves[k]);
-                MBeanUtils.destroyMBean(hValves[k]);
+                MBeanUtils.destroyMBean(hValves[k], host);
             }
         }
 
@@ -1020,7 +1020,7 @@ public class ServerLifecycleListener
                 valve + "]");
 
         try {
-            MBeanUtils.destroyMBean(valve);
+            MBeanUtils.destroyMBean(valve, container);
         } catch (MBeanException t) {
             Exception e = t.getTargetException();
             if (e == null)

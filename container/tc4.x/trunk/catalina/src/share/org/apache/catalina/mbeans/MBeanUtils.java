@@ -77,6 +77,7 @@ import javax.management.OperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
 import org.apache.catalina.Connector;
+import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
@@ -1653,9 +1654,10 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Valve valve)
+    public static void destroyMBean(Valve valve, Container container)
         throws Exception {
 
+        ((Contained)valve).setContainer(container);
         String mname = createManagedName(valve);
         ManagedBean managed = registry.findManagedBean(mname);
         if (managed == null) {
@@ -1665,6 +1667,11 @@ public class MBeanUtils {
         if (domain == null)
             domain = mserver.getDefaultDomain();
         ObjectName oname = createObjectName(domain, valve);
+        try {
+            ((Contained)valve).setContainer(null);
+        } catch (Throwable t) {
+        ;
+        }
         mserver.unregisterMBean(oname);
 
     }
