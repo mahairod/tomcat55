@@ -481,7 +481,7 @@ public class CoyoteRequest
     /**
      * Associated Catalina connector.
      */
-    protected Connector connector;
+    protected CoyoteConnector connector;
 
     /**
      * Return the Connector through which this Request was received.
@@ -496,7 +496,7 @@ public class CoyoteRequest
      * @param connector The new connector
      */
     public void setConnector(Connector connector) {
-        this.connector = connector;
+        this.connector = (CoyoteConnector) connector;
     }
 
 
@@ -2324,11 +2324,19 @@ public class CoyoteRequest
         Parameters parameters = coyoteRequest.getParameters();
 
         String enc = coyoteRequest.getCharacterEncoding();
+        boolean useBodyEncodingForURI = connector.getUseBodyEncodingForURI();
         if (enc != null) {
             parameters.setEncoding(enc);
+            if (useBodyEncodingForURI) {
+                parameters.setQueryStringEncoding(enc);
+            }
         } else {
             parameters.setEncoding
                 (org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING);
+            if (useBodyEncodingForURI) {
+                parameters.setQueryStringEncoding
+                    (org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING);
+            }
         }
 
         parameters.handleQueryParameters();
@@ -2354,7 +2362,7 @@ public class CoyoteRequest
         int len = getContentLength();
 
         if (len > 0) {
-            int maxPostSize = ((CoyoteConnector) connector).getMaxPostSize();
+            int maxPostSize = connector.getMaxPostSize();
             if ((maxPostSize > 0) && (len > maxPostSize)) {
                 log(sm.getString("coyoteRequest.postTooLarge"));
                 throw new IllegalStateException("Post too large");
