@@ -230,6 +230,26 @@
       <fileset dir="${catalina.home}/build"/>
     </copy>
 
+    <filter token="VERSION" value="${version}"/>
+
+    <!-- Add release notes to the root webapp -->
+    <copy file="./RELEASE-NOTES"
+        tofile="${tomcat.build}/webapps/ROOT/RELEASE-NOTES.txt"
+        filtering="true" />
+
+    <!-- Add documents to the tomcat-docs webapp -->
+    <copy todir="${tomcat.build}/webapps/tomcat-docs">
+      <fileset dir=".">
+        <include name="BUILDING.txt"/>
+        <include name="RUNNING.txt"/>
+      </fileset>
+    </copy>
+    <copy file="./RELEASE-NOTES"
+        tofile="${tomcat.build}/webapps/tomcat-docs/RELEASE-NOTES.txt"
+        filtering="true" />
+    <copy file="./CHANGELOG"
+        tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
+
     <!-- Copy the examples webapps -->
     <copy file="${api.home}/jsr152/dist/examples/examples.war"
           tofile="${tomcat.build}/webapps/jsp-examples.war" />
