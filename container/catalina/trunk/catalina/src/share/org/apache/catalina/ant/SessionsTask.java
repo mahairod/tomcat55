@@ -18,6 +18,7 @@
 package org.apache.catalina.ant;
 
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.apache.tools.ant.BuildException;
@@ -61,7 +62,14 @@ public class SessionsTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/sessions?path=" + URLEncoder.encode(this.path));
+        
+        try {
+            execute("/sessions?path=" + URLEncoder.encode(this.path, getCharset()));
+        } catch (UnsupportedEncodingException e) {
+            throw new BuildException
+                ("Invalid 'charset' attribute: " + getCharset());
+        }
+        
     }
 
 }

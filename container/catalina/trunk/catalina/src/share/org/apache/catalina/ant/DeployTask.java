@@ -21,6 +21,7 @@ package org.apache.catalina.ant;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -175,21 +176,25 @@ public class DeployTask extends AbstractCatalinaTask {
 
         // Building URL
         StringBuffer sb = new StringBuffer("/deploy?path=");
-        sb.append(URLEncoder.encode(this.path));
-        if ((war == null) && (config != null)) {
-            sb.append("&config=");
-            sb.append(URLEncoder.encode(config));
-        }
-        if ((war == null) && (localWar != null)) {
-            sb.append("&war=");
-            sb.append(URLEncoder.encode(localWar));
-        }
-        if (update) {
-            sb.append("&update=true");
-        }
-        if (tag != null) {
-            sb.append("&tag=");
-            sb.append(URLEncoder.encode(tag));
+        try {
+            sb.append(URLEncoder.encode(this.path, getCharset()));
+            if ((war == null) && (config != null)) {
+                sb.append("&config=");
+                sb.append(URLEncoder.encode(config, getCharset()));
+            }
+            if ((war == null) && (localWar != null)) {
+                sb.append("&war=");
+                sb.append(URLEncoder.encode(localWar, getCharset()));
+            }
+            if (update) {
+                sb.append("&update=true");
+            }
+            if (tag != null) {
+                sb.append("&tag=");
+                sb.append(URLEncoder.encode(tag, getCharset()));
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new BuildException("Invalid 'charset' attribute: " + getCharset());
         }
 
         execute(sb.toString(), stream, contentType, contentLength);

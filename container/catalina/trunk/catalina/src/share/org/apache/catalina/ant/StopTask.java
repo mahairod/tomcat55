@@ -18,6 +18,7 @@
 package org.apache.catalina.ant;
 
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.apache.tools.ant.BuildException;
@@ -66,7 +67,12 @@ public class StopTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/stop?path=" + URLEncoder.encode(this.path));
+        try {
+            execute("/stop?path=" + URLEncoder.encode(this.path, getCharset()));
+        } catch (UnsupportedEncodingException e) {
+            throw new BuildException
+                ("Invalid 'charset' attribute: " + getCharset());
+        }
 
     }
 
