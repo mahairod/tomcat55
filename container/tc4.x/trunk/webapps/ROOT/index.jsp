@@ -66,6 +66,7 @@
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
                         <a href="admin">Tomcat Administration</a><br>
+                        <a href="manager/html">Tomcat Manager</a><br>
                         &nbsp;
                     </td>
                 </tr>
