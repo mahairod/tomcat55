@@ -753,28 +753,29 @@ public abstract class AuthenticatorBase
      *              caller is associated
      * @param request   the request that needs to be authenticated
      */
-    protected boolean reauthenticateFromSSO(String ssoId, HttpRequest request) {
+    protected boolean reauthenticateFromSSO
+        (String ssoId, HttpRequest request) {
 
         if (sso == null || ssoId == null)
             return false;
 
         boolean reauthenticated = false;
 
-            Container parent = getContainer();
-            if (parent != null) {
+        Container parent = getContainer();
+        if (parent != null) {
             Realm realm = parent.getRealm();
             if (realm != null) {
                 reauthenticated = sso.reauthenticate(ssoId, realm, request);
-                }
             }
+        }
 
         if (reauthenticated) {
-                associate(ssoId, getSession(request, true));
+            associate(ssoId, getSession(request, true));
 
-                if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 HttpServletRequest hreq = 
-                        (HttpServletRequest) request.getRequest();
-                    log.debug(" Reauthenticated cached principal '" +
+                    (HttpServletRequest) request.getRequest();
+                log.debug(" Reauthenticated cached principal '" +
                           hreq.getUserPrincipal().getName() +
                           "' with auth type '" +  hreq.getAuthType() + "'");
             }
