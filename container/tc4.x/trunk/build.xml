@@ -33,8 +33,11 @@
 
   <!-- ====================== DEPLOY: Deploy Components =================== -->
   <target name="deploy-main" depends="deploy-static">
+    <echo>Target: Catalina - Deploy...</echo>
     <ant dir="./catalina" target="deploy"/>
+    <echo>Target: Jasper - Deploy...</echo>
     <ant dir="./jasper"   target="deploy"/>
+    <echo>Target: Webapps - Deploy...</echo>
     <ant dir="./webapps"  target="deploy"/>
   </target>
 
