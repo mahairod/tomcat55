@@ -350,7 +350,7 @@
             <parameter><name>password</name><value></value></parameter>
             <parameter><name>driverClassName</name>
               <value>org.hsql.jdbcDriver</value></parameter>
-            <parameter><name>driverName</name>
+            <parameter><name>url</name>
               <value>jdbc:HypersonicSQL:database</value></parameter>
           </ResourceParams>
           <Resource name="mail/Session" auth="Container"

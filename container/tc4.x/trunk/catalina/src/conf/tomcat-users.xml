@@ -4,7 +4,7 @@
   you must define such a user - the username and password are arbitrary.
 -->
 <tomcat-users>
-  <user name="tomcat" password="tomcat" roles="tomcat" />
+  <user name="tomcat" password="tomcat" roles="tomcat,admin" />
   <user name="role1"  password="tomcat" roles="role1"  />
   <user name="both"   password="tomcat" roles="tomcat,role1" />
 </tomcat-users>
