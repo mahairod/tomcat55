@@ -106,10 +106,11 @@
   <!-- following initialization parameters (default values are in square    -->
   <!-- brackets):                                                           -->
   <!--                                                                      -->
-  <!--   checkInterval       If development is false and reloading is true, -->
-  <!--                       background compiles are enabled. checkInterval -->
-  <!--                       is the time in seconds between checks to see   -->
-  <!--                       if a JSP page needs to be recompiled. [300]    -->
+  <!--   checkInterval       If development is false and checkInterval is   -->
+  <!--                       greater than zero, background compiles are     -->
+  <!--                       enabled. checkInterval is the time in seconds  -->
+  <!--                       between checks to see if a JSP page needs to   -->
+  <!--                       be recompiled. [300]                           -->
   <!--                                                                      -->
   <!--   modificationTestInterval                                           -->
   <!--                       Causes a JSP (and its dependent files) to not  -->
@@ -159,11 +160,6 @@
   <!--                                                                      -->
   <!--   trimSpaces          Should white spaces in template text between   -->
   <!--                       actions or directives be trimmed?  [false]     -->
-  <!--                                                                      -->
-  <!--   reloading           Should Jasper check for and reload modified    -->
-  <!--                       JSPs in deployment mode (development is set to -->
-  <!--                       false)? If true, background compiles are       -->
-  <!--                       enabled every checkInterval seconds. [false]   -->
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
   <!--                       debugging be suppressed?  [false]              -->
