@@ -19,13 +19,18 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.IntrospectionUtils;
 
@@ -222,6 +227,56 @@ public class ConnectorStoreAppender extends StoreAppender {
             repl = (String) replacements.get(name);
         }
         super.printValue(writer, indent, repl, value);
+    }
+    
+    /*
+     * Print Context Values. <ul><li> Spezial handling to default workDir.
+     * </li><li> Don't save path at external context.xml </li><li> Don't
+     * generate docBase for host.appBase webapps <LI></ul>
+     * 
+     * @see org.apache.catalina.config.StoreAppender#isPrintValue(java.lang.Object,
+     *      java.lang.Object, java.lang.String,
+     *      org.apache.catalina.config.StoreDescription)
+     */
+    public boolean isPrintValue(Object bean, Object bean2, String attrName,
+            StoreDescription desc) {
+        boolean isPrint = super.isPrintValue(bean, bean2, attrName, desc);
+        if (isPrint) {
+            if ("jkHome".equals(attrName)) {
+                Connector connector = ((Connector) bean);
+                File catalinaBase = getCatalinaBase();
+                File jkHomeBase = getJkHomeBase((String) connector
+                        .getProperty("jkHome"), catalinaBase);
+                isPrint = !catalinaBase.equals(jkHomeBase);
+
+            }
+        }
+        return isPrint;
+    }
+
+    protected File getCatalinaBase() {
+
+        File appBase;
+        File file = new File(System.getProperty("catalina.base"));
+        try {
+            file = file.getCanonicalFile();
+        } catch (IOException e) {
+        }
+        return (file);
+    }
+
+    protected File getJkHomeBase(String jkHome, File appBase) {
+
+        File jkHomeBase;
+        File file = new File(jkHome);
+        if (!file.isAbsolute())
+            file = new File(appBase, jkHome);
+        try {
+            jkHomeBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            jkHomeBase = file;
+        }
+        return (jkHomeBase);
     }
 
 }
