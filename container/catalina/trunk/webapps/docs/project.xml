@@ -17,24 +17,23 @@
 
     <menu name="User Guide">
         <item name="1) Introduction"        href="introduction.html"/>
-        <item name="2) Installing"          href="installing.html"/>
-        <item name="3) Running"             href="installing.html"/>
-        <item name="4) My first webapp"     href="appdev/index.html"/>
-        <item name="5) Deployer"            href="deployer-howto.html"/>
-        <item name="6) Manager"             href="manager-howto.html"/>
-        <item name="7) Realms and AAA"      href="realm-howto.html"/>
-        <item name="8) Security Manager"    
+        <item name="2) Setup"               href="setup.html"/>
+        <item name="3) First webapp"     href="appdev/index.html"/>
+        <item name="4) Deployer"            href="deployer-howto.html"/>
+        <item name="5) Manager"             href="manager-howto.html"/>
+        <item name="6) Realms and AAA"      href="realm-howto.html"/>
+        <item name="7) Security Manager"    
               href="security-manager-howto.html"/>
-        <item name="9) JNDI Resources"      href="jndi-resources-howto.html"/>
-        <item name="10) JDBC DataSources"    
+        <item name="8) JNDI Resources"      href="jndi-resources-howto.html"/>
+        <item name="9) JDBC DataSources"    
               href="jndi-datasource-examples-howto.html"/>
-        <item name="11) Classloading"       href="class-loader-howto.html"/>
-        <item name="12) JSPs"               href="jasper-howto.html"/>
-        <item name="13) SSL"                href="ssl-howto.html"/>
-        <item name="14) SSI"                href="ssi-howto.html"/>
-        <item name="15) CGI"                href="cgi-howto.html"/>
-        <item name="16) Proxy Support"      href="proxy-howto.html"/>
-        <item name="17) MBean Descriptor" 
+        <item name="10) Classloading"       href="class-loader-howto.html"/>
+        <item name="11) JSPs"               href="jasper-howto.html"/>
+        <item name="12) SSL"                href="ssl-howto.html"/>
+        <item name="13) SSI"                href="ssi-howto.html"/>
+        <item name="14) CGI"                href="cgi-howto.html"/>
+        <item name="15) Proxy Support"      href="proxy-howto.html"/>
+        <item name="16) MBean Descriptor" 
               href="mbeans-descriptor-howto.html"/>        
     </menu>
 
