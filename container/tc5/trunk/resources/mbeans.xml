@@ -1,0 +1,125 @@
+<project name="modeler-test" default="mini-tomcat" basedir=".">
+  <property name="base.dir" location="/usr/share/java" />
+  <property name="base.src" location="../.." />
+  <property name="tomcat.src" location=".." />
+  <property name="jakarta-commons" location="${base.src}/jakarta-commons" />
+  <property name="jmx.home" location="${base.dir}/jmx-ri_1.2" />
+
+  <property name="tomcat.home" location="${tomcat.src}/build" />
+
+  <property name="modeler.home" location="${jakarta-commons}/modeler/dist" />
+  <property name="commons-logging.jar" location="${jakarta-commons}/logging/dist/commons-logging.jar" />
+ 
+
+  <target name="init">
+    <path id="myJars" >
+      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
+      <pathelement path="${commons-logging.jar}" />
+      <fileset dir="${modeler.home}" includes="*.jar" />
+
+      <fileset dir="${tomcat.home}/server/lib" >
+        <include name="catalina.jar" />
+        <include name="commons-digester.jar" />
+        <include name="commons-beanutils.jar" />
+
+        <include name="tomcat-coyote.jar" />
+        <include name="tomcat-http11.jar" />
+        <include name="tomcat-jk2.jar" />
+        <include name="tomcat-util.jar" />
+      </fileset>
+
+      <fileset dir="${tomcat.home}/common/lib">
+        <include name="servlet-api.jar" />
+        <include name="jsp-api.jar" />
+        <include name="jasper-runtime.jar" />
+        <include name="naming-common.jar" />
+        <include name="naming-factory.jar" />
+        <include name="naming-java.jar" />
+        <include name="naming-resources.jar" />
+        <include name="commons-collections.jar" />
+      </fileset>
+
+    </path>
+
+    <classloader classpathRef="myJars"/>
+
+    <taskdef resource="org/apache/commons/modeler/ant/ant.properties" />
+  
+  </target>
+
+
+  <target name="jmx-console" depends="init">
+    <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
+           name="jmx-console:type=HtmlAdaptorServer,port=9998">
+    </mbean>
+    <jmx-attribute objectName="jmx-console:type=HtmlAdaptorServer,port=9998" 
+                   attribute="Port" type="int" value="9998"/>
+
+    <jmx-operation objectName="jmx-console:type=HtmlAdaptorServer,port=9998"
+                   operation="start" />
+  </target>
+
+
+  <!-- Minimal profile. 
+    -->
+  <target name="mini-tomcat" depends="init">
+    <!-- ==================== Load mbeans ==================== -->
+    <!-- Tomcat will fill in the missing pieces - if a component is 
+         needed default values will be created. 
+
+         For example: The ajp connector will create it's own pool, while the http
+         connector is configured with a specific instance.
+      -->
+
+    <modeler code="org.apache.tomcat.util.threads.ThreadPool"
+           name="tomcat:type=ThreadPool,name=HttpConnectorPool" />
+
+    <mbean code="org.apache.commons.modeler.BaseModelMBean"
+           name="tomcat:type=HttpConnector,port=9080" >
+      <arg type="java.lang.String" >org.apache.coyote.http11.Http11Protocol</arg>
+    </mbean>
+
+    <modeler code="org.apache.catalina.core.StandardServer"
+           name="tomcat:type=Server" />
+
+    <modeler code="org.apache.catalina.core.StandardHost"
+           name="tomcat:type=Host,host=default" />
+
+    <modeler code="org.apache.catalina.core.StandardContext"
+           name="tomcat:type=Context,host=default,context=/" />
+
+
+    <!-- ==================== Customization ==================== -->
+    <!-- This should be made persistent - model mbean should be able to save this
+         ( in the standalone version, not the ant file )
+      -->
+    <!--
+    <jmx-attribute objectName="tomcat:type=HttpConnector,port=9080" 
+                   attribute="poolName" 
+                   value="tomcat:type=ThreadPool,name=HttpConnectorPool" />   
+    -->
+
+    <jmx-attribute objectName="tomcat:type=Host,host=default" 
+                   attribute="appBase" 
+                   value="webapps" />   
+
+    <jmx-attribute objectName="tomcat:type=ThreadPool,name=HttpConnectorPool"
+                   attribute="daemon"
+                   type="boolean"
+                   value="false" />
+
+    <!-- ==================== Start the server ==================== -->
+    <!-- 
+      -->
+    <jmx-operation objectName="tomcat:type=Server" 
+                   operation="start" />
+
+    <jmx-operation objectName="tomcat:type=ThreadPool,name=HttpConnectorPool"
+                   operation="start" />
+
+    <jmx-operation objectName="tomcat:type=Server" 
+                   operation="await" />
+
+  </target>
+
+</project>
