@@ -43,7 +43,7 @@ public class ResponseIncludeWrapper extends HttpServletResponseWrapper {
      * and ServletOutputStream.
      *
      * @param res The HttpServletResponse to use
-     * @param out The ServletOutputStream' to use
+     * @param originalServletOutputStream The ServletOutputStream' to use
      */
     public ResponseIncludeWrapper(HttpServletResponse res,
                                   ServletOutputStream originalServletOutputStream) {
