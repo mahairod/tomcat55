@@ -593,9 +593,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         " <td class=\"row-left\">\n" +
         "  <small>\n" +
         "  &nbsp;{1}&nbsp;\n" +
-        "  &nbsp;<a href=\"{2}\">{3}</a>&nbsp;\n" +
-        "  &nbsp;<a href=\"{4}\">{5}</a>&nbsp;\n" +
-        "  &nbsp;<a href=\"{6}\">{7}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{2}\" onclick=\"return(confirm('Are you sure?'))\">{3}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{4}\" onclick=\"return(confirm('Are you sure?'))\">{5}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{6}\" onclick=\"return(confirm('Are you sure?'))\">{7}</a>&nbsp;\n" +
         "  </small>\n" +
         " </td>\n" +
         "</tr>\n";
@@ -603,10 +603,10 @@ public final class HTMLManagerServlet extends ManagerServlet {
     private static final String STOPPED_APPS_ROW_BUTTON_SECTION =
         " <td class=\"row-left\">\n" +
         "  <small>\n" +
-        "  &nbsp;<a href=\"{0}\">{1}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{0}\" onclick=\"return(confirm('Are you sure?'))\">{1}</a>&nbsp;\n" +
         "  &nbsp;{3}&nbsp;\n" +
         "  &nbsp;{5}&nbsp;\n" +
-        "  &nbsp;<a href=\"{6}\">{7}</a>&nbsp;\n" +
+        "  &nbsp;<a href=\"{6}\" onclick=\"return(confirm('Are you sure?'))\">{7}</a>&nbsp;\n" +
         "  </small>\n" +
         " </td>\n" +
         "</tr>\n";
