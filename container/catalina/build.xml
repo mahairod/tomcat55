@@ -502,7 +502,7 @@
           file="${commons-fileupload.jar}"/>
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
-    <copy tofile="${catalina.build}/common/lib/jmx.jar" file="${jmx.jar}"/>
+    <copy tofile="${catalina.build}/bin/jmx.jar" file="${jmx.jar}"/>
   </target>
   <target name="copy-launcher.jars" if="copy.launcher.jars">
     <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/>
