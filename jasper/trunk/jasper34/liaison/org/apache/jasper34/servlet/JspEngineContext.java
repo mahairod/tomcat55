@@ -64,9 +64,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import org.apache.jasper34.generator.*;
-import org.apache.jasper34.generator.Compiler;
+import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.*;
+import org.apache.jasper34.parser.*;
 import org.apache.jasper34.javacompiler.*;
 
 import org.apache.tomcat.util.log.*;

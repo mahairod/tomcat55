@@ -73,7 +73,7 @@ import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.javacompiler.*;
-import org.apache.jasper34.generator.Compiler;
+import org.apache.jasper34.core.Compiler;
 
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.facade.*;

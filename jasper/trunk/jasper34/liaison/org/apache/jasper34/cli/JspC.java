@@ -61,7 +61,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.jasper34.generator.*;
-import org.apache.jasper34.generator.Compiler;
+import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.core.*;
 
