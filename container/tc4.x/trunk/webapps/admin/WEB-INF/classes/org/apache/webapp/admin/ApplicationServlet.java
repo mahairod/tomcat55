@@ -95,13 +95,6 @@ public class ApplicationServlet extends ActionServlet {
     public static final String LOCALES_KEY = "applicationLocales";
 
 
-    /**
-     * The application scope key under which we store our
-     * <code>TreeBuilders</code> instance.
-     */
-    public static final String TREEBUILDERS_KEY = "treeBuilders";
-
-
     // ----------------------------------------------------- Instance Variables
 
 
@@ -161,9 +154,6 @@ public class ApplicationServlet extends ActionServlet {
         // Perform initialization specific to this application
         initApplicationLocales();
 
-        // Perform initialization of list of TreeBuilder classes
-        initTreeBuilders();
-
     }
 
 
@@ -178,37 +168,6 @@ public class ApplicationServlet extends ActionServlet {
 
         ApplicationLocales locales = new ApplicationLocales(this);
         getServletContext().setAttribute(LOCALES_KEY, locales);
-
-    }
-
-
-    /**
-     * Create and initialize the TreeBuilders object, and make it
-     * available as a servlet context attribute.
-     */
-    protected void initTreeBuilders() {
-
-        // Get the list of tree nodes that we must build from web.xml
-        String value = getServletConfig().getInitParameter("treebuilders");
-        if (value == null || value.length() < 1 )
-            return;
-
-        // Parse each comma-delimited entry
-        int start = 0;
-        int end = 0;
-        while (true) {
-
-            // Extract the next comma-delimited entry
-            end = value.lastIndexOf(",", start);
-            if (end == -1)
-                end = value.length();
-            String entry = value.substring(start, end).trim();
-            TreeBuilders.treeBuilders.add(value);
-            if (end == value.length())
-                break;
-            start = end;   // For the following entry
-
-        }
 
     }
 
