@@ -65,6 +65,7 @@ public class SetpropBean {
           private int num=0;
           private String str;
           private int[] intAry={15,20,35};
+          private String bar = "read-only";
           
   /**
    * Property 'Str'
@@ -113,5 +114,14 @@ public class SetpropBean {
     public void setIntAry(int[] i){
     this.intAry=i;
     }    
+
+    /**
+     * property 'bar'
+     * This is a read only property
+     */
+    
+    public String getBar() {
+        return bar;
+    }
     
 }  

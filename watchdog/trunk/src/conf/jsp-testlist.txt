@@ -177,6 +177,10 @@ org.apache.jcheck.jsp.client.core_syntax.directives.taglib.positiveTagLib
 #org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeDupIDSession1
 #org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeInvalidClass
 #org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeNoBody
-#org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativePropSyntax
-#org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetProps
+org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativeSetPropNotWrite
+org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativeSetPropNotProperty
+org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativePropSyntax
+org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetProps
+org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetPropNotRead
+org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetPropNotProperty
 

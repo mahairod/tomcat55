@@ -63,7 +63,7 @@ public class StringBean {
       //Declaring the variables 
           private String name="hello";
           private int[] intAry={5,10,15};
-  
+          private String bar="write-only";  
   /**
    * Property 'name'
    */
@@ -88,4 +88,12 @@ public class StringBean {
     this.intAry=i;
     }
     
+    /**
+     * Property 'bar'
+     * String and Write only
+     */
+   
+    public void setBar(String s) {
+        this.bar=s;
+    }
 }  

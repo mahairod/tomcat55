@@ -9,6 +9,6 @@
 **/  %>	 
 <!-- Declaring the bean with out body -->
 <jsp:useBean id="myBean" scope="request" class="core_syntax.beantests.getProperty.StringBean" />
-<jsp:getProperty name="myBean" property="Name" />
+<jsp:getProperty name="myBean" property="name" />
 </body>
 </html> 

@@ -75,7 +75,7 @@ public class negativePropSyntax extends NegativeJspCheckTest {
         TestResult testResult = null;
 	HttpURLConnection connection = null;
 
-        setErrorCode (404);
+        setErrorCode (500);
 
 	try {
 	    connection = getConnection();
