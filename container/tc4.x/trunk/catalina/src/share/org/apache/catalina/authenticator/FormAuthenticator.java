@@ -74,7 +74,6 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
@@ -129,7 +128,7 @@ public class FormAuthenticator
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -148,14 +147,29 @@ public class FormAuthenticator
 
         // Have we already authenticated someone?
         Principal principal = hreq.getUserPrincipal();
+        String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (debug >= 1)
                 log("Already authenticated '" +
                     principal.getName() + "'");
-            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+            // Associate the session with any existing SSO session
             if (ssoId != null)
                 associate(ssoId, getSession(request, true));
             return (true);
+        }
+
+        // Is there an SSO session against which we can try to reauthenticate?
+        if (ssoId != null) {
+            if (debug >= 1)
+                log("SSO Id " + ssoId + " set; attempting reauthentication");
+            // Try to reauthenticate using data cached by SSO.  If this fails,
+            // either the original SSO logon was of DIGEST or SSL (which
+            // we can't reauthenticate ourselves because there is no
+            // cached username and password), or the realm denied
+            // the user's reauthentication for some reason.
+            // In either case we have to prompt the user for a logon */
+            if (reauthenticateFromSSO(ssoId, request))
+                return true;
         }
 
         // Have we authenticated this user before but have caching disabled?
@@ -195,9 +209,6 @@ public class FormAuthenticator
             register(request, response, principal, Constants.FORM_METHOD,
                      (String) session.getNote(Constants.SESS_USERNAME_NOTE),
                      (String) session.getNote(Constants.SESS_PASSWORD_NOTE));
-            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
-            if (ssoId != null)
-                associate(ssoId, session);
             if (restoreRequest(request, session)) {
                 if (debug >= 1)
                     log("Proceed to restored request");
@@ -377,7 +388,7 @@ public class FormAuthenticator
             while (paramNames.hasNext()) {
                 String paramName = (String) paramNames.next();
                 String paramValues[] =
-                    (String[]) saved.getParameterValues(paramName);
+                    saved.getParameterValues(paramName);
                 request.addParameter(paramName, paramValues);
             }
         }

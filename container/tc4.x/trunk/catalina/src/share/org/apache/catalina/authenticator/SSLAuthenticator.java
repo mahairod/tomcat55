@@ -73,10 +73,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
 import org.apache.catalina.deploy.LoginConfig;
 
 
@@ -124,7 +121,7 @@ public class SSLAuthenticator
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -137,11 +134,41 @@ public class SSLAuthenticator
         // Have we already authenticated someone?
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (debug >= 1)
                 log("Already authenticated '" + principal.getName() + "'");
+            // Associate the session with any existing SSO session in order
+            // to get coordinated session invalidation at logout
+            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+            if (ssoId != null)
+                associate(ssoId, getSession(request, true));
             return (true);
         }
+
+        // NOTE: We don't try to reauthenticate using any existing SSO session,
+        // because that will only work if the original authentication was
+        // BASIC or FORM, which are less secure than the CLIENT-CERT auth-type
+        // specified for this webapp
+        //
+        // Uncomment below to allow previous FORM or BASIC authentications
+        // to authenticate users for this webapp
+        // TODO make this a configurable attribute (in SingleSignOn??)
+        /*
+        // Is there an SSO session against which we can try to reauthenticate?
+        if (ssoId != null) {
+            if (debug >= 1)
+                log("SSO Id " + ssoId + " set; attempting reauthentication");
+            // Try to reauthenticate using data cached by SSO.  If this fails,
+            // either the original SSO logon was of DIGEST or SSL (which
+            // we can't reauthenticate ourselves because there is no
+            // cached username and password), or the realm denied
+            // the user's reauthentication for some reason.
+            // In either case we have to prompt the user for a logon
+            if (reauthenticateFromSSO(ssoId, request))
+                return true;
+        }
+        */
 
         // Retrieve the certificate chain for this client
         HttpServletResponse hres =

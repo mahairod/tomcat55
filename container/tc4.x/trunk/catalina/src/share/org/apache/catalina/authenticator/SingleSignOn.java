@@ -145,6 +145,14 @@ public class SingleSignOn
      */
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
+    
+    /**
+     * Indicates whether this valve should require a downstream Authenticator to
+     * reauthenticate each request, or if it itself can bind a UserPrincipal
+     * and AuthType object to the request.
+     */
+    private boolean requireReauthentication = false;
+
 
     /**
      * The cache of single sign on identifiers, keyed by the Session that is
@@ -188,6 +196,75 @@ public class SingleSignOn
 
         this.debug = debug;
 
+    }
+
+
+    /**
+     * Gets whether each request needs to be reauthenticated (by an
+     * Authenticator downstream in the pipeline) to the security
+     * <code>Realm</code>, or if this Valve can itself bind security info
+     * to the request based on the presence of a valid SSO entry without
+     * rechecking with the <code>Realm</code..
+     *
+     * @return  <code>true</code> if it is required that a downstream
+     *          Authenticator reauthenticate each request before calls to
+     *          <code>HttpServletRequest.setUserPrincipal()</code>
+     *          and <code>HttpServletRequest.setAuthType()</code> are made;
+     *          <code>false</code> if the <code>Valve</code> can itself make
+     *          those calls relying on the presence of a valid SingleSignOn
+     *          entry associated with the request.
+     *
+     * @see #setRequireReauthentication
+     */
+    public boolean getRequireReauthentication()
+    {
+        return requireReauthentication;
+    }
+
+
+    /**
+     * Sets whether each request needs to be reauthenticated (by an
+     * Authenticator downstream in the pipeline) to the security
+     * <code>Realm</code>, or if this Valve can itself bind security info
+     * to the request, based on the presence of a valid SSO entry, without
+     * rechecking with the <code>Realm</code.
+     * <p>
+     * If this property is <code>false</code> (the default), this
+     * <code>Valve</code> will bind a UserPrincipal and AuthType to the request
+     * if a valid SSO entry is associated with the request.  It will not notify
+     * the security <code>Realm</code> of the incoming request.
+     * <p>
+     * This property should be set to <code>true</code> if the overall server
+     * configuration requires that the <code>Realm</code> reauthenticate each
+     * request thread.  An example of such a configuration would be one where
+     * the <code>Realm</code> implementation provides security for both a
+     * web tier and an associated EJB tier, and needs to set security
+     * credentials on each request thread in order to support EJB access.
+     * <p>
+     * If this property is set to <code>true</code>, this Valve will set flags
+     * on the request notifying the downstream Authenticator that the request
+     * is associated with an SSO session.  The Authenticator will then call its
+     * {@link AuthenticatorBase#reauthenticateFromSSO reauthenticateFromSSO}
+     * method to attempt to reauthenticate the request to the
+     * <code>Realm</code>, using any credentials that were cached with this
+     * Valve.
+     * <p>
+     * The default value of this property is <code>false</code>, in order
+     * to maintain backward compatibility with previous versions of Tomcat.
+     *
+     * @param required  <code>true</code> if it is required that a downstream
+     *                  Authenticator reauthenticate each request before calls
+     *                  to  <code>HttpServletRequest.setUserPrincipal()</code>
+     *                  and <code>HttpServletRequest.setAuthType()</code> are
+     *                  made; <code>false</code> if the <code>Valve</code> can
+     *                  itself make those calls relying on the presence of a
+     *                  valid SingleSignOn entry associated with the request.
+     *
+     * @see AuthenticatorBase#reauthenticateFromSSO
+     */
+    public void setRequireReauthentication(boolean required)
+    {
+        this.requireReauthentication = required;
     }
 
 
@@ -299,9 +376,23 @@ public class SingleSignOn
         }
         if (ssoId == null)
             return;
+        
 
-        // Deregister this single session id, invalidating associated sessions
-        deregister(ssoId);
+        /*
+         *  Was the session destroyed as the result of a timeout?
+         *  If so, we'll just remove the expired session from the
+         *  SSO.  If the session was logged out, we'll log out
+         *  of all session associated with the SSO.
+         */
+        if (System.currentTimeMillis() - session.getLastAccessedTime() >=
+                session.getMaxInactiveInterval() * 1000) {            
+            removeSession(ssoId, session);
+        }
+        else {
+            // The session was logged out.
+            // Deregister this single session id, invalidating associated sessions
+            deregister(ssoId);
+        }
 
     }
 
@@ -384,11 +475,14 @@ public class SingleSignOn
         if (entry != null) {
             if (debug >= 1)
                 log(" Found cached principal '" +
-                    entry.principal.getName() + "' with auth type '" +
-                    entry.authType + "'");
+                    entry.getPrincipal().getName() + "' with auth type '" +
+                    entry.getAuthType() + "'");
             request.setNote(Constants.REQ_SSOID_NOTE, cookie.getValue());
-            ((HttpRequest) request).setAuthType(entry.authType);
-            ((HttpRequest) request).setUserPrincipal(entry.principal);
+            // Only set security elements if reauthentication is not required
+            if (!getRequireReauthentication()) {
+                ((HttpRequest) request).setAuthType(entry.getAuthType());
+                ((HttpRequest) request).setUserPrincipal(entry.getPrincipal());
+            }
         } else {
             if (debug >= 1)
                 log(" No cached principal found, erasing SSO cookie");
@@ -510,6 +604,81 @@ public class SingleSignOn
 
     }
 
+    
+    /**
+     * Remove a single Session from a SingleSignOn.  Called when
+     * a session is timed out and no longer active.
+     *
+     * @param ssoId Single sign on identifier from which to remove the session.
+     * @param session the session to be removed.
+     */
+    void removeSession(String ssoId, Session session) {
+        
+        if (debug >= 1)
+            log("Removing session " + session.toString() + " from sso id " + 
+                ssoId );
+        
+        // Get a reference to the SingleSignOn
+        SingleSignOnEntry entry = lookup(ssoId);
+        if (entry == null)
+            return;
+       
+        // Remove the inactive session from SingleSignOnEntry
+        entry.removeSession(session);
+    
+        // Remove the inactive session from the 'reverse' Map.
+        synchronized(reverse) {
+            reverse.remove(session);
+        }
+    
+        // If there are not sessions left in the SingleSignOnEntry,
+        // deregister the entry.
+        if (entry.findSessions().length == 0) {
+            deregister(ssoId);
+        }
+    }
+
+    
+    /**
+     * Updates any <code>SingleSignOnEntry</code> found under key
+     * <code>ssoId</code> with the given authentication data.
+     * <p>
+     * The purpose of this method is to allow an SSO entry that was
+     * established without a username/password combination (i.e. established
+     * following DIGEST or CLIENT-CERT authentication) to be updated with
+     * a username and password if one becomes available through a subsequent
+     * BASIC or FORM authentication.  The SSO entry will then be usable for
+     * reauthentication.
+     * <p>
+     * <b>NOTE:</b> Only updates the SSO entry if a call to
+     * <code>SingleSignOnEntry.getCanReauthenticate()</code> returns
+     * <code>false</code>; otherwise, it is assumed that the SSO entry already
+     * has sufficient information to allow reauthentication and that no update
+     * is needed.
+     *
+     * @param ssoId identifier of Single sign to be updated
+     * @param principal the <code>Principal</code> returned by the latest
+     *                  call to <code>Realm.authenticate</code>.
+     * @param authType  the type of authenticator used (BASIC, CLIENT-CERT,
+     *                  DIGEST or FORM)
+     * @param username  the username (if any) used for the authentication
+     * @param password  the password (if any) used for the authentication
+     */
+    void update(String ssoId, Principal principal, String authType,
+                  String username, String password) {
+
+        SingleSignOnEntry sso = lookup(ssoId);
+        if (sso != null && !sso.getCanReauthenticate()) {
+            if (debug >= 1)
+                log("Update sso id " + ssoId + " to auth type " + authType);
+
+            synchronized(sso) {
+                sso.updateCredentials(principal, authType, username, password);
+            }
+
+        }
+    }
+
 
     // ------------------------------------------------------ Protected Methods
 
@@ -561,53 +730,6 @@ public class SingleSignOn
             return ((SingleSignOnEntry) cache.get(ssoId));
         }
 
-    }
-
-
-}
-
-
-// ------------------------------------------------------------ Private Classes
-
-
-/**
- * A private class representing entries in the cache of authenticated users.
- */
-class SingleSignOnEntry {
-
-    public String authType = null;
-
-    public String password = null;
-
-    public Principal principal = null;
-
-    public Session sessions[] = new Session[0];
-
-    public String username = null;
-
-    public SingleSignOnEntry(Principal principal, String authType,
-                             String username, String password) {
-        super();
-        this.principal = principal;
-        this.authType = authType;
-        this.username = username;
-        this.password = password;
-    }
-
-    public synchronized void addSession(SingleSignOn sso, Session session) {
-        for (int i = 0; i < sessions.length; i++) {
-            if (session == sessions[i])
-                return;
-        }
-        Session results[] = new Session[sessions.length + 1];
-        System.arraycopy(sessions, 0, results, 0, sessions.length);
-        results[sessions.length] = session;
-        sessions = results;
-        session.addSessionListener(sso);
-    }
-
-    public synchronized Session[] findSessions() {
-        return (this.sessions);
     }
 
 }
