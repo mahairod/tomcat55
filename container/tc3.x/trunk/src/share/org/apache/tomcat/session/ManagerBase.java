@@ -117,7 +117,7 @@ public abstract class ManagerBase implements Manager {
      * The default maximum inactive interval for Sessions created by
      * this Manager.
      */
-    protected int maxInactiveInterval = -1;
+    protected int maxInactiveInterval = 60;
 
 
     /**
