@@ -225,7 +225,11 @@
 	
 
       <!-- Add the following attributes if you want to turn XML validation
-           on.i remember to comment the Host element above. -->
+           on. Remember to comment the Host element above. 
+           
+           Note: XML Schema validationn will works with Xerces 2.0.1 or 
+           Xerces 2.1. Xerces 2.0.2 and Xerces 2.2 have bugs that prevent 
+           their use with Tomcat-->
       <!--
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true"
