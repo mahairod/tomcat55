@@ -198,6 +198,12 @@ public class EditContextAction extends Action {
             contextFm.setOverride
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
+	    attribute = "antiJARLocking";
+	    contextFm.setAntiJarLocking
+		(((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+	    attribute = "antiResourceLocking";
+	    contextFm.setAntiResourceLocking
+		(((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             // loader properties
             //attribute = "checkInterval";
             //contextFm.setLdrCheckInterval

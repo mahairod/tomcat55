@@ -194,6 +194,28 @@
             </controls:data>
         </controls:row>
 
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="antiJarLocking">
+            <controls:label><bean:message key="context.antiJarLocking"/>:</controls:label>
+            <controls:data>
+                <html:select property="antiJarLocking" styleId="antiJarLocking">
+                     <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="antiResourceLocking">
+            <controls:label><bean:message key="context.antiResourceLocking"/>:</controls:label>
+            <controls:data>
+                <html:select property="antiResourceLocking" styleId="antiResourceLocking">
+                     <bean:define id="booleanVals" name="contextForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
 <%-- input only allowed on create transaction >
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="workdir">
             <controls:label><bean:message key="context.workdir"/>:</controls:label>
