@@ -39,6 +39,11 @@
                type="java.lang.String"
                writeable="false"/>
 
+    <attribute name="configBaseName"
+               description="The base directory for Context configuration files"
+               type="java.lang.String"
+               writeable="false" />
+
     <attribute name="configClass"
                description="The Java class name of the Context configuration class we should use"
                type="java.lang.String"/>
@@ -74,6 +79,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation name="manageApp"
+               description="Add a web application managed externally"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="context"
+                 description="Context to add"
+                 type="org.apache.catalina.Context" />
+    </operation>
+
     <operation name="removeServiced"
                description="Add a web application name to the serviced list"
                impact="ACTION"
@@ -81,6 +95,15 @@
       <parameter name="name"
                  description="Application name"
                  type="java.lang.String"/>
+    </operation>
+
+    <operation name="unmanageApp"
+               description="Remove a web application from checks"
+               impact="ACTION"
+               returnType="void">
+      <parameter name="contextPath"
+                 description="The application path"
+                 type="java.lang.String" />
     </operation>
 
   </mbean>
