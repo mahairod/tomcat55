@@ -281,6 +281,26 @@
           <responseMatch match="postInclude1:c = [ l ]" />
       </httpClient>
     
+      <httpClient>
+          <comment>2 RequestDispatchers, Body read in the second </comment>
+          <httpRequest 
+              path="/test/servlet/params.IncludeIncludeISParams" 
+              method="POST">
+             <param name="a" value="k" type="GET" />
+             <param name="c" value="l" type="GET"/>
+             <param name="a" value="m" type="POST"/>
+             <param name="b" value="n" type="POST"/>
+          </httpRequest>
+          <!-- BODY - read with IS, inside the included servlet -->
+          <responseMatch match="a=m&amp;b=n" />
+
+          <responseMatch match="/include1:c = [ l ]" />
+          <responseMatch match="/include1:a = [ b , x , k ]" />
+          <responseMatch match="/include1:a = [ m ]" magnitude="false" />
+          <responseMatch match="postInclude1:a = [ x , k ]" />
+          <responseMatch match="postInclude0:a = [ k ]" />
+      </httpClient>
+    
 
 
   </target>
