@@ -272,6 +272,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 tok = nextArg();
                 if (tok != null) {
                     scratchDir = new File(new File(tok).getAbsolutePath());
+                    dirset = false;
                 } else {
                     // either an in-java call with an explicit null
                     // or a "-d --" sequence should cause this,
@@ -322,8 +323,7 @@ public class JspC implements Options { //, JspCompilationContext {
     public boolean parseFile(PrintStream log, String file, Writer servletout, Writer mappingout)
     {
         try {
-            JasperLoader loader =
-                    new JasperLoader();
+            JasperLoader loader = new JasperLoader();
 	    loader.setParentClassLoader(getClass().getClassLoader());
 	    loader.setOptions( this);
             CommandLineContext clctxt = new CommandLineContext(
@@ -340,12 +340,19 @@ public class JspC implements Options { //, JspCompilationContext {
             if (dirset) {
                 clctxt.setOutputInDirs(true);
             }
-            File uriDir = new File(clctxt.getRealPath("/"));
-            if (uriDir.exists()) {
-                if ((new File(uriDir, "WEB-INF/classes")).exists()) {
-                    loader.addJar(clctxt.getRealPath("/WEB-INF/classes"));
+            if (new File(clctxt.getRealPath("/")).exists()) {
+                File classes = new File(clctxt.getRealPath("/WEB-INF/lib"));
+                try {
+                     if (classes.exists()) {
+                        loader.addJar(classes.getCanonicalPath());
+                    }
+                } catch (IOException ioe) {
+                    // failing a toCanonicalPath on a file that
+                    // exists() should be a JVM regression test,
+                    // therefore we have permission to freak out
+                    throw new RuntimeException(ioe.toString());
                 }
-                File lib = new File(clctxt.getRealPath("WEB-INF/lib"));
+                File lib = new File(clctxt.getRealPath("/WEB-INF/lib"));
                 if (lib.exists() && lib.isDirectory()) {
                     String[] libs = lib.list();
                     for (int i = 0; i < libs.length; i++) {

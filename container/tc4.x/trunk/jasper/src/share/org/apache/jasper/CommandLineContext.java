@@ -116,6 +116,7 @@ public class CommandLineContext implements JspCompilationContext {
         uriBase = newUriBase;
         String tUriRoot = newUriRoot;
         jspFile = newJspFile;
+        // hack fix for resolveRelativeURI
         errPage = newErrPage;
         options = newOptions;
 
@@ -331,7 +332,9 @@ public class CommandLineContext implements JspCompilationContext {
      * uses current file as the base.
      */
     public String resolveRelativeUri(String uri) {
-        if (uri.startsWith("/")) {
+        // sometimes we get uri's massaged from File(String), so check for
+        // a root directory deperator char
+        if (uri.startsWith("/") || uri.startsWith(File.separator)) {
             return uri;
         } else {
             return uriBase + uri;
