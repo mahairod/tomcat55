@@ -24,6 +24,7 @@
   <property name="catalina.project"      value="jakarta-tomcat-catalina" />
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
+  <property name="ant.jar"               value="${ant.home}/lib/ant.jar"/>
   <property name="cvstag"                value="" />
   <property name="cvs.base"
            value="${basedir}/.."/>
@@ -149,6 +150,8 @@
     -->
     <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
+
+    <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
   </target>
 
   <!-- ====================== Build all components =================== -->
