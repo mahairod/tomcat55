@@ -129,7 +129,7 @@ final class ApplicationDispatcher
             this.response = response;
         }
 
-        public Object run() throws ServletException, IOException {
+        public Object run() throws java.lang.Exception {
             doForward(request,response);
             return null;
         }
@@ -397,17 +397,10 @@ final class ApplicationDispatcher
 
             if ( log.isDebugEnabled() )
                 log.debug(" Non-HTTP Forward");
-            // only set the Dispatcher Type to Forward if it has not been set. It will have
-            // been set by the ErrorDispatcherValue in the case of an ERROR
-            // it will be REQUEST coming in from the StandardWrapperValue and 
-            // ERROR coming from the ErrorDispatcherValue
-            if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
-                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
-                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
-                }
-            }
+            
+            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
+            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+
             invoke(request, response);
         }
 
@@ -416,17 +409,11 @@ final class ApplicationDispatcher
 
             if ( log.isDebugEnabled() )
                 log.debug(" Named Dispatcher Forward");
-            // only set the Dispatcher Type to Forward if it has not been set. It will have
-            // been set by the ErrorDispatcherValue in the case of an ERROR
-            // it will be REQUEST coming in from the StandardWrapperValue and 
-            // ERROR coming from the ErrorDispatcherValue
-            if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
-                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
-                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-                    request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
-                }
-            }
+
+            
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+            
             invoke(request, response);
 
         }
@@ -468,17 +455,9 @@ final class ApplicationDispatcher
 		wrequest.setQueryParams(queryString);
             }
 
-            // only set the Dispatcher Type to Forward if it has not been set. It will have
-            // been set by the ErrorDispatcherValue in the case of an ERROR
-            // it will be REQUEST coming in from the StandardWrapperValue and 
-            // ERROR coming from the ErrorDispatcherValue
-            if (wrequest.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
-                Integer disInt = (Integer)request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
-                if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
-                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-                    wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
-                }
-            }
+            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
+            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+ 
             invoke(outerRequest, response);
             unwrapRequest();
 
@@ -686,6 +665,7 @@ final class ApplicationDispatcher
         ServletException servletException = null;
         RuntimeException runtimeException = null;
         boolean unavailable = false;
+              
 
         // Check for the servlet being marked unavailable
         if (wrapper.isUnavailable()) {
@@ -727,6 +707,7 @@ final class ApplicationDispatcher
                               wrapper.getName()), e);
             servlet = null;
         }
+                
         // Get the FilterChain Here
         ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
         ApplicationFilterChain filterChain = factory.createFilterChain(request,
