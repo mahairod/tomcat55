@@ -158,7 +158,7 @@
     <xsl:variable name="name">
       <xsl:value-of select="@name"/>
     </xsl:variable>
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
+    <table border="0" cellspacing="0" cellpadding="2">
       <!-- Section heading -->
       <tr><td bgcolor="{$banner-bg}">
           <font color="{$banner-fg}" face="arial,helvetica.sanserif">
@@ -178,7 +178,7 @@
     <xsl:variable name="name">
       <xsl:value-of select="@name"/>
     </xsl:variable>
-    <table border="0" cellspacing="0" cellpadding="2" width="100%">
+    <table border="0" cellspacing="0" cellpadding="2">
       <!-- Subsection heading -->
       <tr><td bgcolor="{$sub-banner-bg}">
           <font color="{$sub-banner-fg}" face="arial,helvetica.sanserif">
@@ -240,9 +240,6 @@
 
   <!-- Process an attributes list with nested attribute elements -->
   <xsl:template match="attributes">
-<!--
-    <table border="1" cellpadding="5" width="100%">
--->
     <table border="1" cellpadding="5">
       <tr>
         <th width="15%" bgcolor="{$attributes-color}">
