@@ -690,11 +690,6 @@ public final class CoyoteConnector
      */
     public ServerSocketFactory getFactory() {
 
-        if (this.factory == null) {
-            synchronized (this) {
-                this.factory = new DefaultServerSocketFactory();
-            }
-        }
         return (this.factory);
 
     }
@@ -1314,7 +1309,7 @@ public final class CoyoteConnector
                                            ssf.getCiphers());
         } else {
             IntrospectionUtils.setProperty(protocolHandler, "secure",
-                                           "" + false);
+                                           "" + secure);
         }
 
         /* Set the configured properties.  This only sets the ones that were
@@ -1325,7 +1320,8 @@ public final class CoyoteConnector
         while( keys.hasNext() ) {
             String name = (String)keys.next();
             String value = properties.get(name).toString();
-            IntrospectionUtils.setProperty(protocolHandler, name, value);
+	    String trnName = translateAttributeName(name);
+            IntrospectionUtils.setProperty(protocolHandler, trnName, value);
         }
         
 
@@ -1336,6 +1332,27 @@ public final class CoyoteConnector
                 (sm.getString
                  ("coyoteConnector.protocolHandlerInitializationFailed", e));
         }
+    }
+
+    /**
+     * Translate the attribute name from the legacy Factory names to their
+     * internal protocol names.
+     */
+    private String translateAttributeName(String name) {
+	if("clientAuth".equals(name)) {
+	    return "clientauth";
+	} else if("keystoreFile".equals(name)) {
+	    return "keystore";
+	} else if("randomFile".equals(name)) {
+	    return "randomfile";
+	} else if("rootFile".equals(name)) {
+	    return "rootfile";
+	} else if("keystorePass".equals(name)) {
+	    return "keypass";
+	} else if("keystoreType".equals(name)) {
+	    return "keytype";
+	}
+	return name;
     }
 
 
