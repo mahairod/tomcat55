@@ -78,6 +78,7 @@ import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Container;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Wrapper;
 
 /**
@@ -99,8 +100,10 @@ public final class ApplicationFilterFactory {
     public static final int REQUEST = 8;
     public static final Integer REQUEST_INTEGER = new Integer(REQUEST);
 
-    public static final String DISPATCHER_TYPE_ATTR="org.apache.catalina.core.DISPATCHER_TYPE";
-    public static final String DISPATCHER_REQUEST_PATH_ATTR="org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
+    public static final String DISPATCHER_TYPE_ATTR = 
+        Globals.DISPATCHER_TYPE_ATTR;
+    public static final String DISPATCHER_REQUEST_PATH_ATTR = 
+        Globals.DISPATCHER_REQUEST_PATH_ATTR;
 
     private static final SecurityManager securityManager = 
         System.getSecurityManager();
