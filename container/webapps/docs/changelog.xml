@@ -29,6 +29,9 @@
       <fix>
         <bug>30245</bug>: Corrected Connector documentation to list "address" as a common attribute. (yoavs)
       </fix>
+      <fix>
+        <bug>29826</bug>: Modified setclasspath.bat exit code to 1. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
