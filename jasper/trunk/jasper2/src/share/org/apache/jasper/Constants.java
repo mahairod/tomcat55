@@ -60,8 +60,6 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.text.MessageFormat;
 
-import org.apache.jasper.logging.Logger;
-
 /**
  * Some constants and other global data that are used by the compiler and the runtime.
  *
@@ -226,7 +224,5 @@ public class Constants {
      */
     public static final String TEMP_VARIABLE_NAME_PREFIX =
         "_jspx_temp";
-
-    public static Logger jasperLog = null;
 }
 

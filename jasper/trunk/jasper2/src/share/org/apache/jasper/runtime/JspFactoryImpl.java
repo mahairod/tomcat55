@@ -60,19 +60,19 @@
  */ 
 package org.apache.jasper.runtime;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspEngineInfo;
 import javax.servlet.jsp.PageContext;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import org.apache.jasper.util.SimplePool;
-import org.apache.jasper.logging.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of JspFactory.
@@ -81,12 +81,13 @@ import org.apache.jasper.logging.Logger;
  */
 public class JspFactoryImpl extends JspFactory {
 
+    // Logger
+    private static Log log = LogFactory.getLog(JspFactoryImpl.class);
+
     private static final String SPEC_VERSION = "2.0";
     private static final boolean USE_POOL = true;
 
     private SimplePool pool = new SimplePool( 100 );
-    private Logger.Helper loghelper = new Logger.Helper("JASPER_LOG",
-							"JspFactoryImpl");
     
     public PageContext getPageContext(Servlet servlet,
 				      ServletRequest request,
@@ -150,7 +151,7 @@ public class JspFactoryImpl extends JspFactory {
             return pc;
         } catch (Throwable ex) {
             /* FIXME: need to do something reasonable here!! */
-            loghelper.log("Exception initializing page context", ex);
+            log.fatal("Exception initializing page context", ex);
             return null;
         }
     }

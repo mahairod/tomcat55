@@ -58,15 +58,15 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.jasper.runtime;
 
-import org.apache.jasper.logging.Logger;
+package org.apache.jasper.runtime;
 
 import java.util.HashMap;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
+
 /**
  * Maps EL functions to their Java method counterparts.  Keeps the
  * actual Method objects protected so that JSP pages can't indirectly
@@ -76,10 +76,6 @@ import java.security.PrivilegedActionException;
  * @author Kin-man Chung
  */
 public final class ProtectedFunctionMapper {
-
-    /** For tracing of error messages */
-    private static Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", 
-	"ProtectedFunctionMapper");
 
     /** 
      * Maps "prefix:name" to java.lang.Method objects.  Lazily created.

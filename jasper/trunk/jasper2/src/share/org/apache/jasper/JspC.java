@@ -75,8 +75,6 @@ import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
 import org.apache.jasper.compiler.Localizer;
-import org.apache.jasper.logging.Logger;
-import org.apache.jasper.logging.JasperLogger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -158,8 +156,6 @@ public class JspC implements Options {
 
     boolean largeFile = false;
     boolean mappedFile = false;
-
-    int jspVerbosityLevel = Logger.INFORMATION;
 
     File scratchDir;
 
@@ -279,10 +275,6 @@ public class JspC implements Options {
         return ieClassId;
     }
 
-    public int getJspVerbosityLevel() {
-        return jspVerbosityLevel;
-    }
-
     public File getScratchDir() {
         return scratchDir;
     }
@@ -327,10 +319,6 @@ public class JspC implements Options {
         return System.getProperty("java.class.path");
     }
 
-    public JspC() {
-        Constants.jasperLog = new JasperLogger();
-    }
-
     // -------------------- Options --------------------
     public void setClassPath(String s) {
         classPath=s;
@@ -349,10 +337,6 @@ public class JspC implements Options {
         } catch( Exception ex ) {
             uriRoot=s;
         }
-    }
-
-    public void setVerbose( int level ) {
-        Constants.jasperLog.setVerbosityLevel(level);
     }
 
     public void setCompile( boolean b ) {
@@ -877,25 +861,11 @@ public class JspC implements Options {
         args = arg;
         String tok;
 
-        int verbosityLevel = Logger.WARNING;
         dieLevel = NO_DIE_LEVEL;
         die = dieLevel;
 
         while ((tok = nextArg()) != null) {
-            if (tok.equals(SWITCH_QUIET)) {
-                verbosityLevel = Logger.WARNING;
-            } else if (tok.equals(SWITCH_VERBOSE)) {
-                verbosityLevel = Logger.INFORMATION;
-            } else if (tok.startsWith(SWITCH_VERBOSE)) {
-                try {
-                    verbosityLevel
-                     = Integer.parseInt(tok.substring(SWITCH_VERBOSE.length()));
-                } catch (NumberFormatException nfe) {
-                    logStream.println("Verbosity level "
-				      + tok.substring(SWITCH_VERBOSE.length())
-				      + " is not valid.  Option ignored.");
-                }
-            } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
+            if (tok.equals(SWITCH_OUTPUT_DIR)) {
                 tok = nextArg();
                 setOutputDir( tok );
             } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {
@@ -962,8 +932,6 @@ public class JspC implements Options {
             if( file==null ) break;
             pages.addElement( file );
         }
-
-        Constants.jasperLog.setVerbosityLevel(verbosityLevel);
     }
 
     /**

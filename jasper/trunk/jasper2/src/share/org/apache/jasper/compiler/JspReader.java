@@ -58,10 +58,14 @@ package org.apache.jasper.compiler;
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.logging.*;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -83,6 +87,9 @@ import org.xml.sax.helpers.AttributesImpl;
 
 class JspReader {
 
+    // Logger
+    private static Log log = LogFactory.getLog(JspReader.class);
+
     private Mark current;
     private String master;
     private Vector sourceFiles;
@@ -90,7 +97,6 @@ class JspReader {
     private int size;
     private JspCompilationContext context;
     private ErrorDispatcher err;
-    private Logger.Helper loghelper;
 
     /*
      * Set to true when using the JspReader on a single file where we read up
@@ -130,8 +136,6 @@ class JspReader {
 	currFileId = 0;
 	size = 0;
 	singleFile = false;
-
-	loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
 	pushFile(fname, encoding, reader);
     }
     
@@ -565,7 +569,7 @@ class JspReader {
 				   longName, encoding);
 	    }
 	} catch (Throwable ex) {
-	    loghelper.log("Exception parsing file ", ex);
+	    log.error("Exception parsing file ", ex);
 	    // Pop state being constructed:
 	    popFile();
 	    err.jspError("jsp.error.file.cannot.read", "ze file");

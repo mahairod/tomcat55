@@ -63,7 +63,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.compiler.Localizer;
 
 import org.apache.commons.logging.Log;
