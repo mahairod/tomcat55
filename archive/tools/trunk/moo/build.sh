@@ -5,11 +5,13 @@
 
 ADDL_CLASSPATH=./../../jakarta-ant/lib/ant.jar:./../../jakarta-ant/lib/xml.jar
 
-if test -n $CLASSPATH; then
-  export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
+if [ "$CLASSPATH" != "" ] ; then
+  CLASSPATH=$CLASSPATH:$ADDL_CLASSPATH
 else
-  export CLASSPATH=$ADDL_CLASSPATH
+ CLASSPATH=$ADDL_CLASSPATH
 fi
+
+export CLASSPATH
 
 echo Building with classpath $CLASSPATH
 
