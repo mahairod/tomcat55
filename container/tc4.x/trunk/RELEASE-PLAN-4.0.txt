@@ -48,8 +48,6 @@ Bugs That Must Be Addressed Before Final Release:
 
 Catalina    3009    Manager cannot install web app
 
-Catalina    3292    Class reloading fails (awaiting test case)
-
 Catalina    3336    ArrayIndexOutOfBounds exception when starting and stopping
                     an app several times through Manager
 
