@@ -97,6 +97,10 @@ Tomcat 5, and using many of the Tomcat features.</p>
     Configuring, using, and extending the load balancer application.</li>
 <li><a href="connectors.html"><strong>Connectors</strong></a> -
     Connectors available in Tomcat, and native web server integration.</li>
+<li><a href="monitoring.html"><strong>Monitoring and Management</strong></a> -
+    Enabling JMX Remote support, and using tools to monitor and manage Tomcat.</li>
+<li><a href="logging.html"><strong>Logging</strong></a> -
+    Confuguring logging in Tomcat.</li>
 
 </ol>
 
