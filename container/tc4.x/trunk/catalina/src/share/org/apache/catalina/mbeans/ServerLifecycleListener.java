@@ -483,6 +483,116 @@ public class ServerLifecycleListener
 
 
     /**
+     * Deregister the MBeans for the specified Context and its nested components.
+     *
+     * @param context Context for which to deregister MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void destroyMBeans(Context context) throws Exception {
+
+        // deregister the MBean for the Context itself
+        if (debug >= 4)
+            log("Destroying MBean for Context " + context);
+        MBeanUtils.destroyMBean(context);
+        if (context instanceof StandardContext) {
+            ((StandardContext) context).
+                removePropertyChangeListener(this);
+        }
+
+        // Destroy the MBeans for the associated nested components
+        Loader cLoader = context.getLoader();
+        if (cLoader != null) {
+            if (debug >= 4)
+                log("Destroying MBean for Loader " + cLoader);
+            MBeanUtils.destroyMBean(cLoader);
+        }
+        Logger hLogger = context.getParent().getLogger();
+        Logger cLogger = context.getLogger();
+        if ((cLogger != null) && (cLogger != hLogger)) {
+            if (debug >= 4)
+                log("Destroying MBean for Logger " + cLogger);
+            MBeanUtils.destroyMBean(cLogger);
+        }
+        Manager cManager = context.getManager();
+        if (cManager != null) {
+            if (debug >= 4)
+                log("Destroying MBean for Manager " + cManager);
+            MBeanUtils.destroyMBean(cManager);
+        }
+        Realm hRealm = context.getParent().getRealm();
+        Realm cRealm = context.getRealm();
+        if ((cRealm != null) && (cRealm != hRealm)) {
+            if (debug >= 4)
+                log("Destroying MBean for Realm " + cRealm);
+            MBeanUtils.destroyMBean(cRealm);
+        }
+
+        // destroy the MBeans for the associated Valves
+        if (context instanceof StandardContext) {
+            Valve cValves[] = ((StandardContext)context).getValves();
+            for (int l = 0; l < cValves.length; l++) {
+                if (debug >= 4)
+                    log("Destroying MBean for Valve " + cValves[l]);
+                MBeanUtils.destroyMBean(cValves[l]);
+            }
+            
+        }
+
+    }
+
+
+    /**
+     * Deregister the MBeans for the specified Host and its nested components.
+     *
+     * @param host Host for which to destroy MBeans
+     *
+     * @exception Exception if an exception is thrown during MBean creation
+     */
+    protected void destroyMBeans(Host host) throws Exception {
+
+        // Deregister the MBean for the Host itself
+        if (debug >= 3) {
+            log("Destroying MBean for Host " + host);
+        }
+        MBeanUtils.destroyMBean(host);
+
+        // Deregister the MBeans for the associated nested components
+        Logger eLogger = host.getParent().getLogger();
+        Logger hLogger = host.getLogger();
+        if ((hLogger != null) && (hLogger != eLogger)) {
+            if (debug >= 3)
+                log("Destroying MBean for Logger " + hLogger);
+            MBeanUtils.destroyMBean(hLogger);
+        }
+        Realm eRealm = host.getParent().getRealm();
+        Realm hRealm = host.getRealm();
+        if ((hRealm != null) && (hRealm != eRealm)) {
+            if (debug >= 3)
+                log("Destroying MBean for Realm " + hRealm);
+            MBeanUtils.destroyMBean(hRealm);
+        }
+
+        // Deregister the MBeans for the associated Valves
+        if (host instanceof StandardHost) {
+            Valve hValves[] = ((StandardHost)host).getValves();
+            for (int k = 0; k < hValves.length; k++) {
+                if (debug >= 3)
+                    log("Destroying MBean for Valve " + hValves[k]);
+                MBeanUtils.destroyMBean(hValves[k]);
+            }
+        }
+
+        // Deregister the MBeans for each child Context
+        Container contexts[] = host.findChildren();
+        for (int k = 0; k < contexts.length; k++) {
+            destroyMBeans((Context) contexts[k]);
+        }
+
+    }
+
+
+    /**
      * Log a message and associated exception.
      *
      * @param message The message to be logged
@@ -669,16 +779,14 @@ public class ServerLifecycleListener
                 }
                 if (debug >= 4)
                     log("  Removing MBean for Context " + context);
-                MBeanUtils.destroyMBean(context);
-                ; // FIXME - child component MBeans?
+                destroyMBeans(context);
                 if (context instanceof StandardContext) {
                     ((StandardContext) context).
                         removePropertyChangeListener(this);
                 }
             } else if (child instanceof Host) {
                 Host host = (Host) child;
-                MBeanUtils.destroyMBean(host);
-                ; // FIXME - child component MBeans?
+                destroyMBeans(host);
                 if (host instanceof StandardHost) {
                     ((StandardHost) host).
                         removePropertyChangeListener(this);
