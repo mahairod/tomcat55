@@ -786,7 +786,7 @@ public class JspParseEventListener implements ParseEventListener {
 	}
 
 	else if (!directive.equals("include")) {
-	    xo.append("jsp:directive." + directive, attrs);
+	    xo.append("jsp:directive." + directive, attrs, true);
 	}
     }
 
@@ -882,7 +882,7 @@ public class JspParseEventListener implements ParseEventListener {
                                   genSessionVariable, isXml),
                 start, stop);
         addGenerator(gen);
-        xo.append("jsp:useBean", attrs);
+        xo.append("jsp:useBean", attrs, false);
     }
 
     public void handleBeanEnd(Mark start, Mark stop, Attributes attrs)
@@ -904,7 +904,7 @@ public class JspParseEventListener implements ParseEventListener {
 	    			   beanInfo), start, stop);
 
 	addGenerator(gen);
-	xo.append("jsp:getProperty", attrs);
+	xo.append("jsp:getProperty", attrs, true);
     }
 
     public void handleSetProperty(Mark start, Mark stop, Attributes attrs)
@@ -922,7 +922,7 @@ public class JspParseEventListener implements ParseEventListener {
                 new SetPropertyGenerator(start, stop, attrs, beanInfo, isXml),
                 start, stop);
         addGenerator(gen);
-        xo.append("jsp:setProperty", attrs);
+        xo.append("jsp:setProperty", attrs, true);
     }
 
     public void handlePlugin(Mark start, Mark stop, Attributes attrs,
@@ -960,7 +960,7 @@ public class JspParseEventListener implements ParseEventListener {
                 new ForwardGenerator(start, attrs, param, isXml),
                 start, stop);
 	addGenerator(gen);
-	xo.append("jsp:forward", attrs);
+	xo.append("jsp:forward", attrs, false);
 	xo.append("jsp:param", param);
 	xo.append("jsp:forward");
     }
@@ -981,7 +981,7 @@ public class JspParseEventListener implements ParseEventListener {
                 new IncludeGenerator(start, attrs, param, isXml),
                 start, stop);
 	addGenerator(gen);
-	xo.append("jsp:include", attrs);
+	xo.append("jsp:include", attrs, false);
 	xo.append("jsp:param", param);
 	xo.append("jsp:include");
     }
@@ -1026,7 +1026,7 @@ public class JspParseEventListener implements ParseEventListener {
                                   getTagVarNumbers(), hasBody, isXml);
         Generator gen = new GeneratorWrapper(tbg, start, stop);
 	addGenerator(gen);
-        xo.append(prefix+":"+shortTagName, attrs);
+        xo.append(prefix+":"+shortTagName, attrs, false);
     }
 
     public void handleTagEnd(Mark start, Mark stop, String prefix,
@@ -1080,7 +1080,7 @@ public class JspParseEventListener implements ParseEventListener {
 	    new UninterpretedTagBeginGenerator(rawName, attrs);
         Generator genWrapper = new GeneratorWrapper(gen, start, stop);
 	addGenerator(genWrapper);
-        xo.append(rawName, attrs);
+        xo.append(rawName, attrs, false);
     }
 
     public void handleUninterpretedTagEnd(Mark start, Mark stop,

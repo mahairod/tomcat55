@@ -167,8 +167,8 @@ public class XmlOutputter {
      * Append the start tag along with its attributes to the
      * XML stream.
      */
-    void append(String tag, Attributes attrs) {
-        append(tag, attrs, sb);
+    void append(String tag, Attributes attrs, boolean hasNoBody) {
+        append(tag, attrs, sb, hasNoBody);
     }
     
     /**
@@ -184,7 +184,7 @@ public class XmlOutputter {
 	    AttributesImpl attrs = new AttributesImpl();
 	    attrs.addAttribute("", "name", "name", "CDATA", name);
 	    attrs.addAttribute("", "value", "value", "CDATA", value);
-	    append(tag, attrs, sb);
+	    append(tag, attrs, sb, false);
 	    append(tag);
 	}
     }
@@ -197,10 +197,12 @@ public class XmlOutputter {
      * can only be generated once we've processed all parts
      * of the translation unit]
      */
-    void append(String tag, Attributes attrs, StringBuffer buff) {
+    void append(String tag, Attributes attrs, StringBuffer buff, boolean hasNoBody) {
         buff.append("<").append(tag);
         if (attrs == null || attrs.getLength() < 1) {
-            buff.append(">");
+            if (hasNoBody)
+                buff.append("/>");
+            else buff.append(">");
         } else {
             buff.append("\n");
             int attrsLength = attrs.getLength();
@@ -210,7 +212,9 @@ public class XmlOutputter {
                 buff.append("  ").append(name).append("=\"");
 		buff.append(JspUtil.getExprInXml(value)).append("\"\n");
             }
-            buff.append(">\n");
+            if (hasNoBody)
+                buff.append("/>\n");
+            else buff.append(">\n");
         }
     }
 
@@ -219,7 +223,7 @@ public class XmlOutputter {
      * to the XML stream.
      */
     void append(String tag, Attributes attrs, char[] text) {
-        append(tag, attrs);
+        append(tag, attrs, false);
         append(text);
         sb.append("</").append(tag).append(">\n");
     }
@@ -239,7 +243,7 @@ public class XmlOutputter {
         AttributesImpl attrs = new AttributesImpl();
 
         
-        append("jsp:root", rootAttrs, buff);
+        append("jsp:root", rootAttrs, buff, false);
 	buff.append(sb.toString());
         buff.append("</jsp:root>");
 	InputStream is = 
