@@ -73,7 +73,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.jar.JarEntry;
@@ -89,7 +88,6 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
@@ -1055,7 +1053,7 @@ public class ManagerServlet
             }
             if (timeout[0] > 0)
                 writer.println(sm.getString("managerServlet.sessiontimeout",
-                                            "<10" + timeout[0]));
+                                            "<10",  "" + timeout[0]));
             for (int i = 1; i < timeout.length-1; i++) {
                 if (timeout[i] > 0)
                     writer.println(sm.getString("managerServlet.sessiontimeout",
