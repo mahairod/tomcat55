@@ -63,6 +63,11 @@ grant codeBase "file:${catalina.home}/server/-" {
         permission java.security.AllPermission;
 };
 
+// The new JSP 2.0 implementation needs some special privileges in order to work.
+// FIX ME: Need to reduce the permission scope.
+grant codeBase "file:${catalina.home}/webapps/jsp-examples/-" {
+  permission java.security.AllPermission;  
+};
 
 // ========== WEB APPLICATION PERMISSIONS =====================================
 
