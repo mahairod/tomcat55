@@ -323,8 +323,7 @@ public final class FileLogger
         // Create the directory if necessary
         File dir = new File(directory);
         if (!dir.isAbsolute())
-            dir = new File(System.getProperty("catalina.home") +
-                           File.separator + directory);
+            dir = new File(System.getProperty("catalina.base"), directory);
         dir.mkdirs();
 
         // Open the current log file

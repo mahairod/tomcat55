@@ -709,8 +709,8 @@ public final class ContextConfig
         // Open the default web.xml file, if it exists
         File file = new File(Constants.DefaultWebXml);
         if (!file.isAbsolute())
-            file = new File(System.getProperty("catalina.home") +
-                            File.separator + Constants.DefaultWebXml);
+            file = new File(System.getProperty("catalina.base"),
+                            Constants.DefaultWebXml);
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file.getCanonicalPath());

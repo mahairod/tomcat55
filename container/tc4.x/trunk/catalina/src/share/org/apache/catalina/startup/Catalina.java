@@ -92,7 +92,7 @@ import org.xml.sax.AttributeList;
  * <li><b>-config {pathname}</b> - Set the pathname of the configuration file
  *     to be processed.  If a relative path is specified, it will be
  *     interpreted as relative to the directory pathname specified by the
- *     "catalina.home" system property.   [conf/server.xml]
+ *     "catalina.base" system property.   [conf/server.xml]
  * <li><b>-help</b> - Display usage information.
  * <li><b>-stop</b> - Stop the currently running instance of Catalina.
  * </u>
@@ -172,6 +172,7 @@ public class Catalina {
      */
     public void process(String args[]) {
 
+        setCatalinaBase();
         setCatalinaHome();
         try {
             if (arguments(args))
@@ -264,8 +265,7 @@ public class Catalina {
 
         File file = new File(configFile);
         if (!file.isAbsolute())
-            file = new File(System.getProperty("catalina.home") +
-                            File.separator + configFile);
+            file = new File(System.getProperty("catalina.base"), configFile);
         return (file);
 
     }
@@ -657,6 +657,20 @@ public class Catalina {
             start();
         else if (stopping)
             stop();
+
+    }
+
+
+    /**
+     * Set the <code>catalina.base</code> System property to the current
+     * working directory if it has not been set.
+     */
+    protected void setCatalinaBase() {
+
+        if (System.getProperty("catalina.base") != null)
+            return;
+        System.setProperty("catalina.base",
+                           System.getProperty("user.dir"));
 
     }
 

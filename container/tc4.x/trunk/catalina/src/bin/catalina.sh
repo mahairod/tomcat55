@@ -4,6 +4,10 @@
 #
 # Environment Variable Prequisites
 #
+#   CATALINA_BASE (Optional) Base directory for resolving dynamic portions
+#                 of a Catalina installation.  If not present, resolves to
+#                 the same directory that CATALINA_HOME points to.
+#
 #   CATALINA_HOME (Optional) May point at your Catalina "build" directory.
 #                 If not present, the current working directory is assumed.
 #
@@ -72,7 +76,13 @@ if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
    CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
 fi
 
+# copy to CATALINA_BASE if necessary
+if [ -z "$CATALINA_BASE" ] ; then
+  CATALINA_BASE=$CATALINA_HOME
+fi
+
 echo "Using CLASSPATH: $CP"
+echo "Using CATALINA_BASE: $CATALINA_BASE"
 echo "Using CATALINA_HOME: $CATALINA_HOME"
 
 
@@ -92,13 +102,17 @@ if [ "$1" = "debug" ] ; then
     $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
-       -classpath $CP -Dcatalina.home=$CATALINA_HOME \
+       -classpath $CP \
+       -Dcatalina.base=$CATALINA_BASE \
+       -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   else
     $JAVA_HOME/bin/jdb \
        $CATALINA_OPTS \
        -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
-       -classpath $CP -Dcatalina.home=$CATALINA_HOME \
+       -classpath $CP \
+       -Dcatalina.base=$CATALINA_BASE \
+       -Dcatalina.home=$CATALINA_HOME \
        org.apache.catalina.startup.Bootstrap "$@" start
   fi
   popd
@@ -114,6 +128,7 @@ elif [ "$1" = "embedded" ] ; then
   done
   echo Embedded Classpath: $CP
   $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
+   -Dcatalina.base=$CATALINA_BASE \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Embedded "$@"
 
@@ -130,11 +145,13 @@ elif [ "$1" = "run" ] ; then
     shift
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
-     -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
+     -Djava.security.policy==$CATALINA_BASE/conf/catalina.policy \
+     -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   else
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
+     -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start
   fi
@@ -142,27 +159,30 @@ elif [ "$1" = "run" ] ; then
 elif [ "$1" = "start" ] ; then
 
   shift
-  touch $CATALINA_HOME/logs/catalina.out
+  touch $CATALINA_BASE/logs/catalina.out
   if [ "$1" = "-security" ] ; then
     echo Using Security Manager
     shift
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
      -Djava.security.manager \
-     -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
+     -Djava.security.policy==$CATALINA_BASE/conf/catalina.policy \
+     -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
-     >> $CATALINA_HOME/logs/catalina.out 2>&1 &
+     >> $CATALINA_BASE/logs/catalina.out 2>&1 &
   else
     $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
+     -Dcatalina.base=$CATALINA_BASE \
      -Dcatalina.home=$CATALINA_HOME \
      org.apache.catalina.startup.Bootstrap "$@" start \
-     >> $CATALINA_HOME/logs/catalina.out 2>&1 &
+     >> $CATALINA_BASE/logs/catalina.out 2>&1 &
   fi
 
 elif [ "$1" = "stop" ] ; then
 
   shift
   $JAVA_HOME/bin/java $CATALINA_OPTS -classpath $CP \
+   -Dcatalina.base=$CATALINA_BASE \
    -Dcatalina.home=$CATALINA_HOME \
    org.apache.catalina.startup.Bootstrap "$@" stop
 

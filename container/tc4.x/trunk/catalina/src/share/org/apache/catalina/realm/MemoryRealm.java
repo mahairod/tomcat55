@@ -178,7 +178,7 @@ public final class MemoryRealm
 
     /**
      * Set the pathname of our XML file containing user definitions.  If a
-     * relative pathname is specified, it is resolved against "catalina.home".
+     * relative pathname is specified, it is resolved against "catalina.base".
      *
      * @param pathname The new pathname
      */
@@ -305,8 +305,7 @@ public final class MemoryRealm
         // Validate the existence of our database file
         File file = new File(pathname);
         if (!file.isAbsolute())
-            file = new File(System.getProperty("catalina.home") +
-                            File.separator + pathname);
+            file = new File(System.getProperty("catalina.base"), pathname);
         if (!file.exists() || !file.canRead())
             throw new LifecycleException
                 (sm.getString("memoryRealm.loadExist",

@@ -3490,7 +3490,7 @@ public class StandardContext
      */
     protected File engineBase() {
 
-        return (new File(System.getProperty("catalina.home")));
+        return (new File(System.getProperty("catalina.base")));
 
     }
 
@@ -3864,7 +3864,7 @@ public class StandardContext
         // Create this directory if necessary
         File dir = new File(workDir);
         if (!dir.isAbsolute()) {
-            File catalinaHome = new File(System.getProperty("catalina.home"));
+            File catalinaHome = new File(System.getProperty("catalina.base"));
             String catalinaHomePath = null;
             try {
                 catalinaHomePath = catalinaHome.getCanonicalPath();

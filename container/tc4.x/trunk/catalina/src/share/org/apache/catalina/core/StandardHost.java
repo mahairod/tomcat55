@@ -849,7 +849,7 @@ public class StandardHost
         // Make sure that there is no such directory already existing
         File appBase = new File(getAppBase());
         if (!appBase.isAbsolute())
-            appBase = new File(System.getProperty("catalina.home"),
+            appBase = new File(System.getProperty("catalina.base"),
                                getAppBase());
         if (!appBase.exists() || !appBase.isDirectory())
             throw new IOException

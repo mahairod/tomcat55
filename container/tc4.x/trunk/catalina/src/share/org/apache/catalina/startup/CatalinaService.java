@@ -92,7 +92,7 @@ import org.xml.sax.AttributeList;
  * <li><b>-config {pathname}</b> - Set the pathname of the configuration file
  *     to be processed.  If a relative path is specified, it will be
  *     interpreted as relative to the directory pathname specified by the
- *     "catalina.home" system property.   [conf/server.xml]
+ *     "catalina.base" system property.   [conf/server.xml]
  * <li><b>-help</b> - Display usage information.
  * <li><b>-stop</b> - Stop the currently running instance of Catalina.
  * </ul>

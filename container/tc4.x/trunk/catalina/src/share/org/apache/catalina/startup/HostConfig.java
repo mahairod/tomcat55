@@ -247,7 +247,7 @@ public final class HostConfig
 
         File file = new File(host.getAppBase());
         if (!file.isAbsolute())
-            file = new File(System.getProperty("catalina.home"),
+            file = new File(System.getProperty("catalina.base"),
                             host.getAppBase());
         return (file);
 
