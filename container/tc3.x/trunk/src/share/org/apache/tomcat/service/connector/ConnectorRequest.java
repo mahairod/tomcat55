@@ -73,7 +73,7 @@ import org.apache.tomcat.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class ConnectorRequest extends RequestImpl {
+public class ConnectorRequest extends Request {
     MsgConnector con;
     Hashtable env_vars;
     

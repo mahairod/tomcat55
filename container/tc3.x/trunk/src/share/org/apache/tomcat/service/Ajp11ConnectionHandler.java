@@ -146,7 +146,7 @@ public class Ajp11ConnectionHandler implements  TcpConnectionHandler {
     }
 }
 
-class AJPRequest extends RequestImpl {
+class AJPRequest extends Request {
     StringManager sm = StringManager.getManager("org.apache.tomcat.service");
     Socket socket;
     

@@ -73,7 +73,7 @@ import org.apache.tomcat.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class HttpRequest extends RequestImpl {
+public class HttpRequest extends Request {
 
     public HttpRequest() {
 	super();

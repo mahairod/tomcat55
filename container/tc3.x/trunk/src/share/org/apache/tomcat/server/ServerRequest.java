@@ -80,7 +80,7 @@ import javax.servlet.http.*;
  * @author Harish Prabandham
  */
 
-public class ServerRequest extends RequestImpl {
+public class ServerRequest extends Request {
 
     private StringManager sm =
         StringManager.getManager(Constants.Package);

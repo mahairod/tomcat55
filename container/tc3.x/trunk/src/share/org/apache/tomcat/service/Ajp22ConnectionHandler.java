@@ -285,7 +285,7 @@ class MessageConnector implements Ajp22Constants {
 }
 
 
-class Ajp22Request extends RequestImpl {
+class Ajp22Request extends Request {
     MessageConnector proto;
     Hashtable env_vars;
 
