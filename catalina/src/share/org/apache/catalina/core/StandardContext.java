@@ -4959,11 +4959,11 @@ public class StandardContext
      *
      * @return list of all servlets ( we know about )
      */
-    public ObjectName[] getServlets() {
+    public String[] getServlets() {
         int size=wrappers.size();
-        ObjectName result[]=new ObjectName[size];
+        String result[]=new String[size];
         for( int i=0; i< size; i++ ) {
-            result[i]=((StandardWrapper)wrappers.get(i)).getJmxName();
+            result[i]=((StandardWrapper)wrappers.get(i)).getObjectName();
         }
         return result;
     }
