@@ -82,7 +82,7 @@ public class FunctionInfo {
     /**
      * The name of the function.
      *
-     * @return The name of the functioN
+     * @return The name of the function
      */
 
     public String getName() {
