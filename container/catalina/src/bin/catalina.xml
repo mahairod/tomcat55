@@ -37,9 +37,11 @@
 
   <path id="tomcatcp" >
     <pathelement location="${catalina.home}/bin/bootstrap.jar"/>
+    <!-- 
     <fileset dir="${catalina.home}/common/lib" includes="*.jar"/>
     <fileset dir="${catalina.home}/server/lib" includes="*.jar"/>
     <pathelement location="${catalina.home}/common/classes"/>
+    -->
     <!-- 
        <pathelement location="${ant.home}/lib/xercesImpl.jar" />
        <pathelement location="${ant.home}/lib/xml-apis.jar" />
@@ -217,9 +219,9 @@
 
     <property name="tomcat.fork" value="false" />
 
-    <java classname="org.apache.catalina.startup.CatalinaService" fork="${tomcat.fork}">
+    <java classname="org.apache.catalina.startup.Bootstrap" fork="${tomcat.fork}">
       <classpath refid="tomcatcp" />
-      <arg value="start" />
+      <arg value="startd" />
       <sysproperty key="catalina.home" value="${catalina.home}"/>
       <sysproperty key="build.compiler" value="jikes"/>
       <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
