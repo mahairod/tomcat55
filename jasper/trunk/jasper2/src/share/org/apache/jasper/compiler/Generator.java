@@ -1736,7 +1736,7 @@ public class Generator {
 
                 public void visit(Node.ParamAction n) throws JasperException {
 		    out.printin("params.put(");
-		    out.print(n.getAttributeValue("name"));
+		    out.print(quote(n.getAttributeValue("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
 					     String.class, "null"));
@@ -1765,9 +1765,9 @@ public class Generator {
 	    // Store varReader in appropriate scope
 	    if (varReader != null) {
 		String scopeName = n.getAttributeValue("scope");
-		out.printin("jspContext.setAttribute(\"");
-		out.print(varReader);
-		out.print("\", new java.io.StringReader(sout.toString())");
+		out.printin("getJspContext().setAttribute(");
+		out.print(quote(varReader));
+		out.print(", new java.io.StringReader(sout.toString())");
 		if (scopeName != null) {
 		    out.print(", ");
 		    out.print(getScopeConstant(scopeName));
@@ -1785,7 +1785,7 @@ public class Generator {
 
                 public void visit(Node.ParamAction n) throws JasperException {
 		    out.printin("params.put(");
-		    out.print(n.getAttributeValue("name"));
+		    out.print(quote(n.getAttributeValue("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
 					     String.class, "null"));
@@ -1812,14 +1812,14 @@ public class Generator {
 		    out.printin("params.put(");
 		    String name = tagVars[i].getNameGiven();
 		    if (name != null) {
-			out.print(name);
-			out.print(", jspContext.getAttribute(");
-			out.print(name);
+			out.print(quote(name));
+			out.print(", getJspContext().getAttribute(");
+			out.print(quote(name));
 			out.println("));");
 		    } else {
 			String getter = toGetterMethod(tagVars[i].getNameFromAttribute());
 			out.print(getter);
-			out.print(", jspContext.getAttribute(");
+			out.print(", getJspContext().getAttribute(");
 			out.print(getter);
 			out.println("));");
 		    }
@@ -1838,9 +1838,9 @@ public class Generator {
 	    // Store varReader in appropriate scope
 	    if (varReader != null) {
 		String scopeName = n.getAttributeValue("scope");
-		out.printin("jspContext.setAttribute(\"");
-		out.print(varReader);
-		out.print("\", new java.io.StringReader(sout.toString())");
+		out.printin("getJspContext().setAttribute(");
+		out.print(quote(varReader));
+		out.print(", new java.io.StringReader(sout.toString())");
 		if (scopeName != null) {
 		    out.print(", ");
 		    out.print(getScopeConstant(scopeName));
@@ -2777,8 +2777,8 @@ public class Generator {
 	// if 'varReader' attribute is specified
 	out.printil("java.io.Writer sout = null;");
 
-	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
-	out.printil("jspContext.pushPageScope();");
+	out.printil("javax.servlet.jsp.JspWriter out = getJspContext().getOut();");
+	out.printil("getJspContext().pushPageScope(null);");
 	generatePageScopedVariables(tagInfo);
 	out.printil("try {");
 	out.pushIndent();
@@ -2788,7 +2788,7 @@ public class Generator {
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
-        out.printil("jspContext.popPageScope();");
+        out.printil("getJspContext().popPageScope();");
         out.popIndent();
 	out.printil("}");
 	out.println();
@@ -2936,9 +2936,9 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-		out.printin("jspContext.setAttribute(\"");
-		out.print(attrName);
-		out.print("\", ");
+		out.printin("getJspContext().setAttribute(");
+		out.print(quote(attrName));
+		out.print(", ");
 		out.print(toGetterMethod(attrName));
 		out.println(");");
 	    }
@@ -2950,9 +2950,9 @@ public class Generator {
 	if (fragAttrInfos != null) {
 	    for (int i=0; i<fragAttrInfos.length; i++) {
 		String attrName = fragAttrInfos[i].getName();
-		out.printin("jspContext.setAttribute(\"");
-		out.print(attrName);
-		out.print("\", ");
+		out.printin("getJspContext().setAttribute(");
+		out.print(quote(attrName));
+		out.print(", ");
 		out.print(toGetterMethod(attrName));
 		out.println(");");
 	    }
@@ -2963,7 +2963,7 @@ public class Generator {
 	    out.printil("for (Iterator i = dynamicAttrs.entrySet().iterator(); i.hasNext(); ) {");
 	    out.pushIndent();
 	    out.printil("Map.Entry e = (Map.Entry) i.next();");
-	    out.printil("this.jspContext.setAttribute(e.getKey(), e.getValue());");
+	    out.printil("getJspContext().setAttribute(e.getKey(), e.getValue());");
 	    out.popIndent();
 	    out.printil("}");
 	}
