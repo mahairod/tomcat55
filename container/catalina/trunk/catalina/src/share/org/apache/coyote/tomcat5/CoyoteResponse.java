@@ -713,9 +713,30 @@ public class CoyoteResponse
             return;
 
         coyoteResponse.setContentType(type);
-        if ((type != null) && (type.indexOf(";charset=") != -1)) {
-            isCharacterEncodingSet = true;
+
+        // Check to see if content type contains charset
+        if (type != null) {
+            int index = type.indexOf(";");
+            if (index != -1) {
+                int len = type.length();
+                index++;
+                while (index < len && Character.isSpace(type.charAt(index))) {
+                    index++;
+                }
+                if (index+7 < len
+                        && type.charAt(index) == 'c'
+                        && type.charAt(index+1) == 'h'
+                        && type.charAt(index+2) == 'a'
+                        && type.charAt(index+3) == 'r'
+                        && type.charAt(index+4) == 's'
+                        && type.charAt(index+5) == 'e'
+                        && type.charAt(index+6) == 't'
+                        && type.charAt(index+7) == '=') {
+                    isCharacterEncodingSet = true;
+                }
+            }
         }
+
         isContentTypeSet = true;    
     }
 
