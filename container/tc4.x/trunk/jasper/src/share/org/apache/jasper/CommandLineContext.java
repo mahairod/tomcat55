@@ -76,6 +76,8 @@ import org.apache.jasper.compiler.Compiler;
 //import org.apache.jasper.runtime.JspLoader;
 // Use the jasper loader - the only function used is to add a jar
 import org.apache.jasper.servlet.JasperLoader;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * Holds data used on a per-page compilation context that would otherwise spill
@@ -369,6 +371,12 @@ public class CommandLineContext implements JspCompilationContext {
         return in;
     }
 
+    public java.net.URL getResource(String res) 
+	throws MalformedURLException
+    {
+	// FIXME @@@
+	return null;
+    }
 
     /** 
      * Gets the actual path of a URI relative to the context of

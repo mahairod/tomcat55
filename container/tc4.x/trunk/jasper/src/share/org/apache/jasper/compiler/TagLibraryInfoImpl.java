@@ -60,8 +60,12 @@
 package org.apache.jasper.compiler;
 
 import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.JarURLConnection;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
+import java.util.jar.*;
+import java.util.Enumeration;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -157,7 +161,15 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         }
     }
 
-    public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, String uriIn) 
+    public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, 
+			      String uriIn) 
+        throws JasperException
+    {
+	this(ctxt, prefix, uriIn, null);
+    }
+
+    public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, 
+			      String uriIn, String[] location) 
         throws JasperException
     {
         super(prefix, uriIn);
@@ -167,181 +179,77 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         InputStream in = null;
         URL url = null;
         boolean relativeURL = false;
-	this.uri = uriIn;
 
-        // Parse web.xml.
-	InputStream is;
-	try {
-	    is = getResourceAsStream(WEB_XML);
-	} catch (FileNotFoundException ex) {
-	    throw new JasperException(
-		Constants.getString("jsp.error.internal.file.not.found", 
-				    new Object[]{WEB_XML}));
+	if (location == null) {
+	    // The URI points to the TLD itself or to a jar
+	    // file where the TLD is located
+	    int uriType = TagLibrariesGlobal.uriType(uri);
+	    if (uriType == TagLibrariesGlobal.ABS_URI) {
+		throw new JasperException(
+                    Constants.getString("jsp.error.absUriCannotBeResolved",
+					new Object[] {uri}));
+	    } else if (uriType == 
+		       TagLibrariesGlobal.NOROOT_REL_URI) {
+		uri = ctxt.resolveRelativeUri(uri);
+	    }
+	    location = new String[2];
+	    location[0] = uri;
+	    if (uri.endsWith("jar")) {
+		location[1] = "META-INF/taglib.tld";
+	    }
 	}
-        if (is != null) {
-            Document webtld =
-                JspUtil.parseXMLDoc(WEB_XML, is);
-            NodeList nList =  webtld.getElementsByTagName("taglib");
 
-            if (nList.getLength() != 0) {
-                for(int i = 0; i < nList.getLength(); i++) {
-                    String tagLoc = null;
-                    boolean match = false;
-                    Element e =  (Element) nList.item(i);
-
-                    // Assume only one entry for location and uri.
-                    NodeList uriList = e.getElementsByTagName("taglib-uri");
-                    Element uriElem = (Element) uriList.item(0);
-                    Text t = (Text) uriElem.getFirstChild();
-
-                    if (t != null) {
-                        String tmpUri = t.getData();
-                        if (tmpUri != null) {
-                            tmpUri = tmpUri.trim();
-                            if (tmpUri.equals(uriIn)) {
-                                match = true;
-                                NodeList locList = e.getElementsByTagName
-                                    ("taglib-location");
-                                Element locElem = (Element) locList.item(0);
-                                Text tl = (Text) locElem.getFirstChild();
-                                if (tl != null) {
-                                    tagLoc = tl.getData();
-                                    if (tagLoc != null)
-                                        tagLoc = tagLoc.trim();
-                                }
-                            }
-                        }
-                    }
-                    if (match == true && tagLoc != null) {
-                        this.uri = tagLoc;
-
-                        // If this is a relative path, then it has to be
-                        // relative to where web.xml is.
-
-                        // I'm taking the simple way out. Since web.xml 
-                        // has to be directly under WEB-INF, I'm making 
-                        // an absolute URI out of it by prepending WEB-INF
-
-                        if (!uri.startsWith("/") && isRelativeURI(uri))
-                            uri = "/WEB-INF/"+uri;
-                    }
-                }
-            }
-        }
-
-        // Try to resolve URI relative to the current JSP page
-        if (!uri.startsWith("/") && isRelativeURI(uri))
-            uri = ctxt.resolveRelativeUri(uri);
-
-
-        if (!uri.endsWith("jar")) {
+        if (!location[0].endsWith("jar")) {
+	    // Location points to TLD file
 	    try {
-		in = getResourceAsStream(uri);
-		if (in == null) throw new FileNotFoundException(uri);
+		in = getResourceAsStream(location[0]);
+		if (in == null) throw new FileNotFoundException(location[0]);
 	    } catch (FileNotFoundException ex) {
 		throw new JasperException(
                     Constants.getString("jsp.error.file.not.found",
-					new Object[] {uri}));
+					new Object[] {location[0]}));
 	    }
 	    // Now parse the tld.
-	    parseTLD(uri, in);
-	}
-	    
-	// FIXME Take this stuff out when taglib changes are thoroughly tested.
-	/* @@@ taking it out... hopefully the sky won't fall -pierred
-	if (uri.endsWith("jar")) {
-	    
-	    if (!isRelativeURI(uri)) {
-		url = new URL(uri);
-		in = url.openStream();
-	    } else {
-		relativeURL = true;
-		in = getResourceAsStream(uri);
-	    }
-	    
-	    zin = new ZipInputStream(in);
-	    this.jarEntries = new Hashtable();
-	    this.ctxt = ctxt;
-	    
-	    // First copy this file into our work directory! 
-	    {
-		File jspFile = new File(ctxt.getJspFile());
-                String parent = jspFile.getParent();
-                String jarFileName = ctxt.getOutputDir();
-                if (parent != null) {
-                   jarFileName = jarFileName + File.separatorChar +
-                       parent;
-                }
-                File jspDir = new File(jarFileName);
-		jspDir.mkdirs();
-	    
-		if (relativeURL)
-		    jarFileName = jarFileName+File.separatorChar+new File(uri).getName();
-		else                    
-		    jarFileName = jarFileName+File.separatorChar+
-			new File(url.getFile()).getName();
-	    
-		Constants.message("jsp.message.copyinguri", 
-	                          new Object[] { uri, jarFileName },
-				  Logger.DEBUG);
-	    
-		if (relativeURL)
-		    copy(getResourceAsStream(uri),
-			 jarFileName);
-		else
-		    copy(url.openStream(), jarFileName);
-	    
-	        ctxt.addJar(jarFileName);
-	    }
-	    
-	    
-	    boolean tldFound = false;
-	    ZipEntry entry;
-	    while ((entry = zin.getNextEntry()) != null) {
-		if (entry.getName().equals(TAGLIB_TLD)) {
-		    // This hack is necessary because XML reads until the end 
-		    // of an inputstream -- does not use available()
-		    // -- and closes the inputstream when it can't
-		    // read no more.
-		    
-		    // BEGIN HACK
-		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		    int b;
-		    while (zin.available() != 0) {
-			b = zin.read();
-			if (b == -1)
-			    break;
-			baos.write(b);
-		    }
-
-		    baos.close();
-		    ByteArrayInputStream bais 
-			= new ByteArrayInputStream(baos.toByteArray());
-		    // END HACK
-		    tldFound = true;
-		    parseTLD(TAGLIB_TLD, bais);
-		} else {
-		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		    int b;
-		    while (zin.available() != 0) {
-			b = zin.read();
-			if (b == -1)
-			    break;
-			baos.write(b);
-		    }
-		    baos.close();
-		    jarEntries.put(entry.getName(), baos.toByteArray());
+	    parseTLD(location[0], in);
+	} else {
+	    // Location points to a jar file
+	    p("JAR FILE: " + location[0]);
+	    // tag library in jar file
+	    JarFile jarFile = null;
+	    ZipEntry jarEntry = null;
+	    InputStream stream = null;
+	    try {
+		url = ctxt.getResource(location[0]);
+		p("url = " + url);
+		if (url == null) return;
+		url = new URL("jar:" + url.toString() + "!/");
+		JarURLConnection conn =
+		    (JarURLConnection) url.openConnection();
+		conn.connect(); //@@@ necessary???
+		jarFile = conn.getJarFile();
+		p("jarFile: " + jarFile);
+		jarEntry = jarFile.getEntry(location[1]);
+		p("jarEntry name: " + jarEntry.getName());
+		stream = jarFile.getInputStream(jarEntry);
+		parseTLD(location[0], stream);
+		// FIXME @@@
+		// -- it seems that the JarURLConnection class caches JarFile 
+		// objects for particular URLs, and there is no way to get 
+		// it to release the cached entry, so
+		// there's no way to redeploy from the same JAR file.  Wierd.
+	    } catch (Exception ex) {
+		if (stream != null) {
+		    try {
+			stream.close();
+		    } catch (Throwable t) {}
 		}
-		zin.closeEntry();
+		if (jarFile != null) {
+		    try {
+			jarFile.close();
+		    } catch (Throwable t) {}
+		}
 	    }
-	    
-	    if (!tldFound) {
-		throw new JasperException(
-                    Constants.getString("jsp.error.tld_not_found",
-		                        new Object[] {TAGLIB_TLD}));
-	    }
-	} // Take this out (END of if(endsWith("jar")))
-        */
+	}
     }
     
     /** Returns true if the given URI is relative in this web application, false if it is an internet URI.
@@ -647,7 +555,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Class tlvClass = 
 		    ctxt.getClassLoader().loadClass(validatorClass);
                 tlv = (TagLibraryValidator)tlvClass.newInstance();
-                //@@@ removed in 1.2PFD tlv.setTagLibraryInfo(this);
+		//p("got validator class: " + tlv);
             } catch (Exception ex) {
                 Constants.message("jsp.warning.tlvclass.is.null",
 				  new Object[] {
@@ -729,4 +637,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     protected TagLibraryValidator tagLibraryValidator; 
+
+    private void p(String s) {
+	System.out.println("[TagLibraryInfoImpl] " + s);
+    }
 }

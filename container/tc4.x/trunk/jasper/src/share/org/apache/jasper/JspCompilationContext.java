@@ -70,6 +70,8 @@ import org.apache.jasper.compiler.ServletWriter;
 //import org.apache.jasper.runtime.JspLoader;
 import org.apache.jasper.compiler.TagLibraries;
 import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import org.apache.jasper.compiler.Compiler;
 
 /**
@@ -202,6 +204,8 @@ public interface JspCompilationContext {
      *         as an InputStream.
      */
     public java.io.InputStream getResourceAsStream(String res);
+
+    public java.net.URL getResource(String res) throws MalformedURLException;
 
     /** 
      * Gets the actual path of a URI relative to the context of

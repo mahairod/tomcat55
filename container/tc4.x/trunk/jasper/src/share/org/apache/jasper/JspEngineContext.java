@@ -65,6 +65,8 @@
 
 package org.apache.jasper;
 
+import java.net.URL;
+import java.net.MalformedURLException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -346,6 +348,12 @@ public class JspEngineContext implements JspCompilationContext {
     public java.io.InputStream getResourceAsStream(String res)
     {
         return context.getResourceAsStream(res);
+    }
+
+    public java.net.URL getResource(String res)
+	throws MalformedURLException
+    {
+        return context.getResource(res);
     }
 
     /** 

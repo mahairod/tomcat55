@@ -83,6 +83,7 @@ import org.apache.jasper.compiler.Mangler;
 import org.apache.jasper.runtime.*;
 
 import org.apache.jasper.compiler.Compiler;
+import org.apache.jasper.compiler.TagLibrariesGlobal;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.JasperLogger;
@@ -285,6 +286,9 @@ public class JspServlet extends HttpServlet {
 	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
 	    loader.setProtectionDomain( pd );
 	}
+
+	// Setup the Tag Libraries mappings
+	TagLibrariesGlobal.init(context);
 
 	if (firstTime) {
 	    firstTime = false;

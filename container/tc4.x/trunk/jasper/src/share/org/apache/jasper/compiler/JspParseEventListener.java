@@ -735,8 +735,15 @@ public class JspParseEventListener extends BaseJspListener {
 	if (directive.equals("taglib")) {
             String uri = attrs.getValue("uri");
             String prefix = attrs.getValue("prefix");
-	    TagLibraryInfo tl = 
-		new TagLibraryInfoImpl(ctxt, prefix, uri);
+	    TagLibraryInfo tl = null;
+
+	    String[] location = 
+		TagLibrariesGlobal.getLocation(uri);
+	    if (location == null) {
+		tl = new TagLibraryInfoImpl(ctxt, prefix, uri);
+	    } else {
+		tl = new TagLibraryInfoImpl(ctxt, prefix, uri, location);
+	    }
 	    libraries.addTagLibrary(prefix, tl);
 	}
 
