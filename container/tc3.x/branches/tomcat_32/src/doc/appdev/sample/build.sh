@@ -1,5 +1,5 @@
 #!/bin/sh
-# build -- Build Script for the "Hello, World" Application
+# build.sh -- Build Script for the "Hello, World" Application
 # $Id$
 
 # Identify the custom class path components we need
