@@ -391,7 +391,13 @@ public class CoyoteRequest
      * Local address
      */
     protected String localAddr = null;
+
     
+    /**
+     * Local address
+     */
+    protected String localName = null;
+
     /** After the request is mapped to a ServletContext, we can also
      * map it to a logger.
      */ 
@@ -427,6 +433,7 @@ public class CoyoteRequest
         remotePort = -1;
         localPort = -1;
         localAddr = null;
+        localName = null;
 
         attributes.clear();
         notes.clear();
@@ -654,6 +661,7 @@ public class CoyoteRequest
         remotePort = -1;
         localPort = -1;
         localAddr = null;
+        localName = null;
     }
 
 
@@ -1255,7 +1263,17 @@ public class CoyoteRequest
      * which the request was received.
      */
     public String getLocalName(){
-        return getServerName();
+        if (localName == null) {
+            if (socket != null) {
+                InetAddress inet = socket.getLocalAddress();
+                localAddr = inet.getHostName();
+            } else {
+                coyoteRequest.action
+                    (ActionCode.ACTION_REQ_LOCAL_NAME_ATTRIBUTE, coyoteRequest);
+                localName = coyoteRequest.localName().toString();
+            }
+        }
+        return localName;
     }
 
     /**
