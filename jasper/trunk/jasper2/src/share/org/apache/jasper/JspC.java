@@ -812,6 +812,8 @@ public class JspC implements Options {
     private void processFile(String file)
         throws JasperException
     {
+        ClassLoader originalClassLoader = null;
+
         try {
             // set up a scratch/output dir if none is provided
             if (scratchDir == null) {
@@ -835,8 +837,9 @@ public class JspC implements Options {
                 clctxt.setServletPackageName(targetPackage);
             }
 
-            if( loader==null )
-                initClassLoader( clctxt );
+            if( loader==null ) {
+                originalClassLoader = initClassLoader( clctxt );
+            }
 
             clctxt.setClassLoader(loader);
             clctxt.setClassPath(classPath);
@@ -876,6 +879,10 @@ public class JspC implements Options {
                                               e.getMessage()));
             }
             throw new JasperException(e);
+        } finally {
+            if(originalClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(originalClassLoader);
+            }
         }
     }
 
@@ -1081,7 +1088,15 @@ public class JspC implements Options {
         tagPluginManager = new TagPluginManager(context);
     }
 
-    private void initClassLoader(JspCompilationContext clctxt)
+    /**
+     * Initializes the classloader as/if needed for the given
+     * compilation context.
+     *
+     * @param clctxt The compilation context
+     * @return The original classloader before modifying
+     * @throws IOException If an error occurs
+     */
+    private ClassLoader initClassLoader(JspCompilationContext clctxt)
         throws IOException {
 
         classPath = getClassPath();
@@ -1158,7 +1173,11 @@ public class JspC implements Options {
         URL urlsA[]=new URL[urls.size()];
         urls.toArray(urlsA);
         loader = new URLClassLoader(urlsA, this.getClass().getClassLoader());
+
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(loader);
+
+        return originalClassLoader;
     }
 
     /**
