@@ -56,6 +56,9 @@
       <fix>
         <bug>28533</bug>: Fixed without-jni check in jk_java.m4. (yoavs)
       </fix>
+      <fix>
+        <bug>28940</bug>: Added UTF-8 encoding directive to Deployer build. (yoavs)
+      </fix>
     </changelog>
   </subsection>
  
