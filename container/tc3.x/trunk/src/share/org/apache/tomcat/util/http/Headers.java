@@ -104,21 +104,6 @@ public class Headers extends MultiMap {
 	return super.findIgnoreCase( name, starting );
     }
     
-    // -------------------- --------------------
-
-    /**
-     * Returns an enumeration of strings representing the header field names.
-     * Field names may appear multiple times in this enumeration, indicating
-     * that multiple fields with that name exist in this header.
-     */
-    public Enumeration names() {
-	return new NamesEnumerator(this);
-    }
-
-    public Enumeration values(String name) {
-	return new ValuesEnumerator(this, name);
-    }
-
     // -------------------- Adding headers --------------------
     
     /** Create a new named header , return the MessageBytes
@@ -168,6 +153,7 @@ public class Headers extends MultiMap {
 
     // bad shortcut - it'll convert to string ( too early probably,
     // encoding is guessed very late )
+    
     public String getHeader(String name) {
 	int pos=findIgnoreCase( name, 0 );
 	if( pos <0 ) return null;
@@ -190,126 +176,3 @@ public class Headers extends MultiMap {
     }
 }
 
-/** Enumerate the distinct header names.
-    Each nextElement() is O(n) ( a comparation is
-    done with all previous elements ).
-
-    This is less frequesnt than add() -
-    we want to keep add O(1).
-*/
-class NamesEnumerator implements Enumeration {
-    int pos;
-    int size;
-    String next;
-    MultiMap headers;
-
-    NamesEnumerator(MultiMap headers) {
-	this.headers=headers;
-	pos=0;
-	size = headers.size();
-	findNext();
-    }
-
-    private void findNext() {
-	next=null;
-	for(  ; pos< size; pos++ ) {
-	    next=headers.getName( pos ).toString();
-	    for( int j=0; j<pos ; j++ ) {
-		if( headers.getName( j ).equalsIgnoreCase( next )) {
-		    // duplicate.
-		    next=null;
-		    break;
-		}
-	    }
-	    if( next!=null ) {
-		// it's not a duplicate
-		break;
-	    }
-	}
-	// next time findNext is called it will try the
-	// next element
-	pos++;
-    }
-    
-    public boolean hasMoreElements() {
-	return next!=null;
-    }
-
-    public Object nextElement() {
-	String current=next;
-	findNext();
-	return current;
-    }
-}
-
-/** Enumerate the values for a (possibly ) multiple
-    value element.
-*/
-class ValuesEnumerator implements Enumeration {
-    int pos;
-    int size;
-    MessageBytes next;
-    MultiMap headers;
-    String name;
-
-    ValuesEnumerator(MultiMap headers, String name) {
-        this.name=name;
-	this.headers=headers;
-	pos=0;
-	size = headers.size();
-	findNext();
-    }
-
-    private void findNext() {
-	next=null;
-	for( ; pos< size; pos++ ) {
-	    MessageBytes n1=headers.getName( pos );
-	    if( n1.equalsIgnoreCase( name )) {
-		next=headers.getValue( pos );
-		break;
-	    }
-	}
-	pos++;
-    }
-    
-    public boolean hasMoreElements() {
-	return next!=null;
-    }
-
-    public Object nextElement() {
-	MessageBytes current=next;
-	findNext();
-	return current.toString();
-    }
-}
-
-class MimeHeaderField {
-    // multiple headers with same name - a linked list will
-    // speed up name enumerations and search ( both cpu and
-    // GC)
-    MimeHeaderField next;
-    MimeHeaderField prev; 
-    
-    protected final MessageBytes nameB = new MessageBytes();
-    protected final MessageBytes valueB = new MessageBytes();
-
-    /**
-     * Creates a new, uninitialized header field.
-     */
-    public MimeHeaderField() {
-    }
-
-    public void recycle() {
-	nameB.recycle();
-	valueB.recycle();
-	next=null;
-    }
-
-    public MessageBytes getName() {
-	return nameB;
-    }
-
-    public MessageBytes getValue() {
-	return valueB;
-    }
-}

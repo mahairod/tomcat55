@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -61,98 +57,53 @@
  *
  */ 
 
+package org.apache.tomcat.util.collections;
 
-package org.apache.tomcat.util;
+import org.apache.tomcat.util.collections.*;
+import org.apache.tomcat.util.MessageBytes;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.text.*;
 
-/**
- *  Common place for date utils.
- *
- * @author dac@eng.sun.com
- * @author Jason Hunter [jch@eng.sun.com]
- * @author James Todd [gonzo@eng.sun.com]
- * @author Costin Manolache
+/** Enumerate the values for a (possibly ) multiple
+ *    value element.
  */
-public class DateTool {
+class MultiMapValuesEnumeration implements Enumeration {
+    int pos;
+    int size;
+    MessageBytes next;
+    MultiMap headers;
+    String name;
 
-    /** US locale - all HTTP dates are in english
-     */
-    public final static Locale LOCALE_US = Locale.US;
-
-    /** GMT timezone - all HTTP dates are on GMT
-     */
-    public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
-
-    /** format for RFC 1123 date string -- "Sun, 06 Nov 1994 08:49:37 GMT"
-     */
-    public final static String RFC1123_PATTERN =
-        "EEE, dd MMM yyyyy HH:mm:ss z";
-
-    // format for RFC 1036 date string -- "Sunday, 06-Nov-94 08:49:37 GMT"
-    private final static String rfc1036Pattern =
-        "EEEEEEEEE, dd-MMM-yy HH:mm:ss z";
-
-    // format for C asctime() date string -- "Sun Nov  6 08:49:37 1994"
-    private final static String asctimePattern =
-        "EEE MMM d HH:mm:ss yyyyy";
-
-    /** Pattern used for old cookies
-     */
-    public final static String OLD_COOKIE_PATTERN = "EEE, dd-MMM-yyyy HH:mm:ss z";
-
-    /** DateFormat to be used to format dates
-     */
-    public final static DateFormat rfc1123Format =
-	new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
-    
-    /** DateFormat to be used to format old netscape cookies
-     */
-    public final static DateFormat oldCookieFormat =
-	new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
-    
-    public final static DateFormat rfc1036Format =
-	new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
-    
-    public final static DateFormat asctimeFormat =
-	new SimpleDateFormat(asctimePattern, LOCALE_US);
-    
-    static {
-	rfc1123Format.setTimeZone(GMT_ZONE);
-	oldCookieFormat.setTimeZone(GMT_ZONE);
-	rfc1036Format.setTimeZone(GMT_ZONE);
-	asctimeFormat.setTimeZone(GMT_ZONE);
-    }
- 
-    private static StringManager sm =
-        StringManager.getManager("org.apache.tomcat.resources");
-    
-    public static long parseDate( MessageBytes value ) {
-	return parseDate( value.toString());
+    MultiMapValuesEnumeration(MultiMap headers, String name,
+			      boolean toString) {
+        this.name=name;
+	this.headers=headers;
+	pos=0;
+	size = headers.size();
+	findNext();
     }
 
-    public static long parseDate( String dateString ) {
-	Date date=null;
-        try {
-            date = DateTool.rfc1123Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-	    date = DateTool.rfc1036Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-            date = DateTool.asctimeFormat.parse(dateString);
-	    return date.getTime();
-        } catch (ParseException pe) {
-        }
-	String msg = sm.getString("httpDate.pe", dateString);
-	throw new IllegalArgumentException(msg);
+    private void findNext() {
+	next=null;
+	for( ; pos< size; pos++ ) {
+	    MessageBytes n1=headers.getName( pos );
+	    if( n1.equalsIgnoreCase( name )) {
+		next=headers.getValue( pos );
+		break;
+	    }
+	}
+	pos++;
+    }
+    
+    public boolean hasMoreElements() {
+	return next!=null;
     }
 
+    public Object nextElement() {
+	MessageBytes current=next;
+	findNext();
+	return current.toString();
+    }
 }

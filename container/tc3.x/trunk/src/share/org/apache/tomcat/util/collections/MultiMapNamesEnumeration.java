@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -61,98 +57,72 @@
  *
  */ 
 
+package org.apache.tomcat.util.collections;
 
-package org.apache.tomcat.util;
+import org.apache.tomcat.util.collections.*;
+import org.apache.tomcat.util.MessageBytes;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.text.*;
 
-/**
- *  Common place for date utils.
- *
- * @author dac@eng.sun.com
- * @author Jason Hunter [jch@eng.sun.com]
- * @author James Todd [gonzo@eng.sun.com]
- * @author Costin Manolache
- */
-public class DateTool {
+/** Enumerate the distinct header names.
+    Each nextElement() is O(n) ( a comparation is
+    done with all previous elements ).
 
-    /** US locale - all HTTP dates are in english
-     */
-    public final static Locale LOCALE_US = Locale.US;
+    This is less frequesnt than add() -
+    we want to keep add O(1).
+*/
+public final class MultiMapNamesEnumeration implements Enumeration {
+    int pos;
+    int size;
+    String next;
+    MultiMap headers;
 
-    /** GMT timezone - all HTTP dates are on GMT
-     */
-    public final static TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
-
-    /** format for RFC 1123 date string -- "Sun, 06 Nov 1994 08:49:37 GMT"
-     */
-    public final static String RFC1123_PATTERN =
-        "EEE, dd MMM yyyyy HH:mm:ss z";
-
-    // format for RFC 1036 date string -- "Sunday, 06-Nov-94 08:49:37 GMT"
-    private final static String rfc1036Pattern =
-        "EEEEEEEEE, dd-MMM-yy HH:mm:ss z";
-
-    // format for C asctime() date string -- "Sun Nov  6 08:49:37 1994"
-    private final static String asctimePattern =
-        "EEE MMM d HH:mm:ss yyyyy";
-
-    /** Pattern used for old cookies
-     */
-    public final static String OLD_COOKIE_PATTERN = "EEE, dd-MMM-yyyy HH:mm:ss z";
-
-    /** DateFormat to be used to format dates
-     */
-    public final static DateFormat rfc1123Format =
-	new SimpleDateFormat(RFC1123_PATTERN, LOCALE_US);
+    // toString and unique options are not implemented -
+    // we allways to toString and unique.
     
-    /** DateFormat to be used to format old netscape cookies
+    /** Create a new multi-map enumeration.
+     * @param  headers the collection to enumerate 
+     * @param  toString convert each name to string 
+     * @param  unique return only unique names
      */
-    public final static DateFormat oldCookieFormat =
-	new SimpleDateFormat(OLD_COOKIE_PATTERN, LOCALE_US);
-    
-    public final static DateFormat rfc1036Format =
-	new SimpleDateFormat(rfc1036Pattern, LOCALE_US);
-    
-    public final static DateFormat asctimeFormat =
-	new SimpleDateFormat(asctimePattern, LOCALE_US);
-    
-    static {
-	rfc1123Format.setTimeZone(GMT_ZONE);
-	oldCookieFormat.setTimeZone(GMT_ZONE);
-	rfc1036Format.setTimeZone(GMT_ZONE);
-	asctimeFormat.setTimeZone(GMT_ZONE);
-    }
- 
-    private static StringManager sm =
-        StringManager.getManager("org.apache.tomcat.resources");
-    
-    public static long parseDate( MessageBytes value ) {
-	return parseDate( value.toString());
+    MultiMapNamesEnumeration(MultiMap headers, boolean toString,
+			     boolean unique) {
+	this.headers=headers;
+	pos=0;
+	size = headers.size();
+	findNext();
     }
 
-    public static long parseDate( String dateString ) {
-	Date date=null;
-        try {
-            date = DateTool.rfc1123Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-	    date = DateTool.rfc1036Format.parse(dateString);
-	    return date.getTime();
-	} catch (ParseException e) { }
-	
-        try {
-            date = DateTool.asctimeFormat.parse(dateString);
-	    return date.getTime();
-        } catch (ParseException pe) {
-        }
-	String msg = sm.getString("httpDate.pe", dateString);
-	throw new IllegalArgumentException(msg);
+    private void findNext() {
+	next=null;
+	for(  ; pos< size; pos++ ) {
+	    next=headers.getName( pos ).toString();
+	    for( int j=0; j<pos ; j++ ) {
+		if( headers.getName( j ).equalsIgnoreCase( next )) {
+		    // duplicate.
+		    next=null;
+		    break;
+		}
+	    }
+	    if( next!=null ) {
+		// it's not a duplicate
+		break;
+	    }
+	}
+	// next time findNext is called it will try the
+	// next element
+	pos++;
+    }
+    
+    public boolean hasMoreElements() {
+	return next!=null;
     }
 
+    public Object nextElement() {
+	String current=next;
+	findNext();
+	return current;
+    }
 }
