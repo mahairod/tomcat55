@@ -44,8 +44,6 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.util.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -156,9 +154,6 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class JNDIRealm extends RealmBase {
-
-
-    private static Log log = LogFactory.getLog(JNDIRealm.class);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -824,7 +819,7 @@ public class JNDIRealm extends RealmBase {
                     throw(e);
 
                 // log the exception so we know it's there.
-                log.error(sm.getString("jndiRealm.exception"), e);
+                container.getLogger().error(sm.getString("jndiRealm.exception"), e);
 
                 // close the connection so we know it will be reopened.
                 if (context != null)
@@ -848,7 +843,7 @@ public class JNDIRealm extends RealmBase {
         } catch (NamingException e) {
 
             // Log the problem for posterity
-            log.error(sm.getString("jndiRealm.exception"), e);
+            container.getLogger().error(sm.getString("jndiRealm.exception"), e);
 
             // Close the connection so that it gets reopened next time
             if (context != null)
@@ -907,7 +902,7 @@ public class JNDIRealm extends RealmBase {
                         }
                     } catch (InvalidNameException ine) {
                         // Log the problem for posterity
-                        log.warn(sm.getString("jndiRealm.exception"), ine);
+                        container.getLogger().warn(sm.getString("jndiRealm.exception"), ine);
                         // ignore; this is probably due to a name not fitting
                         // the search path format exactly, as in a fully-
                         // qualified name being munged into a search path
@@ -1079,7 +1074,7 @@ public class JNDIRealm extends RealmBase {
 
         // Check no further entries were found
         if (results.hasMore()) {
-            log.info("username " + username + " has multiple entries");
+            container.getLogger().info("username " + username + " has multiple entries");
             return (null);
         }
 
@@ -1095,8 +1090,8 @@ public class JNDIRealm extends RealmBase {
         name = name.addAll(entryName);
         String dn = name.toString();
 
-        if (log.isTraceEnabled())
-            log.trace("  entry found for " + username + " with dn " + dn);
+        if (container.getLogger().isTraceEnabled())
+            container.getLogger().trace("  entry found for " + username + " with dn " + dn);
 
         // Get the entry's attributes
         Attributes attrs = result.getAttributes();
@@ -1145,13 +1140,13 @@ public class JNDIRealm extends RealmBase {
              validated = compareCredentials(context, user, credentials);
          }
 
-         if (log.isTraceEnabled()) {
+         if (container.getLogger().isTraceEnabled()) {
              if (validated) {
-                 log.trace(sm.getString("jndiRealm.authenticateSuccess",
-                                        user.username));
+                 container.getLogger().trace(sm.getString("jndiRealm.authenticateSuccess",
+                                  user.username));
              } else {
-                 log.trace(sm.getString("jndiRealm.authenticateFailure",
-                                        user.username));
+                 container.getLogger().trace(sm.getString("jndiRealm.authenticateFailure",
+                                  user.username));
              }
          }
          return (validated);
@@ -1182,8 +1177,8 @@ public class JNDIRealm extends RealmBase {
             return (false);
 
         // Validate the credentials specified by the user
-        if (log.isTraceEnabled())
-            log.trace("  validating credentials");
+        if (container.getLogger().isTraceEnabled())
+            container.getLogger().trace("  validating credentials");
 
         boolean validated = false;
         if (hasMessageDigest()) {
@@ -1235,8 +1230,8 @@ public class JNDIRealm extends RealmBase {
              return (false);
 
          // Validate the credentials specified by the user
-         if (log.isTraceEnabled()) {
-             log.trace("  validating credentials by binding as the user");
+         if (container.getLogger().isTraceEnabled()) {
+             container.getLogger().trace("  validating credentials by binding as the user");
         }
 
         // Set up security environment to bind as the user
@@ -1246,15 +1241,15 @@ public class JNDIRealm extends RealmBase {
         // Elicit an LDAP bind operation
         boolean validated = false;
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("  binding as "  + dn);
+            if (container.getLogger().isTraceEnabled()) {
+                container.getLogger().trace("  binding as "  + dn);
             }
             attr = context.getAttributes("", null);
             validated = true;
         }
         catch (AuthenticationException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("  bind attempt failed");
+            if (container.getLogger().isTraceEnabled()) {
+                container.getLogger().trace("  bind attempt failed");
             }
         }
 
@@ -1301,8 +1296,8 @@ public class JNDIRealm extends RealmBase {
         if (dn == null || username == null)
             return (null);
 
-        if (log.isTraceEnabled())
-            log.trace("  getRoles(" + dn + ")");
+        if (container.getLogger().isTraceEnabled())
+            container.getLogger().trace("  getRoles(" + dn + ")");
 
         // Start with roles retrieved from the user entry
         ArrayList list = user.roles;
@@ -1337,13 +1332,13 @@ public class JNDIRealm extends RealmBase {
         }
 
 
-        if (log.isTraceEnabled()) {
+        if (container.getLogger().isTraceEnabled()) {
             if (list != null) {
-                log.trace("  Returning " + list.size() + " roles");
+                container.getLogger().trace("  Returning " + list.size() + " roles");
                 for (int i=0; i<list.size(); i++)
-                    log.trace(  "  Found role " + list.get(i));
+                    container.getLogger().trace(  "  Found role " + list.get(i));
             } else {
-                log.trace("  getRoles about to return null ");
+                container.getLogger().trace("  getRoles about to return null ");
             }
         }
 
@@ -1362,8 +1357,8 @@ public class JNDIRealm extends RealmBase {
     private String getAttributeValue(String attrId, Attributes attrs)
         throws NamingException {
 
-        if (log.isTraceEnabled())
-            log.trace("  retrieving attribute " + attrId);
+        if (container.getLogger().isTraceEnabled())
+            container.getLogger().trace("  retrieving attribute " + attrId);
 
         if (attrId == null || attrs == null)
             return null;
@@ -1399,8 +1394,8 @@ public class JNDIRealm extends RealmBase {
                                          ArrayList values)
         throws NamingException{
 
-        if (log.isTraceEnabled())
-            log.trace("  retrieving values for attribute " + attrId);
+        if (container.getLogger().isTraceEnabled())
+            container.getLogger().trace("  retrieving values for attribute " + attrId);
         if (attrId == null || attrs == null)
             return values;
         if (values == null)
@@ -1430,11 +1425,11 @@ public class JNDIRealm extends RealmBase {
 
         // Close our opened connection
         try {
-            if (log.isDebugEnabled())
-                log.debug("Closing directory context");
+            if (container.getLogger().isDebugEnabled())
+                container.getLogger().debug("Closing directory context");
             context.close();
         } catch (NamingException e) {
-            log.error(sm.getString("jndiRealm.close"), e);
+            container.getLogger().error(sm.getString("jndiRealm.close"), e);
         }
         this.context = null;
 
@@ -1494,7 +1489,7 @@ public class JNDIRealm extends RealmBase {
             connectionAttempt = 1;
 
             // log the first exception.
-            log.warn(sm.getString("jndiRealm.exception"), e);
+            container.getLogger().warn(sm.getString("jndiRealm.exception"), e);
 
             // Try connecting to the alternate url.
             context = new InitialDirContext(getDirectoryContextEnvironment());
@@ -1521,10 +1516,10 @@ public class JNDIRealm extends RealmBase {
         Hashtable env = new Hashtable();
 
         // Configure our directory context environment.
-        if (log.isDebugEnabled() && connectionAttempt == 0)
-            log.debug("Connecting to URL " + connectionURL);
-        else if (log.isDebugEnabled() && connectionAttempt > 0)
-            log.debug("Connecting to URL " + alternateURL);
+        if (container.getLogger().isDebugEnabled() && connectionAttempt == 0)
+            container.getLogger().debug("Connecting to URL " + connectionURL);
+        else if (container.getLogger().isDebugEnabled() && connectionAttempt > 0)
+            container.getLogger().debug("Connecting to URL " + alternateURL);
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
         if (connectionName != null)
             env.put(Context.SECURITY_PRINCIPAL, connectionName);
