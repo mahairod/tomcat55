@@ -174,7 +174,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="useBodyEncodingForURI"
-          description="Should the body encoding be used for URI parameters"
+          description="Should the body encoding be used for URI query parameters"
                  type="boolean"/>
 
     <attribute    name="xpoweredBy"
