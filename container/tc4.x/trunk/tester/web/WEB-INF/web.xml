@@ -280,6 +280,16 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedLifecycle01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedLifecycle02</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedReflection01</url-pattern>
     </filter-mapping>
 
@@ -651,6 +661,16 @@
     <servlet>
         <servlet-name>Jndi02</servlet-name>
         <servlet-class>org.apache.tester.Jndi02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Lifecycle01</servlet-name>
+        <servlet-class>org.apache.tester.Lifecycle01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Lifecycle02</servlet-name>
+        <servlet-class>org.apache.tester.Lifecycle02</servlet-class>
     </servlet>
 
     <servlet>
@@ -1164,6 +1184,26 @@
     <servlet-mapping>
         <servlet-name>Jndi02</servlet-name>
         <url-pattern>/WrappedJndi02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle01</servlet-name>
+        <url-pattern>/Lifecycle01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle01</servlet-name>
+        <url-pattern>/WrappedLifecycle01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle02</servlet-name>
+        <url-pattern>/Lifecycle02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle02</servlet-name>
+        <url-pattern>/WrappedLifecycle02</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Lifecycle,RequestDispatcher,Resources,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest,CGITest"/>
 
 
   <target name="ROOT">
@@ -493,6 +493,29 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedJndi02" debug="${debug}"
       outContent="Jndi02 PASSED"/>
+
+  </target>
+
+
+  <target name="Lifecycle">
+
+    <!-- ========== Lifecycle Management ================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Lifecycle01"
+      outContent="Lifecycle01 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedLifecycle01"
+      outContent="Lifecycle01 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Lifecycle02" method="POST"
+      outContent="Lifecycle02 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedLifecycle02" method="POST"
+      outContent="Lifecycle02 PASSED" debug="${debug}"/>
 
   </target>
 
