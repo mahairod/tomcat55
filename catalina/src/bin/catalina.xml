@@ -172,10 +172,10 @@
   <!-- ======================= Ant/JMX based ================ -->
 
   <target name="taskdef" >
-    <property name="tomcat.home" location="../../jakarta-tomcat-5/build" />
+    <property name="tomcat.home" location=".." />
 
     <path id="jmx.test.classpath">
-      <pathelement location="target/classes" />
+      <pathelement location="${commons-modeler.jar}" />
       <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
       <fileset dir="${tomcat.home}/server/lib" includes="*.jar"/>
       <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
