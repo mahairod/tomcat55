@@ -17,15 +17,16 @@ import java.io.*;
 public class JikesOutputParser {
     protected Project project;
     protected boolean errorFlag = false; // no errors so far
-    protected int errors,warnings;
+    protected boolean emacsMode;
     
     /**
      * Construct a new Parser object
      * @param project - project in whichs context we are called
      */
-    protected JikesOutputParser(Project project) {
+    protected JikesOutputParser(Project project, boolean emacsMode) {
 	super();
 	this.project = project;
+        this.emacsMode = emacsMode;
     }
 
     /**
@@ -33,6 +34,13 @@ public class JikesOutputParser {
      * @param reader - Reader used to read jikes's output
      */
     protected void parseOutput(BufferedReader reader) throws IOException {
+       if (emacsMode)
+           parseEmacsOutput(reader);
+       else
+           parseStandardOutput(reader);
+    }
+
+    private void parseStandardOutput(BufferedReader reader) throws IOException {
 	String line;
 	String lower;
 	// We assume, that every output, jike does, stands for an error/warning
@@ -51,14 +59,28 @@ public class JikesOutputParser {
 	}
     }
 
+    private void parseEmacsOutput(BufferedReader reader) throws IOException {
+       // This may change, if we add advanced parsing capabilities.
+       parseStandardOutput(reader);
+    }
+
     private void logWarning(String line) {
-	project.log("",Project.MSG_WARN); // Empty lines from jikes are alredy eaten, so print new ones
+        // Empty lines from jikes are alredy eaten, so print new ones
+        if (!emacsMode) {
+	    project.log("",Project.MSG_WARN); 
+        }
+
 	project.log(line,Project.MSG_WARN);
     }
 
     private void logError(String line) {
 	errorFlag = true;
-	project.log("",Project.MSG_ERR); // see above
+
+        // Empty lines from jikes are alredy eaten, so print new ones
+        if (!emacsMode) {
+	    project.log("",Project.MSG_ERR); 
+        }
+
 	project.log(line,Project.MSG_ERR);
     }
 

@@ -315,28 +315,48 @@ public class Javac extends Task {
 	//classpath.append(sourceDir.getAbsolutePath());
 	//classpath.append(File.pathSeparator);
 	classpath.append(destDir.getAbsolutePath());
-	classpath.append(File.pathSeparator);
 
 	// add our classpath to the mix
 
 	if (compileClasspath != null) {
-	    StringTokenizer tok = new StringTokenizer(compileClasspath, 
-            System.getProperty("path.separator"), false);
-	    while (tok.hasMoreTokens()) {
-		File f = project.resolveFile(tok.nextToken());
-		if (f.exists()) {
-		    classpath.append(f.getAbsolutePath());
-		    classpath.append(File.pathSeparator);
-		}
-	    }
+            addExistingToClasspath(classpath,compileClasspath);
 	}
 
 	// add the system classpath
 
-	classpath.append(System.getProperty("java.class.path"));
+        addExistingToClasspath(classpath,System.getProperty("java.class.path"));
 	return classpath.toString();
     }
     
+
+     /**
+     * Takes a classpath-like string, and adds each element of
+     * this string to a new classpath, if the components exist.
+     * Components that don't exist, aren't added.
+     * We do this, because jikes issues warnings for non-existant
+     * files/dirs in his classpath, and these warnings are pretty
+     * annoying.
+     * @param target - target classpath
+     * @param source - source classpath
+     * to get file objects.
+     */
+    private void addExistingToClasspath(StringBuffer target,String source) {
+       StringTokenizer tok = new StringTokenizer(source,
+                             System.getProperty("path.separator"), false);
+       while (tok.hasMoreTokens()) {
+           File f = project.resolveFile(tok.nextToken());
+
+           if (f.exists()) {
+               target.append(File.pathSeparator);
+               target.append(f.getAbsolutePath());
+           } else {
+               project.log("Dropping from classpath: "+
+                   f.getAbsolutePath(),project.MSG_VERBOSE);
+           }
+       }
+
+    }
+
 
     /**
      * Peforms a copmile using the classic compiler that shipped with
@@ -469,6 +489,49 @@ public class Javac extends Task {
 	if (optimize) {
 	    argList.addElement("-O");
 	}
+
+       /**
+        * XXX
+        * Perhaps we shouldn't use properties for these
+        * two options (emacs mode and warnings),
+        * but include it in the javac directive?
+        */
+
+       /**
+        * Jikes has the nice feature to print error
+        * messages in a form readable by emacs, so
+        * that emcas can directly set the cursor
+        * to the place, where the error occured.
+        */
+       boolean emacsMode = false;
+       String emacsProperty = project.getProperty("build.compiler.emacs");
+       if (emacsProperty != null &&
+           (emacsProperty.equalsIgnoreCase("on") ||
+            emacsProperty.equalsIgnoreCase("true"))
+           ) {
+           emacsMode = true;
+       }
+
+       /**
+        * Jikes issues more warnings that javac, for
+        * example, when you have files in your classpath
+        * that don't exist. As this is often the case, these
+        * warning can be pretty annoying.
+        */
+       boolean warnings = true;
+       String warningsProperty = project.getProperty("build.compiler.warnings");
+       if (warningsProperty != null &&
+           (warningsProperty.equalsIgnoreCase("off") ||
+            warningsProperty.equalsIgnoreCase("false"))
+           ) {
+           warnings = false;
+       }
+
+       if (emacsMode)
+           argList.addElement("+E");
+
+       if (!warnings)
+           argList.addElement("-nowarn");
 	
 	project.log("Compilation args: " + argList.toString(),
 		    project.MSG_VERBOSE);
@@ -499,7 +562,7 @@ public class Javac extends Task {
 	// XXX
 	// provide the compiler a different message sink - namely our own
 	
-	JikesOutputParser jop = new JikesOutputParser(project);
+	JikesOutputParser jop = new JikesOutputParser(project,emacsMode);
 	
 	Jikes compiler = new Jikes(jop,"jikes");
 	compiler.compile(args);
