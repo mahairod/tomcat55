@@ -92,6 +92,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.RequestFacade;
 import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.util.InstanceSupport;
@@ -826,7 +827,8 @@ final class ApplicationDispatcher
         while (current != null) {
 
             // If we run into the container request we are done
-            if (current instanceof Request)
+            if ((current instanceof Request)
+                || (current instanceof RequestFacade))
                 break;
 
             // Remove the current request if it is our wrapper
@@ -862,7 +864,8 @@ final class ApplicationDispatcher
         while (current != null) {
 
             // If we run into the container response we are done
-            if (current instanceof Response)
+            if ((current instanceof Response) 
+                || (current instanceof ResponseFacade))
                 break;
 
             // Remove the current response if it is our wrapper
