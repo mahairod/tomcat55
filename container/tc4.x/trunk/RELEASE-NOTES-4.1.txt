@@ -626,6 +626,11 @@ Catalina Bug Fixes:
 [4.1.19] RequestFilterValve:
          Catch null pointer property to match on, deny by default if found.
 
+[4.1.19] #15378
+         ProxyDirContext:
+         Fix cache invalidation problem when creating subcontexts or modifying
+         attributes.
+
 
 ----------------
 Coyote Bug Fixes:
