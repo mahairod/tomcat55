@@ -66,9 +66,12 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import java.util.Vector;
+import java.util.StringTokenizer;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
@@ -88,7 +91,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 // EL interpreter (subject to change)
 import javax.servlet.jsp.el.ExpressionEvaluator;
-import org.apache.jasper.runtime.ExpressionEvaluatorManager;
+import javax.servlet.jsp.el.FunctionMapper;
+import javax.servlet.jsp.el.ELException;
+import javax.servlet.jsp.el.ELParseException;
+import org.apache.jasper.runtime.ExpressionEvaluatorImpl;
 
 /** 
  * This class has all the utility method(s).
@@ -112,6 +118,8 @@ public class JspUtil {
     private static ErrorHandler errorHandler = new MyErrorHandler();
     private static EntityResolver entityResolver = new MyEntityResolver();
     private static int tempSequenceNumber = 0;
+    private static ExpressionEvaluatorImpl expressionEvaluator = 
+        new ExpressionEvaluatorImpl( null );
 
     public static char[] removeQuotes(char []chars) {
 	CharArrayWriter caw = new CharArrayWriter();
@@ -537,16 +545,15 @@ public class JspUtil {
      * Produces a String representing a call to the EL interpreter.
      * @param expression a String containing zero or more "${}" expressions
      * @param expectedType the expected type of the interpreted result
-     * @param fnMap Variable name containing function map, or literal "null"
      * @param defaultPrefix Default prefix, or literal "null"
+     * @param fnmapvar Variable pointing to a function map.
      * @return a String representing a call to the EL interpreter.
      */
     public static String interpreterCall(boolean isTagFile,
 					 String expression,
                                          Class expectedType,
-					 String prefixMap,
-                                         String fnMap,
-                                         String defaultPrefix) 
+                                         String defaultPrefix,
+                                         String fnmapvar ) 
     {
         /*
          * Determine which context object to use.
@@ -595,16 +602,27 @@ public class JspUtil {
  	/*
          * Build up the base call to the interpreter.
          */
+        // XXX - We use a proprietary call to the interpreter for now
+        // as the current standard machinery is inefficient and requires
+        // lots of wrappers and adapters.  This should all clear up once
+        // the EL interpreter moves out of JSTL and into its own project.
+        // In the future, this should be replaced by code that calls
+        // ExpressionEvaluator.parseExpression() and then cache the resulting
+        // expression objects.  The interpreterCall would simply select
+        // one of the pre-cached expressions and evaluate it.
+        // Note that PageContextImpl implements VariableResolver and
+        // the generated Servlet/SimpleTag implements FunctionMapper, so
+        // that machinery is already in place (mroth).
  	StringBuffer call = new StringBuffer(
              "(" + targetType + ") "
-               + Constants.EL_INTERPRETER_CONDUIT_CLASS + "."
-               + Constants.EL_INTERPRETER_CONDUIT_METHOD
+               + "org.apache.jasper.runtime.PageContextImpl.proprietaryEvaluate"
                + "(" + Generator.quote(expression) + ", "
                +       targetType + ".class, "
-	       +       jspCtxt + ", "
-               +       prefixMap + ", "
-               +       fnMap + ", "
-               +       Generator.quote( defaultPrefix ) + ")");
+	       +       "(PageContext)" + jspCtxt 
+               +       ", " + fnmapvar + ", "
+               +       ((defaultPrefix == null) ? 
+                            "null" : Generator.quote( defaultPrefix )) 
+               + ")");
  
  	/*
          * Add the primitive converter method if we need to.
@@ -625,23 +643,24 @@ public class JspUtil {
      */
     public static void validateExpressions(Mark where,
                                            String expressions,
+                                           Class expectedType,
+                                           FunctionMapper functionMapper,
+                                           String defaultPrefix,
                                            ErrorDispatcher err)
             throws JasperException {
-        ExpressionEvaluator el = null;
+        // Just parse and check if any exceptions are thrown.
         try {
-            // XXX when the EL moves to Jakarta Commons, this can
-            //     be replaced with a *much* cleaner interface.  I apologize
-            //     for it for the moment! (SB)
-            el = ExpressionEvaluatorManager.getEvaluatorByName(
-                    ExpressionEvaluatorManager.EVALUATOR_CLASS);
-        } catch (javax.servlet.jsp.JspException uglyEx) {
-            err.jspError(where, "jsp.error.internal.evaluator_not_found");
+            JspUtil.expressionEvaluator.parseExpression( expressions, 
+                expectedType, functionMapper, defaultPrefix );
         }
-	String errMsg = null; // XXX EL
-        // String errMsg = el.validate(expressions);
-        if (errMsg != null)
+        catch( ELParseException e ) {
             err.jspError(where, "jsp.error.invalid.expression", expressions,
-                errMsg);
+                e.toString() );
+        }
+        catch( ELException e ) {
+            err.jspError(where, "jsp.error.invalid.expression", expressions,
+                e.toString() );
+        }
     }
 
     /**
@@ -659,6 +678,123 @@ public class JspUtil {
     public static String nextTemporaryVariableName() {
         return Constants.TEMP_VARIABLE_NAME_PREFIX + (tempSequenceNumber++);
     }
+    
+    /**
+     * Parses and encapsulates a function signature, as would appear in
+     * a TLD.
+     */
+    public static class FunctionSignature {
+        private String returnType;
+        private String methodName;
+        private Class[] parameterTypes;
+        
+        /**
+         * Parses a function signature, as would appear in the TLD
+         *
+         * @param signature The signature to parse
+         * @param tagName Name of tag, for error messages.
+         * @throws JasperException If an error occurred while parsing the 
+         *     signature.
+         */
+        public FunctionSignature( String signature, String tagName,
+            ErrorDispatcher err )
+            throws JasperException
+        {
+            try {
+                // Parse function signature, assuming syntax:
+                // <return-type> S <method-name> S? '('
+                // ( <arg-type> ( ',' <arg-type> )* )? ')'
+                String ws = " \t\n\r";
+                StringTokenizer sigTokenizer = new StringTokenizer( 
+                    signature, ws + "(),", true);
+
+                // Return type:
+                this.returnType = sigTokenizer.nextToken();
+
+                // Skip whitespace and read <method-name>:
+                do {
+                    this.methodName = sigTokenizer.nextToken();
+                } while( ws.indexOf( this.methodName ) != -1 );
+
+                // Skip whitespace and read '(':
+                String paren;
+                do {
+                    paren = sigTokenizer.nextToken();
+                } while( ws.indexOf( paren ) != -1 );
+
+                if( !paren.equals( "(" ) ) {
+                    throw new JasperException( err.getString(
+                        "jsp.error.tld.fn.invalid.signature.parenexpected",
+                        tagName, this.methodName ) );
+                }
+
+                // ( <arg-type> S? ( ',' S? <arg-type> S? )* )? ')'
+
+                // Skip whitespace and read <arg-type>:
+                String argType;
+                do {
+                    argType = sigTokenizer.nextToken();
+                } while( ws.indexOf( argType ) != -1 );
+
+                if( !argType.equals( ")" ) ) {
+                    ArrayList parameterTypes = new ArrayList();
+                    do {
+                        if( ",(".indexOf( argType ) != -1 ) {
+                            throw new JasperException( err.getString(
+                                "jsp.error.tld.fn.invalid.signature",
+                                tagName, this.methodName ) );
+                        }
+
+                        parameterTypes.add( Class.forName( argType ) );
+
+                        String comma;
+                        do {
+                            comma = sigTokenizer.nextToken();
+                        } while( ws.indexOf( comma ) != -1 );
+
+                        if( comma.equals( ")" ) ) {
+                            break;
+                        }
+                        if( !comma.equals( "," ) ) {
+                            throw new JasperException( err.getString(
+                             "jsp.error.tld.fn.invalid.signature.commaexpected",
+                                tagName, this.methodName ) );
+                        }
+
+                        // <arg-type>
+                        do {
+                            argType = sigTokenizer.nextToken();
+                        } while( ws.indexOf( argType ) != -1 );
+                    } while( true );
+                    this.parameterTypes = (Class[])parameterTypes.toArray( 
+                        new Class[parameterTypes.size()] );
+                }
+            }
+            catch( NoSuchElementException e ) {
+                throw new JasperException( err.getString(
+                    "jsp.error.tld.fn.invalid.signature",
+                    tagName, this.methodName ) );
+            }
+            catch( ClassNotFoundException e ) {
+                throw new JasperException( err.getString(
+                    "jsp.error.tld.fn.invalid.signature.classnotfound",
+                    e.getMessage(), tagName, this.methodName ) );
+            }
+        }
+        
+        public String getReturnType() {
+            return this.returnType;
+        }
+        
+        public String getMethodName() {
+            return this.methodName;
+        }
+        
+        public Class[] getParameterTypes() {
+            return this.parameterTypes;
+        }
+    }
+    
 }
 
 

@@ -60,14 +60,20 @@
  */ 
 package org.apache.jasper.compiler;
 
+import java.lang.reflect.Method;
+
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Enumeration;
 
+import javax.servlet.jsp.el.FunctionMapper;
+
+import javax.servlet.jsp.tagext.FunctionInfo;
 import javax.servlet.jsp.tagext.PageData;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
-import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.ValidationMessage;
 
@@ -297,6 +303,11 @@ public class Validator {
 
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
+        
+        /**
+         * A FunctionMapper, used to validate EL expressions.
+         */
+        private FunctionMapper functionMapper;
 
 	private static final JspUtil.ValidAttribute[] jspRootAttrs = {
 	    new JspUtil.ValidAttribute("version", true) };
@@ -376,6 +387,8 @@ public class Validator {
 	ValidateVisitor(Compiler compiler) {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
+            this.functionMapper = new ValidatorFunctionMapper( this.pageInfo, 
+                this.err );
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
@@ -405,6 +418,7 @@ public class Validator {
                                     paramActionAttrs, err);
 	    n.setValue(getJspAttribute("value", null, null,
 				       n.getAttributeValue("value"),
+                                       java.lang.String.class, null,
 				       n, false));
             visitBody(n);
 	}
@@ -413,7 +427,8 @@ public class Validator {
             JspUtil.checkAttributes("Include action", n,
                                     includeActionAttrs, err);
 	    n.setPage(getJspAttribute("page", null, null,
-				      n.getAttributeValue("page"), n, false));
+				      n.getAttributeValue("page"), 
+                                      java.lang.String.class, null, n, false));
 	    visitBody(n);
         };
 
@@ -421,7 +436,8 @@ public class Validator {
             JspUtil.checkAttributes("Forward", n,
                                     forwardActionAttrs, err);
 	    n.setPage(getJspAttribute("page", null, null,
-				      n.getAttributeValue("page"), n, false));
+				      n.getAttributeValue("page"), 
+                                      java.lang.String.class, null, n, false));
 	    visitBody(n);
 	}
 
@@ -438,7 +454,8 @@ public class Validator {
 	    String param = n.getAttributeValue("param");
 	    String value = n.getAttributeValue("value");
 
-            n.setValue(getJspAttribute("value", null, null, value, n, false));
+            n.setValue(getJspAttribute("value", null, null, value, 
+                java.lang.Object.class, null, n, false));
 
             boolean valueSpecified = n.getValue() != null;
 
@@ -475,7 +492,7 @@ public class Validator {
 	    Node.JspAttribute jattr
 		= getJspAttribute("beanName", null, null,
 				  n.getAttributeValue("beanName"),
-				  n, false);
+				  java.lang.String.class, null, n, false);
 	    n.setBeanName(jattr);
 	    if (className != null && jattr != null)
 		err.jspError(n, "jsp.error.useBean.notBoth");
@@ -510,20 +527,16 @@ public class Validator {
             
 	    Node.JspAttribute width
 		= getJspAttribute("width", null, null,
-				  n.getAttributeValue("width"), n, false);
+				  n.getAttributeValue("width"), 
+                                  java.lang.String.class, null, n, false);
 	    n.setWidth( width );
             
 	    Node.JspAttribute height
 		= getJspAttribute("height", null, null,
-				  n.getAttributeValue("height"), n, false);
+				  n.getAttributeValue("height"), 
+                                  java.lang.String.class, null, n, false);
 	    n.setHeight( height );
 
-	    n.setHeight(getJspAttribute("height", null, null,
-					n.getAttributeValue("height"), n,
-					false));
-	    n.setWidth(getJspAttribute("width", null, null,
-				       n.getAttributeValue("width"), n,
-				       false));
 	    visitBody(n);
 	}
 
@@ -534,11 +547,19 @@ public class Validator {
 	}
         
 	public void visit(Node.JspBody n) throws JasperException {
-	    JspUtil.checkAttributes("Body", n,
+	    String defaultPrefix = null;
+            JspUtil.checkAttributes("Body", n,
 				    bodyAttrs, err);
+            Node parent = n.getParent();
+            if( parent instanceof Node.CustomTag ) {
+                // Default prefix comes from parent custom tag's prefix.
+                Node.CustomTag customTag = (Node.CustomTag)parent;
+                defaultPrefix = customTag.getPrefix();
+            }
 	    n.setValue(getJspAttribute("value", null, null,
-				       n.getAttributeValue("value"), n,
-				       false));
+				       n.getAttributeValue("value"), 
+                                       JspFragment.class, defaultPrefix, 
+                                       n, false));
             visitBody(n);
 	}
         
@@ -562,8 +583,14 @@ public class Validator {
 
 	public void visit(Node.ELExpression n) throws JasperException {
             if ( pageInfo.isELEnabled() ) {
-                JspUtil.validateExpressions(n.getStart(),
-                    "${" + new String(n.getText()) + "}", err);
+                JspUtil.validateExpressions(
+                    n.getStart(),
+                    "${" + new String(n.getText()) + "}", 
+                    java.lang.String.class, // XXX - Should template text 
+                                            // always evaluate to String?
+                    this.functionMapper,
+                    null,
+                    err);
             }
         }
 
@@ -613,13 +640,31 @@ public class Validator {
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (attrs.getQName(i).equals(tldAttrs[j].getName())) {
 			if (tldAttrs[j].canBeRequestTime()) {
-			    jspAttrs[i]
-				= getJspAttribute(attrs.getQName(i),
-						  attrs.getURI(i),
-						  attrs.getLocalName(i),
-						  attrs.getValue(i),
-						  n,
-						  false);
+                            Class expectedType;
+                            try {
+                                if( tldAttrs[j].isFragment() ) {
+                                    expectedType = JspFragment.class;
+                                }
+                                else {
+                                    expectedType = Class.forName(
+                                        tldAttrs[j].getTypeName() );
+                                }
+                                jspAttrs[i]
+                                    = getJspAttribute(attrs.getQName(i),
+                                                      attrs.getURI(i),
+                                                      attrs.getLocalName(i),
+                                                      attrs.getValue(i),
+                                                      expectedType,
+                                                      n.getPrefix(),
+                                                      n,
+                                                      false);
+                            }
+                            catch( ClassNotFoundException e ) {
+                                err.jspError(n, 
+                                    "jsp.error.unknown_attribute_type",
+                                    tldAttrs[j].getName(), 
+                                    tldAttrs[j].getTypeName() );
+                            }
 			} else {
 			    jspAttrs[i]
 				= new Node.JspAttribute(attrs.getQName(i),
@@ -647,7 +692,9 @@ public class Validator {
 						      attrs.getURI(i),
 						      attrs.getLocalName(i),
 						      attrs.getValue(i),
-						      n,
+						      java.lang.Object.class,
+                                                      n.getPrefix(),
+                                                      n,
 						      true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
@@ -666,9 +713,26 @@ public class Validator {
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
 			if (tldAttrs[j].canBeRequestTime()) {
-			    jspAttrs[attrs.getLength() + i]
-				= getJspAttribute(na.getName(), null, null,
-						  null, n, false);
+                            Class expectedType;
+                            try {
+                                if( tldAttrs[j].isFragment() ) {
+                                    expectedType = JspFragment.class;
+                                }
+                                else {
+                                    expectedType = Class.forName(
+                                        tldAttrs[j].getTypeName() );
+                                }
+                                jspAttrs[attrs.getLength() + i]
+                                    = getJspAttribute(na.getName(), null, null,
+                                                      null, expectedType, 
+                                                      n.getPrefix(), n, false);
+                            }
+                            catch( ClassNotFoundException e ) {
+                                err.jspError(n, 
+                                    "jsp.error.unknown_attribute_type",
+                                    tldAttrs[j].getName(), 
+                                    tldAttrs[j].getTypeName() );
+                            }
 			} else {
                             err.jspError( n, 
                                 "jsp.error.named.attribute.not.rt",
@@ -684,7 +748,8 @@ public class Validator {
 		    if (tagInfo.hasDynamicAttributes()) {
 			jspAttrs[attrs.getLength() + i]
 			    = getJspAttribute(na.getName(), null, null, null,
-					      n, true);
+					      java.lang.Object.class, 
+                                              n.getPrefix(), n, true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
 				     na.getName());
@@ -711,6 +776,8 @@ public class Validator {
 						  String uri,
 						  String localName,
 						  String value,
+                                                  Class expectedType,
+                                                  String defaultPrefix,
                                                   Node n,
 						  boolean dynamic)
                 throws JasperException {
@@ -743,19 +810,22 @@ public class Validator {
 					dynamic);
                 }
                 else {
-                    // The attribute can contain expressions but is not an
-                    // rtexprvalue; thus, we want to run it through the
-                    // expression interpreter (final argument "true" in
+                    // The attribute can contain expressions but is not a
+                    // scriptlet expression; thus, we want to run it through 
+                    // the expression interpreter (final argument "true" in
                     // Node.JspAttribute constructor).
-                    // XXX Optimize by directing generator to pass expressions
-                    //     through interpreter only if they contain at least
-                    //     one "${"?  (But ensure consistent type conversions
-                    //     in JSP 1.3!)
 
                     // validate expression syntax if string contains
                     // expression(s)
                     if (value.indexOf("${") != -1 && pageInfo.isELEnabled()) {
-                        JspUtil.validateExpressions(n.getStart(), value, err);
+                        JspUtil.validateExpressions(
+                            n.getStart(),
+                            value, 
+                            expectedType, 
+                            this.functionMapper,
+                            defaultPrefix,
+                            this.err);
+                        
                         result = new Node.JspAttribute(qName, uri, localName,
 						       value, false, true,
 						       dynamic);
@@ -939,6 +1009,94 @@ public class Validator {
 	if (errMsg != null) {
             errDisp.jspError(errMsg.toString());
 	}
+    }
+   
+    /**
+     * A Function Mapper to be used by the validator to help in parsing
+     * EL Expressions.  
+     */
+    private static class ValidatorFunctionMapper 
+        implements FunctionMapper
+    {
+        private PageInfo pageInfo;
+        private ErrorDispatcher err;
+        
+        /**
+         * HashMap of cached functions that we already looked up.
+         * Key = prefix, value = HashMap, where key = localName,
+         * value = Method.
+         */
+        private HashMap cachedFunctions = new HashMap();
+        
+        public ValidatorFunctionMapper( PageInfo pageInfo, 
+            ErrorDispatcher err ) 
+        {
+            this.pageInfo = pageInfo;
+            this.err = err;
+        }
+        
+        public Method resolveFunction( String prefix, String localName ) {
+            boolean cached = false;
+            Method result = null;
+            
+            // Look up entry in cache:
+            HashMap cachedMethods = (HashMap)this.cachedFunctions.get( prefix );
+            if( cachedMethods != null ) {
+                if( cachedMethods.containsKey( localName ) ) {
+                    result = (Method)cachedMethods.get( localName );
+                    cached = true;
+                }
+            }
+            
+            // If not cached, look it up:
+            if( !cached ) {
+                Hashtable taglibraries = pageInfo.getTagLibraries();
+                TagLibraryInfo info = 
+                    (TagLibraryInfo)taglibraries.get( prefix );
+                if( info != null ) {
+                    FunctionInfo fnInfo = 
+                        (FunctionInfo)info.getFunction( localName );
+                    if( fnInfo != null ) {
+                        String clazz = fnInfo.getFunctionClass();
+                        try {
+                            JspUtil.FunctionSignature functionSignature = 
+                                new JspUtil.FunctionSignature( 
+                                fnInfo.getFunctionSignature(),
+                                info.getShortName(), this.err );
+                            Class c = Class.forName( clazz );
+                            result = c.getDeclaredMethod( 
+                                functionSignature.getMethodName(),
+                                functionSignature.getParameterTypes() );
+                        }
+                        catch( JasperException e ) {
+                            // return null.
+                            // XXX - If the EL API evolves to allow for
+                            // an exception to be thrown, we should provide
+                            // details here.
+                        }
+                        catch( ClassNotFoundException e ) {
+                            // return null.
+                            // XXX - See above comment regarding detailed
+                            // error reporting.
+                        }
+                        catch( NoSuchMethodException e ) {
+                            // return null.
+                            // XXX - See above comment regarding detailed
+                            // error reporting.
+                        }
+                    }
+                }
+                
+                // Store result in cache:
+                if( cachedMethods == null ) {
+                    cachedMethods = new HashMap();
+                    this.cachedFunctions.put( prefix, cachedMethods );
+                }
+                cachedMethods.put( localName, result );
+            }
+            
+            return result;
+        }
     }
 }
 

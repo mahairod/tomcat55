@@ -89,6 +89,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.el.VariableResolver;
+import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
@@ -529,23 +531,19 @@ public class JspRuntimeLibrary {
 
     // handles <jsp:setProperty> with EL expression for 'value' attribute
     public static void handleSetPropertyExpression(Object bean,
-						   String prop,
-						   String expression,
-						   PageContext pageContext,
-						   Map prefixMap,
-                                                   Map fnMap )
+        String prop, String expression, PageContext pageContext,
+        VariableResolver variableResolver, FunctionMapper functionMapper )
 	throws JasperException
     {
 	try {
             Method method = getWriteMethod(bean.getClass(), prop);
 	    method.invoke(bean, new Object[] { 
-		ExpressionEvaluatorManager.evaluate(
+		pageContext.getExpressionEvaluator().evaluate(
 		    expression,
 		    method.getParameterTypes()[0],
-		    pageContext,
-		    prefixMap,
-                    fnMap,
-                    "null" )
+                    variableResolver,
+                    functionMapper,
+                    null )
 	    });
 	} catch (Exception ex) {
 	    throw new JasperException(ex);

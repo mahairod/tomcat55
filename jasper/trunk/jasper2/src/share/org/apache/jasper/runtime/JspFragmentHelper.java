@@ -127,7 +127,13 @@ public abstract class JspFragmentHelper
             // Remember original values to restore later
             originalValues.put( key, jspContext.getAttribute( key ) );
             // Set new values, based on params
-            jspContext.setAttribute( key, params.get( key ) );
+            Object newValue = params.get( key );
+            if( newValue != null ) {
+                jspContext.setAttribute( key, newValue );
+            }
+            else {
+                jspContext.removeAttribute( key );
+            }
         }
         return originalValues;
     }

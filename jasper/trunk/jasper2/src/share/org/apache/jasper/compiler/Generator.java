@@ -389,7 +389,7 @@ public class Generator {
         
         // Static data for EL function and prefix maps:
         generateELFunctionMap();
-	generatePrefixMap();
+        generateFunctionMapper();
     }
 
     /**
@@ -458,7 +458,8 @@ public class Generator {
 	out.print  (" extends ");
 	out.print  (pageInfo.getExtends());
 	if (!pageInfo.isThreadSafe()) {
-	    out.print("implements SingleThreadModel");
+	    out.print("implements SingleThreadModel, " +
+                "javax.servlet.jsp.el.FunctionMapper");
 	}
 	out.println(" {");
 	out.pushIndent();
@@ -583,86 +584,19 @@ public class Generator {
                     out.print(fnInfo[i].getFunctionClass() + 
                         ".class.getDeclaredMethod(");
                     
-                    try {
-                        // Parse function signature, assuming syntax:
-                        // <return-type> S <method-name> S? '('
-                        // ( <arg-type> ( ',' <arg-type> )* )? ')'
-                        String ws = " \t\n\r";
-                        StringTokenizer sigTokenizer = new StringTokenizer( 
-                            fnSignature, ws + "(),", true);
-
-                        // Skip <arg-type>:
-                        sigTokenizer.nextToken();
-
-                        // Skip whitespace and read <method-name>:
-                        String methodName;
-                        do {
-                            methodName = sigTokenizer.nextToken();
-                        } while( ws.indexOf( methodName ) != -1 );
-
-                        out.print( quote( methodName ) );
-                        out.print( ", new Class[] {" );
-                        
-                        // Skip whitespace and read '(':
-                        String paren;
-                        do {
-                            paren = sigTokenizer.nextToken();
-                        } while( ws.indexOf( paren ) != -1 );
-
-                        if( !paren.equals( "(" ) ) {
-                            throw new JasperException( err.getString(
-                                "jsp.error.tld.fn.invalid.signature",
-                                tli.getShortName(), fnName ) );
+                    JspUtil.FunctionSignature functionSignature = 
+                        new JspUtil.FunctionSignature( fnSignature, 
+                        tli.getShortName(), err );
+                    out.print( quote( functionSignature.getMethodName() ) );
+                    out.print( ", new Class[] {" );
+                    Class[] args = functionSignature.getParameterTypes();
+                    for( int j = 0; j < args.length; j++ ) {
+                        out.print( args[j].getName() + ".class" );
+                        if( j < (args.length - 1) ) {
+                            out.print( ", " );
                         }
-
-                        // ( <arg-type> S? ( ',' S? <arg-type> S? )* )? ')'
-                        
-                        // Skip whitespace and read <arg-type>:
-                        String argType;
-                        do {
-                            argType = sigTokenizer.nextToken();
-                        } while( ws.indexOf( argType ) != -1 );
-
-                        if( !argType.equals( ")" ) ) {
-                            do {
-                                if( ",(".indexOf( argType ) != -1 ) {
-                                    throw new JasperException( err.getString(
-                                        "jsp.error.tld.fn.invalid.signature",
-                                        tli.getShortName(), fnName ) );
-                                }
-
-                                out.print( argType + ".class" );
-
-                                String comma;
-                                do {
-                                    comma = sigTokenizer.nextToken();
-                                } while( ws.indexOf( comma ) != -1 );
-
-                                if( comma.equals( ")" ) ) {
-                                    break;
-                                }
-                                if( !comma.equals( "," ) ) {
-                                    throw new JasperException( err.getString(
-                                        "jsp.error.tld.fn.invalid.signature",
-                                        tli.getShortName(), fnName ) );
-                                }
-
-                                out.print( ", " );
-
-                                // <arg-type>
-                                do {
-                                    argType = sigTokenizer.nextToken();
-                                } while( ws.indexOf( argType ) != -1 );
-                            } while( true );
-                        }
-                        
-                        out.println( "} ) );" );
                     }
-                    catch( NoSuchElementException e ) {
-                        throw new JasperException( err.getString(
-                            "jsp.error.tld.fn.invalid.signature",
-                            tli.getShortName(), fnName ) );
-                    }
+                    out.println( "} ) );" );
                 }
             }
             out.popIndent();
@@ -679,34 +613,23 @@ public class Generator {
             out.println();
         }
     }
-
-    /*
-     * Generates prefix map section.
-     * The prefix map is a map with keys containing prefixes and values being
-     * the URI corresponding to that prefix in the taglib machinery.
+    
+    /**
+     * Generates the method needed to implement FunctionMapper
      */
-    private void generatePrefixMap() throws JasperException {
-        Hashtable taglibs = pageInfo.getTagLibraries();
-        Iterator iter = taglibs.keySet().iterator();
-        
-        out.printil("private static java.util.HashMap _jspx_prefix_map = null;");
-	iter = taglibs.keySet().iterator();
-	out.println();
-	out.printil("static {");
-	out.pushIndent();
-	out.printil("_jspx_prefix_map = new java.util.HashMap();");
-	while (iter.hasNext()) {
-	    String key = (String) iter.next();
-	    TagLibraryInfo tli = (TagLibraryInfo) taglibs.get(key);
-	    out.printin("_jspx_prefix_map.put(");
-	    out.print(quote(tli.getPrefixString()));
-	    out.print(", ");
-	    out.print(quote(tli.getURI()));
-	    out.println(");");
-        }
-	out.popIndent();
-	out.printil("}");
+    private void generateFunctionMapper() 
+        throws JasperException 
+    {
+        out.printil( "public java.lang.reflect.Method resolveFunction(" );
+        out.printil( "    String prefix, String localName )" );
+        out.printil( "{" );
+        out.pushIndent();
+        out.printil( "return (java.lang.reflect.Method)_jspx_fnmap.get( " );
+        out.printil( "    prefix + \":\" + localName );" );
+        out.popIndent();
+        out.printil( "}" );
     }
+
 
     /*
      * Generates the constructor.
@@ -814,8 +737,8 @@ public class Generator {
             if (attr.isExpression() || attr.isELInterpreterInput()) {
 		if (attr.isELInterpreterInput()) {
 		    v = JspUtil.interpreterCall(this.isTagFile,
-		        attr.getValue(), expectedType, "_jspx_prefix_map",
-			"_jspx_fnmap", defaultPrefix );
+		        attr.getValue(), expectedType, defaultPrefix,
+			"_jspx_fnmap" );
 		}
 		if (encode) {
 		    return "java.net.URLEncoder.encode(" + v + ")";
@@ -893,7 +816,7 @@ public class Generator {
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
                         "${" + new String(n.getText()) + "}", String.class,
-			"_jspx_prefix_map", "_jspx_fnmap", "null" )
+			null, "_jspx_fnmap" )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -1108,7 +1031,11 @@ public class Generator {
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
-                    + "pageContext, _jspx_prefix_map, _jspx_fnmap);");
+                    + "pageContext, "
+                    + "pageContext, "   // pageContext is a VariableResolver.
+                    + "this );");       // this (either the generated Servlet 
+                                        // or the generated tag handler for 
+                                        // Tag files) is a FunctionMapper.
             } else if( value.isNamedAttribute() ) {
                 // If the value for setProperty was specified via
                 // jsp:attribute, first generate code to evaluate
@@ -2522,8 +2449,7 @@ public class Generator {
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall(this.isTagFile,
-                        attrValue, c[0], "_jspx_prefix_map", "_jspx_fnmap",
-                        n.getPrefix() );
+                        attrValue, c[0], n.getPrefix(), "_jspx_fnmap" );
                 } else {
 		    attrValue = convertString(
                                 c[0], attrValue, attrName,
@@ -2904,7 +2830,8 @@ public class Generator {
 	out.print(tagInfo.getTagName());
 	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
 	if (tagInfo.hasDynamicAttributes())
-	    out.print(" implements javax.servlet.jsp.tagext.DynamicAttributes");
+	    out.print(" implements javax.servlet.jsp.tagext.DynamicAttributes, " +
+                "javax.servlet.jsp.el.FunctionMapper" );
 	out.println(" {");
 	out.println();
 	out.pushIndent();
@@ -2928,9 +2855,9 @@ public class Generator {
         genPreambleMethods();
         
         // Now the doTag() method
-	out.printil("public void doTag() throws javax.servlet.jsp.JspException {");
+	out.printil("public void doTag() throws javax.servlet.jsp.JspException, java.io.IOException {");
 	out.pushIndent();
-	out.printil("PageContext pageContext = new JspContextWrapper(getJspContext());");
+	out.printil("PageContext pageContext = (PageContext)getJspContext();");
         
         // Declare implicit objects.  
         // XXX - Note that the current JSP 2.0 PFD 
@@ -2972,16 +2899,15 @@ public class Generator {
 
     private void generateTagHandlerPostamble() {
         out.popIndent();
-        //out.printil("} catch (java.io.IOException ioe) {");
-	//out.pushIndent();
-	//out.printil("throw new javax.servlet.jsp.JspException(ioe);");
-	//out.popIndent();
-	//out.printil("}");
         
         // Have to catch Throwable because a classic tag handler
         // helper method is declared to throw Throwable.
         out.printil( "} catch( Throwable t ) {" );
         out.pushIndent();
+        out.printil( "if( t instanceof java.io.IOException )" );
+        out.printil( "    throw (java.io.IOException)t;" );
+        out.printil( "if( t instanceof javax.servlet.jsp.JspException )" );
+        out.printil( "    throw (javax.servlet.jsp.JspException)t;" );
         out.printil("throw new javax.servlet.jsp.JspException(t);" );
         out.popIndent();
         out.printil( "}" );
@@ -3063,6 +2989,26 @@ public class Generator {
 		out.println();
 	    }
 	}
+        
+        // Define setter for JspContext so we can create a wrapper and
+        // store both the original and the wrapper.  We need the wrapper
+        // to maask the page context from the tag file and simulate a 
+        // fresh page context.  We need the original to do things like
+        // sync AT_BEGIN and AT_END scripting variables.
+        out.printil( "protected JspContext jspContext;" );
+        out.println();
+        out.printil( "public void setJspContext( JspContext ctx ) {" );
+        out.pushIndent();
+        out.printil( "super.setJspContext( ctx );" );
+        out.printil( "this.jspContext = new JspContextWrapper( ctx );" );
+        out.popIndent();
+        out.printil( "}" );
+        out.println();
+        out.printil( "public JspContext getJspContext() {" );
+        out.pushIndent();
+        out.printil( "return this.jspContext;" );
+        out.popIndent();
+        out.printil( "}" );
     }
 
     /*

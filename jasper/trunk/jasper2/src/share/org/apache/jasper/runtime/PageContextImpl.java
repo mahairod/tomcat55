@@ -67,6 +67,7 @@ import java.io.InputStreamReader;
 import java.util.EmptyStackException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
@@ -87,14 +88,17 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;
+import org.apache.taglibs.standard.lang.jstl.JSTLVariableResolver;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
+ * Also doubles as a VariableResolver for the EL.
  *
  * @author Anil K. Vijendran
  * @author Larry Cable
@@ -102,9 +106,32 @@ import org.apache.jasper.logging.Logger;
  * @author Pierre Delisle
  * @author Mark Roth
  */
-public class PageContextImpl extends PageContext {
+public class PageContextImpl 
+    extends PageContext 
+    implements VariableResolver
+{
 
     Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "PageContextImpl");
+    
+    /**
+     * The expression evaluator, for evaluating EL expressions.
+     */
+    private ExpressionEvaluatorImpl expressionEvaluator = null;
+    
+    /**
+     * The variable resolver, for evaluating EL expressions.
+     */
+    private static JSTLVariableResolver variableResolver =
+        new JSTLVariableResolver();
+    
+    /**
+     * Expression evaluator for proprietary EL evaluation.
+     * XXX - This should be going away once the EL evaluator moves from
+     * the JSTL implementation to its own project.
+     */
+    private static org.apache.taglibs.standard.lang.jstl.Evaluator
+        proprietaryEvaluator = new 
+        org.apache.taglibs.standard.lang.jstl.Evaluator();
 
     PageContextImpl(JspFactory factory) {
         this.factory = factory;
@@ -415,7 +442,7 @@ public class PageContextImpl extends PageContext {
     }
 
     public VariableResolver getVariableResolver() {
-	return null; // XXX
+	return this;
     }
 
     public void forward(String relativeUrlPath)
@@ -482,13 +509,13 @@ public class PageContextImpl extends PageContext {
      * ExpressionEvaluator that can parse EL expressions.
      */
     public ExpressionEvaluator getExpressionEvaluator() {
-        try {
-            return ExpressionEvaluatorManager.getEvaluatorByName( 
-                ExpressionEvaluatorManager.EVALUATOR_CLASS );
+        if( this.expressionEvaluator == null ) {
+            this.expressionEvaluator = new ExpressionEvaluatorImpl( this );
+            // no need to synchronize - not a big deal even if we create 
+            // two of these.
         }
-        catch( JspException e ) {
-            throw new RuntimeException( e.toString() );
-        }
+        
+        return this.expressionEvaluator;
     }
 
     public void handlePageException(Exception ex)
@@ -530,6 +557,50 @@ public class PageContextImpl extends PageContext {
 	}
     }
 
+    /**
+     * VariableResolver interface
+     */
+    public Object resolveVariable( String pName, Object pContext ) 
+        throws ELException
+    {
+        // Note: pContext will be going away.
+        try {
+            return PageContextImpl.variableResolver.resolveVariable( 
+                pName, this );
+        }
+        catch( org.apache.taglibs.standard.lang.jstl.ELException e ) {
+            throw new ELException( e );
+        }
+    }
+    
+    /**
+     * Proprietary method to evaluate EL expressions.
+     * XXX - This method should go away once the EL interpreter moves
+     * out of JSTL and into its own project.  For now, this is necessary
+     * because the standard machinery is too slow.
+     *
+     * @param expression The expression to be evaluated
+     * @param expectedType The expected resulting type
+     * @param pageContext The page context
+     * @param functionMap Maps prefix and name to Method
+     * @param defaultPrefix Default prefix for this evaluation
+     * @return The result of the evaluation
+     */
+    public static Object proprietaryEvaluate( String expression, 
+        Class expectedType, PageContext pageContext, Map functionMap, 
+        String defaultPrefix )
+        throws ELException
+    {
+        try {
+            return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
+                expression, expectedType, null, pageContext, functionMap, 
+                defaultPrefix );
+        }
+        catch( JspException e ) {
+            throw new ELException( e );
+        }
+    }
+
     protected JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
         throws IOException, IllegalArgumentException {
         try {
@@ -539,7 +610,7 @@ public class PageContextImpl extends PageContext {
             return null;
         }
     }
-
+    
     /*
      * fields
      */
