@@ -172,7 +172,11 @@
     <attribute name="startupTime"
                description="Startup time for this context"
                type="long"/>
-      
+               
+    <attribute name="state"
+               description="Current state of this component"
+               type="int"/>
+                     
     <attribute name="tldScanTime"
                description="Time spend scanning jars for TLDs for this context"
                type="long"/>
