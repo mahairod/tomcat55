@@ -129,6 +129,11 @@ public class PluginGenerator
 	writer.print ("out.println (\"<OBJECT classid=\\\"");
 	writer.print (ieClassId);
 	writer.print ("\\\"");
+        if (name != null) {
+            writer.print(" name=\\\"");
+            writer.print(name);
+            writer.print("\\\"");
+        }
 	generateCommon (writer);
 	writer.print (" codebase=\\\"");
 	if (iepluginurl == null)
@@ -287,6 +292,11 @@ public class PluginGenerator
 	    writer.print (jreversion);
 	}
 	writer.print ("\\\" ");
+        if (name != null) {
+            writer.print(" name=\\\"");
+            writer.print(name);
+            writer.print("\\\"");
+        }
 	generateCommon (writer);
 	writer.print ("pluginspage=\\\"");
 	if (nspluginurl == null)
