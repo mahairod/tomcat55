@@ -11,7 +11,7 @@
                description="Allow symlinking to outside the webapp root directory, if the webapp is an exploded directory"
                is="true"
                type="boolean"/>
-      
+
     <attribute name="cacheMaxSize"
                description="Maximum cache size in KB"
                type="int"/>
@@ -67,6 +67,9 @@
       <parameter name="envName"
                  description="New environment entry name"
                  type="java.lang.String"/>
+      <parameter name="type"
+                 description="Type of entry"
+                 type="java.lang.String" />
     </operation>
 
     <operation name="addResource"
@@ -76,6 +79,9 @@
       <parameter name="resourceName"
                  description="New resource reference name"
                  type="java.lang.String"/>
+      <parameter name="type"
+                 description="Type of resource"
+                 type="java.lang.String" />
     </operation>
     
     <operation name="removeEnvironment"
@@ -122,6 +128,10 @@
                is="true"
                type="boolean"/>
       
+    <attribute name="antiResourceLocking"
+               description="Take care to not lock resources"
+               type="boolean" />
+
     <attribute name="cacheMaxSize"
                description="Maximum cache size in KB"
                type="int"/>
@@ -177,11 +187,6 @@
                description="Name of the engine domain, if different from the context domain"
                type="java.lang.String"/>
 
-    <attribute name="environments"
-               description="MBean Names of the set of defined environment entries for this web application"
-               type="[Ljava.lang.String;"
-               writeable="false"/>
-
     <attribute name="eventProvider"
                description="Event provider support for this managed object"
                is="true"
@@ -197,7 +202,7 @@
       
     <attribute name="logger"
                description="Associated logger."
-               type="org.apache.catalina.Logger" />
+               type="org.apache.commons.logging.Log" />
       
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
@@ -242,11 +247,6 @@
     <attribute name="reloadable"
                description="The reloadable flag for this web application"
                type="boolean"/>
-
-    <attribute name="resourceNames"
-               description="MBean Names of all the defined resource references for this application."
-               type="[Ljava.lang.String;"
-               writeable="false"/>
 
     <attribute name="saveConfig"
                description="Should the configuration be written as needed on startup"
@@ -312,24 +312,7 @@
                description="The pathname to the work directory for this context"
                type="java.lang.String"/>
       
-    <operation name="addEnvironment"
-               description="Add an environment entry for this web application"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="envName"
-                 description="New environment entry name"
-                 type="java.lang.String"/>
-    </operation>
-    
-    <operation   name="addResource"
-               description="Add a resource reference for this web application"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="resourceName"
-                 description="New resource reference name"
-                 type="java.lang.String"/>
-    </operation>
-    
+
     <operation   name="addValve"
                description="Add a valve to this Context"
                impact="ACTION"
@@ -337,24 +320,6 @@
       <parameter name="valve"
                  description="New valve to be added"
                  type="org.apache.catalina.Valve"/>
-    </operation>
-    
-    <operation   name="removeEnvironment"
-               description="Remove any environment entry with the specified name"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="envName"
-                 description="Name of the environment entry to remove"
-                 type="java.lang.String"/>
-    </operation>
-    
-    <operation   name="removeResource"
-               description="Remove any resource reference with the specified name"
-               impact="ACTION"
-               returnType="void">
-      <parameter name="resourceName"
-                 description="Name of the resource reference to remove"
-                 type="java.lang.String"/>
     </operation>
     
     <operation   name="removeValve"
