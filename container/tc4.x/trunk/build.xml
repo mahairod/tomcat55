@@ -1,6 +1,16 @@
 <project name="Tomcat 4.0" default="deploy-main" basedir=".">
 
 
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <property name="ant.home"        value="${basedir}/../jakarta-ant"/>
+  <property name="catalina.build"  value="${basedir}/../build/catalina"/>
+  <property name="jasper.build"    value="${basedir}/../build/jasper"/>
+  <property name="servletapi.dist" value="${basedir}/../dist/servletapi"/>
+  <property name="tomcat.build"    value="${basedir}/../build/tomcat-4.0"/>
+  <property name="tomcat.dist"     value="${basedir}/../dist/tomcat-4.0"/>
+
+
   <!-- ===================== DEPLOY: Create Directories =================== -->
   <target name="deploy-prepare">
     <mkdir dir="${tomcat.build}"/>
@@ -78,7 +88,6 @@
     <copydir src="${servletapi.dist}/docs/api"
             dest="${tomcat.build}/webapps/ROOT/servletapi-javadoc"/>
   </target>
-
 
   <!-- ====================== DIST: Copy Source Code ====================== -->
   <target name="dist-source">
