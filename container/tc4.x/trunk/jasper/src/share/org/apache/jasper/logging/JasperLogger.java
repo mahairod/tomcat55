@@ -62,6 +62,7 @@ import java.io.PrintWriter;
 
 import java.util.Date;
 import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
 
 import org.apache.jasper.util.Queue;
 //import org.apache.jasper.core.JasperException;
@@ -147,10 +148,21 @@ public class JasperLogger extends Logger {
     static LogDaemon logDaemon = null;
     static Queue     logQueue  = null;
 
+    ServletContext servletContext = null;
+
+    public JasperLogger(ServletContext servletContext) {
+	this.servletContext = servletContext;
+	init();
+    }
+
     public JasperLogger() {
+	init();
+    }
+
+    private void init() {
 	if (logDaemon == null || logQueue == null) {
 	    logQueue = new Queue();
-	    logDaemon = new LogDaemon(logQueue);
+	    logDaemon = new LogDaemon(logQueue, servletContext);
 	    logDaemon.start();
 	}
     }
@@ -196,24 +208,30 @@ public class JasperLogger extends Logger {
  * writes out everything in the queue to the sink.
  */
 class LogDaemon extends Thread {
-    LogDaemon(Queue logQueue) {
+    LogDaemon(Queue logQueue, ServletContext servletContext) {
 	this.logQueue = logQueue;
+	this.servletContext = servletContext;
 	setDaemon(true);
     }
 
     static char[] newline;
+    static String separator;
     static {
-	String separator = System.getProperty("line.separator", "\n");
+	separator = System.getProperty("line.separator", "\n");
 	newline = separator.toCharArray();
     }
     
     Runnable flusher = new Runnable() {
-	    public void run() {
-		do {
-		    JasperLogger.LogEntry logEntry =
-		      (JasperLogger.LogEntry) LogDaemon.this.logQueue.pull();
+	public void run() {
+	    do {
+		JasperLogger.LogEntry logEntry =
+		    (JasperLogger.LogEntry) LogDaemon.this.logQueue.pull();
+		if (servletContext != null) {
+		    servletContext.log(logEntry.toString());
+		    servletContext.log(separator);
+		} else {
 		    Writer writer = logEntry.getWriter();
-		    if (writer != null)
+		    if (writer != null) {
 			try {
 			    writer.write(logEntry.toString());
 			    writer.write(newline);
@@ -221,9 +239,10 @@ class LogDaemon extends Thread {
 			} catch (Exception ex) { // IOException
 			    ex.printStackTrace(); // nowhere else to write it
 			}
-		} while (!LogDaemon.this.logQueue.isEmpty());
-	    }
-    };
+		    }
+		}
+	    } while (!LogDaemon.this.logQueue.isEmpty());
+	}};
 
     public void run() {
 	while (true)
@@ -236,4 +255,5 @@ class LogDaemon extends Thread {
     }
 
     private Queue logQueue;
+    private ServletContext servletContext;
 }
