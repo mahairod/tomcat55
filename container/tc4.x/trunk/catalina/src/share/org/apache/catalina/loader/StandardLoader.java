@@ -592,9 +592,10 @@ public final class StandardLoader
 	started = true;
 
         // Register a stream handler factory for the JNDI protocol
+        URLStreamHandlerFactory streamHandlerFactory = 
+            new DirContextURLStreamHandlerFactory();
         try {
-            URL.setURLStreamHandlerFactory
-                (new DirContextURLStreamHandlerFactory());
+            URL.setURLStreamHandlerFactory(streamHandlerFactory);
         } catch (Throwable t) {
             // Ignore the error here.
         }
@@ -1283,6 +1284,8 @@ public final class StandardLoader
 	if (debug >= 1)
 	    log("BACKGROUND THREAD Starting");
 
+        DirContextURLStreamHandler.bindThread(this.container.getResources());
+
 	// Loop until the termination semaphore is set
 	while (!threadDone) {
 
@@ -1298,6 +1301,8 @@ public final class StandardLoader
 	    break;
 
 	}
+
+        DirContextURLStreamHandler.unbindThread();
 
 	if (debug >= 1)
 	    log("BACKGROUND THREAD Stopping");
