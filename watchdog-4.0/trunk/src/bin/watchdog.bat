@@ -24,9 +24,28 @@ SET CLASSPATH=%WATCHDOG_HOME%\lib\ant.jar;%CLASSPATH%
 echo "using classpath=" %CLASSPATH%
 if "%1"=="servlet" goto servlet
 
+if "%1"=="jsp" goto jsp
+if "%1"=="jsp-xml" goto jsp-xml
+if "%1"=="jsp-all" goto jsp-all
+if "%1"=="all" goto jsp-all
+
+
+:jsp
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp-gtest.xml jsp-test
+goto restore
+
+:jsp-xml
+if "%TOMCAT_HOME%=="" goto exit
+java -DJSP_ROOT %TOMCAT_HOME%\webapps\jsp-tests\jsp -DWATCHDOG_HOME$ %WATCHDOG_HOME% org.apache.jspxml.GetWorkspaceInXML
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp-gtest-xml.xml jsp-test
+goto restore
+
+:jsp-all
 java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp-gtest.xml jsp-test
 
-if "%1"=="jsp" goto restore
+if "%TOMCAT_HOME%=="" goto exit
+java -DJSP_ROOT %TOMCAT_HOME%\webapps\jsp-tests\jsp -DWATCHDOG_HOME$ %WATCHDOG_HOME% org.apache.jspxml.GetWorkspaceInXML
+java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/jsp-gtest-xml.xml jsp-test
 
 :servlet
 java org.apache.tools.ant.Main -Dport %PORT% -Dhost %HOST% -Dwatchdog.home %WATCHDOG_HOME% -f %WATCHDOG_HOME%/conf/servlet-moo.xml servlet-test
@@ -41,6 +60,6 @@ set HOST=
 goto end
 
 :exit
-echo usage: %0 {all/jsp/servlet} [serverhost] [serverport] 
+echo usage: %0 {all/jsp/jsp-xml/jsp-all/servlet} [serverhost] [serverport] 
 
 :end
