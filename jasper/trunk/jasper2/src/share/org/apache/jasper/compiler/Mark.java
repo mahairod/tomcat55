@@ -189,13 +189,16 @@ final class Mark {
 	stream = inStream;
     }
 
-
-
-    /** Restores this mark's state to a previously stored stream.
+    /**
+    /* Restores this mark's state to a previously stored stream.
+     * @return null if there is no previous stream
+     *         The previous Makr instance when the stream is pushed.
      */
-    public boolean popStream() {
+    public Mark popStream() {
 	// make sure we have something to pop
-	if ( includeStack.size() <= 0 ) return false;
+	if ( includeStack.size() <= 0 ) {
+	    return null;
+	}
 
 	// get previous state in stack
 	IncludeState state = (IncludeState) includeStack.pop( );
@@ -208,7 +211,7 @@ final class Mark {
 	fileName = state.fileName;
 	baseDir = state.baseDir;
 	stream = state.stream;
-	return true;
+	return this;
     }
 
     // -------------------- Locator interface --------------------

@@ -132,7 +132,7 @@ class JspReader {
 	singleFile = false;
 
 	loghelper = new Logger.Helper("JASPER_LOG", "JspReader");
-	pushFile2(fname, encoding, reader);
+	pushFile(fname, encoding, reader);
     }
     
     String getFile(int fileid) {
@@ -315,7 +315,7 @@ class JspReader {
 
     int skipSpaces() throws JasperException {
 	int i = 0;
-	while (isSpace()) {
+	while (hasMoreInput() && isSpace()) {
 	    i++;
 	    nextChar();
 	}
@@ -532,7 +532,11 @@ class JspReader {
 	return sourceFiles.size() - 1;
     }
 
-    private void pushFile2(String file, String encoding, 
+    /**
+     * Push a file (and its associated Stream) on the file stack.  THe
+     * current position in the current file is remembered.
+     */
+    private void pushFile(String file, String encoding, 
 			   InputStreamReader reader) 
 	        throws JasperException, FileNotFoundException {
 
@@ -574,29 +578,38 @@ class JspReader {
 	}
     }
 
+    /**
+     * Pop a file from the file stack.  The field "current" is retored
+     * to the value to point to the previous files, if any, and is set
+     * to null otherwise.
+     * @return true is there is a previous file on the stck.
+     *         false otherwise.
+     */
     private boolean popFile() throws JasperException {
 
 	// Is stack created ? (will happen if the Jsp file we're looking at is
 	// missing.
-	if (current == null) 
+	if (current == null || currFileId < 0) {
 	    return false;
+	}
 
 	// Restore parser state:
-	//size--;
-	if (currFileId < 0) {
-	    err.jspError("jsp.error.no.more.content");
-	}
-	
 	String fName = getFile(currFileId);
 	currFileId = unregisterSourceFile(fName);
 	if (currFileId < -1) {
 	    err.jspError("jsp.error.file.not.registered", fName);
 	}
 
-	boolean result = current.popStream();
-	if (result)
+	Mark previous = current.popStream();
+	if (previous != null) {
 	    master = current.baseDir;
-	return (result);
+	    current = previous;
+	    return true;
+	}
+	// Note that although the current file is undefined here, "current"
+	// is not set to null just for convience, for it maybe used to
+	// set the current (undefined) position.
+	return false;
     }
 }
 
