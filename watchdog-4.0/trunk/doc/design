@@ -1,0 +1,103 @@
+
+jakarta-watchdog 
+================
+  
+Watchdog overview
+-----------------
+
+Watchdog consists of various JSP and Servlet tests intended to validate
+JSP1.1 and Servlet2.2 API / specification. 
+
+There are two forms of test frameworks:
+    - Generic clients: these follow jsp.xml format and are driven by GTest harness 
+      This format is applicable to the tests which do not need complex result processing
+      on the client side.
+    - Specialized clients: these tests follow servlet.xml format and are driven by Moo harness 
+      This format should be used where complex processing of the results is required on the 
+      client side.
+
+
+Watchdog itself utilizes various other components:
+    Ant (ant.jar)
+    Moo (moo.jar)
+    GTest (testdriver.jar)
+
+
+1. user invokes watchdog.bat or watchdog.sh
+
+2. watchdog.bat or watchdog.sh invoke ant with an xml file and a target in the xml as parameters
+
+3. ant parses the xml file and executes the specified target
+
+3. results are validated by the target either in the form of return codes or golden-files or 
+   combinations of both.
+
+
+Directory structure
+-------------------
+
+              [jakarta-watchdog]
+                      |
+                     / \
+                   /  |   \
+                 /    |     \
+               /      |       \
+             /        |         \
+           /          |           \ 
+         /            |             \
+     build.xml      [doc]          [src]         
+     build.bat                       |
+     build.sh                       /|\           
+                                  /  |  \          
+                                /    |    \
+                              /      |      \
+                            /        |        \
+                          /|         |         |\
+                        /  |         |         |  \
+                      /    |         |         |    \
+                    /      |         |         |      \
+                 [conf]         [client]     [etc]    [server] 
+                jsp.xml              |      web.xml      | 
+                servlet.xml        [org]                 |
+                                     |                 /   \
+                                   [apacge]          /       \
+                                     |             /           \
+                                   [jckeck]     [jsp]        [WEB-INF]
+                                     |         jsp-tests          |
+                                   [jsp]                        / |  \
+                                     |                        /   |    \
+                                  [client]                  /     |      \
+                                    / \               [classes] web.xml  [lib]
+                                  /     \            ..servlets..        moo.jar
+                            ...golden-files...
+
+How to Add new tests
+--------------------
+
+JSP Test
+--------
+    - Server side of the test
+      % cd jakarta-watchdog/src/server/jsp
+      % mkdir your-test-dir
+      % cd your-test-dir
+      % cp ~ your-test-jsp.jsp  .
+
+    - Client side of the test
+      % cd jakarta-watchdog/src/conf
+      % add your-test entry to either jsp.xml or servlet.xml
+
+Servlet Test
+--------
+    - Server side of the test
+      % cd jakarta-watchdog/src/server/WEB-INF/classes
+      % mkdir your-test-dir
+      % cd your-test-dir
+      % cp ~ your-test-servlet.java  .
+
+    - Client side of the test
+      % cd jakarta-watchdog/src/conf
+      % add your-test entry to either jsp.xml or servlet.xml
+
+    - Edit web.xml for configuring servlet mappings
+
+
