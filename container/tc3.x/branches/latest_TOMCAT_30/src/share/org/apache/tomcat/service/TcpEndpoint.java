@@ -208,7 +208,7 @@ public class TcpEndpoint  { // implements Endpoint {
 	    //	    throw new HttpServerException(msg);
 	}
 	running=true;
-	System.out.println("Starting tcp endpoint on " + port + " with " + handler.getClass().getName());
+	//System.out.println("Starting tcp endpoint on " + port + " with " + handler.getClass().getName());
 	listener=new TcpListenerThread( this );
 	Thread thread = new Thread(listener);
 	thread.start();

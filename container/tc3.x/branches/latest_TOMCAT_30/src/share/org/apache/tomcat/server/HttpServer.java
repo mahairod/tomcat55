@@ -583,7 +583,7 @@ public class HttpServer implements Server {
 	
 	String classN=props.getProperty( key + "class" ); // XXX constant, XML
 	
-	System.out.println("Setting up " + ((classN==null)?"HttpServer":classN) + " for " + host  + ":" + port );
+	//System.out.println("Setting up " + ((classN==null)?"HttpServer":classN) + " for " + host  + ":" + port );
 	if(classN != null ) {
 	    ServerConnector conn=null;
 

@@ -176,25 +176,25 @@ public abstract class Compiler {
         // For compiling the generated servlets, you need to 
         // pass -encoding to javac.
 
-        String encoding = ctxt.getContentType();
+        //String encoding = ctxt.getContentType();
         String classpath = ctxt.getClassPath(); 
 
         // Pick up everything after ";charset="
-        if (encoding != null) {
-            int semi = encoding.indexOf(";");
-            if (semi == -1)
-                encoding = null;
-            else {
-                String afterSemi = encoding.substring(semi+1);
-                int charsetLocation = afterSemi.indexOf("charset=");
-                if (charsetLocation == -1)
-                    encoding = null;
-                else {
-                    String afterCharset = afterSemi.substring(charsetLocation+8);
-                    encoding = afterCharset.trim();
-                }
-            }
-        }
+        //if (encoding != null) {
+	//  int semi = encoding.indexOf(";");
+	//  if (semi == -1)
+	//      encoding = null;
+	//  else {
+	//      String afterSemi = encoding.substring(semi+1);
+	//      int charsetLocation = afterSemi.indexOf("charset=");
+	//      if (charsetLocation == -1)
+	//          encoding = null;
+	//      else {
+	//          String afterCharset = afterSemi.substring(charsetLocation+8);
+	//          encoding = afterCharset.trim();
+	//      }
+	//  }
+        //}
 
         // I'm nuking
         //          System.getProperty("jsp.class.path", ".") 
@@ -210,10 +210,10 @@ public abstract class Compiler {
             javaFileName
         };
 
-        if (encoding != null && !encoding.equals("")) {
+        if (javaEncoding != null && !javaEncoding.equals("")) {
             String[] args = new String[argv.length+2];
             args[0] = "-encoding";
-            args[1] = encoding;
+            args[1] = javaEncoding;
             for(int i = 0; i < argv.length; i++)
                 args[i+2] = argv[i];
             argv = args;

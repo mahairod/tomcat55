@@ -424,7 +424,7 @@ public class Context {
 	            org.apache.tomcat.deployment.Constants.ConfigFile);
 	    String msg = sm.getString("context.getConfig.msg", "default");
 
-    	    System.out.println(msg);
+    	    //System.out.println(msg);
 
 	    processWebApp(is, true);
 	} catch (Exception e) {
@@ -455,7 +455,7 @@ public class Context {
 	    String msg = sm.getString("context.getConfig.msg",
 	        webURL.toString());
 
-	    System.out.println(msg);
+	    //System.out.println(msg);
 
 	    processWebApp(is);
 	} catch (Exception e) {
