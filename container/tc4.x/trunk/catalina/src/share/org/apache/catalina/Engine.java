@@ -64,6 +64,8 @@
 
 package org.apache.catalina;
 
+import org.apache.catalina.Context;
+import org.apache.catalina.core.DefaultContext;
 
 /**
  * An <b>Engine</b> is a Container that represents the entire Catalina servlet
@@ -111,7 +113,24 @@ public interface Engine extends Container {
     public void setDefaultHost(String defaultHost);
 
 
+    /**
+     * Set the DefaultContext
+     * for new web applications.
+     *
+     * @param defaultContext The new DefaultContext
+     */
+    public void addDefaultContext(DefaultContext defaultContext);
+
+
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Import the DefaultContext config into a web application context.
+     *
+     * @param context web application context to import default context
+     */
+    public void importDefaultContext(Context context);
 
 
 }

@@ -347,6 +347,12 @@ public class StandardContext
 
 
     /**
+     * The DefaultContext override flag for this web application.
+     */    
+    private boolean override = false;
+
+
+    /**
      * The resource environment references for this web application,
      * keyed by name.
      */
@@ -843,6 +849,16 @@ public class StandardContext
 
 
     /**
+     * Return the DefaultContext override flag for this web application.
+     */
+    public boolean getOverride() {
+
+        return (this.override);
+
+    }
+
+
+    /**
      * Set the reloadable flag for this web application.
      *
      * @param reloadable The new reloadable flag
@@ -854,6 +870,22 @@ public class StandardContext
 	support.firePropertyChange("reloadable",
 				   new Boolean(oldReloadable),
 				   new Boolean(this.reloadable));
+
+    }
+
+
+    /**
+     * Set the DefaultContext override flag for this web application.
+     *
+     * @param override The new override flag
+     */
+    public void setOverride(boolean override) {
+
+        boolean oldOverride = this.override;
+        this.override = override;
+        support.firePropertyChange("override",
+                                   new Boolean(oldOverride),
+                                   new Boolean(this.override));
 
     }
 

@@ -70,13 +70,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
-
+import org.apache.catalina.core.DefaultContext;
 
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
@@ -130,6 +131,12 @@ public class StandardEngine
 	"org.apache.catalina.core.StandardEngineMapper";
 
 
+    /**
+     * DefaultContext config
+     */
+    private DefaultContext defaultContext;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -158,7 +165,36 @@ public class StandardEngine
     }
 
 
+    /**
+     * Set the DefaultContext
+     * for new web applications.
+     *
+     * @param defaultContext The new DefaultContext
+     */
+    public void addDefaultContext(DefaultContext defaultContext) {
+
+        DefaultContext oldDefaultContext = this.defaultContext;
+        this.defaultContext = defaultContext;
+        support.firePropertyChange("defaultContext",
+                                   oldDefaultContext, this.defaultContext);
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Import the DefaultContext config into a web application context.
+     *
+     * @param context web application context to import default context
+     */
+    public void importDefaultContext(Context context) {
+
+	if( this.defaultContext != null );
+            this.defaultContext.importDefaultContext(context);
+
+    }
 
 
     /**

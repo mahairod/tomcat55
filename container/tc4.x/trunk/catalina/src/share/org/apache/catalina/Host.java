@@ -66,7 +66,8 @@ package org.apache.catalina;
 
 
 import javax.servlet.ServletContext;
-
+import org.apache.catalina.Context;
+import org.apache.catalina.core.DefaultContext;
 
 /**
  * A <b>Host</b> is a Container that represents a virtual host in the
@@ -133,6 +134,15 @@ public interface Host extends Container {
 
 
     /**
+     * Set the DefaultContext
+     * for new web applications.
+     *
+     * @param defaultContext The new DefaultContext
+     */
+    public void addDefaultContext(DefaultContext defaultContext);
+
+
+    /**
      * Return the canonical, fully qualified, name of the virtual host
      * this Container represents.
      */
@@ -151,6 +161,14 @@ public interface Host extends Container {
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Import the DefaultContext config into a web application context.
+     *
+     * @param context web application context to import default context
+     */
+    public void importDefaultContext(Context context);
 
 
     /**

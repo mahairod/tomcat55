@@ -143,6 +143,22 @@ following attributes:</p>
     </td>
   </tr>
 
+  <tr>
+    <td><code>useNaming</code></td>
+    <td>      
+      Set this attribute to <code>true</code> if you wish to have Catalina
+      enable JNDI.  Default is <code>true</code>.
+    </td>     
+  </tr>
+
+  <tr>
+    <td><code>override</code></td>
+    <td>              
+      Set this attribute to <code>true</code> if you wish to over ride
+      the DefaultContext configuration.  Default is <code>false</code>.
+    </td>        
+  </tr>
+
 </table>
 
 <br>
@@ -192,11 +208,8 @@ also supports the following attributes:</p>
 <h2>Utility Components</h2>
 
 <p>You can attach one or more of the following utility components by nesting
-a corresponding declaration inside your <strong>Host</strong> element.
-Unless overridden by a utility component of the same name being nested in a
-<a href="context.html">Context</a> element,
-the utility components you declare here will be shared among all 
-web applications running in this <strong>Host</strong>:</p>
+a corresponding declaration inside your <strong>Context</strong> element.
+</p>
 
 <ul>
   <li><a href="loader.html">Loader</a> - Configure a class loader associated
@@ -237,7 +250,7 @@ web application, by nesting an element like this inside your
              prefix="myapp_access_log." suffix=".txt"
              pattern="common"/&gt;
       ...
-    &lt;/Host&gt;
+    &lt;/Context&gt;
 
 </pre>
 

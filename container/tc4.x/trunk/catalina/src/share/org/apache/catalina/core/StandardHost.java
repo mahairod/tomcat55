@@ -89,6 +89,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.core.DefaultContext;
 
 
 /**
@@ -179,6 +180,11 @@ public class StandardHost
     private boolean unpackWARs = true;
 
 
+    /**
+     * DefaultContext config
+     */
+    private DefaultContext defaultContext;
+
     // ------------------------------------------------------------- Properties
 
 
@@ -231,6 +237,22 @@ public class StandardHost
         this.configClass = configClass;
         support.firePropertyChange("configClass",
                                    oldConfigClass, this.configClass);
+
+    }
+
+
+    /**
+     * Set the DefaultContext
+     * for new web applications.
+     *
+     * @param defaultContext The new DefaultContext
+     */
+    public void addDefaultContext(DefaultContext defaultContext) {
+
+        DefaultContext oldDefaultContext = this.defaultContext;
+        this.defaultContext = defaultContext;
+        support.firePropertyChange("defaultContext",
+                                   oldDefaultContext, this.defaultContext);
 
     }
 
@@ -318,6 +340,18 @@ public class StandardHost
 
     // --------------------------------------------------------- Public Methods
 
+
+    /**
+     * Import the DefaultContext config into a web application context.
+     *
+     * @param context web application context to import default context
+     */
+    public void importDefaultContext(Context context) {
+
+	if( this.defaultContext != null )
+            this.defaultContext.importDefaultContext(context);
+
+    }
 
     /**
      * Add an alias name that should be mapped to this same Host.

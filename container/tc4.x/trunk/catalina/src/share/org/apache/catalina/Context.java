@@ -284,6 +284,19 @@ public interface Context extends Container {
 
 
     /**
+     * Return the override flag for this web application.
+     */
+    public boolean getOverride();
+
+
+    /**
+     * Set the override flag for this web application.
+     *
+     * @param overried The new override flag
+     */
+    public void setOverride(boolean override);
+
+    /**
      * Return the servlet context for which this Context is a facade.
      */
     public ServletContext getServletContext();

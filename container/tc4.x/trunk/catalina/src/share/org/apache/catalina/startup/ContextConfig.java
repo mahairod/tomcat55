@@ -89,6 +89,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Authenticator;
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
@@ -99,7 +100,10 @@ import org.apache.catalina.Pipeline;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
-import org.apache.catalina.deploy.ErrorPage;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.core.DefaultContext;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.Extension;
@@ -771,6 +775,18 @@ public final class ContextConfig
 	if (debug > 0)
 	    log(sm.getString("contextConfig.start"));
         ok = true;
+
+	// Set properties based on DefaultContext
+	Container container = context.getParent();
+	if( !context.getOverride() ) {
+	    if( container instanceof Host ) {
+	        ((Host)container).importDefaultContext(context);
+		container = container.getParent();
+	    }
+	    if( container instanceof Engine ) {
+		((Engine)container).importDefaultContext(context);
+	    }
+	}
 
 	// Process the default and application web.xml files
 	XmlMapper mapper = createWebMapper();

@@ -327,6 +327,9 @@ public class Catalina {
 		       ("setContainer", "org.apache.catalina.Container"));
 
         createStartMapperContext("Server/Service/Engine/Context", mapper);
+	createStartMapperDefaultContext(
+			"Server/Service/Engine/DefaultContext",
+                        mapper);
 
 	mapper.addRule("Server/Service/Engine/Host", mapper.objectCreate
 		       ("org.apache.catalina.core.StandardHost",
@@ -342,6 +345,9 @@ public class Catalina {
 		       ("addChild", "org.apache.catalina.Container"));
 
         createStartMapperContext("Server/Service/Engine/Host/Context", mapper);
+        createStartMapperDefaultContext(
+			"Server/Service/Engine/Host/DefaultContext",
+			mapper);
 
 	mapper.addRule("Server/Service/Engine/Host/Listener",
                        mapper.objectCreate
@@ -441,7 +447,59 @@ public class Catalina {
 			    "configClass"));
 	mapper.addRule(prefix + "", mapper.addChild
 		       ("addChild", "org.apache.catalina.Container"));
+	createContextCommon(prefix, mapper);
+    }
 
+
+    /**
+     * Create the mapper rules for a DefaultContext, based on the
+     * specified prefix.
+     *
+     * @param prefix Prefix to rule selectors to be created
+     * @param mapper The mapper we are updating
+     */
+    protected void createStartMapperDefaultContext(String prefix,
+	XmlMapper mapper) {
+
+        mapper.addRule(prefix + "", mapper.objectCreate
+                       ("org.apache.catalina.core.DefaultContext",
+                        "className"));
+        mapper.addRule(prefix + "", mapper.setProperties());
+	mapper.addRule(prefix + "", mapper.addChild
+                       ("addDefaultContext", "org.apache.catalina.core.DefaultContext"));
+        mapper.addRule(prefix + "/Logger", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Logger",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Logger", mapper.addChild
+                       ("setLogger", "org.apache.catalina.Logger"));
+
+        mapper.addRule(prefix + "/Realm", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Realm",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Realm", mapper.addChild
+                       ("setRealm", "org.apache.catalina.Realm"));
+
+        mapper.addRule(prefix + "/Valve", mapper.objectCreate
+                       (null, "className"));
+        mapper.addRule(prefix + "/Valve",
+                       mapper.setProperties());
+        mapper.addRule(prefix + "/Valve", mapper.addChild
+                       ("addValve", "org.apache.catalina.Valve"));
+
+        createContextCommon(prefix, mapper);
+    }
+
+
+    /**
+     * Create the mapper rules for a Context which are common to both
+     * a Context and a DefaultContext, based on the specified prefix.
+     *
+     * @param prefix Prefix to rule selectors to be created
+     * @param mapper The mapper we are updating
+     */
+    protected void createContextCommon(String prefix, XmlMapper mapper) {
         mapper.addRule(prefix + "/ResourceParams", mapper.objectCreate
                        ("org.apache.catalina.deploy.ResourceParams"));
         mapper.addRule(prefix + "/ResourceParams",
@@ -492,13 +550,6 @@ public class Catalina {
 	mapper.addRule(prefix + "/Loader", mapper.addChild
 		       ("setLoader", "org.apache.catalina.Loader"));
 
-	mapper.addRule(prefix + "/Logger", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule(prefix + "/Logger",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Logger", mapper.addChild
-		       ("setLogger", "org.apache.catalina.Logger"));
-
 	mapper.addRule(prefix + "/Manager",
 		       mapper.objectCreate
 		       ("org.apache.catalina.session.StandardManager",
@@ -515,13 +566,6 @@ public class Catalina {
         mapper.addRule(prefix + "/Parameter", mapper.addChild
                        ("addApplicationParameter",
                         "org.apache.catalina.deploy.ApplicationParameter"));
-
-	mapper.addRule(prefix + "/Realm", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule(prefix + "/Realm",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Realm", mapper.addChild
-		       ("setRealm", "org.apache.catalina.Realm"));
 
         mapper.addRule(prefix + "/Resource",
                        mapper.objectCreate
@@ -541,13 +585,6 @@ public class Catalina {
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Resources", mapper.addChild
 		       ("setResources", "javax.naming.directory.DirContext"));
-
-	mapper.addRule(prefix + "/Valve", mapper.objectCreate
-		       (null, "className"));
-	mapper.addRule(prefix + "/Valve",
-		       mapper.setProperties());
-	mapper.addRule(prefix + "/Valve", mapper.addChild
-		       ("addValve", "org.apache.catalina.Valve"));
 
 	mapper.addRule(prefix + "/WrapperLifecycle",
 		       mapper.methodSetter("addWrapperLifecycle", 0));
