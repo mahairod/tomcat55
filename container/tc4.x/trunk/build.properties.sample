@@ -92,17 +92,17 @@ servlet.jar=${servlet.lib}/servlet.jar
 
 # ----- Xerces XML Parser, version 1.4.4 to 2.0.0 Beta 4 -----
 # Note: Optional with JDK 1.4+
-xerces.home=${base.path}/xerces-1_4_4
-xerces.lib=${xerces.home}
-xerces.jar=${xerces.lib}/xerces.jar
-
-
-# ----- Xerces XML Parser, version 2.0.0 Beta 4 or later -----
-# Note: Optional with JDK 1.4+, or if Xerces 1.x is present
-#xerces.home=${base.path}/xerces-2_0_0
+#xerces.home=${base.path}/xerces-1_4_4
 #xerces.lib=${xerces.home}
-#xercesImpl.jar=${xerces.lib}/xercesImpl.jar
-#xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
+#xerces.jar=${xerces.lib}/xerces.jar
+
+
+# ----- Xerces XML Parser, version 2.0.0 or later -----
+# Note: Optional with JDK 1.4+, or if Xerces 1.x is present
+xerces.home=${base.path}/xerces-2_0_1
+xerces.lib=${xerces.home}
+xercesImpl.jar=${xerces.lib}/xercesImpl.jar
+xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
 
 # --------------------------------------------------
