@@ -1594,7 +1594,7 @@ public abstract class ContainerBase
                 parent=parent.getParent();
             }
             if( parent instanceof StandardEngine ) {
-                domain=((StandardEngine)parent).getName();
+                domain=((StandardEngine)parent).getDomain();
             } 
         }
         return domain;
