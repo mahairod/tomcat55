@@ -153,7 +153,7 @@ public class JspServletWrapper {
 					 servletContext, this, rctxt,
 					 tagFileJars);
 
-	// Store tag file .java and .class files in standard location
+	// Store tag handler .java and .class files in standard location
 	// (/tagfiles/org/apache/jsp/), regardless of the original tag file
 	// path
 	String standard = null;

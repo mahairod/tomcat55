@@ -407,6 +407,11 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
      * Parses the tag file directives of the given TagFile and turns them into
      * a TagInfo.
      *
+     * @param elem The <tag-file> element in the TLD
+     * @param uri The location of the TLD, in case the tag file is specified
+     * relative to it
+     * @param jarFile The JAR file, in case the tag file is packaged in a JAR
+     *
      * @return TagInfo correspoding to tag file directives
      */
     private TagFileInfo createTagFileInfo(TreeNode elem, String uri,
