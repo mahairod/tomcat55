@@ -88,13 +88,36 @@ public interface Lifecycle {
 
 
     /**
+     * The LifecycleEvent type for the "component before start" event.
+     */
+    public static final String BEFORE_START_EVENT = "before_start";
+
+
+    /**
+     * The LifecycleEvent type for the "component after start" event.
+     */
+    public static final String AFTER_START_EVENT = "after_start";
+
+
+    /**
      * The LifecycleEvent type for the "component stop" event.
      */
     public static final String STOP_EVENT = "stop";
 
 
-    // --------------------------------------------------------- Public Methods
+    /**
+     * The LifecycleEvent type for the "component before stop" event.
+     */
+    public static final String BEFORE_STOP_EVENT = "before_stop";
 
+
+    /**
+     * The LifecycleEvent type for the "component after stop" event.
+     */
+    public static final String AFTER_STOP_EVENT = "after_stop";
+
+
+    // --------------------------------------------------------- Public Methods
 
 
     /**
