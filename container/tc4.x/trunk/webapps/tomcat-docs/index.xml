@@ -47,6 +47,10 @@ Tomcat 4, and (if you wish to) building a distribution from the source code.
     steps necessary to download Tomcat 4 source code (and the other packages
     that it depends on), and build a binary distribution from those sources.
     </li>
+<li><a href="config/index.html"><strong>Server Configuration Reference</strong></a>
+    - Reference manual that documents all available elements and attributes
+      that may be placed into a Tomcat 4 <code>conf/server.xml</code> file.
+    </li>
 </ul>
 
 </section>
@@ -60,10 +64,9 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
 <ul>
 <li><a href="cgi-howto.html"><strong>CGI HOW-TO</strong></a> - Configuring
     Tomcat to use CGI (Common Gateway Interface).</li>
-<li><a href="config/index.html"><strong>Server Configuration Reference</strong></a>
-    - Reference manual that documents all available elements and attributes
-      that may be placed into a Tomcat 4 <code>conf/server.xml</code> file.
-    </li>
+<li><a href="config/connectors.html"><strong>Connectors List</strong></a>
+    - List of the connectors (both HTTP and native webservers) available for
+      use with Tomcat.</li>
 <li><a href="class-loader-howto.html"><strong>Class Loader HOW-TO</strong></a>
     - Information about class loading in Tomcat 4, including where to place
     your application classes so that they are visible.</li>
@@ -71,6 +74,10 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
     <strong>JNDI DataSource HOW-TO</strong></a>
     - Configuring a JNDI DataSoure with a dB connection pool.
     Examples for many popular databases.</li>
+<li><a href="jk2/index.html"><strong>JK Documenation</strong></a>
+    - Complete documentation and HOWTOs on the JK native webserver connector,
+      used to interface Tomcat with servers like Apache HTTPd, IIS 
+      and others.</li>
 <li><a href="jndi-resources-howto.html"><strong>JNDI Resources HOW-TO</strong></a>
     - Configuring standard and custom resources in the JNDI naming context
     that is provided to each web application.</li>
