@@ -184,6 +184,14 @@ unsigned short jk_b_pget_int(jk_msg_buf_t *msg,
 unsigned char jk_b_pget_byte(jk_msg_buf_t *msg, 
                              int pos);
 
+/* --------------------- Help ------------------------ */
+void jk_dump_buff(jk_logger_t *l, 
+                      const char *file,
+                      int line,
+                      int level,
+                      char * what,
+                      jk_msg_buf_t * msg);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -57,6 +57,7 @@
  * Description: Data marshaling. XDR like                                  *
  * Author:      Costin <costin@costin.dnt.ro>                              *
  * Author:      Gal Shachor <shachor@il.ibm.com>                           *
+ * Author:      Henri Gomez <hgomez@slib.fr>                               *
  * Version:     $Revision$                                           *
  ***************************************************************************/
 
@@ -65,6 +66,7 @@
 #include "jk_util.h"
 #include "jk_sockbuf.h"
 #include "jk_msg_buff.h"
+#include "jk_logger.h"
 
 struct jk_msg_buf {
     jk_pool_t *pool;
@@ -330,3 +332,24 @@ static void swap_16(unsigned char *src, unsigned char *dst)
     *dst++ = *(src + 1 );
     *dst= *src;
 }
+
+/** Helpie dump function 
+ */
+void jk_dump_buff(jk_logger_t *l,
+                      const char *file,
+                      int line,
+                      int level,
+                      char * what,
+                      jk_msg_buf_t * msg)
+{
+#ifdef USE_ALSO_BODY
+        jk_log(l, file, line, level, "%s #%d %.*s\n",
+                  what,
+                  jk_b_get_len(msg),
+                  jk_b_get_len(msg),
+                  jk_b_get_buff(msg));
+#else
+jk_log(l, file, line, level, "%s #%d\n", what, jk_b_get_len(msg));
+#endif
+}
+
