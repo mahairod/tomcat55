@@ -310,7 +310,11 @@ public class JspCompiler extends Compiler implements Mangler {
 
         jspReal = new File(realPath);
 
-        File classFile = new File(getClassFileName());
+		  if(!jspReal.exists()){
+			  return true;
+		  }
+
+		  File classFile = new File(getClassFileName());
         if (classFile.exists()) {
             outDated = classFile.lastModified() < jspReal.lastModified();
         } else {
