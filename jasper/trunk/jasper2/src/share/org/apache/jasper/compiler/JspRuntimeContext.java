@@ -130,6 +130,20 @@ public final class JspRuntimeContext implements Runnable {
                     "runtime.TagHandlerPool");
                 factory.getClass().getClassLoader().loadClass( basePackage +
                     "servlet.JspServletWrapper");
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.JspFragmentHelper");
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.ProtectedFunctionMapper");
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.ProtectedFunctionMapper$1");
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.ProtectedFunctionMapper$2");
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.PageContextImpl");      
+                 factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.PageContextImpl$1");      
+                factory.getClass().getClassLoader().loadClass( basePackage +
+                    "runtime.JspContextWrapper");   
             } catch (ClassNotFoundException ex) {
                 System.out.println(
                     "Jasper JspRuntimeContext preload of class failed: " +
@@ -392,6 +406,7 @@ public final class JspRuntimeContext implements Runnable {
                 // Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
                 permissionCollection.add( new RuntimePermission(
                     "accessClassInPackage.org.apache.jasper.runtime") );
+                
                 if (parentClassLoader instanceof URLClassLoader) {
                     URL [] urls = parentClassLoader.getURLs();
                     String jarUrl = null;
