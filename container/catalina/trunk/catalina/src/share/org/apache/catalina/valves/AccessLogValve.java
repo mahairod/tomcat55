@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
@@ -113,18 +114,19 @@ import org.apache.catalina.util.StringManager;
  *     an empty string
  * <li><b>%r</b> - First line of the request
  * <li><b>%s</b> - HTTP status code of the response
- * <li><b>%S</b> - User session ID 
+ * <li><b>%S</b> - User session ID
  * <li><b>%t</b> - Date and time, in Common Log Format format
  * <li><b>%u</b> - Remote user that was authenticated
  * <li><b>%U</b> - Requested URL path
  * <li><b>%v</b> - Local server name
  * <li><b>%D</b> - Time taken to process the request, in millis
-  * </ul>
+ * <li><b>%T</b> - Time taken to process the request, in seconds
+ * </ul>
  * <p>In addition, the caller can specify one of the following aliases for
  * commonly utilized patterns:</p>
  * <ul>
  * <li><b>common</b> - <code>%h %l %u %t "%r" %s %b</code>
- * <li><b>combined</b> - 
+ * <li><b>combined</b> -
  *   <code>%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"</code>
  * </ul>
  *
@@ -138,6 +140,13 @@ import org.apache.catalina.util.StringManager;
  * <li><code>%{xxx}r</code> xxx is an attribute in the ServletRequest
  * <li><code>%{xxx}s</code> xxx is an attribute in the HttpSession
  * </ul>
+ * </p>
+ *
+ * <p>
+ * Conditional logging is also supported. This can be done with the
+ * <code>condition</code> property.
+ * If the value returned from ServletRequest.getAttribute(condition)
+ * yields a non-null value. The logging will be skipped.
  * </p>
  *
  * @author Craig R. McClanahan
@@ -227,12 +236,12 @@ public final class AccessLogValve
      * The prefix that is added to log file filenames.
      */
     private String prefix = "access_log.";
-    
+
 
     /**
      * Should we rotate our log file? Default is true (like old behavior)
      */
-    private boolean rotatable = true;    
+    private boolean rotatable = true;
 
 
     /**
@@ -282,6 +291,12 @@ public final class AccessLogValve
 
 
     /**
+     * Time taken formatter for 3 decimal places.
+     */
+     private DecimalFormat timeTakenFormatter = null;
+
+
+    /**
      * A date formatter to format a Date into a year string in the format
      * "yyyy".
      */
@@ -325,6 +340,17 @@ public final class AccessLogValve
      */
     private long rotationLastChecked = 0L;
 
+
+    /**
+     * Are we doing conditional logging. default false.
+     */
+    private String condition = null;
+
+
+    /**
+     * Date format to place in log file name. Use at your own risk!
+     */
+    private String fileDateFormat = null;
 
     // ------------------------------------------------------------- Properties
 
@@ -425,21 +451,21 @@ public final class AccessLogValve
      * Should we rotate the logs
      */
     public boolean isRotatable() {
- 
+
         return rotatable;
- 
+
     }
- 
- 
+
+
     /**
      * Set the value is we should we rotate the logs
      *
      * @param rotatable true is we should rotate.
      */
     public void setRotatable(boolean rotatable) {
- 
+
         this.rotatable = rotatable;
- 
+
     }
 
 
@@ -487,6 +513,45 @@ public final class AccessLogValve
     }
 
 
+    /**
+     * Return whether the attribute name to look for when
+     * performing conditional loggging. If null, every
+     * request is logged.
+     */
+    public String getCondition() {
+
+        return condition;
+
+    }
+
+
+    /**
+     * Set the ServletRequest.attribute to look for to perform
+     * conditional logging. Set to null to log everything.
+     *
+     * @param condition Set to null to log everything
+     */
+    public void setCondition(String condition) {
+
+        this.condition = condition;
+
+    }
+
+    /**
+     *  Return the date format date based log rotation.
+     */
+    public String getFileDateFormat() {
+        return fileDateFormat;
+    }
+
+
+    /**
+     *  Set the date format date based log rotation.
+     */
+    public void setFileDateFormat(String fileDateFormat) {
+        this.fileDateFormat =  fileDateFormat;
+    }
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -513,6 +578,12 @@ public final class AccessLogValve
 
         long t2=System.currentTimeMillis();
         long time=t2-t1;
+
+        if (condition!=null &&
+                null!=request.getRequest().getAttribute(condition)) {
+            return;
+        }
+
 
         Date date = getDate();
         StringBuffer result = new StringBuffer();
@@ -688,7 +759,7 @@ public final class AccessLogValve
                             close();
                             dateStamp = tsDate;
                             open();
-                        }                        
+                        }
                     }
                 }
 
@@ -743,7 +814,7 @@ public final class AccessLogValve
             } else {
                 pathname = dir.getAbsolutePath() + File.separator +
                             prefix + suffix;
-            }    
+            }
             writer = new PrintWriter(new FileWriter(pathname, true), true);
         } catch (IOException e) {
             writer = null;
@@ -782,7 +853,7 @@ public final class AccessLogValve
                 value = InetAddress.getLocalHost().getHostAddress();
             } catch(Throwable e){
                 value = "127.0.0.1";
-            }    
+            }
         } else if (pattern == 'b') {
             int length = response.getContentCount();
             if (length <= 0)
@@ -856,6 +927,8 @@ public final class AccessLogValve
             temp.append(timeZone);                              // Timezone
             temp.append(']');
             value = temp.toString();
+        } else if (pattern == 'T') {
+            value = timeTakenFormatter.format(time/1000d);
         } else if (pattern == 'u') {
             if (hreq != null)
                 value = hreq.getRemoteUser();
@@ -971,6 +1044,28 @@ public final class AccessLogValve
     }
 
 
+    private String calculateTimeZoneOffset(long offset) {
+        StringBuffer tz = new StringBuffer();
+        if ((offset<0))  {
+            tz.append("-");
+            offset = -offset;
+        }
+
+        long hourOffset = offset/(1000*60*60);
+        long minuteOffset = (offset/(1000*60)) % 60;
+
+        if (hourOffset<10)
+            tz.append("0");
+        tz.append(hourOffset);
+
+        if (minuteOffset<10)
+            tz.append("0");
+        tz.append(minuteOffset);
+
+        return tz.toString();
+    }
+
+
     // ------------------------------------------------------ Lifecycle Methods
 
 
@@ -987,7 +1082,7 @@ public final class AccessLogValve
 
 
     /**
-     * Get the lifecycle listeners associated with this lifecycle. If this 
+     * Get the lifecycle listeners associated with this lifecycle. If this
      * Lifecycle has no listeners registered, a zero-length array is returned.
      */
     public LifecycleListener[] findLifecycleListeners() {
@@ -1028,11 +1123,11 @@ public final class AccessLogValve
 
         // Initialize the timeZone, Date formatters, and currentDate
         TimeZone tz = TimeZone.getDefault();
-        timeZone = "" + (tz.getRawOffset() / (60 * 60 * 10));
-        if (timeZone.length() < 5)
-            timeZone = timeZone.substring(0, 1) + "0" +
-                timeZone.substring(1, timeZone.length());
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        timeZone = calculateTimeZoneOffset(tz.getRawOffset());
+
+        if (fileDateFormat==null || fileDateFormat.length()==0)
+            fileDateFormat = "yyyy-MM-dd";
+        dateFormatter = new SimpleDateFormat(fileDateFormat);
         dateFormatter.setTimeZone(tz);
         dayFormatter = new SimpleDateFormat("dd");
         dayFormatter.setTimeZone(tz);
@@ -1044,6 +1139,7 @@ public final class AccessLogValve
         timeFormatter.setTimeZone(tz);
         currentDate = new Date();
         dateStamp = dateFormatter.format(currentDate);
+        timeTakenFormatter = new DecimalFormat("0.000");
 
         open();
 
