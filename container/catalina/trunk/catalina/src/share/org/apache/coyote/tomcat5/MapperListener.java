@@ -293,7 +293,34 @@ public class MapperListener
         ObjectName hostName = new ObjectName
             (domain + ":type=Host," + "host=" + defaultHost);
         if (!mBeanServer.isRegistered(hostName)) {
-            log.warn("Unknown default host: " + defaultHost);
+
+            // Get the hosts' list
+            String onStr = domain + ":type=Host,*";
+            ObjectName objectName = new ObjectName(onStr);
+            Set set = mBeanServer.queryMBeans(objectName, null);
+            Iterator iterator = set.iterator();
+            String[] aliases;
+            boolean isRegisteredWithAlias = false;
+            
+            while (iterator.hasNext()) {
+
+                if (isRegisteredWithAlias) break;
+            
+                ObjectInstance oi = (ObjectInstance) iterator.next();
+                hostName = oi.getObjectName();
+                aliases = (String[])
+                    mBeanServer.invoke(hostName, "findAliases", null, null);
+
+                for (int i=0; i < aliases.length; i++){
+                    if (aliases[i].equalsIgnoreCase(defaultHost)){
+                        isRegisteredWithAlias = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isRegisteredWithAlias)
+                log.warn("Unknown default host: " + defaultHost);
         }
         // This should probablt be called later 
         if( defaultHost != null ) {
