@@ -13,6 +13,93 @@
 
 <body>
 
+<section name="Tomcat 5.0.11 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Update all download locations to archive.apache.org to use stable links
+      (remm)
+      </fix>
+      <docs>
+      Update running and building instructions (remm)
+      </docs>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Modify the commons-logging packaging (only the commons-logging API is
+      bundled now) to resolve the classloading problems, and remove the 
+      special case handling from the webapp classloader; pivileged webapps can
+      now use log4j (remm)
+      </update>
+      <fix>
+      <bug>22986</bug>: Fix bad canonicalization call which was causing 
+      problems when a host appBase was absolute (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <docs>
+      Add documentaion on mod_jk tools (glenn)
+      </docs>
+      <fix>
+      Handle query string decoding as a special case, using the character 
+      encoding specified for the rest of the URI in the connector, whereas the
+      encoding of the entity body was used; this can be UTF8 as per the W3C 
+      standard, but for interoperability, it is a one for one byte 
+      to character conversion (remm)
+      </fix>
+      <fix>
+      Null a busy processor in the pool array, so that the algoritm is more
+      consistent (remm)
+      </fix>
+      <fix>
+      MessageBytes.toChars should set the type to chars (remm)
+      </fix>
+      <update>
+      Make the update of the stats an explicit call (I believe it is valid to 
+      call recycle multiple times, and it is hard to avoid with HTTP keepalive)
+      (remm)
+      </update>
+      <fix>
+      Decrease the timeout reduction ratio when the server gets loaded, and 
+      add a setStatus so an error is counted (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      <bug>22956</bug>: Use UTF8 encoding in the manager web application,
+      submitted by Takashi Okamoto (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.10 (remm)">
 
   <subsection name="General">
