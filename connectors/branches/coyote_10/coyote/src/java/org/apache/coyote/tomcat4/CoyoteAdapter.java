@@ -382,7 +382,7 @@ final class CoyoteAdapter
             return;
 
         Cookie[] cookies = new Cookie[count];
-
+        int idx=0;
         for (int i = 0; i < count; i++) {
             ServerCookie scookie = serverCookies.getCookie(i);
             if (scookie.getName().equals(Globals.SESSION_COOKIE_NAME)) {
@@ -399,9 +399,14 @@ final class CoyoteAdapter
                             .getRequestedSessionId());
                 }
             }
-            Cookie cookie = new Cookie(scookie.getName().toString(),
+            try {
+                Cookie cookie = new Cookie(scookie.getName().toString(),
                                        scookie.getValue().toString());
-            cookies[i] = cookie;
+                cookies[idx++] = cookie;
+            } catch (Exception ex) {
+                log("Bad Cookie Name: " + scookie.getName() + 
+                    " /Value: " + scookie.getValue(),ex);
+            }    
         }
 
         request.setCookies(cookies);
