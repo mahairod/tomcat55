@@ -94,9 +94,10 @@ required are documented here.
 (4) Download and Install the Servlet API Binary Distribution
 
 NOTE:  Alternatively, you can download the sources of the
-"jakarta-servletapi-4" subproject, and build a binary distribution yourself.
+"jakarta-servletapi-4" and "jakarta-servletapi" subprojects, 
+and build a binary distribution yourself.
 
-* Download a binary distribution from:
+* Download a binary distribution of the jakarta-servletapi-4 from:
 
     http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly/
 
@@ -106,14 +107,28 @@ NOTE:  Alternatively, you can download the sources of the
   On a Unix platform, you will need:
     jakarta-servletapi-4-YYYYMMDD.zip
 
+* Download a binary distribution of the jakarta-servletapi from:
+
+    http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.3/bin/
+
+  On a Windows platform, you will need:
+    jakarta-servletapi.zip
+
+  On a Unix platform, you will need:
+    jakarta-servletapi.tar.gz
+
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
-  "jakarta-servletapi-4").  For the purposes of the remainder of this document,
-  the symbolic name "${servletapi.home}" is used to refer to the full
-  pathname of the release directory.
+  "jakarta-servletapi-4" for Servlet2.3 and JSP1.2 and "jakarta-servletapi"
+  for Servlet 2.2 and JSP 1.1).  For the purposes of the remainder of this document,
+  the symbolic name "${servlet23api.home}" is used to refer to the full
+  pathname of the jakarta-servletapi-4 release directory and the symbolic
+  name, "${servlet22api.home} is used to refer to the full pathname of the
+  jakarta-servletapi release directory.
 
 * Make a note of the full pathname to the "servlet.jar" file included (in
-  the "lib" subdirectory).  You will need it in the next step.
+  the "lib" subdirectory of each of the distributions).  
+  You will need it in the next step.
 
 
 (5) Customize Build Properties For This Subproject
@@ -132,10 +147,12 @@ subproject (as described in the previous step), or use the "servlet.jar" file
 delivered with your servlet container.
 
 Create (or update) a "build.properties" file in your "${watchdog.source}"
-directory, or in your user home directory, that defines the "servlet.jar"
-property as the full pathname to this file.  For example:
+directory, or in your user home directory, and set the values of 
+servlet23api.home and servlet22api.home to the fully qualified pathnames
+of the respective distributions.  For example:
 
-  servletapi.home=/usr/local/jakarta-servletapi-4/lib/servlet.jar
+  servlet23api.home=/usr/local/jakarta-servletapi-4
+  servlet22api.home=/usr/local/jakarta-servletapi
 
 
 (6) Build A Binary Distribution
