@@ -542,6 +542,7 @@ public class ThreadPool  {
 	    }
             this.toRun = toRun;
             shouldRun = true;
+            noThData = true;
             this.notify();
         }
 
