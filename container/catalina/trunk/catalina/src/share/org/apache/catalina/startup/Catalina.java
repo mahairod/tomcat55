@@ -330,7 +330,7 @@ public class Catalina extends Embedded {
                             "org.apache.catalina.LifecycleListener");
 
         digester.addObjectCreate("Server/Service/Connector",
-                                 "org.apache.catalina.connector.http.HttpConnector",
+                                 "org.apache.coyote.tomcat5.CoyoteConnector",
                                  "className");
         digester.addSetProperties("Server/Service/Connector");
         digester.addSetNext("Server/Service/Connector",
