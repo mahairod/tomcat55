@@ -19,6 +19,7 @@
   <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
   <property name="ant.jar"           value="${ant.home}/lib/ant.jar"/>
   <property name="servlet.jar" value="${api.home}/dist/lib/servlet.jar"/>
+  <property name="jsp20el.jar"       value="${jstl-impl.jar}"/>
 
 
   <!-- Construct Jasper classpath -->
