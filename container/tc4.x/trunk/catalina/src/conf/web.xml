@@ -85,6 +85,30 @@
     <load-on-startup>5</load-on-startup>
   </servlet>
 
+  <!-- CGIServlet -->
+   <servlet>
+     <servlet-name>cgi</servlet-name>
+     <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
+     <init-param>
+       <!-- debug > 0 == debug enabled -->
+       <param-name>debug</param-name>
+       <param-value>6</param-value>
+     </init-param>
+     <init-param>
+       <!-- clientInputTimeout is the time in milliseconds to wait for-->
+       <!--   input from the client browser before assuming there is none -->
+       <param-name>clientInputTimeout</param-name>
+       <param-value>100</param-value>
+     </init-param>
+     <init-param>
+       <!-- The CGI search path will start at                    -->
+       <!--     webAppRootDir + File.separator + cgiPathPrefix   -->
+       <param-name>cgiPathPrefix</param-name>
+       <param-value>WEB-INF/cgi</param-value>
+     </init-param>
+     <load-on-startup>6</load-on-startup>
+   </servlet>
+
   <!-- The mapping for the default servlet -->
   <servlet-mapping>
     <servlet-name>default</servlet-name>
@@ -110,7 +134,14 @@
     <servlet-name>ssi</servlet-name>
     <url-pattern>*.shtml</url-pattern>
   </servlet-mapping>
-  
+
+     <!-- The mapping for the CGI Gateway servlet -->
+     <!-- Comment this out if you do not want "CGI Gateway" service -->
+       <servlet-mapping>
+           <servlet-name>cgi</servlet-name>
+       <url-pattern>/cgi-bin/*</url-pattern>
+       </servlet-mapping>
+
   <!-- Set the default session timeout (in seconds) -->
   <session-config>
     <session-timeout>30</session-timeout>
