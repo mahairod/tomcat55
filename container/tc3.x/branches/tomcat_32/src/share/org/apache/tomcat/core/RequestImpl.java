@@ -167,7 +167,7 @@ public class RequestImpl  implements Request {
     public RequestImpl() {
 	//	System.out.println("XXX new ri " );
  	headers = new MimeHeaders();
- 	recycle(); // XXX need better placement-super()
+	initRequest();
     }
 
     public void setContext(Context context) {
@@ -694,12 +694,7 @@ public class RequestImpl  implements Request {
 	}
     }
 
-    // -------------------- End utils
-    public void recycle() {
-        if( requestFacade != null && context!=null ) {
-            context.getFacadeManager().recycle(this);
-        }
-
+    private void initRequest() {
         context = null;
         attributes.clear();
         parameters.clear();
@@ -746,6 +741,14 @@ public class RequestImpl  implements Request {
         notAuthenticated=true;
 	userRoles=null;
 	reqRoles=null;
+    }
+
+    // -------------------- End utils
+    public void recycle() {
+        if( requestFacade != null && context != null ) {
+	    context.getFacadeManager().recycle(this);
+	}
+	initRequest();
     }
 
     public MimeHeaders getMimeHeaders() {
