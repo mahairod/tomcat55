@@ -24,7 +24,7 @@
 
     <!-- Should be able to see the home page -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="/index.html" debug="${debug}"
+         request="/index.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should be able to use relative path to document root -->
