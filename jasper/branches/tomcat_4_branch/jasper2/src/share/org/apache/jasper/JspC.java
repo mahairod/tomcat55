@@ -489,6 +489,8 @@ public class JspC implements Options {
                 String jspPackage = toPackageName(jspUri);
                 if (jspPackage.equals("")) {
                     clctxt.setServletPackageName(targetPackage);
+                } else if (targetPackage.equals(Constants.JSP_PACKAGE_NAME)) {
+                    clctxt.setServletPackageName(targetPackage);
                 } else {
                     clctxt.setServletPackageName(targetPackage + "." 
                                                  + jspPackage);
