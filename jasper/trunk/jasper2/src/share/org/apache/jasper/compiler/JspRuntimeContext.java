@@ -185,8 +185,13 @@ public final class JspRuntimeContext implements Runnable {
 	    }
         }
 
-        initSecurity();
         initClassPath();
+
+	if (context instanceof org.apache.jasper.servlet.JspCServletContext) {
+	    return;
+	}
+
+        initSecurity();
 
         // If this web application context is running from a
         // directory, start the background compilation thread

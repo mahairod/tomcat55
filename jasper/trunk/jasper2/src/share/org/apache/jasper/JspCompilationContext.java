@@ -201,8 +201,6 @@ public class JspCompilationContext {
     public ClassLoader getClassLoader() {
         if( loader != null )
             return loader;
-        if( rctxt == null) 
-            return getClass().getClassLoader();
         return rctxt.getParentClassLoader();
     }
 

@@ -28,4 +28,9 @@ if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
   exit 1
 fi
 
-exec "$PRGDIR"/"$EXECUTABLE" jspc "$@"
+if [ "$1" = "debug" ]; then
+  shift
+  exec "$PRGDIR"/"$EXECUTABLE" debug "$@"
+else
+  exec "$PRGDIR"/"$EXECUTABLE" jspc "$@"
+fi

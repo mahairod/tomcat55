@@ -68,13 +68,12 @@ import java.util.*;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
 import org.apache.jasper.compiler.TldLocationsCache;
-
-import org.apache.jasper.servlet.JspCServletContext;
-
-import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
 import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.servlet.JspCServletContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -195,6 +194,10 @@ public class JspC implements Options {
     static PrintStream logStream;
 
     JspCServletContext context;
+    /*
+     * Maintain a dummy JspRuntimeContext for compiling tag files
+     */
+    JspRuntimeContext rctxt;
 
     /**
      * Cache for the TLD locations
@@ -204,6 +207,7 @@ public class JspC implements Options {
     private JspConfig jspConfig = null;
     private TagPluginManager tagPluginManager = null;
 
+    private boolean verbose = false;
     private boolean listErrors = false;
     private boolean showSuccess = false;
 
@@ -530,7 +534,7 @@ public class JspC implements Options {
             String baseDir = scratchDir.getCanonicalPath();
             this.setOutputDir( baseDir + jspUri.substring( 0, jspUri.lastIndexOf( '/' ) ) );
             JspCompilationContext clctxt = new JspCompilationContext
-                ( jspUri, false,  this, context, null, null );
+                ( jspUri, false,  this, context, null, rctxt );
 
             /* Override the defaults */
             if ((targetClassName != null) && (targetClassName.length() > 0)) {
@@ -591,6 +595,8 @@ public class JspC implements Options {
 		      e);
             if ( listErrors ) {
 	        logStream.println( "Error in File: " + file );
+		logStream.println(e.getMessage());
+		e.printStackTrace(logStream);
 		return true;
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
@@ -745,12 +751,13 @@ public class JspC implements Options {
                 (new PrintWriter(System.out),
                  new URL("file:" + uriRoot.replace('\\','/') + '/'));
             tldLocationsCache = new
-                TldLocationsCache(context);
+                TldLocationsCache(context, true);
         } catch (MalformedURLException me) {
             System.out.println("**" + me);
         }
-	jspConfig = new JspConfig(context);
-	tagPluginManager = new TagPluginManager(context);
+        rctxt = new JspRuntimeContext(context, this);
+        jspConfig = new JspConfig(context);
+        tagPluginManager = new TagPluginManager(context);
     }
 
 
@@ -865,7 +872,11 @@ public class JspC implements Options {
         die = dieLevel;
 
         while ((tok = nextArg()) != null) {
-            if (tok.equals(SWITCH_OUTPUT_DIR)) {
+            if (tok.equals(SWITCH_VERBOSE)) {
+                verbose = true;
+                showSuccess = true;
+                listErrors = true;
+            } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
                 tok = nextArg();
                 setOutputDir( tok );
             } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {

@@ -207,10 +207,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    InputStream stream = null;
 	    try {
                 String path = location[0] ;
-                if(ctxt.getClassLoader() != null &&
-                   URLClassLoader.class.equals(ctxt.getClassLoader().getClass())
-                       && path.startsWith("/"))
-                   path = path.substring(1,path.length()) ;
                 url = ctxt.getResource(path);
                 if (url == null) return;
 		url = new URL("jar:" + url.toString() + "!/");
@@ -232,11 +228,13 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 			stream.close();
 		    } catch (Throwable t) {}
 		}
+		/*
 		if (jarFile != null) {
 		    try {
 			jarFile.close();
 		    } catch (Throwable t) {}
 		}
+		*/
 		throw new JasperException(ex);
 	    }
 	}

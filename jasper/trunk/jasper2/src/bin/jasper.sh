@@ -87,6 +87,16 @@ if [ "$1" = "jspc" ] ; then
   exec "$_RUNJAVA" $JAVA_OPTS $JASPER_OPTS \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Djasper.home="$JASPER_HOME" \
+    -Dcatalina.home="$JASPER_HOME" \
+    org.apache.jasper.JspC "$@"
+
+elif [ "$1" = "debug" ] ; then
+
+  shift
+  exec "$_RUNJDB" $JAVA_OPTS $JASPER_OPTS \
+    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
+    -Djasper.home="$JASPER_HOME" \
+    -Dcatalina.home="$JASPER_HOME" \
     org.apache.jasper.JspC "$@"
 
 else
