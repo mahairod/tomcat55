@@ -272,6 +272,19 @@ Function .onInstSuccess
 
 FunctionEnd
 
+;--------------------------------
+;Descriptions
+
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} $(DESC_SecTomcat)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatDocs} $(DESC_SecTomcatDocs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+
 
 ; =====================
 ; FindJavaPath Function
