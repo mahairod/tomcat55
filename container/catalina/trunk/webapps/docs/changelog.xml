@@ -13,6 +13,110 @@
 
 <body>
 
+<section name="Tomcat 5.0.22 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <add>
+      New procrun 2 Windows wrapper (mturk)
+      </add>
+      <update>
+      Xerces 2.6.2 (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Fix getContext("/") so current context is returned if called whilst 
+      in the root context (markt)
+      </fix>
+      <fix>
+      Refactor the Extension validator without using a singleton pattern to fix
+      a possible NPE (remm)
+      </fix>
+      <fix>
+      Allow webapp to override JspServlet (settings) inherited from global 
+      web.xml (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Add detection for JDK 1.5 (billbarker)
+      </fix>
+      <fix>
+      <bug>16157</bug>: Set AuthType on HttpServletRequest, submitted by 
+      Kan Ogawa (markt)
+      </fix>
+      <fix>
+      Add public method consistently (jfarcand)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      Moved initialization of 'varName' to where it is needed (luehe)
+      </fix>
+      <update>
+      Allow disable tag pooling for ant task (and command line option) in jspc
+      (funkman)
+      </update>
+      <fix>
+      <bug>28236</bug>: when reallocating, make the buffer grow faster 
+      (512 bytes at a time was not sufficient) (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <fix>
+      <bug>28131</bug>: Fix expiration of delta sessions (fhanik)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Remove resource bundle which was causing problems in the admin
+      webapp (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.21 (remm)">
 
   <subsection name="General">
