@@ -39,3 +39,7 @@ COMPLETED
 10. Add single sign on support
 11. Add Keep Alive and WaitForAck at async mode implementation.
        Make this feature configurable to Sender element at server.xml
+       Is include with 5.5.8
+12. Add support to new Async Mode from Rainer Jung
+       Integrated with 5.5.9
+       
