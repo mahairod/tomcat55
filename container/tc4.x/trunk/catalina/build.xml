@@ -41,6 +41,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${jndi.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
@@ -57,6 +58,7 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${jndi.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
