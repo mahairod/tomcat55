@@ -54,81 +54,73 @@
  */
 
 /***************************************************************************
- * Description: Memory Pool object header file                             *
+ * Description: Experimental bi-directionl protocol handler.               *
  * Author:      Gal Shachor <shachor@il.ibm.com>                           *
- * Version:     $Revision$                                               *
+ * Version:     $Revision$                                           *
  ***************************************************************************/
-#ifndef _JK_POOL_H
-#define _JK_POOL_H
+#ifndef JK_AJP13_H
+#define JK_AJP13_H
 
-#include "jk_global.h"
+
+#include "jk_service.h"
+#include "jk_msg_buff.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define DEFAULT_DYNAMIC 10
+/*
+ * Message does not have a response (for example, JK_AJP13_END_RESPONSE)
+ */
+#define JK_AJP13_ERROR              -1
+/*
+ * Message does not have a response (for example, JK_AJP13_END_RESPONSE)
+ */
+#define JK_AJP13_NO_RESPONSE        0
+/*
+ * Message have a response.
+ */
+#define JK_AJP13_HAS_RESPONSE       1
 
 /*
- * The pool atom (basic pool alocation unit) is an 8 byte long. 
- * Each allocation (even for 1 byte) will return a round up to the 
- * number of atoms. 
- * 
- * This is to help in alignment of 32/64 bit machines ...
- * G.S
+ * Forward a request from the web server to the servlet container.
  */
-#ifdef WIN32
-    typedef __int64     jk_pool_atom_t;
-#elif defined(AIX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(SOLARIS)
-    typedef long long   jk_pool_atom_t;
-#elif defined(LINUX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(OS2)
-    typedef long long   jk_pool_atom_t;
-#endif
+#define JK_AJP13_FORWARD_REQUEST    (unsigned char)2
 
-/* 
- * Pool size in number of pool atoms.
+/*
+ * Write a body chunk from the servlet container to the web server
  */
-#define TINY_POOL_SIZE 256                  /* Tiny 1/4K atom pool. */
-#define SMALL_POOL_SIZE 512                 /* Small 1/2K atom pool. */
-#define BIG_POOL_SIZE   2*SMALL_POOL_SIZE   /* Bigger 1K atom pool. */
-#define HUGE_POOL_SIZE  2*BIG_POOL_SIZE     /* Huge 2K atom pool. */
+#define JK_AJP13_SEND_BODY_CHUNK    (unsigned char)3
 
-struct jk_pool {
-    unsigned size;      
-    unsigned pos;       
-    char     *buf;      
-    unsigned dyn_size;  
-    unsigned dyn_pos;   
-    void     **dynamic; 
+/*
+ * Send response headers from the servlet container to the web server.
+ */
+#define JK_AJP13_SEND_HEADERS       (unsigned char)4
+
+/*
+ * Marks the end of response.
+ */
+#define JK_AJP13_END_RESPONSE       (unsigned char)5
+
+struct jk_res_data {
+    int         status;
+    const char *msg;
+    unsigned    num_headers;
+    char      **header_names;
+    char      **header_values;
 };
+typedef struct jk_res_data jk_res_data_t;
 
-typedef struct jk_pool jk_pool_t;
+int ajp13_marshal_into_msgb(jk_msg_buf_t *msg,
+                            jk_ws_service_t *s,
+                            jk_logger_t *l);
 
-void jk_open_pool(jk_pool_t *p,
-                  jk_pool_atom_t *buf,
-                  unsigned size);
-
-void jk_close_pool(jk_pool_t *p);
-
-void jk_reset_pool(jk_pool_t *p);
-
-void *jk_pool_alloc(jk_pool_t *p, 
-                    size_t sz);
-
-void *jk_pool_realloc(jk_pool_t *p, 
-                      size_t sz,
-                      const void *old,
-                      size_t old_sz);
-
-void *jk_pool_strdup(jk_pool_t *p, 
-                     const char *s);
-
+int ajp13_unmarshal_response(jk_msg_buf_t *msg,
+                             jk_res_data_t *d,
+                             jk_pool_t *p,
+                             jk_logger_t *l);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* _JK_POOL_H */
+#endif /* JK_AJP13_H */

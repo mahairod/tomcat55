@@ -92,6 +92,9 @@ int jk_get_worker_port(jk_map_t *m,
                        const char *wname,
                        int def);
 
+int jk_get_worker_cache_size(jk_map_t *m, 
+                             const char *wname,
+                             int def);
 
 int jk_get_worker_list(jk_map_t *m,
                        char ***list,

@@ -54,81 +54,66 @@
  */
 
 /***************************************************************************
- * Description: Memory Pool object header file                             *
+ * Description: Multi thread portability code for JK                       *
  * Author:      Gal Shachor <shachor@il.ibm.com>                           *
- * Version:     $Revision$                                               *
+ * Version:     $Revision$                                            *
  ***************************************************************************/
-#ifndef _JK_POOL_H
-#define _JK_POOL_H
+
+#ifndef _JK_MT_H
+#define _JK_MT_H
 
 #include "jk_global.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#define DEFAULT_DYNAMIC 10
-
 /*
- * The pool atom (basic pool alocation unit) is an 8 byte long. 
- * Each allocation (even for 1 byte) will return a round up to the 
- * number of atoms. 
- * 
- * This is to help in alignment of 32/64 bit machines ...
- * G.S
+ * All WIN32 code is MT, UNIX code that uses pthreads is marked by the POSIX 
+ * _REENTRANT define.
  */
-#ifdef WIN32
-    typedef __int64     jk_pool_atom_t;
-#elif defined(AIX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(SOLARIS)
-    typedef long long   jk_pool_atom_t;
-#elif defined(LINUX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(OS2)
-    typedef long long   jk_pool_atom_t;
-#endif
+#if defined (WIN32) || defined(_REENTRANT)
 
-/* 
- * Pool size in number of pool atoms.
- */
-#define TINY_POOL_SIZE 256                  /* Tiny 1/4K atom pool. */
-#define SMALL_POOL_SIZE 512                 /* Small 1/2K atom pool. */
-#define BIG_POOL_SIZE   2*SMALL_POOL_SIZE   /* Bigger 1K atom pool. */
-#define HUGE_POOL_SIZE  2*BIG_POOL_SIZE     /* Huge 2K atom pool. */
+    /*
+     * Marks execution under MT compilation
+     */
+    #define _MT_CODE
 
-struct jk_pool {
-    unsigned size;      
-    unsigned pos;       
-    char     *buf;      
-    unsigned dyn_size;  
-    unsigned dyn_pos;   
-    void     **dynamic; 
-};
+    #ifdef WIN32
 
-typedef struct jk_pool jk_pool_t;
+        #include <windows.h>
 
-void jk_open_pool(jk_pool_t *p,
-                  jk_pool_atom_t *buf,
-                  unsigned size);
+        typedef CRITICAL_SECTION JK_CRIT_SEC;
 
-void jk_close_pool(jk_pool_t *p);
+        #define JK_INIT_CS(x, rc) InitializeCriticalSection(x); rc = JK_TRUE;
+        #define JK_DELETE_CS(x, rc) DeleteCriticalSection(x); rc = JK_TRUE;
+        #define JK_ENTER_CS(x, rc) EnterCriticalSection(x); rc = JK_TRUE;
+        #define JK_LEAVE_CS(x, rc) LeaveCriticalSection(x); rc = JK_TRUE;
 
-void jk_reset_pool(jk_pool_t *p);
+    #else /* Unix pthreads */
 
-void *jk_pool_alloc(jk_pool_t *p, 
-                    size_t sz);
+        #include <pthread.h>
 
-void *jk_pool_realloc(jk_pool_t *p, 
-                      size_t sz,
-                      const void *old,
-                      size_t old_sz);
+        typedef pthread_mutex_t	JK_CRIT_SEC;
 
-void *jk_pool_strdup(jk_pool_t *p, 
-                     const char *s);
+        #define JK_INIT_CS(x, rc)\
+            if(pthread_mutex_init(x, NULL)) rc = JK_FALSE; else rc = JK_TRUE; 
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+        #define JK_DELETE_CS(x, rc)\
+            if(pthread_mutex_lock(x)) rc = JK_FALSE; else rc = JK_TRUE; 
 
-#endif /* _JK_POOL_H */
+        #define JK_ENTER_CS(x, rc)\
+            if(pthread_mutex_unlock(x)) rc = JK_FALSE; else rc = JK_TRUE; 
+
+        #define JK_LEAVE_CS(x, rc)\
+            if(pthread_mutex_destroy(x)) rc = JK_FALSE; else rc = JK_TRUE; 
+    #endif /* Unix pthreads */
+
+#else /* Not an MT code */
+
+    typedef void *JK_CRIT_SEC;
+
+    #define JK_INIT_CS(x, rc) rc = JK_TRUE;
+    #define JK_DELETE_CS(x, rc) rc = JK_TRUE;
+    #define JK_ENTER_CS(x, rc) rc = JK_TRUE;
+    #define JK_LEAVE_CS(x, rc) rc = JK_TRUE;
+
+#endif /* Not an MT code */
+
+#endif /* _JK_MT_H */

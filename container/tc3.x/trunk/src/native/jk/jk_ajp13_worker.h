@@ -54,81 +54,29 @@
  */
 
 /***************************************************************************
- * Description: Memory Pool object header file                             *
+ * Description: ajpv1.3 worker header file                                 *
  * Author:      Gal Shachor <shachor@il.ibm.com>                           *
- * Version:     $Revision$                                               *
+ * Version:     $Revision$                                           *
  ***************************************************************************/
-#ifndef _JK_POOL_H
-#define _JK_POOL_H
 
-#include "jk_global.h"
+#ifndef JK_AJP13_WORKER_H
+#define JK_AJP13_WORKER_H
+
+#include "jk_logger.h"
+#include "jk_service.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define DEFAULT_DYNAMIC 10
+#define JK_AJP13_WORKER_NAME ("ajp13")
 
-/*
- * The pool atom (basic pool alocation unit) is an 8 byte long. 
- * Each allocation (even for 1 byte) will return a round up to the 
- * number of atoms. 
- * 
- * This is to help in alignment of 32/64 bit machines ...
- * G.S
- */
-#ifdef WIN32
-    typedef __int64     jk_pool_atom_t;
-#elif defined(AIX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(SOLARIS)
-    typedef long long   jk_pool_atom_t;
-#elif defined(LINUX)
-    typedef long long   jk_pool_atom_t;
-#elif defined(OS2)
-    typedef long long   jk_pool_atom_t;
-#endif
-
-/* 
- * Pool size in number of pool atoms.
- */
-#define TINY_POOL_SIZE 256                  /* Tiny 1/4K atom pool. */
-#define SMALL_POOL_SIZE 512                 /* Small 1/2K atom pool. */
-#define BIG_POOL_SIZE   2*SMALL_POOL_SIZE   /* Bigger 1K atom pool. */
-#define HUGE_POOL_SIZE  2*BIG_POOL_SIZE     /* Huge 2K atom pool. */
-
-struct jk_pool {
-    unsigned size;      
-    unsigned pos;       
-    char     *buf;      
-    unsigned dyn_size;  
-    unsigned dyn_pos;   
-    void     **dynamic; 
-};
-
-typedef struct jk_pool jk_pool_t;
-
-void jk_open_pool(jk_pool_t *p,
-                  jk_pool_atom_t *buf,
-                  unsigned size);
-
-void jk_close_pool(jk_pool_t *p);
-
-void jk_reset_pool(jk_pool_t *p);
-
-void *jk_pool_alloc(jk_pool_t *p, 
-                    size_t sz);
-
-void *jk_pool_realloc(jk_pool_t *p, 
-                      size_t sz,
-                      const void *old,
-                      size_t old_sz);
-
-void *jk_pool_strdup(jk_pool_t *p, 
-                     const char *s);
+int JK_METHOD ajp13_worker_factory(jk_worker_t **w,
+                                   const char *name,
+                                   jk_logger_t *l);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* _JK_POOL_H */
+#endif /* JK_AJP13_WORKER_H */
