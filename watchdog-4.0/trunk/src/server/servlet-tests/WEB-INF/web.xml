@@ -107,6 +107,14 @@
     </filter>
     <!-- END FilterConfig -->
 
+    <!-- START HttpServletResponseWrapper -->
+    <filter>
+        <filter-name>HSRWFilter</filter-name>
+        <display-name>HSRWFilter</display-name>
+        <filter-class>tests.javax_servlet_http.HttpServletResponseWrapper.HSRWFilter</filter-class>
+    </filter>
+    <!-- END HttpServletResponseWrapper -->
+
     <!-- START Filter Mapping -->
     <filter-mapping>
         <filter-name>
@@ -132,7 +140,7 @@
             ServletMappedFilterChain_Filter1
         </filter-name>
         <servlet-name>
-            FilterChainTestLogicalName
+            FilterChainTest
         </servlet-name>
     </filter-mapping>
     <filter-mapping>
@@ -140,10 +148,17 @@
             ServletMappedFilterChain_Filter2
         </filter-name>
         <servlet-name>
-            FilterChainTestLogicalName
+            FilterChainTest
         </servlet-name>
     </filter-mapping>
     <!-- END FilterConfig Mapping -->
+
+    <!-- START HttpServletResponseWrapper Mapping -->
+    <filter-mapping>
+        <filter-name>HSRWFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- END HttpServletResponseWrapper Mapping -->
     
 <!-- END Configured Filters -->
 
@@ -416,7 +431,7 @@
 
     <servlet>
         <servlet-name>
-            FilterChainTestLogicalName
+            FilterChainTest
         </servlet-name>
         <display-name>
             FilterChainTest
@@ -502,6 +517,112 @@
 	</servlet-class>
    </servlet>
 
+<!-- HttpServletResponseWrapper -->
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSetHeaderTestServlet</servlet-name>
+        <display-name>HttpServletResponseWrapperSetHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSetHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendRedirectIgnoreHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendRedirectIgnoreHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendRedirectIgnoreHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendErrorMsgTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendErrorMsgTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendErrorMsgTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperConstructorTest</servlet-name>
+        <display-name>HttpServletResponseWrapperConstructorTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperConstructorTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSetStatusTestServlet</servlet-name>
+        <display-name>HttpServletResponseWrapperSetStatusTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSetStatusTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperEncodeURLTest</servlet-name>
+        <display-name>HttpServletResponseWrapperEncodeURLTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperEncodeURLTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperAddCookieTest</servlet-name>
+        <display-name>HttpServletResponseWrapperAddCookieTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperAddCookieTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSetIntHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSetIntHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSetIntHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperAddIntHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperAddIntHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperAddIntHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendRedirectForWebAppTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendRedirectForWebAppTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendRedirectForWebAppTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperAddHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperAddHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperAddHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperRedirectedTest</servlet-name>
+        <display-name>HttpServletResponseWrapperRedirectedTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperRedirectedTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperEncodeRedirectURLTest</servlet-name>
+        <display-name>HttpServletResponseWrapperEncodeRedirectURLTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperEncodeRedirectURLTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendErrorIgnoreHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendErrorIgnoreHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendErrorIgnoreHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperContainsHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperContainsHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperContainsHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSetStatusMsgTestServlet</servlet-name>
+        <display-name>HttpServletResponseWrapperSetStatusMsgTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSetStatusMsgTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSetDateHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSetDateHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSetDateHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendErrorTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendErrorTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendErrorTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperAddDateHeaderTest</servlet-name>
+        <display-name>HttpServletResponseWrapperAddDateHeaderTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperAddDateHeaderTestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HttpServletResponseWrapperSendRedirectTest</servlet-name>
+        <display-name>HttpServletResponseWrapperSendRedirectTest</display-name>
+        <servlet-class>tests.javax_servlet_http.HttpServletResponseWrapper.HttpServletResponseWrapperSendRedirectTestServlet</servlet-class>
+    </servlet>
 
   <!--		HttpSession	-->
 
@@ -2270,7 +2391,7 @@
 
     <servlet-mapping>
         <servlet-name>
-            FilterChainTestLogicalName
+            FilterChainTest
         </servlet-name>
         <url-pattern>
             /FilterChainTest
@@ -2411,6 +2532,92 @@
 	</url-pattern>
   </servlet-mapping>
 
+<!-- START HttpServletResponseWrapper Servlet Mappings -->
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSetHeaderTestServlet</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSetHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendRedirectIgnoreHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendErrorMsgTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendErrorMsgTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperConstructorTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperConstructorTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSetStatusTestServlet</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSetStatusTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperEncodeURLTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperEncodeURLTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperAddCookieTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperAddCookieTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSetIntHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSetIntHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperAddIntHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperAddIntHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendRedirectForWebAppTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendRedirectForWebAppTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperAddHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperAddHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperRedirectedTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperRedirectedTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperEncodeRedirectURLTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperEncodeRedirectURLTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendErrorIgnoreHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendErrorIgnoreHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperContainsHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperContainsHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSetStatusMsgTestServlet</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSetStatusMsgTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSetDateHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSetDateHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendErrorTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendErrorTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperAddDateHeaderTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperAddDateHeaderTest</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HttpServletResponseWrapperSendRedirectTest</servlet-name>
+        <url-pattern>/HttpServletResponseWrapperSendRedirectTest</url-pattern>
+    </servlet-mapping>
+<!-- END HttpServletResponseWrapper Servlet Mappings -->
 
   <servlet-mapping>
 	<servlet-name>
