@@ -180,10 +180,13 @@ public final class SaveConnectorAction extends Action {
                 ObjectName soname = new ObjectName(serviceName);
                 String domain = soname.getDomain();
                 StringBuffer sb = new StringBuffer(domain);
+                StringBuffer searchSB = new StringBuffer("*");
                 sb.append(TomcatTreeBuilder.CONNECTOR_TYPE);
+                searchSB.append(TomcatTreeBuilder.CONNECTOR_TYPE);
                 sb.append(",port=" + cform.getPortText());
+                searchSB.append(",port=" + cform.getPortText());
                 
-                ObjectName search = new ObjectName(sb.toString()+",*");
+                ObjectName search = new ObjectName(searchSB.toString()+",*");
                 
                 String address = cform.getAddress();
                 if ((address!=null) && (address.length()>0) && 
