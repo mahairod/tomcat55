@@ -1117,11 +1117,13 @@ class Validator {
 						tli.getShortName()));
                 errMsg.append("</h3>");
                 for (int i=0; i<errors.length; i++) {
-                    errMsg.append("<p>");
-                    errMsg.append(errors[i].getId());
-                    errMsg.append(": ");
-                    errMsg.append(errors[i].getMessage());
-                    errMsg.append("</p>");
+		    if (errors[i] != null) {
+			errMsg.append("<p>");
+			errMsg.append(errors[i].getId());
+			errMsg.append(": ");
+			errMsg.append(errors[i].getMessage());
+			errMsg.append("</p>");
+		    }
                 }
             }
         }
