@@ -5,18 +5,18 @@
 <body>
 <h1>jspc</h1>
 <pre>
-Usage: jspc <options> [--] <jsp files>
+Usage: jspc &lt;options&gt; [--] &lt;jsp files&gt;
 where jsp files is any number of:
-    <file>         A file to be parsed as a jsp page
-    -webapp <dir>  A directory containing a web-app, all jsp pages
+    &lt;file%gt;         A file to be parsed as a jsp page
+    -webapp &lt;dir%gt;  A directory containing a web-app, all jsp pages
                    will recursivly be parsed
 where options include:
     -q          Quite mode (same as -v0)
     -v[#]       Verbose mode (optional number is level, default is 2)
     -d &lt;dir&gt;    Output Directory
     -dd &lt;dir&gt;   Literal Output Directory.  (package dirs will not be made)
-    -p <name>         Name of target package
-    -c <name>         Name of target class name
+    -p &lt;name&gt;         Name of target package
+    -c &lt;name&gt;         Name of target class name
                 (only applies to first JSP page)
     -mapped     Generate separate write() calls for each HTML line in the JSP
     -die[#]     Generate an error return code (#) on fatal errors.
@@ -25,9 +25,9 @@ where options include:
                     (Default is "/")
     -uriroot &lt;dir&gt;  The root directory that uri files should be resolved
                     against, (Default is the directory jspc is invoked from)
-    -webinc <file>  Creates partial servlet mapings for the -webapp option
-    -webxml <file>  Creates a complete web.xml when using the -webapp option.
-    -ieplugin <clsid>  Java Plugin classid for Internet Explorer
+    -webinc &lt;file&gt;  Creates partial servlet mapings for the -webapp option
+    -webxml &lt;file&gt;  Creates a complete web.xml when using the -webapp option.
+    -ieplugin &lt;clsid&gt;  Java Plugin classid for Internet Explorer
 </pre>
 <p>
 
