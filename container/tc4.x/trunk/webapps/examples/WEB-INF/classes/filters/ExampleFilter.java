@@ -115,6 +115,17 @@ public final class ExampleFilter implements Filter {
 
 
     /**
+     * Take this filter out of service.
+     */
+    public void destroy() {
+
+        this.attribute = null;
+        this.filterConfig = null;
+
+    }
+
+
+    /**
      * Time the processing that is performed by all subsequent filters in the
      * current filter stack, including the ultimately invoked servlet.
      *
@@ -135,8 +146,6 @@ public final class ExampleFilter implements Filter {
 
 	// Time and log the subsequent processing
 	long startTime = System.currentTimeMillis();
-//	Filter next = filterConfig.getNext();
-//	next.doFilter(request, response);
         chain.doFilter(request, response);
 	long stopTime = System.currentTimeMillis();
 	filterConfig.getServletContext().log
@@ -147,27 +156,14 @@ public final class ExampleFilter implements Filter {
 
 
     /**
-     * Return the filter configuration object for this filter.
-     */
-    public FilterConfig getFilterConfig() {
-
-	return (this.filterConfig);
-
-    }
-
-
-    /**
-     * Set the filter configuration object for this filter.
+     * Place this filter into service.
      *
      * @param filterConfig The filter configuration object
      */
-    public void setFilterConfig(FilterConfig filterConfig) {
+    public void init(FilterConfig filterConfig) {
 
 	this.filterConfig = filterConfig;
-	if (filterConfig != null)
-	    this.attribute = filterConfig.getInitParameter("attribute");
-	else
-	    this.attribute = null;
+        this.attribute = filterConfig.getInitParameter("attribute");
 
     }
 

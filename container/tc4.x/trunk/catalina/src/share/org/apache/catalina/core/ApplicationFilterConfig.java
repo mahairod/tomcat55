@@ -244,7 +244,7 @@ final class ApplicationFilterConfig implements FilterConfig {
         // Instantiate a new instance of this filter and return it
         Class clazz = classLoader.loadClass(filterClass);
         this.filter = (Filter) clazz.newInstance();
-        filter.setFilterConfig(this);
+        filter.init(this);
 	return (this.filter);
 
     }
@@ -267,7 +267,7 @@ final class ApplicationFilterConfig implements FilterConfig {
     void release() {
 
         if (this.filter != null)
-            filter.setFilterConfig(null);
+            filter.destroy();
         this.filter = null;
 
      }
@@ -296,7 +296,7 @@ final class ApplicationFilterConfig implements FilterConfig {
 
 	    // Release any previously allocated filter instance
 	    if (this.filter != null)
-		this.filter.setFilterConfig(null);
+		this.filter.destroy();
 	    this.filter = null;
 
 	} else {

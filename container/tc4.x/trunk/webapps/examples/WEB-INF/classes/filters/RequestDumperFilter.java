@@ -109,6 +109,16 @@ public final class RequestDumperFilter implements Filter {
 
 
     /**
+     * Take this filter out of service.
+     */
+    public void destroy() {
+
+        this.filterConfig = null;
+
+    }
+
+
+    /**
      * Time the processing that is performed by all subsequent filters in the
      * current filter stack, including the ultimately invoked servlet.
      *
@@ -199,29 +209,17 @@ public final class RequestDumperFilter implements Filter {
 	filterConfig.getServletContext().log(sw.getBuffer().toString());
 
 	// Pass control on to the next filter
-//	Filter next = filterConfig.getNext();
-//	next.doFilter(request, response);
         chain.doFilter(request, response);
 
     }
 
 
     /**
-     * Return the filter configuration object for this filter.
-     */
-    public FilterConfig getFilterConfig() {
-
-	return (this.filterConfig);
-
-    }
-
-
-    /**
-     * Set the filter configuration object for this filter.
+     * Place this filter into service.
      *
      * @param filterConfig The filter configuration object
      */
-    public void setFilterConfig(FilterConfig filterConfig) {
+    public void init(FilterConfig filterConfig) {
 
 	this.filterConfig = filterConfig;
 

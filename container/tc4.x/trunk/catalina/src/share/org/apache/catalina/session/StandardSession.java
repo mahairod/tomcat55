@@ -75,10 +75,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionAttributesListener;
+import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
@@ -723,6 +724,22 @@ class StandardSession
 
 
     /**
+     * Return the ServletContext to which this session belongs.
+     */
+    public ServletContext getServletContext() {
+
+        if (manager == null)
+            return (null);
+        Context context = (Context) manager.getContainer();
+        if (context == null)
+            return (null);
+        else
+            return (context.getServletContext());
+
+    }
+
+
+    /**
      * Return the session context with which this session is associated.
      *
      * @deprecated As of Version 2.1, this method is deprecated and has no
@@ -934,10 +951,10 @@ class StandardSession
 	if (listeners == null)
 	    return;
 	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
+	    if (!(listeners[i] instanceof HttpSessionAttributeListener))
 	        continue;
-            HttpSessionAttributesListener listener =
-                (HttpSessionAttributesListener) listeners[i];
+            HttpSessionAttributeListener listener =
+                (HttpSessionAttributeListener) listeners[i];
 	    try {
                 context.fireContainerEvent("beforeSessionAttributeRemoved",
                                            listener);
@@ -1033,10 +1050,10 @@ class StandardSession
 	if (listeners == null)
 	    return;
 	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
+	    if (!(listeners[i] instanceof HttpSessionAttributeListener))
 	        continue;
-            HttpSessionAttributesListener listener =
-                (HttpSessionAttributesListener) listeners[i];
+            HttpSessionAttributeListener listener =
+                (HttpSessionAttributeListener) listeners[i];
 	    try {
 		if (unbound != null) {
                     context.fireContainerEvent("beforeSessionAttributeReplaced",

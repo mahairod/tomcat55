@@ -86,7 +86,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeEvent;
-import javax.servlet.ServletContextAttributesListener;
+import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
@@ -727,10 +727,10 @@ public final class ApplicationContext
 	  new ServletContextAttributeEvent(context.getServletContext(),
 					    name, value);
 	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof ServletContextAttributesListener))
+	    if (!(listeners[i] instanceof ServletContextAttributeListener))
 	        continue;
-            ServletContextAttributesListener listener =
-	        (ServletContextAttributesListener) listeners[i];
+            ServletContextAttributeListener listener =
+	        (ServletContextAttributeListener) listeners[i];
 	    try {
                 context.fireContainerEvent("beforeContextAttributeRemoved",
                                            listener);
@@ -774,10 +774,10 @@ public final class ApplicationContext
 	  new ServletContextAttributeEvent(context.getServletContext(),
 					    name, value);
 	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof ServletContextAttributesListener))
+	    if (!(listeners[i] instanceof ServletContextAttributeListener))
 	        continue;
-            ServletContextAttributesListener listener =
-	        (ServletContextAttributesListener) listeners[i];
+            ServletContextAttributeListener listener =
+	        (ServletContextAttributeListener) listeners[i];
 	    try {
 		if (replaced) {
                     context.fireContainerEvent("beforeContextAttributeReplaced",

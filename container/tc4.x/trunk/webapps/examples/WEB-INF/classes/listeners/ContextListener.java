@@ -67,7 +67,7 @@ package listeners;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeEvent;
-import javax.servlet.ServletContextAttributesListener;
+import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -83,7 +83,7 @@ import javax.servlet.ServletContextListener;
  */
 
 public final class ContextListener
-    implements ServletContextAttributesListener, ServletContextListener {
+    implements ServletContextAttributeListener, ServletContextListener {
 
 
     // ----------------------------------------------------- Instance Variables
