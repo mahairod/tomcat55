@@ -55,6 +55,10 @@
                description="Object names of all children"
                type="[Ljavax.management.ObjectName;"/>
                
+    <attribute name="configFile"
+               description="Location of the context.xml resource or file"
+               type="java.lang.String"/>
+               
     <attribute   name="cookies"
                description="Should we attempt to use cookies for session id
                communication?"
