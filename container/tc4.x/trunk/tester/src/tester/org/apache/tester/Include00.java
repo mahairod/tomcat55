@@ -85,6 +85,9 @@ public class Include00 extends HttpServlet {
         if (path == null)
             path = "/Include00a";
 
+        // Acquire the flush flag
+        boolean flush = "true".equals(request.getParameter("flush"));
+
         // Create a request dispatcher and call include() on it
         RequestDispatcher rd = null;
         if (path.startsWith("!"))
@@ -94,6 +97,13 @@ public class Include00 extends HttpServlet {
         if (rd == null) {
             sb.append(" No RequestDispatcher returned/");
         } else {
+            if (flush) {
+                try {
+                    response.flushBuffer();
+                } catch (IOException e) {
+                    sb.append(" Flush threw IOException/");
+                }
+            }
             if (sb.length() < 1)
                 rd.include(request, response);
         }
