@@ -71,16 +71,21 @@
 
     <!-- Servlet resources -->
     <copy todir="${servletapi.build}/classes/javax/servlet/resources">
-        <fileset dir="src/share/dtd">
-          <include name="web-app*.dtd"/>
+        <fileset dir="src/share/dtd" includes="*.dtd,*.xsd">
+          <exclude name="jsp*.dtd"/>
+          <exclude name="jsp*.xsd"/>
+          <exclude name="web-jsp*.dtd"/>
+          <exclude name="web-jsp*.xsd"/>
         </fileset>
     </copy>
 
     <!-- JSP resources -->
     <copy todir="${servletapi.build}/classes/javax/servlet/jsp/resources">
         <fileset dir="src/share/dtd">
-          <include name="web-jsptaglibrary*.dtd"/>
-          <include name="jspxml.*"/>
+          <include name="jsp*.dtd"/>
+          <include name="jsp*.xsd"/>
+          <include name="web-jsp*.dtd"/>
+          <include name="web-jsp*.xsd"/>
         </fileset>
     </copy>
 
