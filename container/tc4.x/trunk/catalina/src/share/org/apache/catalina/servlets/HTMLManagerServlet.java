@@ -66,6 +66,12 @@ package org.apache.catalina.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,6 +95,7 @@ import org.apache.catalina.util.ServerInfo;
  * same format ar from <code>ManagerServlet</code>
  *
  * @author Bip Thelin
+ * @author Malcolm Edgar
  * @version $Revision$, $Date$
  * @see ManagerServlet
  */
@@ -114,7 +121,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String command = request.getPathInfo();
 
         String path = request.getParameter("path");
-        String war = request.getParameter("war");
+        String installPath = request.getParameter("installPath");
+        String installConfig = request.getParameter("installConfig");
+        String installWar = request.getParameter("installWar");
 
         // Prepare our output writer to generate the response message
         response.setContentType("text/html");
@@ -124,9 +133,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         if (command == null) {
             response.sendRedirect(request.getRequestURI()+"/list");
         } else if (command.equals("/install")) {
-            install(writer, null, path, war);
+            install(writer, installConfig, installPath, installWar);
         } else if (command.equals("/list")) {
-            list(writer);
+            list(writer, "");
         } else if (command.equals("/reload")) {
             reload(writer, path);
         } else if (command.equals("/remove")) {
@@ -138,8 +147,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         } else if (command.equals("/stop")) {
             stop(writer, path);
         } else {
-            writer.println(sm.getString("managerServlet.unknownCommand",
-                                        command));
+            String message =
+                sm.getString("managerServlet.unknownCommand", command);
+            list(writer, message);
         }
 
         // Finish up the response
@@ -148,281 +158,421 @@ public final class HTMLManagerServlet extends ManagerServlet {
     }
 
     /**
-     * Render a HTML list of the currently
-     * active Contexts in our virtual host.
+     * Install an application for the specified path from the specified
+     * web application archive.
+     *
+     * @param writer Writer to render results to
+     * @param config URL of the context configuration file to be installed
+     * @param path Context path of the application to be installed
+     * @param war URL of the web application archive to be installed
+     */
+    protected void install(PrintWriter writer, String config,
+                           String path, String war) {
+
+        StringWriter stringWriter = new StringWriter();        
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+
+        super.install(printWriter, config, path, war);
+        
+        list(writer, stringWriter.toString());
+    }    
+
+    /**
+     * Render a HTML list of the currently active Contexts in our virtual host,
+     * and memory and server status information.
      *
      * @param writer Writer to render to
+     * @param message a message to display
      */
-    public void list(PrintWriter writer) {
+    public void list(PrintWriter writer, String message) {
 
         if (debug >= 1)
             log("list: Listing contexts for virtual host '" +
                 deployer.getName() + "'");
 
-        writer.print("<html>\n<head>\n<title>");
-        writer.print("Listed applications for virtual host ");
-        writer.print(deployer.getName()+"</title>\n</head>\n");
-        writer.print("<body bgcolor=\"#FFFFFF\">\n");
-        writer.print("<form method=\"get\" action=\"install\">");
-        writer.print("<table cellspacing=\"0\"");
-        writer.print("cellpadding=\"3\" align=\"center\">\n");
-        writer.print("<tr><td colspan=\"3\"><font size=\"+2\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Listed applications for virtual host ");
-        writer.print(deployer.getName() +
-                     "</strong>\n</font></td>\n</tr>\n");
-        writer.print("<tr bgcolor=\"#CCCCCC\">\n");
-        writer.print("<td align=\"left\"><font size=\"+1\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Path</strong></font>\n</td>");
-        writer.print("<td align=\"center\"><font size=\"+1\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Status</strong></font></td>\n");
-        writer.print("<td align=\"right\"><font size=\"+1\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Sessions</strong></font></td>\n");
-        writer.print("<td align=\"right\"><font size=\"+1\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Reload</strong></font></td>\n");
-        writer.print("<td align=\"right\"><font size=\"+1\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print("<strong>Remove</strong></font></td>\n</tr>\n");
+        // HTML Header Section
+        writer.print(HTML_HEADER_SECTION);
 
+        // Body Header Section
+        Object[] args = new Object[1];
+        args[0] = sm.getString("htmlManagerServlet.title");
+        writer.print(MessageFormat.format(BODY_HEADER_SECTION, args));
+        
+        // Apps Header Section
+        args = new Object[5];
+        args[0] = sm.getString("htmlManagerServlet.appsTitle");
+        args[1] = sm.getString("htmlManagerServlet.appsPath");
+        args[2] = sm.getString("htmlManagerServlet.appsName");
+        args[3] = sm.getString("htmlManagerServlet.appsAvailable");
+        args[4] = sm.getString("htmlManagerServlet.appsSessions");        
+        writer.print(MessageFormat.format(APPS_HEADER_SECTION, args));
+
+        // Apps Row Section
+        // Create sorted map of deployed applications context paths.
         String contextPaths[] = deployer.findDeployedApps();
+        
+        TreeMap sortedContextPathsMap = new TreeMap();
 
         for (int i = 0; i < contextPaths.length; i++) {
-            Context context = deployer.findDeployedApp(contextPaths[i]);
             String displayPath = contextPaths[i];
-            if( displayPath.equals("") )
+            if (displayPath.equals("")) {
                 displayPath = "/";
-            if (context != null ) {
-                writer.print("<tr bgcolor=\"#FFFFFF\">\n");
-                writer.print("<td align=\"left\"><font size=\"1\"");
-                writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-                writer.print(displayPath+"</font>\n</td>");
-                writer.print("<td align=\"center\"><font size=\"1\"");
-                writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-
-                if (context.getAvailable()) {
-                    writer.print("running / <a href=\"stop?path="+displayPath);
-                    writer.print("\">stop</a>");
-                } else {
-                    writer.print("<a href=\"start?path="+displayPath);
-                    writer.print("\">start</a> / stopped");
-                }
-
-                writer.print("</font></td>\n");
-                writer.print("<td align=\"right\"><font size=\"1\"");
-                writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-                writer.print("<a href=\"sessions?path="+displayPath+"\">");
-                writer.print(context.getManager().findSessions().length);
-                writer.print("</a></font></td>\n");
-                writer.print("<td align=\"right\"><font size=\"1\"");
-                writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-
-                if (context.getAvailable()) {
-                    writer.print("<a href=\"reload?path="+displayPath+"\">");
-                    writer.print("Reload &#187;");
-                    writer.print("</a></font></td>\n");
-                } else {
-                    writer.print("-</font></td>");
-                }
-
-                writer.print("<td align=\"right\"><font size=\"1\"");
-                writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-                writer.print("<a href=\"remove?path="+displayPath+"\">");
-                writer.print("Remove &#187;");
-                writer.print("</a></font></td>\n</tr>\n");
             }
+            sortedContextPathsMap.put(displayPath, contextPaths[i]);
         }
 
-        writer.print("<tr><td colspan=\"5\">&nbsp;</td></tr>");
-        writer.print("<tr><td>");
-        writer.print("<font size=\"2\"");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">");
-        writer.print("<b>Install a webapp</b></font></td>\n");
-        writer.print("<td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">");
-        writer.print("Path:&nbsp;</font>");
-        writer.print("<input type=\"text\" name=\"path\" size=\"25\"></td>");
-        writer.print("<td><font size=\"2\" face=\"Arial, Helvetica, sans-serif\">");
-        writer.print("War-URL:&nbsp;</font>");
-        writer.print("<input type=\"text\" name=\"war\" size=\"25\"></td>");
-        writer.print("<td colspan=\"2\">");
-        writer.print("&nbsp;<input type=\"submit\" value=\"install\"></td></tr>\n");
-        writer.print("<tr><td colspan=\"5\" bgcolor=\"#CCCCCC\"><font size=\"-1\" ");
-        writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
-        writer.print(ServerInfo.getServerInfo()+"</font></td>\n</tr>\n");
-        writer.print("</table>\n</form>\n</body>\n</html>");
+        String appsStart = sm.getString("htmlManagerServlet.appsStart");
+        String appsStop = sm.getString("htmlManagerServlet.appsStop");
+        String appsReload = sm.getString("htmlManagerServlet.appsReload");
+        String appsRemove = sm.getString("htmlManagerServlet.appsRemove");
+        
+        Iterator iterator = sortedContextPathsMap.entrySet().iterator();
+        while (iterator.hasNext()) {            
+            Map.Entry entry = (Map.Entry) iterator.next();            
+            String displayPath = (String) entry.getKey();
+            String contextPath = (String) entry.getKey();
+            Context context = deployer.findDeployedApp(contextPath);
+            
+            if (context != null ) {
+                args = new Object[6]; 
+                args[0] = displayPath;
+                args[1] = context.getDisplayName();
+                if (args[1] == null) {
+                    args[1] = "&nbsp;";
+                }
+                args[2] = new Boolean(context.getAvailable());                
+                args[3] = 
+                    new Integer(context.getManager().findSessions().length);                
+                writer.print
+                    (MessageFormat.format(APPS_ROW_DETAILS_SECTION, args));
+
+                args = new Object[5]; 
+                args[0] = displayPath;
+                args[1] = appsStart;
+                args[2] = appsStop;
+                args[3] = appsReload;
+                args[4] = appsRemove;                
+                writer.print
+                    (MessageFormat.format(APPS_ROW_BUTTON_SECTION, args));
+
+            } else if (displayPath.equals("/")) {
+                args = new Object[4]; 
+                args[0] = displayPath;
+                args[1] = "ROOT";
+                args[2] = new Boolean(true);
+                args[3] = "-";                                
+                writer.print
+                    (MessageFormat.format(APPS_ROOT_ROW_SECTION, args));
+            }
+        }
+        
+        // Install Section
+        args = new Object[5];
+        args[0] = sm.getString("htmlManagerServlet.installTitle");
+        args[1] = sm.getString("htmlManagerServlet.installPath");
+        args[2] = sm.getString("htmlManagerServlet.installConfig");
+        args[3] = sm.getString("htmlManagerServlet.installWar");
+        args[4] = sm.getString("htmlManagerServlet.installButton");
+        writer.print(MessageFormat.format(INSTALL_SECTION, args));
+
+        // Server Header Section
+        args = new Object[7];
+        args[0] = sm.getString("htmlManagerServlet.serverTitle");
+        args[1] = sm.getString("htmlManagerServlet.serverVersion");
+        args[2] = sm.getString("htmlManagerServlet.serverJVMVersion");
+        args[3] = sm.getString("htmlManagerServlet.serverJVMVendor");
+        args[4] = sm.getString("htmlManagerServlet.serverOSName");
+        args[5] = sm.getString("htmlManagerServlet.serverOSVersion");
+        args[6] = sm.getString("htmlManagerServlet.serverOSArch");        
+        writer.print(MessageFormat.format(SERVER_HEADER_SECTION, args));
+
+        // Server Row Section
+        args = new Object[6];
+        args[0] = ServerInfo.getServerInfo();
+        args[1] = System.getProperty("java.runtime.version");
+        args[2] = System.getProperty("java.vm.vendor");
+        args[3] = System.getProperty("os.name");
+        args[4] = System.getProperty("os.version");
+        args[5] = System.getProperty("os.arch");        
+        writer.print(MessageFormat.format(SERVER_ROW_SECTION, args));
+        
+        // Message Section
+        args = new Object[3];                
+        args[0] = sm.getString("htmlManagerServlet.messageLabel");
+        args[1] = (message != null) ? message : "";
+        writer.print(MessageFormat.format(MESSAGE_SECTION, args));
     }
 
     /**
      * Reload the web application at the specified context path.
+     *
+     * @see ManagerServlet#reload(PrintWriter, String)
      *
      * @param writer Writer to render to
      * @param path Context path of the application to be restarted
      */
     protected void reload(PrintWriter writer, String path) {
 
-        if (debug >= 1)
-            log("restart: Reloading web application at '" + path + "'");
-
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            list(writer);
-
-            return;
-        }
-
-        String displayPath = path;
-
-        if( path.equals("/") )
-            path = "";
-
-        try {
-            Context context = deployer.findDeployedApp(path);
-
-            if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-                list(writer);
-
-                return;
-            }
-
-            context.reload();
-            list(writer);
-        } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.reload[" + displayPath + "]", t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-        }
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        
+        super.reload(printWriter, path);
+        
+        list(writer, stringWriter.toString());
     }
 
     /**
      * Remove the web application at the specified context path.
+     *
+     * @see ManagerServlet#remove(PrintWriter, String)
      *
      * @param writer Writer to render to
      * @param path Context path of the application to be removed
      */
     protected void remove(PrintWriter writer, String path) {
 
-        if (debug >= 1)
-            log("remove: Removing web application at '" + path + "'");
+        StringWriter stringWriter = new StringWriter();        
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        
+        super.remove(printWriter, path);
+        
+        list(writer, stringWriter.toString());
+    }
 
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            list(writer);
+    /**
+     * Display session information and invoke list.
+     *
+     * @see ManagerServlet#sessions(PrintWriter, String)
+     *
+     * @param writer Writer to render to
+     * @param path Context path of the application to list session information for
+     */
+    public void sessions(PrintWriter writer, String path) {        
 
-            return;
-        }
-
-        String displayPath = path;
-
-        if( path.equals("/") )
-            path = "";
-
-        try {
-            Context context = deployer.findDeployedApp(path);
-
-            if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-                list(writer);
-
-                return;
-            }
-
-            deployer.remove(path);
-            list(writer);
-        } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.remove[" + displayPath + "]",
-                                    t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-        }
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        
+        super.sessions(printWriter, path);
+        
+        list(writer, stringWriter.toString());
     }
 
     /**
      * Start the web application at the specified context path.
+     *
+     * @see ManagerServlet#start(PrintWriter, String)
      *
      * @param writer Writer to render to
      * @param path Context path of the application to be started
      */
     public void start(PrintWriter writer, String path) {
 
-        if (debug >= 1)
-            log("start: Starting web application at '" + path + "'");
-
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            list(writer);
-
-            return;
-        }
-
-        String displayPath = path;
-
-        if( path.equals("/") )
-            path = "";
-
-        try {
-            Context context = deployer.findDeployedApp(path);
-
-            if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-                list(writer);
-
-                return;
-            }
-
-            deployer.start(path);
-            list(writer);
-        } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.start[" + displayPath + "]",
-                                    t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-        }
+        StringWriter stringWriter = new StringWriter();        
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        
+        super.start(printWriter, path);
+        
+        list(writer, stringWriter.toString());
     }
 
     /**
      * Stop the web application at the specified context path.
+     *
+     * @see ManagerServlet#stop(PrintWriter, String)
      *
      * @param writer Writer to render to
      * @param path Context path of the application to be stopped
      */
     protected void stop(PrintWriter writer, String path) {
 
-        if (debug >= 1)
-            log("stop: Stopping web application at '" + path + "'");
+        StringWriter stringWriter = new StringWriter();        
+        PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            list(writer);
-
-            return;
-        }
-
-        String displayPath = path;
-
-        if( path.equals("/") )
-            path = "";
-
-        try {
-            Context context = deployer.findDeployedApp(path);
-
-            if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
-                list(writer);
-
-                return;
-            }
-
-            deployer.stop(path);
-            list(writer);
-        } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.stop[" + displayPath + "]",
-                                    t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-        }
+        super.stop(printWriter, path);
+        
+        list(writer, stringWriter.toString());
     }
+
+    // ------------------------------------------------------ Private Constants
+
+    // These HTML sections are broken in relatively small sections, because of
+    // limited number of subsitutions MessageFormat can process 
+    // (maximium of 10).
+
+    private static final String HTML_HEADER_SECTION =
+        "<html> \n" +
+        "<head> \n" +
+        "<style> \n" +
+        "  table { width: 100%; } \n" +
+        "  td.page-title {  \n" +
+        "    text-align: center; \n" +
+        "    vertical-align: top; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    font-weight: bold; \n" +
+        "    background: white; \n" +
+        "    color: black; \n" +
+        "  } \n" +
+        "  td.title { \n" +
+        "    text-align: left; \n" +
+        "    vertical-align: top; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    font-style:italic; \n" +
+        "    font-weight: bold; \n" +
+        "    background: #D2A41C; \n" +
+        "  } \n" +
+        "  td.header-left { \n" +
+        "    text-align: left; \n" +
+        "    vertical-align: top; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    font-weight: bold; \n" +
+        "    background: #FFDC75; \n" +
+        "  } \n" +
+        "  td.header-center { \n" +
+        "    text-align: center; \n" +
+        "    vertical-align: top; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    font-weight: bold; \n" +
+        "    background: #FFDC75; \n" +
+        "  } \n" +
+        "  td.row-left { \n" +
+        "    text-align: left; \n" +
+        "    vertical-align: middle; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    color: black; \n" +
+        "    background: white; \n" +
+        "  } \n" +
+        "  td.row-center { \n" +
+        "    text-align: center; \n" +
+        "    vertical-align: middle; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    color: black; \n" +
+        "    background: white; \n" +
+        "  } \n" +
+        "  td.row-right { \n" +
+        "    text-align: right; \n" +
+        "    vertical-align: middle; \n" +
+        "    font-family:verdana,sans-serif; \n" +
+        "    color: black; \n" +
+        "    background: white; \n" +
+        "  } \n" +
+        "</style> \n";
+
+    private static final String BODY_HEADER_SECTION = 
+        "<title>{0}</title> \n" +
+        "</head> \n" +
+        "\n" +
+        "<body bgcolor=\"#FFFFFF\"> \n" +
+        "<form method=\"get\" action=\"install\"> \n" +
+        "<input type=\"hidden\" name=\"path\"> \n" +
+        "\n" +
+        "<table border=\"2\" cellspacing=\"0\" cellpadding=\"3\" " +
+        "bordercolor=\"#000000\"> \n" +
+        "<tr> \n" +
+        " <td class=\"page-title\" bordercolor=\"#000000\" align=\"left\" " +
+        "nowrap> \n" +
+        "  <font size=\"+2\">{0}</font> \n" +
+        " </td> \n" +
+        "</tr> \n" +
+        "</table> \n" +
+        "<br> \n" +
+        "\n";
+
+    private static final String APPS_HEADER_SECTION = 
+        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\"> \n" +
+        "<tr> \n" +
+        " <td colspan=\"10\" class=\"title\">{0}</td> \n" +
+        "</tr> \n" +
+        "<tr> \n" +
+        " <td class=\"header-left\"><small>{1}</small></td> \n" +
+        " <td class=\"header-left\"><small>{2}</small></td> \n" +
+        " <td class=\"header-center\"><small>{3}</small></td> \n" +
+        " <td class=\"header-center\"><small>{4}</small></td> \n" +
+        " <td class=\"header-center\">&nbsp;</td> \n" +
+        "</tr> \n";
+
+    private static final String APPS_ROW_DETAILS_SECTION =
+        "<tr> \n" +
+        " <td class=\"row-left\"><small><a href=\"{0}\">{0}</a>" +
+        "</small></td> \n" +
+        " <td class=\"row-left\"><small>{1}</small></td> \n" +
+        " <td class=\"row-center\"><small>{2}</small></td> \n" +
+        " <td class=\"row-center\">" +
+        "<small><a href=\"sessions?path={0}\">{3}</a></small></td> \n";
+
+    private static final String APPS_ROW_BUTTON_SECTION = 
+        " <td class=\"row-left\"> \n" +
+        "  <small> \n" +
+        "  &nbsp;<a href=\"start?path={0}\">{1}</a>&nbsp; \n" +
+        "  &nbsp;<a href=\"stop?path={0}\">{2}</a>&nbsp; \n" +
+        "  &nbsp;<a href=\"reload?path={0}\">{3}</a>&nbsp; \n" +
+        "  &nbsp;<a href=\"remove?path={0}\">{4}</a>&nbsp; \n" +
+        "  </small> \n" +
+        " </td> \n" +
+        "</tr> \n";
+
+    private static final String APPS_ROOT_ROW_SECTION = 
+        "<tr> \n" +
+        " <td class=\"row-left\"><small><a href=\"{0}\">{0}</a></small></td> \n" +
+        " <td class=\"row-left\"><small>{1}</small></td> \n" +
+        " <td class=\"row-center\"><small>{2}</small></td> \n" +
+        " <td class=\"row-center\"><small>{3}</small></td> \n" +
+        " <td class=\"row-right\">&nbsp;</td> \n" +
+        "</tr> \n";
+
+    private static final String INSTALL_SECTION = 
+        "<tr> \n" +
+        " <td colspan=\"10\" class=\"header-left\"><small>{0}</small></td> \n" +
+        "</tr> \n" +
+        "<tr> \n" +
+        " <td colspan=\"10\" class=\"row-left\"> \n" +
+        "  <small>{1}</small> \n" +
+        "  <input type=\"text\" name=\"installPath\" size=\"10\"> \n" +
+        "  &nbsp;<small>{2}</small> \n" +
+        "  <input type=\"text\" name=\"installConfig\" size=\"18\"> \n" +
+        "  &nbsp;<small>{3}</small> \n" +
+        "  <input type=\"text\" name=\"installWar\" size=\"18\">&nbsp; \n" +
+        "  <input type=\"submit\" value=\"{4}\"> \n" +
+        " </td> \n" +
+        "</tr> \n" +
+        "</table> \n" +
+        "<br> \n" +
+        "\n";
+
+    private static final String SERVER_HEADER_SECTION = 
+        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\"> \n" +
+        "<tr> \n" +
+        " <td colspan=\"10\" class=\"title\">{0}</td>  \n" +
+        "</tr> \n" +
+        "<tr> \n" +
+        " <td class=\"header-center\"><small>{1}</small></td> \n" +
+        " <td class=\"header-center\"><small>{2}</small></td> \n" +
+        " <td class=\"header-center\"><small>{3}</small></td> \n" +
+        " <td class=\"header-center\"><small>{4}</small></td> \n" +
+        " <td class=\"header-center\"><small>{5}</small></td> \n" +
+        " <td class=\"header-center\"><small>{6}</small></td> \n" +
+        "</tr> \n";
+
+    private static final String SERVER_ROW_SECTION = 
+        "<tr> \n" +
+        " <td class=\"row-center\"><small>{0}</small></td> \n" +
+        " <td class=\"row-center\"><small>{1}</small></td> \n" +
+        " <td class=\"row-center\"><small>{2}</small></td> \n" +
+        " <td class=\"row-center\"><small>{3}</small></td> \n" +
+        " <td class=\"row-center\"><small>{4}</small></td> \n" +
+        " <td class=\"row-center\"><small>{5}</small></td> \n" +
+        "</tr> \n" +
+        "</table> \n" +
+        "<br> \n" +
+        "\n";
+
+    private static final String MESSAGE_SECTION =
+        "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\"> \n" +
+        " <tr> \n" +
+        "  <td class=\"row-left\"><small><b>{0}</b>&nbsp;{1}</small></td> \n" +
+        " </tr> \n" +
+        "</table> \n" +
+        "\n" +
+        "</form> \n" +
+        "</body> \n" +
+        "</html>";
 }
