@@ -396,36 +396,42 @@ public class DeltaSession
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationLifecycleListeners();
-        if (listeners != null) {
-            HttpSessionEvent event =
-                new HttpSessionEvent(getSession());
-            for (int i = 0; i < listeners.length; i++) {
-                if (!(listeners[i] instanceof HttpSessionListener))
-                    continue;
-                HttpSessionListener listener =
-                    (HttpSessionListener) listeners[i];
-                try {
-                    fireContainerEvent(context,
-                                       "beforeSessionCreated",
-                                       listener);
-                    listener.sessionCreated(event);
-                    fireContainerEvent(context,
-                                       "afterSessionCreated",
-                                       listener);
-                } catch (Throwable t) {
+        //fix for standalone manager without container
+        if ( context != null ) { 
+            Object listeners[] = context.getApplicationLifecycleListeners();
+            if (listeners != null) {
+                HttpSessionEvent event =
+                    new HttpSessionEvent(getSession());
+                for (int i = 0; i < listeners.length; i++) {
+                    if (! (listeners[i] instanceof HttpSessionListener))
+                        continue;
+                    HttpSessionListener listener =
+                        (HttpSessionListener) listeners[i];
                     try {
+                        fireContainerEvent(context,
+                                           "beforeSessionCreated",
+                                           listener);
+                        listener.sessionCreated(event);
                         fireContainerEvent(context,
                                            "afterSessionCreated",
                                            listener);
-                    } catch (Exception e) {
-                        ;
+                    } catch (Throwable t) {
+                        try {
+                            fireContainerEvent(context,
+                                               "afterSessionCreated",
+                                               listener);
+                        } catch (Exception e) {
+                            ;
+                        }
+                        // FIXME - should we do anything besides log these?
+                        log.error(sm.getString("standardSession.sessionEvent"),
+                                  t);
                     }
-                    // FIXME - should we do anything besides log these?
-                    log.error(sm.getString("standardSession.sessionEvent"), t);
                 }
             }
-        }
+        }//end if
+        //end fix
+
 
     }
 
@@ -710,37 +716,42 @@ public class DeltaSession
             // Notify interested application event listeners
             // FIXME - Assumes we call listeners in reverse order
             Context context = (Context) manager.getContainer();
-            Object listeners[] = context.getApplicationLifecycleListeners();
-            if (notify && (listeners != null)) {
-                HttpSessionEvent event =
-                    new HttpSessionEvent(getSession());
-                for (int i = 0; i < listeners.length; i++) {
-                    int j = (listeners.length - 1) - i;
-                    if (!(listeners[j] instanceof HttpSessionListener))
-                        continue;
-                    HttpSessionListener listener =
-                        (HttpSessionListener) listeners[j];
-                    try {
-                        fireContainerEvent(context,
-                                           "beforeSessionDestroyed",
-                                           listener);
-                        listener.sessionDestroyed(event);
-                        fireContainerEvent(context,
-                                           "afterSessionDestroyed",
-                                           listener);
-                    } catch (Throwable t) {
+            //fix for standalone manager without container
+            if ( context != null ) {
+                Object listeners[] = context.getApplicationLifecycleListeners();
+                if (notify && (listeners != null)) {
+                    HttpSessionEvent event =
+                        new HttpSessionEvent(getSession());
+                    for (int i = 0; i < listeners.length; i++) {
+                        int j = (listeners.length - 1) - i;
+                        if (! (listeners[j] instanceof HttpSessionListener))
+                            continue;
+                        HttpSessionListener listener =
+                            (HttpSessionListener) listeners[j];
                         try {
+                            fireContainerEvent(context,
+                                               "beforeSessionDestroyed",
+                                               listener);
+                            listener.sessionDestroyed(event);
                             fireContainerEvent(context,
                                                "afterSessionDestroyed",
                                                listener);
-                        } catch (Exception e) {
-                            ;
+                        } catch (Throwable t) {
+                            try {
+                                fireContainerEvent(context,
+                                    "afterSessionDestroyed",
+                                    listener);
+                            } catch (Exception e) {
+                                ;
+                            }
+                            // FIXME - should we do anything besides log these?
+                            log.error(sm.getString(
+                                "standardSession.sessionEvent"), t);
                         }
-                        // FIXME - should we do anything besides log these?
-                        log.error(sm.getString("standardSession.sessionEvent"), t);
                     }
                 }
-            }
+            }//end if
+            //end fix
             accessCount=0;
             setValid(false);
 
@@ -1295,58 +1306,62 @@ public class DeltaSession
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationEventListeners();
-        if (listeners == null)
-            return;
-        for (int i = 0; i < listeners.length; i++) {
-            if (!(listeners[i] instanceof HttpSessionAttributeListener))
-                continue;
-            HttpSessionAttributeListener listener =
-                (HttpSessionAttributeListener) listeners[i];
-            try {
-                if (unbound != null) {
-                    fireContainerEvent(context,
-                                       "beforeSessionAttributeReplaced",
-                                       listener);
-                    if ( event == null ) {
-                        event = new HttpSessionBindingEvent
-                            (this,name,unbound);
-                    }
-                    listener.attributeReplaced(event);
-                    fireContainerEvent(context,
-                                       "afterSessionAttributeReplaced",
-                                       listener);
-                } else {
-                    fireContainerEvent(context,
-                                       "beforeSessionAttributeAdded",
-                                       listener);
-                    if (event == null) {
-                        event = new HttpSessionBindingEvent
-                            (this, name, unbound);
-                    }
-                    listener.attributeAdded(event);
-                    fireContainerEvent(context,
-                                       "afterSessionAttributeAdded",
-                                       listener);
-                }
-            } catch (Throwable t) {
+        //fix for standalone manager without container
+        if ( context != null ) {
+            Object listeners[] = context.getApplicationEventListeners();
+            if (listeners == null)
+                return;
+            for (int i = 0; i < listeners.length; i++) {
+                if (! (listeners[i] instanceof HttpSessionAttributeListener))
+                    continue;
+                HttpSessionAttributeListener listener =
+                    (HttpSessionAttributeListener) listeners[i];
                 try {
                     if (unbound != null) {
+                        fireContainerEvent(context,
+                                           "beforeSessionAttributeReplaced",
+                                           listener);
+                        if (event == null) {
+                            event = new HttpSessionBindingEvent
+                                (this, name, unbound);
+                        }
+                        listener.attributeReplaced(event);
                         fireContainerEvent(context,
                                            "afterSessionAttributeReplaced",
                                            listener);
                     } else {
                         fireContainerEvent(context,
+                                           "beforeSessionAttributeAdded",
+                                           listener);
+                        if (event == null) {
+                            event = new HttpSessionBindingEvent
+                                (this, name, unbound);
+                        }
+                        listener.attributeAdded(event);
+                        fireContainerEvent(context,
                                            "afterSessionAttributeAdded",
                                            listener);
                     }
-                } catch (Exception e) {
-                    ;
+                } catch (Throwable t) {
+                    try {
+                        if (unbound != null) {
+                            fireContainerEvent(context,
+                                               "afterSessionAttributeReplaced",
+                                               listener);
+                        } else {
+                            fireContainerEvent(context,
+                                               "afterSessionAttributeAdded",
+                                               listener);
+                        }
+                    } catch (Exception e) {
+                        ;
+                    }
+                    // FIXME - should we do anything besides log these?
+                    log.error(sm.getString("standardSession.attributeEvent"), t);
                 }
-                // FIXME - should we do anything besides log these?
-                log.error(sm.getString("standardSession.attributeEvent"), t);
-            }
-        }
+            } //for
+        }//end if
+        //end fix
 
     }
 
@@ -1612,34 +1627,38 @@ public class DeltaSession
 
         // Notify interested application event listeners
         Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationEventListeners();
-        if (listeners == null)
-            return;
-        for (int i = 0; i < listeners.length; i++) {
-            if (!(listeners[i] instanceof HttpSessionAttributeListener))
-                continue;
-            HttpSessionAttributeListener listener =
-                (HttpSessionAttributeListener) listeners[i];
-            try {
-                fireContainerEvent(context,
-                                   "beforeSessionAttributeRemoved",
-                                   listener);
-                listener.attributeRemoved(event);
-                fireContainerEvent(context,
-                                   "afterSessionAttributeRemoved",
-                                   listener);
-            } catch (Throwable t) {
+        //fix for standalone manager without container
+        if ( context != null ) {
+            Object listeners[] = context.getApplicationEventListeners();
+            if (listeners == null)
+                return;
+            for (int i = 0; i < listeners.length; i++) {
+                if (! (listeners[i] instanceof HttpSessionAttributeListener))
+                    continue;
+                HttpSessionAttributeListener listener =
+                    (HttpSessionAttributeListener) listeners[i];
                 try {
+                    fireContainerEvent(context,
+                                       "beforeSessionAttributeRemoved",
+                                       listener);
+                    listener.attributeRemoved(event);
                     fireContainerEvent(context,
                                        "afterSessionAttributeRemoved",
                                        listener);
-                } catch (Exception e) {
-                    ;
+                } catch (Throwable t) {
+                    try {
+                        fireContainerEvent(context,
+                                           "afterSessionAttributeRemoved",
+                                           listener);
+                    } catch (Exception e) {
+                        ;
+                    }
+                    // FIXME - should we do anything besides log these?
+                    log.error(sm.getString("standardSession.attributeEvent"), t);
                 }
-                // FIXME - should we do anything besides log these?
-                log.error(sm.getString("standardSession.attributeEvent"), t);
-            }
-        }
+            } //for
+        }//end if
+        //end fix
 
     }
 
