@@ -295,6 +295,8 @@ public final class Extension {
     public static List getAvailable(Manifest manifest) {
 
         ArrayList results = new ArrayList();
+        if (manifest == null)
+            return (results);
         Extension extension = null;
 
         Attributes attributes = manifest.getMainAttributes();
