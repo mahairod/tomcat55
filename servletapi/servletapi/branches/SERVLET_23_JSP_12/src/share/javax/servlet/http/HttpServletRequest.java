@@ -101,10 +101,9 @@ public interface HttpServletRequest extends ServletRequest {
 
     /**
      * Returns the name of the authentication scheme used to protect
-     * the servlet. All servlet containers support "BASIC", 
-     * "FORM", and "CLIENT-CERT" and may support "DIGEST".
-     * If the servlet is not authenticated <code>null</code>
-     * null is returned. 
+     * the servlet. All servlet containers support BASIC_AUTH, 
+     * FORM_AUTH, and CLIENT_CERT_AUTH and may support DIGEST_AUTH.
+     * If the servlet is not authenticated <code>null</code> is returned. 
      *
      * <p>Same as the value of the CGI variable AUTH_TYPE.
      *
