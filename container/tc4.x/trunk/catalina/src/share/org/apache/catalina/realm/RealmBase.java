@@ -70,6 +70,7 @@ import java.beans.PropertyChangeSupport;
 import java.security.Principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.io.File;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -175,6 +176,12 @@ public abstract class RealmBase
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
+    /**
+     * Should we validate client certificate chains when they are presented?
+     */
+    protected boolean validate = true;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -253,6 +260,28 @@ public abstract class RealmBase
     public String getInfo() {
 
         return info;
+
+    }
+
+
+    /**
+     * Return the "validate certificate chains" flag.
+     */
+    public boolean getValidate() {
+
+        return (this.validate);
+
+    }
+
+
+    /**
+     * Set the "validate certificate chains" flag.
+     *
+     * @param validate The new validate certificate chains flag
+     */
+    public void setValidate(boolean validate) {
+
+        this.validate = validate;
 
     }
 
@@ -356,6 +385,42 @@ public abstract class RealmBase
             return null;
     }
 
+
+
+    /**
+     * Return the Principal associated with the specified chain of X509
+     * client certificates.  If there is none, return <code>null</code>.
+     *
+     * @param certs Array of client certificates, with the first one in
+     *  the array being the certificate of the client itself.
+     */
+    public Principal authenticate(X509Certificate certs[]) {
+
+        if ((certs == null) || (certs.length < 1))
+            return (null);
+
+        // Check the validity of each certificate in the chain
+        if (debug >= 1)
+            log("Authenticating client certificate chain");
+        if (validate) {
+            for (int i = 0; i < certs.length; i++) {
+                if (debug >= 2)
+                    log(" Checking validity for '" +
+                        certs[i].getSubjectDN().getName() + "'");
+                try {
+                    certs[i].checkValidity();
+                } catch (Exception e) {
+                    if (debug >= 2)
+                        log("  Validity exception", e);
+                    return (null);
+                }
+            }
+        }
+
+        // Check the existence of the client Principal in our database
+        return (getPrincipal(certs[0].getSubjectDN().getName()));
+
+    }
 
 
     /**

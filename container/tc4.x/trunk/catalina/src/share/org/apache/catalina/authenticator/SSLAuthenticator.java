@@ -137,10 +137,15 @@ public final class SSLAuthenticator
         // Have we already authenticated someone?
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-        if (principal != null)
+        if (principal != null) {
+            if (debug >= 1)
+                log("Already authenticated '" + principal.getName() + "'");
             return (true);
+        }
 
         // Retrieve the certificate chain for this client
+        HttpServletResponse hres =
+            (HttpServletResponse) response.getResponse();
         if (debug >= 1)
             log(" Looking up certificates");
         X509Certificate certs[] = (X509Certificate[])
@@ -148,28 +153,19 @@ public final class SSLAuthenticator
         if ((certs == null) || (certs.length < 1)) {
             if (debug >= 1)
                 log("  No certificates included with this request");
-            ((HttpServletResponse) response.getResponse()).
-                sendError(HttpServletResponse.SC_BAD_REQUEST,
-                          sm.getString("authenticator.certificates"));
+            hres.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                           sm.getString("authenticator.certificates"));
             return (false);
         }
-        principal = certs[0].getSubjectDN();
 
-        // Check the validity of each certificate in the chain
-        for (int i = 0; i < certs.length; i++) {
+        // Authenticate the specified certificate chain
+        principal = context.getRealm().authenticate(certs);
+        if (principal == null) {
             if (debug >= 1)
-                log(" Checking validity for '" +
-                    certs[i].getSubjectDN().getName() + "'");
-            try {
-                certs[i].checkValidity();
-            } catch (Exception e) {
-                if (debug >= 1)
-                    log("  Validity exception", e);
-                ((HttpServletResponse) response.getResponse()).
-                    sendError(HttpServletResponse.SC_FORBIDDEN,
-                              sm.getString("authenticator.invalid"));
-                return (false);
-            }
+                log("  Realm.authenticate() returned false");
+            hres.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                           sm.getString("authenticator.unauthorized"));
+            return (false);
         }
 
         // Cache the principal (if requested) and record this authentication

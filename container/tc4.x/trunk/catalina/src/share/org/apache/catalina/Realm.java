@@ -67,6 +67,7 @@ package org.apache.catalina;
 
 import java.beans.PropertyChangeListener;
 import java.security.Principal;
+import java.security.cert.X509Certificate;
 
 
 /**
@@ -158,6 +159,16 @@ public interface Realm {
                                   String nonce, String nc, String cnonce,
                                   String qop, String realm,
                                   String md5a2);
+
+
+    /**
+     * Return the Principal associated with the specified chain of X509
+     * client certificates.  If there is none, return <code>null</code>.
+     *
+     * @param certs Array of client certificates, with the first one in
+     *  the array being the certificate of the client itself.
+     */
+    public Principal authenticate(X509Certificate certs[]);
 
 
     /**
