@@ -1063,8 +1063,8 @@ public class StandardClassLoader
 
         // Validate the manifest of a JAR file repository
         if (!repository.endsWith(File.separator)) {
+            JarFile jarFile = null;
             try {
-                JarFile jarFile = null;
                 Manifest manifest = null;
                 if (repository.startsWith("jar:")) {
                     URL url = new URL(null, repository, streamHandler);
@@ -1104,12 +1104,16 @@ public class StandardClassLoader
                             required.add(extensions.next());
                     }
                 }
-                if (jarFile != null)
-                    jarFile.close();
             } catch (Throwable t) {
                 t.printStackTrace();
                 throw new IllegalArgumentException
                     ("addRepositoryInternal: " + t);
+            } finally {
+                if (jarFile != null) {
+                    try {
+                        jarFile.close();
+                    } catch (Throwable t) {}
+                }
             }
         }
 
