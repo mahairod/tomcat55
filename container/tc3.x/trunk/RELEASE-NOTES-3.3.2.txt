@@ -55,6 +55,9 @@ Bug No.  Description
 
 	 Fix Cookie case name problem under Windows for Session Cookie.
 
+	 Fix problems with URL normalization when the URL attempts to access
+	 a file above the ROOT.
+
 Jasper:
 
 Bug No.  Description
@@ -62,6 +65,7 @@ Bug No.  Description
 11463	 Fix PageContext.removeAttribute(String) to work for a page with
 	 session=false.
 
+13378	 Fix dependency on GenericServlet in the generated .java file.
 
 Configuration:
 
