@@ -792,7 +792,7 @@ public class StandardHost
         }
 
         if (xmlValidation)
-            log.info( "XML validation enaled ");
+            log.info( "XML validation enabled ");
         else
             log.info( "XML validation disabled ");
 
