@@ -49,6 +49,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
     private long tcpSelectorTimeout;
     private int tcpListenPort;
     private boolean isSenderSynchronized;
+    private Selector selector = null;
     
     private Object interestOpsMutex = new Object();
     
@@ -98,7 +99,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
         // Get the associated ServerSocket to bind it with
         ServerSocket serverSocket = serverChannel.socket();
         // create a new Selector for use below
-        Selector selector = Selector.open();
+        selector = Selector.open();
         // set the port the server channel will listen to
         serverSocket.bind (new InetSocketAddress (bind,tcpListenPort));
         // set non-blocking mode for the listening socket
@@ -166,6 +167,14 @@ public class ReplicationListener implements Runnable,ClusterReceiver
 
     public void stopListening(){
         doListen = false;
+        if ( selector != null ) {
+            try {
+                selector.close();
+                selector = null;
+            } catch ( Exception x ) {
+                log.error("Unable to close cluster receiver selector.",x);
+            }
+        }
     }
     
     public void setCatalinaCluster(CatalinaCluster cluster) {
