@@ -26,6 +26,11 @@
     if (param != null) {
 
       contextAdmin.init(request);
+      if (!contextAdmin.initialized()) {
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            "You must mark the administration application as trusted");
+          return;
+      }
 
       if (param.equals("View All Contexts")) {
           Enumeration enum = contextAdmin.getContextNames();

@@ -43,8 +43,17 @@ public class ContextAdmin {
 
     public void init(HttpServletRequest request) {
 	FacadeManager facadeM=(FacadeManager)request.getAttribute( FacadeManager.FACADE_ATTRIBUTE);
+        if (facadeM == null) {
+            realRequest = null;
+            cm = null;
+            return;
+        }
 	realRequest = facadeM.getRealRequest(request);
 	cm = realRequest.getContext().getContextManager();
+    }
+
+    public boolean initialized() {
+        return (cm != null);
     }
 
     public Enumeration getContextNames() {
