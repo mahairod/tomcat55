@@ -169,9 +169,9 @@ class Dumper {
         }
 
         public void visit(Node.UseBean n) throws JasperException {
-	    printAttributes("<jsp:usebean", n.getAttributes(), ">");
+	    printAttributes("<jsp:useBean", n.getAttributes(), ">");
 	    dumpBody(n);
-	    printString("</jsp:usebean>");
+	    printString("</jsp:useBean>");
         }
 	
         public void visit(Node.PlugIn n) throws JasperException {
