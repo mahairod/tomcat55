@@ -536,6 +536,16 @@ public final class NamingResources {
 
 
     /**
+     * Return true if the name specified already exists.
+     */
+    public boolean exists(String name) {
+
+        return (entries.containsKey(name));
+
+    }
+
+
+    /**
      * Remove any EJB resource reference with the specified name.
      *
      * @param name Name of the EJB resource reference to remove
