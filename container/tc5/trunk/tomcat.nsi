@@ -131,6 +131,7 @@ Section "Core" SecTomcatCore
   SetOutPath $INSTDIR\bin
   File bin\bootstrap.jar
   File bin\commons-logging-api.jar
+  File bin\tomcat-juli.jar
   File bin\*.exe
   SetOutPath $INSTDIR\conf
   File conf\*.*
@@ -307,7 +308,7 @@ SectionEnd
 
 Section -post
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
-  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp" --StdOutput auto --StdError auto'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp#-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" --StdOutput auto --StdError auto'
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
