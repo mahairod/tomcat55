@@ -96,7 +96,77 @@
         </controls:row>
      </logic:notEqual>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="acceptCount">
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
+            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
+            <controls:data>
+               <html:select property="debugLvl" styleId="debuglevel">
+                     <bean:define id="debugLvlVals" name="connectorForm" property="debugLvlVals"/>
+                     <html:options collection="debugLvlVals" property="value"
+                        labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="enableDNS">
+            <controls:label><bean:message key="connector.enable.dns"/>:</controls:label>
+            <controls:data>
+                <html:select property="enableLookups" styleId="enableDNS">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <%-- Input only allowed on create transaction --%>
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="address">
+            <controls:label><bean:message key="connector.address.ip"/>:</controls:label>
+            <controls:data>
+             <logic:equal name="connectorForm" property="adminAction" value="Create">
+               <html:text property="address" size="20" styleId="address"/>
+             </logic:equal>
+             <logic:equal name="connectorForm" property="adminAction" value="Edit">
+               &nbsp;<bean:write name="connectorForm" property="address"/>
+               <html:hidden property="address"/>
+             </logic:equal>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="secure">
+            <controls:label><bean:message key="connector.secure"/>:</controls:label>
+            <controls:data>
+                <html:select property="secure" styleId="secure">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+        <%--controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label>Processors</controls:label>
+            <controls:data>&nbsp;</controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="minProcessor">
+            <controls:label><bean:message key="connector.min"/>:</controls:label>
+            <controls:data>
+               <html:text property="minProcessorsText" size="5" styleId="minProcessor"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="connectorMax">
+            <controls:label><bean:message key="connector.max"/>:</controls:label>
+            <controls:data>
+               <html:text property="maxProcessorsText" size="5" styleId="connectorMax"/>
+            </controls:data>
+        </controls:row--%>
+
+<%-- The following properties are supported only for Coyote HTTP/S 1.1 Connectors --%>
+
+     <logic:notEqual name="connectorForm" property="connectorType" scope="session"
+                  value="AJP">
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="acceptCount">
             <controls:label><bean:message key="connector.accept.count"/>:</controls:label>
             <controls:data>
               <html:text property="acceptCountText" size="5" maxlength="5" styleId="acceptCount"/>
@@ -134,17 +204,6 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="debugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="connectorForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="buffersize">
             <controls:label><bean:message key="connector.default.buffer"/>:</controls:label>
             <controls:data>
@@ -163,31 +222,6 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="enableDNS">
-            <controls:label><bean:message key="connector.enable.dns"/>:</controls:label>
-            <controls:data>
-                <html:select property="enableLookups" styleId="enableDNS">
-                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
-                     <html:options collection="booleanVals" property="value"
-                   labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
-        <%-- Input only allowed on create transaction --%>
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="address">
-            <controls:label><bean:message key="connector.address.ip"/>:</controls:label>
-            <controls:data>
-             <logic:equal name="connectorForm" property="adminAction" value="Create">
-               <html:text property="address" size="20" styleId="address"/>
-             </logic:equal>
-             <logic:equal name="connectorForm" property="adminAction" value="Edit">
-               &nbsp;<bean:write name="connectorForm" property="address"/>
-               <html:hidden property="address"/>
-             </logic:equal>
-            </controls:data>
-        </controls:row>
-
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxkeepalive">
             <controls:label><bean:message key="connector.maxkeepalive"/>:</controls:label>
             <controls:data>
@@ -195,14 +229,24 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="secure">
-            <controls:label><bean:message key="connector.secure"/>:</controls:label>
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxspare">
+            <controls:label><bean:message key="connector.maxspare"/>:</controls:label>
             <controls:data>
-                <html:select property="secure" styleId="secure">
-                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
-                     <html:options collection="booleanVals" property="value"
-                   labelProperty="label"/>
-                </html:select>
+              <html:text property="maxSpare" size="5" maxlength="5" styleId="maxspare"/>
+            </controls:data>
+        </controls:row>
+	
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="maxkthreads">
+            <controls:label><bean:message key="connector.maxthreads"/>:</controls:label>
+            <controls:data>
+              <html:text property="maxThreads" size="5" maxlength="5" styleId="maxthreads"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="minspare">
+            <controls:label><bean:message key="connector.minspare"/>:</controls:label>
+            <controls:data>
+              <html:text property="minSpare" size="5" maxlength="5" styleId="minspare"/>
             </controls:data>
         </controls:row>
 
@@ -227,6 +271,7 @@
                 </html:select>
             </controls:data>
         </controls:row>
+     </logic:notEqual>
 
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Ports</controls:label>
@@ -255,28 +300,6 @@
         </controls:row>
 
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
-            <controls:label>Processors</controls:label>
-            <controls:data>&nbsp;</controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="minProcessor">
-            <controls:label><bean:message key="connector.min"/>:</controls:label>
-            <controls:data>
-               <html:text property="minProcessorsText" size="5" styleId="minProcessor"/>
-            </controls:data>
-        </controls:row>
-
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="connectorMax">
-            <controls:label><bean:message key="connector.max"/>:</controls:label>
-            <controls:data>
-               <html:text property="maxProcessorsText" size="5" styleId="connectorMax"/>
-            </controls:data>
-        </controls:row>
-
-<%-- The following properties are supported only for Coyote HTTP/S 1.1 Connectors --%>
-     <logic:notEqual name="connectorForm" property="connectorType" scope="session"
-                  value="AJP">
-        <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Proxy</controls:label>
             <controls:data>&nbsp;</controls:data>
         </controls:row>
@@ -294,7 +317,6 @@
                 <html:text property="proxyPortText" size="5" styleId="portNumber"/>
             </controls:data>
         </controls:row>
-        </logic:notEqual>
 
 <%-- The following properties are supported only on HTTPS Connector --%>
      <logic:equal name="connectorForm" property="scheme" scope="session"
