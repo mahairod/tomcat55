@@ -169,6 +169,10 @@ class JspDocumentParser extends DefaultHandler
 
 	    // Use the default (non-validating) parser
 	    SAXParserFactory factory = SAXParserFactory.newInstance();
+	    factory.setNamespaceAware(true);
+	    // Preserve xmlns attributes
+	    factory.setFeature("http://xml.org/sax/features/namespace-prefixes",
+			       true);
 
 	    // Configure the parser
 	    SAXParser saxParser = factory.newSAXParser();
