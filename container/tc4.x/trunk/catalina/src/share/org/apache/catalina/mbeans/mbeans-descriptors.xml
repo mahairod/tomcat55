@@ -967,6 +967,96 @@
 
   </mbean>
 
+  <mbean         name="JK2Connector"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Implementation of an JK2 connector"
+               domain="Catalina"
+                group="Connector"
+                 type="org.apache.coyote.tomcat4.CoyoteConnector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="allowChunking"
+          description="Is HTTP/1.1 chunking allowed?"
+                 type="boolean"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="curProcessors"
+          description="Current number of active processors"
+                 type="int"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at
+                        initialization time"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="The port number on which we listen for ajp13 requests"
+                 type="int"/>
+
+    <attribute   name="processorClassName"
+          description="Fully qualified class name of Coyote processor class"
+                 type="java.lang.String"/>
+
+    <attribute   name="proxyName"
+          description="The server name to which we should pretend requests to
+                        this Connector were directed"
+                 type="java.lang.String"/>
+
+    <attribute   name="proxyPort"
+          description="The server port to which we should pretend requests to
+                        this Connector were directed"
+                 type="int"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+    <attribute   name="tcpNoDelay"
+          description="Should we set the TCP no-delay option on connections?"
+                 type="boolean"/>
+
+  </mbean>
+
 
   <mbean         name="JNDIRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
