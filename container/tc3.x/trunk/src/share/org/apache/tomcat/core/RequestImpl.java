@@ -285,20 +285,7 @@ public class RequestImpl  implements Request {
     }
 
     public String getRemoteUser() {
-	if( remoteUser!=null)
-	    return remoteUser;
-
-	// Using the Servlet 2.2 semantics ...
-	//  return request.getRemoteUser();
-	java.security.Principal p = getUserPrincipal();
-
-	if (p != null) {
-	    return p.getName();
-	}
-
-	return null;
-
-        //return remoteUser;
+	return remoteUser;
     }
 
     public boolean isSecure() {
