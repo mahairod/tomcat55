@@ -211,8 +211,10 @@ public class SecurityUtil{
        } catch( PrivilegedActionException pe) {
             Throwable e = ((InvocationTargetException)pe.getException()).getTargetException();
             
-            if (log.isWarnEnabled())
-                log.warn(sm.getString("SecurityUtil.doAsPrivilege"), e); 
+            if (log.isDebugEnabled()){
+                log.debug(sm.getString("SecurityUtil.doAsPrivilege"), e); 
+            }
+            
             if (e instanceof UnavailableException)
                 throw (UnavailableException) e;
             else if (e instanceof ServletException)
