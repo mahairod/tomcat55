@@ -50,9 +50,8 @@
 
   <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
   <target name="deploy" depends="dist">
-    <deltree dir="${webapps.deploy}/webapps"/>
     <mkdir dir="${webapps.deploy}/webapps"/>
-    <copydir src="${webapps.dist}" dest="${webapps.deploy}/webapps"/>
+    <copydir src="${webapps.build}" dest="${webapps.deploy}/webapps"/>
   </target>
 
 

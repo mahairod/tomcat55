@@ -1,10 +1,10 @@
 @echo off
 rem ---------------------------------------------------------------------------
-rem build.bat - Build Script for Catalina
+rem build.bat - Build Script for Tomcat
 rem
 rem Environment Variable Prerequisites:
 rem
-rem   ANT_HOME         Must point at your Ant installation [../../jakarta-ant]
+rem   ANT_HOME         Must point at your Ant installation [../jakarta-ant]
 rem
 rem   ANT_OPTS         Command line options to the Java runtime
 rem                    that executes Ant [NONE]
@@ -16,10 +16,10 @@ rem
 rem   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 rem
 rem   REGEXP_HOME      Must point at your Regexp installation
-rem                    [../../jakarta-regexp]
+rem                    [../jakarta-regexp]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-rem                    [../../jakarta-servletapi]
+rem                    [../jakarta-servletapi]
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
@@ -51,15 +51,15 @@ goto cleanup
 :gotJsseHome
 
 if not "%ANT_HOME%" == "" goto gotAntHome
-set ANT_HOME=../../jakarta-ant
+set ANT_HOME=../jakarta-ant
 :gotAntHome
 
 if not "%REGEXP_HOME%" == "" goto gotRegexpHome
-set REGEXP_HOME=../../jakarta-regexp
+set REGEXP_HOME=../jakarta-regexp
 :gotRegexpHome
 
 if not "%SERVLETAPI_HOME%" == "" goto gotServletapiHome
-set SERVLETAPI_HOME=../../jakarta-servletapi
+set SERVLETAPI_HOME=../jakarta-servletapi
 :gotServletapiHome
 
 
@@ -79,8 +79,6 @@ rem ----- Restore Environment Variables ---------------------------------------
 :cleanup
 set SERVLETAPI_HOME=%_SERVLETAPIHOME%
 set _SERVLETAPIHOME=
-set REGEXP_HOME=%_REGEXP_HOME%
-set _REGEXP_HOME=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
 set ANT_HOME=%_ANT_HOME%

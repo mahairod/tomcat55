@@ -1,0 +1,114 @@
+<project name="Tomcat 4.0" default="deploy-main" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+  <property name="ant.home"        value="../jakarta-ant"/>
+  <property name="build.compiler"  value="classic"/>
+  <property name="jaxp.home"       value="../jaxp"/>
+  <property name="jsse.home"       value="../jsse"/>
+  <property name="regexp.home"     value="../jakarta-regexp"/>
+  <property name="servletapi.dist" value="../dist/servletapi"/>
+  <property name="servletapi.home" value="../jakarta-servletapi"/>
+  <property name="tomcat.build"    value="../build/tomcat-4.0"/>
+  <property name="tomcat.dist"     value="../dist/tomcat-4.0"/>
+
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
+  <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
+  <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
+  <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
+  <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
+  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+
+
+  <!-- ===================== DEPLOY: Create Directories =================== -->
+  <target name="deploy-prepare">
+    <mkdir dir="${tomcat.build}"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Copy Static Files =================== -->
+  <target name="deploy-static" depends="deploy-prepare"/>
+
+
+  <!-- ====================== DEPLOY: Deploy Components =================== -->
+  <target name="deploy-main" depends="deploy-static">
+    <ant dir="./catalina" target="deploy"/>
+    <ant dir="./jasper"   target="deploy"/>
+    <ant dir="./webapps"  target="deploy"/>
+  </target>
+
+
+  <!-- ====================== COMBO: Clean All Directories ================ -->
+  <target name="clean">
+    <deltree dir="${tomcat.build}"/>
+    <ant dir="./catalina" target="clean"/>
+    <ant dir="./jasper"   target="clean"/>
+    <ant dir="./webapps"  target="clean"/>
+  </target>
+
+
+  <!-- ======================= COMBO: Build All Components ================ -->
+  <target name="all">
+    <ant dir="./catalina" target="all"/>
+    <ant dir="./jasper"   target="all"/>
+    <ant dir="./webapps"  target="all"/>
+  </target>
+
+
+
+  <!-- ====================== DIST: Create Directories ==================== -->
+  <target name="dist-prepare">
+    <mkdir dir="${tomcat.dist}"/>
+    <mkdir dir="${tomcat.dist}/bin"/>
+    <mkdir dir="${tomcat.dist}/conf"/>
+    <mkdir dir="${tomcat.dist}/lib"/>
+    <mkdir dir="${tomcat.dist}/logs"/>
+    <mkdir dir="${tomcat.dist}/server"/>
+    <mkdir dir="${tomcat.dist}/webapps"/>
+    <mkdir dir="${tomcat.dist}/work"/>
+  </target>
+
+
+  <!-- ====================== DIST: Copy Static Files ===================== -->
+  <target name="dist-static" depends="dist-prepare">
+
+    <copyfile src="./LICENSE"             dest="${tomcat.dist}/LICENSE"/>
+    <copyfile src="./NEW_SPECS.txt"       dest="${tomcat.dist}/NEW_SPECS.txt"/>
+
+    <copydir src="${tomcat.build}/bin"     dest="${tomcat.dist}/bin"/>
+    <copydir src="${tomcat.build}/conf"    dest="${tomcat.dist}/conf"/>
+    <copydir src="${tomcat.build}/lib"     dest="${tomcat.dist}/lib"/>
+    <copydir src="${tomcat.build}/server"  dest="${tomcat.dist}/server"/>
+    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" cr="add"/>
+    <chmod      dir="${tomcat.dist}/bin"   includes="*.sh" perm="+x"/>
+
+  </target>
+
+
+  <!-- ====================== DIST: Create Javadoc ======================== -->
+  <target name="dist-javadoc">
+    <ant dir="./catalina" target="javadoc"/>
+    <ant dir="./jasper" target="javadoc"/>
+    <copydir src="${servletapi.dist}/docs/api"
+            dest="${tomcat.build}/webapps/ROOT/servletapi-javadoc"/>
+  </target>
+
+  <!-- ====================== DIST: Create Archives ======================= -->
+  <target name="dist" depends="dist-javadoc,dist-static">
+    <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
+         basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
+    <jar jarfile="${tomcat.dist}/webapps/examples.war"
+         basedir="${tomcat.build}/webapps/examples" includes="**"/>
+  </target>
+
+
+  <!-- ====================== DIST: Clean Directory ======================= -->
+  <target name="dist-clean">
+    <deltree dir="${tomcat.dist}"/>
+  </target>
+
+
+</project>

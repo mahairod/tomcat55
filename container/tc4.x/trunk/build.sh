@@ -1,10 +1,10 @@
 #!/bin/sh
 # -----------------------------------------------------------------------------
-# build.sh - Build Script for Catalina
+# build.sh - Build Script for Tomcat
 #
 # Environment Variable Prerequisites:
 #
-#   ANT_HOME         Must point at your Ant installation [../../jakarta-ant]
+#   ANT_HOME         Must point at your Ant installation [../jakarta-ant]
 #
 #   ANT_OPTS         Command line options to the Java runtime
 #                    that executes Ant [NONE]
@@ -15,11 +15,11 @@
 #
 #   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 #
-#   REGEXP_HOME      Must point at your Regexp installation
-#                    [../../jakarta-regexp]
+#   REGEXP_HOME      Must point at your "jakarta-regexp" installation
+#                    [../jakarta-regexp]
 #
 #   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
-#                    [../../jakarta-servletapi]
+#                    [../jakarta-servletapi]
 #
 # $Id$
 # -----------------------------------------------------------------------------
@@ -28,7 +28,7 @@
 # ----- Verify and Set Required Environment Variables -------------------------
 
 if [ "$ANT_HOME" = "" ] ; then
-  ANT_HOME=../../jakarta-ant
+  ANT_HOME=../jakarta-ant
 fi
 
 if [ "$ANT_OPTS" = "" ] ; then
@@ -51,11 +51,11 @@ if [ "$JSSE_HOME" = "" ] ; then
 fi
 
 if [ "$REGEXP_HOME" = "" ] ; then
-  REGEXP_HOME=../../jakarta-regexp
+  REGEXP_HOME=../jakarta-regexp
 fi
 
 if [ "$SERVLETAPI_HOME" = "" ] ; then
-  SERVLETAPI_HOME=../../jakarta-servletapi
+  SERVLETAPI_HOME=../jakarta-servletapi
 fi
 
 
@@ -70,4 +70,3 @@ fi
 # ----- Execute The Requested Build -------------------------------------------
 
 java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Djaxp.home=$JAXP_HOME -Djsse.home=$JSSE_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
-
