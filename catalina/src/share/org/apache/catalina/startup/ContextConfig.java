@@ -653,20 +653,24 @@ public final class ContextConfig
         }
 
         InputStream stream = null;
-        //if( ! file.exists() ) {
-            // try using resource ??
+        InputSource source = null;
 
-        //}
         try {
-            // XXX why all this instead of exists() ?
-            stream = new FileInputStream(file.getCanonicalPath());
-            stream.close();
-            stream = null;
-        } catch (FileNotFoundException e) {
-            log.error(sm.getString("contextConfig.defaultMissing") + " " + file);
-            return;
-        } catch (IOException e) {
-            log.error(sm.getString("contextConfig.defaultMissing") + " " + file , e);
+            if ( ! file.exists() ) {
+                // Use getResource and getResourceAsStream
+                stream = getClass().getClassLoader()
+                    .getResourceAsStream(defaultWebXml);
+                source = new InputSource
+                    (getClass().getClassLoader()
+                     .getResource(defaultWebXml).toString());
+            } else {
+                source =
+                    new InputSource("file://" + file.getAbsolutePath());
+                stream = new FileInputStream(file);
+            }
+        } catch (Exception e) {
+            log.error(sm.getString("contextConfig.defaultMissing") 
+                      + " " + defaultWebXml + " " + file , e);
             return;
         }
 
@@ -677,10 +681,7 @@ public final class ContextConfig
         // Process the default web.xml file
         synchronized (webDigester) {
             try {
-                InputSource is =
-                    new InputSource("file://" + file.getAbsolutePath());
-                stream = new FileInputStream(file);
-                is.setByteStream(stream);
+                source.setByteStream(stream);
                 webDigester.setDebug(getDebug());
                 
                 if (context instanceof StandardContext)
@@ -690,7 +691,7 @@ public final class ContextConfig
                 //log.info( "Using cl: " + webDigester.getClassLoader());
                 webDigester.setUseContextClassLoader(false);
                 webDigester.push(context);
-                webDigester.parse(is);
+                webDigester.parse(source);
             } catch (SAXParseException e) {
                 log.error(sm.getString("contextConfig.defaultParse"), e);
                 log.error(sm.getString("contextConfig.defaultPosition",
