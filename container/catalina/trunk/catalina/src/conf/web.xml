@@ -157,7 +157,7 @@
   <!--   reloading           Should Jasper check for modified JSPs?  [true] -->
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
-  <!--                       debugging be suppressed? [false]               -->
+  <!--                       debugging be suppressed?  [false]              -->
   <!--                                                                      -->
   <!--   dumpSmap            Should the SMAP info for JSR45 debugging be    -->
   <!--                       dumped to a file? [false]                      -->
@@ -167,7 +167,7 @@
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
   <!--                                                                      -->
-  <!--   tagPoolSize         The tag handler pool size                      -->
+  <!--   tagpoolMaxSize      The maximum tag handler pool size  [5]         -->
   <!--                                                                      -->
   <!--   xpoweredBy          Determines whether X-Powered-By response       -->
   <!--                       header is added by generated servlet           -->
