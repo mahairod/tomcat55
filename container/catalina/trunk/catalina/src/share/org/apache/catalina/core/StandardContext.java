@@ -4467,18 +4467,18 @@ public class StandardContext
         // Stop our filters
         filterStop();
 
-        // Stop our application listeners
-        listenerStop();
-
-        // Finalize our character set mapper
-        setCharsetMapper(null);
-
         // Stop ContainerBackgroundProcessor thread
         super.threadStop();
 
         if ((manager != null) && (manager instanceof Lifecycle)) {
             ((Lifecycle) manager).stop();
         }
+
+        // Stop our application listeners
+        listenerStop();
+
+        // Finalize our character set mapper
+        setCharsetMapper(null);
 
         // Normal container shutdown processing
         if (log.isDebugEnabled())
