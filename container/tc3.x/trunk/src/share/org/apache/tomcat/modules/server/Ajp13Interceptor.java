@@ -82,6 +82,8 @@ public class Ajp13Interceptor extends PoolTcpConnector
     public Ajp13Interceptor()
     {
         super();
+	super.setSoLinger( 100 );
+	super.setTcpNoDelay( true );
     }
 
     // -------------------- PoolTcpConnector --------------------
@@ -120,8 +122,6 @@ public class Ajp13Interceptor extends PoolTcpConnector
             if(socket == null) {
                 return;
             }
-
-            socket.setSoLinger( true, 100);
 
             Ajp13 con=null;
             Ajp13Request req=null;
