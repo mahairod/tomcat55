@@ -597,6 +597,11 @@ public class ApplicationContext
      */
     public URL getResource(String path)
         throws MalformedURLException {
+
+        path = normalize(path);
+        if (path == null)
+            return (null);
+
         DirContext resources = context.getResources();
         if (resources != null) {
             String fullPath = context.getName() + path;
@@ -636,6 +641,10 @@ public class ApplicationContext
      */
     public InputStream getResourceAsStream(String path) {
 
+        path = normalize(path);
+        if (path == null)
+            return (null);
+
         DirContext resources = context.getResources();
         if (resources != null) {
             try {
@@ -658,6 +667,10 @@ public class ApplicationContext
      * @param path Collection path
      */
     public Set getResourcePaths(String path) {
+
+        path = normalize(path);
+        if (path == null)
+            return (null);
 
         DirContext resources = context.getResources();
         if (resources != null) {
