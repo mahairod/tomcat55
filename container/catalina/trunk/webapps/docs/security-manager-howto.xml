@@ -8,6 +8,7 @@
 
     <properties>
         <author email="glenn@voyager.apg.more.net">Glenn Nielsen</author>
+        <author email="jeanfrancois.arcand@sun.com">Jean-Francois Arcand</author>
         <title>Security Manager HOW-TO</title>
     </properties>
 
@@ -35,12 +36,13 @@
   Using the Java SecurityManager is just one more line of defense a
   system administrator can use to keep the server secure and reliable.</p>
 
-  <p><strong>WARNING</strong> - Implementation of a SecurityManager in
-  Tomcat has not been fully tested or had a security audit.  Make sure that
-  you are satisfied with your SecurityManager configuration before allowing
-  untrusted users to publish web applications, JSPs, servlets, beans, or
-  tag libraries.  However, running with a SecurityManager is definitely
-  better than running without one.</p>
+  <p><strong>WARNING</strong> - A security audit
+  have been conducted using the Tomcat 5 codebase. Most of the critical
+  package have been protected and a new security package protection mechanism 
+  has been implemented. Still, make sure that you are satisfied with your SecurityManager 
+  configuration before allowing untrusted users to publish web applications, 
+  JSPs, servlets, beans, or tag libraries.  <strong>However, running with a 
+  SecurityManager is definitely better than running without one.</strong></p>
 
 </section>
 
@@ -66,7 +68,7 @@
         access to JVM properties such as <code>java.home</code>.</li>
     <li><strong>java.lang.RuntimePermission</strong> - Controls use of
         some System/Runtime functions like <code>exit()</code> and
-        <code>exec()</code>.</li>
+        <code>exec()</code>. Also control the package access/definition.</li>
     <li><strong>java.io.FilePermission</strong> - Controls read/write/execute
         access to files and directories.</li>
     <li><strong>java.net.SocketPermission</strong> - Controls use of
@@ -102,6 +104,14 @@ permission  org.apache.naming.JndiPermission  "jndi://localhost/examples/*";
     application that is deployed, to allow it to read its own static resources
     but disallow it from using file access to read any other files (unless
     permissions for those files are explicitly granted).</p>
+
+    <p>If you starts Tomcat with the <code>-nonaming</code> argument, 
+    Tomcat always dynamically creates the following file permission:</p>
+<source>  
+permission java.io.FilePermission "** your application context**", "read";
+</source>  
+    <p>Where **your application context** equals the folder(or WAR file) under which 
+    your application has been deployed. </p>  
 
   </subsection>
 
@@ -186,6 +196,11 @@ grant codeBase "file:${java.home}/lib/ext/-" {
 // ========== CATALINA CODE PERMISSIONS =======================================
 
 
+// These permissions apply to the launcher code
+grant codeBase "file:${catalina.home}/bin/commons-launcher.jar" {
+        permission java.security.AllPermission;
+};
+
 // These permissions apply to the server startup code
 grant codeBase "file:${catalina.home}/bin/bootstrap.jar" {
         permission java.security.AllPermission;
@@ -201,24 +216,6 @@ grant codeBase "file:${catalina.home}/common/-" {
 // These permissions apply to the container's core code, plus any additional
 // libraries installed in the "server" directory
 grant codeBase "file:${catalina.home}/server/-" {
-        permission java.security.AllPermission;
-};
-
-// These permissions apply to the jasper page compiler
-// located in the "jasper" directory.
-grant codeBase "file:${catalina.home}/jasper/-" {
-        permission java.security.AllPermission;
-};
-
-// These permissions apply to shared web application libraries
-// including the Jasper runtime library installed in the "lib" directory
-grant codeBase "file:${catalina.home}/lib/-" {
-        permission java.security.AllPermission;
-};
-
-// These permissions apply to shared web application classes
-// located in the "classes" directory
-grant codeBase "file:${catalina.home}/classes/-" {
         permission java.security.AllPermission;
 };
 
@@ -262,6 +259,9 @@ grant {
         // Required for getting BeanInfo
         permission java.lang.RuntimePermission "accessClassInPackage.sun.beans.*";
 
+        // Required for OpenJMX
+        permission java.lang.RuntimePermission "getAttribute";
+
 	// Allow read of JAXP compliant XML parser debug
 	permission java.util.PropertyPermission "jaxp.debug", "read";
 };
@@ -291,14 +291,13 @@ grant {
 // };
 //
 // The permission granted to your JDBC driver
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar" {
+// grant codeBase "jar:file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-" {
 //      permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
 // };
 // The permission granted to the scrape taglib
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar" {
+// grant codeBase "jar:file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar!/-" {
 //      permission java.net.SocketPermission "*.noaa.gov:80", "connect";
 // };
-
 </source>
 
   <h3>Starting Tomcat With A SecurityManager</h3>
@@ -312,7 +311,46 @@ $CATALINA_HOME/bin/catalina.sh start -security    (Unix)
 </source>
 
 </section>
+<section name="Configuring Package Protection in Tomcat">
+  <p>Starting with Tomcat 5, it is now possible to configure which Tomcat
+  internal package are protected againts package definition and access. See
+  <a href="http://java.sun.com/security/seccodeguide.html">
+    http://java.sun.com/security/seccodeguide.html</a>
+    for more information.</p>    
 
+  
+  <p><strong>WARNING</strong>: Be aware that removing the default package protection 
+  could possibly open a security hole</p>
+
+  <h3>The Default Properties File</h3>
+
+  <p>The default <code>$CATALINA_HOME/conf/catalina.properties</code> file
+  looks like this:</p>
+<source>  
+#
+# List of comma-separated packages that start with or equal this string
+# will cause a security exception to be thrown when
+# passed to checkPackageAccess unless the
+# corresponding RuntimePermission ("accessClassInPackage."+package) has
+# been granted.
+package.access=sun.,org.apache.catalina.,org.apache.coyote.,org.apache.tomcat.,
+org.apache.jasper.
+#
+# List of comma-separated packages that start with or equal this string
+# will cause a security exception to be thrown when
+# passed to checkPackageDefinition unless the
+# corresponding RuntimePermission ("defineClassInPackage."+package) has
+# been granted.
+#
+# by default, no packages are restricted for definition, and none of
+# the class loaders supplied with the JDK call checkPackageDefinition.
+#
+package.definition=sun.,java.,org.apache.catalina.,org.apache.coyote.,
+org.apache.tomcat.,org.apache.jasper.
+</source>
+  <p>Once you have configured the <code>catalina.properties</code> file for use
+  with a SecurityManager, remember to re-start Tomcat.</p>
+</section>
 
 <section name="Troubleshooting">
 
