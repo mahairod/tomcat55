@@ -201,6 +201,10 @@
       <property name="tomcat-jni.jar" value="${tomcat.build}/server/lib/tomcat-jni.jar" />
 
     </ant>
+
+    <copy file="${jtc.home}/jk/conf/jk2.properties" 
+        todir="${tomcat.build}/conf" />
+
   </target>
 
   <target name="build-tomcatcoyote" 
