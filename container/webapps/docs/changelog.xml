@@ -13,6 +13,135 @@
 
 <body>
 
+<section name="Tomcat 5.0.12 (remm)">
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Refactor persistent manager periodic processing (jfarcand)
+      </fix>
+      <fix>
+      Allow extending StandardPipeline (jfarcand)
+      </fix>
+      <update>
+      Refactor manager initialization, move it into ContextConfig, and remove
+      Cluster.setDistributable (remm)
+      </update>
+      <add>
+      Added in support for sending out access time pings to the cluster, and
+      for session.invalidate to go out to the other nodes in the cluster
+      (fhanik)
+      </add>
+      <fix>
+      Remove the artificial limit of 3 for classpath creation (remm)
+      </fix>
+      <fix>
+      In SecurityUtil, always associate a Subject; if not created, then create
+      a default one (jfarcand)
+      </fix>
+      <fix>
+      Fix security policy after move of commons-logging (remm)
+      </fix>
+      <fix>
+      Don't do a real flush at the end of request processing (remm)
+      </fix>
+      <fix>
+      Remove useless flush in the ErrorReportValve (remm)
+      </fix>
+      <fix>
+      Throw ThreadDeath for invalid classloader accesses (remm)
+      </fix>
+      <fix> 
+      <bug>23131</bug>: Fix wrong classloader binding when reloading the web
+      application after class modifications (remm)
+      </fix>
+      <fix>
+      Remove overriding the mapped servlet path with the jsp-file in the 
+      request dispatcher (remm)
+      </fix>
+      <update>
+      Add a delegate flag on the context to allow easy configuration of the 
+      delegation policy, which is easier to use with JMX embedding (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <update>
+      Add support for specifying the TrustStore algorithm, with default to
+      the keystore algorithm (billbarker)
+      </update>
+      <fix>
+      Refactor thread pool logic to avoid deadlocks when no processor is 
+      available (billbarker)
+      </fix>
+      <fix>
+      Filter out all control chars from the response header, as mandated by
+      the HTTP specification (remm)
+      </fix>
+      <fix>
+      <bug>21763</bug>: Make certain that we don't return a bad Socket
+      (billbarker)
+      </fix>
+      <update>
+      Refactor byte chunk buffering so that the written data fits inside the 
+      limit; the number of byte copies is similar to what it was before (remm)
+      </update>
+      <add>
+      Add a buffer at the socket layer, configured using the socketBuffer
+      attribute; add handling for explicit client flushes (remm)
+      </add>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <update>
+      Add an compilation option to generate writing char arrays instead 
+      of Strings for template texts (kinman)
+      </update>
+      <fix>
+      Fix jsp-config problem (jfarcand)
+      </fix>
+      <fix>
+      Use out.print(expr) instead of out.write(String.valueOf(expr)) 
+      for outputting expressions in template texts (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <docs>
+      Update classloader documentation to reflect the actual classloading order
+      (luehe)
+      </docs>
+      <fix>
+      <bug>21933</bug>: Add header possibly ignored if buffer is too large,
+      submitted by Chris Kessel (funkman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.11 (remm)">
 
   <subsection name="General">
