@@ -260,10 +260,17 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Increments the JSP reload counter.
      */
-    public void incrementJspReloadCount() {
-        synchronized(this) {
-            jspReloadCount++;
-        }
+    public synchronized void incrementJspReloadCount() {
+        jspReloadCount++;
+    }
+
+    /**
+     * Resets the JSP reload counter.
+     *
+     * @param count Value to which to reset the JSP reload counter
+     */
+    public synchronized void setJspReloadCount(int count) {
+        this.jspReloadCount = count;
     }
 
     /**
