@@ -224,6 +224,12 @@ public final class HttpConnector
 
 
     /**
+     * The redirect port for non-SSL to SSL redirects.
+     */
+    private int redirectPort = 443;
+
+
+    /**
      * The request scheme that will be set on all requests received
      * through this connector.
      */
@@ -602,6 +608,30 @@ public final class HttpConnector
     public void setProxyPort(int proxyPort) {
 
         this.proxyPort = proxyPort;
+
+    }
+
+
+    /**
+     * Return the port number to which a request should be redirected if
+     * it comes in on a non-SSL port and is subject to a security constraint
+     * with a transport guarantee that requires SSL.
+     */
+    public int getRedirectPort() {
+
+        return (this.redirectPort);
+
+    }
+
+
+    /**
+     * Set the redirect port number.
+     *
+     * @param redirectPort The redirect port number (non-SSL to SSL)
+     */
+    public void setRedirectPort(int redirectPort) {
+
+        this.redirectPort = redirectPort;
 
     }
 

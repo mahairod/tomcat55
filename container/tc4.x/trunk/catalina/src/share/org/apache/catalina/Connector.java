@@ -177,6 +177,22 @@ public interface Connector {
 
 
     /**
+     * Return the port number to which a request should be redirected if
+     * it comes in on a non-SSL port and is subject to a security constraint
+     * with a transport guarantee that requires SSL.
+     */
+    public int getRedirectPort();
+
+
+    /**
+     * Set the redirect port number.
+     *
+     * @param redirectPort The redirect port number (non-SSL to SSL)
+     */
+    public void setRedirectPort(int redirectPort);
+
+
+    /**
      * Return the scheme that will be assigned to requests received
      * through this connector.  Default value is "http".
      */

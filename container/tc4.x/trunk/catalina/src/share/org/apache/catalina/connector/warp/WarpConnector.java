@@ -104,6 +104,8 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
 
     // -------------------------------------------------------- BEAN PROPERTIES
 
+    /** The port to which non-SSL requests should be redirected for SSL */
+    private int redirectPort = 443;
     /** Wether requests received through this connector are secure. */
     private boolean secure=false;
     /** The scheme to be set on requests received through this connector. */
@@ -241,6 +243,24 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
     }
 
     // ----------------------------------------------------------- BEAN METHODS
+
+    /**
+     * Return the port number to which a request should be redirected if
+     * it comes in on a non-SSL port and is subject to a security constraint
+     * with a transport guarantee that requires SSL.
+     */
+    public int getRedirectPort() {
+        return (this.redirectPort);
+    }
+
+    /**
+     * Set the redirect port number.
+     *
+     * @param redirectPort The redirect port number (non-SSL to SSL)
+     */
+    public void setRedirectPort(int redirectPort) {
+        this.redirectPort = redirectPort;
+    }
 
     /**
      * Return the secure connection flag that will be assigned to requests
