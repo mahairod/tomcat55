@@ -142,3 +142,9 @@ BEFORE COMMITTING CHANGES
 You must, MUST do a `build clean;build` to make sure a clean
 workspace builds. Also, you must, MUST run the tests. All tests must
 pass before checking in the code. 
+
+Related Documents
+-----------------
+
+Please read doc/design for further information on the Watchdog design overview.
+For details on Ant, refer to http://jakarta.apache.org/ant/index.html
