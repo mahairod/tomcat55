@@ -176,8 +176,6 @@ public class MBeanUtils {
         String className = component.getClass().getName();
         for (int i = 0; i < exceptions.length; i++) {
             if (className.equals(exceptions[i][0])) {
-                System.out.println("EXC " + className + " --> " +
-                                   exceptions[i][1]);
                 return (exceptions[i][1]);
             }
         }
@@ -186,8 +184,6 @@ public class MBeanUtils {
         int period = className.lastIndexOf('.');
         if (period >= 0)
             className = className.substring(period + 1);
-        System.out.println("STD " + component.getClass().getName() + " --> " +
-                           className);
         return (className);
 
     }
