@@ -853,8 +853,13 @@ public class FileDirContext extends BaseDirContext {
      * @param name Normalized context-relative path (with leading '/')
      */
     protected File file(String name) {
-	if( File.separatorChar == '\\' )
-            name = name.replace('/',File.separatorChar);
+
+        name = normalize(name);
+        if (name == null)
+            return (null);
+
+	if (File.separatorChar == '\\')
+            name = name.replace('/', File.separatorChar);
 
         File file = new File(base, name);
         if (file.exists() && file.canRead()) {
