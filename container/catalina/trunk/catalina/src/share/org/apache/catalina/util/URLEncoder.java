@@ -76,7 +76,7 @@ public class URLEncoder {
             } else {
                 // convert to external encoding before hex conversion
                 try {
-                    writer.write(c);
+                    writer.write((char)c);
                     writer.flush();
                 } catch(IOException e) {
                     buf.reset();
