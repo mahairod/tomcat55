@@ -461,24 +461,46 @@ public class JspUtil {
      */
     public static Class toClass(String type, ClassLoader loader)
 	    throws ClassNotFoundException {
+
+	Class c = null;
+	int i0 = type.indexOf('[');
+	int dims = 0;
+	if (i0 > 0) {
+	    // This is an array.  Count the dimensions
+	    for (int i = 0; i < type.length(); i++) {
+		if (type.charAt(i) == '[')
+		    dims++;
+	    }
+	    type = type.substring(0, i0);
+	}
+
 	if ("boolean".equals(type))
-	    return boolean.class;
+	    c = boolean.class;
 	else if ("char".equals(type))
-	    return char.class;
+	    c = char.class;
 	else if ("byte".equals(type))
-	    return byte.class;
+	    c =  byte.class;
 	else if ("short".equals(type))
-	    return short.class;
+	    c = short.class;
 	else if ("int".equals(type))
-	    return int.class;
+	    c = int.class;
 	else if ("long".equals(type))
-	    return long.class;
+	    c = long.class;
 	else if ("float".equals(type))
-	    return float.class;
+	    c = float.class;
 	else if ("double".equals(type))
-	    return double.class;
-	else
-	    return loader.loadClass(type);
+	    c = double.class;
+	else if (type.indexOf('[') < 0)
+	    c = loader.loadClass(type);
+
+	if (dims == 0)
+	    return c;
+
+	if (dims == 1)
+	    return java.lang.reflect.Array.newInstance(c, 1).getClass();
+
+	// Array of more than i dimension
+	return java.lang.reflect.Array.newInstance(c, new int[dims]).getClass();
     }
 
     /**

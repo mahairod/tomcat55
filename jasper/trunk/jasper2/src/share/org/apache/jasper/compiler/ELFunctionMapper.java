@@ -173,9 +173,6 @@ public class ELFunctionMapper {
 	    el.visit(fv);
 	    ArrayList functions = fv.funcs;
 
-	    // TODO Some optimization here: if the fmap has only one entry,
-	    // if it was generated before, use it.
-
 	    if (functions.size() == 0) {
 		return;
 	    }
@@ -205,7 +202,29 @@ public class ELFunctionMapper {
 		    if (k != 0) {
 			ds.append(", ");
 		    }
-		    ds.append(params[k] + ".class");
+		    int iArray = params[k].indexOf('[');
+		    if (iArray < 0) {
+			ds.append(params[k] + ".class");
+		    }
+		    else {
+			String baseType = params[k].substring(0, iArray);
+			ds.append("java.lang.reflect.Array.newInstance(");
+			ds.append(baseType);
+			ds.append(".class,");
+
+			// Count the number of array dimension
+			int aCount = 0;
+			for (int jj = iArray; jj < params[k].length(); jj++ ) {
+			    if (params[k].charAt(jj) == '[') {
+				aCount++;
+			    }
+			}
+			if (aCount == 1) {
+			    ds.append("0).getClass()");
+			} else {
+			    ds.append("new int[" + aCount + "]).getClass()");
+			}
+		    }
 		}
 		ds.append("});\n");
 		// Put the current name in the global function map
@@ -230,6 +249,9 @@ public class ELFunctionMapper {
 			// If not all in the previous match, then no match.
 			return null;
 		    }
+		} else if (mapName != null) {
+		    // If not all in the previous match, then no match.
+		    return null;
 		}
 	    }
 	    return mapName;
