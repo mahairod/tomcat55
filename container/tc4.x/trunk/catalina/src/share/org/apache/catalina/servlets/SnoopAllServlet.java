@@ -67,13 +67,16 @@ package org.apache.catalina.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.Locale;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -186,6 +189,96 @@ public final class SnoopAllServlet
 		       request.getServletPath());
 	writer.println("<li><b>userPrincipal</b> = " +
 		       request.getUserPrincipal());
+	writer.println("</ul>");
+	writer.println("<hr>");
+
+	// Document the servlet request attributes
+	writer.println("<h1>ServletRequest Attributes</h1>");
+	writer.println("<ul>");
+	attrs = request.getAttributeNames();
+	while (attrs.hasMoreElements()) {
+	    String attr = (String) attrs.nextElement();
+	    writer.println("<li><b>" + attr + "</b> = " +
+			   request.getAttribute(attr));
+	}
+	writer.println("</ul>");
+	writer.println("<hr>");
+
+	// Process the current session (if there is one)
+	HttpSession session = request.getSession(false);
+	if (session != null) {
+
+	    // Document the session properties
+	    writer.println("<h1>HttpSession Properties</h1>");
+	    writer.println("<ul>");
+	    writer.println("<li><b>id</b> = " +
+			   session.getId());
+	    writer.println("<li><b>creationTime</b> = " +
+			   new Timestamp(session.getCreationTime()));
+	    writer.println("<li><b>lastAccessedTime</b> = " +
+			   new Timestamp(session.getLastAccessedTime()));
+	    writer.println("<li><b>maxInactiveInterval</b> = " +
+			   session.getMaxInactiveInterval());
+	    writer.println("</ul>");
+	    writer.println("<hr>");
+
+	    // Document the session attributes
+	    writer.println("<h1>HttpSession Attributes</h1>");
+	    writer.println("<ul>");
+	    attrs = session.getAttributeNames();
+	    while (attrs.hasMoreElements()) {
+		String attr = (String) attrs.nextElement();
+		writer.println("<li><b>" + attr + "</b> = " +
+			       session.getAttribute(attr));
+	    }
+	    writer.println("</ul>");
+	    writer.println("<hr>");
+
+	}
+
+	// Document the servlet configuration properties
+	writer.println("<h1>ServletConfig Properties</h1>");
+	writer.println("<ul>");
+	writer.println("<li><b>servletName</b> = " +
+		       getServletConfig().getServletName());
+	writer.println("</ul>");
+	writer.println("<hr>");
+
+	// Document the servlet configuration initialization parameters
+	writer.println("<h1>ServletConfig Initialization Parameters</h1>");
+	writer.println("<ul>");
+	params = getServletConfig().getInitParameterNames();
+	while (params.hasMoreElements()) {
+	    String param = (String) params.nextElement();
+	    String value = getServletConfig().getInitParameter(param);
+	    writer.println("<li><b>" + param + "</b> = " + value);
+	}
+	writer.println("</ul>");
+	writer.println("<hr>");
+
+	// Document the servlet context properties
+	writer.println("<h1>ServletContext Properties</h1>");
+	writer.println("<ul>");
+	writer.println("<li><b>majorVersion</b> = " +
+		       getServletContext().getMajorVersion());
+	writer.println("<li><b>minorVersion</b> = " +
+		       getServletContext().getMinorVersion());
+	writer.println("<li><b>realPath('/')</b> = " +
+		       getServletContext().getRealPath("/"));
+	writer.println("<li><b>serverInfo</b> = " +
+		       getServletContext().getServerInfo());
+	writer.println("</ul>");
+	writer.println("<hr>");
+
+	// Document the servlet context initialization parameters
+	writer.println("<h1>ServletContext Initialization Parameters</h1>");
+	writer.println("<ul>");
+	params = getServletContext().getInitParameterNames();
+	while (params.hasMoreElements()) {
+	    String param = (String) params.nextElement();
+	    String value = getServletContext().getInitParameter(param);
+	    writer.println("<li><b>" + param + "</b> = " + value);
+	}
 	writer.println("</ul>");
 	writer.println("<hr>");
 
