@@ -1,0 +1,143 @@
+<project name="Tester" default="all">
+
+  <!-- ========== Global Properties ======================================= -->
+  <property name="catalina.home"  value="../../build/tomcat-4.0"/>
+  <property name="host"           value="localhost"/>
+  <property name="port"           value="8080"/>
+  <property name="context.path"   value="/tester"/>
+  <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
+
+
+  <target name="all" depends="ROOT,CaseSensitive,ServletRequest"/>
+
+
+  <target name="ROOT">
+
+    <!-- ========== Basic Run State ======================================= -->
+
+    <!-- Should be able to see the home page -->
+    <tester host="${host}" port="${port}"
+         request="/index.html"
+          status="200"/>
+
+  </target>
+
+
+  <target name="CaseSensitive">
+
+    <!-- ========== Case Sensitive Request URI Matching =================== -->
+
+    <!-- Make sure that static resources are matched case sensitively -->
+    <tester host="${host}" port="${port}"
+         request="/index.HTML"
+          status="404"/>
+
+    <!-- Should be able to execute the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/examples/jsp/dates/date.jsp"
+          status="200"/>
+
+    <!-- Should not be able to view the source of the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/examples/jsp/dates/date.Jsp"
+          status="404"/>
+
+    <!-- Should not be able to view the source of the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/examples/jsp/dates/Date.jsp"
+          status="404"/>
+
+    <!-- Should not be able to view the source of the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/examples/jsp/Dates/date.jsp"
+          status="404"/>
+
+    <!-- Should not be able to view the source of the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/examples/Jsp/dates/date.jsp"
+          status="404"/>
+
+    <!-- Should not be able to view the source of the Date example -->
+    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
+    <tester host="${host}" port="${port}"
+         request="/Examples/jsp/dates/date.jsp"
+          status="404"/>
+
+    <!-- Should be able to execute the HelloWorld servlet example -->
+    <tester host="${host}" port="${port}"
+         request="/examples/servlet/HelloWorldExample"
+          status="200"/>
+
+    <!-- Should not be able to execute HelloWorld with different cases -->
+    <tester host="${host}" port="${port}"
+         request="/examples/servlet/helloWorldExample"
+          status="404"/>
+
+    <!-- Should not be able to execute HelloWorld with different cases -->
+    <tester host="${host}" port="${port}"
+         request="/examples/Servlet/HelloWorldExample"
+          status="404"/>
+
+    <!-- Should not be able to execute HelloWorld with different cases -->
+    <tester host="${host}" port="${port}"
+         request="/Examples/servlet/HelloWorldExample"
+          status="404"/>
+
+  </target>
+
+
+  <target name="ServletRequest">
+
+    <!-- ========== Parameters and Query Strings ========================== -->
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/GetParameter01?foo=1"
+      outContent="GetParameter01 PASSED"/>
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/GetQueryString01?foo=1"
+      outContent="GetQueryString01 PASSED"/>
+
+
+    <!-- ========== Other ServletRequest Tests ============================ -->
+
+    <!-- Servlet compliance tests, until equivalent tests are included
+         in jakarta-watchdog-4.0.  -->
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/GetInputStream01"
+      outContent="GetInputStream01 PASSED"/>
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/GetParameterMap00?BestLanguage=Java&amp;BestJSP=Java2"
+      outContent="GetParameterMap00 PASSED"/>
+
+
+    <!-- ========== Authentication ======================================== -->
+
+    <!-- Once a user has been authenticated, the corresponding user identity
+         should be visible to all other requests in this web application, even
+         for URIs that are not protected by security constraints.  This is
+         tested by invoking a protected URI followed by a non-protected URI
+    -->
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/protected/Authentication01"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication01 PASSED"/>
+
+    <tester host="${host}" port="${port}"
+         request="${context.path}/protected/Authentication02"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+      outContent="Authentication02 PASSED"/>
+
+
+  </target>
+
+
+</project>

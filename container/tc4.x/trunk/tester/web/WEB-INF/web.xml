@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<!-- Deployment Descriptor for the Tester Web Application -->
+
+<web-app>
+
+    <!-- ========== Servlet Definitions =================================== -->
+
+    <servlet>
+        <servlet-name>Authentication01</servlet-name>
+        <servlet-class>org.apache.tester.Authentication01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Authentication02</servlet-name>
+        <servlet-class>org.apache.tester.Authentication02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetInputStream01</servlet-name>
+        <servlet-class>org.apache.tester.GetInputStream01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetParameter01</servlet-name>
+        <servlet-class>org.apache.tester.GetParameter01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <servlet-class>org.apache.tester.GetParameterMap00</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetQueryString01</servlet-name>
+        <servlet-class>org.apache.tester.GetQueryString01</servlet-class>
+    </servlet>
+
+
+    <!-- ========== Servlet Mappings ====================================== -->
+
+    <servlet-mapping>
+        <servlet-name>Authentication01</servlet-name>
+        <url-pattern>/protected/Authentication01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Authentication02</servlet-name>
+        <url-pattern>/protected/Authentication02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetInputStream01</servlet-name>
+        <url-pattern>/GetInputStream01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameter01</servlet-name>
+        <url-pattern>/GetParameter01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetParameterMap00</servlet-name>
+        <url-pattern>/GetParameterMap00</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetQueryString01</servlet-name>
+        <url-pattern>/GetQueryString01</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- ========== Security Constraints ================================== -->
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Authentication Servlet</web-resource-name>
+            <url-pattern>/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>tomcat</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Authentication Servlet</realm-name>
+    </login-config>
+
+
+</web-app>
