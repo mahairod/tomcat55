@@ -27,6 +27,9 @@
       <fix>
         <bug>29048</bug>: Made DataSourceRealm easier to extend. (yoavs)
       </fix>
+      <fix>
+        <bug>29472</bug>: Embedded overrides add/remove Connector, but not findConnectors (luehe)
+      </fix>
     </changelog>
   </subsection>
 
