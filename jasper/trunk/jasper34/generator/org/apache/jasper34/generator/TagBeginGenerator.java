@@ -71,7 +71,8 @@ import javax.servlet.jsp.tagext.BodyTag;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.core.*;
-
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 //import org.apache.jasper.compiler.ServletWriter;
 
@@ -80,26 +81,25 @@ import org.apache.jasper34.core.*;
  *
  * @author Anil K. Vijendran
  */
-public class TagBeginGenerator
-    extends TagGeneratorBase
-    implements ServiceMethodPhase
+public class TagBeginGenerator extends TagGeneratorBase
 {
     String prefix;
     String shortTagName;
     Hashtable attrs;
     TagLibraryInfo tli;
-    TagInfo ti;
+    TagInfoImpl ti;
     TagAttributeInfo[] attributes;
     String baseVarName, thVarName;
-    TagCache tc;
+    //    TagCache tc; // part of TagInfoImpl
     TagData tagData;
     Mark start;
     TagLibraries libraries;
 
 
-    public TagBeginGenerator(Mark start, String prefix, String shortTagName, Hashtable attrs,
-			     TagLibraryInfo tli, TagInfo ti, TagLibraries libraries,
-                             Stack tagHandlerStack, Hashtable tagVarNumbers)
+    public TagBeginGenerator(Mark start, String prefix, String shortTagName,
+			     Hashtable attrs,TagLibraryInfo tli, TagInfo ti,
+			     TagLibraries libraries, Stack tagHandlerStack,
+			     Hashtable tagVarNumbers)
         throws JasperException
     {
         setTagHandlerStack(tagHandlerStack);
@@ -108,7 +108,7 @@ public class TagBeginGenerator
         this.shortTagName = shortTagName;
         this.attrs = attrs;
 	this.tli = tli;
-	this.ti = ti;
+	this.ti = (TagInfoImpl)ti;
 	this.attributes = ti.getAttributes();
 	this.baseVarName = getTagVarName(prefix, shortTagName);
 	this.thVarName = "_jspx_th_"+baseVarName;
@@ -118,24 +118,21 @@ public class TagBeginGenerator
 
     public void init(JspCompilationContext ctxt) throws JasperException {
         validate();
-        tc = libraries.getTagCache(prefix, shortTagName);
-        if (tc == null) {
-            tc = new TagCache(shortTagName);
-
+        //tc = libraries.getTagInfoImpl(prefix, shortTagName);
+	if( ti.getTagHandlerClass() == null ) {
             ClassLoader cl = ctxt.getClassLoader();
             Class clz = null;
             try {
                 clz = cl.loadClass(ti.getTagClassName());
             } catch (Exception ex) {
                 throw new CompileException(start,
-					   Constants.getString("jsp.error.unable.loadclass",
-                                                              new Object[] { ti.getTagClassName(),
-                                                                             ex.getMessage()
-                                                              }
-                                                              ));
+			   Constants.getString("jsp.error.unable.loadclass",
+				       new Object[] { ti.getTagClassName(),
+					  ex.getMessage() }
+					       ));
             }
-            tc.setTagHandlerClass(clz);
-            libraries.putTagCache(prefix, shortTagName, tc);
+            ti.setTagHandlerClass(clz);
+            //libraries.putTagInfo(prefix, shortTagName, tc);
         }
     }
 
@@ -193,7 +190,7 @@ public class TagBeginGenerator
                 String attrValue = (String) attrs.get(attributes[i].getName());
                 if (attrValue != null) {
 		    String attrName = attributes[i].getName();
-		    Method m = tc.getSetterMethod(attrName);
+		    Method m = ti.getSetterMethod(attrName);
 		    if (m == null)
 			throw new CompileException
 			    (start, Constants.getString
@@ -273,7 +270,8 @@ public class TagBeginGenerator
         }
     }   
     
-    public void generateServiceMethodStatements(ServletWriter writer)
+    //    public void generateServiceMethodStatements(ServletWriter writer)
+    public void generateServiceMethod(ServletWriter writer)
         throws JasperException
     {
         TagVariableData top = topTag();
@@ -318,7 +316,7 @@ public class TagBeginGenerator
         writer.println("int "+evalVar+" = "
                        +thVarName+".doStartTag();");
 
-        boolean implementsBodyTag = BodyTag.class.isAssignableFrom(tc.getTagHandlerClass());
+        boolean implementsBodyTag = BodyTag.class.isAssignableFrom(ti.getTagHandlerClass());
 
         // Need to update AT_BEGIN variables here
         declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
@@ -331,13 +329,13 @@ public class TagBeginGenerator
         if (implementsBodyTag) {
             writer.println("if ("+evalVar+" == javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
             writer.pushIndent();
-            writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
+            writer.println("throw new JspTagException(\"Since tag handler "+ti.getTagHandlerClass()+
                            " implements BodyTag, it can't return Tag.EVAL_BODY_INCLUDE\");");
             writer.popIndent();
         } else {
             writer.println("if ("+evalVar+" == javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_TAG)");
             writer.pushIndent();
-            writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
+            writer.println("throw new JspTagException(\"Since tag handler "+ti.getTagHandlerClass()+
                            " does not implement BodyTag, it can't return BodyTag.EVAL_BODY_TAG\");");
             writer.popIndent();
         }
@@ -369,9 +367,4 @@ public class TagBeginGenerator
         declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
     }
 
-    public void generate(ServletWriter writer, Class phase)
-        throws JasperException
-    {
-        generateServiceMethodStatements(writer);
-    }
 }

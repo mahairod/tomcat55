@@ -67,7 +67,8 @@ import javax.servlet.jsp.tagext.TagInfo;
 
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.core.*;
-
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 /**
  * This class generates tag pooling related information.  Specifically,
  * it generates code to declare tag pools and to obtain tag pools
@@ -77,7 +78,7 @@ import org.apache.jasper34.core.*;
  * @see org.apache.jasper.runtime.TagPoolManager
  */
 public class TagPoolGenerator extends GeneratorBase
-    implements ClassDeclarationPhase, InitMethodPhase {
+{
 
     // Tag related info.
     // Some of them aren't used now, but might be in the future.
@@ -170,23 +171,23 @@ public class TagPoolGenerator extends GeneratorBase
      * @param writer
      * @param phase
      */
-    public void generate(ServletWriter writer, Class phase) {
-        if (ClassDeclarationPhase.class.isAssignableFrom(phase)) {
-            writer.println(Constants.JSP_RUNTIME_PACKAGE +
-			   ".TagHandlerPool " + poolVarName + " = null;");
-        } else if (InitMethodPhase.class.isAssignableFrom(phase)) {
-            writer.println("if (" + TagPoolManagerGenerator.MANAGER_VARIABLE + " != null) {");
-            writer.pushIndent();
-            writer.println(poolVarName + " = ");
-            writer.pushIndent();
-            writer.println(TagPoolManagerGenerator.MANAGER_VARIABLE + ".getPool(\"" + poolName + "\",");
-            writer.println(ti.getTagClassName() + ".class);");
-            writer.popIndent();
-            writer.popIndent();
-            writer.println("}");
-        }
+    public void generateClassDeclaration(ServletWriter writer) {
+	writer.println(Constants.JSP_RUNTIME_PACKAGE +
+		       ".TagHandlerPool " + poolVarName + " = null;");
     }
 
+    public void generateInitMethod(ServletWriter writer ) {
+	writer.println("if (" + TagPoolManagerGenerator.MANAGER_VARIABLE + " != null) {");
+	writer.pushIndent();
+	writer.println(poolVarName + " = ");
+	writer.pushIndent();
+	writer.println(TagPoolManagerGenerator.MANAGER_VARIABLE + ".getPool(\"" + poolName + "\",");
+	writer.println(ti.getTagClassName() + ".class);");
+	writer.popIndent();
+	writer.popIndent();
+	writer.println("}");
+    }
+    
 
     /**
      * This method generates a string based on a set of tag attributes.

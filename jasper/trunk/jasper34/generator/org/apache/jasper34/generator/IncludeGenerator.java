@@ -63,6 +63,8 @@ import java.io.File;
 
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 /**
  * Generator for <jsp:include.../>
@@ -71,9 +73,7 @@ import org.apache.jasper34.runtime.JasperException;
  * @author Anil K. Vijendran
  * @author Mandar Raje
  */
-public class IncludeGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase 
+public class IncludeGenerator extends GeneratorBase
 {
     String page;
     boolean isExpression = false;
@@ -104,7 +104,7 @@ public class IncludeGenerator
 	    isExpression = JspUtil.isExpression (page);
     }
     
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	boolean initial = true;
 	String sep = "?";
 	writer.println("{");

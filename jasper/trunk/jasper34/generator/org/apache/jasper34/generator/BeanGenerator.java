@@ -58,12 +58,14 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.jsptree.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.lang.reflect.Method;
 
 import org.apache.jasper34.core.*;
+import org.apache.jasper34.parser.*;
 import org.apache.jasper34.runtime.JasperException;
 
 /**
@@ -71,14 +73,13 @@ import org.apache.jasper34.runtime.JasperException;
  *
  * @author Mandar Raje
  */
-public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase, 
-    ClassDeclarationPhase {
+public class BeanGenerator extends GeneratorBase  {
   
-	Hashtable attrs;
-	BeanRepository beanInfo;
-	boolean genSession;
-	boolean beanRT = false;
-	Mark start;
+    Hashtable attrs;
+    BeanRepository beanInfo;
+    boolean genSession;
+    boolean beanRT = false;
+    Mark start;
   
     public BeanGenerator (Mark start, Hashtable attrs, BeanRepository beanInfo,
 			  boolean genSession) {
@@ -88,17 +89,21 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	this.start = start;
     }
 	
-    public void generate (ServletWriter writer, Class phase)
-	throws JasperException {
+    public void generateServiceMethod(ServletWriter writer)
+	throws JasperException
+    {
+	generateMethod (writer);
+    }
 
-	    if (ClassDeclarationPhase.class.equals (phase)) 
-		checkSyntax (writer, phase);
-	    else if (ServiceMethodPhase.class.equals (phase))
-		generateMethod (writer, phase);
+    public void generateClassDeclaration(ServletWriter writer)
+	throws JasperException
+    {
+	checkSyntax (writer);
     }
   
-    public void checkSyntax (ServletWriter writer, Class phase) 
-	throws JasperException		{
+    public void checkSyntax (ServletWriter writer) 
+	throws JasperException
+    {
 	    String  name       = getAttribute ("id");
 	    String  varname    = name;
 	    String  serfile    = name;
@@ -155,8 +160,9 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
             }
     }
   
-    public void generateMethod (ServletWriter writer, Class phase) 
-	throws JasperException {
+    public void generateMethod (ServletWriter writer) 
+	throws JasperException
+    {
 	    String  name       = getAttribute ("id");
 	    String  varname    = name;
 	    String  serfile    = name;
@@ -265,7 +271,7 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 
     private void lock (ServletWriter writer, String scope) {
 	
-	writer.println(" synchronized (" + scope + ") {");
+	writer.println("synchronized (" + scope + ") {");
 	writer.pushIndent();
     }
 
@@ -296,8 +302,10 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 			     String scope) {
 	
 	writer.println (varname + "= (" + type + ")");
+	writer.pushIndent();
 	writer.println ("pageContext.getAttribute(" +
 			writer.quoteString(name) + "," + scope + ");");
+	writer.popIndent();
     }
 		
     private void createBean(ServletWriter writer, String varname, String clsname,

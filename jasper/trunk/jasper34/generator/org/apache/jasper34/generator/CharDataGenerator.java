@@ -61,6 +61,9 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
+
 /**
  * CharDataGenerator generates the character data present in the JSP
  * file. Typically this is HTML which lands up as strings in
@@ -68,9 +71,7 @@ package org.apache.jasper34.generator;
  *
  * @author Anil K. Vijendran
  */
-public class CharDataGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase
+public class CharDataGenerator extends GeneratorBase
 {
     char[] chars;
 
@@ -81,7 +82,7 @@ public class CharDataGenerator
 	this.chars = chars;
     }
 
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	writer.indent();
 	int current	= 0;
 	int limit       = chars.length;

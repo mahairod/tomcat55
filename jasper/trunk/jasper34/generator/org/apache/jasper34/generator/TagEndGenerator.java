@@ -65,15 +65,15 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.BodyTag;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 /**
  * Custom tag support.
  *
  * @author Anil K. Vijendran
  */
-public class TagEndGenerator
-    extends TagGeneratorBase
-    implements ServiceMethodPhase
+public class TagEndGenerator extends TagGeneratorBase
 {
     String prefix, shortTagName;
     TagLibraryInfo tli;
@@ -96,7 +96,7 @@ public class TagEndGenerator
 	this.libraries = libraries;
     }
 
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
         TagVariableData tvd = tagEnd();
         String thVarName = tvd.tagHandlerInstanceName;
         String evalVarName = tvd.tagEvalVarName;
@@ -104,8 +104,8 @@ public class TagEndGenerator
 
         VariableInfo[] vi = ti.getVariableInfo(new TagData(attrs));
 
-        Class tagHandlerClass =
-	    libraries.getTagCache(prefix, shortTagName).getTagHandlerClass();
+        Class tagHandlerClass = ((TagInfoImpl)ti).getTagHandlerClass();
+
         boolean implementsBodyTag = BodyTag.class.isAssignableFrom(tagHandlerClass);
 
 	writer.popIndent();

@@ -61,6 +61,8 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 
 
@@ -71,9 +73,7 @@ package org.apache.jasper34.generator;
  *
  * @author Anil K. Vijendran
  */
-public class DeclarationGenerator 
-    extends GeneratorBase
-    implements ClassDeclarationPhase 
+public class DeclarationGenerator extends GeneratorBase
 {
     char[] chars;
     
@@ -81,7 +81,7 @@ public class DeclarationGenerator
 	this.chars = chars;
     }
     
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateClassDeclaration(ServletWriter writer) {
 	writer.printMultiLn(new String(JspUtil.removeQuotes(chars)));
     }
     

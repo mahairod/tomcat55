@@ -62,15 +62,15 @@ package org.apache.jasper34.generator;
 
 import java.util.Vector;
 import org.apache.jasper34.runtime.JasperException;
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 /**
  * StoredCharDataGenerator generates HTML and other data present in
  * JSP files to be stored/serialized into a .dat file. 
  *
  * @author Anil K. Vijendran
  */
-public class StoredCharDataGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase, InitMethodPhase, ClassDeclarationPhase
+public class StoredCharDataGenerator extends GeneratorBase
 {
     int stringId;
     char[] chars;
@@ -89,12 +89,14 @@ public class StoredCharDataGenerator
         return "_jspx_html_data["+stringId+"]";
     }
 
-    private final void generateRef(ServletWriter writer) {
+    //    private final void generateRef(ServletWriter writer) {
+    public void generateClassDeclaration(ServletWriter writer) {
         if (stringId == 0)
             writer.println("static char[][] _jspx_html_data = null;");
     }
 
-    private final void generateInit(ServletWriter writer) {
+    //    private final void generateInit(ServletWriter writer) {
+    public void generateInitMethod(ServletWriter writer) {
         if (stringId == 0) {
             String name = writer.quoteString(fileName);
             writer.println("java.io.ObjectInputStream oin = null;");
@@ -120,18 +122,10 @@ public class StoredCharDataGenerator
         }
     }
 
-    private final void generatePrint(ServletWriter writer) {
+    //    private final void generatePrint(ServletWriter writer) {
+    public void generateServiceMethod(ServletWriter writer) {
         writer.println("out.print("+getStringVar()+");");
         vector.addElement(chars);
-    }
-
-    public void generate(ServletWriter writer, Class phase) {
-        if (phase.equals(ClassDeclarationPhase.class))
-            generateRef(writer);
-        else if (phase.equals(InitMethodPhase.class))
-            generateInit(writer);
-        else if (phase.equals(ServiceMethodPhase.class))
-            generatePrint(writer);
     }
 
     public boolean generateCoordinates(Class phase) {

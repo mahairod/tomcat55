@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -61,18 +57,21 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
+
 /**
  * Deal with </jsp:useBean>.
  *
  * @author Mandar Raje.
  */
-public class BeanEndGenerator extends GeneratorBase implements ServiceMethodPhase {
+public class BeanEndGenerator extends GeneratorBase {
     // Will chage this later.
     public BeanEndGenerator() {
     }
     
 
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	writer.println("}");
     }
     

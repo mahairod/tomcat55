@@ -61,7 +61,8 @@
 
 package org.apache.jasper34.generator;
 
-
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 
 
@@ -70,9 +71,7 @@ package org.apache.jasper34.generator;
  *
  * @author Anil K. Vijendran
  */
-public class ScriptletGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase 
+public class ScriptletGenerator extends GeneratorBase
 {
     char[] chars;
     
@@ -81,7 +80,7 @@ public class ScriptletGenerator
     }
     
 
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	writer.printMultiLn(new String(JspUtil.removeQuotes(chars)));
     }
     

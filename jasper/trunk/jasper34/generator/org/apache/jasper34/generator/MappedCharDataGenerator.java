@@ -60,6 +60,8 @@
  */ 
 
 package org.apache.jasper34.generator;
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 /**
  * CharDataGenerator generates the character data present in the JSP
@@ -77,7 +79,7 @@ public class MappedCharDataGenerator extends CharDataGenerator {
 	super(chars);
     }
 
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	writer.indent();
 	writer.print("out.write(\"");
 	// Generate the char data:

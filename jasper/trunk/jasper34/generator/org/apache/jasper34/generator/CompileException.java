@@ -63,6 +63,7 @@ package org.apache.jasper34.generator;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.runtime.*;
+import org.apache.jasper34.parser.*;
 
 /**
  * Class for parser exceptions. 

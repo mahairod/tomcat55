@@ -61,6 +61,8 @@ import java.util.Stack;
 import java.util.Hashtable;
 
 import javax.servlet.jsp.tagext.VariableInfo;
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 /**
  * Common stuff for use with TagBegin and TagEndGenerators.

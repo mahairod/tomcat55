@@ -63,15 +63,14 @@ import java.util.Enumeration;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.core.*;
-
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 /**
  * Generator for <jsp:plugin>
  *
  * @author Rajiv Mordani [mode@eng.sun.com]
  */
-public class PluginGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase 
+public class PluginGenerator extends GeneratorBase
 {
     Hashtable attrs;
     Hashtable param;
@@ -93,8 +92,8 @@ public class PluginGenerator
         ieClassId = ctxt.getOptions().getIeClassId();
     }
     
-    public void generate(ServletWriter writer, Class phase) 
-    				throws JasperException
+    public void generateServiceMethod(ServletWriter writer) 
+	throws JasperException
     {
 
 	String type = getAttribute ("type");

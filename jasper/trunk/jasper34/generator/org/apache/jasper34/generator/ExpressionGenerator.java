@@ -61,14 +61,15 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
+
 /**
  * Generator to deal with JSP expressions: <%= ... %> stuff. 
  *
  * @author Anil K. Vijendran
  */
-public class ExpressionGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase 
+public class ExpressionGenerator extends GeneratorBase
 {
     char[] chars;
     
@@ -76,7 +77,7 @@ public class ExpressionGenerator
 	this.chars = chars;
     }
     
-    public void generate(ServletWriter writer, Class phase) {
+    public void generateServiceMethod(ServletWriter writer) {
 	writer.println("out.print("+new String(JspUtil.removeQuotes(chars))+");");
     }
 }

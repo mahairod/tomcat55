@@ -61,6 +61,8 @@
 
 package org.apache.jasper34.generator;
 
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 
 
@@ -71,9 +73,7 @@ package org.apache.jasper34.generator;
  *
  * @author Unknown
  */
-class InfoGenerator 
-    extends GeneratorBase
-    implements ClassDeclarationPhase 
+class InfoGenerator extends GeneratorBase
 {
   private String info;
 
@@ -81,7 +81,7 @@ class InfoGenerator
     this.info = info;
   }
 
-  public void generate (ServletWriter writer, Class phase) {
+  public void generateClassDeclaration (ServletWriter writer) {
     writer.println ("public String getServletInfo() {");
     writer.pushIndent();
     writer.println ("return \"" + this.info + "\";");

@@ -61,6 +61,8 @@ import org.apache.jasper34.core.*;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.beans.*;
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 import org.apache.jasper34.runtime.JasperException;
 
@@ -69,9 +71,7 @@ import org.apache.jasper34.runtime.JasperException;
  *
  * @author Mandar Raje
  */
-public class SetPropertyGenerator
-    extends GeneratorBase
-    implements ServiceMethodPhase 
+public class SetPropertyGenerator extends GeneratorBase
 {
     Hashtable attrs;
     BeanRepository beanInfo;
@@ -84,8 +84,9 @@ public class SetPropertyGenerator
 	this.start = start;
     }
     
-    public void generate (ServletWriter writer, Class phase) 
-	throws JasperException {
+    public void generateServiceMethod (ServletWriter writer) 
+	throws JasperException
+    {
 	    String name     = getAttribute ("name");
 	    String property = getAttribute ("property");
 	    String param    = getAttribute ("param");

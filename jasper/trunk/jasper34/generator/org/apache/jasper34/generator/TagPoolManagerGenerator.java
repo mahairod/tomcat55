@@ -61,7 +61,8 @@ package org.apache.jasper34.generator;
 
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.core.*;
-
+import org.apache.jasper34.parser.*;
+import org.apache.jasper34.jsptree.*;
 
 /**
  * This class generates code during the initilization phase that
@@ -71,7 +72,7 @@ import org.apache.jasper34.core.*;
  * @see org.apache.jasper.runtime.TagPoolManager
  */
 public class TagPoolManagerGenerator extends GeneratorBase
-    implements InitMethodPhase {
+{
 
     /**
      * variable name generated into java file
@@ -84,16 +85,14 @@ public class TagPoolManagerGenerator extends GeneratorBase
      * @param writer
      * @param phase
      */
-    public void generate(ServletWriter writer, Class phase) {
-        if (InitMethodPhase.class.isAssignableFrom(phase)) {
-            writer.println(Constants.JSP_RUNTIME_PACKAGE +
-			   ".TagPoolManager " + MANAGER_VARIABLE + " =");
-            writer.pushIndent();
-            // writer.println("org.apache.jasper.runtime.TagPoolManager.getDefaultPoolManager();");
-            writer.println("(" + Constants.JSP_RUNTIME_PACKAGE
-			   + ".TagPoolManager) getServletContext().getAttribute(\"" +
-                TagPoolManager.CONTEXT_ATTRIBUTE_NAME + "\");");
-            writer.popIndent();
-        }
+    public void generateInitMethod(ServletWriter writer) {
+	writer.println(Constants.JSP_RUNTIME_PACKAGE +
+		       ".TagPoolManager " + MANAGER_VARIABLE + " =");
+	writer.pushIndent();
+	// writer.println("org.apache.jasper.runtime.TagPoolManager.getDefaultPoolManager();");
+	writer.println("(" + Constants.JSP_RUNTIME_PACKAGE
+		       + ".TagPoolManager) getServletContext().getAttribute(\"" +
+		       TagPoolManager.CONTEXT_ATTRIBUTE_NAME + "\");");
+	writer.popIndent();
     }
 }
