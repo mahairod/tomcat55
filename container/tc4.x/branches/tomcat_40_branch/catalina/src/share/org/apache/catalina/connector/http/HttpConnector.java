@@ -963,7 +963,11 @@ public final class HttpConnector
             }
         } catch (Exception e) {
             log(sm.getString("httpConnector.noAddress", address));
-            return (factory.createSocket(port, acceptCount));
+            try {
+                return (factory.createSocket(port, acceptCount));
+            } catch (BindException be) {
+                throw new BindException(be.getMessage() + ":" + port);
+            }
         }
 
     }
