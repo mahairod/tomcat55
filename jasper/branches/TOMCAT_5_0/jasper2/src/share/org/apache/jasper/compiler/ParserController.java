@@ -407,13 +407,44 @@ class ParserController implements TagConstants {
 	String encoding = null;
         String saveEncoding = null;
 
+        jspReader.reset(startMark);
+
 	/*
 	 * Determine page encoding from directive of the form <%@ page %> or
 	 * <%@ tag %>
 	 */
-	jspReader.reset(startMark);
-	while (jspReader.skipUntil("<%@") != null) {
+        while (true) {
+            Mark current = jspReader.mark();
+
+            Mark beginDirective = jspReader.skipUntil("<%@");
+            if (beginDirective == null) {
+                break;
+            }
+            // Move past the '<%@' delimiter
+            Mark beginDirectiveBody = jspReader.mark();
+
+            // Check to see if directive is nested inside comment
+            jspReader.reset(current);
+            Mark beginComment = jspReader.skipUntil("<%--");
+            if (beginComment != null) {
+                Mark endComment = jspReader.skipUntil("--%>");
+                if (endComment == null) {
+                    err.jspError(beginComment, "jsp.error.unterminated",
+                                 "&lt;%--");
+                }
+  
+                if (beginDirective.isGreater(beginComment)
+                        && endComment.isGreater(beginDirective)) {
+                    // Directive is nested inside comment, skip until end of 
+                    // comment
+                    jspReader.reset(endComment);
+                    continue;
+                }
+            }
+
+            jspReader.reset(beginDirectiveBody);
 	    jspReader.skipSpaces();
+
 	    // compare for "tag ", so we don't match "taglib"
 	    if (jspReader.matches("tag ") || jspReader.matches("page")) {
 
@@ -429,6 +460,7 @@ class ParserController implements TagConstants {
                 }
 	    }
 	}
+
         if (encoding == null) {
             encoding = saveEncoding;
         }
