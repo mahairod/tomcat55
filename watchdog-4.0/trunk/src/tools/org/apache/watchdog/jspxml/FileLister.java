@@ -63,10 +63,16 @@ package org.apache.watchdog.jspxml;
 import java.io.*;
 import java.util.*;
 
+/**
+   When determining if a file should be listed, if
+   <code>ignore!=null</code>, then do not include files that end with
+   <code>ingore + "." + extension.
+*/
 public class FileLister {
     protected Vector file_list ;
     protected File start_dir ;
     protected String extension ;
+	protected String ignore ;
 
     public FileLister() {
         file_list = new Vector();
@@ -78,6 +84,13 @@ public class FileLister {
         file_list = new Vector();
         start_dir = new File(absolute_path);
         this.extension = extension ;
+    }
+
+    public FileLister(String absolute_path, String extension, String ignore) {
+        file_list = new Vector();
+        start_dir = new File(absolute_path);
+        this.extension = extension ;
+		this.ignore = ignore;
     }
 
     public Object[] listFiles() {
@@ -101,8 +114,12 @@ public class FileLister {
 
             String file_extension = file_name.substring(dot_index + 1, file_name.length());
 
-            if (file_extension.equals(extension))
-                file_list.add(start_dir.getAbsolutePath());
+            if (file_extension.equals(extension)) {
+				if (ignore==null ||
+					! file_name.endsWith(ignore + "." + extension))
+
+					file_list.add(start_dir.getAbsolutePath());
+			}
             return ;
         }
         //we are here means we have a directory

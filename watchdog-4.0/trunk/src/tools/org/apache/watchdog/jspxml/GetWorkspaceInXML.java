@@ -89,19 +89,19 @@ public class GetWorkspaceInXML {
         }
 
         String extension = "jsp" ; //files with extension .jsp
+		String jsp_root_file = new File(jsp_root_dir).toString();
+		int jsp_root_length = jsp_root_file==null ? 0 : jsp_root_file.length();
 
-        FileLister lister = new FileLister(jsp_root_dir , extension) ;
+        FileLister lister = new FileLister(jsp_root_dir , extension, "XML") ;
         Object[] files = lister.listFiles();
-        System.out.println("" + files.length + " files to process in " +
-                           jsp_root_dir);
+        System.out.println(files.length + " files to process in " + 
+						   jsp_root_dir);                           
 
+		int already_converted = 0;
         for (int i = 0; i < files.length;i++) {
             jsp_file = (String)files[i];
             int index = jsp_file.lastIndexOf(".jsp");
 
-            if (index != -1)
-                if (jsp_file.endsWith("XML.jsp"))
-                    continue;
             xml_file = jsp_file.substring(0, index) + "XML" + ".jsp";
 
             //it should convert only if the jsp file is newer than the XML file
@@ -109,15 +109,25 @@ public class GetWorkspaceInXML {
             File file_jsp = new File(jsp_file) ;
             File file_xml = new File(xml_file);
 
-            System.out.println("processing " + jsp_file);
             if (file_xml.exists()) {  
                 //there was already a conversion
-                if (file_xml.lastModified() > file_jsp.lastModified())
+                if (file_xml.lastModified() > file_jsp.lastModified()) {
+					already_converted++;
                     continue;
+				}
             }
 
             //if we are here means we need to convert the jsp file to xml
-            System.out.println("*** converting to " + xml_file);
+			String xml_file_name = xml_file.toString();
+			int path_index = xml_file_name.indexOf(jsp_root_file);
+			if (path_index > 0) {
+				String relative_path =
+					xml_file_name.substring(path_index + jsp_root_length + 1);
+				System.out.println("  " + relative_path);
+			}
+			else
+				System.out.println("  " + xml_file);
+
             jsp2XML jsp_converter = new jsp2XML(jsp_file);
             String xml = jsp_converter.ConvertJsp2XML();
 
@@ -130,6 +140,9 @@ public class GetWorkspaceInXML {
             }
 
         }  //end for
+		if (already_converted > 0)
+			System.out.println(already_converted +
+							   " files previously converted");
 
         //we generated the workspace in XML...now we need to create the
         //jsp-gtest-xml file that has targets for running the tests against
