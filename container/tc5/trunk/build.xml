@@ -55,6 +55,9 @@
   <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
+  <property name="tomcat-dbcp.home" value="${base.path}/tomcat-deps" />
+  <property name="tomcat-dbcp.jar" 
+       value="${tomcat-dbcp.home}/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
   
   <!-- Some compilers will disable debugging if true. And it doesn't do anything 
        in most cases -->
@@ -500,18 +503,25 @@
 
   	<antcall target="downloadgz">
       <param name="sourcefile" value="${commons-collections-src.loc}"/>
-      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+      <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
   	<antcall target="downloadgz">
       <param name="sourcefile" value="${commons-pool-src.loc}"/>
-      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+      <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-dbcp-src.loc}"/>
-      <param name="destfile" value="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"/>
+      <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
-  	<mkdir dir="${base.path}/tomcat-deps"/>
-    <copy todir="${base.path}/tomcat-deps">
+
+   <mkdir dir="${tomcat-dbcp.home}"/>
+   <antcall target="build-tomcat-dbcp">
+      <param name="basedir" value="${tomcat-dbcp.home}" />
+   </antcall>
+  </target>
+
+  <target name="build-tomcat-dbcp">
+    <copy todir="${tomcat-dbcp.home}">
     	<fileset dir="${commons-collections.home}" >
     		<include name="**/collections/CursorableLinkedList.java" />
     		<include name="**/collections/KeyValue.java" />
@@ -529,34 +539,34 @@
     		<exclude name="**/test/**" />
        	</fileset>
     </copy>
-  	<replace dir="${base.path}/tomcat-deps/src/java/org/apache/commons">
+  	<replace dir="${tomcat-dbcp.home}/src/java/org/apache/commons">
   		<replacefilter token="return UnmodifiableList.decorate(l);"
   			value="return l;" />
   		<replacefilter token="import org.apache.commons.collections.list.UnmodifiableList;"
   			value=" " />
   	</replace>
-  	<replace dir="${base.path}/tomcat-deps/src/java/org/apache/commons" >
+  	<replace dir="${tomcat-dbcp.home}/src/java/org/apache/commons" >
   		<replacefilter token="org.apache.commons" 
   			value="org.apache.tomcat.dbcp" />
   	</replace>
-  	<mkdir dir="${base.path}/tomcat-deps/src/java/org/apache/tomcat/dbcp" />
-  	<move todir="${base.path}/tomcat-deps/src/java/org/apache/tomcat/dbcp">
-  		<fileset dir="${base.path}/tomcat-deps/src/java/org/apache/commons" />
+  	<mkdir dir="${tomcat-dbcp.home}/src/java/org/apache/tomcat/dbcp" />
+  	<move todir="${tomcat-dbcp.home}/src/java/org/apache/tomcat/dbcp">
+  		<fileset dir="${tomcat-dbcp.home}/src/java/org/apache/commons" />
     </move>
-  	<mkdir dir="${base.path}/tomcat-deps/classes"/>
-    <javac destdir="${base.path}/tomcat-deps/classes"
+  	<mkdir dir="${tomcat-dbcp.home}/classes"/>
+    <javac destdir="classes"
            optimize="off" debug="on"
-           srcdir="${base.path}/tomcat-deps/src/java" >
+           sourcepath="${tomcat-dbcp.home}/src/java"
+          srcdir="src/java" >
       <include name="**" />
     </javac>
-    <jar jarfile="${base.path}/tomcat-deps/naming-factory-dbcp-${commons-dbcp.version}.jar"
+    <jar jarfile="${tomcat-dbcp.jar}"
          index="true">
-       <fileset dir="${base.path}/tomcat-deps/classes">
+       <fileset dir="${tomcat-dbcp.home}/classes">
           <include name="**/*.class" />
           <include name="**/*.properties" />
        </fileset>
     </jar>
-    
   </target>
 
   <target name="build-webapps" depends="init"
