@@ -460,6 +460,18 @@ public abstract class RealmBase
         String contextPath = hreq.getContextPath();
         if (contextPath.length() > 0)
             uri = uri.substring(contextPath.length());
+        
+        if (uri != null) {
+            int semicolon = uri.indexOf(";");
+            if (semicolon >= 0) {
+                String baseuri = uri.substring(0, semicolon);
+                if (debug >= 2)
+                    log("Request uri '" + uri + "' treated as '" + baseuri +
+                        "' for security constraint matching.");
+                uri = baseuri;
+            }
+        }
+        
         String method = hreq.getMethod();
         for (int i = 0; i < constraints.length; i++) {
             if (log.isDebugEnabled())
