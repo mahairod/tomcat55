@@ -29,7 +29,7 @@
 
 <section name="Introduction">
 
-<p>The deployer, which as its name imply, allows deploying and undeploying web
+<p>The deployer, as its name implies, allows deploying and undeploying web
 applications to the Tomcat server, either statically (the application is 
 setup before the server is started), or dynamically (in conjunction with the
 Tomcat Manager web application or manipulating already deployed applications).
@@ -51,7 +51,7 @@ Context descriptor.
 </p>
 
 <p>Context descriptors allow defining all aspects and configuration parameters
-of a Context, such as namign resources and session manager configuration.
+of a Context, such as naming resources and session manager configuration.
 It should be noted that the docBase specified in the Context element can 
 refer to either the .WAR or the directory which will be created when the
 .WAR is expanded or the .WAR itself.</p>
