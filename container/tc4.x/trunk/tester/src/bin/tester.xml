@@ -650,12 +650,12 @@
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/SetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
-      outHeaders="Content-Language:en"/>
+      outHeaders="Content-Language:en-US"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSetLocale01" debug="${debug}"
       outContent="SetLocale01 PASSED"
-      outHeaders="Content-Language:en"/>
+      outHeaders="Content-Language:en-US"/>
 
 
   </target>

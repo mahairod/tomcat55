@@ -778,8 +778,15 @@ public class HttpResponseBase
 
 	super.setLocale(locale);
 	String language = locale.getLanguage();
-	if ((language != null) && (language.length() > 0))
-	    setHeader("Content-Language", language);
+	if ((language != null) && (language.length() > 0)) {
+            String country = locale.getCountry();
+            StringBuffer value = new StringBuffer(language);
+            if ((country != null) && (country.length() > 0)) {
+                value.append('-');
+                value.append(country);
+            }
+	    setHeader("Content-Language", value.toString());
+        }
 
     }
 
