@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="deployment.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Tomcat FAQ: Deployment</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+    This section of the FAQ discusses common questions related
+    to web application deployment.
+</section>
+
+<section name="Questions">
+<p>
+  <ul>
+    <li>
+      <a href="#tc5Conf">
+        What are these files in the conf directory in tomcat5?
+      </a>
+    </li>
+  </ul>
+</p>
+</section>
+
+
+<section name="Answers">
+<p>
+  <question>
+    <a name="tc5Conf">What are these files in the conf directory in tomcat5?</a>
+  </question>
+  <answer>
+    Unlike tomcat 4.x, tomcat 5.x creates context configuration files for you
+    in its conf/[Engine name]/[Host name] directory.  These files are NOT removed
+    by tomcat automatically.  The suggested practice, again a change from tomcat4,
+    is to place context configuration files in the META-INF/context.xml directory
+    of your webapp, and use Tomcat's Manager webapp to deploy/undeploy your applications.
+    More details can be found here:
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=107590945807699&amp;w=2">MARC Archive</a>
+  </answer>
+</p>
+</section>
+
+</body>
+</document>
