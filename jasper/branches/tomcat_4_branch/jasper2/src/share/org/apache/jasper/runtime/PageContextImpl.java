@@ -178,7 +178,10 @@ public class PageContextImpl extends PageContext {
 		((JspWriterImpl)out).flushBuffer();
 			// push it into the including jspWriter
 	    } else {
-	        out.flush();
+	        //out.flush();
+		// As discussed on the main list - this allows Content-Length
+                // to work with servlets 
+                ((JspWriterImpl)out).flushBuffer();
 	    }
 	} catch (IOException ex) {
 	    loghelper.log("Internal error flushing the buffer in release()");
