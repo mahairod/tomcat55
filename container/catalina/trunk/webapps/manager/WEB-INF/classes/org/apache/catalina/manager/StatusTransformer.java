@@ -190,7 +190,7 @@ public class StatusTransformer {
      * Write the VM state. Mode 0 will generate HTML.
      * Mode 1 will generate XML.
      */
-    protected static void writeVMState(PrintWriter writer, int mode)
+    public static void writeVMState(PrintWriter writer, int mode)
         throws Exception {
 
         if (mode == 0){
@@ -225,12 +225,12 @@ public class StatusTransformer {
     /**
      * Write connector state.
      */
-    protected static void writeConnectorState(PrintWriter writer, 
-                                              ObjectName tpName, String name,
-                                              MBeanServer mBeanServer,
-                                              Vector globalRequestProcessors,
-                                              Vector requestProcessors,
-                                              int mode)
+    public static void writeConnectorState(PrintWriter writer, 
+                                           ObjectName tpName, String name,
+                                           MBeanServer mBeanServer,
+                                           Vector globalRequestProcessors,
+                                           Vector requestProcessors,
+                                           int mode)
         throws Exception {
 
         if (mode == 0) {
@@ -539,8 +539,8 @@ public class StatusTransformer {
     /**
      * Write applications state.
      */
-    protected static void writeDetailedState(PrintWriter writer,
-                                             MBeanServer mBeanServer, int mode)
+    public static void writeDetailedState(PrintWriter writer,
+                                          MBeanServer mBeanServer, int mode)
         throws Exception {
 
         if (mode == 0){
