@@ -1532,9 +1532,10 @@ public class StandardDefaultContext
                 }
                 context.setLoader(context_loader);
             } catch(Exception e) {
-                throw new IllegalArgumentException
-                   ("DefaultContext custom Loader install failed, Exception: " +
-                   e.getMessage());
+                IllegalArgumentException iae = new IllegalArgumentException
+                   ("DefaultContext custom Loader install failed");
+                iae.initCause(e);
+                throw iae;
             }
         }
     }
@@ -1695,8 +1696,10 @@ public class StandardDefaultContext
                     MBeanUtils.createObjectName(this.getDomain(), envs[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -1719,8 +1722,10 @@ public class StandardDefaultContext
                     MBeanUtils.createObjectName(getDomain(), resources[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
@@ -1742,8 +1747,10 @@ public class StandardDefaultContext
                     MBeanUtils.createObjectName(getDomain(), links[i]);
                 results.add(oname.toString());
             } catch (MalformedObjectNameException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + links[i]);
+                iae.initCause(e);
+                throw iae;
             }
         }
         return ((String[]) results.toArray(new String[results.size()]));
