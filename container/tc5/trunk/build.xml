@@ -467,6 +467,16 @@
         <include name="commons-beanutils.jar"/>
         <include name="tomcat-util.jar"/>
       </fileset>
+      <fileset dir="build/common/lib">
+        <include name="commons-collections.jar"/>
+      </fileset>
+    </copy>
+    
+    <!-- JMX -->
+    <copy todir="embed/lib">
+      <fileset dir="build/server/lib">
+        <include name="jmx.jar"/>
+      </fileset>
     </copy>
     
     <!-- Connector -->
@@ -523,10 +533,26 @@
       </fileset>
     </copy>
     -->
-    <copy tofile="embed/tomcat5-mbeans.xml" file="resources/mbeans/tomcat5-mbeans.xml" />
     <copy tofile="embed/tomcat5-ant.xml" file="resources/mbeans/tomcat5-ant.xml" />
+    <!-- 
+    <copy tofile="embed/tomcat5-mbeans.xml" file="resources/mbeans/tomcat5-mbeans.xml" />
     <copy tofile="embed/tomcat5-mlet.xml" file="resources/mbeans/tomcat5-mlet.xml" />
     <copy tofile="embed/tomcat5-service.xml" file="resources/mbeans/tomcat5-service.xml" />
+    -->
+
+    <mkdir dir="embed/conf"/>
+    <copy todir="embed/conf">
+      <fileset dir="build/conf">
+         <include name="server.xml"/>
+         <include name="web.xml"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="embed/webapps"/>
+    <copy todir="embed/webapps" >
+       <fileset dir="build/webapps" includes="ROOT/**"/>
+    </copy>
+    
   </target>
 
   <!-- ====================== DEPLOY: Deploy Components =================== -->
