@@ -78,7 +78,7 @@
             <xsl:value-of select="project/@href"/>
           </xsl:variable>
           <xsl:variable name="src">
-            <xsl:value-of select="project/logo/@href"/>
+            <xsl:value-of select="$relative-path"/><xsl:value-of select="project/logo/@href"/>
           </xsl:variable>
 
           <xsl:comment>PROJECT LOGO</xsl:comment>

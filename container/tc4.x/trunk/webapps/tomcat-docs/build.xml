@@ -37,6 +37,11 @@
       </fileset>
     </copy>
 
+    <!-- WEB-INF Static Files -->
+    <copy    todir="${webapps.build}/${webapp.name}/WEB-INF">
+      <fileset dir="WEB-INF"/>
+    </copy>
+
     <!-- Application Developer's Guide Examples -->
     <copy    todir="${webapps.build}/${webapp.name}/appdev">
       <fileset dir="appdev" includes="*.txt"/>
