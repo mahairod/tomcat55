@@ -127,7 +127,8 @@ public class CharDataGenerator
 	    }
 	}
 	writer.print(sb.toString());
-	writer.print("\");\n");
+	writer.print("\");");
+	writer.println();
     }
 
 
