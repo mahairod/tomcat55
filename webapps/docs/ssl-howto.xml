@@ -270,13 +270,13 @@ installed Tomcat 5.  An example <code>&lt;Connector&gt;</code> element
 for an SSL connector is included in the default <code>server.xml</code>
 file installed with Tomcat.  It will look something like this:</p>
 <source>
-&lt;-- Define an SSL HTTP/1.1 Connector on port 8443 --&gt;
+&lt;-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&gt;
 &lt;!--
-&lt;Connector className="org.apache.catalina.connector.http.HttpConnector"
+&lt;Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
            port="8443" minProcessors="5" maxProcessors="75"
-           enableLookups="true"
-           acceptCount="10" debug="0" scheme="https" secure="true"&gt;
-  &lt;Factory className="org.apache.catalina.net.SSLServerSocketFactory"
+           enableLookups="true" disableUploadTimeout="true"
+           acceptCount="100" debug="0" scheme="https" secure="true"&gt;
+  &lt;Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
            clientAuth="false" protocol="TLS"/&gt;
 &lt;/Connector&gt;
 --&gt;
