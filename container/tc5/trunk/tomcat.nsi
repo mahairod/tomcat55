@@ -151,7 +151,6 @@ Section "Core" SecTomcatCore
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
   StrCpy "$JavaHome" $2
-  Push $2
   Call findJVMPath
   Pop $2
 
@@ -183,7 +182,6 @@ Section "Service" SecTomcatService
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
   StrCpy "$JavaHome" $2
-  Push $2
   Call findJVMPath
   Pop $2
 
@@ -387,37 +385,42 @@ FunctionEnd
 ;
 Function findJVMPath
 
-  Pop $1
+  ClearErrors
+  
+  ;Step one: Is this a JRE path (Program Files\Java\XXX)
+  StrCpy $1 "$JavaHome"
+  
+  StrCpy $2 "$1\bin\hotspot\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\server\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\client\jvm.dll"  
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\classic\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
 
-  IfFileExists "$1\jre\bin\hotspot\jvm.dll" 0 TryJDK14
-    StrCpy $2 "$1\jre\bin\hotspot\jvm.dll"
-    Goto EndIfFileExists
-  TryJDK14:
-  IfFileExists "$1\jre\bin\server\jvm.dll" 0 TryClassic
-    StrCpy $2 "$1\jre\bin\server\jvm.dll"
-    Goto EndIfFileExists
-  TryClassic:
-  IfFileExists "$1\jre\bin\classic\jvm.dll" 0 JDKNotFound
-    StrCpy $2 "$1\jre\bin\classic\jvm.dll"
-    Goto EndIfFileExists
-  JDKNotFound:
-    SetErrors
-  EndIfFileExists:
-
-  IfErrors 0 FoundJVMPath
+  ;Step two: Is this a JDK path (Program Files\XXX\jre)
+  StrCpy $1 "$JavaHome\jre"
+  
+  StrCpy $2 "$1\bin\hotspot\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\server\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\client\jvm.dll"  
+  IfFileExists "$2" FoundJvmDll
+  StrCpy $2 "$1\bin\classic\jvm.dll"
+  IfFileExists "$2" FoundJvmDll
 
   ClearErrors
-
+  ;Step tree: Read defaults from registry
+  
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
   
-  FoundJVMPath:
-
-  IfErrors 0 NoErrors
+  IfErrors 0 FoundJvmDll
   StrCpy $2 ""
 
-NoErrors:
-
+  FoundJvmDll:
   ClearErrors
 
   ; Put the result in the stack
@@ -438,7 +441,6 @@ Function checkJvm
   Quit
 NoErrors1:
   StrCpy "$JavaHome" $3
-  Push $3
   Call findJVMPath
   Pop $4
   StrCmp $4 "" 0 NoErrors2
