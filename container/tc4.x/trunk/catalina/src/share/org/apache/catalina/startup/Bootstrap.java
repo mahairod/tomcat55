@@ -276,6 +276,8 @@ public final class Bootstrap {
                 continue;
             if ((!loadJNDI) && filename.equals("jndi.jar"))
                 continue;
+            if ((!loadJNDI) && filename.equals("ldap.jar"))
+                continue;
             if (filename.equals("bootstrap.jar"))
                 continue;
             File file = new File(directory, filenames[i]);
