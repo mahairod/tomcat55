@@ -439,11 +439,15 @@ public class JspDocumentParser extends DefaultHandler
 		    uri = uri.substring(URN_JSPTLD.length());
 		}
 
-		// get the location
-		String[] location = ctxt.getTldLocation(uri);
-
-		TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
-							   location, err);
+                TldLocationsCache cache=ctxt.getOptions().getTldLocationsCache();
+                TagLibraryInfo tl=cache.getTagLibraryInfo( uri );
+                if( tl==null ) {
+                    // get the location
+                    String[] location = ctxt.getTldLocation(uri);
+                
+                    tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
+                                                location, err);
+                }
 		taglibs.put(prefix, tl);
 	    }
         }
