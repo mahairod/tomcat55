@@ -119,6 +119,11 @@
                description="The document root for this web application"
                type="java.lang.String"/>
 
+    <attribute name="valveNames"
+               description="ObjectNames for the valves associated with this container"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false"/>
+
     <attribute name="environments"
                description="MBean Names of the set of defined environment entries for this web application"
                type="[Ljava.lang.String;"
@@ -313,6 +318,11 @@
                description="Route used for load balancing"
                type="java.lang.String"/>
       
+    <attribute name="valveNames"
+               description="ObjectNames for the valves associated with this container"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false"/>
+
     <operation name="addChild"
                description="Add a virtual host"
                impact="ACTION"
@@ -418,6 +428,11 @@
                description="Return the MBean ObjectNames of the Valves associated with this Host"
                type="[Ljavax.management.ObjectName;"/>
       
+    <attribute name="valveNames"
+               description="ObjectNames for the valves associated with this container"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false"/>
+
     <operation name="addAlias"
                description="Add an alias name that should be mapped to this Host"
                impact="ACTION"
