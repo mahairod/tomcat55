@@ -777,7 +777,9 @@ public class JspParseEventListener implements ParseEventListener {
 					   ex.getMessage());
 	    }
 	}
-	xo.append("jsp:directive." + directive, attrs);
+	if (!directive.equals("include")) {
+	    xo.append("jsp:directive." + directive, attrs);
+	}
     }
 
 
@@ -988,7 +990,6 @@ public class JspParseEventListener implements ParseEventListener {
                                    start, stop);
 
 	addGenerator(gen);
-        xo.append(chars);
     }
 
     public void handleTagBegin(Mark start, Mark stop, 
@@ -1034,7 +1035,7 @@ public class JspParseEventListener implements ParseEventListener {
     }
 
     public void handleRootEnd() {
-	xo.append("jsp:root");
+	xo.rootEnd();
     }
     
     public void handleRootBegin(Attributes attrs) 
@@ -1076,6 +1077,7 @@ public class JspParseEventListener implements ParseEventListener {
     {
 	if (data != null) {
 	    handleCharData(start, stop, data);
+            xo.append(data);
 	}
         UninterpretedTagEndGenerator gen = 
 	    new UninterpretedTagEndGenerator(rawName);
@@ -1088,6 +1090,7 @@ public class JspParseEventListener implements ParseEventListener {
 	throws JasperException
     {
 	handleCharData(start, stop, data);
+        xo.append("jsp:cdata", null, data);
     }
 
     /**

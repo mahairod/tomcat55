@@ -92,6 +92,12 @@ public class XmlOutputter {
      */
     private AttributesImpl rootAttrs;
     
+    /*
+     * Tells the nesting level of <jsp:root> tags encountered
+     * in the translation unit.
+     */
+    private int jspRootLevel = 0;
+
     //*********************************************************************
     // Constructor
 
@@ -110,11 +116,26 @@ public class XmlOutputter {
      * <jsp:root> tag.
      */
     void addRootAttrs(Attributes attrs) {
+	jspRootLevel++;
         int attrsLength = attrs.getLength();
         for (int i = 0; i < attrsLength; i++) {
+	    String qName = attrs.getQName(i);
+	    if (attrs.getQName(i).startsWith("xmlns:jsp") 
+		&& jspRootLevel > 1) continue; 
             rootAttrs.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
                 attrs.getQName(i), attrs.getType(i), attrs.getValue(i));
         }
+    }
+
+    /*
+     * Only put the </jsp:root> tag when we're dealing
+     * with the top level 'container' page.
+     */
+    void rootEnd() {
+	jspRootLevel--;
+	if (jspRootLevel == 0) {
+	    append("jsp:root");
+	}
     }
     
     /**
