@@ -115,6 +115,18 @@ class JspDocumentParser
 
     private Locator locator;
 
+    //Mark representing the start of the current element.  Note
+    //that locator.getLineNumber() and locator.getColumnNumber()
+    //return the line and column numbers for the character
+    //immediately _following_ the current element.  The underlying
+    //XMl parser eats white space that is not part of character
+    //data, so for Nodes that are not created from character data,
+    //this is the best we can do.  But when we parse character data,
+    //we get an accurate starting location by starting with startMark
+    //as set by the previous element, and updating it as we advance
+    //through the characters.
+    private Mark startMark;
+
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
 
@@ -287,7 +299,7 @@ class JspDocumentParser
                 locator);
         }
 
-        Mark start =
+        startMark =
             new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
 
         if (attrs != null) {
@@ -353,7 +365,7 @@ class JspDocumentParser
                     nonTaglibAttrs,
                     nonTaglibXmlnsAttrs,
                     taglibAttrs,
-                    start,
+                    startMark,
                     current);
         } else {
             node =
@@ -364,7 +376,7 @@ class JspDocumentParser
                     nonTaglibAttrs,
                     nonTaglibXmlnsAttrs,
                     taglibAttrs,
-                    start,
+                    startMark,
                     current);
             if (node == null) {
                 node =
@@ -374,7 +386,7 @@ class JspDocumentParser
                         nonTaglibAttrs,
                         nonTaglibXmlnsAttrs,
                         taglibAttrs,
-                        start,
+                        startMark,
                         current);
             }
         }
@@ -417,21 +429,31 @@ class JspDocumentParser
         if ((current instanceof Node.JspText)
             || (current instanceof Node.NamedAttribute)
             || !isAllSpace) {
-            Mark start =
-                new Mark(
-                    path,
-                    locator.getLineNumber(),
-                    locator.getColumnNumber());
+
+            int line = startMark.getLineNumber();
+            int column = startMark.getColumnNumber();
 
             CharArrayWriter ttext = new CharArrayWriter();
             int limit = offset + len;
             int lastCh = 0;
             for (int i = offset; i < limit; i++) {
                 int ch = buf[i];
+                if (ch == '\n') {
+                    column = 1;
+                    line++;
+                } else {
+                    column++;
+                }
                 if (lastCh == '$' && ch == '{') {
                     if (ttext.size() > 0) {
-                        new Node.TemplateText(ttext.toString(), start, current);
+                        new Node.TemplateText(
+                            ttext.toString(),
+                            startMark,
+                            current);
                         ttext = new CharArrayWriter();
+                        //We subtract two from the column number to
+                        //account for the '${' that we've already parsed
+                        startMark = new Mark(path, line, column - 2);
                     }
                     // following "${" to first unquoted "}"
                     i++;
@@ -448,6 +470,12 @@ class JspDocumentParser
 
                         }
                         ch = buf[i];
+                        if (ch == '\n') {
+                            column = 1;
+                            line++;
+                        } else {
+                            column++;
+                        }
                         if (lastCh == '\\' && (singleQ || doubleQ)) {
                             ttext.write(ch);
                             lastCh = 0;
@@ -456,9 +484,10 @@ class JspDocumentParser
                         if (ch == '}') {
                             new Node.ELExpression(
                                 ttext.toString(),
-                                start,
+                                startMark,
                                 current);
                             ttext = new CharArrayWriter();
+                            startMark = new Mark(path, line, column);
                             break;
                         }
                         if (ch == '"')
@@ -483,9 +512,11 @@ class JspDocumentParser
                 ttext.write('$');
             }
             if (ttext.size() > 0) {
-                new Node.TemplateText(ttext.toString(), start, current);
+                new Node.TemplateText(ttext.toString(), startMark, current);
             }
         }
+        startMark =
+            new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
     }
 
     /*
@@ -553,12 +584,12 @@ class JspDocumentParser
     public void comment(char[] buf, int offset, int len) throws SAXException {
         // ignore comments in the DTD
         if (!inDTD) {
-            Mark start =
+            startMark =
                 new Mark(
                     path,
                     locator.getLineNumber(),
                     locator.getColumnNumber());
-            new Node.Comment(new String(buf, offset, len), start, current);
+            new Node.Comment(new String(buf, offset, len), startMark, current);
         }
     }
 
@@ -566,7 +597,8 @@ class JspDocumentParser
      * See org.xml.sax.ext.LexicalHandler.
      */
     public void startCDATA() throws SAXException {
-        // do nothing
+        startMark =
+            new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
     }
 
     /*
