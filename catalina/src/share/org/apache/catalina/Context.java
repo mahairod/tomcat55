@@ -444,22 +444,6 @@ public interface Context extends Container {
 
 
     /**
-     * Add an EJB resource reference for this web application.
-     *
-     * @param ejb New EJB resource reference
-     */
-    public void addEjb(ContextEjb ejb);
-
-
-    /**
-     * Add an environment entry for this web application.
-     *
-     * @param environment New environment entry
-     */
-    public void addEnvironment(ContextEnvironment environment);
-
-
-    /**
      * Add an error page for the specified error or Java exception.
      *
      * @param errorPage The error page definition to be added
@@ -514,14 +498,6 @@ public interface Context extends Container {
 
 
     /**
-     * Add a local EJB resource reference for this web application.
-     *
-     * @param ejb New local EJB resource reference
-     */
-    public void addLocalEjb(ContextLocalEjb ejb);
-
-
-    /**
      * Add a new MIME mapping, replacing any existing mapping for
      * the specified extension.
      *
@@ -539,31 +515,6 @@ public interface Context extends Container {
      * @param value Value of the new  parameter
      */
     public void addParameter(String name, String value);
-
-
-    /**
-     * Add a resource reference for this web application.
-     *
-     * @param resource New resource reference
-     */
-    public void addResource(ContextResource resource);
-
-
-    /**
-     * Add a resource environment reference for this web application.
-     *
-     * @param name The resource environment reference name
-     * @param type The resource environment reference type
-     */
-    public void addResourceEnvRef(String name, String type);
-
-
-    /**
-     * Add a resource link for this web application.
-     *
-     * @param resourceLink New resource link
-     */
-    public void addResourceLink(ContextResourceLink resourceLink);
 
 
     /**
@@ -667,39 +618,6 @@ public interface Context extends Container {
 
 
     /**
-     * Return the EJB resource reference with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
-     */
-    public ContextEjb findEjb(String name);
-
-
-    /**
-     * Return the defined EJB resource references for this application.
-     * If there are none, a zero-length array is returned.
-     */
-    public ContextEjb[] findEjbs();
-
-
-    /**
-     * Return the environment entry with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired environment entry
-     */
-    public ContextEnvironment findEnvironment(String name);
-
-
-    /**
-     * Return the set of defined environment entries for this web
-     * application.  If none have been defined, a zero-length array
-     * is returned.
-     */
-    public ContextEnvironment[] findEnvironments();
-
-
-    /**
      * Return the error page entry for the specified HTTP error code,
      * if any; otherwise return <code>null</code>.
      *
@@ -754,22 +672,6 @@ public interface Context extends Container {
 
 
     /**
-     * Return the local EJB resource reference with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
-     */
-    public ContextLocalEjb findLocalEjb(String name);
-
-
-    /**
-     * Return the defined local EJB resource references for this application.
-     * If there are none, a zero-length array is returned.
-     */
-    public ContextLocalEjb[] findLocalEjbs();
-
-
-    /**
      * Return the MIME type to which the specified extension is mapped,
      * if any; otherwise return <code>null</code>.
      *
@@ -800,55 +702,6 @@ public interface Context extends Container {
      * array is returned.
      */
     public String[] findParameters();
-
-
-    /**
-     * Return the resource reference with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource reference
-     */
-    public ContextResource findResource(String name);
-
-
-    /**
-     * Return the resource environment reference type for the specified
-     * name, if any; otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource environment reference
-     */
-    public String findResourceEnvRef(String name);
-
-
-    /**
-     * Return the set of resource environment reference names for this
-     * web application.  If none have been specified, a zero-length
-     * array is returned.
-     */
-    public String[] findResourceEnvRefs();
-
-
-    /**
-     * Return the resource link with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource link
-     */
-    public ContextResourceLink findResourceLink(String name);
-
-
-    /**
-     * Return the defined resource links for this application.  If
-     * none have been defined, a zero-length array is returned.
-     */
-    public ContextResourceLink[] findResourceLinks();
-
-
-    /**
-     * Return the defined resource references for this application.  If
-     * none have been defined, a zero-length array is returned.
-     */
-    public ContextResource[] findResources();
 
 
     /**
@@ -1000,22 +853,6 @@ public interface Context extends Container {
 
 
     /**
-     * Remove any EJB resource reference with the specified name.
-     *
-     * @param name Name of the EJB resource reference to remove
-     */
-    public void removeEjb(String name);
-
-
-    /**
-     * Remove any environment entry with the specified name.
-     *
-     * @param name Name of the environment entry to remove
-     */
-    public void removeEnvironment(String name);
-
-
-    /**
      * Remove the error page for the specified error code or
      * Java language exception, if it exists; otherwise, no action is taken.
      *
@@ -1051,14 +888,6 @@ public interface Context extends Container {
 
 
     /**
-     * Remove any local EJB resource reference with the specified name.
-     *
-     * @param name Name of the EJB resource reference to remove
-     */
-    public void removeLocalEjb(String name);
-
-
-    /**
      * Remove the MIME mapping for the specified extension, if it exists;
      * otherwise, no action is taken.
      *
@@ -1074,30 +903,6 @@ public interface Context extends Container {
      * @param name Name of the parameter to remove
      */
     public void removeParameter(String name);
-
-
-    /**
-     * Remove any resource reference with the specified name.
-     *
-     * @param name Name of the resource reference to remove
-     */
-    public void removeResource(String name);
-
-
-    /**
-     * Remove any resource environment reference with the specified name.
-     *
-     * @param name Name of the resource environment reference to remove
-     */
-    public void removeResourceEnvRef(String name);
-
-
-    /**
-     * Remove any resource link with the specified name.
-     *
-     * @param name Name of the resource link to remove
-     */
-    public void removeResourceLink(String name);
 
 
     /**

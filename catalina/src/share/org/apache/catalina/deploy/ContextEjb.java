@@ -18,6 +18,8 @@
 package org.apache.catalina.deploy;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.HashMap;
 
 
 /**
@@ -119,6 +121,40 @@ public class ContextEjb implements Serializable {
     }
 
 
+    /**
+     * Holder for our configured properties.
+     */
+    private HashMap properties = new HashMap();
+
+    /**
+     * Return a configured property.
+     */
+    public Object getProperty(String name) {
+        return properties.get(name);
+    }
+
+    /**
+     * Set a configured property.
+     */
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
+    }
+
+    /** 
+     * remove a configured property.
+     */
+    public void removeProperty(String name) {
+        properties.remove(name);
+    }
+
+    /**
+     * List properties.
+     */
+    public Iterator listProperties() {
+        return properties.keySet().iterator();
+    }
+    
+    
     // --------------------------------------------------------- Public Methods
 
 

@@ -307,7 +307,6 @@ public class NamingResourcesMBean extends BaseModelMBean {
                 ("Invalid resource name '" + resourceName + "'");
         }
         nresources.removeResource(resourceName);
-        nresources.removeResourceParams(resourceName);
     
     }
     
