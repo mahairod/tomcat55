@@ -108,6 +108,8 @@
         </servlet-class>
     </servlet>
 
+    <!--GENERATED_JSPS--> 
+
     <servlet-mapping>
         <servlet-name>
             CompressionFilterTestServlet
