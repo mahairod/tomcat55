@@ -24,8 +24,8 @@
         <item name="Deployment"                 href="deployment.html" />
         <item name="How do I"                   href="http://wiki.apache.org/jakarta-tomcat/HowTo"/>
         <item name="Linux / Unix"               href="unix.html"/>
+        <item name="Other Operating Systems"    href="otherOperatingSystems.html" />
         <item name="Logging"                    href="logging.html" />
-        <item name="OS/2, z/OS"                 href="os2.html"/>
         <item name="Memory"                     href="memory.html"/>
         <item name="Meta"                       href="meta.html"/>
         <item name="Miscellaneous"              href="misc.html"/>

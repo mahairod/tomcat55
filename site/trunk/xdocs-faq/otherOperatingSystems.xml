@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="otherOperatingSystems.html">
+
+  &project;
+
+  <properties>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
+    <title>Tomcat on Other Operating Systems</title>
+  </properties>
+
+<body>
+
+
+<section name="Preface">
+  <p>
+    This section of the FAQ deals with running Tomcat on platforms
+    not supported by the built-in startup/shutdown scripts.  These include
+    OS/2, z/OS, OpenVMS-Alpha, and others.
+  </p>
+</section>
+
+<section name="Questions">
+  <ul>
+     <li>
+       <a href="#scripts">
+         Where are the scripts for my operating system?
+       </a>
+      </li>
+  </ul>
+</section>
+
+
+<section name="Answers">
+
+  <question>
+    <a name="scripts">
+      Where are the scripts for my operating system?
+    </a>
+  </question>
+  <answer>
+    <ul>
+      <li>OS/2:
+        <ul>
+          <li><a href="http://hobbes.nmsu.edu/cgi-bin/h-search?key=tomcat_5-0-27_os2.zip">NMSU.edu.</a></li>
+          <li><a href="http://www.netbeans.org/issues/show_bug.cgi?id=42678">NetBeans.org.</a></li>
+          <li><a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=30394">EComStation</a></li>
+        </ul>
+      </li>
+      <li>z/OS:
+        <ul>
+          <li><a href="http://jzos.com/">JZOS</a>.</li>
+        </ul>
+      </li>
+    </ul>
+  </answer>
+</section>
+
+
+</body>
+</document>
