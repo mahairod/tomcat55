@@ -96,7 +96,7 @@ class DefaultErrorHandler implements ErrorHandler {
 				      + " " + errMsg);
 	} else {
 	    throw new JasperException(fname + "(" + line + "," + column + ")"
-				      + " " + ex.getMessage());
+				      + " " + ex);
 	}
     }
 
@@ -110,7 +110,7 @@ class DefaultErrorHandler implements ErrorHandler {
 	if (errMsg != null) {
 	    throw new JasperException(errMsg);
 	} else {
-	    throw new JasperException(ex.getMessage());
+	    throw new JasperException(ex);
 	}
     }
 
