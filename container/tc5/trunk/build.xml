@@ -77,6 +77,7 @@
     <mkdir dir="${tomcat.build}"/>
     <mkdir dir="${tomcat.build}/classes" />
     <mkdir dir="${tomcat.build}/server/lib" />
+    <mkdir dir="${tomcat.build}/shared/lib" />
     <mkdir dir="${tomcat.build}/common/lib" />
 
     <uptodate property="servletapi.build.notrequired"
@@ -373,13 +374,8 @@
     </javac>
   </target>
 
-  <target name="build" depends="init"
-          description="Builds all components">
-
-    <antcall target="build-servletapi"/>
-    <antcall target="build-jspapi"/>
-    <antcall target="build-tomcatutil"/>
-
+  <target name="build-catalina" depends="init"
+          description="Builds catalina">
     <echo>========== Building: catalina </echo>
 
     <ant dir="${catalina.home}/catalina" target="catalina-jars">
@@ -392,6 +388,28 @@
         <property name="flags.hide" value="true" />
     </ant>
 
+    <ant dir="${catalina.home}/catalina" target="deploy-static-only">
+        <property name="catalina.build" value="${tomcat.build}" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar"
+                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="false" />
+    </ant>
+
+  </target>
+
+  <target name="build" depends="init"
+          description="Builds all components">
+    <copy file="${commons-digester.jar}" todir="${tomcat.build}/server/lib"/>
+    <copy file="${commons-collections.jar}" todir="${tomcat.build}/common/lib"/>
+    <copy file="${commons-beanutils.jar}" todir="${tomcat.build}/common/lib"/>
+    <copy file="${jmx.jar}" todir="${tomcat.build}/common/lib"/>
+
+    <antcall target="build-servletapi"/>
+    <antcall target="build-jspapi"/>
+    <antcall target="build-tomcatutil"/>
+    <antcall target="build-catalina"/>
     <antcall target="build-tomcatcoyote"/>
 
     <antcall target="build-tomcatjk"/>
@@ -463,6 +481,81 @@
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
     <antcall target="build-commons-el" />
+
+  </target>
+
+  <target name="build-webapps" depends="init"
+          description="build  webapps">
+
+    <echo>========== Building: webapps </echo>
+
+    <mkdir dir="${tomcat.build}/webapps" />
+    <mkdir dir="${tomcat.build}/server/webapps" />
+
+    <ant dir="${catalina.home}/webapps/ROOT" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/webapps" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar" value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+
+    <ant dir="${catalina.home}/webapps/docs" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/webapps" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar" value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+
+    <ant dir="${catalina.home}/webapps/admin" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/server/webapps" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar" value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+    <ant dir="${catalina.home}/webapps/manager" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/server/webapps" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar" value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+    <antcall target="fix-webapps" />
+  </target>
+
+  <target name="fix-webapps" depends="init"
+          description="Extra build steps for webapps">
+
+    <!-- Add release notes to the root webapp -->
+    <copy file="./RELEASE-NOTES"
+        tofile="${tomcat.build}/webapps/ROOT/RELEASE-NOTES.txt"
+        filtering="true" />
+
+    <!-- Add documents to the tomcat-docs webapp -->
+    <copy todir="${tomcat.build}/webapps/tomcat-docs">
+      <fileset dir=".">
+        <include name="BUILDING.txt"/>
+        <include name="RUNNING.txt"/>
+      </fileset>
+    </copy>
+    <copy file="./RELEASE-NOTES"
+        tofile="${tomcat.build}/webapps/tomcat-docs/RELEASE-NOTES.txt"
+        filtering="true" />
+    <copy file="./CHANGELOG"
+        tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
+
+    <!-- Copy the examples webapps -->
+    <copy todir="${tomcat.build}/webapps/jsp-examples">
+      <fileset dir="${api.home}/jsr152/build/examples"/>
+    </copy>
+    <copy todir="${tomcat.build}/webapps/servlets-examples">
+      <fileset dir="${api.home}/jsr154/build/examples"/>
+    </copy>
+
+    <echo>Target: Webapps precompilation ...</echo>
+    <ant dir="."   target="build-webapps-precompile" /> 
   </target>
 
   <!-- ====================== Embeded target =================== -->
@@ -556,8 +649,12 @@
     <mkdir dir="embed/conf"/>
     <copy todir="embed/conf">
       <fileset dir="build/conf">
-         <include name="server.xml"/>
+         <include name="jk2.properties"/>
+         <include name="tomcat-users.xml"/>
          <include name="web.xml"/>
+         <!-- no longer needed 
+            <include name="server.xml"/>
+         -->
       </fileset>
     </copy>
 
@@ -596,32 +693,6 @@
 
     <filter token="VERSION" value="${version}"/>
 
-    <!-- Add release notes to the root webapp -->
-    <copy file="./RELEASE-NOTES"
-        tofile="${tomcat.build}/webapps/ROOT/RELEASE-NOTES.txt"
-        filtering="true" />
-
-    <!-- Add documents to the tomcat-docs webapp -->
-    <copy todir="${tomcat.build}/webapps/tomcat-docs">
-      <fileset dir=".">
-        <include name="BUILDING.txt"/>
-        <include name="RUNNING.txt"/>
-      </fileset>
-    </copy>
-    <copy file="./RELEASE-NOTES"
-        tofile="${tomcat.build}/webapps/tomcat-docs/RELEASE-NOTES.txt"
-        filtering="true" />
-    <copy file="./CHANGELOG"
-        tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
-
-    <!-- Copy the examples webapps -->
-    <copy todir="${tomcat.build}/webapps/jsp-examples">
-      <fileset dir="${api.home}/jsr152/build/examples"/>
-    </copy>
-    <copy todir="${tomcat.build}/webapps/servlets-examples">
-      <fileset dir="${api.home}/jsr154/build/examples"/>
-    </copy>
-
     <antcall target="build-jasper"/>
 
     <!-- Correct permissions and line endings on "bin" scripts -->
@@ -629,9 +700,7 @@
     <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.bat" eol="crlf"/>
     <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
 
-    <echo>Target: Webapps precompilation ...</echo>
-    <ant dir="."   target="build-webapps-precompile" /> 
-
+    <antcall target="fix-webapps"/>
   </target>
 
 
