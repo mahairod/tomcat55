@@ -103,8 +103,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     Document tld;
 
     Hashtable jarEntries;
-    Hashtable tagCaches = new Hashtable();
-    
+
     JspCompilationContext ctxt;
 
     
@@ -519,11 +518,4 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             out.write(buf, 0, nRead);
     }
 
-    TagCache getTagCache(String shortTagName) {
-        return (TagCache) tagCaches.get(shortTagName);
-    }
-
-    void putTagCache(String shortTagName, TagCache tc) {
-        tagCaches.put(shortTagName, tc);
-    }
 }

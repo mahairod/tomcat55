@@ -180,7 +180,7 @@ public class DumbParseEventListener extends BaseJspListener {
     }
 
     public void handleTagBegin(Mark start, Hashtable attrs, String prefix, 
-			       String shortTagName, TagLibraryInfoImpl tli, 
+			       String shortTagName, TagLibraryInfo tli, 
 			       TagInfo ti)
 	throws JasperException
     {
@@ -190,7 +190,7 @@ public class DumbParseEventListener extends BaseJspListener {
     
     public void handleTagEnd(Mark start, Mark stop, String prefix, 
 			     String shortTagName, Hashtable attrs, 
-                             TagLibraryInfoImpl tli, TagInfo ti)
+                             TagLibraryInfo tli, TagInfo ti)
 	throws JasperException
     {
 	System.err.println("\nUser-defined Tag End "+prefix+":"+shortTagName+" --> ");

@@ -107,11 +107,11 @@ public interface ParseEventListener {
      * stop: can be null if the body contained JSP tags... 
      */
     void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, String shortTagName,
-			TagLibraryInfoImpl tli, TagInfo ti) 
+			TagLibraryInfo tli, TagInfo ti) 
 	throws JasperException;
 
     void handleTagEnd(Mark start, Mark stop, String prefix, String shortTagName,
-		      Hashtable attrs, TagLibraryInfoImpl tli, TagInfo ti)
+		      Hashtable attrs, TagLibraryInfo tli, TagInfo ti)
 	throws JasperException;
 
     void handleForward(Mark start, Mark stop, Hashtable attrs, Hashtable param)
@@ -121,3 +121,4 @@ public interface ParseEventListener {
 
     void endPageProcessing() throws JasperException;
 }
+

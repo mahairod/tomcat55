@@ -186,7 +186,7 @@ final class DelegatingListener implements ParseEventListener {
     }
 
     public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, 
-			       String shortTagName, TagLibraryInfoImpl tli, 
+			       String shortTagName, TagLibraryInfo tli, 
 			       TagInfo ti)
 	throws JasperException
     {
@@ -196,7 +196,7 @@ final class DelegatingListener implements ParseEventListener {
     
     public void handleTagEnd(Mark start, Mark stop, String prefix, 
 			     String shortTagName, Hashtable attrs, 
-                             TagLibraryInfoImpl tli, TagInfo ti)
+                             TagLibraryInfo tli, TagInfo ti)
 	throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
