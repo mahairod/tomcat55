@@ -478,39 +478,6 @@ public final class StandardLoader
 
 
     /**
-     * Remove a repository from the set of repositories for this loader.
-     *
-     * @param repository Repository to be removed
-     */
-    public void removeRepository(String repository) {
-
-        if (debug >= 1)
-	    log(sm.getString("standardLoader.removeRepository", repository));
-	int j = -1;
-	for (int i = 0; i < repositories.length; i++) {
-	    if (repositories[i].equals(repository)) {
-		j = i;
-		break;
-	    }
-	}
-	if (j < 0)
-	    return;
-	String results[] = new String[repositories.length - 1];
-	j = 0;
-	for (int i = 0; i < repositories.length; i++) {
-	    if (!repositories[i].equals(repository))
-		results[j++] = repositories[i];
-	}
-	repositories = results;
-	if (started) {
-	    classLoader.removeRepository(repository);
-	    setClassPath();
-	}
-
-    }
-
-
-    /**
      * Return a String representation of this component.
      */
     public String toString() {

@@ -188,12 +188,4 @@ public interface Loader {
     public void removePropertyChangeListener(PropertyChangeListener listener);
 
 
-    /**
-     * Remove a repository from the set of repositories for this loader.
-     *
-     * @param repository Repository to be removed
-     */
-    public void removeRepository(String repository);
-
-
 }

@@ -162,38 +162,4 @@ public interface Reloader {
     public boolean modified();
 
 
-    /**
-     * Remove a fully qualified class or resource name from the allowed list.
-     *
-     * @param name The name to remove
-     */
-    public void removeAllowed(String name);
-
-
-    /**
-     * Remove the specified repository from the set of places this ClassLoader
-     * can look for classes to be loaded.  Any classes already loaded from this
-     * repository will remain, but no future loads from here will take place.
-     *
-     * @param repository Name of the repository to remove
-     */
-    public void removeRepository(String repository);
-
-
-    /**
-     * Remove a class or resource name prefix from the restricted list.
-     *
-     * @param prefix Prefix to be removed
-     */
-    public void removeRestricted(String prefix);
-
-
-    /**
-     * Remove a class or resource name prefix from the system list.
-     *
-     * @param prefix Prefix to be removed
-     */
-    public void removeSystem(String prefix);
-
-
 }
