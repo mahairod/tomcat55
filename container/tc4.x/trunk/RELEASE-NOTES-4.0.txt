@@ -13,6 +13,8 @@ INTRODUCTION:
 
 This document describes the changes that have been made in the current
 release candidate release of Apache Tomcat, relative to the previous release.
+The release notes for all prior releases of Tomcat 4.0 are also included, for
+your reference.
 
 Bug reports should be entered at the bug reporting system for
 Jakarta projects at:
@@ -33,7 +35,20 @@ General New Features:
 --------------------
 
 The 1.4 release of Ant is now required in order to build Tomcat 4.0
-from source. Previous versions relied on Ant 1.3.
+from source.  Previous versions relied on Ant 1.3.  Please read the
+"BUILDING.txt" file in the top-level directory of the source distribution
+for more information about building Tomcat 4.0 from source.
+
+Tomcat 4.0 now makes an XML parser, as well as other API classes, available
+to web applications by default.  This behavior is consistent with that of
+previous versions of Tomcat, and will make porting apps much less painful.
+See "Tomcat 4.0 Standard APIs Available", below, for more information.
+
+The "build.xml" example file included in the Application Developer's Guide now
+creates a compilation classpath that automatically includes all of the classes
+that Tomcat 4.0 exposes to web applications.  You should not need to customize
+this file unless you need to add additional application-specific classes into
+"/WEB-INF/lib".
 
 
 ---------------------
@@ -98,6 +113,11 @@ to the original source file can be performed.
 Webapps Bug Fixes:
 -----------------
 
+The form-based login example will now operate correctly even if cookies are
+turned off.  Note that this is an extension to the servlet specification's
+requirements, which only require form-based login to work if either cookies
+or SSL sessions are used to maintain session identity.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
@@ -113,20 +133,16 @@ of the WARP connector, which is the Tomcat component that talks to mod_webapp
 inside Apache 1.3.  The current state of this support is summarized as follows:
 
 * The mod_webapp connector is configured based on the contents of the
-  web.xml file for your web application.  The only required per-webapp
-  configuration information in your Apache 1.3 httpd.conf file is
-  something like this:
+  web.xml file for your web application.  See the documentation included
+  with the connector for configuration requirements.
 
-    WebAppDeploy examples   warpConnection   /examples/
+* The version of the connector to be published with Tomcat 4.0 final has had
+  all outstanding bugs fixed for Unix platforms.  However, a known issue
+  remains with the connector on Windows platforms.  For more information, see
 
-  which causes mod_webapp to automatically recognize all of your servlet
-  mappings, security constraints, and other configuration elements.
+    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=3509
 
-* The final version of the mod_webapp connector will be released separately
-  when remaining bugs are fixed.  If any changes are necessary to the Java
-  end of the connector, they will be packaged in a single JAR file (warp.jar)
-  to be installed into $CATALINA_HOME/server/lib of the Tomcat 4.0 final
-  release.
+  This problem will be addressed in a future release of the connector.
 
 
 -------------------------------------
@@ -179,6 +195,10 @@ for use by web applications (by placing them in "common/lib" or "lib"):
 * mail.jar (JavaMail 1.2)
 * servlet.jar (Servlet 2.3 and JSP 1.2 APIs)
 * tyrex-0.9.7.0.jar (Tyrex XA-compatible data source from tyrex.exolab.org)
+
+You can make additional APIs available to all of your web applications by
+putting unpacked classes into a "classes" directory (not created by default),
+or by placing them in JAR files in the "lib" directory.
 
 
 --------------------------
