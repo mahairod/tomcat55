@@ -420,12 +420,6 @@ public class Javadoc2 extends Java {
         return string.startsWith(pattern.substring(0, pattern.length() - 2));
     }
     
-    class JavaFilter implements FileFilter {
-        public boolean accept(File file) {
-            return (file.getName().endsWith(".java") || file.isDirectory());
-        }
-    }
-        
     /**
      * Returns an hashtable of packages linked to the last parsed
      * file in that package. This map is use to return a list of unique
@@ -435,7 +429,7 @@ public class Javadoc2 extends Java {
         Hashtable map = new Hashtable();
         
         Vector files = new Vector();
-        getFiles(path, files, new JavaFilter());
+        getFiles(path, files);
         
         Enumeration e = files.elements();
         while (e.hasMoreElements()) {
@@ -451,19 +445,21 @@ public class Javadoc2 extends Java {
      * Fills the given vector with files under the given path filtered
      * by the given file filter.
      */
-    private void getFiles(File path, Vector list, FileFilter filter) {
+    private void getFiles(File path, Vector list) {
         if (!path.exists()) {
             throw new BuildException("Path " + path + " does not exist.");
         }
         
-        File[] files = path.listFiles(filter);
+        String[] files = path.list();
+        String cwd = path.getName() + System.getProperty("path.separator");
         
         if (files != null) {
             int count = 0;
             for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) { 
-                    getFiles(files[i], list, filter);
-                } else {
+		File file = new File(cwd + files[i]);
+                if (file.isDirectory()) { 
+                    getFiles(file, list);
+                } else if (files[i].endsWith(".java")) {
                     count++;
                     list.addElement(files[i]);
                 }
