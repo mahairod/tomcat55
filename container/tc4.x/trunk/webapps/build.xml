@@ -22,6 +22,18 @@
   <!-- =================== BUILD: Compile Subprojects ===================== -->
   <!-- Add a new target for each webapp subproject -->
 
+  <target name="ROOT">
+    <ant dir="./ROOT" target="dist"/>
+  </target>
+
+  <target name="ROOT-deploy">
+    <ant dir="./ROOT" target="deploy"/>
+  </target>
+
+  <target name="ROOT-deploydist">
+    <ant dir="./ROOT" target="deploy-dist"/>
+  </target>
+
   <target name="examples">
     <ant dir="./examples" target="dist"/>
   </target>
@@ -35,16 +47,16 @@
   </target>
 
   <!-- ================= BUILD: Compile Server Components ================= -->
-  <target name="build" depends="build-prepare,examples"/>
+  <target name="build" depends="build-prepare,ROOT,examples"/>
 
   <!-- ================= BUILD: Create Distribution Files ================= -->
-  <target name="dist" depends="build-prepare,examples"/>
+  <target name="dist" depends="build-prepare,ROOT,examples"/>
 
   <!-- ================= BUILD: Deploy Webapps Projects =================== -->
-  <target name="deploy" depends="examples-deploy"/>
+  <target name="deploy" depends="ROOT-deploy,examples-deploy"/>
 
   <!-- ================= BUILD: Deploy Webapps Distribution Files ========= -->
-  <target name="deploy-dist" depends="examples-deploydist"/>
+  <target name="deploy-dist" depends="ROOT-deploydist,examples-deploydist"/>
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
