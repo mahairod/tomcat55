@@ -184,6 +184,28 @@
                 </html:select>
             </controls:data>
         </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.xmlNamespaceAware"/>:</controls:label>
+            <controls:data>
+               <html:select property="xmlNamespaceAware">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="host.xmlValidation"/>:</controls:label>
+            <controls:data>
+               <html:select property="xmlValidation">
+                     <bean:define id="booleanVals" name="hostForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
       </controls:table>
 
       </td>

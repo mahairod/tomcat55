@@ -96,21 +96,21 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
  */
 
 public class EditHostAction extends Action {
-    
+
     /**
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-    
+
 
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-    
+
 
     // --------------------------------------------------------- Public Methods
-    
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -131,14 +131,14 @@ public class EditHostAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-        
+
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -146,7 +146,7 @@ public class EditHostAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-        
+
         // Set up the object names of the MBeans we are manipulating
         ObjectName hname = null;
         StringBuffer sb = null;
@@ -160,7 +160,7 @@ public class EditHostAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
-        
+
         // Fill in the form values for display and editing
         HostForm hostFm = new HostForm();
         session.setAttribute("hostForm", hostFm);
@@ -172,7 +172,7 @@ public class EditHostAction extends Action {
         hostFm.setNodeLabel(sb.toString());
         hostFm.setDebugLvlVals(Lists.getDebugLevels());
         hostFm.setBooleanVals(Lists.getBooleanValues());
-        
+
         String attribute = null;
         try {
 
@@ -188,6 +188,12 @@ public class EditHostAction extends Action {
                 ((String) mBServer.getAttribute(hname, attribute));
             attribute = "unpackWARs";
             hostFm.setUnpackWARs
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "xmlNamespaceAware";
+            hostFm.setXmlNamespaceAware
+                (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
+            attribute = "xmlValidation";
+            hostFm.setXmlValidation
                 (((Boolean) mBServer.getAttribute(hname, attribute)).toString());
 
         } catch (Throwable t) {
@@ -205,9 +211,9 @@ public class EditHostAction extends Action {
         String operation = null;
         try {
             operation = "findAliases";
-            String aliases[] = 
+            String aliases[] =
                 (String[]) mBServer.invoke(hname, operation, null, null);
-            
+
             hostFm.setAliasVals(new ArrayList(Arrays.asList(aliases)));
 
         } catch (Throwable t) {
@@ -218,11 +224,11 @@ public class EditHostAction extends Action {
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 resources.getMessage(locale, "users.error.invoke",
                                      operation));
-            return (null);            
+            return (null);
         }
-                
+
         // Forward to the host display page
         return (mapping.findForward("Host"));
-        
+
     }
 }
