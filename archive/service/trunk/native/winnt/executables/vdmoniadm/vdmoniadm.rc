@@ -295,7 +295,7 @@ BEGIN
             VALUE "FileDescription", "OnServe Service Administration..\0"
             VALUE "FileVersion", "3.0.0.1\0"
             VALUE "InternalName", "vdmoniadm\0"
-            VALUE "LegalCopyright", "Siemens AG 1998\0"
+            VALUE "LegalCopyright", "Copyright © 1998-2001, Apache Software Foundation \0"
             VALUE "OriginalFilename", "vdmonisvc.exe\0"
             VALUE "ProductName", "OnServe\0"
             VALUE "ProductVersion", "3.0 A00\0"

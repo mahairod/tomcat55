@@ -1,5 +1,5 @@
 /*
- * vdmoni install program, create the service OnServe
+ * jsvc.exe install program, create the service JavaService
  */
 
 // includes
@@ -10,10 +10,10 @@
 
 VOID Usage()
 {
-	cout << "\r\n - Copyright (C) 1998 by Siemens Nixdorf Informationssystem AG\r\n\r\n"; 
+	cout << "\r\n - Java service installer\r\n\r\n"; 
 	cout << " - Usage :\r\n";
-	cout << "       To install OnServe service : InstSvc\r\n";
-	cout << "       To remove OnServe service : InstSvc -REMOVE\r\n\r\n";
+	cout << "       To install Java service : InstSvc\r\n";
+	cout << "       To remove Java service  : InstSvc -REMOVE\r\n\r\n";
 	cout << "   Use regedit if you want to change something\r\n\r\n";
 	cout << "   Note that the service key is in:\r\n";
     cout << "   HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\";
