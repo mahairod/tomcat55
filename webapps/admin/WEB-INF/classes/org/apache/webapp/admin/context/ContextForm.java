@@ -137,6 +137,16 @@ public final class ContextForm extends ActionForm {
      */
     private String mgrMaxSessions = "0";
     
+    /**
+     * The text for the anti resource locking flag.
+     */
+    private String antiResourceLocking = "false";
+
+    /**
+     * The text for the anti jar locking flag.
+     */
+    private String antiJarLocking = "false";
+
     /*
      * Represent boolean (true, false) values for cookies etc.
      */
@@ -539,7 +549,36 @@ public final class ContextForm extends ActionForm {
         this.mgrMaxSessions = mgrMaxSessions;
         
     }
-        
+
+    /**
+     * Get the anti resouce locking flag
+     */
+    public String getAntiResourceLocking() {
+        return antiResourceLocking;
+    }
+
+    /**
+     * Set the anti resource locking flag
+     */
+    public void setAntiResourceLocking(String arl) {
+	antiResourceLocking = arl;
+    }
+
+
+    /**
+     * Get the anti jar locking flag
+     */
+    public String getAntiJarLocking() {
+        return antiJarLocking;
+    }
+
+    /**
+     * Set the anti jar locking flag
+     */
+    public void setAntiJarLocking(String ajl) {
+        antiJarLocking = ajl;
+    }
+
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -563,7 +602,9 @@ public final class ContextForm extends ActionForm {
         this.path = null;
         this.reloadable = "false";
         this.swallowOutput = "false";
-        
+        this.antiResourceLocking = "false";
+        this.antiJarLocking = "false";
+
         // loader properties
         this.ldrCheckInterval = "15";
         this.ldrReloadable = "true";
