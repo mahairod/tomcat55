@@ -208,6 +208,27 @@ public class TreeNode {
 
 
     /**
+     * Return the first child node of this node with the specified name,
+     * if there is one; otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired child element
+     */
+    public TreeNode findChild(String name) {
+
+        if (children == null)
+            return (null);
+        Iterator items = children.iterator();
+        while (items.hasNext()) {
+            TreeNode item = (TreeNode) items.next();
+            if (name.equals(item.getName()))
+                return (item);
+        }
+        return (null);
+
+    }
+
+
+    /**
      * Return an Iterator of all children of this node.  If there are no
      * children, an empty Iterator is returned.
      */

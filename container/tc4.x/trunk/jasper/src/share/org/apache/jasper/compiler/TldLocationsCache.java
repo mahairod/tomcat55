@@ -163,19 +163,13 @@ public class TldLocationsCache {
             // Parse the next <taglib> element
             TreeNode taglib = (TreeNode) taglibs.next();
             String tagUri = null;
-            Iterator uris = taglib.findChildren("taglib-uri");
-            while (uris.hasNext()) {
-                TreeNode uri = (TreeNode) uris.next();
-                if (tagUri == null)
-                    tagUri = uri.getBody();
-            }
             String tagLoc = null;
-            Iterator locs = taglib.findChildren("taglib-location");
-            while (locs.hasNext()) {
-                TreeNode loc = (TreeNode) locs.next();
-                if (tagLoc == null)
-                    tagLoc = loc.getBody();
-            }
+            TreeNode child = taglib.findChild("taglib-uri");
+            if (child != null)
+                tagUri = child.getBody();
+            child = taglib.findChild("taglib-location");
+            if (child != null)
+                tagLoc = child.getBody();
 
             // Save this location if appropriate
             if (tagLoc == null)
@@ -291,10 +285,11 @@ public class TldLocationsCache {
                 return null;
             }
             TreeNode taglib = (TreeNode) taglibs.next();
-            Iterator uris = taglib.findChildren("uri");
-            while (uris.hasNext()) {
-                TreeNode uri = (TreeNode) uris.next();
-                return uri.getBody();
+            TreeNode uri = taglib.findChild("uri");
+            if (uri != null) {
+                String body = uri.getBody();
+                if (body != null)
+                    return body;
             }
         }
         return null; // No <uri> element is present

@@ -191,6 +191,8 @@ public class JspUtil {
 
     /**
      * Parses the XML document contained in the InputStream.
+     *
+     * @deprecated Use ParserUtils.parseXMLDocument() instead
      */
     public static Document parseXMLDoc(String uri, InputStream in) 
 	throws JasperException 
@@ -202,6 +204,8 @@ public class JspUtil {
      * Parses the XML document contained in the InputStream.
      * This XML document is either web.xml or a tld.
      * [The TLD has to be cached internally (see MyEntityResolver)]
+     *
+     * @deprecated Use ParserUtils.parseXMLDocument() instead
      */
     public static Document parseXMLDocJaxp(String uri, InputStream in)
 	throws JasperException

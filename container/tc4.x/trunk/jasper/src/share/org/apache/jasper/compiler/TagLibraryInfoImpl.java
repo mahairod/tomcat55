@@ -62,6 +62,7 @@ package org.apache.jasper.compiler;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.JarURLConnection;
+import java.util.Iterator;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
 import java.util.jar.*;
@@ -89,14 +90,18 @@ import javax.servlet.jsp.tagext.PageData;
 import javax.servlet.jsp.tagext.VariableInfo;
 import javax.servlet.jsp.tagext.TagVariableInfo;
 
-import org.w3c.dom.*;
-import org.xml.sax.*;
+// import org.w3c.dom.*;
+// import org.xml.sax.*;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
 import org.apache.jasper.logging.Logger;
+
+import org.apache.jasper.parser.ParserUtils;
+import org.apache.jasper.parser.TreeNode;
+
 
 /**
  * Implementation of the TagLibraryInfo class from the JSP spec. 
@@ -108,8 +113,6 @@ import org.apache.jasper.logging.Logger;
 public class TagLibraryInfoImpl extends TagLibraryInfo {
     static private final String TAGLIB_TLD = "META-INF/taglib.tld";
     static private final String WEB_XML = "/WEB-INF/web.xml";
-
-    Document tld;
 
     Hashtable jarEntries;
 
@@ -263,45 +266,50 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     private void parseTLD(String uri, InputStream in) 
         throws JasperException
     {
-	tld = JspUtil.parseXMLDoc(uri, in);
+
         Vector tagVector = new Vector();
-        NodeList list = tld.getElementsByTagName("taglib");
 
-        if (list.getLength() != 1)
-            throw new JasperException(
-                Constants.getString("jsp.error.more.than.one.taglib",
-                                    new Object[]{uri}));
+        // Create an iterator over the child elements of our <taglib> element
+        ParserUtils pu = new ParserUtils();
+        TreeNode tld = pu.parseXMLDocument(uri, in);
+        Iterator list = tld.findChildren();
 
-        Element elem = (Element) list.item(0);
-        list = elem.getChildNodes();
+        // Process each child element of our <taglib> element
+        while (list.hasNext()) {
 
-        for(int i = 0; i < list.getLength(); i++) {
-	    Node tmp = list.item(i);
-	    if (! (tmp instanceof Element)) continue;
-            Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("tlibversion") || tname.equals("tlib-version")) {
-		this.tlibversion = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("jspversion") || tname.equals("jsp-version")) {
-		this.jspversion = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("shortname") || tname.equals("short-name")) {
-		this.shortname = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("uri")) {
-		this.urn = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("info")) {
-		this.info = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("validator")) {
-		this.tagLibraryValidator = createValidator(e);
-            } else if (tname.equals("tag"))
-                tagVector.addElement(createTagInfo(e));
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+
+            if ("tlibversion".equals(tname) ||          // JSP 1.1
+                "tlib-version".equals(tname))           // JSP 1.2
+                this.tlibversion = element.getBody();
+            else if ("jspversion".equals(tname) ||
+                     "jsp-version".equals(tname))
+                this.jspversion = element.getBody();
+            else if ("shortname".equals(tname) ||
+                     "short-name".equals(tname))
+                this.shortname = element.getBody();
+            else if ("uri".equals(tname))
+                this.urn = element.getBody();
+            else if ("info".equals(tname) ||
+                     "description".equals(tname))
+                this.info = element.getBody();
+            else if ("validator".equals(tname))
+                this.tagLibraryValidator = createValidator(element);
+            else if ("tag".equals(tname))
+                tagVector.addElement(createTagInfo(element));
+            else if ("display-name".equals(tname) ||    // Ignored elements
+                     "small-icon".equals(tname) ||
+                     "large-icon".equals(tname) ||
+                     "listener".equals(tname))
+                ;
             else {
                 Constants.message("jsp.warning.unknown.element.in.TLD", 
-                                  new Object[] {
-                                      e.getTagName()
-                                  },
+                                  new Object[] {tname},
                                   Logger.WARNING
                                   );
-	    }
+            }
+
         }
 
 
@@ -309,7 +317,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         tagVector.copyInto (this.tags);
     }
 
-    private TagInfo createTagInfo(Element elem) throws JasperException {
+    private TagInfo createTagInfo(TreeNode elem) throws JasperException {
         String name = null;
 	String tagclass = null;
 	String teiclass = null;
@@ -321,46 +329,41 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         
         Vector attributeVector = new Vector();
         Vector variableVector = new Vector();
-        NodeList list = elem.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            Node tmp  =  list.item(i);
-	    if (! (tmp instanceof Element)) continue;
-	    Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("name")) {
-		name = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("tagclass") || tname.equals("tag-class")) {
-		tagclass = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("teiclass") || tname.equals("tei-class")) {
-		teiclass = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("bodycontent") || tname.equals("body-content")) {
-		bodycontent = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("info") || tname.equals("tlib-description")) {
-		info = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("attribute")) {
-                attributeVector.addElement(createAttribute(e));
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
 
-	    // JSP 1.2
-
-	    } else if (tname.equals("display-name")) {
-		displayName = JspUtil.getElementChildTextData(e);
-	    } else if (tname.equals("small-icon")) {
-		smallIcon = JspUtil.getElementChildTextData(e);
-	    } else if (tname.equals("large-icon")) {
-		largeIcon = JspUtil.getElementChildTextData(e);
-	    } else if (tname.equals("variable")) {
-		if (teiclass != null) {
-		    // teiclass comes first in the tag element
-		    // only need to make the check here
-		    throw new JasperException(
-			Constants.getString("tld.error.variableNotAllowed"));
-		}
-		variableVector.addElement(createVariable(e));
-	    } else {
+            if ("name".equals(tname))
+                name = element.getBody();
+            else if ("tagclass".equals(tname) ||
+                     "tag-class".equals(tname))
+                tagclass = element.getBody();
+            else if ("teiclass".equals(tname) ||
+                     "tei-class".equals(tname))
+                teiclass = element.getBody();
+            else if ("bodycontent".equals(tname) ||
+                     "body-content".equals(tname))
+                bodycontent = element.getBody();
+            else if ("display-name".equals(tname))
+                displayName = element.getBody();
+            else if ("small-icon".equals(tname))
+                smallIcon = element.getBody();
+            else if ("large-icon".equals(tname))
+                largeIcon = element.getBody();
+            else if ("info".equals(tname) ||
+                     "description".equals(tname))
+                info = element.getBody();
+            else if ("variable".equals(tname)) {
+                if (teiclass != null)
+                    throw new JasperException
+                        (Constants.getString("tld.error.variableNotAllowed"));
+                variableVector.addElement(createVariable(element));
+            } else if ("attribute".equals(tname))
+                attributeVector.addElement(createAttribute(element));
+            else {
                 Constants.message("jsp.warning.unknown.element.in.tag", 
-                                  new Object[] {
-                                      e.getTagName()
-                                  },
+                                  new Object[] {tname},
                                   Logger.WARNING
                                   );
 	    }
@@ -414,70 +417,65 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         return taginfo;
     }
 
-    TagAttributeInfo createAttribute(Element elem) {
+    TagAttributeInfo createAttribute(TreeNode elem) {
+        //        p("createAttribute\n" + elem);
         String name = null;
         boolean required = false, rtexprvalue = false, reqTime = false;
         String type = null;
         
-        NodeList list = elem.getChildNodes();
-        for(int i = 0; i < list.getLength(); i++) {
-            Node tmp  = list.item(i);
-	    if (! (tmp instanceof Element)) continue;
-	    Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("name"))  {
-		name = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("required"))  {
-                String s = JspUtil.getElementChildTextData(e);
-                if (s != null) {
-		    required = JspUtil.booleanValue(s);
-		}
-            } else if (tname.equals("rtexprvalue")) {
-		String s = JspUtil.getElementChildTextData(e);
-                if (s != null) {
-		    rtexprvalue = JspUtil.booleanValue(s);
-		}
-            } else if (tname.equals("type")) {
-		type = JspUtil.getElementChildTextData(e);
-            } else 
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+
+            if ("name".equals(tname))
+                name = element.getBody();
+            else if ("required".equals(tname)) {
+                String s = element.getBody();
+                if (s != null)
+                    required = JspUtil.booleanValue(s);
+            } else if ("rtexprvalue".equals(tname)) {
+                String s = element.getBody();
+                if (s != null)
+                    rtexprvalue = JspUtil.booleanValue(s);
+            } else if ("type".equals(tname))
+                type = element.getBody();
+            else {
                 Constants.message("jsp.warning.unknown.element.in.attribute", 
-                                  new Object[] {
-                                      e.getTagName()
-                                  },
+                                  new Object[] {tname},
                                   Logger.WARNING
                                   );
+            }
         }
         
-	//     return new TagAttributeInfo(name, required, rtexprvalue, type);
+        // p("name=" + name + ", required=" + required + ", type=" + type +
+        //   ", rtexprvalue=" + rtexprvalue);
         return new TagAttributeInfo(name, required, type, rtexprvalue);
     }
 
-    TagVariableInfo createVariable(Element elem) {
+    TagVariableInfo createVariable(TreeNode elem) {
         String nameGiven = null;
         String nameFromAttribute = null;
 	String className = null;
 	boolean declare = true;
 	int scope = VariableInfo.NESTED;
         
-        NodeList list = elem.getChildNodes();
-        for(int i=0; i<list.getLength(); i++) {
-            Node tmp  = list.item(i);
-	    if (!(tmp instanceof Element)) continue;
-	    Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("name-given"))  {
-		nameGiven = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("name-from-attribute"))  {
-		nameFromAttribute = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("variable-class"))  {
-		className = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("declare"))  {
-                String s = JspUtil.getElementChildTextData(e);
-                if (s != null) {
-		    declare = JspUtil.booleanValue(s);
-		}
-            } else if (tname.equals("scope")) {
-		String s = JspUtil.getElementChildTextData(e);
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+            if ("name-given".equals(tname))
+                nameGiven = element.getBody();
+            else if ("name-from-attribute".equals(tname))
+                nameFromAttribute = element.getBody();
+            else if ("variable-class".equals(tname))
+                className = element.getBody();
+            else if ("declare".equals(tname)) {
+                String s = element.getBody();
+                if (s != null)
+                    declare = JspUtil.booleanValue(s);
+            } else if ("scope".equals(tname)) {
+                String s = element.getBody();
                 if (s != null) {
 		    if ("NESTED".equals(s)) {
 			scope = VariableInfo.NESTED;
@@ -489,7 +487,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		}
             } else {
                 Constants.message("jsp.warning.unknown.element.in.variable",
-                                  new Object[] {e.getTagName()},
+                                  new Object[] {tname},
                                   Logger.WARNING);
 	    }
         }
@@ -497,24 +495,22 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 				   className, declare, scope);
     }
 
-    private TagLibraryValidator createValidator(Element elem) {
+    private TagLibraryValidator createValidator(TreeNode elem) {
         String validatorClass = null;
 	Map initParams = new Hashtable();
-        
-        NodeList list = elem.getChildNodes();
-        for(int i=0; i<list.getLength(); i++) {
-            Node tmp  = list.item(i);
-	    if (!(tmp instanceof Element)) continue;
-	    Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("validator-class"))  {
-		validatorClass = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("init-param"))  {
-		String[] initParam = createInitParam(e);
+
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+            if ("validator-class".equals(tname))
+                validatorClass = element.getBody();
+            else if ("init-param".equals(tname)) {
+		String[] initParam = createInitParam(element);
 		initParams.put(initParam[0], initParam[1]);
             } else {
                 Constants.message("jsp.warning.unknown.element.in.validator", //@@@ add in properties
-                                  new Object[] {e.getTagName()},
+                                  new Object[] {tname},
                                   Logger.WARNING);
 	    }
         }
@@ -541,24 +537,22 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	return tlv;
     }
 
-    String[] createInitParam(Element elem) {
+    String[] createInitParam(TreeNode elem) {
         String[] initParam = new String[2];
         
-        NodeList list = elem.getChildNodes();
-        for(int i=0; i<list.getLength(); i++) {
-            Node tmp  = list.item(i);
-	    if (!(tmp instanceof Element)) continue;
-	    Element e = (Element) tmp;
-            String tname = e.getTagName();
-            if (tname.equals("param-name"))  {
-		initParam[0] = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("param-value"))  {
-		initParam[1] = JspUtil.getElementChildTextData(e);
-            } else if (tname.equals("description"))  {
-		// do nothing
-            } else {
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+            if ("param-name".equals(tname))
+                initParam[0] = element.getBody();
+            else if ("param-value".equals(tname))
+                initParam[1] = element.getBody();
+            else if ("description".equals(tname))
+                ; // Do nothing
+            else {
                 Constants.message("jsp.warning.unknown.element.in.initParam", //@@@ properties
-                                  new Object[] {e.getTagName()},
+                                  new Object[] {tname},
                                   Logger.WARNING);
 	    }
         }
