@@ -248,6 +248,7 @@ public class RequestImpl  implements Request {
     }
 
     public void setPathTranslated(String s ) {
+	pathTranslated=s;
     }
 
     public String getPathTranslated() {

@@ -102,6 +102,7 @@ public class SimpleTcpConnector  extends TcpEndpointConnector implements ServerC
 
 
     public static final String PORT = "port";
+    public static final String INET = "inet";
     public static final String HANDLER = "handler";
 
     // XXX define ConnectorException
@@ -133,6 +134,7 @@ public class SimpleTcpConnector  extends TcpEndpointConnector implements ServerC
 
 	con.setAttribute("context.manager",cm );
     	ep.setPort(port);
+	ep.setAddress( address );
 	if(socketFactory != null) {
 	    ep.setServerSocketFactory( socketFactory );
 	}
@@ -178,6 +180,11 @@ public class SimpleTcpConnector  extends TcpEndpointConnector implements ServerC
     	    	con=(TcpConnectionHandler)chC.newInstance();
     	    } catch( Exception ex) {
 		ex.printStackTrace();
+    	    }
+    	} else if(INET.equals(prop)) {
+    	    try {
+		address=InetAddress.getByName( value );
+    	    } catch( Exception ex) {
     	    }
     	}
     }

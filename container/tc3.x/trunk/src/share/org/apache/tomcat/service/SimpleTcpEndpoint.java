@@ -131,7 +131,7 @@ public class SimpleTcpEndpoint  extends TcpEndpoint { // implements Endpoint {
     }
 
     public void setAddress(InetAddress inet) {
-	    this.inet=inet;
+	this.inet=inet;
     }
 
     public void setServerSocket(ServerSocket ss) {
@@ -182,7 +182,7 @@ public class SimpleTcpEndpoint  extends TcpEndpoint { // implements Endpoint {
 	    if(factory==null)
 		factory=ServerSocketFactory.getDefault();
 	    if(serverSocket==null) {
-		if (inet != null) {
+		if (inet == null) {
 		    serverSocket = factory.createSocket(port, backlog);
 		} else {
 		    serverSocket = factory.createSocket(port, backlog, inet);

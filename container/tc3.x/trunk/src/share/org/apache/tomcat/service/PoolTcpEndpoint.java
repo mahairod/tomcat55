@@ -219,7 +219,7 @@ public class PoolTcpEndpoint extends TcpEndpoint  { // implements Endpoint {
 	        if(factory==null)
 		        factory=ServerSocketFactory.getDefault();
 	        if(serverSocket==null) {
-		        if (inet != null) {
+		        if (inet == null) {
 		            serverSocket = factory.createSocket(port, backlog);
     		    } else {
 	    	        serverSocket = factory.createSocket(port, backlog, inet);
