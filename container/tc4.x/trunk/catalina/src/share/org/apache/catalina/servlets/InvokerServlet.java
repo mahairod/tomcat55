@@ -330,8 +330,10 @@ public final class InvokerServlet
         // try to initialize the same servlet at the same time
         synchronized (this) {
 
-            // Are we referencing an existing servlet name?
+            // Are we referencing an existing servlet class or name?
             wrapper = (Wrapper) context.findChild(servletClass);
+            if (wrapper == null)
+                wrapper = (Wrapper) context.findChild(name);
             if (wrapper != null) {
                 if (debug >= 1)
                     log("Using wrapper for servlet '" +
