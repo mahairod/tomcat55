@@ -45,7 +45,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
     private int tcpThreadCount;
     private long tcpSelectorTimeout;
     private int tcpListenPort;
-    private boolean isSenderSynchronized;
+    private boolean waitForAck;
     private Selector selector = null;
     
     private Object interestOpsMutex = new Object();
@@ -221,7 +221,7 @@ public class ReplicationListener implements Runnable,ClusterReceiver
             return;
         } else {
             // invoking this wakes up the worker thread then returns
-            worker.serviceChannel(key, isSenderSynchronized);
+            worker.serviceChannel(key, waitForAck);
             return;
         }
     }
@@ -249,11 +249,11 @@ public class ReplicationListener implements Runnable,ClusterReceiver
     public void setTcpThreadCount(int tcpThreadCount) {
         this.tcpThreadCount = tcpThreadCount;
     }
-    public boolean getIsSenderSynchronized() {
-        return isSenderSynchronized;
+    public boolean isWaitForAck() {
+        return waitForAck;
     }
-    public void setIsSenderSynchronized(boolean isSenderSynchronized) {
-        this.isSenderSynchronized = isSenderSynchronized;
+    public void setWaitForAck(boolean waitForAck) {
+        this.waitForAck = waitForAck;
     }
     
     public String getHost() {

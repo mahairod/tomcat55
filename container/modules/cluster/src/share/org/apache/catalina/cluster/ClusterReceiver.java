@@ -17,7 +17,13 @@
 package org.apache.catalina.cluster;
 
 
-
+/**
+ * 
+ * @author Filip Hanik
+ * @author Peter Rossbach
+ * @version 1.1
+ *
+ */
 public interface ClusterReceiver
 {
 
@@ -27,7 +33,8 @@ public interface ClusterReceiver
 
     public void setCatalinaCluster(CatalinaCluster cluster);
     
-    public void setIsSenderSynchronized(boolean isSenderSynchronized);
+    public boolean isWaitForAck();
+    public void setWaitForAck(boolean isWaitForAck);
     
     public String getHost();
     

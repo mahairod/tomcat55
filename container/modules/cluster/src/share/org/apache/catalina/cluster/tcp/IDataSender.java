@@ -36,4 +36,8 @@ public interface IDataSender
     public void setSuspect(boolean suspect);
     public boolean getSuspect();
     public void setAckTimeout(long timeout);
+    public long getAckTimeout();
+    public boolean isWaitForAck();
+    public void setWaitForAck(boolean isWaitForAck);
+
 }

@@ -17,173 +17,215 @@
 package org.apache.catalina.cluster.tcp;
 
 import java.net.InetAddress;
-import java.net.Socket;
+
 import org.apache.catalina.cluster.util.SmartQueue;
 
 /**
- * Send cluster messages from a Message queue with only one socket.
+ * Send cluster messages from a Message queue with only one socket. Ack and keep
+ * Alive Handling is supported.
+ * <ul>
+ * <li>With autoConnect=false at ReplicationTransmitter, you can disconnect the
+ * sender and all messages are queued. Only use this for small maintaince
+ * isuses!</li>
+ * <li>waitForAck=true, means that receiver ack the transfer</li>
+ * <li>after one minute idle time, or number of request (100) the connection is
+ * reconnected with next request. Change this for production use!</li>
+ * <li>default ackTimeout is 15 sec: this is very low for big all session replication messages after restart a node</li>
+ * <li>disable keepAlive: keepAliveTimeout="-1" and keepAliveMaxRequestCount="-1"</li>
+ * </ul>
  * 
  * @author Filip Hanik
  * @author Peter Rossbach
- * @version 1.1
+ * @version 1.2
  */
-public class AsyncSocketSender implements IDataSender {
+public class AsyncSocketSender extends DataSender {
+    
     private static int threadCounter = 1;
 
     private static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
             .getLog(AsyncSocketSender.class);
 
-    private InetAddress address;
+    /**
+     * The descriptive information about this implementation.
+     */
+    private static final String info = "AsyncSocketSender/1.2";
 
-    private int port;
+    // ----------------------------------------------------- Instance Variables
 
-    private Socket sc = null;
-
-    private boolean isSocketConnected = false;
-
+    /**
+     * Message Queue
+     */
     private SmartQueue queue = new SmartQueue();
 
-    private boolean suspect;
-
+    /**
+     * Active thread to push messages asynchronous to the other replication node
+     */
     private QueueThread queueThread = null;
 
-    private long ackTimeout;
-
-    private long nrOfRequests = 0;
-
-    private long totalBytes = 0;
-
-    private synchronized void addStats(int length) {
-        nrOfRequests++;
-        totalBytes += length;
-        if (log.isDebugEnabled() && (nrOfRequests % 100) == 0) {
-            log.debug("Send stats from " + getAddress().getHostAddress() + ":" + getPort()
-                    + "Nr of bytes sent=" + totalBytes + " over "
-                    + nrOfRequests + " ==" + (totalBytes / nrOfRequests)
-                    + " bytes/request");
-        }
-
-    }
+    /**
+     * Count number of queue message
+     */
+    private long inQueueCounter = 0;
 
     /**
-     * @return Returns the nrOfRequests.
+     * Count all successfull push messages from queue
      */
-    public long getNrOfRequests() {
-        return nrOfRequests;
-    }
+    private long outQueueCounter = 0;
 
     /**
-     * @return Returns the totalBytes.
+     * Current number of bytes from all queued messages
      */
-    public long getTotalBytes() {
-        return totalBytes;
-    }
+    private long queuedNrOfBytes = 0;
 
+    // ------------------------------------------------------------- Constructor
+
+    /**
+     * start background thread to push incomming cluster messages to replication
+     * node
+     * 
+     * @param host replication node tcp address
+     * @param port replication node tcp port
+     */
     public AsyncSocketSender(InetAddress host, int port) {
-        this.address = host;
-        this.port = port;
+        super(host, port);
         checkThread();
-        if (log.isInfoEnabled())
-            log.info("Started async sender thread for TCP replication.");
+        long a = Long.MAX_VALUE;
     }
 
-    public InetAddress getAddress() {
-        return address;
-    }
+    // ------------------------------------------------------------- Properties
 
-    public int getPort() {
-        return port;
-    }
+    /**
+     * Return descriptive information about this implementation and the
+     * corresponding version number, in the format
+     * <code>&lt;description&gt;/&lt;version&gt;</code>.
+     */
+    public String getInfo() {
 
-    public void connect() throws java.io.IOException {
-        sc = new Socket(getAddress(), getPort());
-        isSocketConnected = true;
-        checkThread();
+        return (info);
 
     }
 
-    protected void checkThread() {
-        if (queueThread == null) {
-            queueThread = new QueueThread(this);
-            queueThread.setDaemon(true);
-            queueThread.start();
-        }
+    /**
+     * @return Returns the inQueueCounter.
+     */
+    public long getInQueueCounter() {
+        return inQueueCounter;
     }
 
-    public void disconnect() {
-        try {
-            sc.close();
-        } catch (Exception x) {
-        }
-        isSocketConnected = false;
-        if (queueThread != null) {
-            queueThread.stopRunning();
-            queueThread = null;
-        }
-
+    /**
+     * @return Returns the outQueueCounter.
+     */
+    public long getOutQueueCounter() {
+        return outQueueCounter;
     }
 
-    public boolean isConnected() {
-        return isSocketConnected;
-    }
-
+    /**
+     * @return Returns the queueSize.
+     */
     public int getQueueSize() {
         return queue.size();
     }
 
     /**
-     * Blocking send
-     * 
-     * @param data
-     * @throws java.io.IOException
+     * @return Returns the queuedNrOfBytes.
      */
-    private synchronized void sendMessage(byte[] data)
-            throws java.io.IOException {
-        if (!isConnected())
-            connect();
-        try {
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-        } catch (java.io.IOException x) {
-            disconnect();
-            connect();
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-        }
-        addStats(data.length);
+    public long getQueuedNrOfBytes() {
+        return queuedNrOfBytes;
     }
 
-    public synchronized void sendMessage(String sessionId, byte[] data)
+    // --------------------------------------------------------- Public Methods
+
+    /*
+     * Connect to socket and start background thread to ppush queued messages
+     * 
+     * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
+     */
+    public void connect() throws java.io.IOException {
+        super.connect();
+        checkThread();
+    }
+
+    /**
+     * Disconnect socket ad stop queue thread
+     * 
+     * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
+     */
+    public void disconnect() {
+        stopThread();
+        super.disconnect();
+    }
+
+    /*
+     * Send message to queue for later sending
+     * 
+     * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
+     *      byte[])
+     */
+    public synchronized void sendMessage(String messageid, byte[] data)
             throws java.io.IOException {
-        SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(sessionId, data);
+        SmartQueue.SmartEntry entry = new SmartQueue.SmartEntry(messageid, data);
         queue.add(entry);
+        inQueueCounter++;
+        queuedNrOfBytes += data.length;
+        if (log.isTraceEnabled())
+            log.trace(sm.getString("AsyncSocketSender.queue.message",
+                    getAddress(), new Integer(getPort()), messageid, new Long(
+                            data.length)));
     }
 
+    /*
+     * Reset sender statistics
+     */
+    public synchronized void resetStatistics() {
+        super.resetStatistics();
+        inQueueCounter = queue.size();
+        outQueueCounter = 0;
+
+    }
+
+    /**
+     * Name of this SockerSender
+     */
     public String toString() {
         StringBuffer buf = new StringBuffer("AsyncSocketSender[");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
     }
 
-    public boolean isSuspect() {
-        return suspect;
+    // --------------------------------------------------------- Public Methods
+
+    /**
+     * Start Queue thread as daemon
+     */
+    protected void checkThread() {
+        if (queueThread == null) {
+            if (log.isInfoEnabled())
+                log.info(sm.getString("AsyncSocketSender.create.thread",
+                        getAddress(), new Integer(getPort())));
+            queueThread = new QueueThread(this);
+            queueThread.setDaemon(true);
+            queueThread.start();
+        }
     }
 
-    public boolean getSuspect() {
-        return suspect;
+    /**
+     * stop queue worker thread
+     */
+    protected void stopThread() {
+        if (queueThread != null) {
+            queueThread.stopRunning();
+            queueThread = null;
+        }
     }
 
-    public void setSuspect(boolean suspect) {
-        this.suspect = suspect;
+    /*
+     * Reduce queued message date size counter
+     */
+    protected void reduceQueuedCounter(int size) {
+        queuedNrOfBytes -= size;
     }
 
-    public long getAckTimeout() {
-        return ackTimeout;
-    }
-
-    public void setAckTimeout(long ackTimeout) {
-        this.ackTimeout = ackTimeout;
-    }
+    // -------------------------------------------------------- Inner Class
 
     private class QueueThread extends Thread {
         AsyncSocketSender sender;
@@ -199,16 +241,26 @@ public class AsyncSocketSender implements IDataSender {
             keepRunning = false;
         }
 
+        /**
+         * Get one queued message and push it to the replication node
+         * 
+         * @see DataSender#pushMessage(String, byte[])
+         */
         public void run() {
             while (keepRunning) {
                 SmartQueue.SmartEntry entry = sender.queue.remove(5000);
                 if (entry != null) {
+                    int messagesize = 0;
                     try {
                         byte[] data = (byte[]) entry.getValue();
-                        sender.sendMessage(data);
+                        messagesize = data.length;
+                        sender.pushMessage((String) entry.getKey(), data);
+                        outQueueCounter++;
                     } catch (Exception x) {
-                        log.warn("Unable to asynchronously send session w/ id="
-                                + entry.getKey() + " message will be ignored.");
+                        log.warn(sm.getString("AsyncSocketSender.send.error",
+                                entry.getKey()));
+                    } finally {
+                        reduceQueuedCounter(messagesize);
                     }
                 }
             }

@@ -389,8 +389,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
             }
             registerMBeans();
-            clusterReceiver.setIsSenderSynchronized(clusterSender
-                    .getIsSenderSynchronized());
+            clusterReceiver.setWaitForAck(clusterSender.isWaitForAck());
             clusterReceiver.setCatalinaCluster(this);
             clusterReceiver.start();
             clusterSender.setCatalinaCluster(this);
