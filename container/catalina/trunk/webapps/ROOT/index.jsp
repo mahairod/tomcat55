@@ -170,7 +170,7 @@
 
             <p align="right"><font size=-1><img src="tomcat-power.gif" width="77" height="80"></font><br>
             &nbsp;
-            <font size=-1>Copyright &copy; 1999-2002 Apache Software Foundation</font><br>
+            <font size=-1>Copyright &copy; 1999-2003 Apache Software Foundation</font><br>
             <font size=-1>All Rights Reserved</font> <br>
             &nbsp;</p>
             <p align="right">&nbsp;</p>
