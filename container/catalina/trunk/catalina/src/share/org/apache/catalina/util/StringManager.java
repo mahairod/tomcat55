@@ -142,8 +142,12 @@ public class StringManager {
      *
      * @param key
      */
-
     public String getString(String key) {
+        return MessageFormat.format(getStringInternal(key), null);
+    }
+
+
+    protected String getStringInternal(String key) {
         if (key == null) {
             String msg = "key is null";
 
@@ -173,7 +177,7 @@ public class StringManager {
 
     public String getString(String key, Object[] args) {
         String iString = null;
-        String value = getString(key);
+        String value = getStringInternal(key);
 
         // this check for the runtime exception is some pre 1.1.6
         // VM's don't do an automatic toString() on the passed in
