@@ -422,6 +422,10 @@
     <servlet-name>Include_1Test</servlet-name>
     <display-name>Include_1Test</display-name>
     <servlet-class>tests.javax_servlet.RequestDispatcher.Include_1TestServlet</servlet-class>
+    <init-param>
+      <param-name>includeTarget</param-name>
+      <param-value>/IncludedServlet</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
@@ -434,6 +438,10 @@
     <servlet-name>Forward_1Test</servlet-name>
     <display-name>Forward_1Test</display-name>
     <servlet-class>tests.javax_servlet.RequestDispatcher.Forward_1TestServlet</servlet-class>
+    <init-param>
+      <param-name>forwardTarget</param-name>
+      <param-value>/ForwardedServlet</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
 

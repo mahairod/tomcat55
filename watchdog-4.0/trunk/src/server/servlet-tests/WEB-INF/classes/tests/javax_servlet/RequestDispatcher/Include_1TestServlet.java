@@ -88,7 +88,7 @@ public class Include_1TestServlet extends HttpServlet {
 
         //setting content-type to text/plain
         response.setContentType( "text/plain" );
-        String path = "/IncludedServlet";
+        String path = getServletConfig().getInitParameter("includeTarget");
         RequestDispatcher rd = getServletContext().getRequestDispatcher( path );
         rd.include( request, response );
 

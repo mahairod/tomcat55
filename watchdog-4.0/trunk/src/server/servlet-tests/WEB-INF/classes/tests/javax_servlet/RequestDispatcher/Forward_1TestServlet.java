@@ -86,7 +86,7 @@ public class Forward_1TestServlet extends HttpServlet {
         //response is committed here
         out.println( "Committing some content to buffer" );
         out.flush();
-        String path = "/ForwardedServlet";
+        String path = getServletConfig().getInitParameter("forwardTarget");
         RequestDispatcher rd = getServletContext().getRequestDispatcher( path );
 
         try {

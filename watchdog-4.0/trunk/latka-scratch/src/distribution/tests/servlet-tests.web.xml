@@ -869,6 +869,11 @@
     
     <servlet-class>tests.javax_servlet.RequestDispatcher.Include_1TestServlet</servlet-class>
     
+    <init-param>
+      <param-name>includeTarget</param-name>
+      <param-value>/tests/javax_servlet/RequestDispatcher/IncludedServlet</param-value>
+    </init-param>
+    
     <load-on-startup>0</load-on-startup>
     
   
@@ -894,6 +899,11 @@
     <display-name>Forward_1Test</display-name>
     
     <servlet-class>tests.javax_servlet.RequestDispatcher.Forward_1TestServlet</servlet-class>
+    
+    <init-param>
+      <param-name>forwardTarget</param-name>
+      <param-value>/tests/javax_servlet/RequestDispatcher/ForwardedServlet</param-value>
+    </init-param>
     
     <load-on-startup>0</load-on-startup>
     
