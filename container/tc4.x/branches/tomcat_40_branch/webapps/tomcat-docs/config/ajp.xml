@@ -144,12 +144,239 @@
 
 <section name="Configuration HOWTOs">
 
+  <subsection name="Apache">
+
+     <subsection name="Introduction">
+
+        <p>This section explains how to connect Tomcat 4 to the popular
+        open source web server, Apache.  It was originally part of
+        <i>Tomcat: A Minimalistic User's Guide</i> by Gal Shachor, but
+        has been split off for organizational reasons.  It should be
+        considered a <b>work in progress</b>.  Since the Tomcat source
+        tree is constantly changing, the information herein may be out
+        of date.  The only definitive reference at this point is the <a
+        href="http://jakarta.apache.org/site/sourceindex.html">source
+        code</a>.</p>
+
+     </subsection>
+
+     <subsection name="Installation">
+
+        <subsection name="Needed Components">
+
+          <p>In a nutshell a web server is waiting for client HTTP requests.
+          When these requests arrive the server does whatever is needed to 
+          serve the requests by providing the necessary content. Adding a 
+          servlet container may somewhat change this behavior. Now the web 
+          server needs also to perform the following:</p>
+
+          <ul>
+            <li>Load the servlet container adapter library 
+            and initialize it (prior to serving requests). </li>
+            <li>When a request arrives, it needs to check and see if a certain 
+            request belongs to a servlet, if so it needs to let the adapter
+            take the request and handle it.</li>
+          </ul>
+
+          <p>The adapter on the other hand needs to know what requests it is
+          going to serve, usually based on some pattern in the request URL, 
+          and to where to direct these requests.</p>
+
+          <p>Things are even more complex when the user wants to set 
+          a configuration that uses virtual hosts, or when they want multiple 
+          developers to work on the same web server but on different servlet 
+          container JVMs. We will cover these two cases 
+          in the advanced sections.</p>
+
+        </subsection>
+
+        <subsection name="mod_jk Terminology">
+
+           <p>The following terms are used in this section:</p>
+
+           <ul>
+              <li><strong>Worker process</strong> - A worker is a Tomcat 
+              instance that is running to serve servlet requests coming 
+              from the web server. In most cases there is only a single worker
+              (the one and only Tomcat process) but sometimes you will run 
+              multiple workers to achieve load balancing or site partitioning.
+              Each worker is identified to the web server by the host were 
+              it is located, the port where it listens and the communication 
+              protocol used to exchange messages.</li>
+              <li><strong>In-Process Worker</strong> - This is a special 
+              worker. Instead of working with a Tomcat process residing on 
+              another process, the web server opens a JVM and executes 
+              Tomcat inside the web server process address space. 
+              Our discussion in this document is not going to get into this 
+              special worker. Note: Tomcat 4 can't be run as this type of 
+              worker at the moment.</li>
+              <li><strong>Web Server Plug-in/Tomcat Redirector</strong> - 
+              For Tomcat to cooperate with any web server it needs an "agent" 
+              to reside in the web server and send him servlet requests. 
+              This is the web server plug-in, and in our case the web server 
+              plug-in is mod_jk. The redirector usually comes in the shape of 
+              a DLL or shared object module that you plug into 
+              the web server.</li>
+              <li><strong>Plug-in Configuration</strong> - We need to 
+              configure the web server plug-in so that it knows where 
+              the different Tomcat workers are and to which of them 
+              it should forward requests. This information, accompanied with 
+              some internal parameter, such as the log level, comprises 
+              the plug-in configuration.</li>
+              <li><strong>Web Server Configuration</strong> - Each web server 
+              has some configuration that defines its behavior, e.g. on which 
+              port to listen, what files to serve, what web server plug-ins 
+              to load, etc. You will need to modify your web server 
+              configuration to instruct it to load the Tomcat 
+              redirector mod_jk.</li>
+           </ul>
+
+        </subsection>
+
+        <subsection name="Getting mod_jk">
+
+           <p>The mod_jk source now resides in the jakarta-tomcat-connectors
+           subproject. Please refer to it for build instructions.</p>
+
+           <p>Binaries for mod_jk are available for several platforms in the 
+           same area as the Tomcat Binary Release.  The binaries are located 
+           in subdirectories by platform. For some platforms, such as Windows,
+           this is the typical way of obtaining mod_jk since most Windows 
+           systems do not have C compilers.  For others, the binary 
+           distribution of mod_jk offers simpler installation.</p>
+
+           <p><strong>Note: Note: The version of mod_jk is not dependent on 
+           the version of Tomcat. The Tomcat 3.3 distribution of mod_jk will 
+           function correctly with Tomcat 4.x and other 3.x versions of 
+           Tomcat, such as Tomcat 3.2.1.</strong></p>
+
+        </subsection>
+
+        <subsection name="Configuring Apache">
+
+           <p>If you've previously configured Apache to use mod_jserv, remove 
+           any ApJServMount directives from your httpd.conf. If you're 
+           including tomcat-apache.conf or tomcat.conf, you'll want to remove 
+           them as well - they are specific to mod_jserv. 
+           The mod_jserv configuration directives are not compatible 
+           with mod_jk!</p>
+
+           <p>Unlike Tomcat 3, Tomcat 4 doesn't automatically generate the 
+           necessary <code>$CATALINA_HOME/conf/mod_jk.conf</code>,
+           and it will have to be created manually. Note that Tomcat 
+           and Apache must be restarted after adding a new context.</p>
+
+           <p>The basic configuration is as follows:</p>
+
+           <ul>
+              <li>You will need to instruct Apache to load Tomcat. This can be
+              done with Apache's LoadModule and AddModule configuration 
+              directives.</li>
+              <li>You must inform mod_jk the location of your 
+              workers.properties file. Use mod_jk's JkWorkersFile 
+              configuration directive.</li>
+              <li>You should specify a location where mod_jk is going to place
+              its log file and a log level to be used. Use the JkLogFile and 
+              JkLogLevel configuration directives. Possible log levels are 
+              debug, info, error and emerg. If the JkLogLevel is not specified,
+              no log is generated.</li>
+              <li>The directive JkLogStampFormat will configure the date/time 
+              format found on mod_jk logfile. Using strftime() format string 
+              it's set by default to "[%a %b %d %H:%M:%S %Y] "</li>
+              <li>Use mod_jk's JkMount directive to assign specific URLs to 
+              Tomcat. In general the structure of a JkMount directive is:
+              <code>JkMount URL_PREFIX WORKER_NAME</code>. You can use the 
+              JkMount directive at the top level or inside &lt;VirtualHost&gt;
+              sections of your httpd.conf file.</li>
+           </ul>
+
+        </subsection>
+
+        <subsection name="Configuring Tomcat">
+
+           <p>Tomcat 4 won't automatically generate the Apache configuration 
+           file at the moment.</p>
+
+           <p>After enabling the AJP 1.3 connector, you need to define workers,
+           using a <code>$CATALINA_HOME/conf/workers.properties</code> file.
+           In most cases, using the example workers.properties given below
+           should work fine, after changing the path values to reflect how your
+           environment is set up.</p>
+
+        </subsection>
+
+        <subsection name="Example Configuration Files">
+
+           <p>Excerpt from workers.properties showing the Ajp13 worker:</p>
+
+<source>
+# Setup for Solaris system
+#
+workers.tomcat_home=/usr/local/jakarta-tomcat
+workers.java_home=/usr/java
+ps=/
+worker.list=ajp12, ajp13
+
+# Definition for Ajp13 worker
+#
+worker.ajp13.port=8009
+worker.ajp13.host=localhost
+worker.ajp13.type=ajp13
+</source>
+
+           <p>Excerpt from Apaches httpd.conf showing JK directives:</p>
+
+<source>
+# Load mod_jk
+#
+LoadModule jk_module libexec/mod_jk.so
+AddModule mod_jk.c
+
+# Configure mod_jk
+#
+JkWorkersFile /usr/local/jakarta-tomcat/conf/jk/workers.properties
+JkLogFile /usr/local/apache/logs/mod_jk.log
+JkLogLevel info
+
+# First Virtual Host.
+#
+&lt;VirtualHost 10.0.0.1:80>
+DocumentRoot /web/host1
+ServerName host1.apache.org
+JkMount /*.jsp ajp13
+JkMount /servlet/* ajp13
+&lt;/VirtualHost>
+
+# Second Virtual Host. Also accessible via HTTPS
+#
+&lt;VirtualHost 10.0.0.2:80>
+DocumentRoot /web/host2
+ServerName host2.apache.org
+JkMount /*.jsp ajp13
+JkMount /servlet/* ajp13
+&lt;/VirtualHost>
+
+&lt;VirtualHost 10.0.0.2:443>
+DocumentRoot /web/host2
+ServerName host2.apache.org
+SSLEngine On
+JkMount /*.jsp ajp13
+JkMount /servlet/* ajp13
+&lt;/VirtualHost>
+</source>
+
+        </subsection>
+
+     </subsection>
+
+  </subsection>
+
   <subsection name="IIS 4.x and 5.x">
 
      <subsection name="Introduction">
 
-        <p>This paragraph explains how to set up IIS 4.0 or newer to cooperate 
-        with Tomcat 4.0.1. Normally IIS cannot execute Servlets and Java Server
+        <p>This section explains how to set up IIS 4.0 or newer to cooperate 
+        with Tomcat 4. Normally IIS cannot execute Servlets and Java Server
         Pages (JSPs), configuring IIS to use Tomcat redirector plugin 
         will allow IIS to redirect Servlet and JSP requests to Tomcat.</p>
 
