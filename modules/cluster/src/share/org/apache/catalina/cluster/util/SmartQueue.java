@@ -68,7 +68,7 @@ public class SmartQueue {
                 queueMap.put(entry.getKey(),entry);
             }else {
                 /*the object has been queued, replace the value*/
-                if ( debug != 0 ) System.out.print("["+Thread.currentThread().getName()+"][SmartQueue] Replacing old object="+current);
+                if ( debug != 0 ) log.debug("["+Thread.currentThread().getName()+"][SmartQueue] Replacing old object="+current);
                 current.setValue(entry.getValue());
                 if ( debug != 0 ) log.debug("with new object="+current);
             }
