@@ -35,7 +35,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class SecurityConstraint implements Serializable {
+public class SecurityConstraint implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors

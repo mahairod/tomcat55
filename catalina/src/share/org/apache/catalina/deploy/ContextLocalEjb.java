@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class ContextLocalEjb implements Serializable {
+public class ContextLocalEjb implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class ErrorPage implements Serializable {
+public class ErrorPage implements Serializable {
 
 
     // ----------------------------------------------------- Instance Variables

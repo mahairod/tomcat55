@@ -28,7 +28,7 @@ package org.apache.catalina.deploy;
  * @since Tomcat 5.0
  */
 
-public final class MessageDestination {
+public class MessageDestination {
 
 
     // ------------------------------------------------------------- Properties
