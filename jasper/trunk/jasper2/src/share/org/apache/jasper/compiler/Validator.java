@@ -454,6 +454,10 @@ class Validator {
 	public void visit(Node.JspRoot n) throws JasperException {
 	    JspUtil.checkAttributes("Jsp:root", n,
 				    jspRootAttrs, err);
+	    String version = n.getTextAttribute("version");
+	    if (!version.equals("1.2") && !version.equals("2.0")) {
+		err.jspError(n, "jsp.error.jsproot.version.invalid", version);
+	    }
 	    visitBody(n);
 	}
 
