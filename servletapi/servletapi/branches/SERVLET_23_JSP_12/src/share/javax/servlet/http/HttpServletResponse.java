@@ -199,7 +199,7 @@ public interface HttpServletResponse extends ServletResponse {
      * response to look like an HTML-formatted server error page, setting the content type
      * to "text/html", leaving cookies and other headers unmodified.
      *
-     * If an <error-page> declaration has been made for the web application
+     * If an error-page declaration has been made for the web application
      * corresponding to the status code passed in, it will be served back in 
      * preference to the suggested msg parameter. 
      *
