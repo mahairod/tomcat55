@@ -1,5 +1,57 @@
 <?xml version="1.0"?>
 <mbeans-descriptors>
+
+  <mbean         name="DataSourceRealm"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Implementation of Realm that works with any JNDI configured DataSource"
+               domain="Catalina"
+                group="Realm"
+                 type="org.apache.catalina.realm.DataSourceRealm">
+
+    <attribute   name="dataSourceName"
+          description="The JNDI named JDBC DataSource for your database"
+                 type="java.lang.String"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="digest"
+          description="Digest algorithm used in storing passwords in a
+                        non-plaintext format"
+                 type="java.lang.String"/>
+
+    <attribute   name="roleNameCol"
+          description="The column in the user role table that names a role"
+                 type="java.lang.String"/>
+
+    <attribute   name="userCredCol"
+          description="The column in the user table that holds the user's
+                        credentials"
+                 type="java.lang.String"/>
+
+    <attribute   name="userNameCol"
+          description="The column in the user table that holds the user's
+                        username"
+                 type="java.lang.String"/>
+
+    <attribute   name="userRoleTable"
+          description="The table that holds the relation between user's and
+                        roles"
+                 type="java.lang.String"/>
+
+    <attribute   name="userTable"
+          description="The table that holds user data"
+                 type="java.lang.String"/>
+
+
+    <operation name="start" description="Start" impact="ACTION" returnType="void" />
+    <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
+    <operation name="init" description="Init" impact="ACTION" returnType="void" />
+    <operation name="destroy" description="Destroy" impact="ACTION" returnType="void" />
+
+  </mbean>
+
   <mbean         name="JAASRealm"
           description="Implmentation of Realm that authenticates users via the
                        Java Authentication and Authorization Service (JAAS)"
