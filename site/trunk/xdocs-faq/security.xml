@@ -8,6 +8,7 @@
 
   <properties>
     <author email="funkman@apache.org">Tim Funk</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Security</title>
   </properties>
 
@@ -16,21 +17,18 @@
 
 <section name="Preface">
 <p>
-    Security issues. But first a helpful link or two ...
-    <ul>
-     <li>
-        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106293430225790&amp;w=2">
-        Using OpenSSL to set up your own CA
-        </a>
-     </li>
-    </ul>
-
+    This FAQ section provides help with some security-related issues.
 </p>
 </section>
 
 
 <section name="Questions">
   <ul>
+     <li>
+       <a href="#openSSL">
+         How do I use OpenSSL to set up my own Certificate Authority (CA)?
+       </a>
+     </li>
 
      <li>
         <a href="#8005">
@@ -63,12 +61,28 @@
        </a>
      </li>
 
+     <li>
+       <a href="#jsvcExample">
+         How do I use jsvc/procrun to run Tomcat on port 80 securely?
+       </a>
+     </li>
+
   </ul>
 
 </section>
 
 
 <section name="Answers">
+  <question>
+    <a href="openSSL">
+      How do I use OpenSSL to set up my own Certificate Authority (CA)?
+    </a>
+  </question>
+  <answer>
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106293430225790&amp;w=2">
+      Using OpenSSL to set up your own CA.
+    </a>
+  </answer>
 
   <question>
     <a name="8005">
@@ -149,7 +163,17 @@
         Valve Reference Link</a>
   </answer>
 
-
+  <question>
+    <a href="jsvcExample">
+      How do I use jsvc/procrun to run Tomcat on port 80 securely?
+    </a>
+  </question>
+  <answer>
+   Fairly easily ;)  See the Setup page in the docs for your tomcat release, and read
+   <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108566020231438&amp;w=2">
+     this mailing list post
+   </a> for a complete setup example with permissions etc.
+  </answer>
 
 </section>
 
