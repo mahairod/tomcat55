@@ -45,7 +45,7 @@
       <copydir  src="src/conf" dest="${watchdog.build}/conf" />
 
       <copydir  src="doc" dest="${watchdog.build}/doc" />
-      <copyfile src="Readme" 
+      <copyfile src="README" 
                dest="${watchdog.build}/doc/Readme"/>
 
       <copyfile src="../jakarta-tools/moo.jar" 
@@ -106,7 +106,7 @@
       <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
 
       <copydir  src="doc" dest="${watchdog.dist}/doc" />
-      <copyfile src="Readme" 
+      <copyfile src="README" 
                dest="${watchdog.dist}/doc/Readme"/>
 
       <copyfile src="../jakarta-tools/moo.jar"
