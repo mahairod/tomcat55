@@ -1,0 +1,5 @@
+- Digest authetication failure.
+- Fix HTTP compression check (with refactoring of the configuration and 
+  cleaner code).
+- Fix FORM processing for more complex requests (bug 10229).
+- Double wrapping of session objects.
