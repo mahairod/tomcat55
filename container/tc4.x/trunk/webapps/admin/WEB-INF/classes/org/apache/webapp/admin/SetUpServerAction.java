@@ -135,8 +135,9 @@ public class SetUpServerAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-	  // Do I have to do this part ??
+        HttpSession session = request.getSession();
 
+	  // Do I have to do this part ??
 	if (form == null) {
                 getServlet().log(" Creating new ServerForm bean under key "
                             + mapping.getAttribute());
@@ -150,6 +151,7 @@ public class SetUpServerAction extends Action {
 	}
             
         MessageResources messages = getResources();
+        Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
             
 	// Do transaction stuff before this
 
@@ -175,15 +177,15 @@ public class SetUpServerAction extends Action {
             actionList = new ArrayList();
 	  // You can get this from the Mbean
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.avaliable.actions"),
+            messages.getMessage(locale, "actions.available.actions"),
             "Available Actions"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.services.create"),
+            messages.getMessage(locale, "actions.services.create"),
             "Create New Service"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.services.delete"),
+            messages.getMessage(locale, "actions.services.delete"),
             "Delete Services"));
         }
 

@@ -139,6 +139,8 @@ public class SetUpServiceAction extends Action {
     HttpServletRequest request,
     HttpServletResponse response)
     throws IOException, ServletException {
+
+        HttpSession session = request.getSession();
         
         if (form == null) {
             getServlet().log(" Creating new ServiceForm bean under key "
@@ -148,12 +150,13 @@ public class SetUpServiceAction extends Action {
             if ("request".equals(mapping.getScope()))
                 request.setAttribute(mapping.getAttribute(), form);
             else
-                request.getSession().setAttribute(mapping.getAttribute(), form);
+                session.setAttribute(mapping.getAttribute(), form);
             
         }
         
         // The message resources for this package.
         MessageResources messages = getResources();
+        Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
         
         String selectedName = request.getParameter("select");
         
@@ -179,67 +182,67 @@ public class SetUpServiceAction extends Action {
             actionList = new ArrayList();
             // You can get this from the Mbean
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.avaliable.actions"),
+            messages.getMessage(locale, "actions.available.actions"),
             "Available Actions"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.accesslogger.create"),
+            messages.getMessage(locale, "actions.accesslogger.create"),
             "Create New Access Logger"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.accesslogger.delete"),
+            messages.getMessage(locale, "actions.accesslogger.delete"),
             "Delete Access Logger"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.connector.create"),
+            messages.getMessage(locale, "actions.connector.create"),
             "Create New Connector"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.connector.delete"),
+            messages.getMessage(locale, "actions.connector.delete"),
             "Delete Connectors..."));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.host.create"),
+            messages.getMessage(locale, "actions.host.create"),
             "Create New Host"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.host.delete"),
+            messages.getMessage(locale, "actions.host.delete"),
             "Delete Hosts"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.logger.create"),
+            messages.getMessage(locale, "actions.logger.create"),
             "Create New Logger"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.logger.delete"),
+            messages.getMessage(locale, "actions.logger.delete"),
             "Delete Logger"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.requestfilter.create"),
+            messages.getMessage(locale, "actions.requestfilter.create"),
             "Create New Request Filter"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.requestfilter.delete"),
+            messages.getMessage(locale, "actions.requestfilter.delete"),
             "Delete Request Filters"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.userrealm.create"),
+            messages.getMessage(locale, "actions.userrealm.create"),
             "Create New User Realm"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.userrealm.delete"),
+            messages.getMessage(locale, "actions.userrealm.delete"),
             "Delete User Realm"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.valve.create"),
+            messages.getMessage(locale, "actions.valve.create"),
             "Create New Valve"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.valve.delete"),
+            messages.getMessage(locale, "actions.valve.delete"),
             "Delete Valves"));
             
             actionList.add(new LabelValueBean(
-            messages.getMessage("actions.service.delete"),
+            messages.getMessage(locale, "actions.service.delete"),
             "Delete This Service"));
             
         }
