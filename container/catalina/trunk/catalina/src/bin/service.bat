@@ -42,10 +42,12 @@ set EXECUTABLE=%CATALINA_HOME%\bin\tomcat5.exe
 
 rem Set default Service name
 set SERVICE_NAME=Tomcat5
+set PR_DISPLAYNAME=Apache Tomcat
 
 if "%1" == "" goto displayUsage
 if "%2" == "" goto setServiceName
 set SERVICE_NAME=%2
+set PR_DISPLAYNAME=Apache Tomcat %2
 :setServiceName
 if %1 == install goto doInstall
 if %1 == remove goto doRemove
@@ -70,7 +72,6 @@ echo Using JAVA_HOME:        %JAVA_HOME%
 rem Use the environment variables as an exaple
 rem Each command line option is prefixed with PR_
 
-set PR_DISPLAYNAME=Apache Tomcat
 set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
 set PR_LOGPATH=%CATALINA_HOME%\logs
