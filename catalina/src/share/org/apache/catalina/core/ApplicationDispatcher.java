@@ -648,11 +648,7 @@ final class ApplicationDispatcher
         // Allocate a servlet instance to process this request
         try {
             if (!unavailable) {
-                //                if (debug >= 2)
-                //                    log("  Allocating servlet instance");
                 servlet = wrapper.allocate();
-                //                if ((debug >= 2) && (servlet == null))
-                //                    log("    No servlet instance returned!");
             }
         } catch (ServletException e) {
             wrapper.getLogger().error(sm.getString("applicationDispatcher.allocateException",

@@ -119,7 +119,7 @@ public final class Tool {
 
         // Verify that "catalina.home" was passed.
         if (catalinaHome == null) {
-            log("Must set 'catalina.home' system property");
+            log.error("Must set 'catalina.home' system property");
             System.exit(1);
         }
 
@@ -182,7 +182,7 @@ public final class Tool {
                  (File[]) packed.toArray(new File[0]),
                  null);
         } catch (Throwable t) {
-            log("Class loader creation threw exception", t);
+            log.error("Class loader creation threw exception", t);
             System.exit(1);
         }
         Thread.currentThread().setContextClassLoader(classLoader);
@@ -195,7 +195,7 @@ public final class Tool {
                 log.debug("Loading application class " + className);
             clazz = classLoader.loadClass(className);
         } catch (Throwable t) {
-            log("Exception creating instance of " + className, t);
+            log.error("Exception creating instance of " + className, t);
             System.exit(1);
         }
 
@@ -211,7 +211,7 @@ public final class Tool {
             paramTypes[0] = params.getClass();
             method = clazz.getMethod(methodName, paramTypes);
         } catch (Throwable t) {
-            log("Exception locating main() method", t);
+            log.error("Exception locating main() method", t);
             System.exit(1);
         }
 
@@ -223,36 +223,9 @@ public final class Tool {
             paramValues[0] = params;
             method.invoke(null, paramValues);
         } catch (Throwable t) {
-            log("Exception calling main() method", t);
+            log.error("Exception calling main() method", t);
             System.exit(1);
         }
-
-    }
-
-
-    /**
-     * Log a debugging detail message.
-     *
-     * @param message The message to be logged
-     */
-    private static void log(String message) {
-
-        System.out.print("Tool: ");
-        System.out.println(message);
-
-    }
-
-
-    /**
-     * Log a debugging detail message with an exception.
-     *
-     * @param message The message to be logged
-     * @param exception The exception to be logged
-     */
-    private static void log(String message, Throwable exception) {
-
-        log(message);
-        exception.printStackTrace(System.out);
 
     }
 
@@ -262,7 +235,7 @@ public final class Tool {
      */
     private static void usage() {
 
-        log("Usage:  java org.apache.catalina.startup.Tool [<options>] <class> [<arguments>]");
+        log.info("Usage:  java org.apache.catalina.startup.Tool [<options>] <class> [<arguments>]");
 
     }
 
