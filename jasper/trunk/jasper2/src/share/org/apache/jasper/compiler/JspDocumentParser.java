@@ -284,6 +284,11 @@ class JspDocumentParser extends DefaultHandler
 		    locator);
 	    }
 	    node = new Node.TagDirective(attrsCopy, start, current);
+	    String imports = attrs.getValue("import");
+	    // There can only be one 'import' attribute per tag directive
+	    if (imports != null) {
+		((Node.TagDirective) node).addImport(imports);
+	    }
 	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
