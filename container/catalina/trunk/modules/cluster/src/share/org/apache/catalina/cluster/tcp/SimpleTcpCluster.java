@@ -412,27 +412,15 @@ public class SimpleTcpCluster
 
     public synchronized Manager createManager(String name) {
         SimpleTcpReplicationManager manager = new SimpleTcpReplicationManager(name);
-        manager.setCluster(null);
-        manager.setDistributable(false);
+        manager.setCluster(this);
+        manager.setDistributable(true);
         manager.setExpireSessionsOnShutdown(expireSessionsOnShutdown);
         manager.setPrintToScreen(printToScreen);
         manager.setUseDirtyFlag(useDirtyFlag);
         manager.setDebug(debug);
         allmanagers.put(name, manager);
+        managers.put(name,manager);
         return manager;
-    }
-
-    public void setDistributable(String contextName, boolean distributable)
-    {
-        log.info("Setting distributable for context:"+contextName+" to "+distributable);
-        SimpleTcpReplicationManager manager = (SimpleTcpReplicationManager)allmanagers.get(contextName);
-        manager.setDistributable(distributable);
-        if (distributable) {
-            manager.setCluster(this);
-            manager.setDistributable(true);
-            managers.put(contextName,manager);
-        }
-        
     }
 
 

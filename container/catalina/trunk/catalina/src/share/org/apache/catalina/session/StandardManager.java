@@ -673,7 +673,6 @@ public class StandardManager
         
         // Validate and update our current component state
         if (started) {
-            log.info(sm.getString("standardManager.alreadyStarted"));
             return;
         }
         lifecycle.fireLifecycleEvent(START_EVENT, null);

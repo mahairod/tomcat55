@@ -92,6 +92,7 @@ import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.SchemaResolver;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
@@ -331,6 +332,28 @@ public final class ContextConfig
         if (context instanceof StandardContext) {
             ((StandardContext) context).setStartupTime(t2-t1);
         }
+    }
+
+
+    /**
+     * Set up a manager.
+     */
+    private synchronized void managerConfig() {
+
+        if (context.getManager() == null) {
+            if ((context.getCluster() != null) && context.getDistributable()) {
+                try {
+                    context.setManager(context.getCluster().createManager
+                                       (context.getName()));
+                } catch (Exception ex) {
+                    log.error("contextConfig.clusteringInit", ex);
+                    ok = false;
+                }
+            } else {
+                context.setManager(new StandardManager());
+            }
+        }
+
     }
 
 
@@ -711,6 +734,10 @@ public final class ContextConfig
         // Configure an authenticator if we need one
         if (ok)
             authenticatorConfig();
+
+        // Configure a manager
+        if (ok)
+            managerConfig();
 
         // Dump the contents of this pipeline if requested
         if ((log.isDebugEnabled()) && (context instanceof ContainerBase)) {
