@@ -65,14 +65,13 @@ import java.util.Locale;
 
 import org.apache.tomcat.util.buf.ByteChunk;
 
-import org.apache.tomcat.util.res.StringManager;
-
 import org.apache.tomcat.util.http.MimeHeaders;
 import org.apache.tomcat.util.http.ContentType;
 
+
 /**
  * Response object.
- * 
+ *
  * @author James Duncan Davidson [duncan@eng.sun.com]
  * @author Jason Hunter [jch@eng.sun.com]
  * @author James Todd [gonzo@eng.sun.com]
@@ -91,14 +90,14 @@ public final class Response {
 
 
     // ----------------------------------------------------- Instance Variables
-    
-    
+
+
    /**
      * Default locale as mandated by the spec.
      */
     private static Locale DEFAULT_LOCALE = new Locale("en", "US");
-    
-       
+
+
     /**
      * Status code.
      */
@@ -144,7 +143,7 @@ public final class Response {
     /**
      * HTTP specific fields.
      */
-    protected String contentType = Constants.DEFAULT_CONTENT_TYPE;
+    protected String contentType = null;
     protected String contentLanguage = null;
     protected String characterEncoding = Constants.DEFAULT_CHARACTER_ENCODING;
     protected int contentLength = -1;
@@ -216,7 +215,7 @@ public final class Response {
 
     public void action(ActionCode actionCode, Object param) {
         if (hook != null) {
-            if( param==null ) 
+            if( param==null )
                 hook.action(actionCode, this);
             else
                 hook.action(actionCode, param);
@@ -231,10 +230,10 @@ public final class Response {
         return status;
     }
 
-    
-    /** 
-     * Set the response status 
-     */ 
+
+    /**
+     * Set the response status
+     */
     public void setStatus( int status ) {
         this.status = status;
     }
@@ -269,7 +268,7 @@ public final class Response {
     // -----------------Error State --------------------
 
 
-    /** 
+    /**
      * Set the error Exception that occurred during
      * request processing.
      */
@@ -278,7 +277,7 @@ public final class Response {
     }
 
 
-    /** 
+    /**
      * Get the Exception that occurred during request
      * processing.
      */
@@ -292,7 +291,7 @@ public final class Response {
     }
 
 
-    /** 
+    /**
      * Set request URI that caused an error during
      * request processing.
      */
@@ -309,14 +308,14 @@ public final class Response {
 
 
     // -------------------- Methods --------------------
-    
-    
-    public void reset() 
+
+
+    public void reset()
         throws IllegalStateException {
-        
+
         // Reset the headers only if this is the main request,
         // not for included
-        contentType = Constants.DEFAULT_CONTENT_TYPE;
+        contentType = null;
         locale = DEFAULT_LOCALE;
         contentLanguage = null;
         characterEncoding = Constants.DEFAULT_CHARACTER_ENCODING;
@@ -325,16 +324,16 @@ public final class Response {
         status = 200;
         message = null;
         headers.clear();
-        
+
         // Force the PrintWriter to flush its data to the output
         // stream before resetting the output stream
         //
         // Reset the stream
         if (commited) {
-            //String msg = sm.getString("servletOutputStreamImpl.reset.ise"); 
+            //String msg = sm.getString("servletOutputStreamImpl.reset.ise");
             throw new IllegalStateException();
         }
-        
+
         action(ActionCode.ACTION_RESET, this);
     }
 
@@ -374,9 +373,9 @@ public final class Response {
         headers.addValue(name).setString( value );
     }
 
-    
-    /** 
-     * Set internal fields for special header names. 
+
+    /**
+     * Set internal fields for special header names.
      * Called from set/addHeader.
      * Return true if the header is special, no need to set the header.
      */
@@ -393,7 +392,7 @@ public final class Response {
                 setContentLength( cL );
                 return true;
             } catch( NumberFormatException ex ) {
-                // Do nothing - the spec doesn't have any "throws" 
+                // Do nothing - the spec doesn't have any "throws"
                 // and the user might know what he's doing
                 return false;
             }
@@ -468,14 +467,17 @@ public final class Response {
         if (isCommitted())
             return;
 
+        if (charset == null || this.contentType==null)
+            return;
+
         String type = this.contentType;
         int start = type.indexOf("charset=");
         if ( start != -1 ) {
             int end = type.indexOf(';', start+8);
-            if (end >= 0) 
+            if (end >= 0)
                 type = type.substring(0,start+8)
                     +charset+type.substring(end-1);
-            else 
+            else
                 type = type.substring(0,start+8)
                     +charset;
             this.contentType = type;
@@ -485,10 +487,10 @@ public final class Response {
                 type = type.substring(0, end) + ";charset=" + charset;
             } else {
                 type = type + ";charset=" + charset;
-            }            
+            }
         }
         setContentType( type );
-        
+
     }
 
     public String getCharacterEncoding() {
@@ -506,7 +508,7 @@ public final class Response {
     public String getContentType() {
         return contentType;
     }
-    
+
     public void setContentLength(int contentLength) {
         this.contentLength = contentLength;
     }
@@ -516,7 +518,7 @@ public final class Response {
     }
 
 
-    /** 
+    /**
      * Write a chunk of bytes.
      */
     public void doWrite(ByteChunk chunk/*byte buffer[], int pos, int count*/)
@@ -526,10 +528,10 @@ public final class Response {
 
 
     // --------------------
-    
+
     public void recycle() {
-        
-        contentType = Constants.DEFAULT_CONTENT_TYPE;
+
+        contentType = null;
         contentLanguage = null;
         locale = DEFAULT_LOCALE;
         characterEncoding = Constants.DEFAULT_CHARACTER_ENCODING;
@@ -540,7 +542,7 @@ public final class Response {
         errorException = null;
         errorURI = null;
         headers.clear();
-        
+
     }
 
 }
