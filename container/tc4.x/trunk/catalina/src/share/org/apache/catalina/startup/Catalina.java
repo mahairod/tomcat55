@@ -494,16 +494,9 @@ public class Catalina {
         if (server instanceof Lifecycle) {
             try {
                 server.initialize();
-            } catch (LifecycleException e) {
-                System.out.println("Catalina.start: " + e);
-                e.printStackTrace(System.out);
-                if (e.getThrowable() != null) {
-                    System.out.println("----- Root Cause -----");
-                    e.getThrowable().printStackTrace(System.out);
-                }
-            }
-            try {
                 ((Lifecycle) server).start();
+                // Wait for the server to be told to shut down
+                server.await();
             } catch (LifecycleException e) {
                 System.out.println("Catalina.start: " + e);
                 e.printStackTrace(System.out);
@@ -513,10 +506,6 @@ public class Catalina {
                 }
             }
         }
-
-
-        // Wait for the server to be told to shut down
-        server.await();
 
         // Shut down the server
         if (server instanceof Lifecycle) {
