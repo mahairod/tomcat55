@@ -756,8 +756,8 @@ public class HttpResponseBase
             sb.append(";jsessionid=");
             sb.append(sessionId);
         }
-        sb.append(query);
         sb.append(anchor);
+        sb.append(query);
         return (sb.toString());
 
     }
