@@ -381,6 +381,7 @@ public class AdaptiveClassLoader extends ClassLoader {
      */
     public AdaptiveClassLoader reinstantiate() {
         AdaptiveClassLoader cl=new AdaptiveClassLoader();
+	cl.setParent(parent); 
 	cl.setRepository(repository);
 	return cl;
     }

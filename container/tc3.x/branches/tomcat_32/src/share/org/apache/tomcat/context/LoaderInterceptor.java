@@ -91,6 +91,7 @@ public class LoaderInterceptor extends BaseInterceptor {
     {
         ContextManager cm = context.getContextManager();
 	AdaptiveServletLoader loader=new AdaptiveServletLoader();
+	loader.setParentLoader(this.getClass().getClassLoader());
 	context.setServletLoader( loader );
 
         String base = context.getDocBase();
