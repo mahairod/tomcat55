@@ -660,9 +660,15 @@ public final class ContextConfig
                 // Use getResource and getResourceAsStream
                 stream = getClass().getClassLoader()
                     .getResourceAsStream(defaultWebXml);
-                source = new InputSource
-                    (getClass().getClassLoader()
-                     .getResource(defaultWebXml).toString());
+                if( stream != null ) {
+                    source = new InputSource
+                            (getClass().getClassLoader()
+                            .getResource(defaultWebXml).toString());
+                } else {
+                    log.info("No default web.xml");
+                    // no default web.xml
+                    return;
+                }
             } else {
                 source =
                     new InputSource("file://" + file.getAbsolutePath());
