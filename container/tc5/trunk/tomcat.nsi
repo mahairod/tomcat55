@@ -227,9 +227,6 @@ Section -post
 
   ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --JavaOptions -Dcatalina.home="\"$INSTDIR\""#-Djava.endorsed.dirs="\"$INSTDIR\common\endorsed\"" --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
 
-  SetOutPath "$INSTDIR"
-  File "${NSISDIR}\Contrib\UIs\modern.exe"
-
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
   WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" "InstallPath" $INSTDIR
