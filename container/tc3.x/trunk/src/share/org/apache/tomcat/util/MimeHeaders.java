@@ -225,7 +225,7 @@ public class MimeHeaders {
 	mhf.getName().setBytes(b, startN, endN);
 	mhf.getValue().setBytes(b, startV, endV);
     }
-    
+
     /**
      * Creates a new header field whose value is the specified string.
      * @param name the header name
@@ -233,7 +233,7 @@ public class MimeHeaders {
      */
     public void setHeader(String name, String s) {
 	MimeHeaderField headerF= find( name );
-	if( headerF != null )
+	if( headerF == null )
 	    headerF=addHeader( name );
 	headerF.getValue().setString(s);
     }
@@ -249,7 +249,7 @@ public class MimeHeaders {
      */
     public void setIntHeader(String name, int i) {
 	MimeHeaderField headerF= find( name );
-	if( headerF != null )
+	if( headerF == null )
 	    headerF=addHeader( name );
 	headerF.getValue().setInt(i);
     }
@@ -266,7 +266,7 @@ public class MimeHeaders {
      */
     public void setDateHeader(String name, long t) {
 	MimeHeaderField headerF= find( name );
-	if( headerF != null )
+	if( headerF == null )
 	    headerF=addHeader( name );
 	headerF.getValue().setTime(t);
     }
