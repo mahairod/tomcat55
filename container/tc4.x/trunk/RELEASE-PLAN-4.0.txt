@@ -77,9 +77,6 @@ Catalina    3515    Process hanging after stopping Tomcat (awaiting
 Catalina    3594    Have to reload page or page will not be shown
                     (awaiting reproducible failure case, likely user error)
 
-Catalina    3597    Shutting down takes *ages* (not confirmed against
-                    latest Tomcat 4.0 build)
-
 Catalina    3612    getServletPath() returns wrong value (awaiting reproducible
                     failure case)
 

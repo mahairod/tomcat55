@@ -1,24 +1,22 @@
-<project name="Tomcat 4.0" default="deploy-main" basedir=".">
+<project name="Tomcat 4.0" default="deploy" basedir=".">
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <property name="nsis.home"        value="c:\program files\nsis"/>
-  <property name="javaservice.home" value="../javaservice"/>
-
+  <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
   <property name="jasper.build"     value="${basedir}/jasper/build"/>
-  <property name="servletapi.home"  value="../jakarta-servletapi-4/dist"/>
+  <property name="javaservice.home" value="../javaservice"/>
+  <property name="nsis.home"        value="c:\program files\nsis"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
   <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
 
-  <property name="catalina.deploy"  value="${tomcat.build}"/>
-  <property name="jasper.deploy"    value="${tomcat.build}"/>
-  <property name="webapps.deploy"   value="${tomcat.build}"/>
 
 
   <!-- ===================== DEPLOY: Create Directories =================== -->
@@ -32,51 +30,51 @@
 
 
   <!-- ====================== DEPLOY: Deploy Components =================== -->
-  <target name="deploy-main" depends="deploy-static">
-    <echo>Target: Catalina - Deploy...</echo>
+  <target name="deploy" depends="deploy-static"
+   description="Build and deploy all components">
+    <echo>Target: Catalina - Deploy ...</echo>
     <ant dir="./catalina" target="deploy"/>
-    <echo>Target: Jasper - Deploy...</echo>
+    <echo>Target: Jasper - Deploy ...</echo>
     <ant dir="./jasper"   target="deploy"/>
-    <echo>Target: Webapps - Deploy...</echo>
+    <echo>Target: Webapps - Deploy ...</echo>
     <ant dir="./webapps"  target="deploy"/>
   </target>
 
 
   <!-- ====================== COMBO: Clean All Directories ================ -->
-  <target name="clean">
+  <target name="clean"
+   description="Clean all components">
     <delete dir="${tomcat.build}"/>
+    <echo>Target: Catalina - Clean ...</echo>
     <ant dir="./catalina" target="clean"/>
+    <echo>Target: Jasper - Clean ...</echo>
     <ant dir="./jasper"   target="clean"/>
-    <ant dir="./tester"   target="clean"/>
+    <echo>Target: Webapps - Clean ...</echo>
     <ant dir="./webapps"  target="clean"/>
     <delete dir="${tomcat.dist}"/>
   </target>
 
 
   <!-- ======================= COMBO: Build All Components ================ -->
-  <target name="all">
+  <target name="all"
+   description="Clean, build, and deploy all components">
+    <echo>Target: Catalina - All ...</echo>
     <ant dir="./catalina" target="all"/>
+    <echo>Target: Jasper - All ...</echo>
     <ant dir="./jasper"   target="all"/>
+    <echo>Target: Webapps - All ...</echo>
     <ant dir="./webapps"  target="all"/>
   </target>
 
 
-  <!-- ======================= SPECIAL:  Tomcat Documentation ============= -->
-  <target name="tomcat-docs" depends="deploy-main">
-    <!-- The "tomcat-docs" webapp is not built by default, because the
-         workaround to an Ant bug causes the XSLT transformations to be
-         run every time.  Run "ant tomcat-docs" or "ant dist" to execute
-         this target -->
-    <ant dir="./webapps"  target="tomcat-docs"/>
-    <copy todir="${tomcat.build}/webapps/tomcat-docs">
-      <fileset dir="webapps/build/tomcat-docs"/>
-    </copy>
-  </target>
-
   <!-- ======================= COMBO: Test All Components ================= -->
-  <target name="test">
+  <target name="test"
+   description="Unit tests on all components">
+    <echo>Target: Catalina - Test ...</echo>
     <ant dir="./catalina" target="test"/>
+    <echo>Target: Jasper - Test ...</echo>
     <ant dir="./jasper"   target="test"/>
+    <echo>Target: Webapps - Test ...</echo>
     <ant dir="./webapps"  target="test"/>
   </target>
 
@@ -85,14 +83,17 @@
   <target name="dist-prepare">
     <mkdir dir="${tomcat.dist}"/>
     <mkdir dir="${tomcat.dist}/bin"/>
+    <mkdir dir="${tomcat.dist}/classes"/>
+    <mkdir dir="${tomcat.dist}/common"/>
+    <mkdir dir="${tomcat.dist}/common/classes"/>
+    <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/conf"/>
     <mkdir dir="${tomcat.dist}/jasper"/>
     <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/logs"/>
     <mkdir dir="${tomcat.dist}/server"/>
+    <mkdir dir="${tomcat.dist}/server/classes"/>
     <mkdir dir="${tomcat.dist}/server/lib"/>
-    <mkdir dir="${tomcat.dist}/common"/>
-    <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/webapps"/>
     <mkdir dir="${tomcat.dist}/work"/>
   </target>
@@ -108,7 +109,7 @@
         <include name="BUILDING.txt"/>
         <include name="README.txt"/>
         <include name="RELEASE*"/>
-        <include name="RUNNING*"/>
+        <include name="RUNNING.txt"/>
       </fileset>
     </copy>
 
@@ -156,33 +157,21 @@
   </target>
 
 
-  <!-- ====================== DIST: Copy Source Code ====================== -->
+  <!-- ====================== DIST: Create Sources ======================== -->
   <target name="dist-source">
-    <mkdir dir="${tomcat.dist}/src"/>
+    <mkdir  dir="${tomcat.dist}/src"/>
     <copy todir="${tomcat.dist}/src">
       <fileset dir=".">
-        <exclude name="**/dist/**" />
-        <exclude name="**/build/**" />
+        <exclude name="build/**"/>
+        <exclude name="dist/**"/>
       </fileset>
     </copy>
   </target>
 
 
   <!-- ====================== DIST: Create Archives ======================= -->
-<!--
-  <target name="dist" depends="deploy-main,dist-static,dist-javadoc,,tomcat-docs">
--->
-  <target name="dist" depends="deploy-main,dist-static,dist-javadoc">
-<!-- Comment out until startup timing issues are resolved
-    <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
-         basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
-    <jar jarfile="${tomcat.dist}/webapps/examples.war"
-         basedir="${tomcat.build}/webapps/examples" includes="**"/>
-    <jar jarfile="${tomcat.dist}/webapps/manager.war"
-         basedir="${tomcat.build}/webapps/manager" includes="**"/>
-    <jar jarfile="${tomcat.dist}/webapps/webdav.war"
-         basedir="${tomcat.build}/webapps/webdav" includes="**"/>
--->
+  <target name="dist" depends="deploy,dist-static,dist-javadoc"
+   description="Create binary distribution">
     <copy todir="${tomcat.dist}/webapps">
       <fileset dir="${tomcat.build}/webapps" />
     </copy>
@@ -190,7 +179,8 @@
 
 
   <!-- ================= DIST: Create Windows Installer =================== -->
-  <target name="installer" depends="dist, dist-source">
+  <target name="installer" depends="dist, dist-source"
+   description="Create Windows installer">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="NSIS must be installed in the default directory"/>
     <copy todir="${tomcat.dist}">
@@ -202,12 +192,6 @@
     <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis.exe">
       <arg value="tomcat.nsi" />
     </exec>
-  </target>
-
-
-  <!-- ====================== DIST: Clean Directory ======================= -->
-  <target name="dist-clean">
-    <delete dir="${tomcat.dist}"/>
   </target>
 
 

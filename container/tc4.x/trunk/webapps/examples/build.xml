@@ -3,6 +3,8 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
   <property file="build.properties"/>
   <property file="../build.properties"/>
   <property file="../../build.properties"/>
@@ -11,15 +13,7 @@
   <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="../build"/>
   <property name="webapps.dist"    value="../dist"/>
-  <property name="servletapi.home" value="../../../jakarta-servletapi-4/dist"/>
-  <property name="webapp.name"    value="examples"/>
-
-
-  <!-- ================== Derived Property Values ========================= -->
-  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
-  <property name="mail.jar"        value="${mail.home}/mail.jar"/>
-  <property name="activation.jar"  value="${activation.home}/activation.jar"/>
-  <property name="jndi.jar"        value="${jndi.home}/lib/jndi.jar"/>
+  <property name="webapp.name"     value="examples"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
@@ -45,20 +39,23 @@
     <javac   srcdir="WEB-INF/classes" 
              destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
              classpath="${servlet.jar}:${jndi.jar}:${activation.jar}:${mail.jar}"
-             deprecation="off" debug="on" optimize="off"
+             debug="${compile.debug}" deprecation="${compile.deprecation}"
+             optimize="${compile.optimize}"
              excludes="**/CVS/**"/>
 
     <javac   srcdir="jsp/plugin/applet" 
              destdir="${webapps.build}/${webapp.name}/jsp/plugin/applet"
              classpath="${servlet.jar}"
-             deprecation="off" debug="on" optimize="off"
+             debug="${compile.debug}" deprecation="${compile.deprecation}"
+             optimize="${compile.optimize}"
              excludes="**/CVS/**"/>
 
   </target>
 
 
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
-  <target name="all" depends="build-clean,build-main"/>
+  <target name="all" depends="build-clean,build-main"
+   description="Clean and build examples webapp"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
@@ -74,7 +71,8 @@
 
 
   <!-- ======================= DIST: Create Distribution Files ============ -->
-  <target name="dist" depends="build-main,dist-prepare">
+  <target name="dist" depends="build-main,dist-prepare"
+   description="Create examples webapp binary distribution">
       <jar   jarfile="${webapps.dist}/${webapp.name}.war"
              basedir="${webapps.build}/${webapp.name}" includes="**"/>
   </target>
@@ -87,7 +85,8 @@
 
 
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean,dist-clean"/>
+  <target name="clean" depends="build-clean,dist-clean"
+   description="Clean build and dist directories"/>
 
 
 </project>

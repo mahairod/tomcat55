@@ -3,6 +3,8 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
   <property file="build.properties"/>
   <property file="../build.properties"/>
   <property file="${user.home}/build.properties"/>
@@ -11,19 +13,16 @@
   <property name="webapps.build"   value="build"/>
   <property name="webapps.deploy"  value="../build"/>
   <property name="webapps.dist"    value="dist"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
-
-
-
-  <!-- ================== Derived Property Values ========================= -->
-  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+
     <available classname="junit.framework.TestCase" property="junit.present" />
+
     <mkdir dir="${webapps.build}"/>
     <mkdir dir="${webapps.dist}"/>
+
   </target>
 
 
@@ -56,12 +55,6 @@
   <target name="build" depends="build-prepare,ROOT,examples,manager,tomcat-docs,webdav"/>
 
 
-  <!-- ==================== BUILD: Execute Unit Tests ===================== -->
-  <target name="test" if="junit.present"
-   description="Run all unit test cases">
-  </target>
-
-
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
     <delete dir="${webapps.build}"/>
@@ -73,7 +66,8 @@
 
 
   <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
-  <target name="deploy" depends="dist">
+  <target name="deploy" depends="dist"
+   description="Build and deploy Webapps component">
     <mkdir dir="${webapps.deploy}/webapps"/>
     <copy todir="${webapps.deploy}/webapps">
       <fileset dir="${webapps.build}" />
@@ -92,7 +86,19 @@
 
 
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean,dist-clean"/>
+  <target name="clean" depends="build-clean,dist-clean"
+   description="Clean build and dist directories"/>
+
+
+  <!-- ===================== TEST: Compile Unit Tests ===================== -->
+  <target name="build-tests" depends="dist" if="junit.present">
+  </target>
+
+
+  <!-- ===================== TEST: Execute Unit Tests ===================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases">
+  </target>
 
 
 </project>

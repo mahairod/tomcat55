@@ -1,46 +1,41 @@
-<project name="Jasper" default="build-main" basedir=".">
+<project name="Jasper" default="deploy" basedir=".">
 
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
   <property file="build.properties"/>
   <property file="../build.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <property name="build.compiler"  value="classic"/>
-  <property name="jasper.build"    value="build"/>
-  <property name="jasper.deploy"   value="../build"/>
-  <property name="jasper.dist"     value="dist"/>
-  <property name="jasper.jaxp.home"       value="${jaxp.home}"/>
-  <property name="jasper.jaxp.parser.jar" value="crimson.jar"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
-
+  <!-- Build Defaults -->
+  <property name="build.compiler"    value="classic"/>
+  <property name="copy.crimson.jar"  value="../lib/crimson.jar"/>
+  <property name="copy.jaxp.jar"     value="../lib/jaxp.jar"/>
+  <property name="jasper.build"      value="build"/>
+  <property name="jasper.deploy"     value="../build"/>
+  <property name="jasper.dist"       value="dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
-
-
-  <!-- ================== Derived Property Values ========================= -->
-  <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>
-  <property name="parser.jar"      value="${jasper.jaxp.home}/${jasper.jaxp.parser.jar}"/>
-  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
-  <property name="tools.jar"       value="${java.home}/lib/tools.jar"/>
-
+  <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
-    <pathelement location="${tools.jar}"/>
-    <pathelement location="${parser.jar}"/>
-    <pathelement location="${jaxp.jar}"/>
+    <pathelement location="${copy.crimson.jar}"/>
+    <pathelement location="${copy.jaxp.jar}"/>
     <pathelement location="${servlet.jar}"/>
+    <pathelement location="${tools.jar}"/>
     <pathelement location="${jasper.build}/classes"/>
   </path>
 
   <!-- Construct unit tests classpath -->
   <path id="test.classpath">
-    <pathelement location="${parser.jar}"/>
-    <pathelement location="${jaxp.jar}"/>
-    <pathelement location="${servlet.jar}"/>
     <pathelement location="${junit.jar}"/>
+    <pathelement location="${copy.crimson.jar}"/>
+    <pathelement location="${copy.jaxp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${tools.jar}"/>
     <pathelement location="${jasper.build}/classes"/>
     <pathelement location="${jasper.build}/tests"/>
   </path>
@@ -48,17 +43,23 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+
     <available classname="junit.framework.TestCase" property="junit.present" />
-    <available file="${jaxp.jar}" property="jaxp.jar.present" />
+
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
     <mkdir dir="${jasper.build}/classes"/>
+    <mkdir dir="${jasper.build}/common"/>
+    <mkdir dir="${jasper.build}/common/classes"/>
+    <mkdir dir="${jasper.build}/common/lib"/>
+    <mkdir dir="${jasper.build}/jasper"/>
     <mkdir dir="${jasper.build}/lib"/>
+
   </target>
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare,copy-jaxp-jar">
+  <target name="build-static" depends="build-prepare">
 
     <!-- Executable Commands -->
     <copy todir="${jasper.build}/bin">
@@ -69,23 +70,10 @@
     <chmod perm="+x" file="${jasper.build}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
-    <!-- Shared Extensions -->
-    <!--   Jasper uses the shared servlet.jar provided by Tomcat -->
-    <!--   Jasper needs JAXP1.1/SAX2.0 compliant parser -->
-<!-- Continue to copy our patched version of crimson.jar until unsealed
-    <copy file="${parser.jar}"
-     tofile="${jasper.build}/lib/${jasper.jaxp.parser.jar}"/>
--->
-    <copy file="../lib/crimson.jar"
-        tofile="${jasper.build}/lib/crimson.jar"/>
-  </target>
+    <!-- Common Extensions -->
+    <copy todir="${jasper.build}/jasper" file="${copy.crimson.jar}"/>
+    <copy todir="${jasper.build}/jasper" file="${copy.jaxp.jar}"/>
 
-  <target name="copy-jaxp-jar" if="jaxp.jar.present" >
-<!-- Continue to copy our patched version of jaxp.jar until unsealed
-    <copy file="${jaxp.jar}" tofile="${jasper.build}/lib/jaxp.jar"/>
--->
-    <copy file="../lib/jaxp.jar"
-        tofile="${jasper.build}/lib/jaxp.jar"/>
   </target>
 
 
@@ -94,8 +82,9 @@
 
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${jasper.build}/classes"
-     deprecation="off" debug="on" optimize="off"
-     excludes="**/CVS/**">
+           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           excludes="**/CVS/**">
       <classpath refid="jasper.classpath" />
     </javac>
 
@@ -107,21 +96,6 @@
       </fileset>
     </copy>
 
-  </target>
-
-
-  <!-- =============== BUILD: Compile Unit Tests ========================== -->
-
-  <target name="build-tests" depends="build-main" if="junit.present">
-    <mkdir      dir="${jasper.build}/tests"/>
-    <!-- Compile unit test classes -->
-<!--
-    <javac   srcdir="src/test" destdir="${jasper.build}/tests"
-             deprecation="off" debug="on" optimize="off" target="1.2"
-             excludes="**/CVS/**">
-      <classpath refid="test.classpath"/>
-    </javac>
--->
   </target>
 
 
@@ -149,21 +123,40 @@
 
 
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
-  <target name="all" depends="build-clean,build-main"/>
+  <target name="all" depends="build-clean,build-main"
+   description="Clean, build, and deploy Jasper component"/>
+
+
+  <!-- =============== BUILD: Compile Unit Tests ========================== -->
+  <target name="build-tests" depends="build-main" if="junit.present">
+    <mkdir      dir="${jasper.build}/tests"/>
+    <!-- Compile unit test classes -->
+<!--
+    <javac   srcdir="src/test" destdir="${jasper.build}/tests"
+             deprecation="off" debug="on" optimize="off"
+             excludes="**/CVS/**">
+      <classpath refid="test.classpath"/>
+    </javac>
+-->
+  </target>
 
 
   <!-- ==================== BUILD: Execute Unit Tests ===================== -->
   <target name="test" if="junit.present"
    description="Run all unit test cases"
-   depends="build-tests"
->
+   depends="build-tests">
   </target>
+
 
   <!-- ====================== DEPLOY: Create Directories ================== -->
   <target name="deploy-prepare">
     <mkdir dir="${jasper.deploy}"/>
     <mkdir dir="${jasper.deploy}/bin"/>
+    <mkdir dir="${jasper.deploy}/classes"/>
+    <mkdir dir="${jasper.deploy}/common"/>
+    <mkdir dir="${jasper.deploy}/common/lib"/>
     <mkdir dir="${jasper.deploy}/jasper"/>
+    <mkdir dir="${jasper.deploy}/lib"/>
   </target>
 
 
@@ -179,8 +172,13 @@
     <chmod perm="+x" file="${jasper.deploy}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
 
-    <!-- Shared Extensions -->
+    <!-- Jasper Compiler -->
     <copy todir="${jasper.deploy}/jasper">
+      <fileset dir="${jasper.build}/jasper" />
+    </copy>
+
+    <!-- Runtime Library -->
+    <copy todir="${jasper.deploy}/lib">
       <fileset dir="${jasper.build}/lib" />
     </copy>
 
@@ -188,8 +186,11 @@
 
 
   <!-- ====================== DEPLOY: Create Jasper JARs ================== -->
-  <target name="deploy-main" depends="deploy-static">
-    <jar  jarfile="${jasper.deploy}/jasper/jasper-compiler.jar">
+  <target name="deploy" depends="deploy-static,build-main"
+   description="Build and deploy Jasper component">
+ 
+   <!-- Jasper Compiler JAR File -->
+   <jar  jarfile="${jasper.deploy}/jasper/jasper-compiler.jar">
       <fileset dir="${jasper.build}/classes">
         <include name="org/apache/jasper/compiler/**" />
         <include name="org/apache/jasper/parser/**" />
@@ -199,6 +200,8 @@
         <include name="org/apache/jasper/*.class" />
       </fileset>
     </jar>
+
+    <!-- Jasper Runtime JAR File -->
     <jar  jarfile="${jasper.deploy}/lib/jasper-runtime.jar">
       <fileset dir="${jasper.build}/classes">
         <include name="org/apache/jasper/Constants.class" />
@@ -210,22 +213,15 @@
         <include name="org/apache/jasper/util/**" />
       </fileset>
     </jar>
-  </target>
 
-
-  <!-- ====================== DEPLOY: Deploy Jasper Build ================= -->
-  <target name="deploy" depends="deploy-main"/>
-
-
-  <!-- ====================== DEPLOY: Clean Directories =================== -->
-  <target name="deploy-clean">
-    <delete dir="${jasper.deploy}"/>
   </target>
 
 
   <!-- ================ DIST: Create Distribution ========================= -->
-  <target name="dist" depends="build-main">
+  <target name="dist" depends="build-main"
+   description="Create binary distribution">
 
+    <!-- Executable commands -->
     <mkdir dir="${jasper.dist}/bin"/>
     <copy dest="${jasper.dist}/bin">
       <fileset dir="${jasper.build}/bin" />
@@ -235,12 +231,13 @@
     <chmod perm="+x" file="${jasper.dist}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
 
+    <!-- Jasper Compiler and Runtime JAR Files -->
     <mkdir dir="${jasper.dist}/lib"/>
     <copy todir="${jasper.dist}/lib">
-      <fileset dir="${jasper.build}/lib" />
+      <fileset dir="${jasper.build}/lib"/>
+      <fileset dir="${jasper.build}/jasper"/>
     </copy>
-    <jar  jarfile="${jasper.dist}/lib/jasper.jar"
-          basedir="${jasper.build}/classes"/>
+
 
   </target>
 
@@ -252,7 +249,8 @@
 
 
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean, dist-clean"/>
+  <target name="clean" depends="build-clean, dist-clean"
+   description="Clean build and dist directories"/>
 
 
 </project>

@@ -3,6 +3,8 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
   <property file="build.properties"/>
   <property file="../build.properties"/>
   <property file="../../build.properties"/>
@@ -11,12 +13,7 @@
   <property name="build.compiler"  value="classic"/>
   <property name="webapps.build"   value="../build"/>
   <property name="webapps.dist"    value="../dist"/>
-  <property name="servletapi.home" value="../../../jakarta-servletapi-4/dist"/>
   <property name="webapp.name"     value="webdav"/>
-
-
-  <!-- ================== Derived Property Values ========================= -->
-  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
@@ -41,7 +38,8 @@
 
 
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
-  <target name="all" depends="build-clean,build-main"/>
+  <target name="all" depends="build-clean,build-main"
+   description="Clean and build webdav webapp"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
@@ -57,7 +55,8 @@
 
 
   <!-- ======================= DIST: Create Distribution Files ============ -->
-  <target name="dist" depends="build-main,dist-prepare">
+  <target name="dist" depends="build-main,dist-prepare"
+   description="Create webdav webapp binary distribution">
       <jar   jarfile="${webapps.dist}/${webapp.name}.war"
              basedir="${webapps.build}/${webapp.name}" includes="**"/>
   </target>
@@ -70,7 +69,8 @@
 
 
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean,dist-clean"/>
+  <target name="clean" depends="build-clean,dist-clean"
+   description="Clean build and dist directories"/>
 
 
 </project>
