@@ -1,7 +1,3 @@
-/* $Id$
- *
- */
-
 package request;
 
 import java.io.*;

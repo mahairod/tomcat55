@@ -1,8 +1,3 @@
-
-/*
- * $Id$
- */
-
 /**
  * test various GET requests
  *

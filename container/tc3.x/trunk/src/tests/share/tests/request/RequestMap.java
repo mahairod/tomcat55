@@ -1,8 +1,3 @@
-
-/*
- * $Id$
- */
-
 /**
  * test various URI requests per servlet 2.2/10
  *

@@ -1,5 +1,3 @@
-# $Id$
-
 tests.file.FileLengthTest
 tests.file.ContentTypeTest
 tests.file.FileIntegrityTest
