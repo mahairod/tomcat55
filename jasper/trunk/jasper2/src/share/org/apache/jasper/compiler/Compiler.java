@@ -143,9 +143,6 @@ public class Compiler {
     // Lazy eval - if we don't need to compile we probably don't need the project
     private Project getProject() {
 
-        if (errDispatcher == null) {
-            this.errDispatcher = new ErrorDispatcher();
-        }
         if( project!=null ) return project;
 
         // Initializing project
@@ -421,6 +418,10 @@ public class Compiler {
     public void compile()
         throws FileNotFoundException, JasperException, Exception
     {
+        if (errDispatcher == null) {
+            this.errDispatcher = new ErrorDispatcher();
+        }
+
         try {
             generateJava();
             generateClass();
