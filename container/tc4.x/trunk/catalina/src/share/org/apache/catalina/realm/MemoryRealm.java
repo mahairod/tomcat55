@@ -23,13 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.catalina.Container;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Realm;
-import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 
@@ -243,7 +237,7 @@ public final class MemoryRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (MemoryRealm.name);
 
     }
 

@@ -1271,6 +1271,13 @@ java org.apache.catalina.realm.RealmBase \
     standard output.</li>
 </ul>
 
+<p>If using digested passwords with DIGEST authentication, the cleartext used
+   to generate the digest is different. In the examples above
+   <code>{cleartext-password}</code> must be replaced with 
+   <code>{username}:{realm}:{cleartext-password}</code>. For example, in a
+   development environment this might take the form
+   <code>testUser:localhost:8080:testPassword</code>.</p>
+
 <p>To use either of the above techniques, the
 <code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
 on your class path to make the <code>RealmBase</code> class available.</p>

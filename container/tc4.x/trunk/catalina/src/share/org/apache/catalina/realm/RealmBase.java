@@ -24,10 +24,10 @@ import java.security.Principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.io.File;
+import java.io.UnsupportedEncodingException;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
@@ -73,6 +73,11 @@ public abstract class RealmBase
      * be performed.
      */
     protected String digest = null;
+
+    /**
+     * The encoding charset for the digest.
+     */
+    protected String digestEncoding = null;
 
 
     /**
@@ -202,6 +207,24 @@ public abstract class RealmBase
 
 
     /**
+     * Returns the digest encoding charset.
+     *
+     * @return The charset (may be null) for platform default
+     */
+    public String getDigestEncoding() {
+        return digestEncoding;
+    }
+
+    /**
+     * Sets the digest encoding charset.
+     *
+     * @param charset The charset (null for platform default)
+     */
+    public void setDigestEncoding(String charset) {
+        digestEncoding = charset;
+    }
+
+    /**
      * Return descriptive information about this Realm implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
@@ -262,9 +285,18 @@ public abstract class RealmBase
 
         String serverCredentials = getPassword(username);
 
-        if ( (serverCredentials == null)
-             || (!serverCredentials.equals(credentials)) )
+        boolean validated;
+        if ( serverCredentials == null ) {
+            validated = false;
+        } else if(hasMessageDigest()) {
+            validated = serverCredentials.equalsIgnoreCase(digest(credentials));
+        } else {
+            validated = serverCredentials.equals(credentials);
+        }
+
+        if(! validated ) {
             return null;
+        }
 
         return getPrincipal(username);
 
@@ -322,14 +354,24 @@ public abstract class RealmBase
         String md5a1 = getDigest(username, realm);
         if (md5a1 == null)
             return null;
-        String serverDigestValue;
-        if (!"auth".equals(qop))
-          serverDigestValue = md5a1 + ":" + nOnce + ":" + md5a2;
-        else
-          serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
+        String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
             + cnonce + ":" + qop + ":" + md5a2;
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = serverDigestValue.getBytes();
+        } else {
+            try {
+                valueBytes = serverDigestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                log("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                throw new IllegalArgumentException(uee.getMessage());
+            }
+        }
+
         String serverDigest =
-            md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));
+            md5Encoder.encode(md5Helper.digest(valueBytes));
+
         //System.out.println("Server digest : " + serverDigest);
 
         if (serverDigest.equals(clientDigest))
@@ -389,12 +431,18 @@ public abstract class RealmBase
      */
     public boolean hasRole(Principal principal, String role) {
 
+        // Should be overriten in JAASRealm - to avoid pretty inefficient conversions
         if ((principal == null) || (role == null) ||
             !(principal instanceof GenericPrincipal))
             return (false);
+
         GenericPrincipal gp = (GenericPrincipal) principal;
-        if (!(gp.getRealm() == this))
-            return (false);
+        if (!(gp.getRealm() == this)) {
+            if (debug >= 2) {
+                log("Different realm " + this + " " + gp.getRealm());
+            }
+        }
+
         boolean result = gp.hasRole(role);
         if (debug >= 2) {
             String name = principal.getName();
@@ -539,7 +587,20 @@ public abstract class RealmBase
         synchronized (this) {
             try {
                 md.reset();
-                md.update(credentials.getBytes());
+    
+                byte[] bytes = null;
+                if(getDigestEncoding() == null) {
+                    bytes = credentials.getBytes();
+                } else {
+                    try {
+                        bytes = credentials.getBytes(getDigestEncoding());
+                    } catch (UnsupportedEncodingException uee) {
+                        log("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                        throw new IllegalArgumentException(uee.getMessage());
+                    }
+                }
+                md.update(bytes);
+
                 return (HexUtils.convert(md.digest()));
             } catch (Exception e) {
                 log(sm.getString("realmBase.digest"), e);
@@ -565,10 +626,30 @@ public abstract class RealmBase
                 throw new IllegalStateException();
             }
         }
+
+    	if (hasMessageDigest()) {
+    		// Use pre-generated digest
+    		return getPassword(username);
+    	}
+    	
         String digestValue = username + ":" + realmName + ":"
             + getPassword(username);
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = digestValue.getBytes();
+        } else {
+            try {
+                valueBytes = digestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                log("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                throw new IllegalArgumentException(uee.getMessage());
+            }
+        }
+
         byte[] digest =
-            md5Helper.digest(digestValue.getBytes());
+            md5Helper.digest(valueBytes);
+
         return md5Encoder.encode(digest);
     }
 
@@ -657,8 +738,11 @@ public abstract class RealmBase
             // Obtain a new message digest with "digest" encryption
             MessageDigest md =
                 (MessageDigest) MessageDigest.getInstance(algorithm).clone();
+ 
             // encode the credentials
+            // Should use the digestEncoding, but that's not a static field
             md.update(credentials.getBytes());
+
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
         } catch(Exception ex) {

@@ -44,7 +44,8 @@ import org.apache.catalina.util.StringManager;
 * @author Craig R. McClanahan
 * @author Carson McDonald
 * @author Ignacio Ortega
-* @version $Revision$ $Date$*/
+* @version $Revision$ $Date$
+*/
 
 public class JDBCRealm
     extends RealmBase {
@@ -384,81 +385,43 @@ public class JDBCRealm
      * @param username Username of the Principal to look up
      * @param credentials Password or other credentials to use in
      *  authenticating this username
-     *
-     * @exception SQLException if a database error occurs
      */
     public synchronized Principal authenticate(Connection dbConnection,
                                                String username,
-                                               String credentials)
-        throws SQLException {
-
-        // Look up the user's credentials
-        String dbCredentials = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            stmt = credentials(dbConnection, username);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                dbCredentials = rs.getString(1);
-            }
-            rs.close();
-            rs = null;
-            if (dbCredentials == null) {
-                return (null);
-            }
-
-            dbCredentials = dbCredentials.trim();
+                                               String credentials) {
 
 
-            // Validate the user's credentials
-            boolean validated = false;
-            if (hasMessageDigest()) {
-                // Hex hashes should be compared case-insensitive
-                validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
-            } else {
-                validated = (digest(credentials).equals(dbCredentials));
-            }
-
-            if (validated) {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateSuccess",
-                                     username));
-            } else {
-                if (debug >= 2)
-                    log(sm.getString("jdbcRealm.authenticateFailure",
-                                     username));
-                return (null);
-            }
-
-            // Accumulate the user's roles
-            ArrayList roleList = new ArrayList();
-            stmt = roles(dbConnection, username);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                String role = rs.getString(1);
-                if (null!=role) {
-                    roleList.add(role.trim());
-                }
-            }
-            rs.close();
-            rs = null;
-
-            // Create and return a suitable Principal for this user
-            return (new GenericPrincipal(this, username, credentials, roleList));
-        } finally {
-            if (rs!=null) {
-                try {
-                    rs.close();
-                } catch(SQLException e) {
-                    log(sm.getString("jdbcRealm.abnormalCloseResultSet"));
-                }
-            }
-            dbConnection.commit();
+        // No user - can't possibly authenticate
+        if (username == null) {
+            return (null);
         }
 
+        // Look up the user's credentials
+        String dbCredentials = getPassword(username);
+
+        // Validate the user's credentials
+        boolean validated = false;
+        if (hasMessageDigest()) {
+            // Hex hashes should be compared case-insensitive
+            validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
+        } else {
+            validated = (digest(credentials).equals(dbCredentials));
+        }
+
+        if (validated) {
+            if (debug >= 2)
+                log(sm.getString("jdbcRealm.authenticateSuccess", username));
+        } else {
+            if (debug >=2)
+                log(sm.getString("jdbcRealm.authenticateFailure",
+ username));
+            return (null);
+        }
+
+        ArrayList roles = getRoles(username);
+        
+        // Create and return a suitable Principal for this user
+        return (new GenericPrincipal(this, username, credentials, roles));
     }
 
 
@@ -542,7 +505,7 @@ public class JDBCRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (JDBCRealm.name);
 
     }
 
@@ -552,6 +515,44 @@ public class JDBCRealm
      */
     protected String getPassword(String username) {
 
+        // Look up the user's credentials
+        String dbCredentials = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            stmt = credentials(dbConnection, username);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                dbCredentials = rs.getString(1);
+            }
+            rs.close();
+            rs = null;
+            if (dbCredentials == null) {
+                return (null);
+            }
+
+            dbCredentials = dbCredentials.trim();
+            return dbCredentials;
+            
+        } catch(SQLException e){
+            log(sm.getString("jdbcRealm.getPassword.exception", username));
+        } finally {
+            if (rs!=null) {
+                try {
+                    rs.close();
+                } catch(SQLException e) {
+                    log(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                }
+            }
+            try {
+                dbConnection.commit();
+            } catch (SQLException e) {
+                log(sm.getString("jdbcRealm.getPassword.exception", username));
+            }
+        }
+        
         return (null);
 
     }
@@ -562,11 +563,60 @@ public class JDBCRealm
      */
     protected Principal getPrincipal(String username) {
 
-        return (null);
+        return (new GenericPrincipal(this,
+                                     username,
+                                     getPassword(username),
+                                     getRoles(username)));
 
     }
 
 
+    /**
+     * Return the roles associated with the gven user name.
+     */
+    protected ArrayList getRoles(String username) {
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // Accumulate the user's roles
+            ArrayList roleList = new ArrayList();
+            stmt = roles(dbConnection, username);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                String role = rs.getString(1);
+                if (null!=role) {
+                    roleList.add(role.trim());
+                }
+            }
+            rs.close();
+            rs = null;
+            
+            return (roleList);
+            
+        } catch(SQLException e){
+            log(sm.getString("jdbcRealm.getRoles.exception", username));
+        } finally {
+            if (rs!=null) {
+                try {
+                    rs.close();
+                } catch(SQLException e) {
+                    log(sm.getString("jdbcRealm.abnormalCloseResultSet"));
+                }
+            }
+            try {
+                dbConnection.commit();
+            } catch (SQLException e) {
+                log(sm.getString("jdbcRealm.getRoles.exception", username));
+            }
+        }
+
+        return (null);
+        
+    }
+    
+    
     /**
      * Open (if necessary) and return a database connection for use by
      * this Realm.

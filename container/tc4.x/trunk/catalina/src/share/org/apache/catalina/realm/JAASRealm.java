@@ -21,14 +21,12 @@ package org.apache.catalina.realm;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.util.StringManager;
 
@@ -296,7 +294,7 @@ public class JAASRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (JAASRealm.name);
 
     }
 

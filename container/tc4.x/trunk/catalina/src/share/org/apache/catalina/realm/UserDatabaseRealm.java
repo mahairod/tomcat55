@@ -19,7 +19,6 @@ package org.apache.catalina.realm;
 
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Iterator;
 import javax.naming.Context;
 import org.apache.catalina.LifecycleException;
@@ -126,73 +125,43 @@ public class UserDatabaseRealm
 
     // --------------------------------------------------------- Public Methods
 
-
     /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
+     * Return <code>true</code> if the specified Principal has the specified
+     * security role, within the context of this Realm; otherwise return
+     * <code>false</code>. This implementation returns <code>true</code>
+     * if the <code>User</code> has the role, or if any <code>Group</code>
+     * that the <code>User</code> is a member of has the role. 
      *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
+     * @param principal Principal for whom the role is to be checked
+     * @param role Security role to be checked
      */
-    public Principal authenticate(String username, String credentials) {
-
-        // Does a user with this username exist?
-        User user = database.findUser(username);
-        if (user == null) {
-            return (null);
+    public boolean hasRole(Principal principal, String role) {
+        if(! (principal instanceof User) ) {
+            //Play nice with SSO and mixed Realms
+            return super.hasRole(principal, role);
         }
-
-        // Do the credentials specified by the user match?
-        // FIXME - Update all realms to support encoded passwords
-        boolean validated = false;
-        if (hasMessageDigest()) {
-            // Hex hashes should be compared case-insensitive
-            validated = (digest(credentials)
-                         .equalsIgnoreCase(user.getPassword()));
-        } else {
-            validated =
-                (digest(credentials).equals(user.getPassword()));
+        if("*".equals(role)) {
+            return true;
+        } else if(role == null) {
+            return false;
         }
-        if (!validated) {
-            if (debug >= 2) {
-                log(sm.getString("userDatabaseRealm.authenticateFailure",
-                                 username));
-            }
-            return (null);
+        User user = (User)principal;
+        Role dbrole = database.findRole(role);
+        if(dbrole == null) {
+            return false; 
         }
-
-        // Construct a GenericPrincipal that represents this user
-        if (debug >= 2) {
-            log(sm.getString("userDatabaseRealm.authenticateSuccess",
-                             username));
-        }
-        ArrayList combined = new ArrayList();
-        Iterator roles = user.getRoles();
-        while (roles.hasNext()) {
-            Role role = (Role) roles.next();
-            String rolename = role.getRolename();
-            if (!combined.contains(rolename)) {
-                combined.add(rolename);
-            }
+        if(user.isInRole(dbrole)) {
+            return true;
         }
         Iterator groups = user.getGroups();
-        while (groups.hasNext()) {
-            Group group = (Group) groups.next();
-            roles = group.getRoles();
-            while (roles.hasNext()) {
-                Role role = (Role) roles.next();
-                String rolename = role.getRolename();
-                if (!combined.contains(rolename)) {
-                    combined.add(rolename);
-                }
+        while(groups.hasNext()) {
+            Group group = (Group)groups.next();
+            if(group.isInRole(dbrole)) {
+                return true;
             }
         }
-        return (new GenericPrincipal(this, user.getUsername(),
-                                     user.getPassword(), combined));
-
+        return false;
     }
-
 
     // ------------------------------------------------------ Protected Methods
 
@@ -202,7 +171,7 @@ public class UserDatabaseRealm
      */
     protected String getName() {
 
-        return (this.name);
+        return (UserDatabaseRealm.name);
 
     }
 
