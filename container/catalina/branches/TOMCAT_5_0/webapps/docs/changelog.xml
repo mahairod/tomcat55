@@ -110,6 +110,9 @@
       <fix>
         <bug>31058</bug>: Ensure StatusTransformer escapes query string for XML. (yoavs)
       </fix>
+      <fix>
+        CGI Servlet: Revert the fix for <bug>27090</bug> as it introduced a JDK 1.4 dependency. (markt)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Jasper">
