@@ -376,14 +376,9 @@ public class SingleSignOn
         if (ssoId == null)
             return;
 
-        if ( event.getData() != null 
-             && "logout".equals( event.getData().toString() )) {
-            // logout of all applications
-            deregister(ssoId);
-        } else {
-            // invalidate just one session
-            deregister(ssoId, session);
-        }
+        // FIXME: Find a way to deregister only a single session in case of 
+        // a timeout
+        deregister(ssoId, session);
 
     }
 
