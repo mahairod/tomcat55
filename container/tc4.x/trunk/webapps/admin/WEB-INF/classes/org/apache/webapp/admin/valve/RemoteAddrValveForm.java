@@ -237,11 +237,11 @@ public final class RemoteAddrValveForm extends ValveForm {
         }
         
         for (int i = 0; i < denies.length; i++) {
-            if (denies[i].match("127.0.0.1")) {
-                errors.add("deny",
-                new ActionError("error.denyIP"));
-            }
             if (denies[i].match(ip)) {
+                if (allows.length < 1) {
+                    errors.add("deny",
+                        new ActionError("error.denyIP"));
+                }
                 for (int j = 0; j < allows.length; j++) {
                     if (!allows[j].match(ip)) { 
                         errors.add("deny",
