@@ -1732,7 +1732,9 @@ class Generator {
 			// Generate an out.write() when see a '\n' in template
 			sb.append("\");");
 			out.println(sb.toString());
-			out.printin();
+                        if (i < text.length()-1) {
+                            out.printin();
+                        }
 			sb.setLength(initLength);
 			count = CHUNKSIZE;
 		    }
