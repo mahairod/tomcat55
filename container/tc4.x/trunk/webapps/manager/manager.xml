@@ -1,0 +1,12 @@
+<!--
+
+    Context configuration file for the Tomcat Manager Web App
+
+    $Id$
+
+-->
+
+
+<Context path="/manager" docBase="../server/webapps/manager"
+        debug="0" privileged="true">
+</Context>
