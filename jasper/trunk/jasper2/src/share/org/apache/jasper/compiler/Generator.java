@@ -3466,7 +3466,7 @@ class Generator {
      */
     public void generateSetDynamicAttribute() {
         out.printil(
-            "public void setDynamicAttribute(String uri, String localName, Object value) throws jsp.JspException {");
+            "public void setDynamicAttribute(String uri, String localName, Object value) throws JspException {");
         out.pushIndent();
         /* 
          * According to the spec, only dynamic attributes with no uri are to
