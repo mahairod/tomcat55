@@ -5,21 +5,15 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
-  <property file="build.properties"/>
-  <property file="${user.home}/build.properties"/>
+  <!--property file="build.properties"/>
+  <property file="${user.home}/build.properties"/-->
 
   <!-- Build Defaults -->
-  <property name="catalina.build"   value="${basedir}/catalina/build"/>
-  <property name="catalina.dist"    value="${basedir}/dist"/>
-  <property name="jasper.build"     value="${jasper.home}/build"/>
-  <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
-  <property name="tomcat.build"     value="${basedir}/build"/>
-  <property name="tomcat.dist"      value="${basedir}/dist"/>
-  <property name="webapps.build"    value="${basedir}/webapps/build"/>
-  <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
-
+  <!--property name="catalina.build"   value="${basedir}/catalina/build"/-->
 
   <!-- Source dependencies -->
+  <property name="api.home"
+           value="${basedir}/../jakarta-servletapi-5"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
 
