@@ -295,7 +295,6 @@ public final class TldConfig  {
 	paths = globalJarPaths.iterator();
 	while (paths.hasNext()) {
 	    JarURLConnection conn = (JarURLConnection) paths.next();
-	    System.out.println("OPENING: " + conn.getJarFileURL().toString());
 	    long lastM = conn.getLastModified();
 	    if (lastM > lastModified) lastModified = lastM;
 	    if (log.isDebugEnabled()) {
