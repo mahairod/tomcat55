@@ -131,11 +131,11 @@ regexp.loc=${base-jakarta.loc}/regexp/binaries/jakarta-regexp-1.3.tar.gz
 
 
 # ----- Xerces XML Parser, version 2.6.1 -----
-xerces.home=${base.path}/xerces-2_6_1
+xerces.home=${base.path}/xerces-2_6_2
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.1.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.2.tar.gz
 
 
 # --------------------------------------------------
@@ -196,6 +196,7 @@ junit.loc=${base-sf.loc}/junit/junit3.7.zip
 nsis.home=${base.path}/nsis-2.0
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
+nsis.nsexec.dll=${nsis.home}/Plugins/nsExec.dll
 nsis.loc=${base-sf.loc}/nsis/nsis20.exe
 
 
