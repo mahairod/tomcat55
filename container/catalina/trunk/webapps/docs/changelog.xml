@@ -66,6 +66,18 @@
       <fix>
         <bug>32585</bug>: Better handling for content length greater than Integer.MAX_VALUE in response. (markt)
       </fix>
+      <update>
+        Allow ApacheConfig and friends to live under an Engine. (billbarker)
+      </update>
+      <update>
+        Syncronize access to the Jk Request registration count. (billbarker)
+      </update>
+      <update>
+        Speed the MsgContext on its way to GC. (billbarker)
+      </update>
+      <fix>
+        Keep correct thread counts in Thread pool when thread ends in an exception (billbarker)
+      </fix>
     </changelog>
   </subsection>
 
