@@ -210,7 +210,7 @@ public class GlobalResourcesLifecycleListener
         while (bindings.hasMore()) {
             Object next=bindings.next();
             if( next instanceof Binding ) {
-                Binding binding = (Binding) bindings.next();
+                Binding binding = (Binding) next;
                 String name = prefix + binding.getName();
                 Object value = context.lookup(binding.getName());
                 if (debug >= 1 && name!=null) {
