@@ -498,7 +498,7 @@ public class HostConfig
 
                 // Calculate the context path and make sure it is unique
                 String file = files[i].substring(0, files[i].length() - 4);
-                String contextPath = "/" + file;
+                String contextPath = "/" + file.replace('_', '/');
                 if (file.equals("ROOT")) {
                     contextPath = "";
                 }
