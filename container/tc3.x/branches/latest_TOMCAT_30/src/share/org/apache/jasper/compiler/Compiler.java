@@ -122,6 +122,7 @@ public abstract class Compiler {
         Constants.message("jsp.message.class_file_name_is",
                           new Object[] { classFileName },
                           Constants.MED_VERBOSITY);
+
         if (!isOutDated())
             return false;
         

@@ -207,8 +207,9 @@ public class JspLoader extends ClassLoader {
      *  @param classpath explicitly set the JSP compilation path.
      *  @return true if JSP files is newer
      */
-    public boolean loadJSP(String name, String classpath, boolean isErrorPage, 
-                           HttpServletRequest req, HttpServletResponse res) 
+    public synchronized boolean loadJSP(String name, String classpath, 
+					boolean isErrorPage, HttpServletRequest req, 
+					HttpServletResponse res) 
 	throws JasperException, FileNotFoundException 
     {
 	Class jspClass = (Class) loadedJSPs.get(name);

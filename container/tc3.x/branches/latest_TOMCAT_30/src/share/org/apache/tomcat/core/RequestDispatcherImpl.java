@@ -66,6 +66,7 @@ package org.apache.tomcat.core;
 
 import org.apache.tomcat.util.StringManager;
 import java.io.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -75,6 +76,7 @@ import javax.servlet.http.*;
  * @author James Duncan Davidson [duncan@eng.sun.com]
  * @author Jason Hunter [jch@eng.sun.com]
  * @author James Todd [gonzo@eng.sun.com]
+ * @author Alex Cruikshank [alex@epitonic.com]
  */
 
 public class RequestDispatcherImpl implements RequestDispatcher {
@@ -113,23 +115,12 @@ public class RequestDispatcherImpl implements RequestDispatcher {
 	ForwardedRequest fRequest =
 	    new ForwardedRequest(realRequest, urlPath);
 
-        // join the query strings of the destination request
-        // with the originaing request in that order.
-
-        String aggregatedQueryString = this.queryString;
-
-        if (realRequest.getQueryString() != null &&
-            realRequest.getQueryString().trim().length() > 0) {
-            if (aggregatedQueryString == null) {
-                aggregatedQueryString = realRequest.getQueryString();
-            } else {
-                aggregatedQueryString += "&" + realRequest.getQueryString();
-            }
-        }
-
+	// add new query string parameters to request
+	// if names are duplicates, new valeus will be prepended to arrays
+	reqFacade.getRealRequest().addQueryString(queryString);
+	
         fRequest.setServletPath(this.lookupResult.getServletPath());
 	fRequest.setPathInfo(this.lookupResult.getPathInfo());
-        fRequest.setQueryString(aggregatedQueryString);
 
 	this.lookupResult.getWrapper().handleRequest(fRequest, resFacade);
     }
@@ -161,6 +152,7 @@ public class RequestDispatcherImpl implements RequestDispatcher {
         Request realRequest = reqFacade.getRealRequest();
 	Response realResponse = resFacade.getRealResponse();
         String originalQueryString = realRequest.getQueryString();
+	Hashtable originalParameters = realRequest.getParametersCopy();
 
 	// XXX
 	// not sure why we're pre-pending context.getPath() here
@@ -186,37 +178,23 @@ public class RequestDispatcherImpl implements RequestDispatcher {
                 lookupResult.getPathInfo());
 	}
 
-        // join the query strings of the destination request
-        // with the originaing request in that order.
+	// add new query string parameters to request
+	// if names are duplicates, new values will be prepended to arrays
+	reqFacade.getRealRequest().addQueryString( this.queryString );
+	
 
-        String aggregatedQueryString = this.queryString;
-
-        if (realRequest.getQueryString() != null &&
-            realRequest.getQueryString().trim().length() > 0) {
-            if (aggregatedQueryString == null) {
-                aggregatedQueryString = realRequest.getQueryString();
-            } else {
-                aggregatedQueryString += "&" + realRequest.getQueryString();
-            }
-        }
-
-	if (aggregatedQueryString != null) {
+	if (reqFacade.getRealRequest().getQueryString() != null) {
 	    req.setAttribute(Constants.Attribute.QueryString,
-                aggregatedQueryString);
+			     reqFacade.getRealRequest().getQueryString());
 	}
-
-        // inline the aggregated query string for the scope
-        // of the include
-
-	reqFacade.getRealRequest().setQueryString(aggregatedQueryString);
 	
 	IncludedResponse iResponse = new IncludedResponse(realResponse);
 
 	lookupResult.getWrapper().handleRequest(reqFacade, iResponse);
-
-        // revert the query string to its original value
-
-        reqFacade.getRealRequest().setQueryString(originalQueryString);
+	
+	// revert the parameters and query string to its original value
+	reqFacade.getRealRequest().setParameters(originalParameters);
+	reqFacade.getRealRequest().replaceQueryString(originalQueryString);
 
 	if (request_uri != null) {
 	    req.setAttribute(Constants.Attribute.RequestURI, request_uri);

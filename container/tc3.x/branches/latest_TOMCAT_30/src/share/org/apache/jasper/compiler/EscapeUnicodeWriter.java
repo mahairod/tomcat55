@@ -88,7 +88,7 @@ public class EscapeUnicodeWriter extends Writer {
         
 	int ci = off, end = off + len;
 	while ( --len >= 0 ) {
-	    int ch = buf[off++] & 0xff;
+	    int ch = buf[off++] & 0xffff;
 	    /*
 	     * Write out unicode characters as \u0000
 	     */

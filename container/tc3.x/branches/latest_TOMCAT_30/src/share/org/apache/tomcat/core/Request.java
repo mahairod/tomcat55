@@ -78,6 +78,7 @@ import javax.servlet.http.*;
  * @author James Todd [gonzo@eng.sun.com]
  * @author Jason Hunter [jch@eng.sun.com]
  * @author Harish Prabandham
+ * @author Alex Cruikshank [alex@apitonic.com]
  */
 public class Request  {
     // XXX used by forward to override, need a better
@@ -85,7 +86,7 @@ public class Request  {
     protected String requestURI;
     protected String queryString;
  
-   //  RequestAdapterImpl Hints
+    //  RequestAdapterImpl Hints
     String serverName;
     protected Vector cookies = new Vector();
 
@@ -227,6 +228,22 @@ public class Request  {
 
         return parameters.keys();
     }
+
+    /**
+     * Used by RequestDispatcherImpl to get a copy of the 
+     * original parameters before adding parameters from the 
+     * query string, if any.
+     */
+    public Hashtable getParametersCopy() {
+	if (!didParameters) {
+	    processFormData(getQueryString());
+	}
+	if (!didReadFormData) {
+	    readFormData();
+	}
+	return (Hashtable) parameters.clone();
+    }
+    
     
 
     public String getAuthType() {
@@ -466,7 +483,54 @@ public class Request  {
 //     public void setScheme(String scheme) {
 //         this.scheme = scheme;
 //     }
+
+
+    /**
+     * Adds a query string to the existing set of parameters. 
+     * The additional parameters represented by the query string will be 
+     * merged with the existing parameters. 
+     * Used by the RequestDispatcherImpl to add query string parameters
+     * to the request. 
+     *
+     * @param inQueryString URLEncoded parameters to add
+     */
+    public void addQueryString(String inQueryString) {
+	// if query string is null, do nothing
+	if ((inQueryString == null) || (inQueryString.trim().length() <= 0))
+	    return;
+	
+	// add query string to existing string
+	if ((queryString == null) || (queryString.trim().length() <= 0))
+	    queryString = inQueryString;
+	else
+	    queryString = inQueryString + "&" + queryString;
+	
+	// process parameters
+	Hashtable newParameters = null;
+	try {
+	    newParameters = HttpUtils.parseQueryString(queryString);
+	} catch (Exception e) {
+	    return;
+	}
+	
+	// merge new parameters with existing parameters
+	if (newParameters != null)
+	    parameters = RequestUtil.mergeParameters(newParameters, parameters);
+    }
     
+
+    /**
+     * Replaces the query string without processing the parameters. 
+     * Used by the RequestDispatcherImpl to restore the original 
+     * query string. 
+     *
+     * @param inQueryString queryString to replace
+     */
+    public void replaceQueryString(String inQueryString) {
+	this.queryString = inQueryString;
+    }
+    
+	
     public void setRequestedSessionId(String reqSessionId) {
 	this.reqSessionId = reqSessionId;
     }
