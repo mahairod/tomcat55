@@ -59,7 +59,7 @@
      classpath="${jmx.jar}" />
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
-     classpath="${commons-modeler.jar}"/>
+     classpath="${commons-modeler.jar}:${jmx.jar}"/>
     <available property="servlet.present"
      classname="javax.servlet.Servlet"
      classpath="${servlet-api.jar}" />
@@ -190,7 +190,7 @@
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static" if="compile.admin">
-
+  
     <javac   srcdir="WEB-INF/classes"
              destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
              debug="${compile.debug}" deprecation="${compile.deprecation}"
