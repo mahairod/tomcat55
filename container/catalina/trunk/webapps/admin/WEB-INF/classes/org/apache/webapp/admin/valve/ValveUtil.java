@@ -180,7 +180,7 @@ public final class ValveUtil {
             
             String domain = pname.getDomain();
             // Look up our MBeanFactory MBean
-            ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+            ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
             
             // Create a new StandardValve object
             values = new String[1];            

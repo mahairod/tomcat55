@@ -237,8 +237,8 @@ public class Lists {
         String hostPrefix = "//"+host.getKeyProperty("host");
         String hostAttr = null;
         while (names.hasNext()) {
-        name = names.next().toString();
-        oname = new ObjectName(name);
+            name = names.next().toString();
+            oname = new ObjectName(name);
             hostAttr = oname.getKeyProperty("name");
             if (hostAttr.startsWith(hostPrefix)) {
                 contexts.add(name);
@@ -285,6 +285,7 @@ public class Lists {
     public static List getDefaultContexts(MBeanServer mbserver, ObjectName 
         container) throws Exception {
 
+        // FIXME
         StringBuffer sb = new StringBuffer(container.getDomain());
         sb.append(":type=DefaultContext");
         String type = container.getKeyProperty("type");
@@ -381,23 +382,7 @@ public class Lists {
     public static List getLoggers(MBeanServer mbserver, ObjectName container)
         throws Exception {
 
-        StringBuffer sb = new StringBuffer(container.getDomain());
-        sb.append(":type=Logger");
-        String type = container.getKeyProperty("type");
-        String path = container.getKeyProperty("path");
-        if (path != null) {
-            sb.append(",path=");
-            sb.append(path);
-        }
-        String host = container.getKeyProperty("host");
-        if ("Host".equals(type)) {
-            host = container.getKeyProperty("host");
-        }
-        if (host != null) {
-            sb.append(",host=");
-            sb.append(host);
-        }
-        ObjectName search = new ObjectName(sb.toString());
+        ObjectName search = getSearchObject(container, "Logger");
         ArrayList loggers = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
         while (names.hasNext()) {
@@ -440,23 +425,7 @@ public class Lists {
     public static List getRealms(MBeanServer mbserver, ObjectName container)
         throws Exception {
 
-        StringBuffer sb = new StringBuffer(container.getDomain());
-        sb.append(":type=Realm");
-        String type = container.getKeyProperty("type");
-        String path = container.getKeyProperty("path");
-        if (path != null) {
-            sb.append(",path=");
-            sb.append(path);
-        }
-        String host = container.getKeyProperty("host");
-        if ("Host".equals(type)) {
-            host = container.getKeyProperty("host");
-        }
-        if (host != null) {
-            sb.append(",host=");
-            sb.append(host);
-        }
-        ObjectName search = new ObjectName(sb.toString());
+        ObjectName search = getSearchObject(container, "Realm");
         ArrayList realms = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
         while (names.hasNext()) {
@@ -502,9 +471,19 @@ public class Lists {
         sb.append(":type=Valve");
         String type = container.getKeyProperty("type");
         sb.append(TomcatTreeBuilder.WILDCARD);
-        
-        String host = container.getKeyProperty("host");
-        String path = container.getKeyProperty("path");
+        String host = "";
+        String path = "";
+        String name = container.getKeyProperty("name");
+        if ((name != null) && (name.length() > 0)) {
+            // parent is context
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            host = name.substring(0,i);
+            path = name.substring(i);
+        } else if ("Host".equals(type)) {
+            // parent is host
+            host = container.getKeyProperty("host");
+        }    
         
         ObjectName search = new ObjectName(sb.toString());        
         ArrayList valves = new ArrayList();
@@ -604,8 +583,9 @@ public class Lists {
     public static List getServices(MBeanServer mbserver, ObjectName server)
         throws Exception {
 
-        StringBuffer sb = new StringBuffer(server.getDomain());
-        sb.append(":type=Service,*");
+        //StringBuffer sb = new StringBuffer(server.getDomain());
+        StringBuffer sb = new StringBuffer("*:type=Service,*");
+        //sb.append(":type=Service,*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList services = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -674,7 +654,7 @@ public class Lists {
     public static String getAdminAppHost
         (MBeanServer mbserver, String domain, HttpServletRequest request)
         throws Exception {
-
+        // FIXME TEST
         // Get the admin app's host name
         StringBuffer sb = new StringBuffer(domain);
         sb.append(":j2eeType=WebModule,*"); 
@@ -698,4 +678,41 @@ public class Lists {
 
     }
 
+    
+    /**
+     * Return search object name to be used to query.
+     *
+     * @param container object name to query
+     * @param type type of the component
+     *
+     * @exception MalformedObjectNameException if thrown while retrieving the list
+     */
+    public static ObjectName getSearchObject(ObjectName container, String type)  
+            throws Exception {
+        
+        StringBuffer sb = new StringBuffer(container.getDomain());
+        sb.append(":type="+type);
+        String containerType = container.getKeyProperty("type");
+        String name = container.getKeyProperty("name");
+        if ((name != null) && (name.length() > 0)) {
+            // parent is context
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            String host = name.substring(0,i);
+            String path = name.substring(i);
+            sb.append(",path=");
+            sb.append(path);
+            sb.append(",host=");
+            sb.append(host);
+        } else if ("Host".equals(containerType)) {
+            // parent is host
+            String host = container.getKeyProperty("host");
+            sb.append(",host=");
+            sb.append(host);
+        }    
+        
+        return new ObjectName(sb.toString());
+        
+    }
+    
 }

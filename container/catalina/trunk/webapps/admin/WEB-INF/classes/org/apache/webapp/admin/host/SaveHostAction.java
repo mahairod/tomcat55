@@ -201,7 +201,7 @@ public final class SaveHostAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 
                 // Create a new StandardHost object
                 values = new Object[9];

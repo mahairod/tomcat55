@@ -122,6 +122,8 @@ public class AddServiceAction extends Action {
             resources = getServlet().getResources();
         }
         
+        String serverName = request.getParameter("serverName");
+        
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();
         session.setAttribute("serviceForm", serviceFm);
@@ -134,6 +136,7 @@ public class AddServiceAction extends Action {
         serviceFm.setDefaultHost("localhost");        
         serviceFm.setAdminServiceName("");
         serviceFm.setDebugLvlVals(Lists.getDebugLevels());
+        serviceFm.setServerObjectName(serverName);
         ArrayList hosts = new ArrayList();
         hosts.add(new LabelValueBean
                   (resources.getMessage("list.none"), ""));

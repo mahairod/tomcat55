@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" contentType="text/html;charset=utf-8" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -18,6 +18,10 @@
 <html:errors/>
 
 <html:form method="POST" action="/SaveServer" focus="portNumberText">
+  <bean:define id="thisObjectName" type="java.lang.String"
+               name="serverForm" property="objectName"/>
+  <html:hidden property="objectName"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
       <td align="left" nowrap>
@@ -34,10 +38,12 @@
           <controls:action>
             ---------------------------------
           </controls:action>
-          <controls:action url="/AddService.do">
+          <controls:action url='<%= "/AddService.do?serverName=" +
+                                      URLEncoder.encode(thisObjectName) %>'>
             <bean:message key="actions.services.create"/>
           </controls:action>
-          <controls:action url="/DeleteService.do">
+          <controls:action url='<%= "/DeleteService.do?serverName=" +
+                                      URLEncoder.encode(thisObjectName) %>'>
             <bean:message key="actions.services.deletes"/>
           </controls:action>
         </controls:actions>

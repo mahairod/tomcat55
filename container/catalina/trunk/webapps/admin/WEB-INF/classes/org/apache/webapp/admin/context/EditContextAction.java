@@ -166,15 +166,17 @@ public class EditContextAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
-        
+        String name = cname.getKeyProperty("name");
+        name = name.substring(2);
+        int i = name.indexOf("/");
+        String host = name.substring(0,i);
+        String path = name.substring(i);
         // Get the corresponding loader
         try {
             sb = new StringBuffer(cname.getDomain());
             sb.append(":type=Loader");
-            sb.append(",path=");
-            sb.append(cname.getKeyProperty("path"));
-            sb.append(",host=");
-            sb.append(cname.getKeyProperty("host"));
+            sb.append(",path="+path);
+            sb.append(",host="+host);
             lname = new ObjectName(sb.toString());
          } catch (Exception e) {
             String message =
@@ -190,10 +192,8 @@ public class EditContextAction extends Action {
         try {
             sb = new StringBuffer(cname.getDomain());
             sb.append(":type=Manager");
-            sb.append(",path=");
-            sb.append(cname.getKeyProperty("path"));
-            sb.append(",host=");
-            sb.append(cname.getKeyProperty("host"));
+            sb.append(",path="+path);
+            sb.append(",host="+host);
             mname = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =
@@ -212,7 +212,7 @@ public class EditContextAction extends Action {
         contextFm.setLoaderObjectName(lname.toString());
         contextFm.setManagerObjectName(mname.toString());
         sb = new StringBuffer("Context (");
-        sb.append(cname.getKeyProperty("path"));
+        sb.append(path);
         sb.append(")");
         contextFm.setNodeLabel(sb.toString());
         contextFm.setDebugLvlVals(Lists.getDebugLevels());

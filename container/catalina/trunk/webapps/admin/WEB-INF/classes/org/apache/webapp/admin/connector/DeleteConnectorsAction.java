@@ -181,7 +181,7 @@ public class DeleteConnectorsAction extends Action {
                     node = control.findNode(connectors[i]);
                     domain = node.getDomain();
                     // Look up our MBeanFactory MBean
-                    fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    fname = TomcatTreeBuilder.getMBeanFactory();
                     mBServer.invoke(fname, operation,
                                 values, removeConnectorTypes);
                     if (node != null) {

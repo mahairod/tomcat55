@@ -175,12 +175,10 @@ public final class SaveConnectorAction extends Action {
             Object values[] = null;
 
             try {
-   
+                // get service name which is same as domain
                 String serviceName = cform.getServiceName();
-                coname = new ObjectName(cObjectName);
-                String domain = coname.getDomain();
                 ObjectName oname =
-                    new ObjectName(domain + TomcatTreeBuilder.CONNECTOR_TYPE +
+                    new ObjectName(serviceName + TomcatTreeBuilder.CONNECTOR_TYPE +
                                    ",port=" + cform.getPortText() +
                                    ",address=" + cform.getAddress());
                                                 
@@ -194,12 +192,12 @@ public final class SaveConnectorAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 
                 // Create a new Connector object
                 values = new Object[3];                
                 values[0] = // parent 
-                    domain + TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
+                    serviceName + TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
 
@@ -219,7 +217,7 @@ public final class SaveConnectorAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = domain + TomcatTreeBuilder.SERVICE_TYPE
+                    String parentName = serviceName + TomcatTreeBuilder.SERVICE_TYPE
                          + ",name=" + serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
@@ -234,7 +232,7 @@ public final class SaveConnectorAction extends Action {
                                                 "EditConnector.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true, domain);
+                                                true, serviceName);
                         // FIXME--the node should be next to the rest of 
                         // the Connector nodes..
                         parentNode.addChild(childNode);

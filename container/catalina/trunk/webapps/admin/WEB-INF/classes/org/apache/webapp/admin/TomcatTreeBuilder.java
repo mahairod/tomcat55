@@ -105,8 +105,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
     // This SERVER_LABEL needs to be localized
     private final static String SERVER_LABEL = "Tomcat Server";
     
+    public final static String DEFAULT_DOMAIN = "Catalina";
     public final static String SERVER_TYPE = ":type=Server";
-    public final static String FACTORY_TYPE = ":type=MBeanFactory";
+    public final static String FACTORY_TYPE = 
+                        DEFAULT_DOMAIN + ":type=MBeanFactory";
     public final static String SERVICE_TYPE = ":type=Service";
     public final static String ENGINE_TYPE = ":type=Engine";
     public final static String CONNECTOR_TYPE = ":type=Connector";
@@ -139,10 +141,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
 
     }
     
-    public static ObjectName getMBeanFactory(String domain) 
+    public static ObjectName getMBeanFactory() 
             throws MalformedObjectNameException {
         
-        return new ObjectName(domain+FACTORY_TYPE + WILDCARD);
+        return new ObjectName(FACTORY_TYPE);
     }
     
 
@@ -202,7 +204,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String serviceName = (String) serviceNames.next();
             ObjectName objectName = new ObjectName(serviceName);
             String nodeLabel =
-                "Service (" + objectName.getKeyProperty("name") + ")";
+                "Service (" + objectName.getDomain() + ")";
             TreeControlNode serviceNode =
                 new TreeControlNode(serviceName,
                                     "Service.gif",
@@ -320,8 +322,12 @@ public class TomcatTreeBuilder implements TreeBuilder{
         while (contextNames.hasNext()) {
             String contextName = (String) contextNames.next();
             ObjectName objectName = new ObjectName(contextName);
+            String name = objectName.getKeyProperty("name");
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            String path = name.substring(i);
             String nodeLabel =
-                "Context (" + objectName.getKeyProperty("path") + ")";
+                "Context (" + path + ")";
             TreeControlNode contextNode =
                 new TreeControlNode(contextName,
                                     "Context.gif",

@@ -65,6 +65,7 @@ package org.apache.webapp.admin.service;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Vector;
 import java.io.IOException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
@@ -97,6 +98,7 @@ import org.apache.webapp.admin.TreeControlNode;
  * <em>Edit Service</em> transactions.
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -122,6 +124,18 @@ public final class SaveServiceAction extends Action {
     private String createStandardServiceTypes[] =
     { "java.lang.String",     // parent
       "java.lang.String",     // name
+      "java.lang.String"      // domain
+    };
+
+
+    /**
+     * Signature for the <code>createStandardEngineService</code> operation.
+     */
+    private String createStandardEngineServiceTypes[] =
+    { "java.lang.String",     // parent
+      "java.lang.String",     // engineName
+      "java.lang.String",     // defaultHost
+      "java.lang.String"      // serviceName
     };
 
 
@@ -181,7 +195,9 @@ public final class SaveServiceAction extends Action {
         String adminAction = sform.getAdminAction();
         String sObjectName = sform.getObjectName();
         String eObjectName = sform.getEngineObjectName();
-
+        String serverObjectName = sform.getServerObjectName();
+        ObjectName eoname = null;
+        ObjectName soname = null;
         // Perform a "Create Service" transaction (if requested)
         if ("Create".equals(adminAction)) {
 
@@ -189,12 +205,12 @@ public final class SaveServiceAction extends Action {
             String values[] = null;
 
             try {
-
-                String domain = (new ObjectName(sObjectName)).getDomain();
+                // engine name is domain
+                String engineName = sform.getEngineName();
+                String domain = (new ObjectName(serverObjectName)).getDomain();
                 // Ensure that the requested service name is unique
                 ObjectName oname =
-                    new ObjectName(domain + TomcatTreeBuilder.SERVICE_TYPE +
-                                   ",name=" + sform.getServiceName());
+                    new ObjectName(engineName + TomcatTreeBuilder.SERVICE_TYPE);
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("serviceName",
@@ -204,29 +220,45 @@ public final class SaveServiceAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory();
 
-                // Create a new StandardService object
-                values = new String[2];
-                values[0] = domain + TomcatTreeBuilder.SERVER_TYPE;
-                values[1] = sform.getServiceName();
-                operation = "createStandardService";
-                sObjectName = (String)
+                // Create a new StandardService and StandardEngine object
+                values = new String[4];
+                values[0] = TomcatTreeBuilder.SERVER_TYPE;
+                values[1] = engineName;
+                values[2] = sform.getDefaultHost();
+                values[3] = sform.getServiceName();
+                operation = "createStandardEngineService";
+                Vector onames = (Vector)
                     mBServer.invoke(fname, operation,
-                                    values, createStandardServiceTypes);
+                                    values, createStandardEngineServiceTypes);
+                eoname = (ObjectName)onames.get(0);
+                soname = (ObjectName)onames.get(1);
+                sObjectName = soname.toString();
+                eObjectName = eoname.toString();
+                
+                // Create a new StandardService object
+                //values = new String[3];
+                //values[0] = TomcatTreeBuilder.SERVER_TYPE;
+                //values[1] = sform.getServiceName();
+                //values[2] = engineName;
+                //operation = "createStandardService";
+                //sObjectName = (String)
+                //    mBServer.invoke(fname, operation,
+                //                    values, createStandardServiceTypes);
 
                 // Create a new StandardEngine object
-                values = new String[3];
-                values[0] = sObjectName;
-                values[1] = sform.getEngineName();
-                values[2] = sform.getDefaultHost();
-                if ("".equals(values[2])) {
-                    values[2] = null;
-                }
-                operation = "createStandardEngine";
-                eObjectName = (String)
-                    mBServer.invoke(fname, operation,
-                                    values, createStandardEngineTypes);
+                //values = new String[3];
+                //values[0] = sObjectName;
+                //values[1] = sform.getEngineName();
+                //values[2] = sform.getDefaultHost();
+                //if ("".equals(values[2])) {
+                //    values[2] = null;
+                //}
+                //operation = "createStandardEngine";
+                //eObjectName = (String)
+                //    mBServer.invoke(fname, operation,
+                //                    values, createStandardEngineTypes);
 
                 // Add the new Service to our tree control node
                 TreeControl control = (TreeControl)
@@ -236,7 +268,7 @@ public final class SaveServiceAction extends Action {
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
-                            "Service (" + sform.getServiceName() + ")";
+                            "Service (" + oname.getDomain() + ")";
                         String encodedName =
                             URLEncoder.encode(sObjectName);
                         TreeControlNode childNode =
@@ -276,9 +308,6 @@ public final class SaveServiceAction extends Action {
         // Perform attribute updates as requested
         String attribute = null;
         try {
-
-            ObjectName soname = new ObjectName(sObjectName);
-            ObjectName eoname = new ObjectName(eObjectName);
 
             attribute = "debug";
             int debug = 0;
