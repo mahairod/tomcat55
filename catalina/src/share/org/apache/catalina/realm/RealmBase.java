@@ -78,6 +78,12 @@ public abstract class RealmBase
 
 
     /**
+     * Container log
+     */
+    protected Log containerLog = null;
+
+
+    /**
      * Digest algorithm used in storing passwords in a non-plaintext format.
      * Valid values are those accepted for the algorithm name by the
      * MessageDigest class, or <code>null</code> if no digesting should
@@ -169,6 +175,7 @@ public abstract class RealmBase
 
         Container oldContainer = this.container;
         this.container = container;
+        this.containerLog = container.getLogger();
         support.firePropertyChange("container", oldContainer, this.container);
 
     }
@@ -283,17 +290,15 @@ public abstract class RealmBase
             validated = serverCredentials.equals(credentials);
         }
         if(! validated ) {
-            if (container.getLogger().isTraceEnabled()) {
-                container.getLogger().
-                    trace(sm.getString("realmBase.authenticateFailure",
-                                 username));
+            if (containerLog.isTraceEnabled()) {
+                containerLog.trace(sm.getString("realmBase.authenticateFailure",
+                                                username));
             }
             return null;
         }
-        if (container.getLogger().isTraceEnabled()) {
-            container.getLogger().
-                trace(sm.getString("realmBase.authenticateSuccess",
-                             username));
+        if (containerLog.isTraceEnabled()) {
+            containerLog.trace(sm.getString("realmBase.authenticateSuccess",
+                                            username));
         }
 
         return getPrincipal(username);
