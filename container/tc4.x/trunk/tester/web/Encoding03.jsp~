@@ -1,0 +1,9 @@
+<html>
+<head>
+<title>Encoding03.jsp</title>
+</head>
+<body bgcolor="white">
+This is illegal in the spec:<br>
+<%= "Joe said %\\>" %>.
+</body>
+</html>

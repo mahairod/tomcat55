@@ -212,9 +212,9 @@
           status="200"/>
 
     <!-- DefaultServlet should not decode the path again -->
-    <tester host="${host}" port="${port}" protocol="${protocol}"
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
          request="${examples.path}/jsp/snp/snoop%252ejsp"
-          status="404"/>
+          status="400"/>
 
   </target>
 
@@ -529,6 +529,13 @@
          request="${context.path}/Encoding01.jsp" debug="${debug}"
           golden="${golden.path}/Encoding01.txt"/>
 
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Encoding02.jsp" debug="${debug}"
+          golden="${golden.path}/Encoding02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Encoding03.jsp" debug="${debug}"
+          golden="${golden.path}/Encoding03.txt"/>
 
   </target>
 

@@ -756,7 +756,7 @@ public class TestClient extends Task {
 
             // Validate the response against our criteria
             if (success) {
-                result = validateStatus(status);
+                result = validateStatus(outStatus);
                 if (result != null)
                     success = false;
             }
