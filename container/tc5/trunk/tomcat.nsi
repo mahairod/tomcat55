@@ -8,9 +8,20 @@
   SetCompressor lzma
   SetDatablockOptimize on
 
-!include "MUI.nsh"
+  Name "Apache Tomcat"
 
-Name "Apache Tomcat"
+  ;Product information
+  VIAddVersionKey ProductName "Apache Tomcat"
+  VIAddVersionKey CompanyName "Apache Software Foundation"
+  VIAddVersionKey LegalCopyright "Copyright (c) 1999-2004 The Apache Software Foundation"
+  VIAddVersionKey FileDescription "Apache Tomcat Installer"
+  VIAddVersionKey FileVersion "2.0"
+  VIAddVersionKey ProductVersion "@VERSION@"
+  VIAddVersionKey Comments "jakarta.apache.org/tomcat"
+  VIAddVersionKey InternalName "jakarta-tomcat-@VERSION@.exe"
+  VIProductVersion @VERSION@.0
+
+!include "MUI.nsh"
 
 ;--------------------------------
 ;Configuration
