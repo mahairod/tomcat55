@@ -96,6 +96,7 @@ import javax.servlet.*;
  * @author Harish Prabandham
  * @author costin@dnt.ro
  * @author Gal Shachor shachor@il.ibm.com
+ * @author Arieh Markel [arieh.markel@sun.com]
  */
 public class Context {
     private static StringManager sm =StringManager.getManager("org.apache.tomcat.core");
@@ -792,6 +793,67 @@ public class Context {
 	    log("Get real path " + path + " " + realPath + " " + base );
 	}
 	return realPath;
+    }
+
+    /**  method to return the Localized version of the file whose
+     *   name is passed as an argument.
+     *
+     *  The method performs a resource lookup in a manner similar to the
+     *  one specified by java.util.ResourceBundle.
+     *
+     *  In the case of 'typed' files (files whose name is [file].[ftype])
+     *  search for localized versions of the file are looked for:
+     *
+     *   file + "_" + language1 + "_" + country1 + "_" + variant1 + "." + ftype
+     *   file + "_" + language1 + "_" + country1 + "." + ftype
+     *   file + "_" + language1 + "." + ftype
+     *   file + "_" + language2 + "_" + country2 + "_" + variant2 "." + ftype
+     *   file + "_" + language2 + "_" + country2 "." + ftype
+     *   file + "_" + language2 + "." + ftype
+     *   file + "." + ftype
+     *
+     *  Where language1, country1, variant1 are associated with the Locale
+     *  passed as an argument and language2, country2, variant are associated
+     *  with the default Locale passed as argument.
+     *
+     *  For example, if the preferred Locale is <CODE>es_AR_POSIX</CODE> and 
+     *  the default Locale passed is <CODE>fr_CA_WIN</CODE>, and the requested
+     *  pathname is <CODE>/foo/bar/index.html</CODE>, then a search for
+     *  the following localized versions of that file will be done, in order:
+     *<UL>
+     *<LI>/foo/bar/index_es_AR_POSIX.html</LI>
+     *<LI>/foo/bar/index_es_AR.html</LI>
+     *<LI>/foo/bar/index_es.html</LI>
+     *<LI>/foo/bar/index_fr_CA_WIN.html</LI>
+     *<LI>/foo/bar/index_fr.html</LI>
+     *<LI>/foo/bar/index.html</LI>
+     *</UL>
+     *
+     *  If the resource passed has no 'ftype' component, then the same
+     *  rules above apply, with the exception that '.' + ftype are not
+     *  concatenated.
+     *
+     *  @param path the pathname for the resource whose localized version
+     *          we are seeking
+     *  @param loc the Locale we are interested in.
+     *  @param fbLoc the fallback Locale to use if unsuccessful
+     *
+     *  @return a String with the path of the "best localized match" for
+     *          the file whose path has been passed as argument.
+     */
+    public String getRealPath (String path, Locale reqLocale, Locale fbLocale)
+    {
+        String base = getAbsolutePath();
+        if (path == null) path = "";
+
+        String realPath = FileUtil.getLocalizedFile (base, path,
+						     reqLocale, fbLocale);
+	if( debug>5) {
+	    log("Get real path " + path + " " + realPath + " " + base
+		 + reqLocale.toString() + " " + fbLocale.toString() );
+	}
+
+        return realPath;
     }
 
     // -------------------- Deprecated

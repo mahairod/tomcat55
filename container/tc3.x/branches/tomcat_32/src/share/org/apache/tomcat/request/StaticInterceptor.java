@@ -75,12 +75,60 @@ import org.apache.tomcat.logging.*;
 /**
  * Handler for static files.
  *
+ * In order to take advantage of doing searches for file-localized
+ * versions of the static files, the "localization" property needs to
+ * be set to "file" in the StaticInterceptor entry in the server.xml file.
+ *
  * @author costin@dnt.ro
+ * @author Arieh Markel [arieh.markel@sun.com]
  */
 public class StaticInterceptor extends BaseInterceptor {
     int realFileNote=-1;
 
+    //  values for localization
+    //
+    int NONE_LOC = 0;
+    int FILE_LOC = 1;
+    int DOCB_LOC = 2;
+
+    int localization = NONE_LOC;
+
+    public static final String  FILE_LOCALIZATION = "file";
+    public static final String  DOCBASE_LOCALIZATION = "docbase";
+    public static final String  NO_LOCALIZATION = "none";
+    public static final String  LOCALIZATION_PROPERTY = "localization";
+
     public StaticInterceptor() {
+    }
+
+    /**  set the mode of localization for resource lookups
+     *
+     *  The following are possible localization modes:
+     *<UL>
+     *<LI>file</LI>
+     *<LI>docbase</LI>
+     *<LI>none</LI>
+     *</UL>
+     *
+     *  @param s the localization mode
+     */
+    public void setLocalization (String s) {
+	if (FILE_LOCALIZATION.equals(s))
+	    localization = FILE_LOC;
+	else if (DOCBASE_LOCALIZATION.equals(s))
+	    localization = DOCB_LOC;
+    }
+
+    /**  return the mode of localization for resource lookups
+     *
+     *  @return the localization mode
+     */
+    public String getLocalization() {
+	return (localization == FILE_LOC)
+	            ? FILE_LOCALIZATION
+	            : (localization == DOCB_LOC)
+	                        ? DOCBASE_LOCALIZATION
+	                        : NO_LOCALIZATION;
     }
 
     public void engineInit(ContextManager cm) throws TomcatException {
@@ -119,7 +167,16 @@ public class StaticInterceptor extends BaseInterceptor {
 	// and a number of checks
 	String pathInfo=req.getServletPath();
 	if( pathInfo==null ) pathInfo="";
-	String absPath=ctx.getRealPath( pathInfo );
+
+	String absPath = null;
+
+	if (localization == FILE_LOC)
+	    absPath = ctx.getRealPath (pathInfo,
+				       RequestUtil.getLocale(req),
+				       Locale.getDefault());
+	else
+	    absPath = ctx.getRealPath( pathInfo );
+
 	if( absPath == null ) return 0;
 	String requestURI=req.getRequestURI();
 
@@ -142,7 +199,14 @@ public class StaticInterceptor extends BaseInterceptor {
 	}
 
 	// Directory, check if we have a welcome file
-	String welcomeFile = getWelcomeFile(ctx, file);
+	String welcomeFile = null;
+	if (localization == FILE_LOC)
+	    welcomeFile = getWelcomeFile(ctx, file,
+					 RequestUtil.getLocale(req),
+				         Locale.getDefault());
+	else
+	    welcomeFile = getWelcomeFile(ctx, file);
+
 	if( debug > 0 )
 	    log( "DefaultServlet: welcome file: "  + welcomeFile);
 
@@ -184,7 +248,7 @@ public class StaticInterceptor extends BaseInterceptor {
     }
     
     private String getWelcomeFile(Context context, File dir) {
-        Enumeration enum = context.getWelcomeFiles();
+	Enumeration enum = context.getWelcomeFiles();
 
 	while (enum.hasMoreElements()) {
 	    String fileName = (String)enum.nextElement();
@@ -196,7 +260,33 @@ public class StaticInterceptor extends BaseInterceptor {
 	return null;
     }
 
+    private String getWelcomeFile(Context context, File dir,
+				  Locale loc, Locale fbloc) {
+	Enumeration enum = context.getWelcomeFiles();
 
+	while (enum.hasMoreElements()) {
+	    String fileName = (String)enum.nextElement();
+
+	    int  ftype = fileName.lastIndexOf ('.');
+	    String fbasen = (ftype != -1)
+				? fileName.substring (0, ftype)
+				: fileName;
+
+	    String fPath = dir.getAbsolutePath()
+			 + File.separatorChar
+			 + fileName;
+
+	    String retPath = FileUtil.getLocalizedResource (fPath,
+							    loc,
+							    fbloc);
+	    if ((new File(retPath)).exists())
+	    {
+		int pathPos = retPath.lastIndexOf (fbasen);
+		return retPath.substring (pathPos);
+	    }
+	}
+	return null;
+    }
 }
 
 // -------------------- Handlers --------------------
@@ -243,7 +333,7 @@ class FileHandler extends ServletWrapper  {
 	File file = new File( absPath );
 	if( debug>0) log( "After paranoic checks = " + absPath);
 	
-        String mimeType=ctx.getMimeMap().getContentTypeFor(absPath);
+	String mimeType=ctx.getMimeMap().getContentTypeFor(absPath);
 
 	if (mimeType == null) {
 	    mimeType = "text/plain";
@@ -432,7 +522,7 @@ class DirHandler extends ServletWrapper  {
 	for (int i = 0; i < fileNames.length; i++) {
 	    String fileName = fileNames[i];
 
-            // Don't display special dirs at top level
+	    // Don't display special dirs at top level
 	    if( (pathInfo.length() == 0 || "/".equals(pathInfo)) &&
      		"WEB-INF".equalsIgnoreCase(fileName) ||
  	    	"META-INF".equalsIgnoreCase(fileName) )
@@ -450,25 +540,25 @@ class DirHandler extends ServletWrapper  {
 		    buf.append("</font></td></tr>\r\n");
 		}
 
-                String fileN = f.getName();
+	        String fileN = f.getName();
 
-                buf.append("<tr");
+	        buf.append("<tr");
 
-                if (shaderow) buf.append(" bgcolor=#eeeeee");
+	        if (shaderow) buf.append(" bgcolor=#eeeeee");
 		shaderow=!shaderow;
 		
-                buf.append("><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                buf.append("<tt><a href=\"")
+	        buf.append("><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	        buf.append("<tt><a href=\"")
 		    .append(slashedRequestURI)
-                    .append(fileN)
+	            .append(fileN)
 		    .append("\">")
 		    .append(fileN)
-                    .append("/</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-                    .append("</tt>\r\n");
-                buf.append("</td><td><tt>&nbsp;&nbsp;</tt></td>");
-                buf.append("<td align=right><tt>");
+	            .append("/</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+	            .append("</tt>\r\n");
+	        buf.append("</td><td><tt>&nbsp;&nbsp;</tt></td>");
+	        buf.append("<td align=right><tt>");
 		buf.append(dateFormat.format(new Date(f.lastModified())));
-                buf.append("</tt></td></tr>\r\n");
+	        buf.append("</tt></td></tr>\r\n");
 	    }
 	}
 
