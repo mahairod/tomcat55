@@ -1654,18 +1654,20 @@ public class WebappClassLoader
 
         }
 
-        synchronized (entry) {
-            // Since all threads use the same ResourceEntry instance, it is
-            // the one which will contain the class
-            if (entry.loadedClass == null) {
-                clazz = defineClass(name, entry.binaryContent, 0,
-                                    entry.binaryContent.length, codeSource);
-                entry.loadedClass = clazz;
-            } else {
-                clazz = entry.loadedClass;
+        if (entry.loadedClass == null) {
+            synchronized (this) {
+                if (entry.loadedClass == null) {
+                    clazz = defineClass(name, entry.binaryContent, 0,
+                                        entry.binaryContent.length, 
+                                        codeSource);
+                    entry.loadedClass = clazz;
+                } else {
+                    clazz = entry.loadedClass;
+                }
             }
+        } else {
+            clazz = entry.loadedClass;
         }
-
 
         return clazz;
 
