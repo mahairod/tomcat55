@@ -188,10 +188,6 @@ class Validator {
 			err.jspError(n, "jsp.error.page.multi.pageencoding");
 		    // 'pageEncoding' can occur at most once per file
 		    pageEncodingSeen = true;
-		    /*
-		     * Report any encoding conflict, treating "UTF-16",
-		     * "UTF-16BE", and "UTF-16LE" as identical.
-		     */
 		    comparePageEncodings(value, n);
 		}
 	    }
@@ -256,37 +252,53 @@ class Validator {
 	    // from the tag file in which the directive appeared
 	}
 
-	/*
-	 * Compares the page encoding specified in the 'pageEncoding'
-	 * attribute of the page directive with the encoding explicitly
-	 * specified in the XML prolog (only for XML syntax) and the encoding
-	 * specified in the JSP config element whose URL pattern matches the
-	 * page, and throws an error in case of a mismatch.
-	 */
-	private void comparePageEncodings(String pageDirEnc,
-					  Node.PageDirective n)
-	            throws JasperException {
+        /*
+         * Compares page encodings specified in various places, and throws
+         * exception in case of page encoding mismatch.
+         *
+         * @param pageDirEnc The value of the pageEncoding attribute of the
+         * page directive
+         * @param pageDir The page directive node
+         *
+         * @throws JasperException in case of page encoding mismatch
+         */
+        private void comparePageEncodings(String pageDirEnc,
+                                          Node.PageDirective pageDir)
+                throws JasperException {
 
-	    String configEnc = n.getRoot().getJspConfigPageEncoding();
+            Node.Root root = pageDir.getRoot();
+            String configEnc = root.getJspConfigPageEncoding();
 
-	    if (configEnc != null && !pageDirEnc.equals(configEnc) 
-		    && (!pageDirEnc.startsWith("UTF-16")
-			|| !configEnc.startsWith("UTF-16"))) {
-		err.jspError(n, "jsp.error.config_pagedir_encoding_mismatch",
-			     configEnc, pageDirEnc);
-	    }
+            /*
+             * Compare the 'pageEncoding' attribute of the page directive with
+             * the encoding specified in the JSP config element whose URL
+             * pattern matches this page.
+             * Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
+             */
+            if (configEnc != null && !pageDirEnc.equals(configEnc) 
+                    && (!pageDirEnc.startsWith("UTF-16")
+                        || !configEnc.startsWith("UTF-16"))) {
+                err.jspError(pageDir,
+                             "jsp.error.config_pagedir_encoding_mismatch",
+                             configEnc, pageDirEnc);
+            }
 
-	    if (n.getRoot().isXmlSyntax()
-		    && n.getRoot().isEncodingSpecifiedInProlog()) {
-		String pageEnc = n.getRoot().getPageEncoding();
-		if (!pageDirEnc.equals(pageEnc) 
-		        && (!pageDirEnc.startsWith("UTF-16")
-			    || !pageEnc.startsWith("UTF-16"))) {
-		    err.jspError(n, "jsp.error.prolog_pagedir_encoding_mismatch",
-				 pageEnc, pageDirEnc);
-		}
-	    }
-	}
+            /*
+             * Compare the 'pageEncoding' attribute of the page directive with
+             * the encoding specified in the XML prolog (only for XML syntax!).
+             * Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
+             */
+	    if (root.isXmlSyntax()) {
+		String pageEnc = root.getPageEncoding();
+                if (!pageDirEnc.equals(pageEnc) 
+                        && (!pageDirEnc.startsWith("UTF-16")
+                            || !pageEnc.startsWith("UTF-16"))) {
+                    err.jspError(pageDir,
+                                 "jsp.error.prolog_pagedir_encoding_mismatch",
+                                 pageEnc, pageDirEnc);
+                }
+            }
+        }
     }
 
     /**
