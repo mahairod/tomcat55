@@ -6,6 +6,12 @@
   <property name="jasper.build"    value="${basedir}/jasper/build"/>
   <property name="tomcat.build"    value="${basedir}/build"/>
   <property name="tomcat.dist"     value="${basedir}/dist"/>
+  <property name="webapps.build"   value="${basedir}/webapps/build"/>
+  <property name="webapps.dist"    value="${basedir}/webapps/dist"/>
+
+  <property name="catalina.deploy" value="${tomcat.build}"/>
+  <property name="jasper.deploy"   value="${tomcat.build}"/>
+  <property name="webapps.deploy"  value="${tomcat.build}"/>
 
 
   <!-- ===================== DEPLOY: Create Directories =================== -->
