@@ -280,16 +280,16 @@ public class ManifestResource {
 
         Extension extension = new Extension();
         extension.setExtensionName(name);
-        extension.setImplementationURL
-            (attributes.getValue("Implementation-URL"));
-        extension.setImplementationVendor
-            (attributes.getValue("Implementation-Vendor"));
-        extension.setImplementationVendorId
-            (attributes.getValue("Implementation-Vendor-Id"));
-        String version = attributes.getValue("Implementation-Version");
-        extension.setImplementationVersion(version);
-        extension.setSpecificationVersion
-            (attributes.getValue("Specification-Version"));
+        extension.setImplementationURL(
+            attributes.getValue("Implementation-URL"));
+        extension.setImplementationVendor(
+            attributes.getValue("Implementation-Vendor"));
+        extension.setImplementationVendorId(
+            attributes.getValue("Implementation-Vendor-Id"));
+        extension.setImplementationVersion(
+            attributes.getValue("Implementation-Version"));
+        extension.setSpecificationVersion(
+            attributes.getValue("Specification-Version"));
 
         if (!extensionMap.containsKey(extension.getUniqueId())) {
             extensionMap.put(extension.getUniqueId(), extension);
