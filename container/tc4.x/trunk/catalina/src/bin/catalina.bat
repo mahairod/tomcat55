@@ -41,7 +41,7 @@ goto cleanup
 
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
-if exist "%CATALINA_HOME%\bin\catalina.bat" goto okCatalinaHome
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
 set CATALINA_HOME=..
 :gotHome
 if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
