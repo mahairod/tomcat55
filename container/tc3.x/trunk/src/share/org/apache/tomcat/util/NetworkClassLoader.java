@@ -237,7 +237,7 @@ public class NetworkClassLoader extends ClassLoader {
     /**
      * java.lang.ClassLoader's defineClass method is final, so the
      * its subclasses cannot override this method. But, this class
-     * instead calls this method in the loadClass() instead.
+     * calls this method in the loadClass() instead.
      * @param The name of the class without ".class" extension.
      * @param The class data bytes.
      * @return The class object.
