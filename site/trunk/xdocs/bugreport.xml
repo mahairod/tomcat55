@@ -54,7 +54,7 @@ problem you are having before reporting a bug.</p>
   <subsection name="Bug Database">
     <p>Please search the bug database to see if the bug you are
       seeing has already been reported.
-      <ul> 
+      <ul>
         <li>The bug may have already been fixed and is available in a later
         version or nightly build.</li>
         <li>Someone else may have reported the bug, you could add supporting
@@ -73,12 +73,18 @@ problem you are having before reporting a bug.</p>
     <p>It is very likely you are not the first to run into a problem.
       Others may have already found a solution.  The <b>tomcat-user</b>
       or <b>tomcat-dev</b> list archives may contain discussions which
-      will help you resolve the problem. Search the Tomcat User List archive
-      <a href="http://www.mail-archive.com/tomcat-user@jakarta.apache.org/">here</a>
-      or <a href="http://mikal.org/interests/java/tomcat/index.html">here</a>
-      and the Tomcat Developer List archive
-      <a href="http://www.mail-archive.com/tomcat-dev@jakarta.apache.org/">here</a>
-      or <a href="http://www.metronet.com/~wjm/tomcat/">here</a>.
+      will help you resolve the problem.
+      Here are four resources to view the Tomcat User List archives:
+       <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;r=1&amp;w=2">Mailing list ARChives</a>,
+       <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=tomcat-user@jakarta.apache.org">Eyebrowse</a>,
+       <a href="http://www.mail-archive.com/tomcat-user@jakarta.apache.org">Mail Archive</a>,
+       and <a href="http://mikal.org/interests/java/tomcat/">mikal.org</a>.
+
+      Here are four resources to view the Tomcat Developer List archives
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;r=1&amp;w=2">Mailing list ARChives</a>,
+      <a href="http://nagoya.apache.org/eyebrowse/SummarizeList?listName=tomcat-dev@jakarta.apache.org">Eyebrowse</a>,
+      <a href="http://www.mail-archive.com/tomcat-dev@jakarta.apache.org/">Mail Archive</a>,
+      and <a href="http://www.metronet.com/~wjm/tomcat/">Texas Metronet</a>.
     </p>
     <p>If you have already subscribed to the
       <a href="mailto:tomcat-user@jakarta.apache.org">tomcat-user</a>
@@ -91,7 +97,7 @@ problem you are having before reporting a bug.</p>
 
   <subsection name="Tomcat on IRC">
     <p>An IRC channel dedicated to Tomcat exists on OpenProjects.</p>
-    
+
     <p><code>#tomcat</code> at <code>irc.us.openprojects.net</code>.
     Click <a href="irc://irc.us.openprojects.net/tomcat">here</a> to
     connect to the channel using Mozilla.</p>
@@ -124,7 +130,7 @@ reproduce it.  Here is a listing of information which should be included:
   <li><b>Example</b> - Example configuration files or web applications which
     demonstrate the bug.  When submitting an example which reproduces the bug,
     please try to make it as simple as possible.</li>
-  <li><b>Bug Fix Patch</b> - A patch created using <code>diff -u</code> which 
+  <li><b>Bug Fix Patch</b> - A patch created using <code>diff -u</code> which
     fixes the bug.
     (If you have found a bug fix which can be applied to the Tomcat code)</li>
   <li><b>Miscellaneous</b> - Any other information you feel will help track
