@@ -1,15 +1,14 @@
 #!/bin/sh
-
 # -----------------------------------------------------------------------------
+# Stop script for the CATALINA Server
 #
-# Script for shutting down Catalina using the Launcher
-#
+# $Id$
 # -----------------------------------------------------------------------------
 
-# Resolve links - $0 may be a softlink
+# resolve links - $0 may be a softlink
 PRG="$0"
 
-while [ -h "$PRG" ]; do
+while [ -h "$PRG" ] ; do
   ls=`ls -ld "$PRG"`
   link=`expr "$ls" : '.*-> \(.*\)$'`
   if expr "$link" : '.*/.*' > /dev/null; then
@@ -18,12 +17,15 @@ while [ -h "$PRG" ]; do
     PRG=`dirname "$PRG"`/"$link"
   fi
 done
-
-# Get standard environment variables
+ 
 PRGDIR=`dirname "$PRG"`
-if [ -r "$PRGDIR"/setenv.sh ]; then
-  . "$PRGDIR"/setenv.sh
+EXECUTABLE=catalina.sh
+
+# Check that target executable exists
+if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
+  echo "Cannot find $PRGDIR/$EXECUTABLE"
+  echo "This file is needed to run this program"
+  exit 1
 fi
 
-# Execute the Launcher using the "catalina" target
-exec "$JAVA_HOME"/bin/java -classpath "$PRGDIR" LauncherBootstrap -launchfile catalina.xml -verbose catalina "$@" stop
+exec "$PRGDIR"/"$EXECUTABLE" stop "$@"
