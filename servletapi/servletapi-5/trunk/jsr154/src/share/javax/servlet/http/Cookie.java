@@ -530,7 +530,7 @@ public class Cookie implements Cloneable {
     // 
     // private static final String tspecials = "()<>@,;:\\\"/[]?={} \t";
 
-    private static final String tspecials = ",;";
+    private static final String tspecials = ",; ";
     
     
     
