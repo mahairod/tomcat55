@@ -135,7 +135,7 @@ Create (or update) a "build.properties" file in your "${watchdog.source}"
 directory, or in your user home directory, that defines the "servlet.jar"
 property as the full pathname to this file.  For example:
 
-  servlet.jar=/usr/local/jakarta-servletapi-4/lib/servlet.jar
+  servletapi.home=/usr/local/jakarta-servletapi-4/lib/servlet.jar
 
 
 (6) Build A Binary Distribution
