@@ -64,6 +64,9 @@
       <fix>
         <bug>31171</bug>: Wrap to avoid ClassCastException in PageContextImpl. (yoavs)
       </fix>
+      <fix>
+        <bug>31257</bug>: Added specification of endorsed dirs if forking.  Note that this is fairly useless for now in 5.5 since it uses JDT and not javac by default. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
