@@ -64,9 +64,12 @@ package org.apache.webapp.admin.resources;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.ObjectInstance;
 
 /**
  * <p>Shared utility methods for the resource administration module.</p>
@@ -83,8 +86,8 @@ public class ResourceUtils {
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
     
     // resource class names
-    private final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
-    private final static String DATASOURCE_CLASS = "javax.sql.DataSource";
+    public final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
+    public final static String DATASOURCE_CLASS = "javax.sql.DataSource";
 
     // --------------------------------------------------------- Public Methods
 
@@ -128,18 +131,20 @@ public class ResourceUtils {
         throws Exception {
 
         ObjectName rname = new ObjectName( RESOURCE_TYPE + 
-                            ",class=" + "javax.sql.DataSource");
-
-        // display only JDBC Resources for the DataSources screen       
-        String[] results = (String[]) (mserver.queryMBeans(rname, null).toArray());
+                            ",class=" + DATASOURCE_CLASS + ",*");
+                                 
+        Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
-        if (results == null) {
-            results = new String[0];
-        }        
-        Arrays.sort(results);
+        ArrayList results = new ArrayList();        
+        while (iterator.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) iterator.next(); 
+            results.add(instance.getObjectName().toString());
+        }
 
+        Collections.sort(results);        
         DataSourcesForm dataSourcesForm = new DataSourcesForm();
-        dataSourcesForm.setDataSources(results);
+        dataSourcesForm.setDataSources((String[]) 
+                        results.toArray(new String[results.size()]));        
         return (dataSourcesForm);
 
     }
@@ -156,20 +161,22 @@ public class ResourceUtils {
     public static UserDatabasesForm getUserDatabasesForm(MBeanServer mserver)
         throws Exception {
 
-        ObjectName ename = new ObjectName( NAMINGRESOURCES_TYPE );
+        ObjectName rname = new ObjectName( RESOURCE_TYPE + 
+                            ",class=" + USERDB_CLASS + ",*");
         
-        String results[] =
-            (String[]) mserver.getAttribute(ename, "resources");
+        Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
-        // FIX ME -- need to add just the UserDatabase resources.
-        
-        if (results == null) {
-            results = new String[0];
-        }        
-        Arrays.sort(results);
+        ArrayList results = new ArrayList();        
+        while (iterator.hasNext()) {
+            ObjectInstance instance = (ObjectInstance) iterator.next(); 
+            results.add(instance.getObjectName().toString());
+        }
+
+        Collections.sort(results);
 
         UserDatabasesForm userDatabasesForm = new UserDatabasesForm();
-        userDatabasesForm.setUserDatabases(results);
+        userDatabasesForm.setUserDatabases((String[]) 
+                        results.toArray(new String[results.size()]));  
         return (userDatabasesForm);
 
     }
