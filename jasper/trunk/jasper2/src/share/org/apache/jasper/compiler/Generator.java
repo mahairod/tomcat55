@@ -1581,9 +1581,9 @@ class Generator {
 		    out.print(attrs.getQName(i));
 		    out.print("=");
 		    if (jspAttrs[i].isELInterpreterInput()) {
-			out.print("\" + ");
+			out.print("\\\"\" + ");
 			out.print(attributeValue(jspAttrs[i], false, Object.class));
-			out.print(" + \"");
+			out.print(" + \"\\\"");
 		    } else {
 			String quote = DOUBLE_QUOTE;
 			String value = attrs.getValue(i);
