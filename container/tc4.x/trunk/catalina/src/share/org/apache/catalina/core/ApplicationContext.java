@@ -66,6 +66,7 @@ package org.apache.catalina.core;
 
 
 import java.io.InputStream;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,18 +75,21 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import javax.naming.directory.DirContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeEvent;
 import javax.servlet.ServletContextAttributesListener;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.naming.resources.DirContextURLConnection;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Resources;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
@@ -100,6 +104,7 @@ import org.apache.catalina.util.StringManager;
  * associated with each instance of <code>StandardContext</code>.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -116,10 +121,11 @@ public final class ApplicationContext
      *
      * @param context The associated Context instance
      */
-    public ApplicationContext(StandardContext context) {
+    public ApplicationContext(String basePath, StandardContext context) {
 
 	super();
 	this.context = context;
+        this.basePath = basePath;
 
     }
 
@@ -159,6 +165,12 @@ public final class ApplicationContext
       StringManager.getManager(Constants.Package);
 
 
+    /**
+     * Base path.
+     */
+    private String basePath = null;
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -167,7 +179,7 @@ public final class ApplicationContext
      * The path must begin with a "/" and is interpreted as relative to the
      * current context root.
      */
-    public Resources getResources() {
+    public DirContext getResources() {
 
 	return context.getResources();
 
@@ -303,11 +315,15 @@ public final class ApplicationContext
      */
     public String getMimeType(String file) {
 
-	Resources resources = context.getResources();
-	if (resources == null)
+	if (file == null)
 	    return (null);
-	else
-	    return (resources.getMimeType(file));
+	int period = file.lastIndexOf(".");
+	if (period < 0)
+	    return (null);
+	String extension = file.substring(period + 1);
+	if (extension.length() < 1)
+	    return (null);
+	return (context.findMimeMapping(extension));
 
     }
 
@@ -343,11 +359,9 @@ public final class ApplicationContext
      */
     public String getRealPath(String path) {
 
-	Resources resources = context.getResources();
-	if (resources == null)
-	    return (null);
-	else
-	    return (resources.getRealPath(path));
+        // Here, we return a fake path
+        File file = new File(basePath, path);
+        return (file.getAbsolutePath());
 
     }
 
@@ -415,11 +429,12 @@ public final class ApplicationContext
      */
     public URL getResource(String path) throws MalformedURLException {
 
-	Resources resources = context.getResources();
+	DirContext resources = context.getResources();
 	if (resources == null)
 	    return (null);
 	else
-	    return (resources.getResource(path));
+	    return new URL("jndi", null, 0, path, 
+                           new DirContextURLStreamHandler(resources));
 
     }
 
@@ -434,11 +449,16 @@ public final class ApplicationContext
      */
     public InputStream getResourceAsStream(String path) {
 
-	Resources resources = context.getResources();
-	if (resources == null)
-	    return (null);
-	else
-	    return (resources.getResourceAsStream(path));
+        DirContext resources = context.getResources();
+        if (resources != null) {
+            try {
+                Object resource = resources.lookup(path);
+                if (resource instanceof Resource)
+                    return (((Resource) resource).streamContent());
+            } catch (Exception e) {
+            }
+        }
+        return (null);
 
     }
 
@@ -451,6 +471,8 @@ public final class ApplicationContext
     public Set getResourcePaths() {
 
         ResourceSet set = new ResourceSet();
+        // FIXME !
+        /*
         Resources resources = context.getResources();
         if (resources == null) {
             set.setLocked(true);
@@ -461,6 +483,7 @@ public final class ApplicationContext
             paths = new String[0];
         for (int i = 0; i < paths.length; i++)
             set.add(paths[i]);
+        */
         set.setLocked(true);
         return (set);
 

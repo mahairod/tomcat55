@@ -71,11 +71,16 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.net.URLStreamHandlerFactory;
+import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 
@@ -99,6 +104,7 @@ import java.util.jar.Manifest;
  * independently.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -122,6 +128,20 @@ public class StandardClassLoader
 
 
     /**
+     * Construct a new ClassLoader with no defined repositories and no
+     * parent ClassLoader, but with a stream handler factory.
+     * 
+     * @param factory the URLStreamHandlerFactory to use when creating URLs
+     */
+    public StandardClassLoader(URLStreamHandlerFactory factory) {
+
+        super(new URL[0], null, factory);
+        this.factory = factory;
+
+    }
+
+
+    /**
      * Construct a new ClassLoader with no defined repositories and the
      * specified parent ClassLoader.
      *
@@ -130,6 +150,22 @@ public class StandardClassLoader
     public StandardClassLoader(ClassLoader parent) {
 
         super((new URL[0]), parent);
+
+    }
+
+
+    /**
+     * Construct a new ClassLoader with no defined repositories and the
+     * specified parent ClassLoader.
+     *
+     * @param parent The parent ClassLoader
+     * @param factory the URLStreamHandlerFactory to use when creating URLs
+     */
+    public StandardClassLoader(ClassLoader parent, 
+                               URLStreamHandlerFactory factory) {
+
+        super((new URL[0]), parent, factory);
+        this.factory = factory;
 
     }
 
@@ -263,6 +299,12 @@ public class StandardClassLoader
     protected String systems[] = { "java." };
 
 
+    /**
+     * URL stream handler for additional protocols.
+     */
+    protected URLStreamHandlerFactory factory = null;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -352,7 +394,12 @@ public class StandardClassLoader
 
         // Add this repository to our underlying class loader
         try {
-            super.addURL(new URL(repository));
+            URLStreamHandler streamHandler = null;
+            String protocol = parseProtocol(repository);
+            if (factory != null)
+                streamHandler = factory.createURLStreamHandler(protocol);
+            URL url = new URL(null, repository, streamHandler);
+            super.addURL(url);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.toString());
         }
@@ -553,14 +600,27 @@ public class StandardClassLoader
 
         // Check for modifications to any of these classes
         for (int i = 0; i < entries.length; i++) {
-            if (!(entries[i].origin instanceof File))
-                continue;
-            File origin = (File) entries[i].origin;
-            if (entries[i].lastModified != origin.lastModified()) {
-                if (debug >= 2)
-                    log("  Class '" + entries[i].loadedClass.getName() +
-                        "' was modified");
-                return (true);
+            if (entries[i].origin instanceof File) {
+                File origin = (File) entries[i].origin;
+                if (entries[i].lastModified != origin.lastModified()) {
+                    if (debug >= 2)
+                        log("  Class '" + entries[i].loadedClass.getName() +
+                            "' was modified");
+                    return (true);
+                }
+            } else if (entries[i].origin instanceof URL) {
+                try {
+                    URL url = (URL) entries[i].origin;
+                    URLConnection urlConn = url.openConnection();
+                    if (entries[i].lastModified != urlConn.getLastModified()) {
+                        if (debug >= 2)
+                            log("  Class '" 
+                                + entries[i].loadedClass.getName() 
+                                + "' was modified");
+                        return (true);
+                    }
+                } catch (IOException e) {
+                }
             }
         }
 
@@ -1028,6 +1088,21 @@ public class StandardClassLoader
 
 
     /**
+     * Parse URL protocol.
+     * 
+     * @return String protocol
+     */
+    protected static String parseProtocol(String spec) {
+        if (spec == null)
+            return "";
+        int pos = spec.indexOf(':');
+        if (pos <= 0)
+            return "";
+        return spec.substring(0, pos).trim();
+    }
+
+
+    /**
      * Add a repository to our internal array only.
      *
      * @param repository The new repository
@@ -1037,12 +1112,18 @@ public class StandardClassLoader
      */
     protected void addRepositoryInternal(String repository) {
 
+        URLStreamHandler streamHandler = null;
+        String protocol = parseProtocol(repository);
+        if (factory != null)
+            streamHandler = factory.createURLStreamHandler(protocol);
+
         // Validate the manifest of a JAR file repository
         if (!repository.endsWith("/")) {
             try {
                 JarFile jarFile = null;
+                Manifest manifest = null;
                 if (repository.startsWith("jar:")) {
-                    URL url = new URL(repository);
+                    URL url = new URL(null, repository, streamHandler);
                     JarURLConnection conn =
                         (JarURLConnection) url.openConnection();
                     conn.setAllowUserInteraction(false);
@@ -1054,13 +1135,20 @@ public class StandardClassLoader
                     jarFile = new JarFile(repository.substring(7));
                 } else if (repository.startsWith("file:")) {
                     jarFile = new JarFile(repository.substring(5));
+                } else if (repository.endsWith(".jar")) {
+                    URL url = new URL(null, repository, streamHandler);
+                    URLConnection conn = url.openConnection();
+                    JarInputStream jis = 
+                        new JarInputStream(conn.getInputStream());
+                    manifest = jis.getManifest();
                 } else {
                     throw new IllegalArgumentException
                         ("addRepositoryInternal:  Invalid URL '" +
                          repository + "'");
                 }
-                Manifest manifest = jarFile.getManifest();
-                if (manifest != null) {
+                if (!((manifest == null) && (jarFile == null))) {
+                    if ((manifest == null) && (jarFile != null))
+                        manifest = jarFile.getManifest();
                     Iterator extensions =
                         Extension.getAvailable(manifest).iterator();
                     while (extensions.hasNext())
@@ -1070,9 +1158,12 @@ public class StandardClassLoader
                     while (extensions.hasNext())
                         required.add(extensions.next());
                 }
-                jarFile.close();
+                if (jarFile != null)
+                    jarFile.close();
             } catch (Throwable t) {
-                throw new IllegalArgumentException("addRepositoryInternal: " + t);
+                t.printStackTrace();
+                throw new IllegalArgumentException
+                    ("addRepositoryInternal: " + t);
             }
         }
 
@@ -1093,11 +1184,30 @@ public class StandardClassLoader
      * @param input The array of String to be converted
      */
     protected static URL[] convert(String input[]) {
+        return convert(input, null);
+    }
+
+
+    /**
+     * Convert an array of String to an array of URL and return it.
+     *
+     * @param input The array of String to be converted
+     * @param factory Handler factory to use to generate the URLs
+     */
+    protected static URL[] convert(String input[], 
+                                   URLStreamHandlerFactory factory) {
+
+        URLStreamHandler streamHandler = null;
 
         URL url[] = new URL[input.length];
         for (int i = 0; i < url.length; i++) {
             try {
-                url[i] = new URL(input[i]);
+                String protocol = parseProtocol(input[i]);
+                if (factory != null)
+                    streamHandler = factory.createURLStreamHandler(protocol);
+                else
+                    streamHandler = null;
+                url[i] = new URL(null, input[i], streamHandler);
             } catch (MalformedURLException e) {
                 url[i] = null;
             }

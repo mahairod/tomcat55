@@ -117,9 +117,9 @@ public final class Bootstrap {
         }
 
         // Construct the class loaders we will need
-        ClassLoader systemLoader = createSystemLoader();
-        ClassLoader catalinaLoader = createCatalinaLoader(systemLoader);
-        ClassLoader sharedLoader = createSharedLoader(systemLoader);
+        ClassLoader commonLoader = createCommonLoader();
+        ClassLoader catalinaLoader = createCatalinaLoader(commonLoader);
+        ClassLoader sharedLoader = createSharedLoader(commonLoader);
 
 	// Load our startup class and call its process() method
 	try {
@@ -171,10 +171,10 @@ public final class Bootstrap {
      * Construct and return the class loader to be used for loading
      * of the shared system classes.
      */
-    private static ClassLoader createSystemLoader() {
+    private static ClassLoader createCommonLoader() {
 
         if (debug >= 1)
-            log("Creating SYSTEM class loader");
+            log("Creating COMMON class loader");
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();

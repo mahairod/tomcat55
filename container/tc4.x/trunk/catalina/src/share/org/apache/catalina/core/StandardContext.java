@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,6 +88,7 @@ import javax.naming.StringRefAddr;
 import javax.naming.NamingEnumeration;
 import javax.naming.Binding;
 import javax.naming.StringRefAddr;
+import javax.naming.directory.DirContext;
 import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.ContextAccessController;
@@ -95,9 +96,13 @@ import org.apache.naming.EjbRef;
 import org.apache.naming.ResourceRef;
 import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.TransactionRef;
+import org.apache.naming.resources.FileDirContext;
+import org.apache.naming.resources.WARDirContext;
+import org.apache.naming.resources.BaseDirContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.Host;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.InstanceListener;
@@ -120,7 +125,6 @@ import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.StandardLoader;
-import org.apache.catalina.resources.FileResources;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
@@ -842,7 +846,7 @@ public class StandardContext
     public synchronized ServletContext getServletContext() {
 
 	if (context == null)
-	    context = new ApplicationContext(this);
+	    context = new ApplicationContext(getBasePath(), this);
 	return (context);
 
     }
@@ -896,6 +900,27 @@ public class StandardContext
     public void setWrapperClass(String wrapperClass) {
 
 	this.wrapperClass = wrapperClass;
+
+    }
+
+
+    /**
+     * Set the resources DirContext object with which this Container is 
+     * associated.
+     *
+     * @param resources The newly associated DirContext
+     */
+    public synchronized void setResources(DirContext resources) {
+
+        if (resources instanceof BaseDirContext) {
+            if (resources instanceof BaseDirContext)
+                ((BaseDirContext) resources).setDocBase(getBasePath());
+        }
+        super.setResources(resources);
+        if (started)
+            // We put the resources into the servlet context
+            getServletContext().setAttribute
+                (Globals.RESOURCES_ATTR, getResources());
 
     }
 
@@ -2887,7 +2912,10 @@ public class StandardContext
         if (getResources() == null) {   // (1) Required by Loader
             if (debug >= 1)
                 log("Configuring default Resources");
-            setResources(new FileResources());
+            if ((docBase != null) && (docBase.endsWith(".war")))
+                setResources(new WARDirContext());
+            else
+                setResources(new FileDirContext());
         }
         if (getLoader() == null) {      // (2) Required by Manager
             if (debug >= 1)
@@ -2899,6 +2927,9 @@ public class StandardContext
                 log("Configuring default Manager");
             setManager(new StandardManager());
         }
+
+        // Post work directory
+	postWorkDirectory();
 
 	// Standard container startup
         if (debug >= 1)
@@ -2925,6 +2956,10 @@ public class StandardContext
             }
         }
 
+        // We put the resources into the servlet context
+        getServletContext().setAttribute
+            (Globals.RESOURCES_ATTR, getResources());
+
         // Configure and call application event listeners and filters
         listenerStart();
         filterStart();
@@ -2933,7 +2968,6 @@ public class StandardContext
         if (debug >= 1)
             log("Posting standard context attributes");
 	postWelcomeFiles();
-	postWorkDirectory();
 
         // Reload sessions from persistent storage if supported
         try {
@@ -3100,7 +3134,48 @@ public class StandardContext
     }
 
 
+    /**
+     * Return a File object representing the base directory for the
+     * entire servlet container (i.e. the Engine container if present).
+     */
+    protected File engineBase() {
+
+	return (new File(System.getProperty("catalina.home")));
+
+    }
+
+
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Get base path.
+     */
+    private String getBasePath() {
+        String docBase = null;
+        Container container = this;
+        while (container != null) {
+            if (container instanceof Host)
+                break;
+            container = container.getParent();
+        }
+        if (container == null) {
+            docBase = (new File(engineBase(), getDocBase())).getPath();
+        } else {
+            File file = new File(getDocBase());
+            if (!file.isAbsolute()) {
+                // Use the "appBase" property of this container
+                String appBase = ((Host) container).getAppBase();
+                file = new File(appBase);
+                if (!file.isAbsolute())
+                    file = new File(engineBase(), appBase);
+                docBase = (new File(file, getDocBase())).getPath();
+            } else {
+                docBase = file.getPath();
+            }
+        }
+        return docBase;
+    }
 
 
     /**
@@ -3236,9 +3311,18 @@ public class StandardContext
         try {
             Reference ref = new TransactionRef();
             compCtx.bind("UserTransaction", ref);
+            addAdditionalParameters(ref, "UserTransaction");
         } catch (NamingException e) {
             log(sm.getString("standardContext.bindFailed", e));
         }
+
+        // Binding the resources directory context
+        try {
+            compCtx.bind("Resources", getResources());
+        } catch (NamingException e) {
+            log(sm.getString("standardContext.bindFailed", e));
+        }
+
 
         // Setting the context in read only mode
         ContextAccessController.setReadOnly(getName());

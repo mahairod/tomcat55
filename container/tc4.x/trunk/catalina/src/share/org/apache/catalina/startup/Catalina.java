@@ -367,12 +367,12 @@ public class Catalina {
 
 	mapper.addRule("Server/Service/Engine/Host/Resources",
                        mapper.objectCreate
-		       ("org.apache.catalina.core.StandardResources",
+		       ("org.apache.naming.resources.FileDirContext",
 			"className"));
 	mapper.addRule("Server/Service/Engine/Host/Resources",
                        mapper.setProperties());
 	mapper.addRule("Server/Service/Engine/Host/Resources", mapper.addChild
-		       ("setResources", "org.apache.catalina.Resources"));
+		       ("setResources", "javax.naming.directory.DirContext"));
 
 	mapper.addRule("Server/Service/Engine/Host/Valve", mapper.objectCreate
 		       (null, "className"));
@@ -402,12 +402,12 @@ public class Catalina {
 		       ("setRealm", "org.apache.catalina.Realm"));
 
 	mapper.addRule("Server/Service/Engine/Resources", mapper.objectCreate
-		       ("org.apache.catalina.core.StandardResources",
+		       ("org.apache.naming.resources.FileDirContext",
 			"className"));
 	mapper.addRule("Server/Service/Engine/Resources",
                        mapper.setProperties());
 	mapper.addRule("Server/Service/Engine/Resources", mapper.addChild
-		       ("setResources", "org.apache.catalina.Resources"));
+		       ("setResources", "javax.naming.directory.DirContext"));
 
 	mapper.addRule("Server/Service/Engine/Valve", mapper.objectCreate
 		       (null, "className"));
@@ -540,12 +540,12 @@ public class Catalina {
 
 	mapper.addRule(prefix + "/Resources",
 		       mapper.objectCreate
-		       ("org.apache.catalina.core.StandardResources",
+		       ("org.apache.naming.resources.FileDirContext",
 			"className"));
 	mapper.addRule(prefix + "/Resources",
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Resources", mapper.addChild
-		       ("setResources", "org.apache.catalina.Resources"));
+		       ("setResources", "javax.naming.directory.DirContext"));
 
 	mapper.addRule(prefix + "/Valve", mapper.objectCreate
 		       (null, "className"));

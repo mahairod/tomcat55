@@ -68,6 +68,7 @@ package org.apache.catalina;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.naming.directory.DirContext;
 
 
 /**
@@ -112,13 +113,13 @@ import javax.servlet.ServletException;
  *     this Container.
  * <li><b>Realm</b> - Read-only interface to a security domain, for
  *     authenticating user identities and their corresponding roles.
- * <li><b>Resources</b> - Implementation of the resource access method
- *     signatures of the <code>ServletContext</code> interface, enabling
- *     custom linkages to existing server components when Catalina is embedded
- *     in a larger server.
+ * <li><b>Resources</b> - JNDI directory context enabling access to static
+ *     resources, enabling custom linkages to existing server components when 
+ *     Catalina is embedded in a larger server.
  * </ul>
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -310,7 +311,7 @@ public interface Container {
      * is no associated Resources object, return the Resources associated with
      * our parent Container (if any); otherwise return <code>null</code>.
      */
-    public Resources getResources();
+    public DirContext getResources();
 
 
     /**
@@ -318,7 +319,7 @@ public interface Container {
      *
      * @param resources The newly associated Resources
      */
-    public void setResources(Resources resources);
+    public void setResources(DirContext resources);
 
 
     // --------------------------------------------------------- Public Methods

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -173,6 +173,12 @@ public class StandardHost
 	"org.apache.catalina.core.StandardHostMapper";
 
 
+    /**
+     * Unpack WARs property.
+     */
+    private boolean unpackWARs = true;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -286,6 +292,26 @@ public class StandardHost
 	String oldName = this.name;
 	this.name = name;
 	support.firePropertyChange("name", oldName, this.name);
+
+    }
+
+
+    /**
+     * Unpack WARs flag accessor.
+     */
+    public boolean isUnpackWARs() {
+
+        return (unpackWARs);
+
+    }
+
+
+    /**
+     * Unpack WARs flag mutator.
+     */
+    public void setUnpackWARs(boolean unpackWARs) {
+
+        this.unpackWARs = unpackWARs;
 
     }
 
@@ -513,22 +539,39 @@ public class StandardHost
         log(sm.getString("standardHost.deploying", contextPath, url));
 
         // Expand a WAR archive into an unpacked directory if needed
-        if (url.startsWith("jar:"))
-            docBase = expand(war);
-        else if (url.startsWith("file://"))
-            docBase = url.substring(7);
-        else if (url.startsWith("file:"))
-            docBase = url.substring(5);
-        else
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.warURL", url));
-
-        // Make sure the document base directory exists and is readable
-        File docBaseDir = new File(docBase);
-        if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
-            !docBaseDir.canRead())
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.accessBase", docBase));
+        if (isUnpackWARs()) {
+            
+            if (url.startsWith("jar:"))
+                docBase = expand(war);
+            else if (url.startsWith("file://"))
+                docBase = url.substring(7);
+            else if (url.startsWith("file:"))
+                docBase = url.substring(5);
+            else
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.warURL", url));
+            
+            // Make sure the document base directory exists and is readable
+            File docBaseDir = new File(docBase);
+            if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
+                !docBaseDir.canRead())
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.accessBase", docBase));
+            
+        } else {
+            
+            if (url.startsWith("jar:")) {
+                url = url.substring(4, url.length() - 2);
+            }
+            if (url.startsWith("file://"))
+                docBase = url.substring(7);
+            else if (url.startsWith("file:"))
+                docBase = url.substring(5);
+            else
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.warURL", url));
+            
+        }
 
         // Deploy this new web application
         try {
@@ -544,7 +587,7 @@ public class StandardHost
             }
             addChild(context);
 	    fireContainerEvent(DEPLOY_EVENT, context);
-            if (url.startsWith("jar:")) {
+            if (isUnpackWARs() && (url.startsWith("jar:"))) {
                 synchronized (expanded) {
                     if (debug >= 1)
                         log("Recording expanded app at path " + contextPath);

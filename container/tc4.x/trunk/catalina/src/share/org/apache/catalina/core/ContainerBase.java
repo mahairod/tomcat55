@@ -70,8 +70,11 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import javax.servlet.ServletException;
+import javax.naming.directory.DirContext;
+import org.apache.naming.resources.ProxyDirContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
@@ -86,7 +89,6 @@ import org.apache.catalina.Mapper;
 import org.apache.catalina.Pipeline;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
-import org.apache.catalina.Resources;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.util.LifecycleSupport;
@@ -252,9 +254,9 @@ public abstract class ContainerBase
 
 
     /**
-     * The Resources object with which this Container is associated.
+     * The resources DirContext object with which this Container is associated.
      */
-    protected Resources resources = null;
+    protected DirContext resources = null;
 
 
     /**
@@ -650,11 +652,12 @@ public abstract class ContainerBase
 
 
     /**
-     * Return the Resources with which this Container is associated.  If there
-     * is no associated Resources object, return the Resources associated with
-     * our parent Container (if any); otherwise return <code>null</code>.
+      * Return the resources DirContext object with which this Container is 
+      * associated.  If there is no associated resources object, return the 
+      * resources associated with our parent Container (if any); otherwise 
+      * return <code>null</code>.
      */
-    public Resources getResources() {
+    public DirContext getResources() {
 
 	if (resources != null)
 	    return (resources);
@@ -666,41 +669,18 @@ public abstract class ContainerBase
 
 
     /**
-     * Set the Resources object with which this Container is associated.
+     * Set the resources DirContext object with which this Container is 
+     * associated.
      *
-     * @param resources The newly associated Resources
+     * @param resources The newly associated DirContext
      */
-    public synchronized void setResources(Resources resources) {
+    public synchronized void setResources(DirContext resources) {
 
 	// Change components if necessary
-	Resources oldResources = this.resources;
+	DirContext oldResources = this.resources;
 	if (oldResources == resources)
 	    return;
-	this.resources = resources;
-
-	// Stop the old component if necessary
-	if (started && (oldResources != null) &&
-	    (oldResources instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) oldResources).stop();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setResources: stop: ", e);
-	    }
-	}
-	if (oldResources != null)
-	    oldResources.setContainer(null);
-
-	// Start the new component if necessary
-	if (resources != null)
-	    resources.setContainer(this);
-	if (started && (resources != null) &&
-	    (resources instanceof Lifecycle)) {
-	    try {
-		((Lifecycle) resources).start();
-	    } catch (LifecycleException e) {
-		log("ContainerBase.setResources: start: ", e);
-	    }
-	}
+        this.resources = new ProxyDirContext(new Hashtable(), resources);
 
 	// Report this property change to interested listeners
 	support.firePropertyChange("resources", oldResources, this.resources);

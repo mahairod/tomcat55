@@ -89,6 +89,7 @@ import java.util.ResourceBundle;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.servlet.ServletContext;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -97,7 +98,6 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
-import org.apache.catalina.Resources;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
@@ -225,10 +225,10 @@ public final class ContextConfig
 
 	// Open the application web.xml file, if it exists
 	InputStream stream = null;
-	Resources resources = context.getResources();
-	if (resources != null)
-	    stream =
-		resources.getResourceAsStream(Constants.ApplicationWebXml);
+ 	ServletContext servletContext = context.getServletContext();
+        if (servletContext != null)
+            stream = servletContext.getResourceAsStream
+                (Constants.ApplicationWebXml);
 	if (stream == null) {
 	    log(sm.getString("contextConfig.applicationMissing"));
 	    return;
@@ -785,11 +785,11 @@ public final class ContextConfig
         // Accumulate the common permissions we will add to all code sources
         if (debug >= 1)
             log("Building common permissions to add");
-        Resources resources = context.getResources();
+        ServletContext servletContext = context.getServletContext();
         Permissions commonPerms = new Permissions();
         URL baseURL = null;
         try {
-            baseURL = resources.getResource("/");
+            baseURL = servletContext.getResource("/");
             if (debug >= 1)
                 log(" baseURL=" + baseURL.toString());
         } catch (MalformedURLException e) {
@@ -822,7 +822,7 @@ public final class ContextConfig
             log("Building document root code source");
         URL docURL = null;
         try {
-            docURL = resources.getResource("/WEB-INF");
+            docURL = servletContext.getResource("/WEB-INF");
             if (debug >= 1)
                 log(" docURL=" + docURL.toString());
         } catch (MalformedURLException e) {
@@ -977,10 +977,10 @@ public final class ContextConfig
         // FIXME - Yet another dependence on files
         if (debug >= 1)
             log("Scanning library JAR files");
-	Resources resources = context.getResources();
+	ServletContext servletContext = context.getServletContext();
         URL libURL = null;
         try {
-            libURL = resources.getResource("/WEB-INF/lib");
+            libURL = servletContext.getResource("/WEB-INF/lib");
         } catch (MalformedURLException e) {
             ;
         }
