@@ -100,6 +100,7 @@ if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
   CATALINA_BASE=`cygpath --path --windows "$CATALINA_BASE"`
+  CATALINA_TMPDIR=`cygpath --path --windows "$CATALINA_TMPDIR"`
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
   JSSE_HOME=`cygpath --path --windows "$JSSE_HOME"`
 fi
