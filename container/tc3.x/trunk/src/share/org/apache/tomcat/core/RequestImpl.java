@@ -112,6 +112,10 @@ public class RequestImpl  implements Request {
     protected String authType;
     protected String remoteUser;
 
+    protected Principal principal;
+    // active roles for the current user
+    protected String userRoles[];
+    
     // Request
     protected Response response;
     protected HttpServletRequestFacade requestFacade;
@@ -292,21 +296,37 @@ public class RequestImpl  implements Request {
     }
 
     public boolean isSecure() {
-	if( context.getRequestSecurityProvider() == null )
-	    return false;
-	return context.getRequestSecurityProvider().isSecure(context, getFacade());
+	// The adapter is responsible for providing this information 
+        return getProtocol().equalsIgnoreCase("HTTPS");
+    }
+    
+    public void setUserPrincipal( Principal p ) {
+	principal=p;
+    }
+    
+    /** Return the principal - the adapter will set it
+     */
+    public Principal getUserPrincipal() {
+	if( principal == null ) {
+	    principal=new SimplePrincipal( getRemoteUser() );
+	}
+	return principal; 
     }
 
-    public Principal getUserPrincipal() {
-	if( context.getRequestSecurityProvider() == null )
-	    return null;
-	return context.getRequestSecurityProvider().getUserPrincipal(context, getFacade());
+    public void setUserRoles( String roles[] ) {
+	userRoles=roles;
+    }
+
+    public String[] getUserRoles( ) {
+	return userRoles;
     }
 
     public boolean isUserInRole(String role) {
-	if( context.getRequestSecurityProvider() == null )
-	    return false;
-	return context.getRequestSecurityProvider().isUserInRole(context, getFacade(), role);
+	if (userRoles != null) {
+	    if( SecurityTools.haveRole( role, userRoles ))
+		return true;
+	}
+	return false;
     }
 
 

@@ -56,45 +56,44 @@
  * [Additional notices, if required by prior licensing conditions]
  *
  */ 
+package org.apache.tomcat.util;
 
+import java.security.Principal;
 
-package org.apache.tomcat.servlets;
+public class SimplePrincipal implements Principal {
+    private String name;
 
-import org.apache.tomcat.util.*;
-import org.apache.tomcat.core.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-
-/**
- * Will authenticate the request for non-form auth
- * ( sort of "default form auth" );
- *
- */
-public class JSecurityCheck extends HttpServlet {
-    
-    public void service(HttpServletRequest request,
-			HttpServletResponse response)
-	throws ServletException, IOException
-    {
-	Request req=((HttpServletRequestFacade)request).getRealRequest();
-	Context ctx=req.getContext();
-	HttpSession session=req.getSession( false );
-	if( session == null ) {
-	    ctx.log("TRY TO AUTHENTICATE WITHOUT A SESSION " + req);
-	    return;
-	}
-	String username=req.getFacade().getParameter( "j_username" );
-	String password=req.getFacade().getParameter( "j_password" );
-	if( ctx.getDebug() > 0 ) ctx.log( "JSecurityCheck - FORM auth " + username + " " + password );
-
-	session.setAttribute( "j_username", username );
-	session.setAttribute( "j_password", password );
-
-	String origLocation=(String)session.getAttribute( "tomcat.auth.originalLocation");
-	if( ctx.getDebug() > 0) ctx.log("JSecurityCheck - Back to orig location " + origLocation);
-	response.sendRedirect( origLocation );
+    public SimplePrincipal(String name) {
+	this.name = name;
     }
 
+    /**
+     * Returns true if the specified Object represents the
+     * same principal (i.e. a Principal with the same name)
+     *
+     * @param another Another Principal instance
+     * @return true if another is a Principal with the same name
+     */
+    public boolean equals(Object another) {
+	return another instanceof Principal &&
+	    ((Principal) another).getName().equals(getName());
+    }
+    
+    /**
+     * Returns the principal's name.
+     *
+     * @return The principal's name
+     */
+    public String getName() {
+	return name;
+    }
+    
+    /**
+     * Returns the principal's name.
+     *
+     * @return The principal's name
+     */
+    public String toString() {
+	return getName();
+    }
 }

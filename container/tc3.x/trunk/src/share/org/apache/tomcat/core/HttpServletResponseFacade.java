@@ -172,7 +172,7 @@ public class HttpServletResponseFacade
 	Request request=response.getRequest();
 	request.setAttribute("javax.servlet.error.message", msg);
 	ContextManager cm=request.getContextManager();
-	cm.handleError( request, response, null, sc );
+	cm.handleStatus( request, response, sc );
     }
 
     public void sendRedirect(String location)

@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -62,32 +58,32 @@
  */ 
 
 
-package org.apache.tomcat.core;
+package org.apache.tomcat.servlets;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apache.tomcat.util.*;
+import org.apache.tomcat.core.*;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-// Not part of tomcat, will be moved to j2ee soon !
 
 /**
- * 
- * @author Harish Prabandham
- * @deprecated Will be removed after security is implemented in tomcat
+ *
  */
+public class BasicLoginServlet extends HttpServlet {
+    
+    public void service(HttpServletRequest request,
+			HttpServletResponse response)
+	throws ServletException, IOException
+    {
+	Request req=((HttpServletRequestFacade)request).getRealRequest();
+	Context ctx=req.getContext();
+	String realm=ctx.getRealmName();
+	if(realm==null) realm="default";
 
-//
-// WARNING: Some of the APIs in this class are used by J2EE. 
-// Please talk to harishp@eng.sun.com before making any changes.
-//
-public interface RequestSecurityProvider {
-    // Will require a sub-request if role is not
-    // one of the roles in security-constraints
-    public boolean isUserInRole(Context context,
-        HttpServletRequest req, String role);
+	response.setHeader( "WWW-Authenticate",
+			    "Basic realm=\"" + realm + "\"");
+	response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
 
-    // Set by Security interceptors
-    public java.security.Principal getUserPrincipal(
-        Context context, HttpServletRequest req);
-
-    // Flag set by request adapter
-    public boolean isSecure(Context context, HttpServletRequest req);
 }
