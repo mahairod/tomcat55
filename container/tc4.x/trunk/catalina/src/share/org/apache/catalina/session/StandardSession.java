@@ -541,7 +541,6 @@ final class StandardSession
 	expiring = false;
 	if ((manager != null) && (manager instanceof ManagerBase)) {
 	    recycle();
-	    ((ManagerBase) manager).recycle(this);
 	}
 
     }
