@@ -25,7 +25,7 @@ SetOverwrite on
 SetDateSave on
 
 InstallDir "$PROGRAMFILES\Jakarta Tomcat 4.0"
-InstallDirRegKey HKLM "SOFTWARE\Apache\Jakarta\Tomcat 4.0" ""
+InstallDirRegKey HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" ""
 
 Section "Tomcat 4.0 (required)"
 
@@ -36,7 +36,6 @@ Section "Tomcat 4.0 (required)"
   File README.txt
   File /r bin
   File /r common
-  File /r conf
   File /r jasper
   File /r lib
   File /r logs
@@ -73,26 +72,37 @@ Section "Tomcat 4.0 Start Menu Group"
 
   SectionIn 1 2 3
 
-  SetOutPath "$SMPROGRAMS\Tomcat 4.0"
+  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat Home Page.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
                  "$INSTDIR\uninst-tomcat4.exe"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Start Tomcat.lnk" \
-                 "%JAVA_HOME%\bin\java" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
+                 "%JAVA_HOME%\bin\java.exe" \
                  '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Stop Tomcat.lnk" \
-                 "%JAVA_HOME%\bin\java" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
+                 "%JAVA_HOME%\bin\java.exe" \
                  '-cp "$INSTDIR\bin\bootstrap.jar;%JAVA_HOME%\lib\tools.jar" -Dcatalina.home="$INSTDIR" org.apache.catalina.startup.Bootstrap stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
+
+  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
+
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Server Configuration.lnk" \
+                 notepad "$INSTDIR\conf\server.xml"
+
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Webapp Defaults.lnk" \
+                 notepad "$INSTDIR\conf\web.xml"
+
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Users.lnk" \
+                 notepad "$INSTDIR\conf\tomcat-users.xml"
 
 SectionEnd
 
@@ -104,20 +114,20 @@ Section "Tomcat 4.0 Documentation"
   SetOutPath $INSTDIR\webapps
   File /r webapps\ROOT
 
-  IfFileExists "$SMPROGRAMS\Tomcat 4.0" 0 NoLinks
+  IfFileExists "$SMPROGRAMS\Jakarta Tomcat 4.0" 0 NoLinks
 
-  SetOutPath "$SMPROGRAMS\Tomcat 4.0\Documentation"
+  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Tomcat Documentation.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Tomcat Documentation.lnk" \
                  "$INSTDIR\webapps\ROOT\docs\index.html"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Catalina Javadoc.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Catalina Javadoc.lnk" \
                  "$INSTDIR\webapps\ROOT\catalina-javadoc\index.html"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Jasper Javadoc.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Jasper Javadoc.lnk" \
                  "$INSTDIR\webapps\ROOT\jasper-javadoc\index.html"
 
-  CreateShortCut "$SMPROGRAMS\Tomcat 4.0\Documentation\Servlet API Javadoc.lnk" \
+  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Servlet API Javadoc.lnk" \
                  "$INSTDIR\webapps\ROOT\servletapi-javadoc\index.html"
 
  NoLinks:
@@ -127,6 +137,11 @@ SectionEnd
 Section "Example Web Applications"
 
   SectionIn 1 3
+
+  SetOverwrite off
+  SetOutPath $INSTDIR\conf
+  File conf\server.xml
+  SetOverwrite on
   SetOutPath $INSTDIR\webapps
   File /r webapps\examples
   File /r webapps\webdav
@@ -145,18 +160,23 @@ SectionEnd
 
 Section -post
 
+  SetOverwrite off
+  SetOutPath $INSTDIR\conf
+  File /oname=server.xml conf\server-noexamples.xml.config
   SetOutPath $INSTDIR
+  File /r conf
+
+  SetOverwrite on
 
   ; since the installer is now created last (in 1.2+), this makes sure 
   ; that any old installer that is readonly is overwritten.
   Delete $INSTDIR\uninst-tomcat4.exe 
 
-  WriteRegStr HKLM "SOFTWARE\Tomcat 4.0" "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tomcat 4.0" \
+  WriteRegStr HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" "" $INSTDIR
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0" \
                    "DisplayName" "Jakarta Tomcat 4.0 (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tomcat 4.0" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0" \
                    "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
-  ExecShell open '$INSTDIR'
 
   Sleep 500
   BringToFront
@@ -195,15 +215,15 @@ Section Uninstall
   NoOwn:
 
   DeleteRegKey HKCR "JSPFile"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tomcat 4.0"
-  DeleteRegKey HKLM "SOFTWARE\Apache\Jakarta\Tomcat 4.0"
-  RMDir /r "$SMPROGRAMS\Tomcat 4.0"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0"
+  DeleteRegKey HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0"
+  RMDir /r "$SMPROGRAMS\Jakarta Tomcat 4.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\README.txt"
   RMDir /r "$INSTDIR\bin"
   RMDir /r "$INSTDIR\common"
-  RMDir /r "$INSTDIR\conf"
+  Delete "$INSTDIR\conf\*.dtd"
   RMDir /r "$INSTDIR\jasper"
   RMDir /r "$INSTDIR\lib"
   RMDir "$INSTDIR\logs"
@@ -224,6 +244,7 @@ Section Uninstall
  you created that you want to keep, click No)" IDNO Removed
     Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
     RMDir /r "$INSTDIR"
+    Sleep 500
     IfFileExists "$INSTDIR" 0 Removed 
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
