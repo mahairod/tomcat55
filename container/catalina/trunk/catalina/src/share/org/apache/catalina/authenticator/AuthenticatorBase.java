@@ -72,6 +72,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.List;
 import java.util.Iterator;
@@ -103,6 +106,7 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.DateTool;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -242,6 +246,14 @@ public abstract class AuthenticatorBase
      * Has this component been started?
      */
     protected boolean started = false;
+
+
+    /**
+     * "Expires" header always set to Date(1), so generate once only
+     */
+    private static final String DATE_ONE =
+        (new SimpleDateFormat(DateTool.HTTP_RESPONSE_DATE_HEADER,
+                              Locale.US)).format(new Date(1));
 
 
     // ------------------------------------------------------------- Properties
@@ -512,7 +524,7 @@ public abstract class AuthenticatorBase
                 (HttpServletResponse) response.getResponse();
             sresponse.setHeader("Pragma", "No-cache");
             sresponse.setHeader("Cache-Control", "no-cache");
-            sresponse.setDateHeader("Expires", 1);
+            sresponse.setHeader("Expires", DATE_ONE);
         }
 	int i;
 	for(i=0; i < constraints.length; i++) {
