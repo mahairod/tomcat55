@@ -1730,11 +1730,6 @@ public class StandardContext
             servletName = "jsp";
         }
 
-        // Properly handle file that are considered to be a jsp.
-        if (pattern.indexOf("*.") > 0){
-            pattern = pattern.substring(pattern.lastIndexOf("*"));
-            servletName = "jsp";
-        }
         if( findChild(servletName) != null) {
             addServletMapping(pattern, servletName);
         } else {
@@ -4736,7 +4731,8 @@ public class StandardContext
             else
                 return (false);
         }
-        if (urlPattern.startsWith("/"))
+        if ( (urlPattern.startsWith("/")) &&
+                (urlPattern.indexOf("*.") < 0))
             return (true);
         else
             return (false);
