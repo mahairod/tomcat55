@@ -50,10 +50,12 @@ Section "Tomcat 4.0 (required)"
   File /r webapps\manager
   File /r webapps\ROOT
 
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+  Call findJavaPath
+  Pop $2
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+
+  WriteUninstaller "$INSTDIR\uninst-tomcat4.exe"
 
 SectionEnd
 
@@ -61,8 +63,8 @@ Section "NT Service (NT/2k/XP only)"
 
   SectionIn 3
 
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
+  Call findJVMPath
+  Pop $2
   
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
@@ -96,8 +98,8 @@ Section "Tomcat 4.0 Start Menu Group"
 
   SectionIn 1 2 3
 
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "JavaHome"
+  Call findJavaPath
+  Pop $2
 
   SetOutPath "$SMPROGRAMS\Apache Tomcat 4.0"
 
@@ -186,10 +188,6 @@ Section -post
 
   SetOverwrite on
 
-  ; since the installer is now created last (in 1.2+), this makes sure 
-  ; that any old installer that is readonly is overwritten.
-  Delete $INSTDIR\uninst-tomcat4.exe 
-
   WriteRegStr HKLM "SOFTWARE\Apache\Apache Tomcat 4.0" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.0" \
                    "DisplayName" "Apache Tomcat 4.0 (remove only)"
@@ -206,20 +204,9 @@ Function .onInit
 
   ClearErrors
 
-  Call doUpdate
-
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
-  ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $4 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$3" "RuntimeLib"
-
-  IfErrors 0 NoAbort
-    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
-computer. Please download one from http://java.sun.com."
-    Abort
-
-  NoAbort:
-    MessageBox MB_OK "Using Java Development Kit version $1 found in $2$\r$\nUsing Java Runtime Environment version $3 found in $4"
+  Call findJavaPath
+  Pop $1
+  MessageBox MB_OK "Using Java Development Kit found in $1"
 
 FunctionEnd
 
@@ -231,45 +218,84 @@ Function .onInstSuccess
 FunctionEnd
 
 
-Function doUpdate
+; =====================
+; FindJavaPath Function
+; =====================
+;
+; Find the JAVA_HOME used on the system, and put the result on the top of the
+; stack
+; Will exit if the path cannot be determined
+;
+Function findJavaPath
 
-  ; This function will be called if a previous Tomcat 4.0 installation has been
-  ; found
+  ClearErrors
 
-  ReadRegStr $1 HKLM "SOFTWARE\Apache\Apache Tomcat 4.0" ""
-  IfErrors NoUpdate
+  ReadEnvStr $1 JAVA_HOME
 
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-      "A previous installation of Jakarata Tomcat 4.0 has been found in $1.\
- Do you want to upgrade it to the latest version ?" IDNO NoUpdate
+  IfErrors 0 FoundJDK
 
-  SetOverwrite ifnewer
-  SetOutPath $INSTDIR
-  File tomcat.ico
-  File LICENSE
-  File /r bin
-  File /r common
-  File /r lib
-  File /r classes
-  File /r logs
-  File /r server
-  File /r work
-  SetOutPath $INSTDIR\webapps
-  File /r webapps\manager
-  File /r webapps\ROOT
+  ClearErrors
 
-  MessageBox MB_OK "Update was successful."
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$2" "JavaHome"
+  ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+  ReadRegStr $4 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$3" "RuntimeLib"
 
-  ; Installation over
-  Abort
+  FoundJDK:
 
-NoUpdate:
+  IfErrors 0 NoAbort
+    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
+computer. Please download one from http://java.sun.com."
+    Abort
+
+  NoAbort:
+
+  ; Put the result in the stack
+  Push $1
+
+FunctionEnd
+
+
+; ====================
+; FindJVMPath Function
+; ====================
+;
+; Find the full JVM path, and put the result on top of the stack
+; Will exit if the path cannot be determined
+;
+Function findJVMPath
+
+  ReadEnvStr $1 JAVA_HOME
+  IfFileExists $1\jre\bin\hotspot\jvm.dll 0 TryJDK14
+    StrCpy $2 $1\jre\bin\hotspot\jvm.dll
+    Goto EndIfFileExists
+  TryJDK14:
+    StrCpy $2 $1\jre\bin\server\jvm.dll
+  EndIfFileExists:
+
+  IfErrors 0 FoundJVMPath
+
+  ClearErrors
+
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
+  
+  FoundJVMPath:
+  
+  IfErrors 0 NoAbort
+    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
+computer. Please download one from http://java.sun.com."
+    Abort
+
+  NoAbort:
+
+  ; Put the result in the stack
+  Push $2
 
 FunctionEnd
 
 
 UninstallText "This will uninstall Apache Tomcat 4.0 from your system:"
-UninstallExeName uninst-tomcat4.exe
 
 
 Section Uninstall
