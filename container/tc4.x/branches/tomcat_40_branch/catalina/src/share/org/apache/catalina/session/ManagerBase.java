@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import org.apache.catalina.Container;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
@@ -547,6 +548,12 @@ public abstract class ManagerBase implements Manager {
         session.setCreationTime(System.currentTimeMillis());
         session.setMaxInactiveInterval(this.maxInactiveInterval);
         String sessionId = generateSessionId();
+        String jvmRoute = getJvmRoute();
+        // @todo Move appending of jvmRoute generateSessionId()???
+        if (jvmRoute != null) {
+            sessionId += '.' + jvmRoute;
+            session.setId(sessionId);
+        }
         /*
         synchronized (sessions) {
             while (sessions.get(sessionId) != null)        // Guarantee uniqueness
@@ -655,6 +662,34 @@ public abstract class ManagerBase implements Manager {
         }
         return (result.toString());
 
+    }
+
+
+    /**
+     * Retrieve the enclosing Engine for this Manager.
+     *
+     * @return an Engine object (or null).
+     */
+    protected Engine getEngine() {
+        Engine e = null;
+        for (Container c=getContainer(); e == null && c != null ;
+             c = c.getParent()) {
+            if (c != null && c instanceof Engine) {
+                e = (Engine)c;
+            }
+        }
+        return e;
+    }
+
+
+    /**
+     * Retrieve the JvmRoute for the enclosing Engine.
+     * 
+     * @return the JvmRoute or null.
+     */
+    protected String getJvmRoute() {
+        Engine e = getEngine();
+        return e == null ? null : e.getJvmRoute();
     }
 
 
