@@ -51,6 +51,9 @@
       <fix>
         <bug>33883</bug>: Bad options in SSL-HowTo. (yoavs)
       </fix>
+      <update>
+        Update to MX4J 3.0.1 (pero)
+      </update>
     </changelog>
    </subsection>
 
