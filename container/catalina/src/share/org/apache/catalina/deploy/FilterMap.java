@@ -32,7 +32,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class FilterMap implements Serializable {
+public class FilterMap implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

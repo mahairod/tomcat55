@@ -30,7 +30,7 @@ import java.io.Serializable;
  * @since Tomcat 5.0
  */
 
-public final class MessageDestinationRef implements Serializable {
+public class MessageDestinationRef implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class ContextResourceLink implements Serializable {
+public class ContextResourceLink implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

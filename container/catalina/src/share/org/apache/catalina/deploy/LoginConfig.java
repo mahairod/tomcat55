@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class LoginConfig implements Serializable {
+public class LoginConfig implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors
