@@ -73,12 +73,12 @@ public class ParserUtils {
      * that corresponds to the root node of the document tree.
      *
      * @param uri URI of the XML document being parsed
-     * @param is Input stream containing the deployment descriptor
+     * @param is Input source containing the deployment descriptor
      *
      * @exception JasperException if an input/output error occurs
      * @exception JasperException if a parsing error occurs
      */
-    public TreeNode parseXMLDocument(String uri, InputStream is)
+    public TreeNode parseXMLDocument(String uri, InputSource is)
         throws JasperException {
 
         Document document = null;
@@ -113,6 +113,23 @@ public class ParserUtils {
 
         // Convert the resulting document to a graph of TreeNodes
         return (convert(null, document.getDocumentElement()));
+    }
+
+
+    /**
+     * Parse the specified XML document, and return a <code>TreeNode</code>
+     * that corresponds to the root node of the document tree.
+     *
+     * @param uri URI of the XML document being parsed
+     * @param is Input stream containing the deployment descriptor
+     *
+     * @exception JasperException if an input/output error occurs
+     * @exception JasperException if a parsing error occurs
+     */
+    public TreeNode parseXMLDocument(String uri, InputStream is)
+            throws JasperException {
+
+        return (parseXMLDocument(uri, new InputSource(is)));
     }
 
 
