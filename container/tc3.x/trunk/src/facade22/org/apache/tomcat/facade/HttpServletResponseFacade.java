@@ -359,7 +359,11 @@ final class HttpServletResponseFacade  implements HttpServletResponse
         // Set the URL port to HTTP default if not available before comparing
         int urlPort = url.getPort();
         if (urlPort == -1) {
-            urlPort = 80;
+	    if("http".equalsIgnoreCase(url.getProtocol())) {
+		urlPort = 80;
+	    } else if ("https".equalsIgnoreCase(url.getProtocol())) {
+		urlPort = 443;
+            }
         }
 	int serverPort = request.getServerPort();
 	if (serverPort == -1)	// Work around bug in java.net.URL.getHost()
