@@ -206,6 +206,17 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
     }
 
 
+    /**
+     * Ignore <code>setBufferSize()</code> calls on an included response.
+     *
+     * @param size The buffer size
+     */
+    public void setBufferSize(int size) {
+        if (!included)
+            getResponse().setBufferSize(size);
+    }
+
+
     // -------------------------------------------- HttpServletResponse Methods
 
 
