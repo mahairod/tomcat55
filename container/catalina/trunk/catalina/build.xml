@@ -114,6 +114,8 @@
     <pathelement location="${tomcat-coyote.home}/src/java"/>
     <pathelement location="${tomcat-jk.home}/java"/>
     <pathelement location="${tomcat-http11.home}/src/java"/>
+    <pathelement location="../modules/cluster/src/share"/>
+    <pathelement location="../modules/storeconfig/src/share"/>
   </path>
 
 
@@ -738,9 +740,13 @@
       version="true"
       windowtitle="Tomcat API Documentation"
       doctitle="Tomcat API"
-      bottom="Copyright &#169; 2000-2004 Apache Software Foundation.  All Rights Reserved."
-      additionalparam="-breakiterator"
-    />
+      bottom="Copyright &#169; 2000-2005 Apache Software Foundation.  All Rights Reserved."
+      additionalparam="-breakiterator">
+    	<excludepackage name="org.apache.ajp.*" />
+    	<excludepackage name="org.apache.coyote.tomcat3" />
+    	<excludepackage name="org.apache.coyote.tomcat4" />
+    	<excludepackage name="org.apache.jk.apr" />
+    </javadoc>
   </target>
 
 
