@@ -59,7 +59,7 @@ import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
 /**
- * A base class for defining tag handlers implemeting SimpleTag.
+ * A base class for defining tag handlers implementing SimpleTag.
  * <p>
  * The SimpleTagSupport class is a utility class intended to be used
  * as the base class for new simple tag handlers.  The SimpleTagSupport
