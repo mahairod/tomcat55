@@ -538,7 +538,8 @@ public class JspUtil {
      * name represents a primitive type, in which case it is converted to a
      * <tt>Class</tt> object by appending ".class" to it (e.g., "int.class").
      */
-    public static Class toClass(String type) throws ClassNotFoundException {
+    public static Class toClass(String type, ClassLoader loader)
+	    throws ClassNotFoundException {
 	if ("boolean".equals(type))
 	    return boolean.class;
 	else if ("char".equals(type))
@@ -556,7 +557,7 @@ public class JspUtil {
 	else if ("double".equals(type))
 	    return double.class;
 	else
-	    return Class.forName(type);
+	    return loader.loadClass(type);
     }
 
     /**
@@ -715,7 +716,7 @@ public class JspUtil {
          *     signature.
          */
         public FunctionSignature( String signature, String tagName,
-            ErrorDispatcher err )
+            ErrorDispatcher err, ClassLoader loader )
             throws JasperException
         {
             try {
@@ -763,7 +764,7 @@ public class JspUtil {
                                 tagName, this.methodName ) );
                         }
 
-                        parameterTypes.add(toClass(argType));
+                        parameterTypes.add(toClass(argType, loader));
 
                         String comma;
                         do {

@@ -358,7 +358,8 @@ public class Validator {
 	private ErrorDispatcher err;
 	private TagInfo tagInfo;
 	private TagData tagData;
-        
+        private ClassLoader loader;
+
 	// A FunctionMapper, used to validate EL expressions.
         private FunctionMapper functionMapper;
 
@@ -442,8 +443,9 @@ public class Validator {
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
 	    this.tagData = compiler.getCompilationContext().getTagData();
+	    this.loader = compiler.getCompilationContext().getClassLoader();
             this.functionMapper = new ValidatorFunctionMapper( this.pageInfo, 
-                this.err );
+                this.err, this.loader );
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
@@ -710,7 +712,8 @@ public class Validator {
                                     expectedType = JspFragment.class;
                                 }
                                 else if( typeStr != null ) {
-                                    expectedType = JspUtil.toClass( typeStr );
+                                    expectedType = JspUtil.toClass(typeStr,
+								   loader);
                                 }
                                 jspAttrs[i]
                                     = getJspAttribute(attrs.getQName(i),
@@ -1209,7 +1212,8 @@ public class Validator {
     {
         private PageInfo pageInfo;
         private ErrorDispatcher err;
-        
+        private ClassLoader loader;
+
         /**
          * HashMap of cached functions that we already looked up.
          * Key = prefix, value = HashMap, where key = localName,
@@ -1218,10 +1222,11 @@ public class Validator {
         private HashMap cachedFunctions = new HashMap();
         
         public ValidatorFunctionMapper( PageInfo pageInfo, 
-            ErrorDispatcher err ) 
+            ErrorDispatcher err, ClassLoader loader ) 
         {
             this.pageInfo = pageInfo;
             this.err = err;
+	    this.loader = loader;
         }
         
         public Method resolveFunction( String prefix, String localName ) {
@@ -1251,7 +1256,7 @@ public class Validator {
                             JspUtil.FunctionSignature functionSignature = 
                                 new JspUtil.FunctionSignature( 
                                 fnInfo.getFunctionSignature(),
-                                info.getShortName(), this.err );
+                                info.getShortName(), this.err, this.loader );
                             Class c = Class.forName( clazz );
                             result = c.getDeclaredMethod( 
                                 functionSignature.getMethodName(),

@@ -587,7 +587,7 @@ public class Generator {
                     
                     JspUtil.FunctionSignature functionSignature = 
                         new JspUtil.FunctionSignature( fnSignature, 
-                        tli.getShortName(), err );
+                        tli.getShortName(), err, ctxt.getClassLoader() );
                     out.print( quote( functionSignature.getMethodName() ) );
                     out.print(", ");
                     Class[] args = functionSignature.getParameterTypes();
@@ -701,6 +701,7 @@ public class Generator {
 	private FragmentHelperClass fragmentHelperClass;
 	private int methodNesting;
 	private TagInfo tagInfo;
+	private ClassLoader loader;
 
 	/**
 	 * Constructor.
@@ -709,11 +710,13 @@ public class Generator {
 			       ServletWriter out, 
 			       MethodsBuffer methodsBuffer, 
 			       FragmentHelperClass fragmentHelperClass,
+			       ClassLoader loader,
 			       TagInfo tagInfo) {
 	    this.isTagFile = isTagFile;
 	    this.out = out;
 	    this.methodsBuffer = methodsBuffer;
 	    this.fragmentHelperClass = fragmentHelperClass;
+	    this.loader = loader;
 	    this.tagInfo = tagInfo;
 	    methodNesting = 0;
 	    handlerInfos = new Hashtable();
@@ -1831,13 +1834,57 @@ public class Generator {
 	     */
 	    class ParamVisitor extends Node.Visitor {
 
+		// The name of the fragment to which the <jsp:param> applies
+		private String fragName;
+
+		public ParamVisitor(String fragName) {
+		    this.fragName = fragName;
+		}
+
                 public void visit(Node.ParamAction n) throws JasperException {
 		    out.printin("_jspx_params.put(");
 		    out.print(quote(n.getTextAttribute("name")));
 		    out.print(", ");
 		    out.print(attributeValue(n.getValue(), false,
-					     String.class, "null"));
+					     getParamClass(n), "null"));
 		    out.println(");");
+		}
+
+		/*
+		 * Checks to see if the given <jsp:param> matches a tag file
+		 * variable scoped to the same fragment as the enclosing
+		 * <jsp:invoke>. If a match is found, the class specified in
+		 * the variable directive's 'variable-class' attribute (if 
+		 * present) is loaded and returned.
+		 */
+		private Class getParamClass(Node.ParamAction n)
+		            throws JasperException {
+
+		    Class clazz = String.class;
+
+		    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+		    if (tagVars != null) {
+			String paramName = n.getTextAttribute("name");
+			for (int i=0; i<tagVars.length; i++) {
+			    String varName = tagVars[i].getNameGiven();
+			    if (varName == null) {
+				// XXX name-from-attribute:
+				// What to do in this case?
+			    }
+			    String tagVarFrag = tagVars[i].getFragment();
+			    if (!paramName.equals(varName)
+				    || tagVarFrag == null
+				    || !this.fragName.equals(tagVarFrag))
+				continue;
+			    try {
+				clazz = JspUtil.toClass(tagVars[i].getClassName(), loader);
+			    } catch (ClassNotFoundException cnfe) {
+				throw new JasperException(cnfe);
+			    }
+			}
+		    }
+
+		    return clazz;
 		}
 	    }
 
@@ -1845,7 +1892,8 @@ public class Generator {
 	    out.printil("_jspx_params = new java.util.HashMap();");
 	    if (n.getBody() != null) {
 		prepareParams(n);
-		n.getBody().visit(new ParamVisitor());
+		n.getBody().visit(new ParamVisitor(
+                                            n.getTextAttribute("fragment")));
 	    }
 	    
 	    // Invoke fragment with parameter map
@@ -1903,10 +1951,14 @@ public class Generator {
 		n.getBody().visit(new ParamVisitor());
 	    }
 
-	    // Add AT_BEGIN and NESTED scripting variables to parameter map
+	    // Add AT_BEGIN and NESTED scripting variables (that are not 
+	    // scoped to any fragment) to parameter map
 	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
 	    if (tagVars != null) {
 		for (int i=0; i<tagVars.length; i++) {
+		    if (tagVars[i].getFragment() != null) {
+			continue;
+		    }
 		    int scope = tagVars[i].getScope();
 		    if (scope != VariableInfo.AT_BEGIN
 			    && scope != VariableInfo.NESTED) {
@@ -2878,17 +2930,22 @@ public class Generator {
 	    }
 
 	    gen.fragmentHelperClass.generatePreamble();
-	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
+	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
+					       out,
 					       gen.methodsBuffer,
 					       gen.fragmentHelperClass,
+					       gen.ctxt.getClassLoader(),
 					       tagInfo));
 	    gen.generateTagHandlerPostamble(  tagInfo );
 	} else {
 	    gen.generatePreamble(page);
 	    gen.fragmentHelperClass.generatePreamble();
-	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
+	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(),
+					       out,
 					       gen.methodsBuffer, 
-					       gen.fragmentHelperClass, null));
+					       gen.fragmentHelperClass,
+					       gen.ctxt.getClassLoader(),
+					       null));
 	    gen.generatePostamble(page);
 	}
     }
