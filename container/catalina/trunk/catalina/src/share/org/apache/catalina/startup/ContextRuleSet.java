@@ -159,6 +159,8 @@ public class ContextRuleSet extends RuleSetBase {
                                  (digester,
                                   "org.apache.catalina.startup.ContextConfig",
                                   "configClass"));
+            digester.addRule(prefix + "Context",
+                             new SetDocBaseRule(digester));
             digester.addSetNext(prefix + "Context",
                                 "addChild",
                                 "org.apache.catalina.Container");
