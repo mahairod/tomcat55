@@ -82,7 +82,15 @@ for the Servlet 2.3 and JSP 1.2 specifications.
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
 
-Tomcat Version 3.2.2 is a bug release only.  No new features were added.
+5.1 Docbase and File Based Localization
+
+Tomcat 3.2.2 now supports a method mapping requests into localized resources
+automatically based on the client's and the server's locale.  Localized
+content can be organized using one directory per locale (Docbase) or
+into a single directory the locale specified in the file names (File based).
+
+A detailed description of this feature can be found in 
+doc/tomcat-localization-how.html
 
 
 =============================================================================
@@ -305,6 +313,11 @@ Servlet
   -  Fix session tracking through forward().  (#504)
   -  Fix problem with getSession() overwritting the requested session ID
      and related URL rewritting problems.  (#160)
+  -  Better error reporting for load-on-startup servler load failures.  ((#489)
+  -  Static files (e.g. .html) can how be used as the location for
+     <error-page> tags in web.xml.  (#291)
+  -  URL encoded data in servlet paths and path info are now decoded 
+     properly. (#657)
 
 Jasper
   -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
@@ -317,6 +330,10 @@ Jasper
   -  Better error reporting if compile fails due to missing tag library.
   -  Fix thread synchronization problem that can cause page compilation to 
      fail (#44).
+  -  Fixed the defualt character encoding.  The default charset is now
+     ISO-8859-1.  (#285)
+  -  jsp:plugin was not being expanded correctly.  (#467)
+
 
 Connectors
   -  Fix infinite loop on invalid content-length for ajp12.  (#264)
@@ -324,9 +341,12 @@ Connectors
   -  For ajp13 protocol, add support for multipart form encoding
      and file uploads now work.
   -  Reading session ids from cookies in the load balancer. (#603) 
+  -  HTTP connections now time out if no data is received from the 
+     client.  (#1006)	
 
   IIS
      -  Better error logging for startup failures.
+
   NetWare
      -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
 
