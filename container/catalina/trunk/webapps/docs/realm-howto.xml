@@ -347,7 +347,7 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 
 <h3>Introduction</h3>
 
-<p><strong>DataSourceRealm</strong> is an implementation of the Tomcat 4
+<p><strong>DataSourceRealm</strong> is an implementation of the Tomcat 5
 <code>Realm</code> interface that looks up users in a relational database
 accessed via a JNDI named JDBC DataSource.  There is substantial configuration
 flexibility that lets you adapt to existing table and column names, as long
@@ -391,7 +391,7 @@ as your database structure conforms to the following requirements:</p>
     for information on how to configure a JNDI named JDBC DataSource.</li>
 <li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
     <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
-<li>Restart Tomcat 4 if it is already running.</li>
+<li>Restart Tomcat 5 if it is already running.</li>
 </ol>
 
 <h3>Realm Element Attributes</h3>
@@ -492,7 +492,7 @@ name "java:/comp/env/jdbc/authority".</p>
 <p>DataSourceRealm operates according to the following rules:</p>
 <ul>
 <li>When a user attempts to access a protected resource for the first time,
-    Tomcat 4 will call the <code>authenticate()</code> method of this
+    Tomcat 5 will call the <code>authenticate()</code> method of this
     <code>Realm</code>.  Thus, any changes you have made to the database
     directly (new users, changed passwords or roles, etc.) will be immediately
     reflected.</li>
