@@ -8,7 +8,7 @@
      version="2.0">
 <xsd:annotation>
 <xsd:documentation>
-@(#)jsp_2_0.xsds	1.8 07/29/02
+%W% %G%
 </xsd:documentation>
 </xsd:annotation>
 
@@ -138,6 +138,7 @@ following additional properties can be described:
     - Control enabling of EL evaluation.
     - Control enabling of Scripting elements.
     - Indicate pageEncoding information.
+    - Indicating that a resource is a JSP document
     - Prelude and Coda automatic includes.
 
 </xsd:documentation>
@@ -159,7 +160,7 @@ following additional properties can be described:
         <xsd:annotation>
         <xsd:documentation>
 
-        Can be used to easily set the isElEnabled
+        Can be used to easily set the isELEnabled
         property of a group of JSP pages.  By default, the
         EL evaluation is enabled for Web Applications using
         a Servlet 2.4 or greater web.xml.
@@ -193,6 +194,22 @@ following additional properties can be described:
         Can be used to easily set the isScriptingEnabled
         property of a group of JSP pages.  By default,
         scripting is enabled.
+
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+	<xsd:element name="is-xml"
+		     type="j2ee:true-falseType"
+		     minOccurs="0">
+        <xsd:annotation>
+        <xsd:documentation>
+
+        If true, denotes that the group of resources
+	that match the URL pattern are JSP documents,
+	and thus must be interpreted as XML documents.
+	If false, the resources are assumed to not
+	be JSP documents, unless there is another
+	property group that indicates otherwise.
 
         </xsd:documentation>
         </xsd:annotation>
