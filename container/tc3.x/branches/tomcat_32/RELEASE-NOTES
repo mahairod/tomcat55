@@ -322,6 +322,9 @@ Servlet
      <error-page> tags in web.xml.  (#291)
   -  URL encoded data in servlet paths and path info are now decoded 
      properly. (#657)
+  -  HttpServletRequest.encodeURL() now properly encodes URLs that contain
+     an anchor but no query string.  (#1182)
+  -  Error pages now work in virtual hosts.
 
 Jasper
   -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
@@ -337,6 +340,8 @@ Jasper
   -  Fixed the defualt character encoding.  The default charset is now
      ISO-8859-1.  (#285)
   -  jsp:plugin was not being expanded correctly.  (#467)
+  -  Fixed bug that could cause the body of a JSP page to be exeucted before
+     or while its jspInit() method was being executed.  (#1280)
 
 
 Connectors
