@@ -141,7 +141,7 @@ abstract class Node {
     }
 
     /**
-     * Get the attribute that is non requrest time expression, either
+     * Get the attribute that is non request time expression, either
      * from the attribute of the node, or from a jsp:attrbute 
      */
     public String getTextAttribute(String name) {

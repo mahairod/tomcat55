@@ -91,7 +91,7 @@ public class JspCompilationContext {
     private Hashtable tagFileJars;
     private boolean isPackagedTagFile;
 
-    private String servletClassName;
+    private String className;
     private String jspUri;
     private boolean isErrPage;
     private String servletPackageName;
@@ -301,40 +301,45 @@ public class JspCompilationContext {
      */
     public String getServletClassName() {
 
+        if (className != null) {
+            return className;
+        }
+
 	if (isTagFile) {
-	    return tagInfo.getTagName();
+	    className = tagInfo.getTagClassName();
+	    int lastIndex = className.lastIndexOf('.');
+	    if (lastIndex != -1) {
+		className = className.substring(lastIndex + 1);
+	    }
+	} else {
+	    int iSep = jspUri.lastIndexOf('/') + 1;
+	    int iEnd = jspUri.length();
+	    StringBuffer modifiedClassName = 
+		new StringBuffer(jspUri.length() - iSep);
+	    if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep)) ||
+		jspUri.charAt(iSep) == '_' ) {
+		// If the first char is not a start of Java identifier or is _
+		// prepend a '_'.
+		modifiedClassName.append('_');
+	    }
+	    for (int i = iSep; i < iEnd; i++) {
+		char ch = jspUri.charAt(i);
+		if (Character.isJavaIdentifierPart(ch)) {
+		    modifiedClassName.append(ch);
+		} else if (ch == '.') {
+		    modifiedClassName.append('_');
+		} else {
+		    modifiedClassName.append(mangleChar(ch));
+		}
+	    }
+	    className = modifiedClassName.toString();
 	}
 
-        if (servletClassName != null) {
-            return servletClassName;
-        }
-
-        int iSep = jspUri.lastIndexOf('/') + 1;
-        int iEnd = jspUri.length();
-        StringBuffer modifiedClassName = 
-            new StringBuffer(jspUri.length() - iSep);
-	if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep)) ||
-	    jspUri.charAt(iSep) == '_' ) {
-	    // If the first char is not a start of Java identifier or is _
-	    // prepend a '_'.
-	    modifiedClassName.append('_');
-	}
-        for (int i = iSep; i < iEnd; i++) {
-            char ch = jspUri.charAt(i);
-            if (Character.isJavaIdentifierPart(ch)) {
-                modifiedClassName.append(ch);
-            } else if (ch == '.') {
-                modifiedClassName.append('_');
-            } else {
-                modifiedClassName.append(mangleChar(ch));
-            }
-        }
-        servletClassName = modifiedClassName.toString();
-        return servletClassName;
+        return className;
     }
 
-    public void setServletClassName(String servletClassName) {
-        this.servletClassName = servletClassName;
+    public void setServletClassName(String className) {
+        this.className = className;
     }
     
     /**
@@ -441,8 +446,9 @@ public class JspCompilationContext {
         }
 
 	if (isTagFile) {
-	    jspPath = "tagfiles/org/apache/jsp/tagfile/"
-		+ tagInfo.getTagName() + ".java";
+	    jspPath = "tags/"
+		+ tagInfo.getTagClassName().replace('.', File.separatorChar)
+		+ ".java";
 	} else {
 	    String dirName = getJspFile();
 	    int pos = dirName.lastIndexOf('/');
@@ -583,14 +589,14 @@ public class JspCompilationContext {
                  rctxt.getPermissionCollection(),
                  rctxt.getCodeSource());
             
-            String className;
+            String name;
             if (isTagFile()) {
-                className = tagInfo.getTagClassName();
+                name = tagInfo.getTagClassName();
             } else {
-                className = getServletPackageName() + "." +
+                name = getServletPackageName() + "." +
                             getServletClassName();
             }
-            servletClass = jspLoader.loadClass(className);
+            servletClass = jspLoader.loadClass(name);
         } catch (FileNotFoundException ex) {
             jspCompiler.removeGeneratedFiles();
             throw ex;
@@ -609,26 +615,34 @@ public class JspCompilationContext {
     }
 
     public void createOutdir(String dirPath) {
-        File outDirF = null;
+
         try {
-            URL outURL = options.getScratchDir().toURL();
-            String outUri = outURL.toString();
-            if (outUri.endsWith("/")) {
-                outUri = outUri
-		    + dirPath.substring(1, dirPath.lastIndexOf("/") + 1);
+	    // Append servlet or tag handler path to scratch dir
+            URL outUrl = options.getScratchDir().toURL();
+            String outUrlString = outUrl.toString();
+            if (outUrlString.endsWith("/")) {
+                outUrlString += dirPath.substring(1,
+						  dirPath.lastIndexOf("/")+1);
             } else {
-                outUri = outUri
-		    + dirPath.substring(0, dirPath.lastIndexOf("/") + 1);
+                outUrlString += dirPath.substring(0,
+						  dirPath.lastIndexOf("/")+1);
             }
-            outURL = new URL(outUri);
-            outDirF = new File(outURL.getFile());
-            if (!outDirF.exists()) {
-                outDirF.mkdirs();
+            outUrl = new URL(outUrlString);
+            File outDirFile = new File(outUrl.getFile());
+            if (!outDirFile.exists()) {
+                outDirFile.mkdirs();
             }
-            this.outputDir = outDirF.toString() + File.separator;
+            this.outputDir = outDirFile.toString() + File.separator;
             
-            outUrls[0] = new URL(outDirF.toURL().toString() + File.separator);
-            outUrls[1] = new URL("file:" + options.getScratchDir() + File.separator + "tagfiles" + File.separator);
+	    // Populate the URL array with the URLs from which to load the
+	    // generated servlet and tag handler classes. The URL array is
+	    // passed to our org.apache.jasper.servlet.JasperLoader, which 
+	    // extends URLClassLoader
+            outUrls[0] = new URL(outDirFile.toURL().toString()
+				 + File.separator);
+            outUrls[1] = new URL("file:" + options.getScratchDir()
+				 + File.separator + "tags"
+				 + File.separator);
         } catch (Exception e) {
             throw new IllegalStateException("No output directory: " +
                                             e.getMessage());

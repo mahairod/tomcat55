@@ -99,6 +99,9 @@ import org.apache.jasper.runtime.ExpressionEvaluatorImpl;
  */
 public class JspUtil {
 
+    private static final String WEB_INF_TAGS = "/WEB-INF/tags/";
+    private static final String META_INF_TAGS = "/META-INF/tags/";
+
     // Delimiters for request-time expressions (JSP and XML syntax)
     private static final String OPEN_EXPR  = "<%=";
     private static final String CLOSE_EXPR = "%>";
@@ -750,6 +753,44 @@ public class JspUtil {
 	return in;
     }
 
+    /**
+     * Gets the fully-qualified class name of the tag handler corresponding to
+     * the given tag file path.
+     */
+    public static String getTagHandlerClassName(String path,
+						ErrorDispatcher err)
+                throws JasperException {
+
+	String className = null;
+	int begin = 0;
+	int index;
+	
+	// Remove ".tag" suffix
+	index = path.lastIndexOf(".tag");
+	if (index != -1) {
+	    path = path.substring(0, index);
+	} else {
+	    err.jspError("XXX", path);
+	}
+
+	index = path.indexOf(WEB_INF_TAGS);
+	if (index != -1) {
+	    className = "org.apache.jsp.tag.web.";
+	    begin = index + WEB_INF_TAGS.length();
+	} else {
+	    index = path.indexOf(META_INF_TAGS);
+	    if (index != -1) {
+		className = "org.apache.jsp.tag.meta.";
+		begin = index + META_INF_TAGS.length();
+	    } else {
+		err.jspError("jsp.error.tagfile.wrong.path", path);
+	    }
+	}
+
+	className += path.substring(begin).replace(File.separatorChar, '.');
+
+	return className;
+    }
 
     static InputStreamReader getReader(String fname, String encoding,
 				       JarFile jarFile,

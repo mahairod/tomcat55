@@ -123,7 +123,7 @@ class TagFileProcessor {
 	private TagLibraryInfo tagLibInfo;
 
         private String name = null;
-        private String tagclass = null;
+	private String path = null;
         private TagExtraInfo tei = null;
         private String bodycontent = null;
         private String description = null;
@@ -137,10 +137,12 @@ class TagFileProcessor {
 
         public TagFileDirectiveVisitor(Compiler compiler,
 				       TagLibraryInfo tagLibInfo,
-				       String name) {
+				       String name,
+				       String path) {
             err = compiler.getErrorDispatcher();
 	    this.tagLibInfo = tagLibInfo;
 	    this.name = name;
+	    this.path = path;
 	    attributeVector = new Vector();
 	    variableVector = new Vector();
         }
@@ -251,7 +253,7 @@ class TagFileProcessor {
 	    return variableVector;
 	}
 
-        public TagInfo getTagInfo() {
+        public TagInfo getTagInfo() throws JasperException {
 
             if (name == null) {
                 // XXX Get it from tag file name
@@ -261,7 +263,7 @@ class TagFileProcessor {
                 bodycontent = TagInfo.BODY_CONTENT_SCRIPTLESS;
             }
 
-            tagclass = Constants.TAG_FILE_PACKAGE_NAME + "." + name;
+            String tagClassName = JspUtil.getTagHandlerClassName(path, err);
 
             TagVariableInfo[] tagVariableInfos
 		= new TagVariableInfo[variableVector.size()];
@@ -272,7 +274,7 @@ class TagFileProcessor {
 	    attributeVector.copyInto(tagAttributeInfo);
 
             return new TagInfo(name,
-			       tagclass,
+			       tagClassName,
 			       bodycontent,
                                description,
 			       tagLibInfo,
@@ -299,7 +301,7 @@ class TagFileProcessor {
      */
     public static TagInfo parseTagFile(ParserController pc,
                                        String name,
-                                       String tagfile,
+                                       String path,
 				       TagLibraryInfo tagLibInfo)
                 throws JasperException {
 
@@ -307,15 +309,16 @@ class TagFileProcessor {
 
         Node.Nodes page = null;
 	try {
-	    page = pc.parseTagFile(tagfile);
+	    page = pc.parseTagFile(path);
 	} catch (FileNotFoundException e) {
-	    err.jspError("jsp.error.file.not.found", tagfile);
+	    err.jspError("jsp.error.file.not.found", path);
 	} catch (IOException e) {
-	    err.jspError("jsp.error.file.not.found", tagfile);
+	    err.jspError("jsp.error.file.not.found", path);
 	}
 
         TagFileDirectiveVisitor tagFileVisitor
-	    = new TagFileDirectiveVisitor(pc.getCompiler(), tagLibInfo, name);
+	    = new TagFileDirectiveVisitor(pc.getCompiler(), tagLibInfo, name,
+					  path);
         page.visit(tagFileVisitor);
 
 	/*
@@ -330,7 +333,7 @@ class TagFileProcessor {
 		TagVariableInfo varInfo = (TagVariableInfo) varsIter.next();
 		if (attrInfo.getName().equals(varInfo.getNameGiven())) {
 		    err.jspError("jsp.error.tagfile.var_name_given_equals_attr_name",
-				 tagfile, attrInfo.getName());
+				 path, attrInfo.getName());
 		}
 	    }
 	}
@@ -362,7 +365,7 @@ class TagFileProcessor {
 	        rctxt.addWrapper(tagFilePath,wrapper);
 	    }
 
-	    Class tagClass;
+	    Class tagClazz;
 	    int tripCount = wrapper.incTripCount();
 	    try {
 	        if (tripCount > 0) {
@@ -378,11 +381,11 @@ class TagFileProcessor {
                                             tagInfo,
                                             ctxt.getRuntimeContext(),
                                             ctxt.getTagFileJars());
-	            tagClass = tempWrapper.loadTagFilePrototype();
+	            tagClazz = tempWrapper.loadTagFilePrototype();
 		    tempVector.add(
 			tempWrapper.getJspEngineContext().getCompiler());
 	        } else {
-	            tagClass = wrapper.loadTagFile();
+	            tagClazz = wrapper.loadTagFile();
 	        }
 	    } finally {
 	        wrapper.decTripCount();
@@ -399,7 +402,7 @@ class TagFileProcessor {
 		}
 	    }
 
-	    return tagClass;
+	    return tagClazz;
 	}
     }
 

@@ -2830,10 +2830,11 @@ class Generator {
 
 	// Generate package declaration
 	String className = tagInfo.getTagClassName();
-	if (className.indexOf('.') != -1) {
-	    String pkgName
-		= className.substring(0, className.lastIndexOf("."));
-            genPreamblePackage( pkgName );
+	int lastIndex = className.lastIndexOf('.');
+	if (lastIndex != -1) {
+	    String pkgName = className.substring(0, lastIndex);
+            genPreamblePackage(pkgName);
+	    className = className.substring(lastIndex + 1);
 	}
 
 	// Generate imports
@@ -2841,7 +2842,7 @@ class Generator {
 
 	// Generate class declaration
 	out.printin("public final class ");
-	out.println(tagInfo.getTagName());
+	out.println(className);
 	out.printil("    extends javax.servlet.jsp.tagext.SimpleTagSupport");
 /* Supress until we also implement resolveFunction()
 	out.printil("    implements "javax.servlet.jsp.el.FunctionMapper, ");

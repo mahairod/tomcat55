@@ -158,8 +158,7 @@ public class Constants {
     /**
      * The default package name for tag handlers generated from tag files
      */
-    public static final String TAG_FILE_PACKAGE_NAME
-	= "org.apache.jsp.tagfile";
+    public static final String TAG_FILE_PACKAGE_NAME = "org.apache.jsp.tag";
 
     /**
      * Servlet context and request attributes that the JSP engine

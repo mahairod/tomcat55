@@ -373,7 +373,7 @@ public class Compiler {
                 javac.execute();
             }
         } catch (BuildException e) {
-            log.error( "Javac execption ", e);
+            log.error( "Javac exception ", e);
             success = false;
         }
 

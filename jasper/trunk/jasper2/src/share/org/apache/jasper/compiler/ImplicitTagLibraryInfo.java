@@ -110,9 +110,8 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	
 	// Determine the value of the <short-name> subelement of the
 	// "imaginary" <taglib> element
-	if (tagdir.equals(WEB_INF_TAGS) || 
-            tagdir.equals( WEB_INF_TAGS + "/" ) ) 
-        {
+	if (tagdir.equals(WEB_INF_TAGS)
+	        || tagdir.equals( WEB_INF_TAGS + "/")) {
 	    shortname = TAGS_SHORTNAME;
 	} else {
 	    shortname = tagdir.substring(WEB_INF_TAGS.length());

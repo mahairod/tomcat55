@@ -196,8 +196,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 		pageInfo.addDependant(location[0]);
 	    }
 	} else {
-	    // Location points to a jar file
-	    // tag library in jar file
+	    // Tag library is packaged in JAR file
 	    JarFile jarFile = null;
 	    ZipEntry jarEntry = null;
 	    InputStream stream = null;
@@ -439,12 +438,18 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 
         path = path.replace('\\', '/');
 	if (!path.startsWith("/")) {
-	    // relative to uri of TLD file
+	    // Tag file path is relative to uri of TLD file
             path = uri.substring(0, uri.lastIndexOf("/") + 1) + path;
+	    try {
+		path = new File(path).getCanonicalPath();
+	    } catch (IOException ioe) {
+		throw new JasperException(ioe);
+	    }
 	} else if (path.startsWith("/META-INF/tags")) {
 	    // Tag file packaged in JAR
 	    ctxt.getTagFileJars().put(path, jarFile);
 	}
+
 	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
 							name, path,
 							this);

@@ -92,10 +92,10 @@ public class JasperLoader extends URLClassLoader {
     private SecurityManager securityManager;
     private PrivilegedLoadClass privLoadClass;
 
-    public JasperLoader(URL [] urls, String className, ClassLoader parent,
+    public JasperLoader(URL[] urls, String className, ClassLoader parent,
 			PermissionCollection permissionCollection,
 			CodeSource codeSource) {
-	super(urls,parent);
+	super(urls, parent);
 	this.permissionCollection = permissionCollection;
 	this.codeSource = codeSource;
 	this.className = className;

@@ -435,12 +435,14 @@ public final class EmbededServletOptions implements Options {
         if (classpath != null)
             this.classpath = classpath;
 
+	/*
+	 * scratchdir
+	 */
         String dir = config.getInitParameter("scratchdir"); 
-
-        if (dir != null)
+        if (dir != null) {
             scratchDir = new File(dir);
-        else {
-            // First we try the Servlet 2.2 javax.servlet.context.tempdir property
+        } else {
+            // First try the Servlet 2.2 javax.servlet.context.tempdir property
             scratchDir = (File) context.getAttribute(Constants.TMP_DIR);
             if (scratchDir == null) {
                 // Not running in a Servlet 2.2 container.
@@ -449,8 +451,7 @@ public final class EmbededServletOptions implements Options {
                 if (dir != null)
                     scratchDir = new File(dir);
             }
-        }
-                
+        }      
         if (this.scratchDir == null) {
             Constants.message("jsp.error.no.scratch.dir", Logger.FATAL);
             return;

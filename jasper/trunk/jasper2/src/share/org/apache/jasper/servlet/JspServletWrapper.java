@@ -60,6 +60,7 @@
 package org.apache.jasper.servlet;
 
 import java.io.IOException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
 import java.net.URL;
@@ -83,6 +84,7 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.compiler.JspUtil;
 import org.apache.jasper.runtime.JspSourceDependent;
 import org.apache.jasper.logging.Logger;
 
@@ -152,18 +154,8 @@ public class JspServletWrapper {
         ctxt = new JspCompilationContext(jspUri, tagInfo, options,
 					 servletContext, this, rctxt,
 					 tagFileJars);
-
-	// Store tag handler .java and .class files in standard location
-	// (/tagfiles/org/apache/jsp/), regardless of the original tag file
-	// path
-	String standard = null;
-	if (tagFilePath.indexOf('/') != -1) {
-	    standard = "/tagfiles/org/apache/jsp/tagfile/"
-		+ tagFilePath.substring(tagFilePath.lastIndexOf("/") + 1);
-	} else {
-	    standard = "/tagfiles/org/apache/jsp/tagfile/" + tagFilePath;
-	}
-        ctxt.createOutdir(standard);
+        ctxt.createOutdir("/tags/"
+			  + tagInfo.getTagClassName().replace('.', File.separatorChar));
     }
 
     public JspCompilationContext getJspEngineContext() {
