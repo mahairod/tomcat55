@@ -64,6 +64,7 @@ package org.apache.catalina.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +109,8 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
+import org.apache.catalina.Server;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
@@ -3903,16 +3906,43 @@ public class StandardContext
 
         // Set config file name
         File configBase = getConfigBase();
-        if ((getConfigFile() == null) && (configBase != null)) {
-            String name = getName();
-            if (name.equals("")) {
-                name = "ROOT";
+        if (configBase != null) {
+            if (getConfigFile() == null) {
+                File file = new File(configBase, getDefaultConfigFile());
+                setConfigFile(file.getPath());
+                // If the docbase is outside the appBase, we should save our
+                // config
+                try {
+                    File appBaseFile = new File(getAppBase());
+                    if (!appBaseFile.isAbsolute()) {
+                        appBaseFile = new File(engineBase(), getAppBase());
+                    }
+                    String appBase = appBaseFile.getCanonicalPath();
+                    String basePath = 
+                        (new File(getBasePath())).getCanonicalPath();
+                    if (!basePath.startsWith(appBase)) {
+                        Server server = ServerFactory.getServer();
+                        ((StandardServer) server).storeContext(this);
+                    }
+                } catch (Exception e) {
+                    log.warn("Error storing config file", e);
+                }
+            } else {
+                try {
+                    String canConfigFile = 
+                        (new File(getConfigFile())).getCanonicalPath();
+                    if (!canConfigFile.startsWith
+                        (configBase.getCanonicalPath())) {
+                        File file = 
+                            new File(configBase, getDefaultConfigFile());
+                        if (copy(new File(canConfigFile), file)) {
+                            setConfigFile(file.getPath());
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("Error setting config file", e);
+                }
             }
-            if (name.startsWith("/")) {
-                name = name.substring(1);
-            }
-            File file = new File(configBase, name.replace('/', '_') + ".xml");
-            setConfigFile(file.getPath());
         }
 
         // Add missing components as necessary
@@ -4558,20 +4588,20 @@ public class StandardContext
                 break;
             container = container.getParent();
         }
-        if (container == null) {
-            docBase = (new File(engineBase(), getDocBase())).getPath();
-        } else {
-            File file = new File(getDocBase());
-            if (!file.isAbsolute()) {
+        File file = new File(getDocBase());
+        if (!file.isAbsolute()) {
+            if (container == null) {
+                docBase = (new File(engineBase(), getDocBase())).getPath();
+            } else {
                 // Use the "appBase" property of this container
                 String appBase = ((Host) container).getAppBase();
                 file = new File(appBase);
                 if (!file.isAbsolute())
                     file = new File(engineBase(), appBase);
                 docBase = (new File(file, getDocBase())).getPath();
-            } else {
-                docBase = file.getPath();
             }
+        } else {
+            docBase = file.getPath();
         }
         return docBase;
     }
@@ -4619,6 +4649,61 @@ public class StandardContext
         }
         configBase.mkdirs();
         return configBase;
+    }
+
+
+    /**
+     * Given a context path, get the config file name.
+     */
+    protected String getDefaultConfigFile() {
+        String basename = null;
+        String path = getPath();
+        if (path.equals("")) {
+            basename = "ROOT";
+        } else {
+            basename = path.substring(1).replace('/', '_');
+        }
+        return (basename + ".xml");
+    }
+
+
+    /**
+     * Copy a file.
+     */
+    private boolean copy(File src, File dest) {
+        FileInputStream is = null;
+        FileOutputStream os = null;
+        try {
+            is = new FileInputStream(src);
+            os = new FileOutputStream(dest);
+            byte[] buf = new byte[4096];
+            while (true) {
+                int len = is.read(buf);
+                if (len < 0)
+                    break;
+                os.write(buf, 0, len);
+            }
+            is.close();
+            os.close();
+        } catch (IOException e) {
+            return false;
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+            try {
+                if (os != null) {
+                    os.close();
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        return true;
     }
 
 
