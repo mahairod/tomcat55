@@ -273,11 +273,11 @@ public class PluginGenerator
 	writer.indent ();
 	writer.print ("out.print (\"<EMBED type=\\\"");
 	if (type.equals ("applet")) 
-	    writer.print ("application/x-java-applet;");
+	    writer.print ("application/x-java-applet");
 	else if (type.equals ("bean"))
-	    writer.print ("application/x-java-bean;");
+	    writer.print ("application/x-java-bean");
 	if (jreversion != null) {
-	    writer.print ("version=");
+	    writer.print (";version=");
 	    writer.print (jreversion);
 	}
 	writer.print ("\\\" ");
