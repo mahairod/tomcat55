@@ -895,13 +895,21 @@ class Validator {
 	public void visit(Node.JspElement n) throws JasperException {
 
 	    Attributes attrs = n.getAttributes();
-            Node.Nodes namedAttrs = n.getNamedAttributeNodes();
 	    int xmlAttrLen = attrs.getLength();
-	    Node.JspAttribute[] jspAttrs = new Node.JspAttribute[xmlAttrLen-1
-								+ namedAttrs.size()];
+	    if (xmlAttrLen == 0) {
+		err.jspError(n, "jsp.error.jspelement.missing.name");
+	    }
+            Node.Nodes namedAttrs = n.getNamedAttributeNodes();
+
+	    // XML-style 'name' attribute, which is mandatory, must not be
+	    // included in JspAttribute array
+	    int jspAttrSize = xmlAttrLen-1 + namedAttrs.size();
+
+	    Node.JspAttribute[] jspAttrs = new Node.JspAttribute[jspAttrSize];
+	    int jspAttrIndex = 0;
 
 	    // Process XML-style attributes
-	    for (int i=0; i<xmlAttrLen && i<jspAttrs.length; i++) {
+	    for (int i=0; i<xmlAttrLen; i++) {
 		if ("name".equals(attrs.getLocalName(i))) {
 		    n.setNameAttribute(getJspAttribute(attrs.getQName(i),
 						       attrs.getURI(i),
@@ -912,14 +920,17 @@ class Validator {
 						       n,
 						       false));
 		} else {
-		    jspAttrs[i] = getJspAttribute(attrs.getQName(i),
-						  attrs.getURI(i),
-						  attrs.getLocalName(i),
-						  attrs.getValue(i),
-						  java.lang.Object.class,
-						  null,
-						  n,
-						  false);
+		    if (jspAttrIndex<jspAttrSize) {
+			jspAttrs[jspAttrIndex++]
+			    = getJspAttribute(attrs.getQName(i),
+					      attrs.getURI(i),
+					      attrs.getLocalName(i),
+					      attrs.getValue(i),
+					      java.lang.Object.class,
+					      null,
+					      n,
+					      false);
+		    }
 		}
 	    }
 	    if (n.getNameAttribute() == null) {
@@ -929,7 +940,7 @@ class Validator {
 	    // Process named attributes
 	    for (int i=0; i<namedAttrs.size(); i++) {
                 Node.NamedAttribute na = (Node.NamedAttribute) namedAttrs.getNode(i);
-		jspAttrs[xmlAttrLen-1 + i] = new Node.JspAttribute(na, false);
+		jspAttrs[jspAttrIndex++] = new Node.JspAttribute(na, false);
 	    }
 
 	    n.setJspAttributes(jspAttrs);
