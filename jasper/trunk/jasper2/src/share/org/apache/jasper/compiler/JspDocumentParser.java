@@ -747,7 +747,13 @@ class JspDocumentParser extends DefaultHandler
     }
 
     /*
-     * XXX
+     * Gets the tag library associated with the given uri namespace to which
+     * the given prefix is bound.
+     *
+     * @param uri The uri namespace 
+     * @param prefix The prefix that is bound to the uri namespace
+     *
+     * @return The tag library associated with the given uri namespace
      */
     private TagLibraryInfo getTaglibInfo(String uri, String prefix)
                 throws JasperException {
