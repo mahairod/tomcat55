@@ -17,9 +17,7 @@
 package org.apache.catalina.mbeans;
 
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Hashtable;
 
@@ -1540,28 +1538,6 @@ public class MBeanUtils {
             registry.loadDescriptors("org.apache.coyote.tomcat5", cl);
         }
         return (registry);
-
-    }
-
-
-    /**
-     * Load an MBean descriptor resource.
-     */
-    public synchronized static void loadMBeanDescriptors(String resource) {
-
-        try {
-            URL url = ServerLifecycleListener.class.getResource(resource);
-            if (url != null) {
-                InputStream stream = url.openStream();
-                Registry.loadRegistry(stream);
-                stream.close();
-            } else {
-                // XXX: i18n
-                System.out.println("MBean descriptors not found:" + resource);
-            }
-        } catch (Throwable t) {
-            t.printStackTrace(System.out);
-        }
 
     }
 
