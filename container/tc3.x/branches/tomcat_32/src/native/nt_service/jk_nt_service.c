@@ -737,6 +737,10 @@ static int start_tomcat(const char *name, HANDLE *hTomcat)
                                                             OPEN_ALWAYS,
                                                             FILE_ATTRIBUTE_NORMAL,
                                                             NULL);
+                        SetFilePointer(startupInfo.hStdOutput,
+                                       0,
+                                       NULL,
+                                       FILE_END);
                         startupInfo.hStdError = CreateFile(data.stderr_file,
                                                            GENERIC_WRITE,
                                                            FILE_SHARE_READ,
@@ -744,6 +748,10 @@ static int start_tomcat(const char *name, HANDLE *hTomcat)
                                                            OPEN_ALWAYS,
                                                            FILE_ATTRIBUTE_NORMAL,
                                                            NULL);
+                        SetFilePointer(startupInfo.hStdError,
+                                       0,
+                                       NULL,
+                                       FILE_END);
 
                         memset(&processInformation, 0, sizeof(processInformation));
                         
