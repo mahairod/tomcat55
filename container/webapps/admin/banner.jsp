@@ -20,7 +20,7 @@
       <td align="left" valign="middle">
         <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" alt="Tomcat Web Server Administration Tool" height="120"></div>
       </td>
-      <form method='post' action='/admin/commitChanges.do' target='_self'>
+      <form method='post' action='<%=request.getContextPath()%>/commitChanges.do' target='_self'>
       <td align="right" valign="middle">
         <html:submit>
           <bean:message key="button.commit"/>
@@ -30,7 +30,7 @@
       <td width="1%">
         <div class="table-normal-text" align="left">&nbsp </div>
       </td>
-    <form method='post' action='/admin/logOut.do' target='_top'>
+    <form method='post' action='<%=request.getContextPath()%>/logOut.do' target='_top'>
       <td align="right" valign="middle">
         <html:submit>
           <bean:message key="button.logout"/>

@@ -72,6 +72,9 @@
       <fix>
         <bug>31707</bug>: Broken JavaScript confirmation in HTML manager. (yoavs)
       </fix>
+      <fix>
+        Remove hard-coded admin context path from admin's banner.jsp. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
