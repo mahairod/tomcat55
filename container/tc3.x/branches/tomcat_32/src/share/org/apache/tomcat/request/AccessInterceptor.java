@@ -314,7 +314,7 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	if( ctMethods != null && ctMethods.length > 0 ) {
 	    boolean ok=false;
 	    for( int i=0; i< ctMethods.length; i++ ) {
-		if( method.equals( ctMethods[i] ) ) {
+		if( method.equalsIgnoreCase( ctMethods[i] ) ) {
 		    ok=true;
 		    break;
 		}

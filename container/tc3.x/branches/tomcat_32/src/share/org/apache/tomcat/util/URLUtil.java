@@ -205,4 +205,91 @@ public class URLUtil {
 
         return hasEscape;
     }
+
+    // Based on Apache's path normalization code
+    public static String normalizeURI(String URI)
+    {
+        int start=0;
+        int end=URI.length();
+        char buff[] = new char[URI.length()];
+        URI.getChars(0, URI.length(), buff, 0);
+        int i=0;
+        int j=0;
+    
+        // remove //
+        for( i=start, j=start; i<end-1; i++ ) {
+            if( buff[i]== '/' && buff[i+1]=='/' ) {
+                while( buff[i+1]=='/' ) i++;
+            }
+            buff[j++]=buff[i];
+        }
+        if( i!=j ) {
+            buff[j++]=buff[end-1];
+            end=j;
+        }
+    
+        // remove /./
+        for( i=start, j=start; i<end-1; i++ ) {
+            if( buff[i]== '.' && buff[i+1]=='/' &&
+                ( i==0 || buff[i-1]=='/' )) {
+                // "/./"
+                i+=1;
+                if( i==end-1 ) j--; // cut the ending /
+            } else {
+                buff[j++]=buff[i];
+            }
+        }
+        if( i!=j ) {
+            buff[j++]=buff[end-1];
+            end=j;
+        }
+    
+        // remove  /. at the end
+        j=end;
+        if( end==start+1 && buff[start]== '.' )
+            end--;
+        else if( end > start+1 && buff[ end-1 ] == '.' &&
+                 buff[end-2]=='/' ) {
+            end=end-2;
+        }
+    
+        // remove /../
+        for( i=start, j=start; i<end-2; i++ ) {
+            if( buff[i] == '.' &&
+                buff[i+1] == '.' &&
+                buff[i+2]== '/' &&
+                ( i==0 || buff[ i-1 ] == '/' ) ) {
+    
+                i+=1;
+                // look for the previous /
+                j=j-2;
+                while( j>0 && buff[j]!='/' ) {
+                    j--;
+                }
+            } else {
+                buff[j++]=buff[i];
+            }
+        }
+        if( i!=j ) {
+            buff[j++]=buff[end-2];
+            buff[j++]=buff[end-1];
+            end=j;
+        }
+    
+    
+        // remove trailing xx/..
+        j=end;
+        if( end>start + 3 &&
+            buff[end-1]=='.' &&
+            buff[end-2]=='.' &&
+            buff[end-3]=='/' ) {
+            end-=4;
+            while( end>0 &&  buff[end]!='/' )
+                end--; 
+        }
+
+        String result = new String(buff, 0, end);
+        return result;
+    }
+    
 }
