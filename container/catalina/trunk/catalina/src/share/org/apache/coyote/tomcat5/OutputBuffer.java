@@ -68,6 +68,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.coyote.ActionCode;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.C2BConverter;
@@ -321,7 +322,7 @@ public class OutputBuffer extends Writer
             }
         }
 
-        flush();
+        doFlush(false);
         closed = true;
 
         coyoteResponse.finish();
@@ -335,6 +336,17 @@ public class OutputBuffer extends Writer
      * @throws IOException An underlying IOException occurred
      */
     public void flush()
+        throws IOException {
+        doFlush(true);
+    }
+
+
+    /**
+     * Flush bytes or chars contained in the buffer.
+     * 
+     * @throws IOException An underlying IOException occurred
+     */
+    protected void doFlush(boolean realFlush)
         throws IOException {
 
         if (suspended)
@@ -352,6 +364,11 @@ public class OutputBuffer extends Writer
             coyoteResponse.sendHeaders();
         }
         doFlush = false;
+
+        if (realFlush) {
+            coyoteResponse.action(ActionCode.ACTION_CLIENT_FLUSH, 
+                                  coyoteResponse);
+        }
 
     }
 
