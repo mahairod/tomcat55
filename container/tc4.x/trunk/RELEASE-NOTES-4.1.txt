@@ -508,6 +508,11 @@ Catalina Bug Fixes:
          allowLinking will also disable case sensitivity checks (which are
          relatively similar).
 
+[4.1.15] #13364
+         StandardDefaultContext:
+         Properly refresh naming entries defined in the DefaultContext after a
+         reload.
+
 
 ----------------
 Coyote Bug Fixes:
