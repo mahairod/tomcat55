@@ -98,11 +98,17 @@ public class DesirableFilter implements FilenameFilter {
 	    return false;
 	}
 	
+    /* If we are going to ignore CVS might as well ignore 
+     * this one as well...
+     */
+    if (name.equals(".cvsignore")){
+        return false;
+    }
+    
 	// default
 	return true;
     }
 }
-
 
 
 
