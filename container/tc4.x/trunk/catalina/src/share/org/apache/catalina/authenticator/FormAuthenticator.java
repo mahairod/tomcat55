@@ -230,7 +230,7 @@ public final class FormAuthenticator
 
         // Redirect the user to the original request URI (which will cause
         // the original request to be restored)
-        requestURI = savedRequestURI(session);
+        requestURI = savedRequestURL(session);
         if (debug >= 1)
             log("Redirecting to '" + requestURI + "'");
         hres.sendRedirect(hres.encodeRedirectURL(requestURI));
@@ -397,18 +397,23 @@ public final class FormAuthenticator
 
 
     /**
-     * Return the request URI from the saved request.
+     * Return the request URI (with the corresponding query string, if any)
+     * from the saved request so that we can redirect to it.
      *
      * @param session Our current session
      */
-    private String savedRequestURI(Session session) {
+    private String savedRequestURL(Session session) {
 
         SavedRequest saved =
           (SavedRequest) session.getSession().getAttribute(Constants.FORM_KEY);
         if (saved == null)
             return (null);
-        else
-            return (saved.getRequestURI());
+        StringBuffer sb = new StringBuffer(saved.getRequestURI());
+        if (saved.getQueryString() != null) {
+            sb.append('?');
+            sb.append(saved.getQueryString());
+        }
+        return (sb.toString());
 
     }
 
