@@ -51,26 +51,48 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
+
+# ----- Cygwin Unix Paths Setup -----------------------------------------------
+
+# Cygwin support.  $cygwin _must_ be set to either true or false.
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+  *) cygwin=false ;;
+esac
+ 
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+  [ -n "$JASPER_HOME" ] &&
+    JASPER_HOME=`cygpath --unix "$JASPER_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+    JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+fi
+
+
 # ----- Set Up The System Classpath -------------------------------------------
 
-# FIXME CP=$JASPER_HOME/dummy
-# FIXME below
 CP=$CP:$JASPER_HOME/classes
 for i in $JASPER_HOME/lib/*.jar $JASPER_HOME/jasper/*.jar ; do
   CP=$CP:$i
 CP=$CP:$JASPER_HOME/common/lib/servlet.jar
 done
 
+
+# ----- Cygwin Windows Paths Setup --------------------------------------------
+
 # convert the existing path to windows
-if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+if $cygwin ; then
    CP=`cygpath --path --windows "$CP"`
    JASPER_HOME=`cygpath --path --windows "$JASPER_HOME"`
+   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
 fi
-
-echo Using CLASSPATH: $CP
 
 
 # ----- Execute The Requested Command -----------------------------------------
+
+echo "Using CLASSPATH:   $CP"
+echo "Using JASPER_HOME: $JASPER_HOME"
+echo "Using JAVA_HOME:   $JAVA_HOME"
 
 if [ "$1" = "jspc" ] ; then
 

@@ -62,6 +62,24 @@ if [ -z "$JAVA_HOME" ] ; then
   exit 1
 fi
 
+
+# ----- Cygwin Unix Paths Setup -----------------------------------------------
+
+# Cygwin support.  $cygwin _must_ be set to either true or false.
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+  *) cygwin=false ;;
+esac
+ 
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+  [ -n "$CATALINA_HOME" ] &&
+    CATALINA_HOME=`cygpath --unix "$CATALINA_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+    JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+fi
+
+
 # ----- Set Up The System Classpath -------------------------------------------
 
 CP="$CATALINA_HOME/bin/bootstrap.jar"
@@ -70,23 +88,30 @@ if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
   CP=$CP:"$JAVA_HOME/lib/tools.jar"
 fi
 
+
+# ----- Cygwin Windows Paths Setup --------------------------------------------
+
 # convert the existing path to windows
-if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+if $cygwin ; then
    CP=`cygpath --path --windows "$CP"`
    CATALINA_HOME=`cygpath --path --windows "$CATALINA_HOME"`
+   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
 fi
 
-# copy to CATALINA_BASE if necessary
+
+# ----- Set Up CATALINA_BASE If Necessary -------------------------------------
+
 if [ -z "$CATALINA_BASE" ] ; then
   CATALINA_BASE=$CATALINA_HOME
 fi
 
-echo "Using CLASSPATH: $CP"
-echo "Using CATALINA_BASE: $CATALINA_BASE"
-echo "Using CATALINA_HOME: $CATALINA_HOME"
-
 
 # ----- Execute The Requested Command -----------------------------------------
+
+echo "Using CLASSPATH:     $CP"
+echo "Using CATALINA_BASE: $CATALINA_BASE"
+echo "Using CATALINA_HOME: $CATALINA_HOME"
+echo "Using JAVA_HOME:     $JAVA_HOME"
 
 if [ "$1" = "jpda" ] ; then
   CATALINA_OPTS="${CATALINA_OPTS} ${JPDA_OPTS}"
