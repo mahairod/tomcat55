@@ -1,0 +1,673 @@
+/*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
+ * ====================================================================
+ *
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer. 
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution, if
+ *    any, must include the following acknowlegement:  
+ *       "This product includes software developed by the 
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowlegement may appear in the software itself,
+ *    if and wherever such third-party acknowlegements normally appear.
+ *
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
+ *    Foundation" must not be used to endorse or promote products derived
+ *    from this software without prior written permission. For written 
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache"
+ *    nor may "Apache" appear in their names without prior written
+ *    permission of the Apache Group.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ * [Additional notices, if required by prior licensing conditions]
+ *
+ */ 
+
+
+package org.apache.catalina.authenticator;
+
+
+import java.io.IOException;
+import java.security.Principal;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.catalina.Authenticator;
+import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.HttpRequest;
+import org.apache.catalina.HttpResponse;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Realm;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
+import org.apache.catalina.Session;
+import org.apache.catalina.Valve;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.StringManager;
+import org.apache.catalina.valves.ValveBase;
+
+
+/**
+ * Basic implementation of the <b>Valve</b> interface that enforces the
+ * <code>&lt;security-constraint&gt;</code> elements in the web application
+ * deployment descriptor.  This functionality is implemented as a Valve
+ * so that it can be ommitted in environments that do not require these
+ * features.  Individual implementations of each supported authentication
+ * method can subclass this base class as required.
+ * <p>
+ * <b>USAGE CONSTRAINT</b>:  When this class is utilized, the Context to
+ * which it is attached (or a parent Container in a hierarchy) must have an
+ * associated Realm that can be used for authenticating users and enumerating
+ * the roles to which they have been assigned.
+ * <p>
+ * <b>USAGE CONSTRAINT</b>:  This Valve is only useful when processing HTTP
+ * requests.  Requests of any other type will simply be passed through.
+ *
+ * @author Craig R. McClanahan
+ * @version $Revision$ $Date$
+ */
+
+
+public abstract class AuthenticatorBase
+    extends ValveBase
+    implements Authenticator, Lifecycle {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Should we cache authenticated Principals if the request is part of
+     * an HTTP session?
+     */
+    protected boolean cache = true;
+
+
+    /**
+     * The Context to which this Valve is attached.
+     */
+    protected Context context = null;
+
+
+    /**
+     * The debugging detail level for this component.
+     */
+    protected int debug = 0;
+
+
+    /**
+     * Descriptive information about this implementation.
+     */
+    protected static final String info =
+	"org.apache.catalina.authenticator.AuthenticatorBase/1.0";
+
+
+    /**
+     * The lifecycle event support for this component.
+     */
+    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
+
+
+    /**
+     * The string manager for this package.
+     */
+    protected static final StringManager sm =
+	StringManager.getManager(Constants.Package);
+
+
+    /**
+     * Has this component been started?
+     */
+    protected boolean started = false;
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the cache authenticated Principals flag.
+     */
+    public boolean getCache() {
+
+	return (this.cache);
+
+    }
+
+
+    /**
+     * Set the cache authenticated Principals flag.
+     *
+     * @param cache The new cache flag
+     */
+    public void setCache(boolean cache) {
+
+	this.cache = cache;
+
+    }
+
+
+    /**
+     * Return the Container to which this Valve is attached.
+     */
+    public Container getContainer() {
+
+	return (this.context);
+
+    }
+
+
+    /**
+     * Set the Container to which this Valve is attached.
+     *
+     * @param container The container to which we are attached
+     */
+    public void setContainer(Container container) {
+
+	if (!(container instanceof Context))
+	    throw new IllegalArgumentException
+		(sm.getString("authenticator.notContext"));
+
+	super.setContainer(container);
+	this.context = (Context) container;
+
+    }
+
+
+    /**
+     * Return the debugging detail level for this component.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level for this component.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
+
+    }
+
+
+    /**
+     * Return descriptive information about this Valve implementation.
+     */
+    public String getInfo() {
+
+	return (this.info);
+
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Enforce the security restrictions in the web application deployment
+     * descriptor of our associated Context.
+     *
+     * @param request Request to be processed
+     * @param response Response to be processed
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if thrown by a processing element
+     */
+    public void invoke(Request request, Response response)
+	throws IOException, ServletException {
+
+	// If this is not an HTTP request, do nothing
+	if (!(request instanceof HttpRequest) ||
+            !(response instanceof HttpResponse)) {
+	    invokeNext(request, response);
+	    return;
+	}
+	if (!(request.getRequest() instanceof HttpServletRequest) ||
+	    !(response.getResponse() instanceof HttpServletResponse)) {
+	    invokeNext(request, response);
+	    return;
+	}
+	HttpRequest hrequest = (HttpRequest) request;
+	HttpResponse hresponse = (HttpResponse) response;
+	if (debug >= 1)
+	    log("Security checking request " +
+		((HttpServletRequest) request.getRequest()).getMethod() + " " +
+		((HttpServletRequest) request.getRequest()).getRequestURI());
+	LoginConfig config = context.getLoginConfig();
+
+	// Special handling for form-based logins to deal with the case
+	// where the login form (and therefore the "j_security_check" URI
+	// to which it submits) might be outside the secured area
+	String contextPath = context.getPath();
+	String requestURI =
+	    ((HttpServletRequest) request.getRequest()).getRequestURI();
+	if (requestURI.startsWith(contextPath) &&
+	    requestURI.endsWith(Constants.FORM_ACTION)) {
+	    if (!authenticate(hrequest, hresponse, config)) {
+		if (debug >= 1)
+		    log(" Failed authenticate() test");
+		return;
+	    }
+	}
+
+	// Is this request URI subject to a security constraint?
+	SecurityConstraint constraint = findConstraint(hrequest);
+	if ((constraint == null) /* &&
+	    (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
+	    if (debug >= 1)
+	        log(" Not subject to any constraint");
+	    invokeNext(request, response);
+	    return;
+	}
+	if ((debug >= 1) && (constraint != null))
+	    log(" Subject to constraint " + constraint);
+
+	// Enforce any user data constraint for this security constraint
+	if (!checkUserData(hrequest, hresponse, constraint)) {
+	    if (debug >= 1)
+	        log(" Failed checkUserData() test");
+	    return;
+	}
+
+	// Authenticate based upon the specified login configuration
+	if (!authenticate(hrequest, hresponse, config)) {
+	    if (debug >= 1)
+	        log(" Failed authenticate() test");
+	    return;
+	}
+
+	// Perform access control based on the specified role(s)
+	if (!accessControl(hrequest, hresponse, constraint)) {
+	    if (debug >= 1)
+	        log(" Failed accessControl() test");
+	    return;
+	}
+
+	// Any and all specified constraints have been satisfied
+	if (debug >= 1)
+	    log(" Successfully passed all security constraints");
+	invokeNext(request, response);
+
+    }
+
+
+    // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Perform access control based on the specified authorization constraint.
+     * Return <code>true</code> if this constraint is satisfied and processing
+     * should continue, or <code>false</code> otherwise.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint we are enforcing
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected boolean accessControl(HttpRequest request,
+				    HttpResponse response,
+				    SecurityConstraint constraint)
+	throws IOException {
+
+	if (constraint == null)
+	    return (true);
+
+	// Specifically allow access to the form login and form error pages
+	LoginConfig config = context.getLoginConfig();
+	if ((config != null) &&
+	    (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
+	    String requestURI =
+		((HttpServletRequest) request.getRequest()).getRequestURI();
+	    String loginPage = context.getPath() + config.getLoginPage();
+	    if (loginPage.equals(requestURI)) {
+		if (debug >= 1)
+		    log(" Allow access to login page " + loginPage);
+		return (true);
+	    }
+	    String errorPage = context.getPath() + config.getErrorPage();
+	    if (errorPage.equals(requestURI)) {
+		if (debug >= 1)
+		    log(" Allow access to error page " + errorPage);
+		return (true);
+	    }
+	    if (requestURI.endsWith(Constants.FORM_ACTION)) {
+		if (debug >= 1)
+		    log(" Allow access to username/password submission");
+		return (true);
+	    }
+	}
+
+	// Which user principal have we already authenticated?
+	Principal principal =
+	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+	if (principal == null) {
+	    ((HttpServletResponse) response.getResponse()).sendError
+		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+		 sm.getString("authenticator.notAuthenticated"));
+	    return (false);
+	}
+
+	// Check each role included in this constraint
+	Realm realm = context.getRealm();
+	String roles[] = constraint.findAuthRoles();
+	if (roles == null)
+	    roles = new String[0];
+	if (roles.length == 0)
+	    return (true);	// Authenticated user is sufficient
+	for (int i = 0; i < roles.length; i++) {
+	    if (realm.hasRole(principal, roles[i]))
+		return (true);
+	}
+
+	// Return a "Forbidden" message denying access to this resource
+	((HttpServletResponse) response.getResponse()).sendError
+	    (HttpServletResponse.SC_FORBIDDEN,
+	     sm.getString("authenticator.forbidden"));
+	return (false);
+
+    }
+
+
+    /**
+     * Authenticate the user making this request, based on the specified
+     * login configuration.  Return <code>true</code> if any specified
+     * constraint has been satisfied, or <code>false</code> if we have
+     * created a response challenge already.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param login Login configuration describing how authentication
+     *              should be performed
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected abstract boolean authenticate(HttpRequest request,
+					    HttpResponse response,
+					    LoginConfig config)
+	throws IOException;
+
+
+    /**
+     * Enforce any user data constraint required by the security constraint
+     * guarding this request URI.  Return <code>true</code> if this constraint
+     * was not violated and processing should continue, or <code>false</code>
+     * if we have created a response already.
+     *
+     * @param request Request we are processing
+     * @param response Response we are creating
+     * @param constraint Security constraint being checked
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    protected boolean checkUserData(HttpRequest request,
+				    HttpResponse response,
+				    SecurityConstraint constraint)
+	throws IOException {
+
+	// Is there a relevant user data constraint?
+	if (constraint == null)
+	    return (true);
+	String userConstraint = constraint.getUserConstraint();
+	if (userConstraint == null)
+	    return (true);
+	if (userConstraint.equals(Constants.NONE_TRANSPORT))
+	    return (true);
+
+	// Validate the request against the user data constraint
+	if (!request.getRequest().isSecure()) {
+	    ((HttpServletResponse) response.getResponse()).sendError
+		(HttpServletResponse.SC_BAD_REQUEST,
+		 sm.getString("authenticator.userDataConstraint"));
+	    return (false);
+	}
+	return (true);
+
+    }
+
+
+    /**
+     * Return the SecurityConstraint configured to guard the request URI for
+     * this request, or <code>null</code> if there is no such constraint.
+     * <b>FIXME - Need to do length-first matching.</b>
+     *
+     * @param request Request we are processing
+     */
+    protected SecurityConstraint findConstraint(HttpRequest request) {
+
+	// Are there any defined security constraints?
+	SecurityConstraint constraints[] = context.findConstraints();
+	if ((constraints == null) || (constraints.length == 0)) {
+	    if (debug >= 2)
+		log("  No applicable constraints defined");
+	    return (null);
+	}
+
+	// Check each defined security constraint
+	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+	String uri = hreq.getRequestURI();
+	String contextPath = hreq.getContextPath();
+	if (contextPath.length() > 0)
+	    uri = uri.substring(contextPath.length());
+	String method = hreq.getMethod();
+	for (int i = 0; i < constraints.length; i++) {
+	    if (debug >= 2)
+		log("  Checking constraint '" + constraints[i] +
+		    "' against " + method + " " + uri + " --> " +
+		    constraints[i].included(uri, method));
+	    if (constraints[i].included(uri, method))
+		return (constraints[i]);
+	}
+
+	// No applicable security constraint was found
+	if (debug >= 2)
+	    log("  No applicable constraint located");
+	return (null);
+
+    }
+
+
+    /**
+     * Return the internal Session that is associated with this HttpRequest,
+     * or <code>null</code> if there is no such Session.
+     *
+     * @param request The HttpRequest we are processing
+     */
+    protected Session getSession(HttpRequest request) {
+
+	return (getSession(request, false));
+
+    }
+
+
+    /**
+     * Return the internal Session that is associated with this HttpRequest,
+     * possibly creating a new one if necessary, or <code>null</code> if
+     * there is no such session and we did not create one.
+     *
+     * @param request The HttpRequest we are processing
+     * @param create Should we create a session if needed?
+     */
+    protected Session getSession(HttpRequest request, boolean create) {
+
+	HttpServletRequest hreq =
+	    (HttpServletRequest) request.getRequest();
+	HttpSession hses = hreq.getSession(create);
+	if (hses == null)
+	    return (null);
+	Manager manager = context.getManager();
+	if (manager == null)
+	    return (null);
+	else {
+	    try {
+		return (manager.findSession(hses.getId()));
+	    } catch (IOException e) {
+		return (null);
+	    }
+	}
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     */
+    protected void log(String message) {
+
+	Logger logger = context.getLogger();
+	if (logger != null)
+	    logger.log("Authenticator[" + context.getPath() + "]: " +
+		       message);
+	else
+	    System.out.println("Authenticator[" + context.getPath() +
+			       "]: " + message);
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any).
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    protected void log(String message, Throwable throwable) {
+
+	Logger logger = context.getLogger();
+	if (logger != null)
+	    logger.log("Authenticator[" + context.getPath() + "]: " +
+		       message, throwable);
+	else {
+	    System.out.println("Authenticator[" + context.getPath() +
+                               "]: " + message);
+	    throwable.printStackTrace(System.out);
+	}
+
+    }
+
+
+    // ------------------------------------------------------ Lifecycle Methods
+
+
+    /**
+     * Add a lifecycle event listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+
+	lifecycle.addLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Remove a lifecycle event listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removeLifecycleListener(LifecycleListener listener) {
+
+	lifecycle.removeLifecycleListener(listener);
+
+    }
+
+
+    /**
+     * Prepare for the beginning of active use of the public methods of this
+     * component.  This method should be called after <code>configure()</code>,
+     * and before any of the public methods of the component are utilized.
+     *
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents this component from being used
+     */
+    public void start() throws LifecycleException {
+
+	// Validate and update our current component state
+	if (started)
+	    throw new LifecycleException
+		(sm.getString("authenticator.alreadyStarted"));
+	lifecycle.fireLifecycleEvent(START_EVENT, null);
+	started = true;
+
+    }
+
+
+    /**
+     * Gracefully terminate the active use of the public methods of this
+     * component.  This method should be the last one called on a given
+     * instance of this component.
+     *
+     * @exception IllegalStateException if this component has not been started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public void stop() throws LifecycleException {
+
+	// Validate and update our current component state
+	if (!started)
+	    throw new LifecycleException
+		(sm.getString("authenticator.notStarted"));
+	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+	started = false;
+
+    }
+
+
+}
