@@ -645,8 +645,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         try {
             out.clear();
         } catch (IOException ex) {
-            throw new IllegalStateException(
-                    Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
+            IllegalStateException ise =
+                new IllegalStateException(Localizer.getMessage(
+                            "jsp.error.attempt_to_clear_flushed_buffer"));
+            ise.initCause(ex);
+            throw ise;
         }
 
         // Make sure that the response object is not the wrapper for include

@@ -528,7 +528,7 @@ public class JspRuntimeLibrary {
 		method.invoke (bean, new Object[] {tmpval});
 	    }
 	} catch (Exception ex) {
-	    throw new JasperException ("error in invoking method");
+            throw new JasperException ("error in invoking method", ex);
 	}
     }
 

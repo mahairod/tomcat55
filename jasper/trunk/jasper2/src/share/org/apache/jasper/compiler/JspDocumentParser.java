@@ -1068,10 +1068,10 @@ class JspDocumentParser
                     ctxt.getClassLoader().loadClass(handlerClassName);
             } catch (Exception e) {
                 throw new SAXException(
-                    Localizer.getMessage(
-                        "jsp.error.loadclass.taghandler",
-                        handlerClassName,
-                        qName));
+                    Localizer.getMessage("jsp.error.loadclass.taghandler",
+                                         handlerClassName,
+                                         qName),
+                    e);
             }
         }
 
