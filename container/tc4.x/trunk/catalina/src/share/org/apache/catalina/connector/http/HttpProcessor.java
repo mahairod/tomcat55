@@ -66,6 +66,7 @@ package org.apache.catalina.connector.http;
 
 
 import java.io.BufferedInputStream;
+import java.io.EOFException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -607,7 +608,7 @@ final class HttpProcessor
 	// Parse the incoming request line
 	String line = read(input);
 	if (line == null)
-	    throw new ServletException
+	    throw new EOFException
 		(sm.getString("httpProcessor.parseRequest.read"));
 	parser.setString(line);
 
@@ -775,6 +776,9 @@ final class HttpProcessor
                         ((HttpResponseImpl) response).setAllowChunking(true);
                     }
                 }
+            } catch (EOFException e) {
+                //                log("process.parse:  EOFException:  " + e);
+                ok = false;
             } catch (Exception e) {
                 try {
                     log("process.parse", e);
