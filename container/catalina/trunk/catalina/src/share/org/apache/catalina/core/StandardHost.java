@@ -866,6 +866,40 @@ public class StandardHost
 
 
     /**
+     * Installs a new web application from the web application archive at the
+     * specified URL, which must contain a META-INF/context.xml context
+     * configuration file (consisting of a <code>&lt;Context&gt;</code>
+     * element).
+     *
+     * <p>The web application is installed at the path specified inside the 
+     * embedded META-INF/context.xml. The docBase (if any) specified inside the
+     * embedded META-INF/context.xml is overridden with the web application's
+     * location.
+     *
+     * <p>If the installation succeeds, a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> is sent to all registered listeners,
+     * with the newly created <code>Context</code> as its argument.
+     *
+     * @param war URL pointing to web application location (WAR-packaged or
+     *        unpacked directory)
+     *
+     * @exception IllegalArgumentException if <code>war</code> is null, or if
+     *            this StandardHost does not support any context.xml
+     *            configuration files
+     * @exception IllegalStateException if the context path specified in the
+     *            context configuration file is already in use by an existing
+     *            web application
+     * @exception IOException if an input/output error was encountered
+     *            during installation
+     */
+    public synchronized void install(URL war) throws IOException {
+
+        getDeployer().install(war);
+
+    }
+
+
+    /**
      * Return the Context for the deployed application that is associated
      * with the specified context path (if any); otherwise return
      * <code>null</code>.

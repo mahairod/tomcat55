@@ -508,6 +508,101 @@ public class StandardHostDeployer implements Deployer {
 
 
     /**
+     * Installs a new web application from the web application archive at the
+     * specified URL, which must contain a META-INF/context.xml context
+     * configuration file (consisting of a <code>&lt;Context&gt;</code>
+     * element).
+     *
+     * <p>The web application is installed at the path specified inside the 
+     * embedded META-INF/context.xml. The docBase (if any) specified inside the
+     * embedded META-INF/context.xml is overridden with the web application's
+     * location.
+     *
+     * <p>If the installation succeeds, a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> is sent to all registered listeners,
+     * with the newly created <code>Context</code> as its argument.
+     *
+     * @param war URL pointing to web application location (WAR-packaged or
+     *        unpacked directory)
+     *
+     * @exception IllegalArgumentException if <code>war</code> is null, or if
+     *            the deployment host does not support any context.xml
+     *            configuration files
+     * @exception IllegalStateException if the context path specified in the
+     *            context configuration file is already in use by an existing
+     *            web application
+     * @exception IOException if an input/output error was encountered
+     *            during installation
+     */
+    public synchronized void install(URL war) throws IOException {
+
+        if (war == null) {
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warRequired"));
+        }
+
+        if (!host.isDeployXML()) {
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.configNotAllowed"));
+        }
+
+        // Calculate the document base for the new web application (if needed)
+        String docBase = null; // Optional override for value in config file
+        boolean isWAR = false;
+        String url = war.toString();
+        log.info(sm.getString("standardHost.installingWAR", url));
+        // Calculate the WAR file absolute pathname
+        if (url.startsWith("jar:")) {
+            url = url.substring("jar:".length(), url.length() - 2);
+            isWAR = true;
+        }
+        if (url.startsWith("file://")) {
+            docBase = url.substring("file://".length());
+        } else if (url.startsWith("file:")) {
+            docBase = url.substring("file:".length());
+        } else {
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.warURL", url));
+        }
+
+        // Expand war file if host wants wars unpacked
+        if (isWAR && host.isUnpackWARs()) {
+            docBase = ExpandWar.expand(host, war);
+        }
+
+        // Install the new web application
+        this.overrideDocBase = docBase;
+
+        InputStream stream = null;
+        try {
+            URL contextXml = new URL(war.toString() + "META-INF/context.xml");
+            log.info(sm.getString("standardHost.installingXML", contextXml));
+            stream = contextXml.openStream();
+            Digester digester = createDigester();
+            digester.setClassLoader(this.getClass().getClassLoader());
+            digester.clear();
+            digester.push(this);
+            digester.parse(stream);
+            stream.close();
+            stream = null;
+        } catch (Exception e) {
+            host.log(sm.getString("standardHost.installError", docBase), e);
+            throw new IOException(e.toString());
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+            }
+            this.overrideDocBase = null;
+        }
+
+    }
+
+
+    /**
      * Return the Context for the deployed application that is associated
      * with the specified context path (if any); otherwise return
      * <code>null</code>.
@@ -818,6 +913,16 @@ public class StandardHostDeployer implements Deployer {
 
         return (host.getParentClassLoader());
 
+    }
+
+
+    /**
+     * Returns true if context.xml config files are supported.
+     *
+     * @return true of context.xml config files are supported, false otherwise
+     */
+    public boolean isDeployXML() {
+        return (host.isDeployXML());
     }
 
 
