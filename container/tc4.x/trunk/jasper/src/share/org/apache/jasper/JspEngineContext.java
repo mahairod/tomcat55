@@ -152,7 +152,13 @@ public class JspEngineContext implements JspCompilationContext {
         String sep = System.getProperty("path.separator");
 
         for(int i = 0; i < urls.length; i++) {
-            cpath.append((String)urls[i].getFile()+sep);
+	    // Tomcat 4 can use URL's other than file URL's,
+	    // a protocol other than file: will generate a
+	    // bad file system path, so only add file:
+	    // protocol URL's to the classpath.
+	    if( urls[i].getProtocol().equals("file") ) {
+                cpath.append((String)urls[i].getFile()+sep);
+	    }
         }
          
         return cpath.toString() + classpath;
