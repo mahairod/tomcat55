@@ -80,36 +80,41 @@ public class GetContentLengthTestServlet extends GenericServlet {
 	/**
 	 *	We get the content length using getContentLength and
 	 * 	we read from the input stream. if the no of chars read
-	 * 	matches the no returned by getContentLength
+	 * 	matches the number returned by getContentLength,
+         *      and the actual content matches as well,
 	 *	we pass the test
 	 */
 
 	PrintWriter out = response.getWriter();
+        ServletInputStream sins = request.getInputStream();
+        String expectedResult = "ULTRA SPARC";
+        int expectedLen = expectedResult.length();
+        byte buffer[] = null;
+	int contentLen = request.getContentLength();
+        int actualLen = 0;
 
-	// get the content length
-	int contentLength = request.getContentLength();
-	out.println("contentLength = " + contentLength );
+        if (contentLen > 0) {
+            buffer = new byte[contentLen];
+            actualLen = sins.readLine(buffer, 0, buffer.length);
+        } else {
+            buffer = new byte[0];
+            actualLen = 0;
+        }
+        String actualResult = new String(buffer, 0, actualLen);
 
-	int len=0;
-	// getting input stream
+        if ((expectedLen == contentLen) &&
+            (expectedLen == actualLen) &&
+            expectedResult.equals(actualResult)) {
+            out.println("GetContentLengthTest test PASSED");
+        } else {
+            out.println("GetContentLengthTest test FAILED");
+            out.println("contentLen = " + contentLen);
+            out.println("expectedLen = " + expectedLen +
+                        ", actualLen = " + actualLen);
+            out.println("expectedResult = " + expectedResult +
+                        ", actualResult = " + actualResult);
+        }
 
-	ServletInputStream sin = request.getInputStream();
-	// read from the stream
-
-	while(sin.read()!=-1) {
-		len++;
-	}
-
-	// did we get what we wrote
-	out.println("len = " + len);
-	if((contentLength==len) || (contentLength==-1)) {
-		out.println("GetContentLengthTest test PASSED");
-	}
-	else {
-		out.println("GetContentLengthTest test FAILED <BR> ");
-		out.println("ServletRequest.getContentLength() method FAILED <BR> ");
-		out.println("Expected Value returned -> contentLength <BR> ");
-		out.println("Actual Value returned -> " + len);
-	}
    }
+
 }

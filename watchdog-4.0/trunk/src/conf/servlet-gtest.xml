@@ -415,11 +415,11 @@
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncoding_1Test.html" />
 
-<!-- FIXME - Causes hang because content length is set but no content sent
       <gtest request="GET /servlet-tests/GetContentLengthTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain##Content-Length:20" 
-           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetContentLengthTest.html" />
--->
+               debug="0" host="${host}" port="${port}"
+      requestHeaders="Content-Type:text/plain"
+             content="ULTRA SPARC"
+          goldenFile="${wgdir}/javax_servlet/ServletRequest/GetContentLengthTest.html" />
 
       <gtest request="GET /servlet-tests/GetContentTypeTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain" 
