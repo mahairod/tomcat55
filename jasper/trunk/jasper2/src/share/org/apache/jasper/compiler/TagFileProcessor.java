@@ -342,19 +342,19 @@ public class TagFileProcessor {
      * Compiles and loads a tagfile.
      */
     public static Class loadTagFile(JspCompilationContext ctxt,
-				    String tagFile, TagInfo tagInfo)
+				    String tagFilePath, TagInfo tagInfo)
 	throws JasperException {
 
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();
         JspServletWrapper wrapper =
-		(JspServletWrapper) rctxt.getWrapper(tagFile);
+		(JspServletWrapper) rctxt.getWrapper(tagFilePath);
 	if (wrapper == null) {
 	    synchronized(rctxt) {
-		wrapper = (JspServletWrapper) rctxt.getWrapper(tagFile);
+		wrapper = (JspServletWrapper) rctxt.getWrapper(tagFilePath);
 		if (wrapper == null) {
 		    wrapper = new JspServletWrapper(ctxt.getServletContext(),
 						    ctxt.getOptions(),
-						    tagFile,
+						    tagFilePath,
                                                     tagInfo,
 						    ctxt.getRuntimeContext());
 		}
@@ -379,8 +379,8 @@ public class TagFileProcessor {
         public void visit(Node.CustomTag n) throws JasperException {
 	    TagFileInfo tagFileInfo = n.getTagFileInfo();
 	    if (tagFileInfo != null) {
-		String tagFile = tagFileInfo.getPath();
-		Class c = loadTagFile(ctxt, tagFile, n.getTagInfo());
+		String tagFilePath = tagFileInfo.getPath();
+		Class c = loadTagFile(ctxt, tagFilePath, n.getTagInfo());
 		n.setTagHandlerClass(c);
 	    }
 	}

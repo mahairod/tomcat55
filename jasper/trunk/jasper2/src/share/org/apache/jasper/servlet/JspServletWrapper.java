@@ -113,6 +113,9 @@ public class JspServletWrapper {
     private ServletConfig config;
     private Options options;
 
+    /*
+     * JspServletWrapper for JSP pages.
+     */
     JspServletWrapper(ServletConfig config, Options options, String jspUri,
                       boolean isErrorPage, JspRuntimeContext rctxt)
             throws JasperException {
@@ -120,25 +123,37 @@ public class JspServletWrapper {
         this.config = config;
         this.options = options;
         this.jspUri = jspUri;
-        ctxt = new JspCompilationContext( jspUri, isErrorPage,
-                                          options,
-                                          config.getServletContext(),
-                                          this, rctxt);
-        ctxt.createOutdir();
+        ctxt = new JspCompilationContext(jspUri, isErrorPage, options,
+					 config.getServletContext(),
+					 this, rctxt);
+        ctxt.createOutdir(jspUri);
     }
 
+    /*
+     * JspServletWrapper for tag files.
+     */
     public JspServletWrapper(ServletContext servletContext, Options options,
-                      String tagfile, TagInfo tagInfo, JspRuntimeContext rctxt)
+			     String tagFilePath, TagInfo tagInfo,
+			     JspRuntimeContext rctxt)
             throws JasperException {
 
         this.config = null;	// not used
         this.options = options;
-        this.jspUri = tagfile;
-        ctxt = new JspCompilationContext( tagfile, tagInfo,
-                                          options,
-                                          servletContext,
-                                          this, rctxt);
-        ctxt.createOutdir();
+	this.jspUri = tagFilePath;
+        ctxt = new JspCompilationContext(jspUri, tagInfo, options,
+					 servletContext, this, rctxt);
+
+	// Store tag file .java and .class files in standard location
+	// (/tagfiles/org/apache/jsp/), regardless of the original tag file
+	// path
+	String standard = null;
+	if (tagFilePath.indexOf('/') != -1) {
+	    standard = "/tagfiles/org/apache/jsp/"
+		+ tagFilePath.substring(tagFilePath.lastIndexOf("/") + 1);
+	} else {
+	    standard = "/tagfiles/org/apache/jsp/" + tagFilePath;
+	}
+        ctxt.createOutdir(standard);
     }
 
     public JspCompilationContext getJspEngineContext() {

@@ -241,7 +241,7 @@ public class Compiler {
 	// Collect page info
 	Collector.collect(this, pageNodes);
 
-	// Compile (if necessar) and load the tag files referenced in
+	// Compile (if necessary) and load the tag files referenced in
 	// this compilation unit.
 	TagFileProcessor.loadTagFiles(this, pageNodes);
 

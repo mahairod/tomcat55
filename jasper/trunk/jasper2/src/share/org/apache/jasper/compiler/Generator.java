@@ -2753,11 +2753,14 @@ public class Generator {
 
 	// Generate package declaration
 	String className = tagInfo.getTagClassName();
-	String pkgName = className.substring(0, className.lastIndexOf("."));
-	out.printin("package ");
-	out.print(pkgName);
-	out.println(";");
-	out.println();
+	if (className.indexOf('.') != -1) {
+	    String pkgName
+		= className.substring(0, className.lastIndexOf("."));
+	    out.printin("package ");
+	    out.print(pkgName);
+	    out.println(";");
+	    out.println();
+	}
 
 	// Generate class declaration
 	out.printin("public class ");

@@ -115,16 +115,20 @@ public class JspCompilationContext {
     protected boolean reload = true;
     
     protected URLClassLoader jspLoader;
-    protected URL [] outUrls = new URL[1];
+    protected URL[] outUrls = new URL[1];
     protected Class servletClass;
 
     protected boolean isTagFile;
     protected TagInfo tagInfo;
 
     // jspURI _must_ be relative to the context
-    public JspCompilationContext(String jspUri, boolean isErrPage, Options options,
-                                 ServletContext context, JspServletWrapper jsw,
+    public JspCompilationContext(String jspUri,
+				 boolean isErrPage,
+				 Options options,
+                                 ServletContext context,
+				 JspServletWrapper jsw,
                                  JspRuntimeContext rctxt) {
+
         this.jspUri = canonicalURI(jspUri);
         this.isErrPage = isErrPage;
         this.options=options;
@@ -146,9 +150,11 @@ public class JspCompilationContext {
         this.rctxt=rctxt;
     }
 
-    public JspCompilationContext(String tagfile, TagInfo tagInfo, 
+    public JspCompilationContext(String tagfile,
+				 TagInfo tagInfo, 
                                  Options options,
-                                 ServletContext context, JspServletWrapper jsw,
+                                 ServletContext context,
+				 JspServletWrapper jsw,
                                  JspRuntimeContext rctxt) {
 
         this(tagfile, false, options, context, jsw, rctxt);
@@ -200,8 +206,8 @@ public class JspCompilationContext {
         return outputDir;
     }
 
-    public void setOutputDir( String s ) {
-        this.outputDir=s;
+    public void setOutputDir(String s) {
+        this.outputDir = s;
     }
 
     /**
@@ -396,17 +402,23 @@ public class JspCompilationContext {
         if (jspPath != null) {
             return jspPath;
         }
-        String dirName = getJspFile();
-        int pos = dirName.lastIndexOf('/');
-        if (pos > 0) {
-            dirName = dirName.substring(0, pos + 1);
-        } else {
-            dirName = "";
-        }
-        jspPath = dirName + getServletClassName() + ".java";
-        if (jspPath.startsWith("/")) {
-            jspPath = jspPath.substring(1);
-        }
+
+	if (isTagFile) {
+	    jspPath = "tagfiles/org/apache/jsp/" + tagInfo.getTagName() + ".java";
+	} else {
+	    String dirName = getJspFile();
+	    int pos = dirName.lastIndexOf('/');
+	    if (pos > 0) {
+		dirName = dirName.substring(0, pos + 1);
+	    } else {
+		dirName = "";
+	    }
+	    jspPath = dirName + getServletClassName() + ".java";
+	    if (jspPath.startsWith("/")) {
+		jspPath = jspPath.substring(1);
+	    }
+	}
+
         return jspPath;
     }
 
@@ -508,7 +520,7 @@ public class JspCompilationContext {
     
     public void compile() throws JasperException, FileNotFoundException {
         createCompiler();
-        if (jspCompiler.isOutDated()) {
+	if (jspCompiler.isOutDated()) {
             try {
                 jspCompiler.compile();
                 reload = true;
@@ -518,7 +530,7 @@ public class JspCompilationContext {
                 throw new JasperException(
                     Constants.getString("jsp.error.unable.compile"),ex);
             }
-        }
+	}
     }
 
     /** True if the servlet needs loading
@@ -568,24 +580,24 @@ public class JspCompilationContext {
         return servletClass;
     }
 
-    public void createOutdir() {
+    public void createOutdir(String dirPath) {
         File outDirF = null;
         try {
             URL outURL = options.getScratchDir().toURL();
-            String outURI = outURL.toString();
-            if (outURI.endsWith("/")) {
-                outURI = outURI 
-                    + jspUri.substring(1,jspUri.lastIndexOf("/")+1);
+            String outUri = outURL.toString();
+            if (outUri.endsWith("/")) {
+                outUri = outUri
+		    + dirPath.substring(1, dirPath.lastIndexOf("/") + 1);
             } else {
-                outURI = outURI 
-                    + jspUri.substring(0,jspUri.lastIndexOf("/")+1);
+                outUri = outUri
+		    + dirPath.substring(0, dirPath.lastIndexOf("/") + 1);
             }
-            outURL = new URL(outURI);
+            outURL = new URL(outUri);
             outDirF = new File(outURL.getFile());
             if (!outDirF.exists()) {
                 outDirF.mkdirs();
             }
-            this.setOutputDir(  outDirF.toString() + File.separator );
+            this.outputDir = outDirF.toString() + File.separator;
             
             outUrls[0] = new URL(outDirF.toURL().toString() + File.separator);
         } catch (Exception e) {

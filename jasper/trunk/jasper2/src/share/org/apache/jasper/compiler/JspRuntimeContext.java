@@ -352,6 +352,8 @@ public final class JspRuntimeContext implements Runnable {
             }
         }    
 
+	cpath.append(options.getScratchDir() + "/tagfiles" + sep);
+
         String cp = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
         if (cp == null || cp.equals("")) {
             cp = options.getClassPath();
