@@ -292,7 +292,6 @@ public final class ContextConfig
                     InputSource is = new InputSource(url.toExternalForm());
                     is.setByteStream(stream);
                     webDigester.clear();
-                    webDigester.setDebug(getDebug());
                     if (context instanceof StandardContext) {
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
@@ -537,7 +536,6 @@ public final class ContextConfig
         synchronized (webDigester) {
             try {
                 source.setByteStream(stream);
-                webDigester.setDebug(getDebug());
                 
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
