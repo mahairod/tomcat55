@@ -210,11 +210,11 @@ public class PageContextImpl
 			// push it into the including jspWriter
 	    } else {
                 // Old code:
-	        //out.flush();
+	        out.flush();
                 // Do not flush the buffer even if we're not included (i.e.
                 // we are the main page. The servlet will flush it and close
                 // the stream.
-                ((JspWriterImpl)out).flushBuffer();
+                //((JspWriterImpl)out).flushBuffer();
 	    }
 	} catch (IOException ex) {
 	    loghelper.log("Internal error flushing the buffer in release()");

@@ -124,6 +124,7 @@ public abstract class HttpJspBase
 
     public final void destroy() {
 	jspDestroy();
+	_jspDestroy();
     }
 
     /**
@@ -139,6 +140,9 @@ public abstract class HttpJspBase
     }
     
     public void jspDestroy() {
+    }
+
+    protected void _jspDestroy() {
     }
 
     public abstract void _jspService(HttpServletRequest request, 
