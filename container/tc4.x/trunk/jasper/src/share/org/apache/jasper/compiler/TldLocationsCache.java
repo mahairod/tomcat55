@@ -137,7 +137,9 @@ public class TldLocationsCache {
             processWebDotXml(ctxt);
             processJars(ctxt);
         } catch (JasperException ex) {
-            Constants.message(ex.getMessage(), Logger.ERROR);
+            Constants.message("jsp.error.internal.tldinit",
+                              new Object[] { ex.getMessage() },
+                              Logger.ERROR);
         }
     }
 

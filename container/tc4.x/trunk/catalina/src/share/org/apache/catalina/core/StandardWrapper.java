@@ -204,6 +204,12 @@ public final class StandardWrapper
 
 
     /**
+     * The run-as identity for this servlet.
+     */
+    private String runAs = null;
+
+
+    /**
      * The fully qualified servlet class name for this servlet.
      */
     private String servletClass = null;
@@ -388,6 +394,30 @@ public final class StandardWrapper
 	    throw new IllegalArgumentException
 		(sm.getString("standardWrapper.notContext"));
 	super.setParent(container);
+
+    }
+
+
+    /**
+     * Return the run-as identity for this servlet.
+     */
+    public String getRunAs() {
+
+        return (this.runAs);
+
+    }
+
+
+    /**
+     * Set the run-as identity for this servlet.
+     *
+     * @param value New run-as identity value
+     */
+    public void setRunAs(String runAs) {
+
+        String oldRunAs = this.runAs;
+        this.runAs = runAs;
+        support.firePropertyChange("runAs", oldRunAs, this.runAs);
 
     }
 

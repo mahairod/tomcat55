@@ -476,8 +476,6 @@ public final class ContextConfig
 		       mapper.methodSetter("setRemote", 0));
 	mapper.addRule("web-app/ejb-ref/ejb-link",
 		       mapper.methodSetter("setLink", 0));
-	mapper.addRule("web-app/ejb-ref/run-as",
-		       mapper.methodSetter("setRunAs", 0));
 
 	mapper.addRule("web-app/env-entry",
 	 mapper.objectCreate("org.apache.catalina.deploy.ContextEnvironment"));
@@ -634,6 +632,8 @@ public final class ContextConfig
 		       mapper.methodSetter("setJspFile", 0));
 	mapper.addRule("web-app/servlet/load-on-startup",
 		       mapper.methodSetter("setLoadOnStartupString", 0));
+	mapper.addRule("web-app/servlet/run-as",
+		       mapper.methodSetter("setRunAs", 0));
 	mapper.addRule("web-app/servlet/security-role-ref",
 		       mapper.methodSetter("addSecurityReference", 2));
 	mapper.addRule("web-app/servlet/security-role-ref/role-link",

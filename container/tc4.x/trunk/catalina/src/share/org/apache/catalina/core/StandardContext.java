@@ -3379,8 +3379,7 @@ public class StandardContext
             ContextEjb ejb = (ContextEjb) ejbsList.next();
             // Create a reference to the EJB.
             Reference ref = new EjbRef
-                (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink(),
-                 ejb.getRunAs());
+                (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink());
             // Adding the additional parameters, if any
             addAdditionalParameters(ref, ejb.getName());
             try {

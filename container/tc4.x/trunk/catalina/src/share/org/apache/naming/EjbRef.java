@@ -108,12 +108,6 @@ public class EjbRef
     public static final String LINK = "link";
 
 
-    /**
-     * RunAs address type.
-     */
-    public static final String RUNAS = "runas";
-
-
     // ----------------------------------------------------------- Constructors
 
 
@@ -124,11 +118,9 @@ public class EjbRef
      * @param home Home interface classname
      * @param remote Remote interface classname
      * @param link EJB link
-     * @param runAs Run As
      */
-    public EjbRef(String ejbType, String home, String remote, String link,
-                  String runAs) {
-        this(ejbType, home, remote, link, runAs, null, null);
+    public EjbRef(String ejbType, String home, String remote, String link) {
+        this(ejbType, home, remote, link, null, null);
     }
 
 
@@ -139,10 +131,9 @@ public class EjbRef
      * @param home Home interface classname
      * @param remote Remote interface classname
      * @param link EJB link
-     * @param runAs Run As
      */
     public EjbRef(String ejbType, String home, String remote, String link,
-                  String runAs, String factory, String factoryLocation) {
+                  String factory, String factoryLocation) {
         super(home, factory, factoryLocation);
         StringRefAddr refAddr = null;
         if (ejbType != null) {
@@ -155,10 +146,6 @@ public class EjbRef
         }
         if (link != null) {
             refAddr = new StringRefAddr(LINK, link);
-            add(refAddr);
-        }
-        if (runAs != null) {
-            refAddr = new StringRefAddr(RUNAS, runAs);
             add(refAddr);
         }
     }

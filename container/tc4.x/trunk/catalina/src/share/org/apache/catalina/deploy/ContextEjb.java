@@ -151,20 +151,6 @@ public final class ContextEjb {
 
 
     /**
-     * The "run as" remote identity for this bean.
-     */
-    private String runAs = null;
-
-    public String getRunAs() {
-	return (this.runAs);
-    }
-
-    public void setRunAs(String runAs) {
-	this.runAs = runAs;
-    }
-
-
-    /**
      * The name of the EJB bean implementation class.
      */
     private String type = null;
@@ -208,10 +194,6 @@ public final class ContextEjb {
 	if (link != null) {
 	    sb.append(", link=");
 	    sb.append(link);
-	}
-	if (runAs != null) {
-	    sb.append(", runAs=");
-	    sb.append(runAs);
 	}
 	sb.append("]");
 	return (sb.toString());
