@@ -1518,8 +1518,7 @@ public class Generator {
 	    ServletWriter outSave = null;
 	    MethodsBuffer methodsBufferSave = null;
             Node.ChildInfo ci = n.getChildInfo();
-	    if (n.implementsSimpleTag()
-		    || (ci.isScriptless() && !ci.hasScriptingVars())) {
+	    if (ci.isScriptless() && !ci.hasScriptingVars()) {
 		// The tag handler and its body code can reside in a separate
 		// method if it is scriptless and does not have any scripting
 		// variable defined.
@@ -1589,8 +1588,7 @@ public class Generator {
 		generateCustomEnd(n, tagHandlerVar, tagEvalVar);
 	    }
 
-	    if (n.implementsSimpleTag()
-		    || (ci.isScriptless() && !ci.hasScriptingVars())) {
+	    if (ci.isScriptless() && !ci.hasScriptingVars()) {
 		// Generate end of method
 		if (methodNesting > 0) {
 		    out.printil("return false;");
