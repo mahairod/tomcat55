@@ -67,16 +67,20 @@ package org.apache.catalina;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.apache.catalina.cluster.ClusterMemberInfo;
-import org.apache.catalina.cluster.MulticastReceiver;
-import org.apache.catalina.cluster.MulticastSender;
+import org.apache.catalina.cluster.ClusterReceiver;
+import org.apache.catalina.cluster.ClusterSender;
 
 /**
  * A <b>Cluster</b> works as a Cluster client/server for the local host
- * Different Cluster implementations can be used to support Session replication
- * or weighted loadbalancing.
+ * Different Cluster implementations can be used to support different
+ * ways to communicate within the Cluster. A Cluster implementation is
+ * responsible for setting up a way to communicate within the Cluster
+ * and also supply "ClientApplications" with <code>ClusterSender</code>
+ * used when sending information in the Cluster and
+ * <code>ClusterInfo</code> used for receiving information in the Cluster.
  *
  * @author Bip Thelin
- * @version $Revision$
+ * @version $Revision$, $Date$
  */
 
 public interface Cluster {
@@ -97,6 +101,21 @@ public interface Cluster {
      * @return The name of the cluster associated with this server
      */
     public String getClusterName();
+
+    /**
+     * Set the time in seconds that the Cluster waits before
+     * checking for changes and replicated data.
+     *
+     * @param checkInterval The time in seconds to sleep
+     */
+    public void setCheckInterval(int checkInterval);
+
+    /**
+     * Get the time in seconds that this Cluster sleeps.
+     *
+     * @return The value in seconds
+     */
+    public int getCheckInterval();
 
     /**
      * Set the name of the cluster to join, if no cluster with
@@ -120,6 +139,20 @@ public interface Cluster {
      */
     public Container getContainer();
 
+    /**
+     * The debug detail level for this Cluster
+     *
+     * @param debug The debug level
+     */
+    public void setDebug(int debug);
+
+    /**
+     * Returns the debug level for this Cluster
+     *
+     * @return The debug level
+     */
+    public int getDebug();
+
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -134,20 +167,25 @@ public interface Cluster {
     public Collection getRemoteClusterMembers();
 
     /**
-     * Returns a <code>MulticastSender</code> which is the interface
-     * to use when communicating in the Cluster. 
+     * Returns a <code>ClusterSender</code> which is the interface
+     * to use when sending information in the Cluster. senderId is
+     * used as a identifier so that information sent through this
+     * instance can only be used with the respectice
+     * <code>ClusterReceiver</code>
      *
-     * @return The MulticastSender to use
+     * @return The ClusterSender
      */
-    public MulticastSender getMulticastSender(String senderId);
+    public ClusterSender getClusterSender(String senderId);
 
     /**
-     * Returns a <code>MulticastReceiver</code> which is the interface
-     * to use when communicating in the Cluster. 
+     * Returns a <code>ClusterReceiver</code> which is the interface
+     * to use when receiving information in the Cluster. senderId is
+     * used as a indentifier, only information send through the
+     * <code>ClusterSender</code> with the same senderId can be received.
      *
-     * @return The MulticastSender to use
+     * @return The ClusterReceiver
      */
-    public MulticastReceiver getMulticastReceiver(String senderId);
+    public ClusterReceiver getClusterReceiver(String senderId);
 
     /**
      * Return cluster information about the local host

@@ -79,8 +79,8 @@ import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Session;
-import org.apache.catalina.cluster.MulticastSender;
-import org.apache.catalina.cluster.MulticastReceiver;
+import org.apache.catalina.cluster.ClusterSender;
+import org.apache.catalina.cluster.ClusterReceiver;
 import org.apache.catalina.cluster.ReplicationWrapper;
 import org.apache.catalina.util.CustomObjectInputStream;
 
@@ -90,7 +90,7 @@ import org.apache.catalina.util.CustomObjectInputStream;
  * Store to make Sessions persistence.
  *
  * @author Bip Thelin
- * @version $Revision$
+ * @version $Revision$, $Date$
  */
 
 public final class DistributedManager extends PersistentManagerBase {
@@ -110,14 +110,14 @@ public final class DistributedManager extends PersistentManagerBase {
     protected static String name = "DistributedManager";
 
     /**
-     * Our MulticastSender, used when replicating sessions
+     * Our ClusterSender, used when replicating sessions
      */
-    private MulticastSender multicastSender = null;
+    private ClusterSender clusterSender = null;
 
     /**
-     * Our MulticastReceiver
+     * Our ClusterReceiver
      */
-    private MulticastReceiver multicastReceiver = null;
+    private ClusterReceiver clusterReceiver = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -162,7 +162,7 @@ public final class DistributedManager extends PersistentManagerBase {
             oos.close();
             
             byte[] obs = bos.toByteArray();
-            multicastSender.send(obs);
+            clusterSender.send(obs);
 
             if(debug > 0)
                 log("Replicating Session: "+session.getId());
@@ -186,8 +186,8 @@ public final class DistributedManager extends PersistentManagerBase {
             cluster = container.getCluster();
 
         if(cluster != null) {
-            this.multicastSender = cluster.getMulticastSender(name);
-            this.multicastReceiver = cluster.getMulticastReceiver(name);
+            this.clusterSender = cluster.getClusterSender(name);
+            this.clusterReceiver = cluster.getClusterReceiver(name);
         }
 
         super.start();
@@ -197,8 +197,8 @@ public final class DistributedManager extends PersistentManagerBase {
      * Called from our background thread to process new received Sessions
      *
      */
-    public void processMulticastReceiver() {
-        Object[] objs = multicastReceiver.getObjects();
+    public void processClusterReceiver() {
+        Object[] objs = clusterReceiver.getObjects();
         StandardSession _session = null;
         ByteArrayInputStream bis = null;
         Loader loader = null;
@@ -258,7 +258,7 @@ public final class DistributedManager extends PersistentManagerBase {
         // Loop until the termination semaphore is set
         while (!threadDone) {
             threadSleep();
-            processMulticastReceiver();
+            processClusterReceiver();
             processExpires();
             processPersistenceChecks();
         }
