@@ -150,7 +150,8 @@ public class ResourcesTreeBuilder implements TreeBuilder {
              "EnvironmentEntries.gif",
              resources.getMessage("resources.env.entries"),
              "resources/listEnvEntries.do?forward=" +
-             URLEncoder.encode("EnvEntries List Setup"),
+             URLEncoder.encode("EnvEntries List Setup") +
+             "&parent=myParent&parentType=myParentType",
              "content",
              false);
         root.addChild(subtree);
