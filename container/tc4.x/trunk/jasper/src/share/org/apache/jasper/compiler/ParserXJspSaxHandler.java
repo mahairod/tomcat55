@@ -448,9 +448,12 @@ class ParserXJspSaxHandler
     private void processCustomTagEnd(NodeTag node, Mark stop) 
 	throws ParseException, JasperException {
 	String bc = node.ti.getBodyContent();
+        boolean hasBody = true;
 
-        String charString = node.getText().toString();
-        boolean hasBody = (charString.trim().length() > 0);
+        if (node.getText() != null) {
+            String charString = node.getText().toString();
+            hasBody = (charString.trim().length() > 0);
+        }
 
         // call begin tag processing with body info
         processCustomTagBeginDoIt(node, hasBody);

@@ -843,9 +843,9 @@ public class Parser {
 
 		listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);		
 		listener.handleTagBegin(start, reader.mark(), attrs, prefix,
-					shortTagName, tli, ti, hasBody);
+					shortTagName, tli, ti, true);
 		listener.handleTagEnd(start, reader.mark(), prefix, 
-				      shortTagName, attrs, tli, ti, hasBody);
+				      shortTagName, attrs, tli, ti, true);
 	    } else { 
 		// Body can be either
 		//     - JSP tags
