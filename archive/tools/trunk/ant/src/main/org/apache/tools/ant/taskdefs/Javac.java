@@ -56,8 +56,7 @@ package org.apache.tools.ant.taskdefs;
 
 import org.apache.tools.ant.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -430,10 +429,81 @@ public class Javac extends Task {
     }
 
     /**
-     * Performs a compile using the Jikes compile.
+     * Performs a compile using the Jikes compiler from IBM..
+     * Mostly of this code is identical to doClassicCompile()
+     * However, it does not support all options like
+     * bootclasspath, extdirs, deprecation and so on, because
+     * there is no option in jikes and I don't understand
+     * what they should do.
+     *
+     * It has been successfully tested with jikes 1.10
+     *
+     * @author skanthak@muehlheim.de
      */
     
     private void doJikesCompile() throws BuildException {
-	project.log("Performing a Jikes COmpile");
+	project.log("Using jikes compiler",project.MSG_VERBOSE);
+	String classpath = getCompileClasspath();
+	Vector argList = new Vector();
+
+	if (deprecation == true)
+	    argList.addElement("-deprecation");
+	
+	// We want all output on stdout to make
+	// parsing easier
+	argList.addElement("-Xstdout");
+	
+	argList.addElement("-d");
+	argList.addElement(destDir.getAbsolutePath());
+	argList.addElement("-classpath");
+	// Jikes has no option for source-path so we
+	// will add it to classpath.
+	// XXX is this correct?
+	argList.addElement(classpath+File.pathSeparator +
+			   srcDir.getAbsolutePath());
+	if (debug) {
+	    argList.addElement("-g");
+	}
+	if (optimize) {
+	    argList.addElement("-O");
+	}
+	
+	project.log("Compilation args: " + argList.toString(),
+		    project.MSG_VERBOSE);
+	
+	String[] args = new String[argList.size() + compileList.size()];
+	int counter = 0; 
+	
+	for (int i = 0; i < argList.size(); i++) {
+	    args[i] = (String)argList.elementAt(i);
+	    counter++;
+	}
+
+	// XXX
+	// should be using system independent line feed!
+	
+	StringBuffer niceSourceList = new StringBuffer("Files to be compiled:"
+						       + "\r\n");
+
+	Enumeration enum = compileList.elements();
+	while (enum.hasMoreElements()) {
+	    args[counter] = (String)enum.nextElement();
+	    niceSourceList.append("    " + args[counter] + "\r\n");
+	    counter++;
+	}
+
+	project.log(niceSourceList.toString(), project.MSG_VERBOSE);
+
+	// XXX
+	// provide the compiler a different message sink - namely our own
+	
+	JikesOutputParser jop = new JikesOutputParser(project);
+	
+	Jikes compiler = new Jikes(jop,"jikes");
+	compiler.compile(args);
+	if (jop.getErrorFlag()) {
+	    String msg = "Compile failed, messages should have been provided.";
+	    throw new BuildException(msg);
+	}
     }
 }
