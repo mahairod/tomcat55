@@ -17,6 +17,9 @@
 <section name="Tomcat 5.0.30 (yoavs)">
   <subsection name="General">
     <changelog>
+      <update>
+        Update web.xml files to 2.4 schema (from 2.3 DTD) where applicable. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
