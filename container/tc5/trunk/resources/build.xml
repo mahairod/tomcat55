@@ -88,14 +88,15 @@
 
   <target name="check.source">
 
-    <available property="source.exists" file="${basedir}/${tomcat.project}" />
+    <available property="source.exists"
+                   file="${basedir}/${tomcat.project}" type="dir" />
 
   </target>
 
   <target name="check.source.depends">
 
     <available property="source.depends.exists" 
-                   file="${basedir}/${commons-daemon.project}" />
+                   file="${basedir}/${commons-daemon.project}" type="dir" />
 
   </target>
 
