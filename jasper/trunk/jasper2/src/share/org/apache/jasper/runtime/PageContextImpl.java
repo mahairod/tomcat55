@@ -395,21 +395,23 @@ public class PageContextImpl extends PageContext {
     }
 
     public void include(String relativeUrlPath)
-        throws ServletException, IOException
-    {
+	    throws ServletException, IOException {
+
         JspRuntimeLibrary.include((HttpServletRequest) request,
                                   (HttpServletResponse) response,
-                                  relativeUrlPath, out, true);
-        /*
-        String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-        context.getRequestDispatcher(path).include(
-	    request, new ServletResponseWrapperInclude(response, out));
-        */
+                                  relativeUrlPath,
+				  out,
+				  true);
     }
 
     public void include(String relativeUrlPath, boolean flush) 
 	    throws ServletException, IOException {
-	include(relativeUrlPath, false); // XXX
+
+        JspRuntimeLibrary.include((HttpServletRequest) request,
+                                  (HttpServletResponse) response,
+                                  relativeUrlPath,
+				  out,
+				  flush);
     }
 
     public VariableResolver getVariableResolver() {
