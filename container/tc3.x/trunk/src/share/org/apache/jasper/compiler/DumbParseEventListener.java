@@ -97,21 +97,21 @@ public class DumbParseEventListener extends BaseJspListener {
 	System.err.println("\t"+attrs);
     }
     
-    public void handleDeclaration(Mark start, Mark stop) 
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) 
         throws JasperException 
     {
 	System.err.println("\nDeclaration: ");
 	System.err.println(reader.getChars(start, stop));
     }
     
-    public void handleScriptlet(Mark start, Mark stop) 
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) 
         throws JasperException 
     {
 	System.err.println("\nScriptlet: ");
 	System.err.println(reader.getChars(start, stop));
     }
     
-    public void handleExpression(Mark start, Mark stop) 
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs) 
         throws JasperException 
     {
 	System.err.println("\nExpression: ");

@@ -81,9 +81,9 @@ public interface ParseEventListener {
     void handleDirective(String directive, 
 			 Mark start, Mark stop, 
 			 Hashtable attrs) throws JasperException;
-    void handleDeclaration(Mark start, Mark stop) throws JasperException;
-    void handleScriptlet(Mark start, Mark stop) throws JasperException;
-    void handleExpression(Mark start, Mark stop) throws JasperException;
+    void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException;
+    void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException;
+    void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException;
     void handleBean(Mark start, Mark stop, Hashtable attrs) 
 	throws JasperException;
     void handleBeanEnd (Mark start, Mark stop, Hashtable attrs)

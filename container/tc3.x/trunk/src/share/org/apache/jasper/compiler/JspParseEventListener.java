@@ -729,7 +729,7 @@ public class JspParseEventListener extends BaseJspListener {
         }
     }
     
-    public void handleDeclaration(Mark start, Mark stop) 
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) 
 	throws JasperException 
     {
         Generator gen
@@ -738,7 +738,7 @@ public class JspParseEventListener extends BaseJspListener {
 	addGenerator(gen);
     }
     
-    public void handleScriptlet(Mark start, Mark stop) 
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) 
 	throws JasperException 
     {
         Generator gen
@@ -747,7 +747,7 @@ public class JspParseEventListener extends BaseJspListener {
 	addGenerator(gen);
     }
     
-    public void handleExpression(Mark start, Mark stop) 
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs) 
 	throws JasperException 
     {
         Generator gen

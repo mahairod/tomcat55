@@ -99,15 +99,15 @@ public class BaseJspListener implements ParseEventListener {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.directives"));
     }
     
-    public void handleDeclaration(Mark start, Mark stop) throws JasperException {
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.declarations"));
     }
     
-    public void handleScriptlet(Mark start, Mark stop) throws JasperException {
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.scriptlets"));
     }
     
-    public void handleExpression(Mark start, Mark stop) throws JasperException {
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.expressions"));
     }
 

@@ -110,19 +110,19 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleDirective(directive, start, stop, attrs);
     }
     
-    public void handleDeclaration(Mark start, Mark stop) throws JasperException {
+    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) throws JasperException {
         doAction();
-        delegate.handleDeclaration(start, stop);
+        delegate.handleDeclaration(start, stop, attrs);
     }
     
-    public void handleScriptlet(Mark start, Mark stop) throws JasperException {
+    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) throws JasperException {
         doAction();
-        delegate.handleScriptlet(start, stop);
+        delegate.handleScriptlet(start, stop, attrs);
     }
     
-    public void handleExpression(Mark start, Mark stop) throws JasperException {
+    public void handleExpression(Mark start, Mark stop, Hashtable attrs) throws JasperException {
         doAction();
-        delegate.handleExpression(start, stop);
+        delegate.handleExpression(start, stop, attrs);
     }
 
     public void handleBean(Mark start, Mark stop, Hashtable attrs) 
