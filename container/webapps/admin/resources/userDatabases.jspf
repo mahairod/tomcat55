@@ -28,9 +28,19 @@
       <tr class="line-row">
         <logic:present name="checkboxes">
           <td scope="row"><div align="center" class="table-normal-text">
-            <label for="userDatabases"></label>
-            <input type="checkbox" name="userDatabases"
-                  value="<%= userDatabase %>" styleId="userDatabases">
+             <logic:match name="userDatabase"
+                        value="name=UserDatabase">
+             <font color='red'>*</font>
+             </logic:match>
+             <logic:notMatch name="userDatabase"
+                        value="name=UserDatabase">
+              <label for="userDatabases"></label>       
+              <html:multibox property="userDatabases"
+                                value="userDatabase" styleId="userDatabases"/>
+              </logic:notMatch>        
+        
+            <!--input type="checkbox" name="userDatabases"
+                  value="<%= userDatabase %>" styleId="userDatabases"-->
           </td>
         </logic:present>
         <td scope="row"><div align="left" class="table-normal-text">
