@@ -19,8 +19,6 @@ package org.apache.catalina.connector;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Wrapper;
@@ -375,8 +373,7 @@ public class CoyoteAdapter
                     request.setRequestedSessionURL(false);
                     if (log.isDebugEnabled())
                         log.debug(" Requested cookie session id is " +
-                            ((HttpServletRequest) request.getRequest())
-                            .getRequestedSessionId());
+                            request.getRequestedSessionId());
                 } else {
                     if (!request.isRequestedSessionIdValid()) {
                         // Replace the session id until one is valid

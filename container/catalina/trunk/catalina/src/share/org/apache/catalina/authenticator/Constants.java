@@ -53,10 +53,10 @@ public class Constants {
      * also call several existing methods on Request to determine whether
      * or not any user has been authenticated:</p>
      * <ul>
-     * <li><strong>((HttpServletRequest) getRequest()).getAuthType()</strong>
+     * <li><strong>request.getAuthType()</strong>
      *     will return BASIC, CLIENT-CERT, DIGEST, FORM, or <code>null</code>
      *     if there is no authenticated user.</li>
-     * <li><strong>((HttpServletRequest) getRequest()).getUserPrincipal()</strong>
+     * <li><strong>request.getUserPrincipal()</strong>
      *     will return the authenticated <code>Principal</code> returned by the
      *     <code>Realm</code> that authenticated this user.</li>
      * </ul>

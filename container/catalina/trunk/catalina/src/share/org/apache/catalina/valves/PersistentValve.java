@@ -21,7 +21,6 @@ package org.apache.catalina.valves;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -102,7 +101,7 @@ public class PersistentValve
         StandardHost host = (StandardHost) getContainer();
         Context context = request.getContext();
         if (context == null) {
-            ((HttpServletResponse) response.getResponse()).sendError
+            response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  sm.getString("standardHost.noContext"));
             return;
@@ -113,8 +112,7 @@ public class PersistentValve
             (context.getLoader().getClassLoader());
 
         // Update the session last access time for our session (if any)
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        String sessionId = hreq.getRequestedSessionId();
+        String sessionId = request.getRequestedSessionId();
         Manager manager = context.getManager();
         if (sessionId != null && manager != null) {
             if (manager instanceof PersistentManager) {
@@ -154,7 +152,7 @@ public class PersistentValve
         // HttpSession hsess = hreq.getSession(false);
         HttpSession hsess;
         try {
-            hsess = hreq.getSession();
+            hsess = request.getSession();
         } catch (Exception ex) {
             hsess = null;
         }
