@@ -76,6 +76,9 @@ import org.apache.catalina.cluster.io.XByteBuffer;
 
 public class ReplicationTransmitter
 {
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+
     private java.util.HashMap map = new java.util.HashMap();
     public ReplicationTransmitter(IDataSender[] senders)
     {
@@ -156,7 +159,7 @@ public class ReplicationTransmitter
                 sender.sendMessage(data);
             }catch ( Exception x)
             {
-                x.printStackTrace();
+                log.warn("Unable to send replicated message, is server down?",x);
             }
 
         }//while

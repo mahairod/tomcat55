@@ -83,7 +83,8 @@ import org.apache.catalina.cluster.io.XByteBuffer;
 public class ReplicationListener extends Thread
 {
 
-
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
     private ThreadPool pool = null;
     private boolean doListen = false;
     private ListenCallback callback;
@@ -108,7 +109,7 @@ public class ReplicationListener extends Thread
         }
         catch ( Exception x )
         {
-            x.printStackTrace();
+            log.error("Unable to start cluster listener.",x);
         }
     }
 

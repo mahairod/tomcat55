@@ -110,6 +110,8 @@ import java.net.InetAddress;
  */
 public class SimpleTcpReplicationManager extends org.apache.catalina.session.StandardManager
 {
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
 
     //the channel configuration
     protected String mChannelConfig = null;

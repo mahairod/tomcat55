@@ -82,6 +82,8 @@ import java.net.DatagramPacket;
 import org.apache.catalina.cluster.MembershipListener;
 public class McastServiceImpl
 {
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( McastService.class );
     /**
      * Internal flag used for the listen thread that listens to the multicasting socket.
      */
@@ -237,7 +239,7 @@ public class McastServiceImpl
                 try {
                     receive();
                 } catch ( Exception x ) {
-                    x.printStackTrace();
+                    log.warn("Error receiving mcast package.",x);
                 }
             }
         }
@@ -254,7 +256,7 @@ public class McastServiceImpl
                     send();
                     this.sleep(time);
                 } catch ( Exception x ) {
-                    x.printStackTrace();
+                    log.warn("Unable to send mcast message.",x);
                 }
             }
         }
