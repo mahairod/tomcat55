@@ -275,4 +275,17 @@ public abstract class AbstractUser implements User {
     }
 
 
+    // ------------------------------------------------------ Principal Methods
+
+
+    /**
+     * Make the principal name the same as the group name.
+     */
+    public String getName() {
+
+        return (getUsername());
+
+    }
+
+
 }

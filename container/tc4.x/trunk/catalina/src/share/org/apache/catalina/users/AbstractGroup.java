@@ -216,4 +216,17 @@ public abstract class AbstractGroup implements Group {
     }
 
 
+    // ------------------------------------------------------ Principal Methods
+
+
+    /**
+     * Make the principal name the same as the group name.
+     */
+    public String getName() {
+
+        return (getGroupname());
+
+    }
+
+
 }

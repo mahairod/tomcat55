@@ -64,6 +64,7 @@
 package org.apache.catalina;
 
 
+import java.security.Principal;
 import java.util.Iterator;
 
 
@@ -78,7 +79,7 @@ import java.util.Iterator;
  * @since 4.1
  */
 
-public interface User {
+public interface User extends Principal {
 
 
     // ------------------------------------------------------------- Properties
