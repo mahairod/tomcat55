@@ -356,7 +356,7 @@ class PageDataImpl extends PageData implements TagConstants {
 		buf.append(jspId++).append("\">");
 	    }
 	    buf.append("${");
-	    buf.append(n.getText());
+            buf.append(JspUtil.escapeXml(n.getText()));
 	    buf.append("}");
 	    if (!n.getRoot().isXmlSyntax()) {
 		buf.append(JSP_TEXT_ACTION_END);
