@@ -265,7 +265,14 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (pos == -1) {
             return getRequest().getAttribute(name);
         } else {
-            return specialAttributes[pos];
+            if ((specialAttributes[pos] == null) && (pos >= 5)) {
+                // If it's a forward special attribute, and null, it means this
+                // is an include, so we check the wrapped request since 
+                // the request could have been forwarded before the include
+                return getRequest().getAttribute(name);
+            } else {
+                return specialAttributes[pos];
+            }
         }
 
     }
