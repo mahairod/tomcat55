@@ -263,6 +263,7 @@
              </logic:equal>
              <%-- display password only while creating connector. Do not display 
                   password as cleartext --%>
+             <%--
              <logic:equal name="connectorForm" property="adminAction" value="Edit">
                 <bean:write name="connectorForm" property="keyStorePassword"/>
              </logic:equal>
