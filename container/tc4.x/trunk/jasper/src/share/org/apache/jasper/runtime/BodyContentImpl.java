@@ -244,7 +244,6 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      i   The <code>int</code> to be printed
-     * @see        java.lang.Integer#toString(int)
      * @throws	   java.io.IOException
      */
 
@@ -260,7 +259,6 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      l   The <code>long</code> to be printed
-     * @see        java.lang.Long#toString(long)
      * @throws	   java.io.IOException
      */
 
@@ -276,7 +274,6 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      f   The <code>float</code> to be printed
-     * @see        java.lang.Float#toString(float)
      * @throws	   java.io.IOException
      */
 
@@ -292,7 +289,6 @@ public class BodyContentImpl extends BodyContent {
      * #write(int)}</code> method.
      *
      * @param      d   The <code>double</code> to be printed
-     * @see        java.lang.Double#toString(double)
      * @throws	   java.io.IOException
      */
 
@@ -342,7 +338,6 @@ public class BodyContentImpl extends BodyContent {
      * method.
      *
      * @param      obj   The <code>Object</code> to be printed
-     * @see        java.lang.Object#toString()
      * @throws	   java.io.IOException
      */
 

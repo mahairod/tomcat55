@@ -434,7 +434,6 @@ public class JspWriterImpl extends JspWriter {
      * method.
      *
      * @param      i   The <code>int</code> to be printed
-     * @see        java.lang.Integer#toString(int)
      */
     public void print(int i) throws IOException {
 	write(String.valueOf(i));
@@ -448,7 +447,6 @@ public class JspWriterImpl extends JspWriter {
      * method.
      *
      * @param      l   The <code>long</code> to be printed
-     * @see        java.lang.Long#toString(long)
      */
     public void print(long l) throws IOException {
 	write(String.valueOf(l));
@@ -462,7 +460,6 @@ public class JspWriterImpl extends JspWriter {
      * method.
      *
      * @param      f   The <code>float</code> to be printed
-     * @see        java.lang.Float#toString(float)
      */
     public void print(float f) throws IOException {
 	write(String.valueOf(f));
@@ -476,7 +473,6 @@ public class JspWriterImpl extends JspWriter {
      * #write(int)}</code> method.
      *
      * @param      d   The <code>double</code> to be printed
-     * @see        java.lang.Double#toString(double)
      */
     public void print(double d) throws IOException {
 	write(String.valueOf(d));
@@ -520,7 +516,6 @@ public class JspWriterImpl extends JspWriter {
      * method.
      *
      * @param      obj   The <code>Object</code> to be printed
-     * @see        java.lang.Object#toString()
      */
     public void print(Object obj) throws IOException {
 	write(String.valueOf(obj));
