@@ -44,13 +44,14 @@ import org.apache.catalina.util.ServerInfo;
 * makes it easier to administrate.
 * <p>
 * However if you use a software that parses the output of
-* <code>HostManagerServlet</code you won't be able to upgrade
+* <code>HostManagerServlet</code> you won't be able to upgrade
 * to this Servlet since the output are not in the
 * same format as from <code>HostManagerServlet</code>
 *
 * @author Bip Thelin
 * @author Malcolm Edgar
 * @author Glenn L. Nielsen
+* @author Peter Rossbach
 * @version $Revision$, $Date$
 * @see ManagerServlet
 */
@@ -76,14 +77,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         String command = request.getPathInfo();
 
         String name = request.getParameter("name");
-        String aliases = request.getParameter("aliases");
-        String appBase = request.getParameter("appBase");
-        boolean manager = true;
-        if ((request.getParameter("manager") != null) 
-            && (request.getParameter("manager").equals("false"))) {
-            manager = false;
-        }
-
+ 
         // Prepare our output writer to generate the response message
         response.setContentType("text/html; charset=" + Constants.CHARSET);
 
@@ -91,7 +85,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         // Process the requested command
         if (command == null) {
         } else if (command.equals("/add")) {
-            message = add(name, aliases, appBase, manager);
+            message = add(request, name);
         } else if (command.equals("/remove")) {
             message = remove(name);
         } else if (command.equals("/list")) {
@@ -112,17 +106,13 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
      * Add a host using the specified parameters.
      *
      * @param name host name
-     * @param aliases comma separated alias list
-     * @param appBase application base for the host
-     * @param manager should the manager webapp be deployed to the new host ?
      */
-    protected String add(String name, String aliases, String appBase, 
-            boolean manager) {
+    protected String add(HttpServletRequest request,String name) {
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        super.add(printWriter, name, aliases, appBase, manager);
+        super.add(request,printWriter,name,true);
 
         return stringWriter.toString();
     }
@@ -224,7 +214,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         args[8] = sm.getString("statusServlet.title");
         writer.print(MessageFormat.format(Constants.MANAGER_SECTION, args));
 
-        // Hosts Header Section
+         // Hosts Header Section
         args = new Object[3];
         args[0] = sm.getString("htmlHostManagerServlet.hostName");
         args[1] = sm.getString("htmlHostManagerServlet.hostAliases");
@@ -295,18 +285,45 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         }
 
         // Add Section
-        args = new Object[10];
+        args = new Object[6];
         args[0] = sm.getString("htmlHostManagerServlet.addTitle");
         args[1] = sm.getString("htmlHostManagerServlet.addHost");
         args[2] = response.encodeURL(request.getContextPath() + "/html/add");
         args[3] = sm.getString("htmlHostManagerServlet.addName");
         args[4] = sm.getString("htmlHostManagerServlet.addAliases");
         args[5] = sm.getString("htmlHostManagerServlet.addAppBase");
-        args[6] = sm.getString("htmlHostManagerServlet.addManager");
-        args[7] = sm.getString("htmlHostManagerServlet.addManagerTrue");
-        args[8] = sm.getString("htmlHostManagerServlet.addManagerFalse");
-        args[9] = sm.getString("htmlHostManagerServlet.addButton");
-        writer.print(MessageFormat.format(ADD_SECTION, args));
+        writer.print(MessageFormat.format(ADD_SECTION_START, args));
+ 
+        args = new Object[3];
+        args[0] = sm.getString("htmlHostManagerServlet.addAutoDeploy");
+        args[1] = "autoDeploy";
+        args[2] = "checked";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+        args[0] = sm.getString("htmlHostManagerServlet.addDeployOnStartup");
+        args[1] = "deployOnStartup";
+        args[2] = "checked";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+        args[0] = sm.getString("htmlHostManagerServlet.addDeployXML");
+        args[1] = "deployXML";
+        args[2] = "checked";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+        args[0] = sm.getString("htmlHostManagerServlet.addUnpackWARs");
+        args[1] = "unpackWARs";
+        args[2] = "checked";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+        args[0] = sm.getString("htmlHostManagerServlet.addXmlNamespaceAware");
+        args[1] = "xmlNamespaceAware";
+        args[2] = "";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+        args[0] = sm.getString("htmlHostManagerServlet.addXmlValidation");
+        args[1] = "xmlValidation";
+        args[2] = "";
+        writer.print(MessageFormat.format(ADD_SECTION_BOOLEAN, args));
+
+        
+        args = new Object[1];
+        args[0] = sm.getString("htmlHostManagerServlet.addButton");
+        writer.print(MessageFormat.format(ADD_SECTION_END, args));
 
         // Server Header Section
         args = new Object[7];
@@ -382,7 +399,7 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         " </td>\n" +
         "</tr>\n";
 
-    private static final String ADD_SECTION =
+    private static final String ADD_SECTION_START =
         "</table>\n" +
         "<br>\n" +
         "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
@@ -419,17 +436,29 @@ public final class HTMLHostManagerServlet extends HostManagerServlet {
         " <td class=\"row-left\">\n" +
         "  <input type=\"text\" name=\"appBase\" size=\"64\">\n" +
         " </td>\n" +
-        "</tr>\n" +
+        "</tr>\n" ;
+    
+        private static final String ADD_SECTION_BOOLEAN =
+        "<tr>\n" +
+        " <td class=\"row-right\">\n" +
+        "  <small>{0}</small>\n" +
+        " </td>\n" +
+        " <td class=\"row-left\">\n" +
+        "  <input type=\"checkbox\" name=\"{1}\" {2}>\n" +
+        " </td>\n" +
+        "</tr>\n" ;
+        
+        private static final String ADD_SECTION_END =
         "<tr>\n" +
         " <td class=\"row-right\">\n" +
         "  &nbsp;\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
         "  <input type=\"hidden\" name=\"manager\" value=\"true\">\n" +
-        "  <input type=\"submit\" value=\"{9}\">\n" +
+        "  <input type=\"submit\" value=\"{0}\">\n" +
         " </td>\n" +
         "</tr>\n" +
-        "</table>\n" +
+         "</table>\n" +
         "</form>\n" +
         "</td>\n" +
         "</tr>\n" +
