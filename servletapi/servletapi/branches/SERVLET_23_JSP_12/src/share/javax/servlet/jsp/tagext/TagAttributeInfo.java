@@ -78,10 +78,10 @@ public class TagAttributeInfo {
      * TagLibrary code under request from some JSP code that is parsing a
      * TLD (Tag Library Descriptor).
      *
-     * @param name The name of the attribute
-     * @param required If this attribute is required in tag instances
-     * @param type The name of the type of the attribute
-     * @param reqTime Whether this attribute hold a request-time Attribute
+     * @param name The name of the attribute.
+     * @param required If this attribute is required in tag instances.
+     * @param type The name of the type of the attribute.
+     * @param reqTime Whether this attribute holds a request-time Attribute.
      */
 
     public TagAttributeInfo(String name, boolean required,
