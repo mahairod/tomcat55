@@ -3,7 +3,7 @@
 ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar:./../javac.jar
 
 if [ "$CLASSPATH" != "" ] ; then
-  CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
+  CLASSPATH=$CLASSPATH:$ADDL_CLASSPATH
 else
  CLASSPATH=$ADDL_CLASSPATH
 fi

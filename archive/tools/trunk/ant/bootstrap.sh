@@ -1,6 +1,6 @@
 SRCDIR=src/main/org/apache/tools/ant
 CLASSDIR=classes
-CLASSPATH=../projectx-tr2.jar:../javac.jar:src:${CLASSDIR}
+CLASSPATH=${CLASSPATH}:../projectx-tr2.jar:../javac.jar:src:${CLASSDIR}
 
 mkdir -p ${CLASSDIR}
 
