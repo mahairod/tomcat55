@@ -11,67 +11,42 @@
   <!-- ==================== Watchdog JSP tests ==================== -->
 
 
-   <target name="jsp-test">
+    <target name="jsp-test">
+
 <!-- Precompilation tests -->
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           returncode="200"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is not sent to the JSP" 
-	   testStrategy="No HTML page received when jsp_precompile has no value"
- 	/>
 
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false&amp;test=insignificant HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           goldenFile="${wgdir}/misc/precompilation/response.html"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is forwarded properly when jsp_precompile=false"
-	   testStrategy="The value of variable passed in the request is displayed if the request goes to the JSP"
- 	/>
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="200" expectResponseBody="false"
+ 	        testName="precompileNoValueTest" 
+	        assertion="If the jsp_precompile request parameter has no value, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2" 
+	        testStrategy="Validate that no response body is returned when jsp_precompile has no value."
+ 	     />
 
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           goldenFile="${wgdir}/misc/precompilation/no_parameter.html"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is forwarded properly when jsp_precompile=false"
-	   testStrategy="The request should be processed "
- 	/>
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+ 	        returnCode="200"  expectResponseBody="false"
+            testName="precompileFalseTest" 
+	        assertion="If the jsp_precompile request parameter is set to false, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2"
+	        testStrategy="Validate that no response body is returned when jsp_precompile is set to false."
+ 	    />
 
-<!--
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=%22false%22 HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           goldenFile="${wgdir}/misc/precompilation/no_parameter.html"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is forwarded properly when jsp_precompile=%22false%22"
-	   testStrategy="The request should be processed "
- 	/>
--->
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="200" expectResponseBody="false"
+ 	        testName="precompileTrueTest" 
+	        assertion="If the jsp_precompile request parameter is set to true, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2"
+	        testStrategy="Validate that no response body is returned when jsp_precompile is set to true."
+ 	    />
 
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           returncode="200"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is not sent to the JSP"
-	   testStrategy="No HTML page received when jsp_precompile=true "
- 	/>
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="500"
+ 	        testName="precompileNegativeTest" 
+	        assertion="Valid parameter values for jsp_precompile are 'true', 'false', and no value.  Any other value will result in an HTTP Error; 500 (Server Error).  JavaServer Pages specification v1.2, Sec. 8.4.2"
+	        testStrategy="Set the jsp_precompile request paramter to a non valid value and validate that a 500 error occurs."
+ 	    />
 
-<!--
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=%22true%22 HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           returncode="200"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the request is not sent to the JSP"
-	   testStrategy="No HTML page received when jsp_precompile=true "
- 	/>
--->
-
-      <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
-           debug="0" host="${host}" port ="${port}"
-           returncode="500"
- 	   testName="precompile.jsp" 
-	   assertion="Test that the proper error code is returned if jsp_precompile is given an invalid value"
-	   testStrategy="check for status code 500"
- 	/>
 <!--  End Precompilation Tests -->
 
 <!-- Begin TLD Resource Path tests -->
