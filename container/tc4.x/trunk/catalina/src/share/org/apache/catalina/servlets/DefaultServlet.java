@@ -1135,7 +1135,13 @@ public class DefaultServlet
         if (resourceInfo.collection) {
 
             if (!request.getRequestURI().endsWith("/")) {
-                String redirectPath = request.getRequestURI() + "/";
+                String redirectPath = path;
+                String contextPath = request.getContextPath();
+                if ((contextPath != null) && (!contextPath.equals("/"))) {
+                    redirectPath = contextPath + redirectPath;
+                }
+                if (!(redirectPath.endsWith("/")))
+                    redirectPath = redirectPath + "/";
                 redirectPath = appendParameters(request, redirectPath);
                 response.sendRedirect(redirectPath);
                 return;
