@@ -164,7 +164,7 @@ public class LoadOnStartupInterceptor extends BaseInterceptor {
 	request.setQueryString( "jsp_precompile=true" );
 	
 	request.setContext(context);
-	request.getSession(true);
+//	request.getSession(true);
 
 	cm.service( request, response );
 // 	    RequestDispatcher rd = context.getFacade().getRequestDispatcher(requestURI);
