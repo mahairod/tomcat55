@@ -37,18 +37,29 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
+[B2] Coyote:
+     This release include a completely new HTTP/1.1 connector and connector 
+     API, called Coyote. This connector provides much improved performance and 
+     robustness over the default HTTP/1.1 connector.
+     This connector is disabled in the default configuration, but can be 
+     enabled by uncommenting an element in the server.xml configuration file.
+
 
 ---------------------
 Catalina New Features:
 ---------------------
 
-Authenticator:  Make authenticator non-final so that they can be subclassed.
+[B1] Authenticator:
+     Make authenticator non-final so that they can be subclassed.
 
-BaseDirContext:  Add lifecycle management, to allow releasing used resources.
+[B1] BaseDirContext:
+     Add lifecycle management, to allow releasing used resources.
 
-StandardHost: Added the workDir attribute to the Host configuration.
-  This makes it easier to set the base directory where the work directories for
-  application Context's are placed when virtual hosting sites with Tomcat.
+[B1] StandardHost:
+     Added the workDir attribute to the Host configuration.
+     This makes it easier to set the base directory where the work directories
+     for application Context's are placed when virtual hosting sites 
+     with Tomcat.
 
 -------------------
 Jasper New Features:
@@ -77,88 +88,110 @@ Generic Bug Fixes:
 Catalina Bug Fixes:
 ------------------
 
-WebappClassLoader:  Clean up of the triggers.
+[B1] WebappClassLoader:
+     Clean up of the triggers.
 
-WebappClassLoader:  Do not allow a a webapp to override classes from J2SE.
+[B1] WebappClassLoader:
+     Do not allow a a webapp to override classes from J2SE.
 
-HttpResponseStream:  Fix rare NPE which could occur when processing an invalid
-  HTTP request.
+[B1] HttpResponseStream:
+     Fix rare NPE which could occur when processing an invalid
+     HTTP request.
 
-HttpProcessor:  Improve robustness of the main processing loop.
+[B1] HttpProcessor:
+     Improve robustness of the main processing loop.
 
-TyrexDataSourceFactory:  Add error logging.
+[B1] TyrexDataSourceFactory:
+     Add error logging.
 
-TyrexDataSourceFactory:  Always return a ServerDataSource, which is transaction
-  aware.
+[B1] TyrexDataSourceFactory:
+     Always return a ServerDataSource, which is transaction aware.
 
-TyrexTransactionFactory:  Add error logging.
+[B1] TyrexTransactionFactory:
+     Add error logging.
 
-ApplicationContext:  Fix security problem which could allow a servlet to serve
-  resources from outside the Catalina home directory, using the request
-  dispatcher. This also implements the specification requirement that the 
-  request dispatcher cannot extend outside the current servlet context.
+[B1] ApplicationContext:
+     Fix security problem which could allow a servlet to serve
+     resources from outside the Catalina home directory, using the request
+     dispatcher. This also implements the specification requirement that the 
+     request dispatcher cannot extend outside the current servlet context.
 
+[B1] ServletContext tempdir (workDir):
+     Fixed a spec compliance bug, SRV.3.7.1
+     states that the tempdir for a Servlet Context must be unique.
+     Added the Engine name as a directory path component when creating
+     the default work directory for a web application.  This fixes a bug
+     where the same work directory would be used for the http and https version
+     of a virtual host.
 
-ServletContext tempdir (workDir):  Fixed a spec compliance bug, SRV.3.7.1
-  states that the tempdir for a Servlet Context must be unique.
-  
-  Added the Engine name as a directory path component when creating
-  the default work directory for a web application.  This fixes a bug
-  where the same work directory would be used for the http and https version
-  of a virtual host.
+[B2] HttpResponseBase:
+     Revert fix for 6600, which breaks sessionid URL encoding in 4.0.4 Beta 1.
 
 
 ----------------
 Jasper Bug Fixes:
 ----------------
 
-Script:  Fix problem with the Windows script for JSPC, which could cause JARs
-  to not be included in the classpath.
+[B1] Script:
+     Fix problem with the Windows script for JSPC, which could cause JARs
+     to not be included in the classpath.
 
 
 -----------------
 Webapps Bug Fixes:
 -----------------
 
-Docs:  Fix typos in the web application development guide.
+[B1] Docs:
+     Fix typos in the web application development guide.
 
 
 ----------------------
 Bugzilla Bugs Resolved:
 ----------------------
 
-1450  Incorrect encode URL with session ID
-3770  HttpSessionListener.sessionCreated() called twice for each session
-4295  Cookies not following RFC2109
-4518  Jsp-file and load-on-startup and init-param does not work
-5422  HTTP Headers not being cleared after form authentication
-5647  AJP13 connector will not pass authentication requests
-6090  Listener not instantiated in tld file
-6201  ISO-8859-8-i  problem. (hebrew)
-6221  Bug with jsp:plugin
-6374  Class not found for: org/w3c/dom/range/Range
-6396  LoggerBase class is package not public
-6406  All classes in $CATALINA_HOME/classes become invisible 
-      when the Oracle 8.1.7 JDBC driver classes are added to this shared 
-      class loader directory
-6400  Tag Libraries not deploying in 4.0.2 final
-6464  Jspc generates bad package names on Windows NT
-6468  Content-type not set for errors
-6480  HttpServletRequest.getPathTranslated() returns different results 
-      on repeated actions
-6550  Old WebappClassLoaders can't be GC'd
-6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
-6569  setLocale() doesn't set the Content-Type charset attribute
-6594  Caching behavior after re-deploying a WAR with the manager
-6600  EncodeURL adds 'jsession' when 'isRequestedSessionIdFromURL' 
-      returns false
-6609  SendMailServlet.java is not compiled  even if javamail is installed 
-      correctly
-6641  Download of MS Office docs from protected areas fail with IE
-6644  Whitespace after Content-type header value leads to POST method failure
-6668  HttpProcessor takes incorrect defaults for proxy port according 
-      to HTTP/1.1 Spec
-6772  [Security] RequestDipatcher allows to bypass security manager sandboxing
+[B1] 1450  Incorrect encode URL with session ID
+[B1] 3770  HttpSessionListener.sessionCreated() called twice for each session
+[B1] 4295  Cookies not following RFC2109
+[B1] 4518  Jsp-file and load-on-startup and init-param does not work
+[B1] 5422  HTTP Headers not being cleared after form authentication
+[B1] 5647  AJP13 connector will not pass authentication requests
+[B1] 6090  Listener not instantiated in tld file
+[B1] 6201  ISO-8859-8-i  problem. (hebrew)
+[B1] 6221  Bug with jsp:plugin
+[B1] 6374  Class not found for: org/w3c/dom/range/Range
+[B1] 6396  LoggerBase class is package not public
+[B1] 6406  All classes in $CATALINA_HOME/classes become invisible 
+           when the Oracle 8.1.7 JDBC driver classes are added to this shared 
+           class loader directory
+[B1] 6400  Tag Libraries not deploying in 4.0.2 final
+[B1] 6464  Jspc generates bad package names on Windows NT
+[B1] 6468  Content-type not set for errors
+[B1] 6480  HttpServletRequest.getPathTranslated() returns different results 
+           on repeated actions
+[B1] 6550  Old WebappClassLoaders can't be GC'd
+[B1] 6558  NPE in RequestDumperValve.toString if debug in catalina/XmlMapper
+[B1] 6569  setLocale() doesn't set the Content-Type charset attribute
+[B1] 6594  Caching behavior after re-deploying a WAR with the manager
+[B1] 6600  EncodeURL adds 'jsession' when 'isRequestedSessionIdFromURL' 
+           returns false
+[B1] 6609  SendMailServlet.java is not compiled  even if javamail is installed 
+           correctly
+[B1] 6641  Download of MS Office docs from protected areas fail with IE
+[B1] 6644  Whitespace after Content-type header value leads to 
+           POST method failure
+[B1] 6668  HttpProcessor takes incorrect defaults for proxy port according 
+           to HTTP/1.1 Spec
+[B1] 6772  [Security] RequestDipatcher allows to bypass security manager 
+           sandboxing
+[B2] 6846  dispatcher.forward() is confused when using special servlet 
+           mapping URLs
+[B2] 6982  Stop + start of the context makes weird things
+[B2] 7061  Servlet loaded TWICE on application startup?
+[B2] 7102  response.encodeURL() doesn't encode
+[B2] 7171  FileStore directory must exists
+[B2] 7344  Tomcat appears to be case-sensitive with regard to the token "Basic"
+           in Authorization request parameter
+[B3] 7534  StackOverflowError in ChunkedOutputFilter.doWrite()
 
 
 ============================
