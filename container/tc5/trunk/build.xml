@@ -418,7 +418,7 @@
 
 
   <!-- ==================== RELEASE: Create Release ======================= -->
-  <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz,win32-release"
+  <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
    description="Create a Tomcat 5 packaged distribution">
 
     <mkdir dir="${tomcat.release}"/>
@@ -426,6 +426,11 @@
     <mkdir dir="${tomcat.release}/v${version}/bin"/>
     <mkdir dir="${tomcat.release}/v${version}/src"/>
 
+    <copy file="${tomcat.dist}/${final.name}.exe" 
+         todir="${tomcat.release}/v${version}/bin"
+     failonerror="false"/>
+    <delete file="${tomcat.dist}/${final.name}.exe" 
+     failonerror="false"/>
     <move file="${tomcat.dist}/${final.name}.tar.gz" 
          todir="${tomcat.release}/v${version}/bin"/>
     <move file="${tomcat.dist}/${final.name}.zip" 
@@ -451,11 +456,6 @@
     <copy file="resources/welcome.bin.html" 
         tofile="${tomcat.release}/v${version}/bin/README.html"
      filtering="true"/>
-  </target>
-
-  <target name="win32-release" if="execute.installer" >
-    <move file="${tomcat.dist}/${final.name}.exe" 
-         todir="${tomcat.release}/v${version}/bin"/>
   </target>
 
   <target name="package-zip">
