@@ -123,9 +123,21 @@ public class GenericPrincipal implements Principal {
             if (this.roles.length > 0)
                 Arrays.sort(this.roles);
         }
-
     }
 
+    public GenericPrincipal(String name, String password,
+                            List roles) {
+
+        super();
+        this.name = name;
+        this.password = password;
+        if (roles != null) {
+            this.roles = new String[roles.size()];
+            this.roles = (String[]) roles.toArray(this.roles);
+            if (this.roles.length > 0)
+                Arrays.sort(this.roles);
+        }
+    }
 
     // ------------------------------------------------------------- Properties
 
@@ -158,6 +170,10 @@ public class GenericPrincipal implements Principal {
 
     public Realm getRealm() {
         return (this.realm);
+    }
+
+    void setRealm( Realm realm ) {
+        this.realm=realm;
     }
 
 
@@ -196,7 +212,11 @@ public class GenericPrincipal implements Principal {
 
         StringBuffer sb = new StringBuffer("GenericPrincipal[");
         sb.append(this.name);
-        sb.append("]");
+        sb.append("(");
+        for( int i=0;i<roles.length; i++ ) {
+            sb.append( roles[i]).append(",");
+        }
+        sb.append(")]");
         return (sb.toString());
 
     }
