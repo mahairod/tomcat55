@@ -138,7 +138,7 @@ class PageInfo {
      * Check if the plugin ID has been previously declared.  Make a not
      * that this Id is now declared.
      * @return true if Id has been declared.
-    */
+     */
     public boolean isPluginDeclared(String id) {
 	if (pluginDcls.contains(id))
 	    return true;
@@ -404,10 +404,28 @@ class PageInfo {
 	    n.addImport(value);
     }
 
+    /**
+     * Gets the value of the 'extends' page directive attribute.
+     *
+     * @param useDefault TRUE if the default
+     * (org.apache.jasper.runtime.HttpJspBase) should be returned if this
+     * attribute has not been set, FALSE otherwise
+     *
+     * @return The value of the 'extends' page directive attribute, or the
+     * default (org.apache.jasper.runtime.HttpJspBase) if this attribute has
+     * not been set and useDefault is TRUE
+     */
     public String getExtends(boolean useDefault) {
 	return (xtends == null && useDefault ? defaultExtends : xtends);
     }
 
+    /**
+     * Gets the value of the 'extends' page directive attribute.
+     *
+     * @return The value of the 'extends' page directive attribute, or the
+     * default (org.apache.jasper.runtime.HttpJspBase) if this attribute has
+     * not been set
+     */
     public String getExtends() {
 	return getExtends(true);
     }
