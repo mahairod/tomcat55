@@ -95,10 +95,7 @@ public class Constants {
 	"javax.servlet.http.*", 
 	"javax.servlet.jsp.*", 
         "javax.servlet.jsp.tagext.*",
-	"java.io.IOException", 
-	"java.beans.Beans",
 	"org.apache.jasper.runtime.*", 
-	"org.apache.jasper.JasperException"
     };
 
     /**

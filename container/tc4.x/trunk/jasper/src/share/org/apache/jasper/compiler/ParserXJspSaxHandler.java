@@ -378,6 +378,7 @@ class ParserXJspSaxHandler
 		} else {
 		    // this is a custom tag
 		    node.validate(true, false);
+		    System.out.println("node is: " + node);
 		    processCustomTagEnd((NodeTag)node, stop);
 		}
 	    }

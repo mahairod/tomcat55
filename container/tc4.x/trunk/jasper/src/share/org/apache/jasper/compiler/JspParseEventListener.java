@@ -297,7 +297,7 @@ public class JspParseEventListener implements ParseEventListener {
         writer.println("private static boolean _jspx_inited = false;");
         writer.println();
 
-        writer.println("public final void _jspx_init() throws JasperException {");
+        writer.println("public final void _jspx_init() throws org.apache.jasper.JasperException {");
         writer.pushIndent();
 	generateAll(InitMethodPhase.class);
         writer.popIndent();
@@ -309,7 +309,7 @@ public class JspParseEventListener implements ParseEventListener {
 		       "HttpServletRequest request, "+
 		       "HttpServletResponse  response)");
 
-	writer.println("    throws IOException, ServletException {");
+	writer.println("    throws java.io.IOException, ServletException {");
 	writer.pushIndent();
 	writer.println();
         writer.println("JspFactory _jspxFactory = null;");
