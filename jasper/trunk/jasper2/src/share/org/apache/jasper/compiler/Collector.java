@@ -88,7 +88,6 @@ class Collector {
 	private boolean paramActionSeen = false;
 	private boolean setPropertySeen = false;
 	private boolean hasScriptingVars = false;
-	private boolean tagFileSeen = false;
 
 	public void visit(Node.ParamAction n) throws JasperException {
 	    if (n.getValue().isExpression()) {
@@ -138,11 +137,6 @@ class Collector {
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
-
-	    // Remember if the tag handler is a tag file
-	    if (n.getTagFileInfo() != null) {
-		tagFileSeen = true;
-	    }
 
             curTagNesting++;
             if (curTagNesting > maxTagNesting) {
@@ -250,7 +244,6 @@ class Collector {
         public void updatePageInfo(PageInfo pageInfo) {
             pageInfo.setMaxTagNesting(maxTagNesting);
 	    pageInfo.setScriptless(! scriptingElementSeen);
-	    pageInfo.setHasTagFile(tagFileSeen);
         }
     }
 

@@ -107,9 +107,6 @@ class PageInfo {
     private boolean elIgnoredSpecified = false;
     private String omitXmlDecl = null;
 
-    // A custom tag is a tag file
-    private boolean hasTagFile = false;
-
     private boolean isJspPrefixHijacked;
 
     // Set of all element and attribute prefixes used in this translation unit
@@ -221,14 +218,6 @@ class PageInfo {
 
     public void setIncludeCoda(Vector coda) {
 	includeCoda = coda;
-    }
-
-    public void setHasTagFile(boolean hasTag) {
-	hasTagFile = hasTag;
-    }
-
-    public boolean hasTagFile() {
-	return hasTagFile;
     }
 
     public void setHasJspRoot(boolean s) {
