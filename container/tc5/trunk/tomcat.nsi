@@ -148,13 +148,10 @@ Section "Example Web Applications"
 
   SectionIn 1 3
 
-  SetOverwrite off
-  SetOutPath $INSTDIR\conf
-  File conf\server.xml
   SetOverwrite on
   SetOutPath $INSTDIR\webapps
-;*** TEMP
-;  File /r webapps\examples
+  File webapps\jsp-examples.war
+  File webapps\servlets-examples.war
 
 SectionEnd
 
@@ -163,15 +160,12 @@ Section "Tomcat Source Code"
   SectionIn 3
   SetOutPath $INSTDIR
   File /r src
-  File /r jtc-src
 
 SectionEnd
 
 Section -post
 
   SetOverwrite off
-  SetOutPath $INSTDIR\conf
-  File /oname=server.xml conf\server-noexamples.xml.config
   SetOutPath $INSTDIR
   File /r conf
 
@@ -471,16 +465,17 @@ Section Uninstall
   RMDir /r "$INSTDIR\shared"
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
-  RMDir "$INSTDIR\webapps\*.xml"
+  Delete "$INSTDIR\webapps\*.xml"
   RMDir /r "$INSTDIR\webapps\ROOT"
   RMDir /r "$INSTDIR\webapps\tomcat-docs"
-  RMDir /r "$INSTDIR\webapps\examples"
-  RMDir /r "$INSTDIR\webapps\webdav"
+  RMDir /r "$INSTDIR\webapps\servlets-examples"
+  RMDir /r "$INSTDIR\webapps\jsp-examples"
+  Delete "$INSTDIR\webapps\servlets-examples.war"
+  Delete "$INSTDIR\webapps\jsp-examples.war"
   RMDir "$INSTDIR\webapps"
   RMDir /r "$INSTDIR\work"
   RMDir /r "$INSTDIR\temp"
   RMDir /r "$INSTDIR\src"
-  RMDir /r "$INSTDIR\jtc-src"
   RMDir "$INSTDIR"
 
   ; if $INSTDIR was removed, skip these next ones
