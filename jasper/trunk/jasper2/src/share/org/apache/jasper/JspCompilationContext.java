@@ -470,7 +470,12 @@ public class JspCompilationContext {
         if (servletJavaFileName == null) {
             servletJavaFileName =
 		getOutputDir() + getServletClassName() + ".java";
-	}
+        } else {
+            File outDirFile = new File(outputDir);
+            if (!outDirFile.exists()) {
+                outDirFile.mkdirs();
+            }
+        }
         return servletJavaFileName;
     }
 
@@ -516,6 +521,11 @@ public class JspCompilationContext {
 
         if (classFileName == null) {
             classFileName = getOutputDir() + getServletClassName() + ".class";
+        } else {
+            File outDirFile = new File(outputDir);
+            if (!outDirFile.exists()) {
+                outDirFile.mkdirs();
+            }
         }
         return classFileName;
     }
