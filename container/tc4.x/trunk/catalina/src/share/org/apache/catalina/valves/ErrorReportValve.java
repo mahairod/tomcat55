@@ -169,15 +169,14 @@ public class ErrorReportValve
         // Perform the request
         context.invokeNext(request, response);
 
-        ServletResponse sresp = (ServletResponse) response;
-        if (sresp.isCommitted())
-            return;
-
-        response.setSuspended(false);
-
         ServletRequest sreq = (ServletRequest) request;
         Throwable throwable = 
             (Throwable) sreq.getAttribute(Globals.EXCEPTION_ATTR);
+
+        ServletResponse sresp = (ServletResponse) response;
+        if (sresp.isCommitted()) {
+            return;
+        }
 
         if (throwable != null) {
 
@@ -197,6 +196,8 @@ public class ErrorReportValve
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         }
+
+        response.setSuspended(false);
 
         try {
             report(request, response, throwable);
@@ -253,7 +254,7 @@ public class ErrorReportValve
         // Do nothing on an OK status
         if (statusCode == HttpServletResponse.SC_OK)
             return;
-        // Do nothing on a NO MODIFIED status
+        // Do nothing on a NOT MODIFIED status
         if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
             return;
         // Do nothing on a NO CONTENT status
@@ -358,7 +359,7 @@ public class ErrorReportValve
             Writer writer = response.getReporter();
             if (writer != null) {
                 // If writer is null, it's an indication that the response has
-                // been hard committed already
+                // been hard committed already, which should never happen
                 writer.write(sb.toString());
                 writer.flush();
             }
