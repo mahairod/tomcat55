@@ -9,19 +9,29 @@
   <property name="base.dir" location="/usr/share/java" />
   <property name="base.src" location="../.." />
   <property name="tomcat.src" location=".." />
+  <property name="catalina.src" location="../../jakarta-tomcat-catalina" />
   <property name="jakarta-commons" location="${base.src}/jakarta-commons" />
   <property name="jmx.home" location="${base.dir}/jmx-ri_1.2" />
 
   <property name="tomcat.home" location="${tomcat.src}/build" />
 
   <property name="commons-modeler.home" location="${jakarta-commons}/modeler/dist" />
-  <property name="commons-logging.jar" location="${jakarta-commons}/logging/dist/commons-logging.jar" />
- 
 
-  <target name="init">
-    <path id="myJars" >
+  <property name="commons-modeler.jar" location="${commons-modeler.home}/commons-modeler.jar" />
+  <property name="commons-logging.jar" location="${jakarta-commons}/logging/dist/commons-logging.jar" />
+  <property name="log4j.jar" location="${base.dir}/log4j/log4j.jar" />
+
+  <path id="tomcatCP-extra" /> 
+
+  <target name="init" unless="init.done">
+    <property name="tomcat.home" location=".." />
+
+    <path id="tomcatCP" >
+      <path refid="tomcatCP-extra"/>
       <fileset dir="${jmx.home}/lib" includes="*.jar"/>
       <pathelement path="${commons-logging.jar}" />
+      <pathelement path="${log4j.jar}" />
+      <pathelement path="/ws/log4j" />
       <fileset dir="${commons-modeler.home}" includes="*.jar" />
 
       <fileset dir="${tomcat.home}/server/lib" >
@@ -48,14 +58,30 @@
 
     </path>
 
-    <classloader classpathRef="myJars"/>
-
-    <taskdef resource="org/apache/commons/modeler/ant/ant.properties" />
+    <!-- Ant1.6
+      <classloader classpathRef="tomcatCP"/>
+      <taskdef resource="org/apache/commons/modeler/ant/ant.properties"/>
+     -->
   
+    <taskdef resource="org/apache/commons/modeler/ant/ant.properties"
+             classpathref="tomcatCP" />
+    <property name="init.done" value="true"/>
   </target>
 
 
-  <target name="jmx-console" depends="init">
+  <!-- ==================== Info ==================== 
+       Call this target if you want env info
+    -->
+
+  <target name="echo-cp" depends="init" description="Display the classpath that will be used" >
+    <echo message="CLASSPATH=${toString:tomcatCP}" />
+  </target>
+
+  <!-- ==================== Console - for debugging. ==================== 
+       Call this target if you want the console added.
+    -->
+
+  <target name="jmx-console" depends="init" description="Enable JMX-RI console ( web interface )" >
     <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
            name="jmx-console:type=HtmlAdaptorServer,port=9998">
     </mbean>
@@ -67,10 +93,11 @@
   </target>
 
 
-  <!-- Minimal profile. 
+  <!-- ==================== Minimal profile. ==================== 
+       The most basic tomcat ( work in progress ! ). 
     -->
   <target name="mini-tomcat" depends="init">
-    <!-- ==================== Load mbeans ==================== -->
+    <!-- Load mbeans -->
     <!-- Tomcat will fill in the missing pieces - if a component is 
          needed default values will be created. 
 
@@ -96,7 +123,7 @@
            name="tomcat:type=Context,host=default,context=/" />
 
 
-    <!-- ==================== Customization ==================== -->
+    <!-- Customization -->
     <!-- This should be made persistent - model mbean should be able to save this
          ( in the standalone version, not the ant file )
       -->
@@ -115,7 +142,7 @@
                    type="boolean"
                    value="false" />
 
-    <!-- ==================== Start the server ==================== -->
+    <!-- Start the server -->
     <!-- 
       -->
     <jmx-operation objectName="tomcat:type=Server" 
@@ -127,6 +154,59 @@
     <jmx-operation objectName="tomcat:type=Server" 
                    operation="await" />
 
+  </target>
+
+
+  <!-- ======================= Server.xml based ================ -->
+   <target name="set-cp-all" >
+    <path id="tomcatCP-extra">
+      <fileset dir="${jmx.home}/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/server/lib" includes="*.jar" 
+               excludes="mx4j**"/>
+      <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
+    </path>
+  </target>
+
+  <target name="run" depends="set-cp-all,init"
+        description="Start tomcat as an mbean using server.xml config and returns">
+
+    <modeler code="org.apache.catalina.startup.Catalina"
+          name="catalina:type=server" />
+
+    <jmxSet objectName="catalina:type=server"
+            attribute="catalinaHome"
+            value="${tomcat.home}"/>
+  
+    <!-- We could also call init and set other properties - 
+         init should load the modules -->
+
+    <jmx objectName="catalina:type=server"
+         operation="start" />
+    
+    <echo message="Tomcat5 running"/>
+  </target>
+
+  <!-- ==================== Await ==================== 
+       Call this target if you want the build file to hung in "await". Tomcat stop or ^C will stop 
+       the ant execution
+    -->
+  <target name="await" depends="init"
+        description="Wait for tomcat stop. Call this target after run">
+
+    <jmx objectName="catalina:type=server"
+         operation="await" />
+
+  </target>
+
+  <target name="start" depends="set-cp-all,init,run,await" description="Start tomcat, wait for stop message"/>
+
+
+  <!-- ==================== Build tools ==================== 
+  -->
+  <target name="convert-mbeans" depends="init" >
+    <mbeans-descriptors file="${catalina.src}/catalina/src/share/org/apache/catalina/mbeans/mbeans-descriptors.xml"
+              out="${catalina.src}/catalina/src/share/org/apache/catalina/mbeans/mbeans-descriptors.xml.ser" />
   </target>
 
 </project>
