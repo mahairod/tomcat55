@@ -151,6 +151,10 @@
           description="Comma-separated list of SSL protocol variants to be enabled"
                  type="java.lang.String"/>
 
+    <attribute   name="strategy"
+          description="Thread pool strategy"
+                 type="java.lang.String"/>
+
     <attribute   name="tcpNoDelay"
           description="Should we use TCP no delay?"
                  type="boolean"/>
