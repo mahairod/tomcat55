@@ -808,9 +808,24 @@ public abstract class RealmBase
 
         // Clean up allocated resources
         md = null;
-
+        
+        destroy();
+    
     }
-
+    
+    public void destroy() {
+    
+        // unregister this realm
+        if ( oname!=null ) {   
+            try {   
+                Registry.getRegistry().unregisterComponent(oname); 
+                log.info( "unregistering realm " + oname );   
+            } catch( Exception ex ) {   
+                log.error( "Can't unregister realm " + oname, ex);   
+            }      
+        }
+          
+    }
 
     // ------------------------------------------------------ Protected Methods
 
