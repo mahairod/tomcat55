@@ -231,13 +231,16 @@ class Ajp13Request extends Request
     
     public int doRead(byte[] b, int off, int len) throws IOException 
     {
+	int rd=-1;
 	if( contentLength == -1 ) {
-	    return ajp13.doRead(b,off,len);
+	    rd=ajp13.doRead(b,off,len);
+	    return rd;
 	}
 	if( available <= 0 )
 	    return -1;
-	int rd=ajp13.doRead( b,off, len );
+	rd=ajp13.doRead( b,off, len );
 	available -= rd;
+	if( dL > 0 ) d("Read: " + new String( b,off, len ));
 	return rd;
     }
     
@@ -245,6 +248,11 @@ class Ajp13Request extends Request
     {
         super.recycle();
 	if( ajp13!=null) ajp13.recycle();
+    }
+
+    private static final int dL=10;
+    private void d(String s ) {
+	System.err.println( "Ajp13Request: " + s );
     }
 }
 
