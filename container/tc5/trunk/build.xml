@@ -213,7 +213,7 @@
 
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
-    <ant dir="${catalina.home}" target="javadoc"/>
+    <ant dir="${catalina.home}" target="dist-javadoc"/>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
       <fileset dir="${catalina.build}/javadoc" />
@@ -225,7 +225,7 @@
     </copy>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
-      <fileset dir="${servlet.home}/docs/api" />
+      <fileset dir="${api.home}/dist/docs/api" />
     </copy>
   </target>
 
