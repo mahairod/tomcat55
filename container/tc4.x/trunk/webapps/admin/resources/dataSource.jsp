@@ -20,7 +20,6 @@
 <html:form method="POST" action="/resources/saveDataSource">
 
   <html:hidden property="objectName"/>
-  <html:hidden property="type"/>
   <html:hidden property="resourcetype"/>
   <html:hidden property="path"/>
   <html:hidden property="host"/>
@@ -46,11 +45,7 @@
             <controls:action url="/resources/setUpDataSource.do">
                 <bean:message key="resources.actions.datasrc.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listDataSources.do?&resourcetype=" +
-                               URLEncoder.encode(resourcetypeInfo) + "&path="+
-                               URLEncoder.encode(pathInfo) + "&host="+
-                               URLEncoder.encode(hostInfo) + "&service="+
-                               URLEncoder.encode(serviceInfo) %> "&forward=" + 
+            <controls:action url='<%= "/resources/listDataSources.do?forward=" + 
                                URLEncoder.encode("DataSources Delete List") %>'>
                 <bean:message key="resources.actions.datasrc.delete"/>
             </controls:action>

@@ -162,11 +162,12 @@ public class ListResourceLinksAction extends Action {
         if (service != null) {
             service = URLDecoder.decode(service);
         }
+        
         // Create a form bean containing the requested MBean Names
         ResourceLinksForm resourceLinksForm = null;
         try {
               resourceLinksForm = 
-              ResourceUtils.getResourceLinksForm(mserver, resourcetype,
+                ResourceUtils.getResourceLinksForm(mserver, resourcetype,
                                         path, host, service);
         } catch (Exception e) {
             getServlet().log(resources.getMessage

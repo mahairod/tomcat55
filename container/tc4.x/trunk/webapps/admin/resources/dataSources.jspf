@@ -18,6 +18,7 @@
         <bean:message key="resources.datasrc.jdbcclass"/>
       </div></td>
     </tr>
+
     <logic:iterate name="dataSourcesForm" property="dataSources"
                      id="dataSource" type="java.lang.String">
       <tr class="line-row">
@@ -42,6 +43,7 @@
         </div></td>
       </tr>
     </logic:iterate>
+
   </table>
 
 </td></tr></table>

@@ -38,6 +38,7 @@
 <br>
 <bean:define id="checkboxes" scope="page" value="true"/>
 <html:form action="/resources/deleteResourceLinks">
+
   <%@ include file="../buttons.jsp" %>
   <br>
   <%@ include file="resourceLinks.jspf" %>

@@ -149,7 +149,7 @@ public final class SetUpResourceLinkAction extends Action {
         }
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-
+        
         // Set up the form bean based on the creating or editing state
         String objectName = request.getParameter("objectName");
         String resourcetype = request.getParameter("resourcetype");
@@ -162,6 +162,7 @@ public final class SetUpResourceLinkAction extends Action {
         resourceLinkForm.setPath(path);
         resourceLinkForm.setHost(host);
         resourceLinkForm.setService(service);
+            
         if (objectName == null) {
             resourceLinkForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.resourcelk.create"));

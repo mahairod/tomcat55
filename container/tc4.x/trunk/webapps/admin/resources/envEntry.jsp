@@ -45,11 +45,7 @@
             <controls:action url="/resources/setUpEnvEntry.do">
                 <bean:message key="resources.actions.env.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listEnvEntries.do?resourcetype=" +
-                            URLEncoder.encode(resourcetypeInfo) + "&path="+
-                            URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" +
+            <controls:action url='<%= "/resources/listEnvEntries.do?forward=" +
                             URLEncoder.encode("EnvEntries Delete List") %>'>
                 <bean:message key="resources.actions.env.delete"/>
             </controls:action>

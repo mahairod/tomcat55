@@ -45,8 +45,8 @@
             <controls:action url="/resources/setUpResourceLink.do">
                 <bean:message key="resources.actions.resourcelk.create"/>
             </controls:action>
-            <controls:action url='<%= "/resources/listResourceLinks.do?forward=" 
-                        + URLEncoder.encode("ResourceLinks Delete List") %>'>
+            <controls:action url='<%= "/resources/listResourceLinks.do?forward=" + 
+                               URLEncoder.encode("ResourceLinks Delete List") %>'>
                 <bean:message key="resources.actions.resourcelk.delete"/>
             </controls:action>
          </controls:actions>
@@ -111,7 +111,7 @@
             </controls:data>
           </controls:row>
 
-        </controls:table>
+	</controls:table>
 
       </td>
 

@@ -195,18 +195,37 @@ public final class SetUpDataSourceAction extends Action {
                 attribute = "password";
                 dataSourceForm.setPassword
                     ((String) mserver.getAttribute(oname, attribute));
-                attribute = "maxActive";
-                dataSourceForm.setActive
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "maxIdle";
-                dataSourceForm.setIdle
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "maxWait";
-                dataSourceForm.setWait
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "validationQuery";
-                dataSourceForm.setQuery
-                    ((String) mserver.getAttribute(oname, attribute));
+                try {
+                    attribute = "maxActive";
+                    dataSourceForm.setActive
+                        ((String) mserver.getAttribute(oname, attribute));                
+                } catch (Exception e) {
+                    // if maxActive not defined, display default value
+                    dataSourceForm.setActive("4");
+                }
+                try {
+                    attribute = "maxIdle";
+                    dataSourceForm.setIdle
+                        ((String) mserver.getAttribute(oname, attribute)); 
+                } catch (Exception e) {
+                    // if maxIdle not defined, display default value
+                    dataSourceForm.setIdle("2");
+                }                    
+                try {
+                    attribute = "maxWait";
+                    dataSourceForm.setWait
+                        ((String) mserver.getAttribute(oname, attribute));
+                } catch (Exception e) {
+                    // if maxWait not defined, display default value
+                    dataSourceForm.setWait("5000");
+                }
+                try {
+                    attribute = "validationQuery";
+                    dataSourceForm.setQuery
+                        ((String) mserver.getAttribute(oname, attribute));
+                } catch (Exception e) {
+                    // don't display anything
+                }
             } catch (Exception e) {
                 getServlet().log
                     (resources.getMessage(locale,

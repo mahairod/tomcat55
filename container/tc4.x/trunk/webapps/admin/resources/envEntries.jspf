@@ -21,6 +21,7 @@
         <bean:message key="users.list.description"/>
       </div></td>
     </tr>
+
     <logic:iterate name="envEntriesForm" property="envEntries"
                      id="envEntry" type="java.lang.String">
       <tr class="line-row">
@@ -48,6 +49,7 @@
         </div></td>
       </tr>
     </logic:iterate>
+
   </table>
 
 </td></tr></table>
