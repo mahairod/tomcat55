@@ -74,15 +74,22 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestWrapper;
 import javax.servlet.ServletResponse;
+import javax.servlet.ServletResponseWrapper;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
 
@@ -191,6 +198,18 @@ final class ApplicationDispatcher
 
 
     /**
+     * The request specified by the dispatching application.
+     */
+    private ServletRequest appRequest = null;
+
+
+    /**
+     * The response specified by the dispatching application.
+     */
+    private ServletResponse appResponse = null;
+
+
+    /**
      * The Context this RequestDispatcher is associated with.
      */
     private Context context = null;
@@ -200,6 +219,12 @@ final class ApplicationDispatcher
      * The debugging detail level for this component.
      */
     private int debug = 0;
+
+
+    /**
+     * Are we performing an include() instead of a forward()?
+     */
+    private boolean including = false;
 
 
     /**
@@ -213,6 +238,18 @@ final class ApplicationDispatcher
      * The servlet name for a named dispatcher.
      */
     private String name = null;
+
+
+    /**
+     * The outermost request that will be passed on to the invoked servlet.
+     */
+    private ServletRequest outerRequest = null;
+
+
+    /**
+     * The outermost response that will be passed on to the invoked servlet.
+     */
+    private ServletResponse outerResponse = null;
 
 
     /**
@@ -245,6 +282,18 @@ final class ApplicationDispatcher
      * or included.
      */
     private Wrapper wrapper = null;
+
+
+    /**
+     * The request wrapper we have created and installed (if any).
+     */
+    private ServletRequest wrapRequest = null;
+
+
+    /**
+     * The response wrapper we have created and installed (if any).
+     */
+    private ServletResponse wrapResponse = null;
 
 
     // ------------------------------------------------------------- Properties
@@ -296,6 +345,7 @@ final class ApplicationDispatcher
     private void doForward(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
+
 	// Reset any output that has been buffered, but keep headers/cookies
         if (response.isCommitted()) {
             if (debug >= 1)
@@ -310,6 +360,9 @@ final class ApplicationDispatcher
                 log("  Forward resetBuffer() returned ISE: " + e);
             throw e;
         }
+
+        // Set up to handle the specified request and response
+        setup(request, response, false);
 
 	// Identify the HTTP-specific request and response objects (if any)
 	HttpServletRequest hrequest = null;
@@ -344,7 +397,7 @@ final class ApplicationDispatcher
 		log(" Path Based Forward");
 
 	    ApplicationHttpRequest wrequest =
-		new ApplicationHttpRequest((HttpServletRequest) request);
+                (ApplicationHttpRequest) wrapRequest();
 	    StringBuffer sb = new StringBuffer();
 	    String contextPath = context.getPath();
 	    if (contextPath != null)
@@ -361,7 +414,8 @@ final class ApplicationDispatcher
 		wrequest.setQueryString(queryString);
 		wrequest.mergeParameters(queryString);
 	    }
-            invoke(wrequest, response);
+            invoke(outerRequest, response);
+            unwrapRequest();
 
 	}
 
@@ -421,15 +475,13 @@ final class ApplicationDispatcher
     private void doInclude(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
+
+        // Set up to handle the specified request and response
+        setup(request, response, true);
+
 	// Create a wrapped response to use for this request
-	ServletResponse wresponse = null;
-	if (response instanceof HttpServletResponse) {
-	    wresponse =
-		new ApplicationHttpResponse((HttpServletResponse) response,
-					    true);
-	} else {
-	    wresponse = new ApplicationResponse(response, true);
-	}
+	// ServletResponse wresponse = null;
+	ServletResponse wresponse = wrapResponse();
 
 	// Handle a non-HTTP include
 	if (!(request instanceof HttpServletRequest) ||
@@ -437,7 +489,8 @@ final class ApplicationDispatcher
 
 	    if (debug >= 1)
 		log(" Non-HTTP Include");
-            invoke(request, wresponse);
+            invoke(request, outerResponse);
+            unwrapResponse();
 
 	}
 
@@ -448,11 +501,13 @@ final class ApplicationDispatcher
 		log(" Named Dispatcher Include");
 
 	    ApplicationHttpRequest wrequest =
-		new ApplicationHttpRequest((HttpServletRequest) request);
+                (ApplicationHttpRequest) wrapRequest();
             wrequest.setAttribute(Globals.NAMED_DISPATCHER_ATTR, name);
             if (servletPath != null)
                 wrequest.setServletPath(servletPath);
-            invoke(wrequest, wresponse);
+            invoke(outerRequest, outerResponse);
+            unwrapRequest();
+            unwrapResponse();
 
 	}
 
@@ -463,7 +518,7 @@ final class ApplicationDispatcher
 		log(" Path Based Include");
 
 	    ApplicationHttpRequest wrequest =
-		new ApplicationHttpRequest((HttpServletRequest) request);
+                (ApplicationHttpRequest) wrapRequest();
 	    StringBuffer sb = new StringBuffer();
 	    String contextPath = context.getPath();
 	    if (contextPath != null)
@@ -489,14 +544,17 @@ final class ApplicationDispatcher
 				      queryString);
 		wrequest.mergeParameters(queryString);
 	    }
-            invoke(wrequest, wresponse);
+            // invoke(wrequest, wresponse);
+            invoke(outerRequest, outerResponse);
+            unwrapRequest();
+            unwrapResponse();
 
 	}
 
     }
 
 
-    // -------------------------------------------------------- Package Methods
+    // -------------------------------------------------------- Private Methods
 
 
     /**
@@ -628,7 +686,7 @@ final class ApplicationDispatcher
      *
      * @param message Message to be logged
      */
-    void log(String message) {
+    private void log(String message) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)
@@ -647,7 +705,7 @@ final class ApplicationDispatcher
      * @param message Message to be logged
      * @param throwable Associated exception
      */
-    void log(String message, Throwable throwable) {
+    private void log(String message, Throwable throwable) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)
@@ -658,6 +716,180 @@ final class ApplicationDispatcher
 			       context.getPath() + "]: " + message);
 	    throwable.printStackTrace(System.out);
 	}
+
+    }
+
+
+    /**
+     * Set up to handle the specified request and response
+     *
+     * @param request The servlet request specified by the caller
+     * @param response The servlet response specified by the caller
+     * @param including Are we performing an include() as opposed to
+     *  a forward()?
+     */
+    private void setup(ServletRequest request, ServletResponse response,
+                       boolean including) {
+
+        this.appRequest = request;
+        this.appResponse = response;
+        this.outerRequest = request;
+        this.outerResponse = response;
+        this.including = including;
+
+    }
+
+
+    /**
+     * Unwrap the request if we have wrapped it.
+     */
+    private void unwrapRequest() {
+
+        if (wrapRequest == null)
+            return;
+
+        ServletRequest previous = null;
+        ServletRequest current = outerRequest;
+        while (current != null) {
+
+            // If we run into the container request we are done
+            if (current instanceof Request)
+                break;
+
+            // Remove the current request if it is our wrapper
+            if (current == wrapRequest) {
+                ServletRequest next =
+                  ((ServletRequestWrapper) current).getRequest();
+                if (previous == null)
+                    outerRequest = next;
+                else
+                    ((ServletRequestWrapper) previous).setRequest(next);
+                break;
+            }
+
+            // Advance to the next request in the chain
+            previous = current;
+            current = ((ServletRequestWrapper) current).getRequest();
+
+        }
+
+    }
+
+
+    /**
+     * Unwrap the response if we have wrapped it.
+     */
+    private void unwrapResponse() {
+
+        if (wrapResponse == null)
+            return;
+
+        ServletResponse previous = null;
+        ServletResponse current = outerResponse;
+        while (current != null) {
+
+            // If we run into the container response we are done
+            if (current instanceof Response)
+                break;
+
+            // Remove the current response if it is our wrapper
+            if (current == wrapResponse) {
+                ServletResponse next =
+                  ((ServletResponseWrapper) current).getResponse();
+                if (previous == null)
+                    outerResponse = next;
+                else
+                    ((ServletResponseWrapper) previous).setResponse(next);
+                break;
+            }
+
+            // Advance to the next response in the chain
+            previous = current;
+            current = ((ServletResponseWrapper) current).getResponse();
+
+        }
+
+    }
+
+
+    /**
+     * Create and return a request wrapper that has been inserted in the
+     * appropriate spot in the request chain.
+     */
+    private ServletRequest wrapRequest() {
+
+        // Locate the request we should insert in front of
+        ServletRequest previous = null;
+        ServletRequest current = outerRequest;
+        while (current != null) {
+            if (!(current instanceof ServletRequestWrapper))
+                break;
+            if (current instanceof ApplicationHttpRequest)
+                break;
+            if (current instanceof ApplicationRequest)
+                break;
+            if (current instanceof Request)
+                break;
+            previous = current;
+            current = ((ServletRequestWrapper) current).getRequest();
+        }
+
+        // Instantiate a new wrapper at this point and insert it in the chain
+        ServletRequest wrapper = null;
+        if ((current instanceof ApplicationHttpRequest) ||
+            (current instanceof HttpRequest) ||
+            (current instanceof HttpServletRequest))
+            wrapper = new ApplicationHttpRequest((HttpServletRequest) current);
+        else
+            wrapper = new ApplicationRequest(current);
+        if (previous == null)
+            outerRequest = wrapper;
+        else
+            ((ServletRequestWrapper) previous).setRequest(wrapper);
+        wrapRequest = wrapper;
+        return (wrapper);
+
+    }
+
+
+    /**
+     * Create and return a response wrapper that has been inserted in the
+     * appropriate spot in the response chain.
+     */
+    private ServletResponse wrapResponse() {
+
+        // Locate the response we should insert in front of
+        ServletResponse previous = null;
+        ServletResponse current = outerResponse;
+        while (current != null) {
+            if (!(current instanceof ServletResponseWrapper))
+                break;
+            if (current instanceof ApplicationHttpResponse)
+                break;
+            if (current instanceof ApplicationResponse)
+                break;
+            if (current instanceof Response)
+                break;
+            previous = current;
+            current = ((ServletResponseWrapper) current).getResponse();
+        }
+
+        // Instantiate a new wrapper at this point and insert it in the chain
+        ServletResponse wrapper = null;
+        if ((current instanceof ApplicationHttpResponse) ||
+            (current instanceof HttpResponse) ||
+            (current instanceof HttpServletResponse))
+            wrapper =
+                new ApplicationHttpResponse((HttpServletResponse) current,
+                                            including);
+        else
+            wrapper = new ApplicationResponse(current, including);
+        if (previous == null)
+            outerResponse = wrapper;
+        else
+            ((ServletResponseWrapper) previous).setResponse(wrapper);
+        wrapResponse = wrapper;
+        return (wrapper);
 
     }
 
