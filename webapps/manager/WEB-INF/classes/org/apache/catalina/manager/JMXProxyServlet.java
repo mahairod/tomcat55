@@ -124,6 +124,7 @@ public class JMXProxyServlet extends HttpServlet  {
                       HttpServletResponse response)
         throws IOException, ServletException
     {
+
         response.setContentType("text/plain");
 
         PrintWriter writer = response.getWriter();
@@ -134,13 +135,7 @@ public class JMXProxyServlet extends HttpServlet  {
             return;
         }
 
-        String qry=request.getParameter("qry");
-        if( qry!= null ) {
-            listBeans( writer, qry );
-            return;
-        }
-
-        qry=request.getParameter("set");
+        String qry=request.getParameter("set");
         if( qry!= null ) {
             String name=request.getParameter("att");
             String val=request.getParameter("val");
@@ -149,8 +144,13 @@ public class JMXProxyServlet extends HttpServlet  {
             return;
         }
 
-        writer.println("UnknownQuery: " + request.getQueryString());
-        return;
+        qry=request.getParameter("qry");
+        if( qry == null ) {
+            qry = "*:*";
+        }
+
+        listBeans( writer, qry );
+
     }
 
     public void setAttribute( PrintWriter writer,
