@@ -597,16 +597,18 @@ public final class ContextConfig
         Object results[] = new Object[listeners.length];
 	boolean error = false;
 	for (int i = 0; i < results.length; i++) {
-	  try {
-	      Class clazz = loader.loadClass(listeners[i]);
-	      results[i] = clazz.newInstance();
-	  } catch (Throwable t) {
-	      // FIXME - should we do anything besides log these?
-	      log(sm.getString("contextConfig.applicationListener",
-			       listeners[i]), t);
-	      error = true;
-	  }
-
+	    if (debug >= 2)
+		log(" Configuring event listener class '" +
+		    listeners[i] + "'");
+	    try {
+		Class clazz = loader.loadClass(listeners[i]);
+		results[i] = clazz.newInstance();
+	    } catch (Throwable t) {
+		// FIXME - should we do anything besides log these?
+		log(sm.getString("contextConfig.applicationListener",
+				 listeners[i]), t);
+		error = true;
+	    }
 	}
 	if (!error)
 	    context.setApplicationListeners(results);

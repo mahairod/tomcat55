@@ -2,9 +2,19 @@
 
 <!DOCTYPE web-app
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
-    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+    "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
 
 <web-app>
+
+    <!-- Define example application events listeners -->
+    <listener>
+        <listener-class>listeners.ContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>listeners.SessionListener</listener-class>
+    </listener>
+
+    <!-- Define servlets that are included in the example application -->
     <servlet>
         <servlet-name>
             snoop

@@ -115,7 +115,7 @@ final class StandardWrapperValve
     /**
      * The debugging detail level for this component.
      */
-    private int debug = 3;
+    private int debug = 0;
 
 
     /**

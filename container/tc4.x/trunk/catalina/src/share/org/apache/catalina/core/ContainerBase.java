@@ -1088,7 +1088,6 @@ public abstract class ContainerBase
 	if (started)
 	    throw new LifecycleException
 		(sm.getString("containerBase.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
 	// Start our subordinate components, if any
@@ -1128,6 +1127,9 @@ public abstract class ContainerBase
 	    current = current.getNext();
 	}
 
+	// Notify our interested LifecycleListeners
+	lifecycle.fireLifecycleEvent(START_EVENT, null);
+
     }
 
 
@@ -1144,6 +1146,8 @@ public abstract class ContainerBase
 	if (!started)
 	    throw new LifecycleException
 		(sm.getString("containerBase.notStarted"));
+
+	// Notify our interested LifecycleListeners
 	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 	started = false;
 
