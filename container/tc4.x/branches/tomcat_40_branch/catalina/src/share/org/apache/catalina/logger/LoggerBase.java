@@ -84,7 +84,7 @@ import org.apache.catalina.Logger;
  * @version $Revision$ $Date$
  */
 
-abstract class LoggerBase
+public abstract class LoggerBase
     implements Logger {
 
 
