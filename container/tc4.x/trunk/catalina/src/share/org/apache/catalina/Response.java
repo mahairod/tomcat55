@@ -248,6 +248,12 @@ public interface Response {
 
 
     /**
+     * Recycle facade object.
+     */
+    public void recycleFacade();
+
+
+    /**
      * Reset the data buffer but not any status or header information.
      */
     public void resetBuffer();
