@@ -7,14 +7,12 @@
   <property name="jasper.build"    value="../../build/jasper"/>
   <property name="jasper.dist"     value="../../dist/jasper"/>
   <property name="jaxp.home"       value="../../jaxp"/>
-  <property name="regexp.home"     value="../../jakarta-regexp"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
   <property name="catalina.build"   value="../../build/catalina"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
   <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
-  <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
 
@@ -26,8 +24,6 @@
     <mkdir dir="${jasper.build}/conf"/>
     <mkdir dir="${jasper.build}/lib"/>
     <mkdir dir="${jasper.build}/logs"/>
-    <mkdir dir="${jasper.build}/server"/>
-    <mkdir dir="${jasper.dist}/lib"/>
   </target>
 
 
@@ -39,11 +35,10 @@
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" cr="add"/>
     <chmod perm="+x" file="${jasper.build}/bin/jasper.sh"/>
-    <chmod perm="+x" file="${jasper.build}/bin/startup.sh"/>
-    <chmod perm="+x" file="${jasper.build}/bin/shutdown.sh"/>
+    <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
     <!-- Configuration Files -->
-    <copydir src="src/conf" dest="${jasper.build}/conf"/>
+    <!-- <copydir src="src/conf" dest="${jasper.build}/conf"/> -->
 
     <!-- Shared Extensions -->
     <!--   All applications need the servlet API classes -->
@@ -51,13 +46,6 @@
     <!--   Jasper needs a JAXP-compatible XML parser -->
     <copyfile src="${jaxp.jar}"    dest="${jasper.build}/lib/jaxp.jar"/>
     <copyfile src="${parser.jar}"  dest="${jasper.build}/lib/parser.jar"/>
-
-    <!-- Server Components -->
-    <!--   Jasper needs a JAXP-compatible XML parser -->
-    <copyfile src="${jaxp.jar}"    dest="${jasper.build}/server/jaxp.jar"/>
-    <copyfile src="${parser.jar}"  dest="${jasper.build}/server/parser.jar"/>
-    <!--   Jasper needs the regular expression library -->
-    <copyfile src="${regexp.jar}"  dest="${jasper.build}/server/regexp.jar"/>
 
   </target>
 
@@ -67,7 +55,7 @@
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${jasper.build}/classes"
-          classpath="${regexp.jar}:${servlet.jar}"
+          classpath="${servlet.jar}"
         deprecation="off" debug="on" optimize="off"
            excludes="**/CVS/**"/>
 
@@ -76,28 +64,16 @@
       <include name="**/*.properties"/>
     </copydir>
 
-    <!-- Construct bootstrap JAR file -->
-    <jar   jarfile="${jasper.build}/bin/bootstrap.jar"
-           basedir="${jasper.build}/classes"
-          includes="org/apache/tomcat/startup/Bootstrap.class,org/apache/tomcat/loader/*"/>
-
   </target>
 
-  <!-- ================ BUILD: dist ==================================== -->
-  <target name="dist" depends="build-main">
-    <jar jarfile="${jasper.dist}/lib/jasper.jar"
-         basedir="${jasper.build}/classes" > 
-         <include name="org/apache/jasper/**" /> 
-    </jar>
-  </target>
-
-  <!-- ================ BUILD: Create Jasper Javadocs =================== -->
-  <target name="build-javadoc" depends="build-main">
-    <mkdir dir="${jasper.build}/webapps/ROOT/javadoc"/>
+  <!-- ================ BUILD: Create Jasper Javadocs ===================== -->
+  <target name="javadoc" depends="build-main">
+    <deltree dir="${catalina.build}/webapps/ROOT/jasper-javadoc"/>
+    <mkdir dir="${catalina.build}/webapps/ROOT/jasper-javadoc"/>
     <javadoc packagenames="org.apache.jasper.*"
-             classpath="${regexp.jar}:${servlet.jar}:${jasper.build}/classes"
+             classpath="${servlet.jar}:${jasper.build}/classes"
                sourcepath="src/share"
-                  destdir="${jasper.build}/webapps/ROOT/javadoc"
+                  destdir="${catalina.build}/webapps/ROOT/jasper-javadoc"
                    author="true"
                   version="true"
               windowtitle="Jasper Internal API Documentation"
@@ -106,11 +82,6 @@
     />
   </target>
 
-
-  <!-- ===================== Deploy for catalina ========================= -->
-  <target name="deploy" depends="build-clean,dist">
-    <copyfile src="${jasper.dist}/lib/jasper.jar" dest="${catalina.build}/lib/jasper.jar"/>
-  </target>
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
@@ -121,8 +92,53 @@
   <!-- ==================== BUILD: Rebuild Everything ===================== -->
   <target name="all" depends="build-clean,build-main"/>
 
+
+  <!-- ================ DIST: Create Directories ========================== -->
+  <target name="dist-prepare">
+    <mkdir dir="${jasper.dist}/bin"/>
+    <mkdir dir="${jasper.dist}/lib"/>
+  </target>
+
+
+  <!-- ================ DIST: Copy Static Files =========================== -->
+  <target name="dist-static" depends="dist-prepare, build-static">
+    <copydir src="${jasper.build}/bin" dest="${jasper.dist}/bin"/>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${jasper.dist}/bin/jasper.sh"/>
+    <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
+  </target>
+
+
+  <!-- ================ DIST: Create Distribution ========================= -->
+  <target name="dist" depends="dist-static, build-main">
+    <jar jarfile="${jasper.dist}/lib/jasper.jar"
+         basedir="${jasper.build}/classes" > 
+         <include name="org/apache/jasper/**" /> 
+    </jar>
+  </target>
+
+
+  <!-- ======================== DIST: Clean Directory ===================== -->
+  <target name="dist-clean">
+    <deltree dir="${jasper.dist}"/>
+  </target>
+
+
+  <!-- ================ DIST: Deploy for Catalina ========================= -->
+  <target name="deploy" depends="dist">
+    <copydir  src="${jasper.dist}/bin" dest="${catalina.build}/bin">
+      <include name="j*"/>
+    </copydir>
+    <chmod perm="+x" file="${catalina.build}/bin/jasper.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/jspc.sh"/>
+    <copyfile src="${jasper.dist}/lib/jasper.jar" dest="${catalina.build}/lib/jasper.jar"/>
+  </target>
+
+
   <!-- ====================== Convenient Synonyms ========================= -->
-  <target name="clean" depends="build-clean"/>
+  <target name="clean" depends="build-clean, dist-clean"/>
 
 
 </project>
+
