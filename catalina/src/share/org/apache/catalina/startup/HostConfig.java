@@ -497,7 +497,7 @@ public class HostConfig
                 }
 
                 // Assume this is a configuration descriptor and deploy it
-                log.info(sm.getString("hostConfig.deployDescriptor", files[i]));
+                log.debug(sm.getString("hostConfig.deployDescriptor", files[i]));
                 try {
                     URL config =
                         new URL("file", null, dir.getCanonicalPath());
@@ -545,7 +545,7 @@ public class HostConfig
                 if (isUnpackWARs()) {
 
                     // Expand and deploy this application as a directory
-                    log.info(sm.getString("hostConfig.expand", files[i]));
+                    log.debug(sm.getString("hostConfig.expand", files[i]));
                     try {
                         URL url = new URL("jar:file:" +
                                           dir.getCanonicalPath() + "!/");
@@ -627,7 +627,7 @@ public class HostConfig
                 }
                 long t2=System.currentTimeMillis();
                 if( (t2-t1) > 200 )
-                    log.info("Deployed " + files[i] + " " + (t2-t1));
+                    log.debug("Deployed " + files[i] + " " + (t2-t1));
             }
 
         }
