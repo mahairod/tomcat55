@@ -383,7 +383,6 @@ values, depending on how you configured your keystore earlier:</p>
     <td>Add this element if your are using a different format for the 
         TrustStore then you are using for the KeyStore.  The valid values are
         <code>JKS</code> and <code>PKCS12</code>.</td>
-    </td>
   </tr>
 </table>
 
