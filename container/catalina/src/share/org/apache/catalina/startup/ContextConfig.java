@@ -103,6 +103,12 @@ public final class ContextConfig
      */
     protected SAXParseException parseException = null;
 
+    
+    /**
+     * Original docBase.
+     */
+    protected String originalDocBase = null;
+    
 
     /**
      * The string resources for this package.
@@ -753,6 +759,11 @@ public final class ContextConfig
             String docBase = context.getDocBase();
             if (docBase == null)
                 return;
+            if (originalDocBase == null) {
+                originalDocBase = docBase;
+            } else {
+                docBase = originalDocBase;
+            }
             File docBaseFile = new File(docBase);
             if (!docBaseFile.isAbsolute()) {
                 docBaseFile = new File(appBase, docBase);
@@ -773,7 +784,7 @@ public final class ContextConfig
             }
 
             File file = null;
-            if (context.getDocBase().toLowerCase().endsWith(".war")) {
+            if (docBase.toLowerCase().endsWith(".war")) {
                 file = new File(System.getProperty("java.io.tmpdir"),
                         deploymentCount++ + "-" + docBase + ".war");
             } else {
@@ -1057,6 +1068,18 @@ public final class ContextConfig
             context.removeWrapperListener(wrapperListeners[i]);
         }
 
+        // Remove (partially) folders and files created by antiLocking
+        Host host = (Host) context.getParent();
+        String appBase = host.getAppBase();
+        String docBase = context.getDocBase();
+        if ((docBase != null) && (originalDocBase != null)) {
+            File docBaseFile = new File(docBase);
+            if (!docBaseFile.isAbsolute()) {
+                docBaseFile = new File(appBase, docBase);
+            }
+            ExpandWar.delete(docBaseFile);
+        }
+        
         ok = true;
 
     }
@@ -1069,7 +1092,9 @@ public final class ContextConfig
         // Called from StandardContext.destroy()
         if (log.isDebugEnabled())
             log.debug(sm.getString("contextConfig.destroy"));
-        
+        String workDir = ((StandardContext) context).getWorkDir();
+        if (workDir != null)
+            ExpandWar.delete(new File(workDir));
     }
     
     
