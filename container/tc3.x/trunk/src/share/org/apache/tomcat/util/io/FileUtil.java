@@ -432,5 +432,25 @@ public class FileUtil {
     }
 
 
+    public static File getConfigFile( File base, File configDir, String defaultF )
+    {
+        if( base==null )
+            base=new File( defaultF );
+        if( ! base.isAbsolute() ) {
+            if( configDir != null )
+                base=new File( configDir, base.getPath());
+            else
+                base=new File( base.getAbsolutePath()); //??
+        }
+        File parent=new File(base.getParent());
+        if(!parent.exists()){
+            if(!parent.mkdirs()){
+                throw new RuntimeException(
+                    "Unable to create path to config file :"+
+                    base.getAbsolutePath());
+            }
+        }
+        return base;
+    }
 
 }
