@@ -51,6 +51,9 @@
 -->
 
       <copydir  src="src/bin" dest="${watchdog.build}/bin"/>
+      <fixcrlf  srcdir="${watchdog.build}/bin" includes="*.sh" cr="remove"/>
+      <fixcrlf  srcdir="${watchdog.build}/bin" includes="*.bat" cr="add"/>
+      <chmod       dir="${watchdog.build}/bin" includes="*.sh" perm="+x"/>
       <copydir  src="src/conf" dest="${watchdog.build}/conf" />
 
       <copydir  src="doc" dest="${watchdog.build}/doc" />
@@ -139,6 +142,9 @@
               dest="${watchdog.dist}/lib/servlet-golden"/>
 
       <copydir  src="src/bin" dest="${watchdog.dist}/bin"/>
+      <fixcrlf  srcdir="${watchdog.dist}/bin" includes="*.sh" cr="remove"/>
+      <fixcrlf  srcdir="${watchdog.dist}/bin" includes="*.bat" cr="add"/>
+      <chmod       dir="${watchdog.dist}/bin" includes="*.sh" perm="+x"/>
       <copydir  src="src/conf" dest="${watchdog.dist}/conf" />
     
       <jar jarfile="${watchdog.dist}/lib/client.jar"
