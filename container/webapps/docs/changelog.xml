@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
@@ -30,6 +30,24 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        Unregister host mbean and all context mbeans at remove a host, s. StandardHost.destroy() and MBeanFactory.createStandardHost/removeHost(,) detected by Thorsten Kamann (pero)
+      </fix>
+      <fix>
+        make it possible to restart connector, now serversocket recreated after stop,start (pero)
+      </fix>
+      <fix>
+        change mbean names from Mapper and ProtocolHandler to connector naming style (pero)
+      </fix>
+      <update>
+        Add some log.isXXXEnabled (pero)
+      </update>
+      <fix>
+        Deregister MapperListener after remove connector (pero)
+      </fix>
+      <fix>
+        Remove host only at own domain with same name at all services, detected by Thorsten Kamann (pero)
+      </fix>
+      <fix>
         <bug>33187</bug>: Remove any logging of the password in the JAAS realm,
         submitted by Andrew Jaquith (remm)
       </fix>
@@ -43,14 +61,28 @@
       <fix>
         <bug>26135</bug>: Workaround for memory leak when reloading Struts
         based web applications by clearing the bean instrospector cache of the JVM on
-        classloader stop, submitted by Tobias LÃ¶fstrand (remm)
+        classloader stop, submitted by Tobias Löfstrand (remm)
       </fix>
       <fix>
          Ensure that if CLASSPATH is declared on startup - it is not used. (funkman)
       </fix>
     </changelog>
   </subsection>
-
+  
+  <subsection name="Coyote">
+    <changelog>
+      <fix>
+         PoolTcpEndpoint recreate ServerSocket after start,stop,start connector (pero)
+      </fix>
+      <update>
+        Add some log.isXXXEnabled (pero)
+      </update>
+	  <add>
+	    JkMX: make log4j mbean configureable with attribute log4jEnabled
+	  </add>
+    </changelog>
+  </subsection>
+ 
   <subsection name="Jasper">
     <changelog>
       <fix>
@@ -59,6 +91,14 @@
       </fix>
     </changelog>
   </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        Fix create and remove Host for Admin app. (pero)
+      </fix>
+    </changelog>
+   </subsection>
 </section>
 
 <section name="Tomcat 5.5.7 (remm)">
