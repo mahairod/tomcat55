@@ -1066,9 +1066,13 @@ class StandardSession
             throw new IllegalStateException
                 (sm.getString("standardSession.isNew.ise"));
 
-
-        // kills all sessions
+        // NOTE: The SingleSignOn Valve/SessionListener will expire
+        // all sessions, if it is being used.
         fireSessionEvent(Session.SESSION_DESTROYED_EVENT, "logout");
+ 
+        // If the SingleSignOn didnt expire it, lets do it now.
+        if (isValid) 
+            expire(false);
 
     }
 
