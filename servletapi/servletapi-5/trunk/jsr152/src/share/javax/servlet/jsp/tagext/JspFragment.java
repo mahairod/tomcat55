@@ -55,6 +55,10 @@
  
 package javax.servlet.jsp.tagext;
 
+import java.io.IOException;
+import java.io.Writer;
+import javax.servlet.jsp.*;
+
 /**
  * Encapsulates a portion of JSP code in an object that 
  * can be invoked as many times as needed.  JSP Fragments are defined 
@@ -104,8 +108,8 @@ public abstract class JspFragment {
      * @throws java.io.IOException If there was an error writing to the 
      *     stream.
      */
-    public abstract void invoke( java.io.Writer out )
-        throws javax.servlet.jsp.JspException, java.io.IOException;
+    public abstract void invoke( Writer out )
+        throws JspException, IOException;
 
     /**
      * Returns the JspContext that is bound to this JspFragment.
