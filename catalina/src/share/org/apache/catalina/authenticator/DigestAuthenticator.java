@@ -75,6 +75,9 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
@@ -94,6 +97,7 @@ import org.apache.catalina.util.MD5Encoder;
 
 public class DigestAuthenticator
     extends AuthenticatorBase {
+    private static Log log = LogFactory.getLog(DigestAuthenticator.class);
 
 
     // -------------------------------------------------------------- Constants
@@ -206,7 +210,7 @@ public class DigestAuthenticator
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -219,8 +223,42 @@ public class DigestAuthenticator
         // Have we already authenticated someone?
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-        if (principal != null)
+        //String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+        if (principal != null) {
+            if (log.isDebugEnabled())
+                log.debug("Already authenticated '" + principal.getName() + "'");
+            // Associate the session with any existing SSO session in order
+            // to get coordinated session invalidation at logout
+            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+            if (ssoId != null)
+                associate(ssoId, getSession(request, true));
             return (true);
+        }
+
+        // NOTE: We don't try to reauthenticate using any existing SSO session,
+        // because that will only work if the original authentication was
+        // BASIC or FORM, which are less secure than the DIGEST auth-type
+        // specified for this webapp
+        //
+        // Uncomment below to allow previous FORM or BASIC authentications
+        // to authenticate users for this webapp
+        // TODO make this a configurable attribute (in SingleSignOn??)
+        /*
+        // Is there an SSO session against which we can try to reauthenticate?
+        if (ssoId != null) {
+            if (log.isDebugEnabled())
+                log.debug("SSO Id " + ssoId + " set; attempting " +
+                          "reauthentication");
+            // Try to reauthenticate using data cached by SSO.  If this fails,
+            // either the original SSO logon was of DIGEST or SSL (which
+            // we can't reauthenticate ourselves because there is no
+            // cached username and password), or the realm denied
+            // the user's reauthentication for some reason.
+            // In either case we have to prompt the user for a logon
+            if (reauthenticateFromSSO(ssoId, request))
+                return true;
+        }
+        */
 
         // Validate any credentials already included with this request
         HttpServletRequest hreq =
@@ -264,8 +302,6 @@ public class DigestAuthenticator
      *
      * @param request HTTP servlet request
      * @param authorization Authorization credentials from this request
-     * @param login Login configuration describing how authentication
-     *              should be performed
      * @param realm Realm used to authenticate Principals
      */
     protected static Principal findPrincipal(HttpServletRequest request,
@@ -292,7 +328,6 @@ public class DigestAuthenticator
         String qop = null;
         String uri = null;
         String response = null;
-        String opaque = null;
         String method = request.getMethod();
 
         while (commaTokenizer.hasMoreTokens()) {
@@ -434,8 +469,8 @@ public class DigestAuthenticator
      * </pre>
      *
      * @param request HTTP Servlet request
-     * @param resonse HTTP Servlet response
-     * @param login Login configuration describing how authentication
+     * @param response HTTP Servlet response
+     * @param config    Login configuration describing how authentication
      *              should be performed
      * @param nOnce nonce token
      */

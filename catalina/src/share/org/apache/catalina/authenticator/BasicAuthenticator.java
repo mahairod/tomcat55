@@ -133,7 +133,7 @@ public class BasicAuthenticator
      *
      * @param request Request we are processing
      * @param response Response we are creating
-     * @param login Login configuration describing how authentication
+     * @param config    Login configuration describing how authentication
      *              should be performed
      *
      * @exception IOException if an input/output error occurs
@@ -146,10 +146,29 @@ public class BasicAuthenticator
         // Have we already authenticated someone?
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (log.isDebugEnabled())
                 log.debug("Already authenticated '" + principal.getName() + "'");
+            // Associate the session with any existing SSO session
+            if (ssoId != null)
+                associate(ssoId, getSession(request, true));
             return (true);
+        }
+
+        // Is there an SSO session against which we can try to reauthenticate?
+        if (ssoId != null) {
+            if (log.isDebugEnabled())
+                log.debug("SSO Id " + ssoId + " set; attempting " +
+                          "reauthentication");
+            /* Try to reauthenticate using data cached by SSO.  If this fails,
+               either the original SSO logon was of DIGEST or SSL (which
+               we can't reauthenticate ourselves because there is no
+               cached username and password), or the realm denied
+               the user's reauthentication for some reason.
+               In either case we have to prompt the user for a logon */
+            if (reauthenticateFromSSO(ssoId, request))
+                return true;
         }
 
         // Validate any credentials already included with this request
@@ -171,8 +190,8 @@ public class BasicAuthenticator
         String realmName = config.getRealmName();
         if (realmName == null)
             realmName = hreq.getServerName() + ":" + hreq.getServerPort();
-    //        if (debug >= 1)
-    //            log("Challenging for realm '" + realmName + "'");
+    //        if (log.isDebugEnabled())
+    //            log.debug("Challenging for realm '" + realmName + "'");
         hres.setHeader("WWW-Authenticate",
                        "Basic realm=\"" + realmName + "\"");
         hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
