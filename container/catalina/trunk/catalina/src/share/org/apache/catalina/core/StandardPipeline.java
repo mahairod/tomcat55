@@ -477,6 +477,8 @@ public class StandardPipeline
             } catch (LifecycleException e) {
                 log.error("StandardPipeline.addValve: start: ", e);
             }
+            // Register the newly added valve
+            registerValve(valve);
         }
 
         // Add this Valve to the set associated with this Pipeline
@@ -486,8 +488,6 @@ public class StandardPipeline
             results[valves.length] = valve;
             valves = results;
         }
-        // register the newly added valve
-        registerValve(valve);
 
     }
 
@@ -602,9 +602,9 @@ public class StandardPipeline
             } catch (LifecycleException e) {
                 log.error("StandardPipeline.removeValve: stop: ", e);
             }
+            // Unregister the removed valave
+            unregisterValve(valve);
         }
-        // unregister the removed valave
-        unregisterValve(valve);
 
     }
 
