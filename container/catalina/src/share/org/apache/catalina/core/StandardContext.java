@@ -3863,17 +3863,12 @@ public class StandardContext
         // Set config file name
         File configBase = getConfigBase();
         if ((getConfigFile() == null) && (configBase != null)) {
-
             String name = getName();
             if (name.equals("")) {
                 name = "ROOT";
             }
-            File file = new File(configBase, name + ".xml");
-
+            File file = new File(configBase, name.replace('/', '_') + ".xml");
             setConfigFile(file.getPath());
-            if (log.isDebugEnabled())
-                log.debug( "Set config file " + file);
-
         }
 
         // Add missing components as necessary
