@@ -543,7 +543,7 @@
             testStrategy="Using jsp\:useBean, create a new bean instance and set the property attribute to '*'.  The following properties should be set by the tag\: name, num, str."
         />
 
-        <watchdog request="GET /jsp-tests/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA  HTTP/1.0"
+        <watchdog request="GET /jsp-tests/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
             testName="positiveSetPropNoParamTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="${wgdir}/core_syntax/actions/setProperty/positiveSetPropNoParam.html"
@@ -1185,6 +1185,7 @@
             assertion="JspWriter.newLine() will write a line separator as defined by the system property 'line.separator'. JavaServer Pages Specification v1.2 , Sec. 9.2.2"
             testStrategy="Validate the a call to newLine() produces the expected results."
         />
+<!-- Test is invalid and needs to be reworked
 
         <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/negativeClose.jsp HTTP/1.0"
             testName="negativeCloseTest" debug="0"
@@ -1196,6 +1197,7 @@
                 host="${host}" port="${port}" debug="0" exactMatch="false"
                 expectHeaders="status:Test Status=PASSED" nested="true"/>
         </watchdog>
+-->
 
         <!-- END engine_jspwriter_misc -->
 
@@ -2192,7 +2194,7 @@
     </target>
 
     <target name="positiveSetPropNoParamTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA  HTTP/1.0"
+        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
             testName="positiveSetPropNoParamTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropNoParam.html"
@@ -3414,6 +3416,8 @@
         />
     </target>
 
+<!-- Test is invalid and needs to be reworked
+
     <target name="negativeCloseTest">
         <watchdog request="GET /jsp-tests/jsp/engine/JspWriter/misc/negativeClose.jsp HTTP/1.0"
             testName="negativeCloseTest" debug="0"
@@ -3426,4 +3430,6 @@
                 expectHeaders="status:Test Status=PASSED" nested="true"/>
         </watchdog>
     </target>
+-->
+
 </project>
