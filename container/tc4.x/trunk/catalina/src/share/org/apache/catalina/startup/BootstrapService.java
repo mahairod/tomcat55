@@ -126,8 +126,8 @@ public final class BootstrapService
         System.out.println("Create Catalina server");
 
         // Set Catalina path
-        setCatalinaBase();
         setCatalinaHome();
+        setCatalinaBase();
 
         // Construct the class loaders we will need
         ClassLoader commonLoader = createCommonLoader();
@@ -594,8 +594,12 @@ public final class BootstrapService
 
         if (System.getProperty("catalina.base") != null)
             return;
-        System.setProperty("catalina.base",
-                           System.getProperty("user.dir"));
+        if (System.getProperty("catalina.home") != null)
+            System.setProperty("catalina.base",
+                               System.getProperty("catalina.home"));
+        else
+            System.setProperty("catalina.base",
+                               System.getProperty("user.dir"));
 
     }
 

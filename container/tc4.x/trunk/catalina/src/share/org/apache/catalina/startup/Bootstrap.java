@@ -124,6 +124,10 @@ public final class Bootstrap {
         } catch (ClassNotFoundException e) {
         }
 
+        // Configure catalina.base from catalina.home if not yet set
+        if (System.getProperty("catalina.base") == null)
+            System.setProperty("catalina.base", getCatalinaHome());
+
         // Construct the class loaders we will need
         ClassLoader commonLoader = createCommonLoader(loadJNDI);
         ClassLoader catalinaLoader =

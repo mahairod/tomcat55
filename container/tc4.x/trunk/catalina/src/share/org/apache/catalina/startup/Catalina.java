@@ -172,8 +172,8 @@ public class Catalina {
      */
     public void process(String args[]) {
 
-        setCatalinaBase();
         setCatalinaHome();
+        setCatalinaBase();
         try {
             if (arguments(args))
                 execute();
@@ -694,7 +694,7 @@ public class Catalina {
         if (System.getProperty("catalina.base") != null)
             return;
         System.setProperty("catalina.base",
-                           System.getProperty("user.dir"));
+                           System.getProperty("catalina.home"));
 
     }
 
