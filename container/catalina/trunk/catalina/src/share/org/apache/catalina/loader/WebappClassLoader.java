@@ -1886,12 +1886,8 @@ public class WebappClassLoader
      */
     protected boolean isPackageSealed(String name, Manifest man) {
 
-        StringBuffer buf = new StringBuffer(name); 
-        for (int i=0;i<buf.length();i++) { 
-            if (buf.charAt(i)=='.') buf.setCharAt(i,'/'); 
-        } 
-        buf.append('/'); 
-        Attributes attr = man.getAttributes(buf.toString()); 
+        String path = name.replace('.', '/') + '/';
+        Attributes attr = man.getAttributes(path); 
         String sealed = null;
         if (attr != null) {
             sealed = attr.getValue(Name.SEALED);
