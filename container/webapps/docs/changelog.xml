@@ -29,14 +29,17 @@
 <section name="Tomcat 5.5.7 (yoavs)">
   <subsection name="General">
     <changelog>
-      <add> 
+      <add>
         Add installer for mod_jk on IIS. (mturk)
       </add>
     </changelog>
   </subsection>
-  
+
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        <bug>32714 </bug>: Don't make the AccessLogValve final (funkman)
+      </fix>
       <fix>
         <bug>32694</bug>: Fix bad code to make docBase path aboslute in antiLocking
         method. (remm)
@@ -78,7 +81,7 @@
       <update>
         <bug>32382</bug>: Index page and packaed WAR for sample webapp. (yoavs)
       </update>
-      <fix> 
+      <fix>
         <bug>32603</bug>: Updated host.xml to reflect appBase resolution. (yoavs)
       </fix>
     </changelog>
@@ -131,7 +134,7 @@
       </update>
     </changelog>
   </subsection>
-  
+
   <subsection name="Webapps">
     <changelog>
       <fix>
@@ -156,7 +159,7 @@
       </update>
  <!-- ByteBufferAccessLogValve.java is not inside!!
       <update>
-        Add an asynchrounous access log valve based on NIO (jfarcand) 
+        Add an asynchrounous access log valve based on NIO (jfarcand)
       </update>
  -->
        <update>
@@ -168,7 +171,7 @@
       <fix>
         <bug>32371</bug>: outdated introduction.xml page. (yoavs)
       </fix>
-      <fix> 
+      <fix>
         <bug>32373</bug>: outdated installation.xml page. (yoavs)
       </fix>
       <update>
@@ -251,7 +254,7 @@
       </fix>
     </changelog>
   </subsection>
-  
+
   <subsection name="Jasper">
     <changelog>
       <update>
@@ -262,20 +265,20 @@
       </fix>
     </changelog>
   </subsection>
-  
+
   <subsection name="Cluster">
     <changelog>
-	   <add>
+       <add>
           JvmRouteBinderValve/JvmRouteSessionIDBinderListener to bind cluster session after primary node failure at first calling backup node.
           This was an option to have session stickyness after cluster node crashed. Work only with JESSIONID cookies. (pero)
        </add>
-	   <add>
+       <add>
           Better log support to DeltaManager to see detail information at debug level. (pero)
        </add>
-	   <fix>
+       <fix>
           Fix FarmWarDeployer based on new HostConfig deployer. (pero)
        </fix>
-	   <fix>
+       <fix>
           FarmWarDeployer controlled WarWatcher with engine backgroundProcess call.
           Added processDeployFrequency attribute to Deployer server.xml element. (pero)
        </fix>
@@ -293,8 +296,8 @@
       <update>
         Add log4j docs submitted by Allistair Crossley. (remm)
       </update>
-      <fix><bug>32381</bug>: Fix problem where EL expression is used as a 
-        place holder in the admin webapp. 
+      <fix><bug>32381</bug>: Fix problem where EL expression is used as a
+        place holder in the admin webapp.
         Submitted by Allistair Crossley. (billbarker)
       </fix>
     </changelog>
@@ -312,7 +315,7 @@
       </update>
     </changelog>
   </subsection>
-  
+
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -340,16 +343,16 @@
         Update JAR list in TldConfig. (remm)
       </fix>
       <add>
-        Register datasources with JMX. With DBCP, this is enough to provide JMX management and monitoring. 
-        It might work well with many other data sources which might not register themselves in JMX 
+        Register datasources with JMX. With DBCP, this is enough to provide JMX management and monitoring.
+        It might work well with many other data sources which might not register themselves in JMX
         but do expose their stuff in a java bean fashion. (remm)
       </add>
       <update>
-        Add the ability to force session cookies to be set to the root path "/". This should not be used 
+        Add the ability to force session cookies to be set to the root path "/". This should not be used
         on large servers, otherwise tons of cookies may be sent. (remm)
       </update>
       <fix>
-        Workaround for client socket exceptions occurring while running a CGI, which could cause 
+        Workaround for client socket exceptions occurring while running a CGI, which could cause
         the external process to hang. (remm)
       </fix>
       <update>
@@ -370,7 +373,7 @@
         <bug>31677</bug>: Log warning if work dir for context can't be determined. (yoavs)
       </fix>
       <fix>
-        <bug>31903</bug>: Fix condition which seems to not have been properly updated after adding 
+        <bug>31903</bug>: Fix condition which seems to not have been properly updated after adding
         entry.binaryContent = null a little below, submitted by Joe Zhou. (remm)
       </fix>
       <fix>
@@ -386,9 +389,9 @@
       <fix>
         <bug>31753</bug>: Minor inconsistency between JDBC and DataSourceRealm#authenticate. (yoavs)
       </fix>
-      <update> 
-        <bug>31683</bug>: Minor clarifications to realm documentation. (yoavs) 
-      </update> 
+      <update>
+        <bug>31683</bug>: Minor clarifications to realm documentation. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
@@ -405,7 +408,7 @@
         Remove bad shutdown logic for ms pool strategy. (remm)
       </fix>
       <fix>
-        Sync with Cookie, by adding ' ' as a special char. If a special char is present, 
+        Sync with Cookie, by adding ' ' as a special char. If a special char is present,
         the string will be quoted. If the client doesn't support it, the String will no be quoted anyway
         and no IAE will be thrown. (remm)
       </fix>
@@ -420,9 +423,9 @@
       <fix>
         <bug>31090</bug>: Use a URL encoded path when setting session cookies. (remm)
       </fix>
-	   <add>
-	      Add getAttributeName() to ProtocolHandler to get all attributes at runtime (pero)
-	   </add>
+       <add>
+          Add getAttributeName() to ProtocolHandler to get all attributes at runtime (pero)
+       </add>
     </changelog>
   </subsection>
 
@@ -436,12 +439,12 @@
 
   <subsection name="Cluster">
     <changelog>
-	   <fix>
-	      DeltaManager and SimpleTcpReplicationManager generate double jvmRoute (pero)
-	   </fix>
-	   <add>
-	      Add some missing Getters and log.isXXXEnableds (pero)
-	   </add>
+       <fix>
+          DeltaManager and SimpleTcpReplicationManager generate double jvmRoute (pero)
+       </fix>
+       <add>
+          Add some missing Getters and log.isXXXEnableds (pero)
+       </add>
     </changelog>
   </subsection>
 
@@ -538,14 +541,14 @@
         Update the connector documentation. (remm)
       </docs>
       <fix>
-        When parsing a context file, ignore the "path" attribute: 
+        When parsing a context file, ignore the "path" attribute:
         the only place where it is acceptable is in server.xml. (remm)
       </fix>
       <fix>
         Digester handling fixes: always call reset in a finally block after using a digester. (remm)
       </fix>
       <update>
-        Remove many fields from Connector, and tie the creation of the Connector to the 
+        Remove many fields from Connector, and tie the creation of the Connector to the
         creation of the protocol handler. (remm)
       </update>
       <update>
@@ -648,7 +651,7 @@
   <subsection name="Cluster">
     <changelog>
       <update>
-        Added flag to the cluster (notifyListenersOnReplication) to enable/disable the 
+        Added flag to the cluster (notifyListenersOnReplication) to enable/disable the
         notifications of attribute/context listeners upon replication of a session delta
         Works only with the DeltaManager (fhanik)
       </update>
@@ -656,7 +659,7 @@
         Added flag to the cluster (Cluster/Sender/ackTimeout) to set the timeout in milliseconds
         for a synchronous request to go through, defaults to 15000ms (fhanik)
       </update>
-    </changelog>  
+    </changelog>
   </subsection>
 
   <subsection name="Webapps">
@@ -717,7 +720,7 @@
         Redo server header handling again. (remm)
       </fix>
       <update>
-        Cleanup a little access to the headers using a local variable and 
+        Cleanup a little access to the headers using a local variable and
         use setValue for Server and Date headers. (remm)
       </update>
     </changelog>
