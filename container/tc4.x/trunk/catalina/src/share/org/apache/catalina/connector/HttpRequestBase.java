@@ -978,6 +978,10 @@ public class HttpRequestBase
      */
     public HttpSession getSession(boolean create) {
 
+        // There cannot be a session if no context has been assigned yet
+        if (context == null)
+            return (null);
+
 	// Return the current session if it exists and is valid
 	if ((session != null) && !session.isValid())
 	    session = null;
