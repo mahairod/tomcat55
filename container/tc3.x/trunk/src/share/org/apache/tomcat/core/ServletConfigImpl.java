@@ -120,11 +120,11 @@ implements ServletConfig {
       return (servletName != null) ? servletName : servletClassName;
     }
 
-    public void setServletName(String servletName) {
+    void setServletName(String servletName) {
         this.servletName = servletName;
     }
 
-    public void setServletClassName(String servletClassName) {
+    void setServletClassName(String servletClassName) {
         this.servletClassName = servletClassName;
     }
 }

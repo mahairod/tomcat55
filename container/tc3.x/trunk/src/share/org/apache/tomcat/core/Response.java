@@ -91,7 +91,7 @@ public class Response {
     protected String characterEncoding = Constants.CharacterEncoding.Default;
     protected int contentLength = -1;
     protected int status = 200;
-    private Locale locale = new Locale(Constants.Locale.Default, "");
+    private Locale locale = new Locale(Constants.LOCALE_DEFAULT, "");
 
     protected MimeHeaders headers = new MimeHeaders();
     protected BufferedServletOutputStream out;
@@ -160,7 +160,7 @@ public class Response {
 	userCookies.removeAllElements();
 	systemCookies.removeAllElements();
 	contentType = Constants.ContentType.Default;
-        locale = new Locale(Constants.Locale.Default, "");
+        locale = new Locale(Constants.LOCALE_DEFAULT, "");
 	characterEncoding = Constants.CharacterEncoding.Default;
 	contentLength = -1;
 	status = 200;
@@ -298,7 +298,7 @@ public class Response {
         //
 	userCookies.removeAllElements();  // keep system (session) cookies
 	contentType = Constants.ContentType.Default;
-        locale = new Locale(Constants.Locale.Default, "");
+        locale = new Locale(Constants.LOCALE_DEFAULT, "");
 	characterEncoding = Constants.CharacterEncoding.Default;
 	contentLength = -1;
 	status = 200;
