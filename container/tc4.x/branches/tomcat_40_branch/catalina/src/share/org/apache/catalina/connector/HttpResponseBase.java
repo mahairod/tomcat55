@@ -729,8 +729,10 @@ public class HttpResponseBase
             path = path.substring(0, pound);
         }
         StringBuffer sb = new StringBuffer(path);
-        sb.append(";jsessionid=");
-        sb.append(sessionId);
+        if( sb.length() > 0 ) { // jsessionid can't be first.
+            sb.append(";jsessionid=");
+            sb.append(sessionId);
+        }
         sb.append(anchor);
         sb.append(query);
         return (sb.toString());
