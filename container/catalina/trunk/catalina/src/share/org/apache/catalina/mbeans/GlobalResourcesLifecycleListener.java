@@ -166,9 +166,8 @@ public class GlobalResourcesLifecycleListener
         try {
             context = (Context) (new InitialContext()).lookup("java:/");
         } catch (NamingException e) {
-            e.printStackTrace();
-            throw new IllegalStateException
-                ("No global naming context defined for server");
+            log("No global naming context defined for server");
+            return;
         }
 
         // Recurse through the defined global JNDI resources context
