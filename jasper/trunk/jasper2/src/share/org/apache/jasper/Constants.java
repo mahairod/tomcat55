@@ -132,6 +132,11 @@ public class Constants {
     public static final int DEFAULT_BUFFER_SIZE = 8*K;
 
     /**
+     * Default size for the tag buffers.
+     */
+    public static final int DEFAULT_TAG_BUFFER_SIZE = 256;
+
+    /**
      * The query parameter that causes the JSP engine to just
      * pregenerated the servlet but not invoke it. 
      */

@@ -79,7 +79,7 @@ import org.apache.jasper.Constants;
 public class BodyContentImpl extends BodyContent {
 
     private char[] cb;
-    protected int bufferSize = Constants.DEFAULT_BUFFER_SIZE;
+    protected int bufferSize = Constants.DEFAULT_TAG_BUFFER_SIZE;
     private int nextChar;
     static String lineSeparator = System.getProperty("line.separator");
     private boolean closed = false;
@@ -115,11 +115,11 @@ public class BodyContentImpl extends BodyContent {
 
 	char[] tmp = null;
 
-	//XXX Should it be multiple of DEFAULT_BUFFER_SIZE??
+	//XXX Should it be multiple of DEFAULT_TAG_BUFFER_SIZE??
 
-	if (len <= Constants.DEFAULT_BUFFER_SIZE) {
-	    tmp = new char [bufferSize + Constants.DEFAULT_BUFFER_SIZE];
-	    bufferSize += Constants.DEFAULT_BUFFER_SIZE;
+	if (len <= Constants.DEFAULT_TAG_BUFFER_SIZE) {
+	    tmp = new char [bufferSize + Constants.DEFAULT_TAG_BUFFER_SIZE];
+	    bufferSize += Constants.DEFAULT_TAG_BUFFER_SIZE;
 	} else {
 	    tmp = new char [bufferSize + len];
 	    bufferSize += len;
