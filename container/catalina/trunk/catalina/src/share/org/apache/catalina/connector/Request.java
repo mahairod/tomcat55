@@ -2285,7 +2285,10 @@ public class Request
 
         Parameters parameters = coyoteRequest.getParameters();
 
-        String enc = coyoteRequest.getCharacterEncoding();
+        // getCharacterEncoding() may have been overridden to search for
+        // hidden form field containing request encoding
+        String enc = getCharacterEncoding();
+
         boolean useBodyEncodingForURI = connector.getUseBodyEncodingForURI();
         if (enc != null) {
             parameters.setEncoding(enc);
