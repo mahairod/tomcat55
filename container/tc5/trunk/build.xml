@@ -86,6 +86,11 @@
       <property name="catalina.home" value="${tomcat.build}"/>
     </ant>
 
+    <!-- Correct permissions and line endings on "bin" scripts -->
+    <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.sh"  eol="lf"/>
+    <fixcrlf srcdir="${tomcat.build}/bin"   includes="*.bat" eol="crlf"/>
+    <chmod      dir="${tomcat.build}/bin"   includes="*.sh"  perm="+x"/>
+
   </target>
 
 
