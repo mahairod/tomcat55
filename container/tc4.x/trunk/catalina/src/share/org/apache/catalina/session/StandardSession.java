@@ -130,8 +130,8 @@ class StandardSession
 
 	super();
 	this.manager = manager;
-        if (manager instanceof StandardManager)
-            this.debug = ((StandardManager) manager).getDebug();
+        if (manager instanceof ManagerBase)
+            this.debug = ((ManagerBase) manager).getDebug();
 
     }
 
@@ -313,14 +313,13 @@ class StandardSession
      */
     public void setId(String id) {
 
-	if ((this.id != null) && (manager != null) &&
-	  (manager instanceof ManagerBase))
-	    ((ManagerBase) manager).remove(this);
+	if ((this.id != null) && (manager != null))
+	    manager.remove(this);
 
 	this.id = id;
 
-	if ((manager != null) && (manager instanceof ManagerBase))
-	    ((ManagerBase) manager).add(this);
+	if (manager != null)
+	    manager.add(this);
 
 	// Notify interested application event listeners
 	StandardContext context = (StandardContext) manager.getContainer();
@@ -431,6 +430,17 @@ class StandardSession
     }
 
 
+    /**
+     * Set the <code>isNew</code> flag for this session.
+     *
+     * @param isNew The new value for the <code>isNew</code> flag
+     */
+    public void setNew(boolean isNew) {
+
+	this.isNew = isNew;
+
+    }
+
 
     /**
      * Return the authenticated Principal that is associated with this Session.
@@ -472,6 +482,27 @@ class StandardSession
     }
 
 
+    /**
+     * Return the <code>isValid</code> flag for this session.
+     */
+    public boolean isValid() {
+
+	return (this.isValid);
+
+    }
+
+
+    /**
+     * Set the <code>isValid</code> flag for this session.
+     *
+     * @param isValid The new value for the <code>isValid</code> flag
+     */
+    public void setValid(boolean isValid) {
+
+	this.isValid = isValid;
+    }
+
+
     // ------------------------------------------------- Session Public Methods
 
 
@@ -502,8 +533,8 @@ class StandardSession
         setValid(false);
 
 	// Remove this session from our manager's active sessions
-	if ((manager != null) && (manager instanceof ManagerBase))
-	    ((ManagerBase) manager).remove(this);
+	if (manager != null)
+	    manager.remove(this);
 
 	// Unbind any objects associated with this session
 	String keys[] = keys();
@@ -592,16 +623,6 @@ class StandardSession
     
     
     /**
-     * Return the <code>isValid</code> flag for this session.
-     */
-    public boolean isValid() {
-
-	return (this.isValid);
-
-    }
-
-
-    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -659,29 +680,6 @@ class StandardSession
 
         readObject(stream);
 
-    }
-
-
-    /**
-     * Set the <code>isNew</code> flag for this session.
-     *
-     * @param isNew The new value for the <code>isNew</code> flag
-     */
-    void setNew(boolean isNew) {
-
-	this.isNew = isNew;
-
-    }
-
-
-    /**
-     * Set the <code>isValid</code> flag for this session.
-     *
-     * @param isValid The new value for the <code>isValid</code> flag
-     */
-    void setValid(boolean isValid) {
-
-	this.isValid = isValid;
     }
 
 
@@ -1243,8 +1241,8 @@ class StandardSession
      */
     private void log(String message) {
 
-	if ((manager != null) && (manager instanceof StandardManager)) {
-	    ((StandardManager) manager).log(message);
+	if ((manager != null) && (manager instanceof ManagerBase)) {
+	    ((ManagerBase) manager).log(message);
 	} else {
 	    System.out.println("StandardSession: " + message);
 	}
@@ -1260,8 +1258,8 @@ class StandardSession
      */
     private void log(String message, Throwable throwable) {
 
-	if ((manager != null) && (manager instanceof StandardManager)) {
-	    ((StandardManager) manager).log(message, throwable);
+	if ((manager != null) && (manager instanceof ManagerBase)) {
+	    ((ManagerBase) manager).log(message, throwable);
 	} else {
 	    System.out.println("StandardSession: " + message);
 	    throwable.printStackTrace(System.out);
