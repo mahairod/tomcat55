@@ -47,7 +47,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.digester.Digester;
+import org.apache.tomcat.util.digester.Digester;
 import org.xml.sax.InputSource;
 
 /**
@@ -187,7 +187,7 @@ public final class TldConfig  {
      * @param tldValidation true to enable xml instance validation
      */
     public void setTldValidation(boolean tldValidation){
-        this.tldValidation = tldValidation;
+        TldConfig.tldValidation = tldValidation;
     }
 
     /**
@@ -215,7 +215,7 @@ public final class TldConfig  {
      * @param tldNamespaceAware true to enable namespace awareness
      */
     public void setTldNamespaceAware(boolean tldNamespaceAware){
-        this.tldNamespaceAware = tldNamespaceAware;
+        TldConfig.tldNamespaceAware = tldNamespaceAware;
     }    
 
 

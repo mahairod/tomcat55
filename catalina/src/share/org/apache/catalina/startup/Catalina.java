@@ -29,9 +29,8 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.util.CatalinaDigester;
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.Rule;
+import org.apache.tomcat.util.digester.Digester;
+import org.apache.tomcat.util.digester.Rule;
 import org.apache.tomcat.util.log.SystemLogHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -259,7 +258,7 @@ public class Catalina extends Embedded {
     protected Digester createStartDigester() {
         long t1=System.currentTimeMillis();
         // Initialize the digester
-        Digester digester = new CatalinaDigester();
+        Digester digester = new Digester();
         digester.setValidating(false);
         digester.setClassLoader(StandardServer.class.getClassLoader());
 
