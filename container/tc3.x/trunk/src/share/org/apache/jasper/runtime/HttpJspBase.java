@@ -118,6 +118,7 @@ public abstract class HttpJspBase
     }
     
     protected ClassLoader getClassLoader() {
+	if(cl==null) return this.getClass().getClassLoader();
 	return cl;
     }
 
