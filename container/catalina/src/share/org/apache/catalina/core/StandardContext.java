@@ -5277,7 +5277,12 @@ public class StandardContext
         hostName="localhost"; // Should be default...
         if( delim > 0 ) {
             hostName=path.substring(0, delim);
-            this.setName( path.substring(delim));
+            path = path.substring(delim);
+            if (path.equals("/")) {
+                this.setName("");
+            } else {
+                this.setName(path);
+            }
         } else {
             log.debug("Setting path " +  path );
             this.setName( path );
