@@ -226,34 +226,17 @@ public final class SaveDataSourceAction extends Action {
                 (oname,
                  new Attribute(attribute, dataSourceForm.getPassword()));
             attribute = "maxActive";
-            int maxActive = 4;
-            try {
-                maxActive = Integer.parseInt(dataSourceForm.getActive());
-            } catch (Throwable t) {
-                maxActive = 4;
-            }
-            mserver.setAttribute(oname,
-                                  new Attribute(attribute, new Integer(maxActive)));            
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, dataSourceForm.getActive()));
             attribute = "maxIdle";
-            int maxIdle = 2;
-            try {
-                maxIdle = Integer.parseInt(dataSourceForm.getIdle());
-            } catch (Throwable t) {
-                maxIdle = 2;
-            }
-            mserver.setAttribute(oname,
-                                  new Attribute(attribute, new Integer(maxIdle)));            
-                                  
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, dataSourceForm.getIdle()));
             attribute = "maxWait";
-            int maxWait = 5000;
-            try {
-                maxWait = Integer.parseInt(dataSourceForm.getWait());
-            } catch (Throwable t) {
-                maxWait = 5000;
-            }
-            mserver.setAttribute(oname,
-                                  new Attribute(attribute, new Integer(maxWait)));            
-            
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, dataSourceForm.getWait()));
             attribute = "validationQuery";
             mserver.setAttribute
                 (oname,

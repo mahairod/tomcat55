@@ -182,13 +182,13 @@ public final class SetUpDataSourceAction extends Action {
                     ((String) mserver.getAttribute(oname, attribute));
                 attribute = "maxActive";
                 dataSourceForm.setActive
-                    (((Integer) mserver.getAttribute(oname, attribute)).toString());                
-                attribute = "maxWait";
-                dataSourceForm.setWait
-                    (((Integer) mserver.getAttribute(oname, attribute)).toString());
+                    ((String) mserver.getAttribute(oname, attribute));
                 attribute = "maxIdle";
                 dataSourceForm.setIdle
-                    (((Integer) mserver.getAttribute(oname, attribute)).toString());
+                    ((String) mserver.getAttribute(oname, attribute));
+                attribute = "maxWait";
+                dataSourceForm.setWait
+                    ((String) mserver.getAttribute(oname, attribute));
                 attribute = "validationQuery";
                 dataSourceForm.setQuery
                     ((String) mserver.getAttribute(oname, attribute));
