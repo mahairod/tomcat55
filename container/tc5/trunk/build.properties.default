@@ -21,9 +21,6 @@ compile.optimize=on
 #Build all components
 #full.dist=on
 
-#Build lightweight JDK 1.4 distribution
-#light.dist=on
-
 #Hide configuration flags display
 #flags.hide=on
 
