@@ -358,10 +358,30 @@ public class DefaultServlet extends HttpServlet {
         // Unfortunately, on Unix, it prevents symlinks from working
 	// So, a check for File.separatorChar='\\' ..... It hopefully
 	// happens on flavors of Windows.
-	if ( (File.separatorChar  == '\\') && (!absPath.equals(canPath)) ) {
-	    response.sendError(response.SC_NOT_FOUND);
+	if (File.separatorChar  == '\\') { 
+		// On Windows check ignore case....
+		if(!absPath.equalsIgnoreCase(canPath)) {
+	    	response.sendError(response.SC_NOT_FOUND);
+	    	return;
+		}
+	} else {
+		// The following code on Non Windows disallows ../ 
+		// in the path but also disallows symlinks.... 
+		// 
+		// if(!absPath.equals(canPath)) {
+	    	// response.sendError(response.SC_NOT_FOUND);
+	    	// return;
+		// }
+		// instead lets look for ".." in the absolute path
+		// and disallow only that. 
+		// Why should we loose out on symbolic links?
+		//
 
-	    return;
+		if(absPath.indexOf("..") != -1) {
+			// We have .. in the path...
+	    	response.sendError(response.SC_NOT_FOUND);
+	    	return;
+		}
 	}
 
 	String mimeType = mimeTypes.getContentTypeFor(file.getName());
