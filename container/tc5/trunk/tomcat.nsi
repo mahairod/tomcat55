@@ -596,7 +596,7 @@ Section Uninstall
  you created that you want to keep, click No)" IDNO Removed
     Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
     RMDir /r "$INSTDIR"
-    Sleep 5.5
+    Sleep 500
     IfFileExists "$INSTDIR" 0 Removed 
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
