@@ -2422,6 +2422,9 @@ public class StandardContext
             }
         }
 
+        // Binding thread
+        oldCCL = bindThread();
+
         // Restart our application class loader
         if ((loader != null) && (loader instanceof Lifecycle)) {
             try {
@@ -2430,6 +2433,9 @@ public class StandardContext
                 log(sm.getString("standardContext.startingLoader"), e);
             }
         }
+
+        // Binding thread
+        unbindThread(oldCCL);
 
         // Create and register the associated naming context, if internal
         // naming is used
