@@ -257,10 +257,11 @@ public final class StandardWrapper
 
     /**
      * Return the available date/time for this servlet, in milliseconds since
-     * the epoch.  If this date/time is in the future, any request for this
-     * servlet will return an SC_SERVICE_UNAVAILABLE error.  If it is zero,
-     * the servlet is currently available.  A value equal to Long.MAX_VALUE
-     * is considered to mean that unavailability is permanent.
+     * the epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean 
+     * that unavailability is permanent and any request for this servlet will return 
+     * an SC_NOT_FOUND error.  If this date/time is in the future, any request for 
+     * this servlet will return an SC_SERVICE_UNAVAILABLE error.  If it is zero, 
+     * the servlet is currently available. 
      */
     public long getAvailable() {
 
@@ -271,8 +272,10 @@ public final class StandardWrapper
 
     /**
      * Set the available date/time for this servlet, in milliseconds since the
-     * epoch.  If this date/time is in the future, any request for this servlet
-     * will return an SC_SERVICE_UNAVAILABLE error.
+     * epoch.  If this date/time is Long.MAX_VALUE, it is considered to mean 
+     * that unavailability is permanent and any request for this servlet will return 
+     * an SC_NOT_FOUND error. If this date/time is in the future, any request for 
+     * this servlet will return an SC_SERVICE_UNAVAILABLE error.
      *
      * @param available The new available date/time
      */

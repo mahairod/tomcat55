@@ -210,11 +210,16 @@ final class StandardWrapperValve
                 ;       // NOTE - Not much we can do generically
             } else {
                 long available = wrapper.getAvailable();
-                if ((available > 0L) && (available < Long.MAX_VALUE))
+                if ((available > 0L) && (available < Long.MAX_VALUE)) {
                     hres.setDateHeader("Retry-After", available);
-                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                    hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                                sm.getString("standardWrapper.isUnavailable",
                                             wrapper.getName()));
+                } else if (available == Long.MAX_VALUE) {
+                    hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+                               sm.getString("standardWrapper.notFound",
+                                            wrapper.getName()));
+                }
             }
             unavailable = true;
         }
