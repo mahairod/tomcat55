@@ -1060,6 +1060,9 @@ public class ContextManager {
      * or use the default handler.
      */
     void handleError( Request req, Response res , Throwable t  ) {
+	// if error already handled
+	if (res.isErrorHandled())
+	    return;
 	Context ctx = req.getContext();
 	if(ctx==null) {
 	    ctx=getContext("");
@@ -1069,7 +1072,22 @@ public class ContextManager {
 	    Note that it is _WRONG_ to send the trace back to
 	    the client. AFAIK the trace is the _best_ debugger.
 	*/
-	if( t instanceof IllegalStateException ) {
+	if (t instanceof UnavailableException) {
+	    int unavailableTime = ((UnavailableException)t).getUnavailableSeconds();
+	    if( unavailableTime > 0 ) {
+		res.setHeader("Retry-After", Integer.toString(unavailableTime));
+	    }
+	    String msg=t.getMessage();
+	    ctx.log( "UnavailableException in: " + req +
+			", time remaining " + unavailableTime + " seconds : " + msg, t);
+	    req.setAttribute("javax.servlet.error.message", msg );
+	    res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE); // 503
+	    handleStatus( req, res, HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+	    // indicate error handling has been called
+	    res.setErrorHandled(true);
+	    return;
+	}
+	else if( t instanceof IllegalStateException ) {
 	    ctx.log("IllegalStateException in: " + req  + " " +
 		    t.getMessage() );
 	} else if( t instanceof org.apache.jasper.JasperException ) {
@@ -1133,6 +1151,9 @@ public class ContextManager {
         } catch( ServletException e) {
             ;   // ASSERT: Only thrown by included servlets
         }
+
+	// indicate error handling has been called
+	res.setErrorHandled(true);
     }
 
     public ServletWrapper getHandlerForPath( Context ctx, String path ) {
