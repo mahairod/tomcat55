@@ -515,6 +515,11 @@ public class Compiler {
         boolean outDated = false;
         String jsp = ctxt.getJspFile();
 
+        if ((jsw != null) && ((jsw.getLastModificationTest() + 2000) 
+            > System.currentTimeMillis())) {
+            return false;
+        }
+        
         long jspRealLastModified = 0;
         try {
             URL jspUrl = ctxt.getResource(jsp);
@@ -560,7 +565,8 @@ public class Compiler {
         if( jsw==null ) {
             return outDated;
         }
-
+        jsw.setLastModificationTest(System.currentTimeMillis());
+        
         List depends = jsw.getDependants();
         if (depends == null) {
             return outDated;

@@ -75,6 +75,7 @@ public class JspServletWrapper {
     private int tripCount;
     private JasperException compileException;
     private long servletClassLastModifiedTime;
+    private long lastModificationTest = 0L;
 
     /*
      * JspServletWrapper for JSP pages.
@@ -379,4 +380,17 @@ public class JspServletWrapper {
         }
     }
 
+    /**
+     * @return Returns the lastModificationTest.
+     */
+    public long getLastModificationTest() {
+        return lastModificationTest;
+    }
+    /**
+     * @param lastModificationTest The lastModificationTest to set.
+     */
+    public void setLastModificationTest(long lastModificationTest) {
+        this.lastModificationTest = lastModificationTest;
+    }
+    
 }
