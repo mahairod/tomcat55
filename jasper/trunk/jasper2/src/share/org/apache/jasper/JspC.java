@@ -780,10 +780,11 @@ public class JspC implements Options {
             }
             if (webxmlLevel >= ALL_WEBXML) {
                 mapout.write(Localizer.getMessage("jspc.webxml.header"));
+                mapout.flush();
             } else if (webxmlLevel>= INC_WEBXML) {
                 mapout.write(Localizer.getMessage("jspc.webinc.header"));
+                mapout.flush();
             }
-            mapout.flush();
         } catch (IOException ioe) {
             mapout = null;
             servletout = null;
