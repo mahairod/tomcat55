@@ -1,0 +1,47 @@
+
+Tomcat 4.0.2 Final bug status
+-----------------------------
+
+This document lists bug that should be addressed before 4.0.2 Final is 
+released. None of these bugs are regression problems, so it should be 
+acceptable to delay their resolution.
+
+
+5647    jk         AJP13 connector will not pass authentication requests
+4793    webapp     mod_webapp connector doesn´t work
+4930    webapp     java.io.StreamCorruptedException: Type code out of range, 
+                   is 0 with Apache WebApp module
+5040    webaap     EOFException when talking from applet to servlet 
+                   via mod_webapp
+5201    catalina   Persistent sessions & EJB Statefull
+5402    webapp     WarpConnection raise IOException
+5483    jk         I18N fails using AJP 1.3 with Tomcat 4.01 
+                   final / Apache 1.3.22
+5644    jasper     JspC produces badly formed classnames if first char 
+                   is a digit
+5735    catalina   HTTP connector running out of processors under heavy load
+5752    docs       Documentation: Resources link invalid on page 
+                   http://jakarta.apache.org/tomcat/tomcat-4.0-doc
+                   /config/context.html
+5760    docs       Doc-bug: Inexact documented jars in "Class Loader INFO"
+5795    catalina   Catalina Shutdown relies on localhost causing problems 
+                   in a Clustered Solaris environment
+5820    docs       Undocumented restriction on inoking manager webapp
+5827    catalina   DataInputStream.readInt returns wrong values
+5899    servlets   HTTP POST parameters ignored in CGIServlet.java
+5905    jasper     JSP Document not correctly processed
+6036    webapp     Problems with URI mapping
+3509    webapp     Apache 1.3.20 & mod_webapp & Tomcat 4b7 HANGS under Win
+5704    servlets   CgiServlet corrupting images?
+4518    jasper     load-on-startup is not working with jsp page
+5759    servlets   CGI servlet mapping by extension *.cgi does not work
+5988    jasper     Jasper Null Pointer Exception Error
+
+
+
+FIXED? - 5330    catalina   JNDI ENC context problem
+LATER - 5396    installer  Tomcat start shortcut fails when HTTPS is set
+FIXED - 5876    catalina   HttpResponseBase broken
+FIXED - 5908    catalina   java.lang.IllegalStateException: zip file closed
+
+
