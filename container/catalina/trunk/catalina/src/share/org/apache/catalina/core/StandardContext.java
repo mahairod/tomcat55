@@ -4252,6 +4252,9 @@ public class StandardContext
             getServletContext().setAttribute
                 (Globals.RESOURCES_ATTR, getResources());
 
+        // Initialize associated mapper
+        mapper.setContext(getPath(), welcomeFiles, resources);
+
         // Binding thread
         oldCCL = bindThread();
 
@@ -4283,9 +4286,6 @@ public class StandardContext
 
         // Unbinding thread
         unbindThread(oldCCL);
-
-        // Initialize associated mapper
-        mapper.setContext(getPath(), welcomeFiles, resources);
 
         // Set available status depending upon startup success
         if (ok) {
