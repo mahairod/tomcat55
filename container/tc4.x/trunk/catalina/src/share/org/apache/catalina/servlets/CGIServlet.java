@@ -1507,11 +1507,10 @@ public class CGIServlet extends HttpServlet {
          * </UL>
          * </p>
          *
-         * For more information, see java.lang.Runtime#exec(String command,
-         * String[] envp, File dir)
-         *
          * @exception IOException if problems during reading/writing occur
          *
+         * @see    java.lang.Runtime#exec(String command, String[] envp,
+         *                                File dir)
          */
         protected void run() throws IOException {
 
@@ -1547,8 +1546,6 @@ public class CGIServlet extends HttpServlet {
             BufferedReader commandsStdErr = null;
             BufferedOutputStream commandsStdIn = null;
             Process proc = null;
-            byte[] bBuf = new byte[1024];
-            char[] cBuf = new char[1024];
             int bufRead = -1;
 
             //create query arguments
@@ -1576,8 +1573,8 @@ public class CGIServlet extends HttpServlet {
                 env.put("CONTENT_LENGTH", new Integer(contentLength));
             }*/
 
-        StringBuffer perlCommand = new StringBuffer("perl ");
         if (command.endsWith(".pl") || command.endsWith(".cgi")) {
+            StringBuffer perlCommand = new StringBuffer("perl ");
             perlCommand.append(cmdAndArgs.toString());
             cmdAndArgs = perlCommand;
         }
@@ -1624,7 +1621,7 @@ public class CGIServlet extends HttpServlet {
                         log("runCGI stdin IS available ["
                             + stdin.available() + "]");
                     }
-                    bBuf = new byte[1024];
+                    byte[] bBuf = new byte[1024];
                     bufRead = -1;
                     try {
                         while ((bufRead = stdin.read(bBuf)) != -1) {
@@ -1651,8 +1648,33 @@ public class CGIServlet extends HttpServlet {
       if(!"".equals(sContentLength)) {
           commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
           byte[] content = new byte[Integer.parseInt(sContentLength)];
-          stdin.read(content);
-          commandsStdIn.write(content);
+
+          int lenRead = stdin.read(content);
+
+          if ("POST".equals(env.get("REQUEST_METHOD"))) {
+              String paramStr = getPostInput(params);
+              if (paramStr != null) {
+                  byte[] paramBytes = paramStr.getBytes();
+                  commandsStdIn.write(paramBytes);
+
+                  int contentLength = paramBytes.length;
+                  if (lenRead > 0) {
+                      String lineSep = System.getProperty("line.separator");
+
+                      commandsStdIn.write(lineSep.getBytes());
+
+                      contentLength = lineSep.length() + lenRead;
+                  }
+
+                  env.put("CONTENT_LENGTH", new Integer(contentLength));
+              }
+          }
+
+          if (lenRead > 0) {
+              commandsStdIn.write(content, 0, lenRead);
+          }
+
+
           commandsStdIn.flush();
           commandsStdIn.close();
       }
@@ -1663,6 +1685,7 @@ public class CGIServlet extends HttpServlet {
              *                               bugParade/bugs/4223650.html
              */
 
+            boolean isRunning = true;
             commandsStdOut = new BufferedReader
                 (new InputStreamReader(proc.getInputStream()));
             commandsStdErr = new BufferedReader
@@ -1678,99 +1701,89 @@ public class CGIServlet extends HttpServlet {
             } catch (IOException ignored) {
                 //NOOP: no output will be written
             }
+            final BufferedReader stdErrRdr = commandsStdErr ;
 
-            boolean inHeader = true;
-            int pauseCount = 0;
+            new Thread() {
+                public void run () {
+                    sendToLog(stdErrRdr) ;
+                } ;
+            }.start() ;
 
-            boolean isRunning = true;
 
             while (isRunning) {
 
-                if (commandsStdErr != null && commandsStdErr.ready()) {
-                    // about to read something; reset pause count
-                    pauseCount = 0;
+                try {
 
-                    bufRead = commandsStdErr.read(cBuf);
-                    if (bufRead == -1) {
-                        commandsStdErr.close();
-                        commandsStdErr = null;
-                        isRunning = (commandsStdOut != null);
-                    } else {
+                    //set headers
+                    String line = null;
+                    while (((line = commandsStdOut.readLine()) != null)
+                           && !("".equals(line))) {
+                        if (debug >= 2) {
+                            log("runCGI: addHeader(\"" + line + "\")");
+                        }
+                        if (line.startsWith("HTTP")) {
+                            //TODO: should set status codes (NPH support)
+                            /*
+                             * response.setStatus(getStatusCode(line));
+                             */
+                        } else if (line.indexOf(":") >= 0) {
+                            response.addHeader
+                                (line.substring(0, line.indexOf(":")).trim(),
+                                line.substring(line.indexOf(":") + 1).trim());
+                        } else {
+                            log("runCGI: bad header line \"" + line + "\"");
+                        }
+                    }
+
+                    //write output
+                    char[] cBuf = new char[1024];
+                    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
                         if (servletContainerStdout != null) {
-                            if (inHeader) {
-                                servletContainerStdout.write(cBuf, 0, bufRead);
-                            } else {
-                                log("runCGI: Throwing away StdErr \"" +
-                                    new String(cBuf, 0, bufRead) + "\"");
+                            if (debug >= 4) {
+                                log("runCGI: write(\"" + new String(cBuf, 0, bufRead) + "\")");
                             }
-                        }
-                    }
-                } else if (commandsStdOut != null && commandsStdOut.ready()) {
-                    // about to read something; reset pause count
-                    pauseCount = 0;
-
-                    if (inHeader) {
-                        //set headers
-                        String line = commandsStdOut.readLine();
-                        if (line == null || "".equals(line)) {
-                            inHeader = false;
-                        } else {
-                            if (debug >= 2) {
-                                log("runCGI: addHeader(\"" + line + "\")");
-                            }
-                            if (line.startsWith("HTTP")) {
-                                //TODO: should set status codes (NPH support)
-                                /*
-                                 * response.setStatus(getStatusCode(line));
-                                 */
-                            } else if (line.indexOf(":") >= 0) {
-                                response.addHeader
-                                    (line.substring(0, line.indexOf(":")).trim(),
-                                     line.substring(line.indexOf(":") + 1).trim());
-                            } else {
-                                log("runCGI: bogus header line \"" + line + "\"");
-                            }
-                        }
-
-                    } else {
-                        //write output
-                        bufRead = commandsStdOut.read(cBuf);
-                        if (bufRead == -1) {
-                            commandsStdOut.close();
-                            commandsStdOut = null;
-                            isRunning = (commandsStdErr != null);
-                        } else {
-                            if (servletContainerStdout != null) {
-                                if (debug >= 4) {
-                                    log("runCGI: write(\"" + new String(cBuf, 0, bufRead) + "\")");
-                                }
-                                servletContainerStdout.write(cBuf, 0, bufRead);
-                            }
+                            servletContainerStdout.write(cBuf, 0, bufRead);
                         }
                     }
 
-                } else {
+                    if (servletContainerStdout != null) {
+                        servletContainerStdout.flush();
+                    }
+
+                    proc.exitValue(); // Throws exception if alive
+
+                    isRunning = false;
+
+                } catch (IllegalThreadStateException e) {
                     try {
-                        int exitVal = proc.exitValue();
-                        pauseCount++;
-                        if (pauseCount > 2) {
-                            isRunning = false;
-                        } else {
-                            // pause for half a second
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException ie) {
-                            }
-                        }
-                    } catch (IllegalThreadStateException ex) {
+                        Thread.currentThread().sleep(500);
+                    } catch (InterruptedException ignored) {
                     }
-                }
-
-                if (servletContainerStdout != null) {
-                    servletContainerStdout.flush();
                 }
             } //replacement for Process.waitFor()
+            commandsStdOut.close()  ;
+        }
 
+        private void sendToLog(BufferedReader rdr) {
+            String line = null;
+            int lineCount = 0 ;
+            try {
+                while ((line = rdr.readLine()) != null) {
+                    log("runCGI (stderr):" +  line) ;
+                }
+                lineCount++ ;
+            } catch (IOException e) {
+                log("sendToLog error", e) ;
+            } finally {
+                try {
+                    rdr.close() ;
+                } catch (IOException ce) {
+                    log("sendToLog error", ce) ;
+                } ;
+            } ;
+            if ( lineCount > 0 && debug > 2) {
+                log("runCGI: " + lineCount + " lines received on stderr") ;
+            } ;
         }
 
 
