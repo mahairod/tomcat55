@@ -757,9 +757,6 @@ final class StandardSession
 		isValid = ((Boolean) stream.readObject()).booleanValue();
 
 		attributes = (Hashtable) stream.readObject();
-
-                // Set constant instance variables
-                sm = StringManager.getManager("org.apache.tomcat.session");
     }
 
 
