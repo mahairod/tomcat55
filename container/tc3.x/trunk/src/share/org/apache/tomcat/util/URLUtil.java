@@ -75,13 +75,16 @@ import java.io.IOException;
  */
 
 public class URLUtil {
+
     public static URL resolve(String s)
-    throws MalformedURLException {
+	throws MalformedURLException
+    {
         return resolve(s, null);
     }
 
     public static URL resolve(String s, URL url)
-    throws MalformedURLException {
+	throws MalformedURLException
+    {
         URL resolve = null;
 
 	// construct a URL via the following heuristics:
@@ -124,8 +127,8 @@ public class URLUtil {
 
         if (! resolve.getProtocol().equalsIgnoreCase("war") &&
             resolve.getFile().toLowerCase().endsWith(
-                "." + Constants.MIME.WAR)) {
-            URL u = new URL(Constants.MIME.WAR + ":" +
+                "." + "war")) {
+            URL u = new URL("war" + ":" +
                 resolve.toString());
 
             resolve = u;

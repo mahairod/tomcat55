@@ -89,10 +89,6 @@ public class Constants {
         }
     }
 
-    public static class MIME {
-        public static final String WAR = "war";
-    }
-
     public static class SESSION {
 	public static final String COOKIE_NAME = "JSESSIONID";
 	public static final String PARAMETER_NAME = "jsessionid";
