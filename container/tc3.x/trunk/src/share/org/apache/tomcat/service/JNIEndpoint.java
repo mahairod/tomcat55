@@ -102,7 +102,8 @@ public class JNIEndpoint {
     // -------------------- Public methods --------------------
 
     public synchronized void startEndpoint() {
-	    running=true;
+	System.out.println("Running ...");
+	running=true;
         notify();
     }
 
@@ -137,16 +138,19 @@ public class JNIEndpoint {
             StartupThread startup = new StartupThread(cmdLine,
                                                       this);
             startup.start();
+	    System.out.println("Starting up StartupThread");
             synchronized (this) {
                 wait(60*1000);
             }
+	    System.out.println("End waiting");
         } catch(Throwable t) {
         }
 
         if(running) {
+	    System.out.println("Running fine ");
             return 1;
         }
-
+	System.out.println("Error - why doesn't run ??");
         return 0;
     }
 
@@ -201,7 +205,8 @@ class StartupThread extends Thread {
             t.printStackTrace();
         } finally {
             if(failed) {
-                jniEp.stopEndpoint();
+		System.out.println("Failed ??");
+		jniEp.stopEndpoint();
             }
         }
     }
