@@ -145,9 +145,10 @@ import org.xml.sax.SAXParseException;
 public final class ContextConfig
     implements LifecycleListener {
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ContextConfig.class );
 
     // ----------------------------------------------------- Instance Variables
-
 
     /**
      * The set of Authenticators that we know how to configure.  The key is
@@ -181,21 +182,31 @@ public final class ContextConfig
     private static final StringManager sm =
         StringManager.getManager(Constants.Package);
 
-
     /**
      * The <code>Digester</code> we will use to process tag library
      * descriptor files.
      */
-    private static Digester tldDigester = createTldDigester();
+    private static Digester tldDigester = null;
 
 
     /**
      * The <code>Digester</code> we will use to process web application
      * deployment descriptor files.
      */
-    private static Digester webDigester = createWebDigester();
+    private static Digester webDigester = null;
+
+    /**
+     * Attribute value used to turn on/off XML validation
+     */
+     private static boolean xmlValidation = false;
 
 
+    /**
+     * Attribute value used to turn on/off XML namespace awarenes.
+     */
+    private static boolean xmlNamespaceAware = false;
+
+    
     // ------------------------------------------------------------- Properties
 
 
@@ -234,16 +245,17 @@ public final class ContextConfig
         // Identify the context we are associated with
         try {
             context = (Context) event.getLifecycle();
-            if (context instanceof StandardContext) {
-                int contextDebug = ((StandardContext) context).getDebug();
-                if (contextDebug > this.debug)
-                    this.debug = contextDebug;
-            }
+//             if (context instanceof StandardContext) {
+//                 int contextDebug = ((StandardContext) context).getDebug();
+//                 if (contextDebug > this.debug)
+//                     this.debug = contextDebug;
+//             }
         } catch (ClassCastException e) {
-            log(sm.getString("contextConfig.cce", event.getLifecycle()), e);
+            log.error(sm.getString("contextConfig.cce", event.getLifecycle()), e);
             return;
         }
 
+        // Called from ContainerBase.addChild() -> StandardContext.start()
         // Process the event that has occurred
         if (event.getType().equals(Lifecycle.START_EVENT))
             start();
@@ -268,35 +280,43 @@ public final class ContextConfig
             stream = servletContext.getResourceAsStream
                 (Constants.ApplicationWebXml);
         if (stream == null) {
-            log(sm.getString("contextConfig.applicationMissing"));
+            log.error(sm.getString("contextConfig.applicationMissing") + " " + context);
             return;
         }
+        
+        long t1=System.currentTimeMillis();
 
+        if (webDigester == null){
+            webDigester = createWebDigester();
+        }
+        
+        URL url=null;
         // Process the application web.xml file
         synchronized (webDigester) {
             try {
-                URL url =
+                url =
                     servletContext.getResource(Constants.ApplicationWebXml);
-                
-                InputSource is = new InputSource(url.toExternalForm());
-                is.setByteStream(stream);
-                webDigester.setDebug(getDebug());
-                if (context instanceof StandardContext) {
-                    ((StandardContext) context).setReplaceWelcomeFiles(true);
+                if( url!=null ) {
+                    InputSource is = new InputSource(url.toExternalForm());
+                    is.setByteStream(stream);
+                    webDigester.setDebug(getDebug());
+                    if (context instanceof StandardContext) {
+                        ((StandardContext) context).setReplaceWelcomeFiles(true);
+                    }
+                    webDigester.clear();
+                    webDigester.push(context);
+                    webDigester.parse(is);
+                } else {
+                    log.info("No web.xml, using defaults " + context );
                 }
-                
-                
-                webDigester.clear();
-                webDigester.push(context);
-                webDigester.parse(is);
             } catch (SAXParseException e) {
-                log(sm.getString("contextConfig.applicationParse"), e);
-                log(sm.getString("contextConfig.applicationPosition",
+                log.error(sm.getString("contextConfig.applicationParse"), e);
+                log.error(sm.getString("contextConfig.applicationPosition",
                                  "" + e.getLineNumber(),
                                  "" + e.getColumnNumber()));
                 ok = false;
             } catch (Exception e) {
-                log(sm.getString("contextConfig.applicationParse"), e);
+                log.error(sm.getString("contextConfig.applicationParse"), e);
                 ok = false;
             } finally {
                 try {
@@ -304,10 +324,14 @@ public final class ContextConfig
                         stream.close();
                     }
                 } catch (IOException e) {
-                    log(sm.getString("contextConfig.applicationClose"), e);
+                    log.error(sm.getString("contextConfig.applicationClose"), e);
                 }
             }
         }
+        long t2=System.currentTimeMillis();
+        if( (t2-t1 ) > 200 ) 
+            log.info("Processed  " + url + " "  + ( t2-t1));
+
 
     }
 
@@ -349,7 +373,7 @@ public final class ContextConfig
 
         // Has a Realm been configured for us to authenticate against?
         if (context.getRealm() == null) {
-            log(sm.getString("contextConfig.missingRealm"));
+            log.error(sm.getString("contextConfig.missingRealm"));
             ok = false;
             return;
         }
@@ -360,7 +384,7 @@ public final class ContextConfig
                 authenticators = ResourceBundle.getBundle
                     ("org.apache.catalina.startup.Authenticators");
             } catch (MissingResourceException e) {
-                log(sm.getString("contextConfig.authenticatorResources"), e);
+                log.error(sm.getString("contextConfig.authenticatorResources"), e);
                 ok = false;
                 return;
             }
@@ -375,7 +399,7 @@ public final class ContextConfig
             authenticatorName = null;
         }
         if (authenticatorName == null) {
-            log(sm.getString("contextConfig.authenticatorMissing",
+            log.error(sm.getString("contextConfig.authenticatorMissing",
                              loginConfig.getAuthMethod()));
             ok = false;
             return;
@@ -390,12 +414,12 @@ public final class ContextConfig
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
                     ((ContainerBase) context).addValve(authenticator);
-                    log(sm.getString("contextConfig.authenticatorConfigured",
+                    log.info(sm.getString("contextConfig.authenticatorConfigured",
                                      loginConfig.getAuthMethod()));
                 }
             }
         } catch (Throwable t) {
-            log(sm.getString("contextConfig.authenticatorInstantiate",
+            log.error(sm.getString("contextConfig.authenticatorInstantiate",
                              authenticatorName), t);
             ok = false;
         }
@@ -417,6 +441,8 @@ public final class ContextConfig
         boolean secure = false;
         Container container = context.getParent();
         if (container instanceof Host) {
+            xmlValidation = ((Host)container).getXmlValidation();
+            xmlNamespaceAware = ((Host)container).getXmlNamespaceAware();
             container = container.getParent();
         }
         if (container instanceof Engine) {
@@ -464,12 +490,12 @@ public final class ContextConfig
                 Pipeline pipeline = ((ContainerBase) context).getPipeline();
                 if (pipeline != null) {
                     ((ContainerBase) context).addValve(certificates);
-                    log(sm.getString
+                    log.error(sm.getString
                         ("contextConfig.certificatesConfig.added"));
                 }
             }
         } catch (Throwable t) {
-            log(sm.getString("contextConfig.certificatesConfig.error"), t);
+            log.error(sm.getString("contextConfig.certificatesConfig.error"), t);
             ok = false;
         }
 
@@ -485,18 +511,19 @@ public final class ContextConfig
 
         URL url = null;
         Digester tldDigester = new Digester();
-        tldDigester.setNamespaceAware(true);
-        tldDigester.setValidating(true);
+        tldDigester.setNamespaceAware(xmlNamespaceAware);
+        tldDigester.setValidating(xmlValidation);
         
         if (tldDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
             tldDigester = patchXerces(tldDigester);
         }
-        
         // Set the schemaLocation
         url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
         SchemaResolver tldEntityResolver = new SchemaResolver(url.toString(), 
                                                               tldDigester);
-        tldDigester.setSchema(url.toString());       
+        if( xmlValidation ) {
+            tldDigester.setSchema(url.toString());
+        }
         
         url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_11);
         tldEntityResolver.register(Constants.TldDtdPublicId_11,
@@ -539,11 +566,11 @@ public final class ContextConfig
      * web application deployment descriptor (web.xml).
      */
     private static Digester createWebDigester() {
-
+        long t1=System.currentTimeMillis();
         URL url = null;
         Digester webDigester = new Digester();
-        webDigester.setNamespaceAware(true);
-        webDigester.setValidating(true);
+        webDigester.setNamespaceAware(xmlNamespaceAware);
+        webDigester.setValidating(xmlValidation);
        
         if (webDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
             webDigester = patchXerces(webDigester);
@@ -552,8 +579,10 @@ public final class ContextConfig
         url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
         SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
                                                               webDigester);
-        webDigester.setSchema(url.toString());
-        
+        if( xmlValidation ) {
+            webDigester.setSchema(url.toString());
+        }
+
         url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_22);
         webEntityResolver.register(Constants.WebDtdPublicId_22,
                                    url.toString());
@@ -566,6 +595,8 @@ public final class ContextConfig
 
         webDigester.setEntityResolver(webEntityResolver);
         webDigester.addRuleSet(new WebRuleSet());
+        long t2=System.currentTimeMillis();
+        //log.info("Create web digester " + ( t2-t1));
         return (webDigester);
     }
 
@@ -574,6 +605,7 @@ public final class ContextConfig
      * Process the default configuration file, if it exists.
      */
     private void defaultConfig() {
+        long t1=System.currentTimeMillis();
 
         // Open the default web.xml file, if it exists
         File file = new File(Constants.DefaultWebXml);
@@ -586,13 +618,17 @@ public final class ContextConfig
             stream.close();
             stream = null;
         } catch (FileNotFoundException e) {
-            log(sm.getString("contextConfig.defaultMissing"));
+            log.error(sm.getString("contextConfig.defaultMissing") + " " + file);
             return;
         } catch (IOException e) {
-            log(sm.getString("contextConfig.defaultMissing"), e);
+            log.error(sm.getString("contextConfig.defaultMissing") + " " + file , e);
             return;
         }
 
+        if (webDigester == null){
+            webDigester = createWebDigester();
+        }
+        
         // Process the default web.xml file
         synchronized (webDigester) {
             try {
@@ -608,13 +644,13 @@ public final class ContextConfig
                 webDigester.push(context);
                 webDigester.parse(is);
             } catch (SAXParseException e) {
-                log(sm.getString("contextConfig.defaultParse"), e);
-                log(sm.getString("contextConfig.defaultPosition",
+                log.error(sm.getString("contextConfig.defaultParse"), e);
+                log.error(sm.getString("contextConfig.defaultPosition",
                                  "" + e.getLineNumber(),
                                  "" + e.getColumnNumber()));
                 ok = false;
             } catch (Exception e) {
-                log(sm.getString("contextConfig.defaultParse"), e);
+                log.error(sm.getString("contextConfig.defaultParse"), e);
                 ok = false;
             } finally {
                 try {
@@ -622,11 +658,13 @@ public final class ContextConfig
                         stream.close();
                     }
                 } catch (IOException e) {
-                    log(sm.getString("contextConfig.defaultClose"), e);
+                    log.error(sm.getString("contextConfig.defaultClose"), e);
                 }
             }
         }
-
+        long t2=System.currentTimeMillis();
+        if( (t2-t1) > 200 )
+            log.info("Processed default web.xml " + file + " "  + ( t2-t1));
     }
 
 
@@ -643,9 +681,7 @@ public final class ContextConfig
         if (logger != null)
             logger.log("ContextConfig[" + context.getName() + "]: " + message);
         else
-            System.out.println("ContextConfig[" + context.getName() + "]: "
-                               + message);
-
+            log.info( message );
     }
 
 
@@ -664,10 +700,7 @@ public final class ContextConfig
             logger.log("ContextConfig[" + context.getName() + "] "
                        + message, throwable);
         else {
-            System.out.println("ContextConfig[" + context.getName() + "]: "
-                               + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
+            log.error( message, throwable );
         }
 
     }
@@ -704,14 +737,14 @@ public final class ContextConfig
     }
 
 
-
     /**
-     * Process a "start" event for this Context.
+     * Process a "start" event for this Context - in background
      */
     private synchronized void start() {
+        // Called from StandardContext.start()
 
         if (debug > 0)
-            log(sm.getString("contextConfig.start"));
+            log.info(sm.getString("contextConfig.start"));
         context.setConfigured(false);
         ok = true;
 
@@ -720,6 +753,9 @@ public final class ContextConfig
         if( !context.getOverride() ) {
             if( container instanceof Host ) {
                 ((Host)container).importDefaultContext(context);
+                xmlValidation = ((Host)container).getXmlValidation();
+                xmlNamespaceAware = ((Host)container).getXmlNamespaceAware();
+
                 container = container.getParent();
             }
             if( container instanceof Engine ) {
@@ -739,7 +775,7 @@ public final class ContextConfig
             try {
                 tldScan();
             } catch (Exception e) {
-                log(e.getMessage(), e);
+                log.error(e.getMessage(), e);
                 ok = false;
             }
         }
@@ -753,25 +789,25 @@ public final class ContextConfig
             authenticatorConfig();
 
         // Dump the contents of this pipeline if requested
-        if ((debug >= 1) && (context instanceof ContainerBase)) {
-            log("Pipline Configuration:");
+        if ((log.isDebugEnabled()) && (context instanceof ContainerBase)) {
+            log.debug("Pipline Configuration:");
             Pipeline pipeline = ((ContainerBase) context).getPipeline();
             Valve valves[] = null;
             if (pipeline != null)
                 valves = pipeline.getValves();
             if (valves != null) {
                 for (int i = 0; i < valves.length; i++) {
-                    log("  " + valves[i].getInfo());
+                    log.debug("  " + valves[i].getInfo());
                 }
             }
-            log("======================");
+            log.debug("======================");
         }
 
         // Make our application available if no problems were encountered
         if (ok)
             context.setConfigured(true);
         else {
-            log(sm.getString("contextConfig.unavailable"));
+            log.error(sm.getString("contextConfig.unavailable"));
             context.setConfigured(false);
         }
 
@@ -783,8 +819,8 @@ public final class ContextConfig
      */
     private synchronized void stop() {
 
-        if (debug > 0)
-            log(sm.getString("contextConfig.stop"));
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("contextConfig.stop"));
 
         int i;
 
@@ -958,9 +994,18 @@ public final class ContextConfig
         while (paths.hasNext()) {
             String path = (String) paths.next();
             if (path.endsWith(".jar")) {
+                long t1=System.currentTimeMillis();
                 tldScanJar(path);
+                long t2=System.currentTimeMillis();
+                if( (t2-t1 ) > 200 ) 
+                    log.info("Processed tld jar  " + path + " "  + ( t2-t1));
             } else {
+                long t1=System.currentTimeMillis();
                 tldScanTld(path);
+                long t2=System.currentTimeMillis();
+                if( (t2-t1 ) > 200 ) 
+                    log.info("Processed tld  " + path + " "  + ( t2-t1));
+
             }
         }
 
@@ -978,8 +1023,8 @@ public final class ContextConfig
      */
     private void tldScanJar(String resourcePath) throws Exception {
 
-        if (debug >= 1) {
-            log(" Scanning JAR at resource path '" + resourcePath + "'");
+        if (log.isDebugEnabled()) {
+            log.debug(" Scanning JAR at resource path '" + resourcePath + "'");
         }
 
         JarFile jarFile = null;
@@ -1007,8 +1052,8 @@ public final class ContextConfig
                 if (!name.endsWith(".tld")) {
                     continue;
                 }
-                if (debug >= 2) {
-                    log("  Processing TLD at '" + name + "'");
+                if (log.isTraceEnabled()) {
+                    log.trace("  Processing TLD at '" + name + "'");
                 }
                 inputStream = jarFile.getInputStream(entry);
                 tldScanStream(inputStream);
@@ -1064,6 +1109,10 @@ public final class ContextConfig
     private void tldScanStream(InputStream resourceStream)
         throws Exception {
 
+        if (tldDigester == null){
+            tldDigester = createTldDigester();
+        }
+        
         synchronized (tldDigester) {
             tldDigester.clear();
             tldDigester.push(context);
@@ -1083,8 +1132,8 @@ public final class ContextConfig
      */
     private void tldScanTld(String resourcePath) throws Exception {
 
-        if (debug >= 1) {
-            log(" Scanning TLD at resource path '" + resourcePath + "'");
+        if (log.isDebugEnabled()) {
+            log.debug(" Scanning TLD at resource path '" + resourcePath + "'");
         }
 
         InputStream inputStream = null;
@@ -1129,15 +1178,15 @@ public final class ContextConfig
      */
     private Set tldScanResourcePaths() throws IOException {
 
-        if (debug >= 1) {
-            log(" Accumulating TLD resource paths");
+        if (log.isDebugEnabled()) {
+            log.debug(" Accumulating TLD resource paths");
         }
         Set resourcePaths = new HashSet();
 
         // Accumulate resource paths explicitly listed in the web application
         // deployment descriptor
-        if (debug >= 2) {
-            log("  Scanning <taglib> elements in web.xml");
+        if (log.isTraceEnabled()) {
+            log.trace("  Scanning <taglib> elements in web.xml");
         }
         String taglibs[] = context.findTaglibs();
         for (int i = 0; i < taglibs.length; i++) {
@@ -1147,40 +1196,44 @@ public final class ContextConfig
             if (!resourcePath.startsWith("/")) {
                 resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
             }
-            if (debug >= 3) {
-                log("   Adding path '" + resourcePath +
+            if (log.isTraceEnabled()) {
+                log.trace("   Adding path '" + resourcePath +
                     "' for URI '" + taglibs[i] + "'");
             }
             resourcePaths.add(resourcePath);
         }
 
         // Scan TLDs in the /WEB-INF subdirectory of the web application
-        if (debug >= 2) {
-            log("  Scanning TLDs in /WEB-INF subdirectory");
+        if (log.isTraceEnabled()) {
+            log.trace("  Scanning TLDs in /WEB-INF subdirectory");
         }
         DirContext resources = context.getResources();
-        try {
-            NamingEnumeration items = resources.list("/WEB-INF");
-            while (items.hasMoreElements()) {
-                NameClassPair item = (NameClassPair) items.nextElement();
-                String resourcePath = "/WEB-INF/" + item.getName();
-                // FIXME - JSP 2.0 is not explicit about whether we should
-                // scan subdirectories of /WEB-INF for TLDs also
-                if (!resourcePath.endsWith(".tld")) {
-                    continue;
+        if( resources!=null ) {
+            try {
+                NamingEnumeration items = resources.list("/WEB-INF");
+                while (items.hasMoreElements()) {
+                    NameClassPair item = (NameClassPair) items.nextElement();
+                    String resourcePath = "/WEB-INF/" + item.getName();
+                    // FIXME - JSP 2.0 is not explicit about whether we should
+                    // scan subdirectories of /WEB-INF for TLDs also
+                    if (!resourcePath.endsWith(".tld")) {
+                        continue;
+                    }
+                    if (log.isTraceEnabled()) {
+                        log.trace("   Adding path '" + resourcePath + "'");
+                    }
+                    resourcePaths.add(resourcePath);
                 }
-                if (debug >= 3) {
-                    log("   Adding path '" + resourcePath + "'");
-                }
-                resourcePaths.add(resourcePath);
+            } catch (NamingException e) {
+                ; // Silent catch: it's valid that no /WEB-INF directory exists
             }
-        } catch (NamingException e) {
-            ; // Silent catch: it's valid that no /WEB-INF directory exists
+        } else {
+            log.info("No resource " + context + " " + context.getClass());
         }
 
         // Scan JARs in the /WEB-INF/lib subdirectory of the web application
-        if (debug >= 2) {
-            log("  Scanning JARs in /WEB-INF/lib subdirectory");
+        if (log.isTraceEnabled()) {
+            log.trace("  Scanning JARs in /WEB-INF/lib subdirectory");
         }
         try {
             NamingEnumeration items = resources.list("/WEB-INF/lib");
@@ -1190,8 +1243,8 @@ public final class ContextConfig
                 if (!resourcePath.endsWith(".jar")) {
                     continue;
                 }
-                if (debug >= 3) {
-                    log("   Adding path '" + resourcePath + "'");
+                if (log.isTraceEnabled()) {
+                    log.trace("   Adding path '" + resourcePath + "'");
                 }
                 resourcePaths.add(resourcePath);
             }
@@ -1221,7 +1274,7 @@ public final class ContextConfig
             for (int j = 0; j < roles.length; j++) {
                 if (!"*".equals(roles[j]) &&
                     !context.findSecurityRole(roles[j])) {
-                    log(sm.getString("contextConfig.role.auth", roles[j]));
+                    log.info(sm.getString("contextConfig.role.auth", roles[j]));
                     context.addSecurityRole(roles[j]);
                 }
             }
@@ -1233,20 +1286,19 @@ public final class ContextConfig
             Wrapper wrapper = (Wrapper) wrappers[i];
             String runAs = wrapper.getRunAs();
             if ((runAs != null) && !context.findSecurityRole(runAs)) {
-                log(sm.getString("contextConfig.role.runas", runAs));
+                log.info(sm.getString("contextConfig.role.runas", runAs));
                 context.addSecurityRole(runAs);
             }
             String names[] = wrapper.findSecurityReferences();
             for (int j = 0; j < names.length; j++) {
                 String link = wrapper.findSecurityReference(names[j]);
                 if ((link != null) && !context.findSecurityRole(link)) {
-                    log(sm.getString("contextConfig.role.link", link));
+                    log.info(sm.getString("contextConfig.role.link", link));
                     context.addSecurityRole(link);
                 }
             }
         }
 
     }
-
 
 }
