@@ -13,6 +13,37 @@
 
 <body>
 
+<section name="Tomcat 5.0.24 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Bad CVS tagging (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <update>
+      Change to list any additionally JNDI data-sources that are present
+      in the web.xml file, but not defined either globally or at the context 
+      level, on the context level maintenance page to make it possible 
+      to click on the data-source and edit it (amyroh)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.23 (remm)">
 
   <subsection name="General">
