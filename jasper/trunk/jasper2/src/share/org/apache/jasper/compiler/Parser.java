@@ -428,12 +428,12 @@ public class Parser {
 	    directive = "<%@ taglib";
 	    parseTaglibDirective(parent);
 	} else if (reader.matches("tag")) {
-	    directive = "<%@ page";
+	    directive = "<%@ tag";
 	    if (!isTagFile) {
 		err.jspError(reader.mark(), "jsp.error.directive.isnottagfile",
 					    directive);
 	    }
-	    parsePageDirective(parent);
+	    parseTagDirective(parent);
 	} else if (reader.matches("attribute")) {
 	    directive = "<%@ attribute";
 	    if (!isTagFile) {

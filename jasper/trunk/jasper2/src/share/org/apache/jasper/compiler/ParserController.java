@@ -196,7 +196,8 @@ public class ParserController {
             reader = getReader(absFileName, encoding);
             if (isXml) {
                 parsedPage = JspDocumentParser.parse(this, absFileName,
-						     reader, parent);
+						     reader, parent,
+						     isTagFile);
             } else {
 		JspReader r = new JspReader(ctxt, absFileName, encoding,
 					    reader,

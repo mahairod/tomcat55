@@ -91,42 +91,34 @@ public class JspDocumentParser extends DefaultHandler
 	= "http://xml.org/sax/properties/lexical-handler";
 
     private ParserController parserController;
-
-    // XXX
-    private JspCompilationContext ctxt;
-    
+    private JspCompilationContext ctxt;    
     // XML document source
     private InputSource inputSource;
-
-    // XXX
     private String path;
-
     // Node representing the XML element currently being parsed
     private Node current;
-
     // Document locator
     private Locator locator;
-
-    // XXX
     private Hashtable taglibs;
-
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
-
     private ErrorDispatcher err;
+    private boolean isTagFile;
 
     /*
      * Constructor
      */
     public JspDocumentParser(ParserController pc,
 			     String path,
-			     InputStreamReader reader) {
+			     InputStreamReader reader,
+			     boolean isTagFile) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.path = path;
 	this.inputSource = new InputSource(reader);
+	this.isTagFile = isTagFile;
     }
 
     /*
@@ -137,8 +129,10 @@ public class JspDocumentParser extends DefaultHandler
     public static Node.Nodes parse(ParserController pc,
 				   String path,
 				   InputStreamReader reader,
-				   Node parent) throws JasperException {
-	JspDocumentParser handler = new JspDocumentParser(pc, path, reader);
+				   Node parent,
+				   boolean isTagFile) throws JasperException {
+	JspDocumentParser handler = new JspDocumentParser(pc, path, reader,
+							  isTagFile);
 	handler.current = parent;
 	Node.Nodes pageNodes = null;
 
@@ -191,6 +185,11 @@ public class JspDocumentParser extends DefaultHandler
 		throw new SAXException(je);
 	    }
 	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
+	    if (isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.istagfile", qName),
+		    locator);
+	    }
 	    node = new Node.PageDirective(attrsCopy, start, current);
 	    String imports = attrs.getValue("import");
 	    // There can only be one 'import' attribute per page directive
@@ -238,13 +237,47 @@ public class JspDocumentParser extends DefaultHandler
 	} else if (qName.equals(JSP_ATTRIBUTE)) {
 	    node = new Node.NamedAttribute(attrsCopy, start, current);
 	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
 	    node = new Node.TagDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
 	    node = new Node.AttributeDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
 	    node = new Node.VariableDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_FRAGMENT_INPUT_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
 	    node = new Node.FragmentInputDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_INVOKE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
+	    node = new Node.InvokeAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_DO_BODY)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    err.getString("jsp.error.action.isnottagfile", qName),
+		    locator);
+	    }
+	    node = new Node.DoBodyAction(attrsCopy, start, current);
 	} else {
 	    node = getCustomTag(qName, attrsCopy, start, current);
 	    if (node == null) {
