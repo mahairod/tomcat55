@@ -133,6 +133,7 @@ import org.xml.sax.SAXParseException;
  * of that Context, and the associated defined servlets.
  *
  * @author Craig R. McClanahan
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -483,6 +484,34 @@ public final class ContextConfig
         url = ContextConfig.class.getResource(Constants.TldDtdResourcePath_12);
         tldDigester.register(Constants.TldDtdPublicId_12,
                              url.toString());
+
+        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
+        // to support servlet.jar that does not contains the schema
+        if (url != null){
+            tldDigester.setSchema(url.toString());
+        }
+
+        // Add local copy of Servlet 2.4 XML Schema instance.
+        url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
+        tldDigester.register(Constants.J2eeSchemaPublicId_14,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
+        tldDigester.register(Constants.W3cSchemaPublicId_10,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
+        tldDigester.register(Constants.JspSchemaPublicId_20,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
+        tldDigester.register(Constants.W3cSchemaPublicId_10,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
+        tldDigester.register(Constants.TldSchemaPublicId_20,
+                             url.toString());
+
         tldDigester.addRuleSet(new TldRuleSet());
         return (tldDigester);
 
@@ -504,6 +533,35 @@ public final class ContextConfig
         url = ContextConfig.class.getResource(Constants.WebDtdResourcePath_23);
         webDigester.register(Constants.WebDtdPublicId_23,
                              url.toString());
+
+        url = ContextConfig.class.getResource(Constants.WebSchemaResourcePath_24);
+
+        // to support servlet.jar that does not contains the schema
+        if (url != null){
+            webDigester.setSchema(url.toString());
+        }
+
+        // Add local copy of Servlet 2.4 XML Schema instance.
+        url = ContextConfig.class.getResource(Constants.J2eeSchemaResourcePath_14);
+        webDigester.register(Constants.J2eeSchemaPublicId_14,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
+        webDigester.register(Constants.W3cSchemaPublicId_10,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.JspSchemaResourcePath_20);
+        webDigester.register(Constants.JspSchemaPublicId_20,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.W3cSchemaResourcePath_10);
+        webDigester.register(Constants.W3cSchemaPublicId_10,
+                             url.toString());
+
+        url = ContextConfig.class.getResource(Constants.TldSchemaResourcePath_20);
+        webDigester.register(Constants.TldSchemaPublicId_20,
+                             url.toString());
+
         webDigester.addRuleSet(new WebRuleSet());
         return (webDigester);
 
@@ -791,7 +849,7 @@ public final class ContextConfig
 
         // Removing resource links
         /*
-        ContextResourceLink[] contextResourceLinks = 
+        ContextResourceLink[] contextResourceLinks =
             context.findResourceLinks();
         for (i = 0; i < contextResourceLinks.length; i++) {
             context.removeResourceLink(contextResourceLinks[i].getName());
