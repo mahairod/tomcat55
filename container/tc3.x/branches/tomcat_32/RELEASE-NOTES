@@ -173,14 +173,7 @@ reload support is not recommended for production applications because of
 its experimental nature, and the extra overhead required to perform the
 necessary checks on every request.
 
-6.5 Returned strings from getServletPath, getPathInfo, and getPathTranslated
-
-The Servlet 2.2 Errata - April 27, 2000 specifies that HttpServletRequest
-methods getServletPath, getPathInfo, and getPathTranslated should return
-decoded strings.  This clarification has not been implemented in Tomcat 3.2.
-In Tomcat 3.2, these methods return encoded strings.
-
-6.6 Avoiding "Out of environment space" errors on Windows 95/98
+6.5 Avoiding "Out of environment space" errors on Windows 95/98
 
 This error can easily occur since the default amount of environment space is
 typically insufficient to run Tomcat.  Here are a couple of ways to avoid it.
@@ -212,7 +205,7 @@ typically insufficient to run Tomcat.  Here are a couple of ways to avoid it.
      line to your autoexec.bat or to the startup.bat and shutdown.bat files
      themselves.
 
-6.7 URL's are now case sensitive on all operating systems
+6.6 URL's are now case sensitive on all operating systems
 
 As of Tomcat 3.2, URL's are case sensitive for all operating systems,
 including operating systems which have case insensitive file systems, such as
@@ -241,7 +234,7 @@ URL. If that static page contains relative links to resources served by
 Tomcat, then invoking those links would carry the mismatched case to Tomcat
 where it cause the resource not to be found.
 
-6.8 Generated Configuration Files for Web Connectors
+6.7 Generated Configuration Files for Web Connectors
 
 At startup time, Tomcat normally generates configuration files like
 "tomcat-apache.conf" to reflect the contexts that are defined.  However, the
@@ -254,7 +247,7 @@ This is a known limitation of the design of the web connectors for Tomcat 3.2,
 and will be addressed by the introduction of the MOD_WARP connector in
 Tomcat 4.0.
 
-6.9 Limitation on Form Based Login
+6.8 Limitation on Form Based Login
 
 If the pages you specify for <form-login-page> or <form-error-page> are within
 the area protected by a security constraint, Tomcat 3.2 will be unable to
@@ -267,7 +260,7 @@ form error page in the document root directory, place all other pages in one
 or more subdirectories, and establish security constraints to protect the
 subdirectories.
 
-6.10 Limitation on Document Base Paths
+6.9 Limitation on Document Base Paths
 
 Tomcat 3.2 is unable to support Windows SMB paths in a <Context> directive
 like this:
@@ -282,7 +275,7 @@ and define your context like this:
 
 where "r:" is mapped to this share.
 
-6.11 Resource Paths Can't Contain URL Escapes
+6.10 Resource Paths Can't Contain URL Escapes
 
 The path passed to javax.servlet.Context.getResource() and
 javax.servlet.Context.getResrouceAsStream() cannot contain URL escapes of
