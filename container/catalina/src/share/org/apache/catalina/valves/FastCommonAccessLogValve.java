@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -207,9 +208,22 @@ public final class FastCommonAccessLogValve
 
 
     /**
-     * The time zone relative to GMT.
+     * The system timezone.
      */
-    private String timeZone = null;
+    private TimeZone timezone = null;
+
+    
+    /**
+     * The time zone offset relative to GMT in text form when daylight saving
+     * is not in operation.
+     */
+    private String timeZoneNoDST = null;
+ 
+    /**
+     * The time zone offset relative to GMT in text form when daylight saving
+     * is in operation.
+     */
+    private String timeZoneDST = null;
 
 
     /**
@@ -677,7 +691,7 @@ public final class FastCommonAccessLogValve
                     result.append(timeFormatter.format(date));
                     result.append(space);
                     // Time zone
-                    result.append(timeZone);
+                    result.append(getTimeZone(date));
                     result.append("] \"");
                     
                     // Check for log rotation
@@ -705,6 +719,15 @@ public final class FastCommonAccessLogValve
     }
 
 
+    private String getTimeZone(Date date) {
+        if (timezone.inDaylightTime(date)) {
+            return timeZoneDST;
+        } else {
+            return timeZoneNoDST;
+        }
+    }
+    
+    
     private String calculateTimeZoneOffset(long offset) {
         StringBuffer tz = new StringBuffer();
         if ((offset<0))  {
@@ -785,21 +808,24 @@ public final class FastCommonAccessLogValve
         started = true;
 
         // Initialize the timeZone, Date formatters, and currentDate
-        TimeZone tz = TimeZone.getDefault();
-        timeZone = calculateTimeZoneOffset(tz.getRawOffset());
-
+        timezone = TimeZone.getDefault();
+        timeZoneNoDST = calculateTimeZoneOffset(timezone.getRawOffset());
+        Calendar calendar = Calendar.getInstance(timezone);
+        int offset = calendar.get(Calendar.DST_OFFSET);
+        timeZoneDST = calculateTimeZoneOffset(timezone.getRawOffset()+offset);
+        
         if (fileDateFormat==null || fileDateFormat.length()==0)
             fileDateFormat = "yyyy-MM-dd";
         dateFormatter = new SimpleDateFormat(fileDateFormat);
-        dateFormatter.setTimeZone(tz);
+        dateFormatter.setTimeZone(timezone);
         dayFormatter = new SimpleDateFormat("dd");
-        dayFormatter.setTimeZone(tz);
+        dayFormatter.setTimeZone(timezone);
         monthFormatter = new SimpleDateFormat("MM");
-        monthFormatter.setTimeZone(tz);
+        monthFormatter.setTimeZone(timezone);
         yearFormatter = new SimpleDateFormat("yyyy");
-        yearFormatter.setTimeZone(tz);
+        yearFormatter.setTimeZone(timezone);
         timeFormatter = new SimpleDateFormat("HH:mm:ss");
-        timeFormatter.setTimeZone(tz);
+        timeFormatter.setTimeZone(timezone);
         currentDateString = getCurrentDateString();
         dateStamp = dateFormatter.format(new Date());
 

@@ -26,6 +26,17 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.10 (yoavs)">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>20380</bug>: Access log timestamps now take account of Daylight Saving
+        Time (DST). (markt)
+      </fix>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.9 (yoavs)">
   <subsection name="General">
     <changelog>
