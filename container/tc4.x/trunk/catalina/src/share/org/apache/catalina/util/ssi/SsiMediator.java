@@ -468,6 +468,36 @@ public class SsiMediator {
         // Return the normalized path that we have completed
         return (relpath.concat(normalized));
     }
+
+    protected String getCGIPath(String path) {
+
+        String cgibinStr = "/cgi-bin/";
+
+        if (path == null)
+            return null;
+
+        if (!path.startsWith(cgibinStr)) {
+            return null;
+        } else {
+            //normalized = normalized.substring(1, cgibinStr.length());
+            //normalized = cgiPathPrefix + File.separator + normalized;
+            path = "http://localhost:8080" + contextPath + path;
+        }
+        return (path);
+    }
+
+    protected String getCommandPath(String path) {
+
+        String commandShellStr = "/bin/sh";
+
+        if (path == null)
+            return null;
+
+        if (!path.startsWith("/"))
+            path = "/" + path;
+        path = commandShellStr + path;
+        return (path);
+    }
     
     /**
      * Check if the supplied string is <code>null</code> and

@@ -64,8 +64,24 @@
 
 package org.apache.catalina.util.ssi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.servlet.ServletException;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.RequestDispatcher;
+
 /**
  * @author Bip Thelin
+ * @author Amy Roh
  * @version $Revision$, $Date$
  *
  */
@@ -76,7 +92,72 @@ public final class SsiExec
 
     public final String getStream(String[] strParamType,
 				  String[] strParam) {
-	return "";
+
+        String retString = "";
+        String path = "";
+
+        if(strParamType[0].equals("cgi")) {
+            path = super.getCGIPath(strParam[0]);
+            if (path != null) {
+                try {
+                    URL url = new URL(path);
+                    InputStream istream = url.openStream();
+                    int i = istream.read();
+                    while (i != -1) {
+                        super.out.write(i);
+                        i = istream.read();
+                    }
+                } catch (IOException e) {
+                    retString = new String(super.getError());
+                }
+            } else {
+                retString = new String(super.getError());
+            }
+        } else if(strParamType[0].equals("cmd"))
+
+            path = super.getCommandPath(strParam[0]);
+
+            if (path!=null) {
+	            BufferedReader commandsStdOut = null;
+	            BufferedReader commandsStdErr = null;
+	            BufferedOutputStream commandsStdIn = null;
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(super.out));
+	            //byte[] bBuf = new byte[1024];
+	            char[] cBuf = new char[1024];
+	            int bufRead = -1;
+
+                Runtime rt = null;
+                Process proc = null;
+
+                try {
+	            rt = Runtime.getRuntime();
+	            proc = rt.exec(path);
+
+                commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+	            //boolean isRunning = true;
+	            commandsStdOut = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+	            commandsStdErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+	            BufferedWriter servletContainerStdout = null;
+
+		        while ((bufRead = commandsStdErr.read(cBuf)) != -1) {
+			        out.write(cBuf, 0, bufRead);
+			    }
+
+    		    cBuf = new char[1024];
+	    	    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+			        out.write(cBuf, 0, bufRead);
+			    }
+
+		        super.out.flush();
+
+		        proc.exitValue();
+                } catch (IOException ex) {
+                }
+        } else {
+            retString = new String(super.getError());
+        }
+
+        return retString;
     }
 
     public final void process(String[] strParamType, String[] strParam) {}
