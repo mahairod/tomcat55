@@ -284,7 +284,9 @@ public class JspUtil {
         int tempLength = attrs.getLength();
 	Vector temp = new Vector(tempLength, 1);
         for (int i = 0; i < tempLength; i++) {
-            temp.addElement(attrs.getQName(i));
+            String qName = attrs.getQName(i);
+            if ((!qName.equals("xmlns")) && (!qName.startsWith("xmlns:")))
+                temp.addElement(qName);
         }
 
 	/*
