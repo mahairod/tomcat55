@@ -122,6 +122,8 @@
   <!--                       print statement per input line, to ease        -->
   <!--                       debugging?  [false]                            -->
   <!--                                                                      -->
+  <!--   reloading           Should Jasper check for modified JSPs?  [true] -->
+  <!--                                                                      -->
   <!--   scratchdir          What scratch directory should we use when      -->
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
