@@ -1,5 +1,5 @@
 <html>
-<title>Positive test for a relative URI </title>
+<title>Positive test for a relative URI</title>
 <body>
 <% 
 	/** 	
