@@ -859,7 +859,7 @@ public class Generator {
 
         public void visit(Node.ELExpression n) throws JasperException {
             n.setBeginJavaLine(out.getJavaLine());
-            if ( true /*isELEnabled*/ ) {
+            if ( pageInfo.isELEnabled() ) {
                 out.printil(
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
@@ -1987,7 +1987,11 @@ public class Generator {
 	    out.print(tagHandlerVar);
 	    out.println(".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
 	    out.pushIndent();
-	    out.printil((methodNesting > 0)? "return true;": "return;");
+	    if (isTagFile) {
+		out.printil("throw new javax.servlet.jsp.SkipPageException();");
+	    } else {
+		out.printil((methodNesting > 0)? "return true;": "return;");
+	    }
 	    out.popIndent();
 
 	    // Synchronize AT_BEGIN and AT_END scripting variables
@@ -2089,12 +2093,8 @@ public class Generator {
 		isSimpleTagHandler = tmpIsSimpleTagHandler;
 	    }
 
-	    out.printin("if (");
-	    out.print(tagHandlerVar);
-	    out.println(".doTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
-	    out.pushIndent();
-	    out.printil((methodNesting > 0)? "return true;": "return;");
-	    out.popIndent();
+	    out.printin(tagHandlerVar);
+	    out.println(".doTag();");
 
 	    // Synchronize AT_BEGIN and AT_END scripting variables
 	    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
@@ -2818,7 +2818,7 @@ public class Generator {
 	if (tagInfo.hasDynamicAttributes())
 	    generateSetDynamicAttribute();
 
-	out.printil("public int doTag() throws javax.servlet.jsp.JspException {");
+	out.printil("public void doTag() throws javax.servlet.jsp.JspException {");
 	out.pushIndent();
 	// Declare parameter map for fragment/body invocation
 	out.printil("java.util.Map params = null;");
@@ -2845,8 +2845,6 @@ public class Generator {
         out.printil("getJspContext().popPageScope();");
         out.popIndent();
 	out.printil("}");
-	out.println();
-	out.printil("return EVAL_PAGE;");
 	out.popIndent();
 	out.printil("}");
 	out.popIndent();

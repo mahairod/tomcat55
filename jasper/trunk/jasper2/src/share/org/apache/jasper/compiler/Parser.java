@@ -133,10 +133,6 @@ public class Parser {
 				   boolean isTagFile) throws JasperException {
 	Parser parser = new Parser(pc, reader, isTagFile);
 
-	// Tag files takes only scriptless body.
-	if (isTagFile)
-	    parser.scriptlessCount++;
-
 	Node.Root root = new Node.Root(null, reader.mark(), parent);
 
 	while (reader.hasMoreInput()) {

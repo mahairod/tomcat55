@@ -95,7 +95,11 @@ public class TagFileProcessor {
             new JspUtil.ValidAttribute("large-icon"),
             new JspUtil.ValidAttribute("description"),
             new JspUtil.ValidAttribute("example"),
-            new JspUtil.ValidAttribute("pageEncoding") };
+            new JspUtil.ValidAttribute("pageEncoding"),
+            new JspUtil.ValidAttribute("language"),
+            new JspUtil.ValidAttribute("import"),
+            new JspUtil.ValidAttribute("isScriptingEnabled"),
+            new JspUtil.ValidAttribute("isELEnabled") };
 
 	private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("name", true),
@@ -152,8 +156,12 @@ public class TagFileProcessor {
 				    err);
 
 	    String tname = n.getAttributeValue("name");
-	    if (tname != null && name != null && !tname.equals(name)) {
-		err.jspError("jsp.error.tagfile.tld.name", name, tname);
+	    if (tname != null) {
+                if (name == null) {
+		    name = tname;
+                } else if (!tname.equals(name)) {
+		    err.jspError("jsp.error.tagfile.tld.name", name, tname);
+                }
 	    }
             bodycontent = n.getAttributeValue("body-content");
             if (bodycontent != null &&
@@ -184,13 +192,17 @@ public class TagFileProcessor {
             boolean fragment = JspUtil.booleanValue(
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");
-            if (type == null)
-                type = "java.lang.String";
-
             if (fragment) {
                 n.setFragmentInputs(new Vector());
                 fragmentAttributesMap.put(name, n);
+
+                if (type != null) {
+                    err.jspError("jsp.error.fragmentwithtype");
+                }
             } else {
+                if (type == null)
+                    type = "java.lang.String";
+
                 attributeVector.addElement(
                     new TagAttributeInfo(name, required, type, rtexprvalue));
             }

@@ -111,7 +111,8 @@ public class Validator {
 	    new JspUtil.ValidAttribute("isErrorPage"),
 	    new JspUtil.ValidAttribute("contentType"),
 	    new JspUtil.ValidAttribute("pageEncoding"),
-	    new JspUtil.ValidAttribute("isScriptingEnabled")
+	    new JspUtil.ValidAttribute("isScriptingEnabled"),
+	    new JspUtil.ValidAttribute("isELEnabled")
 	};
 
 	private boolean languageSeen = false;
@@ -227,6 +228,14 @@ public class Validator {
 			pageInfo.setScriptingEnabled(false);
 		    else
 			err.jspError(n, "jsp.error.isScriptingEnabled.invalid");
+		} else if ("isELEnabled".equals(attr)) {
+		    // XXX Test for multiple occurrence?
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setELEnabled(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setELEnabled(false);
+		    else
+			err.jspError(n, "jsp.error.isELEnabled.invalid");
 		} else if ("isErrorPage".equals(attr)) {
 		    if (isErrorPageSeen)
 			err.jspError(n, "jsp.error.page.multiple.iserrorpage");
@@ -549,7 +558,7 @@ public class Validator {
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
-            if ( true /*isELEnabled*/ ) {
+            if ( pageInfo.isELEnabled() ) {
                 JspUtil.validateExpressions(n.getStart(),
                     "${" + new String(n.getText()) + "}", err);
             }
