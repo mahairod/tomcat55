@@ -26,6 +26,9 @@
       <update>
         Enhanced Japanese resource bundles. (yoavs)
       </update>
+      <fix>
+        <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Catalina">
