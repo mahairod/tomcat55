@@ -82,7 +82,7 @@ public class JspCompiler extends Compiler implements Mangler {
     String javaFileName, classFileName;
     String realClassName;
 
-    File jsp;
+    String jsp;
     String outputDir;
 
     //    ClassFileData cfd;
@@ -93,7 +93,7 @@ public class JspCompiler extends Compiler implements Mangler {
     public JspCompiler(JspCompilationContext ctxt) throws JasperException {
         super(ctxt);
         
-        this.jsp = new File(ctxt.getJspFile());
+        this.jsp = ctxt.getJspFile();
         this.outputDir = ctxt.getOutputDir();
         this.outDated = false;
         setMangler(this);
@@ -125,10 +125,10 @@ public class JspCompiler extends Compiler implements Mangler {
     private final String getBaseClassName() {
 	String className;
         
-        if (jsp.getName().endsWith(".jsp"))
-            className = jsp.getName().substring(0, jsp.getName().length() - 4);
+        if (jsp.endsWith(".jsp"))
+            className = jsp.substring(0, jsp.length() - 4);
         else
-            className = jsp.getName();
+            className = jsp;
             
 	
 	// Fix for invalid characters. If you think of more add to the list.
@@ -167,7 +167,7 @@ public class JspCompiler extends Compiler implements Mangler {
         long jspRealLastModified = 0;
 
         try {
-            URL jspUrl = ctxt.getResource(jsp.getPath());
+            URL jspUrl = ctxt.getResource(jsp);
             if (jspUrl == null)
                 return true;
             jspRealLastModified = jspUrl.openConnection().getLastModified();
