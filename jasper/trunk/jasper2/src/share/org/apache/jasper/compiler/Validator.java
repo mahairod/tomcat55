@@ -756,26 +756,8 @@ public class Validator {
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
-                        Class expectedType = String.class;
-                        try {
-                            String typeStr = tldAttrs[j].getTypeName();
-                            if( tldAttrs[j].isFragment() ) {
-                                expectedType = JspFragment.class;
-                            }
-                            else if( typeStr != null ) {
-                                expectedType = Class.forName( typeStr );
-                            }
-                            jspAttrs[attrs.getLength() + i]
-                                    = getJspAttribute(na.getName(), null, null,
-                                                      null, expectedType, 
-                                                      n.getPrefix(), n, false);
-                        }
-                        catch( ClassNotFoundException e ) {
-                            err.jspError(n, 
-                                    "jsp.error.unknown_attribute_type",
-                                    tldAttrs[j].getName(), 
-                                    tldAttrs[j].getTypeName() );
-                        }
+			jspAttrs[attrs.getLength() + i]
+			    = new Node.JspAttribute(na.getName(), na, false);
                         tagDataAttrs.put(na.getName(),
                                          TagData.REQUEST_TIME_VALUE);
 			found = true;
@@ -785,9 +767,7 @@ public class Validator {
 		if (!found) {
 		    if (tagInfo.hasDynamicAttributes()) {
 			jspAttrs[attrs.getLength() + i]
-			    = getJspAttribute(na.getName(), null, null, null,
-					      java.lang.Object.class, 
-                                              n.getPrefix(), n, true);
+			    = new Node.JspAttribute(na.getName(), na, true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
 				     na.getName());
