@@ -71,6 +71,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.security.SecurityClassLoad;
 
@@ -101,6 +102,7 @@ public final class Bootstrap {
     protected ClassLoader catalinaLoader = null;
     protected ClassLoader sharedLoader = null;
 
+    protected static final String CATALINA_TOKEN = "${catalina.home}";
     
     public void setDebug( int debug ) {
         this.debug=debug;
@@ -109,10 +111,15 @@ public final class Bootstrap {
     public void setArgs(String args[] ) {
         this.args=args;
     }
+
+
     // ----------------------------------------------------------- Main Program
+
 
     public void initClassLoaders() {
         try {
+
+            /*
             File unpacked[] = new File[1];
             File packed[] = new File[1];
             File packed2[] = new File[2];
@@ -142,6 +149,13 @@ public final class Bootstrap {
             sharedLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);
+            */
+
+            ClassLoaderFactory.setDebug(debug);
+            commonLoader = createClassLoader("common", null);
+            catalinaLoader = createClassLoader("server", commonLoader);
+            sharedLoader = createClassLoader("shared", commonLoader);
+
         } catch (Throwable t) {
 
             log("Class loader creation threw exception", t);
@@ -149,6 +163,45 @@ public final class Bootstrap {
 
         }
     }
+
+
+    private ClassLoader createClassLoader(String name, ClassLoader parent)
+        throws Exception {
+
+        String value = CatalinaProperties.getProperty(name + ".loader");
+        if ((value == null) || (value.equals("")))
+            return parent;
+
+        ArrayList unpackedList = new ArrayList();
+        ArrayList packedList = new ArrayList();
+
+        StringTokenizer tokenizer = new StringTokenizer(value, ",");
+        while (tokenizer.hasMoreElements()) {
+            String repository = tokenizer.nextToken();
+            boolean packed = false;
+            if (repository.startsWith(CATALINA_TOKEN)) {
+                repository = getCatalinaHome() 
+                    + repository.substring(CATALINA_TOKEN.length());
+            }
+            if (repository.endsWith("*.jar")) {
+                packed = true;
+                repository = repository.substring
+                    (0, repository.length() - "*.jar".length());
+            }
+            if (packed) {
+                packedList.add(new File(repository));
+            } else {
+                unpackedList.add(new File(repository));
+            }
+        }
+
+        File[] unpacked = (File[]) unpackedList.toArray(new File[0]);
+        File[] packed = (File[]) packedList.toArray(new File[0]);
+
+        return ClassLoaderFactory.createClassLoader(unpacked, packed, parent);
+
+    }
+
 
     // ----------------------------------------------------------- Main Program
 

@@ -163,10 +163,11 @@ public final class ClassLoaderFactory {
         if (unpacked != null) {
             for (int i = 0; i < unpacked.length; i++)  {
                 File file = unpacked[i];
-                if (!file.isDirectory() || !file.exists() || !file.canRead())
+                if (!file.exists() || !file.canRead())
                     continue;
                 if (debug >= 1)
-                    log("  Including directory " + file.getAbsolutePath());
+                    log("  Including directory or JAR " 
+                        + file.getAbsolutePath());
                 URL url = new URL("file", null,
                                   file.getCanonicalPath() + File.separator);
                 list.add(url.toString());
