@@ -1,0 +1,94 @@
+<project name="examples" default="build-main" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+  <property name="ant.home"        value="../../../jakarta-ant"/>
+  <property name="build.compiler"  value="classic"/>
+  <property name="servletapi.home" value="../../../jakarta-servletapi"/>
+  <property name="build.dir"       value="../../../build/webapps"/>
+  <property name="dist.dir"        value="../../../dist/webapps"/>
+  <property name="deploy.dir"      value="../../../build/catalina/webapps"/>
+  <property name="deploy-dist.dir" value="../../../dist/catalina/webapps"/>
+
+  <property name="webapps.name"    value="examples"/>
+  <property name="webapps.src"     value="WEB-INF"/>
+  <property name="jsp.src"         value="jsp"/>
+  <property name="servlets.src"    value="servlets"/>
+  <property name="images.src"      value="images"/>
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+    <!-- Set up build directories -->
+    <mkdir dir="${build.dir}/${webapps.name}"/>
+
+    <!-- Set up distribution directories -->
+    <mkdir dir="${dist.dir}/${webapps.name}"/>
+  </target>
+
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <target name="build-main" depends="build-prepare">
+
+    <copydir src="${webapps.src}" 
+             dest="${build.dir}/${webapps.name}/${webapps.src}"/>
+    <copydir src="${jsp.src}" 
+             dest="${build.dir}/${webapps.name}/${jsp.src}"/>
+    <copydir src="${servlets.src}" 
+             dest="${build.dir}/${webapps.name}/${servlets.src}"/>
+    <copydir src="${images.src}" 
+             dest="${build.dir}/${webapps.name}/${images.src}"/>
+
+    <!-- Compile internal server components -->
+    <javac   srcdir="WEB-INF/classes" 
+             destdir="${build.dir}/${webapps.name}/WEB-INF/classes"
+             classpath="${servlet.jar}"
+             deprecation="off" debug="on" optimize="off"
+             excludes="**/CVS/**"/>
+    <javac   srcdir="jsp/plugin/applet" 
+             destdir="${build.dir}/${webapps.name}/jsp/plugin/applet"
+             classpath="${servlet.jar}"
+             deprecation="off" debug="on" optimize="off"
+             excludes="**/CVS/**"/>
+
+  </target>
+
+  <!-- ======================= DIST: Create Distribution Files ============ -->
+  <target name="dist" depends="build-main">
+    <!-- Create webapp WARS -->
+      <jar   jarfile="${dist.dir}/${webapps.name}/${webapps.name}.war"
+             basedir="${build.dir}/${webapps.name}" includes="**"/>
+  </target>
+
+
+  <!-- ======================= BUILD: Deploy Build ======================== -->
+  <target name="deploy" depends="build-main">
+    <copydir  src="${build.dir}/${webapps.name}"
+              dest="${deploy.dir}/${webapps.name}">
+    </copydir>
+  </target>
+
+  <!-- ======================= BUILD: Deploy Distribution Files =========== -->
+  <target name="deploy-dist" depends="dist">
+    <copydir  src="${dist.dir}/${webapps.name}"
+              dest="${deploy-dist.dir}">
+    </copydir>
+  </target>
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <deltree dir="${build.dir}/${webapps.name}"/>
+    <deltree dir="${dist.dir}/${webapps.name}"/>
+  </target>
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"/>
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean"/>
+
+
+</project>
