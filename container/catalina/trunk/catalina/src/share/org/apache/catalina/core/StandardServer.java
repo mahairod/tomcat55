@@ -119,7 +119,7 @@ public final class StandardServer
         { "org.apache.catalina.core.StandardContext", "sessionTimeout" },
         { "org.apache.catalina.core.StandardContext", "startupTime" },
         { "org.apache.catalina.core.StandardContext", "tldScanTime" },
-        { "org.apache.catalina.core.StandardContext", "workDir" },
+        //{ "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
         { "org.apache.catalina.session.StandardManager", "entropy" },
     };
