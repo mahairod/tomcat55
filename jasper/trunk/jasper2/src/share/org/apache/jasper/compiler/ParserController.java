@@ -218,7 +218,8 @@ class ParserController {
             if (isXml) {
                 parsedPage = JspDocumentParser.parse(this, absFileName,
 						     reader, parent,
-						     isTagFile);
+						     isTagFile,
+						     directivesOnly);
             } else {
 		JspReader r = new JspReader(ctxt, absFileName, encoding,
 					    reader, err);

@@ -61,6 +61,8 @@
 package org.apache.jasper.compiler;
 
 public interface TagConstants {
+
+    public static final String JSP_DIRECTIVE = "jsp:directive.";
     public static final String JSP_ROOT = "jsp:root";
     public static final String JSP_ROOT_END = "</jsp:root>";
     public static final String JSP_PAGE_DIRECTIVE = "jsp:directive.page";

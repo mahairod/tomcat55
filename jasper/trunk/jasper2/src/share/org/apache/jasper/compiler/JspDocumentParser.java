@@ -113,6 +113,7 @@ class JspDocumentParser extends DefaultHandler
 
     private ErrorDispatcher err;
     private boolean isTagFile;
+    private boolean directivesOnly;
 
     /*
      * Constructor
@@ -120,7 +121,8 @@ class JspDocumentParser extends DefaultHandler
     public JspDocumentParser(ParserController pc,
 			     String path,
 			     InputStreamReader reader,
-			     boolean isTagFile) {
+			     boolean isTagFile,
+			     boolean directivesOnly) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.pageInfo = pc.getCompiler().getPageInfo();
@@ -129,6 +131,7 @@ class JspDocumentParser extends DefaultHandler
 	this.path = path;
 	this.inputSource = new InputSource(reader);
 	this.isTagFile = isTagFile;
+	this.directivesOnly = directivesOnly;
     }
 
     /*
@@ -140,10 +143,13 @@ class JspDocumentParser extends DefaultHandler
 				   String path,
 				   InputStreamReader reader,
 				   Node parent,
-				   boolean isTagFile) throws JasperException {
+				   boolean isTagFile,
+				   boolean directivesOnly)
+	        throws JasperException {
 
 	JspDocumentParser handler = new JspDocumentParser(pc, path, reader,
-							  isTagFile);
+							  isTagFile,
+							  directivesOnly);
 	Node.Nodes pageNodes = null;
 	Node.JspRoot jspRoot = null;
 
@@ -196,24 +202,28 @@ class JspDocumentParser extends DefaultHandler
 			     String qName,
 			     Attributes attrs) throws SAXException {
 
+	if (directivesOnly && !qName.startsWith(JSP_DIRECTIVE)) {
+	    return;
+	}
+
 	Mark start = new Mark(path, locator.getLineNumber(),
 			      locator.getColumnNumber());
-	Attributes attrsCopy;
+	Attributes attrsCopy = null;
 
 	Node node = null;
 
-        // XXX - As of JSP 2.0, xmlns: can appear in any node (not just
-        // <jsp:root>).  The spec still needs clarification here.
-        // What we implement is that it can appear in any node and
-        // is valid from that point forward.  Redefinitions cause an
-        // error.  This isn't quite consistent with how xmlns: normally
-        // works.
-        try {
-            attrsCopy = addCustomTagLibraries(attrs);
-        } catch (JasperException je) {
-            throw new SAXParseException( err.getString(
+	// XXX - As of JSP 2.0, xmlns: can appear in any node (not just
+	// <jsp:root>).  The spec still needs clarification here.
+	// What we implement is that it can appear in any node and
+	// is valid from that point forward.  Redefinitions cause an
+	// error.  This isn't quite consistent with how xmlns: normally
+	// works.
+	try {
+	    attrsCopy = addCustomTagLibraries(attrs);
+	} catch (JasperException je) {
+	    throw new SAXParseException( err.getString(
                 "jsp.error.could.not.add.taglibraries" ), locator, je );
-        }
+	}
 
 	if (qName.equals(JSP_ROOT)) {
             // give the <jsp:root> element the original attributes set
@@ -352,6 +362,11 @@ class JspDocumentParser extends DefaultHandler
     public void endElement(String uri,
 			   String localName,
 			   String qName) throws SAXException {
+
+	if (directivesOnly && !qName.startsWith(JSP_DIRECTIVE)) {
+	    return;
+	}
+
 	if (current instanceof Node.NamedAttribute
 	        && ((Node.NamedAttribute) current).isTrim()) {
 	    // Ignore any whitespace (including spaces, carriage returns,
@@ -366,9 +381,7 @@ class JspDocumentParser extends DefaultHandler
 	    if (lastNode instanceof Node.TemplateText) {
 		((Node.TemplateText) lastNode).rtrim();
 	    }
-	}
-
-	if (current instanceof Node.ScriptingElement) {
+	} else if (current instanceof Node.ScriptingElement) {
 	    checkScriptingBody((Node.ScriptingElement) current);
 	}
 
