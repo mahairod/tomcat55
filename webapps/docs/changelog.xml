@@ -99,6 +99,19 @@
       <add>
         <bug>31288</bug>: Allow SMTP authentication for JNDI MailSessionFactory. (yoavs)
       </add>
+      <update>
+        Harmonize processing of the context.xml defaults with the way web.xml is processed
+        (remm)
+      </update>
+      <fix>
+        Ignore ';' if it is in the query string (remm)
+      </fix>
+      <fix>
+        private to protected for the webapp classloader (remm)
+      </fix>
+      <fix>
+        Improve logging of filters and listeners startup errors (remm)
+      </fix>
     </changelog>
    </subsection>
    
@@ -119,6 +132,9 @@
       <update>
         <bug>33857</bug>: Update information on automatic mod_jk configuration in Apache-HowTo. (yoavs)
       </update>
+      <fix>
+        Fix sync block placement in Mapper.addContext (remm)
+      </fix>
      </changelog>
    </subsection>
 
@@ -130,6 +146,9 @@
       <fix>
         <bug>33810</bug>: Incorrect recycling of BodyContent if close is called (remm)
       </fix>
+      <update>
+        Per instance loggers in Jasper (remm)
+      </update>
     </changelog>
   </subsection>
    
@@ -156,6 +175,9 @@
       <add>
         Add more host parameters to create new host with host-manager (pero)
       </add>
+      <fix>
+        <bug>34033</bug>: Fix quoting related bugs (remm)
+      </fix>
      </changelog>
    </subsection>
 </section>
