@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Request;

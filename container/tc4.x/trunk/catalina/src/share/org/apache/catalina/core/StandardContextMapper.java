@@ -20,12 +20,10 @@ package org.apache.catalina.core;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
-import org.apache.catalina.Context;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 
 

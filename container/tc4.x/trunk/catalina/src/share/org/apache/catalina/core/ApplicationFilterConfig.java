@@ -20,7 +20,6 @@ package org.apache.catalina.core;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;

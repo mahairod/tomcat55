@@ -24,7 +24,6 @@ import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
@@ -199,7 +198,7 @@ public final class StandardService
      */
     public String getInfo() {
 
-        return (this.info);
+        return (StandardService.info);
 
     }
 

@@ -23,7 +23,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.InputStream;
@@ -36,7 +35,6 @@ import java.security.AccessControlException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Random;
 
 import javax.naming.directory.DirContext;

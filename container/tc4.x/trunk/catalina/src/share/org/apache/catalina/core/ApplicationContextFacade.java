@@ -19,29 +19,14 @@ package org.apache.catalina.core;
 
 
 import java.io.InputStream;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
-import java.security.PrivilegedActionException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
-import javax.naming.NamingException;
-import javax.naming.Binding;
-import javax.naming.directory.DirContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContextAttributeEvent;
-import javax.servlet.ServletContextAttributeListener;
-import javax.servlet.http.HttpServletRequest;
 
 
 /**

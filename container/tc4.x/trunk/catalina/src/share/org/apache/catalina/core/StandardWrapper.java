@@ -18,10 +18,7 @@
 package org.apache.catalina.core;
 
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
@@ -31,22 +28,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.SingleThreadModel;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.InstanceListener;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.connector.HttpResponseBase;
-import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.tomcat.util.log.SystemLogHandler;

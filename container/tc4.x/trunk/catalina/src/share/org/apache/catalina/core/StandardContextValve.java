@@ -19,21 +19,15 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.naming.NamingException;
-import org.apache.naming.ContextBindings;
-import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 

@@ -18,10 +18,8 @@
 package org.apache.catalina.core;
 
 
-import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.Host;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;

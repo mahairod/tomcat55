@@ -19,24 +19,13 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Deployer;
-import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Host;
-import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.valves.ErrorDispatcherValve;
 
