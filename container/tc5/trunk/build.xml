@@ -514,13 +514,17 @@
       <param name="destfile" value="${tomcat-dbcp.jar}" />
     </antcall>
 
+   <antcall target="build-tomcat-dbcp" />
+  </target>
+
+  <target name="build-tomcat-dbcp">
    <mkdir dir="${tomcat-dbcp.home}"/>
-   <antcall target="build-tomcat-dbcp">
+   <antcall target="-build-tomcat-dbcp">
       <param name="basedir" value="${tomcat-dbcp.home}" />
    </antcall>
   </target>
 
-  <target name="build-tomcat-dbcp">
+  <target name="-build-tomcat-dbcp">
     <copy todir="${tomcat-dbcp.home}">
     	<fileset dir="${commons-collections.home}" >
     		<include name="**/collections/CursorableLinkedList.java" />
