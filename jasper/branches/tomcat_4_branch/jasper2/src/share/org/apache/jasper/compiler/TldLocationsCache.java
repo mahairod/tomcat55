@@ -156,7 +156,7 @@ public class TldLocationsCache {
         try {
             processWebDotXml();
             processJars();
-	    processTldsInFileSystem();
+	    processTldsInFileSystem("/WEB-INF/");
             initialized = true;
         } catch (JasperException ex) {
             Constants.message("jsp.error.internal.tldinit",
@@ -279,12 +279,17 @@ public class TldLocationsCache {
      * an implicit map entry to the taglib map for any TLD that has a <uri>
      * element.
      */
-    private void processTldsInFileSystem() throws JasperException {
-	Set dirList = ctxt.getResourcePaths("/WEB-INF/");
+    private void processTldsInFileSystem(String startPath)
+	    throws JasperException {
+
+	Set dirList = ctxt.getResourcePaths(startPath);
 	if (dirList != null) {
 	    Iterator it = dirList.iterator();
 	    while (it.hasNext()) {
 		String path = (String) it.next();
+                if (path.endsWith("/")) {
+                    processTldsInFileSystem(path);
+                }
                 if (!path.endsWith(".tld")) {
 		    continue;
 		}
