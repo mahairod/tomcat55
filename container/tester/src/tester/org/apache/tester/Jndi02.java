@@ -310,10 +310,10 @@ public class Jndi02 extends HttpServlet {
                 int counts[] = new int[names.length];
                 for (int i = 0; i < names.length; i++)
                     counts[i] = 0;
-                NamingEnumeration enum =
+                NamingEnumeration namingEnum =
                     initContext.listBindings("java:comp/env");
-                while (enum.hasMore()) {
-                    Binding binding = (Binding) enum.next();
+                while (namingEnum.hasMore()) {
+                    Binding binding = (Binding) namingEnum.next();
                     String name = binding.getName();
                     boolean found = false;
                     for (int i = 0; i < names.length; i++) {
