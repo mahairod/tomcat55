@@ -67,6 +67,7 @@ package org.apache.catalina.servlets;
 
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -224,7 +225,7 @@ public final class InvokerServlet
 	if (pathInfo == null) {
 	    if (debug >= 1)
 	        log("serveRequest:  Invalid pathInfo '" + pathInfo + "'");
-	    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+	    response.sendError(HttpServletResponse.SC_NOT_FOUND,
 	                       request.getRequestURI());
 	    return;
         }
@@ -253,9 +254,12 @@ public final class InvokerServlet
 
 	// No, create a new wrapper for the specified servlet class
         else {
+
 	    if (debug >= 1)
 		log("serveRequest:  Creating wrapper for '" + servletClass +
 		    "' with mapping '" + pattern + "'");
+
+            // Create and install a new wrapper
 	    try {
 	        wrapper = context.createWrapper();
 		wrapper.setName(name);
@@ -264,11 +268,40 @@ public final class InvokerServlet
 		context.addChild(wrapper);
 		context.addServletMapping(pattern, name);
             } catch (Throwable t) {
-		log("serveRequest", t);
+		log("serveRequest.create", t);
 		response.sendError(HttpServletResponse.SC_NOT_FOUND,
 				   request.getRequestURI());
 		return;
             }
+
+            // Ensure that we can actually allocate and release an instance
+            try {
+                Servlet instance = wrapper.allocate();
+                wrapper.deallocate(instance);
+            } catch (ServletException e) {
+                log("serveRequest.test", e);
+                Throwable rootCause = e.getRootCause();
+                if ((rootCause != null) &&
+                    (rootCause instanceof ClassNotFoundException))
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                       request.getRequestURI());
+                else
+                    response.sendError
+                        (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                         request.getRequestURI());
+                context.removeServletMapping(pattern);
+                context.removeChild(wrapper);
+                return;
+            } catch (Throwable t) {
+                log("serveRequest.test", t);
+                response.sendError
+                    (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                     request.getRequestURI());
+                context.removeServletMapping(pattern);
+                context.removeChild(wrapper);
+                return;
+            }
+
 	}
 
 	// Pass this request on to the identified or newly created wrapper

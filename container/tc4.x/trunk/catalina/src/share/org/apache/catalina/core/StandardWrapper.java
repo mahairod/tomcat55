@@ -370,7 +370,8 @@ public final class StandardWrapper
      */
     public void setParent(Container container) {
 
-	if (!(container instanceof Context))
+        if ((container != null) &&
+            !(container instanceof Context))
 	    throw new IllegalArgumentException
 		(sm.getString("standardWrapper.notContext"));
 	super.setParent(container);
