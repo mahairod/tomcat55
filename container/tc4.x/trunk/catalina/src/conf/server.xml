@@ -96,15 +96,7 @@
                useURIValidationHack="false" disableUploadTimeout="true" />
     <!-- Note : To disable connection timeouts, set connectionTimeout value
      to -1 -->
-	
-	<!-- Note : To use gzip compression you could set the following properties :
-	
-			   compression="on" 
-			   compressionMinSize="2048" 
-			   noCompressionUserAgents="gozilla, traviata" 
-			   compressableMimeType="text/html,text/xml"
-	-->
-			   	
+
     <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
     <!--
     <Connector className="org.apache.coyote.tomcat4.CoyoteConnector"
