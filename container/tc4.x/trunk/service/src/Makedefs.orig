@@ -1,0 +1,12 @@
+JAVA_HOME = /usr/java
+
+JAVAC       = $(JAVA_HOME)/bin/javac
+JAVACOPTS   = -O
+JAVADOC     = $(JAVA_HOME)/bin/javadoc
+JAVADOCOPTS = -author -version -splitindex -windowtitle "Apache Service Interface"
+JAR         = $(JAVA_HOME)/bin/jar
+
+CC    = gcc
+COPTS = -O6 -Wall -Wstrict-prototypes
+CINCS = -I. -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
+CLIBS = -ldl
