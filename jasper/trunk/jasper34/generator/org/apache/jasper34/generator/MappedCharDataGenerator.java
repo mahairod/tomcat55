@@ -95,7 +95,8 @@ public class MappedCharDataGenerator extends CharDataGenerator {
 		sb.append("\\\\");
 		break;
 	    case '\r':
-		continue;
+		sb.append("\\r");
+		break;
 		/*
 		  case '\'':
 		  sb.append('\\');
@@ -103,7 +104,7 @@ public class MappedCharDataGenerator extends CharDataGenerator {
 		  break;
 		*/
 	    case '\n':
-		sb.append("\\r\\n");
+		sb.append("\\n");
 		writer.print(sb.toString());
 		writer.print("\");\n");
 		sb = new StringBuffer();

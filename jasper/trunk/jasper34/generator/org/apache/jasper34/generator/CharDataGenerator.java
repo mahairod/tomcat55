@@ -109,7 +109,8 @@ public class CharDataGenerator extends GeneratorBase
 		sb.append("\\\\");
 		break;
 	    case '\r':
-		continue;
+		sb.append("\\r");
+		break;
 		/*
 		  case '\'':
 		  sb.append('\\');
@@ -117,7 +118,7 @@ public class CharDataGenerator extends GeneratorBase
 		  break;
 		*/
 	    case '\n':
-		sb.append("\\r\\n");
+		sb.append("\\n");
 		break;
 	    case '\t':
 		sb.append("\\t");
