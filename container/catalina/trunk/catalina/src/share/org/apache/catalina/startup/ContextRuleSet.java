@@ -205,6 +205,13 @@ public class ContextRuleSet extends RuleSetBase {
                             "setResources",
                             "javax.naming.directory.DirContext");
 
+        digester.addObjectCreate(prefix + "Context/ResourceLink",
+                "org.apache.catalina.deploy.ContextResourceLink");
+        digester.addSetProperties(prefix + "Context/ResourceLink");
+        digester.addRule(prefix + "Context/ResourceLink",
+                new SetNextNamingRule("addResourceLink",
+                        "org.apache.catalina.deploy.ContextResourceLink"));
+
         digester.addObjectCreate(prefix + "Context/Valve",
                                  null, // MUST be specified in the element
                                  "className");
