@@ -503,6 +503,14 @@ public class JspC implements Options {
         compile=b;
     }
 
+    public void setVerbose( int level ) {
+        if (level > 0) {
+            verbose = true;
+            showSuccess = true;
+            listErrors = true;
+        }
+    }
+
     public void setValidateXml( boolean b ) {
         org.apache.jasper.xmlparser.ParserUtils.validating=b;
     }
