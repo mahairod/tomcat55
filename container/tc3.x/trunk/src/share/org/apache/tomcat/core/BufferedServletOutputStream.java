@@ -175,12 +175,37 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	    throw new IllegalArgumentException(msg);
 	}
 
-	// I know this is extremely inefficient and there are simple ways
-	// to enhance this.. will do if I get time.
-	for (int i = 0; i < len; i++)
-	    write(b[off+i]);
+        // If the whole thing fits in the buffer, then just put it there.
+        if (len < (buffer.length - bufferCount)) {
+            System.arraycopy(b, off, buffer, bufferCount, len);
+            bufferCount += len;
+            totalCount += len;
+        }
+        else {
+            // Otherwise, we might as well flush and then write out full
+            // buffers of data directly to the underlying stream.  Whatever
+            // is left over, we simply put in the buffer.
+            // This code was adapted (and cleaned up) from Aaron Renn's 
+            // BufferedOutputStream implementation from the Classpath project.
 
-	return;	
+            reallyFlush();
+
+            int iters = len / buffer.length;
+            int leftoverStart = iters * buffer.length;
+            int leftoverLen = len - leftoverStart;
+
+            for (int i = 0; i < iters; i++)
+                doWrite(b, off + (i * buffer.length), buffer.length);
+
+            totalCount += leftoverStart;
+
+            if ((len % buffer.length) != 0) {
+                System.arraycopy(b, off + leftoverStart, buffer, bufferCount,
+                                 leftoverLen);
+                bufferCount += leftoverLen;
+                totalCount += leftoverLen;
+            }
+        }
     }
 
     public void print(String s) throws IOException {
