@@ -145,6 +145,25 @@ public class MBeanFactory extends BaseModelMBean {
 
     // ------------------------------------------------------------- Operations
 
+    /**
+     * Return the managed bean definition for the specified bean type
+     *
+     * @param type MBean type
+     */
+    public String findObjectName(String type) {
+
+        if (type.equals("org.apache.catalina.core.StandardContext")) {
+            return "StandardContext";
+        } else if (type.equals("org.apache.catalina.core.StandardDefaultContext")) {
+            return "DefaultContext";
+        } else if (type.equals("org.apache.catalina.core.StandardEngine")) {
+            return "StandardEngine";
+        } else if (type.equals("org.apache.catalina.core.StandardHost")) {
+            return "StandardHost";
+        } else return null;
+
+    }
+
 
     /**
      * Create a new AccessLoggerValve.
@@ -156,13 +175,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createAccessLoggerValve(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -189,7 +210,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createDefaultContext(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardHost";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -222,13 +244,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createFileLogger(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -257,7 +281,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createHttp10Connector(String parent, String address, int port)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardService";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -295,7 +320,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createHttp11Connector(String parent, String address, int port)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardService";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -331,13 +357,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createJDBCRealm(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -364,13 +392,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createJNDIRealm(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -397,13 +427,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createMemoryRealm(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -430,13 +462,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRemoteAddrValve(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -463,13 +497,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRemoteHostValve(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -496,13 +532,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createRequestDumperValve(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -529,13 +567,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSingleSignOn(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -563,7 +603,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardContext(String parent, String path)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardHost";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -598,7 +639,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardEngine(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardService";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -632,7 +674,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardHost(String parent, String name)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardEngine";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -666,13 +709,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardManager(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -701,7 +746,8 @@ public class MBeanFactory extends BaseModelMBean {
     public String createStandardService(String parent, String name)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        String tname = "StandardServer";
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
@@ -736,13 +782,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSystemErrLogger(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
@@ -769,13 +817,15 @@ public class MBeanFactory extends BaseModelMBean {
     public String createSystemOutLogger(String parent)
         throws Exception {
 
-        ManagedBean managed = registry.findManagedBean(parent);
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        ManagedBean managed = registry.findManagedBean(tname);
         String domain = null;
         if (managed != null)
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-        ObjectName pname = new ObjectName(parent);
         Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
         if (obj instanceof Container) {
