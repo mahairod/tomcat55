@@ -63,6 +63,7 @@
 package org.apache.catalina.ant;
 
 
+import java.net.URLEncoder;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -144,14 +145,14 @@ public class InstallTask extends AbstractCatalinaTask {
                 ("Must specify at least one of 'config' and 'war'");
         }
         StringBuffer sb = new StringBuffer("/install?path=");
-        sb.append(this.path);
+        sb.append(URLEncoder.encode(this.path));
         if (config != null) {
             sb.append("&config=");
-            sb.append(config);
+            sb.append(URLEncoder.encode(config));
         }
         if (war != null) {
             sb.append("&war=");
-            sb.append(war);
+            sb.append(URLEncoder.encode(war));
         }
         execute(sb.toString());
 

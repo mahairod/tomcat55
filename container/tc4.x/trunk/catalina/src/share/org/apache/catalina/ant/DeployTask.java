@@ -67,6 +67,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -142,7 +143,7 @@ public class DeployTask extends AbstractCatalinaTask {
         } catch (IOException e) {
             throw new BuildException(e);
         }
-        execute("/deploy?path=" + this.path, stream,
+        execute("/deploy?path=" + URLEncoder.encode(this.path), stream,
                 "application/octet-stream", contentLength);
 
     }

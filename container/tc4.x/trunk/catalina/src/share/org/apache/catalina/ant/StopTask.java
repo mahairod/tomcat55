@@ -63,6 +63,7 @@
 package org.apache.catalina.ant;
 
 
+import java.net.URLEncoder;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -110,7 +111,7 @@ public class StopTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        execute("/stop?path=" + this.path);
+        execute("/stop?path=" + URLEncoder.encode(this.path));
 
     }
 
