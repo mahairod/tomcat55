@@ -134,8 +134,6 @@ public final class SecurityClassLoad {
         throws Exception {
         String basePackage = "org.apache.catalina.";
         loader.loadClass
-            (basePackage + "util.CookieTools");
-        loader.loadClass
             (basePackage + "util.URL");
         loader.loadClass(basePackage + "util.Enumerator");
     }
