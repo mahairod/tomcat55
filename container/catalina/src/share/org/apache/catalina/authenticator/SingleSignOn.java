@@ -287,10 +287,24 @@ public class SingleSignOn
         synchronized (reverse) {
             ssoId = (String) reverse.get(session);
         }
-        if (ssoId == null) {
+        if (ssoId == null)
             return;
+
+        // Was the session destroyed as the result of a timeout?
+        // If so, we'll just remove the expired session from the
+        // SSO.  If the session was logged out, we'll log out
+        // of all session associated with the SSO.
+        if ((session.getMaxInactiveInterval() > 0)
+            && (System.currentTimeMillis() - session.getLastAccessedTime() >=
+                session.getMaxInactiveInterval() * 1000)) {
+            removeSession(ssoId, session);
+        } else {
+            // The session was logged out.
+            // Deregister this single session id, invalidating 
+            // associated sessions
+            deregister(ssoId);
         }
-        deregister(ssoId, session);
+
     }
 
 
@@ -454,6 +468,46 @@ public class SingleSignOn
 
 
     /**
+     * Deregister the specified single sign on identifier, and invalidate
+     * any associated sessions.
+     *
+     * @param ssoId Single sign on identifier to deregister
+     */
+    protected void deregister(String ssoId) {
+
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("Deregistering sso id '" + ssoId + "'");
+
+        // Look up and remove the corresponding SingleSignOnEntry
+        SingleSignOnEntry sso = null;
+        synchronized (cache) {
+            sso = (SingleSignOnEntry) cache.remove(ssoId);
+        }
+
+        if (sso == null)
+            return;
+
+        // Expire any associated sessions
+        Session sessions[] = sso.findSessions();
+        for (int i = 0; i < sessions.length; i++) {
+            if (container.getLogger().isTraceEnabled())
+                container.getLogger().trace(" Invalidating session " + sessions[i]);
+            // Remove from reverse cache first to avoid recursion
+            synchronized (reverse) {
+                reverse.remove(sessions[i]);
+            }
+            // Invalidate this session
+            sessions[i].expire();
+        }
+
+        // NOTE:  Clients may still possess the old single sign on cookie,
+        // but it will be removed on the next request since it is no longer
+        // in the cache
+
+    }
+
+
+    /**
      * Attempts reauthentication to the given <code>Realm</code> using
      * the credentials associated with the single sign-on session
      * identified by argument <code>ssoId</code>.
@@ -582,4 +636,39 @@ public class SingleSignOn
         }
 
     }
+
+    
+    /**
+     * Remove a single Session from a SingleSignOn.  Called when
+     * a session is timed out and no longer active.
+     *
+     * @param ssoId Single sign on identifier from which to remove the session.
+     * @param session the session to be removed.
+     */
+    protected void removeSession(String ssoId, Session session) {
+
+        if (container.getLogger().isDebugEnabled())
+            container.getLogger().debug("Removing session " + session.toString() + " from sso id " + 
+                ssoId );
+
+        // Get a reference to the SingleSignOn
+        SingleSignOnEntry entry = lookup(ssoId);
+        if (entry == null)
+            return;
+
+        // Remove the inactive session from SingleSignOnEntry
+        entry.removeSession(session);
+
+        // Remove the inactive session from the 'reverse' Map.
+        synchronized(reverse) {
+            reverse.remove(session);
+        }
+
+        // If there are not sessions left in the SingleSignOnEntry,
+        // deregister the entry.
+        if (entry.findSessions().length == 0) {
+            deregister(ssoId);
+        }
+    }
+
 }
