@@ -2800,6 +2800,10 @@ public class Generator {
      */
     private void generatePostamble(Node.Nodes page) {
         out.popIndent();
+	if (pageInfo.hasTagFile()) {
+	    // Silently catch SkipPageException
+	    out.printil("} catch (javax.servlet.jsp.SkipPageException t) {");
+	}
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
 

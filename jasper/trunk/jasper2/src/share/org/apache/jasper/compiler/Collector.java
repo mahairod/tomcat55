@@ -75,11 +75,8 @@ import org.apache.jasper.JasperException;
 public class Collector {
 
     /**
-     * A visitor for collection info on the page
-     * Info collected so far:
-     *   Maximum tag nestings.
-     *   Whether a page or a tag element (and its body) contains any scripting
-     *       elements.
+     * A visitor for collecting information on the page and the body of
+     * the custom tags.
      */
     static class CollectVisitor extends Node.Visitor {
 
@@ -90,6 +87,7 @@ public class Collector {
 	private boolean includeActionSeen = false;
 	private boolean setPropertySeen = false;
 	private boolean hasScriptingVars = false;
+	private boolean tagFileSeen = false;
 
 	public void visit(Node.ParamAction n) throws JasperException {
 	    if (n.getValue().isExpression()) {
@@ -138,6 +136,12 @@ public class Collector {
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
+
+	    // Remember if the tag handler is a tag file
+	    if (n.getTagFileInfo() != null) {
+		tagFileSeen = true;
+	    }
+
             curTagNesting++;
             if (curTagNesting > maxTagNesting) {
                 maxTagNesting = curTagNesting;
@@ -230,6 +234,7 @@ public class Collector {
         public void updatePageInfo(PageInfo pageInfo) {
             pageInfo.setMaxTagNesting(maxTagNesting);
 	    pageInfo.setScriptless(! scriptingElementSeen);
+	    pageInfo.setHasTagFile(tagFileSeen);
         }
     }
 

@@ -94,8 +94,9 @@ class PageInfo {
     private boolean elEnabled = true;
     private boolean tagFile = false;
     private boolean isXml = false;
-    private boolean isXmlSpecified = false;	// true is there is a
-						// is-xml element
+    private boolean isXmlSpecified = false;	// true is there is a is-xml
+						// element in jsp-config
+    private boolean hasTagFile = false;		// A custom tag is a tag file
     private Vector includePrelude;
     private Vector includeCoda;
 
@@ -287,5 +288,13 @@ class PageInfo {
 
     public void setIncludeCoda(Vector coda) {
 	includeCoda = coda;
+    }
+
+    public void setHasTagFile(boolean hasTag) {
+	hasTagFile = hasTag;
+    }
+
+    public boolean hasTagFile() {
+	return hasTagFile;
     }
 }
