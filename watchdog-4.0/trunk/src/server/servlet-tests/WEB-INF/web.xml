@@ -1729,6 +1729,10 @@
     <servlet-name>GetServletPathTest</servlet-name>
     <display-name>GetServletPathTest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletRequest.GetServletPathTestServlet</servlet-class>
+    <init-param>
+      <param-name>expectedResult</param-name>
+      <param-value>/GetServletPathTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
