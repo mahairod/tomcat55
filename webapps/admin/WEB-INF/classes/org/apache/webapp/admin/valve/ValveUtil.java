@@ -62,6 +62,7 @@
 package org.apache.webapp.admin.valve;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
@@ -77,6 +78,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -133,7 +136,7 @@ public final class ValveUtil {
         String operation = null;
         String values[] = null;
         String vObjectName = null;
-
+        
         try {
             
             String objectName = DeleteLoggerAction.getObjectName(parent,
@@ -158,8 +161,7 @@ public final class ValveUtil {
                 servlet.log(message);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
                 return (null);
-            }
-                        
+            }    
             // Ensure that the requested valve name is unique
             
             // TBD -- do we need this check?
@@ -188,6 +190,7 @@ public final class ValveUtil {
             operation = "create" + valveType;
             if ("AccessLogValve".equalsIgnoreCase(valveType))
                 operation = "createAccessLoggerValve";
+                
             vObjectName = (String)
                         mBServer.invoke(fname, operation, values, createStandardValveTypes);
             
@@ -238,4 +241,46 @@ public final class ValveUtil {
         session.removeAttribute(mapping.getAttribute());
         return vObjectName;
     }
+
+    
+    /**
+     * Return an array of regular expression objects initialized from the
+     * specified argument, which must be <code>null</code> or a comma-delimited
+     * list of regular expression patterns.
+     *
+     * @param list The comma-separated list of patterns
+     *
+     * @exception IllegalArgumentException if one of the patterns has
+     *  invalid syntax
+     */
+    public static RE[] precalculate(String list) 
+                                    throws IllegalArgumentException {
+
+        if (list == null)
+            return (new RE[0]);
+        list = list.trim();
+        if (list.length() < 1)
+            return (new RE[0]);
+        list += ",";
+
+        ArrayList reList = new ArrayList();
+        while (list.length() > 0) {
+            int comma = list.indexOf(',');
+            if (comma < 0)
+                break;
+            String pattern = list.substring(0, comma).trim();
+            try {
+                reList.add(new RE(pattern));
+            } catch (RESyntaxException e) {
+                throw new IllegalArgumentException
+                    ("Syntax error in request filter pattern");
+            }
+            list = list.substring(comma + 1);
+        }
+
+        RE reArray[] = new RE[reList.size()];
+        return ((RE[]) reList.toArray(reArray));
+
+    }    
+
 }
