@@ -631,9 +631,6 @@
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
 
     <!-- Common Extensions -->
-    <copy todir="${catalina.deploy}/common/classes">
-      <fileset dir="${catalina.build}/common/classes" />
-    </copy>
     <copy todir="${catalina.deploy}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
     </copy>
@@ -644,17 +641,11 @@
     </copy>
 
     <!-- Server Components -->
-    <copy todir="${catalina.deploy}/server/classes">
-      <fileset dir="${catalina.build}/server/classes" />
-    </copy>
     <copy todir="${catalina.deploy}/server/lib">
       <fileset dir="${catalina.build}/server/lib" />
     </copy>
 
     <!-- Shared Extensions -->
-    <copy todir="${catalina.deploy}/shared/classes">
-      <fileset dir="${catalina.build}/shared/classes" />
-    </copy>
     <copy todir="${catalina.deploy}/shared/lib">
       <fileset dir="${catalina.build}/shared/lib" />
     </copy>
