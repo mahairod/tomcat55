@@ -177,6 +177,8 @@ class Generator {
 		    if (n.getAtETag() != null) {
 			n.getAtETag().visit(this);
 		    }
+		} else {
+		    visitBody(n);
 		}
 	    }
 	}
