@@ -134,6 +134,22 @@ public class ErrorPage02 extends HttpServlet {
             }
         }
 
+        value = request.getAttribute("javax.servlet.error.servlet_name");
+        if (value == null)
+            sb.append(" servlet_name is missing/");
+        else if (!(value instanceof String)) {
+            sb.append(" servlet_name class is ");
+            sb.append(value.getClass().getName());
+            sb.append("/");
+        } else {
+            String servlet_name = (String) value;
+            if (!"ErrorPage01".equals(servlet_name)) {
+                sb.append(" servlet_name is ");
+                sb.append(servlet_name);
+                sb.append("/");
+            }
+        }
+
         // Report ultimate success or failure
         if (sb.length() < 1)
             writer.println("ErrorPage02 PASSED");
