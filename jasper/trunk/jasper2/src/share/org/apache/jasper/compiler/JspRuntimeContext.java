@@ -1,3 +1,4 @@
+
 /*
  * $Header$
  * $Revision$
@@ -72,12 +73,12 @@ import java.security.Policy;
 import java.security.PermissionCollection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.JspFactory;
-
-import org.apache.commons.collections.FastHashMap;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
@@ -203,7 +204,7 @@ public final class JspRuntimeContext implements Runnable {
     /**
      * Maps JSP pages to their JspServletWrapper's
      */
-    private Map jsps = new FastHashMap();
+    private Map jsps = Collections.synchronizedMap( new HashMap());
  
 
     /**
@@ -343,6 +344,7 @@ public final class JspRuntimeContext implements Runnable {
             // a protocol other than file: will generate a
             // bad file system path, so only add file:
             // protocol URL's to the classpath.
+            
             if( urls[i].getProtocol().equals("file") ) {
                 cpath.append((String)urls[i].getFile()+sep);
             }
