@@ -1240,6 +1240,15 @@
                  type="java.lang.String"/>
     </operation>
 
+    <operation   name="createUserDatabaseRealm"
+          description="Create a new UserDatabase Realm"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="parent"
+          description="MBean Name of the associated parent component"
+                 type="java.lang.String"/>
+    </operation>
+
     <operation   name="createWebappLoader"
           description="Create a new Web Application Loader"
                impact="ACTION"

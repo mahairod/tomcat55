@@ -99,6 +99,7 @@ import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.realm.JDBCRealm;
 import org.apache.catalina.realm.JNDIRealm;
 import org.apache.catalina.realm.MemoryRealm;
+import org.apache.catalina.realm.UserDatabaseRealm;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.valves.AccessLogValve;
 import org.apache.catalina.valves.RemoteAddrValve;
@@ -894,8 +895,49 @@ public class MBeanFactory extends BaseModelMBean {
             MBeanUtils.createObjectName(managed.getDomain(), logger);
         return (oname.toString());
     }
+    
+    
+    /**
+     * Create a new  UserDatabaseRealm.
+     *
+     * @param parent MBean Name of the associated parent component
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String createUserDatabaseRealm(String parent)
+        throws Exception {
 
+         // Create a new UserDatabaseRealm instance
+        UserDatabaseRealm realm = new UserDatabaseRealm();
 
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        String tname = findObjectName(type);
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(pname.getKeyProperty("service"));
+        Engine engine = (Engine) service.getContainer();
+        if (tname.equals("StandardContext")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            Context context =
+                    (Context) host.findChild(pname.getKeyProperty("path"));
+            context.setRealm(realm);
+        } else if (tname.equals("Engine")) {
+            engine.setRealm(realm);
+        } else if (tname.equals("Host")) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.setRealm(realm);
+        }
+
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("UserDatabseRealm");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), realm);
+        return (oname.toString());
+
+    }
+
+    
     /**
      * Create a new Web Application Loader.
      *
