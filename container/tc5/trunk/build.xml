@@ -12,7 +12,7 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2004" />
+  <property name="year"                  value="2005" />
   <property name="version.major"         value="5" />
   <property name="version.minor"         value="5" />
   <property name="version.build"         value="0" />
@@ -777,6 +777,14 @@
         <property name="flags.hide" value="true" />
     </ant>
 
+    <ant dir="${catalina.home}/webapps/host-manager" target="build-main">
+        <property name="webapps.build" value="${tomcat.build}/server/webapps" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar" value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+
     <ant dir="${catalina.home}/webapps/balancer" target="build-main">
         <property name="webapps.build" value="${tomcat.build}/webapps" />
         <property name="classes.dir" value="${tomcat.build}/classes" />
@@ -829,6 +837,14 @@
           <include name="**/*.properties" />
        </fileset>
     </jar>
+    <mkdir dir="${tomcat.build}/server/webapps/host-manager/WEB-INF/lib" />
+    <jar jarfile="${tomcat.build}/server/webapps/host-manager/WEB-INF/lib/catalina-host-manager.jar"
+         index="true">
+       <fileset dir="${tomcat.build}/server/webapps/host-manager/WEB-INF/classes">
+          <include name="**/*.class" />
+          <include name="**/*.properties" />
+       </fileset>
+    </jar>
     <mkdir dir="${tomcat.build}/webapps/balancer/WEB-INF/lib" />
     <jar jarfile="${tomcat.build}/webapps/balancer/WEB-INF/lib/catalina-balancer.jar"
          index="true">
@@ -848,6 +864,8 @@
 
     <!-- Add XML declarations for admin, manager and balancer -->
     <copy file="${tomcat.build}/server/webapps/manager/manager.xml"
+         todir="${tomcat.build}/conf/Catalina/localhost" />
+    <copy file="${tomcat.build}/server/webapps/host-manager/host-manager.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
     <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
@@ -1258,6 +1276,7 @@
         <exclude name="admin/WEB-INF/classes/**" />
         <exclude name="admin/WEB-INF/src/**" />
         <exclude name="manager/WEB-INF/classes/**" />
+        <exclude name="host-manager/WEB-INF/classes/**" />
       </fileset>
     </copy>
 <!--
