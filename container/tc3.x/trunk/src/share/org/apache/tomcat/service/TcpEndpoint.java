@@ -183,7 +183,7 @@ public class TcpEndpoint  { // implements Endpoint {
 
     // -------------------- Public methods --------------------
     
-    public void startEndpoint() {
+    public void startEndpoint() throws IOException, InstantiationException {
 	try {
 	    if(factory==null)
 		factory=ServerSocketFactory.getDefault();
@@ -196,13 +196,15 @@ public class TcpEndpoint  { // implements Endpoint {
 	    }
 	} catch( IOException ex ) {
 	    // throw?
-	    ex.printStackTrace();
+	    // ex.printStackTrace();
 	    running=false;
+            throw ex;
 	    //	    throw new HttpServerException(msg);
 	} catch( InstantiationException ex1 ) {
 	    // throw?
-	    ex1.printStackTrace();
+	    // ex1.printStackTrace();
 	    running=false;
+            throw ex1;
 	    //	    throw new HttpServerException(msg);
 	}
 	running=true;

@@ -14,6 +14,20 @@
 
 baseDir=`dirname $0`
 
+if [ -z "$JAVA_HOME" ]
+then
+JAVACMD=`which java`
+if [ -z "$JAVACMD" ]
+then
+echo "Cannot find JAVA. Please set your PATH."
+exit 1
+fi
+JAVA_BINDIR=`dirname $JAVACMD`
+JAVA_HOME=$JAVA_BINDIR/..
+fi
+
+JAVACMD=$JAVA_HOME/bin/java
+
 jsdkJars=${baseDir}/webserver.jar:${baseDir}/lib/servlet.jar
 jspJars=${baseDir}/lib/jasper.jar
 beanJars=${baseDir}/webpages/WEB-INF/classes/jsp/beans
@@ -48,12 +62,12 @@ if test "$1" = "start"
 then 
 shift 
 echo Using classpath: ${CLASSPATH}
-java org.apache.tomcat.shell.Startup "$@" &
+$JAVACMD org.apache.tomcat.shell.Startup "$@" &
 elif test "$1" = "stop"
 then 
 shift 
 echo Using classpath: ${CLASSPATH}
-java org.apache.tomcat.shell.Shutdown "$@"
+$JAVACMD org.apache.tomcat.shell.Shutdown "$@"
 else
 echo "Usage:"
 echo "tomcat [start|stop]"
