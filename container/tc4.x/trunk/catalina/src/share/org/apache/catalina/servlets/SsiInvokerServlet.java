@@ -111,6 +111,8 @@ public final class SsiInvokerServlet extends HttpServlet {
     /** Expiration time in seconds for the doc. */
     private Long expires = null;
 
+    /** Should we ignore unsupported/misspelled SSI Directives */
+    private boolean ignoreUnsupportedDirective = false;
 
     /** virtual path can be webapp-relative */
     private boolean isVirtualWebappRelative = false;
@@ -143,8 +145,19 @@ public final class SsiInvokerServlet extends HttpServlet {
             ;
         }
 
-        value = getServletConfig().getInitParameter("isVirtualWebappRelative");
-        isVirtualWebappRelative = Integer.parseInt(value) > 0 ? true : false;
+        try {
+            value = getServletConfig().getInitParameter("isVirtualWebappRelative");
+            isVirtualWebappRelative = Integer.parseInt(value) > 0 ? true : false;
+        } catch (Throwable t) {
+            ;
+        }
+
+        try {
+            value = getServletConfig().getInitParameter("ignoreUnsupportedDirective");
+            ignoreUnsupportedDirective = Integer.parseInt(value) > 0 ? true : false;
+        } catch (Throwable t) {
+            ;
+        }
 
         try {
             value = getServletConfig().getInitParameter("expires");
@@ -308,6 +321,8 @@ public final class SsiInvokerServlet extends HttpServlet {
                             out.write((ssiCommand.getStream(strParamType, strParam)).getBytes());
                         } else
                             ssiCommand.process(strParamType, strParam);
+                    } else if(ignoreUnsupportedDirective && ssiCommand==null) {
+                        ;
                     } else {
                         out.write(ssiMediator.getError());
                     }
