@@ -194,6 +194,12 @@
       this attribute is set to "false".</p>
     </attribute>
 
+    <attribute name="maxHttpHeaderSize" required="false">
+      <p>The maximum size of the request and response HTTP header, specified
+      in bytes.
+      If not specified, this attribute is set to 4096 (4 KB).</p>
+    </attribute>
+
     <attribute name="maxKeepAliveRequests" required="false">
       <p>The maximum number of HTTP requests which can be pipelined until
       the connection is closed by the server. Setting this attribute to 1 will
