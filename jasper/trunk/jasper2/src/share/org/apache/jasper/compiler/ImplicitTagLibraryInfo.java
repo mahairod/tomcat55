@@ -96,7 +96,7 @@ class ImplicitTagLibraryInfo extends TagLibraryInfo {
 				  String prefix,
 				  String tagdir,
 				  ErrorDispatcher err) throws JasperException {
-        super(prefix, null, tagdir);
+        super(prefix, tagdir);
 	this.pc = pc;
 	this.tagFileMap = new Hashtable();
 	this.vec = new Vector();
