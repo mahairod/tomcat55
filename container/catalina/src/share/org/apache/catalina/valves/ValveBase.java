@@ -301,7 +301,7 @@ public abstract class ValveBase
             parentName=",servlet=" + container.getName() +
                     ",path=" + path + ",host=" + host.getName();
         }
-        log.info("valve parent=" + parentName + " " + parent);
+        log.debug("valve parent=" + parentName + " " + parent);
 
         String className=this.getClass().getName();
         int period = className.lastIndexOf('.');
@@ -314,7 +314,7 @@ public abstract class ValveBase
             if( valves[i]!=null &&
                     valves[i].getClass() == this.getClass() &&
                     valves[i] != this ) {
-                log.info("Duplicate " + valves[i] + " " + this + " " + container);
+                log.debug("Duplicate " + valves[i] + " " + this + " " + container);
                 seq++;
             }
         }
@@ -325,7 +325,7 @@ public abstract class ValveBase
 
         ObjectName objectName = 
             new ObjectName( domain + ":type=Valve,name=" + className + ext + parentName);
-        log.info("valve objectname = "+objectName);
+        log.debug("valve objectname = "+objectName);
         return objectName;
     }
 

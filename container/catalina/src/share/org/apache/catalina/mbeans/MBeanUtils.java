@@ -264,7 +264,7 @@ public class MBeanUtils {
         ModelMBean mbean = managed.createMBean(context);
         ObjectName oname = createObjectName(domain, context);
         if( mserver.isRegistered(oname)) {
-            log.info("Already registered " + oname);
+            log.debug("Already registered " + oname);
             mserver.unregisterMBean(oname);
         }
         mserver.registerMBean(mbean, oname);
