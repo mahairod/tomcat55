@@ -82,6 +82,7 @@ import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
@@ -986,6 +987,21 @@ public final class StandardWrapper
 	    return (true);
 	else
 	    return (false);
+
+    }
+
+
+    /**
+     * Log the abbreviated name of this Container for logging messages.
+     */
+    protected String logName() {
+
+        StringBuffer sb = new StringBuffer("StandardWrapper[");
+        sb.append(getParent().getName());
+        sb.append(':');
+        sb.append(getName());
+        sb.append(']');
+        return (sb.toString());
 
     }
 
