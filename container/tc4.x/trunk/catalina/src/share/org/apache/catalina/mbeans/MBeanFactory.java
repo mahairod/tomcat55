@@ -287,7 +287,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setLogger(fileLogger);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(fileLogger);
         }
 
@@ -847,7 +847,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(logger);
         }
 
@@ -890,7 +890,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setLogger(logger);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(logger);
         }
 
@@ -931,7 +931,7 @@ public class MBeanFactory extends BaseModelMBean {
         } else if (tname.equals("Engine")) {
             engine.setRealm(realm);
         } else if (tname.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("name"));
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setRealm(realm);
         }
 

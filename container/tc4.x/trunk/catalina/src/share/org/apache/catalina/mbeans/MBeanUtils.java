@@ -855,7 +855,7 @@ public class MBeanUtils {
         ObjectName name = null;
         Engine engine = (Engine)host.getParent();
         Service service = engine.getService();
-        name = new ObjectName(domain + ":type=Host,name=" +
+        name = new ObjectName(domain + ":type=Host,host=" +
                               host.getName() + ",service=" +
                               service.getName());
         return (name);
