@@ -289,7 +289,9 @@ public final class ApplicationFilterFactory {
             int slash = requestPath.lastIndexOf('/');
             int period = requestPath.lastIndexOf('.');
             if ((slash >= 0) && (period > slash) 
-                && (period != requestPath.length() - 1)) {
+                && (period != requestPath.length() - 1)
+                && ((requestPath.length() - period) 
+                    == (testPath.length() - 1))) {
                 return (testPath.regionMatches(2, requestPath, period + 1,
                                                testPath.length() - 2));
             }
