@@ -102,6 +102,9 @@
       <update>
         <bug>31739</bug>: Minor realm-howto and AJP connector doc updates. (yoavs)
       </update>
+      <fix>
+        <bug>31753</bug>: Minor inconsistency between JDBC and DataSourceRealm#authenticate. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
