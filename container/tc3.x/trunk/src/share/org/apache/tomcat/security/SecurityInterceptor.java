@@ -492,7 +492,7 @@ public final class SecurityInterceptor implements ServiceInterceptor {
 	if (guarantee == null)
 	    return;
 	if (guarantee.equals(UserDataConstraint.INTEGRAL_TRANSPORT) ||
-	    guarantee.equals(UserDataConstraint.SECURE_TRANSPORT)) {
+	    guarantee.equals(UserDataConstraint.CONFIDENTIAL_TRANSPORT)) {
 	    if (!req.isSecure()) {
 		;	// XXX - Create error response, throw
 		;	// InterceptorException
