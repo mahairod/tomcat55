@@ -865,7 +865,7 @@ public final class ContextConfig
         ok = true;
 
         // Configure the Permissions for this Context (if necessary)
-        permissionsConfig();
+        //        permissionsConfig();  // FIXME - Method not finished yet
 
 	// Process the default and application web.xml files
 	XmlMapper mapper = createWebMapper();
