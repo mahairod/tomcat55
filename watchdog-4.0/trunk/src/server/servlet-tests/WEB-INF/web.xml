@@ -1204,6 +1204,14 @@
 	</servlet>
 	<servlet>
 		<servlet-name>
+			ServletRequestSetCharacterEncoding_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.ServletRequestSetCharacterEncoding_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
 			ServletRequestGetAttributeTest
 		</servlet-name>
 		<servlet-class>
@@ -3208,6 +3216,15 @@
 			/ServletRequestSetAttributeTest
 		</url-pattern>
 
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ServletRequestSetCharacterEncoding_1Test
+		</servlet-name>
+		<url-pattern>
+			/ServletRequestSetCharacterEncoding_1Test
+		</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

@@ -514,6 +514,10 @@
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestSetAttributeTest.html" />
 
+      <gtest request="GET /servlet-tests/ServletRequestSetCharacterEncoding_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestSetCharacterEncoding_1Test.html" />
+
 
   <!-- javax_servlet_ServletResponse tests -->
 
