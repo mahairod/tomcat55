@@ -355,7 +355,7 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
 	writer.println ("} catch (Exception exc) {");
 	writer.pushIndent ();
 	writer.println (" throw new ServletException (\" Cannot create bean of class \""  +
-			"+\"" + clsname + "\");"); 
+			"+\"" + clsname + "\", exc);"); 
 	writer.popIndent ();
 	writer.println ("}");
 	
