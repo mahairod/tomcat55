@@ -32,6 +32,10 @@
       <update>
         <bug>33522</bug>: Update jasper-howto to reflect use of javac switch. (yoavs)
       </update>
+      <update>
+        <bug>34237</bug>: Added note and links to context and host configuration
+          references in JNDI DataSources HowTo to aid the clueless. (yoavs)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Catalina">
