@@ -76,6 +76,9 @@ import javax.servlet.http.*;
  *     test, or <code>class</code> for class loader test.  [context]</li>
  * <li><strong>path</strong> - Resource path to the requested resource,
  *     starting with a slash.  [/WEB-INF/web.xml]</li>
+ * <li><strong>stringify</strong> - If set to any arbitrary value, the URL
+ *     returned by getResource() will be converted to a String and then back
+ *     to a URL before being opened.  [not set]</li>
  * </ul>
  *
  * @author Craig R. McClanahan
@@ -94,6 +97,7 @@ public class Resources05 extends HttpServlet {
         String path = request.getParameter("path");
         if (path == null)
             path = "/WEB-INF/web.xml";
+        boolean stringify = (request.getParameter("stringify") != null);
 
         // Prepare for the desired test
         response.setContentType("text/plain");
@@ -115,8 +119,18 @@ public class Resources05 extends HttpServlet {
                 ok = false;
             }
         } catch (MalformedURLException e) {
-            results.append(" MalformedURLException");
+            results.append(" getResource MalformedURLException");
             ok = false;
+        }
+
+        // Stringify the URL if requested
+        try {
+            if (ok) {
+                String urlString = url.toString();
+                url = new URL(urlString);
+            }
+        } catch (MalformedURLException e) {
+            results.append(" stringify MalformedURLException");
         }
 
         // Open an input stream and input stream reader on this URL
