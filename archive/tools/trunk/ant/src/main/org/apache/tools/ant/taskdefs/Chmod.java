@@ -81,7 +81,8 @@ public class Chmod extends Task {
     public void execute() throws BuildException {
 	try {
 	    // XXX if OS=unix
-	    Runtime.getRuntime().exec("chmod " + mod + " " + srcFile );
+	    if (System.getProperty("path.separator") == "/")
+		Runtime.getRuntime().exec("chmod " + mod + " " + srcFile );
 	} catch (IOException ioe) {
 	    // ignore, but warn
 	    System.out.println("Error chmod" + ioe.toString() );
