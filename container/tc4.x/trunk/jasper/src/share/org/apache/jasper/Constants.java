@@ -109,6 +109,16 @@ public class Constants {
 
     /**
      * FIXME
+     * Request attribute for <code>&lt;jsp-file&gt;</code> element of a
+     * servlet definition.  If present on a request, this overrides the
+     * value returned by <code>request.getServletPath()</code> to select
+     * the JSP page to be executed.
+     */
+    public static final String JSP_FILE = "org.apache.catalina.jsp_file";
+
+
+    /**
+     * FIXME
      * ServletContext attribute for classpath. This is tomcat specific. 
      * Other servlet engines can choose to have this attribute if they 
      * want to have this JSP engine running on them. 

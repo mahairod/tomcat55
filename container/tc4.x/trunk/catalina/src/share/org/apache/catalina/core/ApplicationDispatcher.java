@@ -627,6 +627,11 @@ final class ApplicationDispatcher
 
 	// Call the service() method for the allocated servlet instance
 	try {
+            String jspFile = wrapper.getJspFile();
+            if (jspFile != null)
+                request.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
+            else
+                request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    if (servlet != null) {
                 if ((hrequest != null) && (hresponse != null)) {
                     servlet.service((HttpServletRequest) request,
@@ -635,20 +640,25 @@ final class ApplicationDispatcher
                     servlet.service(request, response);
                 }
 	    }
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
 	} catch (IOException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
 	    ioException = e;
 	} catch (UnavailableException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
 	    servletException = e;
 	    wrapper.unavailable(e);
 	} catch (ServletException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
 	    servletException = e;
 	} catch (RuntimeException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
             runtimeException = e;

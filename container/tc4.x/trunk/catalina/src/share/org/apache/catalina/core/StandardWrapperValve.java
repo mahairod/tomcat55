@@ -184,23 +184,6 @@ final class StandardWrapperValve
 	if (sres instanceof HttpServletResponse)
 	    hres = (HttpServletResponse) sres;
 
-        // HOLD YOUR NOSE - Kludge to deal with <jsp-file> servlets.
-        // Modify the request paths for a servlet that was defined
-        // with a <jsp-file> element instead of a <servlet-class>.
-        String jspFile = wrapper.getJspFile();
-        if ((hreq != null) && (hres != null) && (jspFile != null)) {
-            StringBuffer sb = new StringBuffer();
-            String contextPath = hreq.getContextPath();
-            if (contextPath != null)
-                sb.append(contextPath);
-            sb.append(jspFile);
-            String pathInfo = hreq.getPathInfo();
-            if (pathInfo != null)
-                sb.append(pathInfo);
-            ((HttpRequest) request).setRequestURI(sb.toString());
-            ((HttpRequest) request).setServletPath(jspFile);
-        }
-
         // Check for the application being marked unavailable
         if (!((Context) wrapper.getParent()).getAvailable()) {
             hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
@@ -251,26 +234,36 @@ final class StandardWrapperValve
 	// Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
 	try {
+            String jspFile = wrapper.getJspFile();
+            if (jspFile != null)
+                sreq.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
+            else
+                sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	    if ((servlet != null) && (filterChain != null)) {
                 filterChain.doFilter(sreq, sres);
 	    }
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	} catch (IOException e) {
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    ;	// No reporting to the response
 	    ;	// No change in availability status
 	} catch (UnavailableException e) {
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;
 	    exception(request, response, e);
 	    wrapper.unavailable(e);
 	} catch (ServletException e) {
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;
 	    exception(request, response, e);
 	} catch (Throwable e) {
+            sreq.removeAttribute(Globals.JSP_FILE_ATTR);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;

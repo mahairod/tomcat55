@@ -140,8 +140,8 @@ public class ErrorPage06 extends HttpServlet {
             String request_uri = (String) value;
             String test1 = request.getContextPath() + "/ErrorPage05";
             String test2 = request.getContextPath() + "/WrappedErrorPage05";
-            String test3 = request.getContextPath() + "/ErrorPage08.jsp";
-            String test4 = request.getContextPath() + "/WrappedErrorPage08.jsp";
+            String test3 = request.getContextPath() + "/ErrorPage08";
+            String test4 = request.getContextPath() + "/WrappedErrorPage08";
             if (!request_uri.equals(test1) && !request_uri.equals(test2) &&
                 !request_uri.equals(test3) && !request_uri.equals(test4)) {
                 sb.append(" request_uri is ");

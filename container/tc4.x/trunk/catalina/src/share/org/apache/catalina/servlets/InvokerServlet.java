@@ -418,8 +418,15 @@ public final class InvokerServlet
 
         // Invoke the service() method of the allocated servlet
         try {
+            String jspFile = wrapper.getJspFile();
+            if (jspFile != null)
+                request.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
+            else
+                request.removeAttribute(Globals.JSP_FILE_ATTR);
             instance.service(wrequest, response);
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
         } catch (IOException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
             } catch (Throwable f) {
@@ -427,6 +434,7 @@ public final class InvokerServlet
             }
             throw e;
         } catch (ServletException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
             } catch (Throwable f) {
@@ -434,6 +442,7 @@ public final class InvokerServlet
             }
             throw e;
         } catch (RuntimeException e) {
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
             try {
                 wrapper.deallocate(instance);
             } catch (Throwable f) {

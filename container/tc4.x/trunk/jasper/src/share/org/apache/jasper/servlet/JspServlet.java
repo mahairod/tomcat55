@@ -428,6 +428,9 @@ public class JspServlet extends HttpServlet {
 		jspUri = request.getServletPath();
             else
                 jspUri = includeUri;
+            String jspFile = (String) request.getAttribute(Constants.JSP_FILE);
+            if (jspFile != null)
+                jspUri = jspFile;
 
             boolean precompile = preCompile(request);
 
