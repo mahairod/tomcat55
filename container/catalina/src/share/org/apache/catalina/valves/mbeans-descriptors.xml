@@ -12,10 +12,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
@@ -70,10 +66,6 @@
                description="Object name of the container"
                type="javax.management.ObjectName"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
   </mbean>
 
   <mbean name="ExtendedAccessLogValve"
@@ -86,10 +78,6 @@
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
-
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
 
     <attribute name="containerName"
                description="Object name of the container"
@@ -159,10 +147,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute   name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
     <attribute   name="deny"
                description="The comma-delimited set of deny expressions"
                type="java.lang.String"/>
@@ -190,10 +174,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute   name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
     <attribute   name="deny"
                description="The comma-delimited set of deny expressions"
                type="java.lang.String"/>
@@ -215,10 +195,6 @@
                type="java.lang.String"
                writeable="false"/>
 
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
   </mbean>
 
   <mbean name="RequestListenerValve"
@@ -235,10 +211,6 @@
     <attribute name="containerName"
                description="Object name of the container"
                type="javax.management.ObjectName"/>
-
-    <attribute   name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
 
   </mbean>
 

@@ -17,10 +17,6 @@
           description="The JNDI named JDBC DataSource for your database"
                  type="java.lang.String"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
                         non-plaintext format"
@@ -79,10 +75,6 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
                        non-plaintext format"
@@ -137,10 +129,6 @@
           description="The connection URL to use when trying to connect to the
                        database"
                  type="java.lang.String"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
 
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
@@ -210,10 +198,6 @@
           description="The JNDI context factory for this Realm"
                  type="java.lang.String"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
                        non-plaintext format"
@@ -281,10 +265,6 @@
                  type="java.lang.String"
             writeable="false"/>
 
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
     <attribute   name="pathname"
           description="The pathname of the XML file containing our database
                        information"
@@ -308,10 +288,6 @@
           description="Fully qualified class name of the managed object"
                  type="java.lang.String"
             writeable="false"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
 
     <attribute   name="resourceName"
           description="The global JNDI name of the UserDatabase resource to use"
