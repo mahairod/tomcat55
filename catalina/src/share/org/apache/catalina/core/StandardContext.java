@@ -1605,6 +1605,12 @@ public class StandardContext
         if (servletName == null) {
             servletName = "jsp";
         }
+        
+        // Properly handle file that are considered to be a jsp.
+        if (pattern.indexOf("*.") > 0){
+            pattern = pattern.substring(pattern.lastIndexOf("*"));
+            servletName = "jsp";
+        }               
         addServletMapping(pattern, servletName);
     }
 
