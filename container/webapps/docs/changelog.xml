@@ -160,6 +160,9 @@
       <fix>
         <bug>32741</bug>: Fix spelling of "committed" [patch from Ben Souther] (yoavs)
       </fix>
+      <fix>
+        <bug>34133</bug>: Make setHeader clear multi-valued headers (billbarker)
+      </fix>
      </changelog>
    </subsection>
 
