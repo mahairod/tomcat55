@@ -81,6 +81,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.SingleThreadModel;
 import javax.servlet.UnavailableException;
+import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
@@ -261,7 +262,7 @@ public class StandardWrapper
     // To support jmx attributes
     private StandardWrapperValve swValve;
     private long loadTime=0;
-    private long classLoadTime=0;
+    private int classLoadTime=0;
 
     // ------------------------------------------------------------- Properties
 
@@ -1004,7 +1005,7 @@ public class StandardWrapper
                 ((ContainerServlet) servlet).setWrapper(this);
             }
 
-            classLoadTime=System.currentTimeMillis() -t1;
+            classLoadTime=(int) (System.currentTimeMillis() -t1);
             // Call the initialization method of this servlet
             try {
                 instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
@@ -1084,8 +1085,6 @@ public class StandardWrapper
                 }
             }
         }
-        if( oname != null )
-            registerJMX((StandardContext)getParent());
         return servlet;
 
     }
@@ -1405,6 +1404,11 @@ public class StandardWrapper
     public void setLoadTime(long loadTime) {
         this.loadTime = loadTime;
     }
+
+    public int getClassLoadTime() {
+        return classLoadTime;
+    }
+
     // -------------------------------------------------------- Package Methods
 
 
@@ -1499,6 +1503,9 @@ public class StandardWrapper
         // Start up this component
         super.start();
 
+        if( oname != null )
+            registerJMX((StandardContext)getParent());
+        
         // Load and initialize an instance of this servlet if requested
         // MOVED TO StandardContext START() METHOD
 
@@ -1528,6 +1535,9 @@ public class StandardWrapper
         // Shut down this component
         super.stop();
 
+        if( oname != null ) {
+            Registry.getRegistry().unregisterComponent(oname);
+        }
     }
 
     protected void registerJMX(StandardContext ctx) {
@@ -1541,13 +1551,15 @@ public class StandardWrapper
             String hostName=ctx.getParent().getName();
             String webMod= "//" + ((hostName==null)? "DEFAULT" :hostName ) +
                     (("".equals(parentName) ) ? "/" : parentName );
-            String oname="j2eeType=Servlet,name=" + name + ",WebModule=" +
+            String onameStr=ctx.getDomain() + 
+                    ":j2eeType=Servlet,name=" + name + ",WebModule=" +
                     webMod + ",J2EEApplication=" +
                     ctx.getJ2EEApplication() + ",J2EEServer=" +
                     ctx.getJ2EEServer();
+            
+            oname=new ObjectName(onameStr);
 
-            Registry.getRegistry().registerComponent(this,
-                    ctx.getDomain(), "Servlet", oname);
+            Registry.getRegistry().registerComponent(this, oname, null );
         } catch( Exception ex ) {
             log.info("Error registering servlet with jmx " + this);
         }

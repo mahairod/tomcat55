@@ -466,7 +466,7 @@ public class StandardPipeline
 
     }
 
-    public ObjectName[] getValveNames() {
+    public ObjectName[] getValveObjectNames() {
         ObjectName oname[]=new ObjectName[valves.length + 1];
         for( int i=0; i<valves.length; i++ ) {
             if( valves[i] instanceof ValveBase )

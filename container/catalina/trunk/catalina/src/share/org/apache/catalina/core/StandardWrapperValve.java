@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -66,39 +62,28 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tomcat.util.buf.MessageBytes;
-
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
-import org.apache.catalina.deploy.FilterMap;
-import org.apache.catalina.util.InstanceSupport;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -110,22 +95,16 @@ import org.apache.catalina.valves.ValveBase;
  */
 
 final class StandardWrapperValve
-    extends ValveBase {
-
+    extends ValveBase 
+ {
+    private static Log log = LogFactory.getLog(StandardWrapperValve.class);
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
 
     /**
      * The filter definition for our container-provided filter.
      */
-    private FilterDef filterDef = null;
+    //private FilterDef filterDef = null;
 
     // Some JMX statistics. This vavle is associated with a StandardWrapper.
     // We exponse the StandardWrapper as JMX ( j2eeType=Servlet ). The fields
@@ -135,33 +114,11 @@ final class StandardWrapperValve
     private int requestCount;
     private int errorCount;
 
-
-    /**
-     * The descriptive information related to this implementation.
-     */
-    private static final String info =
-        "org.apache.catalina.core.StandardWrapperValve/1.0";
-
-
     /**
      * The string manager for this package.
      */
     private static final StringManager sm =
         StringManager.getManager(Constants.Package);
-
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return descriptive information about this Valve implementation.
-     */
-    public String getInfo() {
-
-        return (info);
-
-    }
-
 
     // --------------------------------------------------------- Public Methods
 
@@ -210,7 +167,7 @@ final class StandardWrapperValve
 
         // Check for the servlet being marked unavailable
         if (!unavailable && wrapper.isUnavailable()) {
-            log(sm.getString("standardWrapper.isUnavailable",
+            log.info(sm.getString("standardWrapper.isUnavailable",
                              wrapper.getName()));
             if (hres == null) {
                 ;       // NOTE - Not much we can do generically
@@ -236,13 +193,13 @@ final class StandardWrapperValve
                 servlet = wrapper.allocate();
             }
         } catch (ServletException e) {
-            log(sm.getString("standardWrapper.allocateException",
+            log.error(sm.getString("standardWrapper.allocateException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
             servlet = null;
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.allocateException",
+            log.error(sm.getString("standardWrapper.allocateException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -254,12 +211,12 @@ final class StandardWrapperValve
             response.sendAcknowledgement();
         } catch (IOException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.acknowledgeException",
+            log.error(sm.getString("standardWrapper.acknowledgeException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.acknowledgeException",
+            log.error(sm.getString("standardWrapper.acknowledgeException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -296,13 +253,13 @@ final class StandardWrapperValve
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
         } catch (IOException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            log.error(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (UnavailableException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            log.error(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             //            throwable = e;
             //            exception(request, response, e);
@@ -322,13 +279,13 @@ final class StandardWrapperValve
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            log.error(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
             sreq.removeAttribute(Globals.JSP_FILE_ATTR);
-            log(sm.getString("standardWrapper.serviceException",
+            log.error(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
@@ -339,7 +296,7 @@ final class StandardWrapperValve
             if (filterChain != null)
                 filterChain.release();
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.releaseFilters",
+            log.error(sm.getString("standardWrapper.releaseFilters",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -353,7 +310,7 @@ final class StandardWrapperValve
                 wrapper.deallocate(servlet);
             }
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.deallocateException",
+            log.error(sm.getString("standardWrapper.deallocateException",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -369,7 +326,7 @@ final class StandardWrapperValve
                 wrapper.unload();
             }
         } catch (Throwable e) {
-            log(sm.getString("standardWrapper.unloadException",
+            log.error(sm.getString("standardWrapper.unloadException",
                              wrapper.getName()), e);
             if (throwable == null) {
                 throwable = e;
@@ -411,57 +368,6 @@ final class StandardWrapperValve
 
     }
 
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     */
-    private void log(String message) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any)
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    private void log(String message, Throwable throwable) {
-
-        Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message, throwable);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
-        }
-
-    }
-
     public long getProcessingTime() {
         return processingTime;
     }
@@ -494,4 +400,11 @@ final class StandardWrapperValve
         this.errorCount = errorCount;
     }
 
+    // Don't register in JMX
+    
+    public ObjectName createObjectName(String domain, ObjectName parent)
+            throws MalformedObjectNameException
+    {
+        return null;
+    }
 }
