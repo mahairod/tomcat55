@@ -465,7 +465,7 @@ public abstract class Node {
 	    v.visit(this);
 	}
 
-	public void setValue(JspAttribute page) {
+	public void setValue(JspAttribute value) {
 	    this.value = value;
 	}
 
@@ -579,7 +579,7 @@ public abstract class Node {
 	    v.visit(this);
 	}
 
-	public void setValue(JspAttribute page) {
+	public void setValue(JspAttribute value) {
 	    this.value = value;
 	}
 
@@ -603,7 +603,7 @@ public abstract class Node {
 	    v.visit(this);
 	}
 
-	public void setBeanName(JspAttribute page) {
+	public void setBeanName(JspAttribute beanName) {
 	    this.beanName = beanName;
 	}
 
@@ -663,14 +663,6 @@ public abstract class Node {
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
-            jspAttrs = new JspAttribute[attrs.getLength()];
-            Hashtable attrsHashtable = new Hashtable();
-            for (int i = 0; i < attrs.getLength(); i++) {
-                jspAttrs[i] = new JspAttribute
-                    (attrs.getLocalName(i), attrs.getValue(i), false);
-                attrsHashtable.put(attrs.getLocalName(i), attrs.getValue(i));
-            }
-            tagData = new TagData(attrsHashtable);
 	}
 
 	public void accept(Visitor v) throws JasperException {

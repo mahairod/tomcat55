@@ -216,7 +216,7 @@ public class Generator {
 	if (pageInfo.isSession())
 	    out.printil("HttpSession session = null;");
 
-	if (ctxt.isErrorPage())
+	if (pageInfo.isIsErrorPage())
             out.printil("Throwable exception = (Throwable) request.getAttribute(\"javax.servlet.jsp.jspException\");");
 
 	out.printil("ServletContext application = null;");
