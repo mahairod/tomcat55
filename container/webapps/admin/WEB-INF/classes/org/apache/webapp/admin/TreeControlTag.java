@@ -33,7 +33,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * This tag has the following user-settable attributes:</p>
  * <ul>
  * <li><strong>action</strong> - Hyperlink to which expand/contract actions
- *     should be sent, with a string "<code>${node}</code> marking where
+ *     should be sent, with a string "<code>{name}</code> marking where
  *     the node name of the affected node should be included.</li>
  * <li><strong>images</strong> - Name of the directory containing the images
  *     for our icons, relative to the page including this tag.  If not
@@ -88,7 +88,7 @@ public class TreeControlTag extends TagSupport {
 
     /**
      * The hyperlink to be used for submitting requests to expand and
-     * contract tree nodes.  The placeholder "<code>${name}</code>" will
+     * contract tree nodes.  The placeholder "<code>{name}</code>" will
      * be replaced by the <code>name</code> property of the current
      * tree node.
      */
@@ -350,11 +350,11 @@ public class TreeControlTag extends TagSupport {
         // character in parameter values. 
         String encodedNodeName = URLEncoder.encode(node.getName(),TomcatTreeBuilder.URL_ENCODING);
 
-        String action = replace(getAction(), "${name}", encodedNodeName);
+        String action = replace(getAction(), "{name}", encodedNodeName);
 
         
         String updateTreeAction =
-            replace(getAction(), "tree=${name}", "select=" + encodedNodeName);
+            replace(getAction(), "tree={name}", "select=" + encodedNodeName);
         updateTreeAction =
             ((HttpServletResponse) pageContext.getResponse()).
             encodeURL(updateTreeAction);
