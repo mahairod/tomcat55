@@ -145,7 +145,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              false);
         TreeControlNode roles = new TreeControlNode
             ("Global Administer Roles",
-             "folder_16_pad.gif",
+             "Roles.gif",
              resources.getMessage("users.treeBuilder.rolesNode"),
              "users/listRoles.do?databaseName=" +
              URLEncoder.encode(databaseName) +
