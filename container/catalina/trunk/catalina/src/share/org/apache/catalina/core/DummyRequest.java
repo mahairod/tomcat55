@@ -102,6 +102,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.tomcat.util.buf.MessageBytes;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLConnection;
@@ -158,12 +160,20 @@ public class DummyRequest
         return (contextPath);
     }
 
+    public MessageBytes getContextPathMB() {
+        return null;
+    }
+
     public ServletRequest getRequest() {
         return (this);
     }
 
     public String getDecodedRequestURI() {
         return decodedURI;
+    }
+
+    public MessageBytes getDecodedRequestURIMB() {
+        return null;
     }
 
     public FilterChain getFilterChain() {
@@ -190,12 +200,20 @@ public class DummyRequest
         pathInfo = path;
     }
 
+    public MessageBytes getPathInfoMB() {
+        return null;
+    }
+
     public String getServletPath() {
         return servletPath;
     }
 
     public void setServletPath(String path) {
         servletPath = path;
+    }
+
+    public MessageBytes getServletPathMB() {
+        return null;
     }
 
     public ValveContext getValveContext() {
