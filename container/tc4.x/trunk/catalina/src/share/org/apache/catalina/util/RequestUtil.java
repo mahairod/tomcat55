@@ -67,11 +67,10 @@ package org.apache.catalina.util;
 
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
-import java.util.Vector;
 import javax.servlet.http.Cookie;
 
 
@@ -185,25 +184,31 @@ public final class RequestUtil {
 	if ((header == null) || (header.length() < 1))
 	    return (new Cookie[0]);
 
-	Vector cookieJar = new Vector();
-	StringTokenizer tokens = new StringTokenizer(header, ";");
-	while (tokens.hasMoreTokens()) {
+        ArrayList cookies = new ArrayList();
+        while (header.length() > 0) {
+            int semicolon = header.indexOf(";");
+            if (semicolon < 0)
+                semicolon = header.length();
+            if (semicolon == 0)
+                break;
+            String token = header.substring(0, semicolon);
+            if (semicolon < header.length())
+                header = header.substring(semicolon + 1);
+            else
+                header = "";
 	    try {
-		String token = tokens.nextToken();
 		int equals = token.indexOf("=");
 		if (equals > 0) {
 		    String name = URLDecode(token.substring(0, equals).trim());
 		    String value = URLDecode(token.substring(equals+1).trim());
-		    cookieJar.addElement(new Cookie(name, value));
+		    cookies.add(new Cookie(name, value));
 		}
 	    } catch (Throwable e) {
 		;
 	    }
 	}
 
-	Cookie[] cookies = new Cookie[cookieJar.size()];
-	cookieJar.copyInto(cookies);
-	return (cookies);
+        return ((Cookie[]) cookies.toArray(new Cookie[cookies.size()]));
 
     }
 
