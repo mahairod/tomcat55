@@ -1,0 +1,43 @@
+                      Apache Watchdog Version 4.0
+                      ===========================
+                             Release Notes
+                             =============
+
+$Id$
+
+============
+INTRODUCTION:
+============
+
+Watchdog 4.0 provides a set of validation tests for a web container
+implementing the Servlet 2.3 and JSP 1.2 specifications.  This test
+suite is not an official TCK and thus passing the suite should not
+be considered an indication of compatibility.
+
+The specifications for the above mentioned technologies can be found
+here:
+
+        http://www.jcp.org/aboutJava/communityprocess/final/jsr053/
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Watchdog"
+version "4 (Servlet 2.3 / JSP1.2)".
+
+
+============
+NEW FEATURES:
+============
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
