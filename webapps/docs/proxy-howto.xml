@@ -76,10 +76,9 @@ ProxyPassReverse  /myapp  http://localhost:8081/myapp
     <code>&lt;Connector&gt;</code> element, with appropriate
     proxy settings, for example:
 <source>
-&lt;Connector className="org.apache.catalina.connector.http.HttpConnector"
-                port="8081" ...
-           proxyName="www.mycompany.com"
-           proxyPort="80"/&gt;
+&lt;Connector port="8081" ...
+              proxyName="www.mycompany.com"
+              proxyPort="80"/&gt;
 </source>
     which will cause servlets inside this web application to think that
     all proxied requests were directed to <code>www.mycompany.com</code>
