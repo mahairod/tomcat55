@@ -928,7 +928,9 @@ public class HostConfig
 
     /**
      * Add watched resources to the specified Context.
-     * @param app
+     * @param app HostConfig deployed app
+     * @param docBase web app docBase
+     * @param context web application context
      */
     protected void addWatchedResources(DeployedApplication app, String docBase, Context context) {
         // FIXME: Feature idea. Add support for patterns (ex: WEB-INF/*, WEB-INF/*.xml), where
@@ -1055,7 +1057,8 @@ public class HostConfig
             if ((!resource.exists() && lastModified != 0L) 
                 || (resource.lastModified() != lastModified)) {
                 // Reload application
-                log.info(sm.getString("hostConfig.reload", app.name));
+                if(log.isInfoEnabled())
+                    log.info(sm.getString("hostConfig.reload", app.name));
                 Container context = host.findChild(app.name);
                 try {
                     ((Lifecycle) context).stop();
@@ -1095,7 +1098,7 @@ public class HostConfig
             Registry.getRegistry(null, null).registerComponent
                 (this, oname, this.getClass().getName());
         } catch (Exception e) {
-            log.error(sm.getString("hostConfig.jmx.register"), e);
+            log.error(sm.getString("hostConfig.jmx.register", oname), e);
         }
         
         deployApps();
@@ -1117,7 +1120,7 @@ public class HostConfig
             try {
                 Registry.getRegistry(null, null).unregisterComponent(oname);
             } catch (Exception e) {
-                log.error(sm.getString("hostConfig.jmx.unregister"), e);
+                log.error(sm.getString("hostConfig.jmx.unregister", oname), e);
             }
         }
         oname = null;
