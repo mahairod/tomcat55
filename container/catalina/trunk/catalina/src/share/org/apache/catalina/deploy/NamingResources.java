@@ -69,6 +69,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.io.Serializable;
 
 
 /**
@@ -79,7 +80,7 @@ import java.util.Hashtable;
  * @version $Revision$ $Date$
  */
 
-public final class NamingResources {
+public final class NamingResources implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors

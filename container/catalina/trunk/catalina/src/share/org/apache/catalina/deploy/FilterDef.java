@@ -67,6 +67,7 @@ package org.apache.catalina.deploy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.Serializable;
 
 
 /**
@@ -77,7 +78,7 @@ import java.util.Map;
  * @version $Revision$ $Date$
  */
 
-public final class FilterDef {
+public final class FilterDef implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * <p>Representation of a message destination reference for a web application,
@@ -75,7 +77,7 @@ package org.apache.catalina.deploy;
  * @since Tomcat 5.0
  */
 
-public final class MessageDestinationRef {
+public final class MessageDestinationRef implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

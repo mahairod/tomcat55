@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * Representation of a security constraint element for a web application,
@@ -80,7 +82,7 @@ package org.apache.catalina.deploy;
  * @version $Revision$ $Date$
  */
 
-public final class SecurityConstraint {
+public final class SecurityConstraint implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors

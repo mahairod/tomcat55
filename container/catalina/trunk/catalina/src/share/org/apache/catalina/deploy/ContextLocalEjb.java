@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * Representation of a local EJB resource reference for a web application, as
@@ -74,7 +76,7 @@ package org.apache.catalina.deploy;
  * @version $Revision$ $Date$
  */
 
-public final class ContextLocalEjb {
+public final class ContextLocalEjb implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

@@ -66,6 +66,7 @@ package org.apache.catalina.deploy;
 
 
 import org.apache.catalina.util.RequestUtil;
+import java.io.Serializable;
 
 
 /**
@@ -77,7 +78,7 @@ import org.apache.catalina.util.RequestUtil;
  * @version $Revision$ $Date$
  */
 
-public final class LoginConfig {
+public final class LoginConfig implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors
