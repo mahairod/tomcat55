@@ -282,6 +282,11 @@ and define your context like this:
 
 where "r:" is mapped to this share.
 
+6.11 Resource Paths Can't Contain URL Escapes
+
+The path passed to javax.servlet.Context.getResource() and
+javax.servlet.Context.getResrouceAsStream() cannot contain URL escapes of
+the form %HH.  Paths containing any URL escapes will return null.
 
 ===============================================================================
 7.  FIXES AND ENHANCEMENTS IN UPDATES
@@ -305,7 +310,6 @@ Servlet
   -  Properly interpret url-patterns inside security-contraints.  (#567)
   -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
   -  reqeust.getPort() now returns the correct port when using SSL. (#743)
-  -  Fix problem accessing via HTTP without protocol. (#513)
   -  Fix JSP source disclosure problem.  (#619)
   -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
   -  Better initialization of psuedo-random number generator improves
@@ -351,9 +355,33 @@ Connectors
      -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
 
 
-7.2 Security vulnerabilities fixed in Tomcat 3.2.1
+7.2 Security vulnerabilities fixed in Tomcat 3.2.2
 
-7.2.1 Protection of Resources in /WEB-INF and /META-INF Directories
+7.2.1 HTTP Requests With no Protocol
+
+An HTTP request with no protocol specified would return an unprocessed
+source for a JSP file.  For example
+
+GET /examples/jsp/num/numguess.jsp 
+
+would return the source for the numguess.jsp file.
+
+7.2.2
+
+Tomcat 3.2.2 beta releases prior to beta 3 had allowed URI components
+to be decoded twice.  This problem only appears when using JDK 1.3.0
+or later.  The double decode problem caused URL such as
+
+http://localhost:8080/%252e%252e/%252e%252e/%00.jsp
+
+to reveal a directory listing outside the web application.  Other
+versions of this same double decode attack could reveal the contents
+of files outside the web application.
+
+
+7.3 Security vulnerabilities fixed in Tomcat 3.2.1
+
+7.3.1 Protection of Resources in /WEB-INF and /META-INF Directories
 
 The servlet specification prohibits servlet containers from serving resources
 in the /WEB-INF and /META-INF directories of a web application archive directly
@@ -371,7 +399,7 @@ this information if the client requests a URL like this instead:
 corrected in Tomcat 3.2.1.
 
 
-7.2.2 Show Source Vulnerability
+7.3.2 Show Source Vulnerability
 
 The example application delivered with Tomcat 3.2 included a mechanism to
 display the source code for the JSP page examples.  This mechanism could

@@ -1,3 +1,5 @@
+$Id$
+
                             Release Notes for:
                            ====================
                            TOMCAT Version 3.2.2
@@ -28,10 +30,9 @@ be used stand alone, or in conjunction with several popular web servers:
 You should read the License Agreement (in the LICENSE file of the top level
 directory), which applies to all software included in this release.
 
-This document adds descriptions of the bug fixes and enhancements that have
-been added in update releases of Tomcat 3.2 since the original release.  See
-Section 7 for details.
-
+Tomcat Version 3.2.2 is a bug fix release.  No new features have been
+added in this release.  The bugs known to be fixed in Version 3.2.2
+are described in section 7.1 below.
 
 =============================================================================
 2.  INSTALLING AND RUNNING TOMCAT
@@ -43,8 +44,7 @@ Kit 1.1 or later environment, including JDKs conformant with Java2.
 
 For detailed information about installing and running Tomcat, point your
 browser at file "doc/uguide/tomcat_ug.html" under the directory into which
-you unpacked the Tomcat distribution or see the documentation at
-http://jakarta.apache.org/tomcat/index.html.
+you unpacked the Tomcat distribution.
 
 
 =============================================================================
@@ -59,35 +59,39 @@ which you unpacked the Tomcat distribution.
 =============================================================================
 4.  TOMCAT: PAST, PRESENT, AND FUTURE
 
-- Version 3.0 (released 12/1999) was the initial release of Tomcat.  In
-addition to implementing the Java Servlet and Server Pages specification,
+- Version 3.0 (released 12/1999) was the initial release of Tomcat.  In 
+addition to implementing the Java Servlet and Server Pages specification, 
 this release featured a minimal Apache connector.
 
-- Tomcat 3.1 (released 4/2000) improved the Apache connection and added
-connector support for Netscape and IIS web servers. It also added WAR file
-support, automatic servlet reloading, and a command line tool (jspc) to
-compile the JSP pages that comprise your application in advance of
-deployment.  Finally, version 3.1 also focused on reorganizing the code
-(modularization, cleanup, refactoring, removal of dead code, and separation
-of J2EE-specific code).
+- Tomcat 3.1 (released 4/2000) improved the Apache connection and added 
+connector support for Netscape and IIS web servers. It also added WAR file 
+support, automatic servlet reloading, and a command line tool (jspc) to 
+compile ahead of time the JSP pages that comprise your application.  Finally, 
+version 3.1 also focused on reorganizing the code (modularization, cleanup, 
+refactoring, removal of dead code, and separation of J2EE-specific code).
 
-- Tomcat 3.2 is the first performance tune-up, and also adds a few new
+- Tomcat 3.2 is the first performance tune-up, and also adds a few new 
 features (see next section).
 
-- Tomcat 3.2.2 is a bug fix release that collects the fixes that have 
-been applied since version 3.2.1 was released.
+- Tomcat 4.0 is separate development from Tomcat 3.x.  It is based on the
+Catalina architecture, which is very different from the architecture of
+Tomcat 3.x.  In addition, Tomcat 4.0 is to be the reference implementation
+for the Servlet 2.3 and JSP 1.2 specifications.
 
-- It is expected that Tomcat 3.3 will feature additional major performance
-improvements resulting from changes in data representation and algorithms.
-Version 3.3 will also undergo a major review of security  (to be able to
-trust that "untrusted" code runs safely), and support for I18N character
-sets.
 
 =============================================================================
 5.  NEW FEATURES IN THIS RELEASE
 
-Tomcat 3.2.2 is strictly a bug fix release.  No new features have been
-added.
+5.1 Docbase and File Based Localization
+
+Tomcat 3.2.2 now supports a method mapping requests into localized resources
+automatically based on the client's and the server's locale.  Localized
+content can be organized using one directory per locale (Docbase) or
+into a single directory the locale specified in the file names (File based).
+
+A detailed description of this feature can be found in 
+doc/tomcat-localization-how.html
+
 
 =============================================================================
 6.  KNOWN BUGS AND ISSUES
@@ -95,19 +99,196 @@ added.
 6.1 Using An Absolute Path as Document Root Under Windows
 
 In the TOMCAT_HOME/conf/server.xml file, you can declare a relative or absolute
-directory pathname for the docRoot attribute.  If you wish to use an absolute
+directory pathname for the docBase attribute.  If you wish to use an absolute
 pathname on a Windows system, you MUST include the drive letter in order to
 conform to Java's definition of an absolute path on this platform:
 
-    GOOD:  c:\mydirectory\mydocroot
-    GOOD:  c:/mydirectory/mydocroot
-    BAD:   \mydirectory\mydocroot
-    BAD:   /mydirectory/mydocroot
+    GOOD:  c:\mydirectory\mydocbase
+    GOOD:  c:/mydirectory/mydocbase
+    BAD:   \mydirectory\mydocbase
+    BAD:   /mydirectory/mydocbase
 
 Under Unix, absolute pathnames must begin with a slash ('/') character.
 
+6.2 Container Managed Security
 
-=============================================================================
+Tomcat 3.2 has an implementation of container managed security,	as
+described in the Servlet API Specification, version 2.2, section 11.
+Please note the following information about this implementation:
+
+- BASIC and FORM based authentication should work correctly.  Please
+  report any bugs you encounter here at <http://jakarta.apache.org/site/bugs.html>.
+  The example application has a protected area defined at the following URL:
+
+	http://localhost:8080/examples/jsp/security/protected
+
+  which can be accessed by any user defined in the configuration file
+  $TOMCAT_HOME/conf/tomcat-users.xml that has been granted the
+  appropriate roles.  Form-based authentication is used by default,
+  but a commented out setting for Basic authentication is provided if
+  you wish to give it a try.
+
+  WARNING:  Basic authentication is not suitable for general security
+  use across the Internet, or across other insecure networks, because
+  usernames and passwords are sent encoded, but not encrypted, with
+  every single request.
+
+- DIGEST authentication and HTTPS client authentication (i.e. SSL)
+  are not supported in this release.
+
+6.3 Using RequestDispatcher.include() on a Welcome File [Bug Report #160]
+
+Using the following technique results in a response with incorrect content:
+
+- You have a subdirectory under your document root
+  (for example "subdir/").
+
+- This subdirectory contains a welcome file that you
+  have configured to be displayed when that subdirectory
+  is requested on a URL (for example "index.html").
+
+- You request a RequestDispatcher for path "/subdir"
+  or path "/subdir/" and then call include() on it.
+
+The same problem can occur when you do a <jsp:include/> to a page "/subdir"
+or "/subdir/" as well.
+
+A workaround is to ask for a RequestDispatcher on the complete context-
+relative path of the file you wish to have displayed, such as
+"/subdir/index.html".
+
+6.4 Automatic Servlet Reloading
+
+Tomcat 3.2 includes a feature whereby you can ask it to automatically
+reload servlet classes (loaded from either the WEB-INF/classes directory
+or a JAR file in the WEB-INF/lib directory) that have been changed.  This
+feature is experimental, and may not be completely functional.  In particular,
+changes to classes other than the servlet you are requesting do not trigger
+class reloads -- you will need to restart Tomcat to reflect changes in those
+classes.
+
+Reloading is enabled by including a reloadable="true" attribute on the
+<Context> element in the "conf/server.xml" file.  Note that automatic
+reload support is not recommended for production applications because of
+its experimental nature, and the extra overhead required to perform the
+necessary checks on every request.
+
+6.5 Returned strings from getServletPath, getPathInfo, and getPathTranslated
+
+The Servlet 2.2 Errata - April 27, 2000 specifies that HttpServletRequest
+methods getServletPath, getPathInfo, and getPathTranslated should return
+decoded strings.  This clarification has not been implemented in Tomcat 3.2.
+In Tomcat 3.2, these methods return encoded strings.
+
+6.6 Avoiding "Out of environment space" errors on Windows 95/98
+
+This error can easily occur since the default amount of environment space is
+typically insufficient to run Tomcat.  Here are a couple of ways to avoid it.
+
+  A. If you use the MS-DOS Prompt to start Tomcat, execute Programs ->
+     MS-DOS Prompt.  Right-click the MS-DOS icon on the left of the title bar
+     and select Properties at the bottom of the menu.  In the MS-DOS Prompt
+     Properties dialog select the Memory tab.  In the "Initial environment:"
+     field, set a sufficiently high number.  If you are not sure, 3072 should
+     be plenty.  Click OK and close the MS-DOS Prompt window.  Execute
+     Programs -> MS-DOS Prompt again, navigate to the directory where you
+     installed Tomcat.  Set the JAVA_HOME environment variable if not set
+     already.  You should be able to execute "bin\startup" and "bin\shutdown"
+     to start and stop Tomcat without getting an "Out of environment space"
+     error.
+
+  B. If you want to start Tomcat by double clicking a batch file such as
+     startup.bat, you should right-click on the desired batch file in Windows
+     Explorer and select Properties to open the MS-DOS Prompt Properties
+     dialog.  Select the Memory tab and set the "Initial environment:" as
+     described above.  You may want to also select the Program tab and check
+     "Close on exit".  Then click OK.  A shortcut with these settings will be
+     created in same directory with the same base name as the batch file.  You
+     should be able to double-click the shortcut or the batch file to execute
+     without getting an "Out of environment space" error.  If you wish to
+     execute startup.bat and shutdown.bat in this fashion, you will need to do
+     the above for both files.  In addition, you need to provide for setting
+     JAVA_HOME.  This may be done by adding a "SET JAVA_HOME=path to your jdk"
+     line to your autoexec.bat or to the startup.bat and shutdown.bat files
+     themselves.
+
+6.7 URL's are now case sensitive on all operating systems
+
+As of Tomcat 3.2, URL's are case sensitive for all operating systems,
+including operating systems which have case insensitive file systems, such as
+Windows.  This represents a change from Tomcat 3.1, where URL's were case
+insensitive on case insensitive OS's.  This was done for a number of reasons,
+security and portability among them.
+
+A "non-portable" web application, i.e. one with case mismatches, which worked
+on a case insensitive OS under Tomcat 3.1 will show its non-portability when
+run under Tomcat 3.2.
+
+This can also cause URL's that look correct to actually be incorrect.  In
+Windows Explorer, a directory whose name fits within the MS-DOS 8.3 format
+may be displayed using a "formated" name.  For example, a directory named
+"MYDIR" may display as "Mydir".  A URL like "http://localhost/mysite/Mydir/
+index.jsp" would return "File Not Found" because the correct URL would be
+"http://localhost/mysite/MYDIR/index.jsp".  If you find URL's being
+mysteriously "not found", check for case mismatch.  Use the Windows Explorer
+Properties dialog or an MS-DOS window to check the actual case of the file
+and directory names.
+
+This can cause an additional problem when Tomcat is used with a case
+insensitive web server, such as IIS, where the web server serves the static
+content.  The web server could serve a static page with mismatched case in the
+URL. If that static page contains relative links to resources served by
+Tomcat, then invoking those links would carry the mismatched case to Tomcat
+where it cause the resource not to be found.
+
+6.8 Generated Configuration Files for Web Connectors
+
+At startup time, Tomcat normally generates configuration files like
+"tomcat-apache.conf" to reflect the contexts that are defined.  However, the
+generated files do NOT reflect any configuration settings found inside the
+web application deployment descriptor file (web.xml) for your application.
+You will need to configure any such settings that are relevant directly into
+your web server's configuration files.
+
+This is a known limitation of the design of the web connectors for Tomcat 3.2,
+and will be addressed by the introduction of the MOD_WARP connector in
+Tomcat 4.0.
+
+6.9 Limitation on Form Based Login
+
+If the pages you specify for <form-login-page> or <form-error-page> are within
+the area protected by a security constraint, Tomcat 3.2 will be unable to
+display them.  As a side effect of this problem, you will not be able to use
+a URL pattern of "/*" to protect your entire web application when using form
+based login.
+
+A workaround is to set up your web application with the form login page and
+form error page in the document root directory, place all other pages in one
+or more subdirectories, and establish security constraints to protect the
+subdirectories.
+
+6.10 Limitation on Document Base Paths
+
+Tomcat 3.2 is unable to support Windows SMB paths in a <Context> directive
+like this:
+
+        <Context path="/ctx" docBase="\\machine\share\path" />
+
+although this approach was supported in Tomcat 3.1, and is supported in
+Tomcat 4.0.  A workaround is to establish a drive mapping to "\\machine\share"
+and define your context like this:
+
+        <Context path="/ctx" docBase="r:\path" />
+
+where "r:" is mapped to this share.
+
+6.11 Resource Paths Can't Contain URL Escapes
+
+The path passed to javax.servlet.Context.getResource() and
+javax.servlet.Context.getResrouceAsStream() cannot contain URL escapes of
+the form %HH.  Paths containing any URL escapes will return null.
+
+===============================================================================
 7.  FIXES AND ENHANCEMENTS IN UPDATES
 
 
@@ -119,45 +300,110 @@ these, there have been many other minor bug fixes through the product.
 Documentation
   -  Several updates to how-to documents and users guide.
 
+Servlet
+  -  Fix infinite loop if no prefix matches the request URI.  Now returns
+     a 404 error.
+  -  Handle UnavailableException in included servlets.
+  -  User principle was incorrectly maintained.  (#757)
+  -  Use access control for forward() and include() when security manager
+     is being used.
+  -  Properly interpret url-patterns inside security-contraints.  (#567)
+  -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
+  -  reqeust.getPort() now returns the correct port when using SSL. (#743)
+  -  Fix JSP source disclosure problem.  (#619)
+  -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
+  -  Better initialization of psuedo-random number generator improves
+     response time for first request that generates a session.
+  -  Fix session tracking through forward().  (#504)
+  -  Fix problem with getSession() overwritting the requested session ID
+     and related URL rewritting problems.  (#160)
+  -  Better error reporting for load-on-startup servler load failures.  ((#489)
+  -  Static files (e.g. .html) can how be used as the location for
+     <error-page> tags in web.xml.  (#291)
+  -  URL encoded data in servlet paths and path info are now decoded 
+     properly. (#657)
+
+Jasper
+  -  Fix for UnsupportedEncodingException due to UTF8 instead of UTF-8.  (#269)
+  -  Support compiling with debug information.
+  -  If JSP source file is removed, then generated files are removed
+     and subsequent requests return a 404 error. (#698)
+  -  Fix compile error with more than one set of tags with the same 
+     name. (#540)
+  -  Support for non 8859-1 character encodings for included pages.
+  -  Better error reporting if compile fails due to missing tag library.
+  -  Fix thread synchronization problem that can cause page compilation to 
+     fail (#44).
+  -  Fixed the defualt character encoding.  The default charset is now
+     ISO-8859-1.  (#285)
+  -  jsp:plugin was not being expanded correctly.  (#467)
+
+
 Connectors
   -  Fix infinite loop on invalid content-length for ajp12.  (#264)
   -  Fix infinite llop if Tomcat connector closed connection.  (#510)
   -  For ajp13 protocol, add support for multipart form encoding
      and file uploads now work.
   -  Reading session ids from cookies in the load balancer. (#603) 
+  -  HTTP connections now time out if no data is received from the 
+     client.  (#1006)	
 
   IIS
      -  Better error logging for startup failures.
+
   NetWare
      -  Fix for netbuf_getbytes() not supported on NetWare 5.1.
 
-Jasper
-  -  Fix for UnsupportedEncodingException due UTF8 instead of UTF-8.  (#269)
-  -  Support compiling with debug information.
-  -  If JSP source file is removed then generated files are removed
-     and subsequent requests return a 404 error. (#698)
-  -  Fix compile error with more than one set of tags with the same 
-     name. (#540)
-  -  Support for non 8858-1 character encodings for included pages.
-  -  Better error reporting if compile fails due to missing tag library.
-  -  Fix thread synchronization problem that can cause page compilation to 
-     fail (#44).
-  
 
-Servlet
-  -  Fix infinite loop if no prefix matches the request URI.  Now returns
-     a 404 error.
-  -  Handle UnAvailable exceptions in included servlets.
-  -  User Principle was incorrectly maintained.  (#757)
-  -  Use Access control for forward() and include() when security manager
-     is being used.
-  -  Properly interpret url-patterns inside security-contraints.  (#567)
-  -  Fix authentication with Sybase ASE 11.9.2 and Interbase.
-  -  reqeust.getPort() now returns the correct port when using SSL. (#743)
-  -  Fix problem accessing via HTTP without protocol. (#513)
-  -  Fix JSP source disclosure problem.  (#619)
-  -  ServletRequest.getProtocol() could contain a CRLF.  (#620)
-  -  Better initialization of psuedo-random number generator improves
-     response time for first request that generates a session.
-  -  Fix session tracking through forward().  (#504)
+7.2 Security vulnerabilities fixed in Tomcat 3.2.2
+
+7.2.1 HTTP Requests With no Protocol
+
+An HTTP request with no protocol specified would return an unprocessed
+source for a JSP file.  For example
+
+GET /examples/jsp/num/numguess.jsp 
+
+would return the source for the numguess.jsp file.
+
+7.2.2
+
+Tomcat 3.2.2 beta releases prior to beta 3 had allowed URI components
+to be decoded twice.  This problem only appears when using JDK 1.3.0
+or later.  The double decode problem caused URL such as
+
+http://localhost:8080/%252e%252e/%252e%252e/%00.jsp
+
+to reveal a directory listing outside the web application.  Other
+versions of this same double decode attack could reveal the contents
+of files outside the web application.
+
+
+7.3 Security vulnerabilities fixed in Tomcat 3.2.1
+
+7.3.1 Protection of Resources in /WEB-INF and /META-INF Directories
+
+The servlet specification prohibits servlet containers from serving resources
+in the /WEB-INF and /META-INF directories of a web application archive directly
+to clients.  In Tomcat 3.2, this means that URLs like:
+
+   http://localhost:8080/examples/WEB-INF/web.xml
+
+will return an error message, rather than the contents of your deployment
+descriptor.  However, there is a vulnerability in Tomcat 3.2 that exposes
+this information if the client requests a URL like this instead:
+
+    http://localhost:8080/examples//WEB-INF/web.xml
+
+(note the double slash before "WEB-INF").  This vulnerability has been
+corrected in Tomcat 3.2.1.
+
+
+7.3.2 Show Source Vulnerability
+
+The example application delivered with Tomcat 3.2 included a mechanism to
+display the source code for the JSP page examples.  This mechanism could
+be used to bypass the restrictions on displaying sensitive information in
+the WEB-INF and META-INF directories.  This vulnerability has been removed.
+
 
