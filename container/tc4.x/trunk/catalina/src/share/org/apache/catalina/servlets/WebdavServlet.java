@@ -1914,7 +1914,7 @@ public class WebdavServlet
                  getISOCreationDate(resourceInfo.creationDate));
             generatedXML.writeProperty
                 (null, "displayname", 
-                 resourceInfo.path.replace('/', '_').replace('&', '_'));
+                 rewriteUrl(resourceInfo.path.replace('/', '_')));
             generatedXML.writeProperty(null, "getcontentlanguage", 
                                        Locale.getDefault().toString());
             if (!resourceInfo.collection) {
@@ -2013,8 +2013,7 @@ public class WebdavServlet
                 } else if (property.equals("displayname")) {
                     generatedXML.writeProperty
                         (null, "displayname", 
-                         resourceInfo.path.replace('/', '_')
-                         .replace('&', '_'));
+                         rewriteUrl(resourceInfo.path.replace('/', '_')));
                 } else if (property.equals("getcontentlanguage")) {
                     if (resourceInfo.collection) {
                         propertiesNotFound.addElement(property);
@@ -2181,7 +2180,7 @@ public class WebdavServlet
                  getISOCreationDate(lock.creationDate.getTime()));
             generatedXML.writeProperty
                 (null, "displayname", 
-                 path.replace('/', '_').replace('&', '_'));
+                 rewriteUrl(path.replace('/', '_')));
             generatedXML.writeProperty(null, "getcontentlanguage", 
                                        Locale.getDefault().toString());
             generatedXML.writeProperty(null, "getlastmodified", 
@@ -2270,7 +2269,7 @@ public class WebdavServlet
                 } else if (property.equals("displayname")) {
                     generatedXML.writeProperty
                         (null, "displayname", 
-                         path.replace('/', '_').replace('&', '_'));
+                         rewriteUrl(path.replace('/', '_')));
                 } else if (property.equals("getcontentlanguage")) {
                     generatedXML.writeProperty
                         (null, "getcontentlanguage", 
