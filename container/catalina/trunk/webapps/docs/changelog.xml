@@ -13,7 +13,287 @@
 
 <body>
 
-<section name="Tomcat 5.0.5 Alpha (remm)">
+<section name="Tomcat 5.0.6 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <update>
+      Synchornize the server.xml used by the Windows installer with the main
+      default server.xml (remm)
+      </update>
+      <update>
+      Update to Xerces 2.5.0 (remm)
+      </update>
+      <update>
+      Add additional information in the welcome HTML for the release download
+      (remm)
+      </update>
+      <fix>
+      <bug>21999</bug>: Typo fix, submitted by Liu Kang (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Remove welcome file processing from the default servlet (funkman)
+      </update>
+      <fix>
+      Search for TLDs in all subdirectories of WEB-INF, except classes and lib
+      (luehe)
+      </fix>
+      <fix>
+      Fix possible file descriptor leaks in the code responsible for unpacking
+      a WAR (remm)
+      </fix>
+      <fix>
+      <bug>21908</bug>Fix Unix startup script bug (bad AS/400 condition),
+      submitted by Jason Corley (funkman)
+      </fix>
+      <update>
+      Remove useless casts in AccessLogValve (remm)
+      </update>
+      <fix>
+      The default socket factory class name is now the Coyote factory (remm)
+      </fix>
+      <add>
+      Add a new digester rule using the IntrospectionTools so that all 
+      attributes are passed to the connector, including those which have no
+      explicit setters (in which case the setProperty method is called) (remm)
+      </add>
+      <update>
+      Simplify the connector configuration in server.xml (remm, billbarker)
+      </update>
+      <update>
+      Expose the ServletWrapper statistics through JMX (remm)
+      </update>
+      <update>
+      The connectors default configuration are now similar to the HTTPd 2.0
+      default configuration, submitted by Henri Gomez (remm)
+      </update>
+      <update>
+      Send JSR 77 spec required notifications for J2EE mbeans (amyroh)
+      </update>
+      <update>
+      Put the CSS used by various Tomcat components in a separate class in the
+      util package (remm)
+      </update>
+      <fix>
+      Remove path normalization in the default servlet (remm)
+      </fix>
+      <fix>
+      Copy jk2.properties to conf folder (remm)
+      </fix>
+      <fix>
+      Remove some attributes from the default JK 2 configuration, which should
+      instead be configured through jk2.properties (remm)
+      </fix>
+      <update>
+      Remove unneeded fields in the CoyoteConnector (remm)
+      </update>
+      <fix>
+      Make the SingleSignOn methods protected so it is possible to extend that
+      class and have a customized version (jfarcand)
+      </fix>
+      <add>
+      Add code allowing configuring the resource cache size for a context 
+      (remm)
+      </add>
+      <update>
+      Refactor extension handling; available and required extensions are now 
+      consistently NULL if not present (luehe)
+      </update>
+      <fix>
+      System resources were identified but then ignored when checking if 
+      an app's dependencies could be resolved (luehe)
+      </fix>
+      <add>
+      Add the sslProtocol property on the connector to define the protocol 
+      used in SSL (luehe)
+      </add>
+      <update>
+      Synchronize the startup scripts based on the Tomcat 4.1 code (funkman)
+      </update>
+      <fix>
+      Close JarInputStream after reading manifest (luehe)
+      </fix>
+      <update>
+      Use commons-logging and the existing StringManager in the extension
+      validator (luehe)
+      </update>
+      <fix>
+      <bug>22032</bug>: missing security-policy in default configuration;
+      precompiled JSPs running under the security manager always have to 
+      access org.apache.jasper.runtime.* classes (jfarcand)
+      </fix>
+      <update>
+      Remove old reload code, now replaced with a simpler stop/start sequence
+      (remm)
+      </update>
+      <fix>
+      Tomcat will now ignore a non existent classpath JAR (remm)
+      </fix>
+      <fix>
+      Some steps of start shouldn't be executed if the context startup has
+      previously encountered errors (remm)
+      </fix>
+      <fix>
+      Temporary fix for running SSL without a SocketFactory (billbarker)
+      </fix>
+      <scode>
+      Remove apparently useless wrapper classes (remm)
+      </scode>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Fix welcome file mapping, so that the order of the welcomes specified in
+      web.xml is respected, whereas previously servlet mapped welcomes would
+      hae a priority over physical welcome files (funkman)
+      </fix>
+      <fix>
+      When shutting down the endpoint's server socket, close the unlocking
+      socket inside a finally block (remm)
+      </fix>
+      <fix>
+      Fix confiuration of the maxThreads attribute of the thread pool (remm)
+      </fix>
+      <update>
+      Add a new protocol attribute on the Coyote connector, which can be used 
+      rather than using the protocol handler classname; acceptable values are
+      either "HTTP/1.1" or "AJP/1.3" (remm)
+      </update>
+      <update>
+      Improve the thread names and numbering, based on the associated 
+      connector name and the number of existing threads, so that reading 
+      a thread dump is significantly easier (remm)
+      </update>
+      <fix>
+      Fix a bug redirecting to a folder: the context path was lost (remm)
+      </fix>
+      <fix>
+      Fix incorrect URL normalization of the "///" sequence, due to a bad port
+      of the String based algorithm to arrays (remm)
+      </fix>
+      <add>
+      The HTTP/1.1 connector will now automatically scale down the timeout and
+      disable connection keepalive should the server starts getting low on 
+      processors (remm)
+      </add>
+      <fix>
+      Make certain that we tell Apache that we have finished with the request;
+      If the Adapter throws an exception before entering the Pipeline, we end 
+      up with both Apache and Tomcat trying to read the Channel and hence 
+      not serving requests (billbarker)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>21823</bug>: Compiler uses invoking page's PageInfo for
+      handling tag files, submitted by Eric Carmichael (luehe)
+      </fix>
+      <fix>
+      <bug>21978</bug>: Certain tag file pathnames lead to compile errors,
+      submitted by Eric Carmichael; also add check for Java keywords in
+      package names (kinman)
+      </fix>
+      <fix>
+      Remove useless check if the security manager is not present (jfclere)
+      </fix>
+      <update>
+      Refactor getDerivedPackageName and eliminate some duplicate code (kinman)
+      </update>
+      <fix>
+      <bug>21168</bug>: Incorrect paths in generated SMAP file entries, 
+      submitted Eric Carmichael (luehe)
+      </fix>
+      <fix>
+      <bug>20155</bug>: The strutsel-exercise-taglib application can not 
+      be compiled with jspc, because the correct class loader was not being
+      set (kinman)
+      </fix>
+      <update>
+      Make JspProperty constructor public, to allow for user supplied JspConfig
+      (kinman)
+      </update>
+      <update>
+      Removed unused methods and instance variables in Collector and PageInfo 
+      (luehe)
+      </update>
+      <fix>
+      <bug>22084</bug>: Fix incorrect indentation of generated code, submitted
+      by Eric Carmichael (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <add>
+      Display contexts and servlets stats in the status servlet, so that the
+      administrator can get a complete view of the server (remm)
+      </add>
+      <update>
+      Beautify the status servlet, and integrate it with the HTML manager, 
+      through links (remm)
+      </update>
+      <fix>
+      In the status servler scoreboard, add missing whitespace between method 
+      and URI (remm)
+      </fix>
+      <docs>
+      Update the connectors documentation (remm)
+      </docs>
+      <docs>
+      Manager, HTML manager and deployer docs update (remm)
+      </docs>
+      <docs>
+      Document the background processing feature, and the configuration of the
+      resource cache (remm)
+      </docs>
+      <fix>
+      Add a legend for the status servlet scoreboard (remm)
+      </fix>
+      <fix>
+      Fix typo in the Struts definition of the default context forms, submitted
+      by Jeff Tulley (remm)
+      </fix>
+      <docs>
+      Initialize filter so that the release notes of the docs look right
+      (remm)
+      </docs>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
+<section name="Tomcat 5.0.5 (remm)">
 
   <subsection name="General">
 
@@ -230,7 +510,7 @@
 
 </section>
 
-<section name="Tomcat 5.0.4 Alpha (remm)">
+<section name="Tomcat 5.0.4 (remm)">
 
   <subsection name="General">
 
@@ -427,7 +707,7 @@
 
 </section>
 
-<section name="Tomcat 5.0.3 Alpha (remm)">
+<section name="Tomcat 5.0.3 (remm)">
 
   <subsection name="General">
 
