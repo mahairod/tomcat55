@@ -411,6 +411,7 @@ public class Catalina extends Embedded {
 
         // Create and execute our Digester
         Digester digester = createStopDigester();
+        digester.setClassLoader(Thread.currentThread().getContextClassLoader());
         File file = configFile();
         try {
             InputSource is =
@@ -658,21 +659,13 @@ public class Catalina extends Embedded {
         public void run() {
 
             if (server != null) {
-                try {
-                    ((Lifecycle) server).stop();
-                } catch (LifecycleException e) {
-                    System.out.println("Catalina.stop: " + e);
-                    e.printStackTrace(System.out);
-                    if (e.getThrowable() != null) {
-                        System.out.println("----- Root Cause -----");
-                        e.getThrowable().printStackTrace(System.out);
-                    }
-                }
+                this.stop();
             }
             
         }
 
     }
+    
     
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( Catalina.class );
