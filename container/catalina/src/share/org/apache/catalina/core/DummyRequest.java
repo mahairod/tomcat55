@@ -204,6 +204,10 @@ public class DummyRequest
         return null;
     }
 
+    public MessageBytes getRequestPathMB() {
+        return null;
+    }
+
     public String getServletPath() {
         return servletPath;
     }
