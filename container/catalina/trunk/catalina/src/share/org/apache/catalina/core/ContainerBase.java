@@ -1342,11 +1342,16 @@ public abstract class ContainerBase
         String loggerName = null;
         Container current = this;
         while (current != null) {
-            loggerName = "[" + current.getName() + "]" 
+            String name = current.getName();
+            if ((name == null) || (name.equals(""))) {
+                name = "/";
+            }
+            loggerName = "[" + name + "]" 
                 + ((loggerName != null) ? ("." + loggerName) : "");
             current = current.getParent();
         }
         logName = ContainerBase.class.getName() + "." + loggerName;
+        System.out.println(logName);
         return logName;
         
     }
