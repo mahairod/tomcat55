@@ -284,7 +284,8 @@ public class SmapUtil {
             copy(4 + 2 + 2); // magic min/maj version
             int constantPoolCountPos = genPos;
             int constantPoolCount = readU2();
-            log("constant pool count: " + constantPoolCount);
+            if (log.isDebugEnabled())
+                log.debug("constant pool count: " + constantPoolCount);
             writeU2(constantPoolCount);
 
             // copy old constant pool return index of SDE symbol, if found
@@ -298,27 +299,32 @@ public class SmapUtil {
                 ++constantPoolCount;
                 randomAccessWriteU2(constantPoolCountPos, constantPoolCount);
 
-                log("SourceDebugExtension not found, installed at: " + sdeIndex);
+                if (log.isDebugEnabled())
+                    log.debug("SourceDebugExtension not found, installed at: " + sdeIndex);
             } else {
-                log("SourceDebugExtension found at: " + sdeIndex);
+                if (log.isDebugEnabled())
+                    log.debug("SourceDebugExtension found at: " + sdeIndex);
             }
             copy(2 + 2 + 2); // access, this, super
             int interfaceCount = readU2();
             writeU2(interfaceCount);
-            log("interfaceCount: " + interfaceCount);
+            if (log.isDebugEnabled())
+                log.debug("interfaceCount: " + interfaceCount);
             copy(interfaceCount * 2);
             copyMembers(); // fields
             copyMembers(); // methods
             int attrCountPos = genPos;
             int attrCount = readU2();
             writeU2(attrCount);
-            log("class attrCount: " + attrCount);
+            if (log.isDebugEnabled())
+                log.debug("class attrCount: " + attrCount);
             // copy the class attributes, return true if SDE attr found (not copied)
             if (!copyAttrs(attrCount)) {
                 // we will be adding SDE and it isn't already counted
                 ++attrCount;
                 randomAccessWriteU2(attrCountPos, attrCount);
-                log("class attrCount incremented");
+                if (log.isDebugEnabled())
+                    log.debug("class attrCount incremented");
             }
             writeAttrForSDE(sdeIndex);
         }
@@ -326,12 +332,14 @@ public class SmapUtil {
         void copyMembers() {
             int count = readU2();
             writeU2(count);
-            log("members count: " + count);
+            if (log.isDebugEnabled())
+                log.debug("members count: " + count);
             for (int i = 0; i < count; ++i) {
                 copy(6); // access, name, descriptor
                 int attrCount = readU2();
                 writeU2(attrCount);
-                log("member attr count: " + attrCount);
+                if (log.isDebugEnabled())
+                    log.debug("member attr count: " + attrCount);
                 copyAttrs(attrCount);
             }
         }
@@ -343,13 +351,15 @@ public class SmapUtil {
                 // don't write old SDE
                 if (nameIndex == sdeIndex) {
                     sdeFound = true;
-                    log("SDE attr found");
+                    if (log.isDebugEnabled())
+                        log.debug("SDE attr found");
                 } else {
                     writeU2(nameIndex); // name
                     int len = readU4();
                     writeU4(len);
                     copy(len);
-                    log("attr len: " + len);
+                    if (log.isDebugEnabled())
+                        log.debug("attr len: " + len);
                 }
             }
             return sdeFound;
@@ -428,7 +438,8 @@ public class SmapUtil {
                 switch (tag) {
                     case 7 : // Class
                     case 8 : // String
-                        log(i + " copying 2 bytes");
+                        if (log.isDebugEnabled())
+                            log.debug(i + " copying 2 bytes");
                         copy(2);
                         break;
                     case 9 : // Field
@@ -437,12 +448,14 @@ public class SmapUtil {
                     case 3 : // Integer
                     case 4 : // Float
                     case 12 : // NameAndType
-                        log(i + " copying 4 bytes");
+                        if (log.isDebugEnabled())
+                            log.debug(i + " copying 4 bytes");
                         copy(4);
                         break;
                     case 5 : // Long
                     case 6 : // Double
-                        log(i + " copying 8 bytes");
+                        if (log.isDebugEnabled())
+                            log.debug(i + " copying 8 bytes");
                         copy(8);
                         i++;
                         break;
@@ -451,7 +464,8 @@ public class SmapUtil {
                         writeU2(len);
                         byte[] utf8 = readBytes(len);
                         String str = new String(utf8, "UTF-8");
-                        log(i + " read class attr -- '" + str + "'");
+                        if (log.isDebugEnabled())
+                            log.debug(i + " read class attr -- '" + str + "'");
                         if (str.equals(nameSDE)) {
                             sdeIndex = i;
                         }
@@ -706,11 +720,6 @@ public class SmapUtil {
         HashMap getMap() {
             return map;
         }
-    }
-    
-    private static void log(String msg) {
-        if (log.isDebugEnabled())
-            log.debug(msg);
     }
     
 }
