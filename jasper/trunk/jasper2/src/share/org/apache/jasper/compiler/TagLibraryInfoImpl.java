@@ -243,13 +243,8 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
      * @param ctxt The JSP compilation context
      * @param uri The TLD's uri
      * @param in The TLD's input stream
-     * @param jarFile The JAR file containing the TLD, or null if the tag
+     * @param jarFileUrl The JAR file containing the TLD, or null if the tag
      * library is not packaged in a JAR
-     *
-     * @return true if jarFile is different from null and the TLD represented
-     * by the given input stream contains one or more tag files packaged in the
-     * given JAR (that is, one or more tag files whose path element starts
-     * with /META-INF/tags), and false otherwise
      */
     private void parseTLD(JspCompilationContext ctxt,
 			  String uri, InputStream in, URL jarFileUrl) 
