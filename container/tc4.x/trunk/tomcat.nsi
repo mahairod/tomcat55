@@ -30,8 +30,8 @@ DirText "Please select a location to install Tomcat 4.1 (or use the default):"
 SetOverwrite on
 SetDateSave on
 
-InstallDir "$PROGRAMFILES\Apache Tomcat 4.1"
-InstallDirRegKey HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" ""
+InstallDir "$PROGRAMFILES\Apache Group\Tomcat 4.1"
+InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1" ""
 
 Section "Tomcat (required)"
 
@@ -41,6 +41,7 @@ Section "Tomcat (required)"
   File tomcat.ico
   File LICENSE
   File /r bin
+  Delete "$INSTDIR\bin\tomcat.exe"
   File /r common
   File /r shared
   File /r logs
@@ -70,7 +71,7 @@ Section "NT Service (NT/2k/XP only)"
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 4.1" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
   ClearErrors
 
@@ -122,17 +123,6 @@ Section "Tomcat Start Menu Group"
                  "$2\bin\java.exe" \
                  '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
-
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1\Configuration"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configuration\Edit Server Configuration.lnk" \
-                 notepad "$INSTDIR\conf\server.xml"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configuration\Edit Webapp Defaults.lnk" \
-                 notepad "$INSTDIR\conf\web.xml"
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configuration\Edit Users.lnk" \
-                 notepad "$INSTDIR\conf\tomcat-users.xml"
 
 SectionEnd
 
@@ -192,7 +182,9 @@ Section -post
 
   Call configure
 
-  WriteRegStr HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" "" $INSTDIR
+  Call startService
+
+  WriteRegStr HKLM "SOFTWARE\Apache Group\Tomcat\4.1" "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
                    "DisplayName" "Apache Tomcat 4.1 (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1" \
@@ -369,9 +361,7 @@ Function configure
 
   SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\My Tomcat.lnk" \
-                 "http://127.0.0.1:$R0"
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Configuration\Tomcat Administration.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.1\Tomcat Administration.lnk" \
                  "http://127.0.0.1:$R0/admin"
 
  NoLinks:
@@ -412,6 +402,39 @@ Function copyFile
 FunctionEnd
 
 
+; =====================
+; StartService Function
+; =====================
+;
+; Start Tomcat NT Service
+;
+Function startService
+
+  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
+  ExecWait 'net start "Apache Tomcat 4.1"'
+  Sleep 4000
+
+ NoService:
+
+FunctionEnd
+
+
+; =====================
+; StopService Function
+; =====================
+;
+; Stop Tomcat NT Service
+;
+Function un.stopService
+
+  IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
+  ExecWait 'net stop "Apache Tomcat 4.1"'
+  Sleep 2000
+
+ NoService:
+
+FunctionEnd
+
 
 UninstallText "This will uninstall Apache Tomcat 4.1 from your system:"
 
@@ -419,6 +442,9 @@ UninstallText "This will uninstall Apache Tomcat 4.1 from your system:"
 Section Uninstall
 
   Delete "$INSTDIR\uninst-tomcat4.exe"
+
+  ; Stopping NT service (if in use)
+  Call un.stopService
 
   ReadRegStr $1 HKCR ".jsp" ""
   StrCmp $1 "JSPFile" 0 NoOwn ; only do this if we own it
@@ -431,12 +457,12 @@ Section Uninstall
       DeleteRegValue HKCR ".jsp" "backup_val"
   NoOwn:
 
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat 4.1"'
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.1"
-  DeleteRegKey HKLM "SOFTWARE\Apache\Apache Tomcat 4.1"
+  DeleteRegKey HKLM "SOFTWARE\Apache Group\Tomcat\4.1"
   RMDir /r "$SMPROGRAMS\Apache Tomcat 4.1"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
