@@ -14,6 +14,32 @@
 <body>
 
 
+<section name="Table of Contents">
+
+<p>
+<a href="#Quick Start">Quick Start</a><br />
+<blockquote>
+<a href="#What is a Realm?">What is a Realm?</a><br />
+<a href="#Configuring a Realm">Configuring a Realm</a><br />
+</blockquote>
+<a href="#Standard Realm Implementations">
+Standard Realm Implementations</a><br />
+<blockquote>
+<a href="#JDBCRealm">JDBCRealm</a><br />
+<a href="#DataSourceRealm">DataSourceRealm</a><br />
+<a href="#JNDIRealm">JNDIRealm</a><br />
+<a href="#MemoryRealm">MemoryRealm</a><br />
+</blockquote>
+<a href="#Common Features">Common Features</a><br />
+<blockquote>
+<a href="#Digested Passwords">Digested Passwords</a><br />
+<a href="#Example Application">Example Application</a><br />
+<a href="#Manager Application">Manager Application</a><br />
+</blockquote>
+</p>
+
+</section>
+
 <section name="Quick Start">
 
 <p>This document describes how to configure Tomcat to support <em>container
@@ -66,6 +92,9 @@ can be implemented by "plug in" components to establish this connection.
 Three standard plug-ins are provided, supporting connection to three different
 sources of authentication information:</p>
 <ul>
+<li><a href="#DataSourceRealm">DataSourceRealm</a> - Accesses authentication
+    information stored in a relational database, accessed via a named JNDI
+    JDBC DataSource.</li>
 <li><a href="#JDBCRealm">JDBCRealm</a> - Accesses authentication information
     stored in a relational database, accessed via a JDBC driver.</li>
 <li><a href="#JNDIRealm">JNDIRealm</a> - Accesses authentication information
