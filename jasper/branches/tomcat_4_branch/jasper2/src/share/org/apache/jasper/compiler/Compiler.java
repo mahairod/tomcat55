@@ -197,6 +197,10 @@ public class Compiler {
     public void generateJava()
         throws FileNotFoundException, JasperException, Exception
     {
+        if (errDispatcher == null) {
+            this.errDispatcher = new ErrorDispatcher();
+        }
+
         // Setup page info area
         pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 
@@ -246,6 +250,10 @@ public class Compiler {
      */
     public void generateClass()
         throws FileNotFoundException, JasperException, Exception {
+
+        if (errDispatcher == null) {
+            this.errDispatcher = new ErrorDispatcher();
+        }
 
         String javaEncoding = ctxt.getOptions().getJavaEncoding();
         String javaFileName = ctxt.getServletJavaFileName();
@@ -355,10 +363,6 @@ public class Compiler {
     public void compile()
         throws FileNotFoundException, JasperException, Exception
     {
-        if (errDispatcher == null) {
-            this.errDispatcher = new ErrorDispatcher();
-        }
-
         try {
             generateJava();
             generateClass();
