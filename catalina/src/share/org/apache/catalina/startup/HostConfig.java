@@ -608,6 +608,8 @@ public class HostConfig
             // Add the eventual unpacked WAR and all the resources which will be
             // watched inside it
             if (isWar && unpackWARs) {
+                deployedApp.redeployResources.put
+                    (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                 deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
                         new Long(expandedDocBase.lastModified()));
                 addWatchedResources(deployedApp, expandedDocBase.getAbsolutePath(), context);
@@ -636,15 +638,15 @@ public class HostConfig
                             deployedApp.redeployResources.put(warDocBase.getAbsolutePath(),
                                     new Long(warDocBase.lastModified()));
                         }
+                        // Add the context XML to the list of files which should trigger a redeployment
+                        deployedApp.redeployResources.put
+                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                         if (expandedDocBase.exists()) {
                             deployedApp.redeployResources.put(expandedDocBase.getAbsolutePath(),
                                     new Long(expandedDocBase.lastModified()));
                             addWatchedResources(deployedApp, 
                                     expandedDocBase.getAbsolutePath(), context);
                         }
-                        // Add the context XML to the list of files which should trigger a redeployment
-                        deployedApp.redeployResources.put
-                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     }
                 } else {
                     // Add the context XML to the list of files which should trigger a redeployment
@@ -787,6 +789,11 @@ public class HostConfig
         // Deploy the application in this WAR file
         if(log.isInfoEnabled()) 
             log.info(sm.getString("hostConfig.deployJar", file));
+
+        // Populate redeploy resources with the WAR file
+        deployedApp.redeployResources.put
+            (dir.getAbsolutePath(), new Long(dir.lastModified()));
+
         try {
             Context context = (Context) Class.forName(contextClass).newInstance();
             if (context instanceof Lifecycle) {
@@ -799,7 +806,7 @@ public class HostConfig
             context.setDocBase(file);
             if (xml.exists()) {
                 context.setConfigFile(xml.getAbsolutePath());
-                deployedApp.reloadResources.put
+                deployedApp.redeployResources.put
                     (xml.getAbsolutePath(), new Long(xml.lastModified()));
             }
             host.addChild(context);
@@ -831,9 +838,6 @@ public class HostConfig
             log.error(sm.getString("hostConfig.deployJar.error", file), t);
         }
         
-        // Populate redeploy resources with the WAR file
-        deployedApp.redeployResources.put
-            (dir.getAbsolutePath(), new Long(dir.lastModified()));
         deployed.put(contextPath, deployedApp);
     }
 
