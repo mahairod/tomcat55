@@ -135,7 +135,8 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
     }
 
     public void setMaxThreads(int maxThreads) {
-        tp.setMaxThreads(maxThreads);
+	if( maxThreads > 0)
+	    tp.setMaxThreads(maxThreads);
     }
 
     public int getMaxThreads() {
@@ -143,7 +144,8 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
     }
 
     public void setMaxSpareThreads(int maxThreads) {
-        tp.setMaxSpareThreads(maxThreads);
+	if(maxThreads > 0) 
+	    tp.setMaxSpareThreads(maxThreads);
     }
 
     public int getMaxSpareThreads() {
@@ -151,7 +153,8 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
     }
 
     public void setMinSpareThreads(int minThreads) {
-        tp.setMinSpareThreads(minThreads);
+	if(minThreads > 0) 
+	    tp.setMinSpareThreads(minThreads);
     }
 
     public int getMinSpareThreads() {
@@ -200,6 +203,7 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
      * is 100.
      */
     public void setBacklog(int backlog) {
+	if( backlog>0)
 	    this.backlog = backlog;
     }
 
