@@ -93,12 +93,11 @@ public class CompressionResponseStream
      */
     public CompressionResponseStream(HttpServletResponse response) throws IOException{
 
-	    super();
-	    closed = false;
-      commit = false;
-	    count = 0;
-      this.response = response;
-	    this.output = response.getOutputStream();
+        super();
+        closed = false;
+        count = 0;
+        this.response = response;
+        this.output = response.getOutputStream();
 
     }
 
@@ -121,7 +120,7 @@ public class CompressionResponseStream
      * Is it big enough to compress?
      */
     protected boolean compressionThresholdReached = false; 
-    
+
     /**
      * The number of data bytes currently in the buffer.
      */
@@ -136,13 +135,6 @@ public class CompressionResponseStream
      * Has this stream been closed?
      */
     protected boolean closed = false;
-
-
-    /**
-     * Should we commit the response when we are flushed?
-     */
-    protected boolean commit = true;
-
 
     /**
      * The number of bytes which have already been written to this stream.
@@ -166,42 +158,17 @@ public class CompressionResponseStream
      */
     protected ServletOutputStream output = null;
 
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * [Package Private] Return the "commit response on flush" flag.
-     */
-    boolean getCommit() {
-
-        return (this.commit);
-
-    }
-
-
-    /**
-     * [Package Private] Set the "commit response on flush" flag.
-     *
-     * @param commit The new commit flag
-     */
-    void setCommit(boolean commit) {
-
-        this.commit = commit;
-
-    }
-
 
     // --------------------------------------------------------- Public Methods
-
 
 
     /**
      * Set the compressionThreshold number and create buffer for this size
      */
     protected void setBuffer(int threshold) {
-      compressionThreshold = threshold;
-      buffer = new byte[compressionThreshold];
-      //System.out.println("buffer is set to "+compressionThreshold);
+        compressionThreshold = threshold;
+        buffer = new byte[compressionThreshold];
+        //System.out.println("buffer is set to "+compressionThreshold);
     }
 
     /**
@@ -210,12 +177,16 @@ public class CompressionResponseStream
      */
     public void close() throws IOException {
 
-      if (closed)
-	      throw new IOException("This output stream has already been closed");
-      if (gzipstream!=null) {
-        gzipstream.close();
-      }
-      flush();
+        if (closed)
+	        throw new IOException("This output stream has already been closed");
+
+        flush();
+
+        if (gzipstream!=null) {
+            gzipstream.close();
+        }
+
+        output.close();
 	    closed = true;
 
     }
@@ -227,31 +198,32 @@ public class CompressionResponseStream
      */
     public void flush() throws IOException {
 
-      //System.out.println("flush() @ CompressionResponseStream");
-	    if (closed)
-        throw new IOException("Cannot flush a closed output stream");
+        //System.out.println("flush() @ CompressionResponseStream");
+        if (closed) {
+            throw new IOException("Cannot flush a closed output stream");
+        }
 
-      if (commit) {
-	      if (bufferCount > 0) {
-          //System.out.println("writing to original stream");
-	        output.write(buffer, 0, bufferCount);
-	        bufferCount = 0;
-	      }
-      } else {
-        //System.out.println("commit false");
-      }
+        if (bufferCount > 0) {
+            //System.out.println("writing to original stream");
+            output.write(buffer, 0, bufferCount);
+            bufferCount = 0;
+        }
+
+        if (gzipstream!=null) {
+            gzipstream.flush();
+        }
 
     }
 
     public void flushToGZip() throws IOException {
 
-      //System.out.println("flushToGZip() @ CompressionResponseStream");
+        //System.out.println("flushToGZip() @ CompressionResponseStream");
 
-      if (bufferCount > 0) {
-        //System.out.println("flushing out to GZipStream");
-        gzipstream.write(buffer, 0, bufferCount);
-        bufferCount = 0;
-      }
+        if (bufferCount > 0) {
+            //System.out.println("flushing out to GZipStream");
+            gzipstream.write(buffer, 0, bufferCount);
+            bufferCount = 0;
+        }
 
     }
 
@@ -264,20 +236,20 @@ public class CompressionResponseStream
      */
     public void write(int b) throws IOException {
 
-      //System.out.print("write "+b+" in CompressionResponseStream ");
-      if (closed)
-	      throw new IOException("Cannot write to a closed output stream");
+        //System.out.print("write "+b+" in CompressionResponseStream ");
+        if (closed)
+            throw new IOException("Cannot write to a closed output stream");
 
-      if ((bufferCount >= buffer.length) || (count>=compressionThreshold)) {
-        compressionThresholdReached = true;
-      }
+        if ((bufferCount >= buffer.length) || (count>=compressionThreshold)) {
+            compressionThresholdReached = true;
+        }
 
-      if (compressionThresholdReached) {
-        writeToGZip(b);
-      } else {
-	      buffer[bufferCount++] = (byte) b;
-	      count++;
-	    }
+        if (compressionThresholdReached) {
+            writeToGZip(b);
+        } else {
+	        buffer[bufferCount++] = (byte) b;
+	        count++;
+        }
 
     }
 
@@ -292,13 +264,13 @@ public class CompressionResponseStream
 
     public void writeToGZip(int b) throws IOException {
 
-      //System.out.println("writeToGZip (int b) compressing");
-      if (gzipstream == null) {
-        gzipstream = new GZIPOutputStream(output);
-        flushToGZip();
-        response.addHeader("Content-Encoding", "gzip");
-      }
-      gzipstream.write(b);
+        //System.out.println("writeToGZip (int b) compressing");
+        if (gzipstream == null) {
+            gzipstream = new GZIPOutputStream(output);
+            flushToGZip();
+            response.addHeader("Content-Encoding", "gzip");
+        }
+        gzipstream.write(b);
 
     }
 
@@ -312,7 +284,7 @@ public class CompressionResponseStream
      */
     public void write(byte b[]) throws IOException {
 
-    	write(b, 0, b.length);
+        write(b, 0, b.length);
 
     }
 
@@ -329,35 +301,35 @@ public class CompressionResponseStream
      */
     public void write(byte b[], int off, int len) throws IOException {
 
-      //System.out.println("second write in CompressionResponseStream");
-    	if (closed)
-	      throw new IOException("Cannot write to a closed output stream");
+        //System.out.println("second write in CompressionResponseStream");
+        if (closed)
+            throw new IOException("Cannot write to a closed output stream");
 
-	    if (len == 0)
-	      return;
-	    if (len <= (buffer.length - bufferCount)) {
-	      System.arraycopy(b, off, buffer, bufferCount, len);
-	      bufferCount += len;
-	      count += len;
-	      return;
+        if (len == 0)
+            return;
+        if (len <= (buffer.length - bufferCount)) {
+            System.arraycopy(b, off, buffer, bufferCount, len);
+            bufferCount += len;
+            count += len;
+            return;
 	    }
 
-	    // buffer full, start writing to gzipstream
+        // buffer full, start writing to gzipstream
 
-      writeToGZip(b, off, len);
-	    count += len;
+        writeToGZip(b, off, len);
+        count += len;
 
     }
 
     public void writeToGZip(byte b[], int off, int len) throws IOException {
 
-      //System.out.println("writeToGZip 2 compressing");
-      if (gzipstream == null) {
-        gzipstream = new GZIPOutputStream(output);
-        flushToGZip();
-        response.addHeader("Content-Encoding", "gzip");
-      }
-      gzipstream.write(b, off, len);
+        //System.out.println("writeToGZip 2 compressing");
+        if (gzipstream == null) {
+            gzipstream = new GZIPOutputStream(output);
+            flushToGZip();
+            response.addHeader("Content-Encoding", "gzip");
+        }
+        gzipstream.write(b, off, len);
 
     }
 
@@ -368,9 +340,9 @@ public class CompressionResponseStream
     /**
      * Has this response stream been closed?
      */
-    boolean closed() {
+    public boolean closed() {
 
-      return (this.closed);
+        return (this.closed);
 
     }
 
@@ -378,11 +350,10 @@ public class CompressionResponseStream
     /**
      * Reset the count of bytes written to this stream to zero.
      */
-    void reset() {
+    public void reset() {
 
-    	count = 0;
+        count = 0;
 
     }
-
 
 }
