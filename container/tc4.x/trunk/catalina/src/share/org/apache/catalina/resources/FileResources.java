@@ -229,6 +229,14 @@ public final class FileResources extends ResourcesBase {
 	    return (null);
         }
 
+        // Does the specified resource actually exist?
+        File file = new File(pathname);
+        if ((file == null) || !file.exists() || !file.canRead()) {
+            //            if (debug >= 1)
+            //                log("getResource(" + path + ") --> NULL");
+	    return (null);
+        }
+
 	// Construct a URL that refers to this file
         URL url = new URL("file", null, 0, pathname);
         //        if (debug >= 1)
