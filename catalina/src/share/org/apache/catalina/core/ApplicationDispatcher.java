@@ -37,15 +37,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.RequestFacade;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
@@ -966,13 +964,13 @@ final class ApplicationDispatcher
         // Instantiate a new wrapper at this point and insert it in the chain
         ServletRequest wrapper = null;
         if ((current instanceof ApplicationHttpRequest) ||
-            (current instanceof HttpRequest) ||
+            (current instanceof Request) ||
             (current instanceof HttpServletRequest)) {
             // Compute a crossContext flag
             HttpServletRequest hcurrent = (HttpServletRequest) current;
             boolean crossContext = false;
             if ((outerRequest instanceof ApplicationHttpRequest) ||
-                (outerRequest instanceof HttpRequest) ||
+                (outerRequest instanceof Request) ||
                 (outerRequest instanceof HttpServletRequest)) {
                 HttpServletRequest houterRequest = 
                     (HttpServletRequest) outerRequest;
@@ -1024,7 +1022,7 @@ final class ApplicationDispatcher
         // Instantiate a new wrapper at this point and insert it in the chain
         ServletResponse wrapper = null;
         if ((current instanceof ApplicationHttpResponse) ||
-            (current instanceof HttpResponse) ||
+            (current instanceof Response) ||
             (current instanceof HttpServletResponse))
             wrapper =
                 new ApplicationHttpResponse((HttpServletResponse) current,

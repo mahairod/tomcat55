@@ -23,8 +23,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Globals;
-import org.apache.catalina.Request;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.FilterMap;
 
 /**

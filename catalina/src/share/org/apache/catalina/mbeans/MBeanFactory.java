@@ -25,7 +25,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
@@ -35,6 +34,8 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
 import org.apache.catalina.authenticator.SingleSignOn;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardDefaultContext;
@@ -61,7 +62,6 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-import org.apache.coyote.tomcat5.CoyoteConnector;
 
 
 /**
@@ -1157,14 +1157,14 @@ public class MBeanFactory extends BaseModelMBean {
             // if (((address.equals("null")) &&
             if ((connAddress==null) && port.equals(connPort)) {
                 service.removeConnector(conns[i]);
-                ((CoyoteConnector)conns[i]).destroy();
+                ((Connector)conns[i]).destroy();
                 break;
             }
             // } else if (address.equals(connAddress))
             if (port.equals(connPort)) {
                 // Remove this component from its parent component
                 service.removeConnector(conns[i]);
-                ((CoyoteConnector)conns[i]).destroy();
+                ((Connector)conns[i]).destroy();
                 break;
             }
         }

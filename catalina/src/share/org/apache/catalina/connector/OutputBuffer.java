@@ -14,7 +14,7 @@
  * limitations under the License.
  */ 
 
-package org.apache.coyote.tomcat5;
+package org.apache.catalina.connector;
 
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
-import org.apache.catalina.connector.ClientAbortException;
 import org.apache.coyote.ActionCode;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.buf.ByteChunk;

@@ -28,10 +28,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
-import org.apache.catalina.HttpResponse;
-import org.apache.catalina.Request;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.connector.Request;
 
 
 /**
@@ -42,7 +41,7 @@ import org.apache.catalina.Request;
  */
 
 public class DummyResponse
-    implements HttpResponse, HttpServletResponse {
+    implements HttpServletResponse {
 
     public DummyResponse() {
     }

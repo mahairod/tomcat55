@@ -23,15 +23,10 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
 
 
@@ -97,51 +92,37 @@ public class RequestDumperValve
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        // Skip logging for non-HTTP requests and responses
-        if (!(request instanceof HttpRequest) ||
-            !(response instanceof HttpResponse)) {
-            context.invokeNext(request, response);
-            return;
-        }
-        HttpRequest hrequest = (HttpRequest) request;
-        HttpResponse hresponse = (HttpResponse) response;
-        HttpServletRequest hreq =
-            (HttpServletRequest) hrequest.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) hresponse.getResponse();
-
         // Log pre-service information
-        log("REQUEST URI       =" + hreq.getRequestURI());
-        log("          authType=" + hreq.getAuthType());
-        log(" characterEncoding=" + hreq.getCharacterEncoding());
-        log("     contentLength=" + hreq.getContentLength());
-        log("       contentType=" + hreq.getContentType());
-        log("       contextPath=" + hreq.getContextPath());
-        Cookie cookies[] = hreq.getCookies();
+        log("REQUEST URI       =" + request.getRequestURI());
+        log("          authType=" + request.getAuthType());
+        log(" characterEncoding=" + request.getCharacterEncoding());
+        log("     contentLength=" + request.getContentLength());
+        log("       contentType=" + request.getContentType());
+        log("       contextPath=" + request.getContextPath());
+        Cookie cookies[] = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++)
                 log("            cookie=" + cookies[i].getName() + "=" +
                     cookies[i].getValue());
         }
-        Enumeration hnames = hreq.getHeaderNames();
+        Enumeration hnames = request.getHeaderNames();
         while (hnames.hasMoreElements()) {
             String hname = (String) hnames.nextElement();
-            Enumeration hvalues = hreq.getHeaders(hname);
+            Enumeration hvalues = request.getHeaders(hname);
             while (hvalues.hasMoreElements()) {
                 String hvalue = (String) hvalues.nextElement();
                 log("            header=" + hname + "=" + hvalue);
             }
         }
-        log("            locale=" + hreq.getLocale());
-        log("            method=" + hreq.getMethod());
-        Enumeration pnames = hreq.getParameterNames();
+        log("            locale=" + request.getLocale());
+        log("            method=" + request.getMethod());
+        Enumeration pnames = request.getParameterNames();
         while (pnames.hasMoreElements()) {
             String pname = (String) pnames.nextElement();
-            String pvalues[] = hreq.getParameterValues(pname);
+            String pvalues[] = request.getParameterValues(pname);
             StringBuffer result = new StringBuffer(pname);
             result.append('=');
             for (int i = 0; i < pvalues.length; i++) {
@@ -151,43 +132,43 @@ public class RequestDumperValve
             }
             log("         parameter=" + result.toString());
         }
-        log("          pathInfo=" + hreq.getPathInfo());
-        log("          protocol=" + hreq.getProtocol());
-        log("       queryString=" + hreq.getQueryString());
-        log("        remoteAddr=" + hreq.getRemoteAddr());
-        log("        remoteHost=" + hreq.getRemoteHost());
-        log("        remoteUser=" + hreq.getRemoteUser());
-        log("requestedSessionId=" + hreq.getRequestedSessionId());
-        log("            scheme=" + hreq.getScheme());
-        log("        serverName=" + hreq.getServerName());
-        log("        serverPort=" + hreq.getServerPort());
-        log("       servletPath=" + hreq.getServletPath());
-        log("          isSecure=" + hreq.isSecure());
+        log("          pathInfo=" + request.getPathInfo());
+        log("          protocol=" + request.getProtocol());
+        log("       queryString=" + request.getQueryString());
+        log("        remoteAddr=" + request.getRemoteAddr());
+        log("        remoteHost=" + request.getRemoteHost());
+        log("        remoteUser=" + request.getRemoteUser());
+        log("requestedSessionId=" + request.getRequestedSessionId());
+        log("            scheme=" + request.getScheme());
+        log("        serverName=" + request.getServerName());
+        log("        serverPort=" + request.getServerPort());
+        log("       servletPath=" + request.getServletPath());
+        log("          isSecure=" + request.isSecure());
         log("---------------------------------------------------------------");
 
         // Perform the request
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
         // Log post-service information
         log("---------------------------------------------------------------");
-        log("          authType=" + hreq.getAuthType());
-        log("     contentLength=" + hresponse.getContentLength());
-        log("       contentType=" + hresponse.getContentType());
-        Cookie rcookies[] = hresponse.getCookies();
+        log("          authType=" + request.getAuthType());
+        log("     contentLength=" + response.getContentLength());
+        log("       contentType=" + response.getContentType());
+        Cookie rcookies[] = response.getCookies();
         for (int i = 0; i < rcookies.length; i++) {
             log("            cookie=" + rcookies[i].getName() + "=" +
                 rcookies[i].getValue() + "; domain=" +
                 rcookies[i].getDomain() + "; path=" + rcookies[i].getPath());
         }
-        String rhnames[] = hresponse.getHeaderNames();
+        String rhnames[] = response.getHeaderNames();
         for (int i = 0; i < rhnames.length; i++) {
-            String rhvalues[] = hresponse.getHeaderValues(rhnames[i]);
+            String rhvalues[] = response.getHeaderValues(rhnames[i]);
             for (int j = 0; j < rhvalues.length; j++)
                 log("            header=" + rhnames[i] + "=" + rhvalues[j]);
         }
-        log("           message=" + hresponse.getMessage());
-        log("        remoteUser=" + hreq.getRemoteUser());
-        log("            status=" + hresponse.getStatus());
+        log("           message=" + response.getMessage());
+        log("        remoteUser=" + request.getRemoteUser());
+        log("            status=" + response.getStatus());
         log("===============================================================");
 
     }

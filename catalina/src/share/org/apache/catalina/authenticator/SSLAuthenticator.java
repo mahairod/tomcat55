@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 
 
@@ -80,8 +80,8 @@ public class SSLAuthenticator
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean authenticate(HttpRequest request,
-                                HttpResponse response,
+    public boolean authenticate(Request request,
+                                Response response,
                                 LoginConfig config)
         throws IOException {
 
@@ -126,8 +126,6 @@ public class SSLAuthenticator
         */
 
         // Retrieve the certificate chain for this client
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
         if (debug >= 1)
             log(" Looking up certificates");
 
@@ -140,8 +138,8 @@ public class SSLAuthenticator
         if ((certs == null) || (certs.length < 1)) {
             if (debug >= 1)
                 log("  No certificates included with this request");
-            hres.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                           sm.getString("authenticator.certificates"));
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                               sm.getString("authenticator.certificates"));
             return (false);
         }
 
@@ -150,8 +148,8 @@ public class SSLAuthenticator
         if (principal == null) {
             if (debug >= 1)
                 log("  Realm.authenticate() returned false");
-            hres.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                           sm.getString("authenticator.unauthorized"));
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                               sm.getString("authenticator.unauthorized"));
             return (false);
         }
 

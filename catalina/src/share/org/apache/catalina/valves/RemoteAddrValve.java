@@ -20,9 +20,8 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 
 
 /**
@@ -77,12 +76,10 @@ public final class RemoteAddrValve
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        process(request.getRequest().getRemoteAddr(),
-                request, response, context);
+        process(request.getRequest().getRemoteAddr(), request, response);
 
     }
 

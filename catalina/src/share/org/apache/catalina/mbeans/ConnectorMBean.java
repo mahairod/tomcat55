@@ -24,8 +24,8 @@ import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
+import org.apache.catalina.connector.Connector;
 import org.apache.coyote.ProtocolHandler;
-import org.apache.coyote.tomcat5.CoyoteConnector;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 
@@ -86,9 +86,9 @@ public class ConnectorMBean extends ClassNameMBean {
                 (new IllegalArgumentException("Attribute name is null"),
                  "Attribute name is null");
 		 
-        CoyoteConnector connector = null;
+        Connector connector = null;
 	try {
-	    connector = (CoyoteConnector) getManagedResource();
+	    connector = (Connector) getManagedResource();
 	} catch (InstanceNotFoundException e) {
 	    throw new MBeanException(e);
 	} catch (InvalidTargetObjectTypeException e) {
@@ -152,9 +152,9 @@ public class ConnectorMBean extends ClassNameMBean {
                 (new IllegalArgumentException("Attribute name is null"),
                  "Attribute name is null"); 
 		 
-        CoyoteConnector connector = null;
+        Connector connector = null;
 	try {
-	    connector = (CoyoteConnector) getManagedResource();
+	    connector = (Connector) getManagedResource();
 	} catch (InstanceNotFoundException e) {
 	    throw new MBeanException(e);
 	} catch (InvalidTargetObjectTypeException e) {

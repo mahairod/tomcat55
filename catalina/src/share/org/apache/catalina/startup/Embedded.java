@@ -18,13 +18,10 @@
 package org.apache.catalina.startup;
 
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
@@ -35,13 +32,13 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
-import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.security.SecurityConfig;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
@@ -473,16 +470,7 @@ public class Embedded  extends StandardService implements Lifecycle {
             } else if (protocol.equals("https")) {
                 connector.setScheme("https");
                 connector.setSecure(true);
-                try {
-                    Class serverSocketFactoryClass = Class.forName
-                       ("org.apache.coyote.tomcat5.CoyoteServerSocketFactory");
-                    ServerSocketFactory factory = 
-                        (ServerSocketFactory) 
-                        serverSocketFactoryClass.newInstance();
-                    connector.setFactory(factory);
-                } catch (Exception e) {
-                    log.error("Couldn't load SSL server socket factory.");
-                }
+                // FIXME !!!! SET SSL PROPERTIES
             }
 
         } catch (Exception e) {

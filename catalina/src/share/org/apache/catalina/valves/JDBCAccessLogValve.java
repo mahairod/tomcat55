@@ -27,16 +27,12 @@ import java.sql.Timestamp;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.Logger;
@@ -438,44 +434,39 @@ public final class JDBCAccessLogValve
      * @exception ServletException Database SQLException is wrapped 
      * in a ServletException.
      */    
-    public void invoke(Request request, Response response, 
-                       ValveContext context) 
+    public void invoke(Request request, Response response) 
         throws IOException, ServletException {
 
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
 
-        ServletRequest req = request.getRequest();
-        HttpServletRequest hreq = null;
-        if(req instanceof HttpServletRequest) 
-            hreq = (HttpServletRequest) req;
         String remoteHost = "";
         if(resolveHosts)
-            remoteHost = req.getRemoteHost();
+            remoteHost = request.getRemoteHost();
         else
-            remoteHost = req.getRemoteAddr();
+            remoteHost = request.getRemoteAddr();
         String user = "";
-        if(hreq != null)
-            user = hreq.getRemoteUser();
+        if(request != null)
+            user = request.getRemoteUser();
         String query="";
-        if(hreq != null)
-            query = hreq.getRequestURI();
+        if(request != null)
+            query = request.getRequestURI();
         int bytes = response.getContentCount();
         if(bytes < 0)
             bytes = 0;
-        int status = ((HttpResponse)response).getStatus();
+        int status = response.getStatus();
         if (pattern.equals("combined")) {
                 String virtualHost = "";
-                if(hreq != null)
-                    virtualHost = hreq.getServerName();
+                if(request != null)
+                    virtualHost = request.getServerName();
                 String method = "";
-                if(hreq != null)
-                    method = hreq.getMethod();
+                if(request != null)
+                    method = request.getMethod();
                 String referer = "";
-                if(hreq != null)
-                    referer = hreq.getHeader("referer");
+                if(request != null)
+                    referer = request.getHeader("referer");
                 String userAgent = "";
-                if(hreq != null)
-                    userAgent = hreq.getHeader("user-agent");
+                if(request != null)
+                    userAgent = request.getHeader("user-agent");
         }
         synchronized (this) {
           int numberOfTries = 2;
@@ -492,17 +483,17 @@ public final class JDBCAccessLogValve
                 if (pattern.equals("combined")) {
      
                       String virtualHost = "";
-                      if(hreq != null)
-                         virtualHost = hreq.getServerName();
+                      if(request != null)
+                         virtualHost = request.getServerName();
                       String method = "";
-                      if(hreq != null)
-                         method = hreq.getMethod();
+                      if(request != null)
+                         method = request.getMethod();
                       String referer = "";
-                      if(hreq != null)
-                         referer = hreq.getHeader("referer");
+                      if(request != null)
+                         referer = request.getHeader("referer");
                       String userAgent = "";
-                      if(hreq != null)
-                         userAgent = hreq.getHeader("user-agent");
+                      if(request != null)
+                         userAgent = request.getHeader("user-agent");
                       ps.setString(7, virtualHost);
                       ps.setString(8, method);
                       ps.setString(9, referer);
