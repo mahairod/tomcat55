@@ -128,9 +128,11 @@ public final class BootstrapService
         /* Read the arguments from the Daemon context */
         if (context!=null) {
             arguments = context.getArguments();
-            for (int i = 0; i < arguments.length; i++) {
-                if (arguments[i].equals("-debug")) {
-                    debug = 1;
+            if (arguments!=null) {
+                for (int i = 0; i < arguments.length; i++) {
+                    if (arguments[i].equals("-debug")) {
+                        debug = 1;
+                    }
                 }
             }
         }
