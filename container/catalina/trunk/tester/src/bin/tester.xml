@@ -8,11 +8,15 @@
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
-  <property name="examples.path"  value="/examples"/>
+  <property name="examples.path"  value="/jsp-examples"/>
   <property name="golden.path"    value="${context.path}/golden"/>
   <property name="manager.path"   value="/manager"/>
   <property name="reload.path"    value="/tester"/>
-  <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
+  <taskdef  name="tester"     classname="org.apache.tester.TestClient">
+    <classpath>
+      <pathelement location="${catalina.home}/webapps/tester/WEB-INF/lib/tester.jar"/>
+    </classpath>
+  </taskdef>
 
 
   <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterRequest,FilterResponse,Jndi,Jsp,Lifecycle,RequestDispatcher,Resources,Security,ServletContext,ServletRequest,ServletResponse,HttpSession,XercesTest"/>
@@ -110,33 +114,23 @@
           status="404"/>
 
     <!-- Should be able to execute the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/jsp/dates/date.jsp" debug="${debug}"
+         request="${examples.path}/dates/date.jsp" debug="${debug}"
           status="200"/>
 
     <!-- Should not be able to view the source of the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/jsp/dates/date.Jsp" debug="${debug}"
+         request="${examples.path}/dates/date.Jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/jsp/dates/Date.jsp" debug="${debug}"
+         request="${examples.path}/dates/Date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should not be able to view the source of the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/jsp/Dates/date.jsp" debug="${debug}"
-          status="404"/>
-
-    <!-- Should not be able to view the source of the Date example -->
-    <touch  file="${catalina.home}/webapps/examples/jsp/dates/date.jsp"/>
-    <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/Jsp/dates/date.jsp" debug="${debug}"
+         request="${examples.path}/Dates/date.jsp" debug="${debug}"
           status="404"/>
 
     <!-- Should be able to execute the HelloWorld servlet example -->
@@ -203,7 +197,7 @@
 
     <!-- Verify we can access the JSP page normally -->
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${examples.path}/jsp/snp/snoop.jsp"
+         request="${examples.path}/snp/snoop.jsp"
           status="200"/>
 
   </target>
@@ -1386,12 +1380,12 @@
     <!-- Should not be able to use specially crafted URLs to get around 
          security constraints -->
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/jsp/security//protected/index.jsp" 
+         request="${examples.path}/security//protected/index.jsp" 
          debug="${debug}" status="302"/>
 
     <!-- DefaultServlet should not decode the path again -->
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${examples.path}/jsp/snp/snoop%252ejsp"
+         request="${examples.path}/snp/snoop%252ejsp"
           status="404"/>
 
   </target>
