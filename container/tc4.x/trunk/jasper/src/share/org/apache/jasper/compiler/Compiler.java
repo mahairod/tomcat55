@@ -74,6 +74,8 @@ import org.apache.jasper.compiler.ParseException;
 
 import org.apache.jasper.logging.Logger;
 
+import org.xml.sax.Attributes;
+
 /**
  * If you want to customize JSP compilation aspects, this class is
  * something you should take a look at. 
@@ -341,8 +343,8 @@ public class Compiler {
 		tmpReader.skipSpaces();
 		
 		try {
-		    Hashtable attrs = tmpReader.parseTagAttributes();
-		    String ct = (String) attrs.get("contentType");
+		    Attributes attrs = tmpReader.parseTagAttributes();
+		    String ct = attrs.getValue("contentType");
 		    if (ct != null) {
 			int loc = ct.indexOf("charset=");
 			if (loc > 0) {

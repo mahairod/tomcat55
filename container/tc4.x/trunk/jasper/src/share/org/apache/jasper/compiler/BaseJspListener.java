@@ -69,10 +69,13 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
+
 /**
  * An abstract base class to make things easy during development.
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 public class BaseJspListener implements ParseEventListener {
     protected JspReader reader;
@@ -100,51 +103,44 @@ public class BaseJspListener implements ParseEventListener {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.comments"));
     }
 
-    public void handleDirective(String directive, Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleDirective(String directive,Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.directives"));
     }
     
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleDeclaration(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.declarations"));
     }
     
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleScriptlet(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.scriptlets"));
     }
     
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleExpression(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.expressions"));
     }
 
-    public void handleBean(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException
+    public void handleBean(Mark start,Mark stop,Attributes attrs) throws JasperException
     {
         throw new JasperException(Constants.getString("jsp.error.not.impl.usebean"));
     }
     
-    public void handleBeanEnd(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleBeanEnd(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         throw new JasperException(Constants.getString("jsp.error.not.impl.usebean"));
     }
 
-    public void handleGetProperty(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleGetProperty(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         throw new JasperException(Constants.getString("jsp.error.not.impl.getp"));
     }
     
-    public void handleSetProperty(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleSetProperty(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         throw new JasperException(Constants.getString("jsp.error.not.impl.setp"));
     }
     
-    public void handlePlugin(Mark start, Mark stop, Hashtable attrs,
-    				Hashtable param, String fallback) 
-        throws JasperException 
+    public void handlePlugin(Mark start,Mark stop,Attributes attrs,Hashtable param,String fallback) throws JasperException 
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.plugin"));
     }
@@ -153,30 +149,22 @@ public class BaseJspListener implements ParseEventListener {
         System.err.print(chars);
     }
 
-    public void handleForward(Mark start, Mark stop, Hashtable attrs, Hashtable param) 
-        throws JasperException 
+    public void handleForward(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.forward"));
     }
 
-    public void handleInclude(Mark start, Mark stop, Hashtable attrs, Hashtable param) 
-        throws JasperException 
+    public void handleInclude(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.include"));
     }
 
-    public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, 
-			       String shortTagName, TagLibraryInfo tli, 
-			       TagInfo ti)
-	throws JasperException
+    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti) throws JasperException
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.taglib"));
     }
     
-    public void handleTagEnd(Mark start, Mark stop, String prefix, 
-			     String shortTagName, Hashtable attrs, 
-                             TagLibraryInfo tli, TagInfo ti)
-	throws JasperException
+    public void handleTagEnd(Mark start,Mark stop,String prefix,String shortTagName,Attributes attrs,TagLibraryInfo tli,TagInfo ti) throws JasperException
     {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.taglib"));
     }
@@ -185,12 +173,10 @@ public class BaseJspListener implements ParseEventListener {
 	return null;
     }
 
-    public void handleRootBegin(Hashtable attrs) {};
-    public void handleRootEnd() {};
+    public void handleRootBegin(Attributes attrs) {}
+    public void handleRootEnd() {}
 
-    public void handleUninterpretedTagBegin(Mark start, Mark stop,
-					    String rawName, Hashtable attrs)
-	throws JasperException {}
+    public void handleUninterpretedTagBegin(Mark start,Mark stop,String rawName,Attributes attrs) throws JasperException {}
 
     public void handleUninterpretedTagEnd(Mark start, Mark stop,
 					  String rawName)

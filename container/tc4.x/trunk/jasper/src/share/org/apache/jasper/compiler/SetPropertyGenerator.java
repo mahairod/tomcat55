@@ -68,20 +68,23 @@ import java.beans.*;
 
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generator for <jsp:setProperty .../>
  *
  * @author Mandar Raje
+ * @author Danno Ferrin
  */
 public class SetPropertyGenerator
     extends GeneratorBase
     implements ServiceMethodPhase 
 {
-    Hashtable attrs;
+    Attributes attrs;
     BeanRepository beanInfo;
     Mark start;
     
-    public SetPropertyGenerator (Mark start, Mark stop, Hashtable attrs,
+    public SetPropertyGenerator (Mark start, Mark stop, Attributes attrs,
 				 BeanRepository beanInfo) {
 	this.attrs = attrs;
 	this.beanInfo = beanInfo;
@@ -138,7 +141,7 @@ public class SetPropertyGenerator
     }
     
     public String getAttribute(String name) {
-	return (attrs != null) ? (String) attrs.get(name) : null;
+	return (attrs != null) ? attrs.getValue(name) : null;
     }
 }
 

@@ -68,11 +68,15 @@ import java.io.ByteArrayInputStream;
 
 import javax.servlet.jsp.tagext.PageInfo;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+
 /**
  * Class responsible for generating the XML stream representing
  * the JSP translation unit being compiled.
  *
  * @author Pierre Delisle
+ * @author Danno Ferrin
  */
 public class XmlOutputter {
 
@@ -86,14 +90,14 @@ public class XmlOutputter {
      * The root attributes of all the <jsp:root> tags encountered
      * in the translation unit 
      */
-    private Hashtable rootAttrs;
+    private AttributesImpl rootAttrs;
     
     //*********************************************************************
     // Constructor
 
     XmlOutputter() {
 	sb = new StringBuffer();
-	rootAttrs = new Hashtable();
+	rootAttrs = new AttributesImpl();
     }
 
     //*********************************************************************
@@ -105,12 +109,11 @@ public class XmlOutputter {
      * tags. This method cumulates all attributes for the
      * <jsp:root> tag.
      */
-    void addRootAttrs(Hashtable attrs) {
-        Enumeration enum = attrs.keys();
-        while (enum.hasMoreElements()) {
-            Object name = enum.nextElement();
-            Object value = attrs.get(name);
-            rootAttrs.put(name, value);
+    void addRootAttrs(Attributes attrs) {
+        int attrsLength = attrs.getLength();
+        for (int i = 0; i < attrsLength; i++) {
+            rootAttrs.addAttribute(attrs.getURI(i), attrs.getLocalName(i),
+                attrs.getQName(i), attrs.getType(i), attrs.getValue(i));
         }
     }
     
@@ -127,7 +130,7 @@ public class XmlOutputter {
      * Append the start tag along with its attributes to the
      * XML stream.
      */
-    void append(String tag, Hashtable attrs) {
+    void append(String tag, Attributes attrs) {
         append(tag, attrs, sb);
     }
     
@@ -139,16 +142,16 @@ public class XmlOutputter {
      * can only be generated once we've processed all parts
      * of the translation unit]
      */
-    void append(String tag, Hashtable attrs, StringBuffer buff) {
+    void append(String tag, Attributes attrs, StringBuffer buff) {
         buff.append("<").append(tag);
-        if (attrs == null) {
+        if (attrs == null || attrs.getLength() < 1) {
             buff.append(">");
         } else {
             buff.append("\n");
-            Enumeration enum = attrs.keys();
-            while (enum.hasMoreElements()) {
-                String name = (String)enum.nextElement();
-                String value = (String)attrs.get(name);
+            int attrsLength = attrs.getLength();
+            for (int i = 0; i < attrsLength; i++) {
+                String name = attrs.getQName(i);
+                String value = attrs.getValue(i);
                 buff.append("  ").append(name).append("=\"");
 		buff.append(JspUtil.getExprInXml(value)).append("\"\n");
             }
@@ -160,7 +163,7 @@ public class XmlOutputter {
      * Append the start tag along with its attributes and body
      * to the XML stream.
      */
-    void append(String tag, Hashtable attrs, char[] text) {
+    void append(String tag, Attributes attrs, char[] text) {
         append(tag, attrs);
         append(text);
         sb.append("</").append(tag).append(">\n");

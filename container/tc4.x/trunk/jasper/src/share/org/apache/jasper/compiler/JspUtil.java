@@ -67,6 +67,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.util.Hashtable;
+import java.util.Vector;
 import java.util.Enumeration;
 
 import org.apache.jasper.Constants;
@@ -77,11 +78,13 @@ import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.AttributesImpl;
 
 /** 
  * This class has all the utility method(s).
@@ -89,6 +92,7 @@ import org.xml.sax.InputSource;
  *
  * @author Mandar Raje.
  * @author Rajiv Mordani.
+ * @author Danno Ferrin
  */
 public class JspUtil {
 
@@ -203,12 +207,17 @@ public class JspUtil {
 	}
     }
 
-    public static void checkAttributes (String typeOfTag, Hashtable attrs,
+    public static void checkAttributes (String typeOfTag, Attributes attrs,
     					ValidAttribute[] validAttributes, Mark start)
 					throws JasperException
     {
 	boolean valid = true;
-	Hashtable temp = (Hashtable)attrs.clone ();
+        // AttributesImpl.removeAttribute is broken, so we do this...
+        int tempLength = attrs.getLength();
+	Vector temp = new Vector(tempLength, 1);
+        for (int i = 0; i < tempLength; i++) {
+            temp.addElement(attrs.getQName(i));
+        }
 
 	/**
 	 * First check to see if all the mandatory attributes are present.
@@ -218,10 +227,11 @@ public class JspUtil {
 	String missingAttribute = null;
 
 	for (int i = 0; i < validAttributes.length; i++) {
-	        
+	    int attrPos;    
 	    if (validAttributes[i].mandatory) {
-	        if (temp.get (validAttributes[i].name) != null) {
-	            temp.remove (validAttributes[i].name);
+                attrPos = temp.indexOf(validAttributes[i].name);
+	        if (attrPos != -1) {
+	            temp.remove(attrPos);
 		    valid = true;
 		} else {
 		    valid = false;
@@ -243,18 +253,19 @@ public class JspUtil {
 	 * Check to see if there are any more attributes for the specified
 	 * tag.
 	 */
-	if (temp.size() == 0)
+        int attrLeftLength = temp.size();
+	if (attrLeftLength == 0)
 	    return;
 
 	/**
 	 * Now check to see if the rest of the attributes are valid too.
 	 */
-   	Enumeration enum = temp.keys ();
+   	//Enumeration enum = temp.keys ();
 	String attribute = null;
 
-	while (enum.hasMoreElements ()) {
+	for (int j = 0; j < attrLeftLength; j++) {
 	    valid = false;
-	    attribute = (String) enum.nextElement ();
+	    attribute = (String) temp.elementAt(j);
 	    for (int i = 0; i < validAttributes.length; i++) {
 	        if (attribute.equals(validAttributes[i].name)) {
 		    valid = true;
@@ -324,6 +335,16 @@ public class JspUtil {
 	    this (name, false);
 	}
     }
+    
+    public static Hashtable attrsToHashtable(Attributes attrs) {
+        int len = attrs.getLength();
+        Hashtable table = new Hashtable(len);
+        for (int i=0; i<len; i++) {
+            table.put(attrs.getQName(i), attrs.getValue(i));
+        }
+        return table;
+    }
+
 }
 
 class MyEntityResolver implements EntityResolver {

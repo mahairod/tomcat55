@@ -68,16 +68,19 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generator for <jsp:plugin>
  *
  * @author Rajiv Mordani [mode@eng.sun.com]
+ * @author Danno Ferrin
  */
 public class PluginGenerator 
     extends GeneratorBase
     implements ServiceMethodPhase 
 {
-    Hashtable attrs;
+    Attributes attrs;
     Hashtable param;
     String fallback;
 
@@ -85,7 +88,7 @@ public class PluginGenerator
     Mark start;
     
     
-    public PluginGenerator(Mark start, Hashtable attrs, Hashtable param,
+    public PluginGenerator(Mark start, Attributes attrs, Hashtable param,
 			   String fallback) {
     	this.attrs = attrs;
 	this.param = param;
@@ -387,6 +390,6 @@ public class PluginGenerator
     }
 
     public String getAttribute(String name) {
-	return (attrs != null) ? (String) attrs.get(name) : null;
+	return (attrs != null) ? attrs.getValue(name) : null;
     }
 }

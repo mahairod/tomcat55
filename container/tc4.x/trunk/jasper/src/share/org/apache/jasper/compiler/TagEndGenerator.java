@@ -65,11 +65,13 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.BodyTag;
 
+import org.xml.sax.Attributes;
 
 /**
  * Custom tag support.
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 public class TagEndGenerator
     extends TagGeneratorBase
@@ -78,11 +80,11 @@ public class TagEndGenerator
     String prefix, shortTagName;
     TagLibraryInfo tli;
     TagInfo ti;
-    Hashtable attrs;
+    Attributes attrs;
     TagLibraries libraries;
 
     public TagEndGenerator(String prefix, String shortTagName,
-                           Hashtable attrs, TagLibraryInfo tli,
+                           Attributes attrs, TagLibraryInfo tli,
                            TagInfo ti, TagLibraries libraries,
                            Stack tagHandlerStack, Hashtable tagVarNumbers)
     {
@@ -101,7 +103,8 @@ public class TagEndGenerator
         String thVarName = tvd.tagHandlerInstanceName;
         String evalVarName = tvd.tagEvalVarName;
 
-        VariableInfo[] vi = ti.getVariableInfo(new TagData(attrs));
+        VariableInfo[] vi = ti.getVariableInfo(new TagData(
+                JspUtil.attrsToHashtable(attrs)));
 
         Class tagHandlerClass =
 	    libraries.getTagCache(prefix, shortTagName).getTagHandlerClass();

@@ -67,19 +67,22 @@ import java.lang.reflect.Method;
 
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generator for <jsp:getProperty.../>
  *
  * @author Mandar Raje
+ * @author Danno Ferrin
  */
 public class GetPropertyGenerator 
     extends GeneratorBase 
     implements ServiceMethodPhase 
 {
-    Hashtable attrs;
+    Attributes attrs;
     BeanRepository beanInfo;
     
-    public GetPropertyGenerator (Mark start, Mark stop, Hashtable attrs,
+    public GetPropertyGenerator (Mark start, Mark stop, Attributes attrs,
 				 BeanRepository beanInfo) {
 	this.attrs = attrs;
 	this.beanInfo = beanInfo;
@@ -113,7 +116,7 @@ public class GetPropertyGenerator
     }
     
     public String getAttribute(String name) {
-	return (attrs != null) ? (String) attrs.get(name) : null;
+	return (attrs != null) ? attrs.getValue(name) : null;
     }
 }
 

@@ -74,10 +74,14 @@ import org.apache.jasper.Constants;
 
 import org.apache.jasper.compiler.ServletWriter;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+
 /**
  * Custom tag support.
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 public class TagBeginGenerator
     extends TagGeneratorBase
@@ -85,7 +89,7 @@ public class TagBeginGenerator
 {
     String prefix;
     String shortTagName;
-    Hashtable attrs;
+    Attributes attrs;
     TagLibraryInfo tli;
     TagInfo ti;
     TagAttributeInfo[] attributes;
@@ -96,7 +100,7 @@ public class TagBeginGenerator
     TagLibraries libraries;
 
 
-    public TagBeginGenerator(Mark start, String prefix, String shortTagName, Hashtable attrs,
+    public TagBeginGenerator(Mark start, String prefix, String shortTagName, Attributes attrs,
 			     TagLibraryInfo tli, TagInfo ti, TagLibraries libraries,
                              Stack tagHandlerStack, Hashtable tagVarNumbers)
         throws JasperException
@@ -141,7 +145,7 @@ public class TagBeginGenerator
     void validate() throws JasperException {
 
         // Sigh! I wish I didn't have to clone here.
-        Hashtable attribs = (Hashtable) attrs.clone();
+        Hashtable attribs = JspUtil.attrsToHashtable(attrs);
 
         // First make sure all required attributes are indeed present.
         for(int i = 0; i < attributes.length; i++)
@@ -181,37 +185,44 @@ public class TagBeginGenerator
 				       Constants.getString("jsp.error.invalid_attributes"));
     }
 
+    /**
+     * Generates the code that sets the attributes of the tag bean.
+     * <BR><B>Precondition</B>: All attributes must be validated, specifically
+     * any attributes in the attribs field correspond to an exposed proeprty of
+     * the tag bean, and only those attributes that are to be run-time 
+     * expressions are encoded as such in the code<BR>
+     */
     private final void generateSetters(ServletWriter writer, String parent)
         throws JasperException
     {
         writer.println(thVarName+".setPageContext(pageContext);");
         writer.println(thVarName+".setParent("+parent+");");
 
-        if (attributes.length != 0)
-	    for(int i = 0; i < attributes.length; i++) {
-                String attrValue = (String) attrs.get(attributes[i].getName());
-                if (attrValue != null) {
-		    String attrName = attributes[i].getName();
+        int attrsLength = attrs.getLength();
+        for(int i = 0; i < attrsLength; i++) {
+            String attrValue = attrs.getValue(i);
+            if (attrValue != null) {
+                String attrName = attrs.getQName(i);
 		    Method m = tc.getSetterMethod(attrName);
-		    if (m == null)
-			throw new CompileException
-			    (start, Constants.getString
-			     ("jsp.error.unable.to_find_method",
-			      new Object[] { attrName }));
+                if (m == null)
+                    throw new CompileException
+                        (start, Constants.getString
+                         ("jsp.error.unable.to_find_method",
+                          new Object[] { attrName }));
 
-                    Class c[] = m.getParameterTypes();
-                    // assert(c.length > 0)
+                Class c[] = m.getParameterTypes();
+                // assert(c.length > 0)
 
-                    if (attributes[i].canBeRequestTime() && 
-			    JspUtil.isExpression(attrValue)) {
-			attrValue = JspUtil.getExpr(attrValue);
-		    } else {
-			attrValue = convertString(c[0], attrValue, writer, attrName,
-						  tc.getPropertyEditorClass(attrName));
-		    }
-		    writer.println(thVarName+"."+m.getName()+"("+attrValue+");");
+                if (attributes[i].canBeRequestTime() && 
+                        JspUtil.isExpression(attrValue)) {
+                    attrValue = JspUtil.getExpr(attrValue);
+                } else {
+                    attrValue = convertString(c[0], attrValue, writer, attrName,
+                                              tc.getPropertyEditorClass(attrName));
                 }
+                writer.println(thVarName+"."+m.getName()+"("+attrValue+");");
             }
+        }
     }
 
     public String convertString(Class c, String s, ServletWriter writer, String attrName,

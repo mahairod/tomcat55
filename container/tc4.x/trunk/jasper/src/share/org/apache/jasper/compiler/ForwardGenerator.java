@@ -67,10 +67,13 @@ import java.util.Enumeration;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generator for <jsp:forward>
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 public class ForwardGenerator 
     extends GeneratorBase
@@ -80,12 +83,12 @@ public class ForwardGenerator
     boolean isExpression = false;
     Hashtable params;
     
-    public ForwardGenerator(Mark start, Hashtable attrs, Hashtable param)
+    public ForwardGenerator(Mark start, Attributes attrs, Hashtable param)
 	throws JasperException {
-	    if (attrs.size() != 1)
+	    if (attrs.getLength() != 1)
 		throw new JasperException(Constants.getString("jsp.error.invalid.forward"));
 	    
-	    page = (String) attrs.get("page");
+	    page = attrs.getValue("page");
 	    if (page == null)
 		throw new CompileException(start,
 					   Constants.getString("jsp.error.invalid.forward"));

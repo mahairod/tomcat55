@@ -66,21 +66,24 @@ import java.lang.reflect.Method;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generate code for useBean.
  *
  * @author Mandar Raje
+ * @author Danno Ferrin
  */
 public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase, 
     ClassDeclarationPhase {
   
-	Hashtable attrs;
+	Attributes attrs;
 	BeanRepository beanInfo;
 	boolean genSession;
 	boolean beanRT = false;
 	Mark start;
   
-    public BeanGenerator (Mark start, Hashtable attrs, BeanRepository beanInfo,
+    public BeanGenerator (Mark start, Attributes attrs, BeanRepository beanInfo,
 			  boolean genSession) {
 	this.attrs = attrs;
 	this.beanInfo = beanInfo;
@@ -362,7 +365,7 @@ public class BeanGenerator extends GeneratorBase implements ServiceMethodPhase,
     }
 	
     public String getAttribute(String name) {
-	return (attrs != null) ? (String) attrs.get(name) : null;
+	return (attrs != null) ? attrs.getValue(name) : null;
     }
 	
 }

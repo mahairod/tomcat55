@@ -71,12 +71,15 @@ import javax.servlet.jsp.tagext.TagInfo;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.JspCompilationContext;
 
+import org.xml.sax.Attributes;
+
 /**
  * The class that parses the JSP input and calls the right methods on
  * the code generator backend. 
  *
  * @author Anil K. Vijendran
  * @author Rajiv Mordani
+ * @author Danno Ferrin
  */
 public class Parser {
     /**
@@ -213,7 +216,7 @@ public class Parser {
 	    reader.advance(match.length());
 
 	    // Parse the attr-val pairs.
-	    Hashtable attrs = reader.parseTagAttributes();
+	    Attributes attrs = reader.parseTagAttributes();
 	    if (match.equals ("page"))
 	        JspUtil.checkAttributes ("Page directive", attrs, 
 					 pageDvalidAttrs, start);
@@ -270,7 +273,7 @@ public class Parser {
 		Hashtable param = new Hashtable();
 		Mark start = reader.mark();
 		reader.advance(OPEN_INCLUDE.length());
-		Hashtable attrs = reader.parseTagAttributes();
+		Attributes attrs = reader.parseTagAttributes();
 		JspUtil.checkAttributes ("Include", attrs, validAttributes, start);
 		reader.skipSpaces();
 		
@@ -352,7 +355,7 @@ public class Parser {
 	    if (reader.matches(OPEN_FORWARD)) {
 		Mark start = reader.mark();
 		reader.advance(OPEN_FORWARD.length());
-		Hashtable attrs = reader.parseTagAttributes();
+		Attributes attrs = reader.parseTagAttributes();
 		Hashtable param = new Hashtable();
 	        JspUtil.checkAttributes ("Forward", attrs, validAttributes, start);
 		reader.skipSpaces();
@@ -464,7 +467,7 @@ public class Parser {
 	    throws JasperException 
 	{
 	    String close, open, end_open = null;
-            Hashtable attrs = null;
+            Attributes attrs = null;
 	    Mark start;
 				
 	    if (reader.matches(OPEN_DECL)) {
@@ -518,7 +521,7 @@ public class Parser {
 	    throws JasperException
 	{
 	    String close, open, end_open=null;
-            Hashtable attrs = null;
+            Attributes attrs = null;
 	    Mark start;
 		
 	    if (reader.matches(OPEN_EXPR)) {
@@ -571,7 +574,7 @@ public class Parser {
 	    throws JasperException
 	{
 	    String close, open, end_open = null;
-            Hashtable attrs = null;
+            Attributes attrs = null;
 	    Mark start;
 	    
 	    if (reader.matches(OPEN_SCRIPTLET)) {
@@ -635,7 +638,7 @@ public class Parser {
 	    if (reader.matches(OPEN_BEAN)) {
 		Mark start = reader.mark();
 		reader.advance(OPEN_BEAN.length());
-		Hashtable attrs = reader.parseTagAttributesBean();
+		Attributes attrs = reader.parseTagAttributesBean();
 	        JspUtil.checkAttributes ("useBean", attrs, validAttributes, start);
 		reader.skipSpaces();
 		if (!reader.matches(CLOSE_BEAN)) {
@@ -700,7 +703,7 @@ public class Parser {
 	    if (reader.matches(OPEN_GETPROPERTY)) {
 		Mark start = reader.mark();
 		reader.advance(OPEN_GETPROPERTY.length());
-		Hashtable attrs = reader.parseTagAttributes ();
+		Attributes attrs = reader.parseTagAttributes ();
 	        JspUtil.checkAttributes ("getProperty", attrs, validAttributes, start);
 		reader.skipSpaces();
 		if (!reader.matches(CLOSE_GETPROPERTY))
@@ -743,7 +746,7 @@ public class Parser {
 	    if (reader.matches(OPEN_SETPROPERTY)) {
 		Mark start = reader.mark();
 		reader.advance(OPEN_SETPROPERTY.length());
-		Hashtable attrs = reader.parseTagAttributes ();
+		Attributes attrs = reader.parseTagAttributes ();
 	        JspUtil.checkAttributes ("setProperty", attrs, validAttributes, start);
 		reader.skipSpaces();
 		if (!reader.matches(CLOSE_SETPROPERTY))
@@ -819,7 +822,7 @@ public class Parser {
 
 	    String bc = ti.getBodyContent();
 
-            Hashtable attrs = reader.parseTagAttributes();
+            Attributes attrs = reader.parseTagAttributes();
             reader.skipSpaces();
             Mark bodyStart = null;
             Mark bodyStop = null;
@@ -919,7 +922,7 @@ public class Parser {
 	    if (reader.matches(OPEN_PLUGIN)) {
 		Mark start = reader.mark();
 		reader.advance(OPEN_PLUGIN.length());
-		Hashtable attrs = reader.parseTagAttributes ();
+		Attributes attrs = reader.parseTagAttributes ();
 		reader.skipSpaces ();
 
 	    if (!reader.matches(END_OPEN_PLUGIN))

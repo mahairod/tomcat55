@@ -73,6 +73,7 @@ import org.apache.jasper.*;
  * The SAX (2.0) parser event handler.
  *
  * @author Pierre Delisle
+ * @author Danno Ferrin
  *
  * @@@ TODO
  * - make sure validation is in sync with Parser (jsp syntax)
@@ -254,10 +255,9 @@ class ParserXJspSaxHandler
 	// end.
 	try {
 	    if (name.equals("jsp:root")) {
-		jspHandler.handleRootBegin(attrsToHashtable(node.attrs));
+		jspHandler.handleRootBegin(node.attrs);
 	    } else if (name.equals("jsp:useBean")) {
-		jspHandler.handleBean(
-				      node.start, node.start, attrsToHashtable(node.attrs));
+		jspHandler.handleBean(node.start, node.start, node.attrs);
 	    } else if (name.length()<4 || 
 		       !name.substring(0,4).equals("jsp:")) {
 		// custom tag or 'uninterpreted' tag
@@ -276,9 +276,8 @@ class ParserXJspSaxHandler
 		if (!isCustomTag) {
 		    // uninterpreted tag
 		    node.setUninterpreted(true);
-		    jspHandler.handleUninterpretedTagBegin(
-				node.start, node.start, 
-				node.rawName, attrsToHashtable(node.attrs));
+		    jspHandler.handleUninterpretedTagBegin(node.start, 
+                            node.start, node.rawName, node.attrs);
 		}
 	    }
 	} catch (Exception ex) {
@@ -309,31 +308,28 @@ class ParserXJspSaxHandler
 		jspHandler.handleRootEnd();
 	    } else if (name.equals("jsp:directive.include")) {
 		node.validate(true, false);
-		jspHandler.handleDirective(
-					   "include", node.start, stop, 
-					   attrsToHashtable(node.attrs));
+		jspHandler.handleDirective("include", node.start, stop, 
+                        node.attrs);
 	    } else if (name.equals("jsp:directive.page")) {
 		node.validate(true, false);
-		jspHandler.handleDirective(
-					   "page", node.start, stop,
-					   attrsToHashtable(node.attrs));
+		jspHandler.handleDirective("page", node.start, stop, 
+                        node.attrs);
 	    } else if (name.equals("jsp:directive.taglib")) {
 		node.validate(true, false);
-		jspHandler.handleDirective(
-					   "taglib", node.start, stop,
-					   attrsToHashtable(node.attrs));
+		jspHandler.handleDirective("taglib", node.start, stop,
+                        node.attrs);
 	    } else if (name.equals("jsp:declaration")) {
 		node.validate(false, true);
 		jspHandler.handleDeclaration(
-					     node.start, stop, null, node.getText());
+                        node.start, stop, null, node.getText());
 	    } else if (name.equals("jsp:expression")) {
 		node.validate(false, true);
 		jspHandler.handleExpression(
-					    node.start, stop, null, node.getText());
+                        node.start, stop, null, node.getText());
 	    } else if (name.equals("jsp:scriptlet")) {
 		node.validate(false, true);
 		jspHandler.handleScriptlet(
-					    node.start, stop, null, node.getText());
+                        node.start, stop, null, node.getText());
 	    } else if (name.equals("jsp:param")) {
 		node.validate(true, false);
 		// push the node back, it will be needed by the container node
@@ -351,8 +347,7 @@ class ParserXJspSaxHandler
 		    node = (Node)stack.pop();
 		}
 		node.validate(true, true); //@@@
-		jspHandler.handleInclude(
-                    node.start, stop, attrsToHashtable(node.attrs), params);
+		jspHandler.handleInclude(node.start, stop, node.attrs, params);
 	    } else if (name.equals("jsp:forward")) {
 		Hashtable params = null;
 		if (!node.rawName.equals("jsp:forward")) {
@@ -362,20 +357,16 @@ class ParserXJspSaxHandler
 		    node = (Node)stack.pop();
 		}
 		node.validate(true, true);
-		jspHandler.handleForward(
-					 node.start, stop, attrsToHashtable(node.attrs), params);
+		jspHandler.handleForward(node.start, stop, node.attrs, params);
 	    } else if (name.equals("jsp:useBean")) {
 		node.validate(true, true); // @@@
-		jspHandler.handleBeanEnd(
-		    node.start, stop,  attrsToHashtable(node.attrs));
+		jspHandler.handleBeanEnd(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:getProperty")) {
 		node.validate(true, true); // @@@
-		jspHandler.handleGetProperty(
-		    node.start, stop,  attrsToHashtable(node.attrs));
+		jspHandler.handleGetProperty(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:setProperty")) {
 		node.validate(true, true); // @@@
-		jspHandler.handleSetProperty(
-		    node.start, stop,  attrsToHashtable(node.attrs));
+		jspHandler.handleSetProperty(node.start, stop, node.attrs);
 	    } else if (name.equals("jsp:plugin")) {
 		//@@@ test jsp parser to see if fallback can come first?
 		Hashtable params = null;
@@ -393,8 +384,8 @@ class ParserXJspSaxHandler
 		}
 		node.validate(true, true);
 		//p(node);
-		jspHandler.handlePlugin(
-		    node.start, stop, attrsToHashtable(node.attrs), params, fallback);
+		jspHandler.handlePlugin(node.start, stop, node.attrs, params, 
+                        fallback);
 	    } else {
 		if (node.isUninterpretedTag()) {
 		    // this is an 'uninterpreted' tag
@@ -429,8 +420,7 @@ class ParserXJspSaxHandler
 	}
 	node = new NodeTag(node, prefix, shortTagName, tli, ti);
 	stack.push(node);
-	jspHandler.handleTagBegin(node.start, node.start, 
-				  attrsToHashtable(node.attrs), 
+	jspHandler.handleTagBegin(node.start, node.start, node.attrs, 
 				  prefix, shortTagName, tli, ti);
     }
     
@@ -442,8 +432,7 @@ class ParserXJspSaxHandler
 				     + node.rawName);
 	}
 	jspHandler.handleTagEnd(node.start, stop, node.prefix, 
-				node.shortTagName, attrsToHashtable(node.attrs), 
-				node.tli, node.ti);
+                node.shortTagName, node.attrs, node.tli, node.ti);
     }
 
     //*********************************************************************
@@ -738,15 +727,6 @@ class ParserXJspSaxHandler
 	ex.printStackTrace(System.out);
     }
 
-    private Hashtable attrsToHashtable(Attributes attrs) {
-        int len = attrs.getLength();
-        Hashtable table = new Hashtable(len);
-        for (int i=0; i<len; i++) {
-            table.put(attrs.getQName(i), attrs.getValue(i));
-        }
-        return table;
-    }
-    
     private char[] makeCharArray(char[] buf, int offset, int len) {
         char[] ret = new char[len];
         for (int i=0,j=offset; i<len; i++,j++) {

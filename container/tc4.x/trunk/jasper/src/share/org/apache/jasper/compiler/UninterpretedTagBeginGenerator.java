@@ -64,10 +64,13 @@ package org.apache.jasper.compiler;
 import java.util.Hashtable;
 import java.util.Enumeration;
 
+import org.xml.sax.Attributes;
+
 /**
  * Generates the start element of an uninterpreted tag.
  *
  * @author Pierre Delisle
+ * @author Danno Ferrin
  */
 public class UninterpretedTagBeginGenerator
     extends GeneratorBase
@@ -77,9 +80,9 @@ public class UninterpretedTagBeginGenerator
     private static final String doubleQuote = "\\\"";
 
     private String tag;
-    private Hashtable attrs;
+    private Attributes attrs;
 
-    public UninterpretedTagBeginGenerator(String tag, Hashtable attrs) {
+    public UninterpretedTagBeginGenerator(String tag, Attributes attrs) {
 	this.tag = tag;
 	this.attrs = attrs;
     }
@@ -94,11 +97,11 @@ public class UninterpretedTagBeginGenerator
             sb.append(">");
         } else {
             sb.append(" ");
-            Enumeration enum = attrs.keys();
-            while (enum.hasMoreElements()) {
+            int attrsLength = attrs.getLength();
+            for (int i = 0; i < attrsLength; i++) {
 		String quote = doubleQuote;
-                String name = (String)enum.nextElement();
-                String value = (String)attrs.get(name);
+                String name = attrs.getQName(i);
+                String value = attrs.getValue(i);
 		if (value.indexOf('"') != -1) quote = singleQuote;
                 sb.append("  ").append(name).append("=").append(quote);
 		sb.append(value).append(quote);

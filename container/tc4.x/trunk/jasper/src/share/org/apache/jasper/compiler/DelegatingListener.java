@@ -70,12 +70,14 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
+import org.xml.sax.Attributes;
 
 /** 
  * Simple util class.... see usage in Parser.Parser(). Not intended for anything
  * other than that purpose.... 
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 final class DelegatingListener implements ParseEventListener {
     ParseEventListener delegate;
@@ -113,59 +115,52 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleComment(start, stop, text);
     }
 
-    public void handleDirective(String directive, Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleDirective(String directive,Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleDirective(directive, start, stop, attrs);
     }
     
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleDeclaration(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleDeclaration(start, stop, attrs, text);
     }
     
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleScriptlet(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleScriptlet(start, stop, attrs, text);
     }
     
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs, char[] text) throws JasperException {
+    public void handleExpression(Mark start,Mark stop,Attributes attrs,char[] text) throws JasperException {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleExpression(start, stop, attrs, text);
     }
 
-    public void handleBean(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException
+    public void handleBean(Mark start,Mark stop,Attributes attrs) throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleBean(start, stop, attrs);
     }
     
-    public void handleBeanEnd(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleBeanEnd(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleBeanEnd(start, stop, attrs);
     }
 
-    public void handleGetProperty(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleGetProperty(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleGetProperty(start, stop, attrs);
     }
     
-    public void handleSetProperty(Mark start, Mark stop, Hashtable attrs) 
-	throws JasperException 
+    public void handleSetProperty(Mark start,Mark stop,Attributes attrs) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleSetProperty(start, stop, attrs);
     }
     
-    public void handlePlugin(Mark start, Mark stop, Hashtable attrs,
-    				Hashtable param, String fallback) 
-        throws JasperException 
+    public void handlePlugin(Mark start,Mark stop,Attributes attrs,Hashtable param,String fallback) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handlePlugin(start, stop, attrs, param, fallback);
@@ -175,33 +170,25 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleCharData(start, stop, chars);
     }
 
-    public void handleForward(Mark start, Mark stop, Hashtable attrs, Hashtable param) 
-        throws JasperException 
+    public void handleForward(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleForward(start, stop, attrs, param);
     }
 
-    public void handleInclude(Mark start, Mark stop, Hashtable attrs, Hashtable param) 
-        throws JasperException 
+    public void handleInclude(Mark start,Mark stop,Attributes attrs,Hashtable param) throws JasperException 
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleInclude(start, stop, attrs, param);
     }
 
-    public void handleTagBegin(Mark start, Mark stop, Hashtable attrs, String prefix, 
-			       String shortTagName, TagLibraryInfo tli, 
-			       TagInfo ti)
-	throws JasperException
+    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti) throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti);
     }
     
-    public void handleTagEnd(Mark start, Mark stop, String prefix, 
-			     String shortTagName, Hashtable attrs, 
-                             TagLibraryInfo tli, TagInfo ti)
-	throws JasperException
+    public void handleTagEnd(Mark start,Mark stop,String prefix,String shortTagName,Attributes attrs,TagLibraryInfo tli,TagInfo ti) throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
         delegate.handleTagEnd(start, stop, prefix, shortTagName, attrs, tli, ti);
@@ -211,12 +198,10 @@ final class DelegatingListener implements ParseEventListener {
         return delegate.getTagLibraries();
     }
 
-    public void handleRootBegin(Hashtable attrs) {};
-    public void handleRootEnd() {};
+    public void handleRootBegin(Attributes attrs) {}
+    public void handleRootEnd() {}
 
-    public void handleUninterpretedTagBegin(Mark start, Mark stop,
-					    String rawName, Hashtable attrs)
-	throws JasperException {}
+    public void handleUninterpretedTagBegin(Mark start,Mark stop,String rawName,Attributes attrs) throws JasperException {}
 
     public void handleUninterpretedTagEnd(Mark start, Mark stop,
 					  String rawName)

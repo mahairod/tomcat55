@@ -68,10 +68,7 @@ import java.io.File;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
-
-
-
-
+import org.xml.sax.Attributes;
 
 /**
  * Generator for <jsp:include.../>
@@ -79,6 +76,7 @@ import org.apache.jasper.Constants;
  *
  * @author Anil K. Vijendran
  * @author Mandar Raje
+ * @author Danno Ferrin
  */
 public class IncludeGenerator 
     extends GeneratorBase
@@ -89,24 +87,24 @@ public class IncludeGenerator
     boolean flush;
     Hashtable params;
     
-    public IncludeGenerator(Mark start, Hashtable attrs, Hashtable param) 
+    public IncludeGenerator(Mark start, Attributes attrs, Hashtable param) 
         throws JasperException 
     {
-	if (attrs.size() > 2) {
+	if (attrs.getLength() > 2) {
 	    throw new CompileException(
                 start,
 		Constants.getString("jsp.error.include.tag"));
 	}
 
-        page = (String) attrs.get("page");
+        page = attrs.getValue("page");
         if (page == null) {
 	    throw new CompileException(
                 start,
 		Constants.getString("jsp.error.include.tag"));
 	}
 
-        String flushString = (String) attrs.get("flush");
-	if (flushString == null && attrs.size() != 1) {
+        String flushString = attrs.getValue("flush");
+	if (flushString == null && attrs.getLength() != 1) {
 	    throw new CompileException(
                start,
 	       Constants.getString("jsp.error.include.tag"));

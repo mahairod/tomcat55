@@ -72,6 +72,9 @@ import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.logging.*;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
+
 /**
  * JspReader is an input buffer for the JSP parser. It should allow
  * unlimited lookahead and pushback. It also has a bunch of parsing
@@ -82,6 +85,7 @@ import org.apache.jasper.logging.*;
  * @author Harish Prabandham
  * @author Rajiv Mordani
  * @author Mandar Raje
+ * @author Danno Ferrin
  */
 public class JspReader {
     protected Mark current  = null;
@@ -549,7 +553,7 @@ public class JspReader {
      * @param into The Hashtable instance to save the result to.
      */
 
-    private void parseAttributeValue(Hashtable into)
+    private void parseAttributeValue(AttributesImpl into)
 	throws ParseException
     {
 	// Get the attribute name:
@@ -566,7 +570,9 @@ public class JspReader {
 	String value = parseToken(true);
 	skipSpaces();
 	// Add the binding to the provided hashtable:
-	into.put(name, value);
+        //TODO review if the empty namespace works, or if we should get another one
+        //TODO do we want to use typw to indicate rt expression/scripting vlaue?
+	into.addAttribute("", name, name, "CDATA", value);
 	return;
     }
 
@@ -584,10 +590,10 @@ public class JspReader {
      * String instances (variable values).
      */
 
-    public Hashtable parseTagAttributesBean() 
+    public Attributes parseTagAttributesBean() 
 	throws ParseException
     {
-      Hashtable values = new Hashtable(11);
+      AttributesImpl values = new AttributesImpl();
 	while ( true ) {
 	    skipSpaces();
 	    int ch = peekChar();
@@ -630,10 +636,10 @@ public class JspReader {
      * String instances (variable values).
      */
 
-    public Hashtable parseTagAttributes() 
+    public Attributes parseTagAttributes() 
 	throws ParseException
     {
-	Hashtable values = new Hashtable(11);
+	AttributesImpl values = new AttributesImpl();
 	while ( true ) {
 	    skipSpaces();
 	    int ch = peekChar();
@@ -736,10 +742,10 @@ public class JspReader {
     private void parseParams (Hashtable into) 
         throws ParseException
     {
-	Hashtable attrs = parseTagAttributes();
+	Attributes attrs = parseTagAttributes();
 	// Check attributes (name and value):
-	String name  = (String) attrs.get("name");
-	String value = (String) attrs.get("value");
+	String name  = (String) attrs.getValue("name");
+	String value = (String) attrs.getValue("value");
 	if ( name == null )
  	    throw new ParseException(mark(), Constants.getString("jsp.error.param.noname"));
 	if ( value == null )

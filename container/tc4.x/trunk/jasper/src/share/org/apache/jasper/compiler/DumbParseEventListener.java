@@ -69,12 +69,14 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 
 import org.apache.jasper.JasperException;
 
+import org.xml.sax.Attributes;
 
 /**
  * Throwaway class that can be used for debugging during development
  * etc. This probably should go away soon. 
  *
  * @author Anil K. Vijendran
+ * @author Danno Ferrin
  */
 public class DumbParseEventListener extends BaseJspListener {
     
@@ -90,42 +92,42 @@ public class DumbParseEventListener extends BaseJspListener {
 	System.err.println(reader.getChars(start, stop));
     }
 
-    public void handleDirective(String directive, Mark start, Mark stop, Hashtable attrs) 
+    public void handleDirective(String directive, Mark start, Mark stop, Attributes attrs) 
         throws JasperException 
     {
 	System.err.println("\nDirective: "+directive);
 	System.err.println("\t"+attrs);
     }
     
-    public void handleDeclaration(Mark start, Mark stop, Hashtable attrs) 
+    public void handleDeclaration(Mark start, Mark stop, Attributes attrs) 
         throws JasperException 
     {
 	System.err.println("\nDeclaration: ");
 	System.err.println(reader.getChars(start, stop));
     }
     
-    public void handleScriptlet(Mark start, Mark stop, Hashtable attrs) 
+    public void handleScriptlet(Mark start, Mark stop, Attributes attrs) 
         throws JasperException 
     {
 	System.err.println("\nScriptlet: ");
 	System.err.println(reader.getChars(start, stop));
     }
     
-    public void handleExpression(Mark start, Mark stop, Hashtable attrs) 
+    public void handleExpression(Mark start, Mark stop, Attributes attrs) 
         throws JasperException 
     {
 	System.err.println("\nExpression: ");
 	System.err.println(reader.getChars(start, stop));
     }
 
-    public void handleBean(Mark start, Mark stop, Hashtable attrs)
+    public void handleBean(Mark start, Mark stop, Attributes attrs)
         throws JasperException 
     {
 	System.err.println("\nBean: ");
 	System.err.println("\t"+attrs);
     }
 
-    public void handleBeanEnd (Mark start, Mark stop, Hashtable attrs)
+    public void handleBeanEnd (Mark start, Mark stop, Attributes attrs)
 	throws JasperException 
     {
         
@@ -134,21 +136,21 @@ public class DumbParseEventListener extends BaseJspListener {
     }
 
 
-    public void handleGetProperty(Mark start, Mark stop, Hashtable attrs)	
+    public void handleGetProperty(Mark start, Mark stop, Attributes attrs)	
         throws JasperException 
     {
 	System.err.println("\nGetProperty: ");
 	System.err.println("\t"+attrs);
     }
     
-    public void handleSetProperty(Mark start, Mark stop, Hashtable attrs)
+    public void handleSetProperty(Mark start, Mark stop, Attributes attrs)
         throws JasperException 
     {
 	System.err.println("\nSetProperty: ");
 	System.err.println("\t"+attrs);
     }
     
-    public void handlePlugin(Mark start, Mark stop, Hashtable attrs)
+    public void handlePlugin(Mark start, Mark stop, Attributes attrs)
         throws JasperException 
     {
 	System.err.println("\nPlugin: ");
@@ -161,14 +163,14 @@ public class DumbParseEventListener extends BaseJspListener {
 	System.err.print(chars);
     }
     
-    public void handleForward(Mark start, Mark stop, Hashtable attrs)
+    public void handleForward(Mark start, Mark stop, Attributes attrs)
         throws JasperException 
     {
 	System.err.println("\n Forward: ");
 	System.err.println("\t"+attrs);
     }
 
-    public void handleInclude(Mark start, Mark stop, Hashtable attrs)
+    public void handleInclude(Mark start, Mark stop, Attributes attrs)
         throws JasperException 
     {
 	System.err.println("\n Include: ");
@@ -179,7 +181,7 @@ public class DumbParseEventListener extends BaseJspListener {
 	return null;
     }
 
-    public void handleTagBegin(Mark start, Hashtable attrs, String prefix, 
+    public void handleTagBegin(Mark start, Attributes attrs, String prefix, 
 			       String shortTagName, TagLibraryInfo tli, 
 			       TagInfo ti)
 	throws JasperException
@@ -189,7 +191,7 @@ public class DumbParseEventListener extends BaseJspListener {
     }
     
     public void handleTagEnd(Mark start, Mark stop, String prefix, 
-			     String shortTagName, Hashtable attrs, 
+			     String shortTagName, Attributes attrs, 
                              TagLibraryInfo tli, TagInfo ti)
 	throws JasperException
     {
