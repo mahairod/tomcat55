@@ -209,10 +209,6 @@
           <Context path="" docBase="ROOT" debug="0"/>
         -->
 
-        <!-- Tomcat Manager Context -->
-        <Context path="/manager" docBase="manager" 
-         debug="0" privileged="true"/>
-
         <!-- Tomcat Examples Context -->
         <Context path="/examples" docBase="examples" debug="0"
                  reloadable="true" crossContext="true">

@@ -76,7 +76,7 @@
     <!-- General Purpose Applications -->
     <mkdir dir="${webapps.deploy}/webapps"/>
     <copy todir="${webapps.deploy}/webapps">
-      <fileset dir="${webapps.build}" excludes="admin/**"/>
+      <fileset dir="${webapps.build}" excludes="admin/**,manager/**"/>
     </copy>
 
     <!-- Administrative Applications -->
@@ -84,6 +84,12 @@
     <mkdir     dir="${webapps.deploy}/server/webapps/admin"/>
     <copy    todir="${webapps.deploy}/server/webapps/admin">
       <fileset dir="${webapps.build}/admin" excludes="admin.xml"/>
+    </copy>
+    <copy    todir="${webapps.deploy}/webapps"
+              file="${webapps.build}/manager/manager.xml"/>
+    <mkdir     dir="${webapps.deploy}/server/webapps/manager"/>
+    <copy    todir="${webapps.deploy}/server/webapps/manager">
+      <fileset dir="${webapps.build}/manager" excludes="manager.xml"/>
     </copy>
     <copy    todir="${webapps.deploy}/webapps"
               file="${webapps.build}/admin/admin.xml"/>
