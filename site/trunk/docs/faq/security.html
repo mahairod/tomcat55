@@ -6,7 +6,15 @@
     " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Security</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/security.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
 <p>
-    Security issues. Here they are.
+    Security issues. But first a helpful link or two ...
+    <ul>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=106293430225790&w=2">
+        Using OpenSSL to set up your own CA
+        </a>
+     </li>
+    </ul>
+
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
   <ul>
@@ -33,6 +41,12 @@
      <li>
        <a href="#login">
           What is the default login for the manager and admin app?
+       </a>
+     </li>
+
+     <li>
+       <a href="#restrict">
+          How do I restrict access by ip address or remote host?
        </a>
      </li>
 
@@ -106,6 +120,19 @@
     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
         Configuring Manager Application Access</a>
   </div><br>
+
+  <b style="font-size: larger">
+    <a name="restrict">
+      How do I restrict access by ip address or remote host?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    By using the RemoteHostValve or RemoteAddrValve. Warning, these valves rely on
+    accurate incoming ip addresses or hostnames. So they can fall victim to spoofing!
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/valve.html">
+        Valve Reference Link</a>
+  </div><br>
+
 
 
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>

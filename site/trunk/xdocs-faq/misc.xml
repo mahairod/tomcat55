@@ -131,6 +131,17 @@ Questions that were not categorized.
         What is <code>Element "web-app" does not allow "servlet" here</code>?
       </a>
     </li>
+    <li>
+      <a href="#catalina.out">
+        Where does System.out go? <br />
+        How do I rotate catalina.out?
+      </a>
+    </li>
+    <li>
+      <a href="#getResourceAsStream">
+        How do open a file for reading in my webapp?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -345,6 +356,9 @@ Questions that were not categorized.
         &lt;/error-page&gt;
     </pre>
 
+    You may also catch error 500's as well as other specific exceptions or
+    exceptions which extend <tt>Throwable</tt>.
+    <br/>
     For more information, see the Servlet Specification for all the gory
     details of how you can play with this.
   </answer>
@@ -594,6 +608,34 @@ Questions that were not categorized.
     your web.xml file is ok.
   </answer>
 
+
+  <question>
+      <a name="catalina.out">
+        Where does System.out go? <br />
+        How do I rotate catalina.out?
+      </a>
+  </question>
+  <answer>
+    <code>System.out</code> and <code>System.err</code> both print to
+    catalina.out. But you can suppress this via the swallowOutput property and
+    sent to different log files.
+    <br/>
+    catalina.out does not rotate. But it should not be an issue because
+    nothing should be printing to standard output since you are using a logging
+    package, right?
+  <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106623436423859&amp;w=2"> A log4j example</a>  and
+  <a href="http://marc.theaimsgroup.com/?t=105544472600001&amp;r=1&amp;w=2">a thread about rotation of catalina.out</a>
+
+  </answer>
+
+  <question>
+      <a name="getResourceAsStream">
+       How do open a file for reading in my webapp?
+      </a>
+  </question>
+  <answer>
+    Use <tt>ServletContext.getResourceAsStream()</tt>.
+  </answer>
 
 </section>
 

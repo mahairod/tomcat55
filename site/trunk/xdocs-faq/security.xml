@@ -16,7 +16,15 @@
 
 <section name="Preface">
 <p>
-    Security issues. Here they are.
+    Security issues. But first a helpful link or two ...
+    <ul>
+     <li>
+        <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106293430225790&amp;w=2">
+        Using OpenSSL to set up your own CA
+        </a>
+     </li>
+    </ul>
+
 </p>
 </section>
 
@@ -46,6 +54,12 @@
      <li>
        <a href="#login">
           What is the default login for the manager and admin app?
+       </a>
+     </li>
+
+     <li>
+       <a href="#restrict">
+          How do I restrict access by ip address or remote host?
        </a>
      </li>
 
@@ -122,6 +136,19 @@
     <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
         Configuring Manager Application Access</a>
   </answer>
+
+  <question>
+    <a name="restrict">
+      How do I restrict access by ip address or remote host?
+    </a>
+  </question>
+  <answer>
+    By using the RemoteHostValve or RemoteAddrValve. Warning, these valves rely on
+    accurate incoming ip addresses or hostnames. So they can fall victim to spoofing!
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/config/valve.html">
+        Valve Reference Link</a>
+  </answer>
+
 
 
 </section>
