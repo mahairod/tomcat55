@@ -1471,14 +1471,21 @@ public class Generator {
 	/*
 	 * Declares any NESTED scripting variables of the given custom tag,
 	 * if the given custom tag is not nested inside itself (i.e, has a
-	 * nesting level of zero). In addition, a NESTED scripting variable is 
-	 * declared only if it has not already been declared in the same scope
-	 * in the generated code, that is, if this custom tag's parent is
+	 * nesting level of zero). If the custom tag does have a custom nesting
+	 * level greater than 0, this method declares a scripting variable
+	 * derived from the tag's "id" attribute (if present), only if its
+	 * scope is NESTED and it does not match the "id" attribute of any of
+	 * the enclosing tags of the same (custom) type.
+	 *
+	 * Additionally, a NESTED scripting variable is declared only if it
+	 * has not already been declared in the same Java
+	 * scope of the generated code, that is, if this custom tag's parent is
 	 * different from the parent of the custom tag that may already have
 	 * declared this variable.
 	 */
 	private void declareNestedScriptingVariables(Node.CustomTag n) {
-	    if (n.getCustomNestingLevel() > 0) {
+
+	    if (n.getCustomNestingLevel() > 0 && !n.hasUnnestedIdAttribute()) {
 		return;
 	    }
 
@@ -1489,17 +1496,42 @@ public class Generator {
 	    }
 
 	    if (varInfos != null) {
-		for (int i=0; i<varInfos.length; i++) {
-		    if ((varInfos[i].getScope() == VariableInfo.NESTED)
-			    && varInfos[i].getDeclare()) {
-			String name = varInfos[i].getVarName();
-			Node parent = (Node) nestedVars.get(name);
-			if ((parent == null) || (parent != n.getParent())) {
-			    out.printin(varInfos[i].getClassName());
-			    out.print(" ");
-			    out.print(name);
-			    out.println(";");
-			    nestedVars.put(name, n.getParent());
+		if (n.getCustomNestingLevel() == 0) {
+		    // Declare *any* scripting variables with NESTED scope
+		    for (int i=0; i<varInfos.length; i++) {
+			if ((varInfos[i].getScope() == VariableInfo.NESTED)
+			            && varInfos[i].getDeclare()) {
+			    String name = varInfos[i].getVarName();
+			    Node parent = (Node) nestedVars.get(name);
+			    if (parent == null || parent != n.getParent()) {
+				out.printin(varInfos[i].getClassName());
+				out.print(" ");
+				out.print(name);
+				out.println(";");
+				nestedVars.put(name, n.getParent());
+			    }
+			}
+		    }
+		} else {
+		    /*
+		     * Declare only scripting variable (with NESTED scope)
+		     * derived from unnested "id" attribute
+		     */
+		    String idAttr = n.getAttributeValue("id");
+		    for (int i=0; i<varInfos.length; i++) {
+			if ((varInfos[i].getScope() == VariableInfo.NESTED)
+			            && varInfos[i].getDeclare()) {
+			    String name = varInfos[i].getVarName();
+			    Node parent = (Node) nestedVars.get(name);
+			    if ((parent == null || parent != n.getParent())
+				    && idAttr.equals(name)) {
+				out.printin(varInfos[i].getClassName());
+				out.print(" ");
+				out.print(name);
+				out.println(" = null;");
+				nestedVars.put(name, n.getParent());
+				break;
+			    }
 			}
 		    }
 		}
@@ -1526,10 +1558,12 @@ public class Generator {
 	}
 
 	/*
-	 * For every scripting variable exposed by this custom tag, declares
-	 * a variable where the current value of the scripting variable may
-	 * be saved, so it can later be restored in this custom tag's end
-	 * element.
+	 * This method is called as part of the custom tag's start element.
+	 *
+	 * If the given custom tag has a custom nesting level greater than 0,
+	 * declare temporary variables where the current values of the tag's
+	 * scripting variables may be saved, so these values may be restored
+	 * in the tag's end element.
 	 */
 	private void declareTemporaryScriptingVariables(Node.CustomTag n) {
 	    if (n.getCustomNestingLevel() == 0) {
@@ -1577,12 +1611,13 @@ public class Generator {
 	}
 
 	/*
-	 * For each scripting variable of a custom tag with a nesting level
-	 * greater than 0, save its value to a temporary variable so that the
-	 * scripting variable can be synchronized inside the nested custom tag
-	 * without affecting the value it had at the start element of the
-	 * custom tag, which will be restored when the end element of the
-	 * custom tag is reached.
+	 * This method is called as part of the custom tag's start element.
+	 *
+	 * If the given custom tag has a custom nesting level greater than 0,
+	 * save the values of all its scripting variables to temporary
+	 * variables, so the scripting variables may be synchronized
+	 * without affecting the values they had at the tag's start element.
+	 * Those values will be restored when the tag's end element is reached.
 	 */
 	private void saveScriptingVariables(Node.CustomTag n) {
 	    if (n.getCustomNestingLevel() == 0) {
@@ -1623,9 +1658,11 @@ public class Generator {
 	}
 
 	/*
-	 * For each scripting variable of a custom tag with a nesting level
-	 * greater than 0, restore its original value that was saved in the
-	 * start element of the custom tag.
+	 * This method is called as part of the custom tag's end element.
+	 *
+	 * If the given custom tag has a custom nesting level greater than 0,
+	 * restore its scripting variables to their original values that were
+	 * saved in the tag's start element.
 	 */
 	private void restoreScriptingVariables(Node.CustomTag n) {
 	    if (n.getCustomNestingLevel() == 0) {

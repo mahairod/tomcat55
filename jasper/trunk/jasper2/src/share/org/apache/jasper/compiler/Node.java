@@ -673,7 +673,8 @@ public abstract class Node {
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
 	private VariableInfo[] varInfos;
-	private int nestingLevel;
+	private int customNestingLevel;
+	private boolean hasUnnestedIdAttribute;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -683,7 +684,8 @@ public abstract class Node {
 	    this.prefix = prefix;
 	    this.shortName = shortName;
 	    this.tagInfo = tagInfo;
-	    this.nestingLevel = computeCustomNestingLevel();
+	    this.customNestingLevel = computeCustomNestingLevel();
+	    this.hasUnnestedIdAttribute = determineHasUnnestedIdAttribute();
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -789,15 +791,25 @@ public abstract class Node {
 	}
 
 	/*
-	 * Gets this custom tag's nesting level.
+	 * Returns true if this custom tag has an "id" attribute that does
+	 * not match the "id" attribute of any of its enclosing parent tags of
+	 * the same custom tag type, and false otherwise. 
 	 */
-	public int getCustomNestingLevel() {
-	    return nestingLevel;
+	public boolean hasUnnestedIdAttribute() {
+	    return hasUnnestedIdAttribute;
 	}
 
 	/*
-	 * Computes this custom tag's nesting level, which corresponds to the
-	 * number of times this custom tag is nested inside itself.
+	 * Gets this custom tag's custom nesting level, which is given as
+	 * the number of times this custom tag is nested inside itself.
+	 */
+	public int getCustomNestingLevel() {
+	    return customNestingLevel;
+	}
+
+	/*
+	 * Computes this custom tag's custom nesting level, which corresponds
+	 * to the number of times this custom tag is nested inside itself.
 	 *
 	 * Example:
 	 * 
@@ -829,6 +841,38 @@ public abstract class Node {
 		p = p.parent;
 	    }
 	    return n;
+	}
+
+	/*
+	 * Checks to see if this custom tag has an "id" attribute that does
+	 * not match the "id" attribute of any of its enclosing parent tags of
+	 * the same custom tag type.
+	 */
+	private boolean determineHasUnnestedIdAttribute() {
+	    boolean unnested = false;
+
+	    String id = getAttributeValue("id");
+	    if (id != null) {
+		if (customNestingLevel == 0) {
+		    // tag not nested inside itself
+		    unnested = true;
+		} else {
+		    Node p = parent;
+		    while (p != null) {
+			if ((p instanceof Node.CustomTag)
+			      && name.equals(((Node.CustomTag) p).name)
+			      && id.equals(p.getAttributeValue("id"))) {
+			    break;
+			}
+			p = p.parent;
+		    }
+		    if (p == null) {
+			unnested = true;
+		    }
+		}
+	    }
+
+	    return unnested;
 	}
     }
 
