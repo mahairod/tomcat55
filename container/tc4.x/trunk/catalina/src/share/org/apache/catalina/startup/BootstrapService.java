@@ -71,6 +71,8 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import org.apache.service.Service;
+import org.apache.service.ServiceController;
 import org.apache.catalina.loader.Extension;
 import org.apache.catalina.loader.StandardClassLoader;
 
@@ -87,7 +89,8 @@ import org.apache.catalina.loader.StandardClassLoader;
  * @version $Revision$ $Date$
  */
 
-public final class BootstrapService {
+public final class BootstrapService 
+    implements Service {
 
 
     // ------------------------------------------------------- Static Variables
@@ -103,6 +106,140 @@ public final class BootstrapService {
      * Catalina instance.
      */
     private static Object catalina = null;
+
+
+    /**
+     * Catalina service.
+     */
+    private Object catalinaService = null;
+
+
+    // -------------------------------------------------------- Service Methods
+
+
+    /**
+     * Load the Catalina Service.
+     */
+    public void load(ServiceController controller, String arguments[])
+        throws Throwable {
+
+        System.out.println("Create Catalina server");
+
+        // Construct the class loaders we will need
+        ClassLoader commonLoader = createCommonLoader();
+        ClassLoader catalinaLoader =
+            createCatalinaLoader(commonLoader);
+        ClassLoader sharedLoader = createSharedLoader(commonLoader);
+        
+        Thread.currentThread().setContextClassLoader(catalinaLoader);
+        
+        // Load our startup class and call its process() method
+        
+        if( System.getSecurityManager() != null ) {
+            // Pre load some classes required for SecurityManager
+            // so that defineClassInPackage does not throw a
+            // security exception.
+            String basePackage = "org.apache.catalina.";
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedGetRequestDispatcher");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedGetResource");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedGetResourcePaths");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedLogMessage");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedLogException");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationContext$PrivilegedLogThrowable");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationDispatcher$PrivilegedForward");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "core.ApplicationDispatcher$PrivilegedInclude");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "connector.HttpRequestBase$PrivilegedGetSession");
+            catalinaLoader.loadClass
+                (basePackage +
+                 "loader.WebappClassLoader$PrivilegedFindResource");
+            catalinaLoader.loadClass
+                (basePackage + "session.StandardSession");
+            catalinaLoader.loadClass
+                (basePackage + "util.CookieTools");
+            catalinaLoader.loadClass(basePackage + "util.Enumerator");
+            catalinaLoader.loadClass("javax.servlet.http.Cookie");
+        }
+        
+        // Instantiate a startup class instance
+        if (debug >= 1)
+            log("Loading startup class");
+        Class startupClass =
+            catalinaLoader.loadClass
+            ("org.apache.catalina.startup.CatalinaService");
+        Object startupInstance = startupClass.newInstance();
+        
+        // Set the shared extensions class loader
+        if (debug >= 1)
+            log("Setting startup class properties");
+        String methodName = "setParentClassLoader";
+        Class paramTypes[] = new Class[1];
+        paramTypes[0] = Class.forName("java.lang.ClassLoader");
+        Object paramValues[] = new Object[1];
+        paramValues[0] = sharedLoader;
+        Method method =
+            startupInstance.getClass().getMethod(methodName, paramTypes);
+        method.invoke(startupInstance, paramValues);
+        
+        catalinaService = startupInstance;
+        
+        // Call the load() method
+        if (debug >= 1)
+            log("Calling startup class load() method");
+        methodName = "load";
+        method = catalinaService.getClass().getMethod(methodName, null);
+        method.invoke(catalinaService, null);
+
+    }
+
+
+    /**
+     * Start the Catalina Service.
+     */
+    public void start()
+        throws Throwable {
+
+        // Call the start() method
+        if (debug >= 1)
+            log("Calling startup class start() method");
+        String methodName = "start";
+        Method method = catalinaService.getClass().getMethod(methodName, null);
+        method.invoke(catalinaService, null);
+
+    }
+
+
+    /**
+     * Stop the Catalina Service.
+     */
+    public void stop()
+        throws Throwable {
+
+        // Call the stop() method
+        if (debug >= 1)
+            log("Calling startup class stop() method");
+        String methodName = "stop";
+        Method method = catalinaService.getClass().getMethod(methodName, null);
+        method.invoke(catalinaService, null);
+
+    }
 
 
     // ----------------------------------------------------------- Main Program
