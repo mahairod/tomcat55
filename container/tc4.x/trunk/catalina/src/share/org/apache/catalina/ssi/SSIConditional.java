@@ -18,10 +18,6 @@ package org.apache.catalina.ssi;
 
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.ServletOutputStream;
 
 /**
  *  SSI command that handles all conditional directives.

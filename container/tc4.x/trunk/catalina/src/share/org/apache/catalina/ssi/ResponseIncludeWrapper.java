@@ -17,7 +17,6 @@
 package org.apache.catalina.ssi;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

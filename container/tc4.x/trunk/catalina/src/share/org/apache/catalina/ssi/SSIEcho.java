@@ -16,7 +16,6 @@
 
 package org.apache.catalina.ssi;
 
-
 import java.io.PrintWriter;
 
 /**
