@@ -708,7 +708,6 @@ public class Connector
     public void setScheme(String scheme) {
 
         this.scheme = scheme;
-        setProperty("scheme", scheme);
 
     }
 
@@ -733,7 +732,6 @@ public class Connector
     public void setSecure(boolean secure) {
 
         this.secure = secure;
-        setProperty("secure", String.valueOf(secure));
 
     }
 
