@@ -8,6 +8,7 @@
 
     <properties>
         <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+        <author email="arjaquith@mindspring.com">Andrew R. Jaquith</author>
         <title>Realm Configuration HOW-TO</title>
     </properties>
 
@@ -1221,12 +1222,15 @@ on JAAS (see
 JAAS Authentication Tutorial</a> and 
 <a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/JAASLMDevGuide.html">the JAAS Login Module 
 Developer's Guide</a>) to be managed by the JAAS Login
-Context (<code>javax.security.auth.login.LoginContext</code>)
+Context (<code>javax.security.auth.login.LoginContext</code>).
+When developing your LoginModule, note that JAASRealm's built-in <code>CallbackHandler</code>
+only recognizes the <code>NameCallback</code> and <code>PasswordCallback</code> at present.
           </li>
           <li>Although not specified in JAAS, you should create
 seperate classes to distinguish between users and roles, extending <code>javax.security.Principal</code>,
 so that Tomcat can tell which Principals returned from your login
 module are users and which are roles (see <code>org.apache.catalina.realm.JAASRealm</code>).
+Regardless, the first Principal returned is <em>always</em> treated as the user Principal.
           </li>
           <li>Place the compiled classes on Tomcat's classpath
           </li>
@@ -1234,7 +1238,8 @@ module are users and which are roles (see <code>org.apache.catalina.realm.JAASRe
  href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/LoginConfigFile.html">JAAS
 LoginConfig file</a>) and tell Tomcat where to find it by specifying
 its location to the JVM, for instance by setting the environment
-variable: JAVA_OPTS=-D<code>JAVA_OPTS=-Djava.security.auth.login.config==$CATALINA_HOME/conf/jaas.config</code></li>
+variable: <code>JAVA_OPTS=-DJAVA_OPTS=-Djava.security.auth.login.config==$CATALINA_HOME/conf/jaas.config</code></li>
+
           <li>Configure your security-constraints in your web.xml for
 the resources you want to protect</li>
           <li>Configure the JAASRealm module in your server.xml </li>
@@ -1263,7 +1268,7 @@ are supported by this implementation:</p>
   </attribute>
 
   <attribute name="appName" required="true">
-    <p>The name of the realm as configured in your login configuration file 
+    <p>The name of the application as configured in your login configuration file 
     (<a href="http://java.sun.com/j2se/1.4.1/docs/guide/security/jaas/tutorials/LoginConfigFile.html">JAAS LoginConfig</a>).</p>
   </attribute>
 
@@ -1275,6 +1280,14 @@ are supported by this implementation:</p>
   <attribute name="roleClassNames" required="false">
     <p>A comma-seperated list of the names of the classes that you have made 
     for your role <code>Principals</code>.</p>
+  </attribute>
+
+  <attribute name="useContextClassLoader" required="false">
+    <p>Instructs JAASRealm to use the context class loader for loading the user-specified
+    <code>LoginModule</code> class and associated <code>Principal</code> classes. The
+    default value is <code>true</code>, which is backwards-compatible with the way 
+    Tomcat 4 works. To load classes using the container's classloader, specify
+    <code>true</code>.</p>
   </attribute>
 
 </attributes>
@@ -1325,8 +1338,12 @@ be reflected until     the next time that user logs on again.</li>
           <li>Debugging and exception messages logged by this <code>Realm</code>
 will be recorded by the <code>Logger</code> that is associated with our
 surrounding <code>Context</code>, <code>Host</code>, or <code>Engine</code>.
-By default, the corresponding Logger will create a     log file in the <code>$CATALINA_HOME/logs</code>
+By default, the corresponding Logger will create a log file in the <code>$CATALINA_HOME/logs</code>
 directory.</li>
+         <li>As with other <code>Realm</code> implementations, digested passwords
+          are supported if the <code>&lt;Realm&gt;</code> element in <code>server.xml</code>
+          contains a <code>digest</code> attribute; JAASRealm's <code>CallbackHandler</code>
+          will digest the password prior to passing it back to the <code>LoginModule</code></li>  
         </ul>
 
 </subsection>

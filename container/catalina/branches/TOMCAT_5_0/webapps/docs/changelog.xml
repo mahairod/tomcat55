@@ -40,6 +40,9 @@
       <update>
         Added and updated Connector documentation: <bug>31945</bug>. (yoavs)
       </update>
+      <update>
+        <bug>31739</bug>: Minor documentation corrections for realm-howto and AJP docs. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
