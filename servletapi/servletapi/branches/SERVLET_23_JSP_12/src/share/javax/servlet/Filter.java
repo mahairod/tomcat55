@@ -64,8 +64,8 @@ import java.io.IOException;
 
 	/** 
 	** A filter is an object than perform filtering tasks
-	** on either the request to a servlet, or on the response from 
-	** a servlet, or both.<br><br>
+	** on either the request to a resource (a servlet or static content), or on the response from 
+	** a resource, or both.<br><br>
 	** Filters perform filtering in the <code>doFilter</code> method. Every Filter has access to 
 	** a FilterConfig object from which it can obtain its initialization parameters, a
 	** reference to the ServletContext which it can use, for example, to load resources
@@ -104,7 +104,7 @@ public interface Filter {
 	/**
 	* The <code>doFilter</code> method of the Filter is called by the container
 	* each time a request/response pair is passed through the chain due
-	* to a client request for the Servlet at the end of the chain. The FilterChain passed in to this
+	* to a client request for a resource at the end of the chain. The FilterChain passed in to this
 	* method allows the Filter to pass on the request and response to the next entity in the
 	* chain.<p>
 	* A typical implementation of this method would follow the following pattern:- <br>
