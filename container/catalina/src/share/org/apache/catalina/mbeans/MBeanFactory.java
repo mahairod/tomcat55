@@ -19,6 +19,7 @@ package org.apache.catalina.mbeans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Vector;
+import java.io.File;
 
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
@@ -69,6 +70,9 @@ import org.apache.commons.modeler.Registry;
  */
 
 public class MBeanFactory extends BaseModelMBean {
+
+    private static org.apache.commons.logging.Log log = 
+        org.apache.commons.logging.LogFactory.getLog(MBeanFactory.class);
 
     /**
      * The <code>MBeanServer</code> for this application.
@@ -632,6 +636,19 @@ public class MBeanFactory extends BaseModelMBean {
             createStandardContext(parent,path,docBase,false,false,false,false);                                  
     }
 
+    /**
+     * Given a context path, get the config file name.
+     */
+    private String getConfigFile(String path) {
+        String basename = null;
+        if (path.equals("")) {
+            basename = "ROOT";
+        } else {
+            basename = path.substring(1).replace('/', '#');
+        }
+        return (basename);
+    }
+
    /**
      * Create a new StandardContext.
      *
@@ -665,14 +682,36 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
-        Service service = getService(pname);
-        Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        host.addChild(context);
+        ObjectName deployer = new ObjectName(pname.getDomain()+
+                                             ":type=Deployer,host="+
+                                             pname.getKeyProperty("host"));
+        if(mserver.isRegistered(deployer)) {
+            String contextPath = context.getPath();
+            mserver.invoke(deployer, "addServiced",
+                           new Object [] {contextPath},
+                           new String [] {"java.lang.String"});
+            String configPath = (String)mserver.getAttribute(deployer,
+                                                             "configBaseName");
+            String baseName = getConfigFile(contextPath);
+            File configFile = new File(new File(configPath), baseName+".xml");
+            context.setConfigFile(configFile.getAbsolutePath());
+            mserver.invoke(deployer, "manageApp",
+                           new Object[] {context},
+                           new String[] {"org.apache.catalina.Context"});
+            mserver.invoke(deployer, "removeServiced",
+                           new Object [] {contextPath},
+                           new String [] {"java.lang.String"});
+        } else {
+            log.warn("Deployer not found for "+pname.getKeyProperty("host"));
+            Service service = getService(pname);
+            Engine engine = (Engine) service.getContainer();
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            host.addChild(context);
+        }
 
         // Return the corresponding MBean name
         ObjectName oname = context.getJmxName();
-    //            MBeanUtils.createObjectName(pname.getDomain(), context);
+
         return (oname.toString());
 
     }
@@ -942,20 +981,33 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname = new ObjectName(contextName);
         String domain = oname.getDomain();
         StandardService service = (StandardService) getService(oname);
-        if (!service.getObjectName().getDomain().equals(domain)) {
-            throw new Exception("Service with the domain is not found");
-        }        
+
         Engine engine = (Engine) service.getContainer();
         String name = oname.getKeyProperty("name");
         name = name.substring(2);
         int i = name.indexOf("/");
         String hostName = name.substring(0,i);
         String path = name.substring(i);
-        Host host = (Host) engine.findChild(hostName);
+        ObjectName deployer = new ObjectName(domain+":type=Deployer,host="+
+                                             hostName);
         String pathStr = getPathStr(path);
-        Context context = (Context) host.findChild(pathStr);
-        // Remove this component from its parent component
-        host.removeChild(context);
+        if(mserver.isRegistered(deployer)) {
+            mserver.invoke(deployer,"addServiced",
+                           new Object[]{pathStr},
+                           new String[] {"java.lang.String"});
+            mserver.invoke(deployer,"unmanageApp",
+                           new Object[] {pathStr},
+                           new String[] {"java.lang.String"});
+            mserver.invoke(deployer,"removeServiced",
+                           new Object[] {pathStr},
+                           new String[] {"java.lang.String"});
+        } else {
+            log.warn("Deployer not found for "+hostName);
+            Host host = (Host) engine.findChild(hostName);
+            Context context = (Context) host.findChild(pathStr);
+            // Remove this component from its parent component
+            host.removeChild(context);
+        }
 
     }
 
