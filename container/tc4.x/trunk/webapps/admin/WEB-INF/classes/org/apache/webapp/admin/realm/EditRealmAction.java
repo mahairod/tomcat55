@@ -352,6 +352,7 @@ public class EditRealmAction extends Action {
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());
+        realmFm.setSearchVals(Lists.getBooleanValues());
         String attribute = null;
         try {
 
