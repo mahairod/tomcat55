@@ -217,7 +217,7 @@ public class JspServlet extends HttpServlet {
             // jsp is not defined with <servlet-name>, the url
             // as to be passed as it is to the JSP container (since Catalina
             // doesn't know anything about the requested JSP 
-            if(request.getServletPath().indexOf(".") == -1 &&  request.getPathInfo() != null){
+            if(request.getPathInfo() != null){
                 jspUri = request.getServletPath() + request.getPathInfo();
             }
             
