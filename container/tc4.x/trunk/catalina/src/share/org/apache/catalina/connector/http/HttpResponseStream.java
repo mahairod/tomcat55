@@ -66,6 +66,7 @@ package org.apache.catalina.connector.http;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Response;
 import org.apache.catalina.connector.ResponseStream;
 
@@ -100,6 +101,7 @@ public final class HttpResponseStream extends ResponseStream {
 
         super(response);
         checkChunking(response);
+        checkHead(response);
 
     }
 
@@ -119,6 +121,12 @@ public final class HttpResponseStream extends ResponseStream {
     private boolean writingChunk;
 
 
+    /**
+     * True if no content should be written.
+     */
+    private boolean writeContent;
+
+
     // -------------------------------------------- ServletOutputStream Methods
 
 
@@ -133,6 +141,9 @@ public final class HttpResponseStream extends ResponseStream {
         throws IOException {
 
         if (suspended)
+            return;
+
+        if (!writeContent)
             return;
 
         if (useChunking && !writingChunk) {
@@ -158,6 +169,9 @@ public final class HttpResponseStream extends ResponseStream {
         throws IOException {
 
         if (suspended)
+            return;
+
+        if (!writeContent)
             return;
 
         if (useChunking && !writingChunk) {
@@ -187,6 +201,9 @@ public final class HttpResponseStream extends ResponseStream {
         if (suspended)
             throw new IOException
                 (sm.getString("responseStream.suspended"));
+
+        if (!writeContent)
+            return;
 
         if (useChunking) {
             // Write the final chunk.
@@ -227,6 +244,16 @@ public final class HttpResponseStream extends ResponseStream {
         } else if (response.isChunkingAllowed()) {
             response.removeHeader("Transfer-Encoding", "chunked");
         }
+    }
+
+
+    protected void checkHead(HttpResponseImpl response) {
+        HttpServletRequest servletRequest = 
+            (HttpServletRequest) response.getRequest();
+        if (servletRequest.getMethod().equals("HEAD"))
+            writeContent = false;
+        else
+            writeContent = true;
     }
 
 
