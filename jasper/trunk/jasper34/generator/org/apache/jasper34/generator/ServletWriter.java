@@ -105,6 +105,8 @@ public class ServletWriter extends JavaSourceGenerator {
 	
 	generateJspService(pageInfo);
 
+	generateLineMap(pageInfo);
+
 	this.generateClassFooter();
 
 	// Generate additional file for large chunks
@@ -166,10 +168,9 @@ public class ServletWriter extends JavaSourceGenerator {
     private void generateJspService(JspPageInfo pageInfo)
 	throws JasperException
     {
-	this.println("public void _jspService("+
-		       "PageContext pageContext, " + 
-		       "HttpServletRequest request, "+
-		       "HttpServletResponse  response)");
+	this.println("public void _jspService( PageContext pageContext,");
+	this.println( "\t\tHttpServletRequest request, ");
+	this.println("\t\tHttpServletResponse  response)");
 	this.println("    throws Throwable ");
 	this.println("{");
 
@@ -199,9 +200,9 @@ public class ServletWriter extends JavaSourceGenerator {
 	// We can use tc hooks
 	for(int i = 0; i < pageInfo.generators.size(); i++) {
 	    GeneratorBase gen=(GeneratorBase)pageInfo.generators.elementAt(i);
-	    generateStartComment(gen);
+	    generateStartComment(pageInfo,gen);
 	    gen.generateServiceMethod(this);
-	    generateEndComment(gen);
+	    generateEndComment(pageInfo,gen);
 	}
 	this.println();
 	this.popIndent();
@@ -243,8 +244,13 @@ public class ServletWriter extends JavaSourceGenerator {
         this.println("private boolean _jspx_inited = false;");
         this.println();
 
-	this.println("public final synchronized void _jspx_init() throws " +
-		       Constants.JSP_RUNTIME_PACKAGE + ".JasperException {");
+	this.println("public final synchronized void _jspx_init()");
+        this.pushIndent();
+	this.println("throws " +
+		     Constants.JSP_RUNTIME_PACKAGE + ".JasperException ");
+	this.popIndent();
+	this.println("{");
+	
         this.pushIndent();
         this.println("if (! _jspx_inited) {");
         this.pushIndent();
@@ -287,7 +293,6 @@ public class ServletWriter extends JavaSourceGenerator {
 
     }
 
-
     private void generateChunks(JspPageInfo pageInfo )
 	throws JasperException
     {
@@ -316,8 +321,11 @@ public class ServletWriter extends JavaSourceGenerator {
     private void generateGetPageContext(JspPageInfo pageInfo )
 	throws JasperException
     {
-	this.println("public final PageContext _getPageContext(HttpServletRequest request, " + 
-					       " HttpServletResponse response)");
+	this.println("public final PageContext " +
+		     "_getPageContext(HttpServletRequest request,");
+	this.pushIndent();
+	this.println("HttpServletResponse response)");
+	this.popIndent();
 	
 	this.println( "{" );
 	this.pushIndent();
@@ -327,13 +335,14 @@ public class ServletWriter extends JavaSourceGenerator {
 	    this.println("JspFactory _jspxFactory = JspFactory.getDefaultFactory();");
 
 	
-	this.println("return _jspxFactory.getPageContext(this, request, response,\n"
-		       + "\t\t\t"
-		       + this.quoteString(pageInfo.error) + ", "
-		       + pageInfo.genSessionVariable + ", "
-		       + pageInfo.bufferSize + ", "
-		       + pageInfo.autoFlush
-		       + ");");
+	this.println("return _jspxFactory.getPageContext(this, " +
+		     " request, response,");
+	this.println("\t\t\t"
+		     + this.quoteString(pageInfo.error) + ", "
+		     + pageInfo.genSessionVariable + ", "
+		     + pageInfo.bufferSize + ", "
+		     + pageInfo.autoFlush
+		     + ");");
 	this.popIndent();
 	this.println("}");
 	this.println();
@@ -467,8 +476,13 @@ public class ServletWriter extends JavaSourceGenerator {
     }
 
     // -------------------- Generate comments --------------------
-    // The code generator also maintains line number info. Right now we generate
-    // some comments, later we'll add real mappings
+    // The code generator also maintains line number info.
+
+    // experimental - ServletWriter can generate the line numbers
+    // ( the way it generates the comments )
+    StringBuffer internalLineMap=new StringBuffer();
+    StringBuffer internalFileMap=new StringBuffer();
+    Vector internalFileRegister=new Vector();
 
     /**
      * Generates "start-of the JSP-embedded code block" comment
@@ -477,30 +491,40 @@ public class ServletWriter extends JavaSourceGenerator {
      * @param stop End position of the block
      * @exception JasperException 
      */
-    public void generateStartComment(GeneratorBase generator )
+    public void generateStartComment(JspPageInfo pageInfo,
+				     GeneratorBase generator )
         throws JasperException 
     {
 	// XXX Use emacs style or something common
 	Mark start=generator.start;
 	Mark stop=generator.stop;
 	String html = "";
-        if (generator instanceof CharDataGenerator) {
-	   html = "// HTML ";
-	}
- 	if (start != null && stop != null) {
-	    if (start.getFile().equals( stop.getFile())) {
-		String fileName = this.quoteString(start.getFile ());
-		this.println(html + "// begin [file=" + fileName+";from=" +
-			     toShortString(start) + ";to=" +
-			     toShortString(stop) + "]");
-	    } else {
-		this.println(html + "// begin [from="+toString(start)+
-			     ";to="+toString(stop)+"]");
-            }
-	} else {
-	    this.println(html + "// begin");
-        }
+	int javaStart=this.getJavaLine() + 1;
 
+	if( pageInfo.getOptions().getGenerateCommentMapping() ) {
+	    if (generator instanceof CharDataGenerator) {
+		html = "// HTML " + javaStart;
+	    } else {
+		html = "// " + javaStart;
+	    }
+	    if (start != null && stop != null) {
+		if (start.getFile().equals( stop.getFile())) {
+		    String fileName = this.quoteString(start.getFile ());
+		    this.println(html + "// begin [file=" + fileName+";from=" +
+				 toShortString(start) + ";to=" +
+				 toShortString(stop) + "]");
+		} else {
+		    this.println(html + "// begin [from="+toString(start)+
+				 ";to="+toString(stop)+"]");
+		}
+	    } else {
+		this.println(html + "// begin");
+	    }
+	}
+	
+	javaStart=this.getJavaLine();
+	internalLineMap.append("{").append(javaStart ).append(",");
+	
 	//      this.pushIndent();
     }
 
@@ -512,11 +536,93 @@ public class ServletWriter extends JavaSourceGenerator {
      * @param stop End position of the block
      * @exception JasperException
      */
-    public void generateEndComment(GeneratorBase generator)
+    public void generateEndComment(JspPageInfo pageInfo,
+				   GeneratorBase generator)
 	throws JasperException
     {
 	//	this.popIndent();
-        this.println("// end");
+	int javaEnd=this.getJavaLine();
+	internalLineMap.append(javaEnd ).append(",");
+	// We have javaStart, javaEnd: add the mapping
+
+	Mark start=generator.start;
+	Mark stop=generator.stop;
+
+	internalLineMap.append( registerFile( start.getSystemId() ) ).
+	    append(",");
+	internalLineMap.append( start.getLineNumber() ).append(",");
+	internalLineMap.append( start.getColumnNumber() ).append(",");
+
+	internalLineMap.append( registerFile( stop.getSystemId() ) ).
+	    append(",");
+	internalLineMap.append( stop.getLineNumber() ).append(",");
+	internalLineMap.append( stop.getColumnNumber() );
+	
+	internalLineMap.append("},\n");
+	
+	if( pageInfo.getOptions().getGenerateCommentMapping() ) {
+	    this.println("// end " + javaEnd );
+	}
+    }
+    
+    private void generateLineMap(JspPageInfo pageInfo )
+	throws JasperException
+    {
+	this.pushIndent();
+        this.println("private static final int _lineMap[][] = { ");
+	this.pushIndent();
+
+	this.printMultiLn( internalLineMap.toString() );
+	for(int i = 0; i < pageInfo.generators.size(); i++) {
+	    GeneratorBase gen=(GeneratorBase)pageInfo.generators.elementAt(i);
+	    gen.generateLineMap(this);
+	}
+
+	this.println("null");
+		
+	this.popIndent();
+	this.println("}; ");
+        this.println();
+	this.println("public final int[][] _getLineMap() " +
+	" { return _lineMap; }");
+        this.println();
+
+	// -------------------- File map --------------------
+        this.println("private static final String _fileMap[] = { ");
+	this.pushIndent();
+
+	this.printMultiLn( internalFileMap.toString() );
+	for(int i = 0; i < pageInfo.generators.size(); i++) {
+	    GeneratorBase gen=(GeneratorBase)pageInfo.generators.elementAt(i);
+	    gen.generateFileMap(this);
+	}
+
+	this.println("null");
+		
+	this.popIndent();
+	this.println("}; ");
+        this.println();
+	this.println("public final String[] _getFileMap() " +
+	" { return _fileMap; }");
+        this.println();
+
+	this.popIndent();
+
+    }
+
+
+
+    private int registerFile( String s ) {
+	int idx=internalFileRegister.indexOf( s );
+	// 	System.out.println("ServletWriter.registerFile found " +
+	// 			   idx + " " + s );
+	if( idx>=0 ) return idx;
+
+	internalFileRegister.addElement( s );
+	idx=internalFileRegister.size() -1 ; // added item
+	internalFileMap.append("\"").append( s ).append("\" ,\n");
+	// System.out.println("ServletWriter.registerFile " + idx + " " + s );
+	return idx;
     }
 
     // The format may change
