@@ -153,7 +153,12 @@ public class ContextManager {
 
     /** Private workspace for this server
      */
-    String workDir;
+    String workDir = null;      // Initialized the first time we get it
+
+    /** Configured workspace directory name (not absolutized yet)
+     */
+    String workDirProperty = null;
+
 
     /** The base directory where this instance runs.
      *  It can be different from the install directory to
@@ -196,7 +201,7 @@ public class ContextManager {
      */
     public void setHome(String home) {
 	this.home=FileUtil.getCanonicalPath( home );
-	logInt( "Setting home to " + this.home );
+	if (debug>0) logInt( "Setting home to " + this.home );
     }
 
     /**
@@ -286,24 +291,31 @@ public class ContextManager {
      * WorkDir property - where all working files will be created
      */
     public void setWorkDir( String wd ) {
-	if(debug>0) logInt("set work dir " + wd);
-	// make it absolute
-	File f=new File( wd );
-	if( ! f.isAbsolute() ) {
-	    File wdF=getAbsolute( f );
-	    wd= wdF.getAbsolutePath();
-	}
-
-	this.workDir=wd;
+	if (debug>0) logInt("set work dir " + wd);
+        this.workDirProperty = wd;      // Store only the string for now
     }
 
     /**
      * WorkDir property - where all working files will be created
      */
     public String getWorkDir() {
-	if( workDir==null)
-	    workDir=getHome() + File.separator + DEFAULT_WORK_DIR;
-	return workDir;
+
+        // The first time this is called, calculate the right value
+        if (this.workDir == null) {
+            File f = null;
+            if (this.workDirProperty == null)
+                f = new File(DEFAULT_WORK_DIR);
+            else
+                f = new File(this.workDirProperty);
+            if (!f.isAbsolute())
+                f = getAbsolute(f);
+            this.workDir = f.getAbsolutePath();
+            if (debug>0) logInt("calc work dir " + this.workDir);
+        }
+
+        // Return the calculated work directory value
+        return (this.workDir);
+
     }
 
     /**
