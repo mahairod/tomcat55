@@ -26,6 +26,12 @@
     <pathelement location="${servlet.jar}"/>
   </path>
 
+  <!-- Establish pattern sets -->
+  <patternset id="standard.servlet.tests"
+    excludes="**/compat/**"/>
+
+  <patternset id="compat.servlet.tests"
+    includes="**/compat/**"/>
 
   <!-- ===================== Prepare Directories ========================= -->
   <target name="prepare">
@@ -44,6 +50,10 @@
     <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF"/>
     <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
     <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-compat"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-compat/WEB-INF"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-compat/WEB-INF/classes"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-compat/WEB-INF/lib"/>
 
   </target>
 
@@ -96,8 +106,17 @@
       <fileset dir="src/server/jsp-tests"/>
     </copy>
     <copy    todir="${watchdog.build}/webapps/servlet-tests">
-      <fileset dir="src/server/servlet-tests"/>
+      <fileset dir="src/server/servlet-tests">
+        <patternset refid="standard.servlet.tests"/>
+      </fileset>
     </copy>
+    <copy    todir="${watchdog.build}/webapps/servlet-compat">
+      <fileset dir="src/server/servlet-tests">
+        <patternset refid="compat.servlet.tests"/>
+      </fileset>
+    </copy>
+    <move file="${watchdog.build}/webapps/servlet-tests/WEB-INF/compat.web.xml"
+          tofile="${watchdog.build}/webapps/servlet-compat/WEB-INF/web.xml"/>
 
   </target>
 
@@ -134,6 +153,17 @@
      deprecation="${compile.deprecation}"
         optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
+      <patternset refid="standard.servlet.tests"/>
+    </javac>
+
+    <!-- Compat Servlet tests -->
+    <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
+          destdir="${watchdog.build}/webapps/servlet-compat/WEB-INF/classes"
+           debug="${compile.debug}"
+     deprecation="${compile.deprecation}"
+        optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+      <patternset refid="compat.servlet.tests"/>
     </javac>
 
     <!-- Tools -->
@@ -184,6 +214,8 @@
            basedir="${watchdog.build}/webapps/jsp-tests"/>
     <jar   jarfile="${watchdog.dist}/webapps/servlet-tests.war"
            basedir="${watchdog.build}/webapps/servlet-tests"/>
+    <jar   jarfile="${watchdog.dist}/webapps/servlet-compat.war"
+           basedir="${watchdog.build}/webapps/servlet-compat"/>
 
     <!-- Create enterprise application archive -->
     <mkdir     dir="${watchdog.build}/tmp"/>
