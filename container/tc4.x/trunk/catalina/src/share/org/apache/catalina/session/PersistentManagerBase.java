@@ -900,6 +900,7 @@ public abstract class PersistentManagerBase
                 try {
                     session.expire();
                 } catch (Throwable t) {
+					log(sm.getString("standardManager.expireException"), t);
                     ;
                 }
             }
