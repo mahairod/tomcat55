@@ -48,7 +48,7 @@ commons-logging.jar=${commons-logging.lib}/commons-logging.jar
 jmx.home=../mx4j-1.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j-jmx.jar
-jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
+jmxtools.jar=${jmx.lib}/mx4j-tools.jar
 
 # ----- Commons Modeler, version 1.1 or later -----
 commons-modeler.home=../commons-modeler-1.1
