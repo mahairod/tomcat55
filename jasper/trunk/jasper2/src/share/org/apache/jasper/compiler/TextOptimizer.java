@@ -105,9 +105,6 @@ public class TextOptimizer {
         public void visit(Node.VariableDirective n) throws JasperException {
         }
 
-        public void visit(Node.Comment n) throws JasperException {
-        }
-
         /*
          * Don't concatenate text across body boundaries
          */
