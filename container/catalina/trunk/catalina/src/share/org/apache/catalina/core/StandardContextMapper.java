@@ -65,15 +65,20 @@
 package org.apache.catalina.core;
 
 
+import javax.naming.directory.DirContext;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
+import org.apache.naming.resources.Resource;
 
 
 /**
@@ -272,6 +277,15 @@ public final class StandardContextMapper
             if (wrapper != null) {
                 servletPath = relativeURI;
                 pathInfo = null;
+
+                if ( relativeURI.endsWith("/") ) {
+                    WelcomeURIProcessing wfp = new WelcomeURIProcessing( relativeURI );
+                    if ( wfp.mapsToServlet ){
+                        wrapper = wfp.wrapper;
+                        servletPath = wfp.servletPath;
+                        pathInfo = wfp.pathInfo;
+                    }
+                }
             }
         }
 
@@ -290,5 +304,119 @@ public final class StandardContextMapper
 
     }
 
+
+    // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * This helper class is used as part of an attempt to satisfy
+     * Servlet 2.4 spec, section 9.10.  Section 9.10 now allows a
+     * welcome file to map to a servlet
+     **/
+    private class WelcomeURIProcessing {
+        boolean mapsToServlet = false;
+
+        Wrapper wrapper = null;
+        String  servletPath = null;
+        String  pathInfo = null;
+
+        WelcomeURIProcessing (String relativeURI ) {
+            mapsToServlet = search(relativeURI);
+        }
+
+        boolean search(String relativeURI) {
+            DirContext resources = getResources();
+
+            String[] welcomes = context.findWelcomeFiles();
+
+            for(int i=0;i<welcomes.length;i++){
+                String newRelativeURI = relativeURI+welcomes[i];
+
+                try {
+                    Object obj =  resources.lookup(newRelativeURI);
+                    if ( obj != null && obj instanceof Resource ){
+                        return false;
+                    }
+                } catch (NamingException e){
+                    // These happen everytime a resource is not found, which is like very often.
+                }
+
+                // exact match
+                String name = context.findServletMapping(newRelativeURI);
+                if ( name != null){
+                    // set wrapper...
+                    wrapper = (Wrapper) context.findChild(name);
+                    if ( wrapper != null ){
+                        servletPath = newRelativeURI;
+                        pathInfo = null;
+                        return true;
+                    }
+                }
+
+                // prefix match
+                servletPath = newRelativeURI;
+                while (true) {
+                    name = context.findServletMapping(servletPath + "/*");
+                    if (name != null) {
+                        wrapper = (Wrapper) context.findChild(name);
+                    }
+                    if (wrapper != null) {
+                        pathInfo = newRelativeURI.substring(servletPath.length());
+                        if (pathInfo.length() == 0)
+                            pathInfo = null;
+                        servletPath = newRelativeURI;
+                        return true;
+                    }
+                    int slash = servletPath.lastIndexOf('/');
+                    if (slash < 0)
+                        break;
+                    servletPath = servletPath.substring(0, slash);
+                }
+
+            }
+            return false;
+        }
+
+        /**
+         * JNDI resources name.
+         */
+        protected static final String RESOURCES_JNDI_NAME = "java:/comp/Resources";
+
+        /**
+         * Get resources. This method will try to retrieve the resources through
+         * JNDI first, then in the servlet context if JNDI has failed (it could be
+         * disabled). It will return null.
+         *
+         * @return A JNDI DirContext, or null.
+         */
+        protected DirContext getResources() {
+
+            DirContext result = null;
+
+            // Try the servlet context
+            try {
+                result = (DirContext) context.getServletContext()
+                    .getAttribute(Globals.RESOURCES_ATTR);
+            } catch (ClassCastException e) {
+                // Failed : Not the right type
+            }
+
+            if (result != null)
+                return result;
+
+            // Try JNDI
+            try {
+                result =
+                    (DirContext) new InitialContext().lookup(RESOURCES_JNDI_NAME);
+            } catch (NamingException e) {
+                // Failed
+            } catch (ClassCastException e) {
+                // Failed : Not the right type
+            }
+
+            return result;
+
+        }
+    }
 
 }
