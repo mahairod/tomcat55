@@ -107,12 +107,6 @@ class PageInfo {
     private boolean elIgnoredSpecified = false;
     private String omitXmlDecl = null;
 
-    // true if there is an is-xml element in the jsp-config
-    private boolean isXmlConfigSpecified = false;	
-
-    // The value of the is-xml element in the jsp-config
-    private boolean isXmlConfig = false;
-
     // A custom tag is a tag file
     private boolean hasTagFile = false;
 
@@ -211,22 +205,6 @@ class PageInfo {
 
     public boolean isELIgnoredSpecified() {
 	return elIgnoredSpecified;
-    }
-
-    public boolean isXmlConfig() {
-	return isXmlConfig;
-    }
-
-    public void setIsXmlConfig(boolean xml) {
-	isXmlConfig = xml;
-    }
-
-    public boolean isXmlConfigSpecified() {
-	return isXmlConfigSpecified;
-    }
-
-    public void setIsXmlConfigSpecified(boolean xmlSpecified) {
-	isXmlConfigSpecified = xmlSpecified;
     }
 
     public List getIncludePrelude() {

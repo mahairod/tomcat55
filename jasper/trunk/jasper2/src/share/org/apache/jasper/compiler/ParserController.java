@@ -82,7 +82,6 @@ class ParserController implements TagConstants {
 
     private JspCompilationContext ctxt;
     private Compiler compiler;
-    private PageInfo pageInfo;
     private ErrorDispatcher err;
 
     /*
@@ -114,7 +113,6 @@ class ParserController implements TagConstants {
     public ParserController(JspCompilationContext ctxt, Compiler compiler) {
         this.ctxt = ctxt; 
 	this.compiler = compiler;
-	this.pageInfo = compiler.getPageInfo();
 	this.err = compiler.getErrorDispatcher();
     }
 
@@ -299,13 +297,6 @@ class ParserController implements TagConstants {
      * Determines the syntax (standard or XML) and page encoding properties
      * for the given file, and stores them in the 'isXml' and 'sourceEnc'
      * instance variables, respectively.
-     *
-     * The properties may already be specified in a JSP property group: Notice
-     * that while the 'isXml' property applies to an entire translation unit
-     * (and therefore needs to be checked only for the top-level file), the
-     * 'page-encoding' property must be checked separately for the top-level
-     * and each of its included files, unless they're in XML syntax (in which
-     * case the page encoding is determined according to the XML spec).
      */
     private void determineSyntaxAndEncoding(String absFileName,
 					    JarFile jarFile,
@@ -327,10 +318,12 @@ class ParserController implements TagConstants {
 	 */
 	boolean revert = false;
 
-	if (pageInfo.isXmlConfigSpecified()) {
-	    // If <is-xml> is specified in a <jsp-property-group>, it is
-	    // used.
-	    isXml = pageInfo.isXmlConfig();
+        JspConfig jspConfig = ctxt.getOptions().getJspConfig();
+        JspConfig.JspProperty jspProperty = jspConfig.findJspProperty(
+                                                                absFileName);
+        if (jspProperty.isXml() != null) {
+            // If <is-xml> is specified in a <jsp-property-group>, it is used.
+            isXml = JspUtil.booleanValue(jspProperty.isXml());
 	    isExternal = true;
 	} else if (absFileName.endsWith(".jspx")
 		   || absFileName.endsWith(".tagx")) {

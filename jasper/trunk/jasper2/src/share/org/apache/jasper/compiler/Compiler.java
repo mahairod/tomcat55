@@ -212,13 +212,9 @@ public class Compiler {
 	// If the current uri is matched by a pattern specified in
 	// a jsp-property-group in web.xml, initialize pageInfo with
 	// those properties.
-	if (jspProperty.isXml() != null) {
-	    pageInfo.setIsXmlConfigSpecified(true);
-	}
 	if (jspProperty.isELIgnored() != null) {
 	    pageInfo.setELIgnoredSpecified(true);
 	}
-	pageInfo.setIsXmlConfig(JspUtil.booleanValue(jspProperty.isXml()));
 	pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
 	pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
 	if (jspProperty.getIncludePrelude() != null) {
