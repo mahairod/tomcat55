@@ -66,7 +66,7 @@ import java.util.Map;
  * arguments with a tag library.
  *
  * <p>
- * The JSP container is reponsible for locating an approriate
+ * The JSP container is reponsible for locating an appropriate
  * instance of the appropriate subclass by
  *
  * <ul>
