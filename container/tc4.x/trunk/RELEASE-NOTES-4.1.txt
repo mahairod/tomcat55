@@ -907,7 +907,7 @@ Coyote Bug Fixes:
          Reject decoded URIs which don't start with '/'.
 
 [4.1.23] Cookies:
-         Add support for bad cookies.
+         Add handling for bad cookies.
 
 
 ----------------
