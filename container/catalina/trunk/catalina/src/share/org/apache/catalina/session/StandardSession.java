@@ -624,65 +624,74 @@ public class StandardSession
      *  this session?
      */
     public void expire(boolean notify) {
+
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
-        expiring = true;
+
+        synchronized (this) {
+
+            if (manager == null)
+                return;
+
+            expiring = true;
         
-        // Notify interested application event listeners
-        // FIXME - Assumes we call listeners in reverse order
-        Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationListeners();
-        if (notify && (listeners != null)) {
-            HttpSessionEvent event =
-              new HttpSessionEvent(getSession());
-            for (int i = 0; i < listeners.length; i++) {
-                int j = (listeners.length - 1) - i;
-                if (!(listeners[j] instanceof HttpSessionListener))
-                    continue;
-                HttpSessionListener listener =
-                    (HttpSessionListener) listeners[j];
-                try {
-                    fireContainerEvent(context,
-                                       "beforeSessionDestroyed",
-                                       listener);
-                    listener.sessionDestroyed(event);
-                    fireContainerEvent(context,
-                                       "afterSessionDestroyed",
-                                       listener);
-                } catch (Throwable t) {
+            // Notify interested application event listeners
+            // FIXME - Assumes we call listeners in reverse order
+            Context context = (Context) manager.getContainer();
+            Object listeners[] = context.getApplicationListeners();
+            if (notify && (listeners != null)) {
+                HttpSessionEvent event =
+                    new HttpSessionEvent(getSession());
+                for (int i = 0; i < listeners.length; i++) {
+                    int j = (listeners.length - 1) - i;
+                    if (!(listeners[j] instanceof HttpSessionListener))
+                        continue;
+                    HttpSessionListener listener =
+                        (HttpSessionListener) listeners[j];
                     try {
+                        fireContainerEvent(context,
+                                           "beforeSessionDestroyed",
+                                           listener);
+                        listener.sessionDestroyed(event);
                         fireContainerEvent(context,
                                            "afterSessionDestroyed",
                                            listener);
-                    } catch (Exception e) {
-                        ;
+                    } catch (Throwable t) {
+                        try {
+                            fireContainerEvent(context,
+                                               "afterSessionDestroyed",
+                                               listener);
+                        } catch (Exception e) {
+                            ;
+                        }
+                        // FIXME - should we do anything besides log these?
+                        log(sm.getString("standardSession.sessionEvent"), t);
                     }
-                    // FIXME - should we do anything besides log these?
-                    log(sm.getString("standardSession.sessionEvent"), t);
                 }
             }
-        }
-        setValid(false);
+            setValid(false);
 
-        // Remove this session from our manager's active sessions
-        if (manager != null)
-            manager.remove(this);
+            // Remove this session from our manager's active sessions
+            if (manager != null)
+                manager.remove(this);
 
-        // Unbind any objects associated with this session
-        String keys[] = keys();
-        for (int i = 0; i < keys.length; i++)
-            removeAttribute(keys[i], notify);
+            // Unbind any objects associated with this session
+            String keys[] = keys();
+            for (int i = 0; i < keys.length; i++)
+                removeAttribute(keys[i], notify);
 
-        // Notify interested session event listeners
-        if (notify) {
-            fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
-        }
+            // Notify interested session event listeners
+            if (notify) {
+                fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
+            }
 
-        // We have completed expire of this session
-        expiring = false;
-        if ((manager != null) && (manager instanceof ManagerBase)) {
-            recycle();
+            // We have completed expire of this session
+            expiring = false;
+            if ((manager != null) && (manager instanceof ManagerBase)) {
+                recycle();
+            }
+
         }
 
     }
