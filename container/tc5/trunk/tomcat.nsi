@@ -12,6 +12,11 @@
 ;--------------------------------
 ;Configuration
 
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTPAGE
+  !define MUI_DIRSELECTPAGE
+  !define MUI_UNINSTALLER
+
   ;Language
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -31,28 +36,18 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9"
 
   ;License dialog
-  LicenseText "Press Page Down to see the rest of the agreement."
   LicenseData INSTALLLICENSE
 
-  ;Component-select dialog
-  ComponentText "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
-
   ;Folder-select dialog
-  !insertmacro MUI_ENGLISH_DIRTEXT
   InstallDir "$PROGRAMFILES\Apache Group\Tomcat 5.0"
 
-  ;Uninstaller
-  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
+  ;Install types
+  InstType Normal
+  InstType Minimum
+  InstType Full
 
-InstType Normal
-InstType Minimum
-InstType Full
-AutoCloseWindow false
-ShowInstDetails show
-SetOverwrite on
-SetDateSave on
-
-InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
+  ; Main registry key
+  InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
 SubSection "Tomcat" SecTomcat
 
@@ -66,6 +61,7 @@ Section "Core" SecTomcatCore
   File /r bin
   Delete "$INSTDIR\bin\tomcat.exe"
   File /r common
+  File /r conf
   File /r shared
   File /r logs
   File /r server
@@ -79,6 +75,7 @@ Section "Core" SecTomcatCore
   Pop $2
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+  BringToFront
 
 SectionEnd
 
@@ -94,6 +91,7 @@ Section "Service" SecTomcatService
   
   ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat 5.0" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -Djava.endorsed.dirs="$INSTDIR\common\endorsed" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
+  BringToFront
   ClearErrors
 
 SectionEnd
@@ -171,12 +169,6 @@ Section -post
   !insertmacro MUI_FINISHHEADER SetPage
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-
-  SetOverwrite off
-  SetOutPath $INSTDIR
-  File /r conf
-
-  SetOverwrite on
 
   Call startService
 
@@ -412,6 +404,9 @@ Function configure
   StrCpy $R4 'port="$R0"'
   StrCpy $R5 '<user name="$R1" password="$R2" roles="admin,manager" />'
 
+  DetailPrint 'HTTP/1.1 Connector configured on port "$R0"'
+  DetailPrint 'Admin user added: "$R1"'
+
   SetOutPath $TEMP
   File /r confinstall
 
@@ -427,6 +422,8 @@ Function configure
 
   FileClose $R9
 
+  DetailPrint "server.xml written"
+
   ; Build final tomcat-users.xml
   Delete "$INSTDIR\conf\tomcat-users.xml"
   FileOpen $R9 "$INSTDIR\conf\tomcat-users.xml" w
@@ -438,6 +435,8 @@ Function configure
   Call copyFile
 
   FileClose $R9
+
+  DetailPrint "tomcat-users.xml written"
 
   ; Creating a few shortcuts
   IfFileExists "$SMPROGRAMS\Apache Tomcat 5.0" 0 NoLinks
@@ -499,7 +498,8 @@ Function startService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
   ExecWait 'net start "Apache Tomcat 5.0"'
-  Sleep 4000
+  Sleep 3000
+  BringToFront
 
  NoService:
 
@@ -516,7 +516,8 @@ Function un.stopService
 
   IfFileExists "$INSTDIR\bin\tomcat.exe" 0 NoService
   ExecWait 'net stop "Apache Tomcat 5.0"'
-  Sleep 2000
+  Sleep 1000
+  BringToFront
 
  NoService:
 

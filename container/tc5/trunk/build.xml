@@ -419,7 +419,7 @@
 
   <!-- ==================== RELEASE: Create Release ======================= -->
   <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
-   description="Create a Tomcat 5 packaged distribution" if="full-dist">
+   description="Create a Tomcat 5 packaged distribution">
 
     <mkdir dir="${tomcat.release}"/>
     <mkdir dir="${tomcat.release}/v${version}"/>
