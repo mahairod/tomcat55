@@ -49,6 +49,7 @@ java org.apache.tomcat.shell.Shutdown %1 %2 %3 %4 %5 %6 %7 %8 %9
 rem clean up
 
 set CLASSPATH=%cp%
+set TOM_CLASSPATH=
 set port=
 set host=
 set test=
