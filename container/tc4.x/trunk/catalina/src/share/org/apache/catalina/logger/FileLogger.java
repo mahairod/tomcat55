@@ -290,10 +290,10 @@ public final class FileLogger
         // Log this message, timestamped if necessary
         if (writer != null) {
             if (timestamp) {
-                writer.print(tsString);
-                writer.print(" ");
+                writer.println(tsString + " " + msg);
+            } else {
+                writer.println(msg);
             }
-            writer.println(msg);
         }
 
     }
