@@ -276,7 +276,7 @@ public class StandardSession
 
 
     /**
-     * The access count for thsi session.
+     * The access count for this session.
      */
     protected transient int accessCount = 1;
 
@@ -555,16 +555,16 @@ public class StandardSession
             return false;
         }
 
-        if (accessCount > 0) {
-            return true;
-        }
-
         if (maxInactiveInterval >= 0) { 
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - thisAccessedTime) / 1000L);
             if (timeIdle >= maxInactiveInterval) {
                 expire(true);
             }
+        }
+
+        if (accessCount > 0) {
+            return true;
         }
 
         return (this.isValid);
