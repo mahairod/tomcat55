@@ -1607,20 +1607,23 @@ public class DefaultServlet
                                          HttpServletResponse response,
                                          ResourceInfo resourceInfo)
         throws IOException {
-
-        long headerValue = request.getDateHeader("If-Modified-Since");
-        long lastModified = resourceInfo.date;
-        if (headerValue != -1) {
-
-            // If an If-None-Match header has been specified, if modified since
-            // is ignored.
-            if ((request.getHeader("If-None-Match") == null) 
-                && (lastModified <= headerValue + 1000)) {
-                // The entity has not been modified since the date
-                // specified by the client. This is not an error case.
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                return false;
+        try {
+            long headerValue = request.getDateHeader("If-Modified-Since");
+            long lastModified = resourceInfo.date;
+            if (headerValue != -1) {
+    
+                // If an If-None-Match header has been specified, if modified since
+                // is ignored.
+                if ((request.getHeader("If-None-Match") == null) 
+                    && (lastModified <= headerValue + 1000)) {
+                    // The entity has not been modified since the date
+                    // specified by the client. This is not an error case.
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    return false;
+                }
             }
+        } catch(IllegalArgumentException illegalArgument) {
+            return false;
         }
         return true;
 
@@ -1699,17 +1702,19 @@ public class DefaultServlet
                                            HttpServletResponse response,
                                            ResourceInfo resourceInfo)
         throws IOException {
-
-        long lastModified = resourceInfo.date;
-        long headerValue = request.getDateHeader("If-Unmodified-Since");
-        if (headerValue != -1) {
-            if ( lastModified > headerValue ) {
-                // The entity has not been modified since the date
-                // specified by the client. This is not an error case.
-                response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
-                return false;
+        try {
+            long lastModified = resourceInfo.date;
+            long headerValue = request.getDateHeader("If-Unmodified-Since");
+            if (headerValue != -1) {
+                if ( lastModified > headerValue ) {
+                    // The entity has not been modified since the date
+                    // specified by the client. This is not an error case.
+                    response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+                    return false;
+                }
             }
-
+        } catch(IllegalArgumentException illegalArgument) {
+            return false;
         }
         return true;
 
