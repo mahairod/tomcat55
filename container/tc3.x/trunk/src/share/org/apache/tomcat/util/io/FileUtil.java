@@ -407,5 +407,30 @@ public class FileUtil {
 
     }
 
+    public static void clearDir(File dir) {
+        String[] files = dir.list();
+
+        if (files != null) {
+	    for (int i = 0; i < files.length; i++) {
+	        File f = new File(dir, files[i]);
+
+	        if (f.isDirectory()) {
+		    clearDir(f);
+	        }
+
+	        try {
+	            f.delete();
+	        } catch (Exception e) {
+	        }
+	    }
+
+	    try {
+	        dir.delete();
+	    } catch (Exception e) {
+	    }
+        }
+    }
+
+
 
 }
