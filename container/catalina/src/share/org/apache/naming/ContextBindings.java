@@ -347,7 +347,7 @@ public class ContextBindings {
                                          ClassLoader classLoader) {
         if (ContextAccessController.checkSecurityToken(name, token)) {
             Object n = clNameBindings.get(classLoader);
-            if (!(n.equals(name))) {
+            if ((n==null) || !(n.equals(name))) {
                 return;
             }
             clBindings.remove(classLoader);
@@ -407,4 +407,3 @@ public class ContextBindings {
 
 
 }
-
