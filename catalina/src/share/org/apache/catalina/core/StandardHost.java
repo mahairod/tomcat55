@@ -1007,18 +1007,6 @@ public class StandardHost
 
      }
 
-    public ObjectName[] getValveObjectNames()
-        throws Exception
-    {
-        Valve [] valves = this.getValves();
-        ObjectName [] mbeanNames = new ObjectName[valves.length];
-        for (int i = 0; i < valves.length; i++) {
-            mbeanNames[i] = ((ValveBase)valves[i]).getObjectName();
-        }
-
-        return mbeanNames;
-    }
-
     public String[] getAliases() {
         return aliases;
     }
