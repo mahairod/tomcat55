@@ -102,6 +102,7 @@ public class Constants {
         public static final String CONNECTOR = "Connector";
         public static final String CONTEXT_MANAGER = "ContextManager";
         public static final String PARAMETER = "Parameter";
+	public static final String INTERCEPTOR = "Interceptor";
     }
 
     public static class Attribute {

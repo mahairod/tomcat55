@@ -64,6 +64,10 @@
 
 package org.apache.tomcat.shell.deployment;
 
+import java.util.Enumeration;
+import java.util.Vector;
+import org.apache.tomcat.core.LifecycleInterceptor;
+import org.apache.tomcat.core.ServiceInterceptor;
 import org.apache.tomcat.shell.Constants;
 import org.apache.tomcat.util.URLUtil;
 import java.net.URL;
@@ -83,6 +87,8 @@ public class ContextConfig {
     private boolean isInvokerEnabled = Constants.Default.IS_INVOKER_ENABLED;
     private boolean isWorkDirPersistent =
         Constants.Default.IS_WORK_DIR_PERSISTENT;
+    private Vector lifecycleInterceptors = new Vector();
+    private Vector serviceInterceptors = new Vector();
 
     ContextConfig() {
     }
@@ -195,4 +201,21 @@ public class ContextConfig {
     void setIsWorkDirPersistent(boolean isWorkDirPersistent) {
         this.isWorkDirPersistent = isWorkDirPersistent;
     }
+
+    public void addLifecycleInterceptor(LifecycleInterceptor interceptor) {
+	lifecycleInterceptors.addElement(interceptor);
+    }
+
+    public Enumeration getLifecycleInterceptors() {
+	return lifecycleInterceptors.elements();
+    }
+
+    public void addServiceInterceptor(ServiceInterceptor interceptor) {
+	serviceInterceptors.addElement(interceptor);
+    }
+
+    public Enumeration getServiceInterceptors() {
+	return serviceInterceptors.elements();
+    }
+
 }
