@@ -66,6 +66,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>30984</bug>: Added compilerTargetVM option to Jasper. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.0.28 (yoavs)">

@@ -35,7 +35,7 @@ public class DigesterFactory {
     /**
      * Log for logging ;)
      */
-    private static org.apache.commons.logging.Log = 
+    private static org.apache.commons.logging.Log log = 
         org.apache.commons.logging.LogFactory.getLog(DigesterFactory.class);
 
     /**
