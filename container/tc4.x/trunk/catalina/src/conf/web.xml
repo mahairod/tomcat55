@@ -89,6 +89,9 @@
   <!-- following initialization parameters (default values are in square    -->
   <!-- brackets):                                                           -->
   <!--                                                                      -->
+  <!--   classdebuginfo      Should the class file be compiled with         -->
+  <!--                       debugging information?  [false]                -->
+  <!--                                                                      -->
   <!--   classpath           What class path should I use while compiling   -->
   <!--                       generated servlets?  [Created dynamically      -->
   <!--                       based on the current web application]          -->
