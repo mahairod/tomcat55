@@ -100,6 +100,11 @@ public class SmapUtil {
 	// set up our SMAP generator
 	SmapGenerator g = new SmapGenerator();
 
+	/** Disable reading of input SMAP because:
+	    1. There is a bug here: getRealPath() is null if .jsp is in a jar
+		Bugzilla 14660.
+	    2. Mappings from other sources into .jsp files are not supported.
+	    TODO: fix 1. if 2. is not true.
 	// determine if we have an input SMAP
 	String smapPath = inputSmapPath(ctxt.getRealPath(ctxt.getJspFile()));
         File inputSmap = new File(smapPath);
@@ -109,6 +114,7 @@ public class SmapUtil {
 	    String subSmapString = new String(subSmap, SMAP_ENCODING);
 	    g.addSmap(subSmapString, "JSP");
 	}
+	**/
 
         // now, assemble info about our own stratum (JSP) using JspLineMap
         SmapStratum s = new SmapStratum("JSP");
