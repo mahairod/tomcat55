@@ -137,7 +137,7 @@ public abstract class ResponseBase
     /**
      * The content type associated with this Response.
      */
-    protected String contentType = "text/plain";
+    protected String contentType = null;
 
 
     /**
@@ -452,7 +452,7 @@ public abstract class ResponseBase
 	// connector is NOT reset when recycling
 	contentCount = 0;
 	contentLength = -1;
-	contentType = "text/plain";
+	contentType = null;
 	context = null;
 	encoding = null;
 	included = false;
@@ -664,7 +664,7 @@ public abstract class ResponseBase
 	    ((ResponseStream) stream).reset();
 	bufferCount = 0;
 	contentLength = -1;
-	contentType = "text/plain";
+	contentType = null;
 
     }
 
