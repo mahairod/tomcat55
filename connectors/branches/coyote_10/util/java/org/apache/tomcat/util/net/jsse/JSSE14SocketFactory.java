@@ -173,7 +173,7 @@ public class JSSE14SocketFactory  extends JSSESocketFactory {
 
             // create proxy
             sslProxy = context.getServerSocketFactory();
-            logger.debug("Init done");
+
             return;
         } catch(Exception e) {
             if( e instanceof IOException )

@@ -65,8 +65,6 @@ import org.apache.tomcat.util.net.SSLSupport;
 import org.apache.tomcat.util.net.ServerSocketFactory;
 import java.io.*;
 import java.net.*;
-import java.lang.reflect.Constructor;
-import javax.net.ssl.SSLSocket;
 
 /* JSSEImplementation:
 
@@ -77,18 +75,33 @@ import javax.net.ssl.SSLSocket;
         
 public class JSSEImplementation extends SSLImplementation
 {
-    static final String JSSE14SocketFactory = 
-        "org.apache.tomcat.util.net.jsse.JSSE14SocketFactory";
-    static final String JSSE14Support = 
-        "org.apache.tomcat.util.net.jsse.JSSE14Support";
+    static final String JSSE14Factory = 
+        "org.apache.tomcat.util.net.jsse.JSSE14Factory";
+    static final String JSSE13Factory = 
+        "org.apache.tomcat.util.net.jsse.JSSE13Support";
     static final String SSLSocketClass = "javax.net.ssl.SSLSocket";
 
     static org.apache.commons.logging.Log logger = 
         org.apache.commons.logging.LogFactory.getLog(JSSEImplementation.class);
 
+    private JSSEFactory factory;
+
     public JSSEImplementation() throws ClassNotFoundException {
         // Check to see if JSSE is floating around somewhere
-        Class.forName("javax.net.ssl.SSLServerSocketFactory");
+        Class.forName(SSLSocketClass);
+	if( JdkCompat.isJava14() ) {
+	    try {
+		Class factcl = Class.forName(JSSE14Factory);
+		factory = (JSSEFactory)factcl.newInstance();
+	    } catch(Exception ex) {
+		factory = new JSSE13Factory();
+		if(logger.isDebugEnabled()) {
+		    logger.debug("Error getting factory: " + JSSE14Factory, ex);
+		}
+	    }
+	} else {
+	    factory = new JSSE13Factory();
+	}
     }
 
 
@@ -96,47 +109,13 @@ public class JSSEImplementation extends SSLImplementation
       return "JSSE";
     }
       
-    public ServerSocketFactory getServerSocketFactory()
-    {
-        ServerSocketFactory ssf = null;
-        if( JdkCompat.isJava14() ) {
-            try {
-                Class ssfCl = Class.forName(JSSE14SocketFactory);
-                ssf =(ServerSocketFactory)ssfCl.newInstance();
-            } catch(Exception ex) {
-                if(logger.isDebugEnabled())
-                    logger.debug("Error finding " + JSSE14SocketFactory, ex);
-                ssf = new JSSESocketFactory();
-            }
-        } else {
-            ssf = new JSSESocketFactory();
-        }
+    public ServerSocketFactory getServerSocketFactory()  {
+        ServerSocketFactory ssf = factory.getSocketFactory();
         return ssf;
     } 
 
-    public SSLSupport getSSLSupport(Socket s)
-    {
-        SSLSupport ssls = null;
-        if( JdkCompat.isJava14() ) {
-            try {
-                Class sslsCl = Class.forName(JSSE14Support);
-                Class [] cparams = new Class[1];
-                cparams[0] = Class.forName(SSLSocketClass);
-                Constructor sslc = sslsCl.getConstructor(cparams);
-                Object [] params = new Object[1];
-                params[0] = s;
-                ssls = (SSLSupport)sslc.newInstance(params);
-            } catch(Exception ex) {
-                if(logger.isDebugEnabled())
-                    logger.debug("Unable to get " + JSSE14Support, ex);
-                ssls = new JSSESupport((SSLSocket)s);
-            }
-        } else {
-            ssls = new JSSESupport((SSLSocket)s);
-        }
+    public SSLSupport getSSLSupport(Socket s) {
+        SSLSupport ssls = factory.getSSLSupport(s);
         return ssls;
     }
-
-
-
 }

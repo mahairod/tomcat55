@@ -94,8 +94,6 @@ public class JSSESocketFactory
 {
     String keystoreType;
 
-    static org.apache.commons.logging.Log logger =
-	org.apache.commons.logging.LogFactory.getLog(JSSESocketFactory.class);
     static String defaultKeystoreType = "JKS";
     static String defaultProtocol = "TLS";
     static String defaultAlgorithm = "SunX509";
