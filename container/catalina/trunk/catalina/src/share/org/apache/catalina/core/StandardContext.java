@@ -4007,8 +4007,6 @@ public class StandardContext
                 // Start our subordinate components, if any
                 if ((loader != null) && (loader instanceof Lifecycle))
                     ((Lifecycle) loader).start();
-                if ((logger != null) && (logger instanceof Lifecycle))
-                    ((Lifecycle) logger).start();
 
                 // Unbinding thread
                 unbindThread(oldCCL);
@@ -4016,6 +4014,8 @@ public class StandardContext
                 // Binding thread
                 oldCCL = bindThread();
 
+                if ((logger != null) && (logger instanceof Lifecycle))
+                    ((Lifecycle) logger).start();
                 if ((cluster != null) && (cluster instanceof Lifecycle))
                     ((Lifecycle) cluster).start();
                 if ((realm != null) && (realm instanceof Lifecycle))
@@ -4483,8 +4483,10 @@ public class StandardContext
         if (getResources() == null)
             return oldContextClassLoader;
 
-        Thread.currentThread().setContextClassLoader
-            (getLoader().getClassLoader());
+        if (getLoader().getClassLoader() != null) {
+            Thread.currentThread().setContextClassLoader
+                (getLoader().getClassLoader());
+        }
 
         DirContextURLStreamHandler.bind(getResources());
 
