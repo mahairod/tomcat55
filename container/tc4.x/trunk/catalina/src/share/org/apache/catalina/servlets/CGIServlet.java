@@ -1583,7 +1583,7 @@ public class CGIServlet extends HttpServlet {
                         arg.append("=");
                         v = java.net.URLEncoder.encode(v);
                         arg.append(v);
-                        if (arg.indexOf(" ") < 0) {
+                        if (arg.toString().indexOf(" ") < 0) {
                             cmdAndArgs.append(arg);
                         } else {
                             // Spaces used as delimiter, so need to use quotes
