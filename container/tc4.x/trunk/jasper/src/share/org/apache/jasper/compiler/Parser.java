@@ -187,6 +187,10 @@ public class Parser {
 	    new JspUtil.ValidAttribute ("prefix", true)
 	};
 
+	private static final String[] reservedPrefixes = {
+	    "jsp", "jspx", "java", "javax", "servlet", "sun", "sunw"
+	};
+
 	public boolean accept(ParseEventListener listener, JspReader reader, 
 			      Parser parser) throws JasperException
 	{
@@ -224,9 +228,17 @@ public class Parser {
 	    else if (match.equals("include"))
 	        JspUtil.checkAttributes ("Include directive", attrs, 
 					 includeDvalidAttrs, start);
-	    else if (match.equals("taglib"))
+	    else if (match.equals("taglib")) {
 	        JspUtil.checkAttributes ("Taglib directive", attrs, 
 					 tagDvalidAttrs, start);
+		String prefix = attrs.getValue("prefix");
+		for (int i = 0; i < reservedPrefixes.length; i++) {
+		    if (prefix.equals(reservedPrefixes[i]))
+			throw new ParseException(reader.mark(),
+				Constants.getString("jsp.error.taglib.reserved.prefix",
+					new Object[] { prefix }));
+		}
+	    }
 	    
 	    // Match close.
 	    reader.skipSpaces();
