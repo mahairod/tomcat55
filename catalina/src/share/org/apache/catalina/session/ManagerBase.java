@@ -78,6 +78,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.management.MBeanRegistration;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
@@ -97,7 +101,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$ $Date$
  */
 
-public abstract class ManagerBase implements Manager {
+public abstract class ManagerBase implements Manager, MBeanRegistration {
     protected Log log = LogFactory.getLog(ManagerBase.class);
 
     // ----------------------------------------------------- Instance Variables
@@ -980,5 +984,34 @@ public abstract class ManagerBase implements Manager {
         return new Date(s.getLastAccessedTime()).toString();
     }
 
+    // -------------------- JMX and Registration  --------------------
+    protected String domain;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
 
 }
