@@ -183,7 +183,7 @@ final class StandardSession
     /**
      * The string manager for this package.
      */
-    private StringManager sm =
+    private static StringManager sm =
         StringManager.getManager("org.apache.tomcat.session");
 
 
