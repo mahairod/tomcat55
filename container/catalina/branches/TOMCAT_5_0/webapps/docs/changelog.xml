@@ -95,6 +95,9 @@
       <update> 
         Updated JspC usage messages to include recently added configurable parameters. (yoavs) 
       </update> 
+      <fix>
+        <bug>29866</bug>: JspReader#skipUntil may try to read beyond the end of the file. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
