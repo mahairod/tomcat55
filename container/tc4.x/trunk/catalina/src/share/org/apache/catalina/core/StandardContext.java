@@ -3544,8 +3544,23 @@ public class StandardContext
             }
 
             // Stop our subordinate components, if any
-            if ((resources != null) && (resources instanceof Lifecycle)) {
-                ((Lifecycle) resources).stop();
+            if (resources != null) {
+                if (resources instanceof Lifecycle) {
+                    ((Lifecycle) resources).stop();
+                } else if (resources instanceof ProxyDirContext) {
+                    DirContext dirContext = 
+                        ((ProxyDirContext) resources).getDirContext();
+                    if (dirContext != null) {
+                        if (debug >= 1) {
+                            log("Releasing document base " + docBase);
+                        }
+                        if (dirContext instanceof BaseDirContext) {
+                            ((BaseDirContext) dirContext).release();
+                        } else {
+                            log("Cannot release " + resources);
+                        }
+                    }
+                }
             }
             if ((realm != null) && (realm instanceof Lifecycle)) {
                 ((Lifecycle) realm).stop();
@@ -3566,24 +3581,6 @@ public class StandardContext
             if ((loader != null) && (loader instanceof Lifecycle)) {
                 ((Lifecycle) loader).stop();
             }
-
-            // Release our resources DirContext
-            DirContext dirContext = resources;
-            if ((dirContext != null) &&
-                (dirContext instanceof ProxyDirContext)) {
-                dirContext = ((ProxyDirContext) dirContext).getDirContext();
-            }
-            if (dirContext != null) {
-                if (debug >= 1) {
-                    log("Releasing document base " + docBase);
-                }
-                if (dirContext instanceof BaseDirContext) {
-                    ((BaseDirContext) dirContext).release();
-                } else {
-                    log("Cannot release " + resources);
-                }
-            }
-
 
         } finally {
 
