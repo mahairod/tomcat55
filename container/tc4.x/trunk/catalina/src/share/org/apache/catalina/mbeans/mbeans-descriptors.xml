@@ -53,6 +53,7 @@
 
 
   <mbean         name="DefaultContext"
+              className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Used to store the default configuration a Host will use when creating a Context"
                domain="Catalina"
                 group="Default-Context"
@@ -1156,6 +1157,7 @@
 
 
   <mbean         name="StandardManager"
+              className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Standard implementation of the Manager interface"
                domain="Catalina"
                 group="Manager"

@@ -64,7 +64,8 @@
 
 package org.apache.catalina.core;
 
-
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.naming.directory.DirContext;
@@ -244,6 +245,10 @@ public class StandardDefaultContext implements DefaultContext {
     protected static StringManager sm =
         StringManager.getManager(Constants.Package);
 
+    /**
+     * The property change support for this component.
+     */
+    protected PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     // ----------------------------------------------------- Context Properties
 
@@ -408,7 +413,11 @@ public class StandardDefaultContext implements DefaultContext {
      * @param loader The newly associated loader
      */
     public void setLoader(Loader loader) {
+        Loader oldLoader = this.loader;
         this.loader = loader;
+
+        // Report this property change to interested listeners
+        support.firePropertyChange("loader", oldLoader, this.loader);
     }
 
 
@@ -429,7 +438,11 @@ public class StandardDefaultContext implements DefaultContext {
      * @param manager The newly associated Manager
      */
     public void setManager(Manager manager) {
+        Manager oldManager = this.manager;
         this.manager = manager;
+        
+        // Report this property change to interested listeners
+        support.firePropertyChange("manager", oldManager, this.manager);
     }
 
 
@@ -471,7 +484,9 @@ public class StandardDefaultContext implements DefaultContext {
      *  attached to the specified Container
      */
     public void setParent(Container container) {
+        Container oldParent = this.parent;
         this.parent = container;
+        support.firePropertyChange("parent", oldParent, this.parent);
 
     }
 

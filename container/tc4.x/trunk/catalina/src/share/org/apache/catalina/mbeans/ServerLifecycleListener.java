@@ -78,6 +78,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
@@ -705,7 +706,20 @@ public class ServerLifecycleListener
                 ",oldValue=" + oldValue +
                 ",newValue=" + newValue + "]");
         }
-        if ("loader".equals(propertyName)) {
+        if ("defaultContext".equals(propertyName)) {
+            if (oldValue != null) {
+                if (debug >= 5) {
+                    log("Removing MBean for DefaultContext " + oldValue);
+                }
+                MBeanUtils.destroyMBean((DefaultContext) oldValue);
+            }
+            if (newValue != null) {
+                if (debug >= 5) {
+                    log("Creating MBean for DefaultContext " + newValue);
+                }
+                MBeanUtils.createMBean((DefaultContext) newValue);
+            }
+        } else if ("loader".equals(propertyName)) {
             if (oldValue != null) {
                 if (debug >= 5) {
                     log("Removing MBean for Loader " + oldValue);
