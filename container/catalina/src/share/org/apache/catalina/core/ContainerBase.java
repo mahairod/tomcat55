@@ -601,7 +601,6 @@ public abstract class ContainerBase
         String oldName = this.name;
         this.name = name;
         support.firePropertyChange("name", oldName, this.name);
-
     }
 
 
@@ -817,7 +816,7 @@ public abstract class ContainerBase
                 throw new IllegalArgumentException("addChild:  Child name '" +
                                                    child.getName() +
                                                    "' is not unique");
-            child.setParent((Container) this);  // May throw IAE
+            child.setParent(this);  // May throw IAE
             if (started && (child instanceof Lifecycle)) {
                 try {
                     ((Lifecycle) child).start();
@@ -1462,6 +1461,7 @@ public abstract class ContainerBase
     }
 
     // -------------------- JMX and Registration  --------------------
+    protected String type;
     protected String domain;
     protected String suffix;
     protected ObjectName oname;
@@ -1475,7 +1475,11 @@ public abstract class ContainerBase
         return domain;
     }
 
-    public String getJSR77Suffix() {
+    public String getType() {
+        return type;
+    }
+
+    protected String getJSR77Suffix() {
         return suffix;
     }
 
@@ -1484,6 +1488,12 @@ public abstract class ContainerBase
         oname=name;
         mserver=server;
         domain=name.getDomain();
+
+        type=name.getKeyProperty("type");
+        if( type==null ) {
+            type=name.getKeyProperty("j2eeType");
+        }
+
         String j2eeApp=name.getKeyProperty("J2EEApplication");
         String j2eeServer=name.getKeyProperty("J2EEServer");
         if( j2eeApp==null ) {
