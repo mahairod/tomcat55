@@ -41,7 +41,8 @@ import org.apache.commons.modeler.modules.MbeansSource;
 /**
  * Standard implementation of the <b>Engine</b> interface.  Each
  * child container must be a Host implementation to process the specific
- * fully qualified host name of that virtual host.
+ * fully qualified host name of that virtual host. <br/>
+ * You can set the jvmRoute direct or with the System.property <b>jvmRoute</b>.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -353,7 +354,7 @@ public class StandardEngine
                 service.setContainer( this );
                 service.initialize();
             } catch( Throwable t ) {
-                t.printStackTrace();
+                log.error(t);
             }
         }
         
@@ -364,6 +365,7 @@ public class StandardEngine
         initialized=false;
         
         // if we created it, make sure it's also destroyed
+        // this call implizit this.stop()
         ((StandardService)service).destroy();
 
         if( mbeans != null ) {
@@ -371,7 +373,7 @@ public class StandardEngine
                 Registry.getRegistry(null, null)
                     .invoke(mbeans, "destroy", false);
             } catch (Exception e) {
-                log.error("Error in destroy() for " + mbeansFile, e);
+                log.error(sm.getString("standardEngine.unregister.mbeans.failed" ,mbeansFile), e);
             }
         }
         // 
@@ -382,7 +384,7 @@ public class StandardEngine
                         .unregisterComponent((ObjectName)mbeans.get(i));
                 }
             } catch (Exception e) {
-                log.error("Error in destroy() for " + mbeansFile, e);
+                log.error(sm.getString("standardEngine.unregister.mbeans.failed", mbeansFile), e);
             }
         }
         
