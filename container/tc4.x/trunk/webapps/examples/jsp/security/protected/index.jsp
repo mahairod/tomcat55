@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Protected Area Page</title>
+<title>Protected Page for Examples</title>
 </head>
 <body bgcolor="white">
 
@@ -9,11 +9,12 @@ You are logged in as remote user <b><%= request.getRemoteUser() %></b><br><br>
 <%
   if (request.getUserPrincipal() != null) {
 %>
-    Your user principal name is <b><%= request.getUserPrincipal().getName() %></b><br><br>
+    Your user principal name is
+    <b><%= request.getUserPrincipal().getName() %></b><br><br>
 <%
   } else {
 %>
-    No user principal could be identified.
+    No user principal could be identified.<br><br>
 <%
   }
 %>
