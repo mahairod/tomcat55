@@ -112,7 +112,7 @@ public class PoolTcpEndpoint extends TcpEndpoint  { // implements Endpoint {
     private ServerSocketFactory factory;
     private ServerSocket serverSocket;
 
-    Runnable listener;
+    ThreadPoolRunnable listener;
     boolean running = true;
 
     ThreadPool tp;
@@ -319,7 +319,13 @@ public class PoolTcpEndpoint extends TcpEndpoint  { // implements Endpoint {
  * Instead I am now using a pool of threads, all the threads are
  * simmetric in their execution and no thread switch is needed.
  */
-class TcpWorkerThread implements Runnable {
+class TcpWorkerThread implements ThreadPoolRunnable {
+    /* This is not a normal Runnable - it gets attached to an existing
+       thread, runs and when run() ends - the thread keeps running.
+
+       It's better to keep the name ThreadPoolRunnable - avoid confusion.
+       We also want to use per/thread data and avoid sync wherever possible.
+    */
     PoolTcpEndpoint endpoint;
     Vector connectionCache;
 
@@ -331,9 +337,12 @@ class TcpWorkerThread implements Runnable {
 	    }
     }
 
-    public void run() {
+    public Object[] getInitData() {
+	return endpoint.getConnectionHandler().init();
+    }
+    
+    public void runIt(Object perThrData[]) {
 	// Create per-thread cache
-	Object perThrData[]=endpoint.getConnectionHandler().init();
 	while(endpoint.running) {
 		
 		//		System.out.println("XXX accept socket");
