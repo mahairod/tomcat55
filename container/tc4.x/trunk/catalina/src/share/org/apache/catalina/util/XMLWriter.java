@@ -63,10 +63,13 @@
 
 package org.apache.catalina.util;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * XMLWriter helper class.
  * 
- * @author Remy Maucherat
+ * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  */
 public class XMLWriter {
     
@@ -98,7 +101,13 @@ public class XMLWriter {
     /**
      * Buffer.
      */
-    protected StringBuffer buffer;
+    protected StringBuffer buffer = new StringBuffer();
+    
+    
+    /**
+     * Writer.
+     */
+    protected Writer writer = null;
     
     
     // ----------------------------------------------------------- Constructors
@@ -108,7 +117,14 @@ public class XMLWriter {
      * Constructor.
      */
     public XMLWriter() {
-        buffer = new StringBuffer();
+    }
+    
+    
+    /**
+     * Constructor.
+     */
+    public XMLWriter(Writer writer) {
+        this.writer = writer;
     }
     
     
@@ -138,6 +154,7 @@ public class XMLWriter {
         writeElement(namespace, namespaceInfo, name, OPENING);
         buffer.append(value);
         writeElement(namespace, namespaceInfo, name, CLOSING);
+        
     }
     
     
@@ -244,16 +261,19 @@ public class XMLWriter {
      * Write XML Header.
      */
     public void writeXMLHeader() {
-        buffer.append("<?xml version=\"1.0\"?>\n");
+        buffer.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n");
     }
     
     
     /**
-     * Write XML Header.
+     * Send data and reinitializes buffer.
      */
-    public void writeXMLHeader(String encoding) {
-        buffer.append("<?xml version=\"1.0\" encoding=\"" + encoding 
-                      + "\"?>\n");
+    public void sendData()
+        throws IOException {
+        if (writer != null) {
+            writer.write(buffer.toString());
+            buffer = new StringBuffer();
+        }
     }
     
     
