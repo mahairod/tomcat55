@@ -516,7 +516,8 @@ public class SimpleTcpCluster
 
 
     }
-
+    
+    
     public void send(SessionMessage msg, Member dest) {
         try
         {
@@ -526,6 +527,7 @@ public class SimpleTcpCluster
                 if (service.getMembers().length > 0)
                     destination = service.getMembers()[0];
             }
+            msg.setTimestamp(System.currentTimeMillis());
             java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
             java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(outs);
             out.writeObject(msg);
@@ -672,6 +674,8 @@ public class SimpleTcpCluster
             Object myobj = stream.readObject();
             if ( myobj != null && myobj instanceof SessionMessage ) {
                 SessionMessage msg = (SessionMessage)myobj;
+                //remove when checking in
+                perfMessageRecvd(msg.getTimestamp());
                 String name = msg.getContextName();
                 //check if the message is a EVT_GET_ALL_SESSIONS,
                 //if so, wait until we are fully started up
@@ -789,6 +793,16 @@ public class SimpleTcpCluster
 
     // ---------------------------------------------  Inner Class
 
-
+    // ---------------------------------------------  Performance
+    private long nrOfMsgsReceived = 0;
+    private long msgSendTime = 0;
+    private long lastChecked = System.currentTimeMillis();
+    private void perfMessageRecvd(long timeSent) {
+        nrOfMsgsReceived++;
+        msgSendTime+=(System.currentTimeMillis()-timeSent);
+        if ( (System.currentTimeMillis() - lastChecked) > 5000 ) {
+            log.debug("Calc msg send time total="+msgSendTime+"ms num request="+nrOfMsgsReceived+" average per msg="+(msgSendTime/nrOfMsgsReceived)+"ms.");
+        }
+    }
 
 }

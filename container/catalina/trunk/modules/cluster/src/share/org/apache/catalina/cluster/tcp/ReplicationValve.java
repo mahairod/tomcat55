@@ -147,6 +147,18 @@ public class ReplicationValve
 
 
     // --------------------------------------------------------- Public Methods
+    protected static long totalSendTime=0;
+    protected static long nrOfRequests =0;
+    protected static long lastSendTime =0;
+    protected static synchronized void addClusterSendTime(long time) {
+        totalSendTime+=time;
+        nrOfRequests++;
+        if ( (System.currentTimeMillis()-lastSendTime)>5000 ) {
+            log.info("Average cluster serialize/send time="+(totalSendTime/nrOfRequests)+" ms for "+
+                     nrOfRequests+" requests ("+totalSendTime+"ms).");
+            lastSendTime=System.currentTimeMillis();
+        }//end if
+    }
 
 
     /**
@@ -170,6 +182,7 @@ public class ReplicationValve
         //this happens after the request
         try
         {
+            long start = System.currentTimeMillis();
             HttpRequest hrequest = (HttpRequest) request;
             HttpServletRequest hreq = (HttpServletRequest) hrequest.getRequest();
             HttpSession session = hreq.getSession(false);
@@ -185,6 +198,12 @@ public class ReplicationValve
             if ( (request.getContext().getManager()==null) ||
                  (!(request.getContext().getManager() instanceof SimpleTcpReplicationManager)))
                 return;
+
+            SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
+            if ( cluster == null ) {
+                log("No cluster configured for this request.",2);
+                return;
+            }
 
             String uri = hrequest.getDecodedRequestURI();
             boolean filterfound = false;
@@ -202,12 +221,11 @@ public class ReplicationValve
             SessionMessage msg = manager.requestCompleted(id);
             if ( msg == null ) return;
 
-            SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
-            if ( cluster == null ) {
-                log("No cluster configured for this request.",2);
-                return;
-            }
+            
             cluster.send(msg);
+            long stop = System.currentTimeMillis();
+            addClusterSendTime(stop-start);
+            
         }catch (Exception x)
         {
             log("Unable to perform replication request.",x,2);
