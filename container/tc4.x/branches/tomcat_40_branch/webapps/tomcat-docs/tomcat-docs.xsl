@@ -248,7 +248,8 @@
         <th width="85%" bgcolor="{$attributes-color}">
           <font color="#ffffff">Description</font>
         </th>
-        <xsl:for-each select="attribute">
+      </tr>
+      <xsl:for-each select="attribute">
         <tr>
           <td align="left" valign="center">
             <xsl:if test="@required = 'true'">
@@ -262,8 +263,7 @@
             <xsl:apply-templates/>
           </td>
         </tr>
-        </xsl:for-each>
-      </tr>
+      </xsl:for-each>
     </table>
   </xsl:template>
 
