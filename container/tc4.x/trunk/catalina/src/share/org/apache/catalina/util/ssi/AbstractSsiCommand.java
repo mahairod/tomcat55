@@ -1,5 +1,5 @@
 /*
- * SsiEcho.java
+ * AbstractSsiCommand.java
  * $Header$
  * $Revision$
  * $Date$
@@ -62,19 +62,20 @@
  *
  */
 
+
 package org.apache.catalina.util.ssi;
 
 import java.io.IOException;
 import javax.servlet.ServletOutputStream;
 
 /**
- * Writes the variable value to the servlet stream.
+ *  Default abstract implemention of the SsiCommand interface.
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @version $Revision$, $Date$
+ *  @author Paul Speed
+ *  @version $Revision$
  */
-public final class SsiEcho extends AbstractSsiCommand {
+
+public abstract class AbstractSsiCommand implements SsiCommand {
 
     /**
      *  Runs this command using the specified parameters.
@@ -90,25 +91,20 @@ public final class SsiEcho extends AbstractSsiCommand {
      *  @param out      A convenient place for commands to
      *                  write their output.
      */
-    public void execute( String cmdName, String[] argNames,
-                         String[] argVals, SsiEnvironment ssiEnv,
-                         ServletOutputStream out )
+    public abstract void execute( String cmdName, String[] argNames,
+                                  String[] argVals, SsiEnvironment ssiEnv,
+                                  ServletOutputStream out )
                                     throws IOException,
-                                           SsiCommandException {
-        if (argNames.length == 0)
-            throw new SsiCommandException( "No var specified." );
+                                           SsiCommandException;
 
-        for (int i = 0; i < argNames.length; i++ ) {
-            String name = argNames[i];
-            if ("encoding".equals(name)) {
-                // silently ignore for forward compatability
-            } else if ("var".equals(name)) {
-                // Write each var that we find
-                String val = ssiEnv.getVariable(argVals[i]);
-                out.print( (val==null)?"(none)":val );
-            } else {
-                throw new SsiCommandException( "Unknown parameter:" + name );
-            }
-        }
+    /**
+     *  Returns true if the command should always be executed
+     *  even if output is disabled.  Default implementation
+     *  returns false.
+     */
+    public boolean alwaysExecute() {
+        return false;
     }
+
+
 }

@@ -117,6 +117,12 @@ public class SsiEnvironment {
     private Hashtable ssiConfig;
 
     /**
+     *  A place where commands can stick state information specific
+     *  to this environment.
+     */
+    private Hashtable commandVars = new Hashtable(7);
+
+    /**
      *  The ServletContext associated with this environment.
      */
     private ServletContext servletContext;
@@ -157,18 +163,6 @@ public class SsiEnvironment {
      *  Set to true if output is temporarily disabled.
      */
     private boolean disableOutput;
-
-    /**
-     *  Used to track the number if "if" directives that have been
-     *  encountered without yet seeing an "endif".
-     */
-    private int conditionalCount = 0;
-
-    /**
-     *  Used to track the number of nested conditional branches that
-     *  have been taken.
-     */
-    private int branchCount = 0;
 
     /**
      *  Creates a new SsiEnvironment instance for the specified request.
@@ -396,6 +390,25 @@ public class SsiEnvironment {
         if (parent != null)
             return parent.getConfiguration(key);
         return (String)ssiConfig.get( key );
+    }
+
+    /**
+     *  Sets the specified command variable.
+     */
+    public void setCommandVariable( String key, Object value ) {
+        commandVars.put( key, value );
+    }
+
+    /**
+     *  Returns the specified command variable.  Command variables
+     *  can be used by commands to store state information that needs
+     *  to be associated with a specific request and used across
+     *  multiple command executions.  Note: it may be better to
+     *  change get/setConfiguration to take Object values and use
+     *  it instead.
+     */
+    public Object getCommandVariable( String key ) {
+        return commandVars.get( key );
     }
 
     /**

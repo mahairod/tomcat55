@@ -76,7 +76,7 @@ import javax.servlet.ServletOutputStream;
  * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiConfig implements SsiCommand {
+public final class SsiConfig extends AbstractSsiCommand {
 
     /**
      * Variable to hold the patterns for translation

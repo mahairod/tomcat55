@@ -101,19 +101,19 @@ public class SsiDispatcher {
         ssiCommands.put("flastmod", new SsiFlastmod());
         ssiCommands.put("exec", new SsiExec());
         ssiCommands.put("set", new SsiSet());
+
+        SsiConditional cond = new SsiConditional();
+        ssiCommands.put("if", cond);
+        ssiCommands.put("elif", cond);
+        ssiCommands.put("else", cond);
+        ssiCommands.put("endif", cond);
     }
 
     /**
      *  Set to true to ignore unknown commands.
      */
-    public void setIgnoreUnsupportedDirective(boolean flag) {
+    public void setIgnoreUnsupportedDirective( boolean flag ) {
         this.ignoreUnsupportedDirective = flag;
-    }
-
-    /**
-     * Set to true to consider the webapp as root.
-    public void setIsVirtualWebappRelative(boolean flag) {
-        this.isVirtualWebappRelative = flag;
     }
 
     /**
@@ -142,6 +142,7 @@ public class SsiDispatcher {
                             SsiEnvironment ssiEnv,
                             ServletOutputStream out )
                                     throws IOException {
+
         // Lookup the command
         SsiCommand cmd = (SsiCommand)ssiCommands.get(cmdName);
         if (cmd == null) {
@@ -151,6 +152,11 @@ public class SsiDispatcher {
         }
 
         try {
+            // If output is disabled then only run the command if
+            // it should always be run
+            if (ssiEnv.isOutputDisabled() && !cmd.alwaysExecute())
+                return;
+
             // Run the command
             cmd.execute( cmdName, argNames, argVals, ssiEnv, out );
         } catch (SsiCommandException e) {

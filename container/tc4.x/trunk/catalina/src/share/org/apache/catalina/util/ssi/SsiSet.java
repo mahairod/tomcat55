@@ -71,7 +71,7 @@ import javax.servlet.ServletOutputStream;
  *  @version   $Revision$, $Date$
  *  @author    Paul Speed
  */
-public final class SsiSet implements SsiCommand {
+public final class SsiSet extends AbstractSsiCommand {
 
     /**
      *  Runs this command using the specified parameters.

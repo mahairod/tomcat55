@@ -77,7 +77,7 @@ import javax.servlet.ServletOutputStream;
  * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiFsize implements SsiCommand {
+public final class SsiFsize extends AbstractSsiCommand {
 
     /**
      *  Runs this command using the specified parameters.
@@ -99,6 +99,9 @@ public final class SsiFsize implements SsiCommand {
                                     throws IOException,
                                            SsiCommandException {
         FileReference ref = null;
+
+        if (argNames.length == 0)
+            throw new SsiCommandException( "No path specified." );
 
         String value = ssiEnv.substituteVariables( argVals[0] );
 

@@ -96,4 +96,10 @@ public interface SsiCommand {
                                     throws IOException,
                                            SsiCommandException;
 
+    /**
+     *  Returns true if the command should always be executed
+     *  even if output is disabled.  For example, all conditional
+     *  commands should be run when output is disabled.
+     */
+    public boolean alwaysExecute();
 }

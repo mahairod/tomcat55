@@ -78,7 +78,7 @@ import javax.servlet.RequestDispatcher;
  * @author Paul Speed
  * @version $Revision$, $Date$
  */
-public final class SsiInclude implements SsiCommand {
+public final class SsiInclude extends AbstractSsiCommand {
 
     /**
      *  Runs this command using the specified parameters.
@@ -99,6 +99,9 @@ public final class SsiInclude implements SsiCommand {
                          ServletOutputStream out )
                                     throws IOException,
                                            SsiCommandException {
+        if (argNames.length == 0)
+            throw new SsiCommandException( "No path specified." );
+
         FileReference ref = null;
 
         String value = ssiEnv.substituteVariables( argVals[0] );

@@ -83,7 +83,7 @@ import javax.servlet.ServletOutputStream;
  * @version $Revision$, $Date$
  *
  */
-public final class SsiExec implements SsiCommand {
+public final class SsiExec extends AbstractSsiCommand {
 
     /**
      *  Runs this command using the specified parameters.
@@ -104,6 +104,9 @@ public final class SsiExec implements SsiCommand {
                          ServletOutputStream out )
                                     throws IOException,
                                            SsiCommandException {
+
+        if (argNames.length == 0)
+            throw new SsiCommandException( "No executable specified." );
 
         if ("cgi".equals(argNames[0])) {
             String path = getCGIPath(argVals[0], ssiEnv.getContextPath());
