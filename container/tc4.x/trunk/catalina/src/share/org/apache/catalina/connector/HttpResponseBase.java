@@ -68,6 +68,7 @@ package org.apache.catalina.connector;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 // import java.net.URL;
 import java.security.AccessController;
@@ -589,8 +590,12 @@ public class HttpResponseBase
         }
 
         // Prepare a suitable output writer
-        OutputStreamWriter osr =
-            new OutputStreamWriter(getStream(), getCharacterEncoding());
+        OutputStreamWriter osr = null;
+        try {
+            osr = new OutputStreamWriter(getStream(), getCharacterEncoding());
+        } catch (UnsupportedEncodingException e) {
+            osr = new OutputStreamWriter(getStream());
+        }
         final PrintWriter outputWriter = new PrintWriter(osr);
 
         // Send the "Status:" header
