@@ -90,8 +90,8 @@ public class JMXSetTask extends AbstractCatalinaTask {
     }
 
     /**
-     * Set method for the attribute value
-     * @param attribute Attribute value
+     * Set method for the attribute value.
+     * @param value Attribute value
      */
     public void setValue (String value) {
         this.value = value;
