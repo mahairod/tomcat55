@@ -192,7 +192,7 @@ class ParserController implements TagConstants {
 	isEncodingSpecifiedInProlog = false;
 	isDefaultPageEncoding = false;
         this.isTagFile = isTagFile;
-        this.directiveOnly = directiveOnly;
+        this.directiveOnly = directivesOnly;
 
 	JarFile jarFile = getJarFile(jarFileUrl);
 	String absFileName = resolveFileName(inFileName);
