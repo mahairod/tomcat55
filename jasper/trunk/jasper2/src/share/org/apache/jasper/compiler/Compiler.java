@@ -543,7 +543,7 @@ public class Compiler {
             outDated = true;
         } else {
             targetLastModified = targetFile.lastModified();
-            if (checkClass) {
+            if (checkClass && jsw != null) {
                 jsw.setServletClassLastModifiedTime(targetLastModified);
             }   
             if (targetLastModified < jspRealLastModified) {
