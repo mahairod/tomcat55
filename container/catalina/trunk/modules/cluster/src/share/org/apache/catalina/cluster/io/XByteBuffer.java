@@ -242,6 +242,25 @@ public class XByteBuffer
     }//toInt
 
     /**
+     * Convert eight bytes to a long
+     * @param b - the byte array containing the four bytes
+     * @param off - the offset
+     * @return the long value constructed from the eight bytes
+     * @exception java.lang.ArrayOutOfBoundsException
+     */
+    public static long toLong(byte[] b,int off){
+        return ( ( (long) b[off+7]) & 0xFF) +
+            ( ( ( (long) b[off+6]) & 0xFF) << 8) +
+            ( ( ( (long) b[off+5]) & 0xFF) << 16) +
+            ( ( ( (long) b[off+4]) & 0xFF) << 24) +
+            ( ( ( (long) b[off+3]) & 0xFF) << 32) +
+            ( ( ( (long) b[off+2]) & 0xFF) << 40) +
+            ( ( ( (long) b[off+1]) & 0xFF) << 48) +
+            ( ( ( (long) b[off+0]) & 0xFF) << 56);
+    }//toInt
+
+
+    /**
      * Converts an integer to four bytes
      * @param n - the integer
      * @return - four bytes in an array
@@ -257,6 +276,33 @@ public class XByteBuffer
         b[0] = (byte) (n);
         return b;
     } //toBytes
+
+
+    /**
+     * Converts an long to eight bytes
+     * @param n - the long
+     * @return - eight bytes in an array
+     */
+    public static byte[] toBytes(long n) {
+        byte[] b = new byte[8];
+        b[7] = (byte) (n);
+        n >>>= 8;
+        b[6] = (byte) (n);
+        n >>>= 8;
+        b[5] = (byte) (n);
+        n >>>= 8;
+        b[4] = (byte) (n);
+        n >>>= 8;
+        b[3] = (byte) (n);
+        n >>>= 8;
+        b[2] = (byte) (n);
+        n >>>= 8;
+        b[1] = (byte) (n);
+        n >>>= 8;
+        b[0] = (byte) (n);
+        return b;
+    } //toBytes
+
 
     /**
      * Similar to a String.IndexOf, but uses pure bytes
@@ -316,5 +362,20 @@ public class XByteBuffer
         System.arraycopy(END_DATA,0,result,START_DATA.length+4+data.length,END_DATA.length);
         return result;
     }//createDataPackage
+
+    public static void main(String[] args) {
+       System.out.println("Before="+Integer.MAX_VALUE);
+       byte[] d = toBytes(Integer.MAX_VALUE);
+       System.out.println("After="+toInt(d,0));
+
+
+       System.out.println("Before="+Long.MAX_VALUE);
+       d = toBytes(Long.MAX_VALUE);
+       System.out.println("After="+toLong(d,0));
+
+       System.out.println("Before=" + 4564564);
+       d = toBytes((long)4564564);
+       System.out.println("After=" + toLong(d, 0));
+    }
 
 }//class

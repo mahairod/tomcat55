@@ -108,6 +108,11 @@ public class McastMember implements Member, java.io.Serializable {
      * Counter for how many messages have been sent from this member
      */
     protected int msgCount = 0;
+    /**
+     * The number of milliseconds since this members was
+     * created, is kept track of using the start time
+     */
+    protected long memberAliveTime = 0;
 
 
     /**
@@ -118,10 +123,12 @@ public class McastMember implements Member, java.io.Serializable {
      */
     public McastMember(String name,
                        String host,
-                       int port) {
+                       int port,
+                       long aliveTime) {
         this.host = host;
         this.port = port;
         this.name = name;
+        this.memberAliveTime=aliveTime;
     }
 
     /**
@@ -152,17 +159,20 @@ public class McastMember implements Member, java.io.Serializable {
      * @return - the bytes for this member deserialized
      * @throws Exception
      */
-    protected byte[] getData() throws Exception {
+    protected byte[] getData(long startTime) throws Exception {
         //package looks like
+        //alive - 8 bytes
         //port - 4 bytes
         //host - 4 bytes
         //name - remaining bytes
         byte[] named = getName().getBytes();
         byte[] addr = java.net.InetAddress.getByName(host).getAddress();
-        byte[] data = new byte[4+addr.length+named.length];
-        System.arraycopy(XByteBuffer.toBytes(port),0,data,0,4);
-        System.arraycopy(addr,0,data,4,4);
-        System.arraycopy(named,0,data,4+addr.length,named.length);
+        byte[] data = new byte[8+4+addr.length+named.length];
+        long alive=System.currentTimeMillis()-startTime;
+        System.arraycopy(XByteBuffer.toBytes((long)alive),0,data,0,8);
+        System.arraycopy(XByteBuffer.toBytes(port),0,data,8,4);
+        System.arraycopy(addr,0,data,12,addr.length);
+        System.arraycopy(named,0,data,8+4+addr.length,named.length);
         return data;
     }
     /**
@@ -171,13 +181,22 @@ public class McastMember implements Member, java.io.Serializable {
      * @return a member object.
      */
     protected static McastMember getMember(byte[] data) {
-        byte[] portd = new byte[4];
-        System.arraycopy(data,0,portd,0,4);
-        byte[] addr = new byte[4];
-        System.arraycopy(data,4,addr,0,4);
-        byte[] named = new byte[data.length-8];
-        System.arraycopy(data,8,named,0,named.length);
-        return new McastMember(new String(named),addressToString(addr),XByteBuffer.toInt(portd,0));
+       //package looks like
+       //alive - 8 bytes
+       //port - 4 bytes
+       //host - 4 bytes
+       //name - remaining bytes
+       byte[] alived = new byte[8];
+       System.arraycopy(data, 0, alived, 0, 8);
+       byte[] portd = new byte[4];
+       System.arraycopy(data, 8, portd, 0, 4);
+       byte[] addr = new byte[4];
+       System.arraycopy(data, 12, addr, 0, 4);
+       byte[] named = new byte[data.length - 16];
+       System.arraycopy(data, 16, named, 0, named.length);
+       return new McastMember(new String(named), addressToString(addr),
+                              XByteBuffer.toInt(portd, 0),
+                              XByteBuffer.toLong(alived, 0));
     }
 
     /**
@@ -205,11 +224,27 @@ public class McastMember implements Member, java.io.Serializable {
     }
 
     /**
+     * Contains information on how long this member has been online.
+     * The result is the number of milli seconds this member has been
+     * broadcasting its membership to the cluster.
+     * @return nr of milliseconds since this member started.
+     */
+    public long getMemberAliveTime() {
+       return memberAliveTime;
+    }
+
+    public void setMemberAliveTime(long time) {
+       memberAliveTime=time;
+    }
+
+
+
+    /**
      * String representation of this object
      * @return
      */
     public String toString()  {
-        return "org.apache.catalina.cluster.mcast.McastMember["+name+","+host+","+port+"]";
+        return "org.apache.catalina.cluster.mcast.McastMember["+name+","+host+","+port+", alive="+memberAliveTime+"]";
     }
 
     /**

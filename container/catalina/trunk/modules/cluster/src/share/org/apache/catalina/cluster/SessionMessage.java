@@ -138,36 +138,10 @@ public class SessionMessage
      * Event type used when an attribute has been added to a session,
      * the attribute will be sent to all the other nodes in the cluster
      */
-//    public static final int EVT_ATTRIBUTE_ADDED  = 5;
-    /**
-     * Event type used when an attribute has been removed from a session,
-     * the attribute will be sent to all the other nodes in the cluster
-     */
-//    public static final int EVT_ATTRIBUTE_REMOVED_WONOTIFY = 6;
+    public static final int EVT_SESSION_DELTA  = 13;
 
     /**
-     * Event type used when an attribute has been removed from a session,
-     * the attribute will be sent to all the other nodes in the cluster
-     */
-//    public static final int EVT_ATTRIBUTE_REMOVED_WNOTIFY = 8;
-
-    /**
-     * Event type used when a user principal is being cached in the session
-     */
-//    public static final int EVT_SET_USER_PRINCIPAL = 9;
-
-    /**
-     * Event type used when a user principal is being cached in the session
-     */
-//    public static final int EVT_REMOVE_SESSION_NOTE = 10;
-
-
-    /**
-     * Event type used when a user principal is being cached in the session
-     */
-//    public static final int EVT_SET_SESSION_NOTE = 11;
-    /**
-     * Event type used when all sessions are sent over as binary data
+     * When a session state is transferred, this is the event.
      */
     public static final int EVT_ALL_SESSION_DATA = 12;
 
@@ -208,7 +182,7 @@ public class SessionMessage
      * <B>EVT_REMOVE_SESSION_NOTE</B><BR>
      *    The parameters: sessionID, attrName<
      * <B>EVT_SET_SESSION_NOTE</B><BR>
-     *    The parameters: sessionID, attrName, attrValue<
+     *    The parameters: sessionID, attrName, attrValue
      * @param eventtype - one of the 8 event type defined in this class
      * @param session - the serialized byte array of the session itself
      * @param sessionID - the id that identifies this session
@@ -263,14 +237,9 @@ public class SessionMessage
             case EVT_SESSION_CREATED : return "SESSION-MODIFIED";
             case EVT_SESSION_EXPIRED_WNOTIFY : return "SESSION-EXPIRED-WITH-NOTIFY";
             case EVT_SESSION_EXPIRED_WONOTIFY : return "SESSION-EXPIRED-WITHOUT-NOTIFY";
-//            case EVT_ATTRIBUTE_ADDED : return "SESSION-ATTRIBUTE-ADDED";
-//            case EVT_ATTRIBUTE_REMOVED_WNOTIFY : return "SESSION-ATTRIBUTE-REMOVED-WITH-NOTIFY";
-//            case EVT_ATTRIBUTE_REMOVED_WONOTIFY: return "SESSION-ATTRIBUTE-REMOVED-WITHOUT-NOTIFY";
             case EVT_SESSION_ACCESSED : return "SESSION-ACCESSED";
             case EVT_GET_ALL_SESSIONS : return "SESSION-GET-ALL";
-//            case EVT_SET_SESSION_NOTE: return "SET-SESSION-NOTE";
-//            case EVT_SET_USER_PRINCIPAL : return "SET-USER-PRINCIPAL";
-//            case EVT_REMOVE_SESSION_NOTE : return "REMOVE-SESSION-NOTE";
+            //case EVT_SET_USER_PRINCIPAL : return "SET-USER-PRINCIPAL";
             case EVT_ALL_SESSION_DATA : return "ALL-SESSION-DATA";
             default : return "UNKNOWN-EVENT-TYPE";
         }
@@ -296,5 +265,7 @@ public class SessionMessage
         this.mSrc = src;
     }
 
-    public String getContextName() { return mContextName; }
+    public String getContextName() {
+       return mContextName;
+    }
 }//SessionMessage
