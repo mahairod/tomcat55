@@ -65,6 +65,8 @@ Bug No.  Description
 
 	 Fix the handling of response.encodeURL("") to conform to the w3 spec.
 
+15894	 Fix race condition on reusing Sessions.
+
 Jasper:
 
 Bug No.  Description
