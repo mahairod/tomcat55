@@ -61,6 +61,7 @@ import java.io.*;
  *
  *
  * @author costin@dnt.ro
+ * @author stefano@apache.org
  */
 
 public class Cvs extends Task {
@@ -71,31 +72,33 @@ public class Cvs extends Task {
     
     public void execute() throws BuildException {
 
-	// XXX
-	// I'd like to find some Java based CVS utility so that
-	// we don't rely upon command line CVS to be here.
+	// XXX: we should use JCVS (www.ice.com/JCVS) instead of command line
+	// execution so that we don't rely on having native CVS stuff around (SM)
 	
 	try {
 	    String command="cvs -d " + cvsRoot + " co " + pack;
 	    System.out.println(command);
-	    Process proc=Runtime.getRuntime().exec(command);
+
+        // exec command on system runtime
+	    Process proc = Runtime.getRuntime().exec(command);
 	    
 	    // ignore response
-	    DataInputStream din = new DataInputStream( proc.getInputStream() );
-	    String line;
+        BufferedReader din = new BufferedReader(
+           new InputStreamReader(proc.getInputStream())
+        );
 
-	    // XXX
-	    // Change this as din.readLine pops a deprecation warning
-	    // under 1.3
-	    
-	    while( (line=din.readLine()) != null ) {
-		System.out.println(line);
+        // pipe CVS output to STDOUT
+	    String line;
+	    while((line = din.readLine()) != null) {
+    		System.out.println(line);
 	    }
 	    
 	    proc.waitFor();
-	    int err=proc.exitValue();
-	    if( err!=0 ) throw new BuildException( "Error " + err +
-						   "in " + command);
+	    int err = proc.exitValue();
+	    if (err != 0) {
+	       throw new BuildException( "Error " + err + "in " + command);
+	    }
+	    
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
 	    throw new BuildException("Error checking out: " + pack );
