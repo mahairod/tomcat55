@@ -46,8 +46,11 @@ public class ResponseFacade
 
     // ----------------------------------------------------------- DoPrivileged
     
-    private final class SetContentTypePrivilegedAction implements PrivilegedAction{
+    private final class SetContentTypePrivilegedAction
+            implements PrivilegedAction {
+
         private String contentType;
+
         public SetContentTypePrivilegedAction(String contentType){
             this.contentType = contentType;
         }
@@ -58,7 +61,9 @@ public class ResponseFacade
         }            
     }
 
-    private final class DateHeaderPrivilegedAction implements PrivilegedAction {
+    private final class DateHeaderPrivilegedAction
+            implements PrivilegedAction {
+
         private String name;
         private long value;
         private boolean add;
@@ -90,7 +95,6 @@ public class ResponseFacade
     public ResponseFacade(Response response) {
 
          this.response = response;
-
     }
 
 
@@ -443,18 +447,16 @@ public class ResponseFacade
             return;
 
         response.setStatus(sc, sm);
-
     }
 
 
-	public String getContentType() {
-		return response.getContentType();
-	}
+    public String getContentType() {
+        return response.getContentType();
+    }
 
 
-	public void setCharacterEncoding(String arg0) {
+    public void setCharacterEncoding(String arg0) {
         response.setCharacterEncoding(arg0);
-	}
-
+    }
 
 }
