@@ -308,6 +308,13 @@
     or Context to be logged to the <a href="logger.html">Logger</a> that
     corresponds to that container.</p>
 
+    <p><strong>WARNING: Using this valve has side-effects.</strong>
+ The
+    output from this valve includes any parameters included with the request.
+    The parameters will be decoded using the default platform encoding. Any
+    subsequent calls to <code>request.setCharacterEncoding()</code> within
+    the web application will have no effect.</p>
+
   </subsection>
 
 
