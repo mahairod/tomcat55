@@ -65,6 +65,7 @@
 package org.apache.tomcat.server;
 
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.service.http.HttpAdapter;
 import org.apache.tomcat.net.*;
 import org.apache.tomcat.util.*;
 import java.io.*;
@@ -591,7 +592,8 @@ public class HttpServer implements Server {
 		conn=(ServerConnector)c.newInstance();
 	    } catch(Exception ex) {
 		ex.printStackTrace();
-		return new HttpServerConnector();
+		//		return new HttpServerConnector();
+		return new HttpAdapter();
 	    }
 	    
 	    if( conn != null ) {
@@ -610,8 +612,8 @@ public class HttpServer implements Server {
 	    }
 	}
 	// default 
-	HttpServerConnector con=new HttpServerConnector();
-	return con;
+	// 	HttpServerConnector con=new HttpServerConnector();
+	return new HttpAdapter();
     }
 
     /** Called before starting the connector

@@ -16,6 +16,9 @@ if [ "$cp" != "" ]; then
     CLASSPATH=${CLASSPATH}:${cp}
 fi
 
+if [ "$1" != "" ]; then
+    port=$1
+fi
 
 # Add tomcat-related classes
 TOMCAT_HOME=..
