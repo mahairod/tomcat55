@@ -2085,6 +2085,12 @@
           description="Shutdown password"
                  type="java.lang.String"/>
 
+    <operation   name="store"
+          description="Save current state to server.xml file"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
   </mbean>
 
 
