@@ -1079,6 +1079,11 @@ public class StandardContext
         this.defaultWebXml = defaultWebXml;
     }
 
+    /**
+     * Gets the time (in milliseconds) it took to start this context.
+     *
+     * @return Time (in milliseconds) it took to start this context.
+     */
     public long getStartupTime() {
         return startupTime;
     }
@@ -5408,8 +5413,14 @@ public class StandardContext
         return this.javaVMs = javaVMs;
     }
     
+    /**
+     * Gets the time this context was started.
+     *
+     * @return Time (in milliseconds since January 1, 1970, 00:00:00) when this
+     * context was started 
+     */
     public long getStartTime() {
-        return startupTime;
+        return startTime;
     }
     
     public boolean isEventProvider() {
