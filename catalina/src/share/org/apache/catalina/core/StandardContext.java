@@ -140,7 +140,6 @@ public class StandardContext
     private Log log = LogFactory.getLog(StandardContext.class);
 
 
-
     // ----------------------------------------------------------- Constructors
 
 
@@ -158,12 +157,18 @@ public class StandardContext
 
     // ----------------------------------------------------- Instance Variables
 
+
     /**
      * The alternate deployment descriptor name.
      */
     private String altDDName = null;
-    
+
+
+    /**
+     * Associated host name.
+     */
     private String hostName;
+
 
     /**
      * The set of application listener class names configured for this
@@ -4934,7 +4939,7 @@ public class StandardContext
             log.debug( "AddChild " + parentName + " " + this);
             mserver.invoke(parentName, "addChild", new Object[] { this },
                     new String[] {"org.apache.catalina.Container"});
-        }            
+        }
         super.init();
     }
 
