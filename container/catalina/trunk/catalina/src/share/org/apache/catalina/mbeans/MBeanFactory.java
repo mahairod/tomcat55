@@ -952,12 +952,13 @@ public class MBeanFactory extends BaseModelMBean {
         if (containerBase != null) {
             containerBase.setManager(manager);
         } 
-        //ObjectName oname = manager.getObjectName();
-        // FIXME getObjectName() returns null
-        ObjectName oname = 
-            MBeanUtils.createObjectName(pname.getDomain(), manager);
-        return (oname.toString());
-
+        ObjectName oname = manager.getObjectName();
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }
+        
     }
 
 
