@@ -411,47 +411,25 @@ Transport.send(message);
         all J2EE platforms must provide to applications).</li>
     </ul>
 
-    <h3>1.  Download And Install Required Packages</h3>
-
-    <p>Use of the data source JNDI resource involves downloading and installing
-    several packages that are not included with Tomcat.
-    Follow these steps:</p>
-    <ul>
-    <li>Download the JDBC Optional Package (version 2.0) from
-        <a href="http://java.sun.com/products/jdbc/download.html">http://java.sun.com/products/jdbc/download.html</a>.</li>
-    <li>Install the <code>jdbc2_0-stdext.jar</code> file from this package
-        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
-        is available to both Catalina internal classes and to web applications.
-        </li>
-    <li>Download the Java Transaction API (JTA) package (version 1.0.1) from
-        <a href="http://java.sun.com/products/jta/">http://java.sun.com/products/jta/</a>.</li>
-    <li>Install the <code>jta-spec1_0_1.jar</code> file from this package
-        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
-        is available to both Catalina internal classes and to web applications.
-        </li>
-    <li>Download the Tyrex Data Source Package (version 0.9.7) from
-        <a href="http://tyrex.exolab.org">http://tyrex.exolab.org</a>.</li>
-    <li>Install the <code>tyrex-0.9.7.0.jar</code> file from this release
-        into the <code>$CATALINA_HOME/common/lib</code> directory, so that it
-        is available to both Catalina internal classes and to web applications.
-        </li>
-    <li>Tyrex requires that you provide a JDBC driver to actually connect
-        to the underlying database.  Place the JAR file for your database
-        driver into the <code>$CATALINA_HOME/common/lib</code> directory,
-        so that it is available to both Catalina internal classes and to
-        web applications.</li>
-    </ul>
-
     <p><strong>NOTE</strong> - The default data source support in Tomcat
     supports Tyrex.  However, it is possible to use any other connection pool
     that implements <code>javax.sql.DataSource</code>, by writing your own
     custom resource factory, as described
     <a href="#Adding Custom Resource Factories">below</a>.</p>
 
+    <h3>1.  Install Your JDBC Driver</h3>
+
+    <p>Use of the <em>JDBC Data Sources</em> JNDI Resource Factory requires
+    that you make an appropriate JDBC driver available to both Tomcat internal
+    classes and to your web application.  This is most easily accomplished by
+    installing the driver's JAR file(s) into the
+    <code>$CATALINA_HOME/common/lib</code> directory, which makes the driver
+    available both to the resource factory and to your application.</p>
+
     <h3>2.  Declare Your Resource Requirements</h3>
 
-    <p>NExt, modify the web application deployment
-    descriptor (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under
+    <p>Next, modify the web application deployment descriptor
+    (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under
     which you will look up preconfigured data source.  By convention, all such
     names should resolve to the <code>jdbc</code> subcontext (relative to the
     standard <code>java:comp/env</code> naming context that is the root of
