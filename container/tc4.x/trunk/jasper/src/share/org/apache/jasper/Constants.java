@@ -89,16 +89,15 @@ public class Constants {
     /**
      * These classes/packages are automatically imported by the
      * generated code. 
-     *
-     * FIXME: Need to trim this to what is there in PR2 and verify
-     *        with all our generators -akv.
      */
     public static final String[] STANDARD_IMPORTS = { 
-	"javax.servlet.*", "javax.servlet.http.*", "javax.servlet.jsp.*", 
+	"javax.servlet.*", 
+	"javax.servlet.http.*", 
+	"javax.servlet.jsp.*", 
         "javax.servlet.jsp.tagext.*",
-	"java.io.PrintWriter", "java.io.IOException", "java.io.FileInputStream",
-        "java.io.ObjectInputStream", "java.util.Vector",
-	"org.apache.jasper.runtime.*", "java.beans.*",
+	"java.io.IOException", 
+	"java.beans.Beans",
+	"org.apache.jasper.runtime.*", 
 	"org.apache.jasper.JasperException"
     };
 
