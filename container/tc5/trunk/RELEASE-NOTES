@@ -21,6 +21,10 @@ KNOWN ISSUES IN THIS RELEASE:
 * Security manager URLs
 * Symlinking static resources
 * Enabling invoker servlet
+* Container provided authentication
+* Administration web application
+* Deployment descriptors validation
+* When all else fails
 
 
 -------------------------------------
@@ -52,11 +56,11 @@ Tomcat 5.0 Standard APIs Available:
 A standard installation of Tomcat 5 makes all of the following APIs available
 for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * ant.jar (Apache Ant)
-* commons-collections.jar (Commons Collections)
+* commons-collections.jar (Commons Collections 2.1)
 * commons-dbcp.jar (Commons DBCP 1.0)
 * commons-el.jar (Commons Expression Language 1.0)
-* commons-logging-api.jar (Commons Logging)
-* commons-pool.jar (Commons Pool)
+* commons-logging-api.jar (Commons Logging 1.0.3)
+* commons-pool.jar (Commons Pool 1.0)
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
 * jmx.jar (From mx4j-1.1.1)
@@ -64,7 +68,7 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * jsp-api.jar (JSP 2.0 API)
 * commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
-* naming-factory.jar (JNDI object factories)
+* naming-factory.jar (JNDI object factories for J2EE ENC support)
 * naming-resources.jar (JNDI DirContext implementations)
 * servlet-api.jar (Servlet 2.4 API)
 
@@ -83,7 +87,7 @@ As described above, Tomcat 5.0 makes an XML parser (and many other standard
 APIs) available to web applications.  This parser is also used internally
 to parse web.xml files and the server.xml configuration file.  If you wish,
 you may replace the "xercesImpl.jar" file in "common/endorsed" with another
-XML parser, as long as it is compatible with the JAXP 1.1 APIs.
+XML parser, as long as it is compatible with the JAXP 1.2 APIs.
 
 
 ---------------------------------------------------------------
@@ -111,6 +115,8 @@ once a significant number of pages have been accessed. The memory can only be
 freed by stopping Tomcat and then restarting it.
 
 The JSP command line compiler (JSPC) can also be used to precompile the JSPs.
+
+Note: This issue has been fixed in Sun JDK 1.4.x.
 
 
 -------------------------------
@@ -199,8 +205,36 @@ Using the invoker servlet in a production environment is not recommended and
 is unsupported.
 
 
-------------------------
+---------------------------------
+Container provided authentication:
+---------------------------------
+
+Support for the Servlet API PFD 3 specification may not be complete yet for
+security constraint matching. This will be resolved in a future Tomcat beta
+release.
+
+
+------------------------------
+Administration web application:
+------------------------------
+
+Due to changes in the configuration file format, the administration web 
+application does not support editing hosts or connectors. This will be 
+resolved in a future Tomcat beta release.
+
+
+---------------------------------
+Deployment descriptors validation:
+---------------------------------
+
+Validation of Servlet 2.4 and JSP 2.0 deployment descriptors (using XML 
+schema for validation) does not properly work at this time. The cause of this
+problem is investigated.
+
+
+-------------------
 When all else fails:
-------------------------
+-------------------
+
 See the FAQ
 http://jakarta.apache.org/tomcat/faq/
