@@ -368,9 +368,9 @@ class JspDocumentParser extends DefaultHandler
 	    for (int i = offset; i < limit; i++) {
 		int ch = buf[i];
 		if (lastCh == '$' && ch == '{') {
-		    char[] bufCopy = ttext.toCharArray();
-		    if (bufCopy.length > 0) {
-			new Node.TemplateText(bufCopy, start, current);
+		    if (ttext.size() > 0) {
+			new Node.TemplateText(ttext.toString(), start,
+					      current);
 		        ttext = new CharArrayWriter();
 		    }
 		    // following "${" to first unquoted "}"
@@ -392,7 +392,8 @@ class JspDocumentParser extends DefaultHandler
 			    continue;
 			}
 			if (ch == '}') {
-			    new Node.ELExpression(ttext.toCharArray(), start, current);
+			    new Node.ELExpression(ttext.toString(), start,
+						  current);
 			    ttext = new CharArrayWriter();
 			    break;
 			}
@@ -417,9 +418,8 @@ class JspDocumentParser extends DefaultHandler
 	    if (lastCh == '$') {
 		ttext.write('$');
 	    }
-	    char[] bufCopy = ttext.toCharArray();
-	    if (bufCopy.length > 0) {
-		new Node.TemplateText(bufCopy, start, current);
+	    if (ttext.size() > 0) {
+		new Node.TemplateText(ttext.toString(), start, current);
 	    }
 	}
     }
@@ -482,9 +482,7 @@ class JspDocumentParser extends DefaultHandler
 	if (!inDTD) {
 	    Mark start = new Mark(path, locator.getLineNumber(),
 				  locator.getColumnNumber());
-	    char[] bufCopy = new char[len];
-	    System.arraycopy(buf, offset, bufCopy, 0, len);
-	    new Node.Comment(bufCopy, start, current);
+	    new Node.Comment(new String(buf, offset, len), start, current);
 	}
     }
 

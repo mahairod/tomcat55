@@ -66,13 +66,13 @@ import org.apache.jasper.compiler.ServletWriter;
 /**
  * This interface allows the plugin author to make inqueries about the
  * properties of the current tag, and to use Jasper resources to generate
- * direct Java codes in place of tag handler invokations.
+ * direct Java codes in place of tag handler invocations.
  */
 
 public interface TagPluginContext {
     /**
-      * @return true if the body of the tag is scriptless.
-      */
+     * @return true if the body of the tag is scriptless.
+     */
     boolean isScriptless();
 
     /**
@@ -102,7 +102,7 @@ public interface TagPluginContext {
      * Abandon optimization for this tag handler, and instruct
      * Jaser to generate the tag handler calls, as usual.
      * Should be invoked if errors are detected, or when the tag body
-     * is judged to be too compilicated for optimization.
+     * is deemed too compilicated for optimization.
      */
     void dontUseTagPlugin();
 }

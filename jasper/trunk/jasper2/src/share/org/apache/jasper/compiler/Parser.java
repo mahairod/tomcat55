@@ -275,19 +275,21 @@ class Parser {
      *                | '\>'
      *                | Char
      */
-    private String parseQuoted(char[] tx) {
+    private String parseQuoted(String tx) {
 	StringBuffer buf = new StringBuffer();
-	int size = tx.length;
+	int size = tx.length();
 	int i = 0;
 	while (i < size) {
-	    char ch = tx[i];
+	    char ch = tx.charAt(i);
 	    if (ch == '&') {
-		if (i+5 < size && tx[i+1] == 'a' && tx[i+2] == 'p' &&
-			tx[i+3] == 'o' && tx[i+4] == 's' && tx[i+5] == ';') {
+		if (i+5 < size && tx.charAt(i+1) == 'a'
+		        && tx.charAt(i+2) == 'p' && tx.charAt(i+3) == 'o'
+		        && tx.charAt(i+4) == 's' && tx.charAt(i+5) == ';') {
 		    buf.append('\'');
 		    i += 6;
-		} else if (i+5 < size && tx[i+1] == 'q' && tx[i+2] == 'u' &&
-			tx[i+3] == 'o' && tx[i+4] == 't' && tx[i+5] == ';') {
+		} else if (i+5 < size && tx.charAt(i+1) == 'q'
+			   && tx.charAt(i+2) == 'u' && tx.charAt(i+3) == 'o'
+			   && tx.charAt(i+4) == 't' && tx.charAt(i+5) == ';') {
 		    buf.append('"');
 		    i += 6;
 		} else {
@@ -295,7 +297,7 @@ class Parser {
 		    ++i;
 		}
 	    } else if (ch == '\\' && i+1 < size) {
-		ch = tx[i+1];
+		ch = tx.charAt(i+1);
 		if (ch == '\\' || ch == '\"' || ch == '\'' || ch == '>') {
 		    buf.append(ch);
 		    i += 2;
@@ -311,13 +313,14 @@ class Parser {
 	return buf.toString();
     }
 
-    private char[] parseScriptText(char[] tx) {
+    private String parseScriptText(String tx) {
 	CharArrayWriter cw = new CharArrayWriter();
-	int size = tx.length;
+	int size = tx.length();
 	int i = 0;
 	while (i < size) {
-	    char ch = tx[i];
-	    if (i+2 < size && ch == '%' && tx[i+1] == '\\' && tx[i+2] == '>') {
+	    char ch = tx.charAt(i);
+	    if (i+2 < size && ch == '%' && tx.charAt(i+1) == '\\'
+		    && tx.charAt(i+2) == '>') {
 		cw.write('%');
 		cw.write('>');
 		i += 3;
@@ -327,7 +330,7 @@ class Parser {
 	    }
 	}
 	cw.close();
-	return cw.toCharArray();
+	return cw.toString();
     }
 
     /*
@@ -637,7 +640,7 @@ class Parser {
 	}
 
 	new Node.Declaration(parseScriptText(reader.getText(start, stop)),
-				start, parent);
+			     start, parent);
     }
 
     /*
@@ -662,7 +665,7 @@ class Parser {
             }
 
             new Node.Declaration(parseScriptText(reader.getText(start, stop)),
-                               start, parent);
+				 start, parent);
         }
     }
 
@@ -677,7 +680,7 @@ class Parser {
 	}
 
 	new Node.Expression(parseScriptText(reader.getText(start, stop)),
-				start, parent);
+			    start, parent);
     }
 
     /*
@@ -702,7 +705,7 @@ class Parser {
             }
 
             new Node.Expression(parseScriptText(reader.getText(start, stop)),
-                                    start, parent);
+				start, parent);
         }
     }
 
@@ -748,7 +751,7 @@ class Parser {
 	}
 
 	new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
-				start, parent);
+			   start, parent);
     }
 
     /*
@@ -773,7 +776,7 @@ class Parser {
             }
 
             new Node.Scriptlet(parseScriptText(reader.getText(start, stop)),
-                                    start, parent );
+			       start, parent );
         }
     }
 	
@@ -1079,8 +1082,8 @@ class Parser {
                 err.jspError(start, "jsp.error.unterminated", 
                     "&lt;jsp:fallback");
             }
-            char[] text = reader.getText(bodyStart, bodyEnd);
-            new Node.FallBackAction(start, text, parent);
+            new Node.FallBackAction(start, reader.getText(bodyStart, bodyEnd),
+				    parent);
         }
         else {
             err.jspError( reader.mark(), "jsp.error.unterminated",
@@ -1296,12 +1299,8 @@ class Parser {
 	// Quoting in template text is handled here.
 	// JSP2.6 "A literal <% is quoted by <\%"
 	if (reader.matches("<\\%")) {
-	    char[] content = reader.nextContent();
-	    char[] text = new char[content.length + 2];
-	    text[0] = '<';
-	    text[1] = '%';
-	    System.arraycopy(content, 0, text, 2, content.length);
-	    new Node.TemplateText(text, start, parent);
+	    String content = reader.nextContent();
+	    new Node.TemplateText("<%" + content, start, parent);
 	} else {
 	    new Node.TemplateText(reader.nextContent(), start, parent);
 	}
@@ -1335,7 +1334,7 @@ class Parser {
                 if( ch == '<' ) break;
                 if( (lastCh == '$') && (ch == '{') ) {
                     // Create a template text node
-                    new Node.TemplateText( ttext.toCharArray(), start, parent);
+                    new Node.TemplateText( ttext.toString(), start, parent);
 
                     // Mark and parse the EL expression and create its node:
                     start = reader.mark();
@@ -1368,7 +1367,7 @@ class Parser {
                 }
                 // This could happen if we parsed an EL expression and then
                 // there was no more template text (see above).
-                new Node.TemplateText( ttext.toCharArray(), start, parent );
+                new Node.TemplateText( ttext.toString(), start, parent );
             }
 
             if( !reader.matchesETagWithoutLessThan( "jsp:text" ) ) {

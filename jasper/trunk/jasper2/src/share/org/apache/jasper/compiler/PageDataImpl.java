@@ -411,7 +411,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	private void appendTag(String tag,
 			       Attributes attrs,
 			       Node.Nodes body,
-			       char[] text) throws JasperException {
+			       String text) throws JasperException {
 
 	    buf.append("<").append(tag);
 	    buf.append("\n");
@@ -578,7 +578,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("/>\n");	    
 	}
 
-	private void appendText(char[] text, boolean createJspTextElement) {
+	private void appendText(String text, boolean createJspTextElement) {
 	    if (createJspTextElement) {
 		buf.append("<").append(JSP_TEXT);
 		buf.append("\n");
@@ -600,7 +600,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Appends the given text as a CDATA section to the XML view, unless
 	 * the text has already been marked as CDATA.
 	 */
-	private void appendCDATA(char[] text) {
+	private void appendCDATA(String text) {
 	    buf.append(CDATA_START_SECTION);
 	    buf.append(escapeCDATA(text));
 	    buf.append(CDATA_END_SECTION);
@@ -610,13 +610,14 @@ class PageDataImpl extends PageData implements TagConstants {
 	 * Escapes any occurrences of "]]>" (by replacing them with "]]&gt;")
 	 * within the given text, so it can be included in a CDATA section.
 	 */
-	private char[] escapeCDATA(char[] text) {
-	    CharArrayWriter result = new CharArrayWriter(text.length);
-	    for (int i=0; i<text.length; i++) {
-		if (((i+2) < text.length)
-		        && (text[i] == ']')
-		        && (text[i+1] == ']')
-		        && (text[i+2] == '>')) {
+	private String escapeCDATA(String text) {
+	    int len = text.length();
+	    CharArrayWriter result = new CharArrayWriter(len);
+	    for (int i=0; i<len; i++) {
+		if (((i+2) < len)
+		        && (text.charAt(i) == ']')
+		        && (text.charAt(i+1) == ']')
+		        && (text.charAt(i+2) == '>')) {
 		    // match found
 		    result.write(']');
 		    result.write(']');
@@ -626,10 +627,10 @@ class PageDataImpl extends PageData implements TagConstants {
 		    result.write(';');
 		    i += 2;
 		} else {
-		    result.write(text[i]);
+		    result.write(text.charAt(i));
 		}
 	    }
-	    return result.toCharArray();
+	    return result.toString();
 	}
 
 	/*

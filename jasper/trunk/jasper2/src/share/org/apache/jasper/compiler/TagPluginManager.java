@@ -206,7 +206,7 @@ public class TagPluginManager {
 
 	public void generateBody() {
 	    // Since we'll generate the body anyway, this is really a nop, 
-	    // except for the fact that it let us put the Java sources the
+	    // except for the fact that it lets us put the Java sources the
 	    // plugins produce in the correct order (w.r.t the body).
 	    curNodes = node.getAtETag();
 	}

@@ -82,7 +82,7 @@ abstract class Node {
     
     protected Attributes attrs;
     protected Nodes body;
-    protected char[] text;
+    protected String text;
     protected Mark startMark;
     protected int beginJavaLine;
     protected int endJavaLine;
@@ -121,7 +121,7 @@ abstract class Node {
      * @param start The location of the jsp page
      * @param parent The enclosing node
      */
-    public Node(char[] text, Mark start, Node parent) {
+    public Node(String text, Mark start, Node parent) {
 	this.text = text;
 	this.startMark = start;
 	this.isDummy = (start == null);
@@ -247,7 +247,7 @@ abstract class Node {
 	this.body = body;
     }
 
-    public char[] getText() {
+    public String getText() {
 	return text;
     }
 
@@ -549,7 +549,7 @@ abstract class Node {
      */
     public static class Comment extends Node {
 
-	public Comment(char[] text, Mark start, Node parent) {
+	public Comment(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -563,7 +563,7 @@ abstract class Node {
      */
     public static abstract class ScriptingElement extends Node {
 
-	public ScriptingElement(char[] text, Mark start, Node parent) {
+	public ScriptingElement(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -578,16 +578,14 @@ abstract class Node {
 	 * TemplateText nodes in its body. This method handles either case.
 	 * @return The text string
 	 */
-	public char[] getText() {
-	    char[] ret = text;
+	public String getText() {
+	    String ret = text;
 	    if ((ret == null) && (body != null)) {
-		CharArrayWriter chars = new CharArrayWriter();
-		int size = body.size();
-		for (int i=0; i<size; i++) {
-		    chars.write(body.getNode(i).getText(), 0,
-				body.getNode(i).getText().length);
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<body.size(); i++) {
+		    buf.append(body.getNode(i).getText());
 		}
-		ret = chars.toCharArray();
+		ret = buf.toString();
 	    }
 	    return ret;
 	}
@@ -598,7 +596,7 @@ abstract class Node {
      */
     public static class Declaration extends ScriptingElement {
 
-	public Declaration(char[] text, Mark start, Node parent) {
+	public Declaration(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -617,7 +615,7 @@ abstract class Node {
      */
     public static class Expression extends ScriptingElement {
 
-	public Expression(char[] text, Mark start, Node parent) {
+	public Expression(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -635,7 +633,7 @@ abstract class Node {
      */
     public static class Scriptlet extends ScriptingElement {
 
-	public Scriptlet(char[] text, Mark start, Node parent) {
+	public Scriptlet(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -654,7 +652,7 @@ abstract class Node {
      */
     public static class ELExpression extends Node {
 
-        public ELExpression(char[] text, Mark start, Node parent) {
+        public ELExpression(String text, Mark start, Node parent) {
             super(text, start, parent);
         }
 
@@ -706,7 +704,7 @@ abstract class Node {
      */
     public static class FallBackAction extends Node {
 
-	public FallBackAction(Mark start, char[] text, Node parent) {
+	public FallBackAction(Mark start, String text, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -999,7 +997,7 @@ abstract class Node {
 	private Integer numCount;
 	private boolean useTagPlugin;
 	/**
-	 * The following two fields are use for holding the Java
+	 * The following two fields are used for holding the Java
 	 * scriptlets that the tag plugins may generate.  Meaningful
 	 * only if useTagPlugin is true;
 	 */
@@ -1397,7 +1395,7 @@ abstract class Node {
      */
     public static class TemplateText extends Node {
 
-	public TemplateText(char[] text, Mark start, Node parent) {
+	public TemplateText(String text, Mark start, Node parent) {
 	    super(text, start, parent);
 	}
 
@@ -1409,29 +1407,22 @@ abstract class Node {
          * Trim all whitespace from the left of the template text
          */
         public void ltrim() {
-            // Whitespace logic borrowed from JspReader.isSpace
 	    int index = 0;
-            while ((index < text.length) && (text[index] <= ' ')) {
+            while ((index < text.length()) && (text.charAt(index) <= ' ')) {
 		index++;
             }
-	    int size = text.length - index;
-            char[] newText = new char[size];
-            System.arraycopy(text, index, newText, 0, size);
-            text = newText;
+            text = text.substring(index);
         }
 
         /**
          * Trim all whitespace from the right of the template text
          */
         public void rtrim() {
-            // Whitespace logic borrowed from JspReader.isSpace
-            int size = text.length;
-            while( (size > 0) && (text[size-1] <= ' ') ) {
-                size--;
+            int index = text.length();
+            while( (index > 0) && (text.charAt(index-1) <= ' ') ) {
+                index--;
             }
-            char[] newText = new char[size];
-            System.arraycopy( text, 0, newText, 0, size );
-            text = newText;
+            text = text.substring(0, index);
         }
     }
 
