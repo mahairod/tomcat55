@@ -160,14 +160,20 @@ public final class StandardServer
      * be persisted because they are automatically calculated.
      */
     private static String exceptions[][] = {
+        { "org.apache.catalina.core.StandardEngine", "domain" },
+        { "org.apache.catalina.core.StandardHost", "domain" },
         { "org.apache.catalina.core.StandardContext", "available" },
         { "org.apache.catalina.core.StandardContext", "configured" },
         { "org.apache.catalina.core.StandardContext", "distributable" },
+        { "org.apache.catalina.core.StandardContext", "domain" },
+        { "org.apache.catalina.core.StandardContext", "engineName" },
         { "org.apache.catalina.core.StandardContext", "name" },
         { "org.apache.catalina.core.StandardContext", "override" },
         { "org.apache.catalina.core.StandardContext", "publicId" },
         { "org.apache.catalina.core.StandardContext", "replaceWelcomeFiles" },
         { "org.apache.catalina.core.StandardContext", "sessionTimeout" },
+        { "org.apache.catalina.core.StandardContext", "startupTime" },
+        { "org.apache.catalina.core.StandardContext", "tldScanTime" },
         { "org.apache.catalina.core.StandardContext", "workDir" },
         { "org.apache.catalina.session.StandardManager", "distributable" },
         { "org.apache.catalina.session.StandardManager", "entropy" },
@@ -212,6 +218,20 @@ public final class StandardServer
         "org.apache.catalina.valves.CertificatesValve",
         "org.apache.catalina.valves.ErrorReportValve",
         "org.apache.catalina.valves.RequestListenerValve",
+    };
+
+
+    /**
+     * The set of class names that are the standard implementations of 
+     * components, and hence should not be persisted.
+     */
+    private static String standardImplementations[] = {
+        "org.apache.catalina.core.StandardServer",
+        "org.apache.catalina.core.StandardService",
+        "org.apache.coyote.tomcat5.CoyoteConnector",
+        "org.apache.catalina.core.StandardEngine",
+        "org.apache.catalina.core.StandardHost",
+        "org.apache.catalina.core.StandardContext"
     };
 
 
@@ -1048,11 +1068,21 @@ public final class StandardServer
     private void storeAttributes(PrintWriter writer, boolean include,
                                  Object bean) throws Exception {
 
+        // Render the relevant properties of this bean
+        String className = bean.getClass().getName();
+
         // Render a className attribute if requested
         if (include) {
-            writer.print(" className=\"");
-            writer.print(bean.getClass().getName());
-            writer.print("\"");
+            for (int i = 0; i < standardImplementations.length; i++) {
+                if (className.equals(standardImplementations[i])) {
+                    include = false;
+                }
+            }
+            if (include) {
+                writer.print(" className=\"");
+                writer.print(bean.getClass().getName());
+                writer.print("\"");
+            }
         }
 
         // Acquire the list of properties for this bean
@@ -1062,8 +1092,6 @@ public final class StandardServer
             descriptors = new PropertyDescriptor[0];
         }
 
-        // Render the relevant properties of this bean
-        String className = bean.getClass().getName();
         // Create blank instance
         Object bean2 = bean.getClass().newInstance();
         for (int i = 0; i < descriptors.length; i++) {
