@@ -288,6 +288,18 @@ final class FileRealmUser
 
 
     /**
+     * Is this user a member of the specified group?
+     *
+     * @param group The group to be tested
+     */
+    public boolean hasGroup(FileRealmGroup group) {
+
+	return (groups.get(group.getName()) != null);
+
+    }
+
+
+    /**
      * Has this user been explicitly assigned the specified role?
      *
      * @param role The role to be tested

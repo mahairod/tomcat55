@@ -78,7 +78,7 @@ public class Constants {
     /**
      * The name of this Java package.
      */
-    public static final String Package = "org.apache.tomcat.file.security";
+    public static final String Package = "org.apache.tomcat.security.file";
 
 
     /**
@@ -101,6 +101,15 @@ public class Constants {
     public static class Attribute {
 	public static final String NAME = "name";
 	public static final String PASSWORD = "password";
+    }
+
+
+    /**
+     * Initialization parameters from the associated ServletContext.
+     */
+    public static class Parameter {
+	public static final String DATABASE =
+	    Constants.Package + ".database";
     }
 
 
