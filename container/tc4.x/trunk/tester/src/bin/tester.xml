@@ -713,6 +713,16 @@
          request="${context.path}/Include05.jsp"
       outContent="Include05b PASSED" debug="${debug}"/>
 
+    <!-- ========== Include Then Include ================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include06.jsp" debug="${debug}"
+          golden="${golden.path}/Include06.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include07" debug="${debug}"
+          golden="${golden.path}/Include07.txt"/>
+
   </target>
 
 

@@ -673,6 +673,31 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Include06a</servlet-name>
+        <servlet-class>org.apache.tester.Include06a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include07</servlet-name>
+        <servlet-class>org.apache.tester.Include07</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include07a</servlet-name>
+        <servlet-class>org.apache.tester.Include07a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include07b</servlet-name>
+        <servlet-class>org.apache.tester.Include07b</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include07c</servlet-name>
+        <servlet-class>org.apache.tester.Include07c</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Jndi01</servlet-name>
         <servlet-class>org.apache.tester.Jndi01</servlet-class>
         <load-on-startup>1</load-on-startup>
@@ -1204,6 +1229,31 @@
     <servlet-mapping>
         <servlet-name>Include04b</servlet-name>
         <url-pattern>/Include04b</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include06a</servlet-name>
+        <url-pattern>/Include06a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include07</servlet-name>
+        <url-pattern>/Include07</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include07a</servlet-name>
+        <url-pattern>/Include07a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include07b</servlet-name>
+        <url-pattern>/Include07b</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include07c</servlet-name>
+        <url-pattern>/Include07c</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
