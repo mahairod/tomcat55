@@ -278,18 +278,22 @@ public class CoyoteRequestFacade
 
 
     public String[] getParameterValues(String name) {
+
         String[] ret = null;
 
+        /*
+         * Clone the returned array only if there is a security manager
+         * in place, so that performance won't suffer in the nonsecure case
+         */
         if (System.getSecurityManager() != null){
             ret = (String[]) AccessController.doPrivileged(
                 new GetParameterValuePrivilegedAction(name));
+            if (ret != null) {
+                ret = (String[]) ret.clone();
+	    }
         } else {
             ret = request.getParameterValues(name);
         }
-
-        if (ret != null) {
-            ret = (String[]) ret.clone();
-	}
 
         return ret;
     }
@@ -397,20 +401,24 @@ public class CoyoteRequestFacade
 
 
     public Cookie[] getCookies() {
+
         Cookie[] ret = null;
 
+        /*
+         * Clone the returned array only if there is a security manager
+         * in place, so that performance won't suffer in the nonsecure case
+         */
         if (System.getSecurityManager() != null){
             ret = (Cookie[])AccessController.doPrivileged(
                 new GetCookiesPrivilegedAction());
+            if (ret != null) {
+                ret = (Cookie[]) ret.clone();
+            }
         } else {
             ret = request.getCookies();
         }
 
-        if (ret != null) {
-            ret = (Cookie[]) ret.clone();
-        }
-
-        return ret;  
+        return ret;
     }
 
 
