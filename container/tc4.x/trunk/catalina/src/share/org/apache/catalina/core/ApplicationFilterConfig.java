@@ -76,7 +76,7 @@ import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
-
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 /**
  * Implementation of a <code>javax.servlet.FilterConfig</code> useful in
@@ -251,7 +251,20 @@ final class ApplicationFilterConfig implements FilterConfig {
         // Instantiate a new instance of this filter and return it
         Class clazz = classLoader.loadClass(filterClass);
         this.filter = (Filter) clazz.newInstance();
-        filter.init(this);
+        if (context instanceof StandardContext &&
+            ((StandardContext)context).getSwallowOutput()) {
+            try {
+                SystemLogHandler.startCapture();
+                filter.init(this);
+            } finally {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    getServletContext().log(log);
+                }
+            }
+        } else {
+            filter.init(this);
+        }
         return (this.filter);
 
     }
