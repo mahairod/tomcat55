@@ -75,7 +75,6 @@ import javax.servlet.ServletOutputStream;
  *
  * @author dac@eng.sun.com
  */
-
 public class MessageString extends MessageBytes {
     /**
      * The message String.
