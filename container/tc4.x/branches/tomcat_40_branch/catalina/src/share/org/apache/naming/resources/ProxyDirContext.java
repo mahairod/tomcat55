@@ -1379,6 +1379,7 @@ public class ProxyDirContext implements DirContext {
         if (entry.attributes == null)
             return false;
         long lastModified = entry.attributes.getLastModified();
+        long contentLength = entry.attributes.getContentLength();
         if (lastModified <= 0)
             return false;
         try {
@@ -1390,7 +1391,9 @@ public class ProxyDirContext implements DirContext {
                 attributes = (ResourceAttributes) tempAttributes;
             }
             long lastModified2 = attributes.getLastModified();
-            return (lastModified == lastModified2);
+            long contentLength2 = attributes.getContentLength();
+            return (lastModified == lastModified2) 
+                && (contentLength == contentLength2);
         } catch (NamingException e) {
             return false;
         }
