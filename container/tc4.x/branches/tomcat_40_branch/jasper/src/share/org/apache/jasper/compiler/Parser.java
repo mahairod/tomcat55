@@ -1096,11 +1096,12 @@ public class Parser {
 	boolean noJspElement = false;
 	while (reader.hasMoreInput()) {
 
+            if (tmplStart == null)
+                tmplStart = reader.mark();
+            if (tmplStop == null)
+                tmplStop = reader.mark();
+
             if (until != null && reader.matches(until)) {
-                if (tmplStart == null)
-                    tmplStart = reader.mark();
-                if (tmplStop == null)
-                    tmplStop = reader.mark();
                 return;
             }
 
