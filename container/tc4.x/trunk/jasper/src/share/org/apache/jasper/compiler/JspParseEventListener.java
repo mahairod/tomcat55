@@ -1097,8 +1097,10 @@ public class JspParseEventListener implements ParseEventListener {
     public void handleJspCdata(Mark start, Mark stop, char[] data)
 	throws JasperException
     {
-	handleCharData(start, stop, data);
-        xo.append("jsp:cdata", null, data);
+	if (data != null) {
+	    handleCharData(start, stop, data);
+            xo.append("jsp:cdata", null, data);
+	}
     }
 
     /**
