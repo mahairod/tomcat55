@@ -77,6 +77,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
+import org.apache.jasper34.jsptree.*;
+
 /** 
  * This class has all the utility method(s).
  * Ideally should move all the bean containers here.
@@ -127,121 +129,6 @@ public class JspUtil {
 	return returnString;
     }
 
-    // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDoc(InputStream in, String dtdResource, 
-    					  String dtdId) throws JasperException 
-    {
-	return parseXMLDocJaxp(in, dtdResource, dtdId );
-    }
-
-    // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDocJaxp(InputStream in, String dtdResource, 
-					   String dtdId)
-	throws JasperException
-    {
-	try {
-	    Document tld;
-	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.
-		newInstance();
-	    docFactory.setValidating(true);
-	    docFactory.setNamespaceAware(true);
-	    DocumentBuilder builder = docFactory.newDocumentBuilder();
-	    
-	    /***
-	     * These lines make sure that we have an internal catalog entry for
-	     * the taglib.dtdfile; this is so that jasper can run standalone 
-	     * without running out to the net to pick up the taglib.dtd file.
-	     */
-	    MyEntityResolver resolver =
-		new MyEntityResolver(dtdId, dtdResource);
-	    builder.setEntityResolver(resolver);
-	    tld = builder.parse(in);
-	    return tld;
-	} catch( ParserConfigurationException ex ) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.parse.error.in.TLD",
-						new Object[] {
-						    ex.getMessage()
-						}));
-	} catch ( SAXException sx ) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.parse.error.in.TLD",
-						new Object[] {
-						    sx.getMessage()
-						}));
-        } catch (IOException io) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.unable.to.open.TLD",
-						new Object[] {
-						    io.getMessage() }));
-	}
-    }
-
-    public static void checkAttributes (String typeOfTag, Hashtable attrs,
-    					ValidAttribute[] validAttributes, Mark start)
-					throws JasperException
-    {
-	boolean valid = true;
-	Hashtable temp = (Hashtable)attrs.clone ();
-
-	/**
-	 * First check to see if all the mandatory attributes are present.
-	 * If so only then proceed to see if the other attributes are valid
-	 * for the particular tag.
-	 */
-	String missingAttribute = null;
-
-	for (int i = 0; i < validAttributes.length; i++) {
-	        
-	    if (validAttributes[i].mandatory) {
-	        if (temp.get (validAttributes[i].name) != null) {
-	            temp.remove (validAttributes[i].name);
-		    valid = true;
-		} else {
-		    valid = false;
-		    missingAttribute = validAttributes[i].name;
-		    break;
-		}
-	    }
-	}
-
-	/**
-	 * If mandatory attribute is missing then the exception is thrown.
-	 */
-	if (!valid)
-	    throw new ParseException(start, Constants.getString(
-			"jsp.error.mandatory.attribute", 
-                                 new Object[] { typeOfTag, missingAttribute}));
-
-	/**
-	 * Check to see if there are any more attributes for the specified
-	 * tag.
-	 */
-	if (temp.size() == 0)
-	    return;
-
-	/**
-	 * Now check to see if the rest of the attributes are valid too.
-	 */
-   	Enumeration enum = temp.keys ();
-	String attribute = null;
-
-	while (enum.hasMoreElements ()) {
-	    valid = false;
-	    attribute = (String) enum.nextElement ();
-	    for (int i = 0; i < validAttributes.length; i++) {
-	        if (attribute.equals(validAttributes[i].name)) {
-		    valid = true;
-		    break;
-		}
-	    }
-	    if (!valid)
-	        throw new ParseException(start, Constants.getString(
-			"jsp.error.invalid.attribute", 
-                                 new Object[] { typeOfTag, attribute }));
-	}
-    }
-    
     public static String escapeQueryString(String unescString) {
 	if ( unescString == null )
 	    return null;
@@ -260,76 +147,4 @@ public class JspUtil {
 	return escString;
     }
 
-    /**
-     *  Escape the 5 entities defined by XML.
-     */
-    public static String escapeXml(String s) {
-        if (s == null) return null;
-        StringBuffer sb = new StringBuffer();
-        for(int i=0; i<s.length(); i++) {
-            char c = s.charAt(i);
-            if (c == '<') {
-                sb.append("&lt;");
-            } else if (c == '>') {
-                sb.append("&gt;");
-            } else if (c == '\'') {
-                sb.append("&apos;");
-            } else if (c == '&') {
-                sb.append("&amp;");
-            } else if (c == '"') {
-                sb.append("&quote;");
-            } else {
-                sb.append(c);
-            }
-        }
-        return sb.toString();
-    }
-
-    public static class ValidAttribute {
-   	String name;
-	boolean mandatory;
-
-	public ValidAttribute (String name, boolean mandatory) {
-	    this.name = name;
-	    this.mandatory = mandatory;
-	}
-
-	public ValidAttribute (String name) {
-	    this (name, false);
-	}
-    }
 }
-
-class MyEntityResolver implements EntityResolver {
-
-    String dtdId;
-    String dtdResource;
-    
-    public MyEntityResolver(String id, String resource) {
-	this.dtdId = id;
-	this.dtdResource = resource;
-    }
-    
-    public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException, IOException
-    {
-	//System.out.println ("publicId = " + publicId);
-	//System.out.println ("systemId is " + systemId);
-	//System.out.println ("resource is " + dtdResource);
-	if (publicId.equals(dtdId)) {
-	    InputStream input =
-		this.getClass().getResourceAsStream(dtdResource);
-	    InputSource isrc =
-		new InputSource(input);
-	    return isrc;
-	}
-	else {
-	    //System.out.println ("returning null though dtdURL is " + dtdURL);
-	    return null;
-	}
-    }
-}
-
-
-
-
