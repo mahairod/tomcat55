@@ -34,6 +34,22 @@
   <property name="regexp.jar"      value="${regexp.home}/jakarta-regexp-1.2.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
+  <!-- Construct Catalina classpath -->
+  <path id="catalina.classpath">
+    <pathelement location="${parser.jar}"/>
+    <pathelement location="${jaxp.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${catalina.build}/classes"/>
+  </path>
+
   <!-- Construct unit tests classpath -->
   <path id="test.classpath">
     <pathelement location="${parser.jar}"/>
@@ -53,10 +69,10 @@
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
+
     <available classname="junit.framework.TestCase" property="junit.present" />
     <available file="${jaxp.jar}" property="jaxp.jar.present" />
-    <available property="avalon.present" 
-     classname="org.apache.avalon.blocks.Block" />
+
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
     <mkdir dir="${catalina.build}/classes"/>
@@ -66,6 +82,7 @@
     <mkdir dir="${catalina.build}/common/lib"/>
     <mkdir dir="${catalina.build}/server"/>
     <mkdir dir="${catalina.build}/server/lib"/>
+
   </target>
 
 
@@ -76,8 +93,8 @@
     <copy todir="${catalina.build}/bin">
       <fileset dir="src/bin" />
     </copy>
-    <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${catalina.build}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
@@ -133,27 +150,22 @@
      classname="javax.sql.DataSource" />
     <available property="jta.present"
      classname="javax.transaction.UserTransaction" />
-    <available property="avalon.present" 
-     classname="org.apache.avalon.blocks.Block" />
     <available property="jdk.1.3.present"
      classname="java.lang.reflect.Proxy" />
+
     <!-- Compile Service API -->
-    <javac   srcdir="../service/java" destdir="${catalina.build}/classes"
-             deprecation="off" debug="on" optimize="off" target="1.2"
-             excludes="**/CVS/**" />
+    <javac srcdir="../service/java" destdir="${catalina.build}/classes"
+           deprecation="off" debug="on" optimize="off" target="1.2"
+           excludes="**/CVS/**" />
+
     <!-- Compile internal server components -->
-    <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-             classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}:${jndi.jar}:${activation.jar}:${mail.jar}"
-             deprecation="off" debug="on" optimize="off" target="1.2"
-             excludes="**/CVS/**">
-      <exclude name="**/factory/Tyrex*.java" 
-       unless="tyrex.present" />
-      <exclude name="**/startup/CatalinaBlock.java" 
-       unless="avalon.present" />
-      <exclude name="**/util/ProcessHelper.java"
-       unless="jdk.1.3.present"/>
-      <exclude name="**/servlets/CGIServlet.java"
-       unless="jdk.1.3.present"/>
+    <javac srcdir="src/share" destdir="${catalina.build}/classes"
+           deprecation="off" debug="on" optimize="off" target="1.2"
+           excludes="**/CVS/**">
+      <classpath refid="catalina.classpath" />
+      <exclude name="**/factory/Tyrex*.java" unless="tyrex.present" />
+      <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
+      <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
     </javac>
 
     <!-- Copy static resource files -->
@@ -164,25 +176,39 @@
     </copy>
 
     <!-- Construct bootstrap JAR file -->
-    <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
-           basedir="${catalina.build}/classes"
-           includes="org/apache/service/Service.class,org/apache/service/ServiceController.class,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/naming/JndiPermission.class" 
-           manifest="etc/bootstrap.MF"
-           />
-    <jar   jarfile="${catalina.build}/common/lib/naming.jar"
-           basedir="${catalina.build}/classes"
-           includes="**/org/apache/naming/*,**/org/apache/naming/factory/Constants.class,**/org/apache/naming/java/*"
-           excludes="**/org/apache/naming/JndiPermission.class"
-           />
-    <jar   jarfile="${catalina.build}/common/lib/resources.jar"
-           basedir="${catalina.build}/classes"
-           includes="**/org/apache/naming/resources/*" 
-           />
-    <jar   jarfile="${catalina.build}/lib/namingfactory.jar"
-           basedir="${catalina.build}/classes"
-           includes="**/org/apache/naming/factory/**"
-           excludes="**/org/apache/naming/factory/Constants.class"
-           />
+    <jar jarfile="${catalina.build}/bin/bootstrap.jar" 
+         manifest="etc/bootstrap.MF">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/service/Service.class" />
+        <include name="org/apache/service/ServiceController.class" />
+        <include name="org/apache/catalina/startup/Bootstrap.class" />
+        <include name="org/apache/catalina/startup/BootstrapService.class" />
+        <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
+        <include name="org/apache/catalina/loader/Extension.class" />
+        <include name="org/apache/catalina/loader/Reloader.class" />
+        <include name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <include name="org/apache/naming/JndiPermission.class" />
+      </fileset>
+    </jar>
+    <jar jarfile="${catalina.build}/common/lib/naming.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/*" />
+        <include name="org/apache/naming/factory/Constants.class" />
+        <include name="org/apache/naming/java/*" />
+        <exclude name="org/apache/naming/JndiPermission.class" />
+      </fileset>
+    </jar>
+    <jar jarfile="${catalina.build}/common/lib/resources.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/resources/*" />
+      </fileset>
+    </jar>
+    <jar jarfile="${catalina.build}/lib/namingfactory.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/factory/**" />
+        <exclude name="org/apache/naming/factory/Constants.class" />
+      </fileset>
+    </jar>
 
   </target>
 
@@ -192,9 +218,9 @@
   <target name="build-tests" depends="build-main" if="junit.present">
     <mkdir      dir="${catalina.build}/tests"/>
     <!-- Compile unit test classes -->
-    <javac   srcdir="src/test" destdir="${catalina.build}/tests"
-             deprecation="off" debug="on" optimize="off" target="1.2"
-             excludes="**/CVS/**">
+    <javac srcdir="src/test" destdir="${catalina.build}/tests"
+           deprecation="off" debug="on" optimize="off" target="1.2"
+           excludes="**/CVS/**">
       <classpath refid="test.classpath"/>
     </javac>
   </target>
@@ -205,14 +231,14 @@
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
-             classpath="${parser.jar}:${jaxp.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${mail.jar}:${activation.jar}:${catalina.build}/classes"
-               sourcepath="src/share"
-                  destdir="${catalina.build}/javadoc"
-                   author="true"
-                  version="true"
-              windowtitle="Catalina Internal API Documentation"
-                 doctitle="Catalina API"
-                   bottom="Copyright &#169; 2000 Apache Software Foundation.  All Rights Reserved."
+      classpathref="catalina.classpath"
+      sourcepath="src/share"
+      destdir="${catalina.build}/javadoc"
+      author="true"
+      version="true"
+      windowtitle="Catalina Internal API Documentation"
+      doctitle="Catalina API"
+      bottom="Copyright &#169; 2000-2001 Apache Software Foundation.  All Rights Reserved."
     />
   </target>
 
@@ -226,10 +252,10 @@
       <fileset dir="docs/dev/xdocs/images"/>
     </copy>
     <style basedir="docs/dev/xdocs"
-           destdir="${catalina.build}/dev-doc"
-         extension=".html"
-             style="stylesheets/tempoarary.xsl"
-          includes="*.xml"/>
+      destdir="${catalina.build}/dev-doc"
+      extension=".html"
+      style="stylesheets/tempoarary.xsl"
+      includes="*.xml"/>
   </target>
 
 
@@ -314,8 +340,8 @@
     <copy todir="${catalina.deploy}/bin">
       <fileset dir="${catalina.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
@@ -348,9 +374,20 @@
   <target name="deploy-main" depends="deploy-static">
 
     <!-- Catalina Main JAR File -->
-    <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
-          basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/catalina/servlets/**,org/apache/catalina/util/ssi/**" />
+    <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
+      <fileset dir="${catalina.build}/classes">
+        <exclude name="org/apache/naming/**" />
+        <exclude name="**/connector/warp/**" />
+        <exclude name="org/apache/catalina/startup/Bootstrap.class" />
+        <exclude name="org/apache/catalina/startup/BootstrapService.class" />
+        <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
+        <exclude name="org/apache/catalina/loader/Extension.class" />
+        <exclude name="org/apache/catalina/loader/Reloader.class" />
+        <exclude name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <exclude name="org/apache/catalina/servlets/**" />
+        <exclude name="org/apache/catalina/util/ssi/**" />
+      </fileset>
+    </jar>
 
     <!-- WARP Connector JAR File -->
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
@@ -358,44 +395,62 @@
           includes="**/connector/warp/**" />
 
     <!-- Servlets - Common Files -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Constants.class,org/apache/catalina/servlets/*.properties" />
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Constants.class" />
+        <include name="org/apache/catalina/servlets/*.properties" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - CGI Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/CGI*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/CGI*" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - Default File-Serving Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-default.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Default*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-default.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Default*" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - Invoker Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Invoker*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Invoker*" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - Manager Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-manager.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/*Manager*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-manager.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/*Manager*" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - Snoop Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Snoop*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Snoop*" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - SSI Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-ssi.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Ssi*,org/apache/catalina/util/ssi/**" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Ssi*" />
+        <include name="org/apache/catalina/util/ssi/**" />
+      </fileset>
+    </jar>
 
     <!-- Servlets - Webdav Servlet -->
-    <jar  jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar"
-          basedir="${catalina.build}/classes" 
-          includes="org/apache/catalina/servlets/Webdav*" />
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Webdav*" />
+      </fileset>
+    </jar>
 
   </target>
 
@@ -417,8 +472,8 @@
     <copy todir="${catalina.dist}/bin">
       <fileset dir="${catalina.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${catalina.dist}/bin/catalina.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/jspc.sh"/>
