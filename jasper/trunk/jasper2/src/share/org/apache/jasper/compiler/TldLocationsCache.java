@@ -287,8 +287,8 @@ public class TldLocationsCache {
 		    if (url == null)
 			return;
 		    URL jarURL = new URL("jar:" + url.toString() + "!/");
-		    processTldsInJar((JarURLConnection)
-				     jarURL.openConnection());
+		    processTldsInJar((JarURLConnection) jarURL.openConnection(),
+				     false);
 		}
             }
         }
@@ -301,8 +301,10 @@ public class TldLocationsCache {
      * element.
      *
      * @param conn The JarURLConnection to the JAR file containing the TLDs
+     * @param ignore true if any exceptions raised when processing the given
+     * JAR should be ignored, false otherwise
      */
-    private void processTldsInJar(JarURLConnection conn)
+    private void processTldsInJar(JarURLConnection conn, boolean ignore)
 	        throws JasperException {
 
         JarFile jarFile = null;
@@ -348,6 +350,9 @@ public class TldLocationsCache {
 		    }
                 }
             }
+	    if (!ignore) {
+		throw new JasperException(ex);
+	    }
         } finally {
             if (redeployMode) {
                 // if in redeploy mode, always close the jar
@@ -441,14 +446,14 @@ public class TldLocationsCache {
 		for (int i=0; i<urls.length; i++) {
 		    URLConnection conn = urls[i].openConnection();
 		    if (conn instanceof JarURLConnection) {
-			processTldsInJar((JarURLConnection) conn);
+			processTldsInJar((JarURLConnection) conn, true);
 		    } else {
 			String urlStr = urls[i].toString();
 			if (urlStr.startsWith(FILE_PROTOCOL)
 			            && urlStr.endsWith(JAR_FILE_SUFFIX)) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
 			    processTldsInJar((JarURLConnection)
-					     jarURL.openConnection());
+					     jarURL.openConnection(), true);
 			}
 		    }
 		}
