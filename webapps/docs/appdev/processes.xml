@@ -140,6 +140,10 @@ cvs add web.xml
 cvs commit
 </source>
 
+Note that this is only an example web.xml file.  The full definition
+of the deployment descriptor file is in the
+<a href="http://java.sun.com/products/servlet">Servlet Specification.</a>
+
 </subsection>
 
 
