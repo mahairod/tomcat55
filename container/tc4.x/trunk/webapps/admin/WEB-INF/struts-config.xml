@@ -22,10 +22,6 @@
     <!-- Connector form bean -->
     <form-bean      name="connectorForm"
                     type="org.apache.webapp.admin.connector.ConnectorForm"/>
-
-    <!-- Context form bean -->
-    <form-bean      name="contextForm"
-                    type="org.apache.webapp.admin.context.ContextForm"/>
                     
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
@@ -71,6 +67,14 @@
 
     <form-bean      name="realmsForm"
                     type="org.apache.webapp.admin.realm.RealmsForm"/>
+
+    <!-- ============= Context Module ============= -->
+
+    <form-bean      name="contextForm"
+                    type="org.apache.webapp.admin.context.ContextForm"/>
+                    
+    <form-bean      name="contextsForm"
+                    type="org.apache.webapp.admin.context.ContextsForm"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -175,7 +179,7 @@
                     path="/logger/loggers.jsp"
                 redirect="false"/>
 
-    <!-- ============ Logger Module ============== -->
+    <!-- ============ Realm Module ============== -->
 
     <forward        name="JDBCRealm"
                     path="/realm/jdbcRealm.jsp"
@@ -195,6 +199,16 @@
 
     <forward        name="Realms"
                     path="/realm/realms.jsp"
+                redirect="false"/>
+
+    <!-- ============ Context Module ============== -->
+
+    <forward        name="Context"
+                    path="/context/context.jsp"
+                redirect="false"/>
+
+    <forward        name="Hosts"
+                    path="/context/contexts.jsp"
                 redirect="false"/>
         
     <!-- ========== User Database Module ========== -->
@@ -286,13 +300,6 @@
                name="connectorForm"
                scope="session">
     </action>
-
-    <!-- Set up Context datastructure -->
-    <action    path="/setUpContext"
-               type="org.apache.webapp.admin.context.SetUpContextAction"
-               name="contextForm"
-               scope="session">
-    </action>
     
     <!-- Log out of the application -->
     <action    path="/logOut"
@@ -316,14 +323,6 @@
                name="connectorForm"
               scope="session"
               input="/connector.jsp">
-    </action>
-    
-     <!-- Process a context change -->
-    <action    path="/context"
-               type="org.apache.webapp.admin.context.ContextAction"
-               name="contextForm"
-              scope="session"
-              input="/context.jsp">
     </action>
     
     <!-- Process a set-locale action -->
@@ -480,6 +479,37 @@
                type="org.apache.webapp.admin.logger.SaveLoggerAction"
                name="loggerForm"
               input="/logger/logger.jsp"
+               scope="session"/>
+
+   <!-- ============= Context Module ============== -->
+
+    <!-- Set up Add Context transaction -->
+    <action    path="/AddContext"
+               type="org.apache.webapp.admin.context.AddContextAction">
+    </action>
+
+    <!-- Set up Delete Contexts transaction -->
+    <action    path="/DeleteContext"
+               type="org.apache.webapp.admin.context.DeleteContextAction"
+               name="contextsForm"
+               scope="request"/>
+
+    <!-- Perform Delete Contexts transaction -->
+    <action    path="/DeleteContexts"
+               type="org.apache.webapp.admin.context.DeleteContextsAction"
+               name="contextsForm"
+               scope="request"/>
+
+    <!-- Set up Edit Context transaction -->
+    <action    path="/EditContext"
+               type="org.apache.webapp.admin.context.EditContextAction">
+    </action>
+
+    <!-- Perform Save Host transaction -->
+    <action    path="/SaveContext"
+               type="org.apache.webapp.admin.context.SaveContextAction"
+               name="contextForm"
+              input="/context/context.jsp"
                scope="session"/>
                
     <!-- ========== User Database Module ========== -->
