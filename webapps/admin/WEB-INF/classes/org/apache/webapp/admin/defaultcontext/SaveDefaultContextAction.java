@@ -247,7 +247,7 @@ public final class SaveDefaultContextAction extends Action {
                 //                    values, createStandardManagerTypes);
                 
                 // Add the new Default Context to our tree control node
-                addToTreeControlNode(oname, "DefaultContext", 
+                addToTreeControlNode(oname, cObjectName, 
                                     parentName, resources, session);
 
             } catch (Exception e) {
