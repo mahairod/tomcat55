@@ -326,10 +326,10 @@ public class RequestUtil {
                 continue;
             } else if (metaChar == '%') {
                 char c = (char) Integer.parseInt(str.substring(strPos + 1, strPos + 3), 16);
-                if(c == '/' || c == '\0')
-                    throw new IllegalArgumentException("URL contains encoded special chars.");
-
-                dec.append(c);
+                if(c == '/' || c == '%' || c=='.' || c == '\\' || c == '\0')
+                    dec.append(str.substring(strPos, strPos+3));
+                else
+                    dec.append(c);
                 strPos += 3;
             }
         }

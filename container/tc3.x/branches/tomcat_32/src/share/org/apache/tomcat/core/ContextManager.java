@@ -742,18 +742,12 @@ public class ContextManager {
     public void service( Request req, Response res ) {
 
     /**
-     * XXX Normalize and validate the request URI.  This is important
+     * XXX Normalize the request URI.  This is important
      * to prevent non-normalized URIs from causing security constraints
      * from being bypassed.  For example, /examples/jsp/../jsp/security/protected/index.jsp
-     * would not trigger the AccessInterceptor.  Also, encoded special chars
-     * ., /, \ and % are forbidden in URIs to prevent additional security problems.
+     * would not trigger the AccessInterceptor.
      */
     req.setRequestURI(URLUtil.normalizeURI(req.getRequestURI()));
-    String ucURI = req.getRequestURI().toUpperCase();
-    if(ucURI.indexOf("%25") >= 0 || ucURI.indexOf("%2E") >= 0 || 
-       ucURI.indexOf("%2F") >= 0 || ucURI.indexOf("%5C") >=0){
-        res.setStatus(404);
-    }
 
     internalService( req, res );
 	// clean up
