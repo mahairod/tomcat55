@@ -31,10 +31,26 @@ echo Using classpath: %CLASSPATH%
 if "%1"=="" goto run
 set default=%1
 
-set tomcatHome=../tomcat
-%tomcatHome%/tomcatEnv.bat
-
 :run
+set TOMCAT_HOME=..\tomcat
+
+rem THIS PART INCLUDED from jakarta-tomcat/src/shell/tomcatEnv.bat
+rem -------------------------- begin tomcatEnv.bat -----------------------------
+set TOM_CLASSPATH=.
+set TOM_CLASSPATH=%TOMCAT_HOME%\webserver.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\servlet.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\jasper.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\xml.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\webpages\WEB-INF\classes\jsp\beans;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\classes;%TOM_CLASSPATH%
+
+set TOM_CLASSPATH=%JAVA_HOME%\lib\tools.jar;%TOM_CLASSPATH%
+
+
+set TOM_PREV_CLASSPATH=%CLASSPATH%
+set CLASSPATH=%TOM_CLASSPATH%;%CLASSPATH%
+rem -------------------------- end tomcatEnv.bat -------------------------------
+
 start java org.apache.tomcat.shell.Startup -config .\conf\server-test.xml %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 sleep 25
