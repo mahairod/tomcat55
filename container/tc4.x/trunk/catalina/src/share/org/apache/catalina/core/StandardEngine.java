@@ -144,6 +144,13 @@ public class StandardEngine
     private DefaultContext defaultContext;
 
 
+    /**
+     * The JVM Route ID for this Tomcat instance. All Route ID's must be unique
+     * across the cluster.
+     */
+    private String jvmRouteId;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -169,6 +176,27 @@ public class StandardEngine
         support.firePropertyChange("defaultHost", oldDefaultHost,
                                    this.defaultHost);
 
+    }
+
+
+    /**
+     * Set the cluster-wide unique identifier for this Engine.
+     * This value is only useful in a load-balancing scenario.
+     * <p>
+     * This property should not be changed once it is set.
+     */
+    public void setJvmRoute(String routeId) {
+        this.log("setJvmRoute=" + routeId);
+        jvmRouteId = routeId;
+    }
+
+
+    /**
+     * Retrieve the cluster-wide unique identifier for this Engine.
+     * This value is only useful in a load-balancing scenario.
+     */
+    public String getJvmRoute() {
+        return jvmRouteId;
     }
 
 

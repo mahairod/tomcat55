@@ -111,6 +111,21 @@ public interface Engine extends Container {
 
 
     /**
+     * Retrieve the JvmRouteId for this engine.
+     */
+    public String getJvmRoute();
+
+
+    /**
+     * Set the JvmRouteId for this engine.
+     *
+     * @param jvmRouteId the (new) JVM Route ID. Each Engine within a cluster
+     *        must have a unique JVM Route ID.
+     */
+    public void setJvmRoute(String jvmRouteId);
+
+
+    /**
      * Return the <code>Service</code> with which we are associated (if any).
      */
     public Service getService();
