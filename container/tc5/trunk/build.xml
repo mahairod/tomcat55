@@ -204,7 +204,7 @@
 
     <ant dir="${jasper.home}"   target="deploy">
       <property name="catalina.home" value="${tomcat.build}"/>
-      <property name="commons-el.jar" location="${tomcat.build}/common/lib/commons-el.jar" />
+      <property name="commons-el.jar" location="${commons-el.jar}" />
     </ant>
   </target>
 
