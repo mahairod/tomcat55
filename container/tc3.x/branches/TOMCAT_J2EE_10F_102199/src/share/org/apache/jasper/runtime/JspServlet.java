@@ -324,6 +324,8 @@ public class JspServlet extends HttpServlet {
             else
                 jspUri = includeUri;
 
+            boolean precompile = preCompile(request);
+
             if (Constants.matchVerbosity(Constants.MED_VERBOSITY)) {
 		System.err.println("JspEngine --> "+jspUri);
                 System.err.println("\t     ServletPath: "+request.getServletPath());
@@ -339,8 +341,7 @@ public class JspServlet extends HttpServlet {
                     System.err.println("\t\t "+name+" = "+request.getParameter(name));
                 }
             }
-
-            serviceJspFile(request, response, jspUri, null, preCompile(request));
+            serviceJspFile(request, response, jspUri, null, precompile);
 	    
 	} catch (RuntimeException e) {
 	    throw e;
