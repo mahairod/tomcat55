@@ -123,7 +123,7 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
     public void setLastAccessWasDistributed(long time) {
         lastAccessWasDistributed = time;
     }
-    
+
     public long getLastAccessWasDistributed() {
         return lastAccessWasDistributed;
     }
@@ -149,6 +149,10 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
      */
     public void setAttribute(String name, Object value)
     {
+        if ( value == null ) {
+          removeAttribute(name);
+          return;
+        }
         if (!(value instanceof java.io.Serializable))
             throw new java.lang.IllegalArgumentException("Value for attribute "+name+" is not serializable.");
         setIsDirty(true);
