@@ -762,7 +762,7 @@ public class HttpRequestBase
 
         int pos = servletPath.lastIndexOf('/');
         String relative = null;
-        if (pos > 0) {
+        if (pos >= 0) {
             relative = RequestUtil.normalize
                 (servletPath.substring(0, pos + 1) + path);
         } else {
