@@ -23,7 +23,7 @@
   <property name="catalina.project"      value="jakarta-tomcat-catalina" />
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
-
+  <property name="cvstag"                value="" />
   <property name="cvs.base"
            value="${basedir}/.."/>
 
@@ -1074,7 +1074,7 @@
 
   <target name="cvsbuild" unless="exist" depends="testexist">
     <!-- cvs checkout and ant dist + copy of jar file -->
-    <echo message="cvs co ${location} -r ${cvstag} and ant dist in ${subdir}"/>
+    <echo message="cvs co ${location} ${cvstag} and ant dist in ${subdir}"/>
     <mkdir dir="${base.path}/tmp"/>
     <cvs cvsRoot="${cvsroot}"
       tag="${cvstag}"
@@ -1094,19 +1094,19 @@
   <target name="checkout" 
           description="Update or checkout required sources from CVS">
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P -r ${cvstag} jakarta-tomcat-catalina" 
+         command="checkout -P ${cvstag} jakarta-tomcat-catalina" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P -r ${cvstag} jakarta-tomcat-jasper" 
+         command="checkout -P ${cvstag} jakarta-tomcat-jasper" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P -r ${cvstag} jakarta-tomcat-connectors" 
+         command="checkout -P ${cvstag} jakarta-tomcat-connectors" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P -r ${cvstag} jakarta-servletapi-5" 
+         command="checkout -P ${cvstag} jakarta-servletapi-5" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P -r ${cvstag} jakarta-commons" 
+         command="checkout -P ${cvstag} jakarta-commons" 
          dest=".."/>
   </target>
 
