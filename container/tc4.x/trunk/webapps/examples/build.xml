@@ -17,7 +17,8 @@
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
-  <property name="mail.jar"        value="${mail.home}/lib/mail.jar"/>
+  <property name="mail.jar"        value="${mail.home}/mail.jar"/>
+  <property name="activation.jar"  value="${activation.home}/activation.jar"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
