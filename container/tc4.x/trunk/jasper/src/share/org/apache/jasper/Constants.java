@@ -103,19 +103,22 @@ public class Constants {
     };
 
     /**
+     * FIXME
      * ServletContext attribute for classpath. This is tomcat specific. 
      * Other servlet engines can choose to have this attribute if they 
      * want to have this JSP engine running on them. 
      */
-    public static final String SERVLET_CLASSPATH = "org.apache.tomcat.jsp_classpath";
+    //public static final String SERVLET_CLASSPATH = "org.apache.tomcat.jsp_classpath";
+    public static final String SERVLET_CLASSPATH = "org.apache.catalina.jsp_classpath";
 
     /**
+     * FIXME
      * ServletContext attribute for classpath. This is tomcat specific. 
      * Other servlet engines can choose to have this attribute if they 
      * want to have this JSP engine running on them. 
      */
-    public static final String SERVLET_CLASS_LOADER = "org.apache.tomcat.classloader";
-
+    //public static final String SERVLET_CLASS_LOADER = "org.apache.tomcat.classloader";
+    public static final String SERVLET_CLASS_LOADER = "org.apache.catalina.classloader";
 
     /**
      * Default size of the JSP buffer.
@@ -138,6 +141,7 @@ public class Constants {
     public static final String TMP_DIR = "javax.servlet.context.tempdir";
 
     /**
+     * FIXME
      * ProtectionDomain to use for JspLoader defineClass() for current
      * Context when using a SecurityManager.
      */
