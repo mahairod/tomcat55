@@ -58,13 +58,11 @@
  *
  */
 
-
 package tests.javax_servlet.Error;
 
 import javax.servlet.*;
 import java.io.*;
 import javax.servlet.ServletException.*;
-
 
 public class ServletErrorPage extends GenericServlet {
 

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,13 +60,7 @@
 
 package tests.javax_servlet.ServletContext;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -72,29 +68,27 @@ import java.io.PrintWriter;
  *	A Negative Test for ServletContext.getAttribute(String) method
  */
 
+public class ServletContextGetAttribute_1TestServlet extends GenericServlet {
 
-public class ServletContextGetAttribute_1TestServlet extends HttpServlet {
+    /**
+     *	We'll try to get the associated value for
+     *	a non existent attribute name. We should
+     *	get null as the result
+     */
 
-/**
- *	We'll try to get the associated value for
- *	a non existent attribute name. We should
- *	get null as the result
- */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
+        Object attr = context.getAttribute( "Womankind" );
 
-		ServletContext context = config.getServletContext();
-		Object attr = context.getAttribute("Womankind");
-
-		if(attr==null) {
-			out.println("ServletContextGetAttribute_1Test test PASSED");
-		}
-		else {
-			out.println("ServletContextGetAttribute_1Test test FAILED");
-			out.println("ServletContext.getAttribute(String) did not return null");
-		}
-	}
+        if ( attr == null ) {
+            out.println( "ServletContextGetAttribute_1Test test PASSED" );
+        } else {
+            out.println( "ServletContextGetAttribute_1Test test FAILED" );
+            out.println( "ServletContext.getAttribute(String) did not return null" );
+        }
+    }
 }

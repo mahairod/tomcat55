@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,31 +58,25 @@
  *
  */
 
-
 package tests.javax_servlet.ServletContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 /**
  *  	Test for log(String message)
  *	we are just passing it. The server specific log file can be looked up  to see an outting
  */
 
-public class Log_StringTestServlet extends HttpServlet {
+public class Log_StringTestServlet extends GenericServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
-		context.log("testing");
-	}
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
+        context.log( "Log_StringTest test text" );
+        out.println( "Check servlet log file for the text 'Log_StringTest test text'<BR>" );
+    }
 }

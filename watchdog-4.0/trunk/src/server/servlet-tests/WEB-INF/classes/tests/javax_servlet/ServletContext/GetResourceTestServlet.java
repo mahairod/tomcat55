@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,44 +60,46 @@
 
 package tests.javax_servlet.ServletContext;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.File;
 import java.net.URL;
 
 /**
  *	A Test for ServletContext.getResource(String) method
  */
 
+public class GetResourceTestServlet extends GenericServlet {
 
-public class GetResourceTestServlet extends HttpServlet {
+    /**
+     *	We will use this servlet itself as a resource
+     */
 
-/**
- *	We will use this servlet itself as a resource
- */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
+        String path = "/WEB-INF/web.xml";
 
-		String path="/WEB-INF/web.xml";
+        URL resourceURL = context.getResource( path );
 
-		URL resourceURL = context.getResource(path);
+        if ( resourceURL != null ) {
+            String result = resourceURL.toString();
 
-		if(resourceURL!=null) {
-			out.println("GetResourceTest test PASSED");
-		}
-		else {
-			out.println("GetResourceTest test FAILED");
-		}
-	}
+            if ( result.indexOf( path ) > -1 ) {
+                out.println( "GetResourceTest test PASSED" );
+            } else {
+                out.println( "GetResourceTest test FAILED" );
+                out.println( "     Could not locate " + path + " in the returned URL<BR>" );
+                out.println( "     Actual result = " + result + " <BR>" );
+            }
+        } else {
+            out.println( "GetResourceTest test FAILED" );
+            out.println( "     ServletContext.getResource(" + path + ") returned a null<BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,12 +60,7 @@
 
 package tests.javax_servlet.ServletContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -72,31 +69,30 @@ import java.io.PrintWriter;
  *	A Negative Test for ServletContext.getResourceAsStream(String)
  */
 
+public class GetResourceAsStream_1TestServlet extends GenericServlet {
 
-public class GetResourceAsStream_1TestServlet extends HttpServlet {
+    /**
+     *	We will supply a non existent URL and  should get null
+     */
 
-/**
- *	We will supply a non existent URL and  should get null
- */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
+        //dummy URL
 
-		//dummy URL
+        String path = "/dummy";
 
-		String path="/dummy";
+        InputStream in = context.getResourceAsStream( path );
 
-		InputStream in = context.getResourceAsStream(path);
-
-		if(in==null) {
-			out.println("GetResourceAsStream_1Test test PASSED");
-		}
-		else {
-			out.println("GetResourceAsStream_1Test test FAILED");
-		}
-	}
+        if ( in == null ) {
+            out.println( "GetResourceAsStream_1Test test PASSED" );
+        } else {
+            out.println( "GetResourceAsStream_1Test test FAILED" );
+            out.println( "     ServletContext.getResourceAsStream(" + path + ") returned a non-null <BR>" );
+        }
+    }
 }

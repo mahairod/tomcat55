@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,13 +56,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author : Ramesh.Mandava
- *
  */
 
-
 package tests.javax_servlet.Servlet;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -75,27 +73,31 @@ import java.io.PrintWriter;
 
 public class DoServletConfigTestServlet extends CoreServletTest {
 
-/**
- *	getServletConfig gives the ServletConfig object
- * 	that is passed to the init method by the engine
- */
+    /**
+     *	getServletConfig gives the ServletConfig object
+     * 	that is passed to the init method by the engine
+     */
 
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException 
-	{
+        PrintWriter out = response.getWriter();
+        String expectedResult = "Java";
+        ServletConfig sc = getServletConfig();
 
-		PrintWriter out = response.getWriter();
-		if(getServletConfig()!=null)
-		{
-			out.println("DoServletConfigTest test PASSED");
-		 }
-		else
-		{
-			out.println("DoServletConfigTest test FAILED");
-			out.println("getServletConfig returned null?");
+        if ( getServletConfig() != null ) {
+            String result = sc.getInitParameter( "Language" );
 
-		}
-			
-
-	}
+            if ( result.equals( expectedResult ) ) {
+                out.println( "DoServletConfigTest test PASSED" );
+            } else {
+                out.println( "DoServletConfigTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getInitParameter(Language) did not return the correct parameter name<BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = " + result + " <BR>" );
+            }
+        } else {
+            out.println( "DoServletConfigTest test FAILED<BR>" );
+            out.println( "getServletConfig returned null?" );
+        }
+    }
 }

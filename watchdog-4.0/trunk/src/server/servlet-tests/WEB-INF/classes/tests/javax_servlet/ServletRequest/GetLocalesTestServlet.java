@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet.ServletRequest;
 
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.GenericServlet;
@@ -67,46 +68,86 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.Vector;
 import java.util.Locale;
 
 /**
  *	Test for ServletRequest.getLocales method
  */
 
-
 public class GetLocalesTestServlet extends GenericServlet {
 
+    /**
+     *	We set ga-US and en-US  with Accept-Language headers in the client side
+     */
 
-/**
- *	We set en-gb and en-us  with Accept-Language headers in the client side
- */
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
-		Enumeration e = request.getLocales();
-                String locale1="null" ;
-                String locale2="null" ;
+        int count = 0;
+        int expectedCount = 2;
+        Locale expectedResult1 = new Locale( "en", "US" );
+        boolean expectedResult1Found = false;
+        Locale expectedResult2 = new Locale( "en", "GB" );
+        boolean expectedResult2Found = false;
+        Enumeration enum = request.getLocales();
 
-		int count=0;
-		while(e.hasMoreElements()) {
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
+
+            while ( enum.hasMoreElements() ) {
+                Locale result = ( ( Locale ) enum.nextElement() );
+
+                if ( result.equals( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
                         count++;
-                        Locale gotLocale = (Locale)e.nextElement();
-                        if ( gotLocale.toString().equals("en_US") )
-                        locale1="us" ;
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "GetLocalesTest  test FAILED<BR>" );
+                        out.println( "    ServletRequest.getLocales() method return the same locale name twice <BR>" );
+                        out.println( "    The locale already received was " + expectedResult1.getLanguage() + "-" + expectedResult1.getCountry() + " <BR>" );
+                    }
+                } else if ( result.equals( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "GetLocalesTest  test FAILED<BR>" );
+                        out.println( "    ServletRequest.getLocales() method return the same locale name twice <BR>" );
+                        out.println( "    The locale already received was " + expectedResult2.getLanguage() + "-" + expectedResult2.getCountry() + " <BR>" );
+                    }
+                } else {
+                    v.add( result );
+                }
+            }
 
-                        if ( gotLocale.toString().equals("en_GB") )
-                        locale2="gb" ;
+            if ( count != expectedCount ) {
+                out.println( "GetLocalesTest  test FAILED<BR>" );
+                out.println( "    ServletRequest.getLocales() method did not return the correct number of locales <BR>" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.println( "    The expected locales received were :<BR>" );
 
-                        }
- String final_string = locale1 + locale2;
+                if ( expectedResult1Found ) {
+                    out.println( "    " + expectedResult1.getLanguage() + "-" + expectedResult1.getCountry() + "<BR>" );
+                }
 
-                    if(final_string.equals("usgb") )
-                               out.println("GetLocalesTest test PASSED");
-                    else
-                      {
-                        out.println("GetLocalesTest test FAILED ");
-                        out.println("Final Locale String = " + final_string);
-                      }
-	}
+                if ( expectedResult2Found ) {
+                    out.println( "    " + expectedResult2.getLanguage() + "-" + expectedResult2.getCountry() + "<BR>" );
+                }
+
+                out.println( "    Other locales received were :<BR>" );
+
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + ( ( Locale ) v.elementAt( i ) ).getLanguage() + "-" + ( ( Locale ) v.elementAt( i ) ).getCountry() + "<BR>" );
+                }
+            } else {
+                out.println( "GetLocalesTest test PASSED" );
+            }
+        } else {
+            out.println( "GetLocalesTest  test FAILED<BR>" );
+            out.println( "    ServletRequest.getLocales() returned an empty enumeration<BR>" );
+        }
+    }
 }

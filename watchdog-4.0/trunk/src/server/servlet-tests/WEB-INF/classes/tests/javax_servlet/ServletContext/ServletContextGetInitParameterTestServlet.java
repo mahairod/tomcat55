@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,12 +60,7 @@
 
 package tests.javax_servlet.ServletContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -71,31 +68,32 @@ import java.io.PrintWriter;
  *	Test for ServletContext.getInitParameter(String) method
  */
 
+public class ServletContextGetInitParameterTestServlet extends GenericServlet {
 
-public class ServletContextGetInitParameterTestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-		ServletContext context = config.getServletContext();
+        //Init parameters specified in web.xml for ServletContextGetInitParameterTestServlet servlet
+        String param = "EDITOR";
+        String expectedResult = "VI";
+        String result = context.getInitParameter( param );
 
-		//Init parameters specified in web.xml for ServletContextGetInitParameterTestServlet servlet
-                String initParam = context.getInitParameter("EDITOR");
-                if(initParam!=null) {
-                        if(initParam.equals("VI")) {
-                                out.println("ServletContextGetInitParameterTest test PASSED");
-                        }
-                        else {
-                                out.println("ServletContextGetInitParameterTest test FAILED");
-                                out.println("ServletContextGetInitParameterTest getInitParameter(String) gives incorrect results");
-                                out.println("ServletContext getInitParameter(String) != 'VI' as specified in web.xml for GetServletConfigInitParameterTest servlet");
-                        }
-                }
-                else {
-                                out.println("ServletContextGetInitParameterTest test FAILED");
-                                out.println("ServletContext getInitParameter(String) is null");
-                }
+        if ( result != null ) {
+            if ( result.equals( "VI" ) ) {
+                out.println( "ServletContextGetInitParameterTest test PASSED" );
+            } else {
+                out.println( "ServletContextGetInitParameterTest test FAILED" );
+                out.println( "     ServletContext.getInitParameter(String) gave incorrect results" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "ServletContextGetInitParameterTest test FAILED" );
+            out.println( "ServletContext getInitParameter(" + param + ") returned a null" );
         }
+    }
 }

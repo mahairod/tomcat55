@@ -60,18 +60,15 @@
 
 package tests.javax_servlet.Filter;
 
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.*;
 
 public final class DoFilter_Filter implements Filter {
 
-
     // The filter configuration object we are associated with.  If this value
     // is null, this filter instance is not currently configured.
     private FilterConfig filterConfig = null;
-
 
     public void doFilter( ServletRequest request, ServletResponse response,
                           FilterChain chain ) throws IOException, ServletException {
@@ -85,19 +82,15 @@ public final class DoFilter_Filter implements Filter {
         }
 
         out.println( "doFilter was successfully called in DoFilter_Filter<BR>" );
-
     }
 
-
     // Remove the filter configuration object for this filter.
-    public void destroy() {}
-
+    public void destroy() {
+    }
 
     //  initialize the filter configuration object for this filter.
-
     public void init( FilterConfig filterConfig ) {
         this.filterConfig = filterConfig;
 
     }
-
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,9 +58,7 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -74,16 +74,20 @@ import java.io.PrintWriter;
 
 public class GetParameter_1TestServlet extends GenericServlet {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
-		//we are not settting any parameter in the client side so we should get null
-		if(request.getParameter("Anonymous") == null) {
-			out.println("GetParameter_1Test test PASSED");
-		}
-		else {
-			out.println("GetParameter_1Test test FAILED");
-		}
-	}
+        //we are not settting any parameter in the client side so we should get null
+        String result = request.getParameter( "doesnotexist" );
+
+        if ( result == null ) {
+            out.println( "GetParameter_1Test test PASSED" );
+        } else {
+            out.println( "GetParameter_1Test test FAILED<BR>" );
+            out.println( "     ServletRequest.getParameter(Anonymous) returned incorrect result<BR>" );
+            out.println( "     Expected result = null <BR>" );
+            out.println( "     Actual result = |" + result + "| <BR>" );
+        }
+    }
 }

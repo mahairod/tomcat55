@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,55 +60,46 @@
 
 package tests.javax_servlet.UnavailableException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.Servlet;
-import javax.servlet.UnavailableException;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+public class UnavailableException_Constructor1TestServlet extends GenericServlet {
 
-public class UnavailableException_Constructor1TestServlet extends HttpServlet {
+    /*
+     * UnavailableException(String mesg)
+     * constructs an UnavailabaleException object for
+     * the specified servlet. This constructor reports
+     * Permanent Unavailability
+     */
 
-	/**
-	 *UnavailableException(String mesg)
-	 * constructs an UnavailabaleException object for
-	 * the specified servlet. This constructor reports
-	 * Permanent Unavailability
-	 */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /*
+         *  Constructing  one and throwing  it.
+         *  catching the exception
+         */
 
-		/**
-		 *  Constructing  one and throwing  it.
-		 *  catching the exception
-		 */
+        PrintWriter out = response.getWriter();
 
-		PrintWriter out = response.getWriter();
+        UnavailableException ue = new UnavailableException( "Exceptional" );
 
-		UnavailableException ue=new UnavailableException("Exceptional");
+        try {
+            throw ue;
+        } catch ( Exception e ) {
+            if ( e instanceof UnavailableException ) {
+                String mesg = e.getMessage();
 
-		try {
-			throw ue;
-		}catch(Exception e) {
-			if(e instanceof UnavailableException) {
-				String mesg = e.getMessage();
-
-				if(mesg.equals("Exceptional")) {
-					out.println("UnavailableException_Constructor1Test test PASSED");	
-				}
-				else {
-					out.println("UnavailableException_Constructor1Test test FAILED <BR>");	
-					out.println("Message from Exception does not contain 'Exceptional' <BR>");	
-				}
-			}
-			else {
-				out.println("UnavailableException_Constructor1Test test FAILED <BR>");	
-				out.println("Exception is not an instance of UnavailableException <BR>");	
-			}
-		}
-	}
+                if ( mesg.equals( "Exceptional" ) ) {
+                    out.println( "UnavailableException_Constructor1Test test PASSED" );
+                } else {
+                    out.println( "UnavailableException_Constructor1Test test FAILED <BR>" );
+                    out.println( "Message from Exception does not contain 'Exceptional' <BR>" );
+                }
+            } else {
+                out.println( "UnavailableException_Constructor1Test test FAILED <BR>" );
+                out.println( "Exception is not an instance of UnavailableException <BR>" );
+            }
+        }
+    }
 }

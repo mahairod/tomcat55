@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,46 +58,42 @@
  *
  */
 
-
 package tests.javax_servlet.ServletConfig;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
+import javax.servlet.*;
 import java.util.Enumeration;
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 /**
  *	Negative Test for ServletConfig getInitParameterNames() method
  */
 
+public class GetServletConfigInitParameterNames_1TestServlet extends GenericServlet {
 
-public class GetServletConfigInitParameterNames_1TestServlet extends HttpServlet {
+    /**
+     *	getInitParameterNames returns an Enumeration of values
+     *	associated with the init parameters
+     */
 
-/**
- *	getInitParameterNames returns an Enumeration of values
- *	associated with the init parameters
- */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
+        Enumeration enum = config.getInitParameterNames();
 
-		Enumeration enum= config.getInitParameterNames();
+        //we set nothing
+        if ( !enum.hasMoreElements() ) {
+            out.println( "GetServletConfigInitParameterNames_1Test test PASSED" );
+        } else {
+            out.println( "GetServletConfigInitParameterNames_1Test test FAILED<BR>" );
+            out.println( "Servlet Config getInitParameterNames() method should return an empty enumeration as no init parameters were specified<BR>" );
+            out.println( "The parameters returned were: <BR>" );
 
-		//we set nothing
-		if(!enum.hasMoreElements()) {
-			out.println("GetServletConfigInitParameterNames_1Test test PASSED");
-		}
-		else {
-			out.println("GetServletConfigInitParameterNames_1Test test FAILED");
-			out.println("Servlet Config getInitParameterNames() method should return an empty enumeration as no init parameters were specified ");
-		}
-	}
+            while ( enum.hasMoreElements() ) {
+                out.println( "|" + ( String ) enum.nextElement() + "|<BR>" );
+            }
+        }
+    }
 }

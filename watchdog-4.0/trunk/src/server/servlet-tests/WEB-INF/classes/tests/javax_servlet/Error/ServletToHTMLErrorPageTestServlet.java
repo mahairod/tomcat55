@@ -58,7 +58,6 @@
  *
  */
 
-
 package tests.javax_servlet.Error;
 
 import javax.servlet.ServletRequest;
@@ -68,7 +67,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 public class ServletToHTMLErrorPageTestServlet extends GenericServlet {
 

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -55,15 +57,10 @@
  * <http://www.apache.org/>.
  *
  */
+
 package tests.javax_servlet.ServletContext;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -71,29 +68,27 @@ import java.io.PrintWriter;
  *	A Negative Test for ServletContext.getInitParameter(String) method
  */
 
+public class ServletContextGetInitParameter_1TestServlet extends GenericServlet {
 
-public class ServletContextGetInitParameter_1TestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-		ServletContext context = config.getServletContext();
+        //We did not set any init parameters for the servlet in the web.xml
+        // Test for a non-existant init parameter
 
-		//We did not set any init parameters for the servlet in the web.xml
-		// Test for a non-existant init parameter
+        String initParam = context.getInitParameter( "nothing" );
 
-		String initParam=context.getInitParameter("nothing");
-
-		if(initParam==null)  {
-			out.println("ServletContextGetInitParameter_1Test test PASSED");
-		}
-		else {
-                        out.println("ServletContextGetInitParameter_1Test test FAILED");
-                        out.println("Actual Output from ServletContext.getInitParameter(String) -> initParam");
-                        out.println("Expected Value from ServletContext.getInitParameter(String) -> null as a bogus param was used for the String");
-                }
-
-	}
+        if ( initParam == null ) {
+            out.println( "ServletContextGetInitParameter_1Test test PASSED" );
+        } else {
+            out.println( "ServletContextGetInitParameter_1Test test FAILED" );
+            out.println( "     ServletContext.getInitParameter(String)  returned incorrect result<BR>" );
+            out.println( "     Expected result = null <BR>" );
+            out.println( "     Actual result =|" + initParam + "| <BR>" );
+        }
+    }
 }

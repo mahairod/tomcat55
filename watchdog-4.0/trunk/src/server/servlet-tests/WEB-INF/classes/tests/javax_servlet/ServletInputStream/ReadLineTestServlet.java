@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,17 +58,9 @@
  *
  */
 
-
-
-
 package tests.javax_servlet.ServletInputStream;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -75,27 +69,38 @@ import java.io.PrintWriter;
  *	A Test for readLine method
  */
 
+public class ReadLineTestServlet extends GenericServlet {
 
-public class ReadLineTestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletInputStream sins = request.getInputStream();
 
-		PrintWriter out = response.getWriter();
-		ServletInputStream sins = request.getInputStream();
+        int contentLen = request.getContentLength();
 
-		byte buffer[] = new byte[request.getContentLength()];
+        if ( contentLen >= 1 ) {
 
-		int len = sins.readLine(buffer,0,buffer.length);
+            byte buffer[] = new byte[ contentLen ];
 
-		//our client sent ULTRA SPARC  in the stream
+            int len = sins.readLine( buffer, 0, buffer.length );
+            String expectedResult = "ULTRA SPARC";
+            //our client sent ULTRA SPARC  in the stream
 
-		String buff = new String(buffer,0,len);
+            String result = new String( buffer, 0, len );
 
-		if(buff.trim().equals("java")) {
-			out.println("ReadLineTest test PASSED");
-		}
-		else {
-			out.println("ReadLineTest test FAILED");
-		}
-	}
+            if ( result.trim().equals( expectedResult ) ) {
+                out.println( "ReadLineTest test PASSED" );
+            } else {
+                out.println( "ReadLineTest test FAILED<BR>" );
+                out.println( "     ServletInputStream.readLine() returned incorrect result <BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + result + "| <BR>" );
+            }
+        } else {
+            out.println( "ReadLineTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getContentLength() returned incorrect result <BR>" );
+            out.println( "     Expected a result >= 1 <BR>" );
+            out.println( "     Actual result = " + contentLen + " <BR>" );
+        }
+    }
 }

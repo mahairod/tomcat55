@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,64 +58,94 @@
  *
  */
 
-
 package tests.javax_servlet.ServletConfig;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
+import javax.servlet.*;
 import java.util.Enumeration;
-import javax.servlet.ServletException;
+import java.util.Vector;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 /**
  *	Test for Servlet Config getInitParameterNames() method
  */
 
+public class GetServletConfigInitParameterNamesTestServlet extends GenericServlet {
 
-public class GetServletConfigInitParameterNamesTestServlet extends HttpServlet {
+    /**
+     *	getInitParameterNames returns an Enumeration of values
+     *	associated with the init parameters
+     */
 
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-/**
- *	getInitParameterNames returns an Enumeration of values
- *	associated with the init parameters
- */
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        Enumeration enum = config.getInitParameterNames();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
-		Enumeration enum = config.getInitParameterNames();
+        int count = 0;
+        int expectedCount = 2;
+        String expectedResult1 = "Team";
+        boolean expectedResult1Found = false;
+        String expectedResult2 = "org";
+        boolean expectedResult2Found = false;
+        enum = config.getInitParameterNames();
 
-		int count =0;
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
 
-		//count should be 2
-		while(enum.hasMoreElements()) {
-			enum.nextElement();
-			count++;
-		}
-		if(count==2) {
-			count=0;
-			enum = config.getInitParameterNames();
-			while(enum.hasMoreElements()) {
-				String name=(String)enum.nextElement();
-				if(name.equals("Team")||name.equals("org")) {
-					out.println("GetServletConfigInitParameterNamesTest test PASSED");
-					count++;
-				}
-				else {
-					out.println("GetServletConfigInitParameterNamesTest test FAILED");
-					out.println("ServletConfig.getInitParameterNames() method returned incorrect result");
-				}
-			}
-			if(count!=2) {
-					out.println("GetServletConfigInitParameterNamesTest test FAILED");
-					out.println("ServletConfig.getInitParameterNames() method did not return two init parameters");
-			}
+            while ( enum.hasMoreElements() ) {
+                String name = ( String ) enum.nextElement();
 
-		}
-	}
+                if ( name.equals( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
+                        count++;
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "GetServletConfigInitParameterNamesTest test FAILED<BR>" );
+                        out.println( "    ServletConfig.getInitParameterNames() method return an attribute name twice <BR>" );
+                        out.println( "    The attribute already specified was " + expectedResult1 + " <BR>" );
+                    }
+                } else if ( name.equals( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "GetServletConfigInitParameterNamesTest test FAILED<BR>" );
+                        out.println( "    ServletConfig.getInitParameterNames() method return an attribute name twice <BR>" );
+                        out.println( "    The attribute already specified was " + expectedResult2 + " <BR>" );
+                    }
+                } else {
+                    v.add( name );
+                }
+            }
+
+            if ( count != expectedCount ) {
+                out.println( "GetServletConfigInitParameterNamesTest test FAILED" );
+                out.println( "ServletConfig.getInitParameterNames() method did not return the correct number of init parameters" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.println( "    The expected parameter names received were :<BR>" );
+
+                if ( expectedResult1Found ) {
+                    out.println( expectedResult1 + "<BR>" );
+                }
+
+                if ( expectedResult2Found ) {
+                    out.println( expectedResult2 + "<BR>" );
+                }
+
+                out.println( "    Other parameter names received were :<BR>" );
+
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + v.elementAt( i ).toString() + "<BR>" );
+                }
+            } else {
+                out.println( "GetServletConfigInitParameterNamesTest test PASSED" );
+            }
+        } else {
+            out.println( "GetServletConfigInitParameterNamesTest test FAILED" );
+            out.println( "    HttpServletRequest.getInitParameterNames() an empty enumeration <BR>" );
+        }
+    }
 }

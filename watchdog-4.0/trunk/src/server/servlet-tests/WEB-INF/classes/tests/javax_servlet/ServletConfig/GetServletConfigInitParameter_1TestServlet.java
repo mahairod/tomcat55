@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,15 +58,9 @@
  *
  */
 
-
 package tests.javax_servlet.ServletConfig;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -72,28 +68,27 @@ import java.io.PrintWriter;
  *	Negative Test for ServletConfig getInitParameter(String) method
  */
 
+public class GetServletConfigInitParameter_1TestServlet extends GenericServlet {
 
-public class GetServletConfigInitParameter_1TestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /**
+         *	We will try this method with a bogus param
+         *	We expect null as an output
+         */
 
-/**
- *	We will try this method with a bogus param
- *	We expect null as an output
- */
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        String param = "Mono Phosphate";
+        String initParam = config.getInitParameter( param );
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
-
-		String initParam = config.getInitParameter("Mono Phosphate");
-
-		if(initParam==null) {
-			out.println("GetServletConfigInitParameter_1Test test PASSED");
-		}
-		else {
-			out.println("GetServletConfigInitParameter_1Test test FAILED");
-			out.println("Actual Output from ServletConfig.getInitParameter(String) -> initParam");
-			out.println("Expected Value from ServletConfig.getInitParameter(String) -> null as a bogus param was used for the String");
-		}
-	}
+        if ( initParam == null ) {
+            out.println( "GetServletConfigInitParameter_1Test test PASSED" );
+        } else {
+            out.println( "GetServletConfigInitParameter_1Test test FAILED" );
+            out.println( "     ServletConfig.getInitParameter(" + param + ") returned an incorrect result <BR>" );
+            out.println( "     Expected result = null <BR>" );
+            out.println( "     Actual result = |" + initParam + "| <BR>" );
+        }
+    }
 }

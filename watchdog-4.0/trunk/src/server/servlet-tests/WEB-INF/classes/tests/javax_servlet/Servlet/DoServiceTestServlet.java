@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -54,11 +56,9 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * @Author : Ramesh.Mandava
  */
 
 package tests.javax_servlet.Servlet;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -71,37 +71,35 @@ import java.io.PrintWriter;
  *	A Test for service(ServletRequest,ServletResponse) method
  */
 
-
 public class DoServiceTestServlet extends CoreServletTest {
 
-/**
- *	We1'll override init method and assign some value to the String
- *	We'll check for that value in the service method
- */
+    /**
+     *	We1'll override init method and assign some value to the String
+     *	We'll check for that value in the service method
+     */
 
-	String precedence="starting";
+    String precedence = "starting";
 
-	public void init(ServletConfig sc) throws ServletException {
+    public void init( ServletConfig sc ) throws ServletException {
 
-		super.init(sc);
-		precedence="init is called";
-	}
+        super.init( sc );
+        precedence = "init is called";
+    }
 
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        String expectedResult = "init is called";
+        String result = precedence;
 
-
-		PrintWriter out = response.getWriter();
-		if(precedence.equals("init is called")) 
-		{
-			out.println("DoServiceTest test PASSED");	
-		}
-		else
-		{
-			out.println("DoServiceTest test FAILED");
-			out.println("Problem with Servlet life cycle");
-			out.println("init is not called before service");
-		}
-
-	}
+        if ( result.equals( expectedResult ) ) {
+            out.println( "DoServiceTest test PASSED" );
+        } else {
+            out.println( "DoServiceTest test FAILED" );
+            out.println( "Problem with Servlet life cycle" );
+            out.println( "init is not called before service" );
+            out.println( "Expected precedence = " + expectedResult + " <BR>" );
+            out.println( "Actual precedence = " + result + " <BR>" );
+        }
+    }
 }

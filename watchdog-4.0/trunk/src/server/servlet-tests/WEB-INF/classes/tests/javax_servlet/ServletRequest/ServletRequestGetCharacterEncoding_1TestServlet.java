@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -66,27 +68,25 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
-/**	A negative test For getCharacterEncoding()
- *
+/**	
+ * A negative test For getCharacterEncoding()
  */
-
 
 public class ServletRequestGetCharacterEncoding_1TestServlet extends GenericServlet {
 
-	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		// getting char encoding
-		String encoding = request.getCharacterEncoding();
+        PrintWriter out = response.getWriter();
+        // getting char encoding
+        String encoding = request.getCharacterEncoding();
 
-		// in client side we set it to null
-                if(encoding == null) {
-				out.println("ServletRequestGetCharacterEncoding_1Test test PASSED");
-		}// else wrong type of encoding
-		else {
-				out.println("ServletRequestGetCharacterEncoding_1Test test FAILED");
-				out.println("Encoding got= " + encoding);
-		}
-	}
+        if ( encoding == null ) {
+            out.println( "ServletRequestGetCharacterEncoding_1Test test PASSED" );
+        } else {
+            out.println( "ServletRequestGetCharacterEncoding_1Test test FAILED<BR>" );
+            out.println( "     ServletRequest.getCharacterEncoding() returned the wrong result<BR>" );
+            out.println( "     Expected result = null <BR>" );
+            out.println( "     Actual result = |" + encoding + "| <BR>" );
+        }
+    }
 }

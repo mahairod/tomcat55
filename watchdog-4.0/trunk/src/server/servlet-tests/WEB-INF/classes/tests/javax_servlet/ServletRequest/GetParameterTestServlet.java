@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -66,31 +68,38 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Test for getParameter(String)
  */
 
-
 public class GetParameterTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
+        String param = "BestLanguage";
+        // getting the request parameter
+        Object result = request.getParameter( param );
+        String expectedResult = "Java";
 
-		// getting the request parameter
-		Object param = request.getParameter("BestLanguage");
-
-		if(param != null) {
-			// is param an instance of java.lang.String
-			if(param instanceof String) {
-				if(((String)param).equals("Java")) {
-					out.println("GetParameterTest test PASSED");
-				}
-			}
-		}
-		else {
-			out.println("GetParameterTest test FAILED");
-		}
-	}
+        if ( result != null ) {
+            // is param an instance of java.lang.String
+            if ( result instanceof String ) {
+                if ( ( ( String ) result ).equals( expectedResult ) ) {
+                    out.println( "GetParameterTest test PASSED" );
+                } else {
+                    out.println( "GetParameterTest test FAILED<BR>" );
+                    out.println( "     ServletRequest.getParameter(" + param + ") returned an incorrect result<BR>" );
+                    out.println( "     Expected result = " + expectedResult + " <BR>" );
+                    out.println( "     Actual result = |" + ( String ) result + " <BR>" );
+                }
+            } else {
+                out.println( "GetParameterTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getParameter(" + param + ") failed to returned a result that is an instance of a String<BR>" );
+            }
+        } else {
+            out.println( "GetParameterTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getParameter(" + param + ") returned a null result <BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,9 +58,7 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -74,18 +74,34 @@ import java.io.PrintWriter;
 
 public class GetRemoteAddrTestServlet extends GenericServlet {
 
-/**
- *	getRemoteAddress gives the client address from where the request originated
- */
+    /**
+     *	getRemoteAddress gives the client address from where the request originated
+     */
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		if(request.getRemoteAddr()!=null) {
-			out.println("GetRemoteAddrTest test PASSED");
-		}
-		else {
-			out.println("GetRemoteAddrTest test FAILED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        String expectedResult = request.getParameter( "Address" );
+
+        if ( expectedResult != null ) {
+            String result = request.getRemoteAddr();
+
+            if ( result != null ) {
+                if ( result.equals( expectedResult ) ) {
+                    out.println( "GetRemoteAddrTest test PASSED" );
+                } else {
+                    out.println( "GetRemoteAddrTest test FAILED<BR>" );
+                    out.println( "     ServletRequest.getRemoteAddr() returned an incorrect result <BR>" );
+                    out.println( "     Expected result = " + expectedResult + " <BR>" );
+                    out.println( "     Actual result = |" + result + "| <BR>" );
+                }
+            } else {
+                out.println( "GetRemoteAddrTest test FAILED<BR>" );
+                out.println( "     SservletRequest.getRemoteAddr() returned a null result <BR>" );
+            }
+        } else {
+            out.println( "GetRemoteAddrTest test FAILED<BR>" );
+            out.println( "     The expected result was not received from the client<BR>" );
+        }
+    }
 }

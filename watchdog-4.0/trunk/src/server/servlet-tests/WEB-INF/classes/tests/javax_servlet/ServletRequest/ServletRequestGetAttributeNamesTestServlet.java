@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,58 +58,98 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletConfig;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**	A Test For getAttributeNames()
- *
+/**	
+ * A Test For getAttributeNames()
  */
 
 public class ServletRequestGetAttributeNamesTestServlet extends GenericServlet {
 
-/**
- *	getAttributeNames returns an enumeration of attribute names set at request.
- */
+    /**
+     *	getAttributeNames returns an enumeration of attribute names set at request.
+     */
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		request.setAttribute("BestLanguageHeader","Java");
-		request.setAttribute("BestJSPHeader","Tomcat");
+        PrintWriter out = response.getWriter();
+        request.setAttribute( "BestLanguage", "Java" );
+        request.setAttribute( "BestJSP", "Java2" );
 
-		int count =0;//AttributeNames count
-		Enumeration e = request.getAttributeNames();
-                while(e.hasMoreElements()) {
+
+        int count = 0;
+        int expectedCount = 2;
+        String expectedResult1 = "BestLanguage";
+        boolean expectedResult1Found = false;
+        String expectedResult2 = "BestJSP";
+        boolean expectedResult2Found = false;
+        Enumeration enum = request.getAttributeNames();
+
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
+
+            while ( enum.hasMoreElements() ) {
+                String name = ( String ) enum.nextElement();
+
+                if ( name.equals( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
                         count++;
-                        String gotAttrNames = (String)e.nextElement();
-                        if ( (gotAttrNames.trim().equalsIgnoreCase("BestLanguageHeader") ) || ( gotAttrNames.trim().equalsIgnoreCase("BestJSPHeader") ))
-                        {
-                                out.println("ServletRequestGetAttributeNamesTest test PASSED");
-                        }
-                        else
-                        {
-                                out.println("ServletRequestGetAttributeNamesTest test FAILED");
-
-                        }
-
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "ServletRequestGetAttributeNamesTest  test FAILED<BR>" );
+                        out.println( "    ServletRequest.getAttributeNames() method return the same attribute name twice <BR>" );
+                        out.println( "    The attribute already received was " + expectedResult1 + " <BR>" );
+                    }
+                } else if ( name.equals( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "ServletRequestGetAttributeNamesTest  test FAILED<BR>" );
+                        out.println( "    ServletRequest.getAttributeNames() method return the same attribute name twice <BR>" );
+                        out.println( "    The attribute already received was " + expectedResult2 + " <BR>" );
+                    }
+                } else {
+                    v.add( name );
                 }
-                if(count !=2) {
-                  out.println("ServletRequestGetAttributeNamesTest test FAILED");
-                }
-                else
-                {
-                        out.println("ServletRequestGetAttributeNamesTest test PASSED");
+            }
+
+            if ( count != expectedCount ) {
+                out.println( "ServletRequestGetAttributeNamesTest  test FAILED<BR>" );
+                out.println( "    ServletRequest.getAttributeNames() method did not return the correct number of attributes <BR>" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.print( "    The expected attribute names received were :" );
+
+                if ( expectedResult1Found ) {
+                    out.println( expectedResult1 + "<BR>" );
                 }
 
-	}
+                if ( expectedResult2Found ) {
+                    out.println( expectedResult2 + "<BR>" );
+                }
+
+                out.println( "    Other attribute names received were :<BR>" );
+
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + v.elementAt( i ).toString() + "<BR>" );
+                }
+            } else {
+                out.println( "ServletRequestGetAttributeNamesTest test PASSED" );
+            }
+        } else {
+            out.println( "ServletRequestGetAttributeNamesTest  test FAILED<BR>" );
+            out.println( "    ServletRequest.getAttributeNames() returned an empty enumeration<BR>" );
+        }
+    }
 }

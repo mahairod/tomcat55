@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,15 +58,9 @@
  *
  */
 
-
 package tests.javax_servlet.ServletException;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -72,36 +68,39 @@ import java.io.PrintWriter;
  *	A Test for ServletException(String,Throwable) constructor method
  */
 
-public class ServletExceptionConstructor4TestServlet extends HttpServlet {
+public class ServletExceptionConstructor4TestServlet extends GenericServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		ServletException se=null;
+        PrintWriter out = response.getWriter();
+        ServletException se = null;
 
-		//construct and throw
-		try {
-			se = new ServletException("Exceptional",new Throwable("cos"));
-			throw se;
-		}
-		catch(Exception e) {
-			if(se instanceof ServletException ) {
-				Throwable cause = se.getRootCause();
-				String mesg = se.getMessage();
-				if(cause !=null && mesg !=null) {
-					if(mesg.equals("Exceptional") && cause.getMessage().equals("cos")) {
-						out.println("ServletExceptionConstructor4Test test PASSED");
-					}
-				}
-				else {
-					out.println("ServletExceptionConstructor4Test test FAILED <BR>");
-					out.println("rootCause message thrown by Exception was null <BR>");
-				}
-			}
-			else {
-				out.println("ServletExceptionConstructor4Test test FAILED <BR>");
-				out.println("Exception thrown was not an instance of ServletException <BR>");
-			}
-		}
-	}
+        //construct and throw
+        try {
+            se = new ServletException( "Exceptional", new Throwable( "cos" ) );
+            throw se;
+        } catch ( Exception e ) {
+            if ( se instanceof ServletException ) {
+                Throwable cause = se.getRootCause();
+                String mesg = se.getMessage();
+
+                if ( cause != null && mesg != null ) {
+                    if ( mesg.equals( "Exceptional" ) && cause.getMessage().equals( "cos" ) ) {
+                        out.println( "ServletExceptionConstructor4Test test PASSED" );
+                    } else {
+                        out.println( "ServletExceptionConstructor4Test test FAILED <BR>" );
+                        out.println( "     Exception did not contain Exceptional and a cause of cos <BR>" );
+                        out.println( "     Actual exception was |" + mesg + "| <BR>" );
+                        out.println( "     Actual cause was |" + cause.getMessage() + "| <BR>" );
+                    }
+                } else {
+                    out.println( "ServletExceptionConstructor4Test test FAILED <BR>" );
+                    out.println( "rootCause message thrown by Exception was null <BR>" );
+                }
+            } else {
+                out.println( "ServletExceptionConstructor4Test test FAILED <BR>" );
+                out.println( "Exception thrown was not an instance of ServletException <BR>" );
+            }
+        }
+    }
 }

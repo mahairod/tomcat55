@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet.Servlet;
 
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletConfig;
@@ -70,32 +71,25 @@ import java.io.PrintWriter;
  *	Test for destroy Method
  */
 
-
 public class DoDestroyedTestServlet extends CoreServletTest {
 
+    /**
+     *	Testing that destroy method is not called during 
+     * service method execution 
+     *	
+     */
 
-/**
- *	Testing that destroy method is not called during 
- * service method execution 
- *	
- */
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
+        //checking whether destroy is called before this
+        PrintWriter out = response.getWriter();
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+        if ( isDestroyed() ) {
+            out.println( "DoDestroyedTest test FAILED" );
+            out.println( "Servlet Life Cycle is incorrect. destroy is called before/during the service method" );
 
-		//checking whether destroy is called before this
-		PrintWriter out = response.getWriter();
-
-		if(isDestroyed())
-		{
-			out.println("DoDestroyedTest test FAILED");
-			out.println("Servlet Life Cycle is incorrect. destroy is called before/during the service method");
-
-		}
-		else
-		{
-			out.println("DoDestroyedTest test PASSED");
-		}
-
-	}
+        } else {
+            out.println( "DoDestroyedTest test PASSED" );
+        }
+    }
 }

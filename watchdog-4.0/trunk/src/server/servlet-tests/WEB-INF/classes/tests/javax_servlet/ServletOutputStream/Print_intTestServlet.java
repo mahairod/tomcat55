@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,34 +60,28 @@
 
 package tests.javax_servlet.ServletOutputStream;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 
 /* print(int) */
 
-public class Print_intTestServlet extends HttpServlet { 
+public class Print_intTestServlet extends GenericServlet {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		ServletOutputStream sos =null; 
+        ServletOutputStream sos = null;
+        int num = 1;
 
-		try {
-			sos=response.getOutputStream();
-			sos.print('1');
-			sos.print('1');
-			sos.print('1');
-			sos.print('1');
+        try {
+            sos = response.getOutputStream();
+            sos.print( num );
+            sos.print( num );
+            sos.print( "\n" );
 
-		}catch(Exception e) {
-			sos.println("Print_intTest test FAILED <BR>");
-			sos.println("Exception thrown by print(int) method <BR>");
-			sos.println("Exception Message:" + e.getMessage());
-		}
-	}	
+        } catch ( Exception e ) {
+            sos.println( "Print_intTest test FAILED <BR>" );
+            sos.println( "Exception thrown by print(int) method <BR>" );
+            sos.println( "Exception Message:" + e.getMessage() );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,33 +60,38 @@
 
 package tests.javax_servlet.ServletContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+public class GetMimeTypeTestServlet extends GenericServlet {
 
-public class GetMimeTypeTestServlet extends HttpServlet {
+    private static final String EXPECTED_MIME_TYPE = "application/x-java-class";
+    private static final String MIME_OBJECT =
+        "/WEB-INF/classes/tests/javax_servlet/ServletContext/GetMimeTypeTestServlet.class";
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response )
+    throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
 
-		ServletContext context = config.getServletContext();
-		String mimeType = context.getMimeType("testlist.txt");
-                mimeType = mimeType.trim();
+        ServletContext context = config.getServletContext();
+        String result = context.getMimeType( MIME_OBJECT );
 
-		if ((mimeType == null) || (mimeType.equals("text/plain")) ){
-			out.println("GetMimeTypeTest test PASSED");
-		}
-		else {
-			out.println("GetMimeTypeTest test FAILED <BR>");
-			out.println("MimeType returned -> " + mimeType);
-		}
-	}
+        if ( result != null ) {
+            if ( result.equals( EXPECTED_MIME_TYPE ) ) {
+                out.println( "GetMimeTypeTest test PASSED" );
+            } else {
+                out.println( "GetMimeTypeTest test FAILED<BR>\n\t" +
+                             "ServletContext.getMimeType(" + MIME_OBJECT + ") returned incorrect result<BR>\n\t" +
+                             "Expected result = " + EXPECTED_MIME_TYPE + "<BR>\n\t" +
+                             "Actual result = " + result + "<BR>" );
+            }
+        } else {
+            out.println( "GetMimeTypeTest test FAILED<BR>\n\t" +
+                         "ServletContext.getMimeType( " + MIME_OBJECT + " ) returned a null result<BR>\n\t" +
+                         "Expected result = " + EXPECTED_MIME_TYPE + "<BR>" );
+        }
+    }
 }

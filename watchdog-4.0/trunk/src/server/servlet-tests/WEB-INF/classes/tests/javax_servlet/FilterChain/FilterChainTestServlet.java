@@ -60,21 +60,16 @@
 
 package tests.javax_servlet.FilterChain;
 
-
 import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
-
 public class FilterChainTestServlet extends GenericServlet {
-
 
     public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
         PrintWriter out = response.getWriter();
 
         out.println( "In FilterChainTest Servlet<BR>" );
-
     }
 }

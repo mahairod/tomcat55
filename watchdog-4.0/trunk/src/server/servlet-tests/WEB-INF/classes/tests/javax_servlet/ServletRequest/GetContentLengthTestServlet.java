@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,7 +60,6 @@
 
 package tests.javax_servlet.ServletRequest;
 
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.GenericServlet;
@@ -68,53 +69,44 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Test for getContentLength
  */
 
 public class GetContentLengthTestServlet extends GenericServlet {
 
-   public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	/**
-	 *	We get the content length using getContentLength and
-	 * 	we read from the input stream. if the no of chars read
-	 * 	matches the number returned by getContentLength,
-         *      and the actual content matches as well,
-	 *	we pass the test
-	 */
+        /**
+         *	We get the content length using getContentLength and
+         * 	we read from the input stream. if the no of chars read
+         * 	matches the no returned by getContentLength
+         *	we pass the test
+         */
 
-	PrintWriter out = response.getWriter();
-        ServletInputStream sins = request.getInputStream();
-        String expectedResult = "ULTRA SPARC";
-        int expectedLen = expectedResult.length();
-        byte buffer[] = null;
-	int contentLen = request.getContentLength();
-        int actualLen = 0;
+        PrintWriter out = response.getWriter();
 
-        if (contentLen > 0) {
-            buffer = new byte[contentLen];
-            actualLen = sins.readLine(buffer, 0, buffer.length);
-        } else {
-            buffer = new byte[0];
-            actualLen = 0;
-        }
-        String actualResult = new String(buffer, 0, actualLen);
+        // get the content length
+        int contentLength = request.getContentLength();
 
-        if ((expectedLen == contentLen) &&
-            (expectedLen == actualLen) &&
-            expectedResult.equals(actualResult)) {
-            out.println("GetContentLengthTest test PASSED");
-        } else {
-            out.println("GetContentLengthTest test FAILED");
-            out.println("contentLen = " + contentLen);
-            out.println("expectedLen = " + expectedLen +
-                        ", actualLen = " + actualLen);
-            out.println("expectedResult = " + expectedResult +
-                        ", actualResult = " + actualResult);
+        int len = 0;
+        // getting input stream
+
+        ServletInputStream sin = request.getInputStream();
+        // read from the stream
+
+        while ( sin.read() != -1 ) {
+            len++;
         }
 
-   }
-
+        // did we get what we wrote
+        if ( ( contentLength == len ) || ( contentLength == -1 ) ) {
+            out.println( "GetContentLengthTest test PASSED" );
+        } else {
+            out.println( "GetContentLengthTest test FAILED <BR> " );
+            out.println( "     ServletRequest.getContentLength() method FAILED <BR> " );
+            out.println( "     Expected Value returned ->" + contentLength + " <BR> " );
+            out.println( "     Actual Value returned -> " + len );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,8 +58,7 @@
  *
  */
 
-
- package tests.javax_servlet.ServletRequest;
+package tests.javax_servlet.ServletRequest;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -67,28 +68,33 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A Servlet side Test for getContentType
  */
 
-
 public class GetContentTypeTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
-		// in client side it was set to "text/plain"
-		String contentType=request.getContentType();
-                if (contentType == null) {
-                        out.println("GetContentTypeTest test FAILED");
-                        out.println("contentType is NULL!");
-                } else if (contentType.equals("text/plain")) {
-			out.println("GetContentTypeTest test PASSED");
-                } else {
-                        out.println("GetContentTypeTest test FAILED");
-                        out.println("contentType = " + contentType);
-		}
-	}
+        // in client side it was set to "text/plain"
+        String contentType = request.getContentType();
+
+        String expectedResult = "text/plain";
+
+        if ( contentType != null ) {
+            if ( contentType.equals( expectedResult ) ) {
+                out.println( "GetContentTypeTest test PASSED" );
+            } else {
+                out.println( "GetContentTypeTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getContentType() returned an incorrect result <BR>" );
+                out.println( "     Expected result = " + expectedResult + " <BR>" );
+                out.println( "     Actual result = |" + contentType + "| <BR>" );
+            }
+        } else {
+            out.println( "GetContentTypeTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getContentType() returned a null<BR>" );
+        }
+    }
 }

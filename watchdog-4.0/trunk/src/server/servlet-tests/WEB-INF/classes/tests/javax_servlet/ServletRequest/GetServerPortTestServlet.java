@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,7 +58,6 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
 
 import javax.servlet.ServletRequest;
@@ -67,28 +68,40 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A Test for getServerPort method
  *      getServerPort gives the  port number on which the request was received
  */
 
-
 public class GetServerPortTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException, NumberFormatException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
 
-		int port=request.getServerPort();
-		//wrap it to an Integer
+        String expectedResult = request.getParameter( "port" );
+        int result = 0;
+        result = request.getServerPort();
 
-		Integer portInt = new Integer(port);
-		if(portInt!=null) {
-			out.println("GetServerPortTest test PASSED");
-		}
-		else {
-			out.println("GetServerPortTest test FAILED");
-		}
-	}
+        if ( result != 0 ) {
+            try {
+                int sexpectedResult = Integer.parseInt( expectedResult );
+
+                if ( result == sexpectedResult ) {
+                    out.println( "GetServerPortTest test PASSED" );
+                } else {
+                    out.println( "GetServerPortTest test FAILED<BR>" );
+                    out.println( "     ServletRequest.getServerPort() returned an incorrect result <BR>" );
+                    out.println( "     Expected result = " + expectedResult + " <BR>" );
+                    out.println( "     Actual result = |" + result + "| <BR>" );
+                }
+            } catch ( NumberFormatException nfe ) {
+                out.println( "GetServerPortTest test FAILED<BR>" );
+                throw nfe;
+            }
+        } else {
+            out.println( "GetServerPortTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getServerPort() returned a null result <BR>" );
+        }
+    }
 }

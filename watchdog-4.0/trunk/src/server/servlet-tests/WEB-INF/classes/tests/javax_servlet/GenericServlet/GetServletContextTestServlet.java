@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,7 +58,6 @@
  *
  */
 
-
 package tests.javax_servlet.GenericServlet;
 
 import javax.servlet.GenericServlet;
@@ -70,19 +71,15 @@ import java.io.PrintWriter;
 
 public class GetServletContextTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
 
-		if(getServletContext()!=null) {
+        if ( getServletContext() != null ) {
 
-			out.println("GetServletContext test PASSED");
-		}
-		else
-		{
-			out.println("GetServletContext test FAILED<BR>");
-                        out.println("getServletContext method returing null");
-
-
-		}
-	}
+            out.println( "GetServletContext test PASSED" );
+        } else {
+            out.println( "GetServletContext test FAILED<BR>" );
+            out.println( "getServletContext method returing null" );
+        }
+    }
 }

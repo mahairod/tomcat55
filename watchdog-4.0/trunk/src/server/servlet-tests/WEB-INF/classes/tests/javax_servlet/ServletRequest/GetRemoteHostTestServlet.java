@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,7 +58,6 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
 
 import javax.servlet.ServletRequest;
@@ -67,27 +68,60 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Test for getRemoteHost method
  */
 
-
 public class GetRemoteHostTestServlet extends GenericServlet {
 
-/**
- *	getRemoteHost gives the fully qualified hostname of the agent that sent the request
- */
+    /**
+     *	getRemoteHost gives the fully qualified hostname of the agent that sent the request
+     */
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
-		//should get something
-		if(request.getRemoteHost()!=null) {
-			out.println("GetRemoteHostTest test PASSED");
-		}
-		else {
-			out.println("GetRemoteHostTest test FAILED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+
+        String expectedResult[] = request.getParameterValues( "Address" );
+        int len = expectedResult.length;
+
+        if ( len >= 1 ) {
+            String result = request.getRemoteHost();
+
+            if ( result != null ) {
+                int i = 0;
+                boolean found = false;
+
+                while ( ( !found ) && ( i <= len - 1 ) ) {
+                    if ( result.equals( expectedResult[ i ] ) ) {
+                        found = true;
+                    }
+
+                    i++;
+                }
+
+                if ( found ) {
+                    out.println( "GetRemoteHostTest test PASSED" );
+                } else {
+                    out.println( "GetRemoteHostTest test FAILED<BR>" );
+                    out.println( "     ServletRequest.getRemoteHost() returned an incorrect result <BR>" );
+                    out.println( "     The expected result could be one of the following: <BR>" );
+                    i = 0;
+
+                    while ( i <= len - 1 ) {
+                        out.println( "     Expected result " + ( i + 1 ) + "= " + expectedResult[ i ] + " <BR>" );
+                        i++;
+                    }
+
+                    out.println( "     Actual result = |" + result + "| <BR>" );
+                }
+            } else {
+                out.println( "GetRemoteHostTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getRemoteHost() returned a null result <BR>" );
+            }
+        } else {
+            out.println( "GetRemoteHostTest test FAILED<BR>" );
+            out.println( "     The expected result was not received from the client<BR>" );
+        }
+    }
 }

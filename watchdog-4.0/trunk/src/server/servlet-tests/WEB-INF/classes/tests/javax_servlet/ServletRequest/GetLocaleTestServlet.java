@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,9 +58,7 @@
  *
  */
 
-
 package tests.javax_servlet.ServletRequest;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -67,28 +67,36 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 /**
  *	A Test for ServletRequest.getLocale method
  */
 
-
 public class GetLocaleTestServlet extends GenericServlet {
 
-/*
- *	In the client side we set the Accept-Language header to 'en-us'
- */
+    /*
+     *	In the client side we set the Accept-Language header to 'en-US'
+     */
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter();
+        PrintWriter out = response.getWriter();
+        Locale expectedResult = new Locale( "en", "US" );
+        Locale result = request.getLocale();
 
-		if (request.getLocale().toString().equals("en_US")) {
-			out.println("GetLocaleTest test PASSED");
-                }
-		else {
-			out.println("GetLocaleTest test FAILED");
-                        out.println("Locale = " + request.getLocale().toString() );
-		}
-	}
+        if ( result != null ) {
+            if ( result.equals( expectedResult ) ) {
+                out.println( "GetLocaleTest test PASSED" );
+            } else {
+                out.println( "GetLocaleTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getLocale() returned incorrect result <BR>" );
+                out.println( "     Expected result = " + expectedResult.getLanguage() + "-" + expectedResult.getCountry() + " <BR>" );
+                out.println( "     Actual result = |" + result.getLanguage() + "-" + result.getCountry() + "| <BR>" );
+            }
+        } else {
+            out.println( "GetLocaleTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getLocale() returned a null result <BR>" );
+        }
+    }
 }

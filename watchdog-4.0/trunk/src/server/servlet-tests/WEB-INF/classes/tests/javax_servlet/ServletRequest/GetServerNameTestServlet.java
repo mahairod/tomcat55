@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -66,23 +68,38 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *	A  Test for getServerName method
  *	getServerName gives the name of the server that received the request
  */
 
-
 public class GetServerNameTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter(); 
-		if(request.getServerName()!=null) {
-			out.println("GetServerNameTest test PASSED");
-		}
-		else {
-			out.println("GetServerNameTest test FAILED");
-		}
-	}
+        PrintWriter out = response.getWriter();
+        String result = null;
+        result = request.getServerName();
+        String expectedResult = null;
+        expectedResult = request.getParameter( "hostname" );
+
+        if ( result != null ) {
+            if ( expectedResult != null ) {
+                if ( result.equals( expectedResult ) ) {
+                    out.println( "GetServerNameTest test PASSED" );
+                } else {
+                    out.println( "GetServerNameTest test FAILED<BR>" );
+                    out.println( "     ServletRequest.getServerName() returned an incorrect result <BR>" );
+                    out.println( "     Expected result = " + expectedResult + " <BR>" );
+                    out.println( "     Actual result = |" + result + "| <BR>" );
+                }
+            } else {
+                out.println( "GetServerNameTest test FAILED<BR>" );
+                out.println( "     ServletRequest.getParameter(hostname) returned a null result <BR>" );
+            }
+        } else {
+            out.println( "GetServerNameTest test FAILED<BR>" );
+            out.println( "     ServletRequest.getServerName() returned a null result <BR>" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -61,7 +63,6 @@
 
 package tests.javax_servlet.Servlet;
 
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletConfig;
@@ -74,27 +75,24 @@ import java.io.PrintWriter;
  *	Negative Test for Servlet.init(ServletConfig) method
  */
 
-
 public class DoInit1TestServlet extends CoreServletTest {
 
-/**
- *	We will throw UnavailableException from inside init
- *	The Servlet should not be initialized
- */
+    /**
+     *	We will throw UnavailableException from inside init
+     *	The Servlet should not be initialized
+     */
 
-	public void init(ServletConfig sc) throws ServletException {
-		throw new UnavailableException(this,"Negative Init Test");
-	}
+    public void init( ServletConfig sc ) throws ServletException {
+        //throw new UnavailableException(this,"Negative Init Test");
+        throw new UnavailableException( "Negative Init Test" );
+    }
 
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
+        //oops its a Fault Tolerant Servlet
+        PrintWriter out = response.getWriter();
+        out.println( "DoInit1Test test FAILED <BR>" );
+        out.println( "service method getting called even when we throw UnavailableException in init()" );
 
-	public void service (ServletRequest request,ServletResponse response) throws ServletException, IOException {
-
-		//oops its a Fault Tolerant Servlet
-
-		PrintWriter out = response.getWriter();
-		out.println( "DoInit1Test test FAILED <BR>");
-		out.println("service method getting called even when we throw UnavailableException in init()");
-
-	}
+    }
 }

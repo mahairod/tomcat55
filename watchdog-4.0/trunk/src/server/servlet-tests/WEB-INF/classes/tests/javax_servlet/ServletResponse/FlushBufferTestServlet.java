@@ -1,11 +1,12 @@
 /*
  * $Header$ 
- * $Date$ 
  * $Revision$
- * 
+ * $Date$
+ *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,7 +14,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -21,22 +22,22 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -56,8 +57,8 @@
  * <http://www.apache.org/>.
  *
  */
-package tests.javax_servlet.ServletResponse;
 
+package tests.javax_servlet.ServletResponse;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -70,24 +71,28 @@ import java.io.PrintWriter;
 
 /**
  *A Test for ServletResponse.flushBuffer method. 
- */ 
+ */
 
 public class FlushBufferTestServlet extends GenericServlet {
 
-	public void service (ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-		ServletOutputStream sos =null; 
+        ServletOutputStream sos = null;
 
-		try {
-			sos = response.getOutputStream();
-			response.setBufferSize(1000);
-			response.setContentType("text/html");
-			sos.println("Testing ServletResponse.flushBuffer() method");
+        try {
+            sos = response.getOutputStream();
+            response.setBufferSize( 50 );
+            response.setContentType( "text/html" );
+            sos.println( "FlushBufferTest test PASSED" );
 
-			//after flushing the client should get this
-			response.flushBuffer();
-			sos.close();
-		}catch(Exception e) {
-		}
-	}	
+            //after flushing the client should get this
+            response.flushBuffer();
+            sos.close();
+        } catch ( IOException e ) {
+            throw e;
+        }
+        catch ( IllegalStateException e ) {
+            throw e;
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,14 +60,9 @@
 
 package tests.javax_servlet.ServletContext;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import javax.servlet.*;
 import java.util.Enumeration;
-import javax.servlet.ServletException;
+import java.util.Vector;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -73,43 +70,83 @@ import java.io.PrintWriter;
  *	Test for ServletContext.getAttributeNames method
  */
 
+public class ServletContextGetAttributeNamesTestServlet extends GenericServlet {
 
-public class ServletContextGetAttributeNamesTestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
+        //first we have to Set Attributes
 
-		//first we have to Set Attributes
+        context.setAttribute( "Chef", "expert" );
+        context.setAttribute( "chief", "commanding" );
 
-		context.setAttribute("Chef","expert");
-		context.setAttribute("Chief","commanding");
+        //then get Attributes
+        int count = 0;
+        String expectedResult1 = "Chef";
+        boolean expectedResult1Found = false;
+        String expectedResult2 = "chief";
+        boolean expectedResult2Found = false;
+        int expectedCount = 2;
+        Enumeration enum = context.getAttributeNames();
 
-		//then get Attributes
-		Enumeration enum = context.getAttributeNames();
-                String attr1="null"  ; //for attribute Chef
-                String attr2="null"  ; //for attribute Chief
+        if ( enum.hasMoreElements() ) {
+            Vector v = new Vector();
 
-//The Jsp 1.2 spec doesn't define the order in which the attribute names are returned ..we take care of that by setting variables attr1 & attr2  so that the final String derived will be same no matter what is the sequence of the attribute names returned
+            while ( enum.hasMoreElements() ) {
+                String name = ( String ) enum.nextElement();
 
-		while(enum.hasMoreElements()) {
-			String gotAttributeName = (String)enum.nextElement();
-			if ( gotAttributeName.equals("Chef") )
-                        attr1=gotAttributeName;
+                if ( name.equals( expectedResult1 ) ) {
+                    if ( !expectedResult1Found ) {
+                        count++;
+                        expectedResult1Found = true;
+                    } else {
+                        out.println( "ServletContextGetAttributeNamesTest test FAILED<BR>" );
+                        out.println( "ServletContext.getAttributeNames() method return an attribute name twice <BR>" );
+                        out.println( "    The attribute already specified was " + expectedResult1 + " <BR>" );
+                    }
+                } else if ( name.equals( expectedResult2 ) ) {
+                    if ( !expectedResult2Found ) {
+                        count++;
+                        expectedResult2Found = true;
+                    } else {
+                        out.println( "ServletContextGetAttributeNamesTest test FAILED<BR>" );
+                        out.println( "ServletContext.getAttributeNames() method return an attribute name twice <BR>" );
+                        out.println( "    The attribute already specified was " + expectedResult2 + " <BR>" );
+                    }
+                } else {
+                    v.add( name );
+                }
+            }
 
-			if ( gotAttributeName.equals("Chief") )
-                        attr2=gotAttributeName;
+            if ( count != expectedCount ) {
+                out.println( "ServletContextGetAttributeNamesTest test FAILED<BR>" );
+                out.println( "ServletContext.getAttributeNames() method did not return the correct number of init parameters<BR>" );
+                out.println( "    Expected count = " + expectedCount + "<BR>" );
+                out.println( "    Actual count = " + count + "<BR>" );
+                out.println( "    The expected attribute names received were :<BR>" );
 
-			}
-String final_string = attr1 + attr2 ;
+                if ( expectedResult1Found ) {
+                    out.println( expectedResult1 + "<BR>" );
+                }
 
-                if(final_string.equals("ChefChief") )
-                out.println("ServletContextGetAttributeNamesTest PASSED");
-                else
-                out.println("ServletContextGetAttributeNamesTes FAILED");
+                if ( expectedResult2Found ) {
+                    out.println( expectedResult2 + "<BR>" );
+                }
 
+                out.println( "    Other attribute names received were :<BR>" );
 
-		}
-	}
+                for ( int i = 0;i <= v.size() - 1;i++ ) {
+                    out.println( "     " + v.elementAt( i ).toString() + "<BR>" );
+                }
+            } else {
+                out.println( "ServletContextGetAttributeNamesTest test PASSED" );
+            }
+        } else {
+            out.println( "ServletContextGetAttributeNamesTest test FAILED<BR>" );
+            out.println( "ServletContext.getAttributeNames() returned an empty enumeration<BR>" );
+        }
+    }
+}

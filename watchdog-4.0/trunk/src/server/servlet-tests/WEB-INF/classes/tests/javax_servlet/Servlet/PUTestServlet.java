@@ -1,11 +1,12 @@
-
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -59,7 +60,6 @@
 
 package tests.javax_servlet.Servlet;
 
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletConfig;
@@ -74,35 +74,26 @@ import java.io.PrintWriter;
  *	@author Ramesh Mandava,Vanitha Venkatraman 
  */
 
-
 public class PUTestServlet extends GenericServlet {
 
-	/**
-	 *	By passing  ServletTest's service method
-	 *
-	 */
+    /**
+     *	By passing  ServletTest's service method
+     *
+     */
 
-	public void service(ServletRequest request,ServletResponse response) throws ServletException , IOException {
-	  PrintWriter out = response.getWriter();
-	  try 
-	  {
-		   
+    public void service( ServletRequest request, ServletResponse response ) throws ServletException , IOException {
 
-		throw new UnavailableException("Throwing Permanent unavailable Exception ");
-	   }
-	   catch ( UnavailableException ex )
-	   {
-		if ( ex.isPermanent()== true )
-		{
-		     out.println("PUTest test PASSED");
-		}
-		else
-		{
-			out.println("PUTest test FAILED <BR>");
-			out.println("isPermanent() method is returing false for Permanent Unavailable Exception");
-		}
-	   }
-	}
+        PrintWriter out = response.getWriter();
 
-
+        try {
+            throw new UnavailableException( "Throwing Permanent unavailable Exception " );
+        } catch ( UnavailableException ex ) {
+            if ( ex.isPermanent() == true ) {
+                out.println( "PUTest test PASSED" );
+            } else {
+                out.println( "PUTest test FAILED <BR>" );
+                out.println( "isPermanent() method is returing false for Permanent Unavailable Exception" );
+            }
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -58,13 +60,7 @@
 
 package tests.javax_servlet.ServletConfig;
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -72,31 +68,27 @@ import java.io.PrintWriter;
  *	Test for ServletConfig.getServletContext() method
  */
 
+public class ServletConfigGetServletContextTestServlet extends GenericServlet {
 
+    /**
+     *	We'll try to get the ServletContext for this servlet itself
+     */
 
-public class ServletConfigGetServletContextTestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-/**
- *	We'll try to get the ServletContext for this servlet itself
- */
+        PrintWriter out = response.getWriter();
+        String anotherServlet = "/servlet-tests/ServletConfigGetServletContextTest";
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //we expect ServletContext object that corresponds to the named URL
+        ServletContext context2 = context.getContext( anotherServlet );
 
-		PrintWriter out = response.getWriter();
-		String anotherServlet="/servlet-tests/ServletConfigGetServletContextTest";
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
-
-		//we expect ServletContext object that corresponds to the named URL
-		ServletContext context2 = context.getContext(anotherServlet); 
-		if((context2 == context) || (context2 == null))  {
-			out.println("ServletConfigGetServletContextTest test PASSED");
-		}
-		else {
-			out.println("ServletConfigGetServletContextTest test FAILED");
-			out.println("ServletConfig.getServletContext() returned incorrect result");
-                        out.println("context1 = " + context);
-                        out.println("context2 = " + context2);
-		}
-	}
+        if ( ( context2 == context ) ) {
+            out.println( "ServletConfigGetServletContextTest test PASSED" );
+        } else {
+            out.println( "ServletConfigGetServletContextTest test FAILED" );
+            out.println( "ServletConfig.getServletContext() returned incorrect result" );
+        }
+    }
 }

@@ -1,10 +1,12 @@
 /*
- * $Header$
+ * $Header$ 
+ * $Revision$
  * $Date$
  *
+ * ====================================================================
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +37,7 @@
  *    nor may "Apache" appear in their names without prior written
  *    permission of the Apache Group.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND ANY EXPRESSED OR IMPLIED
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -55,14 +57,10 @@
  * <http://www.apache.org/>.
  *
  */
+
 package tests.javax_servlet.ServletContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -70,23 +68,23 @@ import java.io.PrintWriter;
  *	Test for ServletContext.getMinorVersion method
  */
 
+public class GetMinorVersionTestServlet extends GenericServlet {
 
-public class GetMinorVersionTestServlet extends HttpServlet {
+    public void service ( ServletRequest request, ServletResponse response ) throws ServletException, IOException {
 
-	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        ServletConfig config = this.getServletConfig();
+        ServletContext context = config.getServletContext();
+        int expectedResult = 3;
+        int result = context.getMinorVersion();
 
-		PrintWriter out = response.getWriter();
-		ServletConfig config = this.getServletConfig();
-		ServletContext context = config.getServletContext();
-
-		//Version should be 2 right
-		if(context.getMinorVersion()==3) {
-			out.println("GetMinorVersionTest test PASSED");
-		}
-		else {
-			out.println("GetMinorVersionTest test FAILED");
-			out.println("ServletContext.getMinorVersion() returned " + context.getMinorVersion());
-			out.println("Expected ServletContext.getMinorVersion() -> 2 ");
-		}
-	}
+        if ( result == expectedResult ) {
+            out.println( "GetMinorVersionTest test PASSED" );
+        } else {
+            out.println( "GetMinorVersionTest test FAILED" );
+            out.println( "     ServletContext.getMinorVersion() returned incorrect result<BR>" );
+            out.println( "     Expected result = " + expectedResult + " <BR>" );
+            out.println( "     Actual result = " + result + " <BR>" );
+        }
+    }
 }
