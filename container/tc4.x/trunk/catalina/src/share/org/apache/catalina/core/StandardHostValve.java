@@ -71,8 +71,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Manager;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Session;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
@@ -158,9 +160,23 @@ final class StandardHostValve
             return;
         }
 
-        // Ask this Context to process this request
+        // Bind the context CL to the current thread
         Thread.currentThread().setContextClassLoader
             (context.getLoader().getClassLoader());
+
+        // Update the session last access time for our session (if any)
+        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+        String sessionId = hreq.getRequestedSessionId();
+        if (sessionId != null) {
+            Manager manager = context.getManager();
+            if (manager != null) {
+                Session session = manager.findSession(sessionId);
+                if ((session != null) && session.isValid())
+                    session.access();
+            }
+        }
+
+        // Ask this Context to process this request
         context.invoke(request, response);
 
     }
