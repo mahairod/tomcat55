@@ -47,6 +47,9 @@
       <fix>
         <bug>29255</bug>: common/lib/naming-factory.jar missing MailSession and SendMail factories. (yoavs)
       </fix>
+      <fix>
+        <bug>29038</bug>: Create directories above context xml file as needed. (yoavs)
+      </fix>
     </changelog>
   </subsection>
  
