@@ -382,7 +382,7 @@ public class TreeControlTag extends TagSupport {
                 out.print(images);
                 out.print("/");
                 out.print(IMAGE_LINE_VERTICAL);
-                out.print("\" border=\"0\"></td>");
+                out.print("\" alt=\"\" border=\"0\"></td>");
             }
             out.println();
         }
@@ -418,16 +418,19 @@ public class TreeControlTag extends TagSupport {
                 out.print(IMAGE_LINE_LAST);
             else
                 out.print(IMAGE_LINE_MIDDLE);
+            out.print("\" alt=\"");
         } else if (node.isExpanded()) {
             if (node.isLast())
                 out.print(IMAGE_HANDLE_DOWN_LAST);
             else
                 out.print(IMAGE_HANDLE_DOWN_MIDDLE);
+            out.print("\" alt=\"close node");
         } else {
             if (node.isLast())
                 out.print(IMAGE_HANDLE_RIGHT_LAST);
             else
                 out.print(IMAGE_HANDLE_RIGHT_MIDDLE);
+            out.print("\" alt=\"expand node");
         }
         out.print("\" border=\"0\">");
         if ((action != null) && !node.isLeaf())
@@ -465,6 +468,7 @@ public class TreeControlTag extends TagSupport {
             out.print(images);
             out.print("/");
             out.print(node.getIcon());
+            out.print("\" alt=\"");
             out.print("\" border=\"0\">");
             if (hyperlink != null)
                 out.print("</a>");
