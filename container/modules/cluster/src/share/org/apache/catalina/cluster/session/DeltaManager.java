@@ -26,15 +26,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
-import javax.servlet.ServletContext;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -174,7 +169,7 @@ public class DeltaManager
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 
@@ -654,7 +649,7 @@ public class DeltaManager
                 boolean isTimeout=false;
                 do {
                     try {
-                        Thread.currentThread().sleep(100);
+                        Thread.sleep(100);
                     }catch ( Exception sleep) {}
                     reqNow = System.currentTimeMillis();
                     isTimeout=((reqNow-reqStart)>(1000*60));

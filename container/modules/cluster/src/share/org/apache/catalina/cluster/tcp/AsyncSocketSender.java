@@ -18,7 +18,6 @@ package org.apache.catalina.cluster.tcp;
 
 import java.net.InetAddress ;
 import java.net.Socket;
-import java.io.IOException;
 import org.apache.catalina.cluster.util.SmartQueue;
 public class AsyncSocketSender implements IDataSender {
     private static int threadCounter=1;

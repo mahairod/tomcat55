@@ -18,11 +18,7 @@ package org.apache.catalina.cluster.deploy;
 
 import org.apache.catalina.cluster.ClusterMessage;
 import org.apache.catalina.cluster.Member;
-import java.io.Externalizable;
 import java.io.Serializable;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectInput;
 
 /**
  * Contains the data for a file being transferred over TCP, this is 
