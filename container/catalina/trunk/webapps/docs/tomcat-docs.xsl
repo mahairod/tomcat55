@@ -115,7 +115,7 @@
         <td width="80%" valign="top" align="left">
           <table border="0" width="100%" cellspacing="4">
             <tr>
-              <td align="left" valign="top" nowrap="true">
+              <td align="left" valign="top">
                 <h1><xsl:value-of select="project/title"/></h1>
                 <h2><xsl:value-of select="properties/title"/></h2>
               </td>
