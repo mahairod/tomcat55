@@ -99,7 +99,7 @@ process. The 1.4 release is now required.
     jakarta-tomcat-4.0-src-YYYYMMDD.zip
 
   On a Unix platform, you will need:
-    jakarta-tomcat-4.0-src-YYYYMMDD.zip
+    jakarta-tomcat-4.0-src-YYYYMMDD.tar.gz
 
   (NOTE:  Alternatively, you can grab the source distribution from a
   formal release, if you wish, by following links on the Jakarta web site).
