@@ -1316,7 +1316,6 @@ class StandardSession
         String keys[] = keys();
         ArrayList saveNames = new ArrayList();
         ArrayList saveValues = new ArrayList();
-        ArrayList unbinds = new ArrayList();
         for (int i = 0; i < keys.length; i++) {
             Object value = null;
             synchronized (attributes) {
@@ -1327,8 +1326,7 @@ class StandardSession
             else if (value instanceof Serializable) {
                 saveNames.add(keys[i]);
                 saveValues.add(value);
-            } else
-                unbinds.add(keys[i]);
+            }
         }
 
         // Serialize the attribute count and the Serializable attributes
@@ -1348,14 +1346,7 @@ class StandardSession
                 if (debug >= 2)
                     log("  storing attribute '" + saveNames.get(i) +
                         "' with value NOT_SERIALIZED");
-                unbinds.add(saveNames.get(i));
             }
-        }
-
-        // Unbind the non-Serializable attributes
-        Iterator names = unbinds.iterator();
-        while (names.hasNext()) {
-            removeAttribute((String) names.next());
         }
 
     }
