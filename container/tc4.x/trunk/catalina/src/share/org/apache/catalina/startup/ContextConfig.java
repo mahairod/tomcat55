@@ -83,6 +83,7 @@ import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
+import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -761,7 +762,7 @@ public final class ContextConfig
     /**
      * Process a "start" event for this Context.
      */
-    private void start() {
+    private synchronized void start() {
 
 	if (debug > 0)
 	    log(sm.getString("contextConfig.start"));
@@ -771,6 +772,7 @@ public final class ContextConfig
 	XmlMapper mapper = createWebMapper();
 	defaultConfig(mapper);
 	applicationConfig(mapper);
+        //DirContextURLStreamHandlerFactory.bind(context.getResources());
 
         // Scan tag library descriptor files for additional listener classes
         if (ok)
@@ -801,6 +803,8 @@ public final class ContextConfig
             log(sm.getString("contextConfig.unavailable"));
             context.setAvailable(false);
         }
+
+        //DirContextURLStreamHandlerFactory.unbind();
 
     }
 
@@ -900,10 +904,12 @@ public final class ContextConfig
             URL url = context.getServletContext().getResource(resourcePath);
             if (url == null)
                 return (false);
+            DirContextURLStreamHandler.bind(context.getResources());
             url = new URL("jar:" + url.toString() + "!/");
             JarURLConnection conn =
                 (JarURLConnection) url.openConnection();
             jarFile = conn.getJarFile();
+            DirContextURLStreamHandler.unbind();
             boolean found = false;
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -942,7 +948,7 @@ public final class ContextConfig
             }
             return (false);
         }
-
+        
     }
 
 
