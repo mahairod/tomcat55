@@ -197,6 +197,7 @@ public final class StandardServer
         "org.apache.catalina.valves.CertificatesValve",
         "org.apache.catalina.valves.ErrorDispatcherValve",
         "org.apache.catalina.valves.ErrorReportValve",
+        "org.apache.catalina.valves.RequestListenerValve",
     };
 
 
