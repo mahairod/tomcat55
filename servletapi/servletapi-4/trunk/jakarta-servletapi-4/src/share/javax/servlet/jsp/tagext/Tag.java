@@ -112,14 +112,17 @@ import javax.servlet.jsp.*;
  * handler before the handler is released to the GC.
  *
  * <p><B>Empty and Non-Empty Action</B>
- * <p> If the action is an <b>empty action</b>, the doStartTag() method must
- * return SKIP_BODY.
+ * <p> If the TagLibraryDescriptor file indicates that the action must
+ * always have an empty action, by an <body-content> entry of "empty",
+ * then the doStartTag() method must return SKIP_BODY.
  *
- * <p> If the action is a <b>non-empty action</b>, the doStartTag() method
- * may return SKIP_BODY or EVAL_BODY_INCLUDE.
+ * Otherwise, the doStartTag() method may return SKIP_BODY or
+ * EVAL_BODY_INCLUDE.
  *
- * If SKIP_BODY is returned the body is not evaluated.
+ * <p>
+ * If SKIP_BODY is returned the body, if present, is not evaluated.
  * 
+ * <p>
  * If EVAL_BODY_INCLUDE is returned, the body is evaluated and
  * "passed through" to the current out.
 */
@@ -187,8 +190,25 @@ public interface Tag {
 
     /**
      * Get the parent (closest enclosing tag handler) for this tag handler.
-     * This method is used by the findAncestorWithClass() method in
-     * TagSupport.
+     *
+     * <p>
+     * The getParent() method can be used to navigate the nested tag
+     * handler structure at runtime for cooperation among custom actions;
+     * for example, the findAncestorWithClass() method in TagSupport
+     * provides a convenient way of doing this.
+     *
+     * <p>
+     * The current version of the specification only provides one formal
+     * way of indicating the observable type of a tag handler: its
+     * tag handler implementation class, described in the tag-class
+     * subelement of the tag element.  This is extended in an
+     * informal manner by allowing the tag library author to
+     * indicate in the description subelement an observable type.
+     * The type should be a subtype of the tag handler implementation
+     * class or void.
+     * This addititional constraint can be exploited by a
+     * specialized container that knows about that specific tag library,
+     * as in the case of the JSP standard tag library.
      *
      * @returns the current parent, or null if none.
      * @seealso TagSupport.findAncestorWithClass().
@@ -228,7 +248,7 @@ public interface Tag {
      * <p>
      * The JSP container will resynchronize
      * any variable values that are indicated as so in TagExtraInfo after the
-     * invocation of doStartBody().
+     * invocation of doStartTag().
      *
      * @returns EVAL_BODY_INCLUDE if the tag wants to process body, SKIP_BODY if it
      * does not want to process it.
@@ -259,7 +279,7 @@ public interface Tag {
      * <p>
      * The JSP container will resynchronize
      * any variable values that are indicated as so in TagExtraInfo after the
-     * invocation of doEndBody().
+     * invocation of doEndTag().
      *
      * @returns indication of whether to continue evaluating the JSP page.
      * @throws JspException.

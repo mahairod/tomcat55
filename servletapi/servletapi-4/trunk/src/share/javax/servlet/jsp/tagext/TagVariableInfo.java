@@ -62,9 +62,6 @@ package javax.servlet.jsp.tagext;
  *
  * This object should be immutable.
  *
- * I don't see a reason not to just reuse the VariableInfo class; need
- * to check with expert group.
- *
  * This information is only available in JSP 1.2 format
 */
 
