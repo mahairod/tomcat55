@@ -830,6 +830,17 @@
     </antcall>
 
     <antcall target="downloadgz">
+      <param name="sourcefile" value="${jmx.loc}"/>
+      <param name="destfile" value="${jmx.jar}"/>
+    </antcall>
+
+    <antcall target="downloadzip">
+      <param name="sourcefile" value="${junit.loc}"/>
+      <param name="destfile" value="${junit.jar}"/>
+      <param name="destdir" value="${base.path}"/>
+    </antcall>
+
+    <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-launcher.loc}"/>
       <param name="destfile" value="${commons-launcher.jar}"/>
     </antcall>
@@ -864,22 +875,6 @@
       <param name="destfile" value="${commons-modeler.jar}"/>
     </antcall>
 
-<!--
-    <antcall target="downloadzip">
-      <param name="sourcefile" value="${javaservice.loc}"/>
-      <param name="destfile" value="${javaservice.exe}"/>
-      <param name="destdir" value="${javaservice.home}"/>
-    </antcall>
--->
-    <antcall target="downloadgz">
-      <param name="sourcefile" value="${jmx.loc}"/>
-      <param name="destfile" value="${jmx.jar}"/>
-    </antcall>
-    <antcall target="downloadzip">
-      <param name="sourcefile" value="${junit.loc}"/>
-      <param name="destfile" value="${junit.jar}"/>
-      <param name="destdir" value="${base.path}"/>
-    </antcall>
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
       <param name="destfile" value="${nsis.exe}"/>
