@@ -149,18 +149,6 @@ class JspDocumentParser extends DefaultHandler
 							       inStream,
 							       isTagFile,
 							       directivesOnly);
-
-	// It's an error to have a prelude or a coda associated with
-	// a JSP document
-	if (!jspDocParser.pageInfo.getIncludePrelude().isEmpty()) {
-	    String file = (String) jspDocParser.pageInfo.getIncludePrelude().get(0);
-	    jspDocParser.err.jspError("jsp.error.prelude.xml", path, file);
-	}
-	if (!jspDocParser.pageInfo.getIncludeCoda().isEmpty()) {
-	    String file = (String) jspDocParser.pageInfo.getIncludeCoda().get(0);
-	    jspDocParser.err.jspError("jsp.error.coda.xml", path, file);
-	}
-
 	Node.Nodes pageNodes = null;
 
 	try {
@@ -171,8 +159,10 @@ class JspDocumentParser extends DefaultHandler
 	    dummyRoot.setJspConfigPageEncoding(jspConfigPageEnc);
 	    dummyRoot.setIsEncodingSpecifiedInProlog(isEncodingSpecifiedInProlog);
 	    jspDocParser.current = dummyRoot;
-
-	    if (parent != null) {
+	    if (parent == null) {
+		jspDocParser.addInclude(dummyRoot,
+			jspDocParser.pageInfo.getIncludePrelude());
+	    } else {
 		jspDocParser.isTop = false;
 	    }
 
@@ -192,6 +182,11 @@ class JspDocumentParser extends DefaultHandler
 	    // Parse the input
 	    saxParser.parse(jspDocParser.inputSource, jspDocParser);
 
+	    if (parent == null) {
+		jspDocParser.addInclude(dummyRoot,
+			jspDocParser.pageInfo.getIncludeCoda());
+	    }
+
 	    // Create Node.Nodes from dummy root
 	    pageNodes = new Node.Nodes(dummyRoot);
 
@@ -202,6 +197,29 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	return pageNodes;
+    }
+
+    /*
+     * Processes the given list of included files.
+     *
+     * This is used to implement the include-prelude and include-coda
+     * subelements of the jsp-config element in web.xml
+     */
+    private void addInclude(Node parent, List files) throws SAXException {
+	if (files != null) {
+	    Iterator iter = files.iterator();
+	    while (iter.hasNext()) {
+		String file = (String) iter.next();
+		AttributesImpl attrs = new AttributesImpl();
+		attrs.addAttribute("", "file", "file", "CDATA", file);
+
+		// Create a dummy Include directive node
+		Node includeDir = new Node.IncludeDirective(attrs, 
+							   null, // XXX
+							   parent);
+		processIncludeDirective(file, includeDir);
+	    }
+	}
     }
 
     /*
