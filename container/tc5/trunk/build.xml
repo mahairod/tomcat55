@@ -25,6 +25,7 @@
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
   <property name="ant.jar"               value="${ant.home}/lib/ant.jar"/>
+  <property name="ant-launcher.jar       value="${ant.home}/lib/ant-launcher.jar"/>
   <property name="cvstag"                value="" />
   <property name="cvs.base"
            value="${basedir}/.."/>
@@ -145,6 +146,7 @@
             failonerror="false" />
 
     <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
+    <copy todir="${tomcat.build}/common/lib" file="${ant-launcher.jar}"/>
   </target>
 
   <!-- ====================== Build all components =================== -->
@@ -639,12 +641,12 @@
     <copy todir="embed/lib" file="${jmx.jar}"/>
     <copy todir="embed/lib" file="${regexp.jar}"/>
 
+    <copy todir="embed/lib" file="${ant.jar}"/>
+    <copy todir="embed/lib" file="${ant-launcher.jar}"/> 
+
     <copy todir="embed/lib">
       <fileset dir="build/server/lib">
         <include name="tomcat-util.jar"/>
-      </fileset>
-      <fileset dir="${ant.home}/lib">
-        <include name="ant.jar"/>
       </fileset>
     </copy>
     
@@ -698,6 +700,7 @@
     <copy todir="embed/lib">
       <fileset dir="build/common/lib">
         <include name="ant.jar"/>
+        <include name="ant-launcher.jar" />
       </fileset>
       <fileset dir="build/common/lib">
         <include name="jasper-compiler.jar"/>
