@@ -60,7 +60,7 @@
  * [Additional notices, if required by prior licensing conditions]
  *
  */
-package org.apache.catalina.cluster.session;
+package org.apache.catalina.cluster;
 
 /**
  * Title:        Tomcat Session Replication for Tomcat 4.0 <BR>
@@ -185,7 +185,7 @@ public class SessionMessage
     private Member mSrc;
     private String mContextName;
     private long serializationTimestamp;
-    
+
 
     /**
      * Creates a session message. Depending on what event type you want this

@@ -89,7 +89,7 @@ import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.*;
 import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
-import org.apache.catalina.cluster.session.SessionMessage;
+import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 
 /**
@@ -206,7 +206,7 @@ public class ReplicationValve
                     }
                 }
             }
-            
+
             String id = null;
             if ( session != null )
                 id = session.getId();
@@ -220,7 +220,7 @@ public class ReplicationValve
                  (!(request.getContext().getManager() instanceof SimpleTcpReplicationManager)))
                 return;
 
-            
+
 
             String uri = hrequest.getDecodedRequestURI();
             boolean filterfound = false;
@@ -234,15 +234,15 @@ public class ReplicationValve
                 return;
 
             if ( debug > 4 ) log("Invoking replication request on "+uri,4);
-            
+
             SessionMessage msg = manager.requestCompleted(id);
             if ( msg == null ) return;
 
-            
+
             cluster.send(msg);
             long stop = System.currentTimeMillis();
             addClusterSendTime(stop-start);
-            
+
         }catch (Exception x)
         {
             log("Unable to perform replication request.",x,2);

@@ -1,4 +1,4 @@
-package org.apache.catalina.cluster.session;
+package org.apache.catalina.cluster;
 
 import org.apache.catalina.Session;
 

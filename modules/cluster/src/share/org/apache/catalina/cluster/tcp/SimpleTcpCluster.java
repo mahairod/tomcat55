@@ -94,7 +94,7 @@ import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.cluster.tcp.SocketSender;
 import org.apache.catalina.cluster.io.ListenCallback;
 
-import org.apache.catalina.cluster.session.SessionMessage;
+import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
 import org.apache.catalina.cluster.Constants;
@@ -247,7 +247,7 @@ public class SimpleTcpCluster
 
 
     /**
-     * The context name <-> manager association for distributed contexts. 
+     * The context name <-> manager association for distributed contexts.
      */
     protected HashMap managers = new HashMap();
     /**
@@ -260,7 +260,7 @@ public class SimpleTcpCluster
      */
     protected long msgFrequency = 500;
     /**
-     * java.nio.Channels.Selector.select timeout in case the JDK has a 
+     * java.nio.Channels.Selector.select timeout in case the JDK has a
      * poor nio implementation
      */
     protected long tcpSelectorTimeout = 100;
@@ -269,7 +269,7 @@ public class SimpleTcpCluster
      * The channel configuration.
      */
     protected String protocol = null;
-    
+
     /**
      * The replication mode, can be either synchronous or asynchronous
      * defaults to synchronous
@@ -324,9 +324,9 @@ public class SimpleTcpCluster
             "asynchronous".equals(mode)) {
             log.debug("Setting replcation mode to "+mode);
             this.replicationMode = mode;
-        } else 
+        } else
             throw new IllegalArgumentException("Replication mode must be either synchronous or asynchronous");
-        
+
     }
     /**
      * Set the name of the cluster to join, if no cluster with
@@ -503,8 +503,8 @@ public class SimpleTcpCluster
 
 
     }
-    
-    
+
+
     public void send(SessionMessage msg, Member dest) {
         try
         {
@@ -646,7 +646,7 @@ public class SimpleTcpCluster
         this.tcpPort = port;
         svcproperties.setProperty("tcpListenPort",String.valueOf(port));
     }
-    
+
     public void setTcpSelectorTimeout(long timeout) {
         this.tcpSelectorTimeout = timeout;
     }
