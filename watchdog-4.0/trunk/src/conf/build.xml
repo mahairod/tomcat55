@@ -5,6 +5,7 @@
 
    <property name="host" value="localhost" />
    <property name="port" value="8080" />
+   <property name="stest" value="gtestservlet-test" />
     
   <!-- ================= Create Execution Classpath ===================== -->
 
@@ -45,7 +46,7 @@
    description="All servlet tests">
     <antcall target="execute">
       <param   name="execute.build"   value="conf/servlet-gtest.xml"/>
-      <param   name="execute.target"  value="gtestservlet-test"/>
+      <param   name="execute.target"  value="${stest}"/>
     </antcall>
   </target>
 
