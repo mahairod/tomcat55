@@ -345,12 +345,14 @@ public class RequestImpl extends Request {
 	this.requestURI=r;
     }
 
-    public void setQueryString( String q ) {
-	this.queryString=q;
+    public void setQueryString(String queryString) {
+	this.queryString = queryString;
+
+        setParameters(HttpUtils.parseQueryString(queryString));
     }
 
-    public void setParameters( Hashtable h ) {
-	this.parameters=h;
+    public void setParameters(Hashtable parameters) {
+	this.parameters = parameters;
     }
         
     public void setContentLength( int  len ) {
