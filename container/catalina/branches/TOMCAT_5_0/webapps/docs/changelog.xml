@@ -54,6 +54,9 @@
       <fix>
         <bug>31001</bug>: Missing domain attribute in MBean description for createStandardService. (yoavs)
       </fix>
+      <fix>
+        <bug>30636</bug>: NPE in DigesterFactory when resources cannot be located. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Webapps">
