@@ -357,6 +357,7 @@ public class Compiler {
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
+        javac.setFork(ctxt.getOptions().getFork());
         info.append("    srcDir=" + srcPath + "\n" );
 
         // Set the Java compiler to use
@@ -372,8 +373,12 @@ public class Compiler {
         info.append("    include="+ ctxt.getJspPath() + "\n" );
 
         try {
-            synchronized(javacLock) {
+            if (ctxt.getOptions().getFork()) {
                 javac.execute();
+            } else {
+                synchronized(javacLock) {
+                    javac.execute();
+                }
             }
         } catch (BuildException e) {
             log.error( "Javac execption ", e);
