@@ -177,6 +177,12 @@ public class StandardHost
 
 
     /**
+     * The live deploy flag for this Host.
+     */
+    private boolean liveDeploy = true;
+
+
+    /**
      * The Java class name of the default Mapper class for this Container.
      */
     private String mapperClass =
@@ -233,7 +239,7 @@ public class StandardHost
     /**
      * Return the value of the auto deploy flag.  If true, it indicates that 
      * this host's child webapps should be discovred and automatically 
-     * deployed.
+     * deployed at startup time.
      */
     public boolean getAutoDeploy() {
 
@@ -323,6 +329,35 @@ public class StandardHost
         this.contextClass = contextClass;
         support.firePropertyChange("contextClass",
                                    oldContextClass, this.contextClass);
+
+    }
+
+
+    /**
+     * Return the value of the live deploy flag.  If true, it indicates that 
+     * a background thread should be started that looks for web application
+     * context files, WAR files, or unpacked directories being dropped in to
+     * the <code>appBase</code> directory, and deploys new ones as they are
+     * encountered.
+     */
+    public boolean getLiveDeploy() {
+
+        return (this.liveDeploy);
+
+    }
+
+
+    /**
+     * Set the live deploy flag value for this host.
+     * 
+     * @param liveDeploy The new live deploy flag
+     */
+    public void setLiveDeploy(boolean liveDeploy) {
+
+        boolean oldLiveDeploy = this.liveDeploy;
+        this.liveDeploy = liveDeploy;
+        support.firePropertyChange("liveDeploy", oldLiveDeploy, 
+                                   this.liveDeploy);
 
     }
 
