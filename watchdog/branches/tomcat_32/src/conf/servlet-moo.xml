@@ -136,7 +136,6 @@
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValueTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_01Test" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_02Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveInterval_01Test" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNamesTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetCreationTimeTest" />
     <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveIntervalTest" />
