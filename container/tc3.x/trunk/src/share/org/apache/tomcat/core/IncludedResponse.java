@@ -90,6 +90,7 @@ extends HttpServletResponseFacade {
     }
     
     public void sendError(int sc, String msg) throws IOException {
+	//	/*XXX*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
         getRealResponse().sendBodyText("Included servlet error: " + sc +
                                        ": " + msg + "\r\n");
     }

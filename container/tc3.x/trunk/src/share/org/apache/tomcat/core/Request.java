@@ -590,6 +590,7 @@ public class Request  {
 
 
     public void setPathInfo(String pathInfo) {
+	///*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
         this.pathInfo = pathInfo;
     }
 
