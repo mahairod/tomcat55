@@ -17,11 +17,12 @@
 
 package org.apache.catalina.core;
 
-
+import java.lang.reflect.Method;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Stack;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -547,6 +548,44 @@ public class StandardWrapper
             return (false);
         } else
             return (true);
+
+    }
+
+
+    /**
+     * Gets the names of the methods supported by the underlying servlet.
+     *
+     * This is the same set of methods included in the Allow response header
+     * in response to an OPTIONS request method processed by the underlying
+     * servlet.
+     *
+     * @return Array of names of the methods supported by the underlying
+     * servlet
+     */
+    public String[] getServletMethods() throws ServletException {
+	
+        HashSet allow = new HashSet();
+        allow.add("TRACE");
+        allow.add("OPTIONS");
+	
+        Method[] methods = getAllDeclaredMethods(loadServlet().getClass());
+        for (int i=0; methods != null && i<methods.length; i++) {
+            Method m = methods[i];
+	    
+            if (m.getName().equals("doGet")) {
+                allow.add("GET");
+                allow.add("HEAD");
+            } else if (m.getName().equals("doPost")) {
+                allow.add("POST");
+            } else if (m.getName().equals("doPut")) {
+                allow.add("PUT");
+            } else if (m.getName().equals("doDelete")) {
+                allow.add("DELETE");
+            }
+        }
+
+        String[] methodNames = new String[allow.size()];
+        return (String[]) allow.toArray(methodNames);
 
     }
 
@@ -1488,6 +1527,34 @@ public class StandardWrapper
         sb.append(']');
         return (sb.toString());
 
+    }
+
+
+    private Method[] getAllDeclaredMethods(Class c) {
+
+        if (c.equals(javax.servlet.http.HttpServlet.class)) {
+            return null;
+        }
+
+        Method[] parentMethods = getAllDeclaredMethods(c.getSuperclass());
+
+        Method[] thisMethods = c.getDeclaredMethods();
+        if (thisMethods == null) {
+            return parentMethods;
+        }
+
+        if ((parentMethods != null) && (parentMethods.length > 0)) {
+            Method[] allMethods =
+                new Method[parentMethods.length + thisMethods.length];
+	    System.arraycopy(parentMethods, 0, allMethods, 0,
+                             parentMethods.length);
+	    System.arraycopy(thisMethods, 0, allMethods, parentMethods.length,
+                             thisMethods.length);
+
+	    thisMethods = allMethods;
+	}
+
+	return thisMethods;
     }
 
 

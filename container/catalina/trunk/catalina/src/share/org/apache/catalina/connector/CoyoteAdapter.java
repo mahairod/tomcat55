@@ -171,10 +171,11 @@ public class CoyoteAdapter
      * Parse additional request parameters.
      */
     protected boolean postParseRequest(org.apache.coyote.Request req, 
-    		                           Request request,
-    		                           org.apache.coyote.Response res, 
-									   Response response)
-        throws Exception {
+                                       Request request,
+    		                       org.apache.coyote.Response res, 
+                                       Response response)
+            throws Exception {
+
         // XXX the processor needs to set a correct scheme and port prior to this point, 
         // in ajp13 protocols dont make sense to get the port from the connector..
         // XXX the processor may have set a correct scheme and port prior to this point, 
@@ -188,14 +189,6 @@ public class CoyoteAdapter
             // "http" and false respectively)
             req.scheme().setString(connector.getScheme());
             request.setSecure(connector.getSecure());
-        }
-
-        // Filter trace method
-        if (!connector.getAllowTrace() 
-            && req.method().equalsIgnoreCase("TRACE")) {
-            res.setStatus(403);
-            res.setMessage("TRACE method is not allowed");
-            return false;
         }
 
         // FIXME: the code below doesnt belongs to here, 
@@ -270,6 +263,32 @@ public class CoyoteAdapter
                                   request.getMappingData());
         request.setContext((Context) request.getMappingData().context);
         request.setWrapper((Wrapper) request.getMappingData().wrapper);
+
+        // Filter trace method
+        if (!connector.getAllowTrace() 
+                && req.method().equalsIgnoreCase("TRACE")) {
+            Wrapper wrapper = request.getWrapper();
+            String header = null;
+            if (wrapper != null) {
+                String[] methods = wrapper.getServletMethods();
+                if (methods != null) {
+                    for (int i=0; i<methods.length; i++) {
+                        if ("TRACE".equals(methods[i])) {
+                            continue;
+                        }
+                        if (header == null) {
+                            header = methods[i];
+                        } else {
+                            header += ", " + methods[i];
+                        }
+                    }
+                }
+            }                               
+            res.setStatus(405);
+            res.addHeader("Allow", header);
+            res.setMessage("TRACE method is not allowed");
+            return false;
+        }
 
         // Possible redirect
         MessageBytes redirectPathMB = request.getMappingData().redirectPath;
