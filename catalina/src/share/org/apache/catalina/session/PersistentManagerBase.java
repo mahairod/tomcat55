@@ -379,9 +379,6 @@ public abstract class PersistentManagerBase
      * otherwise false is returned
      *
      * @param id The session id for the session to be searched for
-     *
-     * @exception IOException if an input/output error occurs while
-     *  processing this request
      */
     public boolean isLoaded( String id ){
         try {
@@ -425,7 +422,7 @@ public abstract class PersistentManagerBase
     /** 
      * Number of session creations that failed due to maxActiveSessions.
      *
-     * @return
+     * @return The count
      */
     public int getRejectedSessions() {
         return rejectedSessions;
@@ -439,7 +436,7 @@ public abstract class PersistentManagerBase
 
     /** Number of sessions that expired.
      *
-     * @return
+     * @return The count
      */
     public int getExpiredSessions() {
         return expiredSessions;
@@ -530,7 +527,7 @@ public abstract class PersistentManagerBase
      * false, any sessions found in the Store may still be picked up when
      * the Manager is started again.
      *
-     * @param save true if sessions should be saved on restart, false if
+     * @param saveOnRestart true if sessions should be saved on restart, false if
      *     they should be ignored.
      */
     public void setSaveOnRestart(boolean saveOnRestart) {
@@ -717,7 +714,7 @@ public abstract class PersistentManagerBase
      * Remove this Session from the active Sessions for this Manager,
      * and from the Store.
      *
-     * @param is Session's id to be removed
+     * @param id Session's id to be removed
      */    
     protected void removeSession(String id){
         try {

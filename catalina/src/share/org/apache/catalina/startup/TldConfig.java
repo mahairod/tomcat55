@@ -183,7 +183,7 @@ public final class TldConfig  {
     /**
      * Set the validation feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlValidation true to enable xml instance validation
+     * @param tldValidation true to enable xml instance validation
      */
     public void setTldValidation(boolean tldValidation){
         this.tldValidation = tldValidation;
@@ -211,7 +211,7 @@ public final class TldConfig  {
     /**
      * Set the namespace aware feature of the XML parser used when
      * parsing xml instances.
-     * @param xmlNamespaceAware true to enable namespace awareness
+     * @param tldNamespaceAware true to enable namespace awareness
      */
     public void setTldNamespaceAware(boolean tldNamespaceAware){
         this.tldNamespaceAware = tldNamespaceAware;
