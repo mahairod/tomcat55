@@ -202,6 +202,17 @@ public class HostConfig
      */
     private HashMap webXmlLastModified = new HashMap();
 
+    /**
+     * Attribute value used to turn on/off XML validation
+     */
+     private boolean xmlValidation = false;
+
+
+    /**
+     * Attribute value used to turn on/off XML namespace awarenes.
+     */
+     private boolean xmlNamespaceAware = false;
+
 
     // ------------------------------------------------------------- Properties
 
@@ -336,7 +347,44 @@ public class HostConfig
         this.unpackWARs = unpackWARs;
 
     }
+    
+    
+     /**
+     * Set the validation feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlValidation true to enable xml instance validation
+     */
+    public void setXmlValidation(boolean xmlValidation){
+        this.xmlValidation = xmlValidation;
+    }
 
+    /**
+     * Get the server.xml <host> attribute's xmlValidation.
+     * @return true if validation is enabled.
+     *
+     */
+    public boolean getXmlValidation(){
+        return xmlValidation;
+    }
+
+    /**
+     * Get the server.xml <host> attribute's xmlNamespaceAware.
+     * @return true if namespace awarenes is enabled.
+     *
+     */
+    public boolean getXmlNamespaceAware(){
+        return xmlNamespaceAware;
+    }
+
+
+    /**
+     * Set the namespace aware feature of the XML parser used when
+     * parsing xml instances.
+     * @param xmlNamespaceAware true to enable namespace awareness
+     */
+    public void setXmlNamespaceAware(boolean xmlNamespaceAware){
+        this.xmlNamespaceAware=xmlNamespaceAware;
+    }    
 
     // --------------------------------------------------------- Public Methods
 
@@ -359,6 +407,8 @@ public class HostConfig
                 setDeployXML(((StandardHost) host).isDeployXML());
                 setLiveDeploy(((StandardHost) host).getLiveDeploy());
                 setUnpackWARs(((StandardHost) host).isUnpackWARs());
+                setXmlNamespaceAware(((StandardHost) host).getXmlNamespaceAware());
+                setXmlValidation(((StandardHost) host).getXmlValidation());
             }
         } catch (ClassCastException e) {
             log.error(sm.getString("hostConfig.cce", event.getLifecycle()), e);
