@@ -108,7 +108,6 @@ public class TagPluginManager {
 	if (initialized)
 	    return;
 
-	initialized = true;
 	InputStream is = ctxt.getResourceAsStream(TAG_PLUGINS_XML);
 	if (is == null)
 	    return;
@@ -153,6 +152,7 @@ public class TagPluginManager {
 	    }
 	    tagPlugins.put(tagClass, tagPlugin);
 	}
+	initialized = true;
     }
 
     /**

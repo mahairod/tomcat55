@@ -63,23 +63,52 @@ package org.apache.jasper.tagplugins.jstl;
 
 import org.apache.jasper.compiler.tagplugin.*;
 
-public class ForEach implements TagPlugin {
+public final class ForEach implements TagPlugin {
 
     public void doTag(TagPluginContext ctxt) {
 
 	String index = null;
 
-	if (ctxt.isAttributeSpecified("begin")) {
-	    index = ctxt.getTemporaryVariableName();
-	    ctxt.generateJavaSource("for (int " + index + " = ");
-	    ctxt.generateAttribute("begin");
-	    ctxt.generateJavaSource("; " + index + " <= ");
-	    ctxt.generateAttribute("end");
-	    ctxt.generateJavaSource("; " + index + "++) {");
-	    ctxt.generateBody();
-	    ctxt.generateJavaSource("}");
-	} else {
+	boolean hasVarStatus = ctxt.isAttributeSpecified("varStatus");
+	if (hasVarStatus) {
 	    ctxt.dontUseTagPlugin();
+	    return;
 	}
+
+	boolean hasItems = ctxt.isAttributeSpecified("items");
+	if (hasItems) {
+	    // optimizations stubbed out for now
+	    return;
+	}
+
+	boolean hasVar = ctxt.isAttributeSpecified("var");
+	boolean hasBegin = ctxt.isAttributeSpecified("begin");
+	boolean hasEnd = ctxt.isAttributeSpecified("end");
+	boolean hasStep = ctxt.isAttributeSpecified("step");
+
+	// We must have a begin and end attributes
+	index = ctxt.getTemporaryVariableName();
+	ctxt.generateJavaSource("for (int " + index + " = ");
+	ctxt.generateAttribute("begin");
+	ctxt.generateJavaSource("; " + index + " <= ");
+	ctxt.generateAttribute("end");
+	if (hasStep) {
+	    ctxt.generateJavaSource("; " + index + "+=");
+	    ctxt.generateAttribute("step");
+	    ctxt.generateJavaSource(") {");
+	}
+	else {
+	    ctxt.generateJavaSource("; " + index + "++) {");
+	}
+
+	// If var is specified and the body contains an EL, then sycn
+	// the var attribute
+	if (hasVar /* && ctxt.hasEL() */) {
+	    ctxt.generateJavaSource("pageContext.setAttribute(");
+	    ctxt.generateAttribute("var");
+	    ctxt.generateJavaSource(", String.valueOf(" + index + "));");
+	}
+	ctxt.generateBody();
+	ctxt.generateJavaSource("}");
     }
 }
