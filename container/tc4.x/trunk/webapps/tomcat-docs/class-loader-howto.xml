@@ -215,6 +215,21 @@ loading looks in the following repositories, in this order:</p>
 </section>
 
 
+<section name="J2SE classes and extensions">
+
+<p>In addition to the previous rules, the web application classloader 
+delegates classloading for classes which are part of J2SE (which means 
+it will attempt loading first with its parent classloader before loading 
+from its current repositories, regardless of the current delegation setting). 
+This includes classes from the SAX and DOM APIs, Xalan, Xerces, 
+and any classes which package name starts with "javax.".</p>
+
+<p>The web application classloader will also refuse to load classes from the
+core Java language ("java.*" packages).</p>
+
+</section>
+
+
 <section name="XML Parsers and JDK 1.4">
 
 <p>Among many other changes, the JDK 1.4 release packages the JAXP APIs, and
