@@ -79,7 +79,6 @@ import org.apache.tools.ant.types.Path;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.JspEngineContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.util.SystemLogHandler;
@@ -121,7 +120,7 @@ public class Compiler {
 
     protected Options options;
 
-
+    protected Node.Nodes pageNodes;
     // ------------------------------------------------------------ Constructor
 
 
@@ -175,9 +174,9 @@ public class Compiler {
     /** 
      * Compile the jsp file from the current engine context
      */
-    public void compile()
-        throws FileNotFoundException, JasperException, Exception {
-
+    public void generateJava()
+        throws FileNotFoundException, JasperException, Exception
+    {
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 
@@ -216,7 +215,7 @@ public class Compiler {
 
 	// Parse the file
 	ParserController parserCtl = new ParserController(ctxt, this);
-	Node.Nodes pageNodes = parserCtl.parse(ctxt.getJspFile());
+	pageNodes = parserCtl.parse(ctxt.getJspFile());
 
 	// Validate and process attributes
 	Validator.validate(this, pageNodes);
@@ -230,7 +229,16 @@ public class Compiler {
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
         writer.close();
+    }
 
+    /** 
+     * Compile the jsp file from the current engine context
+     */
+    public void generateClass()
+        throws FileNotFoundException, JasperException, Exception
+    {
+	String javaEncoding = "UTF8"; 
+        String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
 
         String sep = System.getProperty("path.separator");
@@ -292,6 +300,15 @@ public class Compiler {
         }
     }
 
+    /** 
+     * Compile the jsp file from the current engine context
+     */
+    public void compile()
+        throws FileNotFoundException, JasperException, Exception
+    {
+        generateJava();
+        generateClass();
+    }
 
     /**
      * This is a protected method intended to be overridden by 
@@ -299,6 +316,16 @@ public class Compiler {
      * to do all the compilation. 
      */
     public boolean isOutDated() {
+        return isOutDated( true );
+    }
+
+    /**
+     * This is a protected method intended to be overridden by 
+     * subclasses of Compiler. This is used by the compile method
+     * to do all the compilation.
+     * @param checkClass Verify the class file if true, only the .java file if false.
+     */
+    public boolean isOutDated(boolean checkClass) {
 
         String jsp = ctxt.getJspFile();
 
@@ -306,7 +333,7 @@ public class Compiler {
         try {
             URL jspUrl = ctxt.getResource(jsp);
             if (jspUrl == null) {
-                ((JspEngineContext)ctxt).incrementRemoved();
+                ctxt.incrementRemoved();
                 return false;
             }
             jspRealLastModified = jspUrl.openConnection().getLastModified();
@@ -315,19 +342,31 @@ public class Compiler {
             return true;
         }
 
-        File classFile = new File(ctxt.getClassFileName());
-        if (!classFile.exists()) {
+        long targetLastModified;
+        File targetFile;
+        
+        if( checkClass ) {
+            targetFile = new File(ctxt.getClassFileName());
+        } else {
+            targetFile = new File( ctxt.getServletJavaFileName());
+        }
+        
+        if (!targetFile.exists()) {
             return true;
         }
-        long classLastModified = classFile.lastModified();
-        if (classLastModified < jspRealLastModified) {
+        targetLastModified = targetFile.lastModified();
+        if (targetLastModified < jspRealLastModified) {
             return true;
         }
 
-        // Determine if compile time includes have been changed
+        // determine if compile time includes have been changed
+        if( jsw==null ) {
+            return false;
+        }
         HttpJspBase servlet = jsw.getServlet();
         if (servlet == null) {
-             return false;
+            System.out.println("XXX No SERVLET, can't process includes");
+            return true;
         }
         List includes = servlet.getIncludes();
         if (includes == null) {
@@ -343,7 +382,7 @@ public class Compiler {
                     return true;
                 }
                 if (includeUrl.openConnection().getLastModified() >
-                    classLastModified) {
+                    targetLastModified) {
                     return true;
                 }
             } catch (Exception e) {
