@@ -853,7 +853,8 @@ public abstract class PersistentManagerBase
             log(sm.getString("persistentManager.swapIn", id));
 
         session.setManager(this);
-        session.setId(id); // To make sure the listener knows about it.
+        // make sure the listeners know about it.
+        ((StandardSession)session).tellNew();
         add(session);
         ((StandardSession)session).activate();
 
