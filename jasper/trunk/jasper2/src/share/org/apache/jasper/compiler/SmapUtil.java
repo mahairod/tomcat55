@@ -53,15 +53,21 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 
 package org.apache.jasper.compiler;
 
-import java.io.*;
-import java.util.*;
-import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.compiler.Node;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
 import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
 
 /**
  * Contains static utilities for generating SMAP data based on the
@@ -92,28 +98,28 @@ public class SmapUtil {
      * @param pageNodes The current JSP page
      * @return a SMAP for the page
      */
-    public static String generateSmap(JspCompilationContext ctxt,
-                                              Node.Nodes pageNodes)
-        throws IOException 
-    {
-	// set up our SMAP generator
-	SmapGenerator g = new SmapGenerator();
+    public static String generateSmap(
+        JspCompilationContext ctxt,
+        Node.Nodes pageNodes)
+        throws IOException {
+        // set up our SMAP generator
+        SmapGenerator g = new SmapGenerator();
 
-	/** Disable reading of input SMAP because:
-	    1. There is a bug here: getRealPath() is null if .jsp is in a jar
-		Bugzilla 14660.
-	    2. Mappings from other sources into .jsp files are not supported.
-	    TODO: fix 1. if 2. is not true.
-	// determine if we have an input SMAP
-	String smapPath = inputSmapPath(ctxt.getRealPath(ctxt.getJspFile()));
-        File inputSmap = new File(smapPath);
-        if (inputSmap.exists()) {
-            byte[] embeddedSmap = null;
-	    byte[] subSmap = SDEInstaller.readWhole(inputSmap);
-	    String subSmapString = new String(subSmap, SMAP_ENCODING);
-	    g.addSmap(subSmapString, "JSP");
-	}
-	**/
+        /** Disable reading of input SMAP because:
+            1. There is a bug here: getRealPath() is null if .jsp is in a jar
+        	Bugzilla 14660.
+            2. Mappings from other sources into .jsp files are not supported.
+            TODO: fix 1. if 2. is not true.
+        // determine if we have an input SMAP
+        String smapPath = inputSmapPath(ctxt.getRealPath(ctxt.getJspFile()));
+            File inputSmap = new File(smapPath);
+            if (inputSmap.exists()) {
+                byte[] embeddedSmap = null;
+            byte[] subSmap = SDEInstaller.readWhole(inputSmap);
+            String subSmapString = new String(subSmap, SMAP_ENCODING);
+            g.addSmap(subSmapString, "JSP");
+        }
+        **/
 
         // now, assemble info about our own stratum (JSP) using JspLineMap
         SmapStratum s = new SmapStratum("JSP");
@@ -125,17 +131,19 @@ public class SmapUtil {
 
         if (ctxt.getOptions().isSmapDumped()) {
             File outSmap = new File(ctxt.getClassFileName() + ".smap");
-            PrintWriter so = new PrintWriter(
-                new OutputStreamWriter(new FileOutputStream(outSmap),
-                                   SMAP_ENCODING));
+            PrintWriter so =
+                new PrintWriter(
+                    new OutputStreamWriter(
+                        new FileOutputStream(outSmap),
+                        SMAP_ENCODING));
             so.print(g.getString());
             so.close();
         }
         return g.getString();
     }
-    
+
     public static void installSmap(String classFileName, String smap)
-               throws IOException {
+        throws IOException {
         if (smap == null) {
             return;
         }
@@ -144,7 +152,6 @@ public class SmapUtil {
         SDEInstaller.install(outServlet, smap.getBytes());
     }
 
-
     //*********************************************************************
     // Private utilities
 
@@ -152,7 +159,7 @@ public class SmapUtil {
      * Returns an unqualified version of the given file path.
      */
     private static String unqualify(String path) {
-	return path.substring(path.lastIndexOf(File.separator) + 1);
+        return path.substring(path.lastIndexOf(File.separator) + 1);
     }
 
     /**
@@ -162,7 +169,6 @@ public class SmapUtil {
     private static String inputSmapPath(String path) {
         return path.substring(0, path.lastIndexOf('.') + 1) + "smap";
     }
-
 
     //*********************************************************************
     // Installation logic (from Robert Field, JSR-045 spec lead)
@@ -183,21 +189,25 @@ public class SmapUtil {
             if (args.length == 2) {
                 install(new File(args[0]), new File(args[1]));
             } else if (args.length == 3) {
-                install(new File(args[0]), new File(args[1]), new File(args[2]));
+                install(
+                    new File(args[0]),
+                    new File(args[1]),
+                    new File(args[2]));
             } else {
-                System.err.println("Usage: <command> <input class file> " + 
-                      "<attribute file> <output class file name>\n" +
-                      "<command> <input/output class file> <attribute file>");
+                System.err.println(
+                    "Usage: <command> <input class file> "
+                        + "<attribute file> <output class file name>\n"
+                        + "<command> <input/output class file> <attribute file>");
             }
         }
 
         static void install(File inClassFile, File attrFile, File outClassFile)
-                throws IOException {
+            throws IOException {
             new SDEInstaller(inClassFile, attrFile, outClassFile);
         }
 
         static void install(File inOutClassFile, File attrFile)
-                throws IOException {
+            throws IOException {
             File tmpFile = new File(inOutClassFile.getPath() + "tmp");
             new SDEInstaller(inOutClassFile, attrFile, tmpFile);
             if (!inOutClassFile.delete()) {
@@ -208,33 +218,31 @@ public class SmapUtil {
             }
         }
 
-        static void install(File classFile, byte[] smap)
-                throws IOException {
+        static void install(File classFile, byte[] smap) throws IOException {
             File tmpFile = new File(classFile.getPath() + "tmp");
             new SDEInstaller(classFile, smap, tmpFile);
             if (!classFile.delete()) {
                 throw new IOException("classFile.delete() failed");
             }
             if (!tmpFile.renameTo(classFile)) {
-                throw new IOException("tmpFile.renameTo(classFile) failed")
-;
+                throw new IOException("tmpFile.renameTo(classFile) failed");
             }
         }
 
         SDEInstaller(File inClassFile, byte[] sdeAttr, File outClassFile)
-                throws IOException {
+            throws IOException {
             if (!inClassFile.exists()) {
                 throw new FileNotFoundException("no such file: " + inClassFile);
             }
- 
+
             this.sdeAttr = sdeAttr;
             // get the bytes
             orig = readWhole(inClassFile);
             gen = new byte[orig.length + sdeAttr.length + 100];
-    
+
             // do it
             addSDE();
-        
+
             // write result
             FileOutputStream outStream = new FileOutputStream(outClassFile);
             outStream.write(gen, 0, genPos);
@@ -242,9 +250,9 @@ public class SmapUtil {
         }
 
         SDEInstaller(File inClassFile, File attrFile, File outClassFile)
-                throws IOException {
+            throws IOException {
             this(inClassFile, readWhole(attrFile), outClassFile);
-	}
+        }
 
         static byte[] readWhole(File input) throws IOException {
             FileInputStream inStream = new FileInputStream(input);
@@ -272,23 +280,24 @@ public class SmapUtil {
             if (sdeIndex < 0) {
                 // if "SourceDebugExtension" symbol not there add it
                 writeUtf8ForSDE();
-                
+
                 // increment the countantPoolCount
                 sdeIndex = constantPoolCount;
                 ++constantPoolCount;
                 randomAccessWriteU2(constantPoolCountPos, constantPoolCount);
-            
+
                 if (verbose) {
-                    System.out.println("SourceDebugExtension not found, installed at: " +
-                                       sdeIndex);
+                    System.out.println(
+                        "SourceDebugExtension not found, installed at: "
+                            + sdeIndex);
                 }
             } else {
                 if (verbose) {
-                    System.out.println("SourceDebugExtension found at: " +
-                                       sdeIndex);
+                    System.out.println(
+                        "SourceDebugExtension found at: " + sdeIndex);
                 }
             }
-            copy(2 + 2 + 2);  // access, this, super
+            copy(2 + 2 + 2); // access, this, super
             int interfaceCount = readU2();
             writeU2(interfaceCount);
             if (verbose) {
@@ -343,7 +352,7 @@ public class SmapUtil {
                         System.out.println("SDE attr found");
                     }
                 } else {
-                    writeU2(nameIndex);  // name
+                    writeU2(nameIndex); // name
                     int len = readU4();
                     writeU4(len);
                     copy(len);
@@ -377,8 +386,8 @@ public class SmapUtil {
         int readU2() {
             int res = readU1();
             return (res << 8) + readU1();
-       }
-     
+        }
+
         int readU4() {
             int res = readU2();
             return (res << 16) + readU2();
@@ -397,13 +406,13 @@ public class SmapUtil {
             writeU2(val >> 16);
             writeU2(val & 0xFFFF);
         }
-    
+
         void copy(int count) {
             for (int i = 0; i < count; ++i) {
                 gen[genPos++] = orig[origPos++];
             }
         }
-    
+
         byte[] readBytes(int count) {
             byte[] bytes = new byte[count];
             for (int i = 0; i < count; ++i) {
@@ -411,62 +420,63 @@ public class SmapUtil {
             }
             return bytes;
         }
-    
+
         void writeBytes(byte[] bytes) {
             for (int i = 0; i < bytes.length; ++i) {
                 gen[genPos++] = bytes[i];
             }
         }
-    
+
         int copyConstantPool(int constantPoolCount)
-                throws UnsupportedEncodingException, IOException {
+            throws UnsupportedEncodingException, IOException {
             int sdeIndex = -1;
             // copy const pool index zero not in class file
             for (int i = 1; i < constantPoolCount; ++i) {
                 int tag = readU1();
                 writeU1(tag);
                 switch (tag) {
-                    case 7:  // Class
-                    case 8:  // String
+                    case 7 : // Class
+                    case 8 : // String
                         if (verbose) {
                             System.out.println(i + " copying 2 bytes");
                         }
-                        copy(2); 
+                        copy(2);
                         break;
-                    case 9:  // Field
-                    case 10: // Method
-                    case 11: // InterfaceMethod
-                    case 3:  // Integer
-                    case 4:  // Float
-                    case 12: // NameAndType
+                    case 9 : // Field
+                    case 10 : // Method
+                    case 11 : // InterfaceMethod
+                    case 3 : // Integer
+                    case 4 : // Float
+                    case 12 : // NameAndType
                         if (verbose) {
                             System.out.println(i + " copying 4 bytes");
                         }
-                        copy(4); 
+                        copy(4);
                         break;
-                    case 5:  // Long
-                    case 6:  // Double
+                    case 5 : // Long
+                    case 6 : // Double
                         if (verbose) {
                             System.out.println(i + " copying 8 bytes");
                         }
-                        copy(8); 
+                        copy(8);
                         i++;
                         break;
-                    case 1:  // Utf8
-                        int len = readU2(); 
+                    case 1 : // Utf8
+                        int len = readU2();
                         writeU2(len);
                         byte[] utf8 = readBytes(len);
                         String str = new String(utf8, "UTF-8");
                         if (verbose) {
-                            System.out.println(i + " read class attr -- '" + str + "'");
+                            System.out.println(
+                                i + " read class attr -- '" + str + "'");
                         }
                         if (str.equals(nameSDE)) {
                             sdeIndex = i;
                         }
                         writeBytes(utf8);
                         break;
-                    default: 
-                        throw new IOException("unexpected tag: " + tag); 
+                    default :
+                        throw new IOException("unexpected tag: " + tag);
                 }
             }
             return sdeIndex;
@@ -482,11 +492,14 @@ public class SmapUtil {
         }
     }
 
-    public static void evaluateNodes(Node.Nodes nodes, SmapStratum s, boolean breakAtLF) {
+    public static void evaluateNodes(
+        Node.Nodes nodes,
+        SmapStratum s,
+        boolean breakAtLF) {
         try {
             nodes.visit(new SmapGenVisitor(s, breakAtLF));
         } catch (JasperException ex) {
-	}
+        }
         s.optimizeLineSection();
     }
 
@@ -590,19 +603,19 @@ public class SmapUtil {
             //Add the file information
             String fileName = mark.getFile();
             smap.addFile(unqualify(fileName), fileName);
-            
+
             //Add a LineInfo that corresponds to the beginning of this node
             int iInputStartLine = mark.getLineNumber();
             int iOutputStartLine = n.getBeginJavaLine();
             smap.addLineData(iInputStartLine, fileName, 1, iOutputStartLine, 1);
-            
+
             //Walk through the node text the same way Generator.java's 
             //visit(Node.TemplateText n) does.  Every time the 
             //line number advances in the input file or the output file, 
             //add a LineInfo with the new line numbers.
             String text = n.getText();
             int count = JspUtil.CHUNKSIZE;
-            for (int i = 0 ; i < text.length()-1 ; i++) {
+            for (int i = 0; i < text.length() - 1; i++) {
                 --count;
                 if (text.charAt(i) == '\n') {
                     iInputStartLine++;
@@ -610,25 +623,34 @@ public class SmapUtil {
                         iOutputStartLine++;
                         count = JspUtil.CHUNKSIZE;
                     }
-                    smap.addLineData(iInputStartLine, fileName, 1, iOutputStartLine, 1);
+                    smap.addLineData(
+                        iInputStartLine,
+                        fileName,
+                        1,
+                        iOutputStartLine,
+                        1);
                 }
             }
         }
 
-        private void doSmap(Node n, int inLineCount, int outIncrement,
-			    int skippedLines) {
+        private void doSmap(
+            Node n,
+            int inLineCount,
+            int outIncrement,
+            int skippedLines) {
             Mark mark = n.getStart();
-	    if (mark == null) {
-                 return;
+            if (mark == null) {
+                return;
             }
 
             String unqualifiedName = unqualify(mark.getFile());
             smap.addFile(unqualifiedName, mark.getFile());
-            smap.addLineData(mark.getLineNumber() + skippedLines,
-                          mark.getFile(),
-                          inLineCount - skippedLines,
-                          n.getBeginJavaLine() + skippedLines,
-                          outIncrement);
+            smap.addLineData(
+                mark.getLineNumber() + skippedLines,
+                mark.getFile(),
+                inLineCount - skippedLines,
+                n.getBeginJavaLine() + skippedLines,
+                outIncrement);
         }
 
         private void doSmap(Node n) {
@@ -638,38 +660,38 @@ public class SmapUtil {
         private void doSmapText(Node n) {
             String text = n.getText();
             int index = 0;
-	    int next = 0;
+            int next = 0;
             int lineCount = 1;
-	    int skippedLines = 0;
-	    boolean slashStarSeen = false;
-	    boolean beginning = true;
+            int skippedLines = 0;
+            boolean slashStarSeen = false;
+            boolean beginning = true;
 
             // Count lines inside text, but skipping comment lines at the
-	    // beginning of the text.
-            while ((next = text.indexOf('\n', index)) > -1 ) {
-		if (beginning) {
-		    String line = text.substring(index, next).trim();
-		    if (!slashStarSeen && line.startsWith("/*")) {
-			slashStarSeen = true;
-		    }
-		    if (slashStarSeen) {
-			skippedLines++;
-			int endIndex = line.indexOf("*/");
-			if (endIndex >= 0) {
-			    // End of /* */ comment
-			    slashStarSeen = false;
-			    if (endIndex < line.length() - 2) {
-				// Some executable code after comment
-				skippedLines--;
-				beginning = false;
-			    }
-			}
-		    } else if (line.length() == 0 || line.startsWith("//")) {
-			skippedLines++;
-		    } else {
-			beginning = false;
-		    }
-		}
+            // beginning of the text.
+            while ((next = text.indexOf('\n', index)) > -1) {
+                if (beginning) {
+                    String line = text.substring(index, next).trim();
+                    if (!slashStarSeen && line.startsWith("/*")) {
+                        slashStarSeen = true;
+                    }
+                    if (slashStarSeen) {
+                        skippedLines++;
+                        int endIndex = line.indexOf("*/");
+                        if (endIndex >= 0) {
+                            // End of /* */ comment
+                            slashStarSeen = false;
+                            if (endIndex < line.length() - 2) {
+                                // Some executable code after comment
+                                skippedLines--;
+                                beginning = false;
+                            }
+                        }
+                    } else if (line.length() == 0 || line.startsWith("//")) {
+                        skippedLines++;
+                    } else {
+                        beginning = false;
+                    }
+                }
                 lineCount++;
                 index = next + 1;
             }
