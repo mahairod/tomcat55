@@ -70,11 +70,15 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                <bean:message key="actions.valves.deletes"/> 
             </controls:action>
+            <%-- cannot delete the context of the admin app  from the tool --%>
+            <logic:notEqual name="contextForm" property="path" 
+                            value='<%= request.getContextPath() %>'>
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url='<%= "/DeleteContext.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.contexts.delete"/>
             </controls:action>
+            </logic:notEqual>
             </logic:notEqual>
         </controls:actions>   
          </div>

@@ -66,6 +66,9 @@
             <td><div align="left" class="table-normal-text">&nbsp;
             <%-- the connector the admin app is running on cannot be deleted 
                  through the tool --%>
+              <logic:match  name="connector" value='<%= Integer.toString(request.getServerPort()) %>'>
+                <font color='red'>*</font>           
+              </logic:match>          
             <logic:notMatch name="connector" value='<%= Integer.toString(request.getServerPort()) %>'>
               <html:multibox property="connectors"
                                 value="<%= connector.toString() %>"/>
