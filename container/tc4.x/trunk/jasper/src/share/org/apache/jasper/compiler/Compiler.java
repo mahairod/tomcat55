@@ -308,7 +308,7 @@ public class Compiler {
             if (line==null) break;
 
             // line number is between a set of colons
-            int beginColon=line.indexOf(':');
+            int beginColon=line.indexOf(':', 2); // Drive letter on Windows !!
             int endColon=line.indexOf(':', beginColon+1);
 
             if (beginColon<0 || endColon<0) {
