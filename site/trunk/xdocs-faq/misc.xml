@@ -154,6 +154,11 @@ Questions that were not categorized.
         Can I run tomcat with the JRE only, or do I need the full JDK?
       </a>
     </li>
+    <li>
+      <a href="#ejb">
+        Is tomcat an EJB server?  Can I use EJBs with tomcat?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -661,6 +666,19 @@ Questions that were not categorized.
     on a JRE only, but you do so at your own risk.
   </answer>
 
+  <question>
+    <a name="ejb">
+      Is tomcat an EJB server?  Can I use EJBs with tomcat?
+    </a>
+  </question>
+  <answer>
+    Tomcat is not an EJB server.  Tomcat is not a full J2EE
+    server.  Tomcat is a Servlet container.  Tomcat does support
+    those parts of the J2EE specification that are required
+    for Servlets, such as a subset of JNDI functionality.
+    Furthermore, you can connect to remote J2EE servers, or
+    run tomcat embedded inside a full J2EE server.
+  </answer>
 </section>
 
 
