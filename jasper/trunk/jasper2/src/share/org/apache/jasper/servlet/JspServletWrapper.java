@@ -152,6 +152,12 @@ public class JspServletWrapper {
                      Constants.getString("jsp.error.unavailable"));
             }
 
+            if (options.getDevelopment()) {
+                synchronized (this) {
+                    ctxt.compile();
+                }
+            }
+
             if (ctxt.isReload()) {
                 synchronized (this) {
     

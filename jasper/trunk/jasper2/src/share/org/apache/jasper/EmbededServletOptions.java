@@ -82,7 +82,7 @@ public final class EmbededServletOptions implements Options {
     /**
      * Is Jasper being used in development mode?
      */
-    public boolean development = false;
+    public boolean development = true;
 
     /**
      * Do you want to keep the generated Java files around?

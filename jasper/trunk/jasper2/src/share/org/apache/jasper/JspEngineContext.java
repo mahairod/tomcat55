@@ -365,7 +365,7 @@ public class JspEngineContext implements JspCompilationContext {
     public Class load() throws JasperException, FileNotFoundException {
 
         try {
-            if (servletClass == null || options.getDevelopment()) {
+            if (servletClass == null && !options.getDevelopment()) {
                 compile();
             }
             jspLoader = new JasperLoader
