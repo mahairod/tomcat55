@@ -567,11 +567,11 @@ abstract public class PageContext
      */
     public ErrorData getErrorData() {
 	return new ErrorData( 
-	    (Throwable)getAttribute( "javax.servlet.error.exception" ),
-	    ((Integer)getAttribute( 
+	    (Throwable)getRequest().getAttribute( "javax.servlet.error.exception" ),
+	    ((Integer)getRequest().getAttribute( 
 		"javax.servlet.error.status_code" )).intValue(),
-	    (String)getAttribute( "javax.servlet.error.request_uri" ),
-	    (String)getAttribute( "javax.servlet.error.servlet_name" ) );
+	    (String)getRequest().getAttribute( "javax.servlet.error.request_uri" ),
+	    (String)getRequest().getAttribute( "javax.servlet.error.servlet_name" ) );
     }
     
 }
