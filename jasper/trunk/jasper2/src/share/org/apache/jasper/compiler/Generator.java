@@ -2862,7 +2862,7 @@ class Generator {
     }
 
     /*
-     * XXX
+     * Generates tag handler preamble.
      */
     private void generateTagHandlerPreamble(TagInfo tagInfo, Node.Nodes tag )
         throws JasperException 
@@ -2881,15 +2881,15 @@ class Generator {
 
 	// Generate class declaration
 	out.printin("public final class ");
-	out.print(tagInfo.getTagName());
-	out.println(" extends javax.servlet.jsp.tagext.SimpleTagSupport");
+	out.println(tagInfo.getTagName());
+	out.printil("    extends javax.servlet.jsp.tagext.SimpleTagSupport");
 /* Supress until we also implement resolveFunction()
 	out.printil("    implements "javax.servlet.jsp.el.FunctionMapper, ");
 */
 	out.printin("    implements org.apache.jasper.runtime.JspSourceDependent");
 	if (tagInfo.hasDynamicAttributes()) {
 	    out.println(",");
-	    out.printin("                 javax.servlet.jsp.tagext.DynamicAttributes");
+	    out.printin("               javax.servlet.jsp.tagext.DynamicAttributes");
 	}
 	out.println(" {");
 	out.println();
@@ -2904,12 +2904,19 @@ class Generator {
 	// Static initializations here
         genPreambleStaticInitializers();
 
+        out.printil("private JspContext jspContext;");
+
+	// Declare writer used for storing result of fragment/body invocation
+	// if 'varReader' or 'var' attribute is specified
+	out.printil("private java.io.Writer _jspx_sout;");
+
  	// Class variable declarations
         genPreambleClassVariableDeclarations( tagInfo.getTagName() );
         
-        // Tag-handler specific declarations:
-	generateTagHandlerDeclarations(tagInfo);
+	generateSetJspContext(tagInfo);
 
+        // Tag-handler specific declarations
+	generateTagHandlerAttributes(tagInfo);
 	if (tagInfo.hasDynamicAttributes())
 	    generateSetDynamicAttribute();
 
@@ -2946,10 +2953,6 @@ class Generator {
 	out.printil("javax.servlet.ServletConfig config = " +
             "pageContext.getServletConfig();");
         
-	// Declare writer used for storing result of fragment/body invocation
-	// if 'varReader' or 'var' attribute is specified
-	out.printil("java.io.Writer _jspx_sout = null;");
-
 	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
 	generatePageScopedVariables(tagInfo);
         
@@ -2999,16 +3002,15 @@ class Generator {
      * Generates declarations for tag handler attributes, and defines the
      * getter and setter methods for each.
      */
-    private void generateTagHandlerDeclarations(TagInfo tagInfo)
+    private void generateTagHandlerAttributes(TagInfo tagInfo)
 	        throws JasperException {
 
 	if (tagInfo.hasDynamicAttributes()) {
 	    out.printil("java.util.HashMap dynamicAttrs = new java.util.HashMap();");
 	}
 
-	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
-
 	// Declare attributes
+	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
 	for (int i=0; i<attrInfos.length; i++) {
 	    out.printin("private ");
 	    if (attrInfos[i].isFragment()) {
@@ -3066,53 +3068,48 @@ class Generator {
 		out.println();
 	    }
 	}
-        
-        // Define setter for JspContext so we can create a wrapper and
-        // store both the original and the wrapper.  We need the wrapper
-        // to mask the page context from the tag file and simulate a 
-        // fresh page context.  We need the original to do things like
-        // sync AT_BEGIN and AT_END scripting variables.
-        out.printil( "private JspContext jspContext;" );
-        out.println();
-        out.printil( "public void setJspContext( JspContext ctx ) {" );
-        out.pushIndent();
-        out.printil( "super.setJspContext(ctx);" );
+    }
 
+    /*
+     * Generate setter for JspContext so we can create a wrapper and
+     * store both the original and the wrapper.  We need the wrapper
+     * to mask the page context from the tag file and simulate a 
+     * fresh page context.  We need the original to do things like
+     * sync AT_BEGIN and AT_END scripting variables.
+     */
+    private void generateSetJspContext(TagInfo tagInfo) {
+        out.printil("public void setJspContext( JspContext ctx ) {");
+        out.pushIndent();
+        out.printil("super.setJspContext(ctx);");
 	out.printil("java.util.Vector _jspx_nested = new java.util.Vector();");
 	out.printil("java.util.Vector _jspx_at_begin = new java.util.Vector();");
 	out.printil("java.util.Vector _jspx_at_end = new java.util.Vector();");
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
 	for (int i=0; i<tagVars.length; i++) {
-		String name = tagVars[i].getNameGiven();
-		/* XXX
-		if (name == null) {
-		    name = toGetterMethod(tagVars[i].getNameFromAttribute());
-		}
-		*/
-		switch(tagVars[i].getScope()) {
-		case VariableInfo.NESTED:
-		    out.printin("_jspx_nested.addElement(");
-		    break;
-		case VariableInfo.AT_BEGIN:
-		    out.printin("_jspx_at_begin.addElement(");
-		    break;
-		case VariableInfo.AT_END:
-		    out.printin("_jspx_at_end.addElement(");
-		    break;
-		} // switch
-		
-		out.print(quote(name));
-		out.println(");");
+	    switch(tagVars[i].getScope()) {
+	    case VariableInfo.NESTED:
+		out.printin("_jspx_nested.addElement(");
+		break;
+	    case VariableInfo.AT_BEGIN:
+		out.printin("_jspx_at_begin.addElement(");
+		break;
+	    case VariableInfo.AT_END:
+		out.printin("_jspx_at_end.addElement(");
+		break;
+	    } // switch
+	    
+	    out.print(quote(tagVars[i].getNameGiven()));
+	    out.println(");");
 	}
-	out.printil( "this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end);" );
+	out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end);");
 	out.popIndent();
-        out.printil( "}" );
+        out.printil("}");
         out.println();
-        out.printil( "public JspContext getJspContext() {" );
+        out.printil("public JspContext getJspContext() {");
         out.pushIndent();
-        out.printil( "return this.jspContext;" );
+        out.printil("return this.jspContext;");
         out.popIndent();
-        out.printil( "}" );
+        out.printil("}");
     }
 
     /*
