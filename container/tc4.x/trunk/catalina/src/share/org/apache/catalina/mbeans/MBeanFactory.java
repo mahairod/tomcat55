@@ -184,6 +184,129 @@ public class MBeanFactory extends BaseModelMBean {
 
     
     /**
+     * Add Logger.
+     *
+     * @logger logger to be added
+     * @parent parent object name
+     * @host hostname object name for context logger
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    private void addLogger(Logger logger, String parent, String hostname)
+        throws Exception {
+        
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        Server server = ServerFactory.getServer();
+        if (type == null) {
+            ObjectName hname = new ObjectName(hostname);
+            String serviceName = hname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();
+            Host host = (Host) engine.findChild(hname.getKeyProperty("host"));
+            String name = pname.getKeyProperty("name");
+            String path = name.substring(name.lastIndexOf('/'));
+            String pathStr = getPathStr(path);
+            Context context = (Context) host.findChild(pathStr);
+            context.setLogger(logger);
+        } else {
+            String serviceName = pname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();
+            if (type.equals("Engine")) {
+                engine.setLogger(logger);
+            } else if (type.equals("Host")) {
+                Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+                host.setLogger(logger);
+            }
+        }
+    }
+    
+ 
+    /**
+     * Add Realm.
+     *
+     * @logger realm to be added
+     * @parent parent object name
+     * @host hostname object name for context realm
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    private void addRealm(Realm realm, String parent, String hostname)
+        throws Exception {
+        
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        Server server = ServerFactory.getServer();
+        if (type == null) {
+            ObjectName hname = new ObjectName(hostname);
+            String serviceName = hname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();
+            Host host = (Host) engine.findChild(hname.getKeyProperty("host"));
+            String name = pname.getKeyProperty("name");
+            String path = name.substring(name.lastIndexOf('/'));
+            String pathStr = getPathStr(path);
+            Context context = (Context) host.findChild(pathStr);
+            context.setRealm(realm);
+        } else {
+            String serviceName = pname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();    
+            if (type.equals("Engine")) {
+                engine.setRealm(realm);
+            } else if (type.equals("Host")) {
+                Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+                host.setRealm(realm);
+            }
+        }
+    }
+    
+ 
+    /**
+     * Add Valve.
+     *
+     * @valve valve to be added
+     * @parent parent object name
+     * @host hostname object name for context realm
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    private void addValve(Valve valve, String parent, String hostname)
+        throws Exception {
+        
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        String type = pname.getKeyProperty("type");
+        Server server = ServerFactory.getServer();
+        if (type == null) {
+            ObjectName hname = new ObjectName(hostname);
+            String serviceName = hname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();
+            Host host = (Host) engine.findChild(hname.getKeyProperty("host"));
+            String name = pname.getKeyProperty("name");
+            String path = name.substring(name.lastIndexOf('/'));
+            String pathStr = getPathStr(path);
+            Context context = (Context) host.findChild(pathStr);
+            ((StandardContext)context).addValve(valve);
+        } else {
+            String serviceName = pname.getKeyProperty("service");
+            Service service = server.findService(serviceName);
+            Engine engine = (Engine) service.getContainer();    
+            if (type.equals("Engine")) {
+                ((StandardEngine)engine).addValve(valve);
+            } else if (type.equals("Host")) {
+                Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+                ((StandardHost)host).addValve(valve);
+            }
+        }
+    } 
+        
+        
+    /**
      * Little convenience method to remove redundant code
      * when retrieving the path string
      *
@@ -205,30 +328,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createAccessLoggerValve(String parent)
+    public String createAccessLoggerValve(String parent, String host)
         throws Exception {
 
         // Create a new AccessLogValve instance
         AccessLogValve accessLogger = new AccessLogValve();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            ((StandardContext)context).addValve(accessLogger);
-        } else if (type.equals("Engine")) {
-            ((StandardEngine)engine).addValve(accessLogger);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            ((StandardHost)host).addValve(accessLogger);
-        }
-
+        addValve(accessLogger, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("AccessLogValve");
         ObjectName oname =
@@ -346,33 +453,18 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new FileLogger.
      *
      * @param parent MBean Name of the associated parent component
+     * @host host object name for context logger
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createFileLogger(String parent)
+    public String createFileLogger(String parent, String host)
         throws Exception {
 
         // Create a new FileLogger instance
         FileLogger fileLogger = new FileLogger();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setLogger(fileLogger);
-        } else if (type.equals("Engine")) {
-            engine.setLogger(fileLogger);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setLogger(fileLogger);
-        }
-
+        addLogger(fileLogger, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("FileLogger");
         ObjectName oname =
@@ -535,30 +627,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createJDBCRealm(String parent)
+    public String createJDBCRealm(String parent, String host)
         throws Exception {
 
         // Create a new JDBCRealm instance
         JDBCRealm realm = new JDBCRealm();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setRealm(realm);
-        } else if (type.equals("Engine")) {
-            engine.setRealm(realm);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setRealm(realm);
-        }
-
+        addRealm(realm, parent, host); 
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("JDBCRealm");
         ObjectName oname =
@@ -575,29 +651,13 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createJNDIRealm(String parent)
+    public String createJNDIRealm(String parent, String host)
         throws Exception {
 
          // Create a new JNDIRealm instance
         JNDIRealm realm = new JNDIRealm();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setRealm(realm);
-        } else if (type.equals("Engine")) {
-            engine.setRealm(realm);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setRealm(realm);
-        }
+        addRealm(realm, parent, host); 
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("JNDIRealm");
@@ -606,7 +666,7 @@ public class MBeanFactory extends BaseModelMBean {
         return (oname.toString());
 
     }
-
+    
 
     /**
      * Create a new Memory Realm.
@@ -615,30 +675,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createMemoryRealm(String parent)
+    public String createMemoryRealm(String parent, String host)
         throws Exception {
 
          // Create a new MemoryRealm instance
         MemoryRealm realm = new MemoryRealm();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setRealm(realm);
-        } else if (type.equals("Engine")) {
-            engine.setRealm(realm);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setRealm(realm);
-        }
-
+        addRealm(realm, parent, host); 
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("MemoryRealm");
         ObjectName oname =
@@ -655,29 +699,13 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createRemoteAddrValve(String parent)
+    public String createRemoteAddrValve(String parent, String host)
         throws Exception {
 
         // Create a new RemoteAddrValve instance
         RemoteAddrValve valve = new RemoteAddrValve();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            ((StandardContext)context).addValve(valve);
-        } else if (type.equals("Engine")) {
-            ((StandardEngine)engine).addValve(valve);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            ((StandardHost)host).addValve(valve);
-        }
+        addValve(valve, parent, host);
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("RemoteAddrValve");
@@ -695,30 +723,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createRemoteHostValve(String parent)
+    public String createRemoteHostValve(String parent, String host)
         throws Exception {
 
         // Create a new RemoteHostValve instance
         RemoteHostValve valve = new RemoteHostValve();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            ((StandardContext)context).addValve(valve);
-        } else if (type.equals("Engine")) {
-            ((StandardEngine)engine).addValve(valve);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            ((StandardHost)host).addValve(valve);
-        }
-
+        
+        addValve(valve, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("RemoteHostValve");
         ObjectName oname =
@@ -735,30 +747,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createRequestDumperValve(String parent)
+    public String createRequestDumperValve(String parent, String host)
         throws Exception {
 
         // Create a new RequestDumperValve instance
         RequestDumperValve valve = new RequestDumperValve();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            ((StandardContext)context).addValve(valve);
-        } else if (type.equals("Engine")) {
-            ((StandardEngine)engine).addValve(valve);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            ((StandardHost)host).addValve(valve);
-        }
-
+        addValve(valve, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("RequestDumperValve");
         ObjectName oname =
@@ -775,30 +771,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createSingleSignOn(String parent)
+    public String createSingleSignOn(String parent, String host)
         throws Exception {
 
         // Create a new SingleSignOn instance
         SingleSignOn valve = new SingleSignOn();
-
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            ((StandardContext)context).addValve(valve);
-        } else if (type.equals("Engine")) {
-            ((StandardEngine)engine).addValve(valve);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            ((StandardHost)host).addValve(valve);
-        }
-
+        
+        addValve(valve, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("SingleSignOn");
         ObjectName oname =
@@ -1007,33 +987,18 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new System Error Logger.
      *
      * @param parent MBean Name of the associated parent component
+     * @host host object name for context logger
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createSystemErrLogger(String parent)
+    public String createSystemErrLogger(String parent, String host)
         throws Exception {
 
         // Create a new SystemErrLogger instance
         SystemErrLogger logger = new SystemErrLogger();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {        
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setLogger(logger);
-        } else if (type.equals("Engine")) {
-            engine.setLogger(logger);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setLogger(logger);
-        }
-
+        addLogger(logger, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("SystemErrLogger");
         ObjectName oname =
@@ -1047,33 +1012,18 @@ public class MBeanFactory extends BaseModelMBean {
      * Create a new System Output Logger.
      *
      * @param parent MBean Name of the associated parent component
+     * @host host object name for context logger
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createSystemOutLogger(String parent)
+    public String createSystemOutLogger(String parent, String host)
         throws Exception {
 
         // Create a new SystemOutLogger instance
         SystemOutLogger logger = new SystemOutLogger();
 
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setLogger(logger);
-        } else if (type.equals("Engine")) {
-            engine.setLogger(logger);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setLogger(logger);
-        }
-
+        addLogger(logger, parent, host);
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("SystemOutLogger");
         ObjectName oname =
@@ -1091,29 +1041,14 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createUserDatabaseRealm(String parent, String resourceName)
-        throws Exception {
+    public String createUserDatabaseRealm(String parent, String resourceName,
+                                            String host) throws Exception {
 
          // Create a new UserDatabaseRealm instance
         UserDatabaseRealm realm = new UserDatabaseRealm();
         realm.setResourceName(resourceName);
-        // Add the new instance to its parent component
-        ObjectName pname = new ObjectName(parent);
-        String type = pname.getKeyProperty("type");
-        Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
-        Engine engine = (Engine) service.getContainer();
-        if (type.equals("Context")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            String pathStr = getPathStr(pname.getKeyProperty("path"));
-            Context context = (Context) host.findChild(pathStr);
-            context.setRealm(realm);
-        } else if (type.equals("Engine")) {
-            engine.setRealm(realm);
-        } else if (type.equals("Host")) {
-            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-            host.setRealm(realm);
-        }
+        
+        addRealm(realm, parent, host); 
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("UserDatabaseRealm");
