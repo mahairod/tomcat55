@@ -443,7 +443,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             if ("path".equals(tname)) {
 		String tagFilePath = child.getBody();
 		tagInfo = TagFileProcessor.parseTagFile(parserController,
-							tagFilePath);
+							tagFilePath,
+							this);
 		break;
 	    }
 	}

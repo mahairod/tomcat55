@@ -83,12 +83,13 @@ public class TagFileProcessor {
     static class TagFileVisitor extends Node.Visitor {
 
         private ErrorDispatcher err;
+	private TagLibraryInfo tagLibInfo;
 
         private String name = null;
         private String tagclass = null;
         private TagExtraInfo tei = null;
         private String bodycontent = "JSP"; // Default body content is JSP
-        private String info = null;
+        private String description = null;
         private String displayName = null;
         private String smallIcon = null;
         private String largeIcon = null;
@@ -136,7 +137,7 @@ public class TagFileProcessor {
             new JspUtil.ValidAttribute("description")
         };
 
-        public TagFileVisitor(Compiler compiler) {
+        public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo) {
             err = compiler.getErrorDispatcher();
         }
 
@@ -151,7 +152,7 @@ public class TagFileProcessor {
 			n.getAttributeValue("dynamic-attributes"));
             smallIcon = n.getAttributeValue("small-icon");
             largeIcon = n.getAttributeValue("large-icon");
-            info = n.getAttributeValue("description");
+            description = n.getAttributeValue("description");
             displayName = n.getAttributeValue("display-name");
         }
 
@@ -263,8 +264,11 @@ public class TagFileProcessor {
                                                   fragmentInputs);
             }
 
-            return new TagInfo(name, tagclass, bodycontent,
-                               info, null,
+            return new TagInfo(name,
+			       tagclass,
+			       bodycontent,
+                               description,
+			       tagLibInfo,
                                tei,
                                tagAttributeInfo,
                                displayName,
@@ -276,7 +280,8 @@ public class TagFileProcessor {
         }
     }
 
-    public static TagInfo parseTagFile(ParserController pc, String tagfile)
+    public static TagInfo parseTagFile(ParserController pc, String tagfile,
+				       TagLibraryInfo tagLibInfo)
                 throws JasperException {
 
         Node.Nodes page = null;
@@ -287,7 +292,8 @@ public class TagFileProcessor {
                                         "jsp.error.file.not.found", tagfile);
 	}
 
-        TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler());
+        TagFileVisitor tagFileVisitor = new TagFileVisitor(pc.getCompiler(),
+							   tagLibInfo);
         page.visit(tagFileVisitor);
 
         return tagFileVisitor.getTagInfo();
