@@ -107,10 +107,10 @@
   <!-- brackets):                                                           -->
   <!--                                                                      -->
   <!--   checkInterval       If development is false and checkInterval is   -->
-  <!--                       greater than zero, background compiles are     -->
+  <!--                       greater than zero, background compilations are -->
   <!--                       enabled. checkInterval is the time in seconds  -->
   <!--                       between checks to see if a JSP page needs to   -->
-  <!--                       be recompiled. [300]                           -->
+  <!--                       be recompiled. [0]                             -->
   <!--                                                                      -->
   <!--   modificationTestInterval                                           -->
   <!--                       Causes a JSP (and its dependent files) to not  -->
