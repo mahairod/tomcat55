@@ -132,7 +132,13 @@ public class HttpResponseAdapter extends  ResponseImpl {
     */
     protected void sendStatus( int status, String message ) throws IOException {
 	printHead("HTTP/1.0 ");
-	printHead(String.valueOf(status));
+	switch( status ) {
+	case 200: printHead("200");
+	    break;
+	    
+	default:
+	    printHead(String.valueOf(status));
+	}
 	if(message!=null) {
 	    printHead(" ");
 	    printHead(message);
