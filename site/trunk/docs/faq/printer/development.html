@@ -1,0 +1,130 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Tomcat FAQ - Tomcat FAQ: Development</title><meta value="Mark Thomas" name="author"><meta value="markt@apache.org" name="email"><style>
+      dt { font-size : larger;  font-weight : bold }
+      dd {padding-bottom : 10px;}
+    </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+      Tomcat FAQ
+    " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Tomcat FAQ: Development</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
+    This section of the FAQ discusses common questions related
+    to Tomcat development.
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <ul>
+    <li>
+      <a href="#rd">
+        How do I configure Tomcat to support remote debugging?
+      </a>
+    </li>
+    <li>
+      <a href="#rd-eclipse">
+        How do I remotely debug Tomcat using Eclipse?
+      </a>
+    </li>
+    <li>
+      <a href="#rd-netbeans">
+        How do I remotely debug Tomcat using NetBeans?
+      </a>
+    </li>
+  </ul>
+</p>
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
+<p>
+  <b style="font-size: larger">
+    <a name="rd">How do I configure Tomcat to support remote debugging?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    The short answer is to add the following options when the JVM is started:<br>
+    <code>-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</code><br>
+
+    There are a number of ways you can do this depending on how you normally start
+    Tomcat:
+    <ul>
+      <li>Set environment variables <code>JPDA_ADDRESS=8000</code> and
+          <code>JPDA_TRANSPORT=dt_socket
+</code> and then start tomcat using
+          <code>catalina jpda start</code>.</li>
+
+      <li>If you run Tomcat using service wrapper, check the documentation for the
+          service to determine how to set the required JVM options.
+</li>
+
+      <li>If you start Tomcat from within an IDE, check the documentation for the IDE
+          to determine how to set the required JVM options.</li>
+
+    </ul>
+    </p>
+    <p>The port does not need to be set to 8000, it may be any value appropriate for your
+    system.</p>
+    <p>Whilst this is very useful in development it should not be used in production because
+    of both security and performance implications.</p>
+  </div><br>
+  <b style="font-size: larger">
+    <a name="rd-eclipse">How do I remotely debug Tomcat using Eclipse?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    This answer assumes that you have a project set up with all of the fixings
+    and have some idea of what you're doing in this respect.  If not then 
+    thats really outside the scope of this topic and more in the scope of 
+    you needing to go to <a href="http://www.eclipse.org">eclipse.org</a> and
+    read up on how to use your ide, and maybe practice a little bit before 
+    you come back to this.  We're also going to assume you have some idea of
+    what a debugger is and how to use one.
+    </p>
+    <p>
+    Make sure tomcat is started and that your app is deployed and the sources,
+    etc are all defined as resources in your app.  If you have a servlet or 
+    something, set a breakpoint where its sure to hit on the next request.
+    Go to "Run-&gt;Debug...".  Click on "Remote Java Applications", then click
+    "New". Type in the title and all.  Notice that port 8000 from the Tomcat 
+    instructions.  Save and run.  Eclipse will connect to the VM that Tomcat 
+    is running under.  Wow, that was easy!  Now go type the url to submit to
+    your servlet or whatever in your browser.  Boom you hit the breakpoint right?
+    Have fun!
+    </p>
+  </div><br>
+  <b style="font-size: larger">
+    <a name="rd-netbeans">How do I remotely debug Tomcat using NetBeans?</a>
+  </b>
+  <div style="padding-left : 20px;">
+    <p>
+    This answer assumes that you have a project set up with all of the fixings
+    and have some idea of what you're doing in this respect.  If not then 
+    thats really outside the scope of this topic and more in the scope of 
+    you needing to go to <a href="http://www.netbeans.org">netbeans.org</a> and
+    read up on how to use your ide, and maybe practice a little bit before 
+    you come back to this.  We're also going to assume you have some idea of
+    what a debugger is and how to use one.
+    </p>
+    <p>
+    Make sure tomcat is started and that your app is deployed and the
+    sources, etc are all defined as resources in your app. If you have a
+    servlet or something, set a breakpoint where its sure to hit on the next
+    request. Go to "Debug-&gt;Start Session-&gt;Attach". A dialog should pop up and
+    use following options:
+    <ul>
+      <li><strong>Debugger Type</strong>: Default Debugger (JPDA)</li>
+      <li><strong>Connector</strong>: SocketAttach</li>
+      <li><strong>Host</strong>: The ip address of the host your Tomcat installation
+          is running on (127.0.0.1 if it is your machine).</li>
+      <li><strong>Port</strong>: The port of your tomcat debugging interface, which
+          should be 8000 if you've followed the instructions above.</li>
+    </ul>
+    </p>
+    <p>
+    Then press ok and you should have a debugging connection very similar to
+    local debugging. (you can set breakpoints inspect variables etc.)
+    </p>
+    <p>
+    Netbeans however has a second option, you can debug JSP files and
+    servlets locally. Nothing really exciting happens
+    there, an integrated Tomcat server is started and a remote connection is
+    opened. Note however that the integrated
+    Netbeans Tomcat usually is a few versions behind the current
+    Jakarta/Apache version.
+    </p>
+  </div><br>
+</p>
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>
