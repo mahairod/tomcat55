@@ -567,7 +567,8 @@ public class ContextManager {
 	}
 
 	String vhost=ctx.getHost();
-	logInt("Adding context " +  ctx.toString());
+	if(debug>0)
+        logInt("Adding context " +  ctx.toString());
 
 	// XXX temporary workaround for the old SimpleMapper -
 	// This code will be removed as soon as the new mapper is stable.
@@ -581,7 +582,8 @@ public class ContextManager {
     public void removeContext( Context context ) throws TomcatException {
 	if( context==null ) return;
 
-	logInt( "Removing context " + context.toString());
+	if(debug>0)
+        logInt( "Removing context " + context.toString());
 
 	ContextInterceptor cI[]=getContextInterceptors();
 	for( int i=0; i< cI.length; i++ ) {
@@ -1038,8 +1040,8 @@ public class ContextManager {
 	// XXX this log was intended to debug the status code generation.
 	// it can be removed for all cases.
 	if( code != 302 && code != 401 )
-	    ctx.log( code + " "  + req + " " +
-		     req.getAttribute("javax.servlet.error.message"));
+	    if(debug>0)
+            ctx.log( code + " "  + req + " " + req.getAttribute("javax.servlet.error.message"));
 
 	errorPath = ctx.getErrorPage( code );
 	if( errorPath != null ) {
@@ -1098,7 +1100,14 @@ public class ContextManager {
 	    Note that it is _WRONG_ to send the trace back to
 	    the client. AFAIK the trace is the _best_ debugger.
 	*/
-	if (t instanceof UnavailableException) {
+    if( t instanceof SocketException ) {
+        /*
+         * There's nothing we can do in this case because the connection 
+         * with the client is already gone.   MAS 1/14/03
+         */
+        ctx.log("SocketException in: " + req + " "  + t.getMessage());
+        return;
+    }else if (t instanceof UnavailableException) {
 	    int unavailableTime = -1;
 	    if ( !((UnavailableException)t).isPermanent() ) {
 		unavailableTime = ((UnavailableException)t).getUnavailableSeconds();
@@ -1115,16 +1124,15 @@ public class ContextManager {
 	    res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE); // 503
 	    handleStatus( req, res, HttpServletResponse.SC_SERVICE_UNAVAILABLE );
 	    return;
-	}
-	else if( t instanceof IllegalStateException ) {
+	} else if( t instanceof IllegalStateException ) {
 	    ctx.log("IllegalStateException in: " + req  + " " +
 		    t.getMessage() );
 	} else if( t instanceof org.apache.jasper.JasperException ) {
 	    ctx.log("JasperException: " + req + " "  + t.getMessage());
 	} else if( t instanceof IOException ) {
 	    if ( "Broken pipe".equals(t.getMessage()))
-		return;
-	    ctx.log("IOException in: " + req + " "  + t.getMessage());
+            return;
+        ctx.log("IOException in: " + req + " "  + t.getMessage());
 	} else {
 	    ctx.log("Exception in: " + req , t );
 	}
