@@ -85,11 +85,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="copy-tyrex" depends="build-prepare" if="tyrex.present">
-    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
-  </target>
-
-  <target name="build-static" depends="build-prepare,copy-tyrex">
+  <target name="build-static" depends="build-prepare">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -108,13 +104,19 @@
     <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
+<!-- Cannot redistribute JSSE
     <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
+-->
     <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
+<!-- Connot redistribute LDAP
     <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
+-->
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
