@@ -124,8 +124,9 @@ public class JspContextWrapper
 	this.atBeginVars = atBeginVars;
 	this.atEndVars = atEndVars;
 	this.pageAttributes = new Hashtable(16);
-	this.originalNestedVars = new Hashtable(nestedVars.size());
-
+	if (nestedVars != null) {
+	    this.originalNestedVars = new Hashtable(nestedVars.size());
+	}
 	copyPageToTagScope(VariableInfo.AT_BEGIN);
 	saveNestedVariables();
     }
@@ -326,14 +327,18 @@ public class JspContextWrapper
 
 	switch (scope) {
 	case VariableInfo.NESTED:
-	    iter = nestedVars.iterator();
+	    if (nestedVars != null) {
+		iter = nestedVars.iterator();
+	    }
 	    break;
 	case VariableInfo.AT_BEGIN:
-	    iter = atBeginVars.iterator();
+	    if (atBeginVars != null) {
+		iter = atBeginVars.iterator();
+	    }
 	    break;
 	}
 
-	while (iter.hasNext()) {
+	while ((iter != null) && iter.hasNext()) {
 	    String varName = (String) iter.next();
 	    Object obj = invokingJspCtxt.getAttribute(varName);
 	    if (obj != null) {
@@ -353,17 +358,23 @@ public class JspContextWrapper
 
 	switch (scope) {
 	case VariableInfo.NESTED:
-	    iter = nestedVars.iterator();
+	    if (nestedVars != null) {
+		iter = nestedVars.iterator();
+	    }
 	    break;
 	case VariableInfo.AT_BEGIN:
-	    iter = atBeginVars.iterator();
+	    if (atBeginVars != null) {
+		iter = atBeginVars.iterator();
+	    }
 	    break;
 	case VariableInfo.AT_END:
-	    iter = atEndVars.iterator();
+	    if (atEndVars != null) {
+		iter = atEndVars.iterator();
+	    }
 	    break;
 	}
 
-	while (iter.hasNext()) {
+	while ((iter != null) && iter.hasNext()) {
 	    String varName = (String) iter.next();
 	    Object obj = getAttribute(varName);
 	    if (obj != null) {
@@ -379,12 +390,14 @@ public class JspContextWrapper
      * the invoking JSP context, so they can later be restored.
      */
     public void saveNestedVariables() {
-	Iterator iter = nestedVars.iterator();
-	while (iter.hasNext()) {
-	    String varName = (String) iter.next();
-	    Object obj = invokingJspCtxt.getAttribute(varName);
-	    if (obj != null) {
-		originalNestedVars.put(varName, obj);
+	if (nestedVars != null) {
+	    Iterator iter = nestedVars.iterator();
+	    while (iter.hasNext()) {
+		String varName = (String) iter.next();
+		Object obj = invokingJspCtxt.getAttribute(varName);
+		if (obj != null) {
+		    originalNestedVars.put(varName, obj);
+		}
 	    }
 	}
     }
@@ -394,14 +407,16 @@ public class JspContextWrapper
      * context.
      */
     public void restoreNestedVariables() {
-	Iterator iter = nestedVars.iterator();
-	while (iter.hasNext()) {
-	    String varName = (String) iter.next();
-	    Object obj = originalNestedVars.get(varName);
-	    if (obj != null) {
-		invokingJspCtxt.setAttribute(varName, obj);
-	    } else {
-		invokingJspCtxt.removeAttribute(varName, PAGE_SCOPE);
+	if (nestedVars != null) {
+	    Iterator iter = nestedVars.iterator();
+	    while (iter.hasNext()) {
+		String varName = (String) iter.next();
+		Object obj = originalNestedVars.get(varName);
+		if (obj != null) {
+		    invokingJspCtxt.setAttribute(varName, obj);
+		} else {
+		    invokingJspCtxt.removeAttribute(varName, PAGE_SCOPE);
+		}
 	    }
 	}
     }
