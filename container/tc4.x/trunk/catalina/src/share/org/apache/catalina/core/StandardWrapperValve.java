@@ -518,8 +518,9 @@ final class StandardWrapperValve
             String containerName = null;
             if (container != null)
                 containerName = container.getName();
-            log( "StandardWrapperValve[" + containerName
-                       + "]: " + message, throwable);
+            System.out.println( "StandardWrapperValve[" + containerName
+                       + "]: " + message);
+            throwable.printStackTrace(System.out);
         }
 
     }
