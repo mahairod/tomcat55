@@ -111,7 +111,7 @@ public class Context {
     // internal state / related objects
     private ContextManager contextM;
     private ServletContext contextFacade;
-
+    private boolean crossContext = true;
     private ServletLoader servletL;
     boolean reloadable=true; // XXX change default to false after testing
 
@@ -192,6 +192,14 @@ public class Context {
 
     public void setContextManager(ContextManager cm) {
 	contextM=cm;
+    }
+
+    public boolean getCrossContext() {
+        return (this.crossContext);
+    }
+
+    public void setCrossContext(boolean crossContext) {
+        this.crossContext = crossContext;
     }
 
     public FacadeManager getFacadeManager() {
@@ -726,6 +734,9 @@ public class Context {
 	    // if we can't  return a servlet, so it's more probable
 	    // servlets will check for null than IllegalArgument
 	}
+        // Return null if cross context lookups are not allowed
+        if (!crossContext)
+            return null;
 	// absolute path
 	Request lr=contextM.createRequest( path );
 	if( vhost != null ) lr.setServerName( vhost );

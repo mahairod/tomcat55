@@ -264,7 +264,8 @@
 
              Defaults are: debug=0, reloadable=true, trusted=false
              (trusted allows you to access tomcat internal objects 
-              with FacadeManager )
+             with FacadeManager ), crossContext=true (allows you to
+             access other contexts via ServletContext.getContext())
  
              If security manager is enabled, you'll have read perms.
              in the webapps dir and read/write in the workdir.
@@ -272,6 +273,7 @@
 
         <Context path="/examples" 
                  docBase="webapps/examples" 
+                 crossContext="false"
                  debug="0" 
                  reloadable="true" > 
         </Context>
@@ -286,6 +288,7 @@
           -->
         <Context path="/admin" 
                  docBase="webapps/admin" 
+                 crossContext="true"
                  debug="0" 
                  reloadable="true" 
                  trusted="false" > 
