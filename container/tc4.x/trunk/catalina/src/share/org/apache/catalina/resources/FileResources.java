@@ -207,7 +207,7 @@ public final class FileResources extends ResourcesBase {
 	    return (null);
 
 	// Construct a URL that refers to this file
-	return (new URL("file://" + pathname));
+	return (new URL("file", null, 0, pathname));
 
     }
 
