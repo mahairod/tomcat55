@@ -83,7 +83,11 @@ public class AntSecurityManager extends SecurityManager {
     }
 
     // everything else should be allowed
-    
+/*    
+Removed the following interfaces as they won't compile with JDK 1.1,
+and the defaults for JDK 1.2 appear to be sufficient.  If you have
+a problem, let me know.  Sam Ruby - rubys@us.ibm.com
+
     public void checkPermission(Permission perm) {
         // allowed
     }
@@ -91,6 +95,7 @@ public class AntSecurityManager extends SecurityManager {
     public void checkPermission(Permission perm, Object context) {
         // allowed
     }
+*/
     
     public void checkCreateClassLoader() {
         // allowed
