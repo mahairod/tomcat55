@@ -158,6 +158,12 @@ public class StandardHost
 
 
     /**
+     * The deploy on startup flag for this Host.
+     */
+    private boolean deployOnStartup = true;
+
+
+    /**
      * deploy Context XML config files property.
      */
     private boolean deployXML = true;
@@ -247,8 +253,7 @@ public class StandardHost
 
     /**
      * Return the value of the auto deploy flag.  If true, it indicates that 
-     * this host's child webapps should be discovred and automatically 
-     * deployed at startup time.
+     * this host's child webapps will be dynamically deployed.
      */
     public boolean getAutoDeploy() {
 
@@ -322,6 +327,7 @@ public class StandardHost
         return (this.defaultContext);
     }
 
+
     /**
      * Return the Java class name of the Context implementation class
      * for new web applications.
@@ -345,6 +351,33 @@ public class StandardHost
         this.contextClass = contextClass;
         support.firePropertyChange("contextClass",
                                    oldContextClass, this.contextClass);
+
+    }
+
+
+    /**
+     * Return the value of the deploy on startup flag.  If true, it indicates 
+     * that this host's child webapps should be discovred and automatically 
+     * deployed at startup time.
+     */
+    public boolean getDeployOnStartup() {
+
+        return (this.deployOnStartup);
+
+    }
+
+
+    /**
+     * Set the deploy on startup flag value for this host.
+     * 
+     * @param autoDeploy The new deploy on startup flag
+     */
+    public void setDeployOnStartup(boolean deployOnStartup) {
+
+        boolean oldDeployOnStartup = this.deployOnStartup;
+        this.deployOnStartup = deployOnStartup;
+        support.firePropertyChange("deployOnStartup", oldDeployOnStartup, 
+                                   this.deployOnStartup);
 
     }
 
@@ -377,9 +410,7 @@ public class StandardHost
      * encountered.
      */
     public boolean getLiveDeploy() {
-
-        return (this.liveDeploy);
-
+        return (this.autoDeploy);
     }
 
 
@@ -389,12 +420,7 @@ public class StandardHost
      * @param liveDeploy The new live deploy flag
      */
     public void setLiveDeploy(boolean liveDeploy) {
-
-        boolean oldLiveDeploy = this.liveDeploy;
-        this.liveDeploy = liveDeploy;
-        support.firePropertyChange("liveDeploy", oldLiveDeploy, 
-                                   this.liveDeploy);
-
+        setAutoDeploy(liveDeploy);
     }
 
 
