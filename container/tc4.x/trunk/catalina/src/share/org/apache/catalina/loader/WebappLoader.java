@@ -608,12 +608,13 @@ public class WebappLoader
 
 	// Construct a class loader based on our current repositories list
 	try {
-	    if (parentClassLoader == null)
-	        classLoader = new WebappClassLoader(container.getResources());
-	    else
-	        classLoader = new WebappClassLoader
-                    (parentClassLoader, container.getResources());
 
+            if (parentClassLoader == null) {
+                classLoader = new WebappClassLoader(container.getResources());
+            } else {
+                classLoader = new WebappClassLoader
+                    (parentClassLoader, container.getResources());
+            }
             classLoader.setDebug(this.debug);
             classLoader.setDelegate(this.delegate);
 
@@ -907,8 +908,18 @@ public class WebappLoader
         
         if (libDir != null) {
             
-            File destDir = new File(workDir, libPath);
-            destDir.mkdirs();
+            boolean copyJars = false;
+            String absoluteLibPath = servletContext.getRealPath(libPath);
+
+            File destDir = null;
+
+            if (absoluteLibPath != null) {
+                destDir = new File(absoluteLibPath);
+            } else {
+                copyJars = true;
+                destDir = new File(workDir, libPath);
+                destDir.mkdirs();
+            }
             
             // Looking up directory /WEB-INF/lib in the context
             try {
@@ -929,18 +940,21 @@ public class WebappLoader
                                      destFile.getAbsolutePath()));
                     
                     Resource jarResource = (Resource) binding.getObject();
-                    if (copy(jarResource.streamContent(), 
-                             new FileOutputStream(destFile))) {
-                        if (classpath.length() != 0)
-                            classpath.append(File.pathSeparator);
-                        classpath.append(destFile.getAbsolutePath());
+                    if (copyJars) {
+                        if (!copy(jarResource.streamContent(), 
+                                  new FileOutputStream(destFile)))
+                            continue;
                     }
-                    
+
+                    if (classpath.length() != 0)
+                        classpath.append(File.pathSeparator);
+                    classpath.append(destFile.getAbsolutePath());
+
                     JarFile jarFile = new JarFile(destFile);
-                    
+
                     classLoader.addJar(filename, jarFile, destFile);
                     addRepository(filename);
-                    
+
                 }
             } catch (NamingException e) {
                 // Silent catch: it's valid that no /WEB-INF/lib directory 
@@ -1255,7 +1269,7 @@ final class WebappContextNotifier implements Runnable {
      */
     public void run() {
 
-	context.reload();
+        context.reload();
 
     }
 
