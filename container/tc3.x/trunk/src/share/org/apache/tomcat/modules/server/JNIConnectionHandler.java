@@ -274,6 +274,8 @@ class JNIRequestAdapter extends Request {
     }
 
     public  int doRead(byte b[], int off, int len) throws IOException {
+	if( available <= 0 )
+	    return 0;
         int rc = 0;
 
         while(0 == rc) {
@@ -282,7 +284,8 @@ class JNIRequestAdapter extends Request {
 	            Thread.currentThread().yield();
 	        }
 	    }
-	    return rc;
+	available -= rc;
+	return rc;
     }
 
     protected void readNextRequest(long s, long l) throws IOException {

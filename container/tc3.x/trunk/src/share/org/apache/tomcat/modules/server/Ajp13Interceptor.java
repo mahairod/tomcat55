@@ -215,12 +215,19 @@ class Ajp13Request extends Request
     
     public int doRead() throws IOException 
     {
+	if( available <= 0 )
+	    return -1;
+	available--;
 	return ajp13.doRead();
     }
     
     public int doRead(byte[] b, int off, int len) throws IOException 
     {
-	return ajp13.doRead( b,off, len );
+	if( available <= 0 )
+	    return -1;
+	int rd=ajp13.doRead( b,off, len );
+	available -= rd;
+	return rd;
     }
     
     public void recycle() 
