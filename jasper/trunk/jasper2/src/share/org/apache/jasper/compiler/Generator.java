@@ -1553,7 +1553,7 @@ public class Generator {
 		out.print(tagMethod);
 		out.print("(");
 		if (parent != null) {
-		    out.print("javax.servlet.jsp.tagext.Tag ");
+		    out.print("javax.servlet.jsp.tagext.JspTag ");
 		    out.print(parent);
 		    out.print(", ");
 		}
@@ -2337,16 +2337,48 @@ public class Generator {
 				     boolean simpleTag)
 	            throws JasperException {
 
+	    // Set context
 	    out.printin(tagHandlerVar);
 	    if (simpleTag) {
 		out.println(".setJspContext(pageContext);");
 	    } else {
 		out.println(".setPageContext(pageContext);");
 	    }
-	    out.printin(tagHandlerVar);
-	    out.print(".setParent(");
-	    out.print(parent);
-	    out.println(");");
+
+	    // Set parent
+	    if (!simpleTag) {
+		if (parent != null) {
+		    out.printin("if (!(");
+		    out.print(parent);
+		    out.println(" instanceof javax.servlet.jsp.tagext.Tag))");
+		    out.pushIndent();
+		    out.printin(tagHandlerVar);
+		    out.print(".setParent(");
+		    out.print("new javax.servlet.jsp.tagext.TagAdapter(");
+		    out.print(parent);
+		    out.print(", ");
+		    out.print("null"); // XXX
+		    out.println("));");
+		    out.popIndent();
+		    out.printil("else");
+		    out.pushIndent();
+		    out.printin(tagHandlerVar);
+		    out.print(".setParent((javax.servlet.jsp.tagext.Tag) ");
+		    out.print(parent);
+		    out.println(");");
+		    out.popIndent();
+		} else {
+		    out.printin(tagHandlerVar);
+		    out.print(".setParent(");
+		    out.print(parent);
+		    out.println(");");
+		}
+	    } else {
+		out.printin(tagHandlerVar);
+		out.print(".setParent(");
+		out.print(parent);
+		out.println(");");
+	    }
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
 	    for (int i=0; i<attrs.length; i++) {
@@ -2533,11 +2565,14 @@ public class Generator {
             // body.  The implementation of this fragment can come from
             // the org.apache.jasper.runtime package as a support class.
             FragmentHelperClass.Fragment fragment = 
-                fragmentHelperClass.openFragment( n );
+                fragmentHelperClass.openFragment(n, tagHandlerVar);
             ServletWriter outSave = out;
 	    out = fragment.getMethodsBuffer().getOut();
+	    String tmpParent = parent;
+	    parent = tagHandlerVar;
             visitBody( n );
             out = outSave;
+	    parent = tmpParent;
 	    fragmentHelperClass.closeFragment( fragment );
             // XXX - Need to change pageContext to jspContext if
             // we're not in a place where pageContext is defined (e.g.
@@ -3151,16 +3186,19 @@ public class Generator {
                 "org.apache.jasper.runtime.JspFragmentHelper" );
             out.printil( "{" );
             out.pushIndent();
+	    out.printil("private javax.servlet.jsp.tagext.JspTag parentTag;");
+	    out.println();
             out.printil( "public " + className + 
                 "( int discriminator, JspContext jspContext, " +
-                "Object parentTag ) {" );
+                "javax.servlet.jsp.tagext.JspTag parentTag ) {" );
             out.pushIndent();
             out.printil( "super( discriminator, jspContext, parentTag );" );
+            out.printil( "this.parentTag = parentTag;" );
             out.popIndent();
             out.printil( "}" );
         }
         
-	public Fragment openFragment( Node parent ) 
+	public Fragment openFragment(Node parent, String tagHandlerVar) 
             throws JasperException 
         {
             Fragment result = new Fragment( fragments.size() );
@@ -3176,8 +3214,8 @@ public class Generator {
             // meaning only the fragment is skipped.  The JSR-152
             // expert group is currently discussing what to do in this case.
             // See comment in closeFragment()
-            out.printil( "public boolean invoke" + result.getId() + "( " +
-                "java.io.Writer out, java.util.Map params ) " );
+	    out.printil( "public boolean invoke" + result.getId() + "( " +
+			 "java.io.Writer out, java.util.Map params ) " );
             out.pushIndent();
             // Note: Throwable required because methods like _jspx_meth_*
             // throw Throwable.
@@ -3186,6 +3224,9 @@ public class Generator {
             out.printil( "{" );
             out.pushIndent();
             generateLocalVariables( out, parent );
+	    out.printin("javax.servlet.jsp.tagext.JspTag ");
+	    out.print(tagHandlerVar);
+	    out.println(" = parentTag;");
             
             return result;
         }

@@ -64,6 +64,7 @@ package org.apache.jasper.runtime;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.PageContext;
 
+import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import java.util.HashMap;
@@ -88,11 +89,11 @@ public abstract class JspFragmentHelper
     protected int discriminator;
     protected JspContext jspContext;
     protected PageContext pageContext;
-    protected Object parentTag;
+    protected JspTag parentTag;
     protected Map originalPageScope;
 
     public JspFragmentHelper( int discriminator, JspContext jspContext, 
-        Object parentTag ) 
+        JspTag parentTag ) 
     {
         this.discriminator = discriminator;
         this.jspContext = jspContext;
@@ -108,7 +109,7 @@ public abstract class JspFragmentHelper
         return this.jspContext;
     }
     
-    public Object getParentTag() {
+    public JspTag getParentTag() {
         return this.parentTag;
     }
     
