@@ -444,16 +444,6 @@ public abstract class AuthenticatorBase
         HttpRequest hrequest = (HttpRequest) request;
         HttpResponse hresponse = (HttpResponse) response;
 
-        // Do not authenticate prior to redirects for trailing slashes,
-        // at least for the root of the context
-        String requestURI = hrequest.getDecodedRequestURI();
-        String contextPath = this.context.getPath();
-        if (requestURI.charAt(requestURI.length() - 1) != '/' &&
-            requestURI.equals(contextPath)) {
-            context.invokeNext(request, response);
-            return;
-        }
-
         if (debug >= 1)
             log("Security checking request " +
                 ((HttpServletRequest) request.getRequest()).getMethod() + " " +
@@ -484,6 +474,8 @@ public abstract class AuthenticatorBase
         // Special handling for form-based logins to deal with the case
         // where the login form (and therefore the "j_security_check" URI
         // to which it submits) might be outside the secured area
+        String requestURI = hrequest.getDecodedRequestURI();
+        String contextPath = this.context.getPath();
         if (requestURI.startsWith(contextPath) &&
             requestURI.endsWith(Constants.FORM_ACTION)) {
             if (!authenticate(hrequest, hresponse, config)) {
