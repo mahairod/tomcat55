@@ -324,8 +324,10 @@ public class Javac extends Task {
             System.getProperty("path.separator"), false);
 	    while (tok.hasMoreTokens()) {
 		File f = project.resolveFile(tok.nextToken());
-		classpath.append(f.getAbsolutePath());
-		classpath.append(File.pathSeparator);
+		if (f.exists()) {
+		    classpath.append(f.getAbsolutePath());
+		    classpath.append(File.pathSeparator);
+		}
 	    }
 	}
 
