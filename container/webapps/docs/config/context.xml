@@ -249,13 +249,6 @@
         disclosure, among other security problems.</b></p>
       </attribute>
 
-      <attribute name="debug" required="false">
-        <p>The level of debugging detail logged by this <strong>Engine</strong>
-        to the associated <a href="logger.html">Logger</a>.  Higher numbers
-        generate more detailed output.  If not specified, the default
-        debugging detail level is zero (0).</p>
-      </attribute>
-
       <attribute name="managerChecksFrequency" required="false">
         <p>Frequency of the session expiration, and related manager operations.
         Manager operations will be done once for the specified amount of

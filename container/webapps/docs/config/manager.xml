@@ -91,13 +91,6 @@
         for this manager.  The default value is 60 seconds.</p>
       </attribute>
 
-      <attribute name="debug" required="false">
-        <p>The level of debugging detail logged by this <strong>Manager</strong>
-        to the associated <a href="logger.html">Logger</a>.  Higher numbers
-        generate more detailed output.  If not specified, the default
-        debugging detail level is zero (0).</p>
-      </attribute>
-
       <attribute name="entropy" required="false">
         <p>A String value that is utilized when seeding the random number
         generator used to create session identifiers for this Manager.

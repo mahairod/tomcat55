@@ -132,13 +132,6 @@
 
     <attributes>
 
-      <attribute name="debug" required="false">
-        <p>The level of debugging detail logged by this <strong>Engine</strong>
-        to the associated <a href="logger.html">Logger</a>.  Higher numbers
-        generate more detailed output.  If not specified, the default
-        debugging detail level is zero (0).</p>
-      </attribute>
-
       <attribute name="deployXML" required="false">
         <p>Set to <code>false</code> if you want to disable deploying
         applications using a Context XML config file. This also disables
