@@ -45,7 +45,7 @@ call "%JASPER_HOME%\bin\setclasspath.bat"
 rem Add on extra jar files to CLASSPATH
 for %%i in ("%JASPER_HOME%\common\lib\*.jar") do call "%JASPER_HOME%\bin\cpappend.bat" %%i
 for %%i in ("%JASPER_HOME%\shared\lib\*.jar") do call "%JASPER_HOME%\bin\cpappend.bat" %%i
-set CLASSPATH=%CLASSPATH%;%JASPER_HOME%\common\lib\servlet.jar
+set CLASSPATH=%CLASSPATH%;%JASPER_HOME%\shared\classes
 
 rem Parse arguments
 if ""%1"" == ""jspc"" goto doJspc
