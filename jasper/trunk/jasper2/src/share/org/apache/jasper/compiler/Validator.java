@@ -359,6 +359,17 @@ public class Validator {
         private static final JspUtil.ValidAttribute[] bodyAttrs = {
             new JspUtil.ValidAttribute("value") };
 
+        private static final JspUtil.ValidAttribute[] invokeAttrs = {
+            new JspUtil.ValidAttribute("fragment", true),
+	    new JspUtil.ValidAttribute("var"),
+	    new JspUtil.ValidAttribute("varReader"),
+	    new JspUtil.ValidAttribute("scope") };
+
+        private static final JspUtil.ValidAttribute[] doBodyAttrs = {
+            new JspUtil.ValidAttribute("var"),
+	    new JspUtil.ValidAttribute("varReader"),
+	    new JspUtil.ValidAttribute("scope") };
+
 	/*
 	 * Constructor
 	 */
@@ -770,6 +781,24 @@ public class Validator {
 
             return result;
         }
+
+	public void visit(Node.InvokeAction n) throws JasperException {
+            JspUtil.checkAttributes("Invoke", n, invokeAttrs, err);
+	    if (n.getAttributeValue("var") != null
+		    && n.getAttributeValue("varReader") != null) {
+		err.jspError(n, "jsp.error.invoke.varAndVarReader");
+	    }
+            visitBody(n);
+	}
+
+	public void visit(Node.DoBodyAction n) throws JasperException {
+            JspUtil.checkAttributes("DoBody", n, doBodyAttrs, err);
+	    if (n.getAttributeValue("var") != null
+		    && n.getAttributeValue("varReader") != null) {
+		err.jspError(n, "jsp.error.doBody.varAndVarReader");
+	    }
+            visitBody(n);
+	}
     }
 
     /**

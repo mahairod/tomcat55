@@ -1741,8 +1741,9 @@ public class Generator {
 	    }
 	    
 	    // Invoke fragment with parameter map
-	    String varReader = n.getAttributeValue("varReader");
-	    if (varReader != null) {
+	    String varReaderAttr = n.getAttributeValue("varReader");
+	    String varAttr = n.getAttributeValue("var");
+	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("sout = new java.io.StringWriter();");
 		out.print(toGetterMethod(n.getAttributeValue("fragment")));
 		out.println(".invoke(sout, params);");
@@ -1752,11 +1753,16 @@ public class Generator {
 	    }
 
 	    // Store varReader in appropriate scope
-	    if (varReader != null) {
+	    if (varReaderAttr != null || varAttr != null) {
 		String scopeName = n.getAttributeValue("scope");
 		out.printin("pageContext.setAttribute(");
-		out.print(quote(varReader));
-		out.print(", new java.io.StringReader(sout.toString())");
+		if (varReaderAttr != null) {
+		    out.print(quote(varReaderAttr));
+		    out.print(", new java.io.StringReader(sout.toString())");
+		} else {
+		    out.print(quote(varAttr));
+		    out.print(", sout.toString()");
+		}		    
 		if (scopeName != null) {
 		    out.print(", ");
 		    out.print(getScopeConstant(scopeName));
@@ -1816,8 +1822,9 @@ public class Generator {
 	    }
 
 	    // Invoke body with parameter map
-	    String varReader = n.getAttributeValue("varReader");
-	    if (varReader != null) {
+	    String varReaderAttr = n.getAttributeValue("varReader");
+	    String varAttr = n.getAttributeValue("var");
+	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("sout = new java.io.StringWriter();");
 		out.printil("getJspBody().invoke(sout, params);");
 	    } else {
@@ -1825,11 +1832,16 @@ public class Generator {
 	    }
 
 	    // Store varReader in appropriate scope
-	    if (varReader != null) {
+	    if (varReaderAttr != null || varAttr != null) {
 		String scopeName = n.getAttributeValue("scope");
 		out.printin("pageContext.setAttribute(");
-		out.print(quote(varReader));
-		out.print(", new java.io.StringReader(sout.toString())");
+		if (varReaderAttr != null) {
+		    out.print(quote(varReaderAttr));
+		    out.print(", new java.io.StringReader(sout.toString())");
+		} else {
+		    out.print(quote(varAttr));
+		    out.print(", sout.toString()");
+		}
 		if (scopeName != null) {
 		    out.print(", ");
 		    out.print(getScopeConstant(scopeName));
@@ -2822,7 +2834,7 @@ public class Generator {
 	out.printil("java.util.Map params = null;");
 
 	// Declare writer used for storing result of fragment/body invocation
-	// if 'varReader' attribute is specified
+	// if 'varReader' or 'var' attribute is specified
 	out.printil("java.io.Writer sout = null;");
 
 	out.printil("javax.servlet.jsp.JspWriter out = pageContext.getOut();");
