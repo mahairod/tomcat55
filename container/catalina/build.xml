@@ -72,7 +72,6 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
-    <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${catalina.build}/server/classes"/>
@@ -105,7 +104,6 @@
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tyrex.jar}"/>
-    <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${catalina.build}/server/classes"/>
@@ -173,9 +171,9 @@
     <condition property="jaxp.present">
       <and>
         <available classname="javax.xml.parsers.SAXParser"
-         classpath="${xerces.jar}:${xmlParserAPIs.jar}" />
+         classpath="${xmlParserAPIs.jar}" />
         <available classname="org.xml.sax.ContentHandler"
-         classpath="${xerces.jar}:${xmlParserAPIs.jar}" />
+         classpath="${xmlParserAPIs.jar}" />
       </and>
     </condition>
     <condition property="javamail.present">
@@ -230,7 +228,7 @@
      classpath="${tyrex.jar}" />
     <available property="xerces.present"
      classname="org.apache.xerces.parsers.SAXParser"
-     classpath="${xerces.jar}:${xercesImpl.jar}" />
+     classpath="${xercesImpl.jar}" />
 
     <!-- JAR files availability flags -->
     <available property="dbcp.jar.present" file="${commons-dbcp.jar}" />
@@ -257,7 +255,6 @@
     <available property="servlet.jar.present" file="${servlet.jar}" />
     <available property="tomcat-util.jar.present" file="${tomcat-util.jar}" />
     <available property="tyrex.jar.present" file="${tyrex.jar}" />
-    <available property="xerces.jar.present" file="${xerces.jar}" />
     <available property="xercesImpl.jar.present" file="${xercesImpl.jar}"/>
     <available property="xmlParserAPIs.jar.present" file="${xmlParserAPIs.jar}"/>
     <condition property="xerces2.jars.present">
@@ -502,25 +499,6 @@
         </or>
       </and>
     </condition>
-    <condition property="copy.xerces.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <and>
-          <equals arg1="${xerces.jar.present}" arg2="true" />
-          <not>
-            <equals arg1="${xerces2.jars.present}" arg2="true" />
-          </not>
-          <or>
-            <equals arg1="${full.dist}" arg2="on" />
-            <not>
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </not>
-          </or>
-        </and>
-      </and>
-    </condition>
     <condition property="copy.xerces2.jars">
       <and>
         <not>
@@ -596,8 +574,7 @@
     <echo message="jndi.jar.present(except JDK 1.3+)=${jndi.jar.present}" />
     <echo message="regexp.jar.present=${regexp.jar.present}" />
     <echo message="servlet.jar.present=${servlet.jar.present}" />
-    <echo message="xerces.jar.present(except JDK 1.4+ or xerces2)=${xerces.jar.present}" />
-    <echo message="xerces2.jars.present(except JDK 1.4+ or xerces1)=${xerces2.jars.present}" />
+    <echo message="xerces2.jars.present(except JDK 1.4+)=${xerces2.jars.present}" />
 
     <echo message="--- Optional JARs ---" />
     <echo message="dbcp.jar.present=${dbcp.jar.present}" />
@@ -638,7 +615,6 @@
     <echo message="copy.modeler.jar=${copy.modeler.jar}" />
     <echo message="copy.pool.jar=${copy.pool.jar}" />
     <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
-    <echo message="copy.xerces.jar=${copy.xerces.jar}" />
     <echo message="copy.xerces2.jars=${copy.xerces2.jars}"/>
 
   </target>
@@ -714,9 +690,6 @@
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
     -->
   </target>
-  <target name="copy-xerces.jar" if="copy.xerces.jar">
-    <copy todir="${catalina.build}/common/endorsed" file="${xerces.jar}"/>
-  </target>
   <target name="copy-xerces2.jars" if="copy.xerces2.jars">
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
@@ -724,7 +697,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces2.jars">
 
     <!-- Copy the launcher classes -->
     <copy todir="${catalina.build}/bin" file="${commons-daemon.jar}"/>
