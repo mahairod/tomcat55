@@ -1234,15 +1234,13 @@ class Parser implements TagConstants {
 	    parseForward(parent);
 	} else if (reader.matches(INVOKE_ACTION)) {
 	    if (!isTagFile) {
-		err.jspError(reader.mark(),
-			     "jsp.error.invalid.action.isnottagfile",
+		err.jspError(reader.mark(), "jsp.error.action.isnottagfile",
 			     "&lt;jsp:invoke");
 	    }
 	    parseInvoke(parent);
 	} else if (reader.matches(DOBODY_ACTION)) {
 	    if (!isTagFile) {
-		err.jspError(reader.mark(),
-			     "jsp.error.invalid.action.isnottagfile",
+		err.jspError(reader.mark(), "jsp.error.action.isnottagfile",
 			     "&lt;jsp:doBody");
 	    }
 	    parseDoBody(parent);
