@@ -750,11 +750,12 @@ public abstract class ResponseBase
             throw new IllegalStateException
                 (sm.getString("responseBase.getWriter.ise"));
 
-        stream = createOutputStream();
-        ((ResponseStream) stream).setCommit(false);
+        ResponseStream newStream = (ResponseStream) createOutputStream();
+        newStream.setCommit(false);
         OutputStreamWriter osr =
-          new OutputStreamWriter(stream, getCharacterEncoding());
-        writer = new ResponseWriter(osr, (ResponseStream) stream);
+            new OutputStreamWriter(newStream, getCharacterEncoding());
+        writer = new ResponseWriter(osr, newStream);
+        stream = newStream;
         return (writer);
 
     }
