@@ -214,6 +214,8 @@ public class ErrorDispatcherValve
                              Throwable throwable) {
 
         Context context = request.getContext();
+        if (context == null)
+            return;
 
         Throwable realError = throwable;
         ErrorPage errorPage = findErrorPage(context, realError);
@@ -281,6 +283,9 @@ public class ErrorDispatcherValve
 
         // Handle a custom error page for this status code
         Context context = request.getContext();
+        if (context == null)
+            return;
+
         ErrorPage errorPage = context.findErrorPage(statusCode);
         if (errorPage != null) {
             response.setAppCommitted(false);
