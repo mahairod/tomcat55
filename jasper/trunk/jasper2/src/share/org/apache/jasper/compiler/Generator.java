@@ -525,7 +525,7 @@ public class Generator {
         while( iter.hasNext() ) {
             String key = (String)iter.next();
             TagLibraryInfo tli = (TagLibraryInfo)taglibs.get( key );
-            if( tli.getFunctions().length > 0 ) {
+            if( tli.getFunctions() != null && tli.getFunctions().length > 0 ) {
                 fnPresent = true;
                 break;
             }
