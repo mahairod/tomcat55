@@ -228,12 +228,14 @@ public abstract class StoreBase
                     session.expire();
                 }
                 remove(session.getId());
-            } catch (IOException e) {
-                log (e.toString());
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                log (e.toString());
-                e.printStackTrace();
+            } catch (Exception e) {
+                log ("Session: "+keys[i]+"; "+e.toString());
+                try {
+                    remove(keys[i]);
+                } catch (IOException e2) {
+                    log (e2.toString());
+                    e2.printStackTrace();
+                }
             }
         }
     }
