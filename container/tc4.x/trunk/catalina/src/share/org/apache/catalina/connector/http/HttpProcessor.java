@@ -919,6 +919,7 @@ final class HttpProcessor
     private void process(Socket socket) {
 
         boolean ok = true;
+        boolean finishResponse = true;
         SocketInputStream input = null;
         OutputStream output = null;
 
@@ -934,6 +935,8 @@ final class HttpProcessor
         keepAlive = true;
 
         while (!stopped && ok && keepAlive) {
+
+            finishResponse = true;
 
             try {
                 request.setStream(input);
@@ -966,7 +969,10 @@ final class HttpProcessor
                     }
                 }
             } catch (EOFException e) {
+                // It's very likely to be a socket disconnect on either the 
+                // client or the server
                 ok = false;
+                finishResponse = false;
             } catch (ServletException e) {
                 ok = false;
                 try {
@@ -1028,10 +1034,12 @@ final class HttpProcessor
 
             // Finish up the handling of the request
             try {
-                response.finishResponse();
-                request.finishRequest();
-                if (output != null)
-                    output.flush();
+                if (finishResponse) {
+                    response.finishResponse();
+                    request.finishRequest();
+                    if (output != null)
+                        output.flush();
+                }
             } catch (IOException e) {
                 ok = false;
             }
