@@ -58,7 +58,10 @@
     <copyfile src="${parser.jar}"  dest="${catalina.build}/server/parser.jar"/>
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
-
+    <!--   Catalina needs the JSSE packages -->
+    <copyfile src="${jcert.jar}"  dest="${catalina.build}/server/jcert.jar"/>
+    <copyfile src="${jnet.jar}"  dest="${catalina.build}/server/jnet.jar"/>
+    <copyfile src="${jsse.jar}"  dest="${catalina.build}/server/jsse.jar"/>
   </target>
 
 
@@ -67,9 +70,9 @@
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
-          classpath="${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
-        deprecation="off" debug="on" optimize="off"
-           excludes="**/CVS/**"/>
+             classpath="${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}"
+             deprecation="off" debug="on" optimize="off" target="1.2"
+             excludes="**/CVS/**"/>
 
     <!-- Copy static resource files -->
     <copydir  src="src/share"    dest="${catalina.build}/classes">
