@@ -165,6 +165,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         InputStream in = null;
         URL url = null;
         boolean relativeURL = false;
+        JarFile jarFile = null;
 
 	if (location == null) {
 	    // The URI points to the TLD itself or to a jar file where the TLD
@@ -183,59 +184,62 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
 	}
 
-        if (!location[0].endsWith("jar")) {
-	    // Location points to TLD file
-	    try {
-		in = getResourceAsStream(location[0]);
-		if (in == null) {
-		    throw new FileNotFoundException(location[0]);
-		}
-	    } catch (FileNotFoundException ex) {
-		err.jspError("jsp.error.file.not.found", location[0]);
-	    }
-	    // Now parse the tld.
-	    parseTLD(ctxt, location[0], in, null);
-	    // Add the TLD to dependency list
-	    PageInfo pageInfo = ctxt.createCompiler().getPageInfo();
-	    if (pageInfo != null) {
-		pageInfo.addDependant(location[0]);
-	    }
-	} else {
-	    // Tag library is packaged in JAR file
-	    JarFile jarFile = null;
-	    ZipEntry jarEntry = null;
-	    InputStream stream = null;
-	    try {
-		url = new URL("jar:" + location[0] + "!/");
-		JarURLConnection conn = (JarURLConnection)
-		    url.openConnection();
-		conn.connect(); //@@@ necessary???
-		jarFile = conn.getJarFile();
-		jarEntry = jarFile.getEntry(location[1]);
-		stream = jarFile.getInputStream(jarEntry);
-		parseTLD(ctxt, location[0], stream, jarFile);
-		// FIXME @@@
-		// -- it seems that the JarURLConnection class caches JarFile 
-		// objects for particular URLs, and there is no way to get 
-		// it to release the cached entry, so
-		// there's no way to redeploy from the same JAR file.  Wierd.
-	    } catch (Exception ex) {
-		if (stream != null) {
-		    try {
-			stream.close();
-		    } catch (Throwable t) {}
-		}
-		/*
-		if (jarFile != null) {
-		    try {
-			jarFile.close();
-		    } catch (Throwable t) {}
-		}
-		*/
-		err.jspError("jsp.error.tld.unable_to_read", location[0],
-			     location[1], ex.toString());
-	    }
-	}
+        try {
+
+            if (!location[0].endsWith("jar")) {
+                // Location points to TLD file
+                try {
+                    in = getResourceAsStream(location[0]);
+                    if (in == null) {
+                        throw new FileNotFoundException(location[0]);
+                    }
+                } catch (FileNotFoundException ex) {
+                    err.jspError("jsp.error.file.not.found", location[0]);
+                }
+                // Now parse the tld.
+                parseTLD(ctxt, location[0], in, null);
+                // Add the TLD to dependency list
+                PageInfo pageInfo = ctxt.createCompiler().getPageInfo();
+                if (pageInfo != null) {
+                    pageInfo.addDependant(location[0]);
+                }
+            } else {
+                // Tag library is packaged in JAR file
+                ZipEntry jarEntry = null;
+                JarURLConnection conn = null;
+                try {
+                    url = new URL("jar:" + location[0] + "!/");
+                    conn = (JarURLConnection)
+                        url.openConnection();
+                    conn.connect(); //@@@ necessary???
+                    jarFile = conn.getJarFile();
+                    jarEntry = jarFile.getEntry(location[1]);
+                    in = jarFile.getInputStream(jarEntry);
+                    parseTLD(ctxt, location[0], in, jarFile);
+                    // FIXME @@@
+                    // -- it seems that the JarURLConnection class caches JarFile 
+                    // objects for particular URLs, and there is no way to get 
+                    // it to release the cached entry, so
+                    // there's no way to redeploy from the same JAR file.  Wierd.
+                } catch (Exception ex) {
+                    err.jspError("jsp.error.tld.unable_to_read", location[0],
+                                 location[1], ex.toString());
+                }
+            }
+
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Throwable t) {}
+            }
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (Throwable t) {}
+            }
+        }
+
     }
     
     private void parseTLD(JspCompilationContext ctxt,
