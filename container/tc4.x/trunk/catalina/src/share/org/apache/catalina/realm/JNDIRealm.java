@@ -188,6 +188,10 @@ public class JNDIRealm extends RealmBase {
 
     // ----------------------------------------------------- Instance Variables
 
+    /**
+     *  The type of authentication to use
+     */
+    protected String authentication = null;
 
     /**
      * The connection username for the server we will contact.
@@ -233,6 +237,10 @@ public class JNDIRealm extends RealmBase {
      */
     protected static final String name = "JNDIRealm";
 
+    /**
+     * The protocol that will be used in the communication with the directory server.
+     */
+    protected String protocol = null;
 
     /**
      * The base element for user searches.
@@ -320,10 +328,28 @@ public class JNDIRealm extends RealmBase {
     protected boolean roleSubtree = false;
 
 
-
     // ------------------------------------------------------------- Properties
 
+    /**
+     * Return the type of authentication to use.
+     */  
+    public String getAuthentication() {
 
+        return authentication;
+    
+    }
+ 
+    /**
+     * Set the type of authentication to use.
+     *
+     * @param authentication The authentication
+     */
+    public void setAuthentication(String authentication) {
+    
+        this.authentication = authentication;
+        
+    }
+      
     /**
      * Return the connection username for this Realm.
      */
@@ -410,6 +436,28 @@ public class JNDIRealm extends RealmBase {
         this.contextFactory = contextFactory;
 
     }
+
+
+    /**
+     * Return the protocol to be used.
+     */
+    public String getProtocol() {
+ 
+        return protocol;
+ 
+    }
+    
+    /**
+     * Set the protocol for this Realm.
+     *
+     * @param protocol The new protocol.
+     */
+    public void setProtocol(String protocol) {
+ 
+        this.protocol = protocol;
+        
+    }
+
 
     /**
      * Return the base element for user searches.
@@ -1294,6 +1342,11 @@ public class JNDIRealm extends RealmBase {
             env.put(Context.SECURITY_CREDENTIALS, connectionPassword);
         if (connectionURL != null)
             env.put(Context.PROVIDER_URL, connectionURL);
+        if (authentication != null)
+            env.put(Context.SECURITY_AUTHENTICATION, authentication);
+        if (protocol != null)
+            env.put(Context.SECURITY_PROTOCOL, protocol);
+    
         context = new InitialDirContext(env);
         return (context);
 
@@ -1378,4 +1431,3 @@ class User {
     }
 
 }
-
