@@ -8,7 +8,7 @@
      version="1.4">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)j2ee_1_4.xsds	1.39 03/04/07
+      %W% %E%
     </xsd:documentation>
   </xsd:annotation>
 
@@ -84,6 +84,9 @@ Deployment File may indicate one of the following:
 
 	This group keeps the usage of the contained description related
 	elements consistent across J2EE deployment descriptors.
+
+	All elements may occur multiple times with different languages,
+	to support localization of the content.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -689,6 +692,37 @@ Deployment File may indicate one of the following:
 		   minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
   </xsd:group>
+
+<!-- **************************************************** -->
+
+  <xsd:complexType name="listenerType">
+    <xsd:annotation>
+      <xsd:documentation>
+
+	The listenerType indicates the deployment properties for a web
+	application listener bean.
+
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:group ref="j2ee:descriptionGroup"/>
+      <xsd:element name="listener-class"
+		   type="j2ee:fully-qualified-classType">
+	<xsd:annotation>
+	  <xsd:documentation>
+
+	    The listener-class element declares a class in the
+	    application must be registered as a web
+	    application listener bean. The value is the fully
+	    qualified classname of the listener class.
+
+	  </xsd:documentation>
+	</xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
+  </xsd:complexType>
 
 <!-- **************************************************** -->
 
