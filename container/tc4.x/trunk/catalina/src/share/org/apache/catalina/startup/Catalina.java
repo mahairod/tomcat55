@@ -66,6 +66,7 @@ package org.apache.catalina.startup;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -82,6 +83,7 @@ import org.apache.catalina.Loader;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 
 
 /**
@@ -438,8 +440,13 @@ public class Catalina {
         Digester digester = createStartDigester();
         File file = configFile();
         try {
+            InputSource is =
+                new InputSource("file://" + file.getAbsolutePath());
+            FileInputStream fis = new FileInputStream(file);
+            is.setByteStream(fis);
             digester.push(this);
-            digester.parse(file);
+            digester.parse(is);
+            fis.close();
         } catch (Exception e) {
             System.out.println("Catalina.start: " + e);
             e.printStackTrace(System.out);
@@ -548,8 +555,13 @@ public class Catalina {
         Digester digester = createStopDigester();
         File file = configFile();
         try {
+            InputSource is =
+                new InputSource("file://" + file.getAbsolutePath());
+            FileInputStream fis = new FileInputStream(file);
+            is.setByteStream(fis);
             digester.push(this);
-            digester.parse(file);
+            digester.parse(is);
+            fis.close();
         } catch (Exception e) {
             System.out.println("Catalina.stop: " + e);
             e.printStackTrace(System.out);

@@ -123,6 +123,7 @@ import org.apache.catalina.loader.Extension;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.digester.Digester;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
 
@@ -267,13 +268,17 @@ public final class ContextConfig
         // Process the application web.xml file
         synchronized (webDigester) {
             try {
+                URL url =
+                    servletContext.getResource(Constants.ApplicationWebXml);
+                InputSource is = new InputSource(url.toExternalForm());
+                is.setByteStream(stream);
                 webDigester.setDebug(getDebug());
                 if (context instanceof StandardContext) {
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
                 }
                 webDigester.clear();
                 webDigester.push(context);
-                webDigester.parse(stream);
+                webDigester.parse(is);
             } catch (SAXParseException e) {
                 log(sm.getString("contextConfig.applicationParse"), e);
                 log(sm.getString("contextConfig.applicationPosition",
@@ -285,7 +290,9 @@ public final class ContextConfig
                 ok = false;
             } finally {
                 try {
-                    stream.close();
+                    if (stream != null) {
+                        stream.close();
+                    }
                 } catch (IOException e) {
                     log(sm.getString("contextConfig.applicationClose"), e);
                 }
@@ -487,6 +494,8 @@ public final class ContextConfig
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file.getCanonicalPath());
+            stream.close();
+            stream = null;
         } catch (FileNotFoundException e) {
             log(sm.getString("contextConfig.defaultMissing"));
             return;
@@ -498,12 +507,16 @@ public final class ContextConfig
         // Process the default web.xml file
         synchronized (webDigester) {
             try {
+                InputSource is =
+                    new InputSource("file://" + file.getAbsolutePath());
+                stream = new FileInputStream(file);
+                is.setByteStream(stream);
                 webDigester.setDebug(getDebug());
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
                 webDigester.clear();
                 webDigester.push(context);
-                webDigester.parse(stream);
+                webDigester.parse(is);
             } catch (SAXParseException e) {
                 log(sm.getString("contextConfig.defaultParse"), e);
                 log(sm.getString("contextConfig.defaultPosition",
@@ -515,7 +528,9 @@ public final class ContextConfig
                 ok = false;
             } finally {
                 try {
-                    stream.close();
+                    if (stream != null) {
+                        stream.close();
+                    }
                 } catch (IOException e) {
                     log(sm.getString("contextConfig.defaultClose"), e);
                 }
