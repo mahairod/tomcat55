@@ -1038,13 +1038,13 @@
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
-        <include name="org/apache/catalina/startup/CatalinaLaunchFilter.class" />
         <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <include name="org/apache/catalina/startup/Tool.class" />
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <include name="org/apache/catalina/loader/Extension.class" />
         <include name="org/apache/catalina/loader/Reloader.class" />
         <include name="org/apache/catalina/startup/SecurityClassLoad.class" />
+        <include name="org/apache/catalina/launcher/CatalinaLaunchFilter.class" />
         <include name="org/apache/naming/JndiPermission.class" />
       </fileset>
     </jar>
@@ -1053,10 +1053,10 @@
     <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
       <fileset dir="${catalina.build}/server/classes">
         <exclude name="org/apache/catalina/ant/**" />
+        <exclude name="org/apache/catalina/launcher/**" />
         <exclude name="org/apache/naming/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
         <exclude name="org/apache/catalina/startup/BootstrapService.class" />
-        <exclude name="org/apache/catalina/startup/CatalinaLaunchFilter.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <exclude name="org/apache/catalina/startup/Tool.class" />
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
