@@ -349,8 +349,10 @@ public class OutputBuffer extends Writer
             state = BYTE_STATE;
         } else if (state == BYTE_STATE) {
             bb.flushBuffer();
-        } else if (state == INITIAL_STATE)
-            realWriteBytes(null, 0, 0);       // nothing written yet
+        } else if (state == INITIAL_STATE) {
+            // If the buffers are empty, commit the response header
+            coyoteResponse.sendHeaders();
+        }
         doFlush = false;
 
     }
