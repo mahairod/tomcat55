@@ -138,7 +138,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	// resolveRelativeUri and/or getResourceAsStream don't seem to properly
 	// handle relative paths when dealing when home and getDocBase are set
 	// the following is a workaround until these problems are resolved.
-	private InputStream getResourceAsStream(String uri) 
+    private InputStream getResourceAsStream(String uri) 
 		throws FileNotFoundException 
     {
 		if (uri.indexOf(":") > 0) {
