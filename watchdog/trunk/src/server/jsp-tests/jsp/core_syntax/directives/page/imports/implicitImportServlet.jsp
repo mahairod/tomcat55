@@ -17,7 +17,7 @@
 
 try{
 
- RequestDispatcher rd =getServletContext().getRequestDispatcher( "/jsp/core_syntax/directives/page/imports/implicit.jsp");
+ RequestDispatcher rd = getServletConfig().getServletContext().getRequestDispatcher( "/jsp/core_syntax/directives/page/imports/implicit.jsp");
  rd.forward(request, response);
 
   }catch(Exception o){o.printStackTrace();}
