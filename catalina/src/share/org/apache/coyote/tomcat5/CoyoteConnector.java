@@ -824,6 +824,44 @@ public final class CoyoteConnector
 
 
     /**
+     * Return the Coyote protocol handler in use.
+     */
+    public String getProtocol() {
+
+        if ("org.apache.coyote.http11.Http11Protocol".equals
+            (getProtocolHandlerClassName())) {
+            return "HTTP/1.1";
+        } else if ("org.apache.jk.server.JkCoyoteHandler".equals
+                   (getProtocolHandlerClassName())) {
+            return "AJP/1.3";
+        }
+        return null;
+
+    }
+
+
+    /**
+     * Set the Coyote protocol which will be used
+     * by the connector.
+     *
+     * @param protocolHandlerClassName The new class name
+     */
+    public void setProtocol(String protocol) {
+
+        if (protocol.equals("HTTP/1.1")) {
+            setProtocolHandlerClassName
+                ("org.apache.coyote.http11.Http11Protocol");
+        } else if (protocol.equals("AJP/1.3")) {
+            setProtocolHandlerClassName
+                ("org.apache.jk.server.JkCoyoteHandler");
+        } else {
+            setProtocolHandlerClassName(null);
+        }
+
+    }
+
+
+    /**
      * Return the class name of the Coyote protocol handler in use.
      */
     public String getProtocolHandlerClassName() {
@@ -1257,7 +1295,6 @@ public final class CoyoteConnector
             Class clazz = Class.forName(protocolHandlerClassName);
             protocolHandler = (ProtocolHandler) clazz.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
             throw new LifecycleException
                 (sm.getString
                  ("coyoteConnector.protocolHandlerInstantiationFailed", e));
@@ -1308,7 +1345,7 @@ public final class CoyoteConnector
         Iterator keys = properties.keySet().iterator();
         while( keys.hasNext() ) {
             String name = (String)keys.next();
-            String value = properties.get(name).toString(); 
+            String value = properties.get(name).toString();
             IntrospectionUtils.setProperty(protocolHandler, name, value);
         }
         
