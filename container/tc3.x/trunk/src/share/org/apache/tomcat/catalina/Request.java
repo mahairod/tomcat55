@@ -62,7 +62,7 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 import java.io.InputStream;

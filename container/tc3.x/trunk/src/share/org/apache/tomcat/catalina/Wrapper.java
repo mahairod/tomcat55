@@ -62,7 +62,7 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 import javax.servlet.Servlet;

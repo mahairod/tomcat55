@@ -62,85 +62,140 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 /**
- * A <b>ContextConfig</b> encapsulates the configuration properties related
- * to a specific <code>&lt;web-app%gt;</code> element from the deployment
- * descriptor of a web application.  As such, implementations of this
- * interface may be used both in the servlet engine itself, and administrative
- * tools used to construct deployment descriptors.
- * <p>
- * <b>FIXME:  Add the missing configuration elements!</b>
+ * Representation of a servlet initialization parameter, corresponding to a
+ * specific <code>&lt;init-param&gt;</code> element from the deployment
+ * descriptor of a web application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface ContextConfig {
+public final class WrapperParam {
+
+
+
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Construct a new instance with default parameter values.
+     */
+    public WrapperParam() {
+
+	this(null, null, null);
+
+    }
+
+
+    /**
+     * Construct a new instance with specified parameter values.
+     *
+     * @param name Parameter name
+     * @param value Paramater value
+     * @param description Parameter description
+     */
+    public WrapperParam(String name, String value, String description) {
+
+	super();
+	setName(name);
+	setValue(value);
+	setDescription(description);
+
+    }
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * The parameter description.
+     */
+    private String description = null;
+
+
+    /**
+     * The parameter name.
+     */
+    private String name = null;
+
+
+    /**
+     * The parameter value.
+     */
+    private String value = null;
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the description of this web application.
+     * Return the description of this parameter.
      */
-    public String getDescription();
+    public String getDescription() {
+
+	return (description);
+
+    }
 
 
     /**
-     * Set the description of this web application.
+     * Set the description of this parameter.
      *
      * @param description The new description
      */
-    public void setDescription(String description);
+    public void setDescription(String description) {
+
+	this.description = description;
+
+    }
 
 
     /**
-     * Return the display name of this web application.
+     * Return the name of this parameter.
      */
-    public String getDisplayName();
+    public String getName() {
+
+	return (name);
+
+    }
 
 
     /**
-     * Set the display name of this web application.
+     * Set the name of this parameter.
      *
-     * @param name The new display name
+     * @param name The new name
      */
-    public void setDisplayName(String name);
+    public void setName(String name) {
+
+	this.name = name;
+
+    }
 
 
     /**
-     * Return the path of the large icon file for this web application.
+     * Return the value of this parameter.
      */
-    public String getLargeIcon();
+    public String getValue() {
+
+	return (value);
+
+    }
 
 
     /**
-     * Set the path of the large icon file for this web application.
+     * Set the value of this parameter.
      *
-     * @param path The new icon path
+     * @param value The new value
      */
-    public void setLargeIcon(String path);
+    public void setValue(String value) {
 
+	this.value = value;
 
-    /**
-     * Return the path of the small icon file for this web application.
-     */
-    public String getSmallIcon();
-
-
-    /**
-     * Set the path of the small icon file for this web application.
-     *
-     * @param path The new icon path
-     */
-    public void setSmallIcon(String path);
-
-
-    // --------------------------------------------------------- Public Methods
+    }
 
 
 }

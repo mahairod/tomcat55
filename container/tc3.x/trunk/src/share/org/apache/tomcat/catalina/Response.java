@@ -62,60 +62,48 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * A <b>Session</b> is the Tomcat-internal facade for an
- * <code>HttpSession</code> that is used to maintain state information
- * between requests for a particular user of a web application.
+ * A <b>Response</b> is the Tomcat-internal facade for an
+ * <code>HttpServletResponse</code> that is to be produced, based on the
+ * processing of a corresponding Request.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Session {
+public interface Response {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the creation time for this session.
+     * Return the Context with which this Response is associated.
      */
-    public long getCreationTime();
+    public Context getContext();
 
 
     /**
-     * Set the creation time for this session.  This method is called by the
-     * Manager when an existing Session instance is reused.
+     * Set the Context with which this Response is associated.  This should
+     * be called as soon as the appropriate Context is identified.
      *
-     * @param time The new creation time
+     * @param context The associated Context
      */
-    public void setCreationTime(long time);
+    public void setContext(Context context);
 
 
     /**
-     * Return the session identifier for this session.
-     */
-    public String getId();
-
-
-    /**
-     * Set the session identifier for this session.
-     *
-     * @param id The new session identifier
-     */
-    public void setId(String id);
-
-
-    /**
-     * Return descriptive information about this Session implementation and
+     * Return descriptive information about this Response implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
@@ -123,69 +111,84 @@ public interface Session {
 
 
     /**
-     * Return the last time the client sent a request associated with this
-     * session, as the number of milliseconds since midnight, January 1, 1970
-     * GMT.  Actions that your application takes, such as getting or setting
-     * a value associated with the session, do not affect the access time.
+     * Return the Request with which this Response is associated.
      */
-    public long getLastAccessedTime();
+    public Request getRequest();
 
 
     /**
-     * Return the Manager within which this Session is valid.
-     */
-    public Manager getManager();
-
-
-    /**
-     * Set the Manager within which this Session is valid.
+     * Set the Request with which this Response is associated.
      *
-     * @param manager The new Manager
+     * @param request The new associated request
      */
-    public void setManager(Manager manager);
+    public void setRequest(Request request);
 
 
     /**
-     * Return the maximum time interval, in seconds, between client requests
-     * before the servlet container will invalidate the session.  A negative
-     * time indicates that the session should never time out.
-     */
-    public int getMaxInactiveInterval();
-
-
-    /**
-     * Set the maximum time interval, in seconds, between client requests
-     * before the servlet container will invalidate the session.  A negative
-     * time indicates that the session should never time out.
-     *
-     * @param interval The new maximum interval
-     */
-    public void setMaxInactiveInterval(int interval);
-
-
-    /**
-     * Return the <code>HttpSession</code> for which this object
+     * Return the <code>HttpServletResponse</code> for which this object
      * is the facade.
      */
-    public HttpSession getSession();
+    public HttpServletResponse getResponse();
 
 
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Update the accessed time information for this session.  This method
-     * should be called by the context when a request comes in for a particular
-     * session, even if the application does not reference it.
+     * Ensure that the HTTP headers (and any buffered output) have been
+     * flushed to the output stream, even if it was never acquired by
+     * a servlet.
+     *
+     * @exception IOException if an input/output error occurs
      */
-    public void access();
+    public void flush() throws IOException;
 
 
     /**
-     * Perform the internal processing required to invalidate this session,
-     * without triggering an exception if the session has already expired.
+     * Return the content length that was set or calculated for this Response.
      */
-    public void expire();
+    public int getContentLength();
+
+
+    /**
+     * Return the content type that was set or calculated for this response,
+     * or <code>null</code> if no content type was set.
+     */
+    public String getContentType();
+
+
+    /**
+     * Return the value for the specified header, or <code>null</code> if this
+     * header has not been set.  If more than one value was added for this
+     * name, only the first is returned; use getHeaderValues() to retrieve all
+     * of them.
+     *
+     * @param name Header name to look up
+     */
+    public String getHeader(String name);
+
+
+    /**
+     * Return an enumeration all the header names set for this response, or
+     * an empty Enumeration if no headers have been set.
+     */
+    public Enumeration getHeaderNames();
+
+
+    /**
+     * Return an enumeration of all the header values associated with the
+     * specified header name, or an empty enumeration if there are no such
+     * header values.
+     *
+     * @param name Header name to look up
+     */
+    public Enumeration getHeaderValues(String name);
+
+
+    /**
+     * Return the HTTP status code associated with this Response.
+     */
+    public int getStatus();
 
 
     /**
@@ -193,6 +196,15 @@ public interface Session {
      * preparation for reuse of this object.
      */
     public void recycle();
+
+
+    /**
+     * Set the output stream associated with this Response.  This stream will
+     * be wrapped by a PrintWriter if <code>getWriter()</code> is called.
+     *
+     * @param stream The new output stream
+     */
+    public void setOutputStream(OutputStream stream);
 
 
 }

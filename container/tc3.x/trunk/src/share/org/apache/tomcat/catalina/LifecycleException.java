@@ -62,138 +62,130 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 /**
- * Representation of a servlet initialization parameter, corresponding to a
- * specific <code>&lt;init-param&gt;</code> element from the deployment
- * descriptor of a web application.
+ * General purpose exception that is thrown to indicate a lifecycle related
+ * problem.  Such exceptions should generally be considered fatal to the
+ * operation of the application containing this component.
+ * <p>
+ * <b>FIXME:  Consider using the Avalon framework architecture instead.</b>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public final class WrapperParam {
+public final class LifecycleException extends Exception {
 
 
-
-    // ----------------------------------------------------------- Constructors
+    //------------------------------------------------------------ Constructors
 
 
     /**
-     * Construct a new instance with default parameter values.
+     * Construct a new LifecycleException with no other information.
      */
-    public WrapperParam() {
+    public LifecycleException() {
 
-	this(null, null, null);
+	this(null, null);
 
     }
 
 
     /**
-     * Construct a new instance with specified parameter values.
+     * Construct a new LifecycleException for the specified message.
      *
-     * @param name Parameter name
-     * @param value Paramater value
-     * @param description Parameter description
+     * @param message Message describing this exception
      */
-    public WrapperParam(String name, String value, String description) {
+    public LifecycleException(String message) {
+
+	this(message, null);
+
+    }
+
+
+    /**
+     * Construct a new LifecycleException for the specified throwable.
+     *
+     * @param throwable Throwable that caused this exception
+     */
+    public LifecycleException(Throwable throwable) {
+
+	this(null, throwable);
+
+    }
+
+
+    /**
+     * Construct a new LifecycleException for the specified message
+     * and throwable.
+     *
+     * @param message Message describing this exception
+     * @param throwable Throwable that caused this exception
+     */
+    public LifecycleException(String message, Throwable throwable) {
 
 	super();
-	setName(name);
-	setValue(value);
-	setDescription(description);
+	this.message = message;
+	this.throwable = throwable;
 
     }
 
 
-    // ----------------------------------------------------- Instance Variables
+    //------------------------------------------------------ Instance Variables
 
 
     /**
-     * The parameter description.
+     * The error message passed to our constructor (if any)
      */
-    private String description = null;
+    protected String message = null;
 
 
     /**
-     * The parameter name.
+     * The underlying exception or error passed to our constructor (if any)
      */
-    private String name = null;
+    protected Throwable throwable = null;
+
+
+    //---------------------------------------------------------- Public Methods
 
 
     /**
-     * The parameter value.
+     * Returns the message associated with this exception, if any.
      */
-    private String value = null;
+    public String getMessage() {
 
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the description of this parameter.
-     */
-    public String getDescription() {
-
-	return (description);
+	return (message);
 
     }
 
 
     /**
-     * Set the description of this parameter.
-     *
-     * @param description The new description
+     * Returns the throwable that caused this exception, if any.
      */
-    public void setDescription(String description) {
+    public Throwable getThrowable() {
 
-	this.description = description;
+	return (throwable);
 
     }
 
 
     /**
-     * Return the name of this parameter.
+     * Return a formatted string that describes this exception.
      */
-    public String getName() {
+    public String toString() {
 
-	return (name);
-
-    }
-
-
-    /**
-     * Set the name of this parameter.
-     *
-     * @param name The new name
-     */
-    public void setName(String name) {
-
-	this.name = name;
-
-    }
-
-
-    /**
-     * Return the value of this parameter.
-     */
-    public String getValue() {
-
-	return (value);
-
-    }
-
-
-    /**
-     * Set the value of this parameter.
-     *
-     * @param value The new value
-     */
-    public void setValue(String value) {
-
-	this.value = value;
+	StringBuffer sb = new StringBuffer("LifecycleException:  ");
+	if (message != null) {
+	    sb.append(message);
+	    if (throwable != null) {
+		sb.append(":  ");
+	    }
+	}
+	if (throwable != null) {
+	    sb.append(throwable.toString());
+	}
+	return (sb.toString());
 
     }
 

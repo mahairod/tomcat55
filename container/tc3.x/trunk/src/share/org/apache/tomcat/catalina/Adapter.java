@@ -62,93 +62,43 @@
  */ 
 
 
-package org.apache.tomcat;
-
-
-import java.io.IOException;
+package org.apache.tomcat.catalina;
 
 
 /**
- * A <b>Store</b> is the abstraction of a Tomcat component that provides
- * persistent storage and loading of Sessions and their associated user data.
- * Implementations are free to save and load the Sessions to any media they
- * wish, but it is assumed that saved Sessions are persistent across
- * server or context restarts.
+ * An <b>Adapter</b> is a component responsible receiving requests from,
+ * and returning responses to, a client application.  An Adapter performs
+ * the following general logic:
+ * <ul>
+ * <li>Receive a request from the client application.
+ * <li>Create (or allocate from a pool) appropriate Request and Response
+ *     instances, and populate their properties based on the contents of
+ *     the received request.
+ * <li>Identify an appropriate Container to use for processing this request.
+ *     For a stand alone Tomcat installation, this will probably be a
+ *     (singleton) Engine implementation.  For a Connector attaching Tomcat
+ *     to a web server such as Apache, this step could take advantage of
+ *     parsing already performed within the web server to identify the
+ *     Context, and perhaps even the Wrapper, to utilize in satisfying this
+ *     Request.
+ * <li>Call the <code>invoke()</code> method of the selected Container,
+ *     passing the initialized Request and Response instances as arguments.
+ * <li>Return any response created by the Container to the client, or
+ *     return an appropriate error message if an exception of any type
+ *     was thrown.
+ * <li>If utilizing a pool of Request and Response objects, recycle the pair
+ *     of instances that was just used.
+ * </ul>
+ * It is expected that the implementation details of various Adapters will
+ * vary widely, so the logic above should considered typical rather than
+ * normative.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Store {
+public interface Adapter {
 
-
-    // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the number of Sessions present in this Store.
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public int getSize() throws IOException;
-
-
-    /**
-     * Return descriptive information about this Store implementation and
-     * the corresponding version number, in the format
-     * <code>&lt;description&gt;/&lt;version&gt;</code>.
-     */
-    public String getInfo();
-
-
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Return an array containing the session identifiers of all Sessions
-     * currently saved in this Store.  If there are no such Sessions, a
-     * zero-length array is returned.
-     *
-     * @exception IOException if an input/output error occurred
-     */
-    public String[] keys() throws IOException;
-
-
-    /**
-     * Load and return the Session associated with the specified session
-     * identifier from this Store, without removing it.  If there is no
-     * such stored Session, return <code>null</code>.
-     *
-     * @param id Session identifier of the session to load
-     *
-     * @exception ClassNotFoundException if a deserialization error occurs
-     * @exception IOException if an input/output error occurs
-     */
-    public Session load(String id)
-        throws ClassNotFoundException, IOException;
-
-
-    /**
-     * Remove the Session with the specified session identifier from
-     * this Store, if present.  If no such Session is present, this method
-     * takes no action.
-     *
-     * @param id Session identifier of the Session to be removed
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public void remove(String id) throws IOException;
-
-
-    /**
-     * Save the specified Session into this Store.  Any previously saved
-     * information for the associated session identifier is replaced.
-     *
-     * @param session Session to be saved
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public void save(Session session) throws IOException;
-
+    // No additional methods defined
 
 }

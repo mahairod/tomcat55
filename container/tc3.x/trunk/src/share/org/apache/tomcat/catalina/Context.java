@@ -62,76 +62,71 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
-import org.w3c.dom.Node;
+import javax.servlet.ServletContext;
 
 
 /**
- * Common interface for component life cycle methods.  Tomcat components
- * may, but are not required to, implement this interface (as well as the
- * appropriate interface(s) for the functionality they support) in order to
- * provide a consistent mechanism to configure, start, and stop the component.
+ * A <b>Context</b> is a Container that represents a servlet context, and
+ * therefore an individual web applicaiton, in the Tomcat servlet engine.
+ * It is therefore useful in almost every deploymentof Tomcat (even if a
+ * Connector attached to a web server (such as Apache) uses the web server's
+ * facilities to identify the appropriate Wrapper to handle this request.
+ * It also provides a convenient mechanism to use Interceptors that see
+ * every request processed by this particular web application.
  * <p>
- * <b>FIXME:  Consider using the Avalon framework architecture instead.</b>
+ * The parent Container attached to a Context is generally a Host, but may
+ * be some other implementation, or may be omitted if it is not necessary.
+ * <p>
+ * The child containers attached to a Context are generally implementations
+ * of Wrapper (representing individual servlet definitions.
+ * <p>
+ * <b>FIXME:  Context initialization parameters have descriptions in the
+ * deployment descriptor!</b>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Lifecycle {
+public interface Context extends Container {
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the context configuration definitions for this web application.
+     */
+    public ContextConfig getConfiguration();
+
+
+    /**
+     * Set the context configuration definitions for this web application.
+     *
+     * @param config The new context configuration definitions
+     */
+    public void setConfiguration(ContextConfig config);
+
+
+    /**
+     * Return the servlet context for which this Context is a facade.
+     */
+    public ServletContext getServletContext();
 
 
     // --------------------------------------------------------- Public Methods
 
 
-
     /**
-     * Configure this component, based on the specified configuration
-     * parameters.  This method should be called immediately after the
-     * component instance is created, and before <code>start()</code>
-     * is called.
+     * Return the Wrapper associated with the servlet that matches the
+     * specified context-relative URI, if any; otherwise return
+     * <code>null</code>.
      *
-     * @param parameters Configuration parameters for this component
-     *  (<B>FIXME: What object type should this really be?)
-     *
-     * @exception IllegalStateException if this component has already been
-     *  configured and/or started
-     * @exception LifecycleException if this component detects a fatal error
-     *  in the configuration parameters it was given
+     * @param uri Context-relative URI, which must start with a "/"
      */
-    public void configure(Node parameters)
-	throws LifecycleException;
-
-
-    /**
-     * Prepare for the beginning of active use of the public methods of this
-     * component.  This method should be called after <code>configure()</code>,
-     * and before any of the public methods of the component are utilized.
-     *
-     * @exception IllegalStateException if this component has not yet been
-     *  configured (if required for this component)
-     * @exception IllegalStateException if this component has already been
-     *  started
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
-     */
-    public void start() throws LifecycleException;
-
-
-    /**
-     * Gracefully terminate the active use of the public methods of this
-     * component.  This method should be the last one called on a given
-     * instance of this component.
-     *
-     * @exception IllegalStateException if this component has not been started
-     * @exception IllegalStateException if this component has already
-     *  been stopped
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
-     */
-    public void stop() throws LifecycleException;
+    public Wrapper map(String uri);
 
 
 }

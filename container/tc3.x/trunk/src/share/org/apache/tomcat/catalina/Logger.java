@@ -62,149 +62,85 @@
  */ 
 
 
-package org.apache.tomcat;
-
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Enumeration;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+package org.apache.tomcat.catalina;
 
 
 /**
- * A <b>Response</b> is the Tomcat-internal facade for an
- * <code>HttpServletResponse</code> that is to be produced, based on the
- * processing of a corresponding Request.
+ * A <b>Logger</b> is a generic interface for the message and exception
+ * logging methods of the ServletContext interface.  Loggers can be
+ * attached at any Container level, but will typically only be attached
+ * to a Context, or higher level, Container.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Response {
+public interface Logger {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the Context with which this Response is associated.
+     * Return the Container with which this Logger has been associated.
      */
-    public Context getContext();
+    public Container getContainer();
 
 
     /**
-     * Set the Context with which this Response is associated.  This should
-     * be called as soon as the appropriate Context is identified.
+     * Set the Container with which this Logger has been associated.
      *
-     * @param context The associated Context
+     * @param container The associated Container
      */
-    public void setContext(Context context);
+    public void setContainer(Container container);
 
 
     /**
-     * Return descriptive information about this Response implementation and
+     * Return descriptive information about this Logger implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo();
 
 
-    /**
-     * Return the Request with which this Response is associated.
-     */
-    public Request getRequest();
-
-
-    /**
-     * Set the Request with which this Response is associated.
-     *
-     * @param request The new associated request
-     */
-    public void setRequest(Request request);
-
-
-    /**
-     * Return the <code>HttpServletResponse</code> for which this object
-     * is the facade.
-     */
-    public HttpServletResponse getResponse();
-
-
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Ensure that the HTTP headers (and any buffered output) have been
-     * flushed to the output stream, even if it was never acquired by
-     * a servlet.
+     * Writes the specified message to a servlet log file, usually an event
+     * log.  The name and type of the servlet log is specific to the
+     * servlet container.
      *
-     * @exception IOException if an input/output error occurs
+     * @param msg A <code>String</code> specifying the message to be written
+     *  to the log file
      */
-    public void flush() throws IOException;
+    public void log(String msg);
 
 
     /**
-     * Return the content length that was set or calculated for this Response.
-     */
-    public int getContentLength();
-
-
-    /**
-     * Return the content type that was set or calculated for this response,
-     * or <code>null</code> if no content type was set.
-     */
-    public String getContentType();
-
-
-    /**
-     * Return the value for the specified header, or <code>null</code> if this
-     * header has not been set.  If more than one value was added for this
-     * name, only the first is returned; use getHeaderValues() to retrieve all
-     * of them.
+     * Writes the specified exception, and message, to a servlet log file.
+     * The implementation of this method should call
+     * <code>log(msg, exception)</code> instead.  This method is deprecated
+     * in the ServletContext interface, but not deprecated here to avoid
+     * many useless compiler warnings.
      *
-     * @param name Header name to look up
+     * @param exception An <code>Exception</code> to be reported
+     * @param msg The associated message string
      */
-    public String getHeader(String name);
+    public void log(Exception exception, String msg);
 
 
     /**
-     * Return an enumeration all the header names set for this response, or
-     * an empty Enumeration if no headers have been set.
-     */
-    public Enumeration getHeaderNames();
-
-
-    /**
-     * Return an enumeration of all the header values associated with the
-     * specified header name, or an empty enumeration if there are no such
-     * header values.
+     * Writes an explanatory message and a stack trace for a given
+     * <code>Throwable</code> exception to the servlet log file.  The name
+     * and type of the servlet log file is specific to the servlet container,
+     * usually an event log.
      *
-     * @param name Header name to look up
+     * @param message A <code>String</code> that describes the error or
+     *  exception
+     * @param throwable The <code>Throwable</code> error or exception
      */
-    public Enumeration getHeaderValues(String name);
-
-
-    /**
-     * Return the HTTP status code associated with this Response.
-     */
-    public int getStatus();
-
-
-    /**
-     * Release all object references, and initialize instance variables, in
-     * preparation for reuse of this object.
-     */
-    public void recycle();
-
-
-    /**
-     * Set the output stream associated with this Response.  This stream will
-     * be wrapped by a PrintWriter if <code>getWriter()</code> is called.
-     *
-     * @param stream The new output stream
-     */
-    public void setOutputStream(OutputStream stream);
+    public void log(String message, Throwable throwable);
 
 
 }

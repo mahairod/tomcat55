@@ -77,8 +77,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
-import org.apache.tomcat.Manager;
-import org.apache.tomcat.Session;
+import org.apache.tomcat.catalina.*;
 import org.apache.tomcat.util.StringManager;
 
 

@@ -62,39 +62,76 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
+
+
+import org.w3c.dom.Node;
 
 
 /**
- * An <b>Engine</b> is a Container that represents the entire Tomcat servlet
- * engine.  It is useful in the following types of scenarios:
- * <ul>
- * <li>You wish to use Interceptors that see every single request processed
- *     by the entire engine.
- * <li>You wish to run Tomcat in with a standalone HTTP connector, but still
- *     want support for multiple virtual hosts.
- * </ul>
- * In general, you would not use an Engine when deploying Tomcat connected
- * to a web server (such as Apache), because the Connector will have
- * utilized the web server's facilities to determine which Context (or
- * perhaps even which Wrapper) should be utilized to process this request.
+ * Common interface for component life cycle methods.  Tomcat components
+ * may, but are not required to, implement this interface (as well as the
+ * appropriate interface(s) for the functionality they support) in order to
+ * provide a consistent mechanism to configure, start, and stop the component.
  * <p>
- * The child containers attached to an Engine are generally implementations
- * of Host (representing a virtual host) or Context (representing individual
- * an individual servlet context), depending upon the Engine implementation.
- * <p>
- * If used, an Engine is always the top level Container in a Tomcat hierarchy.
- * Therefore, the implementation's <code>setParent()</code> method should
- * throw <code>IllegalArgumentException</code>.
+ * <b>FIXME:  Consider using the Avalon framework architecture instead.</b>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Engine extends Container {
+public interface Lifecycle {
 
 
-    // No additional methods are defined
+    // --------------------------------------------------------- Public Methods
+
+
+
+    /**
+     * Configure this component, based on the specified configuration
+     * parameters.  This method should be called immediately after the
+     * component instance is created, and before <code>start()</code>
+     * is called.
+     *
+     * @param parameters Configuration parameters for this component
+     *  (<B>FIXME: What object type should this really be?)
+     *
+     * @exception IllegalStateException if this component has already been
+     *  configured and/or started
+     * @exception LifecycleException if this component detects a fatal error
+     *  in the configuration parameters it was given
+     */
+    public void configure(Node parameters)
+	throws LifecycleException;
+
+
+    /**
+     * Prepare for the beginning of active use of the public methods of this
+     * component.  This method should be called after <code>configure()</code>,
+     * and before any of the public methods of the component are utilized.
+     *
+     * @exception IllegalStateException if this component has not yet been
+     *  configured (if required for this component)
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents this component from being used
+     */
+    public void start() throws LifecycleException;
+
+
+    /**
+     * Gracefully terminate the active use of the public methods of this
+     * component.  This method should be the last one called on a given
+     * instance of this component.
+     *
+     * @exception IllegalStateException if this component has not been started
+     * @exception IllegalStateException if this component has already
+     *  been stopped
+     * @exception LifecycleException if this component detects a fatal error
+     *  that needs to be reported
+     */
+    public void stop() throws LifecycleException;
 
 
 }

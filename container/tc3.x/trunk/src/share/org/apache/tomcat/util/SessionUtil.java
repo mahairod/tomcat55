@@ -66,7 +66,7 @@ package org.apache.tomcat.util;
 
 
 import javax.servlet.http.Cookie;
-import org.apache.tomcat.Request;
+import org.apache.tomcat.catalina.Request;
 
 
 

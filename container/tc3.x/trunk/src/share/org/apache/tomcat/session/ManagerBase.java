@@ -71,10 +71,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
-import org.apache.tomcat.Container;
-import org.apache.tomcat.Manager;
-import org.apache.tomcat.Request;
-import org.apache.tomcat.Session;
+import org.apache.tomcat.catalina.*;
 import org.apache.tomcat.util.SessionUtil;
 
 

@@ -62,34 +62,36 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
 /**
- * A <b>WrapperConfig</b> encapsulates the configuration properties related
- * to a specific <code>&lt;servlet%gt;</code> element from the deployment
+ * A <b>ContextConfig</b> encapsulates the configuration properties related
+ * to a specific <code>&lt;web-app%gt;</code> element from the deployment
  * descriptor of a web application.  As such, implementations of this
  * interface may be used both in the servlet engine itself, and administrative
  * tools used to construct deployment descriptors.
+ * <p>
+ * <b>FIXME:  Add the missing configuration elements!</b>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface WrapperConfig {
+public interface ContextConfig {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the description of this servlet.
+     * Return the description of this web application.
      */
     public String getDescription();
 
 
     /**
-     * Set the description of this servlet.
+     * Set the description of this web application.
      *
      * @param description The new description
      */
@@ -97,13 +99,13 @@ public interface WrapperConfig {
 
 
     /**
-     * Return the display name of this servlet.
+     * Return the display name of this web application.
      */
     public String getDisplayName();
 
 
     /**
-     * Set the display name of this servlet.
+     * Set the display name of this web application.
      *
      * @param name The new display name
      */
@@ -111,27 +113,13 @@ public interface WrapperConfig {
 
 
     /**
-     * Return the path of the JSP file for this servlet.
-     */
-    public String getJspFile();
-
-
-    /**
-     * Set the path of the JSP file for this servlet.
-     *
-     * @param path The JSP file path
-     */
-    public void setJspFile();
-
-
-    /**
-     * Return the path of the large icon file for this servlet.
+     * Return the path of the large icon file for this web application.
      */
     public String getLargeIcon();
 
 
     /**
-     * Set the path of the large icon file for this servlet.
+     * Set the path of the large icon file for this web application.
      *
      * @param path The new icon path
      */
@@ -139,57 +127,13 @@ public interface WrapperConfig {
 
 
     /**
-     * Return the load-on-startup order identifier for this servlet, or
-     * zero if this is not a load-on-startup servlet.
-     */
-    public int getLoadOnStartup();
-
-
-    /**
-     * Set the load-on-startup order identifier for this servlet, or
-     * zero if this is not a load-on-startup servlet.
-     *
-     * @param order The new load-on-startup order identifier
-     */
-    public void setLoadOnStartup(int order);
-
-
-    /**
-     * Return the name of the servlet class for this servlet.
-     */
-    public String getServletClass();
-
-
-    /**
-     * Set the name of the servlet class for this servlet.
-     *
-     * @param servletClass The new servlet class
-     */
-    public void setServletClass(String servletClass);
-
-
-    /**
-     * Return the canonical name of this servlet.
-     */
-    public String getServletName();
-
-
-    /**
-     * Set the canonical name of this servlet.
-     *
-     * @param name Canonical name of this servlet
-     */
-    public void setServletName(String name);
-
-
-    /**
-     * Return the path of the small icon file for this servlet.
+     * Return the path of the small icon file for this web application.
      */
     public String getSmallIcon();
 
 
     /**
-     * Set the path of the small icon file for this servlet.
+     * Set the path of the small icon file for this web application.
      *
      * @param path The new icon path
      */
@@ -199,73 +143,4 @@ public interface WrapperConfig {
     // --------------------------------------------------------- Public Methods
 
 
-    /**
-     * Add the specified initialization parameter for this servlet.
-     *
-     * @param param The new initialization parameter
-     */
-    public void addParameter(WrapperParam param);
-
-
-    /**
-     * Add the specified security role reference for this servlet.
-     *
-     * @param role The new role reference
-     */
-    public void addRoleRef(WrapperRole role);
-
-
-    /**
-     * Return the initialization parameter with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Parameter name to look up
-     */
-    public WrapperParam findParameter(String name);
-
-
-    /**
-     * Return the set of initialization parameters for this servlet.  If there
-     * are no defined parameters, a zero-length array is returned.
-     */
-    public WrapperParam[] findParameters();
-
-
-    /**
-     * Return the security role reference for the specified security role
-     * name (as used by the servlet), if any; otherwise return
-     * <code>null</code>.
-     *
-     * @param name Security role name (as used by the servlet) to look up
-     */
-    public WrapperRole findRoleRef(String name);
-
-
-    /**
-     * Return the set of security role references for this servlet.  If there
-     * are no defined role references, a zero-length array is returned.
-     */
-    public WrapperRole[] findRoleRefs();
-
-
-    /**
-     * Remove any initialization parameter with the defined name
-     * from this servlet.
-     *
-     * @param name Name of the parameter to be removed
-     */
-    public void removeParameter(String name);
-
-
-    /**
-     * Remove any security role reference for the specified role name,
-     * as used within the servlet.
-     *
-     * @param name Security role name to be removed
-     */
-    public void removeRoleRef(String name);
-
-
 }
-
-

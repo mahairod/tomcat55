@@ -62,85 +62,137 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
 
 
-import java.security.Principal;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 
 /**
- * A <b>Realm</b> is a read-only facade for an underlying security realm
- * used to authenticate individual users, and identify the security roles
- * associated with those users.  Realms can be attached at any Container
- * level, but will typically only be attached to a Context, or higher level,
- * Container.
+ * A <b>Session</b> is the Tomcat-internal facade for an
+ * <code>HttpSession</code> that is used to maintain state information
+ * between requests for a particular user of a web application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Realm {
+public interface Session {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the Container with which this Realm has been associated.
+     * Return the creation time for this session.
      */
-    public Container getContainer();
+    public long getCreationTime();
 
 
     /**
-     * Set the Container with which this Realm has been associated.
+     * Set the creation time for this session.  This method is called by the
+     * Manager when an existing Session instance is reused.
      *
-     * @param container The associated Container
+     * @param time The new creation time
      */
-    public void setContainer(Container container);
+    public void setCreationTime(long time);
 
 
     /**
-     * Return descriptive information about this Realm implementation and
+     * Return the session identifier for this session.
+     */
+    public String getId();
+
+
+    /**
+     * Set the session identifier for this session.
+     *
+     * @param id The new session identifier
+     */
+    public void setId(String id);
+
+
+    /**
+     * Return descriptive information about this Session implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo();
 
 
+    /**
+     * Return the last time the client sent a request associated with this
+     * session, as the number of milliseconds since midnight, January 1, 1970
+     * GMT.  Actions that your application takes, such as getting or setting
+     * a value associated with the session, do not affect the access time.
+     */
+    public long getLastAccessedTime();
+
+
+    /**
+     * Return the Manager within which this Session is valid.
+     */
+    public Manager getManager();
+
+
+    /**
+     * Set the Manager within which this Session is valid.
+     *
+     * @param manager The new Manager
+     */
+    public void setManager(Manager manager);
+
+
+    /**
+     * Return the maximum time interval, in seconds, between client requests
+     * before the servlet container will invalidate the session.  A negative
+     * time indicates that the session should never time out.
+     */
+    public int getMaxInactiveInterval();
+
+
+    /**
+     * Set the maximum time interval, in seconds, between client requests
+     * before the servlet container will invalidate the session.  A negative
+     * time indicates that the session should never time out.
+     *
+     * @param interval The new maximum interval
+     */
+    public void setMaxInactiveInterval(int interval);
+
+
+    /**
+     * Return the <code>HttpSession</code> for which this object
+     * is the facade.
+     */
+    public HttpSession getSession();
+
+
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
+     * Update the accessed time information for this session.  This method
+     * should be called by the context when a request comes in for a particular
+     * session, even if the application does not reference it.
      */
-    public Principal authenticate(String username, String credentials);
+    public void access();
 
 
     /**
-     * Return the Principal associated with the specified username and
-     * credentials, if there is one; otherwise return <code>null</code>.
-     *
-     * @param username Username of the Principal to look up
-     * @param credentials Password or other credentials to use in
-     *  authenticating this username
+     * Perform the internal processing required to invalidate this session,
+     * without triggering an exception if the session has already expired.
      */
-    public Principal authenticate(String username, byte[] credentials);
+    public void expire();
 
 
     /**
-     * Return <code>true</code> if the specified Principal has the specified
-     * security role, within the context of this Realm; otherwise return
-     * <code>false</code>.
-     *
-     * @param principal Principal for whom the role is to be checked
-     * @param role Security role to be checked
+     * Release all object references, and initialize instance variables, in
+     * preparation for reuse of this object.
      */
-    public boolean hasRole(Principal principal, String role);
+    public void recycle();
 
 
 }

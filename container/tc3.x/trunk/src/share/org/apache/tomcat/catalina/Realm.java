@@ -62,33 +62,37 @@
  */ 
 
 
-package org.apache.tomcat;
+package org.apache.tomcat.catalina;
+
+
+import java.security.Principal;
 
 
 /**
- * A <b>Logger</b> is a generic interface for the message and exception
- * logging methods of the ServletContext interface.  Loggers can be
- * attached at any Container level, but will typically only be attached
- * to a Context, or higher level, Container.
+ * A <b>Realm</b> is a read-only facade for an underlying security realm
+ * used to authenticate individual users, and identify the security roles
+ * associated with those users.  Realms can be attached at any Container
+ * level, but will typically only be attached to a Context, or higher level,
+ * Container.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public interface Logger {
+public interface Realm {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the Container with which this Logger has been associated.
+     * Return the Container with which this Realm has been associated.
      */
     public Container getContainer();
 
 
     /**
-     * Set the Container with which this Logger has been associated.
+     * Set the Container with which this Realm has been associated.
      *
      * @param container The associated Container
      */
@@ -96,7 +100,7 @@ public interface Logger {
 
 
     /**
-     * Return descriptive information about this Logger implementation and
+     * Return descriptive information about this Realm implementation and
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
@@ -107,40 +111,36 @@ public interface Logger {
 
 
     /**
-     * Writes the specified message to a servlet log file, usually an event
-     * log.  The name and type of the servlet log is specific to the
-     * servlet container.
+     * Return the Principal associated with the specified username and
+     * credentials, if there is one; otherwise return <code>null</code>.
      *
-     * @param msg A <code>String</code> specifying the message to be written
-     *  to the log file
+     * @param username Username of the Principal to look up
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
      */
-    public void log(String msg);
+    public Principal authenticate(String username, String credentials);
 
 
     /**
-     * Writes the specified exception, and message, to a servlet log file.
-     * The implementation of this method should call
-     * <code>log(msg, exception)</code> instead.  This method is deprecated
-     * in the ServletContext interface, but not deprecated here to avoid
-     * many useless compiler warnings.
+     * Return the Principal associated with the specified username and
+     * credentials, if there is one; otherwise return <code>null</code>.
      *
-     * @param exception An <code>Exception</code> to be reported
-     * @param msg The associated message string
+     * @param username Username of the Principal to look up
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
      */
-    public void log(Exception exception, String msg);
+    public Principal authenticate(String username, byte[] credentials);
 
 
     /**
-     * Writes an explanatory message and a stack trace for a given
-     * <code>Throwable</code> exception to the servlet log file.  The name
-     * and type of the servlet log file is specific to the servlet container,
-     * usually an event log.
+     * Return <code>true</code> if the specified Principal has the specified
+     * security role, within the context of this Realm; otherwise return
+     * <code>false</code>.
      *
-     * @param message A <code>String</code> that describes the error or
-     *  exception
-     * @param throwable The <code>Throwable</code> error or exception
+     * @param principal Principal for whom the role is to be checked
+     * @param role Security role to be checked
      */
-    public void log(String message, Throwable throwable);
+    public boolean hasRole(Principal principal, String role);
 
 
 }
