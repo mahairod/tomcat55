@@ -68,6 +68,8 @@ package org.apache.catalina.util;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -101,6 +103,19 @@ public final class Enumerator implements Enumeration {
 
 
     /**
+     * Return an Enumeration over the values of the specified Collection.
+     *
+     * @param collection Collection whose values should be enumerated
+     * @param clone true to clone iterator
+     */
+    public Enumerator(Collection collection, boolean clone) {
+
+        this(collection.iterator(), clone);
+
+    }
+
+
+    /**
      * Return an Enumeration over the values returned by the
      * specified Iterator.
      *
@@ -115,6 +130,29 @@ public final class Enumerator implements Enumeration {
 
 
     /**
+     * Return an Enumeration over the values returned by the
+     * specified Iterator.
+     *
+     * @param iterator Iterator to be wrapped
+     * @param clone true to clone iterator
+     */
+    public Enumerator(Iterator iterator, boolean clone) {
+
+        super();
+        if (clone) {
+            this.iterator = iterator;
+        } else {
+            List list = new LinkedList();
+            while(iterator.hasNext()) {
+                list.add(iterator.next());
+            }
+            this.iterator = list.iterator();   
+        }
+
+    }
+
+
+    /**
      * Return an Enumeration over the values of the specified Map.
      *
      * @param map Map whose values should be enumerated
@@ -122,6 +160,19 @@ public final class Enumerator implements Enumeration {
     public Enumerator(Map map) {
 
         this(map.values().iterator());
+
+    }
+
+
+    /**
+     * Return an Enumeration over the values of the specified Map.
+     *
+     * @param map Map whose values should be enumerated
+     * @param clone true to clone iterator
+     */
+    public Enumerator(Map map, boolean clone) {
+
+        this(map.values().iterator(), clone);
 
     }
 

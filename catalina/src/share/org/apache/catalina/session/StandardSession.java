@@ -1000,7 +1000,7 @@ public class StandardSession
                 (sm.getString("standardSession.getAttributeNames.ise"));
 
         synchronized (attributes) {
-            return (new Enumerator(attributes.keySet()));
+            return (new Enumerator(attributes.keySet(), true));
         }
 
     }
