@@ -247,20 +247,24 @@ public final class SecurityUtil{
                 HttpServletRequest request = 
                     (HttpServletRequest)targetArguments[0];
 
+                boolean hasSubject = false;
                 HttpSession session = request.getSession(false);
                 if (session != null){
                     subject = 
                         (Subject)session.getAttribute(Globals.SUBJECT_ATTR);
+                    hasSubject = (subject != null);
+                }
 
-                    if (subject == null){
-                        subject = new Subject();
+                if (subject == null){
+                    subject = new Subject();
                     
-                        if (principal != null){
-                            subject.getPrincipals().add(principal);
-                        }
- 
-                        session.setAttribute(Globals.SUBJECT_ATTR, subject);
+                    if (principal != null){
+                        subject.getPrincipals().add(principal);
                     }
+                }
+
+                if (session != null && !hasSubject) {
+                    session.setAttribute(Globals.SUBJECT_ATTR, subject);
                 }
             }
 
