@@ -46,7 +46,6 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.util.StringManager;
@@ -723,18 +722,6 @@ public class StandardDefaultContext
 
 
     /**
-     * Add resource parameters for this web application.
-     *
-     * @param resourceParameters New resource parameters
-     */
-    public void addResourceParams(ResourceParams resourceParameters) {
-
-        namingResources.addResourceParams(resourceParameters);
-
-    }
-
-
-    /**
      * Add the classname of an InstanceListener to be added to each
      * Wrapper appended to this Context.
      *
@@ -813,7 +800,7 @@ public class StandardDefaultContext
      */
     public void addResourceEnvRef(String name, String type) {
 
-        namingResources.addResourceEnvRef(name, type);
+        //namingResources.addResourceEnvRef(name, type);
 
     }
 
@@ -939,18 +926,6 @@ public class StandardDefaultContext
 
 
     /**
-     * Return the set of defined resource parameters for this web
-     * application.  If none have been defined, a zero-length array
-     * is returned.
-     */
-    public ResourceParams[] findResourceParams() {
-
-        return namingResources.findResourceParams();
-
-    }
-
-
-    /**
      * Return the set of InstanceListener classes that will be added to
      * newly created Wrappers automatically.
      */
@@ -1012,7 +987,7 @@ public class StandardDefaultContext
      */
     public String findResourceEnvRef(String name) {
 
-        return namingResources.findResourceEnvRef(name);
+        return null;//namingResources.findResourceEnvRef(name);
 
     }
 
@@ -1024,7 +999,7 @@ public class StandardDefaultContext
      */
     public String[] findResourceEnvRefs() {
 
-        return namingResources.findResourceEnvRefs();
+        return null;//namingResources.findResourceEnvRefs();
 
     }
 
@@ -1481,8 +1456,6 @@ public class StandardDefaultContext
                 if (contextResources.exists(envRefs[i])) {
                     listener.removeResourceEnvRef(envRefs[i]);
                 }
-                listener.addResourceEnvRef
-                    (envRefs[i], findResourceEnvRef(envRefs[i]));
             }
 
             // Setting the context in read only mode
@@ -1586,14 +1559,6 @@ public class StandardDefaultContext
         }
 
         if (!(context instanceof StandardContext)) {
-            ContextEjb [] contextEjb = findEjbs();
-            for( int i = 0; i < contextEjb.length; i++ ) {
-                context.addEjb(contextEjb[i]);
-            }
-            ContextEnvironment [] contextEnv = findEnvironments();
-            for( int i = 0; i < contextEnv.length; i++ ) {
-                context.addEnvironment(contextEnv[i]);
-            }
             /*
             if (context instanceof StandardContext) {
                 ResourceParams [] resourceParams = findResourceParams();
@@ -1603,19 +1568,6 @@ public class StandardDefaultContext
                 }
             }
             */
-            ContextResource [] resources = findResources();
-            for( int i = 0; i < resources.length; i++ ) {
-                context.addResource(resources[i]);
-            }
-            ContextResourceLink [] resourceLinks = findResourceLinks();
-            for( int i = 0; i < resourceLinks.length; i++ ) {
-                context.addResourceLink(resourceLinks[i]);
-            }
-            String [] envRefs = findResourceEnvRefs();
-            for( int i = 0; i < envRefs.length; i++ ) {
-                context.addResourceEnvRef
-                    (envRefs[i],findResourceEnvRef(envRefs[i]));
-            }
         }
 
     }
