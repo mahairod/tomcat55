@@ -63,6 +63,7 @@ package org.apache.jasper.runtime;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.Servlet;
 import org.apache.jasper.Constants;
 
 /**
@@ -74,20 +75,55 @@ public class TagHandlerPool {
 
     private Tag[] handlers;
 
+    public static String OPTION_TAGPOOL="jasper.tagpoolClassName";
+    public static String OPTION_MAXSIZE="jasper.tagpoolMaxSize";
+
     // index of next available tag handler
     private int current;
+
+    public static TagHandlerPool getTagHandlerPool( Servlet jspServlet) {
+        TagHandlerPool result=null;
+
+        String tpClassName=getOption( jspServlet, OPTION_TAGPOOL, null);
+        if( tpClassName != null ) {
+            try {
+                Class c=Class.forName( tpClassName );
+                result=(TagHandlerPool)c.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                result=null;
+            }
+        }
+        if( result==null ) result=new TagHandlerPool();
+        result.init(jspServlet);
+
+        return result;
+    }
+
+    protected void init( Servlet servlet ) {
+        int maxSize=-1;
+        String maxSizeS=getOption(servlet, OPTION_MAXSIZE, null);
+        maxSize=Integer.parseInt(maxSizeS);
+        if( maxSize <0  ) {
+            maxSize=Constants.MAX_POOL_SIZE;
+        }
+        this.handlers = new Tag[maxSize];
+        this.current = -1;
+    }
 
     /**
      * Constructs a tag handler pool with the default capacity.
      */
     public TagHandlerPool() {
-	this(Constants.MAX_POOL_SIZE);
+	// Nothing - jasper generated servlets call the other constructor,
+        // this should be used in future + init .
     }
 
     /**
      * Constructs a tag handler pool with the given capacity.
      *
      * @param capacity Tag handler pool capacity
+     * @deprecated Use static getTagHandlerPool
      */
     public TagHandlerPool(int capacity) {
 	this.handlers = new Tag[capacity];
@@ -104,20 +140,22 @@ public class TagHandlerPool {
      *
      * @throws JspException if a tag handler cannot be instantiated
      */
-    public synchronized Tag get(Class handlerClass) throws JspException {
+    public Tag get(Class handlerClass) throws JspException {
 	Tag handler = null;
+        synchronized( this ) {
+            if (current >= 0) {
+                handler = handlers[current--];
+                return handler;
+            }
+        }
 
-	if (current >= 0) {
-	    handler = handlers[current--];
-	} else {
-	    try {
-		return (Tag) handlerClass.newInstance();
-	    } catch (Exception e) {
-		throw new JspException(e.getMessage(), e);
-	    }
-	}
-
-	return handler;
+        // Out of sync block - there is no need for other threads to
+        // wait for us to construct a tag for this thread.
+        try {
+            return (Tag) handlerClass.newInstance();
+        } catch (Exception e) {
+            throw new JspException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -127,11 +165,15 @@ public class TagHandlerPool {
      *
      * @param handler Tag handler to add to this tag handler pool
      */
-    public synchronized void reuse(Tag handler) {
-	if (current < (handlers.length - 1))
-	    handlers[++current] = handler;
-	else
-	    handler.release();
+    public void reuse(Tag handler) {
+        synchronized( this ) {
+            if (current < (handlers.length - 1)) {
+                handlers[++current] = handler;
+                return;
+            }
+        }
+        // There is no need for other threads to wait for us to release
+        handler.release();
     }
 
     /**
@@ -143,5 +185,14 @@ public class TagHandlerPool {
 	    handlers[i].release();
 	}
     }
+
+    protected static String getOption( Servlet servlet, String name, String defaultV) {
+        String value=servlet.getServletConfig().getInitParameter(name);
+        if( value != null ) return value;
+        value=servlet.getServletConfig().getServletContext().getInitParameter(name);
+        if( value!=null ) return value;
+        return defaultV;
+    }
+
 }
 
