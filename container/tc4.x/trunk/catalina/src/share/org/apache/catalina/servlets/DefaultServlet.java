@@ -1024,7 +1024,7 @@ public class DefaultServlet
         // Parse range specifier
         Vector ranges = null;
         if (!resourceInfo.collection) {
-            parseRange(request, response, resourceInfo);
+            ranges = parseRange(request, response, resourceInfo);
         
             // Last-Modified header
             if (debug > 0)
@@ -1036,7 +1036,8 @@ public class DefaultServlet
             response.setHeader("ETag", getETag(resourceInfo, true));
         }
         
-        if ( (ranges == null) && (request.getHeader("Range") == null) ) {
+        if ( ((ranges == null) || (ranges.isEmpty())) 
+             && (request.getHeader("Range") == null) ) {
             
             // Set the appropriate output headers
             if (contentType != null) {
@@ -1061,7 +1062,7 @@ public class DefaultServlet
             
         } else {
             
-            if (ranges == null)
+            if ((ranges == null) || (ranges.isEmpty()))
                 return;
             
             // Partial content response.
