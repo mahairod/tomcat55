@@ -77,7 +77,7 @@ import javax.servlet.*;
  * corresponding Servlet-based method invocations.
  * <p>
  * The jspInit() and jspDestroy() methods can be defined by a JSP
- * author, but the _jspService() method is defined authomatically
+ * author, but the _jspService() method is defined automatically
  * by the JSP processor based on the contents of the JSP page.
  *
  * <p><B>_jspService()</B>
@@ -113,7 +113,7 @@ public interface JspPage extends Servlet {
      * A JSP page can override this method by including a definition for it
      * in a declaration element.
      *
-     * A JSP page should redefine the init() method from Servlet
+     * A JSP page should redefine the init() method from Servlet.
      */
     public void jspInit();
 
@@ -124,7 +124,7 @@ public interface JspPage extends Servlet {
      * A JSP page can override this method by including a definition for it
      * in a declaration element.
      *
-     * A JSP page should redefine the destroy() method from Servlet
+     * A JSP page should redefine the destroy() method from Servlet.
      */
     public void jspDestroy();
 
