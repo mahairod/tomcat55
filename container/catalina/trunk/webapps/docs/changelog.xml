@@ -137,6 +137,9 @@
       <fix>
         <bug>31511</bug>: Don't call setenv.bat if not found, in *using-launcher scripts. (yoavs)
       </fix>
+      <fix>
+        <bug>31549</bug>: Add name to WebappClassLoader's stopped message. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

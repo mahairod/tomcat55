@@ -1217,7 +1217,7 @@ public class WebappClassLoader
 
         // Don't load classes if class loader is stopped
         if (!started) {
-            log.info(sm.getString("webappClassLoader.stopped"));
+            log.info(sm.getString("webappClassLoader.stopped", name));
             throw new ThreadDeath();
         }
 
@@ -1670,7 +1670,7 @@ public class WebappClassLoader
     protected ResourceEntry findResourceInternal(String name, String path) {
 
         if (!started) {
-            log.info(sm.getString("webappClassLoader.stopped"));
+            log.info(sm.getString("webappClassLoader.stopped", name));
             return null;
         }
 
