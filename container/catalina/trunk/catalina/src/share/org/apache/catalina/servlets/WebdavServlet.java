@@ -43,7 +43,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.catalina.util.DOMWriter;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.XMLWriter;
+import org.apache.naming.resources.CacheEntry;
 import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.ResourceAttributes;
 import org.apache.tomcat.util.http.FastHttpDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -275,10 +277,10 @@ public class WebdavServlet
      */
     protected boolean checkIfHeaders(HttpServletRequest request,
                                      HttpServletResponse response,
-                                     ResourceInfo resourceInfo)
+                                     ResourceAttributes resourceAttributes)
         throws IOException {
 
-        if (!super.checkIfHeaders(request, response, resourceInfo))
+        if (!super.checkIfHeaders(request, response, resourceAttributes))
             return false;
 
         // TODO : Checking the WebDAV If header
@@ -295,14 +297,6 @@ public class WebdavServlet
 
         resp.addHeader("DAV", "1,2");
         
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
-
         StringBuffer methodsAllowed = determineMethodsAllowed(resources,
                                                               req);
 
@@ -319,14 +313,6 @@ public class WebdavServlet
         throws ServletException, IOException {
 
         if (!listings) {
-            // Retrieve the resources
-            DirContext resources = getResources();
-
-            if (resources == null) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
-            }
-
             // Get allowed methods
             StringBuffer methodsAllowed = determineMethodsAllowed(resources,
                                                                   req);
@@ -429,14 +415,6 @@ public class WebdavServlet
 
         }
 
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
-
         boolean exists = true;
         Object object = null;
         try {
@@ -496,7 +474,7 @@ public class WebdavServlet
                                   XMLWriter.OPENING);
 
         if (depth == 0) {
-            parseProperties(req, resources, generatedXML, path, type,
+            parseProperties(req, generatedXML, path, type,
                             properties);
         } else {
             // The stack always contains the object of the current level
@@ -509,7 +487,7 @@ public class WebdavServlet
             while ((!stack.isEmpty()) && (depth >= 0)) {
 
                 String currentPath = (String) stack.pop();
-                parseProperties(req, resources, generatedXML, currentPath,
+                parseProperties(req, generatedXML, currentPath,
                                 type, properties);
 
                 try {
@@ -622,14 +600,6 @@ public class WebdavServlet
         if ((path.toUpperCase().startsWith("/WEB-INF")) ||
             (path.toUpperCase().startsWith("/META-INF"))) {
             resp.sendError(WebdavStatus.SC_FORBIDDEN);
-            return;
-        }
-
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
@@ -990,14 +960,6 @@ public class WebdavServlet
         String path = getRelativePath(req);
 
         lock.path = path;
-
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
 
         boolean exists = true;
         Object object = null;
@@ -1552,14 +1514,6 @@ public class WebdavServlet
 
         // Overwriting the destination
 
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return false;
-        }
-
         boolean exists = true;
         try {
             resources.lookup(destinationPath);
@@ -1734,14 +1688,6 @@ public class WebdavServlet
 
         if (isLocked(path, ifHeader + lockTokenHeader)) {
             resp.sendError(WebdavStatus.SC_LOCKED);
-            return false;
-        }
-
-        // Retrieve the resources
-        DirContext resources = getResources();
-
-        if (resources == null) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return false;
         }
 
@@ -1943,7 +1889,7 @@ public class WebdavServlet
      * name, then this Vector contains those properties
      */
     private void parseProperties(HttpServletRequest req,
-                                 DirContext resources, XMLWriter generatedXML,
+                                 XMLWriter generatedXML,
                                  String path, int type,
                                  Vector propertiesVector) {
 
@@ -1953,7 +1899,7 @@ public class WebdavServlet
             path.toUpperCase().startsWith("/META-INF"))
             return;
 
-        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
+        CacheEntry cacheEntry = resources.lookupCache(path);
 
         generatedXML.writeElement(null, "response", XMLWriter.OPENING);
         String status = new String("HTTP/1.1 " + WebdavStatus.SC_OK + " "
@@ -1968,7 +1914,7 @@ public class WebdavServlet
             href += path.substring(1);
         else
             href += path;
-        if ((resourceInfo.collection) && (!href.endsWith("/")))
+        if ((cacheEntry.context != null) && (!href.endsWith("/")))
             href += "/";
 
         generatedXML.writeText(rewriteUrl(href));
@@ -1989,24 +1935,25 @@ public class WebdavServlet
 
             generatedXML.writeProperty
                 (null, "creationdate",
-                 getISOCreationDate(resourceInfo.creationDate));
+                 getISOCreationDate(cacheEntry.attributes.getCreation()));
             generatedXML.writeElement(null, "displayname", XMLWriter.OPENING);
             generatedXML.writeData(resourceName);
             generatedXML.writeElement(null, "displayname", XMLWriter.CLOSING);
-            if (!resourceInfo.collection) {
+            if (cacheEntry.resource != null) {
                 generatedXML.writeProperty
-                    (null, "getlastmodified", resourceInfo.httpDate);
+                    (null, "getlastmodified", FastHttpDateFormat.formatDate
+                           (cacheEntry.attributes.getLastModified(), null));
                 generatedXML.writeProperty
                     (null, "getcontentlength",
-                     String.valueOf(resourceInfo.length));
+                     String.valueOf(cacheEntry.attributes.getContentLength()));
                 String contentType = getServletContext().getMimeType
-                    (resourceInfo.path); 
+                    (cacheEntry.name); 
                 if (contentType != null) {
                     generatedXML.writeProperty(null, "getcontenttype",
                                                contentType);
                 }
                 generatedXML.writeProperty(null, "getetag",
-                                           getETag(resourceInfo));
+                                           getETag(cacheEntry.attributes));
                 generatedXML.writeElement(null, "resourcetype",
                                           XMLWriter.NO_CONTENT);
             } else {
@@ -2052,7 +1999,7 @@ public class WebdavServlet
                                       XMLWriter.NO_CONTENT);
             generatedXML.writeElement(null, "displayname",
                                       XMLWriter.NO_CONTENT);
-            if (!resourceInfo.collection) {
+            if (cacheEntry.resource != null) {
                 generatedXML.writeElement(null, "getcontentlanguage",
                                           XMLWriter.NO_CONTENT);
                 generatedXML.writeElement(null, "getcontentlength",
@@ -2096,7 +2043,7 @@ public class WebdavServlet
                 if (property.equals("creationdate")) {
                     generatedXML.writeProperty
                         (null, "creationdate",
-                         getISOCreationDate(resourceInfo.creationDate));
+                         getISOCreationDate(cacheEntry.attributes.getCreation()));
                 } else if (property.equals("displayname")) {
                     generatedXML.writeElement
                         (null, "displayname", XMLWriter.OPENING);
@@ -2104,45 +2051,46 @@ public class WebdavServlet
                     generatedXML.writeElement
                         (null, "displayname", XMLWriter.CLOSING);
                 } else if (property.equals("getcontentlanguage")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeElement(null, "getcontentlanguage",
                                                   XMLWriter.NO_CONTENT);
                     }
                 } else if (property.equals("getcontentlength")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
                             (null, "getcontentlength",
-                             (String.valueOf(resourceInfo.length)));
+                             (String.valueOf(cacheEntry.attributes.getContentLength())));
                     }
                 } else if (property.equals("getcontenttype")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
                             (null, "getcontenttype",
                              getServletContext().getMimeType
-                             (resourceInfo.path));
+                             (cacheEntry.name));
                     }
                 } else if (property.equals("getetag")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
-                            (null, "getetag", getETag(resourceInfo));
+                            (null, "getetag", getETag(cacheEntry.attributes));
                     }
                 } else if (property.equals("getlastmodified")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         propertiesNotFound.addElement(property);
                     } else {
                         generatedXML.writeProperty
-                            (null, "getlastmodified", resourceInfo.httpDate);
+                            (null, "getlastmodified", FastHttpDateFormat.formatDate
+                                    (cacheEntry.attributes.getLastModified(), null));
                     }
                 } else if (property.equals("resourcetype")) {
-                    if (resourceInfo.collection) {
+                    if (cacheEntry.context != null) {
                         generatedXML.writeElement(null, "resourcetype",
                                                   XMLWriter.OPENING);
                         generatedXML.writeElement(null, "collection",
