@@ -41,6 +41,9 @@
   <subsection name="Catalina">
     <changelog>
       <fix>
+        . Add processExpiresFrequency to PersistentManagerBase and made some small JDBCStore optimizations (pero)
+      </fix>
+      <fix>
         Register JSP monitoring mbean for each servlet that declares a jsp-file in web.xml. (luehe)
       </fix>
       <fix>

@@ -175,7 +175,7 @@ public abstract class StoreBase
         long timeNow = System.currentTimeMillis();
         String[] keys = null;
 
-        if(!started) {
+         if(!started) {
             return;
         }
 
@@ -185,7 +185,10 @@ public abstract class StoreBase
             manager.getContainer().getLogger().error("Error getting keys", e);
             return;
         }
-
+        if (manager.getContainer().getLogger().isDebugEnabled()) {
+            manager.getContainer().getLogger().debug(getStoreName()+ ": processExpires check number of " + keys.length + " sessions" );
+        }
+    
         for (int i = 0; i < keys.length; i++) {
             try {
                 StandardSession session = (StandardSession) load(keys[i]);
@@ -194,6 +197,9 @@ public abstract class StoreBase
                 }
                 if (session.isValid()) {
                     continue;
+                }
+                if (manager.getContainer().getLogger().isDebugEnabled()) {
+                    manager.getContainer().getLogger().debug(getStoreName()+ ": processExpires expire store session " + keys[i] );
                 }
                 if ( ( (PersistentManagerBase) manager).isLoaded( keys[i] )) {
                     // recycle old backup session
