@@ -481,15 +481,17 @@ public final class StandardPipeline
             ((Contained) valve).setContainer(this.container);
 
         // Start the new component if necessary
-        if (started && (valve instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) valve).start();
-            } catch (LifecycleException e) {
-                log.error("StandardPipeline.addValve: start: ", e);
+        if (started) {
+            if (valve instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) valve).start();
+                } catch (LifecycleException e) {
+                    log.error("StandardPipeline.addValve: start: ", e);
+                }
             }
+            // Register the newly added valve
+            registerValve(valve);
         }
-        // Register the newly added valve
-        registerValve(valve);
 
         // Add this Valve to the set associated with this Pipeline
         synchronized (valves) {
@@ -606,15 +608,17 @@ public final class StandardPipeline
         }
 
         // Stop this valve if necessary
-        if (started && (valve instanceof Lifecycle)) {
-            try {
-                ((Lifecycle) valve).stop();
-            } catch (LifecycleException e) {
-                log.error("StandardPipeline.removeValve: stop: ", e);
+        if (started) {
+            if (valve instanceof Lifecycle) {
+                try {
+                    ((Lifecycle) valve).stop();
+                } catch (LifecycleException e) {
+                    log.error("StandardPipeline.removeValve: stop: ", e);
+                }
             }
+            // Unregister the removed valave
+            unregisterValve(valve);
         }
-        // Unregister the removed valave
-        unregisterValve(valve);
 
     }
 
