@@ -163,44 +163,69 @@ public class Compiler {
         pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
 
         String javaFileName = ctxt.getServletJavaFileName();
-
-        // Setup the ServletWriter
-        String javaEncoding = ctxt.getOptions().getJavaEncoding();
-
-        OutputStreamWriter osw = null; 
+        ServletWriter writer = null;
+        
         try {
-            osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
-                                         javaEncoding);
-        } catch (UnsupportedEncodingException ex) {
-            errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
+            // Setup the ServletWriter
+            String javaEncoding = ctxt.getOptions().getJavaEncoding();
+
+            OutputStreamWriter osw = null; 
+            try {
+                osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
+                                             javaEncoding);
+            } catch (UnsupportedEncodingException ex) {
+                errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
+            }
+
+            writer = new ServletWriter(new PrintWriter(osw));
+            ctxt.setWriter(writer);
+
+            // Parse the file
+            ParserController parserCtl = new ParserController(ctxt, this);
+            pageNodes = parserCtl.parse(ctxt.getJspFile());
+
+            // Validate and process attributes
+            Validator.validate(this, pageNodes);
+
+            // Dump out the page (for debugging)
+            // Dumper.dump(pageNodes);
+
+            // Collect page info
+            Collector.collect(this, pageNodes);
+
+            // Determine which custom tag needs to declare which scripting vars
+            ScriptingVariabler.set(pageNodes);
+
+            // generate servlet .java file
+            Generator.generate(writer, this, pageNodes);
+            writer.close();
+            writer = null;
+
+            // The writer is only used during the compile, dereference
+            // it in the JspCompilationContext when done to allow it
+            // to be GC'd and save memory.
+            ctxt.setWriter(null);
+        } catch (Exception e) {
+            if (writer != null) {
+                try {
+                    writer.close();
+                    writer = null;
+                } catch (Exception e1) {
+                    // Do nothing
+                }
+            }
+            // Remove the generated .java file
+            new File(javaFileName).delete();
+            throw e;
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e2) {
+                    // Do nothing
+                }
+            }
         }
-
-        ServletWriter writer = new ServletWriter(new PrintWriter(osw));
-        ctxt.setWriter(writer);
-
-        // Parse the file
-        ParserController parserCtl = new ParserController(ctxt, this);
-        pageNodes = parserCtl.parse(ctxt.getJspFile());
-
-        // Validate and process attributes
-        Validator.validate(this, pageNodes);
-
-        // Dump out the page (for debugging)
-        // Dumper.dump(pageNodes);
-
-        // Collect page info
-        Collector.collect(this, pageNodes);
-
-        // Determine which custom tag needs to declare which scripting vars
-        ScriptingVariabler.set(pageNodes);
-
-        // generate servlet .java file
-        Generator.generate(writer, this, pageNodes);
-        writer.close();
-        // The writer is only used during the compile, dereference
-        // it in the JspCompilationContext when done to allow it
-        // to be GC'd and save memory.
-        ctxt.setWriter(null);
     }
 
     /** 
