@@ -578,8 +578,8 @@ public class HttpResponseBase
 	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
 	HttpSession session = hreq.getSession(false);
 
-	if ((session != null) && session.isNew() &&
-	    getContext().getCookies()) {
+	if ((session != null) && session.isNew() && (getContext() != null) 
+            && getContext().getCookies()) {
 	    Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
 				       session.getId());
 	    cookie.setMaxAge(-1);
@@ -1044,8 +1044,6 @@ public class HttpResponseBase
 	String absolute = toAbsolute(location);
 	setStatus(SC_MOVED_TEMPORARILY);
 	setHeader("Location", absolute);
-        //setContentLength(0);
-	//flushBuffer();
 
     }
 
