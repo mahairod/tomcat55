@@ -161,6 +161,7 @@ public class DeltaRequest implements Externalizable {
     public void execute(DeltaSession session) {
         if ( !this.sessionId.equals( session.getId() ) )
             throw new java.lang.IllegalArgumentException("Session id mismatch, not executing the delta request");
+        session.access();
         for ( int i=0; i<actions.size(); i++ ) {
             AttributeInfo info = (AttributeInfo)actions.get(i);
             switch ( info.getType() ) {
@@ -191,6 +192,7 @@ public class DeltaRequest implements Externalizable {
                 default : throw new java.lang.IllegalArgumentException("Invalid attribute info type="+info);
             }//switch
         }//for
+        session.endAccess();
     }
 
     public void reset() {
