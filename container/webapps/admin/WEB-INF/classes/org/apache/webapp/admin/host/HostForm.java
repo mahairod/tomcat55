@@ -117,6 +117,21 @@ public final class HostForm extends ActionForm {
     private String debugLvl = "0";
 
     /**
+     * Boolean for autoDeploy.
+     */
+    private String autoDeploy = "true";
+
+    /**
+     * Boolean for deployXML.
+     */
+    private String deployXML = "true";
+
+    /**
+     * Boolean for liveDeploy.
+     */
+    private String liveDeploy = "true";
+    
+    /**
      * Boolean for unpack WARs.
      */
     private String unpackWARs = "false";
@@ -255,7 +270,63 @@ public final class HostForm extends ActionForm {
         return this.appBase;
 
     }
+    
+    /**
+     * Return the autoDeploy.
+     */
+    public String getAutoDeploy() {
+        
+        return this.autoDeploy;
+        
+    }
+    
+    /**
+     * Set the autoDeploy.
+     */
+    
+    public void setAutoDeploy(String autoDeploy) {
+        
+        this.autoDeploy = autoDeploy;
+        
+    }
 
+    /**
+     * Return the deployXML.
+     */
+    public String getDeployXML() {
+        
+        return this.deployXML;
+        
+    }
+    
+    /**
+     * Set the deployXML.
+     */
+    
+    public void setDeployXML(String deployXML) {
+        
+        this.deployXML = deployXML;
+        
+    }
+
+    /**
+     * Return the liveDeploy.
+     */
+    public String getLiveDeploy() {
+        
+        return this.liveDeploy;
+        
+    }
+    
+    /**
+     * Set the liveDeploy.
+     */
+    
+    public void setLiveDeploy(String liveDeploy) {
+        
+        this.liveDeploy = liveDeploy;
+        
+    }
 
     /**
      * Set the appBase.
@@ -408,12 +479,15 @@ public final class HostForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
 
-        this.objectName = null;
+        this.objectName = null;        
         this.serviceName = null;
         this.hostName = null;
         this.appBase = null;
+        this.autoDeploy = "true";
+        this.deployXML = "true";
+        this.liveDeploy = "true";
         this.debugLvl = "0";
-        this.unpackWARs = "false";
+        this.unpackWARs = "true";
 
     }
 
@@ -428,6 +502,12 @@ public final class HostForm extends ActionForm {
         sb.append(debugLvl);
         sb.append(",appBase=");
         sb.append(appBase);
+        sb.append(",autoDeploy=");
+        sb.append(autoDeploy);
+        sb.append(",deployXML=");
+        sb.append(deployXML);
+        sb.append(",liveDeploy=");
+        sb.append(liveDeploy);
         sb.append(",unpackWARs=");
         sb.append(unpackWARs);
         sb.append("',objectName='");

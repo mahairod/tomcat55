@@ -59,7 +59,7 @@
  *
  */
 
-package org.apache.webapp.admin.host;
+package org.apache.webapp.admin.defaultcontext;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -76,24 +76,24 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
-
+import org.apache.webapp.admin.TomcatTreeBuilder;
 /**
- * The <code>Action</code> that sets up <em>Add Host</em> transactions.
+ * The <code>Action</code> that sets up <em>Add DefaultContext</em> transactions.
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
-public class AddHostAction extends Action {
-
+public class AddDefaultContextAction extends Action {
+    
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-
-
+    
+    
     // --------------------------------------------------------- Public Methods
-
+    
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -109,45 +109,65 @@ public class AddHostAction extends Action {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-    public ActionForward perform(ActionMapping mapping,
-    ActionForm form,
-    HttpServletRequest request,
-    HttpServletResponse response)
-    throws IOException, ServletException {
-
+    public ActionForward perform(ActionMapping mapping, ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
+        throws IOException, ServletException {
+        
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-
-        // the service Name is needed to retrieve the engine mBean to
-        // which the new host mBean will be added.
-        String serviceName = request.getParameter("serviceName");
-
+        
         // Fill in the form values for display and editing
-        HostForm hostFm = new HostForm();
-        session.setAttribute("hostForm", hostFm);
-        hostFm.setAdminAction("Create");
-        hostFm.setObjectName("");
-        hostFm.setHostName("");
-        hostFm.setDebugLvl("0");
-        hostFm.setServiceName(serviceName);
-        hostFm.setAppBase("");
-        hostFm.setAutoDeploy("true");
-        hostFm.setDeployXML("true");
-        hostFm.setLiveDeploy("true");
-        hostFm.setUnpackWARs("true");   
-        hostFm.setXmlNamespaceAware("false");
-        hostFm.setXmlValidation("false");
-        hostFm.setDebugLvlVals(Lists.getDebugLevels());
-        hostFm.setBooleanVals(Lists.getBooleanValues());
-
-        // Forward to the host display page
-        return (mapping.findForward("Host"));
-
-    }
-
-
+        DefaultContextForm defaultContextFm = new DefaultContextForm();
+        session.setAttribute("defaultContextForm", defaultContextFm);
+        defaultContextFm.setAdminAction("Create");
+        defaultContextFm.setObjectName("");
+        String service = request.getParameter("serviceName");
+        String parent = request.getParameter("parent");
+        String defaultContext = null;
+        if (service != null) {
+            defaultContext = TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                            ",service=" + service;
+            parent = TomcatTreeBuilder.SERVICE_TYPE + ",name=" + service;
+            defaultContextFm.setParentObjectName(parent);
+        } else if (parent != null) {
+            defaultContextFm.setParentObjectName(parent);
+            int position = parent.indexOf(",");
+            defaultContext = TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                            parent.substring(position, parent.length());
+        }
+        defaultContextFm.setObjectName(defaultContext);                        
+        int position = defaultContext.indexOf(",");
+        String loader = TomcatTreeBuilder.LOADER_TYPE + 
+                defaultContext.substring(position, defaultContext.length());
+        String manager = TomcatTreeBuilder.MANAGER_TYPE + 
+                defaultContext.substring(position, defaultContext.length());
+        defaultContextFm.setLoaderObjectName(loader);
+        defaultContextFm.setManagerObjectName(manager); 
+        defaultContextFm.setNodeLabel("");
+        defaultContextFm.setCookies("true");
+        defaultContextFm.setCrossContext("true");
+        defaultContextFm.setReloadable("false");
+        defaultContextFm.setUseNaming("true");
+        //loader initialization
+        //defaultContextFm.setLdrCheckInterval("15");
+        //defaultContextFm.setLdrDebugLvl("0");
+        //defaultContextFm.setLdrReloadable("false");
+        //manager initialization
+        //defaultContextFm.setMgrCheckInterval("60");
+        //defaultContextFm.setMgrDebugLvl("0");
+        //defaultContextFm.setMgrMaxSessions("-1");
+        //defaultContextFm.setMgrSessionIDInit("");
+        
+        defaultContextFm.setDebugLvlVals(Lists.getDebugLevels());
+        defaultContextFm.setBooleanVals(Lists.getBooleanValues());        
+        
+        // Forward to the context display page
+        return (mapping.findForward("DefaultContext"));
+        
+    }    
 }
