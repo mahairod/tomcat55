@@ -254,7 +254,7 @@ public class ParserController {
 	    jspReader.reset(startMark);
 	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
-		isTagFile = jspReader.matches("tag");
+		isTagFile = jspReader.matches("tag ");
 		if (isTagFile || jspReader.matches("page")) {
 		    jspReader.skipSpaces();
 		    Attributes attrs = Parser.parseAttributes(this, jspReader);
