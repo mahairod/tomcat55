@@ -176,6 +176,12 @@ public class FormAuthenticator
             register(request, response, principal, Constants.FORM_METHOD,
                      (String) session.getNote(Constants.SESS_USERNAME_NOTE),
                      (String) session.getNote(Constants.SESS_PASSWORD_NOTE));
+            // If we're caching principals we no longer need the username
+            // and password in the session, so remove them
+            if (cache) {
+                session.removeNote(Constants.SESS_USERNAME_NOTE);
+                session.removeNote(Constants.SESS_PASSWORD_NOTE);
+            }
             if (restoreRequest(request, session)) {
                 if (log.isDebugEnabled())
                     log.debug("Proceed to restored request");
@@ -256,10 +262,8 @@ public class FormAuthenticator
         session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
 
         // If we are not caching, save the username and password as well
-        if (!cache) {
-            session.setNote(Constants.SESS_USERNAME_NOTE, username);
-            session.setNote(Constants.SESS_PASSWORD_NOTE, password);
-        }
+        session.setNote(Constants.SESS_USERNAME_NOTE, username);
+        session.setNote(Constants.SESS_PASSWORD_NOTE, password);
 
         // Redirect the user to the original request URI (which will cause
         // the original request to be restored)
