@@ -394,6 +394,14 @@ public final class PoolTcpConnector implements ServerConnector {
 	loghelper.setLogger(logger);
     }
 
+    /**
+     * Set a socket factory explicitly.  This is used
+     * by the EmbededTomcat class to create custom endpoints.
+     */
+    public void setSocketFactory(ServerSocketFactory socketFactory) {
+        this.socketFactory = socketFactory;
+    }
+
     // -------------------- Implementation methods --------------------
 
 

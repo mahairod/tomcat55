@@ -4,6 +4,7 @@ import java.net.*;
 import java.io.*;
 
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.net.*;
 import org.apache.tomcat.request.*;
 import org.apache.tomcat.service.*;
 import org.apache.tomcat.service.http.*;
@@ -33,6 +34,7 @@ import java.util.*;
  *  "expensive" as code complexity and will be deprecated ).
  * 
  * @author costin@eng.sun.com
+ * @author Stefan Freyr Stafansson [stebbi@decode.is]
  */
 public class EmbededTomcat { // extends WebService
     ContextManager contextM = null;
@@ -112,10 +114,22 @@ public class EmbededTomcat { // extends WebService
 	contextM.addServerConnector(  sc );
     }
 
-    /** Add a secure web service.
+    /** Add a secure web service without client authentication using the
+     * default server socket factory.
      */
     public void addSecureEndpoint( int port, InetAddress addr, String hostname,
 				    String keyFile, String keyPass )
+    {
+        addSecureEndpoint(port, addr, hostname, keyFile, keyPass, false);
+    }
+
+    /** Add a secure web service using the
+     * org.apache.tomcat.net.SSLSocketFactory.  clientAuth specifies whether
+     * client authentication is required or not.
+     */
+    public void addSecureEndpoint(int port, InetAddress addr, String hostname,
+                                  String keyStore, String keyPass,
+                                  boolean clientAuth)
     {
 	if(debug>0) log( "addSecureConnector " + port + " " + addr + " " +
 			 hostname );
@@ -126,9 +140,13 @@ public class EmbededTomcat { // extends WebService
 	sc.setAttribute( "vhost_port" , new Integer( port ) );
 	if( addr != null ) sc.setAttribute( "vhost_address", addr );
 	if( hostname != null ) sc.setAttribute( "vhost_name", hostname );
-
-	sc.setAttribute( "socketFactory",
-			 "org.apache.tomcat.net.SSLSocketFactory");
+        if (keyStore != null)
+            sc.setAttribute("keystore", keyStore);
+        if (keyPass != null)
+            sc.setAttribute("keypass", keyPass);
+        if (clientAuth)
+            sc.setAttribute("clientAuth", "true");
+        sc.setSocketFactory(new org.apache.tomcat.net.SSLSocketFactory());
 	//	System.out.println("XXX " + keyFile + " " + keyPass);
 	HttpConnectionHandler ch=new HttpConnectionHandler();
 	ch.setSecure(true);
@@ -136,6 +154,34 @@ public class EmbededTomcat { // extends WebService
 	// XXX add the secure socket
 	
 	contextM.addServerConnector(  sc );
+    }
+
+    /** Add a custom web service using the specified socket factory.
+     *
+     * @param port Port number on which to listen
+     * @param addr Internet address on which to listen
+     * @param hostname Virtual host name for this service
+     * @param secure Should this endpoint be marked secure?
+     * @param socketFactory The factory for server sockets to be used
+     */
+    public void addCustomEndpoint(int port, InetAddress addr, String hostname,
+                                  boolean secure,
+                                  ServerSocketFactory socketFactory) {
+        if (debug>0) log("addCustomEndpoint " + port + " " + addr + " " +
+                         hostname);
+
+        PoolTcpConnector sc = new PoolTcpConnector();
+        sc.setServer(contextM);
+        if (secure) contextM.setSecurePort(port);
+        sc.setAttribute("vhost_port", new Integer(port));
+        if (addr != null) sc.setAttribute("vhost_address", addr);
+        if (hostname != null) sc.setAttribute("vhost_name", hostname);
+        sc.setSocketFactory(socketFactory);
+        HttpConnectionHandler ch = new HttpConnectionHandler();
+        ch.setSecure(secure);
+        sc.setTcpConnectionHandler(ch);
+        contextM.addServerConnector(sc);
+
     }
 
     // -------------------- Context add/remove --------------------
