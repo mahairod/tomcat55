@@ -428,6 +428,22 @@ public class PageContextImpl extends PageContext {
         }
     }
 
+    public BodyContent allocateBody(JspWriter bodyContent, 
+                                    JspWriter previous) {
+
+        if (bodyContent == null) {
+            return new BodyContentImpl(previous);
+        } else {
+            ((BodyContentImpl) bodyContent).setEnclosingWriter(previous);
+            return (BodyContent) bodyContent;
+        }
+
+    }
+
+    public void setOut(JspWriter newOut) {
+        out = newOut;
+    }
+
     Stack writerStack = new Stack();
 
     public BodyContent pushBody() {
