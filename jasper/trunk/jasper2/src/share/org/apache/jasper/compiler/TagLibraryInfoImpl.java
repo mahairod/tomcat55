@@ -383,6 +383,15 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
                 smallIcon = element.getBody();
             } else if ("large-icon".equals(tname)) {
                 largeIcon = element.getBody();
+            } else if ("icon".equals(tname)) {
+                TreeNode icon = element.findChild("small-icon");
+                if (icon != null) {
+                    smallIcon = icon.getBody();
+                }
+                icon = element.findChild("large-icon");
+                if (icon != null) {
+                    largeIcon = icon.getBody();
+                }
             } else if ("info".equals(tname) ||
                      "description".equals(tname)) {
                 info = element.getBody();
