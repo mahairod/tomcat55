@@ -152,7 +152,14 @@ public class ExpandWar {
                     continue;
                 }
                 input = jarFile.getInputStream(jarEntry);
-                expand(input, docBase, name);
+
+                // Bugzilla 33636
+                File expandedFile = expand(input, docBase, name);
+                long lastModified = jarEntry.getTime();
+                if ((lastModified != -1) && (lastModified != 0) && (expandedFile != null)) {
+                    expandedFile.setLastModified(lastModified);
+                }
+
                 input.close();
                 input = null;
             }
@@ -291,10 +298,11 @@ public class ExpandWar {
      * @param input InputStream to be copied
      * @param docBase Document base directory into which we are expanding
      * @param name Relative pathname of the file to be created
+     * @return A handle to the expanded File
      *
      * @exception IOException if an input/output error occurs
      */
-    protected static void expand(InputStream input, File docBase, String name)
+    protected static File expand(InputStream input, File docBase, String name)
         throws IOException {
 
         File file = new File(docBase, name);
@@ -319,6 +327,7 @@ public class ExpandWar {
             }
         }
 
+        return file;
     }
 
 

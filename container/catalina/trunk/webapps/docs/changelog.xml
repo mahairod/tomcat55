@@ -78,6 +78,9 @@
         <bug>34016</bug>: Save and restore docBase when using antiResourceLocking, for compatibility with
         the admin webapp (remm)
       </fix>
+      <update>
+        <bug>33636</bug>: Set lastModified attribute when expanding WAR files. (yoavs)
+      </update>
     </changelog>
    </subsection>
    
