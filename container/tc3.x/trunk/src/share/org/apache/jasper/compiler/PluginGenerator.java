@@ -82,12 +82,15 @@ public class PluginGenerator
     String fallback;
 
     String ieClassId;
+    Mark start;
     
     
-    public PluginGenerator(Hashtable attrs, Hashtable param, String fallback) {
+    public PluginGenerator(Mark start, Hashtable attrs, Hashtable param,
+			   String fallback) {
     	this.attrs = attrs;
 	this.param = param;
 	this.fallback = fallback;
+	this.start = start;
     }
 
     public void init(JspCompilationContext ctxt) throws JasperException {
@@ -107,10 +110,10 @@ public class PluginGenerator
 	String iepluginurl = getAttribute ("iepluginurl");
 
 	if (type == null)
-	    throw new JasperException (Constants.getString (
+	    throw new CompileException (start, Constants.getString (
 	    				"jsp.error.plugin.notype"));
 	if (code == null)
-	    throw new JasperException (Constants.getString (
+	    throw new CompileException (start, Constants.getString (
 	    				"jsp.error.plugin.nocode"));
 
 	writer.popIndent ();

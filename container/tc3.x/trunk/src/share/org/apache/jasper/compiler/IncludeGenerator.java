@@ -88,22 +88,26 @@ public class IncludeGenerator
     boolean isExpression = false;
     Hashtable params;
     
-    public IncludeGenerator(Hashtable attrs, Hashtable param) 
+    public IncludeGenerator(Mark start, Hashtable attrs, Hashtable param) 
         throws JasperException 
     {
 	if (attrs.size() != 2)
-	    throw new JasperException(Constants.getString("jsp.error.include.tag"));
+	    throw new CompileException(start,
+				       Constants.getString("jsp.error.include.tag"));
 
         page = (String) attrs.get("page");
         if (page == null)
-	    throw new JasperException(Constants.getString("jsp.error.include.tag"));
+	    throw new CompileException(start,
+				       Constants.getString("jsp.error.include.tag"));
 
         String flush = (String) attrs.get("flush");
         if (flush == null)
-            throw new JasperException(Constants.getString("jsp.error.include.noflush"));
+            throw new CompileException(start,
+				       Constants.getString("jsp.error.include.noflush"));
 
         if (!flush.equals("true"))
-            throw new JasperException(Constants.getString("jsp.error.include.badflush"));
+            throw new CompileException(start,
+				       Constants.getString("jsp.error.include.badflush"));
 
 	this.params = param;
 	isExpression = JspUtil.isExpression (page);

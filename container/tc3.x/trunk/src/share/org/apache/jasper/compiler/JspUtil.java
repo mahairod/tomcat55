@@ -214,7 +214,7 @@ public class JspUtil {
     }
 
     public static void checkAttributes (String typeOfTag, Hashtable attrs,
-    					ValidAttribute[] validAttributes)
+    					ValidAttribute[] validAttributes, Mark start)
 					throws JasperException
     {
 	boolean valid = true;
@@ -245,7 +245,7 @@ public class JspUtil {
 	 * If mandatory attribute is missing then the exception is thrown.
 	 */
 	if (!valid)
-	    throw new JasperException(Constants.getString(
+	    throw new ParseException(start, Constants.getString(
 			"jsp.error.mandatory.attribute", 
                                  new Object[] { typeOfTag, missingAttribute}));
 
@@ -272,7 +272,7 @@ public class JspUtil {
 		}
 	    }
 	    if (!valid)
-	        throw new JasperException(Constants.getString(
+	        throw new ParseException(start, Constants.getString(
 			"jsp.error.invalid.attribute", 
                                  new Object[] { typeOfTag, attribute }));
 	}
