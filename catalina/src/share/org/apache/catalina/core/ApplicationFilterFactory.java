@@ -146,7 +146,7 @@ public final class ApplicationFilterFactory {
 
         // Create and initialize a filter chain object
         ApplicationFilterChain filterChain = null;
-        if (securityManager == null) {
+        if ((securityManager == null) && (request instanceof Request)) {
             Request req = (Request) request;
             filterChain = (ApplicationFilterChain) req.getFilterChain();
             if (filterChain == null) {
@@ -155,6 +155,7 @@ public final class ApplicationFilterFactory {
             }
         } else {
             // Security: Do not recycle
+            // Cannot recycle when under a request dispatcher
             filterChain = new ApplicationFilterChain();
         }
 
