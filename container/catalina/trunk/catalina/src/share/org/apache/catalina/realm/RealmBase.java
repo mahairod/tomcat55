@@ -411,12 +411,7 @@ public abstract class RealmBase
         // Check each defined security constraint
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String uri = request.getRequestPathMB().toString();
-
-        // Welcome files are exempted from any security-constraint checks
-        if (isWelcomeFile(uri, context)) {
-            return null;
-        }
-
+        
         String method = hreq.getMethod();
         int i;
         boolean found = false;
@@ -587,27 +582,7 @@ public abstract class RealmBase
         return array;
     }
 
-
-    /*
-     * Returns true of the given <tt>uri</tt> identifies a welcome file.
-     *
-     * @param uri The URI to check against the context's list of welcome files
-     * @param ctx The web context
-     * 
-     * @return true if the given <tt>uri</tt> identifies a welcome file,
-     * false otherwise
-     */
-    private boolean isWelcomeFile(String uri, Context ctx) {
-
-        int slash = uri.indexOf('/');
-        if (slash == 0 && uri.length() > 1) {
-            return ctx.findWelcomeFile(uri.substring(1));
-        } else {
-            return false;
-        }
-    }
-            
- 
+    
     /**
      * Perform access control based on the specified authorization constraint.
      * Return <code>true</code> if this constraint is satisfied and processing
