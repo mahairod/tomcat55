@@ -259,8 +259,7 @@ public class SimpleMapper1 extends  BaseInterceptor  {
 									path );
 	    
 	    if( container == null )
-		throw new RuntimeException( "Assertion failed: " +
-					    "container==null");
+			 return 404;
 
 	    if(debug>0)
 		cm.log("SM: Prefix match " + path + " -> " +
