@@ -86,7 +86,7 @@ public class GetHeadersTestServlet extends HttpServlet {
                         count++;
                         String gotHeaderValue = (String)headers.nextElement();
                         if ( (!gotHeaderValue.trim().equals("en-us")
-) || ( !gotHeaderValue.trim().equals("en-gb") ))
+) && ( !gotHeaderValue.trim().equals("en-gb") ))
                         {
                                 out.println("GetHeadersTest test FAILED");
                                 out.println("Got a header value which is not correct : " + gotHeaderValue );

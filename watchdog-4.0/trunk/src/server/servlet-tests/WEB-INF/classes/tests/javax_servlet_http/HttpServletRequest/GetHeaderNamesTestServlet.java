@@ -104,7 +104,7 @@ public class GetHeaderNamesTestServlet extends HttpServlet {
                          if(gotHeader.equalsIgnoreCase("Authorization"))
                          header1="authorization" ;
                          if(gotHeader.equalsIgnoreCase("Cookie") )
-                         header1="cookie" ;
+                         header2="cookie" ;
                                            }
 		if(count !=2) {
 			out.println("GetHeaderNamesTest test FAILED");

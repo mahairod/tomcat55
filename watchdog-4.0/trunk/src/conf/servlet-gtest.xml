@@ -698,7 +698,7 @@
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeader_01Test.html" />
 
       <gtest request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us,en-gb"
+           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us##Accept-Language:en-gb"
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeadersTest.html" />
 
       <gtest request="GET /servlet-tests/GetHeaders_01Test HTTP/1.0"
