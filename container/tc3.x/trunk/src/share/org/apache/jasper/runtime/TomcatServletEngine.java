@@ -62,7 +62,6 @@ package org.apache.jasper.runtime;
 
 import java.io.File;
 import javax.servlet.ServletContext;
-import org.apache.tomcat.core.ServletContextFacade;
 
 /**
  * Implementation of Servlet Engine that is used when the JSP engine
