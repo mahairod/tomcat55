@@ -227,7 +227,8 @@ public class ExpandWar {
                 input.close();
                 input = null;
             }
-            jarFile.close();
+            // FIXME - Closing the JAR file messes up the class loader???
+            //            jarFile.close();
             jarFile = null;
         } finally {
             if (input != null) {
