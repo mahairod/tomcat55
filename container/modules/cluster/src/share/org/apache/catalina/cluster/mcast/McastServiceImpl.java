@@ -246,6 +246,10 @@ public class McastServiceImpl
 
 
     public class ReceiverThread extends Thread {
+        public ReceiverThread() {
+            super();
+            setName("Cluster-MembershipReceiver");
+        }
         public void run() {
             while ( doRun ) {
                 try {
@@ -261,6 +265,8 @@ public class McastServiceImpl
         long time;
         public SenderThread(long time) {
             this.time = time;
+            setName("Cluster-MembershipSender");
+
         }
         public void run() {
             while ( doRun ) {

@@ -441,7 +441,6 @@ public class DeltaManager
 
         // Initialize our internal data structures
         //sessions.clear(); //should not do this
-
         // Open an input stream to the specified pathname, if any
         ByteArrayInputStream fis = null;
         ObjectInputStream ois = null;

@@ -492,6 +492,7 @@ public class SimpleTcpCluster
                                             "synchronous".equals(this.
                     replicationMode));
                 Thread t = new Thread(mReplicationListener);
+                t.setName("Cluster-TcpListener");
                 t.setDaemon(true);
                 t.start();
             } else {
@@ -503,6 +504,7 @@ public class SimpleTcpCluster
                                             this.tcpSelectorTimeout,
                                             IDataSenderFactory.SYNC_MODE.equals(replicationMode) ||
                                             IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode));
+                mReplicationListener.setName("Cluster-ReplicationListener");
                 mReplicationListener.setDaemon(true);
                 mReplicationListener.start();
             }
