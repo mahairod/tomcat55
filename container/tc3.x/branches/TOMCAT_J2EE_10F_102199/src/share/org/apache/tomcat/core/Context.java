@@ -759,14 +759,14 @@ public class Context {
 		resourceName =
 		    ((ServletDescriptor)webComponentDescriptor).getClassName();
 
-		if (container.containsServlet(resourceName)) {
+		if (container.containsServletByName(name)) {
 		    String msg = sm.getString("context.dd.dropServlet",
-		        resourceName);
+		        name + "(" + resourceName + ")" );
 
 		    System.out.println(msg);
 		    
 		    removeResource = true;
-		    container.removeServlet(resourceName);
+		    container.removeServletByName(name);
 		}
 
 		container.addServlet(name, resourceName, description);
