@@ -116,9 +116,6 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "loader.WebappClassLoader$PrivilegedFindResource");
-        loader.loadClass
-            (basePackage +
-             "session.StandardManager$PrivilegedDoUnload");
     }
     
     
@@ -130,6 +127,9 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "session.StandardSession$1");
+        loader.loadClass
+            (basePackage +
+             "session.StandardManager$PrivilegedDoUnload");
     }
     
     
