@@ -92,8 +92,7 @@
   <strong>org.apache.coyote.tomcat4.CoyoteConnector</strong>, but you
   must specify the protocolHandlerClassName attribute (see below).</p>
 
-  <p><strong>This implementation supports the AJP 1.3 and 1.4 
-  protocols.</strong></p>
+  <p><strong>This implementation supports the AJP/1.3 protocol.</strong></p>
 
   <p>It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
