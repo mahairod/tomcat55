@@ -65,8 +65,6 @@ class loader is above the child class loader:</p>
  Catalina   Shared
              /   \
         Webapp1  Webapp2 ... 
-          /         /
-       Jasper1  Jasper2 ...
 </source>
 
 <p>The characteristics of each of these class loaders, including the source
@@ -181,14 +179,6 @@ loaders as it is initialized:</p>
     under the <code>/WEB-INF/lib</code> directory of your web application
     archive, are made visible to the containing web application, but to
     no others.</li>
-<li><strong>JasperX</strong> - If your web application uses JSP pages, Tomcat
-    also creates an additional class loader for the web application,
-    containing the JSP compiler and classes it depends on.  It is initialized
-    to include all JAR files found in <code>$CATALINA_HOME/jasper</code>.
-    Because this is a child class loader of the web application class loader,
-    the Jasper compiler (and the pages that it compiles) can see all of the
-    application bean classes visible in the <code>Webapp</code> class loader.
-    </li>
 </ul>
 
 <p>As mentioned above, the web application class loader diverges from the
