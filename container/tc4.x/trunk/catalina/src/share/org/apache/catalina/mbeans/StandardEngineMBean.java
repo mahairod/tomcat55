@@ -158,6 +158,29 @@ public class StandardEngineMBean extends BaseModelMBean {
 
 
     /**
+     * Delete <code>AccessLogger<code>.
+     *
+     * @exception Exception if an MBean cannot be deleted or deregistered
+     */
+    public void deleteAccessLogger(String pattern)
+        throws Exception {
+
+        StandardEngine engine = (StandardEngine) this.resource;
+        Valve [] valves = engine.getValves();
+        for (int i=0; i<valves.length; i++) {
+            if (valves[i] instanceof AccessLogValve) {
+                if ((((AccessLogValve)valves[i]).getPattern()).equals(pattern)) {
+                    ((AccessLogValve)valves[i]).setContainer(null);
+                    engine.removeValve(valves[i]);
+                    MBeanUtils.destroyMBean(valves[i]);
+                }
+            }
+        }
+
+    }
+
+
+    /**
      * Create a new <code>Host<code>.
      *
      * @param name The new Host's name

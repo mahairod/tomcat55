@@ -145,4 +145,27 @@ public class StandardServiceMBean extends BaseModelMBean {
     }
 
 
+    /**
+     * Delete <code>Connector<code>.
+     *
+     * @exception Exception if an MBean cannot be deleted or deregistered
+     */
+    public void deleteConnector(String address, int port)
+        throws Exception {
+
+        Service service = (Service) this.resource;
+        Connector [] conns = service.findConnectors();
+        for (int i=0; i<conns.length; i++) {
+            if (conns[i] instanceof HttpConnector) {
+                HttpConnector httpcon = (HttpConnector) conns[i];
+                if ((httpcon.getAddress().equals(address)) &&
+                                                (httpcon.getPort()==port)) {
+                    httpcon.setService(null);
+                    service.removeConnector(conns[i]);
+                    MBeanUtils.destroyMBean(conns[i]);
+                }
+            }
+        }
+
+    }
 }
