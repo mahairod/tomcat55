@@ -344,6 +344,11 @@
     </filter-mapping>
 
     <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedRequest01</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
         <filter-name>GenericFilter</filter-name>
         <url-pattern>/WrappedReset01</url-pattern>
     </filter-mapping>
@@ -447,6 +452,10 @@
         <listener-class>org.apache.tester.ContextListener02</listener-class>
     </listener>
 -->
+
+    <listener>
+        <listener-class>org.apache.tester.RequestListener01</listener-class>
+    </listener>
 
     <listener>
         <listener-class>org.apache.tester.SessionListener01</listener-class>
@@ -903,6 +912,11 @@
     <servlet>
         <servlet-name>Reflection01</servlet-name>
         <servlet-class>org.apache.tester.Reflection01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Request01</servlet-name>
+        <servlet-class>org.apache.tester.Request01</servlet-class>
     </servlet>
 
     <servlet>
@@ -1690,6 +1704,16 @@
     <servlet-mapping>
         <servlet-name>Reflection01</servlet-name>
         <url-pattern>/WrappedReflection01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Request01</servlet-name>
+        <url-pattern>/Request01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Request01</servlet-name>
+        <url-pattern>/WrappedRequest01</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

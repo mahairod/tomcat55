@@ -1504,6 +1504,16 @@
          request="${context.path}/WrappedAggregate02?a=1"
       outContent="Aggregate02 PASSED"/>
 
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Request01"
+      outContent="Request01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/WrappedRequest01"
+      outContent="Request01 PASSED"/>
+
     <!-- ========== Other ServletRequest Tests ============================ -->
 
     <!-- Servlet compliance tests, until equivalent tests are included
