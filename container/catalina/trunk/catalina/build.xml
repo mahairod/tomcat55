@@ -595,7 +595,9 @@
   <target name="build-catalina-core">
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${classes.dir}"
-           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           source="${compile.source}"
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="catalina.classpath" />
@@ -634,8 +636,10 @@
   <target name="build-catalina-optional" unless="build.tomcat.base">
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${classes.dir}"
-           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
            optimize="${compile.optimize}"
+           source="${compile.source}"
            excludes="**/CVS/**">
       <classpath refid="catalina.classpath" />
       <exclude name="org/apache/naming/factory/MailSessionFactory.java"
@@ -757,7 +761,9 @@
     <!-- Compile unit test classes -->
     <javac srcdir="src/test" destdir="${catalina.build}/tests"
            deprecation="${compile.deprecation}"
-           debug="${compile.debug}" optimize="off"
+           debug="${compile.debug}"
+           optimize="off"
+           source="${compile.source}"
            excludes="**/CVS/**">
       <classpath refid="test.classpath"/>
     </javac>

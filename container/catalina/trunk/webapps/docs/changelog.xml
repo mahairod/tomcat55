@@ -29,6 +29,9 @@
 <section name="Tomcat 5.5.1 (yoavs)">
   <subsection name="General">
     <changelog>
+      <update>
+        Tomcat 5.5 can be built on JDK 5.0. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
