@@ -904,12 +904,15 @@ public final class ApplicationContext
         while (childPaths.hasMoreElements()) {
             Binding binding = (Binding) childPaths.nextElement();
             String name = binding.getName();
-            String childPath = path + "/" + name;
+            StringBuffer childPath = new StringBuffer(path);
+            if (!"/".equals(path))
+                childPath.append("/");
+            childPath.append(name);
             Object object = binding.getObject();
             if (object instanceof DirContext) {
-                childPath = childPath + "/";
+                childPath.append("/");
             }
-            set.add(childPath);
+            set.add(childPath.toString());
         }
 
     }
