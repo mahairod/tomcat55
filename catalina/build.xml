@@ -711,7 +711,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
     <chmod perm="+x" file="${catalina.build}/bin/tool-wrapper.sh"/>
@@ -999,7 +998,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.deploy}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
     <chmod perm="+x" file="${catalina.deploy}/bin/tool-wrapper.sh"/>
@@ -1175,7 +1173,6 @@
     </copy>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${catalina.dist}/bin/digest.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/startup.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/shutdown.sh"/>
     <chmod perm="+x" file="${catalina.dist}/bin/tool-wrapper.sh"/>
