@@ -285,7 +285,7 @@ public class ServerLifecycleListener
                         }
                         if (context instanceof StandardContext) {
                             Valve cValves[] = ((StandardContext)context).getValves();
-                            for (int l=0; l<=cValves.length; l++) {
+                            for (int l = 0; l < cValves.length; l++) {
                                 if (debug >= 3)
                                     log("Creating MBean for Valve " + cValves[l]);
                                 MBeanUtils.createMBean(cValves[l]);
@@ -307,7 +307,7 @@ public class ServerLifecycleListener
                     }
                     if (host instanceof StandardHost) {
                         Valve hValves[] = ((StandardHost)host).getValves();
-                        for (int k=0; k<=hValves.length; k++) {
+                        for (int k = 0; k < hValves.length; k++) {
                             if (debug >= 3)
                                 log("Creating MBean for Valve " + hValves[k]);
                             MBeanUtils.createMBean(hValves[k]);
@@ -329,7 +329,7 @@ public class ServerLifecycleListener
                 }
                 if (engine instanceof StandardEngine) {
                     Valve eValves[] = ((StandardEngine)engine).getValves();
-                    for (int j=0; j<=eValves.length; j++) {
+                    for (int j = 0; j < eValves.length; j++) {
                         if (debug >= 3)
                             log("Creating MBean for Valve " + eValves[j]);
                         MBeanUtils.createMBean(eValves[j]);
