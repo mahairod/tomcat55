@@ -96,7 +96,7 @@ public final class NonLoginAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-	"org.apache.catalina.authenticator.NonLoginAuthenticator/1.0";
+    "org.apache.catalina.authenticator.NonLoginAuthenticator/1.0";
 
 
     // ------------------------------------------------------------- Properties
@@ -107,7 +107,7 @@ public final class NonLoginAuthenticator
      */
     public String getInfo() {
 
-	return (this.info);
+    return (this.info);
 
     }
 
@@ -129,9 +129,9 @@ public final class NonLoginAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-				HttpResponse response,
-				LoginConfig config)
-	throws IOException {
+                HttpResponse response,
+                LoginConfig config)
+    throws IOException {
 
         if (debug >= 1)
             log("User authentication is not required");

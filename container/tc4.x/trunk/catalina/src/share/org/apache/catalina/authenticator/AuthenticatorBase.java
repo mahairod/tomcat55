@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.catalina.authenticator;
@@ -192,7 +192,7 @@ public abstract class AuthenticatorBase
      * Descriptive information about this implementation.
      */
     protected static final String info =
-	"org.apache.catalina.authenticator.AuthenticatorBase/1.0";
+    "org.apache.catalina.authenticator.AuthenticatorBase/1.0";
 
 
     /**
@@ -218,7 +218,7 @@ public abstract class AuthenticatorBase
      * The string manager for this package.
      */
     protected static final StringManager sm =
-	StringManager.getManager(Constants.Package);
+    StringManager.getManager(Constants.Package);
 
 
     /**
@@ -242,7 +242,7 @@ public abstract class AuthenticatorBase
      */
     public String getAlgorithm() {
 
-	return (this.algorithm);
+    return (this.algorithm);
 
     }
 
@@ -254,7 +254,7 @@ public abstract class AuthenticatorBase
      */
     public void setAlgorithm(String algorithm) {
 
-	this.algorithm = algorithm;
+    this.algorithm = algorithm;
 
     }
 
@@ -264,7 +264,7 @@ public abstract class AuthenticatorBase
      */
     public boolean getCache() {
 
-	return (this.cache);
+    return (this.cache);
 
     }
 
@@ -276,7 +276,7 @@ public abstract class AuthenticatorBase
      */
     public void setCache(boolean cache) {
 
-	this.cache = cache;
+    this.cache = cache;
 
     }
 
@@ -286,7 +286,7 @@ public abstract class AuthenticatorBase
      */
     public Container getContainer() {
 
-	return (this.context);
+    return (this.context);
 
     }
 
@@ -298,12 +298,12 @@ public abstract class AuthenticatorBase
      */
     public void setContainer(Container container) {
 
-	if (!(container instanceof Context))
-	    throw new IllegalArgumentException
-		(sm.getString("authenticator.notContext"));
+    if (!(container instanceof Context))
+        throw new IllegalArgumentException
+        (sm.getString("authenticator.notContext"));
 
-	super.setContainer(container);
-	this.context = (Context) container;
+    super.setContainer(container);
+    this.context = (Context) container;
 
     }
 
@@ -336,11 +336,11 @@ public abstract class AuthenticatorBase
      */
     public String getEntropy() {
 
-	// Calculate a semi-useful value if this has not been set
-	if (this.entropy == null)
-	    setEntropy(this.toString());
+    // Calculate a semi-useful value if this has not been set
+    if (this.entropy == null)
+        setEntropy(this.toString());
 
-	return (this.entropy);
+    return (this.entropy);
 
     }
 
@@ -352,7 +352,7 @@ public abstract class AuthenticatorBase
      */
     public void setEntropy(String entropy) {
 
-	this.entropy = entropy;
+    this.entropy = entropy;
 
     }
 
@@ -362,7 +362,7 @@ public abstract class AuthenticatorBase
      */
     public String getInfo() {
 
-	return (this.info);
+    return (this.info);
 
     }
 
@@ -372,7 +372,7 @@ public abstract class AuthenticatorBase
      */
     public String getRandomClass() {
 
-	return (this.randomClass);
+    return (this.randomClass);
 
     }
 
@@ -384,7 +384,7 @@ public abstract class AuthenticatorBase
      */
     public void setRandomClass(String randomClass) {
 
-	this.randomClass = randomClass;
+    this.randomClass = randomClass;
 
     }
 
@@ -406,26 +406,26 @@ public abstract class AuthenticatorBase
      */
     public void invoke(Request request, Response response,
                        ValveContext context)
-	throws IOException, ServletException {
+    throws IOException, ServletException {
 
-	// If this is not an HTTP request, do nothing
-	if (!(request instanceof HttpRequest) ||
+    // If this is not an HTTP request, do nothing
+    if (!(request instanceof HttpRequest) ||
             !(response instanceof HttpResponse)) {
-	    context.invokeNext(request, response);
-	    return;
-	}
-	if (!(request.getRequest() instanceof HttpServletRequest) ||
-	    !(response.getResponse() instanceof HttpServletResponse)) {
-	    context.invokeNext(request, response);
-	    return;
-	}
-	HttpRequest hrequest = (HttpRequest) request;
-	HttpResponse hresponse = (HttpResponse) response;
-	if (debug >= 1)
-	    log("Security checking request " +
-		((HttpServletRequest) request.getRequest()).getMethod() + " " +
-		((HttpServletRequest) request.getRequest()).getRequestURI());
-	LoginConfig config = this.context.getLoginConfig();
+        context.invokeNext(request, response);
+        return;
+    }
+    if (!(request.getRequest() instanceof HttpServletRequest) ||
+        !(response.getResponse() instanceof HttpServletResponse)) {
+        context.invokeNext(request, response);
+        return;
+    }
+    HttpRequest hrequest = (HttpRequest) request;
+    HttpResponse hresponse = (HttpResponse) response;
+    if (debug >= 1)
+        log("Security checking request " +
+        ((HttpServletRequest) request.getRequest()).getMethod() + " " +
+        ((HttpServletRequest) request.getRequest()).getRequestURI());
+    LoginConfig config = this.context.getLoginConfig();
 
         // Have we got a cached authenticated Principal to record?
         if (cache) {
@@ -448,45 +448,45 @@ public abstract class AuthenticatorBase
             }
         }
 
-	// Special handling for form-based logins to deal with the case
-	// where the login form (and therefore the "j_security_check" URI
-	// to which it submits) might be outside the secured area
-	String contextPath = this.context.getPath();
-	String requestURI =
-	    ((HttpServletRequest) request.getRequest()).getRequestURI();
-	if (requestURI.startsWith(contextPath) &&
-	    requestURI.endsWith(Constants.FORM_ACTION)) {
-	    if (!authenticate(hrequest, hresponse, config)) {
-		if (debug >= 1)
-		    log(" Failed authenticate() test");
-		return;
-	    }
-	}
+    // Special handling for form-based logins to deal with the case
+    // where the login form (and therefore the "j_security_check" URI
+    // to which it submits) might be outside the secured area
+    String contextPath = this.context.getPath();
+    String requestURI =
+        ((HttpServletRequest) request.getRequest()).getRequestURI();
+    if (requestURI.startsWith(contextPath) &&
+        requestURI.endsWith(Constants.FORM_ACTION)) {
+        if (!authenticate(hrequest, hresponse, config)) {
+        if (debug >= 1)
+            log(" Failed authenticate() test");
+        return;
+        }
+    }
 
-	// Is this request URI subject to a security constraint?
-	SecurityConstraint constraint = findConstraint(hrequest);
-	if ((constraint == null) /* &&
-	    (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
-	    if (debug >= 1)
-	        log(" Not subject to any constraint");
-	    context.invokeNext(request, response);
-	    return;
-	}
-	if ((debug >= 1) && (constraint != null))
-	    log(" Subject to constraint " + constraint);
+    // Is this request URI subject to a security constraint?
+    SecurityConstraint constraint = findConstraint(hrequest);
+    if ((constraint == null) /* &&
+        (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
+        if (debug >= 1)
+            log(" Not subject to any constraint");
+        context.invokeNext(request, response);
+        return;
+    }
+    if ((debug >= 1) && (constraint != null))
+        log(" Subject to constraint " + constraint);
 
-	// Enforce any user data constraint for this security constraint
+    // Enforce any user data constraint for this security constraint
         if (debug >= 1)
             log(" Calling checkUserData()");
-	if (!checkUserData(hrequest, hresponse, constraint)) {
-	    if (debug >= 1)
-	        log(" Failed checkUserData() test");
+    if (!checkUserData(hrequest, hresponse, constraint)) {
+        if (debug >= 1)
+            log(" Failed checkUserData() test");
             // ASSERT: Authenticator already set the appropriate
             // HTTP status code, so we do not have to do anything special
-	    return;
-	}
+        return;
+    }
 
-	// Authenticate based upon the specified login configuration
+    // Authenticate based upon the specified login configuration
         if (constraint.getAuthConstraint()) {
             if (debug >= 1)
                 log(" Calling authenticate()");
@@ -499,7 +499,7 @@ public abstract class AuthenticatorBase
             }
         }
 
-	// Perform access control based on the specified role(s)
+    // Perform access control based on the specified role(s)
         if (constraint.getAuthConstraint()) {
             if (debug >= 1)
                 log(" Calling accessControl()");
@@ -512,10 +512,10 @@ public abstract class AuthenticatorBase
             }
         }
 
-	// Any and all specified constraints have been satisfied
-	if (debug >= 1)
-	    log(" Successfully passed all security constraints");
-	context.invokeNext(request, response);
+    // Any and all specified constraints have been satisfied
+    if (debug >= 1)
+        log(" Successfully passed all security constraints");
+    context.invokeNext(request, response);
 
     }
 
@@ -535,56 +535,56 @@ public abstract class AuthenticatorBase
      * @exception IOException if an input/output error occurs
      */
     protected boolean accessControl(HttpRequest request,
-				    HttpResponse response,
-				    SecurityConstraint constraint)
-	throws IOException {
+                    HttpResponse response,
+                    SecurityConstraint constraint)
+    throws IOException {
 
-	if (constraint == null)
-	    return (true);
+    if (constraint == null)
+        return (true);
 
-	// Specifically allow access to the form login and form error pages
-	LoginConfig config = context.getLoginConfig();
-	if ((config != null) &&
-	    (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
-	    String requestURI =
-		((HttpServletRequest) request.getRequest()).getRequestURI();
-	    String loginPage = context.getPath() + config.getLoginPage();
-	    if (loginPage.equals(requestURI)) {
-		if (debug >= 1)
-		    log(" Allow access to login page " + loginPage);
-		return (true);
-	    }
-	    String errorPage = context.getPath() + config.getErrorPage();
-	    if (errorPage.equals(requestURI)) {
-		if (debug >= 1)
-		    log(" Allow access to error page " + errorPage);
-		return (true);
-	    }
-	    if (requestURI.endsWith(Constants.FORM_ACTION)) {
-		if (debug >= 1)
-		    log(" Allow access to username/password submission");
-		return (true);
-	    }
-	}
+    // Specifically allow access to the form login and form error pages
+    LoginConfig config = context.getLoginConfig();
+    if ((config != null) &&
+        (Constants.FORM_METHOD.equals(config.getAuthMethod()))) {
+        String requestURI =
+        ((HttpServletRequest) request.getRequest()).getRequestURI();
+        String loginPage = context.getPath() + config.getLoginPage();
+        if (loginPage.equals(requestURI)) {
+        if (debug >= 1)
+            log(" Allow access to login page " + loginPage);
+        return (true);
+        }
+        String errorPage = context.getPath() + config.getErrorPage();
+        if (errorPage.equals(requestURI)) {
+        if (debug >= 1)
+            log(" Allow access to error page " + errorPage);
+        return (true);
+        }
+        if (requestURI.endsWith(Constants.FORM_ACTION)) {
+        if (debug >= 1)
+            log(" Allow access to username/password submission");
+        return (true);
+        }
+    }
 
-	// Which user principal have we already authenticated?
-	Principal principal =
-	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-	if (principal == null) {
+    // Which user principal have we already authenticated?
+    Principal principal =
+        ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+    if (principal == null) {
             if (debug >= 2)
                 log("  No user authenticated, cannot grant access");
-	    ((HttpServletResponse) response.getResponse()).sendError
-		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-		 sm.getString("authenticator.notAuthenticated"));
-	    return (false);
-	}
+        ((HttpServletResponse) response.getResponse()).sendError
+        (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+         sm.getString("authenticator.notAuthenticated"));
+        return (false);
+    }
 
-	// Check each role included in this constraint
-	Realm realm = context.getRealm();
-	String roles[] = constraint.findAuthRoles();
-	if (roles == null)
-	    roles = new String[0];
-	if (roles.length == 0) {
+    // Check each role included in this constraint
+    Realm realm = context.getRealm();
+    String roles[] = constraint.findAuthRoles();
+    if (roles == null)
+        roles = new String[0];
+    if (roles.length == 0) {
             if (constraint.getAuthConstraint() &&
                 !constraint.getAllRoles()) {
                 ((HttpServletResponse) response.getResponse()).sendError
@@ -592,18 +592,18 @@ public abstract class AuthenticatorBase
                      sm.getString("authenticator.forbidden"));
                 return (false); // No listed roles means no access at all
             } else
-                return (true);	// Authenticated user is sufficient
+                return (true);  // Authenticated user is sufficient
         }
-	for (int i = 0; i < roles.length; i++) {
-	    if (realm.hasRole(principal, roles[i]))
-		return (true);
-	}
+    for (int i = 0; i < roles.length; i++) {
+        if (realm.hasRole(principal, roles[i]))
+        return (true);
+    }
 
-	// Return a "Forbidden" message denying access to this resource
-	((HttpServletResponse) response.getResponse()).sendError
-	    (HttpServletResponse.SC_FORBIDDEN,
-	     sm.getString("authenticator.forbidden"));
-	return (false);
+    // Return a "Forbidden" message denying access to this resource
+    ((HttpServletResponse) response.getResponse()).sendError
+        (HttpServletResponse.SC_FORBIDDEN,
+         sm.getString("authenticator.forbidden"));
+    return (false);
 
     }
 
@@ -622,9 +622,9 @@ public abstract class AuthenticatorBase
      * @exception IOException if an input/output error occurs
      */
     protected abstract boolean authenticate(HttpRequest request,
-					    HttpResponse response,
-					    LoginConfig config)
-	throws IOException;
+                        HttpResponse response,
+                        LoginConfig config)
+    throws IOException;
 
 
     /**
@@ -640,30 +640,30 @@ public abstract class AuthenticatorBase
      * @exception IOException if an input/output error occurs
      */
     protected boolean checkUserData(HttpRequest request,
-				    HttpResponse response,
-				    SecurityConstraint constraint)
-	throws IOException {
+                    HttpResponse response,
+                    SecurityConstraint constraint)
+    throws IOException {
 
-	// Is there a relevant user data constraint?
-	if (constraint == null) {
+    // Is there a relevant user data constraint?
+    if (constraint == null) {
             if (debug >= 2)
-		log("  No applicable security constraint defined");
-	    return (true);
+        log("  No applicable security constraint defined");
+        return (true);
         }
-	String userConstraint = constraint.getUserConstraint();
-	if (userConstraint == null) {
+    String userConstraint = constraint.getUserConstraint();
+    if (userConstraint == null) {
             if (debug >= 2)
-		log("  No applicable user data constraint defined");
-	    return (true);
+        log("  No applicable user data constraint defined");
+        return (true);
         }
-	if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
+    if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
             if (debug >= 2)
                 log("  User data constraint has no restrictions");
-	    return (true);
+        return (true);
         }
 
-	// Validate the request against the user data constraint
-	if (request.getRequest().isSecure()) {
+    // Validate the request against the user data constraint
+    if (request.getRequest().isSecure()) {
             if (debug >= 2)
                 log("  User data constraint already satisfied");
             return (true);
@@ -728,35 +728,35 @@ public abstract class AuthenticatorBase
      */
     protected SecurityConstraint findConstraint(HttpRequest request) {
 
-	// Are there any defined security constraints?
-	SecurityConstraint constraints[] = context.findConstraints();
-	if ((constraints == null) || (constraints.length == 0)) {
-	    if (debug >= 2)
-		log("  No applicable constraints defined");
-	    return (null);
-	}
+    // Are there any defined security constraints?
+    SecurityConstraint constraints[] = context.findConstraints();
+    if ((constraints == null) || (constraints.length == 0)) {
+        if (debug >= 2)
+        log("  No applicable constraints defined");
+        return (null);
+    }
 
-	// Check each defined security constraint
-	HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-	String uri = hreq.getRequestURI();
-	String contextPath = hreq.getContextPath();
-	if (contextPath.length() > 0)
-	    uri = uri.substring(contextPath.length());
+    // Check each defined security constraint
+    HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
+    String uri = hreq.getRequestURI();
+    String contextPath = hreq.getContextPath();
+    if (contextPath.length() > 0)
+        uri = uri.substring(contextPath.length());
         uri = RequestUtil.URLDecode(uri); // Before checking constraints
-	String method = hreq.getMethod();
-	for (int i = 0; i < constraints.length; i++) {
-	    if (debug >= 2)
-		log("  Checking constraint '" + constraints[i] +
-		    "' against " + method + " " + uri + " --> " +
-		    constraints[i].included(uri, method));
-	    if (constraints[i].included(uri, method))
-		return (constraints[i]);
-	}
+    String method = hreq.getMethod();
+    for (int i = 0; i < constraints.length; i++) {
+        if (debug >= 2)
+        log("  Checking constraint '" + constraints[i] +
+            "' against " + method + " " + uri + " --> " +
+            constraints[i].included(uri, method));
+        if (constraints[i].included(uri, method))
+        return (constraints[i]);
+    }
 
-	// No applicable security constraint was found
-	if (debug >= 2)
-	    log("  No applicable constraint located");
-	return (null);
+    // No applicable security constraint was found
+    if (debug >= 2)
+        log("  No applicable constraint located");
+    return (null);
 
     }
 
@@ -767,27 +767,27 @@ public abstract class AuthenticatorBase
      */
     protected synchronized String generateSessionId() {
 
-	// Generate a byte array containing a session identifier
-	Random random = getRandom();
-	byte bytes[] = new byte[SESSION_ID_BYTES];
-	getRandom().nextBytes(bytes);
-	bytes = getDigest().digest(bytes);
+    // Generate a byte array containing a session identifier
+    Random random = getRandom();
+    byte bytes[] = new byte[SESSION_ID_BYTES];
+    getRandom().nextBytes(bytes);
+    bytes = getDigest().digest(bytes);
 
-	// Render the result as a String of hexadecimal digits
-	StringBuffer result = new StringBuffer();
-	for (int i = 0; i < bytes.length; i++) {
-	    byte b1 = (byte) ((bytes[i] & 0xf0) >> 4);
-	    byte b2 = (byte) (bytes[i] & 0x0f);
-	    if (b1 < 10)
-		result.append((char) ('0' + b1));
-	    else
-		result.append((char) ('A' + (b1 - 10)));
-	    if (b2 < 10)
-		result.append((char) ('0' + b2));
-	    else
-		result.append((char) ('0' + (b2 - 10)));
-	}
-	return (result.toString());
+    // Render the result as a String of hexadecimal digits
+    StringBuffer result = new StringBuffer();
+    for (int i = 0; i < bytes.length; i++) {
+        byte b1 = (byte) ((bytes[i] & 0xf0) >> 4);
+        byte b2 = (byte) (bytes[i] & 0x0f);
+        if (b1 < 10)
+        result.append((char) ('0' + b1));
+        else
+        result.append((char) ('A' + (b1 - 10)));
+        if (b2 < 10)
+        result.append((char) ('0' + b2));
+        else
+        result.append((char) ('0' + (b2 - 10)));
+    }
+    return (result.toString());
 
     }
 
@@ -799,19 +799,19 @@ public abstract class AuthenticatorBase
      */
     protected synchronized MessageDigest getDigest() {
 
-	if (this.digest == null) {
-	    try {
-		this.digest = MessageDigest.getInstance(algorithm);
-	    } catch (NoSuchAlgorithmException e) {
-		try {
-		    this.digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
-		} catch (NoSuchAlgorithmException f) {
-		    this.digest = null;
-		}
-	    }
-	}
+    if (this.digest == null) {
+        try {
+        this.digest = MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+        try {
+            this.digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
+        } catch (NoSuchAlgorithmException f) {
+            this.digest = null;
+        }
+        }
+    }
 
-	return (this.digest);
+    return (this.digest);
 
     }
 
@@ -823,22 +823,22 @@ public abstract class AuthenticatorBase
      */
     protected synchronized Random getRandom() {
 
-	if (this.random == null) {
-	    try {
-		Class clazz = Class.forName(randomClass);
-		this.random = (Random) clazz.newInstance();
-		long seed = System.currentTimeMillis();
-		char entropy[] = getEntropy().toCharArray();
-		for (int i = 0; i < entropy.length; i++) {
-		    long update = ((byte) entropy[i]) << ((i % 8) * 8);
-		    seed ^= update;		    
-		}
-	    } catch (Exception e) {
-		this.random = new java.util.Random();
-	    }
-	}
+    if (this.random == null) {
+        try {
+        Class clazz = Class.forName(randomClass);
+        this.random = (Random) clazz.newInstance();
+        long seed = System.currentTimeMillis();
+        char entropy[] = getEntropy().toCharArray();
+        for (int i = 0; i < entropy.length; i++) {
+            long update = ((byte) entropy[i]) << ((i % 8) * 8);
+            seed ^= update;
+        }
+        } catch (Exception e) {
+        this.random = new java.util.Random();
+        }
+    }
 
-	return (this.random);
+    return (this.random);
 
     }
 
@@ -851,7 +851,7 @@ public abstract class AuthenticatorBase
      */
     protected Session getSession(HttpRequest request) {
 
-	return (getSession(request, false));
+    return (getSession(request, false));
 
     }
 
@@ -866,21 +866,21 @@ public abstract class AuthenticatorBase
      */
     protected Session getSession(HttpRequest request, boolean create) {
 
-	HttpServletRequest hreq =
-	    (HttpServletRequest) request.getRequest();
-	HttpSession hses = hreq.getSession(create);
-	if (hses == null)
-	    return (null);
-	Manager manager = context.getManager();
-	if (manager == null)
-	    return (null);
-	else {
-	    try {
-		return (manager.findSession(hses.getId()));
-	    } catch (IOException e) {
-		return (null);
-	    }
-	}
+    HttpServletRequest hreq =
+        (HttpServletRequest) request.getRequest();
+    HttpSession hses = hreq.getSession(create);
+    if (hses == null)
+        return (null);
+    Manager manager = context.getManager();
+    if (manager == null)
+        return (null);
+    else {
+        try {
+        return (manager.findSession(hses.getId()));
+        } catch (IOException e) {
+        return (null);
+        }
+    }
 
     }
 
@@ -892,13 +892,13 @@ public abstract class AuthenticatorBase
      */
     protected void log(String message) {
 
-	Logger logger = context.getLogger();
-	if (logger != null)
-	    logger.log("Authenticator[" + context.getPath() + "]: " +
-		       message);
-	else
-	    System.out.println("Authenticator[" + context.getPath() +
-			       "]: " + message);
+    Logger logger = context.getLogger();
+    if (logger != null)
+        logger.log("Authenticator[" + context.getPath() + "]: " +
+               message);
+    else
+        System.out.println("Authenticator[" + context.getPath() +
+                   "]: " + message);
 
     }
 
@@ -911,15 +911,15 @@ public abstract class AuthenticatorBase
      */
     protected void log(String message, Throwable throwable) {
 
-	Logger logger = context.getLogger();
-	if (logger != null)
-	    logger.log("Authenticator[" + context.getPath() + "]: " +
-		       message, throwable);
-	else {
-	    System.out.println("Authenticator[" + context.getPath() +
+    Logger logger = context.getLogger();
+    if (logger != null)
+        logger.log("Authenticator[" + context.getPath() + "]: " +
+               message, throwable);
+    else {
+        System.out.println("Authenticator[" + context.getPath() +
                                "]: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+        throwable.printStackTrace(System.out);
+    }
 
     }
 
@@ -984,7 +984,7 @@ public abstract class AuthenticatorBase
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+    lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -996,7 +996,7 @@ public abstract class AuthenticatorBase
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+    lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -1013,14 +1013,14 @@ public abstract class AuthenticatorBase
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("authenticator.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
+    // Validate and update our current component state
+    if (started)
+        throw new LifecycleException
+        (sm.getString("authenticator.alreadyStarted"));
+    lifecycle.fireLifecycleEvent(START_EVENT, null);
         if (context instanceof StandardContext)
             setDebug(((StandardContext) context).getDebug());
-	started = true;
+    started = true;
 
         // Look up the SingleSignOn implementation in our request processing
         // path, if there is one
@@ -1061,12 +1061,12 @@ public abstract class AuthenticatorBase
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("authenticator.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+    // Validate and update our current component state
+    if (!started)
+        throw new LifecycleException
+        (sm.getString("authenticator.notStarted"));
+    lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+    started = false;
 
         sso = null;
 

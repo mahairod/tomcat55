@@ -85,7 +85,7 @@ import org.apache.catalina.util.MD5Encoder;
 /**
  * An <b>Authenticator</b> and <b>Valve</b> implementation of HTTP DIGEST
  * Authentication (see RFC 2069).
- * 
+ *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @version $Revision$ $Date$
@@ -126,7 +126,7 @@ public final class DigestAuthenticator
      * Descriptive information about this implementation.
      */
     private static final String info =
-	"org.apache.catalina.authenticator.DigestAuthenticator/1.0";
+    "org.apache.catalina.authenticator.DigestAuthenticator/1.0";
 
 
     // ----------------------------------------------------------- Constructors
@@ -160,7 +160,7 @@ public final class DigestAuthenticator
 
 
     /**
-     * No once expiration (in millisecond). A shorter amount would mean a 
+     * No once expiration (in millisecond). A shorter amount would mean a
      * better security level (since the token is generated more often), but at
      * the expense of a bigger server overhead.
      */
@@ -189,7 +189,7 @@ public final class DigestAuthenticator
      */
     public String getInfo() {
 
-	return (this.info);
+    return (this.info);
 
     }
 
@@ -211,41 +211,41 @@ public final class DigestAuthenticator
      * @exception IOException if an input/output error occurs
      */
     public boolean authenticate(HttpRequest request,
-				HttpResponse response,
-				LoginConfig config)
-	throws IOException {
+                HttpResponse response,
+                LoginConfig config)
+    throws IOException {
 
-	// Have we already authenticated someone?
-	Principal principal =
-	    ((HttpServletRequest) request.getRequest()).getUserPrincipal();
-	if (principal != null)
-	    return (true);
+    // Have we already authenticated someone?
+    Principal principal =
+        ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+    if (principal != null)
+        return (true);
 
-	// Validate any credentials already included with this request
-	HttpServletRequest hreq =
-	    (HttpServletRequest) request.getRequest();
-	HttpServletResponse hres =
-	    (HttpServletResponse) response.getResponse();
-	String authorization = request.getAuthorization();
-	if (authorization != null) {
-	    principal = findPrincipal(hreq, authorization, context.getRealm());
-	    if (principal != null) {
+    // Validate any credentials already included with this request
+    HttpServletRequest hreq =
+        (HttpServletRequest) request.getRequest();
+    HttpServletResponse hres =
+        (HttpServletResponse) response.getResponse();
+    String authorization = request.getAuthorization();
+    if (authorization != null) {
+        principal = findPrincipal(hreq, authorization, context.getRealm());
+        if (principal != null) {
                 register(request, response, principal,
                          Constants.DIGEST_METHOD);
-		return (true);
-	    }
-	}
+        return (true);
+        }
+    }
 
-	// Send an "unauthorized" response and an appropriate challenge
-        
+    // Send an "unauthorized" response and an appropriate challenge
+
         // Next, generate a nOnce token (that is a token which is supposed
         // to be unique).
         String nOnce = generateNOnce(hreq);
-        
-	setAuthenticateHeader(hreq, hres, config, nOnce);
-	hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        //	hres.flushBuffer();
-	return (false);
+
+    setAuthenticateHeader(hreq, hres, config, nOnce);
+    hres.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        //  hres.flushBuffer();
+    return (false);
 
     }
 
@@ -265,21 +265,21 @@ public final class DigestAuthenticator
      *              should be performed
      * @param realm Realm used to authenticate Principals
      */
-    private static Principal findPrincipal(HttpServletRequest request, 
+    private static Principal findPrincipal(HttpServletRequest request,
                                            String authorization, Realm realm) {
 
         //System.out.println("Authorization token : " + authorization);
-	// Validate the authorization credentials format
-	if (authorization == null)
-	    return (null);
-	if (!authorization.startsWith("Digest "))
-	    return (null);
-	authorization = authorization.substring(7).trim();
-        
-        
-        StringTokenizer commaTokenizer = 
+    // Validate the authorization credentials format
+    if (authorization == null)
+        return (null);
+    if (!authorization.startsWith("Digest "))
+        return (null);
+    authorization = authorization.substring(7).trim();
+
+
+        StringTokenizer commaTokenizer =
             new StringTokenizer(authorization, ",");
-        
+
         String userName = null;
         String realmName = null;
         String nOnce = null;
@@ -290,15 +290,15 @@ public final class DigestAuthenticator
         String response = null;
         String opaque = null;
         String method = request.getMethod();
-        
+
         while (commaTokenizer.hasMoreTokens()) {
             String currentToken = commaTokenizer.nextToken();
             int equalSign = currentToken.indexOf('=');
             if (equalSign < 0)
                 return null;
-            String currentTokenName = 
+            String currentTokenName =
                 currentToken.substring(0, equalSign).trim();
-            String currentTokenValue = 
+            String currentTokenValue =
                 currentToken.substring(equalSign + 1).trim();
             if ("username".equals(currentTokenName))
                 userName = removeQuotes(currentTokenValue);
@@ -317,21 +317,21 @@ public final class DigestAuthenticator
             if ("response".equals(currentTokenName))
                 response = removeQuotes(currentTokenValue);
         }
-        
+
         if ( (userName == null) || (realmName == null) || (nOnce == null)
              || (uri == null) || (response == null) )
             return null;
-        
-        // Second MD5 digest used to calculate the digest : 
+
+        // Second MD5 digest used to calculate the digest :
         // MD5(Method + ":" + uri)
         String a2 = method + ":" + uri;
         //System.out.println("A2:" + a2);
-        
+
         String md5a2 = md5Encoder.encode(md5Helper.digest(a2.getBytes()));
-        
+
         return (realm.authenticate(userName, response, nOnce, nc, cnonce, qop,
                                    realmName, md5a2));
-        
+
     }
 
 
@@ -348,24 +348,24 @@ public final class DigestAuthenticator
 
 
     /**
-     * Generate a unique token. The token is generated according to the 
-     * following pattern. NOnceToken = Base64 ( MD5 ( client-IP ":" 
+     * Generate a unique token. The token is generated according to the
+     * following pattern. NOnceToken = Base64 ( MD5 ( client-IP ":"
      * time-stamp ":" private-key ) ).
-     * 
+     *
      * @param request HTTP Servlet request
      */
     private String generateNOnce(HttpServletRequest request) {
         long currentTime = System.currentTimeMillis();
-        
-        String nOnceValue = request.getRemoteAddr() + ":" + 
+
+        String nOnceValue = request.getRemoteAddr() + ":" +
             currentTime + ":" + key;
-        
+
         byte[] buffer = md5Helper.digest(nOnceValue.getBytes());
         nOnceValue = md5Encoder.encode(buffer);
-        
+
         // Updating the value in the no once hashtable
         nOnceTokens.put(nOnceValue, new Long(currentTime + nOnceTimeout));
-        
+
         return nOnceValue;
     }
 
@@ -377,10 +377,10 @@ public final class DigestAuthenticator
      * <pre>
      *      WWW-Authenticate    = "WWW-Authenticate" ":" "Digest"
      *                            digest-challenge
-     * 
+     *
      *      digest-challenge    = 1#( realm | [ domain ] | nOnce |
      *                  [ digest-opaque ] |[ stale ] | [ algorithm ] )
-     * 
+     *
      *      realm               = "realm" "=" realm-value
      *      realm-value         = quoted-string
      *      domain              = "domain" "=" <"> 1#URI <">
@@ -390,7 +390,7 @@ public final class DigestAuthenticator
      *      stale               = "stale" "=" ( "true" | "false" )
      *      algorithm           = "algorithm" "=" ( "MD5" | token )
      * </pre>
-     * 
+     *
      * @param request HTTP Servlet request
      * @param resonse HTTP Servlet response
      * @param login Login configuration describing how authentication
@@ -401,22 +401,22 @@ public final class DigestAuthenticator
                                        HttpServletResponse response,
                                        LoginConfig config,
                                        String nOnce) {
-        
+
         // Get the realm name
-	String realmName = config.getRealmName();
-	if (realmName == null)
-	    realmName = request.getServerName() + ":" 
+    String realmName = config.getRealmName();
+    if (realmName == null)
+        realmName = request.getServerName() + ":"
                 + request.getServerPort();
-        
+
         byte[] buffer = md5Helper.digest(nOnce.getBytes());
-        
+
         String authenticateHeader = "Digest realm=\"" + realmName + "\", "
-            +  "qop=\"auth\", nonce=\"" + nOnce + "\", " + "opaque=\"" 
+            +  "qop=\"auth\", nonce=\"" + nOnce + "\", " + "opaque=\""
             + md5Encoder.encode(buffer) + "\"";
-        // System.out.println("Authenticate header value : " 
+        // System.out.println("Authenticate header value : "
         //                   + authenticateHeader);
         response.setHeader("WWW-Authenticate", authenticateHeader);
-        
+
     }
 
 

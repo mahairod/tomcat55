@@ -101,7 +101,7 @@ public final class SavedRequest {
     private ArrayList cookies = new ArrayList();
 
     public void addCookie(Cookie cookie) {
-	cookies.add(cookie);
+    cookies.add(cookie);
     }
 
     public Iterator getCookies() {
@@ -118,12 +118,12 @@ public final class SavedRequest {
     private HashMap headers = new HashMap();
 
     public void addHeader(String name, String value) {
-	ArrayList values = (ArrayList) headers.get(name);
-	if (values == null) {
-	    values = new ArrayList();
-	    headers.put(name, values);
-	}
-	values.add(value);
+    ArrayList values = (ArrayList) headers.get(name);
+    if (values == null) {
+        values = new ArrayList();
+        headers.put(name, values);
+    }
+    values.add(value);
     }
 
     public Iterator getHeaderNames() {
@@ -131,11 +131,11 @@ public final class SavedRequest {
     }
 
     public Iterator getHeaderValues(String name) {
-	ArrayList values = (ArrayList) headers.get(name);
-	if (values == null)
-	    return ((new ArrayList()).iterator());
-	else
-	    return (values.iterator());
+    ArrayList values = (ArrayList) headers.get(name);
+    if (values == null)
+        return ((new ArrayList()).iterator());
+    else
+        return (values.iterator());
     }
 
 
@@ -145,7 +145,7 @@ public final class SavedRequest {
     private ArrayList locales = new ArrayList();
 
     public void addLocale(Locale locale) {
-	locales.add(locale);
+    locales.add(locale);
     }
 
     public Iterator getLocales() {
@@ -159,11 +159,11 @@ public final class SavedRequest {
     private String method = null;
 
     public String getMethod() {
-	return (this.method);
+    return (this.method);
     }
 
     public void setMethod(String method) {
-	this.method = method;
+    this.method = method;
     }
 
 
@@ -194,11 +194,11 @@ public final class SavedRequest {
     private String queryString = null;
 
     public String getQueryString() {
-	return (this.queryString);
+    return (this.queryString);
     }
 
     public void setQueryString(String queryString) {
-	this.queryString = queryString;
+    this.queryString = queryString;
     }
 
 
@@ -208,11 +208,11 @@ public final class SavedRequest {
     private String requestURI = null;
 
     public String getRequestURI() {
-	return (this.requestURI);
+    return (this.requestURI);
     }
 
     public void setRequestURI(String requestURI) {
-	this.requestURI = requestURI;
+    this.requestURI = requestURI;
     }
 
 
