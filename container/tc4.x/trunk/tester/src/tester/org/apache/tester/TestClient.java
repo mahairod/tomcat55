@@ -108,12 +108,15 @@ import org.apache.tools.ant.Task;
  *     are expected in the response (order independent).</li>
  * <li><strong>port</strong> - The port number to which this request will be
  *     sent.  Defaults to <code>8080</code> if not specified.</li>
+ * <li><strong>redirect</strong> - If set to true, follow any redirect that
+ *     is returned by the server.  (Only works when using HttpURLConnection).
+ *     </li>
  * <li><strong>request</strong> - The request URI to be transmitted for this
  *     request.  This value should start with a slash character ("/"), and
  *     be the server-relative URI of the requested resource.</li>
  * <li><strong>status</strong> - The HTTP status code that is expected in the
  *     response from the server.  Defaults to <code>200</code> if not
- *     specified.</li>
+ *     specified.  Set to zero to disable checking the return value.</li>
  * </ul>
  *
  * @author Craig R. McClanahan
@@ -326,6 +329,20 @@ public class TestClient extends Task {
 
 
     /**
+     * Should we follow redirects returned by the server?
+     */
+    protected boolean redirect = false;
+
+    public boolean getRedirect() {
+        return (this.redirect);
+    }
+
+    public void setRedirect(boolean redirect) {
+        this.redirect = redirect;
+    }
+
+
+    /**
      * The request URI to be sent to the server.  This value is required.
      */
     protected String request = null;
@@ -435,7 +452,10 @@ public class TestClient extends Task {
                                        sessionId);
             }
 
-            conn.setFollowRedirects(false);
+            if (this.redirect && (debug >= 1))
+                System.out.println("FLAG: setInstanceFollowRedirects(" +
+                                   this.redirect + ")");
+            conn.setInstanceFollowRedirects(this.redirect);
             conn.setRequestMethod(method);
             if (inHeaders != null) {
                 String headers = inHeaders;
@@ -1053,6 +1073,8 @@ public class TestClient extends Task {
      */
     protected String validateStatus(int status) {
 
+        if (this.status == 0)
+            return (null);
         if (this.status == status)
             return (null);
         else

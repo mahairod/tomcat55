@@ -1144,6 +1144,23 @@
          request="${context.path}/WrappedSession06" debug="${debug}"
       outContent="Session06 PASSED"/>
 
+    <!-- ========== Pass Attributes Across Redirect ======================= -->
+
+    <!-- Session maintained across redirect -->
+    <!-- NOTE:  The following two-step pattern is required because
+         HttpURLConnection does not forward the session cookie it
+         receives on to the redirected location (the way that a
+         browser will do so) -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session07a.jsp" debug="${debug}"
+          status="302"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Session07b.jsp" debug="${debug}"
+     joinSession="true"
+      outContent="Session07 PASSED"/>
+
   </target>
 
 
