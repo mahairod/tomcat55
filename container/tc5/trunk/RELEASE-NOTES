@@ -21,6 +21,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Security manager URLs
 * Symlinking static resources
 * Enabling invoker servlet
+* Viewing the Tomcat Change Log
 * When all else fails
 
 
@@ -227,6 +228,12 @@ definition.
 Using the invoker servlet in a production environment is not recommended and
 is unsupported.
 
+------------------------
+Viewing the Tomcat Change Log 
+------------------------
+
+The Change Log for tomcat 5 is available at
+http://jakarta.apache.org/tomcat/tomcat-5.0-doc/changelog.html.
 
 -------------------
 When all else fails:
