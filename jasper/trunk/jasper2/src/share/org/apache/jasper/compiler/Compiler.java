@@ -77,10 +77,8 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
 
 import org.apache.jasper.JspCompilationContext;
-import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Options;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.util.SystemLogHandler;
 import org.apache.jasper.runtime.HttpJspBase;
 import org.apache.jasper.servlet.JspServletWrapper;
@@ -148,16 +146,10 @@ public class Compiler {
         if( project!=null ) return project;
         // Initializing project
         project = new Project();
-        // XXX We should use a specialized logger to redirect to jasperlog
         logger = new JasperAntLogger();
         logger.setOutputPrintStream(System.out);
         logger.setErrorPrintStream(System.err);
 
-        if( Constants.jasperLog.getVerbosityLevel() >= Logger.DEBUG ) {
-            logger.setMessageOutputLevel( Project.MSG_VERBOSE );
-        } else {
-            logger.setMessageOutputLevel( Project.MSG_INFO );
-        }
         if( log.isTraceEnabled() ) {
             logger.setMessageOutputLevel( Project.MSG_VERBOSE );
         }

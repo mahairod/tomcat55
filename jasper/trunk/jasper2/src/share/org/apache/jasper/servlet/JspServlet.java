@@ -83,10 +83,6 @@ import org.apache.jasper.EmbededServletOptions;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.Localizer;
 
-import org.apache.jasper.logging.Logger;
-import org.apache.jasper.logging.DefaultLogger;
-import org.apache.jasper.logging.JasperLogger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -111,8 +107,6 @@ public class JspServlet extends HttpServlet {
     // Logger
     private static Log log = LogFactory.getLog(JspServlet.class);
 
-    private Logger.Helper loghelper;
-
     private ServletContext context;
     private ServletConfig config;
     private Options options;
@@ -125,14 +119,6 @@ public class JspServlet extends HttpServlet {
 	this.config = config;
 	this.context = config.getServletContext();
         
-	// Setup logging 
-        Constants.jasperLog = new DefaultLogger(this.context);
-	Constants.jasperLog.setName("JASPER_LOG");
-	Constants.jasperLog.setTimestamp("false");
-	Constants.jasperLog.setVerbosityLevel(
-            config.getInitParameter("logVerbosityLevel"));
-        loghelper = new Logger.Helper("JASPER_LOG", "JspServlet");
-
         options = new EmbededServletOptions(config, context);
 
         // Initialize the JSP Runtime Context
@@ -235,30 +221,21 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-	    Logger jasperLog = Constants.jasperLog;
-	    
-            if (jasperLog != null
-		    && jasperLog.matchVerbosityLevel(Logger.INFORMATION))
-		{
-		    jasperLog.log("JspEngine --> "+jspUri);
-		    jasperLog.log("\t     ServletPath: " +
-                                  request.getServletPath());
-		    jasperLog.log("\t        PathInfo: " +
-                                  request.getPathInfo());
-		    jasperLog.log("\t        RealPath: " +
-                                  context.getRealPath(jspUri));
-		    jasperLog.log("\t      RequestURI: " +
-                                  request.getRequestURI());
-		    jasperLog.log("\t     QueryString: " +
-                                  request.getQueryString());
-		    jasperLog.log("\t  Request Params: ");
-		    Enumeration e = request.getParameterNames();
-		    while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			jasperLog.log("\t\t " + name + " = " +
-                                      request.getParameter(name));
-		    }
+	    if (log.isInfoEnabled()) {	    
+		log.info("JspEngine --> " + jspUri);
+		log.info("\t     ServletPath: " + request.getServletPath());
+		log.info("\t        PathInfo: " + request.getPathInfo());
+		log.info("\t        RealPath: " + context.getRealPath(jspUri));
+		log.info("\t      RequestURI: " + request.getRequestURI());
+		log.info("\t     QueryString: " + request.getQueryString());
+		log.info("\t  Request Params: ");
+		Enumeration e = request.getParameterNames();
+		while (e.hasMoreElements()) {
+		    String name = (String) e.nextElement();
+		    log.info("\t\t " + name + " = " +
+			     request.getParameter(name));
 		}
+	    }
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
 	    throw e;
@@ -273,10 +250,9 @@ public class JspServlet extends HttpServlet {
     }
 
     public void destroy() {
-
-	if (Constants.jasperLog != null)
-	    Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
-
+	if (log.isInfoEnabled()) {
+	    log.info("JspServlet.destroy()");
+	}
         rctxt.destroy();
     }
 
