@@ -370,7 +370,7 @@
       <p>Name of the database column, contained in the specified
       session table, that contains the <code>maxInactiveInterval</code>
       property of this session.  The column type must accept a
-      Jave <code>integer</code> (32 bits).</p>
+      Java <code>integer</code> (32 bits).</p>
     </attribute>
 
     <attribute name="sessionTable" required="true">
