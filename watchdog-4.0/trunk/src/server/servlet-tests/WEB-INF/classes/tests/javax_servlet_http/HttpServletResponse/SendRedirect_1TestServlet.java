@@ -79,15 +79,9 @@ public class SendRedirect_1TestServlet extends HttpServlet {
 
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-		ServletOutputStream sos =null; 
-		sos = response.getOutputStream();
-		response.setBufferSize(60);
-
 		response.flushBuffer();
-		sos.println("Good Luck");
-		sos.flush();
 		try {
-			response.sendRedirect("/RedirectedTest");
+			response.sendRedirect("RedirectedTest");
 			out.println("SendRedirect_1Test test FAILED");
 		}catch(IllegalStateException ise) {
 			out.println("SendRedirect_1Test test PASSED");
