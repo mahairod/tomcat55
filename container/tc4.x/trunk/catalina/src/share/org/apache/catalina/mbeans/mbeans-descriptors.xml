@@ -1290,6 +1290,23 @@
   </mbean>
 
 
+  <mbean         name="UserDatabaseRealm"
+          description="Realm connected to a UserDatabase as a global JNDI resource"
+               domain="Catalina"
+                group="Realm"
+                 type="org.apache.catalina.realm.UserDatabaseRealm">
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="resourceName"
+          description="The global JNDI name of the UserDatabase resource to use"
+                 type="java.lang.String"/>
+
+  </mbean>
+
+
   <mbean         name="WebappLoader"
           description="Classloader implementation which is specialized for handling web applications"
                domain="Catalina"
