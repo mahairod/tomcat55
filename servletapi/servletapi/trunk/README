@@ -1,21 +1,21 @@
-		Java Servlet and JSP Implementation Classes
-		===========================================
+        Java Servlet and JSP Implementation Classes
+        ===========================================
 
 This subproject contains the source code for the implementation classes of the
 Java Servlet and JSP APIs (packages javax.servlet).  In order to build these
 sources successfully, you must do the following:
 
 * Download and install the Java API for XML Parsing implementation (current
-  version number is 1.0) from <http://java.sun.com/xml>.  Make sure that the
+  version number is 1.0) from <http://java.sun.com/xml/>.  Make sure that the
   "jaxp.jar" and "parser.jar" files are on your class path.
 
 * Download and install the JAKARTA-ANT distribution.  If you have downloaded
   the source distribution, you must create the executable version by
   executing the following commands:
 
-	cd jakarta-ant
-	./bootstrap.sh		<-- Unix
-	bootstrap		<-- Windows
+    cd jakarta-ant
+    ./bootstrap.sh      <-- Unix
+    bootstrap           <-- Windows
 
   This should result in the creation of a file "ant.jar" in the "lib"
   subdirectory, which will be used when building the Servlet API distribution.
@@ -25,28 +25,28 @@ sources successfully, you must do the following:
   directory created above.  That is, if you downloaded both subprojects into
   a directory named $JAKARTA_HOME, you would see the following two entries:
 
-	jakarta-ant/
-	jakarta-servletapi/
+    jakarta-ant/
+    jakarta-servletapi/
 
   underneath it.
 
 * Build the servlet API distribution (a "servlet.jar" file containing the
   classes and a ZIP file containing the API documentation) as follows:
 
-	cd jakarta-servletapi
-	./build.sh dist		<-- Unix
-	build dist		<-- Windows
+    cd jakarta-servletapi
+    ./build.sh dist     <-- Unix
+    build dist          <-- Windows
 
   This should result in the creation of a new "dist" directory at the same
   level as "jakarta-ant" and "jakarta-servletapi", with a "servletapi"
   directory underneath it.  In this distribution directory, you will find:
 
-	docs/api/		Directory containing the Javadoc API
-				documentation for the servlet/JSP API classes
+    docs/api/       Directory containing the Javadoc API
+                    documentation for the servlet/JSP API classes
 
-	lib/servlet.jar		Binary servlet classes suitable
-				for use when compiling servlets
-				(or a servlet container)
+    lib/servlet.jar     Binary servlet classes suitable
+                        for use when compiling servlets
+                        (or a servlet container)
 
-	src/			Directory containing the source code
-				for the servlet/JSP API classes
+    src/            Directory containing the source code
+                    for the servlet/JSP API classes

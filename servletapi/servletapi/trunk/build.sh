@@ -2,20 +2,30 @@
 
 # $Id$
 
-if [ -z "$JAVA_HOME" ]
-then
-JAVACMD=`which java`
-if [ -z "$JAVACMD" ]
-then
-echo "Cannot find JAVA. Please set your PATH."
-exit 1
-fi
-JAVA_BINDIR=`dirname $JAVACMD`
-JAVA_HOME=$JAVA_BINDIR/..
+BUILDFILE=build.xml
+
+if test -z "${JAVA_HOME}" ; then
+    echo "ERROR: JAVA_HOME not found in your environment."
+    echo "Please, set the JAVA_HOME variable in your environment to match the"
+    echo "location of the Java Virtual Machine you want to use."
+    exit
 fi
 
-JAVACMD=$JAVA_HOME/bin/java
+if test -f ${JAVA_HOME}/lib/tools.jar ; then
+    CLASSPATH=${CLASSPATH}:${JAVA_HOME}/lib/tools.jar
+fi
 
-cp=../jakarta-ant/lib/ant.jar:$JAVA_HOME/lib/tools.jar
-$JAVACMD -classpath $cp:$CLASSPATH org.apache.tools.ant.Main "$@"
+# convert the existing path to unix
+if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+   CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
+fi
 
+CLASSPATH=${CLASSPATH}:../jakarta-ant/lib/ant.jar
+
+# convert the unix path to windows
+if [ "$OSTYPE" = "cygwin32" ] || [ "$OSTYPE" = "cygwin" ] ; then
+   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
+fi
+
+${JAVA_HOME}/bin/java -classpath ${CLASSPATH} org.apache.tools.ant.Main \
+                      -buildfile ${BUILDFILE} "$@"
