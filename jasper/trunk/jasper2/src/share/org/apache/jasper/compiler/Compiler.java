@@ -324,7 +324,7 @@ public abstract class Compiler {
         if ((jsw != null)
             && (ctxt.getOptions().getModificationTestInterval() > 0)
             && ((jsw.getLastModificationTest()
-                    + ctxt.getOptions().getModificationTestInterval()) 
+                    + (ctxt.getOptions().getModificationTestInterval() * 1000)) 
                     > System.currentTimeMillis())) {
             return false;
         }
