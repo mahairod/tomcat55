@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -121,8 +125,8 @@ class JspServletWrapper {
                       boolean isErrorPage, String classpath,
                       URLClassLoader parentClassLoader,
                       PermissionCollection permissionCollection,
-                      CodeSource codeSource)
-            throws JasperException {
+                      CodeSource codeSource) throws JasperException {
+
         this.jspUri = jspUri;
         this.theServlet = null;
         this.config = config;
@@ -137,6 +141,7 @@ class JspServletWrapper {
     }
 
     private void load() throws JasperException, ServletException {
+
         try {
             // This is to maintain the original protocol.
             destroy();
@@ -165,8 +170,9 @@ class JspServletWrapper {
             }
 
             // If a page is to only to be precompiled return.
-            if (precompile)
+            if (precompile) {
                 return;
+            }
 
             if (theServlet instanceof SingleThreadModel) {
                // sync on the wrapper so that the freshness
@@ -188,8 +194,9 @@ class JspServletWrapper {
                 throw ex;
             } else {
                 int unavailableSeconds = ex.getUnavailableSeconds();
-                if (unavailableSeconds <= 0)
+                if (unavailableSeconds <= 0) {
                     unavailableSeconds = 60;        // Arbitrary default
+                }
                 available = System.currentTimeMillis() +
                     (unavailableSeconds * 1000L);
                 response.sendError
@@ -219,8 +226,9 @@ class JspServletWrapper {
     }
 
     public void destroy() {
-        if (theServlet != null)
+        if (theServlet != null) {
             theServlet.destroy();
+        }
     }
 
 
@@ -231,8 +239,7 @@ class JspServletWrapper {
      *  @return true if JSP has been recompiled
      */
     boolean loadJSP(HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
+	throws JasperException, FileNotFoundException {
 
 	boolean outDated = false; 
         
@@ -244,8 +251,9 @@ class JspServletWrapper {
                     // compilations of different pages, but not the 
                     // same page.
                     outDated = compiler.isOutDated();
-                    if (outDated)
+                    if (outDated) {
                         compiler.compile();
+                    }
 
                     if ((servletClass == null) || outDated) {
                         URL [] urls = new URL[1];
@@ -294,22 +302,26 @@ class JspServletWrapper {
      */
     protected String normalize(String path) {
 
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         String normalized = path;
         
 	// Normalize the slashes and add leading slash if necessary
-	if (normalized.indexOf('\\') >= 0)
+	if (normalized.indexOf('\\') >= 0) {
 	    normalized = normalized.replace('\\', '/');
-	if (!normalized.startsWith("/"))
+        }
+	if (!normalized.startsWith("/")) {
 	    normalized = "/" + normalized;
+        }
 
 	// Resolve occurrences of "//" in the normalized path
 	while (true) {
 	    int index = normalized.indexOf("//");
-	    if (index < 0)
+	    if (index < 0) {
 		break;
+            }
 	    normalized = normalized.substring(0, index) +
 		normalized.substring(index + 1);
 	}
@@ -317,8 +329,9 @@ class JspServletWrapper {
 	// Resolve occurrences of "/./" in the normalized path
 	while (true) {
 	    int index = normalized.indexOf("/./");
-	    if (index < 0)
+	    if (index < 0) {
 		break;
+            }
 	    normalized = normalized.substring(0, index) +
 		normalized.substring(index + 2);
 	}
@@ -326,10 +339,12 @@ class JspServletWrapper {
 	// Resolve occurrences of "/../" in the normalized path
 	while (true) {
 	    int index = normalized.indexOf("/../");
-	    if (index < 0)
+	    if (index < 0) {
 		break;
-	    if (index == 0)
+            }
+	    if (index == 0) {
 		return (null);	// Trying to go outside our context
+            }
 	    int index2 = normalized.lastIndexOf('/', index - 1);
 	    normalized = normalized.substring(0, index2) +
 		normalized.substring(index + 3);
@@ -339,4 +354,5 @@ class JspServletWrapper {
 	return (normalized);
 
     }
+
 }

@@ -92,6 +92,7 @@ import org.apache.jasper.logging.Logger;
  * @author Anil K. Vijendran
  * @author Harish Prabandham
  * @author Pierre Delisle
+ * @author Glenn Nielsen
  */
 public class JspEngineContext implements JspCompilationContext {
     private JspReader reader;
@@ -112,13 +113,12 @@ public class JspEngineContext implements JspCompilationContext {
 
     public JspEngineContext(URLClassLoader loader, String classpath, 
                             ServletContext context, String jspUri,
-                            boolean isErrPage, Options options)
-    {
+                            boolean isErrPage, Options options) {
         this.loader = loader;
         this.classpath = classpath;
         this.context = context;
         this.jspUri = jspUri;
-        baseURI = jspUri.substring(0, jspUri.lastIndexOf('/'));
+        baseURI = jspUri.substring(0, jspUri.lastIndexOf('/') + 1);
         this.isErrPage = isErrPage;
         this.options = options;
         createOutdir();
@@ -129,12 +129,13 @@ public class JspEngineContext implements JspCompilationContext {
         try {
             URL outURL = options.getScratchDir().toURL();
             String outURI = outURL.toString();           
-            if( outURI.endsWith("/") )                   
+            if( outURI.endsWith("/") ) {
                 outURI = outURI +             
                          jspUri.substring(1,jspUri.lastIndexOf("/")+1);
-            else                                                       
+            } else {
                 outURI = outURI +                                      
                          jspUri.substring(0,jspUri.lastIndexOf("/")+1);;
+            }
             outURL = new URL(outURI);                                   
             outDir = new File(outURL.getFile());                        
             if( !outDir.exists() ) {
@@ -312,8 +313,9 @@ public class JspEngineContext implements JspCompilationContext {
      */
     public Compiler createCompiler() throws JasperException {
 
-        if (jspCompiler != null)
+        if (jspCompiler != null) {
             return jspCompiler;
+        }
 
 	String compilerPath = options.getJspCompilerPath();
 	Class jspCompilerPlugin = options.getJspCompilerPlugin();
@@ -332,8 +334,9 @@ public class JspEngineContext implements JspCompilationContext {
             javac = new SunJavaCompiler();
 	}
 
-        if (compilerPath != null)
+        if (compilerPath != null) {
             javac.setCompilerPath(compilerPath);
+        }
 
         jspCompiler = new JspCompiler(this);
 	jspCompiler.setJavaCompiler(javac);
@@ -345,14 +348,12 @@ public class JspEngineContext implements JspCompilationContext {
     /** 
      * Get the full value of a URI relative to this compilations context
      */
-    public String resolveRelativeUri(String uri)
-    {
-        if (uri.charAt(0) == '/')
-        {
+    public String resolveRelativeUri(String uri) {
+        if (uri.charAt(0) == '/') {
             return uri;
         }
-        return baseURI + '/' + uri;
-    }    
+        return baseURI + uri;
+    }
 
     /**
      * Gets a resource as a stream, relative to the meanings of this
@@ -360,14 +361,11 @@ public class JspEngineContext implements JspCompilationContext {
      * @return a null if the resource cannot be found or represented 
      *         as an InputStream.
      */
-    public java.io.InputStream getResourceAsStream(String res)
-    {
+    public java.io.InputStream getResourceAsStream(String res) {
         return context.getResourceAsStream(res);
     }
 
-    public URL getResource(String res)
-	throws MalformedURLException
-    {
+    public URL getResource(String res) throws MalformedURLException {
         return context.getResource(res);
     }
 
@@ -375,16 +373,11 @@ public class JspEngineContext implements JspCompilationContext {
      * Gets the actual path of a URI relative to the context of
      * the compilation.
      */
-    public String getRealPath(String path)
-    {
-        if (context != null)
-        {
+    public String getRealPath(String path) {
+        if (context != null) {
             return context.getRealPath(path);
         }
-        else
-        {
-            return path;
-        }
+        return path;
     }
 
     public String[] getTldLocation(String uri) throws JasperException {

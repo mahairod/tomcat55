@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -111,7 +115,7 @@ public class JspServlet extends HttpServlet {
 
     private Logger.Helper loghelper;
 
-    private ServletContext context = null;
+    private ServletContext context;
     private Map jsps = new FastHashMap();
     private ServletConfig config;
     private Options options;
@@ -125,15 +129,14 @@ public class JspServlet extends HttpServlet {
     static boolean firstTime = true;
 
     public void init(ServletConfig config)
-	throws ServletException
-    {
+	throws ServletException {
+
 	super.init(config);
 	this.config = config;
 	this.context = config.getServletContext();
         this.serverInfo = context.getServerInfo();
         
 	// Setup logging 
-        //        Constants.jasperLog = new JasperLogger(this.context);
         Constants.jasperLog = new DefaultLogger(this.context);
 	Constants.jasperLog.setName("JASPER_LOG");
 	Constants.jasperLog.setTimestamp("false");
@@ -155,15 +158,16 @@ public class JspServlet extends HttpServlet {
 	// Get the parent class loader
 	parentClassLoader =
 	    (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        if (parentClassLoader == null)
-            parentClassLoader = (URLClassLoader)this.getClass().getClassLoader();
+        if (parentClassLoader == null) {
+            parentClassLoader =
+                (URLClassLoader)this.getClass().getClassLoader();
+        }
         if (parentClassLoader != null) {
             Constants.message("jsp.message.parent_class_loader_is",
                               new Object[] {
                                   parentClassLoader.toString()
                               }, Logger.DEBUG);
-            }
-        else {
+        } else {
             Constants.message("jsp.message.parent_class_loader_is",
                               new Object[] {
                                   "<none>"  
@@ -179,17 +183,19 @@ public class JspServlet extends HttpServlet {
             try {          
 		// Get the permissions for the web app context
                 String contextDir = context.getRealPath("/");
-                if( contextDir == null )
+                if( contextDir == null ) {
                     contextDir = options.getScratchDir().toString();
+                }
 		URL url = new URL("file:" + contextDir);
 		codeSource = new CodeSource(url,null);
 		permissionCollection = policy.getPermissions(codeSource);
 		// Create a file read permission for web app context directory
-		if (contextDir.endsWith(File.separator))
+		if (contextDir.endsWith(File.separator)) {
 		    contextDir = contextDir + "-";
-		else
+                } else {
 		    contextDir = contextDir + File.separator + "-";
-		permissionCollection.add( new FilePermission(contextDir,"read") );
+                }
+		permissionCollection.add(new FilePermission(contextDir,"read"));
 		// Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
 		permissionCollection.add( new RuntimePermission(
 		    "accessClassInPackage.org.apache.jasper.runtime") );
@@ -198,21 +204,28 @@ public class JspServlet extends HttpServlet {
                     String jarUrl = null;
                     String jndiUrl = null;
                     for (int i=0; i<urls.length; i++) {
-                        if (jndiUrl == null && urls[i].toString().startsWith("jndi:") ) {
+                        if (jndiUrl == null
+                                && urls[i].toString().startsWith("jndi:") ) {
                             jndiUrl = urls[i].toString() + "-";
                         }
-                        if (jarUrl == null && urls[i].toString().startsWith("jar:jndi:") ) {
+                        if (jarUrl == null
+                                && urls[i].toString().startsWith("jar:jndi:")
+                                ) {
                             jarUrl = urls[i].toString();
                             jarUrl = jarUrl.substring(0,jarUrl.length() - 2);
-                            jarUrl = jarUrl.substring(0,jarUrl.lastIndexOf('/')) + "/-";
+                            jarUrl = jarUrl.substring(0,
+                                     jarUrl.lastIndexOf('/')) + "/-";
                         }
                     }
                     if (jarUrl != null) {
-                        permissionCollection.add( new FilePermission(jarUrl,"read") );
-                        permissionCollection.add( new FilePermission(jarUrl.substring(4),"read") );
+                        permissionCollection.add(
+                                new FilePermission(jarUrl,"read"));
+                        permissionCollection.add(
+                                new FilePermission(jarUrl.substring(4),"read"));
                     }
                     if (jndiUrl != null)
-                        permissionCollection.add( new FilePermission(jndiUrl,"read") );
+                        permissionCollection.add(
+                                new FilePermission(jndiUrl,"read") );
                 }
 	    } catch(MalformedURLException mfe) {
 	    }
@@ -248,7 +261,8 @@ public class JspServlet extends HttpServlet {
 			      new Object[] { 
 				  options.getScratchDir().toString() 
 			      }, Logger.INFORMATION );
-	    Constants.message("jsp.message.dont.modify.servlets", Logger.INFORMATION);
+	    Constants.message("jsp.message.dont.modify.servlets",
+                    Logger.INFORMATION);
 	    JspFactory.setDefaultFactory(new JspFactoryImpl());
 	}
     }
@@ -256,8 +270,7 @@ public class JspServlet extends HttpServlet {
     private void serviceJspFile(HttpServletRequest request, 
       				HttpServletResponse response, String jspUri, 
 				Throwable exception, boolean precompile) 
-	throws ServletException, IOException
-    {
+	throws ServletException, IOException {
 
 	JspServletWrapper wrapper;
 	synchronized (this) {
@@ -265,8 +278,9 @@ public class JspServlet extends HttpServlet {
 	    if (wrapper == null) {
                 // First check if the requested JSP page exists, to avoid
                 // creating unnecessary directories and files.
-                if (context.getResourceAsStream(jspUri) == null)
+                if (context.getResourceAsStream(jspUri) == null) {
                     throw new FileNotFoundException(jspUri);
+                }
                 boolean isErrorPage = exception != null;
 		wrapper = new JspServletWrapper(config, options, jspUri,
                                                 isErrorPage, classpath,
@@ -294,37 +308,42 @@ public class JspServlet extends HttpServlet {
      * @exception ServletException if an invalid parameter value for the
      *  <code>jsp_precompile</code> parameter name is specified
      */
-    boolean preCompile(HttpServletRequest request) 
-        throws ServletException 
-    {
+    boolean preCompile(HttpServletRequest request) throws ServletException {
 
         String queryString = request.getQueryString();
-        if (queryString == null)
+        if (queryString == null) {
             return (false);
+        }
         int start = queryString.indexOf(Constants.PRECOMPILE);
-        if (start < 0)
+        if (start < 0) {
             return (false);
+        }
         queryString =
             queryString.substring(start + Constants.PRECOMPILE.length());
-        if (queryString.length() == 0)
+        if (queryString.length() == 0) {
             return (true);             // ?jsp_precompile
-        if (queryString.startsWith("&"))
+        }
+        if (queryString.startsWith("&")) {
             return (true);             // ?jsp_precompile&foo=bar...
-        if (!queryString.startsWith("="))
+        }
+        if (!queryString.startsWith("=")) {
             return (false);            // part of some other name or value
+        }
         int limit = queryString.length();
         int ampersand = queryString.indexOf("&");
-        if (ampersand > 0)
+        if (ampersand > 0) {
             limit = ampersand;
+        }
         String value = queryString.substring(1, limit);
-        if (value.equals("true"))
+        if (value.equals("true")) {
             return (true);             // ?jsp_precompile=true
-        else if (value.equals("false"))
+        } else if (value.equals("false")) {
             return (true);             // ?jsp_precompile=false
-        else
+        } else {
             throw new ServletException("Cannot have request parameter " +
                                        Constants.PRECOMPILE + " set to " +
                                        value);
+        }
 
     }
     
@@ -332,41 +351,48 @@ public class JspServlet extends HttpServlet {
 
     public void service (HttpServletRequest request, 
     			 HttpServletResponse response)
-	throws ServletException, IOException
-    {
+	throws ServletException, IOException {
+
 	try {
             String includeUri 
                 = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
 
             String jspUri;
 
-            if (includeUri == null)
+            if (includeUri == null) {
 		jspUri = request.getServletPath();
-            else
+            } else {
                 jspUri = includeUri;
+            }
             String jspFile = (String) request.getAttribute(Constants.JSP_FILE);
-            if (jspFile != null)
+            if (jspFile != null) {
                 jspUri = jspFile;
+            }
 
             boolean precompile = preCompile(request);
 
 	    Logger jasperLog = Constants.jasperLog;
 	    
-            if (jasperLog != null &&
-		jasperLog.matchVerbosityLevel(Logger.INFORMATION))
+            if (jasperLog != null
+		    && jasperLog.matchVerbosityLevel(Logger.INFORMATION))
 		{
 		    jasperLog.log("JspEngine --> "+jspUri);
-		    jasperLog.log("\t     ServletPath: "+request.getServletPath());
-		    jasperLog.log("\t        PathInfo: "+request.getPathInfo());
-		    jasperLog.log("\t        RealPath: "
-				  +getServletConfig().getServletContext().getRealPath(jspUri));
-		    jasperLog.log("\t      RequestURI: "+request.getRequestURI());
-		    jasperLog.log("\t     QueryString: "+request.getQueryString());
+		    jasperLog.log("\t     ServletPath: " +
+                                  request.getServletPath());
+		    jasperLog.log("\t        PathInfo: " +
+                                  request.getPathInfo());
+		    jasperLog.log("\t        RealPath: " +
+                                  context.getRealPath(jspUri));
+		    jasperLog.log("\t      RequestURI: " +
+                                  request.getRequestURI());
+		    jasperLog.log("\t     QueryString: " +
+                                  request.getQueryString());
 		    jasperLog.log("\t  Request Params: ");
 		    Enumeration e = request.getParameterNames();
 		    while (e.hasMoreElements()) {
 			String name = (String) e.nextElement();
-			jasperLog.log("\t\t "+name+" = "+request.getParameter(name));
+			jasperLog.log("\t\t " + name + " = " +
+                                      request.getParameter(name));
 		    }
 		}
             serviceJspFile(request, response, jspUri, null, precompile);
@@ -383,12 +409,14 @@ public class JspServlet extends HttpServlet {
     }
 
     public void destroy() {
+
 	if (Constants.jasperLog != null)
 	    Constants.jasperLog.log("JspServlet.destroy()", Logger.INFORMATION);
 
 	Iterator servlets = jsps.values().iterator();
-	while (servlets.hasNext()) 
+	while (servlets.hasNext()) {
 	    ((JspServletWrapper) servlets.next()).destroy();
+        }
     }
 
 }
