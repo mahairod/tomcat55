@@ -712,8 +712,13 @@ public class GTest extends Task implements TaskContainer {
                                         System.out.println( tempValue );
                                         if ( currentHeaderValue.equals( resVal ) || 
                                              tempValue.equals( resVal ) ) {
-                                           numberFound++;
-                                           headerValues.remove( 0 );
+                                            numberFound++;
+                                            headerValues.remove( 0 );
+                                        }
+                                    } else {
+                                        if ( currentHeaderValue.equals( resVal ) ) {
+                                            numberFound++;
+                                            headerValues.remove( 0 );
                                         }
                                     }
                                 } else if ( headerValues.contains( currentHeaderValue ) ) {
