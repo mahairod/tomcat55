@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -92,7 +88,6 @@ import org.apache.commons.modeler.Registry;
  * not required.
  *
  * @author Craig R. McClanahan
- * @version $Revision$ $Date$
  */
 
 public class StandardService
@@ -553,8 +548,7 @@ public class StandardService
 
         // Validate and update our current component state
         if (!started) {
-            throw new LifecycleException
-                (sm.getString("standardService.stop.notStarted"));
+            return;
         }
 
         // Notify our interested LifecycleListeners
@@ -562,7 +556,7 @@ public class StandardService
 
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 
-        System.out.println
+        log.info
             (sm.getString("standardService.stop.name", this.name));
         started = false;
 
@@ -582,16 +576,14 @@ public class StandardService
                 }
             }
         }
-        
-        // unregister this service
-        if( oname!=null ) {
-            try {
-                Registry.getRegistry().unregisterComponent(oname);
-                log.info("unregistering " + oname);
-            } catch (Exception e) {
-                log.error("Error unregistering ",e);
-            }
+
+        if( oname==controller ) {
+            // we registered ourself on init().
+            // That should be the typical case - this object is just for
+            // backward compat, nobody should bother to load it explicitely
+            Registry.getRegistry().unregisterComponent(oname);
         }
+        
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
@@ -619,6 +611,7 @@ public class StandardService
                 Container engine=this.getContainer();
                 domain=engine.getName();
                 oname=new ObjectName(domain + ":type=Service,serviceName="+name);
+                this.controller=oname;
                 Registry.getRegistry().registerComponent(this, oname, null);
             } catch (Exception e) {
                 log.error("Error registering ",e);
@@ -641,6 +634,11 @@ public class StandardService
                 }
         }
     }
+    
+    public void destroy() throws LifecycleException {
+        if( started ) stop();
+        // unregister should be here probably
+    }
 
     public void init() {
         try {
@@ -654,6 +652,7 @@ public class StandardService
     protected String domain;
     protected String suffix;
     protected ObjectName oname;
+    protected ObjectName controller;
     protected MBeanServer mserver;
 
     public ObjectName getObjectName() {
