@@ -815,7 +815,8 @@ public class PageContextImpl extends PageContext implements VariableResolver {
             }
 
             if (rootCause != null) {
-                throw new ServletException(t.getMessage(), rootCause);
+                throw new ServletException(t.getClass().getName() + ": " + 
+                                           t.getMessage(), rootCause);
             }
                  
             throw new ServletException(t);
