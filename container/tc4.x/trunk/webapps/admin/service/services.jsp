@@ -64,8 +64,15 @@
         <logic:iterate name="servicesList" id="service">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+             <logic:match name="service" 
+                        value='<%= (String)request.getAttribute("adminAppService") %>'>
+             <font color='red'>*</font>           
+             </logic:match>          
+             <logic:notMatch name="service" 
+                        value='<%= (String)request.getAttribute("adminAppService") %>'>
               <html:multibox property="services"
                                 value="<%= service.toString() %>"/>
+              </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditService.do?select=" + 
@@ -80,6 +87,12 @@
 
     </td></tr>
   </table>
+
+<br>
+<font color='red'> * </font>
+Cannot delete the service the admin application is running on.
+
+<br>
 
 <%@ include file="../buttons.jsp" %>
 

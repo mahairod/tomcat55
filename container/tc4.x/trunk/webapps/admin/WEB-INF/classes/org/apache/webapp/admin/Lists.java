@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -598,5 +599,34 @@ public class Lists {
 
     }
 
+    /**
+     * Return the  <code>Service</code> object name string
+     * that the admin app belongs to.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param request Http request
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static String getAdminAppService(MBeanServer mbserver, 
+                       String domain, HttpServletRequest request)
+        throws Exception {
 
+            // Get the admin app's service name
+            StringBuffer sb = new StringBuffer(domain);
+            sb.append(":type=Context");
+            sb.append(",path=");
+            sb.append(request.getContextPath());
+            sb.append(",host=");
+            sb.append(request.getServerName());
+            sb.append(",*");
+            ObjectName search = new ObjectName(sb.toString());
+            Iterator names = mbserver.queryNames(search, null).iterator();
+            String service = null;
+            while (names.hasNext()) {
+                service = ((ObjectName)names.next()).getKeyProperty("service");
+            }
+            return service;
+    }
+    
 }

@@ -34,10 +34,10 @@
           <controls:action>
             ---------------------------------
           </controls:action>
-          <controls:action url="AddService.do">
+          <controls:action url="/AddService.do">
             <bean:message key="actions.services.create"/>
           </controls:action>
-          <controls:action url="DeleteService.do">
+          <controls:action url="/DeleteService.do">
             <bean:message key="actions.services.deletes"/>
           </controls:action>
         </controls:actions>

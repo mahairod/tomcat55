@@ -199,7 +199,7 @@
             </controls:data>
         </controls:row>
 
-<%-- The following properties are supported only for Coyote Connectors --%>
+<%-- The following properties are supported only for Coyote HTTP/1.1 Connectors --%>
      <logic:notEqual name="connectorForm" property="connectorType" scope="session" 
                   value="Ajp13Connector">
      <logic:notEqual name="connectorForm" property="connectorType" scope="session" 
@@ -226,8 +226,8 @@
         </logic:notEqual>
 
 <%-- The following properties are supported only on HTTPS Connector --%>
-     <logic:equal name="connectorForm" property="connectorType" scope="session" 
-                  value="HTTPS">
+     <logic:equal name="connectorForm" property="scheme" scope="session" 
+                  value="https">
         <br>
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Factory Properties:</controls:label>

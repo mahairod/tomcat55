@@ -25,6 +25,8 @@
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="engineObjectName"/>
+  <bean:define id="adminServiceName" type="java.lang.String"
+               name="serviceForm" property="adminServiceName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -100,6 +102,8 @@
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.valves.deletes"/> 
                </controls:action>
+               <%-- cannot delete the service the admin app runs on --%>
+               <logic:notEqual name="serviceName" value='<%= adminServiceName %>'>
                <controls:action disabled="true"> 
                 ------------------------------------- 
                 </controls:action>
@@ -107,6 +111,7 @@
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.services.delete"/>
               </controls:action>
+              </logic:notEqual>
             </logic:notEqual>
           </controls:actions>
         </div>

@@ -119,7 +119,11 @@ public final class ServiceForm extends ActionForm {
      * The text for the debug level.
      */
     private String debugLvl = "0";
-        
+    
+    /**
+     * The name of the service the admin app runs on.
+     */
+    private String adminServiceName = null;    
 
     /**
      * The text for the defaultHost Name.
@@ -305,7 +309,25 @@ public final class ServiceForm extends ActionForm {
         this.serviceName = serviceName;
         
     }
-    
+
+    /**
+     * Return the name of the service the admin app runs on.
+     */
+    public String getAdminServiceName() {
+
+        return this.adminServiceName;
+
+    }
+
+    /**
+     * Set the name of the service the admin app runs on.
+     */
+    public void setAdminServiceName(String adminServiceName) {
+
+        this.adminServiceName = adminServiceName;
+
+    }
+
     /**
      * Return the default Host.
      */
@@ -339,6 +361,7 @@ public final class ServiceForm extends ActionForm {
         this.objectName = null;
         this.serviceName = null;
         this.engineName = null;
+        this.adminServiceName = null;
         this.debugLvl = "0";
         this.defaultHost = null;
     }
@@ -363,6 +386,8 @@ public final class ServiceForm extends ActionForm {
         sb.append(objectName);
         sb.append("',serviceName=");
         sb.append(serviceName);
+        sb.append("',adminServiceName=");
+        sb.append(adminServiceName);
         sb.append("]");
         return (sb.toString());
 

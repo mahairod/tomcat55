@@ -139,7 +139,11 @@ public class AddConnectorAction extends Action {
         connectorFm.setConnectorType(type);
         connectorFm.setDebugLvl("0");
         connectorFm.setServiceName(serviceName);
-        connectorFm.setScheme("http");
+        if ("HTTPS".equalsIgnoreCase(type)) {
+            connectorFm.setScheme("https");
+        } else {
+            connectorFm.setScheme("http");       
+        }
         connectorFm.setAcceptCountText("10");
         connectorFm.setConnTimeOutText("60000");
         connectorFm.setBufferSizeText("2048");

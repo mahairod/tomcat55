@@ -175,6 +175,22 @@ public class EditServiceAction extends Action {
             return (null);
         }
 
+        String adminService = null;
+        // Get the service name the admin app runs on
+        // this service cannot be deleted from the admin tool
+        try {
+            adminService = Lists.getAdminAppService(
+                                  mBServer, sname.getDomain(),request);
+         } catch (Exception e) {
+            String message =
+                resources.getMessage("error.serviceName.bad",
+                                 adminService);
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+
+        
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();
         session.setAttribute("serviceForm", serviceFm);
@@ -185,6 +201,7 @@ public class EditServiceAction extends Action {
         sb.append(sname.getKeyProperty("name"));
         sb.append(")");
         serviceFm.setNodeLabel(sb.toString());
+        serviceFm.setAdminServiceName(adminService);
         serviceFm.setDebugLvlVals(Lists.getDebugLevels());
         String attribute = null;
         try {

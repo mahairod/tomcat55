@@ -91,6 +91,7 @@ import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.Lists;
 
 /**
  * The <code>Action</code> that sets up <em>Delete Services</em> transactions.
@@ -153,6 +154,22 @@ public class DeleteServiceAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
+        String adminService = null;
+        // Get the service name the admin app runs on
+        // this service cannot be deleted from the admin tool
+        try {
+            adminService = Lists.getAdminAppService(
+                                  mBServer, "Catalina" ,request);
+         } catch (Exception e) {
+            String message =
+                resources.getMessage("error.serviceName.bad",
+                                 adminService);
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+        request.setAttribute("adminAppService", adminService);
+ 
         // Set up a form bean containing the currently selected
         // objects to be deleted
         ServicesForm servicesForm = new ServicesForm();
@@ -183,7 +200,7 @@ public class DeleteServiceAction extends Action {
             return (null);
         }
         Collections.sort(list);
-        request.setAttribute("servicesList", list);
+        request.setAttribute("servicesList", list);    
         
         // Forward to the list display page
         return (mapping.findForward("Services"));
