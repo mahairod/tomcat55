@@ -657,7 +657,16 @@ public class DefaultServlet
                                             Globals.INCLUDE_REQUEST_URI_ATTR);
             if (requestUri == null) {
                 requestUri = request.getRequestURI();
+            } else {
+                // We're included, and the response.sendError() below is going
+                // to be ignored by the resource that is including us.
+                // Therefore, the only way we can let the including resource
+                // know is by including warning message in response
+                response.getWriter().write(
+                    sm.getString("defaultServlet.missingResource",
+                    requestUri));
             }
+
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                requestUri);
             return;
