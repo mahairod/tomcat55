@@ -91,13 +91,22 @@ if $os400; then
 fi
 
 # Get standard Java environment variables
-if [ -r "$CATALINA_HOME"/bin/setclasspath.sh ]; then
+if $os400; then
+  # -r will Only work on the os400 if the files are:
+  # 1. owned by the user
+  # 2. owned by the PRIMARY group of the user
+  # this will not work if the user belongs in secondary groups
   BASEDIR="$CATALINA_HOME"
-  . "$CATALINA_HOME"/bin/setclasspath.sh
+  . "$CATALINA_HOME"/bin/setclasspath.sh 
 else
-  echo "Cannot find $CATALINA_HOME/bin/setclasspath.sh"
-  echo "This file is needed to run this program"
-  exit 1
+  if [ -r "$CATALINA_HOME"/bin/setclasspath.sh ]; then
+    BASEDIR="$CATALINA_HOME"
+    . "$CATALINA_HOME"/bin/setclasspath.sh
+  else
+    echo "Cannot find $CATALINA_HOME/bin/setclasspath.sh"
+    echo "This file is needed to run this program"
+    exit 1
+  fi
 fi
 
 # Add on extra jar files to CLASSPATH
