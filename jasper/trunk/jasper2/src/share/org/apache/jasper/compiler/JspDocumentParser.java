@@ -615,6 +615,9 @@ class JspDocumentParser
      * See org.xml.sax.ext.LexicalHandler.
      */
     public void comment(char[] buf, int offset, int len) throws SAXException {
+
+        processChars();  // Flush char buffer and remove white spaces
+
         // ignore comments in the DTD
         if (!inDTD) {
             startMark =
@@ -630,6 +633,8 @@ class JspDocumentParser
      * See org.xml.sax.ext.LexicalHandler.
      */
     public void startCDATA() throws SAXException {
+
+        processChars();  // Flush char buffer and remove white spaces
         startMark =
             new Mark(path, locator.getLineNumber(), locator.getColumnNumber());
     }
@@ -638,7 +643,7 @@ class JspDocumentParser
      * See org.xml.sax.ext.LexicalHandler.
      */
     public void endCDATA() throws SAXException {
-        // do nothing
+        processChars();  // Flush char buffer and remove white spaces
     }
 
     /*
