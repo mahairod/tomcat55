@@ -213,9 +213,9 @@ public class ApplicationContext
         String contextPath = context.getPath();
         if (!contextPath.endsWith("/"))
             contextPath = contextPath + "/";
-        if ((contextPath.length() > 1) && 
-            ((uri.equals(context.getPath())) 
-             || (uri.startsWith(contextPath)))) {
+
+        if (((contextPath.length() > 1) && (uri.startsWith(contextPath))) ||
+            ((contextPath.equals("/")) && (uri.equals("/")))) {
             return (this);
         }
 
