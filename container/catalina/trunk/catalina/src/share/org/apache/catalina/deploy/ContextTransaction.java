@@ -17,47 +17,59 @@
 
 package org.apache.catalina.deploy;
 
-import java.util.Hashtable;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+
 
 /**
- * Representation of additional parameters which will be used to initialize
- * external resources defined in the web application deployment descriptor.
+ * Representation of an application resource reference, as represented in
+ * an <code>&lt;res-env-refy&gt;</code> element in the deployment descriptor.
  *
- * @author Remy Maucherat
+ * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class ResourceParams implements Serializable {
+public class ContextTransaction implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * The name of this resource parameters. Must be the name of the resource
-     * in the java: namespace.
+     * Holder for our configured properties.
      */
-    private String name = null;
+    private HashMap properties = new HashMap();
 
-    public String getName() {
-        return (this.name);
+    /**
+     * Return a configured property.
+     */
+    public Object getProperty(String name) {
+        return properties.get(name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    /**
+     * Set a configured property.
+     */
+    public void setProperty(String name, Object value) {
+        properties.put(name, value);
     }
 
-    private Hashtable resourceParams = new Hashtable();
-
-    public void addParameter(String name, String value) {
-        resourceParams.put(name, value);
+    /** 
+     * remove a configured property.
+     */
+    public void removeProperty(String name) {
+        properties.remove(name);
     }
 
-    public Hashtable getParameters() {
-        return resourceParams;
+    /**
+     * List properties.
+     */
+    public Iterator listProperties() {
+        return properties.keySet().iterator();
     }
-
+    
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -66,11 +78,7 @@ public class ResourceParams implements Serializable {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("ResourceParams[");
-        sb.append("name=");
-        sb.append(name);
-        sb.append(", parameters=");
-        sb.append(resourceParams.toString());
+        StringBuffer sb = new StringBuffer("Transaction[");
         sb.append("]");
         return (sb.toString());
 

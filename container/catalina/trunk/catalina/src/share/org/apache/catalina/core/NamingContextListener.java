@@ -20,8 +20,8 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.naming.NameAlreadyBoundException;
@@ -41,9 +41,10 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextResourceLink;
+import org.apache.catalina.deploy.ContextTransaction;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -313,36 +314,6 @@ public class NamingContextListener
                 addEnvironment(env);
             }
 
-        } else if ((type.equals("addResourceParams")) 
-                   || (type.equals("removeResourceParams"))) {
-
-            String resourceParamsName = (String) event.getData();
-            if (resourceParamsName != null) {
-                ContextEjb ejb = namingResources.findEjb(resourceParamsName);
-                if (ejb != null) {
-                    removeEjb(resourceParamsName);
-                    addEjb(ejb);
-                }
-                ContextResource resource = 
-                    namingResources.findResource(resourceParamsName);
-                if (resource != null) {
-                    removeResource(resourceParamsName);
-                    addResource(resource);
-                }
-                String resourceEnvRefValue = 
-                    namingResources.findResourceEnvRef(resourceParamsName);
-                if (resourceEnvRefValue != null) {
-                    removeResourceEnvRef(resourceParamsName);
-                    addResourceEnvRef(resourceParamsName, resourceEnvRefValue);
-                }
-                ContextResourceLink resourceLink = 
-                    namingResources.findResourceLink(resourceParamsName);
-                if (resourceLink != null) {
-                    removeResourceLink(resourceParamsName);
-                    addResourceLink(resourceLink);
-                }
-            }
-
         } else if (type.equals("addLocalEjb")) {
 
             String localEjbName = (String) event.getData();
@@ -374,9 +345,9 @@ public class NamingContextListener
 
             String resourceEnvRefName = (String) event.getData();
             if (resourceEnvRefName != null) {
-                String resourceEnvRefValue = 
+                ContextResourceEnvRef resourceEnvRef = 
                     namingResources.findResourceEnvRef(resourceEnvRefName);
-                addResourceEnvRef(resourceEnvRefName, resourceEnvRefValue);
+                addResourceEnvRef(resourceEnvRef);
             }
 
         } else if (type.equals("removeEjb")) {
@@ -534,15 +505,18 @@ public class NamingContextListener
             }
         } else if (name.equals("resourceEnvRef")) {
             if (oldValue != null) {
-                String update = (String) oldValue;
-                int colon = update.indexOf(':');
-                removeResourceEnvRef(update.substring(0, colon));
+                ContextResourceEnvRef resourceEnvRef = 
+                    (ContextResourceEnvRef) oldValue;
+                if (resourceEnvRef.getName() != null) {
+                    removeResourceEnvRef(resourceEnvRef.getName());
+                }
             }
             if (newValue != null) {
-                String update = (String) newValue;
-                int colon = update.indexOf(':');
-                addResourceEnvRef(update.substring(0, colon),
-                                  update.substring(colon + 1));
+                ContextResourceEnvRef resourceEnvRef = 
+                    (ContextResourceEnvRef) newValue;
+                if (resourceEnvRef.getName() != null) {
+                    addResourceEnvRef(resourceEnvRef);
+                }
             }
         } else if (name.equals("resourceLink")) {
             if (oldValue != null) {
@@ -555,43 +529,6 @@ public class NamingContextListener
                 ContextResourceLink rl = (ContextResourceLink) newValue;
                 if (rl.getName() != null) {
                     addResourceLink(rl);
-                }
-            }
-        } else if (name.equals("resourceParams")) {
-            String resourceParamsName = null;
-            ResourceParams rp = null;
-            if (oldValue != null) {
-                rp = (ResourceParams) oldValue;
-            }
-            if (newValue != null) {
-                rp = (ResourceParams) newValue;
-            }
-            if (rp != null) {
-                resourceParamsName = rp.getName();
-            }
-            if (resourceParamsName != null) {
-                ContextEjb ejb = namingResources.findEjb(resourceParamsName);
-                if (ejb != null) {
-                    removeEjb(resourceParamsName);
-                    addEjb(ejb);
-                }
-                ContextResource resource = 
-                    namingResources.findResource(resourceParamsName);
-                if (resource != null) {
-                    removeResource(resourceParamsName);
-                    addResource(resource);
-                }
-                String resourceEnvRefValue = 
-                    namingResources.findResourceEnvRef(resourceParamsName);
-                if (resourceEnvRefValue != null) {
-                    removeResourceEnvRef(resourceParamsName);
-                    addResourceEnvRef(resourceParamsName, resourceEnvRefValue);
-                }
-                ContextResourceLink resourceLink = 
-                    namingResources.findResourceLink(resourceParamsName);
-                if (resourceLink != null) {
-                    removeResourceLink(resourceParamsName);
-                    addResourceLink(resourceLink);
                 }
             }
         }
@@ -639,11 +576,9 @@ public class NamingContextListener
         }
 
         // Resources Env
-        String[] resourceEnvRefs = namingResources.findResourceEnvRefs();
+        ContextResourceEnvRef[] resourceEnvRefs = namingResources.findResourceEnvRefs();
         for (i = 0; i < resourceEnvRefs.length; i++) {
-            String key = resourceEnvRefs[i];
-            String type = namingResources.findResourceEnvRef(key);
-            addResourceEnvRef(key, type);
+            addResourceEnvRef(resourceEnvRefs[i]);
         }
 
         // Environment entries
@@ -664,8 +599,16 @@ public class NamingContextListener
             try {
                 Reference ref = new TransactionRef();
                 compCtx.bind("UserTransaction", ref);
-                addAdditionalParameters
-                    (namingResources, ref, "UserTransaction");
+                ContextTransaction transaction = namingResources.getTransaction();
+                if (transaction != null) {
+                    Iterator params = transaction.listProperties();
+                    while (params.hasNext()) {
+                        String paramName = (String) params.next();
+                        String paramValue = (String) transaction.getProperty(paramName);
+                        StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+                        ref.add(refAddr);
+                    }
+                }
             } catch (NameAlreadyBoundException e) {
                 // Ignore because UserTransaction was obviously 
                 // added via ResourceLink
@@ -696,7 +639,13 @@ public class NamingContextListener
         Reference ref = new EjbRef
             (ejb.getType(), ejb.getHome(), ejb.getRemote(), ejb.getLink());
         // Adding the additional parameters, if any
-        addAdditionalParameters(ejb.getNamingResources(), ref, ejb.getName());
+        Iterator params = ejb.listProperties();
+        while (params.hasNext()) {
+            String paramName = (String) params.next();
+            String paramValue = (String) ejb.getProperty(paramName);
+            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+            ref.add(refAddr);
+        }
         try {
             createSubcontexts(envCtx, ejb.getName());
             envCtx.bind(ejb.getName(), ref);
@@ -811,8 +760,13 @@ public class NamingContextListener
             (resource.getType(), resource.getDescription(),
              resource.getScope(), resource.getAuth());
         // Adding the additional parameters, if any
-        addAdditionalParameters(resource.getNamingResources(), ref, 
-                                resource.getName());
+        Iterator params = resource.listProperties();
+        while (params.hasNext()) {
+            String paramName = (String) params.next();
+            String paramValue = (String) resource.getProperty(paramName);
+            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+            ref.add(refAddr);
+        }
         try {
             if (logger.isDebugEnabled()) {
                 logger.debug("  Adding resource ref " 
@@ -830,12 +784,18 @@ public class NamingContextListener
     /**
      * Set the specified resources in the naming context.
      */
-    public void addResourceEnvRef(String name, String type) {
+    public void addResourceEnvRef(ContextResourceEnvRef resourceEnvRef) {
 
         // Create a reference to the resource env.
-        Reference ref = new ResourceEnvRef(type);
-        // Adding the additional parameters, if any
-        addAdditionalParameters(null, ref, name);
+        Reference ref = new ResourceEnvRef(resourceEnvRef.getType());
+        // FIXME: Adding the additional parameters, if any
+        Iterator params = resourceEnvRef.listProperties();
+        while (params.hasNext()) {
+            String paramName = (String) params.next();
+            String paramValue = (String) resourceEnvRef.getProperty(paramName);
+            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
+            ref.add(refAddr);
+        }
         try {
             if (logger.isDebugEnabled())
                 log.debug("  Adding resource env ref " + name);
@@ -856,9 +816,6 @@ public class NamingContextListener
         // Create a reference to the resource.
         Reference ref = new ResourceLinkRef
             (resourceLink.getType(), resourceLink.getGlobal());
-        // Adding the additional parameters, if any
-        addAdditionalParameters(resourceLink.getNamingResources(), ref, 
-                                resourceLink.getName());
         javax.naming.Context ctx = 
             "UserTransaction".equals(resourceLink.getName()) 
             ? compCtx : envCtx;
@@ -977,31 +934,6 @@ public class NamingContextListener
                         (javax.naming.Context) currentContext.lookup(token);
                 }
             }
-        }
-    }
-
-
-    /**
-     * Add additional parameters to the reference.
-     */
-    private void addAdditionalParameters(NamingResources resources, 
-                                         Reference ref, String name) {
-        if (resources == null) {
-            resources = namingResources;
-        }
-        ResourceParams resourceParameters = resources.findResourceParams(name);
-        if (logger.isDebugEnabled())
-            logger.debug("  Resource parameters for " + name + " = " +
-                resourceParameters);
-        if (resourceParameters == null)
-            return;
-        Hashtable params = resourceParameters.getParameters();
-        Enumeration enumeration = params.keys();
-        while (enumeration.hasMoreElements()) {
-            String paramName = (String) enumeration.nextElement();
-            String paramValue = (String) params.get(paramName);
-            StringRefAddr refAddr = new StringRefAddr(paramName, paramValue);
-            ref.add(refAddr);
         }
     }
 

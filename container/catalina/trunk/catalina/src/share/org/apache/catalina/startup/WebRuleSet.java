@@ -129,9 +129,9 @@ public class WebRuleSet extends RuleSetBase {
 
         digester.addObjectCreate(prefix + "web-app/ejb-local-ref",
                                  "org.apache.catalina.deploy.ContextLocalEjb");
-        digester.addSetNext(prefix + "web-app/ejb-local-ref",
-                            "addLocalEjb",
-                            "org.apache.catalina.deploy.ContextLocalEjb");
+        digester.addRule(prefix + "web-app/ejb-local-ref",
+                new SetNextNamingRule("addLocalEjb",
+                            "org.apache.catalina.deploy.ContextLocalEjb"));
 
         digester.addCallMethod(prefix + "web-app/ejb-local-ref/description",
                                "setDescription", 0);
@@ -148,9 +148,9 @@ public class WebRuleSet extends RuleSetBase {
 
         digester.addObjectCreate(prefix + "web-app/ejb-ref",
                                  "org.apache.catalina.deploy.ContextEjb");
-        digester.addSetNext(prefix + "web-app/ejb-ref",
-                            "addEjb",
-                            "org.apache.catalina.deploy.ContextEjb");
+        digester.addRule(prefix + "web-app/ejb-ref",
+                new SetNextNamingRule("addEjb",
+                            "org.apache.catalina.deploy.ContextEjb"));
 
         digester.addCallMethod(prefix + "web-app/ejb-ref/description",
                                "setDescription", 0);
@@ -167,9 +167,9 @@ public class WebRuleSet extends RuleSetBase {
 
         digester.addObjectCreate(prefix + "web-app/env-entry",
                                  "org.apache.catalina.deploy.ContextEnvironment");
-        digester.addSetNext(prefix + "web-app/env-entry",
-                            "addEnvironment",
-                            "org.apache.catalina.deploy.ContextEnvironment");
+        digester.addRule(prefix + "web-app/env-entry",
+                new SetNextNamingRule("addEnvironment",
+                            "org.apache.catalina.deploy.ContextEnvironment"));
 
         digester.addCallMethod(prefix + "web-app/env-entry/description",
                                "setDescription", 0);
@@ -270,10 +270,16 @@ public class WebRuleSet extends RuleSetBase {
         digester.addCallParam(prefix + "web-app/mime-mapping/extension", 0);
         digester.addCallParam(prefix + "web-app/mime-mapping/mime-type", 1);
 
-        digester.addCallMethod(prefix + "web-app/resource-env-ref",
-                               "addResourceEnvRef", 2);
-        digester.addCallParam(prefix + "web-app/resource-env-ref/resource-env-ref-name", 0);
-        digester.addCallParam(prefix + "web-app/resource-env-ref/resource-env-ref-type", 1);
+        digester.addObjectCreate(prefix + "web-app/resource-env-ref",
+            "org.apache.catalina.deploy.ContextResourceEnvRef");
+        digester.addRule(prefix + "web-app/resource-env-ref",
+                    new SetNextNamingRule("addResourceEnvRef",
+                        "org.apache.catalina.deploy.ContextResourceEnvRef"));
+
+        digester.addCallMethod(prefix + "web-app/resource-env-ref/resource-env-ref-name",
+                "setName", 0);
+        digester.addCallMethod(prefix + "web-app/resource-env-ref/resource-env-ref-type",
+                "setType", 0);
 
         digester.addObjectCreate(prefix + "web-app/message-destination",
                                  "org.apache.catalina.deploy.MessageDestination");
@@ -311,9 +317,9 @@ public class WebRuleSet extends RuleSetBase {
 
         digester.addObjectCreate(prefix + "web-app/resource-ref",
                                  "org.apache.catalina.deploy.ContextResource");
-        digester.addSetNext(prefix + "web-app/resource-ref",
-                            "addResource",
-                            "org.apache.catalina.deploy.ContextResource");
+        digester.addRule(prefix + "web-app/resource-ref",
+                new SetNextNamingRule("addResource",
+                            "org.apache.catalina.deploy.ContextResource"));
 
         digester.addCallMethod(prefix + "web-app/resource-ref/description",
                                "setDescription", 0);

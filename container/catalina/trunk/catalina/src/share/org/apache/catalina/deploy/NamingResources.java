@@ -108,10 +108,10 @@ public class NamingResources implements Serializable {
 
 
     /**
-     * The resource parameters for this web application, keyed by name.
+     * The transaction for this webapp.
      */
-    private HashMap resourceParams = new HashMap();
-
+    private ContextTransaction transaction = null;
+    
 
     /**
      * The property change support for this component.
@@ -137,6 +137,22 @@ public class NamingResources implements Serializable {
         this.container = container;
     }
 
+    
+    /**
+     * Set the transaction object.
+     */
+    public void setTransaction(ContextTransaction transaction) {
+        this.transaction = transaction;
+    }
+    
+
+    /**
+     * Get the transaction object.
+     */
+    public ContextTransaction getTransaction() {
+        return transaction;
+    }
+    
 
     /**
      * Add an EJB resource reference for this web application.
@@ -178,26 +194,6 @@ public class NamingResources implements Serializable {
             envs.put(environment.getName(), environment);
         }
         support.firePropertyChange("environment", null, environment);
-
-    }
-
-
-    /**
-     * Add resource parameters for this web application.
-     *
-     * @param resourceParameters New resource parameters
-     */
-    public void addResourceParams(ResourceParams resourceParameters) {
-
-        synchronized (resourceParams) {
-            if (resourceParams.containsKey(resourceParameters.getName())) {
-                return;
-            }
-            resourceParameters.setNamingResources(this);
-            resourceParams.put(resourceParameters.getName(),
-                               resourceParameters);
-        }
-        support.firePropertyChange("resourceParams", null, resourceParameters);
 
     }
 
@@ -286,19 +282,19 @@ public class NamingResources implements Serializable {
      * @param name The resource environment reference name
      * @param type The resource environment reference type
      */
-    public void addResourceEnvRef(String name, String type) {
+    public void addResourceEnvRef(ContextResourceEnvRef resource) {
 
-        if (entries.containsKey(name)) {
+        if (entries.containsKey(resource.getName())) {
             return;
         } else {
-            entries.put(name, type);
+            entries.put(resource.getName(), resource.getType());
         }
 
-        synchronized (resourceEnvRefs) {
-            resourceEnvRefs.put(name, type);
+        synchronized (localEjbs) {
+            resource.setNamingResources(this);
+            resourceEnvRefs.put(resource.getName(), resource);
         }
-        support.firePropertyChange("resourceEnvRef", null,
-                                   name + ":" + type);
+        support.firePropertyChange("resourceEnvRef", null, resource);
 
     }
 
@@ -513,10 +509,10 @@ public class NamingResources implements Serializable {
      *
      * @param name Name of the desired resource environment reference
      */
-    public String findResourceEnvRef(String name) {
+    public ContextResourceEnvRef findResourceEnvRef(String name) {
 
         synchronized (resourceEnvRefs) {
-            return ((String) resourceEnvRefs.get(name));
+            return ((ContextResourceEnvRef) resourceEnvRefs.get(name));
         }
 
     }
@@ -527,42 +523,11 @@ public class NamingResources implements Serializable {
      * web application.  If none have been specified, a zero-length
      * array is returned.
      */
-    public String[] findResourceEnvRefs() {
+    public ContextResourceEnvRef[] findResourceEnvRefs() {
 
         synchronized (resourceEnvRefs) {
-            String results[] = new String[resourceEnvRefs.size()];
-            return ((String[]) resourceEnvRefs.keySet().toArray(results));
-        }
-
-    }
-
-
-    /**
-     * Return the resource parameters with the specified name, if any;
-     * otherwise return <code>null</code>.
-     */
-    public ResourceParams findResourceParams(String name) {
-
-        synchronized (resourceParams) {
-            return ((ResourceParams) resourceParams.get(name));
-        }
-
-    }
-
-
-    /**
-     * Return the resource parameters with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource parameters
-     */
-    public ResourceParams[] findResourceParams() {
-
-        synchronized (resourceParams) {
-            ResourceParams results[] = 
-                new ResourceParams[resourceParams.size()];
-            return ((ResourceParams[]) resourceParams.values()
-                    .toArray(results));
+            ContextResourceEnvRef results[] = new ContextResourceEnvRef[resourceEnvRefs.size()];
+            return ((ContextResourceEnvRef[]) resourceEnvRefs.values().toArray(results));
         }
 
     }
@@ -733,26 +698,6 @@ public class NamingResources implements Serializable {
         if (resourceLink != null) {
             support.firePropertyChange("resourceLink", resourceLink, null);
             resourceLink.setNamingResources(null);
-        }
-
-    }
-
-
-    /**
-     * Remove any resource parameters with the specified name.
-     *
-     * @param name Name of the resource parameters to remove
-     */
-    public void removeResourceParams(String name) {
-
-        ResourceParams resourceParameters = null;
-        synchronized (resourceParams) {
-            resourceParameters = (ResourceParams) resourceParams.remove(name);
-        }
-        if (resourceParameters != null) {
-            support.firePropertyChange("resourceParams", resourceParameters,
-                                       null);
-            resourceParameters.setNamingResources(null);
         }
 
     }

@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -67,11 +66,6 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
-import org.apache.catalina.deploy.ContextEjb;
-import org.apache.catalina.deploy.ContextEnvironment;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
-import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
@@ -79,11 +73,9 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.MessageDestination;
 import org.apache.catalina.deploy.MessageDestinationRef;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.util.CharsetMapper;
@@ -91,7 +83,6 @@ import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
 import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.BaseDirContext;
@@ -128,7 +119,6 @@ public class StandardContext
 
         super();
         pipeline.setBasic(new StandardContextValve());
-        namingResources.setContainer(this);
         broadcaster = new NotificationBroadcasterSupport();
 
     }
@@ -165,6 +155,12 @@ public class StandardContext
     private String hostName;
 
 
+    /**
+     * The antiJARLocking flag for this Context.
+     */
+    private boolean antiJARLocking = false;
+
+    
     /**
      * The antiResourceLocking flag for this Context.
      */
@@ -354,7 +350,7 @@ public class StandardContext
     /**
      * The naming resources for this web application.
      */
-    private NamingResources namingResources = new NamingResources();
+    private NamingResources namingResources = null;
 
 
     /**
@@ -825,11 +821,37 @@ public class StandardContext
 
 
     /**
+     * Return the antiJARLocking flag for this Context.
+     */
+    public boolean getAntiJARLocking() {
+
+        return (this.antiJARLocking);
+
+    }
+
+
+    /**
      * Return the antiResourceLocking flag for this Context.
      */
     public boolean getAntiResourceLocking() {
 
         return (this.antiResourceLocking);
+
+    }
+
+
+    /**
+     * Set the application available flag for this Context.
+     *
+     * @param available The new application available flag
+     */
+    public void setAntiJARLocking(boolean antiJARLocking) {
+
+        boolean oldAntiJARLocking = this.antiJARLocking;
+        this.antiJARLocking = antiJARLocking;
+        support.firePropertyChange("antiJARLocking",
+                                   new Boolean(oldAntiJARLocking),
+                                   new Boolean(this.antiJARLocking));
 
     }
 
@@ -1307,7 +1329,10 @@ public class StandardContext
      */
     public NamingResources getNamingResources() {
 
-        return (this.namingResources);
+        if (namingResources == null) {
+            setNamingResources(new NamingResources());
+        }
+        return (namingResources);
 
     }
 
@@ -1322,6 +1347,7 @@ public class StandardContext
         // Process the property setting change
         NamingResources oldNamingResources = this.namingResources;
         this.namingResources = namingResources;
+        namingResources.setContainer(this);
         support.firePropertyChange("namingResources",
                                    oldNamingResources, this.namingResources);
 
@@ -1879,48 +1905,6 @@ public class StandardContext
 
 
     /**
-     * Add an EJB resource reference for this web application.
-     *
-     * @param ejb New EJB resource reference
-     */
-    public void addEjb(ContextEjb ejb) {
-
-        namingResources.addEjb(ejb);
-        fireContainerEvent("addEjb", ejb.getName());
-
-    }
-
-
-    /**
-     * Add an environment entry for this web application.
-     *
-     * @param environment New environment entry
-     */
-    public void addEnvironment(ContextEnvironment environment) {
-
-        ContextEnvironment env = findEnvironment(environment.getName());
-        if ((env != null) && !env.getOverride())
-            return;
-        namingResources.addEnvironment(environment);
-        fireContainerEvent("addEnvironment", environment.getName());
-
-    }
-
-
-    /**
-     * Add resource parameters for this web application.
-     *
-     * @param resourceParameters New resource parameters
-     */
-    public void addResourceParams(ResourceParams resourceParameters) {
-
-        namingResources.addResourceParams(resourceParameters);
-        fireContainerEvent("addResourceParams", resourceParameters.getName());
-
-    }
-
-
-    /**
      * Add an error page for the specified error or Java exception.
      *
      * @param errorPage The error page definition to be added
@@ -2075,19 +2059,6 @@ public class StandardContext
 
 
     /**
-     * Add a local EJB resource reference for this web application.
-     *
-     * @param ejb New EJB resource reference
-     */
-    public void addLocalEjb(ContextLocalEjb ejb) {
-
-        namingResources.addLocalEjb(ejb);
-        fireContainerEvent("addLocalEjb", ejb.getName());
-
-    }
-
-
-    /**
      * Add a message destination for this web application.
      *
      * @param md New message destination
@@ -2157,46 +2128,6 @@ public class StandardContext
             parameters.put(name, value);
         }
         fireContainerEvent("addParameter", name);
-
-    }
-
-
-    /**
-     * Add a resource reference for this web application.
-     *
-     * @param resource New resource reference
-     */
-    public void addResource(ContextResource resource) {
-
-        namingResources.addResource(resource);
-        fireContainerEvent("addResource", resource.getName());
-
-    }
-
-
-    /**
-     * Add a resource environment reference for this web application.
-     *
-     * @param name The resource environment reference name
-     * @param type The resource environment reference type
-     */
-    public void addResourceEnvRef(String name, String type) {
-
-        namingResources.addResourceEnvRef(name, type);
-        fireContainerEvent("addResourceEnvRef", name);
-
-    }
-
-
-    /**
-     * Add a resource link for this web application.
-     *
-     * @param resourceLink New resource link
-     */
-    public void addResourceLink(ContextResourceLink resourceLink) {
-
-        namingResources.addResourceLink(resourceLink);
-        fireContainerEvent("addResourceLink", resourceLink.getName());
 
     }
 
@@ -2487,55 +2418,6 @@ public class StandardContext
 
 
     /**
-     * Return the EJB resource reference with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
-     */
-    public ContextEjb findEjb(String name) {
-
-        return namingResources.findEjb(name);
-
-    }
-
-
-    /**
-     * Return the defined EJB resource references for this application.
-     * If there are none, a zero-length array is returned.
-     */
-    public ContextEjb[] findEjbs() {
-
-        return namingResources.findEjbs();
-
-    }
-
-
-    /**
-     * Return the environment entry with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired environment entry
-     */
-    public ContextEnvironment findEnvironment(String name) {
-
-        return namingResources.findEnvironment(name);
-
-    }
-
-
-    /**
-     * Return the set of defined environment entries for this web
-     * application.  If none have been defined, a zero-length array
-     * is returned.
-     */
-    public ContextEnvironment[] findEnvironments() {
-
-        return namingResources.findEnvironments();
-
-    }
-
-
-    /**
      * Return the error page entry for the specified HTTP error code,
      * if any; otherwise return <code>null</code>.
      *
@@ -2638,30 +2520,6 @@ public class StandardContext
     public String[] findInstanceListeners() {
 
         return (instanceListeners);
-
-    }
-
-
-    /**
-     * Return the local EJB resource reference with the specified name, if any;
-     * otherwise, return <code>null</code>.
-     *
-     * @param name Name of the desired EJB resource reference
-     */
-    public ContextLocalEjb findLocalEjb(String name) {
-
-        return namingResources.findLocalEjb(name);
-
-    }
-
-
-    /**
-     * Return the defined local EJB resource references for this application.
-     * If there are none, a zero-length array is returned.
-     */
-    public ContextLocalEjb[] findLocalEjbs() {
-
-        return namingResources.findLocalEjbs();
 
     }
 
@@ -2787,79 +2645,6 @@ public class StandardContext
             String results[] = new String[parameters.size()];
             return ((String[]) parameters.keySet().toArray(results));
         }
-
-    }
-
-
-    /**
-     * Return the resource reference with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource reference
-     */
-    public ContextResource findResource(String name) {
-
-        return namingResources.findResource(name);
-
-    }
-
-
-    /**
-     * Return the resource environment reference type for the specified
-     * name, if any; otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource environment reference
-     */
-    public String findResourceEnvRef(String name) {
-
-        return namingResources.findResourceEnvRef(name);
-
-    }
-
-
-    /**
-     * Return the set of resource environment reference names for this
-     * web application.  If none have been specified, a zero-length
-     * array is returned.
-     */
-    public String[] findResourceEnvRefs() {
-
-        return namingResources.findResourceEnvRefs();
-
-    }
-
-
-    /**
-     * Return the resource link with the specified name, if any;
-     * otherwise return <code>null</code>.
-     *
-     * @param name Name of the desired resource link
-     */
-    public ContextResourceLink findResourceLink(String name) {
-
-        return namingResources.findResourceLink(name);
-
-    }
-
-
-    /**
-     * Return the defined resource links for this application.  If
-     * none have been defined, a zero-length array is returned.
-     */
-    public ContextResourceLink[] findResourceLinks() {
-
-        return namingResources.findResourceLinks();
-
-    }
-
-
-    /**
-     * Return the defined resource references for this application.  If
-     * none have been defined, a zero-length array is returned.
-     */
-    public ContextResource[] findResources() {
-
-        return namingResources.findResources();
 
     }
 
@@ -3252,40 +3037,6 @@ public class StandardContext
 
 
     /**
-     * Remove any EJB resource reference with the specified name.
-     *
-     * @param name Name of the EJB resource reference to remove
-     */
-    public void removeEjb(String name) {
-
-        namingResources.removeEjb(name);
-        fireContainerEvent("removeEjb", name);
-
-    }
-
-
-    /**
-     * Remove any environment entry with the specified name.
-     *
-     * @param name Name of the environment entry to remove
-     */
-    public void removeEnvironment(String name) {
-        if (namingResources == null) {
-            return;
-        }
-        ContextEnvironment env = namingResources.findEnvironment(name);
-        if (env == null) {
-            throw new IllegalArgumentException
-                ("Invalid environment name '" + name + "'");
-        }
-
-        namingResources.removeEnvironment(name);
-        fireContainerEvent("removeEnvironment", name);
-
-    }
-
-
-    /**
      * Remove the error page for the specified error code or
      * Java language exception, if it exists; otherwise, no action is taken.
      *
@@ -3401,19 +3152,6 @@ public class StandardContext
 
 
     /**
-     * Remove any local EJB resource reference with the specified name.
-     *
-     * @param name Name of the EJB resource reference to remove
-     */
-    public void removeLocalEjb(String name) {
-
-        namingResources.removeLocalEjb(name);
-        fireContainerEvent("removeLocalEjb", name);
-
-    }
-
-
-    /**
      * Remove any message destination with the specified name.
      *
      * @param name Name of the message destination to remove
@@ -3469,63 +3207,6 @@ public class StandardContext
             parameters.remove(name);
         }
         fireContainerEvent("removeParameter", name);
-
-    }
-
-
-    /**
-     * Remove any resource reference with the specified name.
-     *
-     * @param name Name of the resource reference to remove
-     */
-    public void removeResource(String name) {
-        name = URLDecoder.decode(name);
-        if (namingResources == null) {
-            return;
-        }
-        ContextResource resource = namingResources.findResource(name);
-        if (resource == null) {
-            throw new IllegalArgumentException
-                ("Invalid resource name '" + name + "'");
-        }
-
-        namingResources.removeResource(name);
-        fireContainerEvent("removeResource", name);
-
-    }
-
-
-    /**
-     * Remove any resource environment reference with the specified name.
-     *
-     * @param name Name of the resource environment reference to remove
-     */
-    public void removeResourceEnvRef(String name) {
-
-        namingResources.removeResourceEnvRef(name);
-        fireContainerEvent("removeResourceEnvRef", name);
-
-    }
-
-
-    /**
-     * Remove any resource link with the specified name.
-     *
-     * @param name Name of the resource link to remove
-     */
-    public void removeResourceLink(String name) {
-        name = URLDecoder.decode(name);
-        if (namingResources == null) {
-            return;
-        }
-        ContextResourceLink resource = namingResources.findResourceLink(name);
-        if (resource == null) {
-            throw new IllegalArgumentException
-                ("Invalid resource name '" + name + "'");
-        }
-
-        namingResources.removeResourceLink(name);
-        fireContainerEvent("removeResourceLink", name);
 
     }
 
@@ -5201,182 +4882,11 @@ public class StandardContext
     }
 
 
-    // -------------------- JMX methods  --------------------
-
-    /**
-     * Return the MBean Names of the set of defined environment entries for
-     * this web application
-     */
-    public String[] getEnvironments() {
-        ContextEnvironment[] envs = getNamingResources().findEnvironments();
-        ArrayList results = new ArrayList();
-        for (int i = 0; i < envs.length; i++) {
-            try {
-                ObjectName oname =
-                    MBeanUtils.createObjectName(this.getEngineName(), envs[i]);
-                results.add(oname.toString());
-            } catch (MalformedObjectNameException e) {
-                IllegalArgumentException iae = new IllegalArgumentException
-                    ("Cannot create object name for environment " + envs[i]);
-                jdkCompat.chainException(iae, e);
-                throw iae;
-            }
-        }
-        return ((String[]) results.toArray(new String[results.size()]));
-
-    }
-
-
-    /**
-     * Return the MBean Names of all the defined resource references for this
-     * application.
-     */
-    public String[] getResourceNames() {
-
-        ContextResource[] resources = getNamingResources().findResources();
-        ArrayList results = new ArrayList();
-        for (int i = 0; i < resources.length; i++) {
-            try {
-                ObjectName oname =
-                    MBeanUtils.createObjectName(this.getEngineName(), resources[i]);
-                results.add(oname.toString());
-            } catch (MalformedObjectNameException e) {
-                IllegalArgumentException iae = new IllegalArgumentException
-                    ("Cannot create object name for resource " + resources[i]);
-                jdkCompat.chainException(iae, e);
-                throw iae;
-            }
-        }
-        return ((String[]) results.toArray(new String[results.size()]));
-
-    }
-
-
-    /**
-     * Return the MBean Names of all the defined resource links for this
-     * application
-     */
-    public String[] getResourceLinks() {
-
-        ContextResourceLink[] links = getNamingResources().findResourceLinks();
-        ArrayList results = new ArrayList();
-        for (int i = 0; i < links.length; i++) {
-            try {
-                ObjectName oname =
-                    MBeanUtils.createObjectName(this.getEngineName(), links[i]);
-                results.add(oname.toString());
-            } catch (MalformedObjectNameException e) {
-                IllegalArgumentException iae = new IllegalArgumentException
-                    ("Cannot create object name for resource " + links[i]);
-                jdkCompat.chainException(iae, e);
-                throw iae;
-            }
-        }
-        return ((String[]) results.toArray(new String[results.size()]));
-
-    }
-
     // ------------------------------------------------------------- Operations
 
 
     /**
-     * Add an environment entry for this web application.
-     *
-     * @param envName New environment entry name
-     */
-    public String addEnvironment(String envName, String type)
-        throws MalformedObjectNameException {
-
-        NamingResources nresources = getNamingResources();
-        if (nresources == null) {
-            return null;
-        }
-        ContextEnvironment env = nresources.findEnvironment(envName);
-        if (env != null) {
-            throw new IllegalArgumentException
-                ("Invalid environment name - already exists '" + envName + "'");
-        }
-        env = new ContextEnvironment();
-        env.setName(envName);
-        env.setType(type);
-        nresources.addEnvironment(env);
-
-        // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry(null, null)
-            .findManagedBean("ContextEnvironment");
-        ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), env);
-        return (oname.toString());
-
-    }
-
-
-    /**
-     * Add a resource reference for this web application.
-     *
-     * @param resourceName New resource reference name
-     */
-    public String addResource(String resourceName, String type)
-        throws MalformedObjectNameException {
-
-        NamingResources nresources = getNamingResources();
-        if (nresources == null) {
-            return null;
-        }
-        ContextResource resource = nresources.findResource(resourceName);
-        if (resource != null) {
-            throw new IllegalArgumentException
-                ("Invalid resource name - already exists'" + resourceName + "'");
-        }
-        resource = new ContextResource();
-        resource.setName(resourceName);
-        resource.setType(type);
-        nresources.addResource(resource);
-
-        // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry(null, null)
-            .findManagedBean("ContextResource");
-        ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), resource);
-        return (oname.toString());
-    }
-
-
-    /**
-     * Add a resource link for this web application.
-     *
-     * @param resourceLinkName New resource link name
-     */
-    public String addResourceLink(String resourceLinkName, String global,
-                String name, String type) throws MalformedObjectNameException {
-
-        NamingResources nresources = getNamingResources();
-        if (nresources == null) {
-            return null;
-        }
-        ContextResourceLink resourceLink =
-                                nresources.findResourceLink(resourceLinkName);
-        if (resourceLink != null) {
-            throw new IllegalArgumentException
-                ("Invalid resource link name - already exists'" +
-                                                        resourceLinkName + "'");
-        }
-        resourceLink = new ContextResourceLink();
-        resourceLink.setGlobal(global);
-        resourceLink.setName(resourceLinkName);
-        resourceLink.setType(type);
-        nresources.addResourceLink(resourceLink);
-
-        // Return the corresponding MBean name
-        ManagedBean managed = Registry.getRegistry(null, null)
-            .findManagedBean("ContextResourceLink");
-        ObjectName oname =
-            MBeanUtils.createObjectName(managed.getDomain(), resourceLink);
-        return (oname.toString());
-    }
-    
-    
-    /** JSR77 deploymentDescriptor attribute
+     * JSR77 deploymentDescriptor attribute
      *
      * @return string deployment descriptor 
      */

@@ -25,7 +25,6 @@ import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 
 
 /**
@@ -238,14 +237,6 @@ public interface DefaultContext {
 
 
     /**
-     * Add resource parameters for this web application.
-     *
-     * @param resourceParameters New resource parameters
-     */
-    public void addResourceParams(ResourceParams resourceParameters);
-
-
-    /**
      * Add the classname of an InstanceListener to be added to each
      * Wrapper appended to this Context.
      *
@@ -363,14 +354,6 @@ public interface DefaultContext {
      * is returned.
      */
     public ContextEnvironment[] findEnvironments();
-
-
-    /**
-     * Return the set of defined resource parameters for this web
-     * application.  If none have been defined, a zero-length array
-     * is returned.
-     */
-    public ResourceParams[] findResourceParams();
 
 
     /**

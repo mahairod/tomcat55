@@ -18,83 +18,26 @@
 package org.apache.catalina.deploy;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
- * Representation of a local EJB resource reference for a web application, as
- * represented in a <code>&lt;ejb-local-ref&gt;</code> element in the
- * deployment descriptor.
+ * Representation of an application resource reference, as represented in
+ * an <code>&lt;res-env-refy&gt;</code> element in the deployment descriptor.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class ContextLocalEjb implements Serializable {
+public class ContextResourceEnvRef implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * The description of this EJB.
-     */
-    private String description = null;
-
-    public String getDescription() {
-        return (this.description);
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    /**
-     * The name of the EJB home implementation class.
-     */
-    private String home = null;
-
-    public String getHome() {
-        return (this.home);
-    }
-
-    public void setHome(String home) {
-        this.home = home;
-    }
-
-
-    /**
-     * The link to a J2EE EJB definition.
-     */
-    private String link = null;
-
-    public String getLink() {
-        return (this.link);
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-
-    /**
-     * The name of the EJB local implementation class.
-     */
-    private String local = null;
-
-    public String getLocal() {
-        return (this.local);
-    }
-
-    public void setLocal(String local) {
-        this.local = local;
-    }
-
-
-    /**
-     * The name of this EJB.
+     * The name of this environment entry.
      */
     private String name = null;
 
@@ -108,7 +51,22 @@ public class ContextLocalEjb implements Serializable {
 
 
     /**
-     * The name of the EJB bean implementation class.
+     * Does this environment entry allow overrides by the application
+     * deployment descriptor?
+     */
+    private boolean override = true;
+
+    public boolean getOverride() {
+        return (this.override);
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
+    }
+
+
+    /**
+     * The type of this environment entry.
      */
     private String type = null;
 
@@ -163,29 +121,15 @@ public class ContextLocalEjb implements Serializable {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("ContextLocalEjb[");
+        StringBuffer sb = new StringBuffer("ContextResourceEnvRef[");
         sb.append("name=");
         sb.append(name);
-        if (description != null) {
-            sb.append(", description=");
-            sb.append(description);
-        }
         if (type != null) {
             sb.append(", type=");
             sb.append(type);
         }
-        if (home != null) {
-            sb.append(", home=");
-            sb.append(home);
-        }
-        if (link != null) {
-            sb.append(", link=");
-            sb.append(link);
-        }
-        if (local != null) {
-            sb.append(", local=");
-            sb.append(local);
-        }
+        sb.append(", override=");
+        sb.append(override);
         sb.append("]");
         return (sb.toString());
 

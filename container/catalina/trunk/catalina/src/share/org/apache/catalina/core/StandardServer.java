@@ -34,8 +34,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.AccessControlException;
 import java.sql.Timestamp;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Random;
 
 import javax.management.MBeanRegistration;
@@ -66,9 +64,9 @@ import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceEnvRef;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.session.StandardManager;
@@ -990,6 +988,8 @@ public final class StandardServer
     private void storeAttributes(PrintWriter writer, boolean include,
                                  Object bean) throws Exception {
 
+        // FIXME: Add support for storing all attributes
+        
         // Render the relevant properties of this bean
         String className = bean.getClass().getName();
         // Render a className attribute if requested
@@ -1723,6 +1723,8 @@ public final class StandardServer
                                       NamingResources resources)
         throws Exception {
 
+        // FIXME: Store extra attributes for some of these
+        
         // Store nested <Ejb> elements
         ContextEjb[] ejbs = resources.findEjbs();
         if (ejbs.length > 0) {
@@ -1774,69 +1776,14 @@ public final class StandardServer
         }
 
         // Store nested <ResourceEnvRef> elements
-        String[] eresources = resources.findResourceEnvRefs();
+        ContextResourceEnvRef[] eresources = resources.findResourceEnvRefs();
         for (int i = 0; i < eresources.length; i++) {
             for (int j = 0; j < indent; j++) {
                 writer.print(' ');
             }
-            writer.println("<ResourceEnvRef>");
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<name>");
-            writer.print(eresources[i]);
-            writer.println("</name>");
-            for (int j = 0; j < indent + 2; j++) {
-                writer.print(' ');
-            }
-            writer.print("<type>");
-            writer.print(resources.findResourceEnvRef(eresources[i]));
-            writer.println("</type>");
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
+            writer.println("<ResourceEnvRef");
+            storeAttributes(writer, false, eresources[i]);
             writer.println("</ResourceEnvRef>");
-        }
-
-        // Store nested <ResourceParams> elements
-        ResourceParams[] params = resources.findResourceParams();
-        for (int i = 0; i < params.length; i++) {
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
-            writer.print("<ResourceParams");
-            storeAttributes(writer, false, params[i]);
-            writer.println(">");
-            Hashtable resourceParams = params[i].getParameters();
-            Enumeration nameEnum = resourceParams.keys();
-            while (nameEnum.hasMoreElements()) {
-                String name = (String) nameEnum.nextElement();
-                String value = (String) resourceParams.get(name);
-                for (int j = 0; j < indent + 2; j++) {
-                    writer.print(' ');
-                }
-                writer.println("<parameter>");
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }
-                writer.print("<name>");
-                writer.print(name);
-                writer.println("</name>");
-                for (int j = 0; j < indent + 4; j++) {
-                    writer.print(' ');
-                }
-                writer.print("<value>");
-                writer.print(convertStr(value));
-                writer.println("</value>");
-                for (int j = 0; j < indent + 2; j++) {
-                    writer.print(' ');
-                }
-                writer.println("</parameter>");
-            }
-            for (int j = 0; j < indent; j++) {
-                writer.print(' ');
-            }
-            writer.println("</ResourceParams>");
         }
 
         // Store nested <ResourceLink> elements
