@@ -97,7 +97,7 @@ import org.apache.tomcat.util.StringManager;
  */
 
 final class StandardSession
-    implements HttpSession, Session {
+    implements HttpSession, Session, Serializable {
 
 
     // ----------------------------------------------------------- Constructors
