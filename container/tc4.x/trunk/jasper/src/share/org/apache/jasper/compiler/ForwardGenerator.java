@@ -105,7 +105,7 @@ public class ForwardGenerator
         writer.println("out.clear();");
 	writer.println("String _jspx_qfStr = \"\";");
 	
-	if (params.size() > 0) {
+	if (params != null && params.size() > 0) {
 	    Enumeration en = params.keys();
 	    while (en.hasMoreElements()) {
 		String key = (String) en.nextElement();

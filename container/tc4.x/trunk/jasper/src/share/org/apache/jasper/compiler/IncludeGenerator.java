@@ -132,7 +132,7 @@ public class IncludeGenerator
 	if (flush) {
 	    writer.println("out.flush();");
 	}
-	if (params.size() > 0) {
+	if (params != null && params.size() > 0) {
 	    Enumeration en = params.keys();
 	    while (en.hasMoreElements()) {
 		String key = (String) en.nextElement();
