@@ -32,7 +32,8 @@
         </logic:present>
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpEnvEntry.do?objectName=" + 
-                               URLEncoder.encode(envEntry) + "&parent=" +
+                               URLEncoder.encode(envEntry) +
+                                "&parent=" +
                                URLEncoder.encode(parentInfo) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
