@@ -630,7 +630,7 @@ public final class StandardWrapper
         }
 
         // Lock and return this instance
-        synchronized (instance) {
+        synchronized (this) {
             if (allocated) {
                 if (debug >= 2)
                     log("  Waiting for allocated STM instance");
@@ -668,7 +668,7 @@ public final class StandardWrapper
             return;
 
         // Unlock and free this instance
-        synchronized (instance) {
+        synchronized (this) {
             allocated = false;
             instance.notify();
         }
