@@ -374,6 +374,14 @@
                   redirect="true"/>
     </action>
 
+    <!-- Save current settings to server.xml -->
+    <action    path="/commitChanges"
+               type="org.apache.webapp.admin.CommitChangesAction">
+      <forward        name="Banner"
+                      path="/banner.jsp"
+                  redirect="true"/>
+    </action>
+
     <!-- Process a set-locale action -->
     <action    path="/setLocale"
                type="org.apache.webapp.admin.SetLocaleAction"
