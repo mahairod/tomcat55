@@ -70,7 +70,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.connector.HttpResponseFacade;
 import org.apache.catalina.util.StringManager;
 
 
