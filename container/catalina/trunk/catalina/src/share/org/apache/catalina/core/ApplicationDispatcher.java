@@ -996,10 +996,16 @@ final class ApplicationDispatcher
         ServletRequest wrapper = null;
         if ((current instanceof ApplicationHttpRequest) ||
             (current instanceof HttpRequest) ||
-            (current instanceof HttpServletRequest))
-            wrapper = new ApplicationHttpRequest((HttpServletRequest) current);
-        else
+            (current instanceof HttpServletRequest)) {
+            // Compute a crossContext flag
+            HttpServletRequest hcurrent = (HttpServletRequest) current;
+            boolean crossContext = 
+                !(context.getPath().equals(hcurrent.getContextPath()));
+            wrapper = new ApplicationHttpRequest
+                (hcurrent, context, crossContext);
+        } else {
             wrapper = new ApplicationRequest(current);
+        }
         if (previous == null)
             outerRequest = wrapper;
         else

@@ -72,10 +72,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
+
+import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -130,9 +136,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      *
      * @param request The servlet request being wrapped
      */
-    public ApplicationHttpRequest(HttpServletRequest request) {
+    public ApplicationHttpRequest(HttpServletRequest request, Context context,
+                                  boolean crossContext) {
 
         super(request);
+        this.context = context;
+        this.crossContext = crossContext;
         setRequest(request);
 
     }
@@ -142,9 +151,22 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
+     * The context for this request.
+     */
+    protected Context context = null;
+
+
+    /**
      * The context path for this request.
      */
     protected String contextPath = null;
+
+
+    /**
+     * If this request is cross context, since this changes session accesss
+     * behavior.
+     */
+    protected boolean crossContext = false;
 
 
     /**
@@ -207,6 +229,12 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * The servlet path for this request.
      */
     protected String servletPath = null;
+
+
+    /**
+     * The currently active session for this request.
+     */
+    protected HttpSession session = null;
 
 
     /**
@@ -288,6 +316,43 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (!setSpecial(name, value)) {
             getRequest().setAttribute(name, value);
         }
+
+    }
+
+
+    /**
+     * Return a RequestDispatcher that wraps the resource at the specified
+     * path, which may be interpreted as relative to the current request path.
+     *
+     * @param path Path of the resource to be wrapped
+     */
+    public RequestDispatcher getRequestDispatcher(String path) {
+
+        if (context == null)
+            return (null);
+
+        // If the path is already context-relative, just pass it through
+        if (path == null)
+            return (null);
+        else if (path.startsWith("/"))
+            return (context.getServletContext().getRequestDispatcher(path));
+
+        // Convert a request-relative path to a context-relative one
+        String servletPath = 
+            (String) getAttribute(Globals.INCLUDE_SERVLET_PATH_ATTR);
+        if (servletPath == null)
+            servletPath = getServletPath();
+
+        int pos = servletPath.lastIndexOf('/');
+        String relative = null;
+        if (pos >= 0) {
+            relative = RequestUtil.normalize
+                (servletPath.substring(0, pos + 1) + path);
+        } else {
+            relative = RequestUtil.normalize(servletPath + path);
+        }
+
+        return (context.getServletContext().getRequestDispatcher(relative));
 
     }
 
@@ -423,6 +488,64 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public String getServletPath() {
 
         return (this.servletPath);
+
+    }
+
+
+    /**
+     * Return the session associated with this Request, creating one
+     * if necessary.
+     */
+    public HttpSession getSession() {
+        return (getSession(true));
+    }
+
+
+    /**
+     * Return the session associated with this Request, creating one
+     * if necessary and requested.
+     *
+     * @param create Create a new session if one does not exist
+     */
+    public HttpSession getSession(boolean create) {
+
+        if (crossContext) {
+            
+            // There cannot be a session if no context has been assigned yet
+            if (context == null)
+                return (null);
+
+            // Return the current session if it exists and is valid
+            if (session != null)
+                return (session);
+
+            HttpSession other = super.getSession(false);
+            if (create && (other == null)) {
+                // First create a session in the first context: the problem is
+                // that the top level request is the only one which can 
+                // create the cookie safely
+                other = super.getSession(true);
+            }
+            if (other != null) {
+                Session localSession = null;
+                try {
+                    localSession =
+                        context.getManager().findSession(other.getId());
+                } catch (IOException e) {
+                    // Ignore
+                }
+                if (localSession == null) {
+                    localSession = context.getManager().createEmptySession();
+                    localSession.setId(other.getId());
+                }
+                session = localSession.getSession();
+                return session;
+            }
+            return null;
+
+        } else {
+            return super.getSession(create);
+        }
 
     }
 
