@@ -659,7 +659,7 @@ public class Catalina extends Embedded {
         public void run() {
 
             if (server != null) {
-                this.stop();
+                Catalina.this.stop();
             }
             
         }
