@@ -38,11 +38,31 @@
     </changelog>
   </subsection>
 
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        Add child to the map of the parent before starting it. (remm)
+      </fix>
+      <fix>
+        Decouple usage of the scheme and secure attributes from enabling SSL. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+
   <subsection name="Jasper">
     <changelog>
       <update>
         Updated Jasper-HowTo section on using Jikes, changed conf/web.xml JSPServlet to refer people to Jasper-HowTo so that we don't have these instructions in two places. (yoavs)
       </update>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>32505</bug>: Fix handling of an empty context parameter (which occurred every time the HTML
+        manager was used to deploy a local war without specifying also a context file). (remm)
+      </fix>
     </changelog>
   </subsection>
 </section>
