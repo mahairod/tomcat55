@@ -652,6 +652,13 @@
            optimize="${compile.optimize}"
            excludes="**/CVS/**">
       <classpath refid="catalina.classpath" />
+      <exclude name="org/apache/naming/factory/MailSessionFactory.java"
+       unless="compile.javamail"/>
+      <exclude name="org/apache/naming/factory/SendMailFactory.java"
+       unless="compile.javamail"/>
+      <exclude name="org/apache/catalina/valves/CertificatesValve.java"
+       unless="compile.jsse"/>
+<!--
       <exclude name="org/apache/catalina/util/ProcessHelper.java" 
        unless="jdk.1.3.present"/>
       <exclude name="org/apache/catalina/servlets/CGIServlet.java" 
@@ -664,12 +671,6 @@
        unless="compile.tyrex"/>
       <exclude name="org/apache/catalina/ssi/**"
        unless="compile.ssi"/>
-      <exclude name="org/apache/catalina/valves/CertificatesValve.java"
-       unless="compile.jsse"/>
-      <exclude name="org/apache/naming/factory/MailSessionFactory.java"
-       unless="compile.javamail"/>
-      <exclude name="org/apache/naming/factory/SendMailFactory.java"
-       unless="compile.javamail"/>
       <exclude name="org/apache/catalina/startup/EmbeddedManager.java"
        unless="compile.jmx"/>
       <exclude name="org/apache/catalina/startup/CatalinaManager.java"
@@ -678,6 +679,7 @@
        unless="compile.jmx"/>
       <exclude name="org/apache/catalina/launcher/**"
        unless="compile.launcher"/>
+-->
     </javac>
 
     <!-- Copy static resource files -->
