@@ -647,6 +647,7 @@ public class CGIServlet extends HttpServlet {
                 if (cgiEnv.isValid()) {
                     out.println(cgiEnv.toString());
                 } else {
+                    res.setStatus(404);
                     out.println("<H3>");
                     out.println("CGI script not found or not specified.");
                     out.println("</H3>");
