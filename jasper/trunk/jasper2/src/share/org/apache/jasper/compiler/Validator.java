@@ -252,34 +252,10 @@ class Validator {
 			err.jspError(n, "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
 		    /*
-		     * It is a translation-time error to name different page
-		     * character encodings in two or more of the following:
-		     * the XML prolog of a JSP page, the pageEncoding
-		     * attribute of the page directive of the JSP page, and in
-		     * a JSP configuration element (whose URL pattern matches
-		     * the page).
-		     *
-		     * At this point, we've already verified (in 
-		     * ParserController.parse()) that the page character
-		     * encodings specified in a JSP config element and XML
-		     * prolog match.
-		     *
-		     * Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
+		     * Report any encoding conflict, treating "UTF-16",
+		     * "UTF-16BE", and "UTF-16LE" as identical.
 		     */
-		    String compareEnc = pageInfo.getPageEncoding();
-		    if (!value.equals(compareEnc) 
-			    && (!value.startsWith("UTF-16")
-				|| !compareEnc.startsWith("UTF-16"))) {
-			if (pageInfo.isXml()) {
-			    err.jspError(n,
-					 "jsp.error.prolog_pagedir_encoding_mismatch",
-					 compareEnc, value);
-			} else {
-			    err.jspError(n,
-					 "jsp.error.config_pagedir_encoding_mismatch",
-					 compareEnc, value);
-			}
-		    }
+		    compareEncodings(value, n, pageInfo);
 		}
 	    }
 
@@ -344,6 +320,36 @@ class Validator {
 	    // Do nothing, since this variable directive has already been
 	    // validated by TagFileProcessor when it created a TagInfo object
 	    // from the tag file in which the directive appeared
+	}
+
+	/*
+	 * Compares the encoding specified in the 'pageEncoding' attribute of
+	 * the page directive with the encoding explicitly specified in the
+	 * XML prolog (only for XML syntax) and the encoding specified in
+	 * the JSP config element whose URL pattern matches the page, and 
+	 * throws an error in case of a mismatch.
+	 */
+	private void compareEncodings(String pageDirEnc, Node n,
+				      PageInfo pageInfo)
+	            throws JasperException {
+
+	    String configEnc = pageInfo.getConfigEncoding();
+	    if (configEnc != null && !pageDirEnc.equals(configEnc) 
+		    && (!pageDirEnc.startsWith("UTF-16")
+			|| !configEnc.startsWith("UTF-16"))) {
+		err.jspError(n, "jsp.error.config_pagedir_encoding_mismatch",
+			     configEnc, pageDirEnc);
+	    }
+
+	    if (pageInfo.isXml() && pageInfo.isEncodingSpecifiedInProlog()) {
+		String pageEnc = pageInfo.getPageEncoding();
+		if (!pageDirEnc.equals(pageEnc) 
+		        && (!pageDirEnc.startsWith("UTF-16")
+			    || !pageEnc.startsWith("UTF-16"))) {
+		    err.jspError(n, "jsp.error.prolog_pagedir_encoding_mismatch",
+				 pageEnc, pageDirEnc);
+		}
+	    }
 	}
     }
 

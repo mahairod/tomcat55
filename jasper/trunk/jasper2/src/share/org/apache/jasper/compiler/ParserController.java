@@ -199,27 +199,23 @@ class ParserController {
 	figureOutJspDocument(absFileName, jarFile);
 
 	if (isTopFile) {
-	    if (isXml) {
-		// Make sure the encoding determined from the XML prolog
-		// matches that in the JSP config element, if present.
-		// Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
-		String jspConfigPageEnc = pageInfo.getPageEncoding();
+	    if (isXml && pageInfo.isEncodingSpecifiedInProlog()) {
+		/*
+		 * Make sure the encoding explicitly specified in the XML
+		 * prolog (if any) matches that in the JSP config element
+		 * (if any), treating "UTF-16", "UTF-16BE", and "UTF-16LE" as
+		 * identical.
+		 */
+		String jspConfigPageEnc = pageInfo.getConfigEncoding();
 		if (jspConfigPageEnc != null
 		        && !jspConfigPageEnc.equals(sourceEnc)
-			&& (!jspConfigPageEnc.startsWith("UTF-16")
+		        && (!jspConfigPageEnc.startsWith("UTF-16")
 			    || !sourceEnc.startsWith("UTF-16"))) {
 		    err.jspError("jsp.error.prolog_config_encoding_mismatch",
 				 sourceEnc, jspConfigPageEnc);
 		}
-		// override the encoding that may have been set from JSP config
-		// info (in Compiler.generateJava()), since that applies to
-		// standard syntax only
-		pageInfo.setPageEncoding(sourceEnc);
-	    } else {
-		if (pageInfo.getPageEncoding() == null) {
-		    pageInfo.setPageEncoding(sourceEnc);
-		}
 	    }
+	    pageInfo.setPageEncoding(sourceEnc);
 	    pageInfo.setIsXml(isXml);
 	    isTopFile = false;
 	} else {
@@ -305,11 +301,19 @@ class ParserController {
     private void figureOutJspDocument(String fname, JarFile jarFile)
 	        throws JasperException, IOException {
 
-	// 'true' if the syntax of the page (XML or standard) is identified by
-	// external information: either via a JSP configuration element or
-	// the ".jspx" suffix
+	/*
+	 * 'true' if the syntax of the page (XML or standard) is identified by
+	 * external information: either via a JSP configuration element or
+	 * the ".jspx" suffix
+	 */
 	boolean isExternal = false;
 	isXml = false;
+
+	/*
+	 * Indicates whether we need to revert from temporary usage of
+	 * "ISO-8859-1" back to "UTF-8"
+	 */
+	boolean revert = false;
 
 	if (pageInfo.isXmlSpecified()) {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
@@ -321,8 +325,8 @@ class ParserController {
 	}
 	
 	if (isExternal && !isXml) {
-	    // JSP syntax
-	    if (pageInfo.getPageEncoding() != null) {
+	    // JSP (standard) syntax
+	    if (pageInfo.getConfigEncoding() != null) {
 		// Encoding specified in jsp-config (used by standard syntax
 		// only)
 		sourceEnc = pageInfo.getPageEncoding();
@@ -332,18 +336,19 @@ class ParserController {
 		sourceEnc = "ISO-8859-1";
 	    }
 	} else {
-	    // XML syntax or unknown, autodetect encoding ...
+	    // XML syntax or unknown, (auto)detect encoding ...
 	    Object[] ret = XMLEncodingDetector.getEncoding(fname, jarFile,
 							   ctxt, err);
 	    sourceEnc = (String) ret[0];
-	    boolean isFallback = ((Boolean) ret[1]).booleanValue();
-	    if (isFallback) {
+	    if (((Boolean) ret[1]).booleanValue()) {
+		pageInfo.setIsEncodingSpecifiedInProlog(true);
+	    }
+
+	    if (!isXml && sourceEnc.equals("UTF-8")) {
 		/*
-		 * Page does not have any XML prolog, or contains an XML
-		 * prolog that is being used as template text (in standard
-		 * syntax). This means that the page's encoding cannot be
-		 * determined from the 'encoding' attribute of an XML prolog,
-		 * or autodetected from an XML prolog.
+		 * We don't know if we're dealing with XML or standard syntax.
+		 * Therefore, we need to check and see if the page contains
+		 * a <jsp:root> element.
 		 *
 		 * We need to be careful, because the page may be encoded in
 		 * ISO-8859-1 (or something entirely different), and may
@@ -357,6 +362,7 @@ class ParserController {
 		 * and ISO-8859-1 are extensions of ASCII).
 		 */
 		sourceEnc = "ISO-8859-1";
+		revert = true;
 	    }
 	}
 
@@ -389,6 +395,8 @@ class ParserController {
 	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
 	    if (mark != null) {
 	        isXml = true;
+		if (revert) 
+		    sourceEnc = "UTF-8";
 		return;
 	    } else {
 	        isXml = false;

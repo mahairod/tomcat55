@@ -104,7 +104,7 @@ public class XMLEncodingDetector {
 				      ErrorDispatcher err)
 	throws IOException, JasperException
     {
-        Object result[] = new Object[] { "UTF8", new Boolean(true) };
+        Object result[] = new Object[] { "UTF8", new Boolean(false) };
         return result;
     }
 }

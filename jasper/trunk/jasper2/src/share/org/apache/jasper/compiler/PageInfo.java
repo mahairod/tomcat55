@@ -89,6 +89,17 @@ class PageInfo {
     private String errorPage = null;
     private String pageEncoding = null;
 
+    // Encoding specified in JSP config element
+    private String configEncoding;
+
+    /*
+     * Indicates whether an encoding has been explicitly specified in the
+     * page's XML prolog (only used for pages in XML syntax).
+     * This information is used to decide whether a translation error must
+     * be reported for encoding conflicts.
+     */
+    private boolean isEncodingSpecifiedInProlog;
+
     private int maxTagNesting = 0;
     private boolean scriptless = false;
     private boolean scriptingInvalid = false;
@@ -228,6 +239,22 @@ class PageInfo {
 
     public String getPageEncoding() {
 	return pageEncoding;
+    }
+
+    public void setIsEncodingSpecifiedInProlog(boolean isSpecified) {
+	this.isEncodingSpecifiedInProlog = isSpecified;
+    }
+
+    public boolean isEncodingSpecifiedInProlog() {
+	return this.isEncodingSpecifiedInProlog;
+    }
+
+    public void setConfigEncoding(String enc) {
+	this.configEncoding = enc;
+    }
+
+    public String getConfigEncoding() {
+	return this.configEncoding;
     }
 
     public int getMaxTagNesting() {
