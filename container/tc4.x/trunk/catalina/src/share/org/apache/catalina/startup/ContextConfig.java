@@ -1022,6 +1022,7 @@ public final class ContextConfig
                 stream.close();
                 found = true;
             }
+            jarFile.close();
             return (found);
         } catch (Exception e) {
             if (debug >= 2)
