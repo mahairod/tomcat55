@@ -72,21 +72,21 @@ Tests can be run in two different ways:
    - Running Servlet tests
 
         (unix)% ./build.sh
-        (unix)% cd ../build/jakarta-check
+        (unix)% cd ../build/watchdog
         (unix)% ./runTest.sh servlet
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\jakarta-check
+        (dos)> cd ..\build\watchdog
         (dos)> .\runTest.bat servlet
 
    - Running JSP tests
 
         (unix)% ./build.sh
-        (unix)% cd ../build/jakarta-check
+        (unix)% cd ../build/watchdog
         (unix)% ./runTest.sh jsp
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\jakarta-check
+        (dos)> cd ..\build\watchdog
         (dos)> .\runTest.bat jsp
 
 2) Running test against other servers:
@@ -97,11 +97,11 @@ Tests can be run in two different ways:
      file. Install this war file on the server you want to test. Then 
 
         (unix)% ./build.sh
-        (unix)% cd ../build/jakarta-check
+        (unix)% cd ../build/watchdog
         (unix)% ./runClient.sh servlet {host} {port}
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\jakarta-check
+        (dos)> cd ..\build\watchdog
         (dos)> .\runClient.bat servlet {host} {port}
 
    - Running JSP tests.
@@ -110,11 +110,11 @@ Tests can be run in two different ways:
      file. Install this war file on the server you want to test. Then 
 
         (unix)% ./build.sh
-        (unix)% cd ../build/jakarta-check
+        (unix)% cd ../build/watchdog
         (unix)% ./runClient.sh jsp {host} {port}
 
         (dos)> .\build.bat
-        (dos)> cd ..\build\jakarta-check
+        (dos)> cd ..\build\watchdog
         (dos)> .\runClient.bat jsp {host} {port}
 
 
