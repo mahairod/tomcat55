@@ -228,8 +228,10 @@ public abstract class RequestFilterValve
             try {
                 reList.add(new RE(pattern));
             } catch (RESyntaxException e) {
-                throw new IllegalArgumentException
+                IllegalArgumentException iae = new IllegalArgumentException
                     (sm.getString("requestFilterValve.syntax", pattern));
+                iae.initCause(e);
+                throw iae;
             }
             list = list.substring(comma + 1);
         }
