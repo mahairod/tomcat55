@@ -54,7 +54,7 @@
    -->
 
   <!-- Define the Tomcat Stand-Alone Service -->
-  <Service name="Tomcat-Standalone">
+  <Service name="Catalina">
 
     <!-- A "Connector" represents an endpoint by which requests are received
          and responses are returned.  Each Connector passes requests on to the
