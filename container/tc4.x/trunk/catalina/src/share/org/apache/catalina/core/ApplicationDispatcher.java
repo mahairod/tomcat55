@@ -235,6 +235,8 @@ final class ApplicationDispatcher
 
     /**
      * Forward this request and response to another resource for processing.
+     * Any runtime exception, IOException, or ServletException thrown by the
+     * called servlet will be propogated to the caller.
      *
      * @param request The servlet request to be forwarded
      * @param response The servlet response to be forwarded
@@ -283,17 +285,7 @@ final class ApplicationDispatcher
 
 	    if (debug >= 1)
 		log(" Non-HTTP Forward");
-
-	    try {
-		invoke(request, response);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.forward.throw"), t);
-	    }
+            invoke(request, response);
 
 	}
 
@@ -302,17 +294,7 @@ final class ApplicationDispatcher
 
 	    if (debug >= 1)
 		log(" Named Dispatcher Forward");
-
-	    try {
-		invoke(request, response);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.forward.throw"), t);
-	    }
+            invoke(request, response);
 
 	}
 
@@ -340,17 +322,7 @@ final class ApplicationDispatcher
 		wrequest.setQueryString(queryString);
 		wrequest.mergeParameters(queryString);
 	    }
-
-	    try {
-		invoke(wrequest, response);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.forward.throw"), t);
-	    }
+            invoke(wrequest, response);
 
 	}
 
@@ -379,6 +351,8 @@ final class ApplicationDispatcher
 
     /**
      * Include the response from another resource in the current response.
+     * Any runtime exception, IOException, or ServletException thrown by the
+     * called servlet will be propogated to the caller.
      *
      * @param request The servlet request that is including this one
      * @param response The servlet response to be appended to
@@ -424,17 +398,7 @@ final class ApplicationDispatcher
 
 	    if (debug >= 1)
 		log(" Non-HTTP Include");
-
-	    try {
-		invoke(request, wresponse);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.include.throw"), t);
-	    }
+            invoke(request, wresponse);
 
 	}
 
@@ -447,17 +411,7 @@ final class ApplicationDispatcher
 	    ApplicationHttpRequest wrequest =
 		new ApplicationHttpRequest((HttpServletRequest) request);
             wrequest.setAttribute(Globals.NAMED_DISPATCHER_ATTR, name);
-
-	    try {
-		invoke(wrequest, wresponse);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.include.throw"), t);
-	    }
+            invoke(wrequest, wresponse);
 
 	}
 
@@ -494,17 +448,7 @@ final class ApplicationDispatcher
 				      queryString);
 		wrequest.mergeParameters(queryString);
 	    }
-
-	    try {
-		invoke(wrequest, wresponse);
-	    } catch (IOException e) {
-		throw e;
-	    } catch (ServletException e) {
-		throw e;
-	    } catch (Throwable t) {
-		throw new ServletException
-		    (sm.getString("applicationDispatcher.include.throw"), t);
-	    }
+            invoke(wrequest, wresponse);
 
 	}
 
@@ -542,6 +486,7 @@ final class ApplicationDispatcher
 	Servlet servlet = null;
         IOException ioException = null;
         ServletException servletException = null;
+	RuntimeException runtimeException = null;
 	boolean unavailable = false;
 
 	// Check for the servlet being marked unavailable
@@ -603,12 +548,10 @@ final class ApplicationDispatcher
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
 	    servletException = e;
-	} catch (Throwable e) {
+	} catch (RuntimeException e) {
 	    log(sm.getString("applicationDispatcher.serviceException",
 			     wrapper.getName()), e);
-            servletException = new ServletException
-                (sm.getString("applicationDispatcher.serviceException",
-                              wrapper.getName()), e);
+            runtimeException = e;
 	}
 
 	// Deallocate the allocated servlet instance
@@ -632,6 +575,8 @@ final class ApplicationDispatcher
             throw ioException;
         if (servletException != null)
             throw servletException;
+	if (runtimeException != null)
+	    throw runtimeException;
 
     }
 
