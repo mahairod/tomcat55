@@ -1,0 +1,916 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<HTML>
+
+  <HEAD>
+
+    <TITLE> UsebeanTest </TITLE>
+
+  </HEAD>
+
+  <BODY>
+
+      <H1> UsebeanTest </H1>
+
+
+      <H3> Summary </H3>
+      
+      The useBean action is used to instantiate a Bean which can be retrieved.
+      
+      
+
+      <H3> Positive Tests </H3>
+      
+<P><b> positiveBodyNew Test: </b> Try to create a valid useBean tag in the JSP page with a
+                non-empty body. Ensure that the classname specified does not
+                exist.</P>
+
+    <A NAME="positiveBodyNew"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveBodyNew -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+      
+      <P><b> positiveNoBody Test: </b> Try to create a valid useBean tag in the JSP page with no body.</P>
+
+    <A NAME="positiveNoBody"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveNoBody -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+
+
+<P><b> positiveBodyExists Test: </b> Try to create a valid useBean tag in the JSP page with a
+                non-empty body and with a class name that has already been
+                created.</P>
+
+    <A NAME="positiveBodyExists"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveBodyExists -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+
+
+<P><b> positiveDupIDRequest Test: </b> Try to create two useBean tags on different JSP pages with
+                same ID, but with scope attribute being set to "request".</P>
+
+    <A NAME="positiveDupIDRequest"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveDupIDRequest -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+<P><b> positiveSessionScope Test: </b> Create the JSP page with useBean scope set to "session". Load the
+                CounterBean. Try to reload the page multiple times.</P>
+
+    <A NAME="positiveSessionScope"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveSessionScope -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+
+<P><b> positiveDupIDPage Test: </b> Try to create two useBean tags on <B><I>different</I></B> JSP
+                pages with the same ID, with the scope attribute of each being set
+                to "page". Thereafter Access each page one after the other.</P>
+
+    <A NAME="positiveDupIDPage"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveDupIDPage -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+<P><b> positivePageScope Test: </b> Create the JSP page with useBean scope set to "page". Load the
+                CounterBean. Try to reload the page multiple times.</P>
+
+    <A NAME="positivePageScope"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positivePageScope -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+    
+    
+    <P><b> positiveTypeAssignable </b>  we are using 'class' and 'type' together and 'class' is assignable 
+       to type. This should return the expected page without error.</P>
+
+    <A NAME="positiveTypeAssignable"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+             <A HREF="NewCounter.java">NewCounter.java</A>
+           
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveTypeAssignable -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+      
+      
+ <P><b> positiveBeanNameClass</b> Declaring the bean with bean name as the class file.
+        We should get the page output without error.</P>
+
+    <A NAME="positiveBeanNameClass"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+             <A HREF="NewCounter.java">NewCounter.java</A>
+           
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveBeanNameClass -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+      
+ <P><b> positiveBeanNameClass</b> Declaring the bean with bean name as the resource file.
+        We should get page output without error.</P>
+
+    <A NAME="positiveBeanNameRes"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+             <A HREF="NewCounter.java">NewCounter.java</A>
+           
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID positiveBeanNameRes -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+              
+        
+      
+      <H3> Negative Tests </H3>
+
+
+
+<P><b> negativeDupIDSession Test: </b> Try to create two useBean tags on different JSP pages with
+                same ID, but with scope attribute being set to "session"</P>
+
+    <A NAME="negativeDupIDSession"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeDupIDSession -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+
+<P><b> negativeInvalidClass Test: </b> Try to create a JSP with useBean tag that contains a
+                non-implicit class reference and no source file for that class.</P>
+
+    <A NAME="negativeInvalidClass"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeInvalidClass -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+<P><b> negativeDupID Test: </b> Try to create two useBean tags in the same JSP page with the same
+                ID.</P>
+
+    <A NAME="negativeDupID"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeDupID -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+<P><b> negativeBody Test: </b> Try to create an invalid useBean tag with body (i.e. the tag
+                has a body, but the closing tag does not exist)</P>
+
+    <A NAME="negativeBody"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeBody -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+
+
+
+
+<P><b> negativeNoBody Test: </b> Try to create an invalid useBean tag (i.e. tag that is not
+                closed)</P>
+
+    <A NAME="negativeNoBody"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+            <A HREF="String_IntBean.java">String_IntBean.java</A>   
+            <A HREF="IntBean.java">IntBean.java</A> 
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeNoBody -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+      
+      
+    <P><b> negativeTypeNonAssignable</b>  We are using 'class' and 'type' together and 'class' is not assignable 
+       to type. This should return ClassCastException.</P>
+
+    <A NAME="negativeTypeNonAssignable"></A>
+    <TABLE BORDER CLASS="TestDescription">
+
+    <TR> 
+            <TD><B>title</B></TD>
+
+            <TD>UsebeanTest</TD>
+
+    </TR>
+
+
+        <TR>
+            <TD><B>source</B></TD>
+
+            <TD>
+            <A HREF="UsebeanTest.java">UsebeanTest.java</A>
+            <A HREF="Counter.java">Counter.java</A>
+             <A HREF="NewCounter.java">NewCounter.java</A>
+           
+            </TD>
+        </TR>
+
+        <TR>
+
+            <TD><B>executeClass</B></TD>
+
+            <TD>core_syntax.beantests.useBean.UsebeanTest</TD> 
+    
+        </TR>
+
+        <TR>
+
+            <TD><B>executeArgs</B></TD>
+
+            <TD>-TestCaseID negativeTypeNonAssignable -ServerHost $servletServerHost -ServerPort $servletServerPort -UrlMaps $servletMaps</TD>
+
+        </TR>
+
+
+
+        <TR>
+
+            <TD><B>keywords</B></TD>
+
+            <TD>positive extensionAPI</TD>
+
+        </TR>
+
+      </TABLE>
+        
+      
+
+
+      </BODY>
+
+</HTML>

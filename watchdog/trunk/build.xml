@@ -101,7 +101,7 @@
 
       <jar jarfile="${watchdog.dist}/webapps/jsp-tests.war"
         basedir="${watchdog.build}/webapps/jsp-tests" 
-        items="WEB-INF,jsp,golden-files" />
+        items="WEB-INF,jsp" />
 
       <!-- build EAR -->
 
