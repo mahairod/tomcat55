@@ -61,6 +61,7 @@
 package javax.servlet.http;
 
 import java.util.Enumeration;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -184,7 +185,16 @@ public interface HttpSession {
     public long getLastAccessedTime();
     
     
-    
+    /**
+    * Returns the ServletContext to which this session belongs.
+    *    
+    * @return The ServletContext object for the web application
+    * @since 2.3
+    */
+
+    public ServletContext getServletContext();
+
+
     /**
      *
      * Specifies the time, in seconds, between client requests before the 

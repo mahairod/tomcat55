@@ -174,14 +174,33 @@ public interface ServletContext {
     public String getMimeType(String file);
     
     /**
-    * Return all the paths to resources held in the web application. All paths are
-    * java.lang.String objects, begin with a leading /, and are relative to the root
-    * of the web application.
-    *@return an immutable set containing the paths
+    * Returns a directory-like listing of all the paths to resources within the web application whose longest sub-path
+    * matches the supplied path argument. Paths indicating subdirectory paths end with a '/'. The returned paths are all 
+    * relative to the root of the web application and have a leading '/'. For example, for a web application 
+    * containing<br><br>
+
+    * /welcome.html<br>
+    * /catalog/index.html<br>
+    * /catalog/products.html<br>
+    * /catalog/offers/books.html<br>
+    * /catalog/offers/music.html<br>
+    * /customer/login.jsp<br>
+    * /WEB-INF/web.xml<br>
+    * /WEB-INF/classes/com.acme.OrderServlet.class,<br><br>
+    *
+    * getResourcePaths("/") returns {"/welcome.html", "/catalog/", "/customer/", "/WEB-INF/"}<br>
+    * getResourcePaths("/catalog/") returns {"/catalog/index.html", "/catalog/products.html", "/catalog/offers/"}.<br>
+	   
+
+
+    *@param the partial path used to match the resources, which must start with a /
+    *@return a Set containing the directory listing, or null if there are no resources in the web application whose path
+	* begins with the supplied path.
+
     * @since Servlet 2.3
     */
     
-    public Set getResourcePaths();
+    public Set getResourcePaths(String path);
     
     
 
