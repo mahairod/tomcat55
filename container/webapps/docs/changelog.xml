@@ -127,6 +127,9 @@
       <fix>
         <bug>34034</bug>: Jasper does not respect external entities (billbarker)
       </fix>
+      <fix>
+        <bug>33810</bug>: Incorrect recycling of BodyContent if close is called (remm)
+      </fix>
     </changelog>
   </subsection>
    
