@@ -20,13 +20,13 @@ import java.net.Socket;
 import java.util.LinkedList;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
+ * Send cluster messages with a pool of sockets (25).
+ * 
+ * @author Filip Hanik
+ * @author Peter Rossbach
+ * @version 1.1
  */
+
 
 public class PooledSocketSender implements IDataSender
 {
@@ -47,6 +47,9 @@ public class PooledSocketSender implements IDataSender
     private int maxPoolSocketLimit = 25;
 
     private SenderQueue senderQueue = null;
+    private long nrOfRequests = 0;
+
+    private long totalBytes = 0;
 
     public PooledSocketSender(InetAddress host, int port)
     {
@@ -54,6 +57,33 @@ public class PooledSocketSender implements IDataSender
         this.port = port;
         senderQueue = new SenderQueue(this,maxPoolSocketLimit);
     }
+
+    private synchronized void addStats(int length) {
+        nrOfRequests++;
+        totalBytes += length;
+        if (log.isDebugEnabled() && (nrOfRequests % 100) == 0) {
+            log.debug("Send stats from " + getAddress().getHostAddress() + ":" + getPort()
+                    + "Nr of bytes sent=" + totalBytes + " over "
+                    + nrOfRequests + " ==" + (totalBytes / nrOfRequests)
+                    + " bytes/request");
+        }
+
+    }
+
+    /**
+     * @return Returns the nrOfRequests.
+     */
+    public long getNrOfRequests() {
+        return nrOfRequests;
+    }
+
+    /**
+     * @return Returns the totalBytes.
+     */
+    public long getTotalBytes() {
+        return totalBytes;
+    }
+
 
     public InetAddress getAddress()
     {
@@ -117,6 +147,7 @@ public class PooledSocketSender implements IDataSender
         sender.sendMessage(sessionId,data);
         //return the connection to the pool
         senderQueue.returnSender(sender);
+        addStats(data.length);
     }
 
     public String toString() {
@@ -144,6 +175,19 @@ public class PooledSocketSender implements IDataSender
     }
     public void setKeepAliveMaxRequestCount(int keepAliveMaxRequestCount) {
         this.keepAliveMaxRequestCount = keepAliveMaxRequestCount;
+    }
+
+    /**
+     * @return Returns the keepAliveConnectTime.
+     */
+    public long getKeepAliveConnectTime() {
+        return keepAliveConnectTime;
+    }
+    /**
+     * @return Returns the keepAliveCount.
+     */
+    public int getKeepAliveCount() {
+        return keepAliveCount;
     }
 
     private class SenderQueue {

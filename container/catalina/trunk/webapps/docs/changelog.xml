@@ -62,6 +62,17 @@
     </changelog>
   </subsection>
 
+  <subsection name="Cluster">
+    <changelog>
+	   <fix>
+          correct JvmRouteSessionIDBinderListener MBean name to &lt;domain&gt;:type=Listener,name=JvmRouteSessionIDBinderListener,host=&lt;host&gt; (pero)
+       </fix>
+	   <add>
+	   	  JMX support to SimpleTcpCluster, ReplicationTransmitter and all senders (pero)
+	   </add>
+    </changelog>
+  </subsection>
+
   <subsection name="Webapps">
     <changelog>
       <fix>

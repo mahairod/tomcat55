@@ -19,12 +19,11 @@ import java.net.InetAddress ;
 import java.net.Socket;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
+ * Send cluster messages sync to request with only one socket.
+ * 
+ * @author Filip Hanik
+ * @author Peter Rossbach
+ * @version 1.1
  */
 
 public class SocketSender implements IDataSender
@@ -37,14 +36,59 @@ public class SocketSender implements IDataSender
     private int port;
     private Socket sc = null;
     private boolean isSocketConnected = false;
+    /**
+     * Flag socket as suspect
+     */
     private boolean suspect;
-    private long ackTimeout = 15*1000;  //15 seconds socket read timeout (for acknowledgement)
-    private long keepAliveTimeout = 60*1000; //keep socket open for no more than one min
-    private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
+    /**
+     * 15 seconds socket read timeout (for acknowledgement)
+     */
+    private long ackTimeout = 15*1000; 
+    /**
+     * keep socket open for no more than one min 
+     */
+    private long keepAliveTimeout = 60*1000; 
+    
+    /**
+     *   max 100 requests before reconnecting
+     */
+    private int keepAliveMaxRequestCount = 100; 
+    
     private long keepAliveConnectTime = 0;
     private int keepAliveCount = 0;
 
+    private long nrOfRequests = 0;
 
+    private long totalBytes = 0;
+
+    private synchronized void addStats(int length) {
+        nrOfRequests++;
+        totalBytes += length;
+        if (log.isDebugEnabled() && (nrOfRequests % 100) == 0) {
+            log.debug("Send stats from " + getAddress().getHostAddress() + ":" + getPort()
+                    + "Nr of bytes sent=" + totalBytes + " over "
+                    + nrOfRequests + " ==" + (totalBytes / nrOfRequests)
+                    + " bytes/request");
+        }
+
+    }
+
+    /**
+     * get number of messages that send 
+     * @return Returns the nrOfRequests.
+     */
+    public long getNrOfRequests() {
+        return nrOfRequests;
+    }
+
+    /**
+     * get total num bytes send with this socket.
+     * @return Returns the totalBytes.
+     */
+    public long getTotalBytes() {
+        return totalBytes;
+    }
+    
     public SocketSender(InetAddress host, int port)
     {
         this.address = host;
@@ -102,8 +146,9 @@ public class SocketSender implements IDataSender
     }
 
     /**
-     * Blocking send
-     * @param data
+     * send with only one socket at a time
+     * @param sessionid unique message id
+     * @param data data to send
      * @throws java.io.IOException
      */
     public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException
@@ -126,7 +171,7 @@ public class SocketSender implements IDataSender
         }
         this.keepAliveCount++;
         checkIfDisconnect();
-
+        addStats(data.length);
     }
 
     private void waitForAck(long timeout)  throws java.io.IOException {
@@ -171,5 +216,16 @@ public class SocketSender implements IDataSender
         this.keepAliveMaxRequestCount = keepAliveMaxRequestCount;
     }
 
-
+    /**
+     * @return Returns the keepAliveConnectTime.
+     */
+    public long getKeepAliveConnectTime() {
+        return keepAliveConnectTime;
+    }
+    /**
+     * @return Returns the keepAliveCount.
+     */
+    public int getKeepAliveCount() {
+        return keepAliveCount;
+    }
 }

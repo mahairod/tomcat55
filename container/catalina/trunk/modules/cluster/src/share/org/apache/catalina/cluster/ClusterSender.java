@@ -16,6 +16,8 @@
 
 package org.apache.catalina.cluster;
 
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+
 
 
 public interface ClusterSender
@@ -34,5 +36,10 @@ public interface ClusterSender
     public void sendMessage(String messageId, byte[] indata) throws java.io.IOException;
     
     public boolean getIsSenderSynchronized();
+
+    /**
+     * @param cluster
+     */
+    public void setCatalinaCluster(SimpleTcpCluster cluster);
 
 }

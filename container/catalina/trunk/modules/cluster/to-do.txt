@@ -30,9 +30,12 @@ wish to be replicated
 	pero:
 		Also send Start/Stop messages from Context to complete cluster!
 7. JMX friendly
+    pero:  Add some MBeanSupport to SimpleTCPCluster, ReplicationTransmitter and Senders
 8. Documentation
 9. Add a flag for replicated  attribute events, to enable or disable them -
 	pero:
 		Why different defaults from notifyListenersOnReplication at SimpleTcpCluster and DeltaManager exists?
 COMPLETED
 10. Add single sign on support
+11. Add Keep Alive and WaitForAck at async mode implementation.
+       Make this feature configurable to Sender element at server.xml
