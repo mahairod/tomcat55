@@ -42,7 +42,7 @@ public final class Constants {
         Package + ".EjbFactory";
 
     public static final String DBCP_DATASOURCE_FACTORY = 
-        "org.apache.commons.dbcp.BasicDataSourceFactory";
+        "org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory";
 
     public static final String OPENEJB_EJB_FACTORY = 
         Package + ".OpenEjbFactory";
