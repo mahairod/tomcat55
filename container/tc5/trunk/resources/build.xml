@@ -54,6 +54,9 @@
   <target name="checkout"
           description="Update or checkout required sources from CVS">
 
+    <echo level="info"
+        message="If the checkout fails, run `cvs -d ${cvsroot} login` and try again. The password for the anonymous CVS access is `anoncvs`" />
+
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${tomcat.project}" 
          dest="${basedir}" compression="true" />
