@@ -197,7 +197,7 @@ this class loader will look in the local repositories <strong>first</strong>,
 instead of delegating before looking.  There are exceptions. Classes which are
 part of the JRE base classes cannot be overriden. For some classes (such as
 the XML parser components in JDK 1.4+), the JDK 1.4 endorsed feature can be 
-used used 
+used  
 (see the common classloader definition above). In addition, for the following
 class patterns, the classloader will always delegate first 
 (and load the class itself if no parent classloader loads it):
