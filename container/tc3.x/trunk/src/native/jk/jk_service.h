@@ -132,6 +132,20 @@ struct jk_ws_service {
 
 
     /*
+     * Request attributes. 
+     *
+     * These attributes that were extracted from the web server and are 
+     * sent to Tomcat.
+     *
+     * The developer should be able to read them from the ServletRequest
+     * attributes. Tomcat is required to append org.apache.tomcat. to 
+     * these attrinbute names.
+     */
+    char    **attributes_names;    /* Names of the request attributes  */
+    char    **attributes_values;   /* Values of the request attributes */
+    unsigned num_attributes;       /* Number of request attributes     */
+
+    /*
      * The jvm route is in use when the adapter load balance among
      * several JVMs. It is the ID of a specific JVM in the load balance
      * group. We are using this variable to implement JVM session 
