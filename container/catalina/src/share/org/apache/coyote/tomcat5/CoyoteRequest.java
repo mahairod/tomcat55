@@ -439,6 +439,9 @@ public class CoyoteRequest
         notes.clear();
         cookies = null;
 
+        if (session != null) {
+            session.endAccess();
+        }
         session = null;
         requestedSessionCookie = false;
         requestedSessionId = null;
@@ -2261,6 +2264,7 @@ public class CoyoteRequest
             if ((session != null) && !session.isValid())
                 session = null;
             if (session != null) {
+                session.access();
                 return (session.getSession());
             }
         }
