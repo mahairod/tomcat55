@@ -144,6 +144,13 @@ The DefaultServlet allows the following initParamters:
         DELETE are rejected?  [true]
     </td>
   </tr>
+  <tr>
+    <th valign='top'>fileEncoding</th>
+    <td valign='top'>
+        File encoding to be used when reading static resources.
+        [platform default]
+    </td>
+  </tr>
 
 
 </table>
