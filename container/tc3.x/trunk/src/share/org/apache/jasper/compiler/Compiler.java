@@ -104,30 +104,37 @@ public abstract class Compiler {
         throws FileNotFoundException, JasperException, Exception 
     {
         String pkgName = mangler.getPackageName();
-        String className = mangler.getClassName();
-        String javaFileName = mangler.getJavaFileName();
         String classFileName = mangler.getClassFileName();
 
-        ctxt.setServletClassName(className);
         ctxt.setServletPackageName(pkgName);
-        ctxt.setServletJavaFileName(javaFileName);
-
         Constants.message("jsp.message.package_name_is",
                           new Object[] { (pkgName==null)?
                                           "[default package]":pkgName },
-                          Logger.DEBUG);
-        Constants.message("jsp.message.class_name_is",
-                          new Object[] { className },
-                          Logger.DEBUG);
-        Constants.message("jsp.message.java_file_name_is",
-                          new Object[] { javaFileName },
                           Logger.DEBUG);
         Constants.message("jsp.message.class_file_name_is",
                           new Object[] { classFileName },
                           Logger.DEBUG);
 
-        if (!isOutDated())
+	if (!isOutDated())
             return false;
+
+	// Hack to avoid readign the class file every time -
+	// getClassName() is an _expensive_ operation, and it's needed only
+	// if isOutDated() return true. 
+        String javaFileName = mangler.getJavaFileName();
+        ctxt.setServletJavaFileName(javaFileName);
+
+        Constants.message("jsp.message.java_file_name_is",
+                          new Object[] { javaFileName },
+                          Logger.DEBUG);
+
+	String className = mangler.getClassName();
+        ctxt.setServletClassName(className);
+        Constants.message("jsp.message.class_name_is",
+                          new Object[] { className },
+                          Logger.DEBUG);
+
+        
         
         // Need the encoding specified in the JSP 'page' directive for
         //  - reading the JSP page
@@ -261,6 +268,17 @@ public abstract class Compiler {
         }
 
         return true;
+    }
+
+    public void computeServletClassName() {
+	// Hack to avoid readign the class file every time -
+	// getClassName() is an _expensive_ operation, and it's needed only
+	// if isOutDated() return true. 
+	String className = mangler.getClassName();
+        ctxt.setServletClassName(className);
+        Constants.message("jsp.message.class_name_is",
+                          new Object[] { className },
+                          Logger.DEBUG);
     }
     
     /**
