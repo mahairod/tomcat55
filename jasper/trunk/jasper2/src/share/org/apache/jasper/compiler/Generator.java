@@ -2907,6 +2907,8 @@ public class Generator {
 	out.pushIndent();
 	out.printil("if (uri != null)");
 	out.pushIndent();
+	// XXX Specification still needs to clarify what the variable name
+	// looks like. Assume <uri>_<localName> for now.
 	out.printil("dynamicAttrs.put(uri + \"_\" + localName, value);");
 	out.popIndent();
 	out.printil("else");
