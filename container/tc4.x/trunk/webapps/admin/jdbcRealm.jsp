@@ -1,0 +1,205 @@
+<!-- Standard Struts Entries -->
+<%@ page language="java" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
+
+<html:html locale="true">
+
+<%@ include file="header.jsp" %>
+
+<!-- Body -->
+<body bgcolor="white">
+
+<!--Form -->
+
+<html:errors/>
+
+<html:form method="POST" action="/JDBCRealm">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr bgcolor="7171A5">
+      <td width="81%">
+        <html:hidden property="realmName"/>
+        <html:hidden property="realmType"/>
+       <div class="page-title-text" align="left"> 
+          <bean:write name="jdbcRealmForm" property="nodeLabel" scope="session"/>
+       </div>
+      </td>
+      <td width="19%"> 
+        <div align="right">
+      <controls:actions>
+            <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
+            <controls:action> --------------------------------- </controls:action>
+            <controls:action url="">  <bean:message key="actions.thisrealm.delete"/> </controls:action>
+       </controls:actions>   
+         </div>
+      </td>
+    </tr>
+  </table>
+    <%@ include file="buttons.jsp" %>
+  <br>
+
+  <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr> 
+      <td> 
+       <controls:table tableStyle="front-table" lineStyle="line-row">
+            <controls:row header="true" 
+                labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label><bean:message key="service.property"/></controls:label>
+            <controls:data><bean:message key="service.value"/></controls:data>
+        </controls:row>
+
+      <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="connector.type"/>:</controls:label>
+            <controls:data>
+              <bean:write name="jdbcRealmForm" property="realmType" scope="session"/>
+            </controls:data>
+        </controls:row>
+      
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.driver"/>:</controls:label>
+            <controls:data>
+              <html:text property="driver" size="30"/>
+            </controls:data>
+        </controls:row>
+      
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.passwd"/>:</controls:label>
+            <controls:data>
+                <html:text property="connectionPassword" size="30"/>
+            </controls:data>
+        </controls:row>
+      
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.url"/>:</controls:label>
+            <controls:data>
+                <html:text property="connectionURL" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.userName"/>:</controls:label>
+            <controls:data>
+                <html:text property="connectionName" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
+            <controls:data>
+               <html:select property="debugLvl">
+                     <bean:define id="debugLvlVals" name="jdbcRealmForm" property="debugLvlVals"/>
+                     <html:options collection="debugLvlVals" property="value"
+                        labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.digest"/>:</controls:label>
+            <controls:data>
+                <html:text property="digest" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.passwordCol"/>:</controls:label>
+            <controls:data>
+                <html:text property="passwordCol" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.roleNameCol"/>:</controls:label>
+            <controls:data>
+                <html:text property="roleNameCol" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.userRoleTable"/>:</controls:label>
+            <controls:data>
+                <html:text property="roleTable" size="30"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.userTable"/>:</controls:label>
+            <controls:data>
+                <html:text property="userTable" size="30"/>
+            </controls:data>
+        </controls:row>
+      
+      </controls:table>
+      </td>
+    </tr>
+  </table>
+
+    <%-- Display the following fields only if it is a Filerealm --%>
+    <%-- These are the properties specific to a Filerealm --%>
+<%--
+     <logic:equal name="realmForm" property="realmType" scope="session" 
+                  value="Filerealm">
+     <br>
+        
+     <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr> <td>  <div class="table-title-text">  
+            <bean:message key="realm.filerealm.properties"/>
+        </div> </td> </tr>
+     </table>
+
+    <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
+     <tr> 
+      <td> 
+     <controls:table tableStyle="front-table" lineStyle="line-row">
+            <controls:row header="true" 
+                labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label><bean:message key="service.property"/></controls:label>
+            <controls:data><bean:message key="service.value"/></controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.directory"/>:</controls:label>
+            <controls:data>
+               <html:text property="directory" size="25"/> 
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.prefix"/>:</controls:label>
+            <controls:data>
+               <html:text property="prefix" size="25"/> 
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.suffix"/>:</controls:label>
+            <controls:data>
+               <html:text property="suffix" size="15"/> 
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="realm.timestamp"/>:</controls:label>
+            <controls:data>
+                <html:select property="timestamp">
+                     <bean:define id="booleanVals" name="realmForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row> 
+   </controls:table>
+   </td>
+  </tr>
+  </table>
+ </logic:equal>
+ --%> 
+    
+    <%@ include file="buttons.jsp" %>
+  <br>
+  </html:form>
+<p>&nbsp;</p>
+</body>
+</html:html>
