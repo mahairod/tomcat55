@@ -257,13 +257,18 @@ class Validator {
 		     * attribute of the page directive of the JSP page, and in
 		     * a JSP configuration element (whose URL pattern matches
 		     * the page).
+		     *
 		     * At this point, we've already verified (in 
 		     * ParserController.parse()) that the page character
 		     * encodings specified in a JSP config element and XML
 		     * prolog match.
+		     *
+		     * Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
 		     */
 		    String compareEnc = pageInfo.getPageEncoding();
-		    if (!value.equals(compareEnc)) {
+		    if (!value.equals(compareEnc) 
+			    && (!value.startsWith("UTF-16")
+				|| !compareEnc.startsWith("UTF-16"))) {
 			if (pageInfo.isXml()) {
 			    err.jspError(n,
 					 "jsp.error.prolog_pagedir_encoding_mismatch",

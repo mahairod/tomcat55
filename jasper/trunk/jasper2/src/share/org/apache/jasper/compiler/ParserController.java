@@ -201,10 +201,13 @@ class ParserController {
 	if (isTopFile) {
 	    if (isXml) {
 		// Make sure the encoding determined from the XML prolog
-		// matches that in the JSP config element, if present
+		// matches that in the JSP config element, if present.
+		// Treat "UTF-16", "UTF-16BE", and "UTF-16LE" as identical.
 		String jspConfigPageEnc = pageInfo.getPageEncoding();
 		if (jspConfigPageEnc != null
-		        && !jspConfigPageEnc.equals(sourceEnc)) {
+		        && !jspConfigPageEnc.equals(sourceEnc)
+			&& (!jspConfigPageEnc.startsWith("UTF-16")
+			    || !sourceEnc.startsWith("UTF-16"))) {
 		    err.jspError("jsp.error.prolog_config_encoding_mismatch",
 				 sourceEnc, jspConfigPageEnc);
 		}
