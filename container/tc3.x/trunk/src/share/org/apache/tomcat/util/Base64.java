@@ -147,7 +147,7 @@ public final class Base64 {
      * @param binaryData Array containing binaryData
      * @return Encoded Base64 array
      */
-    public byte[] encode( byte[] binaryData ) {
+    public static byte[] encode( byte[] binaryData ) {
         int      lengthDataBits    = binaryData.length*EIGHTBIT;
         int      fewerThan24bits   = lengthDataBits%TWENTYFOURBITGROUP;
         int      numberTriplets    = lengthDataBits/TWENTYFOURBITGROUP;
