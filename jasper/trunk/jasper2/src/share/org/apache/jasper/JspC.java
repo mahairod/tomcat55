@@ -182,7 +182,6 @@ public class JspC implements Options {
     private String uriBase;
     private String uriRoot;
     private int dieLevel;
-    private boolean dieOnExit = false;
     private boolean helpNeeded = false;
     private boolean compile = false;
     private String compiler = null;
@@ -599,8 +598,7 @@ public class JspC implements Options {
     /**
      * Include the generated web.xml inside the webapp's web.xml.
      */
-    protected void mergeIntoWebXml()
-        throws Exception {
+    protected void mergeIntoWebXml() throws IOException {
 
         File webappBase = new File(uriRoot);
         File webXml = new File(webappBase, "WEB-INF/web.xml");
@@ -701,7 +699,7 @@ public class JspC implements Options {
 
     }
 
-    public boolean processFile(String file)
+    private void processFile(String file)
         throws JasperException
     {
         try {
@@ -748,42 +746,24 @@ public class JspC implements Options {
             if ( showSuccess ) {
                 log.info( "Built File: " + file );
             }
-            return true;
-        } catch (FileNotFoundException fne) {
-	    if (log.isWarnEnabled()) {
-		log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
-					      fne.getMessage()));
-	    }
-            throw new JasperException( fne );
-        } catch (ServletException e) {
-            Throwable rootCause = e;
-            Throwable rootCauseCheck = null;
-            // Extra aggressive rootCause finding
-            do {
-                if (rootCause instanceof ServletException) {
-                    rootCauseCheck = 
-                        ((ServletException) rootCause).getRootCause();
-                    if (rootCauseCheck != null) {
-                        rootCause = rootCauseCheck;
-                        rootCauseCheck = null;
-                    }
-                }
-            } while (rootCauseCheck != null);
+
+        } catch (JasperException je) {
+            Throwable rootCause = je;
+            while (rootCause instanceof JasperException
+                    && ((JasperException) rootCause).getRootCause() != null) {
+                rootCause = ((JasperException) rootCause).getRootCause();
+            }
             log.error(Localizer.getMessage("jspc.error.generalException",
 					   file),
 		      rootCause);
-            return false;
+            throw je;
+
         } catch (Exception e) {
-            log.error(Localizer.getMessage("jspc.error.generalException",
-					   file),
-		      e);
-            if ( listErrors ) {
-	        log.warn( "Error in File: " + file, e );
-		return true;
-            } else if (dieLevel != NO_DIE_LEVEL) {
-                dieOnExit = true;
-            }
-            throw new JasperException( "Error compiling " + file, e );
+	    if ((e instanceof FileNotFoundException) && log.isWarnEnabled()) {
+		log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+					      e.getMessage()));
+	    }
+            throw new JasperException(e);
         }
     }
 
@@ -830,7 +810,7 @@ public class JspC implements Options {
         }
     }
 
-    public void execute()  throws JasperException {
+    public void execute() throws JasperException {
 
         try {
 	    if (uriRoot == null) {
@@ -902,23 +882,17 @@ public class JspC implements Options {
                 mergeIntoWebXml();
             }
 
-        } catch (ServletException e) {
-            Throwable rootCause = e;
-            Throwable rootCauseCheck = null;
-            // Extra aggressive rootCause finding
-            do {
-                if (rootCause instanceof ServletException) {
-                    rootCauseCheck = 
-                        ((ServletException) rootCause).getRootCause();
-                    if (rootCauseCheck != null) {
-                        rootCause = rootCauseCheck;
-                        rootCauseCheck = null;
-                    }
-                }
-            } while (rootCauseCheck != null);
+        } catch (IOException ioe) {
+            throw new JasperException(ioe);
+
+        } catch (JasperException je) {
+            Throwable rootCause = je;
+            while (rootCause instanceof JasperException
+                    && ((JasperException) rootCause).getRootCause() != null) {
+                rootCause = ((JasperException) rootCause).getRootCause();
+            }
             rootCause.printStackTrace();
-        } catch (Throwable t) {
-            t.printStackTrace();
+            throw je;
         }
     }
 
@@ -1132,4 +1106,3 @@ public class JspC implements Options {
         }
     }
 }
-
