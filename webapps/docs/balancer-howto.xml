@@ -23,7 +23,13 @@ as a replacement for other load-balancing mechanisms used for high traffic
 environments.  Rather, it is a simple, pure Java, easily extensible, and fast
 way to direct traffic among multiple servers.
 </p>
-
+<p>
+Although balancer ships with tomcat, it is not tomcat-specific and runs
+on other containers without any modification.  The balancer webapp 
+requires a Servlet Specification 2.3 or later container if you wish 
+to use a filter to redirect traffic.  If you wish to redirect traffic
+using a servlet, you may use any servlet container.
+</p>
 </section>
 
 <section name="Sample Configuration">
@@ -64,7 +70,7 @@ so that you can write your own rules quickly.  Rules
 should be JavaBeans (public no-args constructor, public
 setter method setXXX for property xxx), as they are
 instantiated by Jakarta Commons Digester.  Feel free
-to inquire on the tomcat-user mailist list regarding
+to inquire on the tomcat-user mailing list regarding
 the availability of rules of the inclusion of your rules
 in the distribution.
 </p>
@@ -72,8 +78,8 @@ in the distribution.
 <p>
 Rules are assembled into RuleChains.  Each BalancerFilter
 (or Servlet/JSP) refers to one RuleChain when making its
-redirection decisions.  Not that you are not restricted
-to having one filter mapped to /*, as is the default 
+redirection decisions.  Note that you are not restricted
+to having one filter mapped to /* as done in the sample
 configuration.  You can configure as many filters as
 desired, using the full filter mapping possibilities defined
 in the Servlet Specification.  Each filter will have
@@ -83,7 +89,6 @@ its own RuleChain.
 
 <section name="How it Works">
 <p>
-Here is the flow of events in the balancer:
 <ol>
   <li>You write a rules configuration file containing various
 rules and redirection locations.</li>
@@ -99,6 +104,13 @@ evaluation and cause the request to be redirected.</li>
 </ol>
 </p>
 
+</section>
+
+<section name="Comments">
+<p>
+Please direct questions, comments, suggestions, etc. to the
+tomcat-user mailing list.  Thank you.
+</p>
 </section>
 
 </body>
