@@ -104,7 +104,7 @@
         Remove bad shutdown logic for ms pool strategy. (remm)
       </fix>
       <fix>
-        <bug>31090</bug>: Sync with Cookie, by adding ' ' as a special char. If a special char is present, 
+        Sync with Cookie, by adding ' ' as a special char. If a special char is present, 
         the string will be quoted. If the client doesn't support it, the String will no be quoted anyway
         and no IAE will be thrown. (remm)
       </fix>
@@ -116,6 +116,9 @@
       <update>
         String caching is enabled by default for ByteChunk. (remm)
       </update>
+      <fix>
+        <bug>31090</bug>: Use a URL encoded path when setting session cookies. (remm)
+      </fix>
     </changelog>
   </subsection>
 
