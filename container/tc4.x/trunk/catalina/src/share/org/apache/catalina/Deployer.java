@@ -79,7 +79,8 @@ import java.net.URL;
  * @version $Revision$ $Date$
  */
 
-public interface Deployer extends Container {
+/* public interface Deployer extends Container { */
+public interface Deployer  {
 
 
     // ----------------------------------------------------- Manifest Constants
@@ -103,6 +104,12 @@ public interface Deployer extends Container {
 
 
     /**
+     * Return the name of the Container with which this Deployer is associated.
+     */
+    public String getName();
+
+
+    /**
      * Install a new web application, whose web application archive is at the
      * specified URL, into this container with the specified context path.
      * A context path of "" (the empty string) should be used for the root
@@ -121,12 +128,39 @@ public interface Deployer extends Container {
      *
      * @exception IllegalArgumentException if the specified context path
      *  is malformed (it must be "" or start with a slash)
-     * @exception IllegalArgumentException if the specified context path
+     * @exception IllegalStateException if the specified context path
      *  is already attached to an existing web application
      * @exception IOException if an input/output error was encountered
      *  during installation
      */
     public void install(String contextPath, URL war) throws IOException;
+
+
+    /**
+     * <p>Install a new web application, whose context configuration file
+     * (consisting of a <code>&lt;Context&gt;</code> element) and web
+     * application archive are at the specified URLs.</p>
+     *
+     * <p>If this application is successfully installed, a ContainerEvent
+     * of type <code>INSTALL_EVENT</code> will be sent to all registered
+     * listeners, with the newly created <code>Context</code> as an argument.
+     * </p>
+     *
+     * @param config A URL that points to the context configuration file to
+     *  be used for configuring the new Context
+     * @param war A URL of type "jar:" that points to a WAR file, or type
+     *  "file:" that points to an unpacked directory structure containing
+     *  the web application to be installed
+     *
+     * @exception IllegalArgumentException if one of the specified URLs is
+     *  null
+     * @exception IllegalStateException if the context path specified in the
+     *  context configuration file is already attached to an existing web
+     *  application
+     * @exception IOException if an input/output error was encountered
+     *  during installation
+     */
+    public void install(URL config, URL war) throws IOException;
 
 
     /**

@@ -169,7 +169,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
         writer.print("<tr><td colspan=\"3\"><font size=\"+2\"");
         writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");
         writer.print("<strong>Listed applications for virtual host ");
-        writer.print(deployer.getName()+"</strong>\n</font></td>\n</tr>\n");
+        writer.print(deployer.getName() +
+                     "</strong>\n</font></td>\n</tr>\n");
         writer.print("<tr bgcolor=\"#CCCCCC\">\n");
         writer.print("<td align=\"left\"><font size=\"+1\"");
         writer.print(" face=\"Arial, Helvetica, sans-serif\">\n");

@@ -65,17 +65,9 @@
 package org.apache.catalina.core;
 
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -160,6 +152,13 @@ public class StandardHost
      */
     private String contextClass =
         "org.apache.catalina.core.StandardContext";
+
+
+    /**
+     * The <code>Deployer</code> to whom we delegate application
+     * deployment requests.
+     */
+    private Deployer deployer = new StandardHostDeployer(this);
 
 
     /**
@@ -669,85 +668,45 @@ public class StandardHost
      *
      * @exception IllegalArgumentException if the specified context path
      *  is malformed (it must be "" or start with a slash)
-     * @exception IllegalArgumentException if the specified context path
+     * @exception IllegalStateException if the specified context path
      *  is already attached to an existing web application
      * @exception IOException if an input/output error was encountered
      *  during install
      */
     public void install(String contextPath, URL war) throws IOException {
 
-        // Validate the format and state of our arguments
-        if (contextPath == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathRequired"));
-        if (!contextPath.equals("") && !contextPath.startsWith("/"))
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathFormat", contextPath));
-        if (findDeployedApp(contextPath) != null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathUsed", contextPath));
-        if (war == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.warRequired"));
+        deployer.install(contextPath, war);
 
-        // Prepare the local variables we will require
-        String url = war.toString();
-        String docBase = null;
-        log(sm.getString("standardHost.installing", contextPath, url));
+    }
 
-        // Expand a WAR archive into an unpacked directory if needed
-        if (isUnpackWARs()) {
 
-            if (url.startsWith("jar:"))
-                docBase = expand(war);
-            else if (url.startsWith("file://"))
-                docBase = url.substring(7);
-            else if (url.startsWith("file:"))
-                docBase = url.substring(5);
-            else
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.warURL", url));
+    /**
+     * <p>Install a new web application, whose context configuration file
+     * (consisting of a <code>&lt;Context&gt;</code> element) and web
+     * application archive are at the specified URLs.</p>
+     *
+     * <p>If this application is successfully installed, a ContainerEvent
+     * of type <code>INSTALL_EVENT</code> will be sent to all registered
+     * listeners, with the newly created <code>Context</code> as an argument.
+     * </p>
+     *
+     * @param config A URL that points to the context configuration file to
+     *  be used for configuring the new Context
+     * @param war A URL of type "jar:" that points to a WAR file, or type
+     *  "file:" that points to an unpacked directory structure containing
+     *  the web application to be installed
+     *
+     * @exception IllegalArgumentException if one of the specified URLs is
+     *  null
+     * @exception IllegalStateException if the context path specified in the
+     *  context configuration file is already attached to an existing web
+     *  application
+     * @exception IOException if an input/output error was encountered
+     *  during installation
+     */
+    public synchronized void install(URL config, URL war) throws IOException {
 
-            // Make sure the document base directory exists and is readable
-            File docBaseDir = new File(docBase);
-            if (!docBaseDir.exists() || !docBaseDir.isDirectory() ||
-                !docBaseDir.canRead())
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.accessBase", docBase));
-
-        } else {
-
-            if (url.startsWith("jar:")) {
-                url = url.substring(4, url.length() - 2);
-            }
-            if (url.startsWith("file://"))
-                docBase = url.substring(7);
-            else if (url.startsWith("file:"))
-                docBase = url.substring(5);
-            else
-                throw new IllegalArgumentException
-                    (sm.getString("standardHost.warURL", url));
-
-        }
-
-        // Install this new web application
-        try {
-            Class clazz = Class.forName(contextClass);
-            Context context = (Context) clazz.newInstance();
-            context.setPath(contextPath);
-            context.setDocBase(docBase);
-            if (context instanceof Lifecycle) {
-                clazz = Class.forName(configClass);
-                LifecycleListener listener =
-                    (LifecycleListener) clazz.newInstance();
-                ((Lifecycle) context).addLifecycleListener(listener);
-            }
-            addChild(context);
-            fireContainerEvent(INSTALL_EVENT, context);
-        } catch (Exception e) {
-            log(sm.getString("standardHost.installError", contextPath), e);
-            throw new IOException(e.toString());
-        }
+        deployer.install(config, war);
 
     }
 
@@ -761,11 +720,7 @@ public class StandardHost
      */
     public Context findDeployedApp(String contextPath) {
 
-        if (contextPath == null)
-            return (null);
-        synchronized (children) {
-            return ((Context) children.get(contextPath));
-        }
+        return (deployer.findDeployedApp(contextPath));
 
     }
 
@@ -777,11 +732,7 @@ public class StandardHost
      */
     public String[] findDeployedApps() {
 
-        synchronized (children) {
-            String results[] = new String[children.size()];
-            return ((String[]) children.keySet().toArray(results));
-
-        }
+        return (deployer.findDeployedApps());
 
     }
 
@@ -804,26 +755,7 @@ public class StandardHost
      */
     public void remove(String contextPath) throws IOException {
 
-        // Validate the format and state of our arguments
-        if (contextPath == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathRequired"));
-        if (!contextPath.equals("") && !contextPath.startsWith("/"))
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathFormat", contextPath));
-        Context context = findDeployedApp(contextPath);
-        if (context == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathMissing", contextPath));
-
-        // Remove this web application
-        log(sm.getString("standardHost.removing", contextPath));
-        try {
-            removeChild(context);
-        } catch (Exception e) {
-            log(sm.getString("standardHost.removeError", contextPath), e);
-            throw new IOException(e.toString());
-        }
+        deployer.remove(contextPath);
 
     }
 
@@ -843,25 +775,8 @@ public class StandardHost
      */
     public void start(String contextPath) throws IOException {
 
-        // Validate the format and state of our arguments
-        if (contextPath == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathRequired"));
-        if (!contextPath.equals("") && !contextPath.startsWith("/"))
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathFormat", contextPath));
-        Context context = findDeployedApp(contextPath);
-        if (context == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathMissing", contextPath));
-        log("standardHost.start " + contextPath);
-        try {
-            ((Lifecycle) context).start();
-        } catch (LifecycleException e) {
-            log("standardHost.start " + contextPath + ": ", e);
-            throw new IllegalStateException
-                ("standardHost.start " + contextPath + ": " + e);
-        }
+        deployer.start(contextPath);
+
     }
 
 
@@ -880,25 +795,7 @@ public class StandardHost
      */
     public void stop(String contextPath) throws IOException {
 
-        // Validate the format and state of our arguments
-        if (contextPath == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathRequired"));
-        if (!contextPath.equals("") && !contextPath.startsWith("/"))
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathFormat", contextPath));
-        Context context = findDeployedApp(contextPath);
-        if (context == null)
-            throw new IllegalArgumentException
-                (sm.getString("standardHost.pathMissing", contextPath));
-        log("standardHost.stop " + contextPath);
-        try {
-            ((Lifecycle) context).stop();
-        } catch (LifecycleException e) {
-            log("standardHost.stop " + contextPath + ": ", e);
-            throw new IllegalStateException
-                ("standardHost.stop " + contextPath + ": " + e);
-        }
+        deployer.stop(contextPath);
 
     }
 
@@ -915,145 +812,6 @@ public class StandardHost
     protected void addDefaultMapper(String mapperClass) {
 
         super.addDefaultMapper(this.mapperClass);
-
-    }
-
-
-    /**
-     * Expand the WAR file found at the specified URL into an unpacked
-     * directory structure, and return the absolute pathname to the expanded
-     * directory.
-     *
-     * @param war URL of the web application archive to be expanded
-     *  (must start with "jar:")
-     *
-     * @exception IllegalArgumentException if this is not a "jar:" URL
-     * @exception IOException if an input/output error was encountered
-     *  during expansion
-     */
-    protected String expand(URL war) throws IOException {
-
-        // Calculate the directory name of the expanded directory
-        if (debug >= 1)
-            log("expand(" + war.toString() + ")");
-        String pathname = war.toString().replace('\\', '/');
-        if (pathname.endsWith("!/"))
-            pathname = pathname.substring(0, pathname.length() - 2);
-        int period = pathname.lastIndexOf('.');
-        if (period >= pathname.length() - 4)
-            pathname = pathname.substring(0, period);
-        int slash = pathname.lastIndexOf('/');
-        if (slash >= 0)
-            pathname = pathname.substring(slash + 1);
-        if (debug >= 1)
-            log("  Proposed directory name: " + pathname);
-
-        // Make sure that there is no such directory already existing
-        File appBase = new File(getAppBase());
-        if (!appBase.isAbsolute())
-            appBase = new File(System.getProperty("catalina.base"),
-                               getAppBase());
-        if (!appBase.exists() || !appBase.isDirectory())
-            throw new IOException
-                (sm.getString("standardHost.appBase",
-                              appBase.getAbsolutePath()));
-        File docBase = new File(appBase, pathname);
-        if (docBase.exists()) {
-            // War file is already installed
-            return (docBase.getAbsolutePath());
-            }
-        docBase.mkdir();
-        if (debug >= 2)
-            log("  Have created expansion directory " +
-                docBase.getAbsolutePath());
-
-        // Expand the WAR into the new document base directory
-        JarFile jarFile = ((JarURLConnection)war.openConnection()).getJarFile();
-        if (debug >= 2)
-            log("  Have opened JAR file successfully");
-        Enumeration jarEntries = jarFile.entries();
-        if (debug >= 2)
-            log("  Have retrieved entries enumeration");
-        while (jarEntries.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-            String name = jarEntry.getName();
-            if (debug >= 2)
-                log("  Am processing entry " + name);
-            int last = name.lastIndexOf('/');
-            if (last >= 0) {
-                File parent = new File(docBase,
-                                       name.substring(0, last));
-                if (debug >= 2)
-                    log("  Creating parent directory " + parent);
-                parent.mkdirs();
-            }
-            if (name.endsWith("/"))
-                continue;
-            if (debug >= 2)
-                log("  Creating expanded file " + name);
-            InputStream input = jarFile.getInputStream(jarEntry);
-            expand(input, docBase, name);
-            input.close();
-        }
-        jarFile.close();        // FIXME - doesn't remove from cache!!!
-
-        // Return the absolute path to our new document base directory
-        return (docBase.getAbsolutePath());
-
-    }
-
-
-    /**
-     * Expand the specified input stream into the specified directory, creating
-     * a file named from the specified relative path.
-     *
-     * @param input InputStream to be copied
-     * @param docBase Document base directory into which we are expanding
-     * @param name Relative pathname of the file to be created
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void expand(InputStream input, File docBase, String name)
-        throws IOException {
-
-        File file = new File(docBase, name);
-        BufferedOutputStream output =
-            new BufferedOutputStream(new FileOutputStream(file));
-        byte buffer[] = new byte[2048];
-        while (true) {
-            int n = input.read(buffer);
-            if (n <= 0)
-                break;
-            output.write(buffer, 0, n);
-        }
-        output.close();
-
-    }
-
-
-    /**
-     * Remove the specified directory and all of its contents.
-     *
-     * @param dir Directory to be removed
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    protected void remove(File dir) throws IOException {
-
-        String list[] = dir.list();
-        for (int i = 0; i < list.length; i++) {
-            File file = new File(dir, list[i]);
-            if (file.isDirectory()) {
-                remove(file);
-            } else {
-                if (!file.delete())
-                    throw new IOException("Cannot delete file " +
-                                          file.getAbsolutePath());
-            }
-        }
-        if (!dir.delete())
-            throw new IOException("Cannot delete directory " +
-                                  dir.getAbsolutePath());
 
     }
 

@@ -75,6 +75,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
@@ -126,6 +127,13 @@ public class HostConfig
      * The debugging detail level for this component.
      */
     protected int debug = 0;
+
+
+    /**
+     * The names of applications that we have auto-deployed (to avoid
+     * double deployment attempts).
+     */
+    protected ArrayList deployed = new ArrayList();
 
 
     /**
@@ -313,8 +321,12 @@ public class HostConfig
                 continue;
             if (files[i].equalsIgnoreCase("WEB-INF"))
                 continue;
+            if (deployed.contains(files[i]))
+                continue;
             File dir = new File(appBase, files[i]);
             if (dir.isDirectory()) {
+
+                deployed.add(files[i]);
 
                 // Make sure there is an application configuration directory
                 File webInf = new File(dir, "/WEB-INF");
@@ -330,8 +342,7 @@ public class HostConfig
                     continue;
 
                 // Deploy the application in this directory
-                if (debug >= 1)
-                    log(sm.getString("hostConfig.deployDir", files[i]));
+                log(sm.getString("hostConfig.deployDir", files[i]));
                 try {
                     URL url = new URL("file", null, dir.getCanonicalPath());
                     ((Deployer) host).install(contextPath, url);
@@ -340,7 +351,24 @@ public class HostConfig
                         t);
                 }
 
+            } else if (files[i].toLowerCase().endsWith(".xml")) {
+
+                deployed.add(files[i]);
+
+                // Assume this is a configuration descriptor and deploy it
+                log(sm.getString("hostConfig.deployDescriptor", files[i]));
+                try {
+                    URL config =
+                        new URL("file", null, dir.getCanonicalPath());
+                    ((Deployer) host).install(config, null);
+                } catch (Throwable t) {
+                    log(sm.getString("hostConfig.deployDescriptor.error",
+                                     files[i]), t);
+                }
+
             } else if (files[i].toLowerCase().endsWith(".war")) {
+
+                deployed.add(files[i]);
 
                 // Calculate the context path and make sure it is unique
                 String contextPath = "/" + files[i];
@@ -353,8 +381,7 @@ public class HostConfig
                     continue;
 
                 // Deploy the application in this WAR file
-                if (debug >= 1)
-                    log(sm.getString("hostConfig.deployJar", files[i]));
+                log(sm.getString("hostConfig.deployJar", files[i]));
                 try {
                     URL url = new URL("file", null, dir.getCanonicalPath());
                     url = new URL("jar:" + url.toString() + "!/");

@@ -329,7 +329,8 @@ public class ManagerServlet
 
         // Log debugging messages as necessary
         if (debug >= 1) {
-            log("init: Associated with Deployer '" + deployer.getName() + "'");
+            log("init: Associated with Deployer '" +
+                deployer.getName() + "'");
         }
 
     }

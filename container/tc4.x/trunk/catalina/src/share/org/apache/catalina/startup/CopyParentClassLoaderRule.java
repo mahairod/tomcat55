@@ -63,6 +63,7 @@
 package org.apache.catalina.startup;
 
 
+import java.lang.reflect.Method;
 import org.apache.catalina.Container;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
@@ -112,8 +113,12 @@ public class CopyParentClassLoaderRule extends Rule {
         if (digester.getDebug() >= 1)
             digester.log("Copying parent class loader");
         Container child = (Container) digester.peek(0);
-        Container parent = (Container) digester.peek(1);
-        child.setParentClassLoader(parent.getParentClassLoader());
+        Object parent = digester.peek(1);
+        Method method =
+            parent.getClass().getMethod("getParentClassLoader", new Class[0]);
+        ClassLoader classLoader =
+            (ClassLoader) method.invoke(parent, new Object[0]);
+        child.setParentClassLoader(classLoader);
 
     }
 
