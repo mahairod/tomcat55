@@ -10,6 +10,7 @@
   <property file="${user.home}/build.properties"/-->
 
   <!-- Build Defaults -->
+  <property name="catalina.home"     value="${basedir}/.."/>
   <property name="catalina.build"    value="${catalina.home}/catalina/build"/>
   <property name="catalina.deploy"   value="${catalina.home}/build"/>
   <property name="catalina.dist"     value="${catalina.home}/dist"/>
