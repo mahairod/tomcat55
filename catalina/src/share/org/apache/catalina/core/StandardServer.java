@@ -883,12 +883,7 @@ public final class StandardServer
             } else if (c == '"') {
                 filtered.append("&quot;");
             } else if (c == '&') {
-                int j = input.indexOf(";", i);
-                if (j > 0) {
-                    filtered.append(c);
-                } else {
-                    filtered.append("&amp;");
-                }
+                filtered.append("&amp;");
             } else {
                 filtered.append(c);
             }
