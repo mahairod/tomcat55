@@ -1,4 +1,4 @@
-#! /bin/ksh
+#! /bin/sh
 #
 # $Id$
 
@@ -31,36 +31,40 @@ if [ -d ${baseDir}/clients ]; then
     appClassPath=${baseDir}/clients:${appClassPath}
 fi
 
-export CLASSPATH=${appClassPath}:${sysJars}
+CLASSPATH=${appClassPath}:${sysJars}
+export CLASSPATH
+echo $CLASSPATH
 
-if [[ -n $cp ]]; then
-    export CLASSPATH=${appClassPath}:${cp}
+if [ "$cp" != "" ]; then
+    CLASSPATH=${appClassPath}:${cp}
+    export CLASSPATH
 fi
 
 echo Using classpath: ${CLASSPATH}
 echo
 
-if [[ -n $1 ]]; then
+if [ "$1" != "" ]; then
   default=$1
 fi
 
 java org.apache.tomcat.shell.Startup -config ./conf/server-test.xml $* &
 sleep 25
 
-if [[ ${default} == jsp || ${default} == all ]];then
+if [ "${default}" = jsp -o "${default}" = all ];then
 java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \
     -testfile $jtest
 fi
 
-if [[ ${default} == servlet || ${default} == all ]];then
+if [ "${default}" = servlet -o "${default}" = all ];then
 java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \
     -testfile $stest
 fi
 
 java org.apache.tomcat.shell.Shutdown $*
 
-if [[ -n $cp ]]; then
-    export CLASSPATH=${cp}
+if ["$cp" != ""]; then
+    CLASSPATH=${cp}
+    export CLASSPATH
 else
     unset CLASSPATH
 fi
