@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2001,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -121,7 +121,7 @@ final class StandardHostValve
             Thread.currentThread().setContextClassLoader
                     (context.getLoader().getClassLoader());
         }
-        
+
         // Ask this Context to process this request
         context.getPipeline().getFirst().invoke(request, response);
 
@@ -162,15 +162,15 @@ final class StandardHostValve
         Context context = request.getContext();
         if (context == null)
             return;
-        
+
         Throwable realError = throwable;
-        
+
         if (realError instanceof ServletException) {
             realError = ((ServletException) realError).getRootCause();
             if (realError == null) {
                 realError = throwable;
             }
-        } 
+        }
 
         // If this is an aborted request from a client just log it and return
         if (realError instanceof ClientAbortException ) {
@@ -202,10 +202,10 @@ final class StandardHostValve
                               realError);
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
-            	request.setAttribute(Globals.SERVLET_NAME_ATTR,
+                request.setAttribute(Globals.SERVLET_NAME_ATTR,
                                   wrapper.getName());
             request.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-            		             request.getRequestURI());
+                                 request.getRequestURI());
             request.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
                               realError.getClass());
             if (custom(request, response, errorPage)) {
@@ -218,7 +218,7 @@ final class StandardHostValve
         } else {
             // A custom error-page has not been defined for the exception
             // that was thrown during request processing. Check if an
-            // error-page for error code 500 was specified and if so, 
+            // error-page for error code 500 was specified and if so,
             // send that page back as the response.
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             // The response is an error
@@ -226,7 +226,7 @@ final class StandardHostValve
 
             status(request, response);
         }
-            
+
 
     }
 
@@ -249,12 +249,21 @@ final class StandardHostValve
         if (context == null)
             return;
 
+        /* Only look for error pages when isError() is set.
+         * isError() is set when response.sendError() is invoked. This
+         * allows custom error pages without relying on default from
+         * web.xml.
+         */
+        if (!response.isError())
+            return;
+
         ErrorPage errorPage = context.findErrorPage(statusCode);
         if (errorPage != null) {
             response.setAppCommitted(false);
             request.setAttribute(Globals.STATUS_CODE_ATTR,
                               new Integer(statusCode));
-	    String message = RequestUtil.filter(response.getMessage());
+
+            String message = RequestUtil.filter(response.getMessage());
             if (message == null)
                 message = "";
             request.setAttribute(Globals.ERROR_MESSAGE_ATTR, message);
@@ -263,14 +272,14 @@ final class StandardHostValve
                  errorPage.getLocation());
             request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                               new Integer(ApplicationFilterFactory.ERROR));
-            
-             
+
+
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
-            	request.setAttribute(Globals.SERVLET_NAME_ATTR,
+                request.setAttribute(Globals.SERVLET_NAME_ATTR,
                                   wrapper.getName());
             request.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-            		             request.getRequestURI());
+                                 request.getRequestURI());
             if (custom(request, response, errorPage)) {
                 try {
                     response.flushBuffer();
@@ -341,7 +350,7 @@ final class StandardHostValve
             Integer statusCodeObj =
                 (Integer) request.getAttribute(Globals.STATUS_CODE_ATTR);
             int statusCode = statusCodeObj.intValue();
-            String message = 
+            String message =
                 (String) request.getAttribute(Globals.ERROR_MESSAGE_ATTR);
             response.reset(statusCode, message);
 

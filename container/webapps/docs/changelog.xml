@@ -28,13 +28,19 @@
 
 <section name="Tomcat 5.5.3 (yoavs)">
   <subsection name="General">
-    <fix> 
-      <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs) 
-    </fix> 
+    <fix>
+      <bug>30568</bug>: Incomplete setup.html documentation for launching jsvc. (yoavs)
+    </fix>
   </subsection>
 
   <subsection name="Catalina">
     <changelog>
+      <fix>
+        When checking status codes for error handling, only check if
+        Response.isError() is true. This way, users may use setStatus() to set their own
+        error status without having the error page invoked. (in which case, the user should've
+        use sendError()) (funkman)
+      </fix>
       <update>
         Remove Digester code for Xerces workaround. (jfarcand)
       </update>
@@ -51,9 +57,9 @@
       <fix>
         <bug>31277</bug>: Clarified automatic application deployment section of Host configuration page. (yoavs)
       </fix>
-     <fix> 
+     <fix>
        <bug>28631</bug>: JAASRealm enhancements to support custom user and role classes  use Commons-Logging. (yoavs)
-     </fix> 
+     </fix>
      <fix>
        <bug>31364</bug>: Missing resource in org.apache.catalina.core.LocalString.properties. (yoavs)
      </fix>
