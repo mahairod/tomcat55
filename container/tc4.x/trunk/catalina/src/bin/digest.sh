@@ -1,6 +1,6 @@
 #!/bin/sh
 # -----------------------------------------------------------------------------
-# Script to digest password using the algorithm specificied
+# Script to digest password using the algorithm specified
 #
 # $Id$
 # -----------------------------------------------------------------------------
