@@ -13,6 +13,7 @@
 
     <menu name="Links">
         <item name="Docs Home"             href="index.html"/>
+        <item name="FAQ"                   href="../faq" />
     </menu>
 
     <menu name="User Guide">
