@@ -55,7 +55,7 @@
 package org.apache.tools.ant.taskdefs;
 
 import org.apache.tools.ant.*;
-import java.io.IOException;
+import java.io.*;
 
 /**
  *
@@ -64,18 +64,59 @@ import java.io.IOException;
  */
 
 public class Exec extends Task {
-
     private String os;
+    private String dir;
     private String command;
     
     public void execute() throws BuildException {
 	try {
-	    // XXX if OS= current OS
-	    Runtime.getRuntime().exec(command);
+	    // test if os match
+	    String myos=System.getProperty("os.name");
+	    project.log("Myos= " + myos, "exec", Project.MSG_WARN);
+	    if( ( os != null ) && ( os.indexOf(myos) < 0 ) ){
+		// this command will be executed only on the specified OS
+		project.log("Not found in " + os, "exec", Project.MSG_WARN);
+		return;
+	    }
+		
+	    // XXX: we should use JCVS (www.ice.com/JCVS) instead of command line
+	    // execution so that we don't rely on having native CVS stuff around (SM)
+	    
+	    String ant=project.getProperty("ant.home");
+	    if(ant==null) throw new BuildException("Needs ant.home");
+		
+	    command=ant + "/bin/antRun " + dir + " " + command;
+            project.log(command, "exec", Project.MSG_WARN);
+		
+	    // exec command on system runtime
+	    Process proc = Runtime.getRuntime().exec( command);
+	    // ignore response
+	    InputStreamReader isr=new InputStreamReader(proc.getInputStream());
+	    BufferedReader din = new BufferedReader(isr);
+	    
+	    project.log("Output: ", "exec", Project.MSG_WARN);
+	    // pipe CVS output to STDOUT
+	    String line;
+	    while((line = din.readLine()) != null) {
+		project.log(line, "exec", Project.MSG_WARN);
+		System.out.println(line);
+	    }
+	    
+	    proc.waitFor();
+	    int err = proc.exitValue();
+	    if (err != 0) {
+		throw new BuildException( "Error " + err + "in " + command);
+	    }
+	    
 	} catch (IOException ioe) {
 	    throw new BuildException("Error exec: " + command );
+	} catch (InterruptedException ex) {
 	}
 
+    }
+
+    public void setDir(String d) {
+	this.dir = d;
     }
 
     public void setOs(String os) {

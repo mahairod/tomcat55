@@ -1,5 +1,0 @@
-#! /bin/sh
-
-# Args: CVSROOT MODULE DIR
-cd $3
-cvs -d $1 checkout $2

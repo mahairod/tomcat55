@@ -34,7 +34,7 @@
      <copydir src="src/bin" dest="${dist.dir}/ant/bin"/>
      <copydir src="docs" dest="${dist.dir}/ant/docs"/>
      <chmod perm="+x" src="${dist.dir}/ant/bin/ant"/>
-     <chmod perm="+x" src="${dist.dir}/ant/bin/cvsget"/>
+     <chmod perm="+x" src="${dist.dir}/ant/bin/antRun"/>
   </target>
 
   <target name="package" depends="dist">

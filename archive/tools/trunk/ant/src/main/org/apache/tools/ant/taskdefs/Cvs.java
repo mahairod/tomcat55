@@ -79,8 +79,8 @@ public class Cvs extends Task {
 	    String ant=project.getProperty("ant.home");
 	    if(ant==null) throw new BuildException("Needs ant.home");
 
-	    String command=ant + "/bin/cvsget " + cvsRoot + " " + pack + " " +dest;
-	    System.out.println( command);
+	    String command=ant + "/bin/antRun " + dest + "cvs -d " + cvsRoot + " checkout " + pack;
+            project.log(command, "cvs", Project.MSG_WARN);
 
 	    // exec command on system runtime
 	    Process proc = Runtime.getRuntime().exec( command);

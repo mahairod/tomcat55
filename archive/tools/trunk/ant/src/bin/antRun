@@ -1,0 +1,7 @@
+#! /bin/sh
+
+# Args: DIR command
+cd $1
+shift
+echo $@
+$@ 2>&1

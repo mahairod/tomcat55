@@ -1,0 +1,99 @@
+<project name="source-snapshots" default="tomcat" basedir=".">
+   <!-- ******************** Initialization ******************** -->
+   <target name="init">
+    <tstamp />
+    <property name="src.dir" value="${user.home}/ws" />
+    <property name="nightly.dir" value="/www/jakarta.apache.org/builds/tomcat/nightly" />
+    <property name="public.dir" value="/www/jakarta.apache.org/builds/tmp" />
+    <property name="tomcat.home" value="/opt/tomcat" />
+    <property name="package.dir" value="/home/ftp/pub" />
+  </target>
+
+  <target name="clean">
+     <deltree dir="${src.dir}/jakarta-tomcat" />
+     <deltree dir="${src.dir}/jakarta-tools" />
+     <deltree dir="${src.dir}/tomcat-src.zip" />
+     <deltree dir="${src.dir}/ant-src.zip" />
+  </target>
+
+
+  <target name="init.SunOS">
+    <property name="package.dir" value="/export/home/ftp/pub" />
+  </target>
+
+
+   <!-- ******************** Getting sources ******************** -->
+  <target name="tomcat.get">
+    <mkdir dir="${src.dir}" />
+    <get src="http://jakarta.apache.org/builds/tmp/tomcat/jakarta-tomcat.src.zip" dest="${src.dir}/tomcat-src.zip" />
+    <expand src="${src.dir}/tomcat-src.zip" dest="${src.dir}" />
+  </target>
+  
+  <target name="ant.get">
+    <mkdir dir="${src.dir}" />
+    <get src="http://jakarta.apache.org/builds/tmp/ant/ant.src.zip" dest="${src.dir}/ant-src.zip" />
+    <expand src="${src.dir}/ant-src.zip" dest="${src.dir}" />
+    <deltree dir="${src.dir}/jakarta-tools/ant/src/main/org/apache/tools/ant/ApacheParser.java" />
+  </target>
+
+   <!-- ******************** Building  ******************** -->
+  <target name="tomcat">
+     <ant dir="${src.dir}/jakarta-tomcat" antfile="${src.dir}/jakarta-tomcat/build.xml" target="package" />
+  </target>
+
+  <target name="ant">
+     <ant dir="${src.dir}/jakarta-tools/ant" antfile="${src.dir}/jakarta-tools/ant/build.xml" target="package" />
+  </target>
+
+   <!-- ******************** Platform specific packages  ******************** -->
+  <target name="tomcat.pkg" > 
+    <exec os="SunOS" dir="${src.dir}/jakarta-tomcat/src/etc" command="pkgmk -f prototype -d ${src.dir}/build  -r / " />
+    <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
+         basedir="${src.dir}/build"
+         items="ASFtomcat" />
+  </target>
+
+
+
+   <!-- ******************** Creating source snapshots  ******************** -->
+  <target name="ant.src.snap">
+    <mkdir dir="${src.dir}" />
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic" 
+         package="jakarta-tools"
+         dest="${src.dir}"  />
+    <mkdir dir="${public.dir}/ant" />
+    <zip zipfile="${public.dir}/ant/ant.src.zip" basedir="${src.dir}" items="jakarta-tools"/>
+    <zip zipfile="${public.dir}/ant/ant.src-${DSTAMP}.zip" basedir="${src.dir}" items="jakarta-tools"/>
+  </target>
+
+  <target name="tomcat.src.snap">
+    <mkdir dir="${src.dir}" />
+    <cvs cvsRoot=":pserver:anoncvs@jakarta.apache.org:/home/cvspublic"
+         package="jakarta-tomcat"
+         dest="${src.dir}"  />
+    <mkdir dir="${public.dir}/tomcat" />
+    <zip zipfile="${public.dir}/tomcat/jakarta-tomcat.src.zip" 
+         basedir="${src.dir}" 
+         items="jakarta-tomcat"/>
+    <zip zipfile="${public.dir}/tomcat/jakarta-tomcat.src-${DSTAMP}.zip" 
+         basedir="${src.dir}"
+         items="jakarta-tomcat"/>
+  </target> 
+ 
+   <!-- ******************** Getting binaries from build machines  ******************** -->
+   <target name="binaries.get" >
+    <get src="ftp ftp://tokyo.javasoft.com/pub/tomcat/tomcat-SunOS-${DSTAMP}.zip" 
+         dest="${nightly.dir}/tomcat-${DSTAMP}.zip" />
+    <copyfile src="${nightly.dir}/tomcat-${DSTAMP}.zip" dest="${nightly.dir}/tomcat.zip" />
+    <exec dir="${nightly.dir}" command="find . -atime +3 -name tomcat-\*.zip -print" />
+   </target>
+
+   <!-- ******************** Agregate targets  ******************** -->
+  <target name="all" depends="clean,tomcat.get,tomcat">
+  </target>
+
+  <target name="src.snap" depends="clean,ant.src.snap,tomcat.src.snap" >
+  </target>
+  
+</project>
+

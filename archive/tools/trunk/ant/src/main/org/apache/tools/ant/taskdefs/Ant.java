@@ -87,6 +87,7 @@ public class Ant extends Task {
 	
 	p1.setBasedir( dir );
 	p1.setUserProperty( "basedir" , dir);
+	if(antFile==null) antFile= dir + "/build.xml";
 	ProjectHelper.configureProject(p1, new File(antFile));
 
 	if (target == null) {
