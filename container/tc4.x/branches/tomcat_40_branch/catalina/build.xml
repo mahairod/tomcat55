@@ -217,82 +217,122 @@
       </or>
     </condition>
     <condition property="copy.jdbc20ext.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${jdbc20ext.jar.present}" arg2="true" />
-          <not>
-            <equals arg1="${jdk.1.4.present}" arg2="true" />
-          </not>
-        </and>
-      </or>
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <and>
+            <equals arg1="${jdbc20ext.jar.present}" arg2="true" />
+            <not>
+              <equals arg1="${jdk.1.4.present}" arg2="true" />
+            </not>
+          </and>
+        </or>
+      </and>
     </condition>
     <condition property="copy.jndi.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${jndi.jar.present}" arg2="true" />
-          <not>
-            <or>
-              <equals arg1="${jdk.1.3.present}" arg2="true" />
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </or>
-          </not>
-        </and>
-      </or>
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <and>
+            <equals arg1="${jndi.jar.present}" arg2="true" />
+            <not>
+              <or>
+                <equals arg1="${jdk.1.3.present}" arg2="true" />
+                <equals arg1="${jdk.1.4.present}" arg2="true" />
+              </or>
+            </not>
+          </and>
+        </or>
+      </and>
     </condition>
     <condition property="copy.javamail.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${javamail.jar.present}" arg2="true" />
-      </or>
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <equals arg1="${javamail.jar.present}" arg2="true" />
+        </or>
+      </and>
     </condition>
     <condition property="copy.jta.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${jta.jar.present}" arg2="true" />
-      </or>
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <equals arg1="${jta.jar.present}" arg2="true" />
+        </or>
+      </and>
     </condition>
     <condition property="copy.ldap.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${ldap.jar.present}" arg2="true" />
-          <not>
-            <or>
-              <equals arg1="${jdk.1.3.present}" arg2="true" />
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </or>
-          </not>
-        </and>
-      </or>
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <and>
+            <equals arg1="${ldap.jar.present}" arg2="true" />
+            <not>
+              <or>
+                <equals arg1="${jdk.1.3.present}" arg2="true" />
+                <equals arg1="${jdk.1.4.present}" arg2="true" />
+              </or>
+            </not>
+          </and>
+        </or>
+      </and>
     </condition>
     <condition property="copy.jsse.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <and>
-          <equals arg1="${jcert.jar.present}" arg2="true" />
-          <equals arg1="${jnet.jar.present}" arg2="true" />
-          <equals arg1="${jsse.jar.present}" arg2="true" />
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <and>
+            <equals arg1="${jcert.jar.present}" arg2="true" />
+            <equals arg1="${jnet.jar.present}" arg2="true" />
+            <equals arg1="${jsse.jar.present}" arg2="true" />
+            <not>
+              <equals arg1="${jdk.1.4.present}" arg2="true" />
+            </not>
+          </and>
+        </or>
+      </and>
+    </condition>
+    <condition property="copy.tyrex.jar">
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
+          <equals arg1="${tyrex.jar.present}" arg2="true" />
+        </or>
+      </and>
+    </condition>
+    <condition property="copy.xerces.jar">
+      <and>
+        <not>
+          <equals arg1="${light.dist}" arg2="on" />
+        </not>
+        <or>
+          <equals arg1="${full.dist}" arg2="on" />
           <not>
             <equals arg1="${jdk.1.4.present}" arg2="true" />
           </not>
-        </and>
-      </or>
-    </condition>
-    <condition property="copy.tyrex.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${tyrex.jar.present}" arg2="true" />
-      </or>
-    </condition>
-    <condition property="copy.xerces.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <not>
-          <equals arg1="${jdk.1.4.present}" arg2="true" />
-        </not>
-      </or>
+        </or>
+      </and>
     </condition>
 
   </target>

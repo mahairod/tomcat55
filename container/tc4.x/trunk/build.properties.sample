@@ -18,6 +18,7 @@ compile.optimize=on
 
 # ----- Build Control Flags
 #full.dist=on
+#light.dist=on
 #build.sysclasspath=ignore
 #flags.hide=on
 
@@ -105,7 +106,7 @@ mail.jar=${mail.lib}/mail.jar
 
 
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or OpenJMX 1.0b2 or later -----
-jmx.home=${base.path}/openjmx
+jmx.home=${base.path}/openjmx-1.0
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/openjmx.jar
 
