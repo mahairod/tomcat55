@@ -497,9 +497,6 @@ class Generator {
 	out.print  (servletClassName);
 	out.print  (" extends ");
 	out.println(pageInfo.getExtends());
-/* Supress until we also implement resolveFunction()
-	out.printil("    implements javax.servlet.jsp.el.FunctionMapper, ");
-*/
 	out.printin("    implements org.apache.jasper.runtime.JspSourceDependent");
 	if (!pageInfo.isThreadSafe()) {
 	    out.println(",");
@@ -550,11 +547,6 @@ class Generator {
      	// Number of tag object that need to be popped
 	// XXX TODO: use a better criteria
 	maxTagNesting = pageInfo.getMaxTagNesting();
-/*
-        if (maxTagNesting > 0) {
-	    out.printil("JspxState _jspxState = new JspxState();");
-        }
-*/
         out.printil("JspWriter _jspx_out = null;");
 	out.println();
 
@@ -649,26 +641,6 @@ class Generator {
 	out.printil("public " + className + "() {");
 	out.printil("}");
 	out.println();
-    }
-
-    /**
-     * Generate codes defining the classes used in the servlet.
-     * 1. Servlet state object, used to pass servlet info round methods.
-     */
-    private void generateJspState() {
-/*
-	out.println();
-	out.printil("static final class JspxState {");
-	out.pushIndent();
-	out.printil("public JspWriter out;");
-	out.println();
-	out.printil("public JspxState() {");
-	out.pushIndent();
-	out.popIndent();
-	out.printil("}");
-	out.popIndent();
-	out.printil("}");
-*/
     }
 
     /**
@@ -1501,7 +1473,6 @@ class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-//		out.println("pageContext, _jspxState)");
 		out.print("pageContext");
 		if (pushBodyCountVar != null) {
 		    out.print(", ");
@@ -1531,7 +1502,6 @@ class Generator {
 		    out.print(parent);
 		    out.print(", ");
 		}
-//		out.println("PageContext pageContext, JspxState _jspxState)");
 		out.print("PageContext pageContext");
 		if (pushBodyCountVar != null) {
 		    out.print(", int[] ");
@@ -2857,11 +2827,6 @@ class Generator {
             out.printMultiLn(fragmentHelperClass.toString());
         }
 
-	// generate class definition for JspxState
-        if (maxTagNesting > 0) {
-	    generateJspState();
-	}
-
         // Close the class definition
         out.popIndent();
         out.printil("}");
@@ -3005,9 +2970,6 @@ class Generator {
 	out.printin("public final class ");
 	out.println(className);
 	out.printil("    extends javax.servlet.jsp.tagext.SimpleTagSupport");
-/* Supress until we also implement resolveFunction()
-	out.printil("    implements "javax.servlet.jsp.el.FunctionMapper, ");
-*/
 	out.printin("    implements org.apache.jasper.runtime.JspSourceDependent");
 	if (tagInfo.hasDynamicAttributes()) {
 	    out.println(",");
