@@ -597,9 +597,9 @@ public class CoyoteRequest
      * is the facade.  This method must be implemented by a subclass.
      */
     public ServletRequest getRequest() {
-        if (facade == null) {
+        if (facade == null || Constants.SECURITY) {
             facade = new CoyoteRequestFacade(this);
-        }
+        } 
         return (facade);
     }
 
@@ -728,7 +728,6 @@ public class CoyoteRequest
      * Set the Wrapper within which this Request is being processed.  This
      * must be called as soon as the appropriate Wrapper is identified, and
      * before the Request is ultimately passed to an application servlet.
-     *
      * @param wrapper The newly associated Wrapper
      */
     public void setWrapper(Wrapper wrapper) {
