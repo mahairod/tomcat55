@@ -58,21 +58,9 @@ grant codeBase "file:${catalina.home}/server/-" {
         permission java.security.AllPermission;
 };
 
-// These permissions apply to the jasper page compiler
-// located in the "jasper" directory.
-grant codeBase "file:${catalina.home}/jasper/-" {
-        permission java.security.AllPermission;
-};
-
 // These permissions apply to shared web application libraries
-// including the Jasper runtime library installed in the "lib" directory
-grant codeBase "file:${catalina.home}/lib/-" {
-        permission java.security.AllPermission;
-};
-
-// These permissions apply to shared web application classes
-// located in the "classes" directory
-grant codeBase "file:${catalina.home}/classes/-" {
+// including the Jasper page compiler installed in the "shared/lib" directory
+grant codeBase "file:${catalina.home}/shared/-" {
         permission java.security.AllPermission;
 };
 
