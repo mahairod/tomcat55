@@ -53,34 +53,6 @@ set _RUNJAVA="%JAVA_HOME%\bin\java"
 rem ----- Set Up The Runtime Classpath ----------------------------------------
 
 set CP=%CATALINA_HOME%\bin\bootstrap.jar;%CATALINA_HOME%\bin\servlet.jar
-goto installClasspath
-rem Try to determine if CATALINA_HOME contains spaces
-if exist %CATALINA_HOME%\server\catalina.jar goto dynClasspath
-echo Your CATALINA_HOME appears to contain spaces.
-echo Unable to set CLASSPATH dynamically.
-goto staticClasspath
-
-:dynClasspath
-set _LIBJARS=
-for %%i in (%CATALINA_HOME%\lib\*.jar) do call %CATALINA_HOME%\bin\cpappend.bat %%i
-if not "%_LIBJARS%" == "" goto gotLibJars
-echo Unable to set CLASSPATH dynamically.
-goto staticClasspath
-
-:gotLibJars
-echo Including all JARs in %CATALINA_HOME%\lib in your CLASSPATH.
-rem NOTE: _LIBJARS already contains a leading semicolon
-set CP=%CP%%_LIBJARS%
-goto installClasspath
-
-:staticClasspath
-echo Setting your CLASSPATH statically.
-set CP=%CP%;%CATALINA_HOME%\lib\jasper.jar
-set CP=%CP%;%CATALINA_HOME%\lib\jaxp.jar
-set CP=%CP%;%CATALINA_HOME%\lib\parser.jar
-set CP=%CP%;%CATALINA_HOME%\lib\servlet.jar
-
-:installClasspath
 set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 set CLASSPATH=%CP%
 echo Using CLASSPATH: %CLASSPATH%
