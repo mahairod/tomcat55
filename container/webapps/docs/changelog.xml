@@ -812,6 +812,10 @@
       <scode>
       Fix javadoc generation for the connectors (costin)
       </scode>
+      <fix>
+      <bug>21984</bug>: Fix potential DoS condition when processing a malformed
+      request URI using the Jk-Coyote Connector (billbarker)
+      </fix>
 
     </changelog>
 
