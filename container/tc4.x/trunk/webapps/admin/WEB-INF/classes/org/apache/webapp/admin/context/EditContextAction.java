@@ -147,9 +147,12 @@ public class EditContextAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
+                
         // Set up the object names of the MBeans we are manipulating
         // Context mBean
         ObjectName cname = null;
+        // Parent Host mBean
+        ObjectName hname = null;        
         // Loader mBean
         ObjectName lname = null;
         // Manager mBean 
@@ -166,17 +169,30 @@ public class EditContextAction extends Action {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
         }
+        try {
+            hname = new ObjectName(request.getParameter("hostName"));
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.hostName.bad",
+                                     request.getParameter("hostName"));
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
+        
+        String name = cname.getKeyProperty("name");
+        String path = name.substring(name.lastIndexOf('/'));
         
         // Get the corresponding loader
         try {
             sb = new StringBuffer(cname.getDomain());
             sb.append(":type=Loader");
             sb.append(",path=");
-            sb.append(cname.getKeyProperty("path"));
+            sb.append(path);
             sb.append(",host=");
-            sb.append(cname.getKeyProperty("host"));
+            sb.append(hname.getKeyProperty("host"));
             sb.append(",service=");
-            sb.append(cname.getKeyProperty("service"));
+            sb.append(hname.getKeyProperty("service"));
             lname = new ObjectName(sb.toString());
          } catch (Exception e) {
             String message =
@@ -193,11 +209,11 @@ public class EditContextAction extends Action {
             sb = new StringBuffer(cname.getDomain());
             sb.append(":type=Manager");
             sb.append(",path=");
-            sb.append(cname.getKeyProperty("path"));
+            sb.append(path);
             sb.append(",host=");
-            sb.append(cname.getKeyProperty("host"));
+            sb.append(hname.getKeyProperty("host"));
             sb.append(",service=");
-            sb.append(cname.getKeyProperty("service"));
+            sb.append(hname.getKeyProperty("service"));
             mname = new ObjectName(sb.toString());
         } catch (Exception e) {
             String message =
@@ -216,7 +232,7 @@ public class EditContextAction extends Action {
         contextFm.setLoaderObjectName(lname.toString());
         contextFm.setManagerObjectName(mname.toString());
         sb = new StringBuffer("Context (");
-        sb.append(cname.getKeyProperty("path"));
+        sb.append(path);
         sb.append(")");
         contextFm.setNodeLabel(sb.toString());
         contextFm.setDebugLvlVals(Lists.getDebugLevels());

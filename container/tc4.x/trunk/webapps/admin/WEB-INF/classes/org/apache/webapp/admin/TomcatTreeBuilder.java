@@ -103,6 +103,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     // This SERVER_LABEL needs to be localized
     private final static String SERVER_LABEL = "Tomcat Server";
     
+    public final static String DOMAIN = "Catalina";
     public final static String SERVER_TYPE = "Catalina:type=Server";
     public final static String FACTORY_TYPE = "Catalina:type=MBeanFactory";
     public final static String SERVICE_TYPE = "Catalina:type=Service";
@@ -110,6 +111,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
     public final static String HOST_TYPE = "Catalina:type=Host";
     public final static String CONTEXT_TYPE = "Catalina:type=Context";
+    public final static String CONTEXT_JSR77_TYPE = "Catalina:j2eeType=WebModule";
     public final static String DEFAULTCONTEXT_TYPE = "Catalina:type=DefaultContext";
     public final static String LOADER_TYPE = "Catalina:type=Loader";
     public final static String MANAGER_TYPE = "Catalina:type=Manager";
@@ -317,8 +319,10 @@ public class TomcatTreeBuilder implements TreeBuilder{
         while (contextNames.hasNext()) {
             String contextName = (String) contextNames.next();
             ObjectName objectName = new ObjectName(contextName);
+            String name = objectName.getKeyProperty("name");
+            String path = name.substring(name.lastIndexOf('/'));
             String nodeLabel =
-                "Context (" + objectName.getKeyProperty("path") + ")";
+                "Context (" + path + ")";
             TreeControlNode contextNode =
                 new TreeControlNode(contextName,
                                     "Context.gif",
@@ -326,7 +330,9 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "EditContext.do?select=" +
                                     URLEncoder.encode(contextName) +
                                     "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
+                                    URLEncoder.encode(nodeLabel) +
+                                    "&hostName=" +
+                                    URLEncoder.encode(hostName),
                                     "content",
                                     false);
             hostNode.addChild(contextNode);
@@ -452,19 +458,33 @@ public class TomcatTreeBuilder implements TreeBuilder{
                               MessageResources resources) throws Exception {
 
         ObjectName oname = new ObjectName(containerName);
-        String type = oname.getKeyProperty("type");
-        if (type == null) {
-            type = "";
+        String type = null;
+        String path = null;
+        String host = null;
+        String service = null;
+        if (oname.getKeyProperty("j2eeType").equals("WebModule")) {
+            type = "Context";
+            String name = oname.getKeyProperty("name");
+            path = name.substring(name.lastIndexOf('/'));
+            TreeControlNode hostNode = containerNode.getParent();
+            ObjectName honame = new ObjectName(hostNode.getName());
+            host = honame.getKeyProperty("host");
+            service = honame.getKeyProperty("service");
+        } else {
+            type = oname.getKeyProperty("type");
+            if (type == null) {
+                type = "";
+            }
+            path = oname.getKeyProperty("path");
+            if (path == null) {
+                path = "";
+            }        
+            host = oname.getKeyProperty("host");
+            if (host == null) {
+                host = "";
+            }        
+            service = oname.getKeyProperty("service");
         }
-        String path = oname.getKeyProperty("path");
-        if (path == null) {
-            path = "";
-        }        
-        String host = oname.getKeyProperty("host");
-        if (host == null) {
-            host = "";
-        }        
-        String service = oname.getKeyProperty("service");
         TreeControlNode subtree = new TreeControlNode
             ("Context Resource Administration " + containerName,
              "folder_16_pad.gif",

@@ -798,9 +798,11 @@ public final class ContextForm extends ActionForm {
             
             // if path is empty, it's root context
             // validate context starting with "/" only at the time of context creation.
-            //if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
-            //    errors.add("path", new ActionError("error.path.prefix"));                
-            //}
+            if ((path !=null) && (path.length() > 0)) {
+                if ("Create".equalsIgnoreCase(adminAction) && !path.startsWith("/")) {
+                    errors.add("path", new ActionError("error.path.prefix"));                
+                }
+            }
                         
             //if ((workDir == null) || (workDir.length() < 1)) {
             //    errors.add("workDir", new ActionError("error.workDir.required"));

@@ -92,6 +92,16 @@ public class ContextsForm extends ActionForm {
     public void setContexts(String contexts[]) {
         this.contexts = contexts;
     }
+    
+    private String hostName = null;
+    
+    public String getHostName() {
+        return hostName;
+    }
+    
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -106,6 +116,7 @@ public class ContextsForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
 
         this.contexts = new String[0];
+        this.hostName = null;
 
     }
         

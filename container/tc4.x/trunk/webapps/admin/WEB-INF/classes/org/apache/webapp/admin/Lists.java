@@ -229,16 +229,22 @@ public class Lists {
         throws Exception {
 
         StringBuffer sb = new StringBuffer(host.getDomain());
-        sb.append(":type=Context,host=");
-        sb.append(host.getKeyProperty("host"));
-        sb.append(",service=");
-        sb.append(host.getKeyProperty("service"));
-        sb.append(",*");
+        sb.append(":j2eeType=WebModule,*");
+        //sb.append(":type=Context,host=");
+        //sb.append(host.getKeyProperty("host"));
+        //sb.append(",service=");
+        //sb.append(host.getKeyProperty("service"));
+        //sb.append(",*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList contexts = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
+        String hostName = host.getKeyProperty("host");
+        String queryString = "Catalina:j2eeType=WebModule,name=//"+hostName;
         while (names.hasNext()) {
-            contexts.add(names.next().toString());
+            String name = names.next().toString();
+            if (name.startsWith(queryString)) {
+                contexts.add(name);
+            }
         }
         Collections.sort(contexts);
         return (contexts);

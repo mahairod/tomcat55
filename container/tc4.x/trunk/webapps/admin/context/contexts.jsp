@@ -18,6 +18,8 @@
 
 <html:form method="post" action="/DeleteContexts">
 
+  <html:hidden property="hostName"/>
+  
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
@@ -65,10 +67,12 @@
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
               <%-- admin context cannot be deleted from the tool --%>
-              <logic:match name="context" value='<%= "path="+request.getContextPath()+"," %>'>
+              <logic:match name="context" value='<%= "name=//"+request.getAttribute("host")+
+                                                    request.getContextPath()+"," %>'>
                 <font color='red'>*</font>
               </logic:match>
-              <logic:notMatch name="context" value='<%= "path="+request.getContextPath()+"," %>'>
+              <logic:notMatch name="context" value='<%= "name=//"+request.getAttribute("host")+
+                                                    request.getContextPath()+"," %>'>
               <label for="contexts"></label>
               <html:multibox property="contexts"
                                 value="<%= context.toString() %>" styleId="contexts"/>
@@ -76,7 +80,8 @@
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditContext.do?select=" +
-                         java.net.URLEncoder.encode(context.toString()) %>'>
+                         java.net.URLEncoder.encode(context.toString()) +
+                         "&hostName=" + request.getAttribute("hostName") %>'>
                 <controls:attribute name="context" attribute="path"/>
               </html:link>
             </div></td>
