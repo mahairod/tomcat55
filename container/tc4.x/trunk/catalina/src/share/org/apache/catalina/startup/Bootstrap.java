@@ -145,9 +145,9 @@ public final class Bootstrap {
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                      commonLoader);
 
-            unpacked[0] = new File(getCatalinaHome(),
+            unpacked[0] = new File(getCatalinaBase(),
                                    "shared" + File.separator + "classes");
-            packed[0] = new File(getCatalinaHome(),
+            packed[0] = new File(getCatalinaBase(),
                                  "shared" + File.separator + "lib");
             sharedLoader =
                 ClassLoaderFactory.createClassLoader(unpacked, packed,
@@ -259,6 +259,14 @@ public final class Bootstrap {
     private static String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
+    }
+
+
+    /**
+     * Get the value of the catalina.base environment variable.
+     */
+    private static String getCatalinaBase() {
+        return System.getProperty("catalina.base", getCatalinaHome());
     }
 
 

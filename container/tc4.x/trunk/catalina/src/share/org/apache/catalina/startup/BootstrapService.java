@@ -314,24 +314,28 @@ public final class BootstrapService
                     ClassLoaderFactory.setDebug(debug);
 
                     unpacked[0] = new File(getCatalinaHome(),
-                                           "common" + File.separator + "classes");
+                                           "common" + File.separator 
+                                           + "classes");
                     packed[0] = new File(getCatalinaHome(),
                                          "common" + File.separator + "lib");
                     commonLoader =
-                        ClassLoaderFactory.createClassLoader(unpacked, packed, null);
+                        ClassLoaderFactory.createClassLoader
+                        (unpacked, packed, null);
 
                     unpacked[0] = new File(getCatalinaHome(),
-                                           "server" + File.separator + "classes");
+                                           "server" + File.separator 
+                                           + "classes");
                     packed[0] = new File(getCatalinaHome(),
                                          "server" + File.separator + "lib");
                     catalinaLoader =
                         ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                              commonLoader);
 
-                    unpacked[0] = new File(getCatalinaHome(),
-                                           "classes");
-                    packed[0] = new File(getCatalinaHome(),
-                                         "lib");
+                    unpacked[0] = new File(getCatalinaBase(), 
+                                           "shared" + File.separator 
+                                           + "classes");
+                    packed[0] = new File(getCatalinaBase(),
+                                         "shared" + File.separator + "lib");
                     sharedLoader =
                         ClassLoaderFactory.createClassLoader(unpacked, packed,
                                                              commonLoader);
@@ -406,8 +410,8 @@ public final class BootstrapService
                 paramTypes[0] = Class.forName("java.lang.ClassLoader");
                 Object paramValues[] = new Object[1];
                 paramValues[0] = sharedLoader;
-                Method method =
-                    startupInstance.getClass().getMethod(methodName, paramTypes);
+                Method method = startupInstance.getClass().getMethod
+                    (methodName, paramTypes);
                 method.invoke(startupInstance, paramValues);
 
                 catalina = startupInstance;
@@ -475,6 +479,14 @@ public final class BootstrapService
     private static String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
+    }
+
+
+    /**
+     * Get the value of the catalina.base environment variable.
+     */
+    private static String getCatalinaBase() {
+        return System.getProperty("catalina.base", getCatalinaHome());
     }
 
 
