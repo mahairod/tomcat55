@@ -840,6 +840,12 @@
     </antcall>
 
     <antcall target="downloadzip">
+      <param name="sourcefile" value="${javagroups.loc}"/>
+      <param name="destfile" value="${javagroups.jar}"/>
+      <param name="destdir" value="${base.path}"/>
+    </antcall>
+
+    <antcall target="downloadzip">
       <param name="sourcefile" value="${commons-dbcp.loc}"/>
       <param name="destfile" value="${commons-dbcp.jar}"/>
       <param name="destdir" value="${base.path}"/>

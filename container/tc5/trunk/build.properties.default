@@ -150,6 +150,13 @@ commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0.1/commons-pool-1.0.1.tar.gz
 
 
+# ----- JavaGroups, version 2.0.3 or later -----
+javagroups.home=${base.path}/JavaGroups-2.0.3.bin
+javagroups.lib=${javagroups.home}
+javagroups.jar=${javagroups.lib}/javagroups-all.jar
+javagroups.loc=http://telia.dl.sourceforge.net/sourceforge/javagroups/JavaGroups-2.0.3.bin.zip
+
+
 # ----- JavaService, version 1.2.0 or later -----
 javaservice.home=${base.path}/javaservice
 javaservice.exe=${javaservice.home}/bin/JavaService.exe
@@ -168,7 +175,7 @@ jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
 junit.home=${base.path}/junit3.7
 junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
-junit.loc=http://download.sourceforge.net/junit/junit3.7.zip
+junit.loc=http://telia.dl.sourceforge.net/sourceforge/junit/junit3.7.zip
 
 
 # ----- NSIS, version 2.0a7 or later -----
