@@ -26,19 +26,19 @@
 	    <td><b>Result</b></td>
 	  </thead>
 	  <tr>
-	    <td>${'${'}param["foo"]}</td>
+	    <td>\${param["foo"]}</td>
 	    <td>${param["foo"]}&nbsp;</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}my:reverse(param["foo"])}</td>
+	    <td>\${my:reverse(param["foo"])}</td>
 	    <td>${my:reverse(param["foo"])}&nbsp;</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}my:reverse(my:reverse(param["foo"]))}</td>
+	    <td>\${my:reverse(my:reverse(param["foo"]))}</td>
 	    <td>${my:reverse(my:reverse(param["foo"]))}&nbsp;</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}my:countVowels(param["foo"])}</td>
+	    <td>\${my:countVowels(param["foo"])}</td>
 	    <td>${my:countVowels(param["foo"])}&nbsp;</td>
 	  </tr>
 	</table>

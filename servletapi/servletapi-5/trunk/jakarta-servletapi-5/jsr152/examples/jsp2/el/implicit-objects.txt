@@ -45,23 +45,23 @@
 	    <td><b>Result</b></td>
 	  </thead>
 	  <tr>
-	    <td>${'${'}param.foo}</td>
+	    <td>\${param.foo}</td>
 	    <td>${param.foo}&nbsp;</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}param["foo"]}</td>
+	    <td>\${param["foo"]}</td>
 	    <td>${param["foo"]}&nbsp;</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}header["host"]}</td>
+	    <td>\${header["host"]}</td>
 	    <td>${header["host"]}</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}header["accept"]}</td>
+	    <td>\${header["accept"]}</td>
 	    <td>${header["accept"]}</td>
 	  </tr>
 	  <tr>
-	    <td>${'${'}header["user-agent"]}</td>
+	    <td>\${header["user-agent"]}</td>
 	    <td>${header["user-agent"]}</td>
 	  </tr>
 	</table>
