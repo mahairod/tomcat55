@@ -82,6 +82,7 @@ import javax.naming.NamingException;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
+import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -585,47 +586,66 @@ public final class StandardLoader
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
+        // Register a stream handler factory for the JNDI protocol
+        try {
+            URL.setURLStreamHandlerFactory
+                (new DirContextURLStreamHandlerFactory());
+        } catch (Throwable t) {
+            // Ignore the error here.
+        }
+
+        // Temporarily bind the current Catalina classloader to the directory
+        // context
+        DirContextURLStreamHandler.bind(this.container.getResources());
+        
         // Configure our context repositories if appropriate
         setRepositories();
 
 	// Construct a class loader based on our current repositories list
 	try {
+            /*
             URLStreamHandlerFactory shFactory = null;
             if ((this.container != null) && 
-                (this.container.getResources() != null))
-                shFactory = new DirContextURLStreamHandlerFactory
-                    (this.container.getResources());
+                (this.container.getResources() != null)) {
+                shFactory = new DirContextURLStreamHandlerFactory();
+            }
+            */
 	    if (parentClassLoader == null)
-	        classLoader = new StandardClassLoader(shFactory);
+	        classLoader = new StandardClassLoader();
 	    else
-	        classLoader = new StandardClassLoader
-                    (parentClassLoader, shFactory);
+	        classLoader = new StandardClassLoader(parentClassLoader);
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
             ((StandardClassLoader) classLoader).setDelegate(this.delegate);
 	    if (container instanceof Context) {
 		// Tell the class loader the root of the context
-		Resources resources = ((Context) container).getResources();
+		ServletContext servletContext = 
+                    ((Context) container).getServletContext();
 		try {
-		    URL contextURL = resources.getResource("/");
+		    URL contextURL = servletContext.getResource("/");
 		    if( contextURL != null )
-			((StandardClassLoader)classLoader).setPermissions(
-			    contextURL);
+			((StandardClassLoader)classLoader).setPermissions
+                            (contextURL);
 		} catch (MalformedURLException e) {
 		}
 	    }
 	    if (classLoader instanceof Lifecycle)
 		((Lifecycle) classLoader).start();
+            // Binding the Webapp class loader to the directory context
+            DirContextURLStreamHandler.bind
+                ((ClassLoader) classLoader, this.container.getResources());
 	} catch (Throwable t) {
 	    throw new LifecycleException("start: ", t);
 	}
+
+        // Unbind Catalina classloader
+        DirContextURLStreamHandler.unbind();
 
         // Validate that all required packages are actually available
         validatePackages();
 
 	// Set up context attributes if appropriate
-	setClassLoader();
-	setClassPath();
+        setJasperEnvironment();
 
 	// Start our background thread if we are reloadable
 	if (reloadable) {
@@ -771,6 +791,81 @@ public final class StandardLoader
 
 
     /**
+     * Set an appropriate Jasper environment.
+     */
+    private void setJasperEnvironment() {
+	setClassLoader();
+        copyClassesRepository();
+	setClassPath();
+    }
+
+
+    /**
+     * Copies classes to the work directory. This is required only because 
+     * Jasper depends on it.
+     */
+    private void copyClassesRepository() {
+
+        // Validate our current state information
+	if (!(container instanceof Context))
+	    return;
+	ServletContext servletContext =
+	    ((Context) container).getServletContext();
+	if (servletContext == null)
+	    return;
+
+        String classpath = 
+            (String) servletContext.getAttribute(Globals.CLASS_PATH_ATTR);
+        if (classpath == null)
+            classpath = "";
+        
+        DirContext resources = container.getResources();
+        String classesName = "/WEB-INF/classes";
+
+        // Looking up directory /WEB-INF/classes in the context
+        try {
+            resources.lookup(classesName);
+        } catch(NamingException e) {
+            return;
+        }
+
+        // Loading the work directory
+        File workDir = 
+            (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+
+        if (workDir != null) {
+
+            if (!(classpath.equals("")))
+                classpath += File.pathSeparator;
+            File classesDir = new File(workDir, "/classes");
+            classpath += classesDir.getAbsolutePath();
+
+            try {
+                NamingEnumeration enum = resources.list(classesName);
+                while (enum.hasMoreElements()) {
+                    NameClassPair ncPair = 
+                        (NameClassPair) enum.nextElement();
+                    String filename = ncPair.getName();
+                }
+            } catch (NamingException e) {
+            }
+
+        }
+
+        servletContext.setAttribute(Globals.CLASS_PATH_ATTR, classpath);
+
+    }
+
+
+    /**
+     * Copy directory.
+     */
+    private boolean copyDir(DirContext directory) {
+        return true;
+    }
+
+
+    /**
      * Set the appropriate context attribute for our class loader.  This
      * is required only because Jasper depends on it.
      */
@@ -835,9 +930,91 @@ public final class StandardLoader
             layers++;
         }
 
+        // Loading the work directory
+        File workDir = 
+            (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+
+        if (workDir != null) {
+
+            DirContext resources = container.getResources();
+            String libName = "/WEB-INF/lib";
+            DirContext libDir = null;
+            // Looking up directory /WEB-INF/lib in the context
+            try {
+                Object object = resources.lookup(libName);
+                if (object instanceof DirContext)
+                    libDir = (DirContext) object;
+            } catch(NamingException e) {
+                // Silent catch: it's valid that no /WEB-INF/lib directory 
+                //exists
+            }
+            
+            // Add the WEB-INF/lib/*.jar files
+            if (libDir != null) {
+                // Enumerate children
+                try {
+                    NamingEnumeration enum = resources.list(libName);
+                    while (enum.hasMoreElements()) {
+                        NameClassPair ncPair = 
+                            (NameClassPair) enum.nextElement();
+                        String filename = ncPair.getName();
+                        if (!filename.endsWith(".jar"))
+                            continue;
+                        try {
+                            URL fileURL = servletContext.getResource
+                                (libName + "/" + filename);
+                            log(" Adding '" + "file: " +
+                                libName + "/" + filename + "'");
+                            // Copying the file to the work dir
+                            File dest = new File(workDir, filename);
+                            if (copy(fileURL.openStream(), 
+                                     new FileOutputStream(dest))) {
+                                if (n > 0)
+                                    classpath.append(File.pathSeparator);
+                                n++;
+                                classpath.append(dest.getAbsolutePath());
+                            }
+                        } catch (MalformedURLException e) {
+                        } catch (IOException e) {
+                        }
+                        
+                    }
+                } catch(NamingException e) {
+                }
+            }
+
+        }
+
         // Store the assembled class path as a servlet context attribute
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
 				    classpath.toString());
+
+        System.out.println("Classpath: " + classpath);
+        
+    }
+
+
+    /**
+     * Copy a file to the specified temp directory. This is required only 
+     * because Jasper depends on it.
+     */
+    private boolean copy(InputStream is, OutputStream os) {
+
+        try {
+            byte[] buf = new byte[4096];
+            while (true) {
+                int len = is.read(buf);
+                if (len < 0)
+                    break;
+                os.write(buf, 0, len);
+            }
+            is.close();
+            os.close();
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -885,104 +1062,32 @@ public final class StandardLoader
             addRepository(classesURLString + "/");
         }
         
-        // Loading the work directory
-        File workDir = 
-            (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-
-        if (workDir != null) {
-
-            DirContext resources = container.getResources();
-            String libName = "/WEB-INF/lib";
-            DirContext libDir = null;
-            // Looking up directory /WEB-INF/lib in the context
-            try {
-                Object object = resources.lookup(libName);
-                if (object instanceof DirContext)
-                    libDir = (DirContext) object;
-            } catch(NamingException e) {
-                // Silent catch: it's valid that no /WEB-INF/lib directory 
-                //exists
-            }
-
-            // Add the WEB-INF/lib/*.jar files
-            if (libDir != null) {
-                // Enumerate children
-                try {
-                    NamingEnumeration enum = resources.list(libName);
-                    while (enum.hasMoreElements()) {
-                        NameClassPair ncPair = 
-                            (NameClassPair) enum.nextElement();
-                        String filename = ncPair.getName();
-                        if (!filename.endsWith(".jar"))
-                            continue;
-                        try {
-                            URL fileURL = servletContext.getResource
-                                (libName + "/" + filename);
-                            log(" Adding '" + "file: " +
-                                libName + "/" + filename + "'");
-                            // Copying the file to the work dir
-                            File dest = new File(workDir, filename);
-                            if (copyJAR(fileURL.openStream(), 
-                                        new FileOutputStream(dest)))
-                                addRepository(dest.toURL().toString());
-                        } catch (MalformedURLException e) {
-                        } catch (IOException e) {
-                        }
-                    }
-                } catch(NamingException e) {
-                }
-            }
-
-        } else {
-
-            // Add the WEB-INF/lib/*.jar files
-            // This requires disk directory!  Scan JARs if present
-
-            File libFile = new File(((Context) container).getDocBase(), 
-                                    "/WEB-INF/lib");
-            if (libFile.exists() && libFile.canRead() &&
-                libFile.isDirectory()) {
-                String filenames[] = libFile.list();
-                for (int i = 0; i < filenames.length; i++) {
-                    if (!filenames[i].endsWith(".jar"))
-                        continue;
-                    File jarFile = new File(libFile, filenames[i]);
-                    try {
-                        if (debug > 0)
-                            log(" Adding '" + "file: " +
-                                jarFile.getCanonicalPath() + "'");
-                        addRepository("file:" + jarFile.getCanonicalPath());
-                    } catch (IOException e) {
-                        log(jarFile.getAbsolutePath(), e);
-                    }
-                }
-            }
-
-        }
-
-    }
-
-
-    /**
-     * Copy a JAR file to the specified temp directory.
-     */
-    private boolean copyJAR(InputStream is, OutputStream os) {
-
+        DirContext resources = container.getResources();
+        String libName = "/WEB-INF/lib";
+        DirContext libDir = null;
+        // Looking up directory /WEB-INF/lib in the context
         try {
-            byte[] buf = new byte[4096];
-            while (true) {
-                int len = is.read(buf);
-                if (len < 0)
-                    break;
-                os.write(buf, 0, len);
+            NamingEnumeration enum = resources.list(libName);
+            while (enum.hasMoreElements()) {
+                NameClassPair ncPair = 
+                    (NameClassPair) enum.nextElement();
+                String filename = libName + "/" + ncPair.getName();
+                if (!filename.endsWith(".jar"))
+                    continue;
+                try {
+                    URL url = servletContext.getResource(filename);
+                    url = new URL("jar:" + url.toString() + "!/");
+                    addRepository(url.toString());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            is.close();
-            os.close();
-        } catch (IOException e) {
-            return false;
+        } catch (NamingException e) {
+            // Silent catch: it's valid that no /WEB-INF/lib directory 
+            //exists
         }
-
-        return true;
 
     }
 
