@@ -58,6 +58,27 @@
     <load-on-startup>4</load-on-startup>
   </servlet>
 
+  <!-- SSIInvoker Servlet -->
+  <servlet>
+    <servlet-name>ssi</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.SsiInvokerServlet</servlet-class>
+    <init-param>
+      <!-- debug > 0 == debug enabled -->
+      <param-name>debug</param-name>
+      <param-value>0</param-value>
+    </init-param>
+    <init-param>
+      <!-- time in seconds before the SSI page expires -->
+      <param-name>expires</param-name>
+      <param-value>666</param-value>
+    </init-param>
+    <init-param>
+      <!-- 0 == false; 1 == true -->
+      <param-name>buffered</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    <load-on-startup>5</load-on-startup>
+  </servlet>
 
   <!-- The mapping for the default servlet -->
   <servlet-mapping>
@@ -79,6 +100,12 @@
     <url-pattern>*.jsp</url-pattern>
   </servlet-mapping>
 
+  <!-- The mapping for SSI-->
+  <servlet-mapping>
+    <servlet-name>ssi</servlet-name>
+    <url-pattern>*.shtml</url-pattern>
+  </servlet-mapping>
+  
   <!-- Set the default session timeout (in seconds) -->
   <session-config>
     <session-timeout>30</session-timeout>
