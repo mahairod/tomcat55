@@ -73,6 +73,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Hashtable;
+import java.util.Stack;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.servlet.FilterConfig;
@@ -471,6 +472,12 @@ public class StandardContext
      * Filesystem based flag.
      */
     private boolean filesystemBased = false;
+
+
+    /**
+     * Name of the associated naming context.
+     */
+    private String namingContextName = null;
 
 
     // ----------------------------------------------------- Context Properties
@@ -3672,19 +3679,25 @@ public class StandardContext
      * Get naming context full name.
      */
     private String getNamingContextName() {
-        Container parent = getParent();
-        if (parent != null) {
-            StringBuffer buf = new StringBuffer();
-            buf.append("/").append(parent.getName()).append(getName());
-            parent = parent.getParent();
-            while (parent != null) {
-                buf.append("/").append(parent.getName());
-                parent = parent.getParent();
-            }
-            return buf.toString();
-        } else {
-            return getName();
-        }
+	if (namingContextName == null) {
+	    Container parent = getParent();
+	    if (parent == null) {
+		namingContextName = getName();
+	    } else {
+		Stack stk = new Stack();
+		StringBuffer buff = new StringBuffer();
+		while (parent != null) {
+		    stk.push(parent.getName());
+		    parent = parent.getParent();
+		}
+		while (!stk.empty()) {
+		    buff.append("/" + stk.pop());
+		}
+		buff.append(getName());
+		namingContextName = buff.toString();
+	    }
+	}
+	return namingContextName;
     }
 
 
