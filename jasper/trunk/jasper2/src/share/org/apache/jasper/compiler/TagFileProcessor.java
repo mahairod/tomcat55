@@ -134,7 +134,7 @@ class TagFileProcessor {
         private String displayName = null;
         private String smallIcon = null;
         private String largeIcon = null;
-        private String dynamicAttrs;
+        private String dynamicAttrsMapName;
         
         private Vector attributeVector;
         private Vector variableVector;
@@ -164,7 +164,7 @@ class TagFileProcessor {
                 err.jspError(n, "jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
-            dynamicAttrs = n.getAttributeValue("dynamic-attributes");
+            dynamicAttrsMapName = n.getAttributeValue("dynamic-attributes");
             smallIcon = n.getAttributeValue("small-icon");
             largeIcon = n.getAttributeValue("large-icon");
             description = n.getAttributeValue("description");
@@ -285,6 +285,14 @@ class TagFileProcessor {
             return variableVector;
         }
 
+	/*
+	 * Returns the value of the dynamic-attributes tag directive
+	 * attribute.
+	 */
+	public String getDynamicAttributesMapName() {
+	    return dynamicAttrsMapName;
+	}
+
         public TagInfo getTagInfo() throws JasperException {
 
             if (name == null) {
@@ -316,7 +324,7 @@ class TagFileProcessor {
 			       smallIcon,
 			       largeIcon,
 			       tagVariableInfos,
-			       dynamicAttrs);
+			       dynamicAttrsMapName);
         }
     }
 
@@ -376,9 +384,10 @@ class TagFileProcessor {
                 }
             }
         }
+
         /*
          * It is illegal to have a variable.name-given equal another
-         * variable.alias the same tag file translation unit.
+         * variable.alias in the same tag file translation unit.
          */
         Iterator varsIter = tagFileVisitor.getVariablesVector().iterator();
         while (varsIter.hasNext()) {
@@ -403,7 +412,46 @@ class TagFileProcessor {
             }
         }
 
+	checkDynamicAttributesUniqueness(tagFileVisitor, path, err);
+
         return tagFileVisitor.getTagInfo();
+    }
+
+    /*
+     * Reports a translation error if there is a tag directive with
+     * a 'dynamic-attributes' attribute equal to the value of a
+     * 'name-given' attribute of a variable directive or equal to the
+     * value of a 'name' attribute of an attribute directive in this
+     * translation unit.
+     */
+    private static void checkDynamicAttributesUniqueness(
+                                            TagFileDirectiveVisitor tfv,
+					    String path,
+					    ErrorDispatcher err)
+	        throws JasperException {
+
+	String dynamicAttrsMapName = tfv.getDynamicAttributesMapName();
+	if (dynamicAttrsMapName == null) {
+	    return;
+	}
+
+	Iterator attrs = tfv.getAttributesVector().iterator();
+	while (attrs.hasNext()) {
+	    TagAttributeInfo attrInfo = (TagAttributeInfo) attrs.next();
+	    if (dynamicAttrsMapName.equals(attrInfo.getName())) {
+		err.jspError("jsp.error.tagfile.tag_dynamic_attrs_equals_attr_name",
+			     path, dynamicAttrsMapName);
+	    }
+	}
+
+	Iterator vars = tfv.getVariablesVector().iterator();
+	while (vars.hasNext()) {
+	    TagVariableInfo varInfo = (TagVariableInfo) vars.next();
+	    if (dynamicAttrsMapName.equals(varInfo.getNameGiven())) {
+		err.jspError("jsp.error.tagfile.tag_dynamic_attrs_equals_var_name_given",
+			     path, dynamicAttrsMapName);
+	    }
+	}
     }
 
     /**
