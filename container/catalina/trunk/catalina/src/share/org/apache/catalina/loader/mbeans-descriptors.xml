@@ -7,12 +7,7 @@
                domain="Catalina"
                 group="Loader"
                  type="org.apache.catalina.loader.WebappLoader">
-
-    <attribute   name="checkInterval"
-          description="The number of seconds between checks for modified
-                       classes"
-                 type="int"/>
-
+                 
     <attribute   name="className"
           description="Fully qualified class name of the managed object"
                  type="java.lang.String"

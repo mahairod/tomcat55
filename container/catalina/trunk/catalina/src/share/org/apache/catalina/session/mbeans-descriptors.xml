@@ -17,11 +17,6 @@
           description="File source of random - /dev/urandom or a pipe"
                  type="java.lang.String"/>
 
-    <attribute   name="checkInterval"
-          description="The interval (in seconds) between checks for expired
-                       sessions"
-                 type="int"/>
-
     <attribute   name="className"
           description="Fully qualified class name of the managed object"
                  type="java.lang.String"
