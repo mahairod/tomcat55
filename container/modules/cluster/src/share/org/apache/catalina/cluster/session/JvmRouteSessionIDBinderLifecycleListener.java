@@ -17,6 +17,7 @@ package org.apache.catalina.cluster.session;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.modelmbean.ModelMBean;
 
@@ -38,10 +39,10 @@ import org.apache.commons.modeler.Registry;
  * add following at your server.xml Host section
  * 
  * <pre>
- *     &lt;Host &gt;... 
- *       &lt;Listener className=&quot;org.apache.catalina.cluster.session.JvmRouteSessionIDBinderLifecycleListener&quot; /&gt;
- *       &lt;Cluster ...&gt;
- *     &lt;/Host&gt;
+ *        &lt;Host &gt;... 
+ *          &lt;Listener className=&quot;org.apache.catalina.cluster.session.JvmRouteSessionIDBinderLifecycleListener&quot; /&gt;
+ *          &lt;Cluster ...&gt;
+ *        &lt;/Host&gt;
  * </pre>
  * 
  * @author Peter Rossbach
@@ -70,7 +71,9 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
 
     private MessageListener sessionMoverListener;
 
-    /* start and stop cluster 
+    /*
+     * start and stop cluster
+     * 
      * @see org.apache.catalina.LifecycleListener#lifecycleEvent(org.apache.catalina.LifecycleEvent)
      */
     public void lifecycleEvent(LifecycleEvent event) {
@@ -90,33 +93,57 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
     }
 
     /**
-     * start sessionID mover at cluster
-     * @param host clustered host
+     * stop sessionID binder at cluster
+     * 
+     * @param host
+     *            clustered host
      */
     protected void stopSessionIDListener(StandardHost host) {
         if (sessionMoverListener != null) {
             CatalinaCluster cluster = (CatalinaCluster) host.getCluster();
             cluster.removeClusterListener(sessionMoverListener);
+            if (mserver != null) {
+                try {
+                    ObjectName objectName = getObjectName(host);
+                    mserver.unregisterMBean(objectName);
+                } catch (Exception e) {
+                    log.error(e);
+                }
+            }
         }
     }
 
     /**
+     * @param host
+     * @return
+     * @throws MalformedObjectNameException
+     */
+    protected ObjectName getObjectName(StandardHost host) throws MalformedObjectNameException {
+        ObjectName objectName = new ObjectName(
+                host.getDomain()
+                        + ":type=Listener,name=JvmRouteSessionIDBinderListener,host=" + host.getName());
+        return objectName;
+    }
+
+    /**
      * start sessionID mover at cluster
-     * @param host clustered host
+     * 
+     * @param host
+     *            clustered host
      */
     protected void startSessionIDListener(StandardHost host) {
         try {
             ObjectName objectName = null;
             getMBeanServer();
-            objectName = new ObjectName(host.getDomain()
-                    + ":type=Listener,name=JvmRouteSessionIDBinderListener");
-
+            objectName = getObjectName(host);
             if (mserver.isRegistered(objectName)) {
-                log.info(sm.getString("jvmRoute.run.already"));
+                if (log.isInfoEnabled())
+                    log.info(sm.getString("jvmRoute.run.already"));
                 return;
             }
             sessionMoverListener = new JvmRouteSessionIDBinderListener();
-            mserver.registerMBean(getManagedBean(sessionMoverListener), objectName);
+            mserver.registerMBean(getManagedBean(sessionMoverListener),
+                    objectName);
             CatalinaCluster cluster = (CatalinaCluster) host.getCluster();
             sessionMoverListener.setCluster(cluster);
             ((JvmRouteSessionIDBinderListener) sessionMoverListener).start();
@@ -149,10 +176,13 @@ public class JvmRouteSessionIDBinderLifecycleListener implements
      * @throws Exception
      *             If an error occurs this constructors throws this exception
      */
-    public ModelMBean getManagedBean(Object object) throws Exception {
-        ManagedBean managedBean = registry.findManagedBean(object.getClass()
-                .getName());
-        ModelMBean mbean = managedBean.createMBean(object);
+    protected ModelMBean getManagedBean(Object object) throws Exception {
+        ModelMBean mbean = null;
+        if (registry != null) {
+            ManagedBean managedBean = registry.findManagedBean(object
+                    .getClass().getName());
+            mbean = managedBean.createMBean(object);
+        }
         return mbean;
     }
 
