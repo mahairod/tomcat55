@@ -283,6 +283,23 @@ public interface ServletResponse {
     public void flushBuffer() throws IOException;
     
     
+    
+    /**
+     * Clears the content of the underlying buffer in the response without
+     * clearing headers or status code. If the 
+     * response has been committed, this method throws an 
+     * <code>IllegalStateException</code>.
+     *
+     * @see 		#setBufferSize
+     * @see 		#getBufferSize
+     * @see 		#isCommitted
+     * @see 		#reset
+     *
+     * @since 2.3
+     */
+
+    public void resetBuffer();
+    
 
     /**
      * Returns a boolean indicating if the response has been

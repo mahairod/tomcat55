@@ -918,6 +918,9 @@ class NoBodyResponse implements HttpServletResponse {
 
     public void reset() throws IllegalStateException
       { resp.reset(); }
+      
+      public void resetBuffer() throws IllegalStateException
+      { resp.resetBuffer(); }
 
     public boolean isCommitted()
       { return resp.isCommitted(); }

@@ -194,6 +194,15 @@ public class ServletResponseWrapper implements ServletResponse {
     }
     
     /**
+     * The default behavior of this method is to call resetBuffer()
+     * on the wrapped response object.
+     */
+     
+    public void resetBuffer() {
+	this.response.resetBuffer();
+    }
+    
+    /**
      * The default behavior of this method is to call setLocale(Locale loc)
      * on the wrapped response object.
      */
