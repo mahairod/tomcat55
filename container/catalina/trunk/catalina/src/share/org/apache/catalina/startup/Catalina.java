@@ -69,10 +69,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Constructor;
 import java.net.Socket;
-import java.security.Security;
 import java.util.Stack;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -80,6 +77,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.Loader;
+import org.apache.catalina.security.SecurityConfig;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.tomcat.util.log.SystemLogHandler;
@@ -479,27 +477,10 @@ public class Catalina {
             }
         }
 
-        // If a SecurityManager is being used, set properties for
-        // checkPackageAccess() and checkPackageDefinition
-        if( System.getSecurityManager() != null ) {
-            String access = Security.getProperty("package.access");
-            if( access != null && access.length() > 0 )
-                access += ",";
-            else
-                access = "sun.,";
-            Security.setProperty("package.access",
-                access + "org.apache.catalina.,org.apache.jasper.,org.apache.coyote., org.apache.tomcat.");
-            String definition = Security.getProperty("package.definition");
-            if( definition != null && definition.length() > 0 )
-                definition += ",";
-            else
-                definition = "sun.,";
-            Security.setProperty("package.definition",
-                // FIX ME package "javax." was removed to prevent HotSpot
-                // fatal internal errors
-                definition + "java.,org.apache.catalina.,org.apache.jasper.,org.apache.coyote., org.apache.tomcat.");
-        }
-
+        SecurityConfig securityConfig = SecurityConfig.newInstance();
+        securityConfig.setPackageDefinition();
+        securityConfig.setPackageAccess();
+        
         // Replace System.out and System.err with a custom PrintStream
         SystemLogHandler systemlog = new SystemLogHandler(System.out);
         System.setOut(systemlog);
