@@ -635,7 +635,7 @@ public class ManagerServlet
                localWar.getAbsolutePath(), update);
 
         // Acknowledge successful completion of this deploy command
-        writer.println(sm.getString("managerServlet.installed",
+        writer.println(sm.getString("managerServlet.deployed",
                                     displayPath));
 
     }
@@ -855,7 +855,7 @@ public class ManagerServlet
 
             try {
                 deployer.install(path, new URL(war));
-                writer.println(sm.getString("managerServlet.installed",
+                writer.println(sm.getString("managerServlet.deployed",
                                             displayPath));
             } catch (Throwable t) {
                 log("ManagerServlet.install[" + displayPath + "]", t);
@@ -987,7 +987,7 @@ public class ManagerServlet
                 return;
             }
             deployer.remove(path,true);
-            writer.println(sm.getString("managerServlet.removed", displayPath));
+            writer.println(sm.getString("managerServlet.undeployed", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.remove[" + displayPath + "]", t);
             writer.println(sm.getString("managerServlet.exception",
