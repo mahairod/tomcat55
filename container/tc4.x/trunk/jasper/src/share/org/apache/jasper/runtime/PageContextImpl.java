@@ -466,6 +466,27 @@ public class PageContextImpl extends PageContext {
 
     }
 
+    public void handlePageException(Throwable e)
+    throws IOException, ServletException {
+
+	// set the request attribute with the exception.
+	request.setAttribute("javax.servlet.jsp.jspException", e);
+
+	if (errorPageURL != null && !errorPageURL.equals("")) {
+	    forward(errorPageURL);
+	} // Otherwise throw the exception wrapped inside a ServletException.
+	else {
+	    // Set the exception as the root cause in the ServletException
+	    // to get a stack trace for the real problem
+	    if( e instanceof IOException )
+		throw (IOException)e;
+	    if( e instanceof ServletException )
+		throw (ServletException) e;
+	    throw new ServletException(e);
+	}
+
+    }
+
     protected JspWriter _createOut(int bufferSize, boolean autoFlush)
         throws IOException, IllegalArgumentException
     {
