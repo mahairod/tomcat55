@@ -40,7 +40,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.4/2.0</td>
-  <td>5.0.14 Beta</td>
+  <td>5.0.16</td>
 </tr>
 
 <tr>
@@ -61,7 +61,7 @@ the associated release notes.</p>
 
 <subsection name="Tomcat 5.x">
 
-<p><strong>Tomcat 5.x</strong> is the upcoming major release of Tomcat, and
+<p><strong>Tomcat 5.x</strong> is the current release of Tomcat, and
 builds upon the Tomcat 3.3 and Tomcat 4.1 codebases. 
 The 5.x releases implement the <strong>Servlet 2.4</strong> 
 and <strong>JSP 2.0</strong> specifications.</p>
@@ -93,9 +93,8 @@ Catalina) that is based on completely new architecture.  The 4.x releases
 implement the <strong>Servlet 2.3</strong> and <strong>JSP 1.2</strong>
 specifications.</p>
 
-<p><strong>Tomcat 4.1.x</strong>.  Tomcat 4.1, whose latest stable release
-is listed above, is a refactoring of Tomcat 4.0.x, and contains significant 
-enhancements, including:
+<p><strong>Tomcat 4.1.x</strong>. Tomcat 4.1 is a refactoring 
+of Tomcat 4.0.x, and contains significant enhancements, including:
 <ul>
 <li>JMX based administration features</li>
 <li>JSP and Struts based administration web application</li>
