@@ -250,11 +250,10 @@ public class TagBeginGenerator
         writer.println("if ("+evalVar+" != Tag.SKIP_BODY) {");
 	writer.pushIndent();
 
-	writer.println("try {");
-	writer.pushIndent();
-	
-
 	if (implementsBodyTag) {
+            writer.println("try {");
+            writer.pushIndent();
+
 	    writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
 	    writer.pushIndent();
 
