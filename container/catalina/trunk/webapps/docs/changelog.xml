@@ -39,6 +39,9 @@
       <update>
         <bug>34248</bug>: Update JavaMail download instructions to include JAF. (yoavs)
       </update>
+      <update>
+        Update to JDT from Eclipse 3.1M6, which is now feature complete (remm)
+      </update>
     </changelog>
   </subsection>
   
@@ -84,6 +87,12 @@
         <bug>34727</bug>: Allow specifying the Option class used by the Jasper engine,
         submitted by Scott Stark (remm)
       </add>
+      <add>
+        Support for Java 5.0 in JSPs (remm)
+      </add>
+      <update>
+        Java 5 will be the source and target for JSPs when running on Java 5 (remm)
+      </update>
     </changelog>
   </subsection>
   
