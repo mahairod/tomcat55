@@ -30,6 +30,9 @@
 
   <subsection name="Coyote">
     <changelog>
+      <fix>
+       <bug>30770</bug>: Check that the browser actually sent a user-agent header before using it. (billbarker)
+      </fix>
     </changelog>
   </subsection>
 
