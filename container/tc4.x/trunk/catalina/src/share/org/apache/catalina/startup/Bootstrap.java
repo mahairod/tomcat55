@@ -121,36 +121,37 @@ public final class Bootstrap {
         ClassLoader catalinaLoader = createCatalinaLoader(commonLoader);
         ClassLoader sharedLoader = createSharedLoader(commonLoader);
 
-	// Load our startup class and call its process() method
-	try {
-
-	    if( System.getSecurityManager() != null ) {
-		// Pre load some classes required for SecurityManager
-		// so that defineClassInPackage does not throw a
-		// security exception.
-		String basePackage = "org.apache.catalina.";
-		catalinaLoader.loadClass(basePackage +
-		    "core.ApplicationContext$PrivilegedGetRequestDispatcher");
-                catalinaLoader.loadClass(basePackage +
-                    "core.ApplicationDispatcher$PrivilegedForward");
-                catalinaLoader.loadClass(basePackage +
-                    "core.ApplicationDispatcher$PrivilegedInclude");
-                catalinaLoader.loadClass(basePackage +
-                    "session.StandardSession");
-                catalinaLoader.loadClass(basePackage +
-                    "util.Enumerator");
-                catalinaLoader.loadClass(
-		    "javax.servlet.http.Cookie");
-	    }
+        // Load our startup class and call its process() method
+        try {
+            
+            if( System.getSecurityManager() != null ) {
+                // Pre load some classes required for SecurityManager
+                // so that defineClassInPackage does not throw a
+                // security exception.
+                String basePackage = "org.apache.catalina.";
+                catalinaLoader.loadClass
+                    (basePackage +
+                     "core.ApplicationContext$PrivilegedGetRequestDispatcher");
+                catalinaLoader.loadClass
+                    (basePackage +
+                     "core.ApplicationDispatcher$PrivilegedForward");
+                catalinaLoader.loadClass
+                    (basePackage +
+                     "core.ApplicationDispatcher$PrivilegedInclude");
+                catalinaLoader.loadClass
+                    (basePackage + "session.StandardSession");
+                catalinaLoader.loadClass(basePackage + "util.Enumerator");
+                catalinaLoader.loadClass("javax.servlet.http.Cookie");
+            }
 
             // Instantiate a startup class instance
             if (debug >= 1)
                 log("Loading startup class");
-	    Class startupClass =
-		catalinaLoader.loadClass
+            Class startupClass =
+                catalinaLoader.loadClass
                 ("org.apache.catalina.startup.Catalina");
-	    Object startupInstance = startupClass.newInstance();
-
+            Object startupInstance = startupClass.newInstance();
+            
             // Set the shared extensions class loader
             if (debug >= 1)
                 log("Setting startup class properties");
@@ -162,26 +163,26 @@ public final class Bootstrap {
             Method method =
                 startupInstance.getClass().getMethod(methodName, paramTypes);
             method.invoke(startupInstance, paramValues);
-
+            
             // Call the process() method
             if (debug >= 1)
                 log("Calling startup class process() method");
-	    methodName = "process";
-	    paramTypes = new Class[1];
-	    paramTypes[0] = args.getClass();
-	    paramValues = new Object[1];
-	    paramValues[0] = args;
-	    method =
-		startupInstance.getClass().getMethod(methodName, paramTypes);
-	    method.invoke(startupInstance, paramValues);
+            methodName = "process";
+            paramTypes = new Class[1];
+            paramTypes[0] = args.getClass();
+            paramValues = new Object[1];
+            paramValues[0] = args;
+            method =
+                startupInstance.getClass().getMethod(methodName, paramTypes);
+            method.invoke(startupInstance, paramValues);
+            
+        } catch (Exception e) {
+            System.out.println("Exception during startup processing");
+            e.printStackTrace(System.out);
+            System.exit(2);
+        }
 
-	} catch (Exception e) {
-	    System.out.println("Exception during startup processing");
-	    e.printStackTrace(System.out);
-	    System.exit(2);
-	}
-
-	System.exit(0);
+        System.exit(0);
 
     }
 
@@ -195,6 +196,14 @@ public final class Bootstrap {
         if (debug >= 1)
             log("Creating COMMON class loader");
 
+        // Check to see if JNDI is already present in the system classpath
+        boolean loadJNDI = true;
+        try {
+            Class.forName("javax.naming.Context");
+            loadJNDI = false;
+        } catch (ClassNotFoundException e) {
+        }
+
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
@@ -206,12 +215,13 @@ public final class Bootstrap {
                                + " does not exist");
             System.exit(1);
         }
-	String filenames[] = directory.list();
-	for (int i = 0; i < filenames.length; i++) {
+        String filenames[] = directory.list();
+        for (int i = 0; i < filenames.length; i++) {
             String filename = filenames[i].toLowerCase();
-	    if ((!filename.endsWith(".jar")) ||
-                (filename.indexOf("bootstrap.jar") != -1))
-		continue;
+            if ((!filename.endsWith(".jar")) ||
+                (filename.indexOf("bootstrap.jar") != -1) ||
+                ((!loadJNDI) && (filename.indexOf("jndi.jar") != -1)))
+                continue;
             File file = new File(directory, filenames[i]);
             try {
                 URL url = new URL("file", null, file.getCanonicalPath());
@@ -224,7 +234,7 @@ public final class Bootstrap {
                 e.printStackTrace(System.out);
                 System.exit(1);
             }
-	}
+        }
 
         // Construct the class loader itself
         String array[] = (String[]) list.toArray(new String[list.size()]);
