@@ -167,12 +167,12 @@ public class JspRuntimeLibrary {
                 return new Long(s);
             } else if ( t.equals(Double.class) || t.equals(Double.TYPE) ) {
                 return new Double(s);
-            } else if ( t.equals(Object.class) ) {
-                return new Object[] {s};
             } else if ( t.equals(String.class) ) {
                 return s;
             } else if ( t.equals(java.io.File.class) ) {
                 return new java.io.File(s);
+            } else if (t.getName().equals("java.lang.Object")) {
+                return new Object[] {s};
 	    } else {
 		return getValueFromPropertyEditorManager(
                                             t, propertyName, s);
