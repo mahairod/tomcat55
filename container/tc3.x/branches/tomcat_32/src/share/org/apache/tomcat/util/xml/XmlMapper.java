@@ -406,6 +406,9 @@ public class XmlMapper
     public InputSource resolveEntity(String publicId, String systemId)
 	throws SAXException
     {
+	if (publicId == null)
+		return (null);	// if publicid is null, parser will handle that (tfr)
+
 	String dtd = (String) fileDTDs.get(publicId);
 	if( dtd != null ) {
 	    File dtdF=new File( dtd );
