@@ -22,7 +22,7 @@
   <property name="tomcat.project"        value="jakarta-tomcat-5" />
   <property name="catalina.project"      value="jakarta-tomcat-catalina" />
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
-  <property name="jasper.project"        value="jakarta-tomcat-jasper" />
+  <property name="jasper.project"        value="jakarta-tomcat-jasper_tc5" />
 
   <property name="cvs.base"
            value="${basedir}/.."/>
