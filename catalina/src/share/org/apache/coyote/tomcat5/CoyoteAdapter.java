@@ -486,7 +486,7 @@ public class CoyoteAdapter
         // If the URI ends with "/." or "/..", then we append an extra "/"
         // Note: It is possible to extend the URI by 1 without any side effect
         // as the next character is a non-significant WS.
-        if (((end - start) > 2) && (b[end - 1] == (byte) '.')) {
+        if (((end - start) >= 2) && (b[end - 1] == (byte) '.')) {
             if ((b[end - 2] == (byte) '/') 
                 || ((b[end - 2] == (byte) '.') 
                     && (b[end - 3] == (byte) '/'))) {
