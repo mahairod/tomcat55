@@ -1,6 +1,5 @@
 !/bin/ksh
 echo CHECKOUT:
 cd ws
-cvs -d :pserver:anoncvs@dev.apache.org:/home/cvspublic checkout jakarta-tools ja
-karta-tomcat jakarta-watchdog
+cvs -d :pserver:anoncvs@dev.apache.org:/home/cvspublic checkout jakarta-tools jakarta-tomcat jakarta-watchdog
 
