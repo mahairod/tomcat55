@@ -76,6 +76,9 @@ Catalina New Features:
 [4.1.5] ServerLifecycleListener:
         Generate MBeans for the JNDI resources of the contexts.
 
+[4.1.8] BootstrapService:
+        Allow passing parameters to the BootstrapService.
+
 
 -------------------
 Jasper New Features:
@@ -120,6 +123,8 @@ Jasper New Features:
 [4.1.6] Options:
         Add new "enablePooling" flag, which allows disabling tag reuse.
 
+[4.1.8] JspCompilationContext:
+        Use _ instead of $ to generate file and class names for jsp servlets.
 
 
 ==========================
@@ -153,6 +158,9 @@ Generic Bug Fixes:
 
 [4.1.6] Administration Webapp:
         Tweak validation code for the context parameters.
+
+[4.1.8] Build:
+        Tomcat is now built with JDK 1.4.
 
 
 ------------------
@@ -322,6 +330,25 @@ Catalina Bug Fixes:
 [4.1.6] StandardContext:
         Reset application context when stopping.
 
+[4.1.8] BootstrapService:
+        Prevent NPE when DaemonContext is not well initialised.
+
+[4.1.8] StandardServer:
+        Make sure the global resources are correctly initialized even if there
+        is no GlobalNamingResources element in server.xml.
+
+[4.1.8] MBean-descriptors:
+        Add PersistentManager MBean info to mbeans-descripor.xml so it doesn't
+        complain in case if you have PersistentManager.
+
+[4.1.8] #10967
+        Summary: Java Deadlock in WebappClassLoader
+        WebappClassLoader:
+        Make ResourceEntry a separate class.
+
+[4.1.8] StandardSession:
+        Set manager to null before recycling.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -405,6 +432,30 @@ Jasper Bug Fixes:
 [4.1.6] Generator:
         Add synchronization of the scripting variables.
 
+[4.1.8] #10896
+        Summary: Parsing ContentType error
+        ParserController:
+        Fix parsing.
+
+[4.1.8] #10713
+        Summary: Backslashes quoting quotes in attributes does not work
+        Parser:
+        Fix parsing.
+
+[4.1.8] #10711
+        Summary: Relative filenames with ../ do not work for JSP-includes
+        JspCompilationContext:
+        Add back path normalization code.
+
+[4.1.8] #10670
+        Summary: Problem in JSP compilation
+        Generator:
+        Fix compilation problem.
+
+[4.1.8] #10766
+        Summary: <%@ page extends %> causes ClassCastException
+        JspServletWrapper:
+        Fix regression caused by the included JSP modification tracking.
 
 
 ============================
