@@ -63,6 +63,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Stack;
 import java.text.StringCharacterIterator;
 import java.text.CharacterIterator;
 
@@ -86,6 +87,10 @@ public class Project {
     public static final int MSG_VERBOSE = 3;
 
     private static String javaVersion;
+    // private set of constants to represent the state
+    // of a DFS of the Target dependencies
+    private static final String VISITING = "VISITING";
+    private static final String VISITED = "VISITED";
 
     private String name;
     private PrintStream out = System.out;
@@ -96,7 +101,6 @@ public class Project {
     private Hashtable taskClassDefinitions = new Hashtable();
     private Hashtable targets = new Hashtable();
     private File baseDir;
-    private Vector visitedTargets = new Vector();
 
     public Project() {
         detectJavaVersion();
@@ -281,54 +285,27 @@ public class Project {
     
     public void executeTarget(String targetName) throws BuildException {
 
-	// sanity check ourselves, if we've been asked to build nothing
-	// then we should complain
-	
-	if (targetName == null) {
-	    String msg = "No target specified";
-	    throw new BuildException(msg);
-	}
-
-	Target target = (Target)targets.get(targetName);
-
-	if (target == null) {
-	    String msg = "Target " + targetName + " does not exist in this " +
-		"project";
-	    throw new BuildException(msg);
-	}
-	executeTarget(target);
-    }
-
-    public void executeTarget(Target target) throws BuildException {
-
-        // Check to see if the target has already been visited. If so, assume
-        // it to be up to date and do not execute the target.
-
-        if (!visitedTargets.contains(target)) {
-
-            // make sure any dependencies on this target are executed
-            // first
-
-            Enumeration enum = target.getDependencies();
-            while (enum.hasMoreElements()) {
-                String dependency = (String)enum.nextElement();
-                Target prereqTarget = (Target)targets.get(dependency);
-                executeTarget(prereqTarget);
-            }
-
-            log("Executing Target: " + target.getName(), MSG_INFO);
-
-            visitedTargets.addElement(target);
-            target.execute();
-        } else {
-
-            // XXX
-            // note that we aren't catching circular dependencies right now.
-            // This log message is the only indicator of a circular dependency.
-
-            log("Skipping previously visited Target: " + target.getName(),
-                MSG_VERBOSE);
+        // sanity check ourselves, if we've been asked to build nothing
+        // then we should complain
+        
+        if (targetName == null) {
+            String msg = "No target specified";
+            throw new BuildException(msg);
         }
+
+        // Sort the dependency tree, and run everything from the
+        // beginning until we hit our targetName.
+        // Sorting checks if all the targets (and dependencies)
+        // exist, and if there is any cycle in the dependency
+        // graph.
+        Vector sortedTargets = topoSort(targetName, targets);
+
+        int curidx = 0;
+        String curtarget;
+        do {
+            curtarget = (String) sortedTargets.elementAt(curidx++);
+            runTarget(curtarget, targets);
+        } while (!curtarget.equals(targetName));
     }
 
     public File resolveFile(String fileName) {
@@ -387,9 +364,135 @@ public class Project {
         }
         return(bs.toString());
     }
+
+    // Given a string defining a target name, and a Hashtable
+    // containing the "name to Target" mapping, pick out the
+    // Target and execute it.
+    private final void runTarget(String target, Hashtable targets)
+        throws BuildException {
+        Target t = (Target)targets.get(target);
+        if (t == null) {
+            throw new RuntimeException("Unexpected missing target `"+target+
+                                       "' in this project.");
+        }
+        log("Executing Target: "+target, MSG_INFO);
+        t.execute();
+    }
+
+
+    /**
+     * Topologically sort a set of Targets.
+     * @param root is the (String) name of the root Target. The sort is
+     * created in such a way that the sequence of Targets uptil the root
+     * target is the minimum possible such sequence.
+     * @param targets is a Hashtable representing a "name to Target" mapping
+     * @return a Vector of Strings with the names of the targets in
+     * sorted order.
+     * @exception BuildException if there is a cyclic dependency among the
+     * Targets, or if a Target does not exist.
+     */
+    private final Vector topoSort(String root, Hashtable targets)
+        throws BuildException {
+        Vector ret = new Vector();
+        Hashtable state = new Hashtable();
+        Stack visiting = new Stack();
+
+        // We first run a DFS based sort using the root as the starting node.
+        // This creates the minimum sequence of Targets to the root node.
+        // We then do a sort on any remaining unVISITED targets.
+        // This is unnecessary for doing our build, but it catches
+        // circular dependencies or missing Targets on the entire
+        // dependency tree, not just on the Targets that depend on the
+        // build Target.
+
+        tsort(root, targets, state, visiting, ret);
+        log("Build sequence for target `"+root+"' is "+ret, MSG_VERBOSE);
+        for (Enumeration en=targets.keys(); en.hasMoreElements();) {
+            String curTarget = (String)(en.nextElement());
+            String st = (String) state.get(curTarget);
+            if (st == null) {
+                tsort(curTarget, targets, state, visiting, ret);
+            }
+            else if (st == VISITING) {
+                throw new RuntimeException("Unexpected node in visiting state: "+curTarget);
+            }
+        }
+        log("Complete build sequence is "+ret, MSG_VERBOSE);
+        return ret;
+    }
+
+    // one step in a recursive DFS traversal of the Target dependency tree.
+    // - The Hashtable "state" contains the state (VISITED or VISITING or null)
+    // of all the target names.
+    // - The Stack "visiting" contains a stack of target names that are
+    // currently on the DFS stack. (NB: the target names in "visiting" are
+    // exactly the target names in "state" that are in the VISITING state.)
+    // 1. Set the current target to the VISITING state, and push it onto
+    // the "visiting" stack.
+    // 2. Throw a BuildException if any child of the current node is
+    // in the VISITING state (implies there is a cycle.) It uses the
+    // "visiting" Stack to construct the cycle.
+    // 3. If any children have not been VISITED, tsort() the child.
+    // 4. Add the current target to the Vector "ret" after the children
+    //   have been visited. Move the current target to the VISITED state.
+    //   "ret" now contains the sorted sequence of Targets upto the current
+    //   Target.
+
+    private final void tsort(String root, Hashtable targets,
+                             Hashtable state, Stack visiting,
+                             Vector ret)
+        throws BuildException {
+        state.put(root, VISITING);
+        visiting.push(root);
+
+        Target target = (Target)(targets.get(root));
+
+        // Make sure we exist
+        if (target == null) {
+            StringBuffer sb = new StringBuffer("Target `");
+            sb.append(root);
+            sb.append("' does not exist in this project. ");
+            visiting.pop();
+            if (!visiting.empty()) {
+                String parent = (String)visiting.peek();
+                sb.append("It is used from target `");
+                sb.append(parent);
+                sb.append("'.");
+            }
+
+            throw new BuildException(new String(sb));
+        }
+
+        for (Enumeration en=target.getDependencies(); en.hasMoreElements();) {
+            String cur = (String) en.nextElement();
+            String m=(String)state.get(cur);
+            if (m == null) {
+                // Not been visited
+                tsort(cur, targets, state, visiting, ret);
+            }
+            else if (m == VISITING) {
+                // Currently visiting this node, so have a cycle
+                throw makeCircularException(cur, visiting);
+            }
+        }
+
+        String p = (String) visiting.pop();
+        if (root != p) {
+            throw new RuntimeException("Unexpected internal error: expected to pop "+root+" but got "+p);
+        }
+        state.put(root, VISITED);
+        ret.addElement(root);
+    }
+
+    private static BuildException makeCircularException(String end, Stack stk) {
+        StringBuffer sb = new StringBuffer("Circular dependency: ");
+        sb.append(end);
+        String c;
+        do {
+            c = (String)stk.pop();
+            sb.append(" <- ");
+            sb.append(c);
+        } while(!c.equals(end));
+        return new BuildException(new String(sb));
+    }
 }
-
-
-
-
-
