@@ -41,7 +41,7 @@
     <copyfile src="${servlet.jar}" dest="${jasper.build}/lib/servlet.jar"/>
     <!--   Jasper needs a JAXP-compatible XML parser -->
     <copyfile src="${jaxp.jar}"    dest="${jasper.build}/lib/jaxp.jar"/>
-    <copyfile src="${parser.jar}"  dest="${jasper.build}/lib/parser.jar"/>
+    <copyfile src="${parser.jar}"  dest="${jasper.build}/lib/zparser.jar"/>
 
   </target>
 
