@@ -38,6 +38,13 @@ Undeploy an Existing Application</a><br />
 </blockquote>
 <a href="#Executing Manager Commands With Ant">
 Executing Manager Commands With Ant</a><br />
+<a href="#Using the JMX Proxy Servlet">
+Using the JMX Proxy Servlet</a><br />
+<blockquote>
+<a href="#What is JMX Proxy Servlet">What is JMX Proxy Servlet?</a><br />
+<a href="#JMX Query command">Query command</a><br />
+<a href="#JMX Set command">Set command</a><br />
+</blockquote>
 </p>
 
 </section>
@@ -283,8 +290,8 @@ by use of the <code>/undeploy</code>.</p>
 <ul>
 <li><code>update</code>: When set to true, any existing update will be
     undeployed first. The default value is set to false.</li>
-<li><code>tag</code>: Specifying a tag name, this allows associating the 
-    deployed webapp with a version number. The application version can 
+<li><code>tag</code>: Specifying a tag name, this allows associating the
+    deployed webapp with a version number. The application version can
     be later redeployed when needed using only the tag.</li>
 <li><code>pause</code>: Pause webapps so that incoming connections are not lost
     during an application update. This option is only used with the update
@@ -312,7 +319,7 @@ error message.  Possible causes for problems include:</p>
     application using this context path, or choose a different context path
     for the new one. The <code>update</code> parameter may be specified as
     a parameter on the URL, with a value of <code>true</code> to avoid this
-    error. In that case, an undeploy will be performed on an existing 
+    error. In that case, an undeploy will be performed on an existing
     application before performing the deployment.</p>
     </blockquote></li>
 <li><em>Encountered exception</em>
@@ -348,8 +355,8 @@ This command is the logical opposite of the <code>/remove</code> command.</p>
 <h3>Install a version of a previously deployed webapp</h3>
 
 <p>This can be used to deploy a previous version of a web applicaion, which
-has been deployed using the <code>tag</code> attribute. Note that the work 
-directory for the manager webapp will contain the previously deployed WARs; 
+has been deployed using the <code>tag</code> attribute. Note that the work
+directory for the manager webapp will contain the previously deployed WARs;
 removing it would make the deployment fail.
 <source>
 http://localhost:8080/manager/deploy?path=/footoo&amp;tag=footag
@@ -368,7 +375,7 @@ a URL referring to a WAR file is described on the Javadocs page for the
 the entire WAR file.</p>
 
 <p>In this example the web application located in the directory
-<code>/path/to/foo</code> on the Tomcat server is installed as the 
+<code>/path/to/foo</code> on the Tomcat server is installed as the
 web application context named <code>/footoo</code>.
 <source>
 http://localhost:8080/manager/deploy?path=/footoo&amp;war=file:/path/to/foo
@@ -488,7 +495,7 @@ error message.  Possible causes for problems include:</p>
     application using this context path, or choose a different context path
     for the new one. The <code>update</code> parameter may be specified as
     a parameter on the URL, with a value of <code>true</code> to avoid this
-    error. In that case, an undeploy will be performed on an existing 
+    error. In that case, an undeploy will be performed on an existing
     application before performing the deployment.</p>
     </blockquote></li>
 <li><em>Document base does not exist or is not a readable directory</em>
@@ -858,8 +865,8 @@ http://localhost:8080/manager/undeploy?path=/examples
 <p><strong><font color="red">WARNING</font> - This command will
 delete the contents of the web application directory if it exists within the
 <code>appBase</code> directory (typically "webapps") for this virtual host
-</strong>.  This will also delete the source .WAR if expanding occurred, as 
-well as the XML Context definition. If you simply want to take an application 
+</strong>.  This will also delete the source .WAR if expanding occurred, as
+well as the XML Context definition. If you simply want to take an application
 out of service, you should use the <code>/stop</code> command instead.</p>
 
 <p>Signal an existing application to gracefully shut itself down, and
@@ -993,6 +1000,90 @@ property, and specify it from the command line:</p>
 </pre>
 
 </section>
+
+<section name="Using the JMX Proxy Servlet">
+
+  <subsection name="What is JMX Proxy Servlet">
+    The JMX Proxy Servlet is a lightweight proxy to get and set the
+    tomcat internals. (Or any class that has been exposed via an MBean)
+    Its usage is not very user friendly but the UI is
+    extremely help for integrating command line scripts for monitoring
+    and changing the internals of tomcat. You can do two things with the proxy:
+    get information and set information. For you to really understand the
+    JMX Proxy Servlet, you should have a general understanding of JMX.
+    If you don't know what JMX is, then prepare to be confused.
+  </subsection>
+
+  <subsection name="JMX Query command">
+    This takes the form:
+    <source>
+http://webserver/manager/jmxproxy/?qry=STUFF
+    </source>
+    Where <code>STUFF</code> is the JMX query you wish to perform. For example,
+    here are some queries you might wish to run:
+    <ul>
+      <li>
+        <code>qry=*%3Atype%3DRequestProcessor%2C* -->
+         type=RequestProcessor</code> which will locate all
+         workers which can process requests and report
+         their state.
+      </li>
+      <li>
+        <code>qry=*%3Aj2eeType=Servlet%2c* -->
+            j2eeType=Servlet</code> which return all loaded servlets.
+      </li>
+      <li>
+        <code>qry=Catalina%3Atype%3DEnvironment%2Cresourcetype%3DGlobal%2Cname%3DsimpleValue -->
+            Catalina:type=Environment,resourcetype=Global,name=simpleValue</code>
+            which look for a specific MBean by the given name.
+      </li>
+    </ul>
+    You'll need to experiment with this to really understand its capabilites.
+    If you provide no <code>qry</code> parameter, then all of the MBeans will
+    be displayed. We really recommend looking at the tomcat source code and
+    understand the JMX spec to get a better understanding of all the queries
+    you may run.
+  </subsection>
+
+  <subsection name="JMX Set command">
+    Now that you can query an MBean, its time to muck with Tomcat's internals!
+    The general form of the set command is :
+    <source>
+http://webserver/manager/jmxproxy/?set=BEANNAME&amp;att=MYATTRIBUTE&amp;val=NEWVALUE
+    </source>
+    So you need to provide 3 request parameters:
+    <ol>
+      <li><code>set</code>: The full bean name</li>
+      <li><code>att</code>: The attribute you wish to alter</li>
+      <li><code>val</code>: The new value </li>
+    </ol>
+    If all goes ok, then it will say OK, otherwise an error message will be
+    shown. For example, lets say we wish to turn up debugging on the fly for the
+    <code>ErrorReportValve</code>. The following will set debugging to 10.
+    <source>
+http://localhost:8080/manager/jmxproxy/
+?set=Catalina%3Atype%3DValve%2Cname%3DErrorReportValve%2Chost%3Dlocalhost&amp;att=debug&amp;val=10
+    </source>
+    and my result is (YMMV):
+    <source>
+Result: ok
+    </source>
+
+    Here is what I see if I pass in a bad value. Here is the URL I used,
+    I try set debugging equal to 'cowbell':
+    <source>
+http://localhost:8080/manager/jmxproxy/
+?set=Catalina%3Atype%3DValve%2Cname%3DErrorReportValve%2Chost%3Dlocalhost&amp;att=debug&amp;val=cowbell
+    </source>
+    When I try that, my result is
+    <source>
+Error: java.lang.NumberFormatException: For input string: "cowbell"
+    </source>
+  </subsection>
+
+
+</section>
+
 
 
 </body>
