@@ -152,6 +152,10 @@ Catalina:  Make the default file-serving servlet work correctly when it is
 the subject of a RequestDispatcher.include(), even where the calling servlet
 has already called response.getWriter() so that binary output cannot be used.
 
+Catalina:  If a servlet threw an exception after it had grabbed the writer
+with response.getWriter(), the exception report would silently be suppressed.
+This has been corrected.
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:
