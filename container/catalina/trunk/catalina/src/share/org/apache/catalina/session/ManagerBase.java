@@ -71,8 +71,10 @@ import java.io.IOException;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -221,6 +223,24 @@ public abstract class ManagerBase implements Manager {
      * The property change support for this component.
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+    
+    // ------------------------------------------------------------- Security classes
+    private class PrivilegedSetRandomFile implements PrivilegedAction{
+        
+        public Object run(){               
+            try {
+                File f=new File( devRandomSource );
+                if( ! f.exists() ) return null;
+                randomIS= new DataInputStream( new FileInputStream(f));
+                randomIS.readLong();
+                if( log.isDebugEnabled() )
+                    log.debug( "Opening " + devRandomSource );
+                return randomIS;
+            } catch (IOException ex){
+                return null;
+            }
+        }
+    }
 
 
     // ------------------------------------------------------------- Properties
@@ -478,17 +498,21 @@ public abstract class ManagerBase implements Manager {
     public void setRandomFile( String s ) {
 	// as a hack, you can use a static file - and genarate the same
 	// session ids ( good for strange debugging )
-	try {
-	    devRandomSource=s;
-	    File f=new File( devRandomSource );
-	    if( ! f.exists() ) return;
-	    randomIS= new DataInputStream( new FileInputStream(f));
-	    randomIS.readLong();
-	    if( log.isDebugEnabled() )
-                log.debug( "Opening " + devRandomSource );
-	} catch( IOException ex ) {
-	    randomIS=null;
-	}
+        if (System.getSecurityManager() != null){
+                randomIS = (DataInputStream)AccessController.doPrivileged(new PrivilegedSetRandomFile());          
+            } else {
+                try{
+                    devRandomSource=s;
+                    File f=new File( devRandomSource );
+                    if( ! f.exists() ) return;
+                    randomIS= new DataInputStream( new FileInputStream(f));
+                    randomIS.readLong();
+                    if( log.isDebugEnabled() )
+                        log.debug( "Opening " + devRandomSource );
+                } catch( IOException ex ) {
+                    randomIS=null;
+                }
+            }
     }
 
 
