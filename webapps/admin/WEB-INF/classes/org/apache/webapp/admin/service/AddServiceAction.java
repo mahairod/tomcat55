@@ -122,7 +122,7 @@ public class AddServiceAction extends Action {
             resources = getServlet().getResources();
         }
         
-        String serverName = request.getParameter("serverName");
+        String serverName = request.getParameter("select");
         
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();

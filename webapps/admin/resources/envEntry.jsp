@@ -33,9 +33,9 @@
                name="envEntryForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="envEntryForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="envEntryForm" property="domain"/>
+  <html:hidden property="domain"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -57,15 +57,15 @@
         <controls:action url='<%= "/resources/setUpEnvEntry.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) %>'>
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) %>'>
                 <bean:message key="resources.actions.env.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listEnvEntries.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" +
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) + "&forward=" +
                             URLEncoder.encode("EnvEntries Delete List") %>'>
                 <bean:message key="resources.actions.env.delete"/>
             </controls:action>

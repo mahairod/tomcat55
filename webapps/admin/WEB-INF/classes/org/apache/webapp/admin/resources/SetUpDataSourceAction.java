@@ -155,13 +155,13 @@ public final class SetUpDataSourceAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
 
         DataSourceForm dataSourceForm = new DataSourceForm();
         dataSourceForm.setResourcetype(resourcetype);
         dataSourceForm.setPath(path);
         dataSourceForm.setHost(host);
-        dataSourceForm.setService(service);
+        dataSourceForm.setDomain(domain);
         dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
 
         if (objectName == null) {

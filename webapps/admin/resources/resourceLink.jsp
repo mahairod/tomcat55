@@ -33,9 +33,9 @@
                name="resourceLinkForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="resourceLinkForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="resourceLinkForm" property="domain"/>
+  <html:hidden property="domain"/>
 
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -58,15 +58,15 @@
             <controls:action url='<%= "/resources/setUpResourceLink.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) %>'>
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) %>'>
                 <bean:message key="resources.actions.resourcelk.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listResourceLinks.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" +
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) + "&forward=" +
                             URLEncoder.encode("ResourceLinks Delete List") %>'>
                 <bean:message key="resources.actions.resourcelk.delete"/>
             </controls:action>
