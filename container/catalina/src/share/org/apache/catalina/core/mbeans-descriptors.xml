@@ -499,10 +499,15 @@
                description="Shutdown password"
                type="java.lang.String"/>
       
+    <attribute name="serviceNames"
+               description="Object names of all services we know about"
+               type="[Ljavax.management.ObjectName;"/>
+      
     <operation name="store"
                description="Save current state to server.xml file"
                impact="ACTION"
                returnType="void">
+
     </operation>
     
   </mbean>

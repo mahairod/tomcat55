@@ -67,18 +67,23 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
+import org.apache.catalina.ServerFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import javax.management.ObjectName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -91,8 +96,10 @@ import javax.management.ObjectName;
  */
 
 public class StandardService
-    implements Lifecycle, Service {
-
+        implements Lifecycle, Service, MBeanRegistration 
+ {
+    private static Log log = LogFactory.getLog(StandardService.class);
+   
 
     // ----------------------------------------------------- Instance Variables
 
@@ -497,15 +504,16 @@ public class StandardService
 
         // Validate and update our current component state
         if (started) {
-            throw new LifecycleException
-                (sm.getString("standardService.start.started"));
+            log.info(sm.getString("standardService.start.started"));
         }
+        
+        if( ! initialized )
+            init(); 
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 
-        System.out.println
-            (sm.getString("standardService.start.name", this.name));
+        log.info(sm.getString("standardService.start.name", this.name));
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -586,11 +594,35 @@ public class StandardService
      * to bind to restricted ports under Unix operating environments.
      */
     public void initialize()
-    throws LifecycleException {
-        if (initialized)
-            throw new LifecycleException (
-                sm.getString("standardService.initialize.initialized"));
+            throws LifecycleException
+    {
+        // Service shouldn't be used with embeded, so it doesn't matter
+        if (initialized) {
+            log.info(sm.getString("standardService.initialize.initialized"));
+            return;
+        }
         initialized = true;
+
+        if( oname==null ) {
+            try {
+                // Hack - Server should be deprecated...
+                Container engine=this.getContainer();
+                domain=engine.getName();
+                oname=new ObjectName(domain + ":type=Service");
+                Registry.getRegistry().registerComponent(this, oname, null);
+            } catch (Exception e) {
+                log.error("Error registering ",e);
+            }
+            
+            
+        }
+        if( server==null ) {
+            // Register with the server 
+            // HACK: ServerFactory should be removed...
+            
+            ServerFactory.getServer().addService(this);
+        }
+               
 
         // Initialize our defined Connectors
         synchronized (connectors) {
@@ -598,6 +630,45 @@ public class StandardService
                     connectors[i].initialize();
                 }
         }
+    }
+
+    public void init() {
+        try {
+            initialize();
+        } catch( Throwable t ) {
+            t.printStackTrace();
+        }
+    }
+
+    protected String type;
+    protected String domain;
+    protected String suffix;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
     }
 
 }
