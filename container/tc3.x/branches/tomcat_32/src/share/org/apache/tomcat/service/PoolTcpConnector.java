@@ -85,6 +85,7 @@ import java.util.*;
  *
  * @author costin@eng.sun.com
  * @author Gal Shachor [shachor@il.ibm.com]
+ * @author Arieh Markel [arieh.markel@sun.com]
  */
 public final class PoolTcpConnector implements ServerConnector {
     // Attributes we accept ( to support the old model of
@@ -229,7 +230,7 @@ public final class PoolTcpConnector implements ServerConnector {
     /** Generic configure system - this allows Connector
      * 	configuration using name/value.
      *
-     *  The "prefered" configuration is to call setters,
+     *  The "preferred" configuration is to call setters,
      * 	and tomcat using server.xml will do that, but
      *	this allows (minimal) integration with simpler
      *	systems.
@@ -239,13 +240,22 @@ public final class PoolTcpConnector implements ServerConnector {
      *  after we improve the startup system.
      *
      *  Supported attributes:
+     *  "port" - port 
+     *  "handler" - class implementing ConnectionHandler
+     *  "thread_pool" - whether thread pools are being used
+     *  "max_threads" - maximum number of threads in pool
+     *  "max_spare_threads" - maximum number of threads in pool
+     *  "min_spare_threads" - minimum number of threads in pool
+     *  "backlog" - the backlog value for the network connections
      *  "vhost_port" - port ( will act as a virtual host )
      *  "vhost_name" - virtual host name 
      *  "vhost_address" - virtual host binding address
      *  "socketFactory" - socket factory - for ssl.
-     *  XXX add the others
      * 
      *  Note that the attributes are passed to the Endpoint.
+     *
+     *  @param prop the name of the property whose value is being set
+     *  @param value the value set on the property passed
      */
     public void setAttribute( String prop, Object value) {
 	if( debug > 0 ) 
@@ -302,8 +312,77 @@ public final class PoolTcpConnector implements ServerConnector {
 	}
     }
 
+    /**  set the property passed with the value passed as argument
+     *
+     *  @param prop the name of the property being set
+     *  @param value the value to set the property to.
+     */
     public void setProperty( String prop, String value) {
 	setAttribute( prop, value );
+    }
+
+    /** Method returning the values of the attributes
+     *
+     *  (NOTE: primitive types - int, boolean - are wrapped in appropriate
+     *   classes - Integer, Boolean)
+     *
+     *  Supported attributes:
+     *  "port" - returns an Integer (bound port number)
+     *  "handler" - returns reference to object implementing ConnectionHandler
+     *  "thread_pool" - returns a Boolean (whether thread pools are used)
+     *  "max_threads" - returns an Integer (maximum number of threads in pool)
+     *  "max_spare_threads" - returns an Integer (maximum number of spare
+     *				threads in pool)
+     *  "min_spare_threads" - returns an Integer (minimum number of spare
+     *				threads in pool
+     *  "backlog" - returns an Integer (backlog value for the network 
+     *				connections)
+     *  "vhost_port" - returns an Integer (port)
+     *  "vhost_name" - returns a String with the virtual host name 
+     *  "vhost_address" - returns an InetAddress (virtual host bound address)
+     *  "socketFactory" - returns a ServerSocketFactory
+     *
+     *  @param prop the property whose value is looked for
+     * 
+     *  @return an Object that corresponds to the value requested
+     */
+    public Object getAttribute( String prop ) {
+	if( debug > 0 ) 
+	    loghelper.log( "getAttribute( " + prop + ")");
+
+	try {
+	    if( PORT.equals(prop) ) {
+		return new Integer(port);
+	    } else if(HANDLER.equals(prop)) {
+		return con;
+	    } else if(THREAD_POOL.equals(prop)) {
+		return new Boolean(usePools);
+	    } else if(INET.equals(prop)) {
+		return address;
+	    } else if( MAX_THREADS.equals(prop)) {
+		return new Integer(maxThreads);
+	    } else if( MAX_SPARE_THREADS.equals(prop)) {
+		return new Integer(maxSpareThreads);
+	    } else if( MIN_SPARE_THREADS.equals(prop)) {
+		return new Integer(minSpareThreads);
+	    } else if(VHOST_NAME.equals(prop) ) {
+		return vhost;
+	    } else if( BACKLOG.equals(prop)) {
+		return new Integer(backlog);
+	    } else if(VHOST_PORT.equals(prop) ) {
+		return new Integer(port);
+	    } else if(SOCKET_FACTORY.equals(prop)) {
+		return socketFactory;
+	    } else if(VHOST_ADDRESS.equals(prop)) {
+		return address;
+	    } else {
+		return attributes.get (prop);
+	    }
+	}
+	catch (Exception e) {
+	    loghelper.log("getAttribute: " +prop, e, Logger.ERROR);
+	}
+	return null;
     }
 
     /**
