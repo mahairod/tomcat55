@@ -12,14 +12,19 @@
 ;--------------------------------
 ;Configuration
 
+  !define MUI_WELCOMEPAGE
+  !define MUI_FINISHPAGE
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
+
   !define MUI_ABORTWARNING
+  !define MUI_CUSTOMPAGECOMMANDS
 
   !define MUI_UNINSTALLER
-
-  !define MUI_CUSTOMPAGECOMMANDS
 
   !define TEMP1 $R0
   !define TEMP2 $R1
@@ -46,12 +51,14 @@
   LangString TEXT_CONF_PAGETITLE ${LANG_ENGLISH} ": Configuration Options"
 
   ;Page order
+  !insertmacro MUI_PAGECOMMAND_WELCOME
   !insertmacro MUI_PAGECOMMAND_LICENSE
   !insertmacro MUI_PAGECOMMAND_COMPONENTS
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
   Page custom SetConfiguration "$(TEXT_CONF_PAGETITLE)"
   Page custom SetChooseJVM "$(TEXT_JVM_PAGETITLE)"
   !insertmacro MUI_PAGECOMMAND_INSTFILES
+  !insertmacro MUI_PAGECOMMAND_FINISH
 
   ;License dialog
   LicenseData INSTALLLICENSE
@@ -83,6 +90,8 @@
   !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+  !insertmacro MUI_RESERVEFILE_SPECIALINI
+  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
   ReserveFile "jvm.ini"
   ReserveFile "config.ini"
 
@@ -216,9 +225,10 @@ Section "Examples" SecExamples
 
 SectionEnd
 
-!insertmacro MUI_SECTIONS_FINISHHEADER
-
 Section -post
+
+  SetOutPath "$INSTDIR"
+  File "${NSISDIR}\Contrib\UIs\modern.exe"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
