@@ -5,6 +5,8 @@
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
 
+  <property name="nsis.home"       value="c:\program files\nsis"/>
+
   <property name="catalina.build"  value="${basedir}/catalina/build"/>
   <property name="jasper.build"    value="${basedir}/jasper/build"/>
   <property name="servletapi.home" value="../jakarta-servletapi-4/dist"/>
@@ -165,12 +167,12 @@
   <!-- ================= DIST: Create Windows Installer =================== -->
   <target name="installer" depends="dist">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
-    <echo message="The target requires Nullsoft Installer to be in your PATH"/>
+    <echo message="NSIS must be installed in the default directory"/>
     <copy todir="${tomcat.dist}">
       <fileset dir="resources" />
     </copy>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />
-    <exec dir="${tomcat.dist}" executable="makensis.exe">
+    <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis.exe">
       <arg value="tomcat.nsi" />
     </exec>
   </target>

@@ -196,6 +196,8 @@ Function .onInit
 
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+  ReadRegStr $3 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+  ReadRegStr $4 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$3" "RuntimeLib"
 
   IfErrors 0 NoAbort
     MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
@@ -203,7 +205,7 @@ computer. Please download one from http://java.sun.com."
     Abort
 
   NoAbort:
-    MessageBox MB_OK "Using Java Development Kit version $1 found in $2"
+    MessageBox MB_OK "Using Java Development Kit version $1 found in $2$\r$\nUsing Java Runtime Environment version $3 found in $4"
 
 FunctionEnd
 
