@@ -2404,7 +2404,8 @@ public final class StandardServer
         if( oname==null ) {
             try {
                 oname=new ObjectName( "Catalina:type=Server");
-                Registry.getRegistry().registerComponent(this, oname, null );
+                Registry.getRegistry(null, null)
+                    .registerComponent(this, oname, null );
             } catch (Exception e) {
                 log.error("Error registering ",e);
             }
