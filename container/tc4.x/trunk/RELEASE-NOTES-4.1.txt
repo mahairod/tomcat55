@@ -56,6 +56,9 @@ General New Features:
 [4.1.11] Documentation:
          New JK and JK 2 documentation.
 
+[4.1.15] i18n:
+         Complete French language translation.
+
 
 ---------------------
 Catalina New Features:
@@ -179,6 +182,9 @@ Generic Bug Fixes:
 
 [4.1.12] Administration Webapp:
          Complete support for DefaultContext.
+
+[4.1.15] Administration Webapp:
+         Fix edition and creation of resource links.
 
 
 ------------------
@@ -494,6 +500,14 @@ Catalina Bug Fixes:
 [4.1.14] ContextConfig:
          Fix TLD processing.
 
+[4.1.15] #13583
+         ApplicationContext:
+         Add path normalization.
+
+[4.1.15] FileDirContext:
+         allowLinking will also disable case sensitivity checks (which are
+         relatively similar).
+
 
 ----------------
 Coyote Bug Fixes:
@@ -550,6 +564,15 @@ Coyote Bug Fixes:
 
 [4.1.15] JK2 JkCoyoteHander:
          Fix problem where the same buffer was used for output and input.
+
+[4.1.15] Tomcat 4 Adapter:
+         Closing the output stream or writer in the Tomcat 4 adapter will now
+         finish the response.
+
+[4.1.15] HTTP/1.1 InternalOutputBuffer:
+         Fix possible loop scenarios which could happen if an invalid 0 length
+         read was made.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -745,6 +768,20 @@ Jasper Bug Fixes:
 
 [4.1.14] Compiler:
          Add global synchronization on the javac invocation.
+
+[4.1.15] Jspc:
+         Rename "--compile" option to "-compile" (it was undocumented).
+
+[4.1.15] #14195
+         ErrorDispatcher:
+         Fix NPE.
+
+[4.1.15] #14197
+         Generator:
+         Allow jspDestroy to be overriden.
+
+[4.1.15] PageContextImpl:
+         Avoid flushing after processing the page.
 
 
 ============================
