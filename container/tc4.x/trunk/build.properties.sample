@@ -57,10 +57,10 @@ base.path=/usr/local
 
 
 # ----- Commons Beanutils, version 1.1 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.4
+commons-beanutils.home=${base.path}/commons-beanutils-1.4.1
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4/commons-beanutils-1.4.tar.gz
+commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4.1/commons-beanutils-1.4.1.tar.gz
 
 
 # ----- Commons Collections, version 1.0 or later -----
