@@ -52,6 +52,9 @@
         </a>
       </li>
     </ul>
+    If you get a
+    <code>NoClassDefFoundError</code> exception, the root might be the
+    same reason as a <code>ClassNotFound</code> exception.
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
 <p>
   <ul>
@@ -62,6 +65,11 @@
       <a href="#filter">
         Why do I get <code>java.lang.NoClassDefFoundError:
         javax/servlet/Filter</code>
+        </a>
+     </li>
+    <li>
+      <a href="#xml">
+        Why do I get <code>NoClassDefFoundError: org/xml/sax/InputSource</code>?
         </a>
      </li>
   </ul>
@@ -100,6 +108,18 @@
     This really messes up the classloaders since Tomcat's classloaders
     don't act quite as normal as one expects (see links above). servlet.jar
     should only be found only once in $CATALINA_HOME/common/lib.
+    </div><br>
+
+
+    <b style="font-size: larger">
+     <a name="xml">
+       Why do I get <code>java.lang.NoClassDefFoundError:
+       org/xml/sax/InputSource</code>
+     </a>
+    </b>
+    <div style="padding-left : 20px;">
+    You have conflicting XML api jar files in your classpath. Read the
+    README or RELEASE-NOTES for more information.
     </div><br>
 
 

@@ -58,6 +58,12 @@
     </a>
   </li>
 
+  <li>[link]
+    <a href="http://www.greenfieldresearch.ca/technical/jk2_config.html">
+       Tomcat-Apache using JK2 connector
+    </a>
+  </li>
+
   <li>[thread]
     <a href="http://marc.theaimsgroup.com/?t=104040058200004&amp;r=1&amp;w=2">
       Configuring mod_jk - Again!

@@ -111,7 +111,11 @@ Questions that were not catagorized.
         from a servlet? (or jsp)
       </a>
     </li>
-
+    <li>
+      <a href="#tagbroken">
+        Is tag pooling broken? It doesn't call release!
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -312,7 +316,7 @@ Questions that were not catagorized.
 
 
   <question>
-    <a name="properties">
+    <a name="error">
       How do I get a customized error page?
     </a>
   </question>
@@ -473,6 +477,21 @@ Questions that were not catagorized.
      header.
   </answer>
 
+
+
+  <question>
+      <a name="#tagbroken">
+        Is tag pooling broken? It doesn't call release!
+      </a>
+  </question>
+  <answer>
+    It is not broken, your tag probably is. Many bug reports
+    have been filed about this.
+     <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16001">
+        Here
+     </a>
+    is the bug report with all the gory details.
+  </answer>
 
 
 

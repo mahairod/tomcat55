@@ -25,9 +25,17 @@
 <section name="Questions">
   <ul>
 
-     <li><a href="#which">
-        Which tomcat version should I use?
-         </a> </li>
+     <li>
+       <a href="#which">
+         Which tomcat version should I use?
+       </a>
+     </li>
+
+     <li>
+       <a href="#when">
+        When will the next version be released?
+       </a>
+      </li>
 
   </ul>
 </section>
@@ -66,6 +74,17 @@
       tomcat home page </a> should have the correct recommendation.
     </answer>
 
+
+    <question>
+      <a name="when">
+        When will the next version be released?
+      </a>
+    </question>
+    <answer>
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=102351104906437&amp;w=2">
+        When it is ready.
+      </a>
+    </answer>
 
 </section>
 
