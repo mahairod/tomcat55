@@ -265,6 +265,7 @@ public class TreeControl implements Serializable {
             if (node == this.root) {
                 this.root = null;
             }
+            registry.remove(node.getName());
         }
 
     }
