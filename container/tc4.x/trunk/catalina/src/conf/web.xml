@@ -506,6 +506,14 @@
         <mime-type>text/javascript</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>jsf</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jspf</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>kar</extension>
         <mime-type>audio/x-midi</mime-type>
     </mime-mapping>
