@@ -96,5 +96,4 @@ file CDATA #REQUIRED>
 
 <!ELEMENT jsp:root %jsp.body;>
 <!ATTLIST jsp:root
-xmlns:jsp CDATA #FIXED "http://java.sun.com/products/jsp/dtd/jsp_1_0.dtd"
-xmlns:ttl CDATA #FIXED "http://java.sun.com/products/jsp/dtd/jsptests_1_0.dtd">
+xmlns:jsp CDATA #FIXED "http://java.sun.com/products/jsp/dtd/jsp_1_0.dtd">
