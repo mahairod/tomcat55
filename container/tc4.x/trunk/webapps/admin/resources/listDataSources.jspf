@@ -8,8 +8,7 @@
     ---------------------------------
   </controls:action>
 
-<%-- FIX ME
-  <controls:action url="/resources/setDataSource.do">
+  <controls:action url="/resources/setUpDataSource.do">
     <bean:message key="resources.actions.datasrc.create"/>
   </controls:action>
 
@@ -17,6 +16,5 @@
                         + URLEncoder.encode("DataSources Delete List") %>'>
     <bean:message key="resources.actions.datasrc.delete"/>
   </controls:action>
---%>
 
 </controls:actions>
