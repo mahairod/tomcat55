@@ -76,22 +76,11 @@ public class DigesterFactory {
         digester.setValidating(xmlValidation);
         digester.setUseContextClassLoader(true);
 
-        String parserName = 
-                digester.getFactory().getClass().getName();
-        if (parserName.indexOf("xerces")!=-1) {
-            digester = patchXerces(digester);
+        if (xmlValidation || xmlNamespaceAware){
+            configureSchema(digester);        
         }
 
         schemaResolver = new SchemaResolver(digester);
-        if (xmlValidation) {
-            // Xerces 2.3 and up has a special way to turn on validation
-            // for both DTD and Schema
-            if (parserName.indexOf("xerces")!=-1) {
-                turnOnXercesValidation(digester);
-            } else {
-                turnOnValidation(digester);
-            }
-        }
         registerLocalSchema();
         
         digester.setEntityResolver(schemaResolver);
@@ -100,28 +89,6 @@ public class DigesterFactory {
         }
 
         return (digester);
-    }
-
-
-    /**
-     * Patch Xerces for backward compatibility.
-     */
-    private static Digester patchXerces(Digester digester){
-        // This feature is needed for backward compatibility with old DDs
-        // which used Java encoding names such as ISO8859_1 etc.
-        // with Crimson (bug 4701993). By default, Xerces does not
-        // support ISO8859_1.
-        try{
-            digester.setFeature(
-                "http://apache.org/xml/features/allow-java-encodings", true);
-        } catch(ParserConfigurationException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotRecognizedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotSupportedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        }
-        return digester;
     }
 
 
@@ -186,35 +153,15 @@ public class DigesterFactory {
     /**
      * Turn on DTD and/or validation (based on the parser implementation)
      */
-    protected static void turnOnValidation(Digester digester){
+    protected static void configureSchema(Digester digester){
         URL url = DigesterFactory.class
                         .getResource(Constants.WebSchemaResourcePath_24);
   
         if(url == null) {
-            log.error("Could not get url for " + Constants.WebSchemaResourcePath_24);
+            log.error("Could not get url for " 
+                                        + Constants.WebSchemaResourcePath_24);
         } else {
             digester.setSchema(url.toString());     
-        }
-    }
-
-
-    /** 
-     * Turn on schema AND DTD validation on Xerces parser.
-     */
-    protected static void turnOnXercesValidation(Digester digester){
-        try{
-            digester.setFeature(
-                "http://apache.org/xml/features/validation/dynamic",
-                true);
-            digester.setFeature(
-                "http://apache.org/xml/features/validation/schema",
-                true);
-        } catch(ParserConfigurationException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotRecognizedException e){
-                // log("contextConfig.registerLocalSchema", e);
-        } catch(SAXNotSupportedException e){
-                // log("contextConfig.registerLocalSchema", e);
         }
     }
 }
