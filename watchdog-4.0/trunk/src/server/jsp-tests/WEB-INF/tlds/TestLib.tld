@@ -222,6 +222,60 @@
     </attribute>
 </tag>
 
+<tag>
+    <name>iterator</name>
+    <tag-class>tags.SimpleIteratorTag</tag-class>
+    <description>
+        A simple tag that prints a message iteratively depending
+        on one of its attributes. A test for doAfterBody()
+    </description>
+    <attribute>
+      <name>iteration</name>
+      <required>true</required>
+    </attribute>
+</tag>
 
+<tag>
+    <name>default</name>
+    <tag-class>tags.TagSupport.defaultReturnValues</tag-class>
+    <description>
+        A simple tag that prints te default return values 
+        as returned from TagSupport class
+    </description>
+</tag>
+
+<tag>
+    <name>persistence</name>
+    <tag-class>tags.misc.PersistenceTag</tag-class>
+    <description>
+      A tag that prints the value of its attribute at beginning and
+      end of the tag.  
+    </description>
+    <attribute>
+      <name>tagid</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+<tag>
+    <name>ReqTime</name>
+    <tag-class>tags.misc.ReqTimeAttributesTag</tag-class>
+    <description>
+   A tag that prints the values of its 
+   Attributes in order.To tests the order of evaluation.
+    </description>
+    <attribute>
+      <name>attr1</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>attr2</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>attr3</name>
+      <required>false</required>
+    </attribute>
+</tag>
 
 </taglib>
