@@ -2,16 +2,19 @@
 rem $Id$
 rem Build file for stoopid dos machines
 
+SET _ANTHOME=%ANT_HOME%
+if "%ANT_HOME%" == "" SET ANT_HOME=..\jakarta-ant
+
 if "%CLASSPATH%" == "" goto noclasspath
 
 rem else
 set _CLASSPATH=%CLASSPATH%
-set CLASSPATH=.\..\jakarta-tools\ant.jar;.\..\jakarta-tools\moo.jar;.\..\jakarta-tools\projectx-tr2.jar;.\..\jakarta-tools\servlet-2.2.0.jar;%CLASSPATH%
+set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%ANT_HOME%\lib\xml.jar;..\jakarta-tools\servlet-2.2.0.jar
 goto next
 
 :noclasspath
 set _CLASSPATH=
-set CLASSPATH=.\src\lib\ant.jar;.\src\lib\moo.jar;.\src\lib\xml.jar
+set CLASSPATH=%ANT_HOME%\lib\ant.jar;%ANT_HOME%\lib\xml.jar;..\jakarta-tools\servlet-2.2.0.jar
 goto next
 
 :next
@@ -24,3 +27,5 @@ java org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
 rem clean up classpath after
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
+SET ANT_HOME=%_ANTHOME%
+SET _ANTHOME=

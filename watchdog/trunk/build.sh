@@ -7,10 +7,10 @@ baseDir=`pwd`
 
 echo $baseDir .....
 
-ADDL_CLASSPATH=../jakarta-tools/ant.jar:../jakarta-tools/projectx-tr2.jar
+ADDL_CLASSPATH=../jakarta-ant/lib/ant.jar:../jakarta-ant/lib/xml.jar:../jakarta-tools/servlet-2.2.0.jar
 
 if [ -n $CLASSPATH ]; then
-  CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
+  CLASSPATH=$CLASSPATH:$ADDL_CLASSPATH
 else
   CLASSPATH=$ADDL_CLASSPATH
 fi
