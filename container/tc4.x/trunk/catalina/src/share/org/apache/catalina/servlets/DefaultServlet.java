@@ -73,6 +73,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.Writer;
@@ -232,6 +233,12 @@ public class DefaultServlet
     protected static final char[] hexadecimal =
     {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
      'A', 'B', 'C', 'D', 'E', 'F'};
+
+
+    /**
+     * Size of file transfer buffer in bytes.
+     */
+    private static final int BUFFER_SIZE = 4096;
 
 
     // ----------------------------------------------------- Static Initializer
@@ -582,12 +589,6 @@ public class DefaultServlet
             return;
         }
 
-        // Looking for a Content-Range header
-        if (req.getHeader("Content-Range") != null) {
-            // No content range header is supported
-            resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
-        }
-
         // Retrieve the resources
         DirContext resources = getResources();
 
@@ -604,8 +605,31 @@ public class DefaultServlet
         }
 
         boolean result = true;
+
+        // Temp. content file used to support partial PUT
+        File contentFile = null;
+
+        // Input stream for temp. content file used to support partial PUT
+        FileInputStream contentFileInStream = null;
+
+        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
+        Range range = parseContentRange(req, resp);
+
+        InputStream resourceInputStream = null;
+
+        // Append data specified in ranges to existing content for this
+        // resource - create a temp. file on the local filesystem to
+        // perform this operation
+        // Assume just one range is specified for now
+        if (range != null) {
+            contentFile = executePartialPut(req, range, path);
+            resourceInputStream = new FileInputStream(contentFile);
+        } else {
+            resourceInputStream = req.getInputStream();
+        }
+
         try {
-            Resource newResource = new Resource(req.getInputStream());
+            Resource newResource = new Resource(resourceInputStream);
             // FIXME: Add attributes
             if (exists) {
                 resources.rebind(path, newResource);
@@ -625,6 +649,73 @@ public class DefaultServlet
         } else {
             resp.sendError(HttpServletResponse.SC_CONFLICT);
         }
+
+    }
+
+
+    /**
+     * Handle a partial PUT.  New content specified in request is appended to 
+     * existing content in oldRevisionContent (if present). This code does 
+     * not support simultaneous partial updates to the same resource.
+     */
+    protected File executePartialPut(HttpServletRequest req, Range range, 
+                                     String path) 
+        throws IOException {
+
+        // Append data specified in ranges to existing content for this
+        // resource - create a temp. file on the local filesystem to
+        // perform this operation
+        File tempDir = (File) getServletContext().getAttribute
+            ("javax.servlet.context.tempdir");
+        // Convert all '/' characters to '.' in resourcePath
+        String convertedResourcePath = path.replace('/', '.');
+        File contentFile = new File(tempDir, convertedResourcePath);
+        if (contentFile.createNewFile()) {
+            // Clean up contentFile when Tomcat is terminated
+            contentFile.deleteOnExit();
+        }
+
+        RandomAccessFile randAccessContentFile = 
+            new RandomAccessFile(contentFile, "rw");
+
+        Resource oldResource = null;
+        try {
+            Object obj = getResources().lookup(path);
+            if (obj instanceof Resource)
+                oldResource = (Resource) obj;
+        } catch (NamingException e) {
+        }
+
+        // Copy data in oldRevisionContent to contentFile
+        if (oldResource != null) {
+            BufferedInputStream bufOldRevStream = 
+                new BufferedInputStream(oldResource.streamContent(), 
+                                        BUFFER_SIZE);
+
+            int numBytesRead;
+            byte[] copyBuffer = new byte[BUFFER_SIZE];
+            while ((numBytesRead = bufOldRevStream.read(copyBuffer)) != -1) {
+                randAccessContentFile.write(copyBuffer, 0, numBytesRead);
+            }
+
+            bufOldRevStream.close();
+        }
+
+        randAccessContentFile.setLength(range.length);
+
+        // Append data in request input stream to contentFile
+        randAccessContentFile.seek(range.start);
+        int numBytesRead;
+        byte[] transferBuffer = new byte[BUFFER_SIZE];
+        BufferedInputStream requestBufInStream =
+            new BufferedInputStream(req.getInputStream(), BUFFER_SIZE);
+        while ((numBytesRead = requestBufInStream.read(transferBuffer)) != -1) {
+            randAccessContentFile.write(transferBuffer, 0, numBytesRead);
+        }
+        randAccessContentFile.close();
+        requestBufInStream.close();
+
+        return contentFile;
 
     }
 
@@ -1259,6 +1350,67 @@ public class DefaultServlet
             }
 
         }
+
+    }
+
+
+    /**
+     * Parse the content-range header.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     * @return Range
+     */
+    protected Range parseContentRange(HttpServletRequest request,
+                                      HttpServletResponse response)
+        throws IOException {
+
+        // Retrieving the content-range header (if any is specified
+        String rangeHeader = request.getHeader("Content-Range");
+
+        if (rangeHeader == null)
+            return null;
+
+        // bytes is the only range unit supported
+        if (!rangeHeader.startsWith("bytes")) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        rangeHeader = rangeHeader.substring(6).trim();
+
+        int dashPos = rangeHeader.indexOf('-');
+        int slashPos = rangeHeader.indexOf('/');
+
+        if (dashPos == -1) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        if (slashPos == -1) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        Range range = new Range();
+
+        try {
+            range.start = Long.parseLong(rangeHeader.substring(0, dashPos));
+            range.end = 
+                Long.parseLong(rangeHeader.substring(dashPos + 1, slashPos));
+            range.length = Long.parseLong
+                (rangeHeader.substring(slashPos + 1, rangeHeader.length()));
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        if (!range.validate()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+
+        return range;
 
     }
 
@@ -2084,8 +2236,8 @@ public class DefaultServlet
          * Validate range.
          */
         public boolean validate() {
-            return ( (start >= 0) && (end >= 0) && (length > 0)
-                     && (start <= end) && (end < length) );
+            return ( (start >= 0) && (end >= 0) && (start <= end) 
+                     && (length > 0) && (end < length) );
         }
 
         public void recycle() {
