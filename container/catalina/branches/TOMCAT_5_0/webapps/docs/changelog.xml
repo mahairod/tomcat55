@@ -26,6 +26,9 @@
       <fix>
         <bug>32377</bug>: Update MX4J dependency. (yoavs)
       </fix>
+      <update>
+        <bug>32454</bug>: Amended JNDI documentation for JavaMail/JavaActivationFramework usage. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
