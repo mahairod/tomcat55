@@ -455,9 +455,15 @@
 
 <!--
 
-  The "reload" target tells the specified Tomcat 5 installation to dynamically
-  reload this web application, to reflect changes in the underlying classes or
-  the "web.xml" deployment descriptor.
+  The "reload" signals the specified application Tomcat 5 to shut itself down
+  and reload. This can be useful when the web application context is not
+  reloadable and you have updated classes or property files in the
+  /WEB-INF/classes directory or when you have added or updated jar files in the
+  /WEB-INF/lib directory.
+
+  NOTE: The /WEB-INF/web.xml web application configuration file is not reread
+  on a reload. If you have made changes to your web.xml file you must stop
+  then start the web application. 
 
 -->
 
