@@ -775,6 +775,7 @@ public class DefaultServlet
         }
 
         Vector ranges = null;
+        long contentLength = -1L;
 
         if (cacheEntry.context != null) {
 
@@ -800,6 +801,14 @@ public class DefaultServlet
             response.setHeader("Last-Modified", 
                     cacheEntry.attributes.getLastModifiedHttp());
 
+            // Get content length
+            contentLength = cacheEntry.attributes.getContentLength();
+            // Special case for zero length files, which would cause a 
+            // (silent) ISE when setting the output buffer size
+            if (contentLength == 0L) {
+                content = false;
+            }
+            
         }
 
         ServletOutputStream ostream = null;
@@ -835,7 +844,6 @@ public class DefaultServlet
                         contentType + "'");
                 response.setContentType(contentType);
             }
-            long contentLength = cacheEntry.attributes.getContentLength();
             if ((cacheEntry.resource != null) && (contentLength >= 0)) {
                 if (debug > 0)
                     log("DefaultServlet.serveFile:  contentLength=" +
