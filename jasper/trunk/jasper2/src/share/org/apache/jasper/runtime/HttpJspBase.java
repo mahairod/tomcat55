@@ -133,11 +133,6 @@ public abstract class HttpJspBase
     public final void service(HttpServletRequest request, HttpServletResponse response) 
 	throws ServletException, IOException 
     {
-	/*
-	if (getServletContext().isXPoweredByEnabled()) {
-	    response.addHeader("X-Powered-By", "JSP/2.0");
-	}
-	*/
         _jspService(request, response);
     }
     
