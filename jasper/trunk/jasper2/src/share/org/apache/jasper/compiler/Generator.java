@@ -2487,7 +2487,7 @@ class Generator {
 
 	    TagInfo tagInfo = n.getTagInfo();
 	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	    String aliasMapVar = "null";
+	    String aliasMapVar = null;
 
 	    boolean aliasSeen = false;
 	    for (int i=0; i<tagVars.length; i++) {
@@ -2526,9 +2526,14 @@ class Generator {
 		// Generate alias map 
 		String aliasMapVar= generateAliasMap(n, tagHandlerVar);
 		out.printin(tagHandlerVar);
-		out.print(".setJspContext(pageContext, ");
-		out.print(aliasMapVar);
-		out.println(");");
+		if (aliasMapVar == null) {
+		    out.print(".setJspContext(pageContext);");
+		}
+		else {
+		    out.print(".setJspContext(pageContext, ");
+		    out.print(aliasMapVar);
+		    out.println(");");
+		}
 	    } else {
 		out.printin(tagHandlerVar);
 		out.println(".setPageContext(pageContext);");
@@ -3179,10 +3184,24 @@ class Generator {
 	boolean atBeginSeen = false;
 	boolean atEndSeen = false;
 
-        out.printil("public void setJspContext(JspContext ctx, java.util.Map aliasMap) {");
+	// Determine if there is any aliases
+	boolean aliasSeen = false;
+	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	for (int i=0; i<tagVars.length; i++) {
+	    if (tagVars[i].getNameFromAttribute() != null) {
+		aliasSeen = true;
+		break;
+	    }
+	}
+
+	if (aliasSeen) {
+            out.printil("public void setJspContext(JspContext ctx, java.util.Map aliasMap) {");
+	}
+	else {
+	    out.printil("public void setJspContext(JspContext ctx) {");
+	}
         out.pushIndent();
         out.printil("super.setJspContext(ctx);");
-	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
 	out.printil("java.util.ArrayList _jspx_nested = null;");
 	out.printil("java.util.ArrayList _jspx_at_begin = null;");
 	out.printil("java.util.ArrayList _jspx_at_end = null;");
@@ -3218,7 +3237,11 @@ class Generator {
 	    out.print(quote(tagVars[i].getNameGiven()));
 	    out.println(");");
 	}
-	out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end, aliasMap);");
+	if (aliasSeen) {
+	    out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end, aliasMap);");
+	} else {
+	    out.printil("this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end, null);");
+	}
 	out.popIndent();
         out.printil("}");
         out.println();
