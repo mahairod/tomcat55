@@ -190,7 +190,7 @@ public class JspEngineContext implements JspCompilationContext {
      * this JSP? I don't think this is used right now -- akv. 
      */
     public ClassLoader getClassLoader() {
-        return loader;
+        return Thread.currentThread().getContextClassLoader();
     }
 
     /**
