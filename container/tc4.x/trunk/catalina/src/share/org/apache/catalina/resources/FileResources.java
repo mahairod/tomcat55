@@ -571,8 +571,10 @@ public final class FileResources extends ResourcesBase {
 	File file = file(normalized);
 	if (file != null) {
 	    String[] dirList = file.list();
-            for (int i=0; i<dirList.length; i++) {
-                dirList[i] = normalize(normalized + "/" + dirList[i]);
+            if (dirList != null) {
+                for (int i=0; i<dirList.length; i++) {
+                    dirList[i] = normalize(normalized + "/" + dirList[i]);
+                }
             }
             return dirList;
         } else {
