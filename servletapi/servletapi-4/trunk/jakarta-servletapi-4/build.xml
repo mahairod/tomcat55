@@ -2,7 +2,9 @@
 
   <!-- =================== Environmental Properties ======================= -->
 
-  <property name="ant.home" value="../jakarta-ant" />
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
   <property name="build.compiler"   value="classic"/>
   <property name="servletapi.build" value="build"/>
   <property name="servletapi.dist"  value="dist"/>
