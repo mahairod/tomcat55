@@ -16,7 +16,6 @@
 
 package org.apache.catalina.mbeans;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import javax.management.MBeanException;
@@ -296,7 +295,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
      */
     public void removeResource(String resourceName) {
 
-        resourceName = URLDecoder.decode(resourceName);
+        resourceName = ObjectName.unquote(resourceName);
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
             return;
@@ -318,7 +317,7 @@ public class NamingResourcesMBean extends BaseModelMBean {
      */
     public void removeResourceLink(String resourceLinkName) {
 
-        resourceLinkName = URLDecoder.decode(resourceLinkName);
+        resourceLinkName = ObjectName.unquote(resourceLinkName);
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
             return;
