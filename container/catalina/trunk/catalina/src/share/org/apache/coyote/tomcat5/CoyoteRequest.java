@@ -597,7 +597,7 @@ public class CoyoteRequest
      * is the facade.  This method must be implemented by a subclass.
      */
     public ServletRequest getRequest() {
-        if (facade == null || Constants.SECURITY) {
+        if (facade == null) {
             facade = new CoyoteRequestFacade(this);
         } 
         return (facade);
