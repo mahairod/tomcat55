@@ -101,7 +101,7 @@ import org.apache.jasper.logging.DefaultLogger;
 import org.apache.jasper.logging.JasperLogger;
 
 /**
- * The JSP engine (a.k.a Jasper)! 
+ * The JSP engine (a.k.a Jasper).
  *
  * The servlet container is responsible for providing a
  * URLClassLoader for the web application context Jasper

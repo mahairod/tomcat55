@@ -179,7 +179,8 @@ public class CommandLineContext implements JspCompilationContext {
     }
     
     /**
-     * What is the scratch directory we are generating code into?
+     * The scratch directory to generate code into.
+     *
      * FIXME: In some places this is called scratchDir and in some
      * other places it is called outputDir.
      */
@@ -188,7 +189,8 @@ public class CommandLineContext implements JspCompilationContext {
     }
     
     /**
-     * What is the scratch directory we are generating code into?
+     * The scratch directory to generate code into for javac.
+     *
      * FIXME: In some places this is called scratchDir and in some
      * other places it is called outputDir.
      */
@@ -259,8 +261,9 @@ public class CommandLineContext implements JspCompilationContext {
     }
 
     /**
-     * What's the content type of this JSP? Content type includes
-     * content type and encoding. 
+     * The content type of this JSP.
+     *
+     * Content type includes content type and encoding. 
      */
     public String getContentType() {
         return contentType;
