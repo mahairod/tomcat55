@@ -71,9 +71,6 @@ public class JAASCallbackHandler implements CallbackHandler {
 
         if (realm.hasMessageDigest()) {
             this.password = realm.digest(password);
-            if (log.isDebugEnabled()) {
-                log.debug(sm.getString("jaasCallback.digestpassword", password, this.password));
-            }
         }
         else {
             this.password = password;
@@ -131,8 +128,6 @@ public class JAASCallbackHandler implements CallbackHandler {
                     realm.getContainer().getLogger().trace(sm.getString("jaasCallback.username", username));
                 ((NameCallback) callbacks[i]).setName(username);
             } else if (callbacks[i] instanceof PasswordCallback) {
-                if (realm.getContainer().getLogger().isTraceEnabled())
-                    realm.getContainer().getLogger().trace(sm.getString("jaasCallback.password", password));
                 final char[] passwordcontents;
                 if (password != null) {
                     passwordcontents = password.toCharArray();
