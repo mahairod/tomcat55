@@ -16,20 +16,26 @@
 package org.apache.catalina.storeconfig;
 
 import java.io.File;
+import java.io.IOException;
+
+import javax.print.DocPrintJob;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 
 /**
- * store StandardCOntext Attributes ...
+ * store StandardContext Attributes ... TODO DefaultContext Handling
+ * 
  * @author Peter Rossbach
  *  
  */
 public class StoreContextAppender extends StoreAppender {
 
     /*
-     * (non-Javadoc)
+     * Print Context Values. <ul><li> Spezial handling to default workDir.
+     * </li><li> Don't save path at external context.xml </li><li> Don't
+     * generate docBase for host.appBase webapps <LI></ul>
      * 
      * @see org.apache.catalina.config.StoreAppender#isPrintValue(java.lang.Object,
      *      java.lang.Object, java.lang.String,
@@ -38,15 +44,61 @@ public class StoreContextAppender extends StoreAppender {
     public boolean isPrintValue(Object bean, Object bean2, String attrName,
             StoreDescription desc) {
         boolean isPrint = super.isPrintValue(bean, bean2, attrName, desc);
-        if (isPrint && "workDir".equals(attrName)) {
+        if (isPrint) {
             StandardContext context = ((StandardContext) bean);
-            String defaultWorkDir = getDefaultWorkDir(context);
-            isPrint = !defaultWorkDir.equals(context.getWorkDir());
+            if ("workDir".equals(attrName)) {
+                String defaultWorkDir = getDefaultWorkDir(context);
+                isPrint = !defaultWorkDir.equals(context.getWorkDir());
+            } else if ("path".equals(attrName)) {
+                isPrint = desc.isStoreSeparate() 
+                            && desc.isExternalAllowed()
+                            && context.getConfigFile() == null;
+            } else if ("docBase".equals(attrName)) {
+                Container host = context.getParent();
+                if (host instanceof StandardHost) {
+                    File appBase = getAppBase(((StandardHost) host));
+                    File docBase = getDocBase(context,appBase);
+                    isPrint = !appBase.equals(docBase.getParentFile());
+                }
+            }
         }
         return isPrint;
     }
 
+    protected File getAppBase(StandardHost host) {
+
+        File appBase;
+        File file = new File(host.getAppBase());
+        if (!file.isAbsolute())
+            file = new File(System.getProperty("catalina.base"), host
+                    .getAppBase());
+        try {
+            appBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            appBase = file;
+        }
+        return (appBase);
+
+    }
+
+    protected File getDocBase(StandardContext context, File appBase) {
+
+        File docBase;
+        File file = new File(context.getDocBase());
+        if (!file.isAbsolute())
+            file = new File(appBase, context.getDocBase());
+        try {
+            docBase = file.getCanonicalFile();
+        } catch (IOException e) {
+            docBase = file;
+        }
+        return (docBase);
+
+    }
+
     /**
+     * Make default Work Dir
+     * 
      * @param context
      * @return
      */
@@ -71,12 +123,9 @@ public class StoreContextAppender extends StoreAppender {
     }
 
     /*
-     * Generate a real default StandardContext 
-     * TODO read and interpret the
-     * default context.xml and context.xml.default 
-     * TODO Cache a Default
-     * StandardContext ( with reloading strategy) 
-     * TODO remove really all
+     * Generate a real default StandardContext TODO read and interpret the
+     * default context.xml and context.xml.default TODO Cache a Default
+     * StandardContext ( with reloading strategy) TODO remove really all
      * elements, but detection is hard... To Listener or Valve from same class?>
      * 
      * @see org.apache.catalina.storeconfig.StoreAppender#defaultInstance(java.lang.Object)
