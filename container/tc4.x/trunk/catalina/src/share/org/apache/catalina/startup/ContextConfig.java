@@ -92,20 +92,21 @@ import javax.naming.directory.DirContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import org.apache.catalina.Authenticator;
+import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
+import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
+import org.apache.catalina.Service;
 import org.apache.catalina.Valve;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.core.ContainerBase;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.ApplicationParameter;
@@ -397,9 +398,36 @@ public final class ContextConfig
      * Create and deploy a Valve to expose the SSL certificates presented
      * by this client, if any.  If we cannot instantiate such a Valve
      * (because the JSSE classes are not available), silently continue.
+     * This is only instantiated for those Contexts being served by
+     * a Connector with secure set to true.
      */
     private void certificatesConfig() {
 
+        // Only install this valve if there is a Connector installed
+        // which has secure set to true.
+        boolean secure = false;
+        Container container = context.getParent();
+        if (container instanceof Host) {
+            System.out.println("certificatesConfig found Host");
+            container = container.getParent();
+        }
+        if (container instanceof Engine) {
+            System.out.println("certificatesConfig found Engine");
+            Service service = ((Engine)container).getService();
+            Connector [] connectors = service.findConnectors();
+            for (int i = 0; i < connectors.length; i++) {
+                System.out.println("certificatesConfig found Connector");
+                secure = connectors[i].getSecure();
+                if (secure) {
+                    break;
+                }
+            }
+        }
+
+        if (!secure) {
+            return;
+        }
+        System.out.println("certificatesConfig add CertificatesValve");
         // Validate that the JSSE classes are present
         try {
             Class clazz = this.getClass().getClassLoader().loadClass
