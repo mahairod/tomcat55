@@ -205,6 +205,11 @@ public final class EmbeddedServletOptions implements Options {
      */
     private String javaEncoding = "UTF8";
 
+    /*
+     * Is generation of X-Powered-By response header enabled/disabled?
+     */
+    private boolean xpoweredBy;
+
     public String getProperty(String name ) {
         return settings.getProperty( name );
     }
@@ -316,6 +321,13 @@ public final class EmbeddedServletOptions implements Options {
      */
     public String getClassPath() {
         return classpath;
+    }
+
+    /**
+     * Is generation of X-Powered-By response header enabled/disabled?
+     */
+    public boolean isXpoweredBy() {
+        return xpoweredBy;
     }
 
     /**
@@ -589,6 +601,22 @@ public final class EmbeddedServletOptions implements Options {
             } else {
 		if (log.isWarnEnabled()) {
 		    log.warn(Localizer.getMessage("jsp.warning.fork"));
+		}
+	    }
+        }
+
+        /*
+         * X-Powered-By
+         */
+        String xpoweredBy = config.getInitParameter("xpoweredBy"); 
+        if (xpoweredBy != null) {
+            if (xpoweredBy.equalsIgnoreCase("true")) {
+                this.xpoweredBy = true;
+            } else if (xpoweredBy.equalsIgnoreCase("false")) {
+                this.xpoweredBy = false;
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.xpoweredBy"));
 		}
 	    }
         }

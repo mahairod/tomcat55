@@ -191,6 +191,11 @@ public interface Options {
     public JspConfig getJspConfig();
 
     /**
+     * Is generation of X-Powered-By response header enabled/disabled?
+     */
+    public boolean isXpoweredBy();
+
+    /**
      * Obtain a Tag Plugin Manager
      */
     public TagPluginManager getTagPluginManager();
