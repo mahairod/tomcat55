@@ -336,7 +336,7 @@ public class TagFileProcessor {
      */
     private Class loadTagFile(Compiler compiler,
 			      String tagFilePath, TagInfo tagInfo,
-			      TagData tagData)
+			      TagData tagData, PageInfo parentPageInfo)
 	throws JasperException {
 
 	JspCompilationContext ctxt = compiler.getCompilationContext();
@@ -383,6 +383,15 @@ public class TagFileProcessor {
 	        wrapper.decTripCount();
 	    }
 
+	    // Add the dependants for this tag file to its parent's
+	    // dependant list.
+	    PageInfo pageInfo = wrapper.getJspEngineContext().getCompiler().
+					getPageInfo();
+	    Iterator iter = pageInfo.getDependants().iterator();
+	    if (iter.hasNext()) {
+		parentPageInfo.addDependant((String)iter.next());
+	    }
+
 	    return tagClass;
 	}
     }
@@ -409,7 +418,7 @@ public class TagFileProcessor {
 		String tagFilePath = tagFileInfo.getPath();
 		pageInfo.addDependant(tagFilePath);
 		Class c = loadTagFile(compiler, tagFilePath, n.getTagInfo(),
-				      n.getTagData());
+				      n.getTagData(), pageInfo);
 		n.setTagHandlerClass(c);
 	    }
 	    visitBody(n);
