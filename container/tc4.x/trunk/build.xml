@@ -33,7 +33,7 @@
 
   <!-- Source dependencies -->
   <property name="jasper.home"
-            value="${basedir}/./jasper"/>
+           value="${basedir}/../jakarta-tomcat-jasper/jasper2"/>
   <property name="jtc.home"
            value="${basedir}/../jakarta-tomcat-connectors"/>
 
