@@ -333,6 +333,34 @@ public class StandardServerMBean extends BaseModelMBean {
     // -------------------------------------------------------- Private Methods
 
 
+    /** Given a string, this method replaces all occurrences of
+     *  '<', '>', '&', and '"'.
+    */
+
+    private String convertStr(String input) {
+
+        StringBuffer filtered = new StringBuffer(input.length());
+        char c;
+        for(int i=0; i<input.length(); i++) {
+            c = input.charAt(i);
+            if (c == '<') {
+                filtered.append("&lt;");
+            } else if (c == '>') {
+                filtered.append("&gt;");
+            } else if (c == '\'') {
+                filtered.append("&apos;");
+            } else if (c == '"') {
+                filtered.append("&quot;");
+            } else if (c == '&') {
+                filtered.append("&amp;");
+            } else {
+                filtered.append(c);
+            }
+        }
+            return(filtered.toString());
+    } 
+
+
     /**
      * Is this an instance of the default <code>Loader</code> configuration,
      * with all-default properties?
@@ -509,7 +537,8 @@ public class StandardServerMBean extends BaseModelMBean {
             writer.print(' ');
             writer.print(descriptors[i].getName());
             writer.print("=\"");
-            writer.print((String) value);
+            String strValue = convertStr((String) value);
+            writer.print(strValue);
             writer.print("\"");
         }
 
