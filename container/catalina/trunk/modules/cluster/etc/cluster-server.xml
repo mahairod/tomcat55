@@ -231,23 +231,29 @@
              
              tcpThreadCount = the number of threads to handle incoming replication requests, optimal would be the same amount of threads as nodes 
 
-             tcpListenAddress = the listen address (bind address) for TCP cluster request on this host, in case of multiple ethernet cards
+             tcpListenAddress = the listen address (bind address) for TCP cluster request on this host, 
+                                in case of multiple ethernet cards.
+                                auto means that address becomes
+                                InetAddress.getLocalHost().getHostAddress()
 
              tcpListenPort = the tcp listen port
+             
+             tcpSelectorTimeout = the timeout (ms) for the Selector.select() method in case the OS
+                                  has a wakup bug in java.nio. Set to 0 for no timeout
 
              printToScreen = true means that managers will also print to std.out
 
              expireSessionsOnShutdown = true means that 
 
              useDirtyFlag = true means that we only replicate a session after setAttribute,removeAttribute has been called.
-              				false means to replicate the session after each request.
-              				false means that replication would work for the following piece of code:
-              				<%
-              				HashMap map = new HashMap();
-              				session.setAttribute("map",map);
-              				map.put("key","value");
-              				%>
-		-->             
+                            false means to replicate the session after each request.
+                            false means that replication would work for the following piece of code:
+                            <%
+                            HashMap map = new HashMap();
+                            session.setAttribute("map",map);
+                            map.put("key","value");
+                            %>
+        -->             
              
             
         <Cluster  className="org.apache.catalina.cluster.tcp.SimpleTcpCluster"
@@ -259,33 +265,34 @@
                   mcastFrequency="500"
                   mcastDropTime="3000"
                   tcpThreadCount="2"
-                  tcpListenAddress="localhost"
+                  tcpListenAddress="auto"
                   tcpListenPort="4001"
+                  tcpSelectorTimeout="100"
                   printToScreen="false"
                   expireSessionsOnShutdown="false"
                   useDirtyFlag="true"
         />
         
         <!--
-        	When configuring for clustering, you also add in a valve to catch all the requests
-        	coming in, at the end of the request, the session may or may not be replicated.
-        	A session is replicated if and only if all the conditions are met:
-        	1. useDirtyFlag is true or setAttribute or removeAttribute has been called AND
-        	2. a session exists (has been created)
-        	3. the request is not trapped by the "filter" attribute
-        	
-        	The filter attribute is to filter out requests that could not modify the session,
-        	hence we don't replicate the session after the end of this request.
-        	The filter is negative, ie, anything you put in the filter, you mean to filter out,
-        	ie, no replication will be done on requests that match one of the filters.
-        	The filter attribute is delimited by ;, so you can't escape out ; even if you wanted to.
-        	
-        	filter=".*\.gif;.*\.js;" means that we will not replicate the session after requests with the URI
-        	ending with .gif and .js are intercepted.
-       	-->
-        	
+            When configuring for clustering, you also add in a valve to catch all the requests
+            coming in, at the end of the request, the session may or may not be replicated.
+            A session is replicated if and only if all the conditions are met:
+            1. useDirtyFlag is true or setAttribute or removeAttribute has been called AND
+            2. a session exists (has been created)
+            3. the request is not trapped by the "filter" attribute
+            
+            The filter attribute is to filter out requests that could not modify the session,
+            hence we don't replicate the session after the end of this request.
+            The filter is negative, ie, anything you put in the filter, you mean to filter out,
+            ie, no replication will be done on requests that match one of the filters.
+            The filter attribute is delimited by ;, so you can't escape out ; even if you wanted to.
+            
+            filter=".*\.gif;.*\.js;" means that we will not replicate the session after requests with the URI
+            ending with .gif and .js are intercepted.
+        -->
+            
         <Valve className="org.apache.catalina.cluster.tcp.ReplicationValve"
-        	   filter=".*\.gif;.*\.js;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"/>
+               filter=".*\.gif;.*\.js;.*\.jpg;.*\.htm;.*\.html;.*\.txt;"/>
 
       <!-- Add the following attributes if you want to turn XML validation
            on. Remember to comment the Host element above. 
