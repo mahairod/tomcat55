@@ -94,7 +94,7 @@ import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;
-import org.apache.taglibs.standard.lang.jstl.JSTLVariableResolver;
+import org.apache.jasper.runtime.el.jstl.JSTLVariableResolver;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
@@ -129,9 +129,9 @@ public class PageContextImpl
      * XXX - This should be going away once the EL evaluator moves from
      * the JSTL implementation to its own project.
      */
-    private static org.apache.taglibs.standard.lang.jstl.Evaluator
+    private static org.apache.jasper.runtime.el.jstl.Evaluator
         proprietaryEvaluator = new 
-        org.apache.taglibs.standard.lang.jstl.Evaluator();
+        org.apache.jasper.runtime.el.jstl.Evaluator();
 
     PageContextImpl(JspFactory factory) {
         this.factory = factory;
@@ -568,7 +568,7 @@ public class PageContextImpl
             return PageContextImpl.variableResolver.resolveVariable( 
                 pName, this );
         }
-        catch( org.apache.taglibs.standard.lang.jstl.ELException e ) {
+        catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
             throw new ELException( e );
         }
     }

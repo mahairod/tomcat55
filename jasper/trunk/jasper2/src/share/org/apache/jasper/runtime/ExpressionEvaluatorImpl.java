@@ -58,7 +58,7 @@ package org.apache.jasper.runtime;
 import java.util.Map;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.el.*;
-import org.apache.taglibs.standard.lang.jstl.ELEvaluator;
+import org.apache.jasper.runtime.el.jstl.ELEvaluator;
 
 /**
  * <p>An adapter for the JSTL Expression Evaluator.</p>
@@ -93,7 +93,7 @@ public class ExpressionEvaluatorImpl
 			   String defaultPrefix) 
         throws ELException 
     {
-        org.apache.taglibs.standard.lang.jstl.VariableResolver
+        org.apache.jasper.runtime.el.jstl.VariableResolver
             resolver = new JSTLVariableResolverWrapper( vResolver );
         Map fMapperMap = new FunctionMapperMap( fMapper );
         
@@ -106,7 +106,7 @@ public class ExpressionEvaluatorImpl
                 expression, this.pageContext, expectedType, fMapperMap,
                 defaultPrefix );
         }
-        catch( org.apache.taglibs.standard.lang.jstl.ELException e ) {
+        catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
             throw new ELException( e );
         }
     }
@@ -119,7 +119,7 @@ public class ExpressionEvaluatorImpl
     {
         // Validate and then create an Expression object.
         String errorMessage =
-            new org.apache.taglibs.standard.lang.jstl.Evaluator().validate( 
+            new org.apache.jasper.runtime.el.jstl.Evaluator().validate( 
             "<unknown>", expression );
         if( errorMessage != null ) {
             // Failed validation.  Tell user why.
@@ -139,7 +139,7 @@ public class ExpressionEvaluatorImpl
      * can be moved out of JSTL into its own project.
      */
     private static class JSTLVariableResolverWrapper 
-        implements org.apache.taglibs.standard.lang.jstl.VariableResolver
+        implements org.apache.jasper.runtime.el.jstl.VariableResolver
     {
         private VariableResolver delegate;
         
@@ -148,7 +148,7 @@ public class ExpressionEvaluatorImpl
         }
         
         public Object resolveVariable( String pName, Object pContext ) 
-            throws org.apache.taglibs.standard.lang.jstl.ELException
+            throws org.apache.jasper.runtime.el.jstl.ELException
         {
             // pContext parameter is going away in JSP 2.0
             Object result;
@@ -156,7 +156,7 @@ public class ExpressionEvaluatorImpl
                 result = delegate.resolveVariable( pName, null );
             }
             catch( ELException e ) {
-                throw new org.apache.taglibs.standard.lang.jstl.ELException( 
+                throw new org.apache.jasper.runtime.el.jstl.ELException( 
                     e.getMessage() );
             }
             return result;
@@ -274,7 +274,7 @@ public class ExpressionEvaluatorImpl
         public Object evaluate( VariableResolver vResolver )
             throws ELException
         {
-            org.apache.taglibs.standard.lang.jstl.VariableResolver
+            org.apache.jasper.runtime.el.jstl.VariableResolver
                 resolver = new JSTLVariableResolverWrapper( vResolver );
 
             // XXX - This is currently inefficient.  A new evaluator and
@@ -287,7 +287,7 @@ public class ExpressionEvaluatorImpl
                     this.expectedType, this.fMapperMap,
                     this.defaultPrefix );
             }
-            catch( org.apache.taglibs.standard.lang.jstl.ELException e ) {
+            catch( org.apache.jasper.runtime.el.jstl.ELException e ) {
                 throw new ELException( e );
             }
         }
