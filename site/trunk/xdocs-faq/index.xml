@@ -72,6 +72,8 @@
     Questions related to web application deployment.</li>
 <li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How To</a> -
     Miscellaneous common how to's. </li>
+<li><a href="fda-validation.html">FDA Validation</a> -
+    Questions related to running Tomcat in an FDA validated environment.</li>
 <li><a href="unix.html">Linux / Unix</a> -
     Common questions for Linux / Unix related platforms. </li>
 <li><a href="otherOperatingSystems.html">Other Operating Systems</a> -
