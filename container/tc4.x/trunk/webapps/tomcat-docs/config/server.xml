@@ -58,7 +58,12 @@
   It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
 
-  <attributes/>
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this <strong>Server</strong>
+    to the associated <a href="logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
 
   </subsection>
 
