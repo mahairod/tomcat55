@@ -160,7 +160,9 @@ class JspReader {
         return caw.toString();
     }
 
-    int peekChar() {
+    int peekChar() throws JasperException {
+        if (!hasMoreInput())
+            return -1;
         return current.stream[current.cursor];
     }
 
@@ -352,7 +354,7 @@ class JspReader {
         return ret;
     }
 
-    final boolean isSpace() {
+    final boolean isSpace() throws JasperException {
         // Note: If this logic changes, also update Node.TemplateText.rtrim()
         return peekChar() <= ' ';
     }
@@ -369,6 +371,10 @@ class JspReader {
         skipSpaces();
         stringBuffer.setLength(0);
         
+        if (!hasMoreInput()) {
+            return "";
+        }
+
         int ch = peekChar();
         
         if (quoted) {
