@@ -101,15 +101,19 @@ public class ReplicationValve
 
 
     // --------------------------------------------------------- Public Methods
+    protected static long totalRequestTime=0;
     protected static long totalSendTime=0;
     protected static long nrOfRequests =0;
     protected static long lastSendTime =0;
-    protected static synchronized void addClusterSendTime(long time) {
-        totalSendTime+=time;
+    
+    protected static synchronized void addClusterSendTime(long requestTime, long clusterTime) {
+        totalSendTime+=clusterTime;
+        totalRequestTime+=requestTime;
         nrOfRequests++;
         if ( (nrOfRequests % 100) == 0 ) {
-            log.info("Average cluster serialize/send time="+(totalSendTime/nrOfRequests)+" ms for "+
-                     nrOfRequests+" requests ("+totalSendTime+"ms).");
+            log.info("Average request time="+(totalRequestTime/nrOfRequests)+" ms for "+
+                     "Cluster overhead time="+(totalSendTime/nrOfRequests)+" ms for "+
+                     nrOfRequests+" requests (Request="+totalRequestTime+"ms Cluster="+totalSendTime+"ms).");
             lastSendTime=System.currentTimeMillis();
         }//end if
     }
@@ -131,6 +135,7 @@ public class ReplicationValve
                        ValveContext context)
         throws IOException, ServletException
     {
+        long totalstart = System.currentTimeMillis();
         //this happens before the request
         //long _debugstart = System.currentTimeMillis();
         context.invokeNext(request, response);
@@ -201,7 +206,7 @@ public class ReplicationValve
 
             cluster.send(msg);
             long stop = System.currentTimeMillis();
-            addClusterSendTime(stop-start);
+            addClusterSendTime(stop-totalstart,stop-start);
 
         }catch (Exception x)
         {
