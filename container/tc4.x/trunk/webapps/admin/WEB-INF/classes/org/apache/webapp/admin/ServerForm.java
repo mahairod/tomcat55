@@ -211,7 +211,7 @@ public final class ServerForm extends ActionForm {
             
             if ((portNumberText == null) || (portNumberText.length() < 1)) {
                 errors.add("portNumberText",
-                new ActionError("error.portNumberText.required"));
+                new ActionError("error.portNumber.required"));
             } else {
                 try {
                     int port = Integer.parseInt(portNumberText);

@@ -91,9 +91,8 @@ import javax.management.MBeanInfo;
  *
  * @author Jazmin Jonson
  * @author Manveen Kaur
- * @version
+ * @version $Revision$ $Date$
  */
-
 
 
 public class TomcatTreeBuilder implements TreeBuilder{
@@ -104,8 +103,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
     public final static String SERVER_TYPE = "Catalina:type=Server";
     public final static String SERVICE_TYPE = "Catalina:type=Service";
     public final static String ENGINE_TYPE = "Catalina:type=Engine";
-    private final static String CONNECTOR_TYPE = "Catalina:type=Connector";
-    public final static String HOST_TYPE = "Catalina:type=Host";    
+    public final static String CONNECTOR_TYPE = "Catalina:type=Connector";
+    public final static String HOST_TYPE = "Catalina:type=Host";
     public final static String WILDCARD = ",*";
     
     private static MBeanServer mBServer = null;
@@ -151,7 +150,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
         
     }
     
-    
     public void getServices(TreeControlNode serverNode)
     throws JMException, ServletException {
         
@@ -185,14 +183,13 @@ public class TomcatTreeBuilder implements TreeBuilder{
             serverNode.addChild(serviceNode);
             
             getConnectors(serviceNode, serviceName);
+
         }
     }
     
     public void getConnectors(TreeControlNode serviceNode,
-    String serviceName)
-    
-    throws JMException{
-        
+                              String serviceName)
+        throws JMException{
         
         Iterator ConnectorItr =
         (mBServer.queryMBeans(new ObjectName(CONNECTOR_TYPE + WILDCARD +
@@ -210,23 +207,22 @@ public class TomcatTreeBuilder implements TreeBuilder{
             (String)mBServer.getAttribute(connectorObj.getObjectName(),
             "scheme");
             
-            // HACK to take into account special characters like = and &
-            // in the node name, could remove this code if encode URL
-            // and later request.getParameter() could deal with = and &
-            // character in parameter values. Decoding name not needed
-            // because Tomcat does this automatically
-            
             encodedConnectorName =  URLEncoder.encode(connectorObj.getObjectName().toString());
             
-            connectorNode =
-            new TreeControlNode(connectorObj.getObjectName().toString(),
-            "folder_16_pad.gif",
-            "Connector(" + connectorName + ")",
-            "treeControlTest.do?select=" +
-            encodedConnectorName,
-            null, true);
-            
-            serviceNode.addChild(connectorNode);
+            // Do not display the connector node if it is a warp connector.
+            // This is because warp connector doesn't conform to the
+            // standard Engine/Host/Context hierarchy and we don't support it.
+            if (!"warp".equalsIgnoreCase(connectorName)) {
+                connectorNode =
+                new TreeControlNode(connectorObj.getObjectName().toString(),
+                "folder_16_pad.gif",
+                "Connector(" + connectorName + ")",
+                "setUpConnector.do?select=" +
+                encodedConnectorName,
+                "content", true);
+                
+                serviceNode.addChild(connectorNode);
+            }
         }
         
     }

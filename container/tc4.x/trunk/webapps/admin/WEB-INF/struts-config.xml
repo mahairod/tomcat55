@@ -148,6 +148,14 @@
               input="/service.jsp">
     </action>
 
+    <!-- Process a connector change -->
+    <action    path="/connector"
+               type="org.apache.webapp.admin.ConnectorAction"
+               name="connectorForm"
+              scope="session"
+              input="/connector.jsp">
+    </action>
+
     <!-- Process a set-locale action -->
     <action    path="/setLocale"
                type="org.apache.webapp.admin.SetLocaleAction"
