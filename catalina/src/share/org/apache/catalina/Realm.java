@@ -68,6 +68,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import org.apache.catalina.deploy.SecurityConstraint;
 /**
@@ -171,12 +172,12 @@ public interface Realm {
     public Principal authenticate(X509Certificate certs[]);
     
     /**
-     * Return the SecurityConstraint configured to guard the request URI for
+     * Return the SecurityConstraints configured to guard the request URI for
      * this request, or <code>null</code> if there is no such constraint.
      *
      * @param request Request we are processing
      */
-    public SecurityConstraint findSecurityConstraint(HttpRequest request,
+    public SecurityConstraint [] findSecurityConstraints(HttpRequest request,
                                                      Context context);
     /**
      * Perform access control based on the specified authorization constraint.

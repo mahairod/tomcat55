@@ -197,6 +197,8 @@ public class GenericPrincipal implements Principal {
      */
     public boolean hasRole(String role) {
 
+        if("*".equals(role)) // Special 2.4 role meaning everyone
+            return true;
         if (role == null)
             return (false);
         return (Arrays.binarySearch(roles, role) >= 0);
