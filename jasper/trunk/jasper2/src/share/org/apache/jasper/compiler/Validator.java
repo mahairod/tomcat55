@@ -69,7 +69,6 @@ import java.util.Enumeration;
 import javax.servlet.jsp.tagext.*;
 import javax.servlet.jsp.el.FunctionMapper;
 
-import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 

@@ -354,8 +354,4 @@ public class TldLocationsCache {
         if( ! initialized ) init();
         tlds.put( uri, tld);
     }
-    
-    private void p(String s) {
-        System.out.println("[TldLocationsCache] " + s);
-    }
 }

@@ -59,10 +59,6 @@
  *
  */ 
 
-
-
-
-
 package org.apache.jasper.runtime;
 
 import java.io.IOException;
@@ -89,19 +85,14 @@ import org.apache.jasper.Constants;
 public class JspWriterImpl extends JspWriter {
 
     protected Writer out;
-
-    protected ServletResponse response;
-    
+    protected ServletResponse response;    
     protected char cb[];
     protected int nextChar;
-
-    protected static int defaultCharBufferSize = Constants.DEFAULT_BUFFER_SIZE;
-
     protected boolean flushed = false;
     protected boolean closed = false;
     
     public JspWriterImpl() {
-	super( defaultCharBufferSize, true );
+	super( Constants.DEFAULT_BUFFER_SIZE, true );
     }
 
     /**
@@ -111,7 +102,7 @@ public class JspWriterImpl extends JspWriter {
      * @param  response  A Servlet Response
      */
     public JspWriterImpl(ServletResponse response) {
-        this(response, defaultCharBufferSize, true);
+        this(response, Constants.DEFAULT_BUFFER_SIZE, true);
     }
 
     /**
@@ -171,7 +162,6 @@ public class JspWriterImpl extends JspWriter {
     protected void initOut() throws IOException {
         if (out == null) {
             out = response.getWriter();
-	    //System.out.println("JspWriterImpl: initOut: " + this + " " +out);
 	}
     }
 	
@@ -244,7 +234,6 @@ public class JspWriterImpl extends JspWriter {
 
     /**
      * Write a single character.
-     *
      */
     public void write(int c) throws IOException {
         ensureOpen();
@@ -284,7 +273,6 @@ public class JspWriterImpl extends JspWriter {
      * @param  cbuf  A character array
      * @param  off   Offset from which to start reading characters
      * @param  len   Number of characters to write
-     *
      */
     public void write(char cbuf[], int off, int len) 
         throws IOException 
@@ -346,7 +334,6 @@ public class JspWriterImpl extends JspWriter {
      * @param  s     String to be written
      * @param  off   Offset from which to start reading characters
      * @param  len   Number of characters to be written
-     *
      */
     public void write(String s, int off, int len) throws IOException {
         ensureOpen();
