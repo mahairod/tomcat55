@@ -1762,6 +1762,8 @@ public class WebappClassLoader
         int pos = name.lastIndexOf('.');
         if (pos != -1)
             packageName = name.substring(0, pos);
+        else
+            return true;
 
         if (packageName.equals("javax.servlet"))
             return false;
