@@ -73,6 +73,10 @@
      classname="java.lang.reflect.Proxy" />
     <available property="jdk.1.4.present" classname="java.nio.Buffer" />
 
+    <!-- Ant flags -->
+    <available property="style.available"
+     classname="org.apache.tools.ant.taskdefs.optional.TraXLiaison" />
+
     <!-- Class availability flags -->
     <condition property="javamail.present">
       <and>
@@ -130,7 +134,10 @@
       </and>
     </condition>
     <available property="jdbc20ext.jar.present" file="${jdbc20ext.jar}" />
+    <available property="jcert.jar.present" file="${jcert.jar}" />
     <available property="jndi.jar.present" file="${jndi.jar}" />
+    <available property="jnet.jar.present" file="${jnet.jar}" />
+    <available property="jsse.jar.present" file="${jsse.jar}" />
     <available property="jta.jar.present" file="${jta.jar}" />
     <available property="junit.jar.present" file="${junit.jar}" />
     <available property="ldap.jar.present" file="${ldap.jar}" />
@@ -244,6 +251,19 @@
         </and>
       </or>
     </condition>
+    <condition property="copy.jsse.jar">
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <and>
+          <equals arg1="${jcert.jar.present}" arg2="true" />
+          <equals arg1="${jnet.jar.present}" arg2="true" />
+          <equals arg1="${jsse.jar.present}" arg2="true" />
+          <not>
+            <equals arg1="${jdk.1.4.present}" arg2="true" />
+          </not>
+        </and>
+      </or>
+    </condition>
     <condition property="copy.tyrex.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -255,7 +275,7 @@
 
 
   <!-- =================== BUILD: Set compile flags ======================= -->
-  <target name="flags.display" depends="flags">
+  <target name="flags.display" depends="flags" unless="flags.hide">
 
     <echo message="--- Build environment for Catalina ---" />
 
@@ -267,6 +287,9 @@
     <echo message="compile.debug=${compile.debug}" />
     <echo message="compile.deprecation=${compile.deprecation}" />
     <echo message="compile.optimize=${compile.optimize}" />
+
+    <echo message="--- Ant Flags ---" />
+    <echo message="&lt;style&gt; task available (required)=${style.available}" />
 
     <echo message="--- JDK ---" />
     <echo message="jdk.1.2.present=${jdk.1.2.present}" />
@@ -320,7 +343,7 @@
   </target>
 
   <!-- =================== BUILD: Create Directories ====================== -->
-  <target name="build-prepare" depends="flags">
+  <target name="build-prepare">
 
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
@@ -352,8 +375,15 @@
     <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
   </target>
   <target name="copy-ldap.jar" if="copy.ldap.jar">
-    <!-- Licensing issue: don't copy ldap.jar
+    <!-- Cannot redistribute LDAP
     <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
+    -->
+  </target>
+  <target name="copy-jsse.jar" if="copy.jsse.jar">
+    <!-- Cannot redistribute JSSE
+    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
     -->
   </target>
   <target name="copy-tyrex.jar" if="copy.tyrex.jar">
@@ -363,7 +393,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare,copy-activation.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jta.jar,copy-ldap.jar,copy-tyrex.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-jdbc20ext.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-tyrex.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -379,11 +409,6 @@
     <!-- Common Extensions -->
     <copy todir="${catalina.build}/common/lib" file="${copy.crimson.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
-<!-- Cannot redistribute JSSE
-    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
--->
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
 
     <!-- Configuration Files -->
@@ -452,7 +477,7 @@
 
 
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
-  <target name="javadoc" depends="build-main">
+  <target name="javadoc">
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"

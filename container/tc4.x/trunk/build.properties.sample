@@ -19,6 +19,7 @@ compile.optimize=on
 # ----- Build Control Flags
 #full.dist=on
 #build.sysclasspath=ignore
+#flags.hide=on
 
 
 # ----- Default Base Path for Dependent Packages -----
