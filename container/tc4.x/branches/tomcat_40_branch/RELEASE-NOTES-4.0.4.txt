@@ -44,6 +44,9 @@ General New Features:
      This connector is disabled in the default configuration, but can be 
      enabled by uncommenting an element in the server.xml configuration file.
 
+[B3] Coyote:
+     Update to Coyote 1.0 Beta 9.
+
 
 ---------------------
 Catalina New Features:
@@ -81,9 +84,6 @@ BUG FIXES AND IMPROVEMENTS:
 ------------------
 Generic Bug Fixes:
 ------------------
-
-[B3] Coyote:
-     Update to Coyote 1.0 Beta 5.
 
 
 ------------------
@@ -141,6 +141,12 @@ Catalina Bug Fixes:
 [B3] Coyote:
      Implement getRemoteHost and getRemoteAddr.
 
+[B3] ErrorReportValve:
+     Don't generate status reports for status codes below 300.
+
+[B3] SnoopAllServlet:
+     Remove servlet.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -174,6 +180,7 @@ Bugzilla Bugs Resolved:
 [B1] 5422  HTTP Headers not being cleared after form authentication
 [B3] 5471  jspc -webapp option is broken due to namespace collisions
 [B1] 5647  AJP13 connector will not pass authentication requests
+[B3] 5998  Exception hiding when a JspExceptioin is thrown by a tag
 [B1] 6090  Listener not instantiated in tld file
 [B1] 6201  ISO-8859-8-i  problem. (hebrew)
 [B1] 6221  Bug with jsp:plugin
@@ -209,12 +216,16 @@ Bugzilla Bugs Resolved:
 [B2] 6982  Stop + start of the context makes weird things
 [B2] 7061  Servlet loaded TWICE on application startup?
 [B2] 7102  response.encodeURL() doesn't encode
+[B3] 7124  MissingResourceException when translating an invalid setProperty tag
 [B2] 7171  FileStore directory must exists
 [B2] 7344  Tomcat appears to be case-sensitive with regard to the token "Basic"
            in Authorization request parameter
 [B3] 7488  JspC generates wrong package with -webapp on PC/DOS/NT/Win2k
 [B3] 7534  StackOverflowError in ChunkedOutputFilter.doWrite()
 [B3] 7170  JDBCStore doesn't work with Orcale 8.x
+[B3] 7880  If a TLV flags flags an error during the translation phase, 
+           a fatal translation error is not returned (HTTP 500)
+[B3] 7993  parameters in <jsp:plugin> for jsp Document do not work
 [B3] 8092  Problems forwarding from an included servlet
 
 
