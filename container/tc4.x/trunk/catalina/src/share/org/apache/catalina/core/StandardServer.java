@@ -192,7 +192,6 @@ public final class StandardServer
         "org.apache.catalina.core.StandardContextValve",
         "org.apache.catalina.core.StandardEngineValve",
         "org.apache.catalina.core.StandardHostValve",
-        "org.apache.catalina.mbeans.ServerLifecycleListener",
         "org.apache.catalina.startup.ContextConfig",
         "org.apache.catalina.startup.EngineConfig",
         "org.apache.catalina.startup.HostConfig",
@@ -200,6 +199,13 @@ public final class StandardServer
         "org.apache.catalina.valves.ErrorDispatcherValve",
         "org.apache.catalina.valves.ErrorReportValve",
     };
+
+
+    /**
+     * ServerLifecycleListener classname.
+     */
+    private static String SERVER_LISTENER_CLASS_NAME = 
+        "org.apache.catalina.mbeans.ServerLifecycleListener";
 
 
     // ------------------------------------------------------------ Constructor
@@ -1040,11 +1046,10 @@ public final class StandardServer
                 listeners = new LifecycleListener[0];
             }
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -1094,11 +1099,10 @@ public final class StandardServer
             LifecycleListener listeners[] =
                 ((Lifecycle) context).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -1238,11 +1242,10 @@ public final class StandardServer
             LifecycleListener listeners[] =
                 ((Lifecycle) dcontext).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -1398,11 +1401,10 @@ public final class StandardServer
             LifecycleListener listeners[] =
                 ((Lifecycle) engine).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -1538,11 +1540,10 @@ public final class StandardServer
             LifecycleListener listeners[] =
                 ((Lifecycle) host).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
@@ -2001,11 +2002,10 @@ public final class StandardServer
             LifecycleListener listeners[] =
                 ((Lifecycle) service).findLifecycleListeners();
             for (int i = 0; i < listeners.length; i++) {
-                /*
-                  if (listeners[i] instanceof ServerLifecycleListener) {
-                  continue;
-                  }
-                */
+                if (listeners[i].getClass().getName().equals
+                    (SERVER_LISTENER_CLASS_NAME)) {
+                    continue;
+                }
                 storeListener(writer, indent + 2, listeners[i]);
             }
         }
