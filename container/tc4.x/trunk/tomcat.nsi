@@ -11,6 +11,7 @@ SetDatablockOptimize on
 
 BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000000
+InstProgressFlags smooth colored
 
 Icon main.ico
 UninstallIcon uninst.ico 
@@ -32,7 +33,7 @@ SetDateSave on
 InstallDir "$PROGRAMFILES\Apache Tomcat 4.1"
 InstallDirRegKey HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" ""
 
-Section "Tomcat 4.1 (required)"
+Section "Tomcat (required)"
 
   SectionIn 1 2 3
 
@@ -49,16 +50,8 @@ Section "Tomcat 4.1 (required)"
   File webapps\*.xml
   File /r webapps\ROOT
 
-  ReadEnvStr $2 JAVA_HOME
-
-  IfErrors 0 FoundJDK
-
-  ClearErrors
-
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
-
-  FoundJDK:
+  Call findJavaPath
+  Pop $2
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
 
@@ -68,23 +61,9 @@ Section "NT Service (NT/2k/XP only)"
 
   SectionIn 3
 
-  ReadEnvStr $1 JAVA_HOME
-  IfFileExists $1\jre\bin\hotspot\jvm.dll 0 TryJDK14
-    StrCpy $2 $1\jre\bin\hotspot\jvm.dll
-    Goto EndIfFileExists
-  TryJDK14:
-    StrCpy $2 $1\jre\bin\server\jvm.dll
-  EndIfFileExists:
+  Call findJVMPath
+  Pop $2
 
-  IfErrors 0 FoundJDK
-
-  ClearErrors
-
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
-  
-  FoundJDK:
-  
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
@@ -113,20 +92,12 @@ Label1:
 
 SectionEnd
 
-Section "Tomcat 4.1 Start Menu Group"
+Section "Tomcat Start Menu Group"
 
   SectionIn 1 2 3
 
-  ReadEnvStr $2 JAVA_HOME
-
-  IfErrors 0 FoundJDK
-
-  ClearErrors
-
-  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "JavaHome"
-
-  FoundJDK:
+  Call findJavaPath
+  Pop $2
 
   SetOutPath "$SMPROGRAMS\Apache Tomcat 4.1"
 
@@ -162,9 +133,9 @@ Section "Tomcat 4.1 Start Menu Group"
 
 SectionEnd
 
-SectionDivider
+SectionDivider " documentation and examples "
 
-Section "Tomcat 4.1 Documentation"
+Section "Tomcat Documentation"
 
   SectionIn 1 3
   SetOutPath $INSTDIR\webapps
@@ -195,9 +166,9 @@ Section "Example Web Applications"
 
 SectionEnd
 
-SectionDivider
+SectionDivider " developer resources "
 
-Section "Tomcat 4.1 Source Code"
+Section "Tomcat Source Code"
 
   SectionIn 3
   SetOutPath $INSTDIR
@@ -235,7 +206,31 @@ Function .onInit
 
   ClearErrors
 
-  Call doUpdate
+  Call findJavaPath
+  Pop $1
+  MessageBox MB_OK "Using Java Development Kit found in $1"
+
+FunctionEnd
+
+
+Function .onInstSuccess
+
+  ExecShell open '$SMPROGRAMS\Apache Tomcat 4.1'
+
+FunctionEnd
+
+
+; =====================
+; FindJavaPath Function
+; =====================
+;
+; Find the JAVA_HOME used on the system, and put the result on the top of the
+; stack
+; Will exit if the path cannot be determined
+;
+Function findJavaPath
+
+  ClearErrors
 
   ReadEnvStr $1 JAVA_HOME
 
@@ -256,18 +251,56 @@ computer. Please download one from http://java.sun.com."
     Abort
 
   NoAbort:
-    MessageBox MB_OK "Using Java Development Kit found in $1"
+
+  ; Put the result in the stack
+  Push $1
 
 FunctionEnd
 
 
-Function .onInstSuccess
+; ====================
+; FindJVMPath Function
+; ====================
+;
+; Find the full JVM path, and put the result on top of the stack
+; Will exit if the path cannot be determined
+;
+Function findJVMPath
 
-  ExecShell open '$SMPROGRAMS\Apache Tomcat 4.1'
+  ReadEnvStr $1 JAVA_HOME
+  IfFileExists $1\jre\bin\hotspot\jvm.dll 0 TryJDK14
+    StrCpy $2 $1\jre\bin\hotspot\jvm.dll
+    Goto EndIfFileExists
+  TryJDK14:
+    StrCpy $2 $1\jre\bin\server\jvm.dll
+  EndIfFileExists:
+
+  IfErrors 0 FoundJVMPath
+
+  ClearErrors
+
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
+  
+  FoundJVMPath:
+  
+  IfErrors 0 NoAbort
+    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
+computer. Please download one from http://java.sun.com."
+    Abort
+
+  NoAbort:
+
+  ; Put the result in the stack
+  Push $2
 
 FunctionEnd
 
 
+; =================
+; DoUpdate Function
+; =================
+;
 Function doUpdate
 
   ; This function will be called if a previous Tomcat 4.1 installation has been
