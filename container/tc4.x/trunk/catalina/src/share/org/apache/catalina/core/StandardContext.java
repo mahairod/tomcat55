@@ -326,6 +326,14 @@ public final class StandardContext
 
 
     /**
+     * The public identifier of the DTD for the web application deployment
+     * descriptor version we are currently parsing.  This is used to support
+     * relaxed validation rules when processing version 2.2 web.xml files.
+     */
+    private String publicId = null;
+
+
+    /**
      * The reloadable flag for this web application.
      */
     private boolean reloadable = false;
@@ -730,6 +738,32 @@ public final class StandardContext
     public void setPath(String path) {
 
 	setName(RequestUtil.URLDecode(path));
+
+    }
+
+
+    /**
+     * Return the public identifier of the deployment descriptor DTD that is
+     * currently being parsed.
+     */
+    public String getPublicId() {
+
+        return (this.publicId);
+
+    }
+
+
+    /**
+     * Set the public identifier of the deployment descriptor DTD that is
+     * currently being parsed.
+     *
+     * @param publicId The public identifier
+     */
+    public void setPublicId(String publicId) {
+
+	String oldPublicId = this.publicId;
+        this.publicId = publicId;
+        support.firePropertyChange("publicId", oldPublicId, publicId);
 
     }
 

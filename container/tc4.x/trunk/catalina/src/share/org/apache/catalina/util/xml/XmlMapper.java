@@ -46,6 +46,8 @@ public class XmlMapper
     int debug=0;
     boolean validating=false;
 
+    String publicId = null;
+
     public XmlMapper() {
 	attributeStack = new Object[256]; // depth of the xml doc
 	tagStack = new String[256];
@@ -68,6 +70,7 @@ public class XmlMapper
         if (sp != 0) {
 	    System.out.println("The XML document is probably broken. " + sp);
 	}
+        publicId = null;
     }
 
 
@@ -165,6 +168,10 @@ public class XmlMapper
 
     public Stack getObjectStack() {
 	return oStack;
+    }
+
+    public String getPublicId() {
+        return publicId;
     }
 
     public Object getRoot() {
@@ -427,6 +434,10 @@ public class XmlMapper
     public InputSource resolveEntity(String publicId, String systemId)
 	throws SAXException
     {
+        if (debug >= 1)
+            System.out.println("Resolve: " + publicId + " " + systemId);
+        this.publicId = publicId;
+
 	String dtd = (String) fileDTDs.get(publicId);
 	if( dtd != null ) {
 	    File dtdF=new File( dtd );

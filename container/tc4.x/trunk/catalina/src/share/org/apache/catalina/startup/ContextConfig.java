@@ -72,6 +72,7 @@ import java.io.FilePermission;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -431,6 +432,9 @@ public final class ContextConfig
 				Constants.WebDtdResourcePath_23);
 	mapper.registerDTDFile(Constants.WebDtdPublicId_23,
 			       resourceFile.toString());
+
+        mapper.addRule("web-app",
+                       new SetPublicIdAction("setPublicId"));
 
 	mapper.addRule("web-app/context-param",
 		       mapper.methodSetter("addParameter", 2));
@@ -1108,6 +1112,49 @@ final class SetAuthConstraint extends XmlAction {
         securityConstraint.setAuthConstraint(true);
 	if (ctx.getDebug() > 0)
 	    ctx.log("Calling SecurityConstraint.setAuthConstraint(true)");
+    }
+
+}
+
+
+/**
+ * Class that calls a property setter for the top object on the stack,
+ * passing the public ID of the entity we are currently processing.
+ */
+
+final class SetPublicIdAction extends XmlAction {
+
+    public SetPublicIdAction(String method) {
+        super();
+        this.method = method;
+    }
+    
+
+    private String method = null;
+
+    public void start(SaxContext context) throws Exception {
+
+        Stack stack = context.getObjectStack();
+        Object top = stack.peek();
+        Class paramClasses[] = new Class[1];
+        paramClasses[0] = "String".getClass();
+        String paramValues[] = new String[1];
+        paramValues[0] = context.getPublicId();
+
+        Method m = null;
+        try {
+            m = top.getClass().getMethod(method, paramClasses);
+        } catch (NoSuchMethodException e) {
+            context.log("Can't find method " + method + " in " + top +
+                        " CLASS " + top.getClass());
+            return;
+        }
+
+        m.invoke(top, paramValues);
+        if (context.getDebug() >= 1)
+            context.log("" + top.getClass().getName() + "." + method +
+                        "(" + paramValues[0] + ")");
+
     }
 
 }

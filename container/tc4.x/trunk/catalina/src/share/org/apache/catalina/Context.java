@@ -254,6 +254,22 @@ public interface Context extends Container {
 
 
     /**
+     * Return the public identifier of the deployment descriptor DTD that is
+     * currently being parsed.
+     */
+    public String getPublicId();
+
+
+    /**
+     * Set the public identifier of the deployment descriptor DTD that is
+     * currently being parsed.
+     *
+     * @param publicId The public identifier
+     */
+    public void setPublicId(String publicId);
+
+
+    /**
      * Return the reloadable flag for this web application.
      */
     public boolean getReloadable();

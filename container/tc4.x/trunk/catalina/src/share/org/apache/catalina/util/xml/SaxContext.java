@@ -62,4 +62,8 @@ public interface SaxContext  {
     public int getDebug();
 
     public void log( String s );
+
+    public String getPublicId();
+
 }
+
