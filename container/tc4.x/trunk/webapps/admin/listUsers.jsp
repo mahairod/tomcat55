@@ -33,12 +33,11 @@
               <controls:action>
                 ---------------------------------
               </controls:action>
-              <controls:action url="">
+<%--
+              <controls:action url="/setUpUser.do">
                 <bean:message key="actions.user.create"/>
               </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.user.delete"/>
-              </controls:action>
+--%>
               <!-- add the urls later once those screens get implemented -->
             </controls:actions>
         </div>
@@ -68,7 +67,10 @@
           <logic:iterate name="users" id="user">
             <tr class="line-row">
               <td><div align="left" class="table-normal-text">&nbsp;
-                <controls:attribute name="user" attribute="username"/>
+                <html:link page='<%= "/setUpUser.do?objectName=" + 
+                               java.net.URLEncoder.encode(user.toString()) %>'>
+                  <controls:attribute name="user" attribute="username"/>
+                </html:link>
               </div></td>
               <td><div align="left" class="table-normal-text">&nbsp;
                 <controls:attribute name="user" attribute="fullName"/>

@@ -51,6 +51,10 @@
     <form-bean      name="listUsersForm"
                     type="org.apache.webapp.admin.ListUsersForm"/>
 
+    <!-- User form bean -->
+    <form-bean      name="userForm"
+                    type="org.apache.webapp.admin.UserForm"/>
+
   </form-beans>
 
 
@@ -110,10 +114,18 @@
                     path="/listUsers.jsp"
                 redirect="false"/>
 
+    <forward        name="Users List Setup"
+                    path="/listUsers.do"
+                redirect="false"/>
+
     <forward        name="Logger"
                     path="/logger.jsp"
                 redirect="false"/>
   
+    <forward        name="User"
+                    path="/user.jsp"
+                redirect="false"/>
+
   </global-forwards>
 
 
@@ -270,10 +282,21 @@
                name="listGroupsForm"
                type="org.apache.webapp.admin.ListGroupsAction"/>
 
-    <!-- Set up users list axction -->
+    <!-- Set up users list action -->
     <action    path="/listUsers"
                name="listUsersForm"
                type="org.apache.webapp.admin.ListUsersAction"/>
+
+    <!-- Set up user action -->
+    <action    path="/setUpUser"
+               type="org.apache.webapp.admin.SetUpUserAction"/>
+
+    <!-- Save user action -->
+    <action    path="/saveUser"
+              input="/user.jsp"
+               name="userForm"
+              scope="request"
+               type="org.apache.webapp.admin.SaveUserAction"/>
 
   </action-mappings>
   

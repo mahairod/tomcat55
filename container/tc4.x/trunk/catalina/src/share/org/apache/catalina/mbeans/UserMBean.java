@@ -176,6 +176,21 @@ public class UserMBean extends BaseModelMBean {
     }
 
 
+    /**
+     * Update the set of authorized roles for this user.
+     */
+    public void setRoles(String roles[]) {
+
+        if (roles != null) {
+            User user = (User) this.resource;
+            for (int i = 0; i < roles.length; i++) {
+                user.addRole(roles[i]);
+            }
+        }
+
+    }
+
+
     // ------------------------------------------------------------- Operations
 
 

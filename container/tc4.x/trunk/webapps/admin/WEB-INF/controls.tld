@@ -215,6 +215,10 @@
         URL is specified, no action will be taken (useful for "(None)"
         options and dividers).
 
+        If this URL starts with a slash, it will be assumed to be
+        context-relative, and will be prefixed with the context path
+        of this request.  Otherwise, it will be used unmodified.
+
         NOTE:  This URL will be passed through URL rewriting so that it
         will maintain session identity even in environments were cookies
         are not being used.

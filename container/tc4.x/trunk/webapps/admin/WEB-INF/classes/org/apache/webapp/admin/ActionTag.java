@@ -66,6 +66,7 @@ package org.apache.webapp.admin;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -189,10 +190,18 @@ public class ActionTag extends BodyTagSupport {
 
         // Register the information for the action represented by
         // this action
+        HttpServletRequest request =
+            (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response =
             (HttpServletResponse) pageContext.getResponse();
+        String path = null;
+        if ((url != null) && (url.startsWith("/"))) {
+            path = request.getContextPath() + url;
+        } else {
+            path = url;
+        }
         actions.addAction(label, selected,
-                          response.encodeURL(url));
+                          response.encodeURL(path));
 
         return (EVAL_PAGE);
 
