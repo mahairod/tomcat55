@@ -829,6 +829,11 @@ final class HttpProcessor
         // Create a place for the normalized path
         String normalized = path;
 
+        // Normalize "/%7E" and "/%7e" at the beginning to "/~"
+        if (normalized.startsWith("/%7E") ||
+            normalized.startsWith("/%7e"))
+            normalized = "/~" + normalized.substring(4);
+
         // Prevent encoding '%', '/', '.' and '\', which are special reserved
         // characters
         if ((normalized.indexOf("%25") >= 0)

@@ -349,15 +349,17 @@ public final class UserConfig
     private void deploy(String user, String home) {
 
         // Does this user have a web application to be deployed?
-        String contextPath = "~" + user;
+        String contextPath = "/~" + user;
         if (host.findChild(contextPath) != null)
             return;
         File app = new File(home, directoryName);
         if (!app.exists() || !app.isDirectory())
             return;
+        /*
         File dd = new File(app, "/WEB-INF/web.xml");
         if (!dd.exists() || !dd.isFile() || !dd.canRead())
             return;
+        */
         log(sm.getString("userConfig.deploy", user));
 
         // Deploy the web application for this user
