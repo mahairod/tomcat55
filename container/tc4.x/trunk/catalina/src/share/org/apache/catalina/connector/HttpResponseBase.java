@@ -724,14 +724,21 @@ public class HttpResponseBase
 
         String path = url;
         String query = "";
+        String anchor = "";
         int question = url.indexOf('?');
         if (question >= 0) {
             path = url.substring(0, question);
             query = url.substring(question);
         }
+        int pound = path.indexOf('#');
+        if (pound >= 0) {
+            anchor = path.substring(pound);
+            path = path.substring(0, pound);
+        }
         StringBuffer sb = new StringBuffer(path);
         sb.append(";jsessionid=");
         sb.append(sessionId);
+        sb.append(anchor);
         sb.append(query);
         return (sb.toString());
 
