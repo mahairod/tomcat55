@@ -1825,6 +1825,9 @@ class Generator {
                 out.print((String)map.get(attrName));
             }
 
+            // Smap should not include the body
+            n.setEndJavaLine(out.getJavaLine());
+
             // Does the <jsp:element> have nested tags other than
             // <jsp:attribute>
             boolean hasBody = false;
@@ -1851,8 +1854,6 @@ class Generator {
             } else {
                 out.println(" + \"/>\");");
             }
-
-            n.setEndJavaLine(out.getJavaLine());
         }
 
         public void visit(Node.TemplateText n) throws JasperException {
