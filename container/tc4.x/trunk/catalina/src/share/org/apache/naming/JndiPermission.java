@@ -65,6 +65,7 @@
 package org.apache.naming;
 
 import java.security.BasicPermission;
+import java.security.Permission;
 
 /**
  * Java SecurityManager Permission class for JNDI name based file resources
@@ -96,25 +97,13 @@ public final class JndiPermission extends BasicPermission {
     }
 
     /**
-     * Creates a new JndiPermission with no actions
+     * Creates a new JndiPermission with actions
      *
      * @param String - JNDI resource path name
+     * @param String - JNDI actions (none defined)
      */
     public JndiPermission(String name, String actions) {
         super(name,actions);
-    }
-
-    // ---------------- Permission Class abstract public method implementations
-
-    public boolean equals(Object obj) {
-        if( !(obj instanceof JndiPermission) )
-            return false;
-
-        JndiPermission p = (JndiPermission)obj;
-        if( !p.getName().equals(this.getName()) )
-            return false;
-
-        return true;
     }
 
 }
