@@ -9,66 +9,162 @@
     <properties>
         <author email="leslie.hughes@rubus.com">Les Hughes</author>
         <author email="david-tomcat@haraburda.com">David Haraburda</author>
-        <title>JNDI Datasource Examples HOW-TO</title>
+        <author>Glenn Nielsen</author>
+        <title>JNDI Datasource HOW-TO</title>
     </properties>
 
 <body>
 
+<section name="Table of Contents">
+<p>
+<a href="#Introduction">Introduction</a><br />
+<a href="#Database Connection Pool (DBCP) Configurations">
+Database Connection Pool (DBCP) Configurations</a><br />
+<a href="#Tyrex Connection Pool">Tyrex Connection Pool</a><br />
+<a href="#Non DBCP Solutions">Non DBCP Solutions</a><br />
+<a href="#Oracle 8i with OCI client">Oracle 8i with OCI client</a><br />
+<a href="#Common Problems">Common Problems</a><br />
+</p>
+</section>
 
 <section name="Introduction">
-<p>JNDI Datasource configuration is covered extensively in the JNDI-Resources-HOWTO 
-however, feedback from <code>tomcat-user</code> has shown that specifics for individual 
-configurations can be rather tricky.</p>
 
-<p>Here then are some example configurations that have posted to tomcat-user
-for popular databases.</p>
+<p>JNDI Datasource configuration is covered extensively in the
+JNDI-Resources-HOWTO however, feedback from <code>tomcat-user</code> has
+shown that specifics for individual configurations can be rather tricky.</p>
+
+<p>Here then are some example configurations that have been posted to
+tomcat-user for popular databases and some general tips for db useage.</p>
+
+<p>You should be aware that since these notes are derived from configuration
+and/or feedback posted to <code>tomcat-user</code> YMMV :-). Please let us
+know if you have any other tested configurations that you feel may be of use
+to the wider audience, or if you feel we can improve this section in anyway.</p>
+
 </section>
-<section name="Jakarta DBCP Pooled Configurations">
-<p>For each of these configurations you will need the following Jakarta Commons projects
-Note that currently, these all employ connection pooling
-via the Jakarta-commons connection pool. Also, you should be aware that since these 
-notes are derived from the mysql configuration and/or feedback from <code>tomcat-user</code>. 
-YMMV :-). Please let us know if you have any other tested configurations
-that you feel may be of use to the wider audience, or if you feel we can 
-improve this section
-in anyway.</p>
+
+<section name="Database Connection Pool (DBCP) Configurations">
+
+<p>DBCP provides support for JDBC 2.0.  On systems using a 1.4 JVM DBCP
+will support JDBC 3.0. Please let us know if you have used DBCP and its
+JDBC 3.0 features with a 1.4 JVM.
+</p>
+
+<p>See the <a href="http://jakarta.apache.org/commons/dbcp/api/index.html">
+DBCP Javadocs</a> BasicDataSource class for a complete list
+of configuration parameters.
+</p>
+
+<subsection name="Installation">
+<p>DBCP uses the Jakarta-Commons Database Connection Pool. It relies on
+number of Jakarta-Commons componenets:
 <ul>
-<li>DBCP Nightly build &gt; 20020523</li>
-<li>collections 2.0</li>
-<li>pool 1.0</li>
+<li>Jakarta-Commons DBCP 1.0</li>
+<li>Jakarta-Commons Collections 2.0</li>
+<li>Jakarta-Commons Pool 1.0</li>
 </ul>
-<subsection name="Common Requirements">
-<p>Here are some common gotchas to consider</p>
-<ul>
-<li>Datasource related classes (drivers, pools etc) should be installed in <code>$CATALINA_HOME/common/lib</code> 
-to enable the server to find your classes when it creates your Datasources</li>
-<li>Third Party drivers should be in jarfiles, not zipfiles as by default, Tomcat
-only adds <code>$CATALINA_HOME/common/lib/*.jar</code> to the classpath</li>
-</ul>
+These jar files along with your the jar file for your JDBC driver should
+be installed in <code>$CATALINA_HOME/common/lib</code>.
+<blockquote>
+<strong>NOTE:</strong>Third Party drivers should be in jarfiles, not zipfiles.
+Tomcat only adds <code>$CATALINA_HOME/common/lib/*.jar</code> to the classpath.
+</blockquote>
+<blockquote>
+<strong>NOTE:</strong>
+Do not install these jarfiles in your <code>/WEB-INF/lib</code>, or
+<code>$JAVA_HOME/jre/lib/ext</code>, or anywhere else.  You will
+experience problems if you install them anyplace other than
+<code>$CATALINA_HOME/common/lib</code>.
+</blockquote>
+</p>
+
 </subsection>
 
+<subsection name="Preventing dB connection pool leaks">
 
-<subsection name="mySQL using Jakarta Commons Connection Pool">
-    <h3>0.   Software Manifest</h3>
-    <p>Starting with the correct sotftware is manifestly important, so here's a list of
-    what we've found to work. Let us know of your success stories with other versions.</p>
-    <ul>
-    <li>Tomcat 4.0.3</li>
-    <li>mySQL 4.0.1alpha</li>
-    <li>mm.mysql 2.0.14 (JDBC Driver)</li>
-    </ul>
-    
-    <h3>1.  Installation</h3>
-    <p>Ensure that you follow these instructions as variations can cause problems.</p>
-    <ul>
-    <li>Install mm.mysql driver, DBCP, collections and pool jarfiles into
-    <code>$CATALINA_HOME/common/lib</code>. You will experience problems if you place
-    these jarfiles in your webapp's <code>WEB-INF/lib</code> directory, in your 
-    <code>$JAVA_HOME/jre/lib/ext</code> or anywhere else, so dont.</li>
-    <li>Create a new test user, a new database and a single test table.
-    Your mySQL user <b>must</b> have a password assigned. The driver
-    will fail if you try to connect with an empty password.</li></ul>
-    <source>
+<p>
+A database connection pool creates and manages a pool of connections
+to a database. Recycling and reusing already existing connections
+to a dB is more efficient than opening a new connection.
+</p>
+
+<p>
+There is one problem with connection pooling.  A web application has
+to explicetely close ResultSet's, Statement's, and Connection's.
+Failure of a web application to close these resources can result in
+them never being available again for reuse, a db connection pool "leak".
+This can eventually result in your web application db connections failing
+if there are no more available connections.</p>
+
+<p>
+There is a solution to this problem.  The Jakarta-Commons DBCP can be
+configured to track and recover these abandoned dB connections.  Not
+only can it recover them, but also generate a stack trace for the code
+which opened these resources and never closed them.</p>
+
+<p>
+To configure a DBCP DataSource so that abandoned dB connections are
+removed and recycled add the following <code>paramater</code> to the
+<code>ResourceParams</code> configuration for your DBCP DataSource
+<code>Resource</code>:
+<source>
+            &lt;parameter&gt;
+              &lt;name&gt;removeAbandoned&lt;/name&gt;
+              &lt;value&gt;true&lt;/value&gt;
+            &lt;/parameter&gt;
+</source>
+When available db connections run low DBCP will recover and recyle
+any abandoned dB connections it finds. The default is <code>false</code>.
+</p>
+
+<p>
+Use the <code>removeAbandonedTimeout</code> parameter to set the number
+of seconds a dB connection has been idle before it is considered abandoned.
+<source>
+            &lt;parameter&gt;
+              &lt;name&gt;removeAbandonedTimeout&lt;/name&gt;
+              &lt;value&gt;60&lt;/value&gt;
+            &lt;/parameter&gt;
+</source>
+The default timeout for removing abandoned connections is 300 seconds.
+</p>
+
+<p>
+The <code>logAbandoned</code> parameter can be set to <code>true</code>
+if you want DBCP to log a stack trace of the code which abandoned the
+dB connection resources.
+<source>
+            &lt;parameter&gt;
+              &lt;name&gt;logAbandoned&lt;/name&gt;
+              &lt;value&gt;true&lt;/value&gt;
+            &lt;/parameter&gt;
+</source>
+The default is <code>false</code>.
+</p>
+
+</subsection>
+
+<subsection name="MySQL DBCP Example">
+
+<h3>0. Introduction</h3>
+<p>Versions of MySQL and the mm.mysql JDBC driver when have been
+reported to work:
+<ul>
+<li>MySQL 3.23.47, MySQL 3.23.47 using InnoDB, MySQL 4.0.1alpha</li>
+<li>mm.mysql 2.0.14 (JDBC Driver)</li>
+</ul>
+Please let us know if you have tested the new MySQL mm.mysql 3.0 driver.
+</p>
+
+<h3>1. MySQL configuration</h3>
+<p>
+Ensure that you follow these instructions as variations can cause problems.
+</p>
+
+<p>Create a new test user, a new database and a single test table.
+Your MySQL user <strong>must</strong> have a password assigned. The driver
+will fail if you try to connect with an empty password.
+<source>
 mysql&gt; GRANT ALL PRIVILEGES ON *.* TO javauser@localhost 
     -&gt;   IDENTIFIED BY 'javadude' WITH GRANT OPTION;
 mysql&gt; create database javatest;
@@ -77,10 +173,15 @@ mysql&gt; create table testdata (
     -&gt;   id int not null auto_increment primary key,
     -&gt;   foo varchar(25), 
     -&gt;   bar int);
-    </source>
-    <p>Note: the above user should be removed once testing is complete!</p>
-    <ul><li>Next insert some test data into the testdata table</li></ul>
-    <source>
+</source>
+<blockquote>
+<strong>Note:</strong> the above user should be removed once testing is
+complete!
+</blockquote>
+</p>
+
+<p>Next insert some test data into the testdata table.
+<source>
 mysql&gt; insert into testdata values(null, 'hello', 12345);
 Query OK, 1 row affected (0.00 sec)
 
@@ -94,8 +195,109 @@ mysql> select * from testdata;
 
 mysql&gt;
 </source>
-    <ul><li>Now create a simple test.jsp for use later.</li></ul>
-    <source>
+</p>
+
+<h3>2. server.xml configuration</h3>
+<p>Configure the JNDI DataSource in Tomcat by adding a declaration for your
+resource to <code>$CATALINA_HOME/conf/server.xml</code>.</p>
+<p>Add this in between the <code>&lt;/Context&gt;</code> tag of the examples
+context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.<source>
+&lt;Context path="/DBTest" docBase="DBTest"
+        debug="5" reloadable="true" crossContext="true"&gt;
+
+  &lt;Logger className="org.apache.catalina.logger.FileLogger"
+             prefix="localhost_DBTest_log." suffix=".txt"
+             timestamp="true"/&gt;
+
+  &lt;Resource name="jdbc/TestDB"
+               auth="Container"
+               type="javax.sql.DataSource"/&gt;
+
+  &lt;ResourceParams name="jdbc/TestDB"&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;factory&lt;/name&gt;
+      &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- Maximum number of dB connections in pool. Make sure you
+         configure your mysqld max_connections large enough to handle
+         all of your db connections. Set to 0 for no limit.
+         --&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;maxActive&lt;/name&gt;
+      &lt;value&gt;100&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- Maximum number of idle dB connections to retain in pool.
+         Set to 0 for no limit.
+         --&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;maxIdle&lt;/name&gt;
+      &lt;value&gt;30&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- Maximum time to wait for a dB connection to become available
+         in ms, in this example 10 seconds. An Exception is thrown if
+         this timeout is exceeded.  Set to -1 to wait indefinitely.
+         --&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;maxWait&lt;/name&gt;
+      &lt;value&gt;10000&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- MySQL dB username and password for dB connections  --&gt;
+    &lt;parameter&gt;
+     &lt;name&gt;username&lt;/name&gt;
+     &lt;value&gt;javauser&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+     &lt;name&gt;password&lt;/name&gt;
+     &lt;value&gt;javadude&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- Class name for mm.mysql JDBC driver --&gt;
+    &lt;parameter&gt;
+       &lt;name&gt;driverClassName&lt;/name&gt;
+       &lt;value&gt;org.gjt.mm.mysql.Driver&lt;/value&gt;
+    &lt;/parameter&gt;
+
+    &lt;!-- The JDBC connection url for connecting to your MySQL dB.
+         The autoReconnect=true argument to the url makes sure that the
+         mm.mysql JDBC Driver will automatically reconnect if mysqld closed the
+         connection.  mysqld by default closes idle connections after 8 hours.
+         --&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;url&lt;/name&gt;
+      &lt;value&gt;jdbc:mysql://localhost:3306/javatest?autoReconnect=true&lt;/value&gt;
+    &lt;/parameter&gt;
+  &lt;/ResourceParams&gt;
+&lt;/Context&gt;
+</source>
+</p>
+
+<h3>3. web.xml configuration</h3>
+
+<p>Now create a <code>WEB-INF/web.xml</code> for this test application.
+<source>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+    &lt;!DOCTYPE web-app PUBLIC
+    "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd"&gt;
+&lt;web-app&gt;
+  &lt;description&gt;MySQL Test App&lt;/description&gt;
+  &lt;resource-ref&gt;
+      &lt;description&gt;DB Connection&lt;/description&gt;
+      &lt;res-ref-name&gt;jdbc/TestDB&lt;/res-ref-name&gt;
+      &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+      &lt;res-auth&gt;Container&lt;/res-auth&gt;
+  &lt;/resource-ref&gt;
+&lt;/web-app&gt;
+</source>
+</p>
+
+<h3>4. Test code</h3>
+<p>Now create a simple test.jsp for use later.
+<source>
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;DB Test&lt;/title&gt;
@@ -114,9 +316,12 @@ mysql&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </source>
-    <ul><li>And create a Java class to actually use your new Datasource and connection pool. Note: this
-    code isn't anywhere near production ready - it's only supposed to be used as a simple test :-)</li></ul>
-    <source>
+</p>
+
+<p>And create a Java class to actually use your new Datasource and connection
+pool. Note: this code isn't anywhere near production ready - it's only
+supposed to be used as a simple test :-)
+<source>
 package foo;
 
 import javax.naming.*;
@@ -163,90 +368,21 @@ public class DBTest {
  public int getBar() { return bar;}
 }
 </source>
-  <ul><li>Now create a <code>WEB-INF/web.xml</code> for this test application</li></ul>
-  <source>
-&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
-    &lt;!DOCTYPE web-app PUBLIC 
-    "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
-    "http://java.sun.com/dtd/web-app_2_3.dtd"&gt;
-&lt;web-app&gt;  
-  &lt;description&gt;mySQL Test App&lt;/description&gt;
-  &lt;resource-ref&gt;
-      &lt;description&gt;DB Connection&lt;/description&gt;
-      &lt;res-ref-name&gt;jdbc/TestDB&lt;/res-ref-name&gt;
-      &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
-      &lt;res-auth&gt;Container&lt;/res-auth&gt;
-  &lt;/resource-ref&gt;
-&lt;/web-app&gt;
-</source>
-<p>That completes the standard webapp aspects of the test application. Now to configure Tomcat.</p>
-<ul><li>Add a declaration of your resource to <code>$CATALINA_HOME/conf/server.xml</code>
-Add this in between the <code>&lt;/Context&gt;</code> tag of the examples context and the 
-<code>&lt;/Host&gt;</code> tag closing the localhost definition. DONT ADD IT TO THE WARP CONNECTOR SECTION!!! 
-</li></ul>
-<source>
-&lt;Context path="/DBTest" docBase="DBTest"
-        debug="5" reloadable="true" crossContext="true"&gt;
+</p>
 
-  &lt;Logger className="org.apache.catalina.logger.FileLogger"
-             prefix="localhost_DBTest_log." suffix=".txt"
-             timestamp="true"/&gt;
+<p>Finally deploy your web app into <code>$CATALINA_HOME/webapps</code> either
+as a warfile called <code>DBTest.war</code> or into a sub-directory called
+<code>DBTest</code></p>
+<p>Once deployed, point a browser at
+<code>http://localhost:8080/DBTest/test.jsp</code> to view the fruits of
+your hard work.</p>
 
-  &lt;Resource name="jdbc/TestDB" 
-               auth="Container" 
-               type="javax.sql.DataSource"/&gt;
-
-  &lt;ResourceParams name="jdbc/TestDB"&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;factory&lt;/name&gt;
-      &lt;value&gt;org.apache.commons.dbcp.BasicDataSourceFactory&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxActive&lt;/name&gt;
-      &lt;value&gt;100&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxIdle&lt;/name&gt;
-      &lt;value&gt;30000&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-      &lt;name&gt;maxWait&lt;/name&gt;
-      &lt;value&gt;100&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-     &lt;name&gt;username&lt;/name&gt;
-     &lt;value&gt;javauser&lt;/value&gt;
-    &lt;/parameter&gt;
-    &lt;parameter&gt;
-     &lt;name&gt;password&lt;/name&gt;
-     &lt;value&gt;javadude&lt;/value&gt;
-    &lt;/parameter&gt;
-                  
-    &lt;parameter&gt;
-       &lt;name&gt;driverClassName&lt;/name&gt;
-       &lt;value&gt;org.gjt.mm.mysql.Driver&lt;/value&gt;
-    &lt;/parameter&gt;
-            
-    &lt;parameter&gt;
-      &lt;name&gt;url&lt;/name&gt;
-      &lt;value&gt;jdbc:mysql://localhost:3306/javatest&lt;/value&gt;
-    &lt;/parameter&gt;
-  &lt;/ResourceParams&gt;
-&lt;/Context&gt;
-</source>
-
-<ul><li>Finally deploy your web app into <code>$CATALINA_HOME/webapps</code> either as a warfile called 
-<code>DBTest.war</code> or into a sub-directory called <code>DBTest</code></li>
-<li>Once deployed, point a browser at <code>http://localhost:8080/DBTest/test.jsp</code> to view the fruits of your hard work.</li></ul>
-
-<p><i>ToDo: Perhaps we could bundle a simple project and Ant buildfile to demonstrate?</i></p>
 </subsection>
 
-
-<subsection name="Oracle 8i using Jakarta Commons Connection Pool">
+<subsection name="Oracle 8i">
 <h3>0.    Introduction</h3>
 <p><i>We would appreciate comments on this section as I'm not an Oracle DBA :-)</i></p>
-<p>Oracle requires minimal changes from the mySQL configuration except for the usual gotchas :-) Firstly
+<p>Oracle requires minimal changes from the MySQL configuration except for the usual gotchas :-) Firstly
 by default, Tomcat will only use <code>*.jar</code> files installed in <code>$CATALINA_HOME/common/lib</code>
  therefore <code>classes111.zip</code> or <code>classes12.zip</code> will need to be renamed with a <code>.jar</code> 
 extension. Since jarfiles are zipfiles, there is no need to unzip and jar these files - a simple rename will suffice.
@@ -257,7 +393,7 @@ you unzip the file, remove the <code>javax.sql.*</code> class heirarchy and reja
 file. Here we define a Datasource called myoracle using the thin driver to connect as user scott, password tiger
 to the schema called myschema in the sid called mysid. (Note: with the thin driver this sid is not the same as the tnsname)</p>
 
-<p>Use of the OCI driver should simply involve a changing thin to oci in the URL string.</p>
+<p>Use of the OCI driver should simply involve a changing thin to oci in the URL string.
 <source>
 &lt;Resource name="jdbc/myoracle" auth="Container"
               type="javax.sql.DataSource"/&gt; 
@@ -297,6 +433,8 @@ to the schema called myschema in the sid called mysid. (Note: with the thin driv
   &lt;/parameter&gt;
 &lt;/ResourceParams&gt;
 </source>
+</p>
+
 <h3>2.    web.xml configuration</h3>
 <p>You should ensure that you respect the elemeent ordering defined by the DTD when you
 create you applications web.xml file.</p>
@@ -321,7 +459,7 @@ Connection conn = ds.getConnection();
 </subsection>
 
 
-<subsection name="PostgreSQL using Jakarta Commons Connection Pool">
+<subsection name="PostgreSQL">
 <h3>0.    Introduction</h3>
 <p>PostgreSQL is configured in a similar manner to Oracle. Again, highlighting the differences.
 These notes are untested as yet and we would appreciate feedback.</p>
@@ -377,18 +515,8 @@ These notes are untested as yet and we would appreciate feedback.</p>
 </subsection>
 </section>
 
-
-
-
-
-<section name="Non DBCP Solutions">
-<p>
-These solutions either utilise a single connection to the database (not recommended for anything other
-than testing!) or some other pooling technology.
-</p>
-</section>
-
 <section name="Tyrex Connection Pool">
+
 <subsection name="Introduction">
 
 <p>
@@ -516,10 +644,14 @@ Tyrex also provides a <code>javax.transaction.UserTransaction</code>,
 </p>
 </subsection>
 
-
-
 </section>
 
+<section name="Non DBCP Solutions">
+<p>
+These solutions either utilise a single connection to the database (not recommended for anything other
+than testing!) or some other pooling technology.
+</p>
+</section>
 
 <section name="Oracle 8i with OCI client">
 <subsection name="Introduction">
@@ -545,7 +677,8 @@ Ensure that you have the <code>ocijdbc8.dll</code> or <code>.so</code> in your <
 using <code>System.loadLibrary("ocijdbc8");</code>
 </p>
 <p>
-You should next create a simple test servlet or jsp that has these <b>critical lines</b>:
+You should next create a simple test servlet or jsp that has these
+<strong>critical lines</strong>:
 </p>
 <source>
 DriverManager.registerDriver(new
@@ -588,6 +721,35 @@ Change the database connect string (of the form <code>host:port:SID</code>) with
 </subsection>
 </section>
 
+<section name="Common Problems">
+<p>Here are some common problems encountered with a web application which
+uses a database and tips for how to solve them.</p>
+
+<subsection name="Intermittent dB Connection Failures">
+<p>
+Tomcat runs within a JVM.  The JVM periodically performs garbage collection
+(GC) to remove java objects which are no longer being used.  When the JVM
+performs GC execution of code within Tomcat freezes. If the maximum time
+configured for establishment of a dB connection is less than the amount
+of time garbage collection took you can get a db conneciton failure.
+</p>
+
+<p>To collect data on how long garbage collection is taking add the
+<code>-verbose:gc</code> argument to your <code>CATALINA_OPTS</code>
+environment variable when starting Tomcat.  When verbose gc is enabled
+your <code>$CATALINA_BASE/logs/catalina.out</code> log file will include
+data for every garbage collection including how long it took.</p>
+
+<p>When your JVM is tuned correctly 99% of the time a GC will take less
+than one second.  The remainder will only take a few seconds.  Rarely,
+if ever should a GC take more than 10 seconds.</p>
+
+<p>Make sure that the db connection timeout is set to 10-15 seconds.
+For the DBCP you set this using the parameter <code>maxWait</code>.</p>
+
+</subsection>
+
+</section>
+
 </body>
 </document>
-
