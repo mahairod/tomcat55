@@ -127,6 +127,141 @@ well, overriding corresponding values from <code>conf/server.xml</code>
   configure, and use your own custom resource factory classes with
   Tomcat 4.</p>
 
+  <p><em>NOTE</em> - Of the standard resource factories, only the
+  "JDBC Data Source" and "User Transaction" factories are mandated to
+  be available on other platforms, and then they are required only if
+  the platform implements the Java2 Enterprise Edition (J2EE) specs.
+  All other standard resource factories, plus custom resource factories
+  that you write yourself, are specific to Tomcat and cannot be assumed
+  to be available on other containers.</p>
+
+  <subsection name="Generic JavaBean Resources">
+
+    <h3>0.  Introduction</h3>
+
+    <p>This resource factory can be used to create objects of <em>any</em>
+    Java class that conforms to standard JavaBeans naming conventions (i.e.
+    it has a zero-arguments constructor, and has property setters that
+    conform to the setFoo() naming pattern.  The resource factory will
+    create a new instance of the appropriate bean class every time a
+    <code>lookup()</code> for this entry is made.</p>
+
+    <p>The steps required to use this facility are described below.</p>
+
+    <h3>1.  Create Your JavaBean Class</h3>
+
+    <p>Create the JavaBean class which will be instantiated each time
+    that the resource factory is looked up.  For this example, assume
+    you create a class <code>com.mycompany.MyBean</code>, which looks
+    like this:</p>
+
+<source>
+package com.mycompany;
+
+public class MyBean {
+
+  private String foo = "Default Foo";
+
+  public String getFoo() {
+    return (this.foo);
+  }
+
+  public void setFoo(String foo) {
+    this.foo = foo;
+  }
+
+  private int bar = 0;
+
+  public int getBar() {
+    return (this.bar);
+  }
+
+  public void setBar(int bar) {
+    this.bar = bar;
+  }
+
+
+}
+</source>
+
+  <h3>2.  Declare Your Resource Requirements</h3>
+
+  <p>Next, modify your web application deployment descriptor
+  (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under which
+  you will request new instances of this bean.  The simplest approach is
+  to use a <code>&lt;resource-env-ref&gt;</code> element, like this:</p>
+
+<source>
+&lt;resource-env-ref&gt;
+  &lt;Description&gt;
+    Object factory for MyBean instances.
+  &lt;/Description&gt;
+  &lt;resource-env-ref-name&gt;
+    bean/MyBeanFactory
+  &lt;/resource-env-ref-name&gt;
+  &lt;resource-env-ref-type&gt;
+    com.mycompany.MyBean
+  &lt;/resource-env-ref-type&gt;
+&lt;resource-env-ref&gt;
+</source>
+
+    <p><strong>WARNING</strong> - Be sure you respect the element ordering
+    that is required by the DTD for web application deployment descriptors!
+    See the
+    <a href="http://java.sun.com/products/servlet/download.html">Servlet
+    Specification</a> for details.</p>
+
+  <h3>3.  Code Your Application's Use Of This Resource</h3>
+
+  <p>A typical use of this resource environment reference might look
+  like this:</p>
+
+<source>
+Context initCtx = new InitialContext();
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
+MyBean bean = (MyBean) envCtx.lookup("bean/MyBeanFactory");
+
+writer.println("foo = " + bean.getFoo() + ", bar = " +
+               bean.getBar());
+</source>
+
+    <h3>4.  Configure Tomcat's Resource Factory</h3>
+
+    <p>To configure Tomcat's resource factory, add an elements like this to the
+    <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
+    <code>Context</code> element for this web application (or nested inside
+    a <code>DefaultContext</code> element for the surrounding
+    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+<source>
+&lt;Context ...&gt;
+  ...
+  &lt;Resource name="bean/MyBeanFactory" auth="Container"
+            type="com.mycompany.MyBean"/&gt;
+  &lt;ResourceParams name="bean/MyBeanFactory"&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;factory&lt;/name&gt;
+      &lt;value&gt;org.apache.naming.factory.BeanFactory&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;bar&lt;/name&gt;
+      &lt;value&gt;23&lt;/value&gt;
+    &lt;/parameter&gt;
+  &lt;/ResourceParams&gt;
+  ...
+&lt;/Context&gt;
+</source>
+
+    <p>Note that the resource name (here, <code>bean/MyBeanFactory</code>
+    must match the value specified in the web application deployment
+    descriptor.  We are also initializing the value of the <code>bar</code>
+    property, which will cause <code>setBar(23)</code> to be called before
+    the new bean is returned.  Because we are not initializing the
+    <code>foo</code> property (although we could have), the bean will
+    contain whatever default value is set up by its constructor.</p>
+
+  </subsection>
+
+
   <subsection name="JavaMail Sessions">
 
     <h3>0.  Introduction</h3>
