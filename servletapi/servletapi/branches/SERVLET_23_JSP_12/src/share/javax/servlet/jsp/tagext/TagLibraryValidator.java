@@ -55,15 +55,30 @@
 
 package javax.servlet.jsp.tagext;
 
+import java.util.Map;
+
 /**
  * Translation-time validator class for a JSP page. 
  * A validator operates on the XML document associated with the JSP page.
  *
  * <p>
- * Validator classes are associated with a tag library via the TLD.
- * A TagLibraryValidator instance is associated with a given TLD
- * and the JSP translator will invoke the setTagLibraryInfo method
- * on an instance before invoking the validate method.
+ * The TLD file associates a TagLibraryValidator class and some init
+ * arguments with a tag library.
+ *
+ * <p>
+ * The JSP container is reponsible for locating an approriate
+ * instance of the appropriate subclass by
+ *
+ * <ul>
+ * <li> new a fresh instance, or reuse an available one
+ * <li> invoke the setInitParams(Map) method on the instance
+ * </ul>
+ *
+ * once initialized, the validate(String, String, PageData) method will
+ * be invoked, where the first two arguments are the prefix
+ * and uri arguments used in the taglib directive.
+ *
+ * <p>
  * A TagLibraryValidator instance
  * may create auxiliary objects internally to perform
  * the validation (e.g. an XSchema validator) and may reuse it for all
@@ -73,37 +88,49 @@ package javax.servlet.jsp.tagext;
 abstract public class TagLibraryValidator {
 
     /**
-     * Set the TagLibraryInfo data for this validator.
+     * Set the init data in the TLD for this validator.
+     * Parameter names are keys, and parameter values are the values.
      *
-     * @param tld The TagLibraryInfo instance
+     * @param initMap A Map describing the init parameters
      */
-    public void setTagLibraryInfo(TagLibraryInfo tld) {
-	theTLD = tld;
+    public void setInitParameters(Map map) {
+	initParameters = map;
     }
 
 
     /**
-     * Get the TagLibraryInfo associated with with Validator.
+     * Get the init parameters data as an immutable Map.
+     * Parameter names are keys, and parameter values are the values.
      *
-     * @return The TagLibraryInfo instance
+     * @return The init parameters as an immutable map.
      */
-    public TagLibraryInfo getTagLibraryInfo() {
-	return theTLD;
+    public Map getInitParameters() {
+	return initParameters;
     }
 
     /**
      * Validate a JSP page.
+     * This will get invoked once per directive in the JSP page.
      * This method will return a null String if the page passed through
      * is valid; otherwise an error message.
      *
-     * @param thePage the JSP page object
+     * @param prefix the value of the prefix argument in the directive
+     * @param uri the value of the uri argument in the directive
+     * @param thePage the JspData page object
      * @return A string indicating whether the page is valid or not.
      */
-    public String validate(PageInfo thePage) {
+    public String validate(String prefix, String uri, PageData page) {
 	return null;
     }
 
+    /**
+     * Release any data kept by this instance for validation purposes
+     */
+    public void release() {
+	initParameters = null;
+    };
+
     // Private data
-    private TagLibraryInfo theTLD;
+    private Map initParameters;
 
 }
