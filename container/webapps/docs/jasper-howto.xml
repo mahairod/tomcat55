@@ -99,6 +99,11 @@ check for JSP modification on every access)? <code>true</code> or
 enabled. <code>true</code> or <code>false</code>, default <code>true</code>.
 </li>
 
+<li><strong>engineOptionsClass</strong> - Allows specifying the Options class
+used to configure Jasper. If not present, the default EmbeddedServletOptions
+will be used.
+</li>
+
 <li><strong>ieClassId</strong> - The class-id value to be sent to Internet
 Explorer when using &lt;jsp:plugin&gt; tags.   Default
 <code>clsid:8AD9C840-044E-11D1-B3E9-00805F499D93</code>.</li>
