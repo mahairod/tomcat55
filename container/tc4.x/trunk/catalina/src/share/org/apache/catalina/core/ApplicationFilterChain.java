@@ -185,6 +185,8 @@ final class ApplicationFilterChain implements FilterChain {
                     throw (ServletException) e;
                 else if (e instanceof IOException)
                     throw (IOException) e;
+                else if (e instanceof RuntimeException)
+                    throw (RuntimeException) e;
                 else
                     throw new ServletException(e.getMessage(), e);
             }
@@ -218,6 +220,11 @@ final class ApplicationFilterChain implements FilterChain {
                                               filter);
                 throw e;
             } catch (ServletException e) {
+                if (filter != null)
+                    support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
+                                              filter);
+                throw e;
+            } catch (RuntimeException e) {
                 if (filter != null)
                     support.fireInstanceEvent(InstanceEvent.AFTER_FILTER_EVENT,
                                               filter);
@@ -263,6 +270,10 @@ final class ApplicationFilterChain implements FilterChain {
                                       servlet);
             throw e;
         } catch (ServletException e) {
+            support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
+                                      servlet);
+            throw e;
+        } catch (RuntimeException e) {
             support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
                                       servlet);
             throw e;
