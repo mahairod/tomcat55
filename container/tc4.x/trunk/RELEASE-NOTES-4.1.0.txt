@@ -45,11 +45,6 @@ Jasper New Features:
 -------------------
 
 
---------------------
-Webapps New Features:
---------------------
-
-
 
 ==========================
 BUG FIXES AND IMPROVEMENTS:
@@ -71,15 +66,15 @@ Jasper Bug Fixes:
 ----------------
 
 
------------------
-Webapps Bug Fixes:
------------------
+----------------------
+Bugzilla Bugs Resolved:
+----------------------
 
 
-------------------
-Security Bug Fixes:
-------------------
 
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
 
 * Tomcat 4.0 and JNI Based Applications
 * Tomcat 4.0 Standard APIs Available
