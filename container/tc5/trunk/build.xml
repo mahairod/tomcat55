@@ -859,6 +859,21 @@
         <include name="bin/tool-wrapper.sh" />
       </tarfileset>
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
+        <include name="bin/**" />
+        <include name="common/**" />
+        <include name="conf/**" />
+        <include name="logs/**" />
+        <include name="server/**" />
+        <include name="shared/**" />
+        <include name="temp/**" />
+        <include name="webapps/**" />
+        <include name="work/**" />
+        <include name="LICENSE" />
+        <include name="README.txt" />
+        <include name="RELEASE-NOTES" />
+        <include name="CHANGELOG" />
+        <include name="RUNNING.txt" />
+        <include name="BENCHMARKS.txt" />
         <exclude name="bin/catalina.sh" />
         <exclude name="bin/digest.sh" />
         <exclude name="bin/jasper.sh" />
