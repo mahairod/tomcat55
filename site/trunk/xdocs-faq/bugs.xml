@@ -78,7 +78,7 @@ If you think you found a bug,
         Can a developer <b>easily</b> reproduce the bug in their own environment?
       </li>
       <li>
-        Have you provided a patch? Is against cvs? using the correct file? Using
+        Have you provided a patch? Is it against cvs? Using the correct file? Using
         <code>cvs diff -u</code>
       </li>
       <li>
@@ -90,7 +90,7 @@ If you think you found a bug,
     </ul>
 
     Some developers are uncomfortable submitting patches to code they are
-    unfamiliar with. The committers are not experts in all areas of tomcat.
+    unfamiliar with. The committers are not experts in all areas of Tomcat.
     It may be that the developer who has the ability to adequately review
     the patch may be too busy or unable to review the bug. That is the bad news,
     the good news is Tomcat is Open Source and you can build and use your own

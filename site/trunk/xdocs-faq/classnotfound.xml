@@ -71,12 +71,12 @@
 <p>
   <ul>
     <li>
-      <a href="#usebean">Why is <code>jsp:useBean</code> not working!</a>
+      <a href="#usebean">Why is <code>jsp:useBean</code> not working?</a>
     </li>
     <li>
       <a href="#filter">
         Why do I get <code>java.lang.NoClassDefFoundError:
-        javax/servlet/Filter</code>
+        javax/servlet/Filter</code>?
         </a>
      </li>
     <li>
@@ -101,7 +101,7 @@
         Your bean is packaged in a class.
       </li>
       <li>
-        You have fully qualifies your class name
+        You have fully qualified your class name
         (eg:<code>com.bar.package.MyClass</code>) OR
       </li>
       <li>
@@ -115,7 +115,7 @@
     <question>
      <a name="filter">
        Why do I get <code>java.lang.NoClassDefFoundError:
-       javax/servlet/Filter</code>
+       javax/servlet/Filter</code>?
      </a>
     </question>
     <answer>
@@ -129,7 +129,7 @@
     <question>
      <a name="xml">
        Why do I get <code>java.lang.NoClassDefFoundError:
-       org/xml/sax/InputSource</code>
+       org/xml/sax/InputSource</code>?
      </a>
     </question>
     <answer>
