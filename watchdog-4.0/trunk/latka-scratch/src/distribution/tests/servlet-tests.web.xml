@@ -834,6 +834,11 @@
     
     <servlet-class>tests.javax_servlet.RequestDispatcher.IncludeTestServlet</servlet-class>
     
+    <init-param>
+      <param-name>includeTarget</param-name>
+      <param-value>/tests/javax_servlet/RequestDispatcher/IncludedServlet</param-value>
+    </init-param>
+    
     <load-on-startup>0</load-on-startup>
     
   

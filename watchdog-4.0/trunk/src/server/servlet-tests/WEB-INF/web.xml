@@ -402,6 +402,10 @@
     <servlet-name>IncludeTest</servlet-name>
     <display-name>IncludeTest</display-name>
     <servlet-class>tests.javax_servlet.RequestDispatcher.IncludeTestServlet</servlet-class>
+    <init-param>
+      <param-name>includeTarget</param-name>
+      <param-value>/IncludedServlet</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>

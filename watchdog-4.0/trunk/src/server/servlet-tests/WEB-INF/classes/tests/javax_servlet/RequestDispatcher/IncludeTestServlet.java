@@ -77,7 +77,7 @@ public class IncludeTestServlet extends HttpServlet {
 
     public void service( HttpServletRequest request, HttpServletResponse response )
     throws ServletException, IOException {
-        String path = "/IncludedServlet";
+        String path = getServletConfig().getInitParameter("includeTarget");
         RequestDispatcher rd = getServletContext().getRequestDispatcher( path );
         rd.include( request, response );
     }
