@@ -26,9 +26,14 @@
 ${StrRep}
   Var "JavaHome"
 
+
+
 ;--------------------------------
 ;Configuration
 
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_RIGHT
+  !define MUI_HEADERIMAGE_BITMAP header.bmp
   !define MUI_WELCOMEFINISHPAGE_BITMAP side_left.bmp 
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
   !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcat5w.exe
