@@ -198,13 +198,7 @@ public class Response {
     }
 
     public void finish() throws IOException {
-	if (usingWriter && (writer != null)) {
-	    writer.flush();
-	    //writer.close();
-	}
-	oBuffer.flushChars();
-	oBuffer.flushBytes();
-
+        oBuffer.close();
 	request.getContextManager().doAfterBody(request, this);
     }
 
@@ -293,8 +287,12 @@ public class Response {
     public void setBufferSize(int size) throws IllegalStateException {
 	// Force the PrintWriter to flush the data to the OutputStream.
 	if (usingWriter == true && writer != null ) writer.flush();
-
-	if( oBuffer.getBytesWritten() >0  ) {
+        try{
+            oBuffer.flushChars();
+        }catch(IOException ex){
+                ;
+        }
+	if( oBuffer.getBytesWritten() >0) {
 	    throw new IllegalStateException ( sm.getString("servletOutputStreamImpl.setbuffer.ise"));
 	}
 	oBuffer.setBufferSize( size );
