@@ -107,6 +107,20 @@
     <form-bean      name="valvesForm"
                     type="org.apache.webapp.admin.valve.ValvesForm"/>
 
+    <!-- ========== Resources Module ========== -->
+
+    <form-bean      name="envEntryForm"
+                    type="org.apache.webapp.admin.resources.EnvEntryForm"/>
+
+    <form-bean      name="envEntriesForm"
+                    type="org.apache.webapp.admin.resources.EnvEntriesForm"/>
+
+    <form-bean      name="dataSourceForm"
+                    type="org.apache.webapp.admin.resources.DataSourceForm"/>
+
+    <form-bean      name="dataSourcesForm"
+                    type="org.apache.webapp.admin.resources.DataSourcesForm"/>
+
     <!-- ========== User Database Module ========== -->
 
     <form-bean      name="databaseForm"
@@ -288,6 +302,40 @@
 
     <forward        name="Valves"
                     path="/valve/valves.jsp"
+                redirect="false"/>
+
+    <!-- ========== Resources Module ========== -->
+
+    <forward        name="EnvEntry"
+                    path="/resources/envEntry.jsp"
+                redirect="false"/>
+
+    <forward        name="EnvEntries Delete List"
+                    path="/resources/deleteEnvEntries.jsp"
+                redirect="false"/>
+
+    <forward        name="EnvEntries List"
+                    path="/resources/listEnvEntries.jsp"
+                redirect="false"/>
+
+    <forward        name="EnvEntries List Setup"
+                    path="/resources/listEnvEntries.do?forward=EnvEntries+List"
+                redirect="false"/>
+                
+    <forward        name="DataSource"
+                    path="/resources/dataSource.jsp"
+                redirect="false"/>
+
+    <forward        name="DataSources Delete List"
+                    path="/resources/deleteDataSources.jsp"
+                redirect="false"/>
+
+    <forward        name="DataSources List"
+                    path="/resources/listDataSources.jsp"
+                redirect="false"/>
+
+    <forward        name="DataSources List Setup"
+                    path="/resources/listDataSources.do?forward=DataSources+List"
                 redirect="false"/>
                         
     <!-- ========== User Database Module ========== -->
@@ -697,6 +745,47 @@
               input="/valve/singleSignOnValve.jsp"
                scope="session"/>
                
+   <!-- ========== Resources Module ========== -->
+
+   <action    path="/resources/deleteEnvEntries"
+               name="envEntriesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.DeleteEnvEntriesAction"/>
+    
+    <action    path="/resources/deleteDataSources"
+               name="dataSourcesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.DeleteDataSourcesAction"/>
+               
+    <action    path="/resources/listEnvEntries"
+               name="envEntriesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.ListEnvEntriesAction"/>
+
+    <action    path="/resources/listDataSources"
+               name="dataSourcesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.ListDataSourcesAction"/>
+
+   <action    path="/resources/saveEnvEntry"
+              input="/resources/envEntry.jsp"
+               name="envEntryForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.SaveEnvEntryAction"/>
+
+    <action    path="/resources/saveDataSource"
+              input="/resources/dataSource.jsp"
+               name="dataSourceForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.SaveDataSourceAction"/>
+
+   <action    path="/resources/setUpEnvEntry"
+               type="org.apache.webapp.admin.resources.SetUpEnvEntryAction"/>
+
+    <action    path="/resources/setUpDataSource"
+               type="org.apache.webapp.admin.resources.SetUpDataSourceAction"/>
+
+           
     <!-- ========== User Database Module ========== -->
 
     <action    path="/users/deleteGroups"
