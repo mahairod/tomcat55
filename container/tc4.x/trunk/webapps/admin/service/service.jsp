@@ -44,7 +44,7 @@
             <controls:action selected="true">
               -----<bean:message key="actions.available.actions"/>-----
             </controls:action>
-            <controls:action>
+            <controls:action disabled="true">
               -------------------------------------
             </controls:action>
             <logic:notEqual name="serviceForm" property="adminAction" value="Create">
@@ -68,19 +68,17 @@
                 -------------------------------------
               </controls:action>
               --%>
-              <%--
-              <controls:action url='<%= "/setUpAddHost.do?serviceName=" +
+              <controls:action url='<%= "/AddHost.do?serviceName=" +
                                         serviceName %>'>  
-                <bean:message key="actions.host.create"/>
-              </controls:action>
-              <controls:action url='<%= "/setUpDeleteHost.do?serviceName=" +
+                <bean:message key="actions.hosts.create"/>
+              </controls:action>              
+              <controls:action url='<%= "/DeleteHost.do?serviceName=" +
                                         serviceName %>'>
-                <bean:message key="actions.host.delete"/> 
+                <bean:message key="actions.hosts.deletes"/> 
               </controls:action>
-              <controls:action>
+              <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
-              --%>
               <%--
               <controls:action url="">
                 <bean:message key="actions.logger.create"/>

@@ -42,7 +42,7 @@
        <div align="right">
         <controls:actions>
             <controls:action selected="true"> -----<bean:message key="actions.available.actions"/>----- </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
+            <controls:action disabled="true"> ------------------------------------- </controls:action>
             <logic:notEqual name="hostForm" property="adminAction" value="Create">              
             <%--
             <controls:action url="">  <bean:message key="actions.accesslogger.create"/> </controls:action>
@@ -63,11 +63,11 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
+            --%> 
             <controls:action url='<%= "/DeleteHost.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
                 <bean:message key="actions.hosts.delete"/> 
-            </controls:action>
-            --%>            
+            </controls:action>           
            </logic:notEqual>          
          </controls:actions>
        </div>

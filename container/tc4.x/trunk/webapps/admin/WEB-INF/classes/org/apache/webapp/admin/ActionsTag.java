@@ -217,14 +217,11 @@ public class ActionsTag extends BodyTagSupport {
                 boolean selected = ((Boolean) selecteds.get(i)).booleanValue();
                 boolean disabled = ((Boolean) disableds.get(i)).booleanValue();             
                 String url = (String) urls.get(i);
-                if (disabled) {
-                    out.println("<optgroup disabled> </optgroup>");
-                } else {    
                 out.print("<option");
                 if (selected)
                     out.print(" selected=\"selected\"");
-                //if (disabled)
-                   // out.print(" disabled");                
+                if (disabled)
+                    out.print(" disabled=\"true\"");                
                 out.print(" value=\"");
                 if (url != null)
                     out.print(url);
@@ -233,7 +230,6 @@ public class ActionsTag extends BodyTagSupport {
                 if (label != null)
                     out.print(label);
                 out.println("</option>");
-                }
             }
 
             // Render the end of this element
