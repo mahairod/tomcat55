@@ -26,7 +26,12 @@
   better overall performance than running your applications under
   Tomcat stand-alone using the <a href="http11.html">HTTP/1.1 Connector</a>.  
   However, the only way to know for sure whether it will provide better 
-  performance for <strong>your</strong> application is to try it both ways.</p>
+  performance for <strong>your</strong> application is to try it both 
+  ways.</p>
+
+  <p>This connector supports load balancing when used in conjunction with
+  the <code>jvmRoute</code> attribute of the 
+  <a href="engine.html">Engine</a>.</p>
 
 </section>
 
@@ -87,7 +92,7 @@
   <p>The standard implementation of <strong>AJP Connector</strong> is
   <strong>org.apache.ajp.tomcat4.Ajp13Connector</strong>.</p>
 
-  <p><strong>This implementation supports the AJP 1.3 protocol.</strong></p>
+  <p><strong>This implementation supports the AJP 1.3 and 1.4 protocols.</strong></p>
 
   <p>It supports the following additional attributes (in addition to the
   common attributes listed above):</p>
