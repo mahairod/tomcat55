@@ -20,7 +20,6 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
