@@ -18,18 +18,15 @@ package org.apache.webapp.admin.context;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
-import org.apache.webapp.admin.LabelValueBean;
 import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 /**
@@ -90,6 +87,7 @@ public class AddContextAction extends Action {
         contextFm.setCrossContext("false");
         contextFm.setDocBase("");
         contextFm.setOverride("false");
+        contextFm.setPrivileged("false");
         contextFm.setPath("");
         contextFm.setReloadable("false");
         contextFm.setSwallowOutput("false");
