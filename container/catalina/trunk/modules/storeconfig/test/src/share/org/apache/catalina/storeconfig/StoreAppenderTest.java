@@ -22,11 +22,10 @@ import java.io.StringWriter;
 
 import junit.framework.TestCase;
 
+import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.startup.SetAllPropertiesRule;
-import org.apache.catalina.storeconfig.StoreAppender;
-import org.apache.catalina.storeconfig.StoreDescription;
 import org.apache.tomcat.util.digester.Digester;
 import org.xml.sax.SAXException;
 
@@ -71,6 +70,22 @@ public class StoreAppenderTest extends TestCase {
         PrintWriter writer = new PrintWriter(new StringWriter());
         StandardServer bean = new StandardServer();
         new StoreAppender().printAttributes(writer, 0, true, bean, desc);
+    }
+
+    public void testStoreReplicationTransmitter() throws Exception {
+        StoreDescription desc = new StoreDescription();
+        desc.setStandard(true);
+        StringWriter swriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(swriter);
+        ReplicationTransmitter bean = new ReplicationTransmitter();
+        bean.setReplicationMode("asynchronous");
+        bean.setProperty("keepAliveTimeout","80000");
+        new ReplicationTransmitterStoreAppender().printAttributes(writer, 0, true, bean, desc);
+        String aspectedResult =LF.LINE_SEPARATOR           
+           + "    replicationMode=\"asynchronous\"" + LF.LINE_SEPARATOR 
+           + "    keepAliveTimeout=\"80000\"" ;
+        assertEquals(aspectedResult, swriter.getBuffer().toString());
+
     }
 
 }
