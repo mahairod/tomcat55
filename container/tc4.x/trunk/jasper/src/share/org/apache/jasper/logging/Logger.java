@@ -322,7 +322,7 @@ public abstract class Logger {
      * 				(WARNING/DEBUG/INFO etc)
      */
     public final void log(String message, int verbosityLevel) {
-	log(message, null, level);
+	log(message, null, verbosityLevel);
     }
 
     /**
