@@ -26,12 +26,33 @@
   </p>
 </section>
 
-<section name="Tomcat 5.5.8">
+<section name="Tomcat 5.5.8 (yoavs)">
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        <bug>33187</bug>: Remove any logging of the password in the JAAS realm, 
+        submitted by Andrew Jaquith (remm)
+      </fix>
+      <fix>
+        <bug>33033</bug>: Don't do anything to the response in the ErrorReportValve 
+        if data has already been written (remm)
+      </fix>
+      <update>
+        Add charset support for the URLs used by the tasks, to remove deprecation (remm)
+      </update>
+      <fix>
+        <bug>26135</bug>: Workaround for memory leak when reloading Struts 
+        based web applications by clearing the bean instrospector cache of the JVM on
+        classloader stop, submitted by Tobias Löfstrand (remm)
+      </fix>
+    </changelog>
+  </subsection>
+
   <subsection name="Jasper">
     <changelog>
       <fix>
-        <bug>33223</bug>: pageContext.forward and <jsp:include> result
-in StringIndexOutOfBoundsException (luehe)
+        <bug>33223</bug>: pageContext.forward and jsp:include result 
+        in StringIndexOutOfBoundsException (luehe)
       </fix>
     </changelog>
   </subsection>
