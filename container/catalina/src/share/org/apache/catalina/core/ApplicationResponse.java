@@ -65,6 +65,8 @@
 package org.apache.catalina.core;
 
 
+import java.util.Locale;
+
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletResponseWrapper;
 
@@ -178,6 +180,28 @@ class ApplicationResponse extends ServletResponseWrapper {
         if (!included)
             getResponse().setContentType(type);
 
+    }
+
+
+    /**
+     * Ignore <code>setLocale()</code> calls on an included response.
+     *
+     * @param loc The new locale
+     */
+    public void setLocale(Locale loc) {
+        if (!included)
+            getResponse().setLocale(loc);
+    }
+
+
+    /**
+     * Ignore <code>setBufferSize()</code> calls on an included response.
+     *
+     * @param size The buffer size
+     */
+    public void setBufferSize(int size) {
+        if (!included)
+            getResponse().setBufferSize(size);
     }
 
 
