@@ -22,16 +22,6 @@ java org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
 if "%1"=="dist" goto ear
 goto clean
 
-:ear
-   echo BUILDING EAR....
-   mkdir dist\foo
-   mkdir dist\foo\META-INF
-   copy src\etc\ear-dd.xml dist\foo\META-INF\application.xml
-   copy dist\servlet-tests.war dist\foo
-   copy dist\jsp-tests.war dist\foo
-   jar -cf dist\jcheck.ear dist\foo\META-INF\application.xml dist\foo\jsp-tests.war dist\foo\servlet-tests.war
-   rm -r dist\foo
-
 :clean
 
 rem clean up classpath after
