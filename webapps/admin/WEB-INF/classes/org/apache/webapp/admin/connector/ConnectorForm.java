@@ -156,6 +156,11 @@ public final class ConnectorForm extends ActionForm {
      * The text for the minSpare.
      */
     private String minSpare = null;
+
+    /**
+     * The text for the threadPriority.
+     */
+    private String threadPriority = null;
     
     /**
      * The text for the URIEncoding.
@@ -892,7 +897,26 @@ public final class ConnectorForm extends ActionForm {
         
         this.minSpare = minSpare;
         
-    }  
+    }
+
+    /**
+     * Return the threadPriority.
+     */
+    public String getThreadPriority() {
+
+      return this.threadPriority;
+
+    }
+
+    /**
+     * Set the threadPriority.
+     */
+    
+    public void setThreadPriority(String threadPriority) {
+      
+      this.threadPriority = threadPriority;
+    
+    }
     
     /**
      * Return the URIEncoding text.
@@ -1102,6 +1126,7 @@ public final class ConnectorForm extends ActionForm {
         this.maxSpare = null;
         this.maxThreads = null;
         this.minSpare = null;
+        this.threadPriority = null;
         this.uriEncodingText = null;
         this.useBodyEncodingForURI = "false";
         this.allowTrace = "false";
