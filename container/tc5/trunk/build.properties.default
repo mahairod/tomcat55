@@ -102,13 +102,15 @@ regexp.jar=${regexp.lib}/jakarta-regexp-1.2.jar
 regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-regexp-1.2.tar.gz
 
 
-# ----- Xerces XML Parser, version 2.0.2 or later -----
-# Note: Optional with JDK 1.4+
-xerces.home=${base.path}/xerces-2_0_2
+# ----- Xerces XML Parser, version 2 nightly build July 31, 2002 or later -----
+#xerces.home=${base.path}/xerces-2_0_2
+xerces.home=${base.path}/xerces-2-latest
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.0.2.tar.gz
+#xerces.loc=http://xml.apache.org/dist/xerces-j/Xerces-J-bin.2.0.2.tar.gz
+xercesImpl.loc=http://gump.covalent.net/jars/latest/xml-xerces2/xercesImpl.jar
+xmlParserAPIs.loc=http://gump.covalent.net/jars/latest/xml-xerces2/xmlParserAPIs.jar
 
 
 # --------------------------------------------------
