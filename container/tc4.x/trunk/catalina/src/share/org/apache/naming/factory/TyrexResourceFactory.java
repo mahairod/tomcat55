@@ -18,18 +18,13 @@
 package org.apache.naming.factory;
 
 import java.util.Hashtable;
-import java.util.Iterator;
 import javax.naming.Name;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.RefAddr;
-import javax.naming.spi.ObjectFactory;
-import java.net.URL;
 import org.apache.naming.ResourceRef;
-import tyrex.tm.TransactionDomain;
 import tyrex.resource.Resources;
-import tyrex.resource.ResourceConfig;
 
 /**
  * Object factory for Tyrex Resources.<br>

@@ -18,7 +18,6 @@
 package org.apache.naming.resources;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 import java.io.InputStream;
@@ -33,7 +32,6 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 

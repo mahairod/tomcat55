@@ -17,7 +17,6 @@
 
 package org.apache.naming;
 
-import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import javax.naming.NamingException;

@@ -17,19 +17,13 @@
 
 package org.apache.naming.factory;
 
-import java.net.URL;
 import java.util.Hashtable;
 import javax.naming.Name;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.naming.RefAddr;
-import javax.naming.spi.ObjectFactory;
-import javax.transaction.UserTransaction;
 
 import org.apache.naming.TransactionRef;
-
-import tyrex.tm.TransactionDomain;
 
 /**
  * Object factory for Tyrex User transactions.<br>

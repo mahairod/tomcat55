@@ -18,17 +18,13 @@
 package org.apache.naming.resources;
 
 import java.util.Hashtable;
-import java.util.HashMap;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameParser;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.CompositeName;
-import javax.naming.NameParser;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import org.apache.naming.StringManager;

@@ -17,12 +17,10 @@
 
 package org.apache.naming.resources;
 
-import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import javax.naming.NamingException;
 import javax.naming.NamingEnumeration;
-import javax.naming.NameClassPair;
 
 /**
  * Naming enumeration implementation.
