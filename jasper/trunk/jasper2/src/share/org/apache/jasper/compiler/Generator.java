@@ -552,7 +552,9 @@ class Generator {
      * Generates a XML declaration
      */
     private void generateXmlDeclaration(Node.Nodes page) {
-	if (page.getRoot().isXmlSyntax() && ! pageInfo.hasJspRoot()) {
+	if (page.getRoot().isXmlSyntax() && ! pageInfo.hasJspRoot() && 
+		(pageInfo.getOmitXmlDecl() == null /* not specified */ ||
+		 ! JspUtil.booleanValue(pageInfo.getOmitXmlDecl()))) {
 	    String cType = pageInfo.getContentType();
 	    String charSet = cType.substring(cType.indexOf("charset=")+8);
 	    out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\"" +

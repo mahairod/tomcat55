@@ -434,6 +434,9 @@ class Validator {
 	    new JspUtil.ValidAttribute("varReader"),
 	    new JspUtil.ValidAttribute("scope") };
 
+	private static final JspUtil.ValidAttribute[] jspOutputAttrs = {
+	    new JspUtil.ValidAttribute("omit-xml-declaration", true) };
+
 	/*
 	 * Constructor
 	 */
@@ -844,6 +847,17 @@ class Validator {
 	    n.setJspAttributes(jspAttrs);
 
 	    visitBody(n);
+	}
+
+	public void visit(Node.JspOutput n) throws JasperException {
+            JspUtil.checkAttributes("jsp:output", n, jspOutputAttrs, err);
+
+	    if (pageInfo.getOmitXmlDecl() != null) {
+                err.jspError(n, "jsp.error.multiple.jspoutput");
+	    }
+
+	    pageInfo.setOmitXmlDecl(
+			n.getAttributeValue("omit-xml-declaration"));
 	}
 
 	/**

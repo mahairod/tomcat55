@@ -92,6 +92,7 @@ public interface TagConstants {
     public static final String JSP_ATTRIBUTE = "jsp:attribute";
     public static final String JSP_BODY = "jsp:body";
     public static final String JSP_ELEMENT = "jsp:element";
+    public static final String JSP_OUTPUT = "jsp:output";
 
     /*
      * Tag Files

@@ -904,6 +904,20 @@ abstract class Node {
     }
 
     /**
+     * Represents a <jsp:output>.
+     */
+    public static class JspOutput extends Node {
+
+	public JspOutput(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
      * Collected information about child elements.  Used by nodes like
      * CustomTag, JspBody, and NamedAttribute.  The information is 
      * set in the Collector.
@@ -1724,6 +1738,10 @@ abstract class Node {
         }
 
 	public void visit(TemplateText n) throws JasperException {
+	    doVisit(n);
+	}
+
+	public void visit(JspOutput n) throws JasperException {
 	    doVisit(n);
 	}
     }

@@ -277,6 +277,8 @@ class JspDocumentParser extends DefaultHandler
 	    node = new Node.JspBody(start, current);
 	} else if (qName.equals(JSP_ATTRIBUTE)) {
 	    node = new Node.NamedAttribute(attrsCopy, start, current);
+	} else if (qName.equals(JSP_OUTPUT)) {
+	    node = new Node.JspOutput(attrsCopy, start, current);
 	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(

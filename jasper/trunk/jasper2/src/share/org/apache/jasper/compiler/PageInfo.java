@@ -102,6 +102,7 @@ class PageInfo {
     private boolean elIgnored = false;
     private boolean elIgnoredSpecified = false;
     private boolean isXml = false;
+    private String omitXmlDecl = null;
 
     // true is there is a is-xml element in jsp-config
     private boolean isXmlSpecified = false;	
@@ -326,5 +327,13 @@ class PageInfo {
 
     public boolean hasJspRoot() {
 	return hasJspRoot;
+    }
+
+    public String getOmitXmlDecl() {
+	return omitXmlDecl;
+    }
+
+    public void setOmitXmlDecl(String omit) {
+	omitXmlDecl = omit;
     }
 }
