@@ -25,6 +25,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+
 import org.apache.catalina.security.SecurityClassLoad;
 
 
@@ -143,8 +147,24 @@ public final class Bootstrap {
         File[] packed = (File[]) packedList.toArray(new File[0]);
         URL[] urls = (URL[]) urlList.toArray(new URL[0]);
 
-        return ClassLoaderFactory.createClassLoader
+        ClassLoader classLoader = ClassLoaderFactory.createClassLoader
             (unpacked, packed, urls, parent);
+
+        // Retrieving MBean server
+        MBeanServer mBeanServer = null;
+        if (MBeanServerFactory.findMBeanServer(null).size() > 0) {
+            mBeanServer = 
+                (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
+        } else {
+            mBeanServer = MBeanServerFactory.createMBeanServer();
+        }
+
+        // Register the server classloader
+        ObjectName objectName = 
+            new ObjectName("Catalina:type=ServerClassLoader,name=" + name);
+        mBeanServer.registerMBean(classLoader, objectName);
+
+        return classLoader;
 
     }
 
