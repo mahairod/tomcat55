@@ -398,10 +398,8 @@ final class ApplicationDispatcher
             if ( log.isDebugEnabled() )
                 log.debug(" Non-HTTP Forward");
             
-            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
+            processRequest(hrequest,hresponse);
 
-            invoke(request, response);
         }
 
         // Handle an HTTP named dispatcher forward
@@ -409,12 +407,8 @@ final class ApplicationDispatcher
 
             if ( log.isDebugEnabled() )
                 log.debug(" Named Dispatcher Forward");
-
             
-            request.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-            request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
-            
-            invoke(request, response);
+            processRequest(request,response);
 
         }
 
@@ -452,13 +446,10 @@ final class ApplicationDispatcher
  
             if (queryString != null) {
                 wrequest.setQueryString(queryString);
-		wrequest.setQueryParams(queryString);
+                wrequest.setQueryParams(queryString);
             }
 
-            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, origServletPath);
-            outerRequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR, new Integer(ApplicationFilterFactory.FORWARD));
- 
-            invoke(outerRequest, response);
+            processRequest(request,response);
             unwrapRequest();
 
         }
@@ -499,7 +490,42 @@ final class ApplicationDispatcher
 
     }
 
+    
 
+    /**
+     * Prepare the request based on the filter configuration.
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet error occurs
+     */
+    private void processRequest(ServletRequest request, ServletResponse response)
+            throws IOException, ServletException {
+                
+        if (request.getAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR) != null){
+            Integer disInt = 
+                (Integer)request.getAttribute(
+                    ApplicationFilterFactory.DISPATCHER_TYPE_ATTR);
+
+            if (disInt.intValue() != ApplicationFilterFactory.ERROR) {
+                outerRequest.setAttribute(
+                    ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                    origServletPath);
+
+                outerRequest.setAttribute(
+                    ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                        new Integer(ApplicationFilterFactory.FORWARD));
+
+                invoke(outerRequest, response);
+            } else {
+                invoke(request, response);                  
+            }
+        }        
+    }
+    
+    
+    
     /**
      * Include the response from another resource in the current response.
      * Any runtime exception, IOException, or ServletException thrown by the
