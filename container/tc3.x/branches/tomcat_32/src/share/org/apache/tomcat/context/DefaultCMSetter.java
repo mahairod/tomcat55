@@ -156,7 +156,7 @@ class NotFoundHandler extends ServletWrapper {
 	String requestURI = (String)req.
 	    getAttribute("javax.servlet.include.request_uri");
 
-	if (requestURI == null) {
+	if (requestURI == null || res.isIncluded()) {
 	    requestURI = req.getRequestURI();
 	}
 
