@@ -293,6 +293,12 @@ public final class HttpConnector
     private boolean allowChunking = true;
 
 
+    /**
+     * Use TCP no delay ?
+     */
+    private boolean tcpNoDelay = true;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -713,6 +719,29 @@ public final class HttpConnector
     }
 
 
+    /**
+     * Return the TCP no delay flag value.
+     */
+    public boolean getTcpNoDelay() {
+
+        return (this.tcpNoDelay);
+
+    }
+
+
+    /**
+     * Set the TCP no delay flag which will be set on the socket after 
+     * accepting a connection.
+     * 
+     * @param tcpNoDelay The new TCP no delay flag
+     */
+    public void setTcpNoDelay(boolean tcpNoDelay) {
+
+        this.tcpNoDelay = tcpNoDelay;
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -905,6 +934,7 @@ public final class HttpConnector
                 //                    log("run: Returned from serverSocket.accept()");
                 if (connectionTimeout > 0)
                     socket.setSoTimeout(connectionTimeout);
+                setTcpNoDelay(tcpNoDelay);
             } catch (AccessControlException ace) {
                 log("socket accept security exception", ace);
                 continue;
