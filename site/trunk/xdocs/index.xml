@@ -45,7 +45,7 @@ Servlet/JSP specifications:</p>
 
 <tr>
   <td>2.3/1.2</td>
-  <td>4.1.24</td>
+  <td>4.1.27</td>
 </tr>
 
 <tr>
@@ -91,7 +91,7 @@ Catalina) that is based on completely new architecture.  The 4.x releases
 implement the <strong>Servlet 2.3</strong> and <strong>JSP 1.2</strong>
 specifications.</p>
 
-<p><strong>Tomcat 4.1.x</strong>.  Tomcat 4.1.24 Stable is the latest release.
+<p><strong>Tomcat 4.1.x</strong>.  Tomcat 4.1.27 Stable is the latest release.
 Tomcat 4.1 is a refactoring of Tomcat 4.0.x, and contains significant 
 enhancements, including:
 <ul>
