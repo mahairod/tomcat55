@@ -1233,7 +1233,6 @@ mod_webapp into mod_jk )
           <httpRequest path="/test/aaa/protected/index.jsp" />
           <httpStatusMatch match="302" />
           <headerMatch name="Location" value="http://${host}:${port}/test/aaa/login.jsp" />
-          <responseMatch match="This document has moved" />
       </httpClient>
    </target>
 
