@@ -137,12 +137,6 @@
     <copy todir="${tomcat.build}/bin" 
            file="${commons-logging-api.jar}" />
     <copy tofile="${tomcat.build}/bin/jmx.jar" file="${jmx.jar}" />
-    <copy tofile="${tomcat.build}/common/lib/jmx-tools.jar" 
-            file="${jmx-tools.jar}"  failonerror="false" />
-    <copy tofile="${tomcat.build}/common/lib/jmx-remote.jar" 
-            file="${jmx-remote.jar}" failonerror="false" />
-    <copy tofile="${tomcat.build}/common/lib/jmx-remote-tools.jar" 
-            file="${jmx-remote-tools.jar}" failonerror="false" />
 
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
 
