@@ -91,10 +91,13 @@ useful by including the actual exception as a root cause.
 
 Bootstrap:  Set the Catalina class loader as the thread context class loader.
 
-catalina.policy:  Update the default security manager policies to reflet the
+catalina.policy:  Update the default security manager policies to reflect the
 fact that "${java.home}" on some JVMs actually points at "$JAVA_HOME/jre"
 instead of "$JAVA_HOME".
 
+Changed the Java SecurityManager implementation to allow finer control
+when setting security policies for a web application.  See the updated
+catalina.policy file for example usage.
 
 ----------------
 Jasper Bug Fixes:
