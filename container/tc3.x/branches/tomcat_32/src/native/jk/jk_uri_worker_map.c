@@ -111,7 +111,8 @@ struct jk_uri_worker_map {
  * fumble and return the jsp content. 
  *
  * To solve that we will check for path info following the suffix, we 
- * will also check that the end of the uri is not .suffix.
+ * will also check that the end of the uri is not ".suffix.",
+ * ".suffix/", or ".suffix ".
  */
 static int check_security_fraud(jk_uri_worker_map_t *uw_map, 
                                 const char *uri, 
@@ -129,9 +130,9 @@ static int check_security_fraud(jk_uri_worker_map_t *uw_map,
                 if('.' != *(suffix_start - 1)) {
                     continue;
                 } else {
-                    char *after_suffix = suffix_start + strlen(uw_map->maps[i].suffix) + 1;
+                    char *after_suffix = suffix_start + strlen(uw_map->maps[i].suffix);
                 
-                    if((('.' == *after_suffix) || ('/' == *after_suffix)) && 
+                    if((('.' == *after_suffix) || ('/' == *after_suffix) || (' ' == *after_suffix)) &&
                        (0 == strncmp(uw_map->maps[i].context, uri, uw_map->maps[i].ctxt_len))) {
                         /* 
                          * Security violation !!!
