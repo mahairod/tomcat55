@@ -602,8 +602,9 @@ public class DeltaManager
         if (started) {
             return;
         }
-        lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        
 
         // Force initialization of the random number generator
         String dummy = generateSessionId();
