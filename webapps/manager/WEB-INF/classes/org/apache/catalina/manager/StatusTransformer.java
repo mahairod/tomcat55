@@ -338,9 +338,7 @@ public class StatusTransformer {
                 while (enum.hasMoreElements()) {
                     ObjectName objectName = (ObjectName) enum.nextElement();
                     if (name.equals(objectName.getKeyProperty("worker"))) {
-                        writer.write("<worker>");
                         writeProcessorState(writer, objectName, mBeanServer, mode);
-                        writer.write("</worker>");
                     }
                 }
                 writer.write("</workers>");
@@ -361,53 +359,55 @@ public class StatusTransformer {
                                               int mode)
         throws Exception {
 
+        Integer stageValue = 
+            (Integer) mBeanServer.getAttribute(pName, "stage");
+        int stage = stageValue.intValue();
+        boolean fullStatus = true;
+        boolean showRequest = true;
+        String stageStr = null;
+
+        switch (stage) {
+
+        case (1/*org.apache.coyote.Constants.STAGE_PARSE*/):
+            stageStr = "P";
+            fullStatus = false;
+            break;
+        case (2/*org.apache.coyote.Constants.STAGE_PREPARE*/):
+            stageStr = "P";
+            fullStatus = false;
+            break;
+        case (3/*org.apache.coyote.Constants.STAGE_SERVICE*/):
+            stageStr = "S";
+            break;
+        case (4/*org.apache.coyote.Constants.STAGE_ENDINPUT*/):
+            stageStr = "F";
+            break;
+        case (5/*org.apache.coyote.Constants.STAGE_ENDOUTPUT*/):
+            stageStr = "F";
+            break;
+        case (7/*org.apache.coyote.Constants.STAGE_ENDED*/):
+            stageStr = "R";
+            fullStatus = false;
+            break;
+        case (6/*org.apache.coyote.Constants.STAGE_KEEPALIVE*/):
+            stageStr = "K";
+            fullStatus = true;
+            showRequest = false;
+            break;
+        case (0/*org.apache.coyote.Constants.STAGE_NEW*/):
+            stageStr = "R";
+            fullStatus = false;
+            break;
+        default:
+            // Unknown stage
+            stageStr = "?";
+            fullStatus = false;
+
+        }
+
         if (mode == 0) {
-            Integer stageValue = 
-                (Integer) mBeanServer.getAttribute(pName, "stage");
-            int stage = stageValue.intValue();
-            boolean fullStatus = true;
-            boolean showRequest = true;
-
             writer.write("<td><strong>");
-
-            switch (stage) {
-
-            case (1/*org.apache.coyote.Constants.STAGE_PARSE*/):
-                writer.write("P");
-                fullStatus = false;
-                break;
-            case (2/*org.apache.coyote.Constants.STAGE_PREPARE*/):
-                writer.write("P");
-                fullStatus = false;
-                break;
-            case (3/*org.apache.coyote.Constants.STAGE_SERVICE*/):
-                writer.write("S");
-                break;
-            case (4/*org.apache.coyote.Constants.STAGE_ENDINPUT*/):
-                writer.write("F");
-                break;
-            case (5/*org.apache.coyote.Constants.STAGE_ENDOUTPUT*/):
-                writer.write("F");
-                break;
-            case (7/*org.apache.coyote.Constants.STAGE_ENDED*/):
-                writer.write("R");
-                fullStatus = false;
-                break;
-            case (6/*org.apache.coyote.Constants.STAGE_KEEPALIVE*/):
-                writer.write("K");
-                fullStatus = true;
-                showRequest = false;
-                break;
-            case (0/*org.apache.coyote.Constants.STAGE_NEW*/):
-                writer.write("R");
-                fullStatus = false;
-                break;
-            default:
-                writer.write("?");
-                fullStatus = false;
-
-            }
-
+            writer.write(stageStr);
             writer.write("</strong></td>");
 
             if (fullStatus) {
@@ -464,7 +464,73 @@ public class StatusTransformer {
                 writer.write("<td>?</td><td>?</td><td>?</td><td>?</td><td>?</td><td>?</td>");
             }
         } else if (mode == 1){
-            // for now we don't generate XML output
+            writer.write("<worker ");
+            writer.write(" stage=\"" + stageStr + "\"");
+
+            if (fullStatus) {
+                writer.write(" requestProcessingTime=\"" 
+                             + mBeanServer.getAttribute
+                             (pName, "requestProcessingTime") + "\"");
+                writer.write(" requestBytesSent=\"");
+                if (showRequest) {
+                    writer.write("" + mBeanServer.getAttribute
+                                 (pName, "requestBytesSent"));
+                } else {
+                    writer.write("?");
+                }
+                writer.write("\"");
+                writer.write(" requestBytesReceived=\"");
+                if (showRequest) {
+                    writer.write("" + mBeanServer.getAttribute
+                                 (pName, "requestBytesReceived"));
+                } else {
+                    writer.write("?");
+                }
+                writer.write("\"");
+                writer.write(" remoteAddr=\"" 
+                             + filter(mBeanServer.getAttribute
+                                      (pName, "remoteAddr")) + "\"");
+                writer.write(" virtualHost=\"" 
+                             + filter(mBeanServer.getAttribute
+                                      (pName, "virtualHost")) + "\"");
+
+                if (showRequest) {
+                    writer.write(" method=\"" 
+                                 + filter(mBeanServer.getAttribute
+                                          (pName, "method")) + "\"");
+                    writer.write(" currentUri=\"" 
+                                 + filter(mBeanServer.getAttribute
+                                          (pName, "currentUri")) + "\"");
+
+                    String queryString = (String) mBeanServer.getAttribute
+                        (pName, "currentQueryString");
+                    if ((queryString != null) && (!queryString.equals(""))) {
+                        writer.write(" currentQueryString=\"" 
+                                     + queryString + "\"");
+                    } else {
+                        writer.write(" currentQueryString=\"?\"");
+                    }
+                    writer.write(" protocol=\"" 
+                                 + filter(mBeanServer.getAttribute
+                                          (pName, "protocol")) + "\"");
+                } else {
+                    writer.write(" method=\"?\"");
+                    writer.write(" currentUri=\"?\"");
+                    writer.write(" currentQueryString=\"?\"");
+                    writer.write(" protocol=\"?\"");
+                }
+            } else {
+                writer.write(" requestProcessingTime=\"?\"");
+                writer.write(" requestBytesSent=\"?\"");
+                writer.write(" requestBytesRecieved=\"?\"");
+                writer.write(" remoteAddr=\"?\"");
+                writer.write(" virtualHost=\"?\"");
+                writer.write(" method=\"?\"");
+                writer.write(" currentUri=\"?\"");
+                writer.write(" currentQueryString=\"?\"");
+                writer.write(" protocol=\"?\"");
+            }
+            writer.write(" />");
         }
 
     }

@@ -83,13 +83,13 @@
 
   <xsl:template match="worker">
    <tr>
-    <td><xsl:apply-templates select="stage"/></td>
-    <td><xsl:apply-templates select="requestProcessingTime"/></td>
-    <td><xsl:apply-templates select="requestBytesSent"/></td>
-    <td><xsl:apply-templates select="requestBytesReceived"/></td>
-    <td><xsl:apply-templates select="remoteAddr"/></td>
-    <td><xsl:apply-templates select="virtualHost"/></td>
-    <td><xsl:apply-templates select="method"/> <xsl:apply-templates select="currentUri"/>?<xsl:apply-templates select="currentQueryString"/></td>
+    <td><xsl:value-of select="@stage"/></td>
+    <td><xsl:value-of select="@requestProcessingTime"/></td>
+    <td><xsl:value-of select="@requestBytesSent"/></td>
+    <td><xsl:value-of select="@requestBytesReceived"/></td>
+    <td><xsl:value-of select="@remoteAddr"/></td>
+    <td><xsl:value-of select="@virtualHost"/></td>
+    <td><xsl:value-of select="@method"/> <xsl:value-of select="@currentUri"/>?<xsl:value-of select="@currentQueryString"/> <xsl:value-of select="@protocol"/></td>
    </tr>
   </xsl:template>
 
