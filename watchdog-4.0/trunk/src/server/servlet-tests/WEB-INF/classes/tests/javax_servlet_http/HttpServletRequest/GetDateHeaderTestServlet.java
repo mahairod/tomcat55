@@ -86,7 +86,7 @@ public class GetDateHeaderTestServlet extends HttpServlet {
 	   {
 		long date = request.getDateHeader("If-Modified-Since");
 
-		if  ( ( new Date(date)).getDay()==6  ) {
+                if (date == 946684801000L) {
 			out.println("GetDateHeaderTest test PASSED");
 		}
 		else
