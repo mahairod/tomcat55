@@ -545,9 +545,9 @@
         <property name="flags.hide" value="true" />
     </ant>
 
-    <antcall target="fix-webapps" />
-
+    <!-- Precompiling and fixing webapps -->
     <antcall target="build-webapps-precompile" /> 
+    <antcall target="fix-webapps" />
 
   </target>
 
@@ -572,8 +572,26 @@
     <copy file="./CHANGELOG"
         tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
 
+    <!-- Build JARs for webapps classes -->
+    <mkdir dir="${tomcat.build}/server/webapps/admin/WEB-INF/lib" />
+    <jar jarfile="${tomcat.build}/server/webapps/admin/WEB-INF/lib/catalina-admin.jar"
+         index="true">
+       <fileset dir="${tomcat.build}/server/webapps/admin/WEB-INF/classes">
+          <include name="**/*.class" />
+          <include name="**/*.properties" />
+       </fileset>
+    </jar>
+    <mkdir dir="${tomcat.build}/server/webapps/manager/WEB-INF/lib" />
+    <jar jarfile="${tomcat.build}/server/webapps/manager/WEB-INF/lib/catalina-manager.jar"
+         index="true">
+       <fileset dir="${tomcat.build}/server/webapps/manager/WEB-INF/classes">
+          <include name="**/*.class" />
+          <include name="**/*.properties" />
+       </fileset>
+    </jar>
+
     <!-- Add XML declarations for admin and manager -->
-    <move file="${tomcat.build}/server/webapps/manager/manager.xml"
+    <copy file="${tomcat.build}/server/webapps/manager/manager.xml"
          todir="${tomcat.build}/webapps" />
     <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
          todir="${tomcat.build}/webapps" />
@@ -737,7 +755,10 @@
   <!-- ====================== COMBO: Clean All Directories ================ -->
   <target name="clean"
    description="Clean all components">
+
     <delete dir="${tomcat.build}"/>
+
+    <delete dir="${tomcat.embed}"/>
 
     <echo>Target: Servlet API - Clean ...</echo>
     <ant dir="${api.home}/jsr154" target="clean"/>
@@ -957,7 +978,10 @@
       <fileset dir="${tomcat.build}/server/lib" />
     </copy>
     <copy todir="${tomcat.dist}/server/webapps">
-      <fileset dir="${tomcat.build}/server/webapps" />
+      <fileset dir="${tomcat.build}/server/webapps">
+        <exclude name="${tomcat.build}/server/webapps/admin/WEB-INF/classes/**" />
+        <exclude name="${tomcat.build}/server/webapps/manager/WEB-INF/classes/**" />
+      </fileset>
     </copy>
 <!--
     <copy todir="${tomcat.dist}/shared/lib">
