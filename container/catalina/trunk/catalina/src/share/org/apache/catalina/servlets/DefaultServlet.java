@@ -1384,37 +1384,13 @@ public class DefaultServlet
      */
     protected InputStream render
         (String contextPath, ResourceInfo resourceInfo) {
-        InputStream xsltInputStream = null;
-        try {
-            if (localXsltFile!=null) {
-                DirContext resources = getResources();
-                String xsltFile = resourceInfo.path + localXsltFile;
-                ResourceInfo xsltInfo = new ResourceInfo(xsltFile, resources);
-
-                if (xsltInfo.exists)
-                    xsltInputStream = xsltInfo.getStream();
-            }
-
-            if (xsltInputStream==null && globalXsltFile!=null)
-                xsltInputStream = new FileInputStream(globalXsltFile);
-
-        } catch(Throwable e) {
-            xsltInputStream = null;
-        }
-
+        InputStream xsltInputStream =
+            findXsltInputStream(resourceInfo.directory);
 
         if (xsltInputStream==null) {
             return renderHtml(contextPath, resourceInfo);
         } else {
-            try {
-                return renderXml(contextPath, resourceInfo, xsltInputStream);
-            } finally {
-                try {
-                    xsltInputStream.close();
-                } catch(Throwable e){
-                    ;
-                }
-            }
+            return renderXml(contextPath, resourceInfo, xsltInputStream);
         }
 
     }
@@ -1501,24 +1477,12 @@ public class DefaultServlet
 
         sb.append("</entries>");
 
-        if (readmeFile!=null) {
-            DirContext resources = getResources();
-            String readme = resourceInfo.path + readmeFile;
-            ResourceInfo readmeInfo = new ResourceInfo(readme,
-                                                       resources);
-            if (readmeInfo.exists()) {
-                try {
-                    StringWriter buffer = new StringWriter();
-                    copyRange(new InputStreamReader(readmeInfo.getStream()),
-                              new PrintWriter(buffer));
+        String readme = getReadme(resourceInfo.directory);
 
-                    sb.append("<readme><![CDATA[");
-                    sb.append(buffer.toString());
-                    sb.append("]]></readme>");
-                } catch(IOException e) {
-                    ; /* Change me if this should be verbose */
-                }
-            }
+        if (readme!=null) {
+            sb.append("<readme><![CDATA[");
+            sb.append(readme);
+            sb.append("]]></readme>");
         }
 
 
@@ -1538,7 +1502,7 @@ public class DefaultServlet
             osWriter.flush();
             return (new ByteArrayInputStream(stream.toByteArray()));
         } catch (Exception e) {
-            e.printStackTrace();
+            log("directory transform failure: " + e.getMessage());
             return renderHtml(contextPath, resourceInfo);
         }
     }
@@ -1698,24 +1662,11 @@ public class DefaultServlet
 
         sb.append("<HR size=\"1\" noshade>");
 
-        if (readmeFile!=null) {
-            DirContext resources = getResources();
-            String readme = resourceInfo.path + readmeFile;
-            ResourceInfo readmeInfo = new ResourceInfo(readme,
-                                                       resources);
-            if (readmeInfo.exists()) {
-                try {
-                    StringWriter buffer = new StringWriter();
-                    copyRange(new InputStreamReader(readmeInfo.getStream()),
-                              new PrintWriter(buffer));
-
-                    sb.append(buffer.toString());
-                    sb.append("<HR size=\"1\" noshade>");
-                } catch(IOException e) {
-                    ; /* Change me if this should be verbose */
-                }
-            }
-         }
+        String readme = getReadme(resourceInfo.directory);
+        if (readme!=null) {
+            sb.append(readme);
+            sb.append("<HR size=\"1\" noshade>");
+        }
 
         sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body>\r\n");
@@ -1745,6 +1696,84 @@ public class DefaultServlet
 
     }
 
+
+    /**
+     * Get the readme file as a string.
+     */
+    protected String getReadme(DirContext directory) {
+        if (readmeFile!=null) {
+            try {
+                Object obj = directory.lookup(readmeFile);
+
+                if (obj!=null && obj instanceof Resource) {
+                    StringWriter buffer = new StringWriter();
+                    InputStream is = ((Resource)obj).streamContent();
+                    copyRange(new InputStreamReader(is),
+                              new PrintWriter(buffer));
+
+                    return buffer.toString();
+                 }
+             } catch(Throwable e) {
+                 ; /* Should only be IOException or NamingException
+                    * can be ignored
+                    */
+             }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Return the xsl template inputstream (if possible)
+     */
+    protected InputStream findXsltInputStream(DirContext directory) {
+        if (localXsltFile!=null) {
+            try {
+                Object obj = directory.lookup(localXsltFile);
+                if (obj!=null && obj instanceof Resource) {
+                    InputStream is = ((Resource)obj).streamContent();
+                    if (is!=null)
+                        return is;
+                }
+             } catch(Throwable e) {
+                 ; /* Should only be IOException or NamingException
+                    * can be ignored
+                    */
+             }
+        }
+
+
+        /*  Open and read in file in one fell swoop to reduce chance
+         *  chance of leaving handle open.
+         */
+        if (globalXsltFile!=null) {
+            FileInputStream fis = null;
+
+            try {
+                File f = new File(globalXsltFile);
+                if (f.exists()){
+                    fis =new FileInputStream(f);
+                    byte b[] = new byte[(int)f.length()]; /* danger! */
+                    fis.read(b);
+                    return new ByteArrayInputStream(b);
+                }
+            } catch(Throwable e) {
+                log("This shouldn't happen (?)...", e);
+                return null;
+            } finally {
+                try {
+                    if (fis!=null)
+                        fis.close();
+                } catch(Throwable e){
+                    ;
+                }
+            }
+        }
+
+        return null;
+
+    }
 
     // -------------------------------------------------------- Private Methods
 
