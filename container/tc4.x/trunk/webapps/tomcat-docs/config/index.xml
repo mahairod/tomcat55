@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
 <document>
+
+  &project;
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>

@@ -18,16 +18,8 @@
   <property name="site.xsl"        value="../../../jakarta-site2/xdocs/stylesheets/site.xsl"/>
 
 
-  <!-- =================== BUILD: Initialization ========================== -->
-  <target name="build-init">
-    <!-- Required only for the Ant Bugzilla #603 workaround -->
-    <tstamp/>
-    <property name="webapp.work" value="${java.io.tmpdir}/${webapp.name}${DSTAMP}${TSTAMP}"/>
-  </target>
-
-
   <!-- =================== BUILD: Create Directories ====================== -->
-  <target name="build-prepare" depends="build-init">
+  <target name="build-prepare">
     <mkdir dir="${webapps.build}"/>
     <mkdir dir="${webapps.build}/${webapp.name}"/>
   </target>
@@ -91,54 +83,36 @@
   <!-- ================= BUILD: XML-HTML Generation ======================= -->
   <target name="build-main" depends="build-static">
 
-    <!-- Workaround for Ant 1.3 bug (Bugzilla #603) where the "style"
-         attribute is resolved relatively even if it is absolute!  Copy
-         the source tree to a temporary directory, and interpolate the
-         XSLT stylesheet appropriately -->
-    <mkdir dir="${webapp.work}"/>
-    <copy    todir="${webapp.work}">
-      <fileset dir="."/>
-      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
-    </copy>
-    <copy    todir="${webapp.work}/appdev">
-      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
-    </copy>
-    <copy    todir="${webapp.work}/config">
-      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
-    </copy>
 
     <!-- Top Level Directory -->
-    <style basedir="${webapp.work}"
+    <style basedir="."
            destdir="${webapps.build}/${webapp.name}"
          extension=".html"
-             style="site.xsl"
+             style="tomcat-docs.xsl"
           excludes="build.xml project.xml"
           includes="*.xml">
       <param name="relative-path" expression="."/>
     </style>
 
     <!-- Application Developer's Guide -->
-    <style basedir="${webapp.work}/appdev"
+    <style basedir="appdev"
            destdir="${webapps.build}/${webapp.name}/appdev"
          extension=".html"
-             style="site.xsl"
+             style="../tomcat-docs.xsl"
           excludes="project.xml"
           includes="*.xml">
-      <param name="relative-path" expression="."/>
+      <param name="relative-path" expression=".."/>
     </style>
 
     <!-- Server Configuration Reference -->
-    <style basedir="${webapp.work}/config"
+    <style basedir="config"
            destdir="${webapps.build}/${webapp.name}/config"
          extension=".html"
-             style="site.xsl"
+             style="../tomcat-docs.xsl"
           excludes="project.xml"
           includes="*.xml">
-      <param name="relative-path" expression="."/>
+      <param name="relative-path" expression=".."/>
     </style>
-
-    <!-- Remove the temporary directory for the Ant bug workaround -->
-    <delete dir="${webapp.work}" />
 
   </target>
 
