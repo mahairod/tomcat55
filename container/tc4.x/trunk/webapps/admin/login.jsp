@@ -13,7 +13,7 @@
 
   <!--
     if (window.self != window.top) {
-      window.open(window.location, "_top");
+      window.open(".", "_top");
     }
   // -->
 
