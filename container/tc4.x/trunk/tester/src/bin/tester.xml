@@ -537,6 +537,23 @@
          request="${context.path}/Resources05?mode=class&amp;path=/org/apache/tester/Unpacked05.txt&amp;stringify=true"
       outContent="Resources05 PASSED"/>
 
+    <!-- ========== getResourcePaths() ==================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources06?path=/"
+      outContent="Resources06 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources06?path=/golden"
+      outContent="Resources06 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+         request="${context.path}/Resources06?path=/WEB-INF"
+      outContent="Resources06 PASSED"/>
+
   </target>
 
 
