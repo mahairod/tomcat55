@@ -108,7 +108,7 @@ public class SocketSender implements IDataSender
     public void connect() throws java.io.IOException
     {
         sc = new Socket(getAddress(),getPort());
-        sc.setSoTimeout((int)ackTimeout);
+        //sc.setSoTimeout((int)ackTimeout);
         isSocketConnected = true;
         this.keepAliveCount = 0;
         this.keepAliveConnectTime = System.currentTimeMillis();
