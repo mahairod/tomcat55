@@ -2103,6 +2103,15 @@ Servlet 2.2 specification.</p>
       off.</td>
     <td>false</td>
   </tr>
+  <tr valign="top">
+    <td>checkSSLSessionId</td>
+    <td>If true, Tomcat session will be verified against SSL session to prevent
+      (malicious) use of other users' sessions. In order for this to work, SSL
+      has to be enabled (through Apache) and SSL Session ID has to be known to
+      Tomcat. More information can be found in mod_jk documentation.</td>
+    <td>false</td>
+  </tr>
+
 </table>
 
 <h4>Example(s)</h4>
@@ -2110,6 +2119,7 @@ Servlet 2.2 specification.</p>
 <pre>
 &lt;SessionId cookiesFirst=&quot;true&quot; noCookies=&quot;false&quot; /&gt;
 &lt;SessionId noCookies=&quot;true&quot; /&gt;
+&lt;SessionId noCookies=&quot;true&quot; checkSSLSessionId=&quot;true&quot;/&gt;
 </pre>
 
 <hr size="5">
