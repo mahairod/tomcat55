@@ -138,6 +138,12 @@ public class MemoryUserDatabase implements UserDatabase {
 
 
     /**
+     * Was the database modified ?
+     */
+    private boolean modified = false;
+
+
+    /**
      * The relative (to <code>catalina.base</code>) or absolute pathname to
      * the XML file in which we will save our persistent information.
      */
@@ -287,6 +293,7 @@ public class MemoryUserDatabase implements UserDatabase {
         synchronized (groups) {
             groups.put(group.getGroupname(), group);
         }
+        modified = true;
         return (group);
 
     }
@@ -304,6 +311,7 @@ public class MemoryUserDatabase implements UserDatabase {
         synchronized (roles) {
             roles.put(role.getRolename(), role);
         }
+        modified = true;
         return (role);
 
     }
@@ -323,6 +331,7 @@ public class MemoryUserDatabase implements UserDatabase {
         synchronized (users) {
             users.put(user.getUsername(), user);
         }
+        modified = true;
         return (user);
 
     }
@@ -426,6 +435,7 @@ public class MemoryUserDatabase implements UserDatabase {
 
             }
         }
+        modified = false;
 
     }
 
@@ -445,6 +455,7 @@ public class MemoryUserDatabase implements UserDatabase {
             }
             groups.remove(group.getGroupname());
         }
+        modified = true;
 
     }
 
@@ -469,6 +480,7 @@ public class MemoryUserDatabase implements UserDatabase {
             }
             roles.remove(role.getRolename());
         }
+        modified = true;
 
     }
 
@@ -483,6 +495,7 @@ public class MemoryUserDatabase implements UserDatabase {
         synchronized (users) {
             users.remove(user.getUsername());
         }
+        modified = true;
 
     }
 
@@ -494,6 +507,11 @@ public class MemoryUserDatabase implements UserDatabase {
      * @exception Exception if any exception is thrown during saving
      */
     public void save() throws Exception {
+
+        if (!modified) {
+            return;
+        }
+        modified = false;
 
         // Write out contents to a temporary file
         File fileNew = new File(pathnameNew);
