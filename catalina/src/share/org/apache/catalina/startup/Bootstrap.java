@@ -90,42 +90,29 @@ import org.apache.catalina.security.SecurityClassLoad;
 
 public final class Bootstrap {
 
-
-    // ------------------------------------------------------- Static Variables
-
-
     /**
      * Debugging detail level for processing the startup.
      */
-    private static int debug = 0;
+    protected int debug = 0;
+    protected String args[];
 
+    // Construct the class loaders we will need
+    protected ClassLoader commonLoader = null;
+    protected ClassLoader catalinaLoader = null;
+    protected ClassLoader sharedLoader = null;
 
+    
+    public void setDebug( int debug ) {
+        this.debug=debug;
+    }
+
+    public void setArgs(String args[] ) {
+        this.args=args;
+    }
     // ----------------------------------------------------------- Main Program
 
-
-    /**
-     * The main program for the bootstrap.
-     *
-     * @param args Command line arguments to be processed
-     */
-    public static void main(String args[]) {
-
-        // Set the debug flag appropriately
-        for (int i = 0; i < args.length; i++)  {
-            if ("-debug".equals(args[i]))
-                debug = 1;
-        }
-        
-        // Configure catalina.base from catalina.home if not yet set
-        if (System.getProperty("catalina.base") == null)
-            System.setProperty("catalina.base", getCatalinaHome());
-
-        // Construct the class loaders we will need
-        ClassLoader commonLoader = null;
-        ClassLoader catalinaLoader = null;
-        ClassLoader sharedLoader = null;
+    public void initClassLoaders() {
         try {
-
             File unpacked[] = new File[1];
             File packed[] = new File[1];
             File packed2[] = new File[2];
@@ -161,6 +148,23 @@ public final class Bootstrap {
             System.exit(1);
 
         }
+    }
+
+    // ----------------------------------------------------------- Main Program
+
+    public void execute() {
+        // Set the debug flag appropriately
+        for (int i = 0; i < args.length; i++)  {
+            if ("-debug".equals(args[i]))
+                setDebug( 1 );
+        }
+        
+        // Configure catalina.base from catalina.home if not yet set
+        if (System.getProperty("catalina.base") == null)
+            System.setProperty("catalina.base", getCatalinaHome());
+
+        this.initClassLoaders();
+
         Thread.currentThread().setContextClassLoader(catalinaLoader);
 
  
@@ -205,14 +209,25 @@ public final class Bootstrap {
             e.printStackTrace(System.out);
             System.exit(2);
         }
+    }
 
+    /**
+     * The main program for the bootstrap.
+     *
+     * @param args Command line arguments to be processed
+     */
+    public static void main(String args[]) {
+        Bootstrap bootstrap=new Bootstrap();
+
+        bootstrap.setArgs( args );
+        bootstrap.execute();
     }
 
 
     /**
      * Get the value of the catalina.home environment variable.
      */
-    private static String getCatalinaHome() {
+    protected String getCatalinaHome() {
         return System.getProperty("catalina.home",
                                   System.getProperty("user.dir"));
     }
@@ -221,7 +236,7 @@ public final class Bootstrap {
     /**
      * Get the value of the catalina.base environment variable.
      */
-    private static String getCatalinaBase() {
+    protected String getCatalinaBase() {
         return System.getProperty("catalina.base", getCatalinaHome());
     }
 
@@ -231,7 +246,7 @@ public final class Bootstrap {
      *
      * @param message The message to be logged
      */
-    private static void log(String message) {
+    protected void log(String message) {
 
         System.out.print("Bootstrap: ");
         System.out.println(message);
@@ -245,7 +260,7 @@ public final class Bootstrap {
      * @param message The message to be logged
      * @param exception The exception to be logged
      */
-    private static void log(String message, Throwable exception) {
+    protected void log(String message, Throwable exception) {
 
         log(message);
         exception.printStackTrace(System.out);
