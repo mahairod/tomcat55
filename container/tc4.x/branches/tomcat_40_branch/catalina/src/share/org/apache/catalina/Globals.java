@@ -1,4 +1,4 @@
-/*
+*
  * $Header$
  * $Revision$
  * $Date$
@@ -219,7 +219,7 @@ public final class Globals {
     /**
      * The descriptive information about this server and version.
      */
-    public static final String SERVER_INFO = "Apache Tomcat/4.0.2-b2";
+    public static final String SERVER_INFO = "Apache Tomcat/4.0.2-dev";
 
 
     /**
