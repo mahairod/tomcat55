@@ -409,7 +409,7 @@ public class ApplicationContext
         
         ApplicationDispatcher dispatcher;
         dispatcher =
-              new ApplicationDispatcher(wrapper, null, null, null, name);
+              new ApplicationDispatcher(wrapper, null, null, null, null, name);
         
         return ((RequestDispatcher) dispatcher);
 
@@ -481,8 +481,9 @@ public class ApplicationContext
         }
 
         // Map the URI
+        CharChunk uriCC = uriMB.getCharChunk();
         try {
-            CharChunk uriCC = uriMB.getCharChunk();
+            uriCC.append(context.getPath(), 0, context.getPath().length());
             uriCC.append(path, 0, pos);
             context.getMapper().map(uriMB, mappingData);
             if (mappingData.wrapper == null) {
@@ -496,7 +497,8 @@ public class ApplicationContext
 
         // Construct a RequestDispatcher to process this request
         return (RequestDispatcher) new ApplicationDispatcher
-            ((Wrapper) mappingData.wrapper, mappingData.wrapperPath.toString(),
+            ((Wrapper) mappingData.wrapper, uriCC.toString(),
+             mappingData.wrapperPath.toString(),
              mappingData.pathInfo.toString(), queryString, null);
 
     }

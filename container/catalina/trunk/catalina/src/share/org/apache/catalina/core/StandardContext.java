@@ -4045,7 +4045,7 @@ public class StandardContext
                     ((Lifecycle) resources).start();
 
                 // Initialize associated mapper
-                mapper.setContext(welcomeFiles, resources);
+                mapper.setContext(getPath(), welcomeFiles, resources);
 
                 // Start our child containers, if any
                 Container children[] = findChildren();
