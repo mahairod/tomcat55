@@ -270,11 +270,19 @@ FunctionEnd
 Function findJVMPath
 
   ReadEnvStr $1 JAVA_HOME
-  IfFileExists $1\jre\bin\hotspot\jvm.dll 0 TryJDK14
-    StrCpy $2 $1\jre\bin\hotspot\jvm.dll
+  IfFileExists "$1\jre\bin\hotspot\jvm.dll" 0 TryJDK14
+    StrCpy $2 "$1\jre\bin\hotspot\jvm.dll"
     Goto EndIfFileExists
   TryJDK14:
-    StrCpy $2 $1\jre\bin\server\jvm.dll
+  IfFileExists "$1\jre\bin\server\jvm.dll" 0 TryClassic
+    StrCpy $2 "$1\jre\bin\server\jvm.dll"
+    Goto EndIfFileExists
+  TryClassic:
+  IfFileExists "$1\jre\bin\classic\jvm.dll" 0 JDKNotFound
+    StrCpy $2 "$1\jre\bin\classic\jvm.dll"
+    Goto EndIfFileExists
+  JDKNotFound:
+    SetErrors
   EndIfFileExists:
 
   IfErrors 0 FoundJVMPath
