@@ -470,6 +470,7 @@ public class Lists {
         StringBuffer sb = new StringBuffer(container.getDomain());
         sb.append(":type=Valve");
         String type = container.getKeyProperty("type");
+        String j2eeType = container.getKeyProperty("j2eeType");
         sb.append(TomcatTreeBuilder.WILDCARD);
         String host = "";
         String path = "";
@@ -520,7 +521,7 @@ public class Lists {
                 }
             }
             
-            if ("Context".equalsIgnoreCase(type)) {
+            if ("WebModule".equalsIgnoreCase(j2eeType)) {
                 if ((path.equalsIgnoreCase(vpath)) && (host.equalsIgnoreCase(vhost))) {
                     valves.add(valve.toString());      
                 }
