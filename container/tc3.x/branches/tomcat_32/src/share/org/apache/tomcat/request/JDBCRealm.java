@@ -509,12 +509,22 @@ public final class JDBCRealm extends BaseInterceptor {
 	userRoles = getUserRoles( user );
 	req.setUserRoles( userRoles );
 
-        if( debug > 0 ) log( "Auth ok, first role=" + userRoles[0] );
+        if( debug > 0 ) {
+            if ((userRoles != null) && (userRoles.length > 0))
+                log( "Auth ok, first role=" + userRoles[0] );
+            else
+                log( "Auth ok, user has no roles");
+        }
 
         if( SecurityTools.haveRole( userRoles, roles ))
             return 0;
 
-        if( debug > 0 ) log( "UnAuthorized " + roles[0] );
+        if( debug > 0 ) {
+            if ((roles != null) && (roles.length > 0))
+                log( "UnAuthorized " + roles[0] );
+            else
+                log( "UnAuthorized - no roles specified");
+        }
 	return 401; //HttpServletResponse.SC_UNAUTHORIZED
         // XXX check transport
     }

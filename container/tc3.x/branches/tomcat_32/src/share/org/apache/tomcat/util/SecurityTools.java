@@ -192,6 +192,8 @@ public class SecurityTools {
     }
 
     public static boolean haveRole( String userRoles[], String requiredRoles[] ) {
+        if ((userRoles == null) || (requiredRoles == null))
+            return false;
 	for( int i=0; i< userRoles.length; i ++ ) {
 	    if( haveRole( userRoles[i], requiredRoles )) return true;
 	}
@@ -199,8 +201,10 @@ public class SecurityTools {
     }
 
     public static boolean haveRole( String element, String set[] ) {
+        if ((element == null) || (set == null))
+            return false;
 	for( int i=0; i< set.length; i ++ ) {
-	    if( element!=null && element.equals( set[i] ))
+	    if( element.equals( set[i] ))
 		return true;
 	}
 	return false;
