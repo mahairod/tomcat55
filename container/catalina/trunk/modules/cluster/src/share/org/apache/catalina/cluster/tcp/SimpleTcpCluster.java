@@ -719,19 +719,6 @@ public class SimpleTcpCluster
     }
 
     public void lifecycleEvent(LifecycleEvent lifecycleEvent){
-//        if ( lifecycleEvent.getLifecycle().AFTER_START_EVENT.equals(lifecycleEvent.getType()) ) {
-//            //The server has started
-//            SessionMessage msg =
-//                new SessionMessage(null,
-//                                   SessionMessage.EVT_GET_ALL_SESSIONS,
-//                                   null,
-//                                   null);
-//            if (service.getMembers().length > 0) {
-//                Member mbr = service.getMembers()[0];
-//                send(msg, mbr);
-//            }
-//
-//        }//end if
     }
 
     // --------------------------------------------------------- Cluster Wide Deployments

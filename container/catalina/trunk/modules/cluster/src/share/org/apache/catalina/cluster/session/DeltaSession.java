@@ -347,7 +347,7 @@ public class DeltaSession
      * @param primarySession
      */
     public void setPrimarySession(boolean primarySession) {
-       this.isPrimarySession=primarySession;
+        this.isPrimarySession=primarySession;
     }
 
     /**
@@ -543,7 +543,7 @@ public class DeltaSession
         if (isValid && interval == 0) {
             expire();
         } else {
-            if ( addDeltaRequest ) deltaRequest.setMaxInactiveInterval(interval);
+            if ( addDeltaRequest && (deltaRequest!=null) ) deltaRequest.setMaxInactiveInterval(interval);
         }
 
     }
@@ -559,7 +559,7 @@ public class DeltaSession
     }
     public void setNew(boolean isNew, boolean addDeltaRequest) {
         this.isNew = isNew;
-        if (addDeltaRequest) deltaRequest.setNew(isNew);
+        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.setNew(isNew);
     }
 
 
@@ -592,7 +592,7 @@ public class DeltaSession
         Principal oldPrincipal = this.principal;
         this.principal = principal;
         support.firePropertyChange("principal", oldPrincipal, this.principal);
-        if (addDeltaRequest) deltaRequest.setPrincipal(principal);
+        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.setPrincipal(principal);
     }
 
 
@@ -624,6 +624,8 @@ public class DeltaSession
      */
     public boolean isValid() {
         
+        
+        
         if (this.expiring){
             return true;
         }
@@ -631,11 +633,15 @@ public class DeltaSession
         if (!this.isValid ) {
             return false;
         }
-
+        
         if (maxInactiveInterval >= 0) {
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
             if ( (timeIdle >= maxInactiveInterval) && (isPrimarySession()) ) {
+                expire(true);
+            } else if ( timeIdle >= (2*maxInactiveInterval) ) {
+                //if the session has been idle twice as long as allowed,
+                //the primary session has probably crashed
                 expire(true);
             }
         }
@@ -704,10 +710,16 @@ public class DeltaSession
      *  this session?
      */
     public void expire(boolean notify) {
+        expire(notify,true);
+    }
+    
+    public void expire(boolean notify, boolean notifyCluster) {
 
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
+        
+        String expiredId = getId();
 
         synchronized (this) {
 
@@ -768,6 +780,12 @@ public class DeltaSession
 
             // We have completed expire of this session
             expiring = false;
+            
+            if ( notifyCluster ) {
+                log.debug("Notifying cluster of expiration primary=" +
+                         isPrimarySession() + " id=" + expiredId);
+                ( (DeltaManager) manager).sessionExpired(expiredId);
+            }
 
         }
 
@@ -1198,7 +1216,7 @@ public class DeltaSession
             }
         }
         
-        if (addDeltaRequest) deltaRequest.removeAttribute(name);
+        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.removeAttribute(name);
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
         if (!notify) {
@@ -1307,7 +1325,7 @@ public class DeltaSession
             throw new IllegalArgumentException("Attribute ["+name+"] is not serializable");
         }
         
-        if (addDeltaRequest) deltaRequest.setAttribute(name,value);
+        if (addDeltaRequest && (deltaRequest!=null)) deltaRequest.setAttribute(name,value);
 
         // Validate our current state
         if (!isValid())
