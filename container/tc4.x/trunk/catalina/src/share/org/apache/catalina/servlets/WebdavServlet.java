@@ -1753,6 +1753,15 @@ public class WebdavServlet
                                   DirContext resources, 
                                   String path, Hashtable errorList) {
         
+        if (debug > 1)
+            System.out.println("Delete:" + path);
+        
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            errorList.put(path, new Integer(WebdavStatus.SC_FORBIDDEN));
+            return;
+        }
+        
         String ifHeader = req.getHeader("If");
         if (ifHeader == null)
             ifHeader = "";
