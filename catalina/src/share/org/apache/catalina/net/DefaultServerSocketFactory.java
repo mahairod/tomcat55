@@ -77,7 +77,7 @@ import org.apache.catalina.net.ServerSocketFactory;
 
 
 /**
- * Default server socket factory, which returns unadorned server sockts.
+ * Default server socket factory, which returns unadorned server sockets.
  *
  * @author db@eng.sun.com
  * @author Harish Prabandham
