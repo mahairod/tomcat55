@@ -3596,6 +3596,18 @@ public class StandardContext
         setConfigured(false);
         boolean ok = true;
 
+        // Set config file name
+        if (getConfigFile() == null) {
+            String appBase = getAppBase();
+            String name = getName();
+            if (name.equals("")) {
+                name = "ROOT";
+            }
+            File file = new File(appBase);
+            file = new File(file, name + ".xml");
+            setConfigFile(file.getPath());
+        }
+
         // Add missing components as necessary
         if (webappResources == null) {   // (1) Required by Loader
             if (debug >= 1)
@@ -4055,6 +4067,24 @@ public class StandardContext
             }
         }
         return docBase;
+    }
+
+
+    /**
+     * Get app base.
+     */
+    private String getAppBase() {
+        String appBase = null;
+        Container container = this;
+        while (container != null) {
+            if (container instanceof Host)
+                break;
+            container = container.getParent();
+        }
+        if (container != null) {
+            appBase = ((Host) container).getAppBase();
+        }
+        return appBase;
     }
 
 
