@@ -166,6 +166,19 @@ public class FileUtil {
         return patchPath;
     }
 
+    public static boolean isAbsolute( String path ) {
+	// normal file
+	if( path.startsWith("/" ) ) return true;
+
+	if( path.startsWith(File.separator ) ) return true;
+
+	// win c:
+	if (path.length() >= 3 &&
+            Character.isLetter(path.charAt(0)) &&
+            path.charAt(1) == ':')
+	    return true;
+	return false;
+    }
     
     // Probably not needed, original code used by Context.getRealPath()
     // XXX Find if it is duplicated, merge with the other "path" functions
