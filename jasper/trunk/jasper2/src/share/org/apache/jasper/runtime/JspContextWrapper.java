@@ -79,6 +79,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
@@ -88,7 +89,7 @@ import javax.servlet.jsp.el.VariableResolver;
  *
  * @author Kin-man Chung
  */
-public class JspContextWrapper extends PageContext {
+public class JspContextWrapper extends PageContext implements VariableResolver {
 
     private PageContext pageContext;
     private transient Hashtable	pageAttributes;
@@ -248,5 +249,20 @@ public class JspContextWrapper extends PageContext {
         throws IOException, ServletException 
     {
 	pageContext.handlePageException(t);
+    }
+
+    /**
+     * VariableResolver interface
+     */
+    public Object resolveVariable( String pName, Object pContext )
+        throws ELException
+    {
+	if (pageContext instanceof PageContextImpl) {
+	    return ((PageContextImpl)pageContext).
+			resolveVariable(pName, pContext);
+	}
+
+	return ((JspContextWrapper)pageContext).
+			resolveVariable(pName, pContext);
     }
 }

@@ -387,9 +387,11 @@ public class TagFileProcessor {
 	    // dependant list.
 	    PageInfo pageInfo = wrapper.getJspEngineContext().getCompiler().
 					getPageInfo();
-	    Iterator iter = pageInfo.getDependants().iterator();
-	    if (iter.hasNext()) {
-		parentPageInfo.addDependant((String)iter.next());
+	    if (pageInfo != null) {
+	        Iterator iter = pageInfo.getDependants().iterator();
+	            if (iter.hasNext()) {
+		        parentPageInfo.addDependant((String)iter.next());
+		}
 	    }
 
 	    return tagClass;
