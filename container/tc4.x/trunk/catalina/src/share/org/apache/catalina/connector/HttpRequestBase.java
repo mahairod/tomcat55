@@ -630,8 +630,11 @@ public class HttpRequestBase
         if (contentType == null)
             contentType = "";
         int semicolon = contentType.indexOf(';');
-        if (semicolon >= 0)
+        if (semicolon >= 0) {
             contentType = contentType.substring(0, semicolon).trim();
+        } else {
+            contentType = contentType.trim();
+        }
         if ("POST".equals(getMethod()) && (getContentLength() > 0)
             && (this.stream == null)
             && "application/x-www-form-urlencoded".equals(contentType)) {
