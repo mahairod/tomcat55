@@ -10,8 +10,14 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 /**
+ * Central representation of an Ant project. This class defines a
+ * Ant project with all of it's targets and tasks. It also provides
+ * the mechanism to kick off a build using a particular target name.
+ * <p>
+ * This class also encapsulates methods which allow Files to be refered
+ * to using abstract path names which are translated to native system
+ * file paths at runtime as well as defining various project properties.
  * 
- *
  * @author duncan@x180.com
  */
 
@@ -79,10 +85,8 @@ public class Project {
     }
 
     public void setProperty(String name, String value) {
-	if( properties.get( name ) != null )
-	    return; // this way command line arguments have priority.
-	// XXX we need a way to redefine properties
-	
+        log("Setting project property: " + name + " to " +
+            value, MSG_VERBOSE);
 	properties.put(name, value);
     }
 
