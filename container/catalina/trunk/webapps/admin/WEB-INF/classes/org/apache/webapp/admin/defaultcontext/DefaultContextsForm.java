@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,112 +57,57 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- * [Additional notices, if required by prior licensing conditions]
- *
  */
 
+package org.apache.webapp.admin.defaultcontext;
 
-package org.apache.catalina;
+
+import javax.servlet.http.HttpServletRequest;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
+
 
 /**
- * An <b>Engine</b> is a Container that represents the entire Catalina servlet
- * engine.  It is useful in the following types of scenarios:
- * <ul>
- * <li>You wish to use Interceptors that see every single request processed
- *     by the entire engine.
- * <li>You wish to run Catalina in with a standalone HTTP connector, but still
- *     want support for multiple virtual hosts.
- * </ul>
- * In general, you would not use an Engine when deploying Catalina connected
- * to a web server (such as Apache), because the Connector will have
- * utilized the web server's facilities to determine which Context (or
- * perhaps even which Wrapper) should be utilized to process this request.
- * <p>
- * The child containers attached to an Engine are generally implementations
- * of Host (representing a virtual host) or Context (representing individual
- * an individual servlet context), depending upon the Engine implementation.
- * <p>
- * If used, an Engine is always the top level Container in a Catalina
- * hierarchy. Therefore, the implementation's <code>setParent()</code> method
- * should throw <code>IllegalArgumentException</code>.
+ * Form bean for deleting default contexts.
  *
- * @author Craig R. McClanahan
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
-public interface Engine extends Container {
+public class DefaultContextsForm extends ActionForm {
 
 
     // ------------------------------------------------------------- Properties
 
 
     /**
-     * Return the default hostname for this Engine.
+     * The object names of the default contexts to be deleted.
      */
-    public String getDefaultHost();
+    private String defaultContexts[] = new String[0];
+
+    public String[] getDefaultContexts() {
+        return (this.defaultContexts);
+    }
+
+    public void setDefaultContexts(String defaultContexts[]) {
+        this.defaultContexts = defaultContexts;
+    }
 
 
-    /**
-     * Set the default hostname for this Engine.
-     *
-     * @param defaultHost The new default host
-     */
-    public void setDefaultHost(String defaultHost);
-
-
-    /**
-     * Retrieve the JvmRouteId for this engine.
-     */
-    public String getJvmRoute();
-
-
-    /**
-     * Set the JvmRouteId for this engine.
-     *
-     * @param jvmRouteId the (new) JVM Route ID. Each Engine within a cluster
-     *        must have a unique JVM Route ID.
-     */
-    public void setJvmRoute(String jvmRouteId);
-
-
-    /**
-     * Return the <code>Service</code> with which we are associated (if any).
-     */
-    public Service getService();
-
-
-    /**
-     * Set the <code>Service</code> with which we are associated (if any).
-     *
-     * @param service The service that owns this Engine
-     */
-    public void setService(Service service);
-
-
-    /**
-     * Set the DefaultContext
-     * for new web applications.
-     *
-     * @param defaultContext The new DefaultContext
-     */
-    public void addDefaultContext(DefaultContext defaultContext);
-
-
-    /**
-     * Retrieve the DefaultContext for new web applications.
-     */
-    public DefaultContext getDefaultContext();
-    
-    
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Import the DefaultContext config into a web application context.
+     * Reset all properties to their default values.
      *
-     * @param context web application context to import default context
+     * @param mapping The mapping used to select this instance
+     * @param request The servlet request we are processing
      */
-    public void importDefaultContext(Context context);
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
 
+        this.defaultContexts = new String[0];
+
+    }
+        
 
 }

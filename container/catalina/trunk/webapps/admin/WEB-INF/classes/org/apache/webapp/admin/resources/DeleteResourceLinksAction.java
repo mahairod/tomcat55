@@ -188,7 +188,17 @@ public final class DeleteResourceLinksAction extends Action {
                                 ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
                                 ",host=" + host + ",service=" + service);
                 } else if (resourcetype.equals("DefaultContext")) {
-                    // add defaultcontext support later
+                    if (host.length() > 0) {
+                        dname = 
+                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",host=" + 
+                            host + ",service=" + service);
+                    } else {
+                        dname = 
+                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",service=" + 
+                            service);
+                    }
                 }
             }
 

@@ -316,13 +316,19 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
         Server server = ServerFactory.getServer();
-        Service service = server.findService(pname.getKeyProperty("service"));
+        String serviceName = pname.getKeyProperty("service");
+        if (serviceName == null) {
+            serviceName = pname.getKeyProperty("name");
+        }
+        Service service = server.findService(serviceName);        
         Engine engine = (Engine) service.getContainer();
         String hostName = pname.getKeyProperty("host");
         if (hostName == null) { //if DefaultContext is nested in Engine
+            context.setParent(engine);
             engine.addDefaultContext(context);
         } else {                // if DefaultContext is nested in Host
             Host host = (Host) engine.findChild(hostName);
+            context.setParent(host);
             host.addDefaultContext(context);
         }
 
@@ -877,12 +883,19 @@ public class MBeanFactory extends BaseModelMBean {
      * @param parent MBean Name of the associated parent component
      * @param name Unique name of this Host
      * @param appBase Application base directory name
+     * @param autoDeploy Should we auto deploy?
+     * @param deployXML Should we deploy Context XML config files property?
+     * @param liveDeploy Should we live deploy?     
      * @param unpackWARs Should we unpack WARs when auto deploying?
+     * @param xmlNamespaceAware Should we turn on/off XML namespace awareness?
+     * @param xmlValidation Should we turn on/off XML validation?        
      *
      * @exception Exception if an MBean cannot be created or registered
      */
     public String createStandardHost(String parent, String name,
-                                     String appBase, boolean unpackWARs,
+                                     String appBase, boolean autoDeploy,
+                                     boolean deployXML, boolean liveDeploy,                                      
+                                     boolean unpackWARs,
                                      boolean xmlNamespaceAware,
                                      boolean xmlValidation)
         throws Exception {
@@ -891,6 +904,9 @@ public class MBeanFactory extends BaseModelMBean {
         StandardHost host = new StandardHost();
         host.setName(name);
         host.setAppBase(appBase);
+        host.setAutoDeploy(autoDeploy);
+        host.setDeployXML(deployXML);
+        host.setLiveDeploy(liveDeploy);
         host.setUnpackWARs(unpackWARs);
         host.setXmlNamespaceAware(xmlNamespaceAware);
         host.setXmlValidation(xmlValidation);

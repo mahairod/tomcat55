@@ -198,7 +198,17 @@ public final class SaveMailSessionAction extends Action {
                             ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
                             ",host=" + host + ",service=" + service);
                     } else if (resourcetype.equals("DefaultContext")) {
-                        // add defaultcontext support later
+                        if (host.length() > 0) {
+                            oname = 
+                                new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                                ResourceUtils.DEFAULTCONTEXT_TYPE + ",host=" + 
+                                host + ",service=" + service);
+                        } else {
+                            oname = 
+                                new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
+                                ResourceUtils.DEFAULTCONTEXT_TYPE + ",service=" + 
+                                service);
+                        }
                     }
                 }
 

@@ -59,7 +59,7 @@
  *
  */
 
-package org.apache.webapp.admin.context;
+package org.apache.webapp.admin.defaultcontext;
 
 
 import java.net.URLEncoder;
@@ -93,25 +93,23 @@ import org.apache.webapp.admin.TreeControlNode;
 
 
 /**
- * The <code>Action</code> that completes <em>Add Context</em> and
- * <em>Edit Context</em> transactions.
+ * The <code>Action</code> that completes <em>Add Default Context</em> and
+ * <em>Edit Default Context</em> transactions.
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
-public final class SaveContextAction extends Action {
+public final class SaveDefaultContextAction extends Action {
 
 
     // ----------------------------------------------------- Instance Variables
 
     /**
-     * Signature for the <code>createStandardContext</code> operation.
+     * Signature for the <code>createDefaultContext</code> operation.
      */
-    private String createStandardContextTypes[] =
+    private String createDefaultContextTypes[] =
     { "java.lang.String",     // parent
-      "java.lang.String",     // path
-      "java.lang.String",     // docBase
     };
 
    /**
@@ -180,37 +178,39 @@ public final class SaveContextAction extends Action {
         }
         
         // Identify the requested action
-        ContextForm cform = (ContextForm) form;
+        DefaultContextForm cform = (DefaultContextForm) form;
         String adminAction = cform.getAdminAction();
         String cObjectName = cform.getObjectName();
         String lObjectName = cform.getLoaderObjectName();
         String mObjectName = cform.getManagerObjectName();
-        if ((cform.getPath() == null) || (cform.getPath().length()<1)) {
-            cform.setPath("/");
-        }
        
-        // Perform a "Create Context" transaction (if requested)
+        // Perform a "Create DefaultContext" transaction (if requested)
         if ("Create".equals(adminAction)) {
 
             String operation = null;
             Object values[] = null;
             
             try {
-                // get the parent host name
+                // get the parent name
                 String parentName = cform.getParentObjectName();
-                ObjectName honame = new ObjectName(parentName);
-                
-                // Ensure that the requested context name is unique
-                ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.CONTEXT_TYPE +
-                                   ",path=" + cform.getPath() +
-                                   ",host=" + honame.getKeyProperty("host") +
-                                   ",service=" + honame.getKeyProperty("service"));
+                ObjectName poname = new ObjectName(parentName);
+
+                String host = poname.getKeyProperty("host");
+                ObjectName oname = null;
+                // Ensure that the requested default context name is unique
+                if (host!=null) {
+                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                                        ",host=" + host + ",service=" + 
+                                        poname.getKeyProperty("service"));
+                } else {
+                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                                        ",service=" + poname.getKeyProperty("name"));
+                }
                 
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
                     errors.add("contextName",
-                               new ActionError("error.contextName.exists"));
+                               new ActionError("error.defaultcontextName.exists"));
                     saveErrors(request, errors);
                     return (new ActionForward(mapping.getInput()));
                 }
@@ -219,38 +219,36 @@ public final class SaveContextAction extends Action {
                 ObjectName fname =
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
-                // Create a new StandardContext object
-                values = new Object[3];
+                // Create a new DefaultContext object
+                values = new Object[1];
                 values[0] = parentName;
-                values[1] = cform.getPath();
-                values[2] = cform.getDocBase();
                 
-                operation = "createStandardContext";
+                operation = "createDefaultContext";
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
-                                    values, createStandardContextTypes);
+                                    values, createDefaultContextTypes);
 
-                // Create a new Loader object
+                //* Create a new Loader object
                 values = new String[1];
                 // parent of loader is the newly created context
                 values[0] = cObjectName.toString();
                 operation = "createWebappLoader";
-                lObjectName = (String)
-                    mBServer.invoke(fname, operation,
-                                    values, createStandardLoaderTypes);                
+                //lObjectName = (String)
+                //    mBServer.invoke(fname, operation,
+                //                    values, createStandardLoaderTypes);                
                 
                 // Create a new StandardManager object
                 values = new String[1];
                 // parent of manager is the newly created Context
                 values[0] = cObjectName.toString();
                 operation = "createStandardManager";
-                mObjectName = (String)
-                    mBServer.invoke(fname, operation,
-                                    values, createStandardManagerTypes);
-                                    
+                //mObjectName = (String)
+                //    mBServer.invoke(fname, operation,
+                //                    values, createStandardManagerTypes);
+                
                 // Add the new Default Context to our tree control node
-                addToTreeControlNode(oname, "DefaultContext", parentName, 
-                                    resources, session);                     
+                addToTreeControlNode(oname, "DefaultContext", 
+                                    parentName, resources, session);
 
             } catch (Exception e) {
                 getServlet().log
@@ -273,34 +271,6 @@ public final class SaveContextAction extends Action {
             ObjectName coname = new ObjectName(cObjectName);
             ObjectName loname = new ObjectName(lObjectName);
             ObjectName moname = new ObjectName(mObjectName);
-
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(cform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }            
-            mBServer.setAttribute(coname,
-                                  new Attribute("debug", new Integer(debug)));
-
-            attribute = "path";
-            String path = "";
-            try {
-                path = cform.getPath();
-            } catch (Throwable t) {
-                path = "";
-            }
-            mBServer.setAttribute(coname,
-                                  new Attribute("path", path));
-            
-            attribute = "workDir";
-            String workDir = "";
-            workDir = cform.getWorkDir();
-            if ((workDir!=null) && (workDir.length()>=1)) {
-                mBServer.setAttribute(coname,
-                                  new Attribute("workDir", workDir));
-            }
  
             attribute = "cookies";
             String cookies = "false";
@@ -321,16 +291,6 @@ public final class SaveContextAction extends Action {
             }
             mBServer.setAttribute(coname,
                                   new Attribute("crossContext", new Boolean(crossContext)));
-
-            attribute = "override";
-            String override = "false";
-            try {
-                override = cform.getOverride();
-            } catch (Throwable t) {
-                override = "false";
-            }
-            mBServer.setAttribute(coname,
-                                  new Attribute("override", new Boolean(override)));
 
             attribute = "reloadable";
             String reloadable = "false";
@@ -353,69 +313,70 @@ public final class SaveContextAction extends Action {
                                   new Attribute("useNaming", new Boolean(useNaming)));
 
             // Loader properties            
-            attribute = "reloadable";
-            try {
-                reloadable = cform.getLdrReloadable();
-            } catch (Throwable t) {
-                reloadable = "false";
-            }
-            mBServer.setAttribute(loname,
-                                  new Attribute("reloadable", new Boolean(reloadable)));
+            //attribute = "reloadable";
+            //try {
+            //    reloadable = cform.getLdrReloadable();
+            //} catch (Throwable t) {
+            //    reloadable = "false";
+            //}
+            //mBServer.setAttribute(loname,
+            //                      new Attribute("reloadable", new Boolean(reloadable)));
             
-            attribute = "debug";
-            try {
-                debug = Integer.parseInt(cform.getLdrDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(loname,
-                                  new Attribute("debug", new Integer(debug)));
+            //attribute = "debug";
+            //int debug = 0;
+            //try {
+            //    debug = Integer.parseInt(cform.getLdrDebugLvl());
+            //} catch (Throwable t) {
+            //    debug = 0;
+            //}
+            //mBServer.setAttribute(loname,
+            //                      new Attribute("debug", new Integer(debug)));
             
-            attribute = "checkInterval";
-            int checkInterval = 15;
-            try {
-                checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
-            } catch (Throwable t) {
-                checkInterval = 15;
-            }
-            mBServer.setAttribute(loname,
-                                  new Attribute("checkInterval", new Integer(checkInterval)));
+            //attribute = "checkInterval";
+            //int checkInterval = 15;
+            //try {
+            //    checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
+            //} catch (Throwable t) {
+            //    checkInterval = 15;
+            //}
+            //mBServer.setAttribute(loname,
+            //                      new Attribute("checkInterval", new Integer(checkInterval)));
 
             // Manager properties            
-            attribute = "entropy";
-            String entropy = cform.getMgrSessionIDInit();
-            if ((entropy!=null) && (entropy.length()>=1)) {
-                mBServer.setAttribute(moname,
-                                  new Attribute("entropy",entropy));
-            }
+            //attribute = "entropy";
+            //String entropy = cform.getMgrSessionIDInit();
+            //if ((entropy!=null) && (entropy.length()>=1)) {
+            //    mBServer.setAttribute(moname,
+            //                      new Attribute("entropy",entropy));
+            //}
             
-            attribute = "debug";
-            try {
-                debug = Integer.parseInt(cform.getMgrDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }            
-            mBServer.setAttribute(moname,
-                                  new Attribute("debug", new Integer(debug)));
+            //attribute = "debug";
+            //try {
+            //    debug = Integer.parseInt(cform.getMgrDebugLvl());
+            //} catch (Throwable t) {
+            //    debug = 0;
+            //}            
+            //mBServer.setAttribute(moname,
+            //                      new Attribute("debug", new Integer(debug)));
             
-            attribute = "checkInterval";
-            try {
-                checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
-            } catch (Throwable t) {
-                checkInterval = 60;
-            }
-            mBServer.setAttribute(moname,
-                                  new Attribute("checkInterval", new Integer(checkInterval)));
+            //attribute = "checkInterval";
+            //try {
+            //    checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
+            //} catch (Throwable t) {
+            //    checkInterval = 60;
+            //}
+            //mBServer.setAttribute(moname,
+            //                      new Attribute("checkInterval", new Integer(checkInterval)));
             
-            attribute = "maxActiveSessions";
-            int maxActiveSessions = -1;
-            try {
-                maxActiveSessions = Integer.parseInt(cform.getMgrMaxSessions());
-            } catch (Throwable t) {
-                maxActiveSessions = -1;
-            }
-            mBServer.setAttribute(moname,
-                                  new Attribute("maxActiveSessions", new Integer(maxActiveSessions)));
+            //attribute = "maxActiveSessions";
+            //int maxActiveSessions = -1;
+            //try {
+            //    maxActiveSessions = Integer.parseInt(cform.getMgrMaxSessions());
+            //} catch (Throwable t) {
+            //    maxActiveSessions = -1;
+            //}
+            //mBServer.setAttribute(moname,
+            //                      new Attribute("maxActiveSessions", new Integer(maxActiveSessions)));
 
         } catch (Exception e) {
 
@@ -445,7 +406,7 @@ public final class SaveContextAction extends Action {
      *  messages
      */
     public void addToTreeControlNode(ObjectName oname, String containerName, 
-                                    String parentName, MessageResources resources, 
+                                    String parentName, MessageResources resources,
                                     HttpSession session) 
         throws Exception {
                               
@@ -453,14 +414,13 @@ public final class SaveContextAction extends Action {
         if (control != null) {
             TreeControlNode parentNode = control.findNode(parentName);
             if (parentNode != null) {
-                String path = oname.getKeyProperty("path");
-                String nodeLabel = "Context (" + path + ")";
+                String nodeLabel = "DefaultContext";
                 String encodedName = URLEncoder.encode(oname.toString());
                 TreeControlNode childNode = 
                     new TreeControlNode(oname.toString(),
-                                        "Context.gif",
+                                        "DefaultContext.gif",
                                         nodeLabel,
-                                        "EditContext.do?select=" +
+                                        "EditDefaultContext.do?select=" +
                                         encodedName,
                                         "content",
                                         true);
@@ -470,6 +430,7 @@ public final class SaveContextAction extends Action {
                 if (type == null) {
                     type = "";
                 }
+                String path = oname.getKeyProperty("path");
                 if (path == null) {
                     path = "";
                 }        
@@ -545,6 +506,6 @@ public final class SaveContextAction extends Action {
         }else {
             getServlet().log("Cannot find TreeControlNode!");
         }                              
-    }    
-        
+    }
+    
 }

@@ -22,14 +22,14 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-envEntry documentation included with the redistribution, if
+ * 3. The end-user documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Struts", and "Apache Software
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -60,56 +60,58 @@
  */
 
 
-package org.apache.webapp.admin.resources;
+package org.apache.webapp.admin.defaultcontext;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.ObjectInstance;
+import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 import org.apache.struts.util.MessageResources;
+
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.TreeControl;
+import org.apache.webapp.admin.TreeControlNode;
 
 
 /**
- * <p>Implementation of <strong>Action</strong> that deletes the
- * specified set of dataSource entries.</p>
+ * The <code>Action</code> that completes <em>Delete Default Contexts</em>
+ * transactions.
  *
- * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
- * @since 4.1
  */
 
-public final class DeleteDataSourcesAction extends Action {
+public class DeleteDefaultContextsAction extends Action {
 
 
-    // ----------------------------------------------------- Instance Variables
+    /**
+     * Signature for the <code>removeDefaultContext</code> operation.
+     */
+    private String removeDefaultContextTypes[] =
+    { "java.lang.String",      // Object name
+    };
 
 
     /**
      * The MBeanServer we will be interacting with.
      */
-    private MBeanServer mserver = null;
-
+    private MBeanServer mBServer = null;
+    
 
     /**
      * The MessageResources we will be retrieving messages from.
@@ -118,8 +120,8 @@ public final class DeleteDataSourcesAction extends Action {
 
 
     // --------------------------------------------------------- Public Methods
-
-
+    
+    
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -140,98 +142,72 @@ public final class DeleteDataSourcesAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-
+        
+        
         // Look up the components we will be using as needed
-        if (mserver == null) {
-            mserver = ((ApplicationServlet) getServlet()).getServer();
-        }
+        HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Has this transaction been cancelled?
-        if (isCancelled(request)) {
-            return (mapping.findForward("List DataSources Setup"));
-        }
-
-        // Check the transaction token
-        if (!isTokenValid(request)) {
-            response.sendError
-                (HttpServletResponse.SC_BAD_REQUEST,
-                 resources.getMessage(locale, "users.error.token"));
-            return (null);
-        }
-
-        // Perform any extra validation that is required
-        DataSourcesForm dataSourcesForm = (DataSourcesForm) form;
-        String dataSources[] = dataSourcesForm.getDataSources();
-        if (dataSources == null) {
-            dataSources = new String[0];
-        }
-
-        // Perform "Delete EnvEntry" transactions as required
+        // Acquire a reference to the MBeanServer containing our MBeans
         try {
-            
-            String resourcetype = dataSourcesForm.getResourcetype();
-            String path = dataSourcesForm.getPath();
-            String host = dataSourcesForm.getHost();
-            String service = dataSourcesForm.getService();
-            
-            ObjectName dname = null;
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+	// == fix this later
+        // Delete the specified DefaultContext
+        String defaultContexts[]  = ((DefaultContextsForm) form).getDefaultContexts();
+        String values[] = new String[1];
+        String operation = "removeDefaultContext";
 
-            if (resourcetype!=null) {
-                // Construct the MBean Name for the naming source
-                if (resourcetype.equals("Global")) {
-                    dname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                                            ResourceUtils.GLOBAL_TYPE);
-                } else if (resourcetype.equals("Context")) {            
-                    dname = new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
-                                ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
-                                ",host=" + host + ",service=" + service);
-                } else if (resourcetype.equals("DefaultContext")) {
-                    if (host.length() > 0) {
-                        dname = 
-                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",host=" + 
-                            host + ",service=" + service);
+        try {
+            // Look up our MBeanFactory MBean
+            ObjectName fname =
+                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+
+            // Look up our tree control data structure
+            TreeControl control = (TreeControl)
+                session.getAttribute("treeControlTest");
+
+            // Remove the specified default contexts
+            for (int i = 0; i < defaultContexts.length; i++) {
+                values[0] = defaultContexts[i];
+                mBServer.invoke(fname, operation,
+                                values, removeDefaultContextTypes);
+                if (control != null) {
+                    control.selectNode(null);
+                    TreeControlNode node = control.findNode(defaultContexts[i]);
+                    if (node != null) {
+                        node.remove();
                     } else {
-                        dname = 
-                            new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",service=" + 
-                            service);
+                        getServlet().log("Missing TreeControlNode for " +
+                                         defaultContexts[i]);
                     }
+                } else {
+                    getServlet().log("Missing TreeControl attribute");
                 }
             }
 
-            String signature[] = new String[1];
-            signature[0] = "java.lang.String";
-            Object params[] = new String[1];
-             
-            for (int i = 0; i < dataSources.length; i++) {
-                ObjectName oname = new ObjectName(dataSources[i]);
-                params[0] = oname.getKeyProperty("name");
-                mserver.invoke(dname, "removeResource",
-                               params, signature);
-            }
-          
-        } catch (Throwable t) {
-
+        } catch (Exception e) {
             getServlet().log
                 (resources.getMessage(locale, "users.error.invoke",
-                                      "removeResource"), t);
+                                      operation), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.invoke",
-                                      "removeResource"));
+                                      operation));
             return (null);
 
         }
 
-        // Proceed to the list envEntrys screen
-        return (mapping.findForward("DataSources List Setup"));
+        // Report successful completion of this transaction
+        return (mapping.findForward("Save Successful"));
 
     }
-
+    
 }
