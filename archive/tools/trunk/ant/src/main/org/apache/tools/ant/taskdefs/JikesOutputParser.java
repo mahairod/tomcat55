@@ -11,12 +11,13 @@ import java.io.*;
  *
  * TODO: 
  * Parsing could be much better
- * Emacs-mode of jikes (+E) cannot be parsed right now
  * @author skanthak@muehlheim.de
  */
 public class JikesOutputParser {
     protected Project project;
     protected boolean errorFlag = false; // no errors so far
+    protected int errors,warnings;
+    protected boolean error = false;
     protected boolean emacsMode;
     
     /**
@@ -46,16 +47,31 @@ public class JikesOutputParser {
 	// We assume, that every output, jike does, stands for an error/warning
 	// XXX 
 	// Is this correct?
+
+        // TODO:
+        // A warning line, that shows code, which contains a variable
+        // error will cause some trouble. The parser should definitely
+        // be much better.
+
 	while ((line = reader.readLine()) != null) {
 	    lower = line.toLowerCase();
 	    if (line.trim().equals(""))
 		continue;
 	    if (lower.indexOf("error") != -1)
-		logError(line);
+		setError(true);
 	    else if (lower.indexOf("warning") != -1)
-		logWarning(line);
-	    else
-		logError(line);
+                setError(false);
+            else {
+                // If we don't know the type of the line
+                // and we are in emacs mode, it will be
+                // an error, because in this mode, jikes won't
+                // always print "error", but sometimes other
+                // keywords like "Syntax". We should look for
+                // all those keywords.
+                if (emacsMode)
+                    setError(true);
+            }
+            log(line);
 	}
     }
 
@@ -64,24 +80,17 @@ public class JikesOutputParser {
        parseStandardOutput(reader);
     }
 
-    private void logWarning(String line) {
-        // Empty lines from jikes are alredy eaten, so print new ones
-        if (!emacsMode) {
-	    project.log("",Project.MSG_WARN); 
-        }
-
-	project.log(line,Project.MSG_WARN);
+    private void setError(boolean err) {
+        error = err;
+        if(error)
+            errorFlag = true;
     }
 
-    private void logError(String line) {
-	errorFlag = true;
-
-        // Empty lines from jikes are alredy eaten, so print new ones
-        if (!emacsMode) {
-	    project.log("",Project.MSG_ERR); 
-        }
-
-	project.log(line,Project.MSG_ERR);
+    private void log(String line) {
+       if (!emacsMode) {
+           project.log("", (error ? Project.MSG_ERR : Project.MSG_WARN));
+       }
+       project.log(line, (error ? Project.MSG_ERR : Project.MSG_WARN));
     }
 
     /**

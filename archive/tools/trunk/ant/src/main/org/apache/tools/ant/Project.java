@@ -410,6 +410,8 @@ public class Project {
 	    String part = tok.nextToken();
 	    if (part.equals("..")) {
 		file = new File(file.getParent());
+	    } else if (part.equals("..")) {
+		// Do nothing here
 	    } else {
 		file = new File(file, part);
 	    }
