@@ -1,0 +1,139 @@
+$Id$
+
+                      Release Plan for Apache Tomcat 4.0
+                      ==================================
+
+
+Introduction:
+------------
+
+This document is a release plan for the *final* release of Apache Tomcat 4.0.
+We've been waiting for the underlying specifications (Servlet 2.3 and JSP 1.2)
+to go final.  As these specifications are now in the Executive Committee voting
+step of the Java Community Process, this time is now at hand.
+
+The goal of the Apache Tomcat 4.0 final release is to provide a stable
+container that supports 100% of the mandatory requirements of the Servlet 2.3
+and JSP 1.2 specifications, as well as many useful additional features.  To
+that end, a series of beta releases have been distributed, and the focus has
+been primarily on specification compliance and other bug fixes, rather than
+adding functionality.
+
+This Release Plan proposes the following schedule:
+
+  Monday, September 9, 2001      Tomcat 4.0 Release Candidate 1
+
+  Thursday, September 12, 2001   Tomcat 4.0 Release Candidate 2
+
+  Monday, September 17, 2001     Tomcat 4.0 Final Release
+
+In order to complete final release, all outstanding Bugzilla bug reports
+against Tomcat 4.0 need to be fixed or deferred for later releases.  This
+Release Plan proposes the following classification of current outstanding
+bug reports in the bug tracking system, sorted by component and their ID
+numbers in our bug tracking system at:
+
+  http://nagoya.apache.org/bugzilla/
+
+Please review the bug reports, and their classification as "must have",
+"nice to have", or "address later".  Lobbying for changes in classification
+can take place on the TOMCAT-DEV mailling list.  In addition, if you have a
+bug report or enhancement that you wish to have considered prior to final
+release, please submit a bug report as quickly as possible.
+
+
+
+Bugs That Must Be Addressed Before Final Release:
+------------------------------------------------
+
+Catalina    2883    Error page for 401 error code is not populated
+
+Catalina    3093    Base64.decode returns extra 0's at end of array
+
+Catalina    3232    Cookie values are URLDecoded but not URLEncoded
+
+Catalina    3292    Class reloading fails
+
+Connectors  1788    mod_webapp errors on Win2k
+
+Connectors  2334    Tomcat 4.0-b5 + Apache 1.3.12?
+
+Connectors  2997    Webapp connector should recover when Tomcat is restarted
+
+Connectors  2999    Linking trouble: webapp connectors and Apache 1.3 apxs
+
+Connectors  3160    mod_webapp performance issues
+
+Jasper      2693    Syntax errors in JSP source generate NumberFormatException
+
+Jasper      2917    JSP compiled file name is not correct
+
+Jasper      3019    Jasper generates bad custom tag variable names
+
+Jasper      3079    NullPointerException in JakartaCommentGenerator.generateEnd
+
+Jasper      3127    <jsp:directive.include/> not supported
+
+Jasper      3174    XML view of JSP document is incorrect
+
+Jasper      3235    JSPC command line compiler does not support taglibs
+
+Jasper      3350    Using XML syntax causes content rearrangement
+
+Jasper      3351    JSP documents in XML syntax produce invalid XML
+
+Jasper      3366    Character tag attributes
+
+Jasper      3381    Tag attributes of type short not working
+
+Jasper      3398    Jasper does not support primitive types for tag variables
+
+Webapps     3009    Manager cannot install web app
+
+Webapps     3336    ArrayIndexOutOfBounds exception when starting and stopping
+                    an app several times through Manager
+
+Webapps     3383    CompressionFilter problem in Catalina
+
+
+Nice To Have Fixes Before Final Release:
+---------------------------------------
+
+Catalina    2949    Tomcat 4.0/Solaris follow soft links for public_html
+
+Catalina    3114    Spanish translations of LocalString.properties files
+
+Catalina    3194    Javadoc errors during build
+
+Catalina    3285    Tomcat 4.0-b5 class loader fails on IBM JDK
+
+Catalina    3293    Allow content lengths > 2^31
+
+Jasper      3055    <jsp:plugin> tag ignores the name attribute
+
+Jasper      3195    Javadoc errors during build
+
+Jasper      3340    sun.tools.javac.Main has been deprecated in JDK 1.4-beta-2
+
+Servletapi  3196    Javadoc errors during build
+
+Servletapi  3344    Typo in javadocs
+
+
+Enhancement Requests To Be Addressed Later:
+------------------------------------------
+
+Catalina    1400    SSLServerSocketFactory.java does not support multiple
+                    keys in a keystore file
+
+Catalina    1575    Slow server start due to SAX parsing
+
+Catalina    2570    Add ability to configure a default error handler
+
+Catalina    2823    Allow a <Manager> inside <DefaultContext>
+
+Jasper      2500    FileNotFoundException unintentionally caught
+
+Jasper      2622    Jasper is not taking advantage of empty body content
+                    optimization opportunity
+
