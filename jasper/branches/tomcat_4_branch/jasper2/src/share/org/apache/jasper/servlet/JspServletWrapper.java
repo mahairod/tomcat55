@@ -129,7 +129,7 @@ public class JspServletWrapper {
         return ctxt;
     }
 
-    public HttpJspBase getServlet()
+    public Servlet getServlet()
         throws ServletException, IOException, FileNotFoundException
     {
         if (ctxt.isReload()) {
@@ -153,7 +153,7 @@ public class JspServletWrapper {
                 }
             }    
         }
-        return (HttpJspBase)theServlet;
+        return theServlet;
     }
 
     public ServletContext getServletContext() {

@@ -376,7 +376,7 @@ public class Compiler {
         if( jsw==null ) {
             return false;
         }
-        HttpJspBase servlet=null;
+        Servlet servlet=null;
         try {
             servlet = jsw.getServlet();
         } catch( ServletException ex1 ) {
@@ -386,7 +386,16 @@ public class Compiler {
             // System.out.println("Compiler: outdated, no servlet " + targetFile );
             return true;
         }
-        List includes = servlet.getIncludes();
+        List includes = null;
+        // If the page contains a page directive with "extends" attribute
+        // it may not be an instance of HttpJspBase.
+        // For now only track dependencies on included files if this is not
+        // the case.  A more complete solution is to generate the servlet
+        // to implement (say) JspInlcudes which contains getIncludes method.
+        if (servlet instanceof HttpJspBase) {
+            includes = ((HttpJspBase)servlet).getIncludes();
+        }
+
         if (includes == null) {
             return false;
         }
