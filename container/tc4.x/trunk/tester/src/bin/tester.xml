@@ -1632,6 +1632,10 @@
           golden="${golden.path}/SSIInclude02.txt"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIInclude09.shtml" debug="${debug}"
+          golden="${golden.path}/SSIInclude03.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/SSIConfig01.shtml" debug="${debug}"
           golden="${golden.path}/SSIConfig01.txt"/>
 
