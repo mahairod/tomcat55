@@ -117,7 +117,12 @@ files are in c:\jakarta-tomcat\conf.</p>
         contains a "," separated list of dlls ( full paths ) - you need to insert the 
         full path to isapi_redirect.dll.</li>
   <li>Restart IIS (stop + start the IIS service), make sure that the
-    jakarta filter is marked with a green up-pointing arrow. <br>(costin)Under Win98 you may 
+    jakarta filter is marked with a green up-pointing arrow. 
+    <br><strong>Windows NT/2000:</strong>  note that
+    the stop/start feature of the Microsoft Management Console does not actually stop
+    and start the IIS service.  You need to use the services control panel (or the net command)
+    to stop and start the "World Wide Web Publishing Service".
+    <br><strong>Win98:</strong>  (costin) you may 
     need to cd WINDOWS\SYSTEM\inetsrv and type PWS /stop ( the DLL and log files are locked -
     even if you click the stop button, PWS will still keep the DLLs in memory. ). Type pws
     to start it again.
@@ -152,7 +157,10 @@ to <tt>uriworkermap.properties</tt> will be:</p>
 
 <p><tt>/shop/*=ajp12</tt></p>
 
-<p>After saving <tt>uriworkermap.properties</tt> restart IIS and it will serve the new context.</p>
+<p>After saving <tt>uriworkermap.properties</tt> restart IIS and it will serve the new context.
+As described in step 9 above, you must actually stop and start the IIS service from the service control
+panel.  Stopping and starting using the MMC will not pick up the changes to the 
+uriworkermap.properties file.</p>
 
 <p>As a new feature in Tomcat 3.2, a <tt>uriworkermap.properties-auto</tt> is
 automatically written each time Tomcat is started.  This file includes settings
