@@ -892,7 +892,7 @@ public class NamingContext implements Context {
         } else {
             if ((!rebind) && (entry != null)) {
                 throw new NamingException
-                    (sm.getString("namingContext.alreadyBound"));
+                    (sm.getString("namingContext.alreadyBound", name.get(0)));
             } else {
                 // Getting the type of the object and wrapping it within a new
                 // NamingEntry
