@@ -240,6 +240,17 @@ public abstract class PersistentManagerBase
 
     // ------------------------------------------------------------- Properties
 
+/**
+     * Perform the background processes for this Manager
+     */
+    public void backgroundProcess() {
+        this.processExpires();
+        this.processPersistenceChecks();
+        if ((this.getStore() != null)
+            && (this.getStore() instanceof StoreBase)) {
+            ((StoreBase) this.getStore()).processExpires();
+        }
+    }
 
     /**
      * Indicates how many seconds old a session can get, after its last
