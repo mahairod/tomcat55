@@ -20,11 +20,12 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,7 +110,10 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
             public char[] getContents() {
                 char[] result = null;
                 try {
-                    Reader reader = new BufferedReader(new FileReader(sourceFile));
+                    InputStreamReader isReader =
+                        new InputStreamReader(new FileInputStream(sourceFile),
+                                ctxt.getOptions().getJavaEncoding());
+                    Reader reader = new BufferedReader(isReader);
                     if (reader != null) {
                         char[] chars = new char[8192];
                         StringBuffer buf = new StringBuffer();
