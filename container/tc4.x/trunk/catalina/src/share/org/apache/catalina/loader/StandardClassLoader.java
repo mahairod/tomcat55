@@ -77,6 +77,7 @@ import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
 import java.security.AccessControlException;
 import java.security.CodeSource;
+import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Policy;
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import org.apache.naming.JndiPermission;
 
 
 /**
@@ -296,10 +298,10 @@ public class StandardClassLoader
 
 
     /**
-     * A list of read FilePermission's required if this loader
+     * A list of read File and Jndi Permission's required if this loader
      * is for a web application context.
      */
-    private ArrayList filePermissionList = new ArrayList();
+    private ArrayList permissionList = new ArrayList();
 
 
     /**
@@ -387,20 +389,24 @@ public class StandardClassLoader
 
     /**
      * If there is a Java SecurityManager create a read FilePermission
-     * for the file directory path.
+     * or JndiPermission for the file directory path.
      *
      * @param path file directory path
      */
     public void setPermissions(String path) {
 	if( securityManager != null ) {
-            filePermissionList.add(new FilePermission(path + "-","read"));
+            if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
+                permissionList.add(new JndiPermission(path + "*"));
+            } else {
+                permissionList.add(new FilePermission(path + "-","read"));
+            }
 	}
     }
 
 
     /**
      * If there is a Java SecurityManager add a read FilePermission
-     * for URL.
+     * or JndiPermission for URL.
      *
      * @param url URL for a file or directory on local system
      */
@@ -1139,10 +1145,10 @@ public class StandardClassLoader
         if ((pc = (PermissionCollection)loaderPC.get(codeUrl)) == null) {
             pc = super.getPermissions(codeSource);
             if (pc != null) {
-                Iterator perms = filePermissionList.iterator();
+                Iterator perms = permissionList.iterator();
                 while (perms.hasNext()) {
-                    FilePermission fp = (FilePermission)perms.next();
-                    pc.add(fp);
+                    Permission p = (Permission)perms.next();
+                    pc.add(p);
                 }
 	        loaderPC.put(codeUrl,pc);
             }
