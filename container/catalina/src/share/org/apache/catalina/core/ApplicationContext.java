@@ -133,175 +133,6 @@ import org.apache.catalina.util.StringManager;
 public class ApplicationContext
     implements ServletContext {
 
-    protected class PrivilegedGetInitParameter
-        implements PrivilegedAction {
-            
-        private String name;
-
-        PrivilegedGetInitParameter(String name){
-            this.name = name;
-        }
-        
-        public Object run(){
-            return ((String) parameters.get(name));
-        }
-    }
-    
-    
-    protected class PrivilegedGetInitParameterNames
-        implements PrivilegedAction {
-
-        PrivilegedGetInitParameterNames(){
-        }
-
-        public Object run() {
-            return (new Enumerator(parameters.keySet()));
-        }
-    }        
-
-    protected class PrivilegedGetNamedDispatcher
-        implements PrivilegedAction {
-
-        private Wrapper wrapper;
-        private String name;
-        
-        PrivilegedGetNamedDispatcher(Wrapper wrapper, String name) {
-            this.wrapper = wrapper;
-            this.name = name;
-        }
-
-        public Object run() {
-            return new ApplicationDispatcher(wrapper, null, null, null, name);
-        }
-    }
-    
-    
-    protected class PrivilegedGetRequestDispatcher
-        implements PrivilegedAction {
-
-        private String contextPath;
-        private String relativeURI;
-        private String queryString;
-
-        PrivilegedGetRequestDispatcher(String contextPath, String relativeURI,
-                                       String queryString) {
-            this.contextPath = contextPath;
-            this.relativeURI = relativeURI;
-            this.queryString = queryString;
-        }
-
-        public Object run() {
-            HttpRequest request = new DummyRequest
-                (context.getPath(), contextPath + relativeURI, queryString);
-            Wrapper wrapper = (Wrapper) context.map(request, true);
-            if (wrapper == null)
-                return (null);
-
-            // Construct a RequestDispatcher to process this request
-            HttpServletRequest hrequest =
-                (HttpServletRequest) request.getRequest();
-            return (RequestDispatcher) new ApplicationDispatcher
-                (wrapper,
-                 hrequest.getServletPath(),
-                 hrequest.getPathInfo(),
-                 hrequest.getQueryString(),
-                 null);
-        }
-
-    }
-
-
-    protected class PrivilegedGetResource
-        implements PrivilegedExceptionAction {
-
-        private String path;
-        private String host;
-        private DirContext resources;
-
-        PrivilegedGetResource(String host, String path, DirContext resources) {
-            this.host = host;
-            this.path = path;
-            this.resources = resources;
-        }
-
-        public Object run() throws Exception {
-            return new URL("jndi", null, 0, getJNDIUri(host, path),
-                           new DirContextURLStreamHandler(resources));
-        }
-    }
-
-
-    protected class PrivilegedGetResourcePaths
-        implements PrivilegedAction {
-
-        private String path;
-        private DirContext resources;
-
-        PrivilegedGetResourcePaths(DirContext resources, String path) {
-            this.resources = resources;
-            this.path = path;
-        }
-
-        public Object run() {
-            return (getResourcePathsInternal(resources, path));
-        }
-
-    }
-
-
-    protected class PrivilegedLogMessage
-        implements PrivilegedAction {
-
-        private String message;
-
-        PrivilegedLogMessage(String message) {
-            this.message = message;
-        }
-
-        public Object run() {
-            internalLog(message);
-            return null;
-        }
-
-    }
-
-    protected class PrivilegedLogException
-        implements PrivilegedAction {
-
-        private String message;
-        private Exception exception;
-
-        PrivilegedLogException(Exception exception,String message) {
-            this.message = message;
-            this.exception = exception;
-        }
-
-        public Object run() {
-            internalLog(exception,message);
-            return null;
-        }
-
-    }
-
-    protected class PrivilegedLogThrowable
-        implements PrivilegedAction {
-
-        private String message;
-        private Throwable throwable;
-
-        PrivilegedLogThrowable(String message,Throwable throwable) {
-            this.message = message;
-            this.throwable = throwable;
-        }
-
-        public Object run() {
-            internalLog(message,throwable);
-            return null;
-        }
-
-    }
-
-
     // ----------------------------------------------------------- Constructors
 
 
@@ -468,14 +299,7 @@ public class ApplicationContext
 
         mergeParameters();
         synchronized (parameters) {
-            if (System.getSecurityManager() != null){
-                PrivilegedGetInitParameter ip =
-                    new PrivilegedGetInitParameter(name);
-                return (String)AccessController.doPrivileged(ip);
- 
-            } else {
-               return ((String) parameters.get(name));
-            }                   
+            return ((String) parameters.get(name));
         }
     }
 
@@ -488,13 +312,7 @@ public class ApplicationContext
 
         mergeParameters();
         synchronized (parameters) {
-            if (System.getSecurityManager() != null){
-                PrivilegedGetInitParameterNames pn =
-                    new PrivilegedGetInitParameterNames();
-                return (Enumeration)AccessController.doPrivileged(pn);
-            } else {
-               return (new Enumerator(parameters.keySet()));
-            }
+           return (new Enumerator(parameters.keySet()));
         }
 
     }
@@ -559,14 +377,8 @@ public class ApplicationContext
             return (null);
         
         ApplicationDispatcher dispatcher;
-        if (System.getSecurityManager() != null){
-            PrivilegedGetNamedDispatcher nd = 
-                    new PrivilegedGetNamedDispatcher(wrapper, name);
-            dispatcher = (ApplicationDispatcher)AccessController.doPrivileged(nd);
-        } else {
-            dispatcher =
+        dispatcher =
               new ApplicationDispatcher(wrapper, null, null, null, name);
-        }
         
         return ((RequestDispatcher) dispatcher);
 
@@ -620,13 +432,6 @@ public class ApplicationContext
             relativeURI = path.substring(0, question);
             queryString = path.substring(question + 1);
         }
-        if( System.getSecurityManager() != null ) {
-            PrivilegedGetRequestDispatcher dp =
-                new PrivilegedGetRequestDispatcher(contextPath,
-                        relativeURI,queryString);
-            return (RequestDispatcher)AccessController.doPrivileged(dp);
-        }
-
         // The remaining code is duplicated in PrivilegedGetRequestDispatcher,
         // we need to make sure they stay in sync
         HttpRequest request = new DummyRequest
@@ -675,20 +480,9 @@ public class ApplicationContext
             String hostName = context.getParent().getName();
             try {
                 resources.lookup(path);
-                if( System.getSecurityManager() != null ) {
-                    try {
-                        PrivilegedGetResource dp =
-                            new PrivilegedGetResource
-                                (hostName, fullPath, resources);
-                        return (URL)AccessController.doPrivileged(dp);
-                    } catch( PrivilegedActionException pe) {
-                        throw pe.getException();
-                    }
-                } else {
-                    return new URL
-                        ("jndi", null, 0, getJNDIUri(hostName, fullPath),
-                         new DirContextURLStreamHandler(resources));
-                }
+                return new URL
+                    ("jndi", null, 0, getJNDIUri(hostName, fullPath),
+                     new DirContextURLStreamHandler(resources));
             } catch (Exception e) {
                 //e.printStackTrace();
             }
@@ -741,13 +535,7 @@ public class ApplicationContext
 
         DirContext resources = context.getResources();
         if (resources != null) {
-            if (System.getSecurityManager() != null) {
-                PrivilegedAction dp =
-                    new PrivilegedGetResourcePaths(resources, path);
-                return ((Set) AccessController.doPrivileged(dp));
-            } else {
-                return (getResourcePathsInternal(resources, path));
-            }
+            return (getResourcePathsInternal(resources, path));
         }
         return (null);
 
@@ -808,18 +596,7 @@ public class ApplicationContext
      * @deprecated As of Java Servlet API 2.1, with no direct replacement.
      */
     public Enumeration getServletNames() {
-        if (System.getSecurityManager() != null){
-            return (Enumeration)AccessController.doPrivileged(
-                new PrivilegedAction(){
-                    
-                    public Object run(){
-                        return (new Enumerator(empty)); 
-                    }
-                }
-            );
-        } else {
-            return (new Enumerator(empty));
-        }
+        return (new Enumerator(empty));
     }
 
 
@@ -827,18 +604,7 @@ public class ApplicationContext
      * @deprecated As of Java Servlet API 2.1, with no direct replacement.
      */
     public Enumeration getServlets() {
-        if (System.getSecurityManager() != null){
-            return (Enumeration)AccessController.doPrivileged(
-                new PrivilegedAction(){
-                    
-                    public Object run(){
-                        return (new Enumerator(empty)); 
-                    }
-                }
-            );
-        } else {
-            return (new Enumerator(empty));
-        }        
+        return (new Enumerator(empty));
     }
 
 
@@ -848,16 +614,6 @@ public class ApplicationContext
      * @param message Message to be written
      */
     public void log(String message) {
-        if( System.getSecurityManager() != null ) {
-            PrivilegedLogMessage dp =
-                new PrivilegedLogMessage(message);
-            AccessController.doPrivileged(dp);
-        } else {
-            internalLog(message);
-        }
-    }
-
-    private void internalLog(String message) {
 
         Logger logger = context.getLogger();
         if (logger != null)
@@ -876,16 +632,7 @@ public class ApplicationContext
      *  <code>log(String, Throwable)</code> instead
      */
     public void log(Exception exception, String message) {
-        if( System.getSecurityManager() != null ) {
-            PrivilegedLogException dp =
-                new PrivilegedLogException(exception,message);
-            AccessController.doPrivileged(dp);
-        } else {
-            internalLog(exception,message);
-        }
-    }
-
-    private void internalLog(Exception exception, String message) {
+        
         Logger logger = context.getLogger();
         if (logger != null)
             logger.log(exception, message);
@@ -900,17 +647,7 @@ public class ApplicationContext
      * @param throwable Exception to be reported
      */
     public void log(String message, Throwable throwable) {
-        if( System.getSecurityManager() != null ) {
-            PrivilegedLogThrowable dp =
-                new PrivilegedLogThrowable(message,throwable);
-            AccessController.doPrivileged(dp);
-        } else {
-            internalLog(message,throwable);
-        }
-    }
-
-    private void internalLog(String message, Throwable throwable) {
-
+        
         Logger logger = context.getLogger();
         if (logger != null)
             logger.log(message, throwable);
@@ -1084,7 +821,7 @@ public class ApplicationContext
     /**
      * Return the facade associated with this ApplicationContext.
      */
-    ServletContext getFacade() {
+    protected ServletContext getFacade() {
 
         return (this.facade);
 
