@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ *
+ * ====================================================================
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights
@@ -63,7 +67,7 @@ import org.apache.jasper.Constants;
  * declares and attempts to obtain a TagPoolManager.
  *
  * @author Casey Lucas <clucas@armassolutions.com>
- * @see TagPoolManager
+ * @see org.apache.jasper.runtime.TagPoolManager
  */
 public class TagPoolManagerGenerator extends GeneratorBase
     implements InitMethodPhase {

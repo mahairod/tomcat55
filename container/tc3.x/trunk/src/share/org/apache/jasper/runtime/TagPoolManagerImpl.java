@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ *
+ * ====================================================================
+ * 
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights
@@ -64,8 +68,8 @@ import org.apache.tomcat.util.log.Log;
  * It simply manages a collection of named pools, including their
  * retrieval and cleanup.
  *
- * @author Casey Lucas <clucas@armassolutions.com
- * @see TagPoolManagerInterceptor
+ * @author Casey Lucas <clucas@armassolutions.com>
+ * @see org.apache.tomcat.facade.TagPoolManagerInterceptor
  */
 public class TagPoolManagerImpl implements TagPoolManager {
 
