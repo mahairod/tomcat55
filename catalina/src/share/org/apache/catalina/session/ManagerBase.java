@@ -87,9 +87,12 @@ import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 /**
@@ -222,6 +225,8 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
     // number of duplicated session ids - anything >0 means we have problems
     protected int duplicates=0;
+
+    protected boolean initialized=false;
 
     /**
      * The string manager for this package.
@@ -603,7 +608,33 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     // --------------------------------------------------------- Public Methods
-
+    public void destroy() {
+        if( oname != null )
+            Registry.getRegistry().unregisterComponent(oname);
+        initialized=false;
+    }
+    
+    public void init() {
+        if( initialized ) return;
+        initialized=true;        
+        
+        if( oname==null ) {
+            try {
+                StandardContext ctx=(StandardContext)this.getContainer();
+                Engine eng=(Engine)ctx.getParent().getParent();
+                domain=eng.getName();
+                StandardHost hst=(StandardHost)ctx.getParent();
+                
+                oname=new ObjectName(domain + ":type=Manager,path="
+                + ctx.getPath() + ",host=" + hst.getName());
+                Registry.getRegistry().registerComponent(this, oname, null );
+            } catch (Exception e) {
+                log.error("Error registering ",e);
+            }
+        }
+        log.info("Registering " + oname );
+               
+    }
 
     /**
      * Add this Session to the set of active Sessions for this Manager.
