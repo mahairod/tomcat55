@@ -24,7 +24,7 @@ set CLASSPATH=%CLASSPATH%;%cp%
 
 echo Using classpath: %CLASSPATH%
 rem start java org.apache.tomcat.shell.Startup %2 %3 %4 %5 %6 %7 %8 %9
-java org.apache.japser.JspC %1 %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.jasper.JspC %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 set CLASSPATH=%cp%
 set port=
