@@ -112,7 +112,7 @@ class TagFileProcessor {
 	};
 
 	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
-	    new JspUtil.ValidAttribute("name-given"),
+	    new JspUtil.ValidAttribute("name-given", true),
 	    new JspUtil.ValidAttribute("variable-class"),
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("declare"),
@@ -131,9 +131,9 @@ class TagFileProcessor {
         private String smallIcon = null;
         private String largeIcon = null;
         private boolean dynamicAttributes = false;
-
-        private Vector attributeVector = new Vector();
-        private Vector variableVector = new Vector();
+	
+        private Vector attributeVector;
+        private Vector variableVector;
 
         public TagFileDirectiveVisitor(Compiler compiler,
 				       TagLibraryInfo tagLibInfo,
@@ -141,6 +141,8 @@ class TagFileProcessor {
             err = compiler.getErrorDispatcher();
 	    this.tagLibInfo = tagLibInfo;
 	    this.name = name;
+	    attributeVector = new Vector();
+	    variableVector = new Vector();
         }
 
         public void visit(Node.TagDirective n) throws JasperException {
@@ -233,6 +235,22 @@ class TagFileProcessor {
 							  scope));
         }
 
+	/*
+	 * Returns the vector of attributes corresponding to attribute
+	 * directives.
+	 */
+	public Vector getAttributesVector() {
+	    return attributeVector;
+	}
+
+	/*
+	 * Returns the vector of variables corresponding to variable
+	 * directives.
+	 */        
+	public Vector getVariablesVector() {
+	    return variableVector;
+	}
+
         public TagInfo getTagInfo() {
 
             if (name == null) {
@@ -285,20 +303,37 @@ class TagFileProcessor {
 				       TagLibraryInfo tagLibInfo)
                 throws JasperException {
 
+	ErrorDispatcher err = pc.getCompiler().getErrorDispatcher();
+
         Node.Nodes page = null;
 	try {
 	    page = pc.parseTagFile(tagfile);
 	} catch (FileNotFoundException e) {
-	    pc.getCompiler().getErrorDispatcher().jspError(
-                                        "jsp.error.file.not.found", tagfile);
+	    err.jspError("jsp.error.file.not.found", tagfile);
 	} catch (IOException e) {
-	    pc.getCompiler().getErrorDispatcher().jspError(
-                                        "jsp.error.file.not.found", tagfile);
+	    err.jspError("jsp.error.file.not.found", tagfile);
 	}
 
         TagFileDirectiveVisitor tagFileVisitor
 	    = new TagFileDirectiveVisitor(pc.getCompiler(), tagLibInfo, name);
         page.visit(tagFileVisitor);
+
+	/*
+	 * It is illegal to have a variable.name-given equal to an
+	 * attribute.name in the same tag file translation unit.
+	 */
+	Iterator attrsIter = tagFileVisitor.getAttributesVector().iterator();
+	while (attrsIter.hasNext()) {
+	    TagAttributeInfo attrInfo = (TagAttributeInfo) attrsIter.next();
+	    Iterator varsIter = tagFileVisitor.getVariablesVector().iterator();
+	    while (varsIter.hasNext()) {
+		TagVariableInfo varInfo = (TagVariableInfo) varsIter.next();
+		if (attrInfo.getName().equals(varInfo.getNameGiven())) {
+		    err.jspError("jsp.error.tagfile.var_name_given_equals_attr_name",
+				 tagfile, attrInfo.getName());
+		}
+	    }
+	}
 
         return tagFileVisitor.getTagInfo();
     }
