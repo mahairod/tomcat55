@@ -165,7 +165,12 @@ char *qptr;
         if (GetExitCodeProcess(ProcessInformation.hProcess, &qreturn)) {
           if (qreturn == STILL_ACTIVE) continue;
           }
-        AddToMessageLog(TEXT("ServiceStart: jsvc stopped"));
+        AddToMessageLog(TEXT("ServiceStart: jsvc crashed"));
+        CloseHandle(hServerStopEvent);
+        CloseHandle(ProcessInformation.hProcess);
+        exit(0); // exit ungracefully so
+                 // Service Control Manager 
+                 // will attempt a restart.
         break; //failed.
         }
 
@@ -189,7 +194,7 @@ char *qptr;
         CloseHandle(hServerStopEvent);
 
     if (ProcessInformation.hProcess)
-       CloseHandle(ProcessInformation.hProcess);
+        CloseHandle(ProcessInformation.hProcess);
 
 }
 
