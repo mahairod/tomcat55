@@ -115,6 +115,12 @@
     <form-bean      name="envEntriesForm"
                     type="org.apache.webapp.admin.resources.EnvEntriesForm"/>
 
+    <form-bean      name="userDatabaseForm"
+                    type="org.apache.webapp.admin.resources.UserDatabaseForm"/>
+
+    <form-bean      name="userDatabasesForm"
+                    type="org.apache.webapp.admin.resources.userDatabasesForm"/>
+
     <form-bean      name="dataSourceForm"
                     type="org.apache.webapp.admin.resources.DataSourceForm"/>
 
@@ -320,6 +326,22 @@
 
     <forward        name="EnvEntries List Setup"
                     path="/resources/listEnvEntries.do?forward=EnvEntries+List"
+                redirect="false"/>
+
+    <forward        name="UserDatabase"
+                    path="/resources/userDatabase.jsp"
+                redirect="false"/>
+
+    <forward        name="UserDatabases Delete List"
+                    path="/resources/deleteUserDatabases.jsp"
+                redirect="false"/>
+
+    <forward        name="UserDatabases List"
+                    path="/resources/listUserDatabases.jsp"
+                redirect="false"/>
+
+    <forward        name="UserDatabases List Setup"
+                    path="/resources/listUserDatabases.do?forward=UserDatabases+List"
                 redirect="false"/>
                 
     <forward        name="DataSource"
@@ -751,7 +773,12 @@
                name="envEntriesForm"
               scope="request"
                type="org.apache.webapp.admin.resources.DeleteEnvEntriesAction"/>
-    
+
+   <action    path="/resources/deleteUserDatabases"
+               name="userDatabasesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.DeleteUserDatabasesAction"/>
+      
     <action    path="/resources/deleteDataSources"
                name="dataSourcesForm"
               scope="request"
@@ -761,6 +788,11 @@
                name="envEntriesForm"
               scope="request"
                type="org.apache.webapp.admin.resources.ListEnvEntriesAction"/>
+               
+    <action    path="/resources/listUserDatabases"
+               name="userDatabasesForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.ListUserDatabasesAction"/>
 
     <action    path="/resources/listDataSources"
                name="dataSourcesForm"
@@ -772,6 +804,12 @@
                name="envEntryForm"
               scope="request"
                type="org.apache.webapp.admin.resources.SaveEnvEntryAction"/>
+               
+   <action    path="/resources/saveUserDatabase"
+              input="/resources/userDatabase.jsp"
+               name="userDatabaseForm"
+              scope="request"
+               type="org.apache.webapp.admin.resources.SaveUserDatabaseAction"/>
 
     <action    path="/resources/saveDataSource"
               input="/resources/dataSource.jsp"
@@ -781,6 +819,9 @@
 
    <action    path="/resources/setUpEnvEntry"
                type="org.apache.webapp.admin.resources.SetUpEnvEntryAction"/>
+
+   <action    path="/resources/setUpUserDatabase"
+               type="org.apache.webapp.admin.resources.SetUpUserDatabaseAction"/>
 
     <action    path="/resources/setUpDataSource"
                type="org.apache.webapp.admin.resources.SetUpDataSourceAction"/>
