@@ -143,10 +143,10 @@
 
 -->
 
-  <taskdef name="install" classname="org.apache.catalina.ant.InstallTask"/>
-  <taskdef name="list"    classname="org.apache.catalina.ant.ListTask"/>
-  <taskdef name="reload"  classname="org.apache.catalina.ant.ReloadTask"/>
-  <taskdef name="remove"  classname="org.apache.catalina.ant.RemoveTask"/>
+  <taskdef name="deploy"   classname="org.apache.catalina.ant.DeployTask"/>
+  <taskdef name="list"     classname="org.apache.catalina.ant.ListTask"/>
+  <taskdef name="reload"   classname="org.apache.catalina.ant.ReloadTask"/>
+  <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
 
 
 <!--  ==================== Compilation Control Options ==================== -->
@@ -357,11 +357,11 @@
   <target name="install" depends="compile"
    description="Install application to servlet container">
 
-    <install url="${manager.url}"
-        username="${manager.username}"
-        password="${manager.password}"
-            path="${app.path}"
-             war="file://${build.home}"/>
+    <deploy url="${manager.url}"
+       username="${manager.username}"
+       password="${manager.password}"
+           path="${app.path}"
+            war="file://${build.home}"/>
 
   </target>
 
@@ -486,10 +486,10 @@
   <target name="remove"
    description="Remove application on servlet container">
 
-    <remove url="${manager.url}"
-       username="${manager.username}"
-       password="${manager.password}"
-           path="${app.path}"/>
+    <undeploy url="${manager.url}"
+         username="${manager.username}"
+         password="${manager.password}"
+             path="${app.path}"/>
 
   </target>
 

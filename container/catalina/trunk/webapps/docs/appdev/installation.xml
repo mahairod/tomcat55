@@ -38,7 +38,7 @@ are available at
 <subsection name="Tomcat">
 
 <p>Binary downloads of the <strong>Tomcat</strong> server are available from
-<a href="http://jakarta.apache.org/downloads/binindex.html">http://jakarta.apache.org/downloads/binindex.html</a>.
+<a href="http://jakarta.apache.org/binindex.cgi">http://jakarta.apache.org/binindex.cgi</a>.
 This manual assumes you are using the most recent release
 of Tomcat 5.  Detailed instructions for downloading and installing
 Tomcat 5 are available <a href="../RUNNING.txt">here</a>.</p>
