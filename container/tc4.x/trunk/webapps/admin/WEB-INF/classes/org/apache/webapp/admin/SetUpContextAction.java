@@ -112,7 +112,7 @@ public class SetUpContextAction extends Action {
     public final static String DEBUG_PROP_NAME = "debug";
     public final static String DOC_BASE_PROP_NAME = "docBase";
     public final static String OVERRIDE_PROP_NAME = "override";
-    public final static String PATH_PROP_NAME = "name";
+    public final static String PATH_PROP_NAME = "path";
     public final static String RELOADABLE_PROP_NAME = "reloadable";
     public final static String USENAMING_PROP_NAME = "useNaming";
     public final static String WORKDIR_PROP_NAME = "workDir";

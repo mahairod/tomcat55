@@ -305,8 +305,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             ObjectInstance contextObj = (ObjectInstance)contextItr.next();
             
             String contextName =
-            (String)mBServer.getAttribute(contextObj.getObjectName(),
-            "name");
+            (String)mBServer.getAttribute(contextObj.getObjectName(), "path");
             
             encodedContextName =  URLEncoder.encode(contextObj.getObjectName().toString());
             
