@@ -405,7 +405,7 @@ public class Embedded implements Lifecycle {
 	    if (connector instanceof HttpConnector) {
 		HttpConnector hc = (HttpConnector) connector;
 		logger.log("Adding connector for address '" +
-			  ((hc.getAddress() != null) ? "ALL" : hc.getAddress())
+			  ((hc.getAddress() == null) ? "ALL" : hc.getAddress())
 			   + "' port='" + hc.getPort() + "'");
 	    } else {
 		logger.log("Adding connector (" + connector.getInfo() + ")");
