@@ -451,8 +451,10 @@ public final class ContextConfig
 
 
 	mapper.addRule("web-app/resource-ref",
-		       mapper.addChild("addResource",
-				       "org.apache.catalina.deploy.ContextResource"));
+            mapper.objectCreate("org.apache.catalina.deploy.ContextResource"));
+        mapper.addRule("web-app/resource-ref",
+		mapper.addChild("addResource",
+			        "org.apache.catalina.deploy.ContextResource"));
 	mapper.addRule("web-app/resource-ref/description",
 		       mapper.methodSetter("setDescription", 0));
 	mapper.addRule("web-app/resource-ref/res-auth",
