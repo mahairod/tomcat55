@@ -710,7 +710,7 @@
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaders_01Test.html" />
       <gtest request="GET /servlet-tests/GetIntHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="MyIntHeader:1" 
+           debug="0" host="${host}" port="${port}" requestHeaders="MyIntHeader:123" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeaderTest.html" />
 
       <gtest request="GET /servlet-tests/GetIntHeader_1Test HTTP/1.0"

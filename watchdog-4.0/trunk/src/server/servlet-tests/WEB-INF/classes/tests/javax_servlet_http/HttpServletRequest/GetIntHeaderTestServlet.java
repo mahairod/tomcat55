@@ -79,9 +79,16 @@ public class GetIntHeaderTestServlet extends HttpServlet {
 	public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
+                int expectedResult = 123;
 		try {
 			int testInt = request.getIntHeader("MyIntHeader");
-			out.println("GetIntHeaderTest test PASSED");
+                        if (testInt == expectedResult)
+                            out.println("GetIntHeaderTest test PASSED");
+                        else {
+                            out.println("GetIntHeaderTest test FAILED<BR>");
+                            out.println("Expected " + expectedResult +
+                                        " but got " + testInt);
+                        }
 		}
 		catch(NumberFormatException nfe) {
 			out.println("GetIntHeaderTest test FAILED<BR>");
