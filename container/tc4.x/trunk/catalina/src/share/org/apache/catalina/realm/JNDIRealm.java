@@ -237,11 +237,21 @@ public class JNDIRealm extends RealmBase {
      */
     protected static final String name = "JNDIRealm";
 
+
     /**
      * The protocol that will be used in the communication with the directory server.
      */
     protected String protocol = null;
 
+
+    /**
+     * How should we handle referrals?  Microsoft Active Directory can't handle 
+     * the default case, so an application authenticating against AD must 
+     * set referrals to "follow".
+     */
+    protected String referrals = null;
+    
+    
     /**
      * The base element for user searches.
      */
@@ -458,6 +468,23 @@ public class JNDIRealm extends RealmBase {
         
     }
 
+
+    /**
+     * Returns the current settings for handling JNDI referrals.
+     */
+    public String getReferrals () {
+        return referrals;
+    }
+
+
+    /**
+     * How do we handle JNDI referrals? ignore, follow, or throw 
+     * (see javax.naming.Context.REFERRAL for more information).
+     */
+    public void setReferrals (String referrals) {
+        this.referrals = referrals;
+    }
+    
 
     /**
      * Return the base element for user searches.
@@ -1345,7 +1372,9 @@ public class JNDIRealm extends RealmBase {
         if (authentication != null)
             env.put(Context.SECURITY_AUTHENTICATION, authentication);
         if (protocol != null)
-            env.put(Context.SECURITY_PROTOCOL, protocol);
+            env.put(Context.SECURITY_PROTOCOL, protocol);   
+        if (referrals != null)
+            env.put(Context.REFERRAL, referrals);   
     
         context = new InitialDirContext(env);
         return (context);
