@@ -223,7 +223,7 @@ public class JspDocumentParser extends DefaultHandler
 	    node = new Node.IncludeDirective(attrsCopy, start, current);
 	    String file = attrsCopy.getValue("file");
 	    try {
-		parserController.parse(file, node, false);
+		parserController.parse(file, node);
 	    } catch (FileNotFoundException fnfe) {
 		throw new SAXParseException(
                     err.getString("jsp.error.file.not.found", file),

@@ -312,7 +312,7 @@ public class TagFileProcessor {
 
         Node.Nodes page = null;
 	try {
-	    page = pc.parse(tagfile, null, true);
+	    page = pc.parseTagFile(tagfile);
 	} catch (FileNotFoundException e) {
 	    pc.getCompiler().getErrorDispatcher().jspError(
                                         "jsp.error.file.not.found", tagfile);

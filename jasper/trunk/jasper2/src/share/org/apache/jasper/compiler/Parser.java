@@ -330,7 +330,7 @@ public class Parser {
 	}
 
 	try {
-	    parserController.parse(file, parent, false);
+	    parserController.parse(file, parent);
 	} catch (FileNotFoundException ex) {
 	    err.jspError(start, "jsp.error.file.not.found", file);
 	} catch (Exception ex) {

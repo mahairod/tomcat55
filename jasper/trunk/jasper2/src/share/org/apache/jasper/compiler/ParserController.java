@@ -151,14 +151,38 @@ public class ParserController {
     // Parse
 
     /**
-     * Parse the jsp page provided as an argument.
-     * This is only invoked by the compiler.
+     * Parses a jsp file.  This is invoked by the compiler.
      *
      * @param inFileName The name of the JSP file to be parsed.
      */
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
-	return parse(inFileName, null, ctxt.isTagFile());
+	isTagFile = ctxt.isTagFile();
+	return parseFile(inFileName, null);
+    }
+
+    /**
+     * Parses a jsp file.  This is invoked to process an include file.
+     *
+     * @param inFileName The name of the JSP file to be parsed.
+     * @param parent The node for the 'include' directive.
+     */
+    public Node.Nodes parse(String inFileName, Node parent)
+	        throws FileNotFoundException, JasperException, IOException {
+	return parseFile(inFileName, parent);
+    }
+
+    /**
+     * Parses a tag file.  This is invoked by the compiler to extract tag
+     * file directive information.
+     *
+     * @param inFileName The name of the tag file to be parsed.
+     */
+    public Node.Nodes parseTagFile(String inFileName)
+	        throws FileNotFoundException, JasperException, IOException {
+	isTagFile = true;
+	isTopFile = true;
+	return parseFile(inFileName, null);
     }
 
     /**
@@ -166,19 +190,14 @@ public class ParserController {
      * This is invoked recursively to handle 'include' directives.
      *
      * @param inFileName The name of the jsp file to be parsed.
-     * @param parent The node for the 'include' directive.
      */
-    public Node.Nodes parse(String inFileName, Node parent, boolean isTagFile)
+    private Node.Nodes parseFile(String inFileName, Node parent)
 	        throws FileNotFoundException, JasperException, IOException {
 
-	this.isTagFile = isTagFile;
 	Node.Nodes parsedPage = null;
 	String encoding = topFileEncoding;
         InputStreamReader reader = null;
 	String absFileName = resolveFileName(inFileName);
-	if (isTagFile) {
-	    isTopFile = true;
-	}
 
 	JarFile jarFile = (JarFile) ctxt.getTagFileJars().get(inFileName);
 
