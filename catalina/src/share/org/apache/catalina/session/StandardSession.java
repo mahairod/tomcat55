@@ -709,13 +709,13 @@ public class StandardSession
                 fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
             }
 
+            // We have completed expire of this session
+            expiring = false;
+
             // Unbind any objects associated with this session
             String keys[] = keys();
             for (int i = 0; i < keys.length; i++)
                 removeAttributeInternal(keys[i], notify);
-
-            // We have completed expire of this session
-            expiring = false;
 
         }
 
