@@ -1030,16 +1030,16 @@ public abstract class ContainerBase
             if (children.get(child.getName()) == null)
                 return;
             children.remove(child.getName());
-            if (started && (child instanceof Lifecycle)) {
-                try {
-                    ((Lifecycle) child).stop();
-                } catch (LifecycleException e) {
-                    log("ContainerBase.removeChild: stop: ", e);
-                }
-            }
-            fireContainerEvent(REMOVE_CHILD_EVENT, child);
-            child.setParent(null);
         }
+        if (started && (child instanceof Lifecycle)) {
+            try {
+                ((Lifecycle) child).stop();
+            } catch (LifecycleException e) {
+                log("ContainerBase.removeChild: stop: ", e);
+            }
+        }
+        fireContainerEvent(REMOVE_CHILD_EVENT, child);
+        child.setParent(null);
 
     }
 
