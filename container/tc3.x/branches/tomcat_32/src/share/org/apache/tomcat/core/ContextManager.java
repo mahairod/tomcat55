@@ -167,6 +167,11 @@ public class ContextManager {
 
     // port for SSL endpoint - for redirect
     int securePort=-1;
+
+    /** The setting which controls display of stack traces
+     *  in the default exception handling
+     */
+    boolean showStackTraces = true;
     
     /** Default work dir, relative to home
      */
@@ -325,6 +330,21 @@ public class ContextManager {
     public void setRandomClass(String randomClass) {
         System.setProperty("tomcat.sessionid.randomclass", randomClass);
     }
+
+    /** Get the showStackTraces property to be used for controlling the display of
+     *  stack traces in the default response for exceptions.
+     **/
+    public boolean getShowStackTraces() {
+	return showStackTraces;
+    }
+    
+    /** Sets the showStackTraces property used for controlling the display of
+     *  stack traces in the default response for exceptions.
+     */
+    public void setShowStackTraces(boolean showStackTraces) {
+	this.showStackTraces = showStackTraces;
+    }
+	
 
     // -------------------- Support functions --------------------
 

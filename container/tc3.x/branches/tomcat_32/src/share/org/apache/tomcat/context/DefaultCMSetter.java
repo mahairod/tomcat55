@@ -232,33 +232,48 @@ class ExceptionHandler extends ServletWrapper {
 	    .append("</h2>");
 
 	buf.append("<b>")
-	    .append(sm.getString("defaulterrorpage.internalservleterror"))
-	    .append("</b><br>");
+	    .append(sm.getString("defaulterrorpage.internalservleterror"));
 
-	buf.append("<pre>");
+	if (contextM.getShowStackTraces()) {
+	    buf.append("</b><br>");
 
-	StringWriter sw = new StringWriter();
-	PrintWriter pw = new PrintWriter(sw);
-	e.printStackTrace(pw);
+	    buf.append("<pre>");
 
-	buf.append(sw.toString());
+	    StringWriter sw = new StringWriter();
+	    PrintWriter pw = new PrintWriter(sw);
+	    e.printStackTrace(pw);
 
-	buf.append("</pre>\r\n");
+	    buf.append(sw.toString());
+
+	    buf.append("</pre>\r\n");
+	} else {
+	    buf.append("</b>")
+    	        .append(e.getMessage())
+		.append("<br>\r\n");
+	}
 
         if (e instanceof ServletException) {
 	    Throwable cause = ((ServletException)e).getRootCause();
 	    if (cause != null) {
 		buf.append("<b>")
-		    .append(sm.getString("defaulterrorpage.rootcause"))
-		    .append("</b>\r\n");
-	    buf.append("<pre>");
+		    .append(sm.getString("defaulterrorpage.rootcause"));
 
-	    sw=new StringWriter();
-	    pw=new PrintWriter(sw);
-	    cause.printStackTrace( pw );
-	    buf.append( sw.toString());
+		if (contextM.getShowStackTraces()) {
+		    buf.append("</b>\r\n");
 
-	    buf.append("</pre>\r\n");
+		    buf.append("<pre>");
+
+		    StringWriter sw = new StringWriter();
+		    PrintWriter pw = new PrintWriter(sw);
+		    cause.printStackTrace( pw );
+		    buf.append( sw.toString());
+
+		    buf.append("</pre>\r\n");
+		} else {
+		    buf.append("</b>")
+			.append(cause.getMessage())
+			.append("\r\n");
+		}
 	    }
 	}
 	
