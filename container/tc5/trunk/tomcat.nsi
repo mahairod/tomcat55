@@ -86,7 +86,7 @@ ${StrRep}
   !insertmacro MUI_LANGUAGE English
 
   ;Folder-select dialog
-  InstallDir "$PROGRAMFILES\Apache Software Foundation\Tomcat 5.0"
+  InstallDir "$PROGRAMFILES\Apache Software Foundation\Tomcat 5.5"
 
   ;Install types
   InstType Normal
@@ -94,7 +94,7 @@ ${StrRep}
   InstType Full
 
   ; Main registry key
-  InstallDirRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" ""
+  InstallDirRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.5" ""
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   ReserveFile "jvm.ini"
@@ -143,7 +143,7 @@ Section "Core" SecTomcatCore
   IfSilent +2 0
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
-;  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
+;  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 45.5
   ClearErrors
 
   Call configure
@@ -201,36 +201,36 @@ Section "Start Menu Items" SecMenu
 
   !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
-  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 5.5"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Home Page.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Welcome.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Welcome.lnk" \
                  "http://127.0.0.1:$R0/"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Administration.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Administration.lnk" \
                  "http://127.0.0.1:$R0/admin/"
 
   IfFileExists "$INSTDIR\webapps\webapps\tomcat-docs" 0 NoDocumentaion
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat Documentation.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Documentation.lnk" \
                  "$INSTDIR\webapps\tomcat-docs\index.html"
 
 NoDocumentaion:
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Uninstall Tomcat 5.0.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Uninstall Tomcat 5.5.lnk" \
                  "$INSTDIR\Uninstall.exe"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Tomcat 5.0 Program Directory.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat 5.5 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Monitor Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Monitor Tomcat.lnk" \
                  "$INSTDIR\bin\tomcat5w.exe" \
                  '//MS//Tomcat5' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Configure Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Configure Tomcat.lnk" \
                  "$INSTDIR\bin\tomcat5w.exe" \
                  '//ES//Tomcat5' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
@@ -283,11 +283,11 @@ Section -post
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" "InstallPath" $INSTDIR
-  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0" "Version" @VERSION@
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
-                   "DisplayName" "Apache Tomcat 5.0 (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0" \
+  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.5" "InstallPath" $INSTDIR
+  WriteRegStr HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.5" "Version" @VERSION@
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.5" \
+                   "DisplayName" "Apache Tomcat 5.5 (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.5" \
                    "UninstallString" '"$INSTDIR\Uninstall.exe"'
 
 SectionEnd
@@ -566,9 +566,9 @@ Section Uninstall
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.0"
-  DeleteRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.0"
-  RMDir /r "$SMPROGRAMS\Apache Tomcat 5.0"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.5"
+  DeleteRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.5"
+  RMDir /r "$SMPROGRAMS\Apache Tomcat 5.5"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   RMDir /r "$INSTDIR\bin"
@@ -592,11 +592,11 @@ Section Uninstall
   ; if $INSTDIR was removed, skip these next ones
   IfFileExists "$INSTDIR" 0 Removed 
     MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your Tomcat 5.0 directory? (If you have anything\
+      "Remove all files in your Tomcat 5.5 directory? (If you have anything\
  you created that you want to keep, click No)" IDNO Removed
     Delete "$INSTDIR\*.*" ; this would be skipped if the user hits no
     RMDir /r "$INSTDIR"
-    Sleep 500
+    Sleep 5.5
     IfFileExists "$INSTDIR" 0 Removed 
       MessageBox MB_OK|MB_ICONEXCLAMATION \
                  "Note: $INSTDIR could not be removed."
