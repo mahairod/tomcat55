@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,6 +83,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.connector.RequestWrapper;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.LifecycleSupport;
@@ -90,8 +91,8 @@ import org.apache.catalina.util.StringManager;
 
 
 /**
- * Implementation of a Valve that deals with SSL client certificates, as
- * follows:
+ * <p>Implementation of a Valve that deals with SSL client certificates, as
+ * follows:</p>
  * <ul>
  * <li>If this request was not received on an SSL socket, simply pass it
  *     on unmodified.</li>
@@ -107,8 +108,8 @@ import org.apache.catalina.util.StringManager;
  *         as request attributes.</li>
  * </ul>
  *
- * The above tasks have been combined into a single Valve to minimize the
- * amount of code that has to check for the existence of JSSE classes.
+ * <p>The above tasks have been combined into a single Valve to minimize the
+ * amount of code that has to check for the existence of JSSE classes.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -217,11 +218,14 @@ public final class CertificatesValve
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
 	throws IOException, ServletException {
 
         // Identify the underlying request if this request was wrapped
@@ -239,7 +243,7 @@ public final class CertificatesValve
         expose(request, actual);
 
         // Invoke the next Valve in our Pipeline
-        invokeNext(request, response);
+        context.invokeNext(request, response);
 
     }
 

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,18 +82,19 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.connector.HttpResponseWrapper;
 import org.apache.catalina.util.StringManager;
 
 
 /**
- * Implementation of a Valve that logs interesting contents from the
+ * <p>Implementation of a Valve that logs interesting contents from the
  * specified Request (before processing) and the corresponding Response
  * (after processing).  It is especially useful in debugging problems
- * related to headers and cookies.
- * <p>
- * This Valve may be attached to any Container, depending on the granularity
- * of the logging you wish to perform.
+ * related to headers and cookies.</p>
+ *
+ * <p>This Valve may be attached to any Container, depending on the granularity
+ * of the logging you wish to perform.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -142,17 +143,20 @@ public class RequestDumperValve
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
 	throws IOException, ServletException {
 
         // Skip logging for non-HTTP requests and responses
         if (!(request instanceof HttpRequest) ||
             !(response instanceof HttpResponse)) {
-            invokeNext(request, response);
+            context.invokeNext(request, response);
             return;
         }
         HttpRequest hrequest = (HttpRequest) request;
@@ -212,7 +216,7 @@ public class RequestDumperValve
         log("---------------------------------------------------------------");
 
         // Perform the request
-        invokeNext(request, response);
+        context.invokeNext(request, response);
 
         // Log post-service information
         log("---------------------------------------------------------------");

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,10 +67,12 @@ package org.apache.catalina.valves;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 
 
@@ -86,7 +88,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ValveBase
-    implements Valve {
+    implements Contained, Valve {
 
 
     //------------------------------------------------------ Instance Variables
@@ -104,18 +106,6 @@ public abstract class ValveBase
      */
     protected static String info =
 	"org.apache.catalina.core.ValveBase/1.0";
-
-
-    /**
-     * The next Valve in the pipeline this Valve is a component of.
-     */
-    protected Valve next = null;
-
-
-    /**
-     * The previous Valve in the pipeline this Valve is a component of.
-     */
-    protected Valve previous = null;
 
 
     /**
@@ -160,52 +150,6 @@ public abstract class ValveBase
     }
 
 
-    /**
-     * Return the next Valve in this pipeline, or <code>null</code> if this
-     * is the last Valve in the pipeline.
-     */
-    public Valve getNext() {
-
-	return (next);
-
-    }
-
-
-    /**
-     * Set the Valve that follows this one in the pipeline it is part of.
-     *
-     * @param valve The new next valve
-     */
-    public void setNext(Valve valve) {
-
-	this.next = valve;
-
-    }
-
-
-    /**
-     * Return the previous Valve in this pipeline, or <code>null</code> if
-     * this is the first Valve in the pipeline.
-     */
-    public Valve getPrevious() {
-
-	return (previous);
-
-    }
-
-
-    /**
-     * Set the Valve that preceeds this one in the pipeline it is part of.
-     *
-     * @param valve The previous valve
-     */
-    public void setPrevious(Valve valve) {
-
-	this.previous = valve;
-
-    }
-
-
     //---------------------------------------------------------- Public Methods
 
 
@@ -217,34 +161,15 @@ public abstract class ValveBase
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public abstract void invoke(Request request, Response response)
+    public abstract void invoke(Request request, Response response,
+                                ValveContext context)
 	throws IOException, ServletException;
-
-
-    /**
-     * Invoke the next Valve in our pipeline, or complain if there is no such
-     * Valve remaining.
-     *
-     * @param request The servlet request to be processed
-     * @param response The servlet response to be created
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
-     */
-    public void invokeNext(Request request, Response response)
-	throws IOException, ServletException {
-
-	if (getNext() != null)
-	    getNext().invoke(request, response);
-	else
-	    throw new IllegalStateException
-		(sm.getString("valveBase.noNext"));
-
-    }
 
 
 }

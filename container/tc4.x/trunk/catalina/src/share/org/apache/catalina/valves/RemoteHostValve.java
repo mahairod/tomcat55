@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 
 
 /**
@@ -90,7 +91,7 @@ public final class RemoteHostValve
      * The descriptive information related to this implementation.
      */
     private static final String info =
-	"org.apache.catalina.valves.RemoteAddrValve/1.0";
+	"org.apache.catalina.valves.RemoteHostValve/1.0";
 
 
     // ------------------------------------------------------------- Properties
@@ -117,15 +118,18 @@ public final class RemoteHostValve
      *
      * @param request The servlet request to be processed
      * @param response The servlet response to be created
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
 	throws IOException, ServletException {
 
 	process(request.getRequest().getRemoteHost(),
-		request, response);
+		request, response, context);
 
     }
 

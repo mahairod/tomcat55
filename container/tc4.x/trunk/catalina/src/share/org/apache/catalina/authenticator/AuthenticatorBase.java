@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,6 +92,7 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Session;
 import org.apache.catalina.Valve;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
@@ -393,22 +394,25 @@ public abstract class AuthenticatorBase
      *
      * @param request Request to be processed
      * @param response Response to be processed
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if thrown by a processing element
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
 	throws IOException, ServletException {
 
 	// If this is not an HTTP request, do nothing
 	if (!(request instanceof HttpRequest) ||
             !(response instanceof HttpResponse)) {
-	    invokeNext(request, response);
+	    context.invokeNext(request, response);
 	    return;
 	}
 	if (!(request.getRequest() instanceof HttpServletRequest) ||
 	    !(response.getResponse() instanceof HttpServletResponse)) {
-	    invokeNext(request, response);
+	    context.invokeNext(request, response);
 	    return;
 	}
 	HttpRequest hrequest = (HttpRequest) request;
@@ -417,7 +421,7 @@ public abstract class AuthenticatorBase
 	    log("Security checking request " +
 		((HttpServletRequest) request.getRequest()).getMethod() + " " +
 		((HttpServletRequest) request.getRequest()).getRequestURI());
-	LoginConfig config = context.getLoginConfig();
+	LoginConfig config = this.context.getLoginConfig();
 
         // Have we got a cached authenticated Principal to record?
         if (cache) {
@@ -443,7 +447,7 @@ public abstract class AuthenticatorBase
 	// Special handling for form-based logins to deal with the case
 	// where the login form (and therefore the "j_security_check" URI
 	// to which it submits) might be outside the secured area
-	String contextPath = context.getPath();
+	String contextPath = this.context.getPath();
 	String requestURI =
 	    ((HttpServletRequest) request.getRequest()).getRequestURI();
 	if (requestURI.startsWith(contextPath) &&
@@ -461,7 +465,7 @@ public abstract class AuthenticatorBase
 	    (!Constants.FORM_METHOD.equals(config.getAuthMethod())) */ ) {
 	    if (debug >= 1)
 	        log(" Not subject to any constraint");
-	    invokeNext(request, response);
+	    context.invokeNext(request, response);
 	    return;
 	}
 	if ((debug >= 1) && (constraint != null))
@@ -498,7 +502,7 @@ public abstract class AuthenticatorBase
 	// Any and all specified constraints have been satisfied
 	if (debug >= 1)
 	    log(" Successfully passed all security constraints");
-	invokeNext(request, response);
+	context.invokeNext(request, response);
 
     }
 
@@ -952,13 +956,12 @@ public abstract class AuthenticatorBase
                 parent = parent.getParent();
                 continue;
             }
-            Valve valve = ((Pipeline) parent).findValves();
-            while ((sso == null) && (valve != null)) {
-                if (valve instanceof SingleSignOn) {
-                    sso = (SingleSignOn) valve;
+            Valve valves[] = ((Pipeline) parent).getValves();
+            for (int i = 0; i < valves.length; i++) {
+                if (valves[i] instanceof SingleSignOn) {
+                    sso = (SingleSignOn) valves[i];
                     break;
                 }
-                valve = valve.getNext();
             }
             if (sso == null)
                 parent = parent.getParent();

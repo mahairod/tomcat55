@@ -3,7 +3,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,20 +80,21 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
 
 /**
- * Implementation of the <b>Valve</b> interface that generates a web server
+ * <p>Implementation of the <b>Valve</b> interface that generates a web server
  * access log with the detailed line contents matching a configurable pattern.
  * The syntax of the available patterns is similar to that supported by the
  * Apache <code>mod_log_config</code> module.  As an additional feature,
- * automatic rollover of log files when the date changes is also supported.
- * <p>
- * Patterns for the logged message may include constant text or any of the
+ * automatic rollover of log files when the date changes is also supported.</p>
+ *
+ * <p>Patterns for the logged message may include constant text or any of the
  * following replacement strings, for which the corresponding information
- * from the specified Response is substituted:
+ * from the specified Response is substituted:</p>
  * <ul>
  * <li><b>%a</b> - Remote IP address
  * <li><b>%A</b> - Local IP address
@@ -114,14 +115,14 @@ import org.apache.catalina.util.StringManager;
  * <li><b>%U</b> - Requested URL path
  * <li><b>%v</b> - Local server name
  * </ul>
- * In addition, the caller can specify one of the following aliases for
- * commonly utilized patterns:
+ * <p>In addition, the caller can specify one of the following aliases for
+ * commonly utilized patterns:</p>
  * <ul>
  * <li><b>common</b> - <code>%h %l %u %t "%r" %s %b</code>
  * </ul>
  *
- * <b>FIXME</b> - Improve the parsing so that things like <code>%{xxx}i</code>
- * can be implemented.
+ * <p><b>FIXME</b> - Improve the parsing so that things like
+ * <code>%{xxx}i</code> can be implemented.</p>
  *
  * @author Craig R. McClanahan
  * @author Jason Brittain
@@ -403,15 +404,18 @@ public final class AccessLogValve
      *
      * @param request Request being processed
      * @param response Response being processed
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error has occurred
      * @exception ServletException if a servlet error has occurred
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
 	throws IOException, ServletException {
 
 	// Pass this request on to the next valve in our pipeline
-	invokeNext(request, response);
+	context.invokeNext(request, response);
 
         Date date = getDate();
         StringBuffer result = new StringBuffer();

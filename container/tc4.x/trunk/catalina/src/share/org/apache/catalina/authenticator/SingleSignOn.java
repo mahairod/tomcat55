@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,7 @@ import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.StringManager;
 
@@ -179,17 +180,20 @@ public class SingleSignOn
      *
      * @param request The servlet request we are processing
      * @param response The servlet response we are creating
+     * @param context The valve context used to invoke the next valve
+     *  in the current processing pipeline
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response)
+    public void invoke(Request request, Response response,
+                       ValveContext context)
         throws IOException, ServletException {
 
         // If this is not an HTTP request and response, just pass them on
         if (!(request instanceof HttpRequest) ||
             !(response instanceof HttpResponse)) {
-            invokeNext(request, response);
+            context.invokeNext(request, response);
             return;
         }
 
@@ -202,7 +206,7 @@ public class SingleSignOn
             if (debug >= 1)
                 log(" Principal '" + hreq.getUserPrincipal().getName() +
                     "' has already been authenticated");
-            invokeNext(request, response);
+            context.invokeNext(request, response);
             return;
         }
 
@@ -222,7 +226,7 @@ public class SingleSignOn
         if (cookie == null) {
             if (debug >= 1)
                 log(" SSO cookie is not present");
-            invokeNext(request, response);
+            context.invokeNext(request, response);
             return;
         }
 
@@ -243,7 +247,7 @@ public class SingleSignOn
         }
 
         // Invoke the next Valve in our pipeline
-        invokeNext(request, response);
+        context.invokeNext(request, response);
 
     }
 
