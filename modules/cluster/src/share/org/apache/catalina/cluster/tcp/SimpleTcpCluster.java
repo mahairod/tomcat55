@@ -262,9 +262,10 @@ public class SimpleTcpCluster
      */
     protected long msgFrequency = 500;
     /**
-     * A reference to the membership service.
+     * java.nio.Channels.Selector.select timeout in case the JDK has a 
+     * poor nio implementation
      */
-
+    protected long tcpSelectorTimeout = 100;
 
     /**
      * The channel configuration.
@@ -471,7 +472,8 @@ public class SimpleTcpCluster
                 new ReplicationListener(this,
                                         this.tcpThreadCount,
                                         this.tcpAddress,
-                                        this.tcpPort);
+                                        this.tcpPort,
+                                        this.tcpSelectorTimeout);
             mReplicationListener.setDaemon(true);
             mReplicationListener.start();
             mReplicationTransmitter = new ReplicationTransmitter(new SocketSender[0]);
@@ -602,8 +604,15 @@ public class SimpleTcpCluster
 
     public void setTcpListenAddress(String address)  {
         try {
-            tcpAddress = java.net.InetAddress.getByName(address);
-            svcproperties.setProperty("tcpListenHost",address);
+            if ("auto".equals(address) )
+            {
+                address = java.net.InetAddress.getLocalHost().getHostAddress();
+                tcpAddress = java.net.InetAddress.getByName(address);
+            }
+            else
+            {
+                tcpAddress = java.net.InetAddress.getByName(address);
+            }//end if
         }catch ( Exception x ){
             log.error("Unable to set listen address",x);
         }
@@ -625,6 +634,12 @@ public class SimpleTcpCluster
         this.tcpPort = port;
         svcproperties.setProperty("tcpListenPort",String.valueOf(port));
     }
+    
+    public void setTcpSelectorTimeout(long timeout) {
+        this.tcpSelectorTimeout = timeout;
+    }
+
+
 
     public void messageDataReceived(byte[] data) {
         try {
