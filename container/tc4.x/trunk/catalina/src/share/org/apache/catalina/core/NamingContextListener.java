@@ -149,6 +149,12 @@ public class NamingContextListener
 
 
     /**
+     * Debugging level.
+     */
+    protected int debug = 0;
+
+
+    /**
      * Initialized flag.
      */
     protected boolean initialized = false;
@@ -186,6 +192,28 @@ public class NamingContextListener
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the "debug" property.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the "debug" property.
+     *
+     * @param debug The new debug level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
+
+    }
 
 
     /**
@@ -377,6 +405,9 @@ public class NamingContextListener
 
         int i;
 
+        if (debug >= 1)
+            log("Creating JNDI naming context");
+
         // Environment entries
         ContextEnvironment[] contextEnvironments = 
             namingResources.findEnvironments();
@@ -487,9 +518,12 @@ public class NamingContextListener
         } catch (NumberFormatException e) {
             log(sm.getString("naming.invalidEnvEntryValue", env.getName()));
         }
+
         // Binding the object to the appropriate name
         if (value != null) {
             try {
+                if (debug >= 2)
+                    log("  Adding environment entry " + env.getName());
                 createSubcontexts(envCtx, env.getName());
                 envCtx.bind(env.getName(), value);
             } catch (NamingException e) {
@@ -522,6 +556,10 @@ public class NamingContextListener
         // Adding the additional parameters, if any
         addAdditionalParameters(ref, resource.getName());
         try {
+            if (debug >= 2) {
+                log("  Adding resource ref " + resource.getName());
+                log("  " + ref);
+            }
             createSubcontexts(envCtx, resource.getName());
             envCtx.bind(resource.getName(), ref);
         } catch (NamingException e) {
@@ -541,6 +579,8 @@ public class NamingContextListener
         // Adding the additional parameters, if any
         addAdditionalParameters(ref, name);
         try {
+            if (debug >= 2)
+                log("  Adding resource env ref " + name);
             createSubcontexts(envCtx, name);
             envCtx.bind(name, ref);
         } catch (NamingException e) {
@@ -561,6 +601,8 @@ public class NamingContextListener
         // Adding the additional parameters, if any
         addAdditionalParameters(ref, resourceLink.getName());
         try {
+            if (debug >= 2)
+                log("  Adding resource link " + resourceLink.getName());
             createSubcontexts(envCtx, resourceLink.getName());
             envCtx.bind(resourceLink.getName(), ref);
         } catch (NamingException e) {
@@ -649,6 +691,9 @@ public class NamingContextListener
     private void addAdditionalParameters(Reference ref, String name) {
         ResourceParams resourceParameters =
             namingResources.findResourceParams(name);
+        if (debug >= 2)
+            log("  Resource parameters for " + name + " = " +
+                resourceParameters);
         if (resourceParameters == null)
             return;
         Hashtable params = resourceParameters.getParameters();

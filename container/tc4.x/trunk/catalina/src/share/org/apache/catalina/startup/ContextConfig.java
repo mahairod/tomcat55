@@ -263,6 +263,7 @@ public final class ContextConfig
         // Process the application web.xml file
         try {
             Digester digester = createWebDigester();
+            digester.setDebug(getDebug());
             synchronized (digester) {
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
@@ -500,6 +501,7 @@ public final class ContextConfig
         // Process the default web.xml file
         try {
             Digester digester = createWebDigester();
+            digester.setDebug(getDebug());
             synchronized (digester) {
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);

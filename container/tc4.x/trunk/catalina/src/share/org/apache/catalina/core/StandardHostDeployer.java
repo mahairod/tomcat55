@@ -82,6 +82,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.startup.ContextRuleSet;
+import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXParseException;
@@ -138,13 +139,20 @@ public class StandardHostDeployer implements Deployer {
      * The <code>ContextRuleSet</code> associated with our
      * <code>digester</code> instance.
      */
-    private ContextRuleSet digesterRuleSet = null;
+    private ContextRuleSet contextRuleSet = null;
 
 
     /**
      * The <code>StandardHost</code> instance we are associated with.
      */
     protected StandardHost host = null;
+
+
+    /**
+     * The <code>NamingRuleSet</code> associated with our
+     * <code>digester</code> instance.
+     */
+    private NamingRuleSet namingRuleSet = null;
 
 
     /**
@@ -364,6 +372,7 @@ public class StandardHostDeployer implements Deployer {
         try {
             stream = config.openStream();
             Digester digester = createDigester();
+            digester.setDebug(host.getDebug());
             digester.clear();
             digester.push(this);
             digester.parse(stream);
@@ -586,8 +595,10 @@ public class StandardHostDeployer implements Deployer {
             if (host.getDebug() > 0)
                 digester.setDebug(3);
             digester.setValidating(false);
-            digesterRuleSet = new ContextRuleSet("");
-            digester.addRuleSet(digesterRuleSet);
+            contextRuleSet = new ContextRuleSet("");
+            digester.addRuleSet(contextRuleSet);
+            namingRuleSet = new NamingRuleSet("Context/");
+            digester.addRuleSet(namingRuleSet);
         }
         return (digester);
 

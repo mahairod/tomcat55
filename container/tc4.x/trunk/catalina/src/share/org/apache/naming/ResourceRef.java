@@ -64,7 +64,9 @@
 
 package org.apache.naming;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
+import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.Context;
 import javax.naming.StringRefAddr;
@@ -173,6 +175,36 @@ public class ResourceRef
                 return DEFAULT_FACTORY;
             }
         }
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String rendering of this object.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("ResourceRef[");
+        sb.append("className=");
+        sb.append(getClassName());
+        sb.append(",factoryClassLocation=");
+        sb.append(getFactoryClassLocation());
+        sb.append(",factoryClassName=");
+        sb.append(getFactoryClassName());
+        Enumeration refAddrs = getAll();
+        while (refAddrs.hasMoreElements()) {
+            RefAddr refAddr = (RefAddr) refAddrs.nextElement();
+            sb.append(",{type=");
+            sb.append(refAddr.getType());
+            sb.append(",content=");
+            sb.append(refAddr.getContent());
+            sb.append("}");
+        }
+        sb.append("]");
+        return (sb.toString());
+
     }
 
 

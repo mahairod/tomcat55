@@ -115,6 +115,12 @@ public final class StandardServer
 
 
     /**
+     * Debugging detail level.
+     */
+    private int debug = 0;
+
+
+    /**
      * Global naming resources.
      */
     private NamingResources globalNamingResources = null;
@@ -184,6 +190,28 @@ public final class StandardServer
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the debugging detail level.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
+
+    }
 
 
     /**
@@ -561,6 +589,7 @@ public final class StandardServer
             if ((globalNamingResources != null) 
                 && (namingContextListener == null)) {
                 namingContextListener = new NamingContextListener();
+                namingContextListener.setDebug(getDebug());
                 addLifecycleListener(namingContextListener);
             }
         }

@@ -3349,6 +3349,7 @@ public class StandardContext
         if (ok && isUseNaming()) {
             if (namingContextListener == null) {
                 namingContextListener = new NamingContextListener();
+                namingContextListener.setDebug(getDebug());
                 namingContextListener.setName(getNamingContextName());
                 addLifecycleListener(namingContextListener);
                 addContainerListener(namingContextListener);
