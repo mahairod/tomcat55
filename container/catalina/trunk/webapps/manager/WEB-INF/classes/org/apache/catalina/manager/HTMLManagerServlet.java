@@ -88,7 +88,7 @@ import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 
 /**
-* Servlet that enables remote management of the web applications installed
+* Servlet that enables remote management of the web applications deployed
 * within the same virtual host as this web application is.  Normally, this
 * functionality will be protected by a security constraint in the web
 * application deployment descriptor.  However, this requirement can be
@@ -131,9 +131,9 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String command = request.getPathInfo();
 
         String path = request.getParameter("path");
-        String installPath = request.getParameter("installPath");
-        String installConfig = request.getParameter("installConfig");
-        String installWar = request.getParameter("installWar");
+        String deployPath = request.getParameter("deployPath");
+        String deployConfig = request.getParameter("deployConfig");
+        String deployWar = request.getParameter("deployWar");
 
         // Prepare our output writer to generate the response message
         Locale locale = Locale.getDefault();
@@ -144,13 +144,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String message = "";
         // Process the requested command
         if (command == null || command.equals("/")) {
-        } else if (command.equals("/install")) {
-            message = install(installConfig, installPath, installWar);
+        } else if (command.equals("/deploy")) {
+            message = deployInternal(deployConfig, deployPath, deployWar);
         } else if (command.equals("/list")) {
         } else if (command.equals("/reload")) {
             message = reload(path);
-        } else if (command.equals("/remove")) {
-            message = remove(path);
+        } else if (command.equals("/undeploy")) {
+            message = undeploy(path);
         } else if (command.equals("/sessions")) {
             message = sessions(path);
         } else if (command.equals("/start")) {
@@ -216,7 +216,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 FileItem item = (FileItem) iter.next();
         
                 if (!item.isFormField()) {
-                    if (item.getFieldName().equals("installWar") &&
+                    if (item.getFieldName().equals("deployWar") &&
                         warUpload == null) {
                         warUpload = item;
                     } else {
@@ -227,13 +227,13 @@ public final class HTMLManagerServlet extends ManagerServlet {
             while(true) {
                 if (warUpload == null) {
                     message = sm.getString
-                        ("htmlManagerServlet.installUploadNoFile");
+                        ("htmlManagerServlet.deployUploadNoFile");
                     break;
                 }
                 war = warUpload.getName();
                 if (!war.toLowerCase().endsWith(".war")) {
                     message = sm.getString
-                        ("htmlManagerServlet.installUploadNotWar",war);
+                        ("htmlManagerServlet.deployUploadNotWar",war);
                     break;
                 }
                 // Get the filename if uploaded name includes a path
@@ -256,10 +256,12 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 File file = new File(appBaseDir,war);
                 if (file.exists()) {
                     message = sm.getString
-                        ("htmlManagerServlet.installUploadWarExists",war);
+                        ("htmlManagerServlet.deployUploadWarExists",war);
                     break;
                 }
                 warUpload.write(file);
+                war = file.getAbsolutePath();
+                /*
                 try {
                     URL url = file.toURL();
                     war = url.toString();
@@ -268,11 +270,12 @@ public final class HTMLManagerServlet extends ManagerServlet {
                     file.delete();
                     throw e;
                 }
+                */
                 break;
             }
         } catch(Exception e) {
             message = sm.getString
-                ("htmlManagerServlet.installUploadFail", e.getMessage());
+                ("htmlManagerServlet.deployUploadFail", e.getMessage());
             log(message, e);
         } finally {
             if (warUpload != null) {
@@ -281,29 +284,29 @@ public final class HTMLManagerServlet extends ManagerServlet {
             warUpload = null;
         }
 
-        // If there were no errors, install the WAR
+        // If there were no errors, deploy the WAR
         if (message.length() == 0) {
-            message = install(null, null, war);
+            message = deployInternal(null, null, war);
         }
 
         list(request, response, message);
     }
 
     /**
-     * Install an application for the specified path from the specified
+     * Deploy an application for the specified path from the specified
      * web application archive.
      *
-     * @param config URL of the context configuration file to be installed
-     * @param path Context path of the application to be installed
-     * @param war URL of the web application archive to be installed
+     * @param config URL of the context configuration file to be deployed
+     * @param path Context path of the application to be deployed
+     * @param war URL of the web application archive to be deployed
      * @return message String
      */
-    protected String install(String config, String path, String war) {
+    protected String deployInternal(String config, String path, String war) {
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        super.install(printWriter, config, path, war);
+        super.deploy(printWriter, config, path, war, false);
 
         return stringWriter.toString();
     }
@@ -379,7 +382,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String appsStart = sm.getString("htmlManagerServlet.appsStart");
         String appsStop = sm.getString("htmlManagerServlet.appsStop");
         String appsReload = sm.getString("htmlManagerServlet.appsReload");
-        String appsRemove = sm.getString("htmlManagerServlet.appsRemove");
+        String appsUndeploy = sm.getString("htmlManagerServlet.appsUndeploy");
 
         Iterator iterator = sortedContextPathsMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -422,8 +425,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 args[5] = appsReload;
                 args[6] = response.encodeURL
                     (request.getContextPath() +
-                     "/html/remove?path=" + displayPath);
-                args[7] = appsRemove;
+                     "/html/undeploy?path=" + displayPath);
+                args[7] = appsUndeploy;
                 if (context.getPath().equals(this.context.getPath())) {
                     writer.print(MessageFormat.format(
                         MANAGER_APP_ROW_BUTTON_SECTION, args));
@@ -438,22 +441,22 @@ public final class HTMLManagerServlet extends ManagerServlet {
             }
         }
 
-        // Install Section
+        // Deploy Section
         args = new Object[7];
-        args[0] = sm.getString("htmlManagerServlet.installTitle");
-        args[1] = sm.getString("htmlManagerServlet.installServer");
-        args[2] = response.encodeURL(request.getContextPath() + "/html/install");
-        args[3] = sm.getString("htmlManagerServlet.installPath");
-        args[4] = sm.getString("htmlManagerServlet.installConfig");
-        args[5] = sm.getString("htmlManagerServlet.installWar");
-        args[6] = sm.getString("htmlManagerServlet.installButton");
-        writer.print(MessageFormat.format(INSTALL_SECTION, args));
+        args[0] = sm.getString("htmlManagerServlet.deployTitle");
+        args[1] = sm.getString("htmlManagerServlet.deployServer");
+        args[2] = response.encodeURL(request.getContextPath() + "/html/deploy");
+        args[3] = sm.getString("htmlManagerServlet.deployPath");
+        args[4] = sm.getString("htmlManagerServlet.deployConfig");
+        args[5] = sm.getString("htmlManagerServlet.deployWar");
+        args[6] = sm.getString("htmlManagerServlet.deployButton");
+        writer.print(MessageFormat.format(DEPLOY_SECTION, args));
 
         args = new Object[4];
-        args[0] = sm.getString("htmlManagerServlet.installUpload");
+        args[0] = sm.getString("htmlManagerServlet.deployUpload");
         args[1] = response.encodeURL(request.getContextPath() + "/html/upload");
-        args[2] = sm.getString("htmlManagerServlet.installUploadFile");
-        args[3] = sm.getString("htmlManagerServlet.installButton");
+        args[2] = sm.getString("htmlManagerServlet.deployUploadFile");
+        args[3] = sm.getString("htmlManagerServlet.deployButton");
         writer.print(MessageFormat.format(UPLOAD_SECTION, args));
 
         // Server Header Section
@@ -504,19 +507,19 @@ public final class HTMLManagerServlet extends ManagerServlet {
     }
 
     /**
-     * Remove the web application at the specified context path.
+     * Undeploy the web application at the specified context path.
      *
-     * @see ManagerServlet#remove(PrintWriter, String)
+     * @see ManagerServlet#undeploy(PrintWriter, String)
      *
-     * @param path Context path of the application to be removed
+     * @param path Context path of the application to be undeployd
      * @return message String
      */
-    protected String remove(String path) {
+    protected String undeploy(String path) {
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        super.remove(printWriter, path);
+        super.undeploy(printWriter, path);
 
         return stringWriter.toString();
     }
@@ -751,7 +754,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         " </td>\n" +
         "</tr>\n";
 
-    private static final String INSTALL_SECTION =
+    private static final String DEPLOY_SECTION =
         "</table>\n" +
         "<br>\n" +
         "<table border=\"1\" cellspacing=\"0\" cellpadding=\"3\">\n" +
@@ -770,7 +773,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  <small>{3}</small>\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
-        "  <input type=\"text\" name=\"installPath\" size=\"20\">\n" +
+        "  <input type=\"text\" name=\"deployPath\" size=\"20\">\n" +
         " </td>\n" +
         "</tr>\n" +
         "<tr>\n" +
@@ -778,7 +781,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  <small>{4}</small>\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
-        "  <input type=\"text\" name=\"installConfig\" size=\"20\">\n" +
+        "  <input type=\"text\" name=\"deployConfig\" size=\"20\">\n" +
         " </td>\n" +
         "</tr>\n" +
         "<tr>\n" +
@@ -786,7 +789,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  <small>{5}</small>\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
-        "  <input type=\"text\" name=\"installWar\" size=\"40\">\n" +
+        "  <input type=\"text\" name=\"deployWar\" size=\"40\">\n" +
         " </td>\n" +
         "</tr>\n" +
         "<tr>\n" +
@@ -816,7 +819,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  <small>{2}</small>\n" +
         " </td>\n" +
         " <td class=\"row-left\">\n" +
-        "  <input type=\"file\" name=\"installWar\" size=\"40\">\n" +
+        "  <input type=\"file\" name=\"deployWar\" size=\"40\">\n" +
         " </td>\n" +
         "</tr>\n" +
         "<tr>\n" +

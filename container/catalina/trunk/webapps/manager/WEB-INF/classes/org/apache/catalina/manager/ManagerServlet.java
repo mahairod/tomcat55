@@ -67,6 +67,7 @@ package org.apache.catalina.manager;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -93,6 +94,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Role;
@@ -120,17 +122,17 @@ import org.apache.naming.resources.WARDirContext;
  * The following actions and parameters (starting after the servlet path)
  * are supported:
  * <ul>
- * <li><b>/install?config={config-url}</b> - Install and start a new
+ * <li><b>/deploy?config={config-url}</b> - Install and start a new
  *     web application, based on the contents of the context configuration
  *     file found at the specified URL.  The <code>docBase</code> attribute
  *     of the context configuration file is used to locate the actual
  *     WAR or directory containing the application.</li>
- * <li><b>/install?config={config-url}&war={war-url}/</b> - Install and start
+ * <li><b>/deploy?config={config-url}&war={war-url}/</b> - Install and start
  *     a new web application, based on the contents of the context
  *     configuration file found at <code>{config-url}</code>, overriding the
  *     <code>docBase</code> attribute with the contents of the web
  *     application archive found at <code>{war-url}</code>.</li>
- * <li><b>/install?path=/xxx&war={war-url}</b> - Install and start a new
+ * <li><b>/deploy?path=/xxx&war={war-url}</b> - Install and start a new
  *     web application attached to context path <code>/xxx</code>, based
  *     on the contents of the web application archive found at the
  *     specified URL.</li>
@@ -140,10 +142,7 @@ import org.apache.naming.resources.WARDirContext;
  *     Where path is the context path.  Status is either running or stopped.
  *     Sessions is the number of active Sessions.</li>
  * <li><b>/reload?path=/xxx</b> - Reload the Java classes and resources for
- *     the application at the specified path, but do not reread the web.xml
- *     configuration files.</li>
- * <li><b>/remove?path=/xxx</b> - Shutdown and remove the web application
- *     attached to context path <code>/xxx</code> for this virtual host.</li>
+ *     the application at the specified path.</li>
  * <li><b>/resources?type=xxxx</b> - Enumerate the available global JNDI
  *     resources, optionally limited to those of the specified type
  *     (fully qualified Java class name), if available.</li>
@@ -202,6 +201,7 @@ import org.apache.naming.resources.WARDirContext;
  * </ul>
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -210,6 +210,12 @@ public class ManagerServlet
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Path where context descriptors should be deployed.
+     */
+    protected File configBase = null;
 
 
     /**
@@ -230,6 +236,18 @@ public class ManagerServlet
      * uploaded.
      */
     protected File deployed = null;
+
+
+    /**
+     * Path used to store revisions of webapps.
+     */
+    protected File versioned = null;
+
+
+    /**
+     * Path used to store context descriptors.
+     */
+    protected File contextDescriptors = null;
 
 
     /**
@@ -331,6 +349,12 @@ public class ManagerServlet
         String path = request.getParameter("path");
         String type = request.getParameter("type");
         String war = request.getParameter("war");
+        String tag = request.getParameter("tag");
+        boolean update = false;
+        if ((request.getParameter("update") != null) 
+            && (request.getParameter("update").equals("true"))) {
+            update = false;
+        }
 
         // Prepare our output writer to generate the response message
         Locale locale = Locale.getDefault();
@@ -342,13 +366,21 @@ public class ManagerServlet
         // Process the requested command (note - "/deploy" is not listed here)
         if (command == null) {
             writer.println(sm.getString("managerServlet.noCommand"));
+        } else if (command.equals("/deploy")) {
+            if (war != null) {
+                deploy(writer, config, path, war, update);
+            } else {
+                deploy(writer, path, tag);
+            }
         } else if (command.equals("/install")) {
-            install(writer, config, path, war);
+            // Deprecated
+            deploy(writer, config, path, war, false);
         } else if (command.equals("/list")) {
             list(writer);
         } else if (command.equals("/reload")) {
             reload(writer, path);
         } else if (command.equals("/remove")) {
+            // Deprecated
             remove(writer, path);
         } else if (command.equals("/resources")) {
             resources(writer, type);
@@ -399,6 +431,12 @@ public class ManagerServlet
         if (command == null)
             command = request.getServletPath();
         String path = request.getParameter("path");
+        String tag = request.getParameter("tag");
+        boolean update = false;
+        if ((request.getParameter("update") != null) 
+            && (request.getParameter("update").equals("true"))) {
+            update = false;
+        }
 
         // Prepare our output writer to generate the response message
         response.setContentType("text/plain");
@@ -410,13 +448,14 @@ public class ManagerServlet
         if (command == null) {
             writer.println(sm.getString("managerServlet.noCommand"));
         } else if (command.equals("/deploy")) {
-            deploy(writer, path, request);
+            deploy(writer, path, tag, update, request);
         } else {
             writer.println(sm.getString("managerServlet.unknownCommand",
                                         command));
         }
 
         // Saving configuration
+        /*
         Server server = ServerFactory.getServer();
         if ((server != null) && (server instanceof StandardServer)) {
             try {
@@ -426,6 +465,7 @@ public class ManagerServlet
                                             e.getMessage()));
             }
         }
+        */
 
         // Finish up the response
         writer.flush();
@@ -468,8 +508,35 @@ public class ManagerServlet
         }
 
         // Calculate the directory into which we will be deploying applications
-        deployed = (File) getServletContext().getAttribute
+        versioned = (File) getServletContext().getAttribute
             ("javax.servlet.context.tempdir");
+
+        // Identify the appBase of the owning Host of this Context
+        // (if any)
+        String appBase = ((Host) context.getParent()).getAppBase();
+        deployed = new File(appBase);
+        if (!deployed.isAbsolute()) {
+            deployed = new File(System.getProperty("catalina.base"),
+                                appBase);
+        }
+        configBase = new File(System.getProperty("catalina.base"), "conf");
+        Container container = context;
+        Container host = null;
+        Container engine = null;
+        while (container != null) {
+            if (container instanceof Host)
+                host = container;
+            if (container instanceof Engine)
+                engine = container;
+            container = container.getParent();
+        }
+        if (engine != null) {
+            configBase = new File(configBase, engine.getName());
+        }
+        if (host != null) {
+            configBase = new File(configBase, host.getName());
+        }
+        // Note: The directory must exist for this to work.
 
         // Log debugging messages as necessary
         if (debug >= 1) {
@@ -493,10 +560,12 @@ public class ManagerServlet
      *
      * @param writer Writer to render results to
      * @param path Context path of the application to be installed
+     * @param tag Tag to be associated with the webapp
      * @param request Servlet request we are processing
      */
-    protected synchronized void deploy(PrintWriter writer, String path,
-                                       HttpServletRequest request) {
+    protected synchronized void deploy
+        (PrintWriter writer, String path,
+         String tag, boolean update, HttpServletRequest request) {
 
         if (debug >= 1) {
             log("deploy: Deploying web application at '" + path + "'");
@@ -514,16 +583,32 @@ public class ManagerServlet
         if (path.equals("")) {
             basename = "_";
         } else {
-            basename = path.substring(1);
+            basename = path.substring(1).replace('/', '_');
         }
-        if (deployer.findDeployedApp(path) != null) {
+
+        // Check if app already exists, or undeploy it if updating
+        Context context =  deployer.findDeployedApp(path);
+        if (update) {
+            if (context != null) {
+                undeploy(writer, path);
+            }
+            context =  deployer.findDeployedApp(path);
+        }
+        if (context != null) {
             writer.println
-                (sm.getString("managerServlet.alreadyContext", displayPath));
+                (sm.getString("managerServlet.alreadyContext",
+                              displayPath));
             return;
         }
 
+        // Calculate the base path
+        File deployedPath = deployed;
+        if (tag != null) {
+            deployedPath = new File(versioned, tag);
+        }
+
         // Upload the web application archive to a local WAR file
-        File localWar = new File(deployed, basename + ".war");
+        File localWar = new File(deployedPath, basename + ".war");
         if (debug >= 2) {
             log("Uploading WAR file to " + localWar);
         }
@@ -536,8 +621,16 @@ public class ManagerServlet
             return;
         }
 
+        // Copy WAR and XML to the host base
+        if (tag != null) {
+            deployedPath = deployed;
+            File localWarCopy = new File(deployedPath, basename + ".war");
+            copy(localWar, localWarCopy);
+            localWar = localWarCopy;
+        }
+
         // Extract the nested context deployment file (if any)
-        File localXml = new File(deployed, basename + ".xml");
+        File localXml = new File(configBase, basename + ".xml");
         if (debug >= 2) {
             log("Extracting XML file to " + localXml);
         }
@@ -551,26 +644,8 @@ public class ManagerServlet
         }
 
         // Deploy this web application
-        try {
-            URL warURL =
-                new URL("jar:file:" + localWar.getAbsolutePath() + "!/");
-            URL xmlURL = null;
-            if (localXml.exists()) {
-                xmlURL = new URL("file:" + localXml.getAbsolutePath());
-            }
-            if (xmlURL != null) {
-                deployer.install(xmlURL, warURL);
-            } else {
-                deployer.install(path, warURL);
-            }
-        } catch (Throwable t) {
-            log("ManagerServlet.deploy[" + displayPath + "]", t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
-            localWar.delete();
-            localXml.delete();
-            return;
-        }
+        deploy(writer, localXml.getAbsolutePath(), path, 
+               localWar.getAbsolutePath(), update);
 
         // Acknowledge successful completion of this deploy command
         writer.println(sm.getString("managerServlet.installed",
@@ -584,12 +659,87 @@ public class ManagerServlet
      * web application archive.
      *
      * @param writer Writer to render results to
+     * @param tag Revision tag to deploy from
+     * @param path Context path of the application to be installed
+     */
+    protected void deploy(PrintWriter writer, String path, String tag) {
+
+        // Validate the requested context path
+        if ((path == null) || path.length() == 0 || !path.startsWith("/")) {
+            writer.println(sm.getString("managerServlet.invalidPath", path));
+            return;
+        }
+        String displayPath = path;
+        if( path.equals("/") )
+            path = "";
+        String basename = null;
+        if (path.equals("")) {
+            basename = "_";
+        } else {
+            basename = path.substring(1).replace('/', '_');
+        }
+
+        // Calculate the base path
+        File deployedPath = versioned;
+        if (tag != null) {
+            deployedPath = new File(deployedPath, tag);
+        }
+
+        // Find the local WAR file
+        File localWar = new File(deployedPath, basename + ".war");
+
+        // Find the local context deployment file (if any)
+        File localXml = new File(configBase, basename + ".xml");
+
+        // Check if app already exists, or undeploy it if updating
+        Context context =  deployer.findDeployedApp(path);
+        if (context != null) {
+            undeploy(writer, path);
+        }
+
+        // Copy WAR and XML to the host base
+        if (tag != null) {
+            deployedPath = deployed;
+            File localWarCopy = new File(deployedPath, basename + ".war");
+            copy(localWar, localWarCopy);
+            try {
+                extractXml(localWar, localXml);
+            } catch (IOException e) {
+                log("managerServlet.extract[" + displayPath + "]", e);
+                writer.println(sm.getString("managerServlet.exception",
+                                            e.toString()));
+                return;
+            }
+            localWar = localWarCopy;
+        }
+
+        String war = null;
+        String config = null;
+        if (localWar.exists()) {
+            war = localWar.getAbsolutePath();
+        }
+        if (localXml.exists()) {
+            config = localXml.getAbsolutePath();
+        }
+
+        // Deploy webapp
+        deploy(writer, config, path, war, false);
+
+    }
+
+
+    /**
+     * Install an application for the specified path from the specified
+     * web application archive.
+     *
+     * @param writer Writer to render results to
      * @param config URL of the context configuration file to be installed
      * @param path Context path of the application to be installed
      * @param war URL of the web application archive to be installed
+     * @param update true to override any existing webapp on the path
      */
-    protected void install(PrintWriter writer, String config,
-                           String path, String war) {
+    protected void deploy(PrintWriter writer, String config,
+                          String path, String war, boolean update) {
 
         if (war != null && war.length() == 0) {
             war = null;
@@ -622,7 +772,7 @@ public class ManagerServlet
                     appBaseDir = new File(System.getProperty("catalina.base"),
                                           appBase);
                 }
-                File file = new File(appBaseDir,war);
+                File file = new File(appBaseDir, war);
                 try {
                     URL url = file.toURL();
                     war = url.toString();
@@ -701,14 +851,22 @@ public class ManagerServlet
                 path = "";
             }
 
-            try {
-                Context context =  deployer.findDeployedApp(path);
+            // Check if app already exists, or undeploy it if updating
+            Context context =  deployer.findDeployedApp(path);
+            if (update) {
                 if (context != null) {
-                    writer.println
-                        (sm.getString("managerServlet.alreadyContext",
-                                      displayPath));
-                    return;
+                    undeploy(writer, path);
                 }
+                context =  deployer.findDeployedApp(path);
+            }
+            if (context != null) {
+                writer.println
+                    (sm.getString("managerServlet.alreadyContext",
+                                  displayPath));
+                return;
+            }
+
+            try {
                 deployer.install(path, new URL(war));
                 writer.println(sm.getString("managerServlet.installed",
                                             displayPath));
@@ -815,6 +973,7 @@ public class ManagerServlet
      *
      * @param writer Writer to render to
      * @param path Context path of the application to be removed
+     * @deprecated Replaced by undeploy
      */
     protected void remove(PrintWriter writer, String path) {
 
@@ -1077,6 +1236,7 @@ public class ManagerServlet
 
     }
 
+
     /**
      * Start the web application at the specified context path.
      *
@@ -1099,7 +1259,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext", 
+                                            displayPath));
                 return;
             }
             deployer.start(path);
@@ -1143,7 +1304,8 @@ public class ManagerServlet
         try {
             Context context = deployer.findDeployedApp(path);
             if (context == null) {
-                writer.println(sm.getString("managerServlet.noContext", displayPath));
+                writer.println(sm.getString("managerServlet.noContext", 
+                                            displayPath));
                 return;
             }
             // It isn't possible for the manager to stop itself
@@ -1232,9 +1394,7 @@ public class ManagerServlet
             } else {
                 docBaseDir.delete();  // Delete the WAR file
             }
-            String docBaseXmlPath =
-                docBasePath.substring(0, docBasePath.length() - 4) + ".xml";
-            File docBaseXml = new File(docBaseXmlPath);
+            File docBaseXml = new File(configBase, context.getPath() + ".xml");
             docBaseXml.delete();
             writer.println(sm.getString("managerServlet.undeployed",
                                         displayPath));
@@ -1246,6 +1406,7 @@ public class ManagerServlet
         }
 
         // Saving configuration
+        /*
         Server server = ServerFactory.getServer();
         if ((server != null) && (server instanceof StandardServer)) {
             try {
@@ -1255,6 +1416,7 @@ public class ManagerServlet
                                             e.getMessage()));
             }
         }
+        */
 
     }
 
@@ -1418,6 +1580,46 @@ public class ManagerServlet
             }
         }
 
+    }
+
+
+    /**
+     * Copy a file.
+     */
+    private boolean copy(File src, File dest) {
+        FileInputStream is = null;
+        FileOutputStream os = null;
+        try {
+            is = new FileInputStream(src);
+            os = new FileOutputStream(dest);
+            byte[] buf = new byte[4096];
+            while (true) {
+                int len = is.read(buf);
+                if (len < 0)
+                    break;
+                os.write(buf, 0, len);
+            }
+            is.close();
+            os.close();
+        } catch (IOException e) {
+            return false;
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+            try {
+                if (os != null) {
+                    os.close();
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        return true;
     }
 
 
