@@ -41,6 +41,9 @@
       <fix>
       Remove CGI servlet dependency on JDK 1.4 (markt)
       </fix>
+      <fix>
+      <bug>26171</bug>: Fix NPE in AccessLogValve during a reload (yoavs)
+      </fix>
 
     </changelog>
 
@@ -52,18 +55,6 @@
 
       <fix>
       Fix memory leak when spare threads are destroyed (remm, fhanik)
-      </fix>
-
-    </changelog>
-
-  </subsection>
-
-  <subsection name="Webapps">
-
-    <changelog>
-
-      <fix>
-      <bug>26147</bug>: Fix typo in schemaLocation (remm)
       </fix>
 
     </changelog>
