@@ -202,6 +202,12 @@ public final class ApplicationContext
 
 
     /**
+     * List of read only attributes for this context.
+     */
+    private HashMap readOnlyAttributes = new HashMap();
+
+
+    /**
      * The Context instance with which we are associated.
      */
     private StandardContext context = null;
@@ -244,6 +250,19 @@ public final class ApplicationContext
     public DirContext getResources() {
 
 	return context.getResources();
+
+    }
+
+
+    /**
+     * Set an attribute as read only.
+     */
+    public void setAttributeReadOnly(String name) {
+
+        synchronized (attributes) {
+            if (attributes.containsKey(name))
+                readOnlyAttributes.put(name, name);
+        }
 
     }
 
@@ -710,6 +729,9 @@ public final class ApplicationContext
 
 	// Remove the specified attribute
 	synchronized (attributes) {
+            // Check for read only attribute
+            if (readOnlyAttributes.containsKey(name))
+                return;
             found = attributes.containsKey(name);
             if (found) {
                 value = attributes.get(name);
@@ -761,6 +783,9 @@ public final class ApplicationContext
 
 	// Add or replace the specified attribute
 	synchronized (attributes) {
+            // Check for read only attribute
+            if (readOnlyAttributes.containsKey(name))
+                return;
 	    if (attributes.get(name) != null)
 	        replaced = true;
 	    attributes.put(name, value);
