@@ -70,7 +70,7 @@ public class Get extends Task {
     public void execute() throws BuildException {
 	try {
 	    URL url=new URL( source );
-	    System.out.println("<log:get src=\"" + source + "\">");
+	    project.log("Getting: " + source);
 	    File destF=new File(dest);
 	    FileOutputStream fos = new FileOutputStream(destF);
 
@@ -83,11 +83,11 @@ public class Get extends Task {
 		if( "true".equals(verbose)) System.out.print(".");
 	    }
 	    if( "true".equals(verbose)) System.out.println();
-	    System.out.println("</log:get>");
 	    fos.close();
 	    is.close();
 	} catch (IOException ioe) {
 	    ioe.printStackTrace();
+	    throw new BuildException(ioe.toString());
 	}
     }
 
