@@ -55,6 +55,9 @@
       <fix>
         If ServletResponse.getWriter() is called and no char encoding has been specified, set response char encoding to default (ISO-8859-1) so that it is reflected in getContentType() and Content-Type header, as required by the Servlet Spec (Bugtraq 6152759) (luehe)
       </fix>
+      <fix>
+        <bug>29869</bug>: Better JMX/JSR77 support in StandardContext and StandardWrapper. (remm)
+      </fix>
     </changelog>
   </subsection>
 
