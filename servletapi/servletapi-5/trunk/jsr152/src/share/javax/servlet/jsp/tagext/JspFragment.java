@@ -116,6 +116,6 @@ public abstract class JspFragment {
      *
      * @return The JspContext used by this fragment at invocation time.
      */
-    public JspContext getJspContext();
+    public abstract JspContext getJspContext();
 
 }
