@@ -20,6 +20,7 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.apache.catalina.cluster.tcp.ReplicationTransmitter;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.mbeans.ServerLifecycleListener;
@@ -75,5 +76,13 @@ public class StoreLoaderTest extends TestCase {
                 .findDescription("org.apache.catalina.core.StandardServer.[ServerLifecycleListener]");
         assertEquals(ServerLifecycleListener.class.getName(), desc
                 .getTagClass());
+        desc = registry.findDescription(ReplicationTransmitter.class);
+        assertNotNull(desc);
+        assertEquals(ReplicationTransmitter.class.getName(), desc
+                .getTagClass());
+        assertNotNull(desc.getStoreFactory());
+        assertEquals(ReplicationTransmitterStoreAppender.class, desc.getStoreFactory().getStoreAppender().getClass()
+                );
+        
     }
 }
