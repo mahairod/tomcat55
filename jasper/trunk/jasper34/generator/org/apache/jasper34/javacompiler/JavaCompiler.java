@@ -57,7 +57,10 @@
 
 package org.apache.jasper34.javacompiler;
 
-import java.io.OutputStream;
+import java.io.*;
+
+// Temp ( ? )
+import org.apache.jasper34.core.*;
 
 /**
  * If you want to plugin your own Java compiler, you probably want to
@@ -65,44 +68,112 @@ import java.io.OutputStream;
  *
  * @author Anil K. Vijendran
  * @author Sam Ruby
+ * @author Costin Manolache
  */
-public interface JavaCompiler {
+public abstract class JavaCompiler {
+    protected String encoding;
+    protected String classpath;
+    protected String compilerPath = "jikes";
+    protected String outdir;
+    protected OutputStream out;
+    protected boolean classDebugInfo=false;
 
     /**
      * Specify where the compiler can be found
      */ 
-    void setCompilerPath(String compilerPath);
+    public void setCompilerPath(String compilerPath) {
+	this.compilerPath = compilerPath;
+    }
+
 
     /**
      * Set the encoding (character set) of the source
      */ 
-    void setEncoding(String encoding);
+    public void setEncoding(String encoding) {
+      this.encoding = encoding;
+    }
 
     /**
      * Set the class path for the compiler
      */ 
-    void setClasspath(String classpath);
+    public void setClasspath(String classpath) {
+      this.classpath = classpath;
+    }
 
     /**
      * Set the output directory
      */ 
-    void setOutputDir(String outdir);
+    public void setOutputDir(String outdir) {
+      this.outdir = outdir;
+    }
 
     /**
      * Set where you want the compiler output (messages) to go 
      */ 
-    void setMsgOutput(OutputStream out);
+    public void setMsgOutput(OutputStream out) {
+      this.out = out;
+    }
 
     /**
      * Set if you want debugging information in the class file 
      */ 
-    void setClassDebugInfo(boolean classDebugInfo);
+    public void setClassDebugInfo(boolean classDebugInfo) {
+	this.classDebugInfo = classDebugInfo;
+    }
 
+    // -------------------- Compile method --------------------
     /**
      * Execute the compiler
      * @param source - file name of the source to be compiled
      */ 
-    boolean compile(String source);
+    public abstract boolean compile(String source);
+
+    // -------------------- Utils --------------------
+
+    public static Class getCompilerPluginClass( String s ) {
+	try {
+	    Class c=Class.forName( s );
+	    return c;
+	} catch( Exception ex ) {
+	    return null;
+	}
+    }
+    public static JavaCompiler createJavaCompiler(ContainerLiaison containerL,
+						  String jspCompilerPluginS )
+    {
+	Class c=getCompilerPluginClass( jspCompilerPluginS );
+	if( c==null ) return new SunJavaCompiler();
+	return createJavaCompiler( containerL, c );
+    }
+	
+    /** tool for customizing javac.
+     */
+    public static JavaCompiler createJavaCompiler(ContainerLiaison containerL,
+						  Class jspCompilerPlugin )
+	//	throws JasperException
+    {
+        JavaCompiler javac;
+
+	if (jspCompilerPlugin != null) {
+            try {
+                javac = (JavaCompiler) jspCompilerPlugin.newInstance();
+            } catch (Exception ex) {
+		// containerL.message("jsp.warning.compiler.class.cantcreate",
+		// 	         new Object[] { jspCompilerPlugin, ex }, 
+		// 		  Log.FATAL);
+                javac = new SunJavaCompiler();
+	    }
+	} else {
+            javac = new SunJavaCompiler();
+	}
+
+	return javac;
+    }
+
+
+    public static JavaCompiler getDefaultCompiler() {
+	return new SunJavaCompiler();
+    }
 
 }
 

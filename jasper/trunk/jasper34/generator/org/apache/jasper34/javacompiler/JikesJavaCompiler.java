@@ -69,71 +69,22 @@ import java.io.ByteArrayOutputStream;
   * @author Jeffrey Chiu
   * @author Hans Bergsten <hans@gefionsoftware.com>
   */
-public class JikesJavaCompiler implements JavaCompiler {
+public class JikesJavaCompiler extends JavaCompiler {
 
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;
     static final String q =
-            "\\".equals(System.getProperty("file.separator")) ? "\"" : "";
-
+	"\\".equals(System.getProperty("file.separator")) ? "\"" : "";
+    
     /*
      * Contains extra classpath for Jikes use from Microsoft systems:
      * Microsoft does not report it's internal classpath in
      * System.getProperty(java.class.path) which results in jikes to fail.  
      * (Internal classpath with other JVMs contains for instance rt.jar).
      */
-     static StringBuffer MicrosoftClasspath = null;
-
-    String encoding;
-    String classpath;
-    String compilerPath = "jikes";
-    String outdir;
-    OutputStream out;
-    boolean classDebugInfo=false;
-
+    static StringBuffer MicrosoftClasspath = null;
+    
     /**
-     * Specify where the compiler can be found
-     */ 
-    public void setCompilerPath(String compilerPath) {
-	this.compilerPath = compilerPath;
-    }
-
-    /**
-     * Set the encoding (character set) of the source
-     */
-    public void setEncoding(String encoding) {
-      this.encoding = encoding;
-    }
-
-    /**
-     * Set the class path for the compiler
-     */
-    public void setClasspath(String classpath) {
-      this.classpath = classpath;
-    }
-
-    /**
-     * Set the output directory
-     */
-    public void setOutputDir(String outdir) {
-      this.outdir = outdir;
-    }
-
-    /**
-     * Set where you want the compiler output (messages) to go
-     */
-    public void setMsgOutput(OutputStream out) {
-      this.out = out;
-    }
-
-    /**
-     * Set if you want debugging information in the class file
-     */
-    public void setClassDebugInfo(boolean classDebugInfo) {
-        this.classDebugInfo = classDebugInfo;
-    }
-
-   /**
      * Execute the compiler
      * @param source - file name of the source to be compiled
      */ 
