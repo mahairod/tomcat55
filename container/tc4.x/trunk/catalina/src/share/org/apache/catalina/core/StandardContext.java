@@ -338,10 +338,6 @@ public final class StandardContext
      */
     public Object[] getApplicationListeners() {
 
-        if (!started)
-	    throw new IllegalStateException
-	      (sm.getString("standardContext.notStarted"));
-
 	return (applicationListenersObjects);
 
     }
