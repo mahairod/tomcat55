@@ -45,6 +45,7 @@ import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemErrLogger;
 import org.apache.catalina.logger.SystemOutLogger;
+import org.apache.catalina.realm.DataSourceRealm;
 import org.apache.catalina.realm.JDBCRealm;
 import org.apache.catalina.realm.JNDIRealm;
 import org.apache.catalina.realm.MemoryRealm;
@@ -340,6 +341,40 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
     
+    /**
+     * Create a new DataSource Realm.
+     *
+     * @param parent MBean Name of the associated parent component
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public String createDataSourceRealm(String parent, String dataSourceName, 
+        String roleNameCol, String userCredCol, String userNameCol, 
+        String userRoleTable, String userTable) throws Exception {
+
+        // Create a new DataSourceRealm instance
+        DataSourceRealm realm = new DataSourceRealm();
+	realm.setDataSourceName(dataSourceName);
+	realm.setRoleNameCol(roleNameCol);
+	realm.setUserCredCol(userCredCol);
+	realm.setUserNameCol(userNameCol);
+        realm.setUserRoleTable(userRoleTable);
+        realm.setUserTable(userTable);
+
+        // Add the new instance to its parent component
+        ObjectName pname = new ObjectName(parent);
+        ContainerBase containerBase = getParentContainerFromParent(pname);
+        // Add the new instance to its parent component
+        containerBase.setRealm(realm);
+        // Return the corresponding MBean name
+        ObjectName oname = realm.getObjectName();
+        if (oname != null) {
+            return (oname.toString());
+        } else {
+            return null;
+        }   
+
+    }
 
     /**
      * Create a new DefaultContext.

@@ -8,6 +8,11 @@
                 group="Realm"
                  type="org.apache.catalina.realm.DataSourceRealm">
 
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
     <attribute   name="dataSourceName"
           description="The JNDI named JDBC DataSource for your database"
                  type="java.lang.String"/>
