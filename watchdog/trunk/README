@@ -1,9 +1,9 @@
 $Id$
 
-PROJECT jakarta-check SOURCE TREE 
-=================================
+PROJECT jakarta-watchdog SOURCE TREE 
++++=================================
  
-This is the source code tree for jakarta-check(Jcheck) which is a
+This is the source code tree for jakarta-watchdog(Jcheck) which is a
 set of API validation tests for the Servlet 2.2 APIs and the JSP 
 1.1 APIs.
 
@@ -128,3 +128,8 @@ pass before checking in the code.
 
 Mandar Raje 
 mandar@eng.sun.com
+
+
+
+
+
