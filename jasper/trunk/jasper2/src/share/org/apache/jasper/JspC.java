@@ -68,7 +68,6 @@ import java.util.*;
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
-import org.apache.jasper.compiler.CommandLineCompiler;
 import org.apache.jasper.compiler.TldLocationsCache;
 
 import org.apache.jasper.servlet.JasperLoader;
@@ -85,7 +84,7 @@ import org.apache.jasper.logging.JasperLogger;
  * @author Danno Ferrin
  * @author Pierre Delisle
  */
-public class JspC implements Options { //, JspCompilationContext {
+public class JspC implements Options {
 
     public static final String DEFAULT_IE_CLASS_ID = 
             "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
@@ -367,9 +366,9 @@ public class JspC implements Options { //, JspCompilationContext {
     public boolean parseFile(PrintStream log, String file, Writer servletout, Writer mappingout)
     {
         try {
-            CommandLineContext clctxt = new CommandLineContext(
-                    getClassPath(), file.replace('\\','/'), uriBase, uriRoot,
-		    false, this);
+
+            CommandLineContext clctxt = new CommandLineContext
+                (file.replace('\\','/'), uriBase, uriRoot, false, this);
             if ((targetClassName != null) && (targetClassName.length() > 0)) {
                 clctxt.setServletClassName(targetClassName);
             }
@@ -379,12 +378,18 @@ public class JspC implements Options { //, JspCompilationContext {
             if (dirset) {
                 clctxt.setOutputInDirs(true);
             }
+
+            clctxt.setupContext();
+
+            String classPath = getClassPath();
 	    ArrayList urls = new ArrayList();
 
             if (new File(clctxt.getRealPath("/")).exists()) {
                 File classes = new File(clctxt.getRealPath("/WEB-INF/classes"));
                 try {
                      if (classes.exists()) {
+                         classPath = classPath + File.pathSeparator 
+                             + classes.getCanonicalPath();
                          urls.add(classes.getCanonicalFile().toURL());
                     }
                 } catch (IOException ioe) {
@@ -401,6 +406,8 @@ public class JspC implements Options { //, JspCompilationContext {
 			    File libFile = new File(lib.toString()
                                     + File.separator
                                     + libs[i]);
+                            classPath = classPath + File.pathSeparator 
+                                + libFile.getCanonicalPath();
 			    urls.add(libFile.getCanonicalFile().toURL());
                         } catch (IOException ioe) {
                             // failing a toCanonicalPath on a file that
@@ -412,7 +419,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 }
             }
             StringTokenizer tokenizer = new StringTokenizer
-                (clctxt.getClassPath(), File.pathSeparator);
+                (getClassPath(), File.pathSeparator);
             while (tokenizer.hasMoreTokens()) {
                 String path = tokenizer.nextToken();
                 try {
@@ -430,17 +437,21 @@ public class JspC implements Options { //, JspCompilationContext {
             URLClassLoader loader = new URLClassLoader
                 ((URL[])(urls.toArray(new URL[urls.size()])));
             clctxt.setClassLoader(loader);
-            CommandLineCompiler clc = new CommandLineCompiler(clctxt);
+            clctxt.setClassPath(classPath);
+            Compiler clc = clctxt.createCompiler();
 
             clc.compile();
 
             targetClassName = null;
+
+            String className = clctxt.getClassName();
+            String packageName = clctxt.getServletPackageName();
+
             String thisServletName;
-            if  ("".equals(clc.getPackageName())) {
-                thisServletName = clc.getClassName();
-             } else {
-                thisServletName = clc.getPackageName()
-                    + '.' + clc.getClassName();
+            if  ("".equals(packageName)) {
+                thisServletName = className;
+            } else {
+                thisServletName = packageName + '.' + className;
             }
             if (servletout != null) {
                 servletout.write("\n\t<servlet>\n\t\t<servlet-name>");
@@ -466,6 +477,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 dieOnExit = true;
             }
         } catch (FileNotFoundException fne) {
+            fne.printStackTrace();
                 Constants.message("jspc.error.fileDoesNotExist", 
                         new Object[] {fne.getMessage()}, Logger.WARNING);
         } catch (Exception e) {
@@ -478,7 +490,6 @@ public class JspC implements Options { //, JspCompilationContext {
         }
         return false;
     }
-
 
     public void parseFiles(PrintStream log)  throws JasperException {
 

@@ -66,10 +66,10 @@
 package org.apache.jasper;
 
 import java.io.*;
+import java.util.StringTokenizer;
 
 import org.apache.jasper.compiler.JspReader;
 import org.apache.jasper.compiler.ServletWriter;
-import org.apache.jasper.compiler.CommandLineCompiler;
 import org.apache.jasper.compiler.Compiler;
 
 import java.net.URL;
@@ -83,8 +83,13 @@ import java.net.MalformedURLException;
  *
  * @author Danno Ferrin
  * @author Pierre Delisle
+ * @author Remy Maucherat
  */
 public class CommandLineContext implements JspCompilationContext {
+
+
+    // ----------------------------------------------------- Instance Variables
+
 
     String classPath;
     JspReader reader;
@@ -93,23 +98,24 @@ public class CommandLineContext implements JspCompilationContext {
     boolean errPage;
     String jspFile;
     String servletClassName;
-    String servletPackageName;
+    String servletPackageName = Constants.JSP_PACKAGE_NAME;;
     String servletJavaFileName;
     String contentType;
     Options options;
+    private String classFileName;
+    private String jspPath;
+    private String outputDir;
 
     String uriBase;
     File uriRoot;
 
     boolean outputInDirs;
 
-    public CommandLineContext(String newClassPath,
-                              String newJspFile, String newUriBase,
+    public CommandLineContext(String newJspFile, String newUriBase,
                               String newUriRoot, boolean newErrPage,
                               Options newOptions)
-    throws JasperException
-    {
-        classPath = newClassPath;
+        throws JasperException {
+
         uriBase = newUriBase;
         String tUriRoot = newUriRoot;
         jspFile = newJspFile;
@@ -138,7 +144,32 @@ public class CommandLineContext implements JspCompilationContext {
                         Constants.getString("jsp.error.jspc.uriroot_not_dir"));
             }
         }
+
     }
+
+
+    /**
+     * Resolve relative path, and create output directories.
+     */
+    public void setupContext() {
+
+        outputDir = options.getScratchDir().toString();
+
+        if (isOutputInDirs()) {
+            int indexOfSlash = getJspFile().lastIndexOf('/');
+            String pathName = "";
+            if (indexOfSlash != -1) {
+                pathName = getJspFile().substring(0, indexOfSlash);
+            }
+            String tmpDir = outputDir + File.separatorChar + pathName;
+            File f = new File(tmpDir);
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+        }
+
+    }
+
 
     /**
      * The classpath that is passed off to the Java compiler. 
@@ -147,6 +178,13 @@ public class CommandLineContext implements JspCompilationContext {
         return classPath;
     }
     
+    /**
+     * The classpath that is passed off to the Java compiler. 
+     */
+    public void setClassPath(String classPath) {
+        this.classPath = classPath;
+    }
+
     /**
      * Get the input reader for the JSP text. 
      */
@@ -179,24 +217,12 @@ public class CommandLineContext implements JspCompilationContext {
     
     /**
      * The scratch directory to generate code into.
-     *
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
      */
     public String getOutputDir() {
-        return options.getScratchDir().toString();
+        return outputDir;
+        //return options.getScratchDir().toString();
     }
     
-    /**
-     * The scratch directory to generate code into for javac.
-     *
-     * FIXME: In some places this is called scratchDir and in some
-     * other places it is called outputDir.
-     */
-    public String getJavacOutputDir() {
-        return options.getScratchDir().toString();
-    }
-
     /**
      * Path of the JSP URI. Note that this is not a file name. This is
      * the context rooted URI of the JSP file. 
@@ -210,6 +236,29 @@ public class CommandLineContext implements JspCompilationContext {
      * generated class. 
      */
     public String getServletClassName() {
+        if (servletClassName != null) {
+            return servletClassName;
+        }
+        int iSep = jspFile.lastIndexOf('/') + 1;
+        int iEnd = jspFile.length();
+        StringBuffer modifiedClassName = 
+            new StringBuffer(jspFile.length() - iSep);
+	if (!Character.isJavaIdentifierStart(jspFile.charAt(iSep))) {
+	    // If the first char is not a legal Java letter or digit,
+	    // prepend a '$'.
+	    modifiedClassName.append('$');
+	}
+        for (int i = iSep; i < iEnd; i++) {
+            char ch = jspFile.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                modifiedClassName.append(ch);
+            } else if (ch == '.') {
+                modifiedClassName.append('$');
+            } else {
+                modifiedClassName.append(mangleChar(ch));
+            }
+        }
+        servletClassName = modifiedClassName.toString();
         return servletClassName;
     }
     
@@ -219,36 +268,59 @@ public class CommandLineContext implements JspCompilationContext {
      * the one derived from the path to jsp file.
      */
     public String getServletPackageName() {
-        //Get the path to the jsp file.  Note that the jspFile, by the
-	//time it gets here, would have been normalized to use '/'
-	//as file separator.
-
-	int indexOfSlash = getJspFile().lastIndexOf('/');
-        String pathName;
-        if (indexOfSlash != -1) {
-            pathName = getJspFile().substring(0, indexOfSlash);
-        } else {
-            pathName = "/";
-        }
-
-        //Assemble the package name from the base package name specified on
-        //the command line and the package name derived from the path to
-        //the jsp file
-        String packageName = "";
-        if (servletPackageName != null) {
-            packageName = servletPackageName;
-        }
-        packageName += pathName.replace('/', '.');
-
-        return CommandLineCompiler.manglePackage(packageName);
+        return servletPackageName;
     }
+
 
     /**
      * Full path name of the Java file into which the servlet is being
      * generated. 
      */
     public String getServletJavaFileName() {
-        return servletJavaFileName;
+
+        if (servletJavaFileName != null) {
+            return servletJavaFileName;
+        }
+
+        String outputDir = getOutputDir();
+        //servletJavaFileName = getServletClassName() + ".java";
+        servletJavaFileName = "/" + getJspPath();
+ 	if (outputDir != null && !outputDir.equals("")) {
+	    servletJavaFileName = outputDir + servletJavaFileName;
+        }
+	return servletJavaFileName;
+
+    }
+
+    public String getJspPath() {
+        if (jspPath != null) {
+            return jspPath;
+        }
+        String dirName = getJspFile();
+        int pos = dirName.lastIndexOf('/');
+        if (pos > 0) {
+            dirName = dirName.substring(0, pos + 1);
+        } else {
+            dirName = "";
+        }
+        jspPath = dirName + getServletClassName() + ".java";
+        if (jspPath.startsWith("/")) {
+            jspPath = jspPath.substring(1);
+        }
+        return jspPath;
+    }
+
+    public String getClassFileName() {
+        if (classFileName != null) {
+            return classFileName;
+        }
+
+        String outputDir = getOutputDir();
+        classFileName = getServletClassName() + ".class";
+	if (outputDir != null && !outputDir.equals("")) {
+	    classFileName = outputDir + File.separatorChar + classFileName;
+        }
+	return classFileName;
     }
 
     /**
@@ -319,8 +391,11 @@ public class CommandLineContext implements JspCompilationContext {
      * is not done yet. Right now we're just hardcoding the actual
      * compilers that are created. 
      */
-    public Compiler createCompiler() throws JasperException {
-        return new CommandLineCompiler(this);
+    public Compiler createCompiler()
+        throws JasperException {
+
+        return new Compiler(this);
+
     }
 
 
@@ -390,5 +465,120 @@ public class CommandLineContext implements JspCompilationContext {
 	    options.getTldLocationsCache().getLocation(uri);
 	return location;
     }
+
+    public String getClassName() {
+        String outputDir = getOutputDir();
+        String classFileName = getBaseClassName() + ".class";
+	if (outputDir != null && !outputDir.equals(""))
+	    classFileName = outputDir + File.separatorChar + classFileName;
+        return classFileName;
+    }
+
+    public static String [] keywords = {
+        "abstract", "boolean", "break", "byte",
+        "case", "catch", "char", "class",
+        "const", "continue", "default", "do",
+        "double", "else", "extends", "final",
+        "finally", "float", "for", "goto",
+        "if", "implements", "import",
+        "instanceof", "int", "interface",
+        "long", "native", "new", "package",
+        "private", "protected", "public",
+        "return", "short", "static", "super",
+        "switch", "synchronized", "this",
+        "throw", "throws", "transient",
+        "try", "void", "volatile", "while"
+    };
+
+    private final String getBaseClassName() {
+        String className = getServletClassName();
+        String prefix = null;
+        if (className == null) {
+            String jsp = getJspFile();
+            int indexOfSlash = jsp.lastIndexOf('/');
+            if (indexOfSlash != -1) {
+                prefix = jsp.substring(0, indexOfSlash + 1);
+                jsp = jsp.substring(indexOfSlash + 1);
+            }
+            if (jsp.endsWith(".jsp")) {
+                className = jsp.substring(0, jsp.length() - 4);
+            } else {
+                className = jsp;
+            }
+        }
+        if (prefix != null) {
+            return prefix + mangleName(className);
+        } else {
+            return mangleName(className);
+        }
+    }
+	
+    private static final String mangleName(String name) {
+
+	// since we don't mangle extensions like the servlet does,
+	// we need to check for keywords as class names
+	for (int i = 0; i < keywords.length; i++) {
+	    if (name.equals(keywords[i])) {
+		name += "%";
+		break;
+	    };
+	};
+	
+	// Fix for invalid characters. If you think of more add to the list.
+	StringBuffer modifiedName = new StringBuffer();
+	if (Character.isJavaIdentifierStart(name.charAt(0)))
+	    modifiedName.append(name.charAt(0));
+	else
+	    modifiedName.append(mangleChar(name.charAt(0)));
+	for (int i = 1; i < name.length(); i++) {
+	    if (Character.isJavaIdentifierPart(name.charAt(i)))
+		modifiedName.append(name.charAt(i));
+	    else
+		modifiedName.append(mangleChar(name.charAt(i)));
+	}
+	
+	return modifiedName.toString();
+    }
+
+    private static final String mangleChar(char ch) {
+	
+        if(ch == File.separatorChar) {
+	    ch = '/';
+	}
+	String s = Integer.toHexString(ch);
+	int nzeros = 5 - s.length();
+	char[] result = new char[6];
+	result[0] = '_';
+	for (int i = 1; i <= nzeros; i++)
+	    result[i] = '0';
+	for (int i = nzeros+1, j = 0; i < 6; i++, j++)
+	    result[i] = s.charAt(j);
+	return new String(result);
+    }
+
+    /**
+     * Make sure that the package name is a legal Java name
+     *
+     * @param name The input string, containing arbitary chars separated by
+     *             '.'s, with possible leading, trailing, or double '.'s
+     * @return legal Java package name.
+     */
+    public static String manglePackage(String name) {
+        boolean first = true;
+
+        StringBuffer b = new StringBuffer();
+        StringTokenizer t = new StringTokenizer(name, ".");
+        while (t.hasMoreTokens()) {
+            String nt = t.nextToken();
+            if (nt.length() > 0) {
+                if (b.length() > 0)
+                    b.append('.');
+                b.append(mangleName(nt));
+            }
+        }
+        return b.toString();
+    }
+
+
 }
 
