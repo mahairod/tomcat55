@@ -1603,7 +1603,7 @@
     <!-- individual targets -->
 
         <target name="positiveContentTypeTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_content/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_content/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
             testName="positiveContentTypeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             expectHeaders="Content-Type:text/plain;charset=ISO-8859-1"
@@ -1613,7 +1613,7 @@
     </target>
 
     <target name="negativeDuplicateContentFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_content/jsp/core_syntax/directives/page/content/negativeDuplicateContentFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_content/jsp/core_syntax/directives/page/content/negativeDuplicateContentFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateContentFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1623,7 +1623,7 @@
     </target>
 
     <target name="positiveExtendsTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_extend/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_extend/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
             testName="positiveExtendsTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/extend/goldenfiles/positiveExtends.html"
@@ -1633,7 +1633,7 @@
     </target>
 
     <target name="negativeDuplicateExtendsFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_extend/jsp/core_syntax/directives/page/extend/negativeDuplicateExtendsFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_extend/jsp/core_syntax/directives/page/extend/negativeDuplicateExtendsFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateExtendsFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1643,7 +1643,7 @@
     </target>
 
     <target name="positiveDefaultIsErrorPageTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/positiveDefaultIsErrorPage.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/positiveDefaultIsErrorPage.jsp HTTP/1.0"
             testName="positiveDefaultIsErrorPageTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1653,7 +1653,7 @@
     </target>
 
     <target name="positiveErrorPageTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
             testName="positiveErrorPageTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/errorpage/goldenfiles/positiveErrorPage.html"
@@ -1663,7 +1663,7 @@
     </target>
 
     <target name="negativeFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/negativeFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/negativeFatalTranslationError.jsp HTTP/1.0"
             testName="negativeFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1673,7 +1673,7 @@
     </target>
 
     <target name="negativeDuplicateErrorPageFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/negativeDuplicateErrorPageFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_errorpage/jsp/core_syntax/directives/page/errorpage/negativeDuplicateErrorPageFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateErrorPageFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1683,7 +1683,7 @@
     </target>
 
     <target name="positiveImportTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
             testName="positiveImportTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/imports/goldenfiles/positiveImport.html"
@@ -1693,7 +1693,7 @@
     </target>
 
     <target name="implicitImportLangTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
             testName="implicitImportLangTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/imports/goldenfiles/implicitImportLang.html"
@@ -1703,7 +1703,7 @@
     </target>
 
     <target name="implicitImportJspTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
             testName="implicitImportJspTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/imports/goldenfiles/implicitImportJsp.html"
@@ -1713,7 +1713,7 @@
     </target>
 
     <target name="implicitImportServletTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
             testName="implicitImportServletTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/imports/goldenfiles/implicitImportServlet.html"
@@ -1723,7 +1723,7 @@
     </target>
 
     <target name="implicitImportHttpTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
             testName="implicitImportHttpTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/imports/goldenfiles/implicitImportHttp.html"
@@ -1733,7 +1733,7 @@
     </target>
 
     <target name="positiveMultipleImportTest">
-        <gtest request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/positiveMultipleImport.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_dir_pg_imprt/jsp/core_syntax/directives/page/imports/positiveMultipleImport.jsp HTTP/1.0"
             testName="positiveMultipleImportTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1743,7 +1743,7 @@
     </target>
 
     <target name="positiveInfoTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_info/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_info/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
             testName="positiveInfoTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/info/goldenfiles/positiveInfo.html"
@@ -1753,7 +1753,7 @@
     </target>
 
     <target name="negativeDuplicateInfoFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_info/jsp/core_syntax/directives/page/info/negativeDuplicateInfoFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_info/jsp/core_syntax/directives/page/info/negativeDuplicateInfoFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateInfoFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1763,7 +1763,7 @@
     </target>
 
     <target name="positiveLangTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_language/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_language/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
             testName="positiveLangTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/page/language/goldenfiles/positiveLang.html"
@@ -1773,7 +1773,7 @@
     </target>
 
     <target name="negativeDuplicateLanguageFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_language/jsp/core_syntax/directives/page/language/negativeDuplicateLanguageFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_language/jsp/core_syntax/directives/page/language/negativeDuplicateLanguageFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateLanguageFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1783,7 +1783,7 @@
     </target>
 
     <target name="positiveSessionTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
             testName="positiveSessionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1793,7 +1793,7 @@
     </target>
 
     <target name="positiveSessionDefaultTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
             testName="positiveSessionDefaultTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1803,7 +1803,7 @@
     </target>
 
     <target name="negativeSessionFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/negativeSessionFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/negativeSessionFatalTranslationError.jsp HTTP/1.0"
             testName="negativeSessionFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1813,7 +1813,7 @@
     </target>
 
     <target name="negativeDuplicateSessionFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/negativeDuplicateSessionFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_session/jsp/core_syntax/directives/page/session/negativeDuplicateSessionFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateSessionFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1823,7 +1823,7 @@
     </target>
 
     <target name="positiveBuffAutoflushTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
             testName="positiveBuffAutoflushTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1833,7 +1833,7 @@
     </target>
 
     <target name="positiveBuffCreateTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
             testName="positiveBuffCreateTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1843,7 +1843,7 @@
     </target>
 
     <target name="negativeDuplicateBufferFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/negativeDuplicateBufferFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/negativeDuplicateBufferFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateBufferFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -1853,7 +1853,7 @@
     </target>
 
     <target name="negativeBufferOverflowExceptionTest">
-        <gtest request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/negativeBufferOverflowException.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_pg_buffer/jsp/core_syntax/directives/page/buffer/negativeBufferOverflowException.jsp HTTP/1.0"
             testName="negativeBufferOverflowExceptionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -1864,7 +1864,7 @@
     </target>
 
     <target name="positiveIncludeCtxRelativeDirectiveTest">
-        <gtest request="GET /jsp_coresyntx_direct_include/jsp/core_syntax/directives/include/positiveIncludeCtxRelativeDirective.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_include/jsp/core_syntax/directives/include/positiveIncludeCtxRelativeDirective.jsp HTTP/1.0"
             testName="positiveIncludeCtxRelativeDirectiveTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/include/goldenfiles/positiveIncludeCtxRelativeDirective.html"
@@ -1874,7 +1874,7 @@
     </target>
 
     <target name="positiveIncludePageRelativeDirectiveTest">
-        <gtest request="GET /jsp_coresyntx_direct_include/jsp/core_syntax/directives/include/positiveIncludePageRelativeDirective.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_direct_include/jsp/core_syntax/directives/include/positiveIncludePageRelativeDirective.jsp HTTP/1.0"
             testName="positiveIncludePageRelativeDirectiveTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/include/goldenfiles/positiveIncludePageRelativeDirective.html"
@@ -1884,7 +1884,7 @@
     </target>
 
     <target name="positiveTagLibTest">
-        <gtest request="GET /jsp_core_syntx_direct_taglib/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_core_syntx_direct_taglib/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
             testName="positiveTagLibTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/directives/taglib/goldenfiles/positiveTagLib.html"
@@ -1894,7 +1894,7 @@
     </target>
 
     <target name="positiveDeclarationTest">
-        <gtest request="GET /jsp_coresyntx_script_declaration/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_script_declaration/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
             testName="positiveDeclarationTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/scripting/declaration/goldenfiles/positiveDeclaration.html"
@@ -1904,7 +1904,7 @@
     </target>
 
     <target name="positiveExprTest">
-        <gtest request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
             testName="positiveExprTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/scripting/expressions/goldenfiles/positiveExpr.html"
@@ -1914,7 +1914,7 @@
     </target>
 
     <target name="positiveExprCommentTest">
-        <gtest request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
             testName="positiveExprCommentTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/scripting/expressions/goldenfiles/positiveExprComment.html"
@@ -1924,7 +1924,7 @@
     </target>
 
     <target name="positiveExprWhiteSpaceTest">
-        <gtest request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExprWhiteSpace.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntax_script_expressions/jsp/core_syntax/scripting/expressions/positiveExprWhiteSpace.jsp HTTP/1.0"
             testName="positiveExprWhiteSpaceTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/scripting/expressions/goldenfiles/positiveExprWhiteSpace.html"
@@ -1934,7 +1934,7 @@
     </target>
 
     <target name="positiveScriptletTest">
-        <gtest request="GET /jsp_coresyntx_script_scriptlet/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_script_scriptlet/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
             testName="positiveScriptletTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/scripting/scriptlet/goldenfiles/positiveScriptlet.html"
@@ -1944,7 +1944,7 @@
     </target>
 
     <target name="checkSessionTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
             testName="checkSessionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkSession.html"
@@ -1954,7 +1954,7 @@
     </target>
 
     <target name="checkConfigTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/CheckConfig HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/CheckConfig HTTP/1.0"
             testName="checkConfigTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkConfig.html"
@@ -1964,7 +1964,7 @@
     </target>
 
     <target name="checkExceptionTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
             testName="checkExceptionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkException.html"
@@ -1974,7 +1974,7 @@
     </target>
 
     <target name="checkOutTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
             testName="checkOutTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkOut.html"
@@ -1984,7 +1984,7 @@
     </target>
 
     <target name="checkPageTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
             testName="checkPageTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkPage.html"
@@ -1994,7 +1994,7 @@
     </target>
 
     <target name="checkPageContextTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
             testName="checkPageContextTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkPageContext.html"
@@ -2004,7 +2004,7 @@
     </target>
 
     <target name="checkRequestTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
             testName="checkRequestTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkRequest.html"
@@ -2014,7 +2014,7 @@
     </target>
 
     <target name="checkResponseTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
             testName="checkResponseTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             expectHeaders="TestHeader:Method call OK"
@@ -2024,7 +2024,7 @@
     </target>
 
     <target name="checkApplicationTest">
-        <gtest request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_implicitobjects/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
             testName="checkApplicationTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/implicitobjects/goldenfiles/checkApplication.html"
@@ -2034,7 +2034,7 @@
     </target>
 
     <target name="positiveSetBooleanObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
             testName="positiveSetBooleanObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetBooleanObj.html"
@@ -2044,7 +2044,7 @@
     </target>
 
     <target name="positiveSetBooleanPrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
             testName="positiveSetBooleanPrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetBooleanPrim.html"
@@ -2054,7 +2054,7 @@
     </target>
 
     <target name="positiveSetByteObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetByteObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetByteObj.jsp HTTP/1.0"
             testName="positiveSetByteObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetByteObj.html"
@@ -2064,7 +2064,7 @@
     </target>
 
     <target name="positiveSetBytePrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
             testName="positiveSetBytePrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetBytePrim.html"
@@ -2074,7 +2074,7 @@
     </target>
 
     <target name="positiveSetCharObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetCharObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetCharObj.jsp HTTP/1.0"
             testName="positiveSetCharObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetCharObj.html"
@@ -2084,7 +2084,7 @@
     </target>
 
     <target name="positiveSetCharPrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
             testName="positiveSetCharPrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetCharPrim.html"
@@ -2094,7 +2094,7 @@
     </target>
 
     <target name="positiveSetDoubleObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
             testName="positiveSetDoubleObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetDoubleObj.html"
@@ -2104,7 +2104,7 @@
     </target>
 
     <target name="positiveSetDoublePrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
             testName="positiveSetDoublePrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetDoublePrim.html"
@@ -2114,7 +2114,7 @@
     </target>
 
     <target name="positiveSetFloatObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
             testName="positiveSetFloatObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetFloatObj.html"
@@ -2124,7 +2124,7 @@
     </target>
 
     <target name="positiveSetFloatPrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
             testName="positiveSetFloatPrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetFloatPrim.html"
@@ -2134,7 +2134,7 @@
     </target>
 
     <target name="positiveSetIndexedPropTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
             testName="positiveSetIndexedPropTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetIndexedProp.html"
@@ -2144,7 +2144,7 @@
     </target>
 
     <target name="positiveSetIntObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIntObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIntObj.jsp HTTP/1.0"
             testName="positiveSetIntObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetIntObj.html"
@@ -2154,7 +2154,7 @@
     </target>
 
     <target name="positiveSetIntPrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
             testName="positiveSetIntPrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetIntPrim.html"
@@ -2164,7 +2164,7 @@
     </target>
 
     <target name="positiveSetLongObjTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetLongObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetLongObj.jsp HTTP/1.0"
             testName="positiveSetLongObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetLongObj.html"
@@ -2174,7 +2174,7 @@
     </target>
 
     <target name="positiveSetLongPrimTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
             testName="positiveSetLongPrimTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetLongPrim.html"
@@ -2184,7 +2184,7 @@
     </target>
 
     <target name="positiveSetPropAllTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropAll.jsp?name=Frodo&amp;num=116165&amp;str=Validated HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropAll.jsp?name=Frodo&amp;num=116165&amp;str=Validated HTTP/1.0"
             testName="positiveSetPropAllTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropAll.html"
@@ -2194,7 +2194,7 @@
     </target>
 
     <target name="positiveSetPropNoParamTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
             testName="positiveSetPropNoParamTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropNoParam.html"
@@ -2204,7 +2204,7 @@
     </target>
 
     <target name="positiveSetPropParamTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
             testName="positiveSetPropParamTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropParam.html"
@@ -2214,7 +2214,7 @@
     </target>
 
     <target name="positiveSetPropReqTimeSingleQuotesTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropReqTimeSingleQuotes.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropReqTimeSingleQuotes.jsp HTTP/1.0"
             testName="positiveSetPropReqTimeSingleQuotesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropReqTimeSingleQuotes.html"
@@ -2224,7 +2224,7 @@
     </target>
 
     <target name="positiveSetPropReqTimeDoubleQuotesTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropReqTimeDoubleQuotes.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropReqTimeDoubleQuotes.jsp HTTP/1.0"
             testName="positiveSetPropReqTimeDoubleQuotesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropReqTimeDoubleQuotes.html"
@@ -2234,7 +2234,7 @@
     </target>
 
     <target name="positiveSetPropValueTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropValue.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveSetPropValue.jsp HTTP/1.0"
             testName="positiveSetPropValueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveSetPropValue.html"
@@ -2244,7 +2244,7 @@
     </target>
 
     <target name="positiveBeanPropertyEditorTest">
-        <gtest request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveBeanPropertyEditor.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_setProperty/jsp/core_syntax/actions/setProperty/positiveBeanPropertyEditor.jsp HTTP/1.0"
             testName="positiveBeanPropertyEditorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/setProperty/goldenfiles/positiveBeanPropertyEditor.html"
@@ -2254,7 +2254,7 @@
     </target>
 
     <target name="positiveGetPropsTest">
-        <gtest request="GET /jsp_coresyntx_act_getProperty/jsp/core_syntax/actions/getProperty/positiveGetProps.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_getProperty/jsp/core_syntax/actions/getProperty/positiveGetProps.jsp HTTP/1.0"
             testName="positiveGetPropsTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/getProperty/goldenfiles/positiveGetProps.html"
@@ -2264,7 +2264,7 @@
     </target>
 
     <target name="negativeGetPropObjectNotFoundExceptionTest">
-        <gtest request="GET /jsp_coresyntx_act_getProperty/jsp/core_syntax/actions/getProperty/negativeGetPropObjectNotFoundException.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_getProperty/jsp/core_syntax/actions/getProperty/negativeGetPropObjectNotFoundException.jsp HTTP/1.0"
             testName="negativeGetPropObjectNotFoundExceptionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/getProperty/goldenfiles/negativeGetPropObjectNotFoundException.html"
@@ -2274,7 +2274,7 @@
     </target>
 
     <target name="positiveBeanNameTypeTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameType.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameType.jsp HTTP/1.0"
             testName="positiveBeanNameTypeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/useBean/goldenfiles/positiveBeanNameType.html"
@@ -2284,7 +2284,7 @@
     </target>
 
     <target name="positiveBeanNameTypeCastTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameTypeCast.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameTypeCast.jsp HTTP/1.0"
             testName="positiveBeanNameTypeCastTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/useBean/goldenfiles/positiveBeanNameTypeCast.html"
@@ -2294,7 +2294,7 @@
     </target>
 
     <target name="positiveBeanNameSerializedTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameSerialized.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBeanNameSerialized.jsp HTTP/1.0"
             testName="positiveBeanNameSerializedTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/useBean/goldenfiles/positiveBeanNameSerialized.html"
@@ -2304,7 +2304,7 @@
     </target>
 
     <target name="positiveBodyNewTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBodyNew.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveBodyNew.jsp HTTP/1.0"
             testName="positiveBodyNewTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/useBean/goldenfiles/positiveBodyNew.html"
@@ -2314,7 +2314,7 @@
     </target>
 
     <target name="positivePageScopedObjectTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positivePageScopedObject.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positivePageScopedObject.jsp HTTP/1.0"
             testName="positivePageScopedObjectTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200" expectHeaders="status:Test Status=PASSED"
@@ -2324,7 +2324,7 @@
     </target>
 
     <target name="positiveRequestScopedObjectTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveRequestScopedObject.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveRequestScopedObject.jsp HTTP/1.0"
             testName="positiveRequestScopedObjectTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200" expectHeaders="status:Test Status=PASSED"
@@ -2334,7 +2334,7 @@
     </target>
 
     <target name="positiveSessionScopedObjectTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveSessionScopedObject.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveSessionScopedObject.jsp HTTP/1.0"
             testName="positiveSessionScopedObjectTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200" expectHeaders="status:Test Status=PASSED"
@@ -2344,7 +2344,7 @@
     </target>
 
     <target name="positiveApplicationScopedObjectTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveApplicationScopedObject.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveApplicationScopedObject.jsp HTTP/1.0"
             testName="positiveApplicationScopedObjectTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200" expectHeaders="status:Test Status=PASSED"
@@ -2354,7 +2354,7 @@
     </target>
 
     <target name="positiveNoBodyTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveNoBody.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveNoBody.jsp HTTP/1.0"
             testName="positiveNoBodyTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/useBean/goldenfiles/positiveNoBody.html"
@@ -2364,7 +2364,7 @@
     </target>
 
     <target name="positiveClassTypeCastTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveClassTypeCast.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/positiveClassTypeCast.jsp HTTP/1.0"
             testName="positiveClassTypeCastTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -2375,7 +2375,7 @@
     </target>
 
     <target name="negativeDuplicateIDFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeDuplicateIDFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeDuplicateIDFatalTranslationError.jsp HTTP/1.0"
             testName="negativeDuplicateIDFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -2385,7 +2385,7 @@
     </target>
 
     <target name="negativeSessionScopeFatalTranslationErrorTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeSessionScopeFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeSessionScopeFatalTranslationError.jsp HTTP/1.0"
             testName="negativeSessionScopeFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -2395,7 +2395,7 @@
     </target>
 
     <target name="negativeClassCastExceptionTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeClassCastExceptionFwd.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeClassCastExceptionFwd.jsp HTTP/1.0"
             testName="negativeClassCastExceptionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -2406,7 +2406,7 @@
     </target>
 
     <target name="negativeNotFoundTypeInstantiationExceptionTest">
-        <gtest request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeNotFoundTypeInstantiationException.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_useBean/jsp/core_syntax/actions/useBean/negativeNotFoundTypeInstantiationException.jsp HTTP/1.0"
             testName="negativeNotFoundTypeInstantiationExceptionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -2417,7 +2417,7 @@
     </target>
 
     <target name="positiveForwardCtxRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardCtxRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardCtxRelative.jsp HTTP/1.0"
             testName="positiveForwardCtxRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveForwardCtxRelative.html"
@@ -2427,7 +2427,7 @@
     </target>
 
     <target name="positiveForwardCtxRelativeHtmlTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardCtxRelativeHtml.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardCtxRelativeHtml.jsp HTTP/1.0"
             testName="positiveForwardCtxRelativeHtmlTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveForwardCtxRelativeHtml.html"
@@ -2437,7 +2437,7 @@
     </target>
 
     <target name="positiveForwardPageRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardPageRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardPageRelative.jsp HTTP/1.0"
             testName="positiveForwardPageRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveForwardPageRelative.html"
@@ -2447,7 +2447,7 @@
     </target>
 
     <target name="positiveForwardPageRelativeHtmlTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardPageRelativeHtml.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveForwardPageRelativeHtml.jsp HTTP/1.0"
             testName="positiveForwardPageRelativeHtmlTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveForwardPageRelativeHtml.html"
@@ -2457,7 +2457,7 @@
     </target>
 
     <target name="positiveForwardRequestAttrCtxRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveRequestAttrCtxRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveRequestAttrCtxRelative.jsp HTTP/1.0"
             testName="positiveForwardRequestAttrCtxRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveRequestAttrCtxRelative.html"
@@ -2467,7 +2467,7 @@
     </target>
 
     <target name="positiveForwardRequestAttrPageRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveRequestAttrPageRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_forward/jsp/core_syntax/actions/forward/positiveRequestAttrPageRelative.jsp HTTP/1.0"
             testName="positiveForwardRequestAttrPageRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/forward/goldenfiles/positiveRequestAttrPageRelative.html"
@@ -2477,7 +2477,7 @@
     </target>
 
     <target name="positiveIncludeCtxRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludeCtxRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludeCtxRelative.jsp HTTP/1.0"
             testName="positiveIncludeCtxRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/include/goldenfiles/positiveIncludeCtxRelative.html"
@@ -2487,7 +2487,7 @@
     </target>
 
     <target name="positiveIncludeCtxRelativeHtmlTest">
-        <gtest request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludeCtxRelativeHtml.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludeCtxRelativeHtml.jsp HTTP/1.0"
             testName="positiveIncludeCtxRelativeHtmlTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/include/goldenfiles/positiveIncludeCtxRelativeHtml.html"
@@ -2497,7 +2497,7 @@
     </target>
 
     <target name="positiveIncludePageRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludePageRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveIncludePageRelative.jsp HTTP/1.0"
             testName="positiveIncludePageRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/include/goldenfiles/positiveIncludePageRelative.html"
@@ -2507,7 +2507,7 @@
     </target>
 
     <target name="positiveIncludeRequestAttrCtxRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveRequestAttrCtxRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveRequestAttrCtxRelative.jsp HTTP/1.0"
             testName="positiveIncludeRequestAttrCtxRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/include/goldenfiles/positiveRequestAttrCtxRelative.html"
@@ -2517,7 +2517,7 @@
     </target>
 
     <target name="positiveIncludeRequestAttrPageRelativeTest">
-        <gtest request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveRequestAttrPageRelative.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_coresyntx_act_include/jsp/core_syntax/actions/include/positiveRequestAttrPageRelative.jsp HTTP/1.0"
             testName="positiveIncludeRequestAttrPageRelativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/core_syntax/actions/include/goldenfiles/positiveRequestAttrPageRelative.html"
@@ -2527,7 +2527,7 @@
     </target>
 
     <target name="positiveForwardTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
             testName="positiveForwardTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveForward.html"
@@ -2537,7 +2537,7 @@
     </target>
 
     <target name="positiveGetAttributeAvblTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
             testName="positiveGetAttributeAvblTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveGetAttributeAvbl.html"
@@ -2547,7 +2547,7 @@
     </target>
 
     <target name="positiveGetAttributeNotAvblTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
             testName="positiveGetAttributeNotAvblTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveGetAttributeNotAvbl.html"
@@ -2557,7 +2557,7 @@
     </target>
 
     <target name="positiveGetAttributeNamesInScopeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
             testName="positiveGetAttributeNamesInScopeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveGetAttributeNamesInScope.html"
@@ -2567,7 +2567,7 @@
     </target>
 
     <target name="positiveGetAttributeScopeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
             testName="positiveGetAttributeScopeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveGetAttributeScope.html"
@@ -2577,7 +2577,7 @@
     </target>
 
     <target name="checkGetSessionTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
             testName="checkGetSessionTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetSession.html"
@@ -2587,7 +2587,7 @@
     </target>
 
     <target name="checkGetResponseTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
             testName="checkGetResponseTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetResponse.html"
@@ -2597,7 +2597,7 @@
     </target>
 
     <target name="checkGetRequestTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
             testName="checkGetRequestTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetRequest.html"
@@ -2607,7 +2607,7 @@
     </target>
 
     <target name="checkGetServletContextTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
             testName="checkGetServletContextTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetServletContext.html"
@@ -2617,7 +2617,7 @@
     </target>
 
     <target name="checkGetServletConfigTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
             testName="checkGetServletConfigTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetServletConfig.html"
@@ -2627,7 +2627,7 @@
     </target>
 
     <target name="checkGetOutTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
             testName="checkGetOutTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/checkGetOut.html"
@@ -2637,7 +2637,7 @@
     </target>
 
     <target name="positiveIncludeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
             testName="positiveIncludeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveInclude.html"
@@ -2647,7 +2647,7 @@
     </target>
 
     <target name="positiveRemoveAttributeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
             testName="positiveRemoveAttributeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveRemoveAttribute.html"
@@ -2657,7 +2657,7 @@
     </target>
 
     <target name="positiveSetAttributeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
             testName="positiveSetAttributeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveSetAttribute.html"
@@ -2667,7 +2667,7 @@
     </target>
 
     <target name="positiveSetAttributeInScopeTest">
-        <gtest request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_PageContext/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
             testName="positiveSetAttributeInScopeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/PageContext/goldenfiles/positiveSetAttributeInScope.html"
@@ -2677,7 +2677,7 @@
     </target>
 
     <target name="positiveJSPInitJSPTest">
-        <gtest request="GET /jsp_eng_HttpJspPage/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_HttpJspPage/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
             testName="positiveJSPInitJSPTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/HttpJspPage/goldenfiles/positiveJSPInitJSP.html"
@@ -2687,7 +2687,7 @@
     </target>
 
     <target name="positivePrintBooleanTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
             testName="positivePrintBooleanTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintBoolean.html"
@@ -2697,7 +2697,7 @@
     </target>
 
     <target name="positivePrintCharTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
             testName="positivePrintCharTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintChar.html"
@@ -2707,7 +2707,7 @@
     </target>
 
     <target name="positivePrintCharArrayTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
             testName="positivePrintCharArrayTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintCharArray.html"
@@ -2717,7 +2717,7 @@
     </target>
 
     <target name="positivePrintDoubleTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
             testName="positivePrintDoubleTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintDouble.html"
@@ -2727,7 +2727,7 @@
     </target>
 
     <target name="positivePrintFloatTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
             testName="positivePrintFloatTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintFloat.html"
@@ -2737,7 +2737,7 @@
     </target>
 
     <target name="positivePrintIntTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
             testName="positivePrintIntTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintInt.html"
@@ -2747,7 +2747,7 @@
     </target>
 
     <target name="positivePrintLongTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
             testName="positivePrintLongTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintLong.html"
@@ -2757,7 +2757,7 @@
     </target>
 
     <target name="positivePrintObjTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
             testName="positivePrintObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintObj.html"
@@ -2767,7 +2767,7 @@
     </target>
 
     <target name="positivePrintStrTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
             testName="positivePrintStrTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintStr.html"
@@ -2777,7 +2777,7 @@
     </target>
 
     <target name="positivePrintlnTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
             testName="positivePrintlnTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintln.html"
@@ -2787,7 +2787,7 @@
     </target>
 
     <target name="positivePrintlnBooleanTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
             testName="positivePrintlnBooleanTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnBoolean.html"
@@ -2797,7 +2797,7 @@
     </target>
 
     <target name="positivePrintlnCharTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
             testName="positivePrintlnCharTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnChar.html"
@@ -2807,7 +2807,7 @@
     </target>
 
     <target name="positivePrintlnCharArrayTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
             testName="positivePrintlnCharArrayTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnCharArray.html"
@@ -2817,7 +2817,7 @@
     </target>
 
     <target name="positivePrintlnDoubleTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
             testName="positivePrintlnDoubleTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnDouble.html"
@@ -2827,7 +2827,7 @@
     </target>
 
     <target name="positivePrintlnFloatTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
             testName="positivePrintlnFloatTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnFloat.html"
@@ -2837,7 +2837,7 @@
     </target>
 
     <target name="positivePrintlnIntTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
             testName="positivePrintlnIntTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnInt.html"
@@ -2847,7 +2847,7 @@
     </target>
 
     <target name="positivePrintlnLongTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
             testName="positivePrintlnLongTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnLong.html"
@@ -2857,7 +2857,7 @@
     </target>
 
     <target name="positivePrintlnObjTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
             testName="positivePrintlnObjTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnObj.html"
@@ -2867,7 +2867,7 @@
     </target>
 
     <target name="positivePrintlnStrTest">
-        <gtest request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_print/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
             testName="positivePrintlnStrTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/print/goldenfiles/positivePrintlnStr.html"
@@ -2877,7 +2877,7 @@
     </target>
 
     <target name="positiveClearTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
             testName="positiveClearTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveClear.html"
@@ -2887,7 +2887,7 @@
     </target>
 
     <target name="positiveFlushTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
             testName="positiveFlushTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveFlush.html"
@@ -2897,7 +2897,7 @@
     </target>
 
     <target name="positiveGetBufferSizeTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
             testName="positiveGetBufferSizeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveGetBufferSize.html"
@@ -2907,7 +2907,7 @@
     </target>
 
     <target name="positiveGetBufferSizeUnBufferedTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
             testName="positiveGetBufferSizeUnBufferedTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveGetBufferSizeUnBuffered.html"
@@ -2917,7 +2917,7 @@
     </target>
 
     <target name="positiveGetRemainingTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
             testName="positiveGetRemainingTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveGetRemaining.html"
@@ -2927,7 +2927,7 @@
     </target>
 
     <target name="positiveGetRemainingBufferUnsetTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
             testName="positiveGetRemainingBufferUnsetTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveGetRemainingBufferUnset.html"
@@ -2937,7 +2937,7 @@
     </target>
 
     <target name="positiveIsAutoFlushTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
             testName="positiveIsAutoFlushTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveIsAutoFlush.html"
@@ -2947,7 +2947,7 @@
     </target>
 
     <target name="positiveNewLineTest">
-        <gtest request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveNewLine.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_eng_JW_misc/jsp/engine/JspWriter/misc/positiveNewLine.jsp HTTP/1.0"
             testName="positiveNewLineTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/engine/JspWriter/misc/goldenfiles/positiveNewLine.html"
@@ -2957,7 +2957,7 @@
     </target>
 
     <target name="positiveTagGetAttributeTest">
-        <gtest request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
             testName="positiveTagGetAttributeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagData/goldenfiles/positiveTagGetAttribute.html"
@@ -2967,7 +2967,7 @@
     </target>
 
     <target name="positiveTagSetAttributeTest">
-        <gtest request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
             testName="positiveTagSetAttributeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagData/goldenfiles/positiveTagSetAttribute.html"
@@ -2977,7 +2977,7 @@
     </target>
 
     <target name="positiveTagGetAttributeStringTest">
-        <gtest request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagData/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
             testName="positiveTagGetAttributeStringTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagData/goldenfiles/positiveTagGetAttributeString.html"
@@ -2987,7 +2987,7 @@
     </target>
 
     <target name="positiveGetValuesTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
             testName="positiveGetValuesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveGetValues.html"
@@ -2997,7 +2997,7 @@
     </target>
 
     <target name="positiveGetValueTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
             testName="positiveGetValueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveGetValue.html"
@@ -3007,7 +3007,7 @@
     </target>
 
     <target name="positiveRemoveValueTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
             testName="positiveRemoveValueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveRemoveValue.html"
@@ -3017,7 +3017,7 @@
     </target>
 
     <target name="positiveSetValueTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
             testName="positiveSetValueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveSetValue.html"
@@ -3027,7 +3027,7 @@
     </target>
 
     <target name="positiveGetParentTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
             testName="positiveGetParentTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveGetParent.html"
@@ -3037,7 +3037,7 @@
     </target>
 
     <target name="default_return_valuesTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/default_return_values.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/default_return_values.jsp HTTP/1.0"
             testName="default_return_valuesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/default_return_values.html"
@@ -3047,7 +3047,7 @@
     </target>
 
     <target name="positiveTSDoEndTagTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoEndTag.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoEndTag.jsp HTTP/1.0"
             testName="positiveTSDoEndTagTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveDoEndTag.html"
@@ -3057,7 +3057,7 @@
     </target>
 
     <target name="positiveSetGetIdTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetGetId.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetGetId.jsp HTTP/1.0"
             testName="positiveSetGetIdTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveSetGetId.html"
@@ -3067,7 +3067,7 @@
     </target>
 
     <target name="positivefindAncestorWithClassTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positivefindAncestorWithClass.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positivefindAncestorWithClass.jsp HTTP/1.0"
             testName="positivefindAncestorWithClassTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positivefindAncestorWithClass.html"
@@ -3077,7 +3077,7 @@
     </target>
 
     <target name="positiveDoStartTagTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoStartTag.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoStartTag.jsp HTTP/1.0"
             testName="positiveDoStartTagTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveDoStartTag.html"
@@ -3087,7 +3087,7 @@
     </target>
 
     <target name="positiveSetPageContextTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetPageContext.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveSetPageContext.jsp HTTP/1.0"
             testName="positiveSetPageContextTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveSetPageContext.html"
@@ -3097,7 +3097,7 @@
     </target>
 
     <target name="positiveTSDoAfterBodyTest">
-        <gtest request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_TagSupport/jsp/tagext/TagSupport/positiveDoAfterBody.jsp HTTP/1.0"
             testName="positiveTSDoAfterBodyTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TagSupport/goldenfiles/positiveDoAfterBody.html"
@@ -3107,7 +3107,7 @@
     </target>
 
     <target name="positiveDoInitBodyTest">
-        <gtest request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
             testName="positiveDoInitBodyTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/BodyTagSupport/goldenfiles/positiveDoInitBody.html"
@@ -3117,7 +3117,7 @@
     </target>
 
     <target name="positiveBTSDoAfterBodyTest">
-        <gtest request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
             testName="positiveBTSDoAfterBodyTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/BodyTagSupport/goldenfiles/positiveDoAfterBody.html"
@@ -3127,7 +3127,7 @@
     </target>
 
     <target name="positiveBTSDoEndTagTest">
-        <gtest request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
             testName="positiveBTSDoEndTagTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/BodyTagSupport/goldenfiles/positiveDoEndTag.html"
@@ -3137,7 +3137,7 @@
     </target>
 
     <target name="positiveLifeCycleTest">
-        <gtest request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveLifeCycle.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_BodyTagSupport/jsp/tagext/BodyTagSupport/positiveLifeCycle.jsp HTTP/1.0"
             testName="positiveLifeCycleTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/BodyTagSupport/goldenfiles/positiveLifeCycle.html"
@@ -3147,7 +3147,7 @@
     </target>
 
     <target name="tag_attr_setting_1Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_1.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_1.jsp HTTP/1.0"
             testName="tag_attr_setting_1Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_attr_setting_1.html"
@@ -3157,7 +3157,7 @@
     </target>
 
     <target name="tag_attr_setting_2Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_2.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_2.jsp HTTP/1.0"
             testName="tag_attr_setting_2Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_attr_setting_2.html"
@@ -3167,7 +3167,7 @@
     </target>
 
     <target name="tag_attr_setting_3Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_3.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_attr_setting_3.jsp HTTP/1.0"
             testName="tag_attr_setting_3Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_attr_setting_3.html"
@@ -3177,7 +3177,7 @@
     </target>
 
     <target name="tag_check_BodyContent_1Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_1.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_1.jsp HTTP/1.0"
             testName="tag_check_BodyContent_1Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_BodyContent_1.html"
@@ -3187,7 +3187,7 @@
     </target>
 
     <target name="tag_check_BodyContent_2Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_2.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_2.jsp HTTP/1.0"
             testName="tag_check_BodyContent_2Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_BodyContent_2.html"
@@ -3197,7 +3197,7 @@
     </target>
 
     <target name="tag_check_BodyContent_3Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_3.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_3.jsp HTTP/1.0"
             testName="tag_check_BodyContent_3Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_BodyContent_3.html"
@@ -3207,7 +3207,7 @@
     </target>
 
     <target name="tag_check_BodyContent_4Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_4.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_4.jsp HTTP/1.0"
             testName="tag_check_BodyContent_4Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_BodyContent_4.html"
@@ -3217,7 +3217,7 @@
     </target>
 
     <target name="tag_check_BodyContent_5Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_5.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_BodyContent_5.jsp HTTP/1.0"
             testName="tag_check_BodyContent_5Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_BodyContent_5.html"
@@ -3227,7 +3227,7 @@
     </target>
 
     <target name="tag_check_comments_1Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_comments_1.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_comments_1.jsp HTTP/1.0"
             testName="tag_check_comments_1Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_comments_1.html"
@@ -3237,7 +3237,7 @@
     </target>
 
     <target name="tag_check_comments_2Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_comments_2.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_check_comments_2.jsp HTTP/1.0"
             testName="tag_check_comments_2Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_check_comments_2.html"
@@ -3247,7 +3247,7 @@
     </target>
 
     <target name="tag_doEndTag_skip_pageTest">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doEndTag_skip_page.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doEndTag_skip_page.jsp HTTP/1.0"
             testName="tag_doEndTag_skip_pageTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_doEndTag_skip_page.html"
@@ -3257,7 +3257,7 @@
     </target>
 
     <target name="tag_doStart_eval_body_includeTest">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doStart_eval_body_include.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doStart_eval_body_include.jsp HTTP/1.0"
             testName="tag_doStart_eval_body_includeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_doStart_eval_body_include.html"
@@ -3267,7 +3267,7 @@
     </target>
 
     <target name="tag_doStart_skip_bodyTest">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doStart_skip_body.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_doStart_skip_body.jsp HTTP/1.0"
             testName="tag_doStart_skip_bodyTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_doStart_skip_body.html"
@@ -3277,7 +3277,7 @@
     </target>
 
     <target name="tag_translationtime_verify_1Test">
-        <gtest request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_translationtime_verify_1.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_LifeCycle/jsp/tagext/LifeCycle/tag_translationtime_verify_1.jsp HTTP/1.0"
             testName="tag_translationtime_verify_1Test" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/LifeCycle/goldenfiles/tag_translationtime_verify_1.html"
@@ -3287,7 +3287,7 @@
     </target>
 
     <target name="persistentValuesTest">
-        <gtest request="GET /jsp_tagext_Misc/jsp/tagext/misc/persistentValues.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_Misc/jsp/tagext/misc/persistentValues.jsp HTTP/1.0"
             testName="persistentValuesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/misc/goldenfiles/persistentValues.html"
@@ -3297,7 +3297,7 @@
     </target>
 
     <target name="request_time_attributesTest">
-        <gtest request="GET /jsp_tagext_Misc/jsp/tagext/misc/request_time_attributes.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_Misc/jsp/tagext/misc/request_time_attributes.jsp HTTP/1.0"
             testName="request_time_attributesTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/misc/goldenfiles/request_time_attributes.html"
@@ -3307,7 +3307,7 @@
     </target>
 
     <target name="positiveImplicitJarMultiTldTest">
-        <gtest request="GET /jsp_tagext_ImplicitTldPathResolution/jsp/tagext/TldPathResolution/implicit/positiveImplicitJarMultiTld.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ImplicitTldPathResolution/jsp/tagext/TldPathResolution/implicit/positiveImplicitJarMultiTld.jsp HTTP/1.0"
             testName="positiveImplicitJarMultiTldTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TldPathResolution/implicit/goldenfiles/positiveImplicitJarMultiTld.html"
@@ -3317,7 +3317,7 @@
     </target>
 
     <target name="positiveAbsTldTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveAbsTld.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveAbsTld.jsp HTTP/1.0"
             testName="positiveAbsTldTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -3327,7 +3327,7 @@
     </target>
 
     <target name="positiveRelTldTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveRelTld.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveRelTld.jsp HTTP/1.0"
             testName="positiveRelTldTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TldPathResolution/explicit/goldenfiles/positiveRelTld.html"
@@ -3337,7 +3337,7 @@
     </target>
 
     <target name="positiveAbsJarTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveAbsJar.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveAbsJar.jsp HTTP/1.0"
             testName="positiveAbsJarTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -3347,7 +3347,7 @@
     </target>
 
     <target name="positiveRelJarTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveRelJar.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveRelJar.jsp HTTP/1.0"
             testName="positiveRelJarTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TldPathResolution/explicit/goldenfiles/positiveRelJar.html"
@@ -3357,7 +3357,7 @@
     </target>
 
     <target name="positiveDirectTldReferenceTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveDirectTldReference.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/positiveDirectTldReference.jsp HTTP/1.0"
             testName="positiveDirectTldReferenceTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             goldenFile="/opt/workspaces/ctsbuild/src/tests/jsp/ee/jsp/tagext/TldPathResolution/explicit/goldenfiles/positiveDirectTldReference.html"
@@ -3367,7 +3367,7 @@
     </target>
 
     <target name="negativeAbsFatalTranslationErrorTest">
-        <gtest request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/negativeAbsFatalTranslationError.jsp HTTP/1.0"
+        <watchdog request="GET /jsp_tagext_ExplicitTldPathResolution/jsp/tagext/TldPathResolution/explicit/negativeAbsFatalTranslationError.jsp HTTP/1.0"
             testName="negativeAbsFatalTranslationErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
@@ -3377,7 +3377,7 @@
     </target>
 
     <target name="precompileNoValueTest">
-        <gtest request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
+        <watchdog request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
             testName="precompileNoValueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -3387,7 +3387,7 @@
     </target>
 
     <target name="precompileFalseTest">
-        <gtest request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
+        <watchdog request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
             testName="precompileFalseTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -3397,7 +3397,7 @@
     </target>
 
     <target name="precompileTrueTest">
-        <gtest request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
+        <watchdog request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
             testName="precompileTrueTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="200"
@@ -3407,7 +3407,7 @@
     </target>
 
     <target name="precompileNegativeTest">
-        <gtest request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
+        <watchdog request="GET /jsp_misc_precompilation/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
             testName="precompileNegativeTest" debug="0"
             host="${host}" port="${port}" exactMatch="false"
             returnCode="500"
