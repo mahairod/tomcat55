@@ -219,6 +219,14 @@ public class MapperListener
                 }
             }
 
+            // At deployment time, engineName is always = null.
+            if ( (!"*".equals(domain)) &&
+                 ( !domain.equals(objectName.getDomain()) ) &&
+                 ( (!domain.equals(engineName) ) &&
+                   (engineName != null) ) )  {
+                return;
+            }
+
             log.debug( "Handle " + objectName );    
             if (notification.getType().equals
                 (MBeanServerNotification.REGISTRATION_NOTIFICATION)) {
