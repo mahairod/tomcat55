@@ -515,6 +515,7 @@ public class WarpConnector implements Connector, Lifecycle, Runnable {
         this.started = true;
 
         this.thread=new Thread(this);
+        this.thread.setDaemon(true);
         this.thread.start();
     }
 
