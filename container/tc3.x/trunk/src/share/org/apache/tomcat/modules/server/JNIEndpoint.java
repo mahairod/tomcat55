@@ -205,7 +205,7 @@ class StartupThread extends Thread {
         boolean failed = true;
         try {
 	    System.out.println("Calling main" );
-            org.apache.tomcat.startup.Tomcat.main(cmdLine);
+            org.apache.tomcat.startup.Main.main(cmdLine);
 	    System.out.println("Main returned" );
             failed = false;
         } catch(Throwable t) {
