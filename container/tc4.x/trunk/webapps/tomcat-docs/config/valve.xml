@@ -121,6 +121,7 @@
     <li><b>%q</b> - Query string (prepended with a '?' if it exists)</li>
     <li><b>%r</b> - First line of the request (method and request URI)</li>
     <li><b>%s</b> - HTTP status code of the response</li>
+    <li><b>%s</b> - User session ID</li>
     <li><b>%t</b> - Date and time, in Common Log Format</li>
     <li><b>%u</b> - Remote user that was authenticated (if any), else '-'</li>
     <li><b>%U</b> - Requested URL path</li>
