@@ -163,6 +163,7 @@ public class Catalina {
      */
     public void process(String args[]) {
 
+        setCatalinaHome();
 	try {
 	    if (arguments(args))
 		execute();
@@ -595,6 +596,20 @@ public class Catalina {
 	    start();
 	else if (stopping)
 	    stop();
+
+    }
+
+
+    /**
+     * Set the <code>catalina.home</code> System property to the current
+     * working directory if it has not been set.
+     */
+    protected void setCatalinaHome() {
+
+        if (System.getProperty("catalina.home") != null)
+            return;
+        System.setProperty("catalina.home",
+                           System.getProperty("user.dir"));
 
     }
 
