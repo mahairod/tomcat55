@@ -1461,10 +1461,10 @@ public class Http11Processor implements Processor, ActionHook {
             }
         }
 
-        int contentLength = response.getContentLength();
+        long contentLength = response.getContentLengthLong();
         if (contentLength != -1) {
             response.getMimeHeaders().setValue("Content-Length")
-                .setInt(contentLength);
+                .setLong(contentLength);
             outputBuffer.addActiveFilter
                 (outputFilters[Constants.IDENTITY_FILTER]);
             contentDelimitation = true;
