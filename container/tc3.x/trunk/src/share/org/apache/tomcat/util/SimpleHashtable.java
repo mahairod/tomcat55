@@ -99,7 +99,7 @@ import java.util.*;
  *
  * @version $Revision$
  */
-final class SimpleHashtable implements Enumeration
+public final class SimpleHashtable implements Enumeration
 {
     // entries ...
     private Entry		table[];
