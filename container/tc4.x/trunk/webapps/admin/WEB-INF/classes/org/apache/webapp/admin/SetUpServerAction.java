@@ -137,27 +137,27 @@ public class SetUpServerAction extends Action {
 
         HttpSession session = request.getSession();
 
-	  // Do I have to do this part ??
-	if (form == null) {
-                getServlet().log(" Creating new ServerForm bean under key "
-                            + mapping.getAttribute());
-	    form = new ServerForm();
-	   
+        // Do I have to do this part ??
+        if (form == null) {
+            getServlet().log(" Creating new ServerForm bean under key "
+                + mapping.getAttribute());
+            form = new ServerForm();
+           
             if ("request".equals(mapping.getScope()))
                 request.setAttribute(mapping.getAttribute(), form);
             else
                 request.getSession().setAttribute(mapping.getAttribute(), form);
-	       
-	}
+               
+        }
             
         MessageResources messages = getResources();
         Locale locale = (Locale)session.getAttribute(Action.LOCALE_KEY);
             
-	// Do transaction stuff before this
+        // Do transaction stuff before this
 
-	ServerForm serverFm = (ServerForm) form;
+        ServerForm serverFm = (ServerForm) form;
 
-	if(debugLvlList == null) {
+        if(debugLvlList == null) {
             debugLvlList = new ArrayList();
             debugLvlList.add(new LabelValueBean("0", "0"));
             debugLvlList.add(new LabelValueBean("1", "1"));
@@ -172,10 +172,10 @@ public class SetUpServerAction extends Action {
 
         }
 
-	if(actionList == null) {
+        if(actionList == null) {
 
             actionList = new ArrayList();
-	  // You can get this from the Mbean
+            // You can get this from the Mbean
             actionList.add(new LabelValueBean(
             messages.getMessage(locale, "actions.available.actions"),
             "Available Actions"));
@@ -189,15 +189,15 @@ public class SetUpServerAction extends Action {
             "Delete Services"));
         }
 
-	Integer portNumb = null;
-	Integer debug = null;
-	String shutdown = null;
+        Integer portNumb = null;
+        Integer debug = null;
+        String shutdown = null;
         try{
-	
+        
             if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();	
+                ApplicationServlet servlet = (ApplicationServlet)getServlet();        
                 mBServer = servlet.getServer();
-	    }
+            }
 
             Iterator serverItr = 
                 mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
@@ -207,16 +207,16 @@ public class SetUpServerAction extends Action {
             ObjectName serverObjName =
                 ((ObjectInstance)serverItr.next()).getObjectName();
 
-	    /*
+            /*
             ModelMBeanInfo info = (ModelMBeanInfo) mBServer.getMBeanInfo(serverObjName);  
             MBeanAttributeInfo attrs[] = info.getAttributes();
             for (int i = 0; i < attrs.length; i++)
                 System.out.println("  AttributeInfo=" + attrs[i]);
-	    
+            
             MBeanOperationInfo opers[] = info.getOperations();
             for (int i = 0; i < opers.length; i++)
                 System.out.println("  Operation=" + opers[i]);
-       	*/
+               */
 
             portNumb = (Integer)mBServer.getAttribute(serverObjName,
                                                   PORT_PROP_NAME);
@@ -236,7 +236,7 @@ public class SetUpServerAction extends Action {
             //forward to error page
         } 
 
-	
+        
         serverFm.setPortNumberText(portNumb.toString());
         // Hardcode debuglvl for now
         serverFm.setDebugLvl(debug.toString());
