@@ -548,6 +548,8 @@ Coyote Bug Fixes:
 [4.1.13] Fix broken JSSE/SSL-support and include support for Cert-Auth with
          JSSE 1.1.x.
 
+[4.1.15] JK2 JkCoyoteHander:
+         Fix problem where the same buffer was used for output and input.
 
 ----------------
 Jasper Bug Fixes:
