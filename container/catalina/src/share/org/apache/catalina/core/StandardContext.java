@@ -3754,6 +3754,13 @@ public class StandardContext
             log.info(sm.getString("containerBase.alreadyStarted", logName()));
             return;
         }
+        if( !initialized ) { 
+            try {
+                init();
+            } catch( Exception ex ) {
+                throw new LifecycleException("Error initializaing ", ex);
+            }
+        }
 
         String logName="tomcat." + getParent().getName() + "." +
                 ("".equals(getName()) ? "ROOT" : getName()) + ".Context";
@@ -4764,24 +4771,19 @@ public class StandardContext
 
     public void init() throws Exception {
 
-        if( this.getParent() != null ) {
-            log.info( "Already configured" );
-            return;
-        }
-        ObjectName parentName=getParentName();
-
-        log.info("Adding to " + parentName );
-
-        if( ! mserver.isRegistered(parentName)) {
-            log.info("No host, creating one ");
-            StandardHost host=new StandardHost();
-            host.setName(hostName);
-            Registry.getRegistry().registerComponent(host, parentName, null);
-            mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
-        }
-        ContextConfig config = new ContextConfig();
-        this.addLifecycleListener(config);
-
+        if( this.getParent() == null ) {
+            ObjectName parentName=getParentName();
+            
+            if( ! mserver.isRegistered(parentName)) {
+                log.info("No host, creating one " + parentName);
+                StandardHost host=new StandardHost();
+                host.setName(hostName);
+                Registry.getRegistry().registerComponent(host, parentName, null);
+                mserver.invoke(parentName, "init", new Object[] {}, new String[] {} );
+            }
+            ContextConfig config = new ContextConfig();
+            this.addLifecycleListener(config);
+        }            
         super.init();
     }
 
