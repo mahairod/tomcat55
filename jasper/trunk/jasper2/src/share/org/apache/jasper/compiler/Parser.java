@@ -1544,6 +1544,9 @@ class Parser {
         } else if (reader.matches("<jsp:")) {
             err.jspError( reader.mark(), "jsp.error.not.in.template",
 		"Standard actions" );
+	} else if (parseCustomTag(parent)) {
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Custom actions" );
 	} else {
             parseTemplateText(parent);
 	}
