@@ -101,6 +101,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.tomcat.util.buf.CharChunk;
+import org.apache.tomcat.util.buf.MessageBytes;
+import org.apache.tomcat.util.http.mapper.Mapper;
+import org.apache.tomcat.util.http.mapper.MappingData;
+
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLConnection;
@@ -202,6 +208,18 @@ public class ApplicationContext
     private String basePath = null;
 
 
+    /**
+     * Thread local mapping data.
+     */
+    private ThreadLocal localMappingData = new ThreadLocal();
+
+
+    /**
+     * Thread local URI message bytes.
+     */
+    private ThreadLocal localUriMB = new ThreadLocal();
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -277,7 +295,20 @@ public class ApplicationContext
             return (null);
         try {
             Host host = (Host) context.getParent();
-            Context child = host.map(uri);
+            Context child = null;
+            String mapuri = uri;
+            while (true) {
+                child = (Context) host.findChild(mapuri);
+                if (context != null)
+                    break;
+                int slash = mapuri.lastIndexOf('/');
+                if (slash < 0)
+                    break;
+                mapuri = mapuri.substring(0, slash);
+            }
+            if (child == null) {
+                child = (Context) host.findChild("");
+            }
             if (child != null)
                 return (child.getServletContext());
             else
@@ -416,38 +447,57 @@ public class ApplicationContext
             return (null);
         if (!path.startsWith("/"))
             throw new IllegalArgumentException
-              (sm.getString("applicationContext.requestDispatcher.iae", path));
+                (sm.getString
+                 ("applicationContext.requestDispatcher.iae", path));
         path = normalize(path);
         if (path == null)
             return (null);
 
-        // Construct a "fake" request to be mapped by our Context
-        String contextPath = context.getPath();
-        if (contextPath == null)
-            contextPath = "";
-        String relativeURI = path;
-        String queryString = null;
-        int question = path.indexOf('?');
-        if (question >= 0) {
-            relativeURI = path.substring(0, question);
-            queryString = path.substring(question + 1);
+        // Retrieve the thread local URI
+        MessageBytes uriMB = (MessageBytes) localUriMB.get();
+        if (uriMB == null) {
+            uriMB = new MessageBytes();
+            CharChunk uriCC = uriMB.getCharChunk();
+            uriCC.setLimit(-1);
+            localUriMB.set(uriMB);
+        } else {
+            uriMB.recycle();
         }
-        // The remaining code is duplicated in PrivilegedGetRequestDispatcher,
-        // we need to make sure they stay in sync
-        HttpRequest request = new DummyRequest
-            (context.getPath(), contextPath + relativeURI, queryString);
-        Wrapper wrapper = (Wrapper) context.map(request, true);
-        if (wrapper == null)
+        String queryString = null;
+        int pos = path.indexOf('?');
+        if (pos >= 0) {
+            queryString = path.substring(pos + 1);
+        } else {
+            pos = path.length();
+        }
+
+        // Retrieve the thread local mapping data
+        MappingData mappingData = (MappingData) localMappingData.get();
+        if (mappingData == null) {
+            mappingData = new MappingData();
+            localMappingData.set(mappingData);
+        } else {
+            mappingData.recycle();
+        }
+
+        // Map the URI
+        try {
+            CharChunk uriCC = uriMB.getCharChunk();
+            uriCC.append(path, 0, pos);
+            context.getMapper().map(uriMB, mappingData);
+            if (mappingData.wrapper == null) {
+                return (null);
+            }
+        } catch (Exception e) {
+            // Should never happen
+            log(sm.getString("applicationContext.mapping.error"), e);
             return (null);
+        }
 
         // Construct a RequestDispatcher to process this request
-        HttpServletRequest hrequest =
-            (HttpServletRequest) request.getRequest();
-        return (RequestDispatcher) new ApplicationDispatcher(wrapper,
-                        hrequest.getServletPath(),
-                        hrequest.getPathInfo(),
-                        hrequest.getQueryString(),
-                        null);
+        return (RequestDispatcher) new ApplicationDispatcher
+            ((Wrapper) mappingData.wrapper, mappingData.wrapperPath.toString(),
+             mappingData.pathInfo.toString(), queryString, null);
 
     }
 
