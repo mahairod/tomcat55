@@ -78,7 +78,7 @@
     <tr><th>Stage</th><th>Time</th><th>B Sent</th><th>B Recv</th><th>Client</th><th>VHost</th><th>Request</th></tr>
   	<xsl:apply-templates select="worker"/>
 
-   </table>
+   </table><hr />
   </xsl:template>
 
   <xsl:template match="worker">
@@ -88,11 +88,8 @@
     <td><xsl:apply-templates select="requestBytesSent"/></td>
     <td><xsl:apply-templates select="requestBytesReceived"/></td>
     <td><xsl:apply-templates select="remoteAddr"/></td>
-    <td><xsl:apply-templates select="remoteAddr"/></td>
     <td><xsl:apply-templates select="virtualHost"/></td>
-    <td><xsl:apply-templates select="method"/></td>
-    <td><xsl:apply-templates select="currentUri"/></td>
-    <td><xsl:apply-templates select="currentQueryString"/></td>
+    <td><xsl:apply-templates select="method"/> <xsl:apply-templates select="currentUri"/>?<xsl:apply-templates select="currentQueryString"/></td>
    </tr>
   </xsl:template>
 
