@@ -964,13 +964,14 @@ file might look something like this:</p>
 
   &lt;!-- Executable Targets --&gt;
   &lt;target name="compile" description="Compile web application"&gt;
-    &lt;!-- ... construct web application in ${build} subdirectory ... --&gt;
+    &lt;!-- ... construct web application in ${build} subdirectory, and
+            generated a ${path}.war ... --&gt;
   &lt;/target&gt;
 
   &lt;target name="deploy" description="Install web application"
           depends="compile"&gt;
     &lt;deploy url="${url}" username="${username}" password="${password}"
-            path="${path}" war="file://${build}"/&gt;
+            path="${path}" war="${build}${path}.war"/&gt;
   &lt;/target&gt;
 
   &lt;target name="reload" description="Reload web application"
