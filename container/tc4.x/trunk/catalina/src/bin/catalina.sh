@@ -17,6 +17,9 @@
 #                   the JVM should use (java.io.tmpdir).  Defaults to
 #                   $CATALINA_BASE/temp.
 #
+#   CATALINA_OUT    (Optional) Location of the file to which stdout and stderr
+#                   are written.  Defaults to $CATALINA_BASE/logs/catalina.out.
+#
 #   JAVA_HOME       Must point at your Java Development Kit installation.
 #
 #   JAVA_OPTS       (Optional) Java runtime options used when the "start",
@@ -115,6 +118,11 @@ if [ -z "$CATALINA_TMPDIR" ] ; then
   CATALINA_TMPDIR="$CATALINA_BASE"/temp
 fi
 
+if [ -z "$CATALINA_OUT" ] ; then
+  # Use default location for redirected stdout/stderr
+  CATALINA_OUT="$CATALINA_BASE"/logs/catalina.out
+fi
+
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
@@ -131,6 +139,7 @@ fi
 echo "Using CATALINA_BASE:   $CATALINA_BASE"
 echo "Using CATALINA_HOME:   $CATALINA_HOME"
 echo "Using CATALINA_TMPDIR: $CATALINA_TMPDIR"
+echo "Using CATALINA_OUT:    $CATALINA_OUT"
 echo "Using JAVA_HOME:       $JAVA_HOME"
 
 if [ "$1" = "jpda" ] ; then
@@ -214,7 +223,7 @@ elif [ "$1" = "run" ]; then
 elif [ "$1" = "start" ] ; then
 
   shift
-  touch "$CATALINA_BASE"/logs/catalina.out
+  touch "$CATALINA_OUT"
   if [ "$1" = "-security" ] ; then
     echo "Using Security Manager"
     shift
@@ -226,7 +235,7 @@ elif [ "$1" = "start" ] ; then
       -Dcatalina.home="$CATALINA_HOME" \
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
       org.apache.catalina.startup.Bootstrap "$@" start \
-      >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+      >> "$CATALINA_OUT" 2>&1 &
 
       if [ ! -z "$CATALINA_PID" ]; then
         echo $! > $CATALINA_PID
@@ -238,7 +247,7 @@ elif [ "$1" = "start" ] ; then
       -Dcatalina.home="$CATALINA_HOME" \
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
       org.apache.catalina.startup.Bootstrap "$@" start \
-      >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+      >> "$CATALINA_OUT" 2>&1 &
 
       if [ ! -z "$CATALINA_PID" ]; then
         echo $! > $CATALINA_PID
