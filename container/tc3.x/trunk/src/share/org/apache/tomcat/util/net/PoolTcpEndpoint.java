@@ -249,7 +249,6 @@ public class PoolTcpEndpoint { // implements Endpoint {
 
     public void startEndpoint() throws IOException, InstantiationException {
 	try {
-	    //	    System.out.println("Creating socket " + port );
 	    if(factory==null)
 		factory=ServerSocketFactory.getDefault();
 	    if(serverSocket==null) {
