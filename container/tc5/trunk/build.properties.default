@@ -249,7 +249,7 @@ mail.jar=${mail.lib}/mail.jar
 
 
 # ----- PureTLS Extension, version 0.9 or later -----
-puretls.home=${base.path}/puretls-0.9b2
+puretls.home=${base.path}/puretls-0.9b4
 puretls.lib=${puretls.home}/build
 puretls.jar=${puretls.lib}/puretls.jar
 
