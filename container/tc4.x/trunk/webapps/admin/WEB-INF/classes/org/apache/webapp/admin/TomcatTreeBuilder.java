@@ -162,7 +162,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String nodeLabel = SERVER_LABEL;
             TreeControlNode serverNode =
                 new TreeControlNode(serverName,
-                                    "folder_16_pad.gif",
+                                    "Server.gif",
                                     nodeLabel,
                                     "EditServer.do?select=" +
                                     URLEncoder.encode(serverName) +
@@ -197,7 +197,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 "Service (" + objectName.getKeyProperty("name") + ")";
             TreeControlNode serviceNode =
                 new TreeControlNode(serviceName,
-                                    "folder_16_pad.gif",
+                                    "Service.gif",
                                     nodeLabel,
                                     "EditService.do?select=" +
                                     URLEncoder.encode(serviceName) +
@@ -236,7 +236,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 "Connector (" + objectName.getKeyProperty("port") + ")";
             TreeControlNode connectorNode =
                 new TreeControlNode(connectorName,
-                                    "folder_16_pad.gif",
+                                    "Connector.gif",
                                     nodeLabel,
                                     "EditConnector.do?select=" +
                                     URLEncoder.encode(connectorName) +
@@ -269,7 +269,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 "Host (" + objectName.getKeyProperty("host") + ")";
             TreeControlNode hostNode =
                 new TreeControlNode(hostName,
-                                    "folder_16_pad.gif",
+                                    "Host.gif",
                                     nodeLabel,
                                     "EditHost.do?select=" +
                                     URLEncoder.encode(hostName) +
@@ -306,7 +306,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 "Context (" + objectName.getKeyProperty("path") + ")";
             TreeControlNode contextNode =
                 new TreeControlNode(contextName,
-                                    "folder_16_pad.gif",
+                                    "Context.gif",
                                     nodeLabel,
                                     "EditContext.do?select=" +
                                     URLEncoder.encode(contextName) +
@@ -341,7 +341,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String nodeLabel = "Logger for " + containerNode.getLabel();
             TreeControlNode loggerNode =
                 new TreeControlNode(loggerName,
-                                    "folder_16_pad.gif",
+                                    "Logger.gif",
                                     nodeLabel,
                                     "EditLogger.do?select=" +
                                     URLEncoder.encode(loggerName) +
@@ -374,7 +374,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String nodeLabel = "Realm for " + containerNode.getLabel();
             TreeControlNode realmNode =
                 new TreeControlNode(realmName,
-                                    "folder_16_pad.gif",
+                                    "Realm.gif",
                                     nodeLabel,
                                     "EditRealm.do?select=" +
                                     URLEncoder.encode(realmName) +
@@ -406,7 +406,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             String nodeLabel = "Valve for " + containerNode.getLabel();
             TreeControlNode valveNode =
                 new TreeControlNode(valveName,
-                                    "folder_16_pad.gif",
+                                    "Valve.gif",
                                     nodeLabel,
                                     "EditValve.do?select=" +
                                     URLEncoder.encode(valveName) +
