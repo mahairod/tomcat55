@@ -54,19 +54,19 @@
   <mbean         name="BasicAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of HTTP BASIC
-                        Authentication"
+                       Authentication"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.authenticator.BasicAuthenticator">
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
-                        session identifiers"
+                       session identifiers"
                  type="java.lang.String"/>
 
     <attribute   name="cache"
           description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
+                       is part of an HTTP session?"
                  type="boolean"/>
 
     <attribute   name="className"
@@ -80,8 +80,8 @@
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
   </mbean>
 
@@ -108,8 +108,8 @@
   <mbean         name="ContextConfig"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Context that configures the
-                        properties of that Context, and the associated defined
-                        servlets"
+                       properties of that Context, and the associated defined
+                       servlets"
                domain="Catalina"
                 group="Listener"
                  type="org.apache.catalina.startup.ContextConfig">
@@ -148,7 +148,7 @@
 
     <attribute   name="override"
           description="Does this environment entry allow overrides by the
-      application deployment descriptor"
+                       application deployment descriptor"
                  type="boolean"/>
 
     <attribute   name="type"
@@ -273,12 +273,12 @@
 
     <attribute   name="minProcessors"
           description="The minimum number of processors to start at
-                        initialization time"
+                       initialization time"
                  type="int"/>
 
     <attribute   name="port"
           description="The port number on which we listen for ajp13 requests"
-        type="int"/>
+                type="int"/>
 
     <attribute   name="protocolHandlerClassName"
           description="Coyote Protocol handler class name"
@@ -326,13 +326,13 @@
 
     <attribute   name="cookies"
           description="Should we attempt to use cookies for session id
-                        communication?"
+                       communication?"
                  type="boolean"/>
 
     <attribute   name="crossContext"
           description="Should we allow the ServletContext.getContext() method to
-                        access the context of other web applications in this
-                        server?"
+                       access the context of other web applications in this
+                       server?"
                  type="boolean"/>
 
     <attribute   name="reloadable"
@@ -398,7 +398,7 @@
 
     <attribute   name="cache"
           description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
+                       is part of an HTTP session?"
                  type="boolean"/>
 
     <attribute   name="className"
@@ -412,16 +412,16 @@
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
   </mbean>
 
   <mbean         name="EngineConfig"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Engine that configures the
-                        properties of that Engine, and the associated defined
-                        contexts"
+                       properties of that Engine, and the associated defined
+                       contexts"
                domain="Catalina"
                 group="Listener"
                  type="org.apache.catalina.startup.EngineConfig">
@@ -460,7 +460,7 @@
   <mbean         name="ErrorDispatcherValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that handles the error
-                        dispatch"
+                       dispatch"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.valves.ErrorDispatcherValve">
@@ -480,7 +480,7 @@
   <mbean         name="FileLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Logger that appends log messages to a
-                        file"
+                       file"
                domain="Catalina"
                 group="Logger"
                  type="org.apache.catalina.logger.FileLogger">
@@ -512,7 +512,7 @@
 
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be
-                        filtered"
+                       filtered"
                  type="int"/>
 
   </mbean>
@@ -520,19 +520,19 @@
   <mbean         name="FormAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of FORM BASED
-                        Authentication"
+                       Authentication"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.authenticator.FormAuthenticator">
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
-                        session identifiers"
+                       session identifiers"
                  type="java.lang.String"/>
 
     <attribute   name="cache"
           description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
+                       is part of an HTTP session?"
                  type="boolean"/>
 
     <attribute   name="className"
@@ -546,8 +546,8 @@
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
   </mbean>
 
@@ -607,8 +607,8 @@
   <mbean         name="HostConfig"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Startup event listener for a Host that configures the
-                        properties of that Host, and the associated defined
-                        contexts"
+                       properties of that Host, and the associated defined
+                       contexts"
                domain="Catalina"
                 group="Listener"
                  type="org.apache.catalina.startup.HostConfig">
@@ -625,7 +625,7 @@
 
     <attribute   name="contextClass"
           description="The Java class name of the Context implementation we
-                        should use"
+                       should use"
                  type="java.lang.String"/>
 
     <attribute   name="debug"
@@ -677,7 +677,7 @@
 
     <attribute   name="minProcessors"
           description="The minimum number of processors to start at
-                        initialization time"
+                       initialization time"
                  type="int"/>
 
     <attribute   name="port"
@@ -686,12 +686,12 @@
 
     <attribute   name="proxyName"
           description="The server name to which we should pretend requests to
-                        this Connector were directed"
+                       this Connector were directed"
                  type="java.lang.String"/>
 
     <attribute   name="proxyPort"
           description="The server port to which we should pretend requests to
-                        this Connector were directed"
+                       this Connector were directed"
                  type="int"/>
 
     <attribute   name="redirectPort"
@@ -726,7 +726,7 @@
 
     <attribute   name="allowChunking"
           description="Flag which indicates if HTTP/1.1 chunking transfer
-                        encoding can be used"
+                       encoding can be used"
                  type="boolean"/>
 
     <attribute   name="bufferSize"
@@ -756,7 +756,7 @@
 
     <attribute   name="minProcessors"
           description="The minimum number of processors to start at
-                        initialization time"
+                       initialization time"
                  type="int"/>
 
     <attribute   name="port"
@@ -765,12 +765,12 @@
 
     <attribute   name="proxyName"
           description="The server name to which we should pretend requests to
-                        this Connector were directed"
+                       this Connector were directed"
                  type="java.lang.String"/>
 
     <attribute   name="proxyPort"
           description="The server port to which we should pretend requests to
-                        this Connector were directed"
+                       this Connector were directed"
                  type="int"/>
 
     <attribute   name="redirectPort"
@@ -791,15 +791,15 @@
   <mbean         name="JAASRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implmentation of Realm that authenticates users via the
-                        Java Authentication and Authorization Service (JAAS)"
+                       Java Authentication and Authorization Service (JAAS)"
                domain="Catalina"
                 group="Realm"
                  type="org.apache.catalina.realm.JAASRealm">
 
     <attribute   name="appName"
           description="The application name passed to the JAAS LoginContext,
-                        which uses it to select the set of relevant
-                        LoginModules"
+                       which uses it to select the set of relevant
+                       LoginModules"
                  type="java.lang.String"/>
 
     <attribute   name="className"
@@ -813,22 +813,22 @@
 
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
-                        non-plaintext format"
+                       non-plaintext format"
                  type="java.lang.String"/>
 
     <attribute   name="roleClassNames"
           description="Comma-delimited list of javax.security.Principal classes
-                        that represent security roles"
+                       that represent security roles"
                  type="java.lang.String"/>
 
     <attribute   name="userClassNames"
           description="Comma-delimited list of javax.security.Principal classes
-                        that represent individual users"
+                       that represent individual users"
                  type="java.lang.String"/>
 
     <attribute   name="validate"
           description="Should we validate client certificate chains when they
-                        are presented?"
+                       are presented?"
                  type="java.lang.String"/>
 
   </mbean>
@@ -837,7 +837,7 @@
   <mbean         name="JDBCRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with any JDBC
-                        supported database"
+                       supported database"
                domain="Catalina"
                 group="Realm"
                  type="org.apache.catalina.realm.JDBCRealm">
@@ -849,17 +849,17 @@
 
     <attribute   name="connectionName"
           description="The connection username to use when trying to connect to
-                        the database"
+                       the database"
                  type="java.lang.String"/>
 
     <attribute   name="connectionPassword"
           description="The connection URL to use when trying to connect to the
-                        database"
+                       database"
                  type="java.lang.String"/>
 
     <attribute   name="connectionURL"
           description="The connection URL to use when trying to connect to the
-                        database"
+                       database"
                  type="java.lang.String"/>
 
     <attribute   name="debug"
@@ -868,7 +868,7 @@
 
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
-                        non-plaintext format"
+                       non-plaintext format"
                  type="java.lang.String"/>
 
     <attribute   name="driverName"
@@ -881,17 +881,17 @@
 
     <attribute   name="userCredCol"
           description="The column in the user table that holds the user's
-                        credentials"
+                       credentials"
                  type="java.lang.String"/>
 
     <attribute   name="userNameCol"
           description="The column in the user table that holds the user's
-                        username"
+                       username"
                  type="java.lang.String"/>
 
     <attribute   name="userRoleTable"
           description="The table that holds the relation between user's and
-                        roles"
+                       roles"
                  type="java.lang.String"/>
 
     <attribute   name="userTable"
@@ -1028,8 +1028,8 @@
   <mbean         name="JNDIRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of Realm that works with a directory
-                        server accessed via the Java Naming and Directory
-                        Interface (JNDI) APIs"
+                       server accessed via the Java Naming and Directory
+                       Interface (JNDI) APIs"
                domain="Catalina"
                 group="Realm"
                  type="org.apache.catalina.realm.JNDIRealm">
@@ -1061,7 +1061,7 @@
 
     <attribute   name="digest"
           description="Digest algorithm used in storing passwords in a
-                        non-plaintext format"
+                       non-plaintext format"
                  type="java.lang.String"/>
 
     <attribute   name="roleBase"
@@ -1078,7 +1078,7 @@
 
     <attribute   name="roleSubtree"
           description="Should we search the entire subtree for matching
-                        memberships?"
+                       memberships?"
                  type="boolean"/>
 
     <attribute   name="userBase"
@@ -1136,7 +1136,7 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
-     <parameter name="address"
+      <parameter name="address"
           description="The IP address on which to bind"
                  type="java.lang.String"/>
       <parameter name="port"
@@ -1184,7 +1184,7 @@
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
-     <parameter name="address"
+      <parameter name="address"
           description="The IP address on which to bind"
                  type="java.lang.String"/>
       <parameter name="port"
@@ -1455,7 +1455,7 @@
   <mbean         name="MemoryRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Realm that reads an XML file to
-                        configure the valid users, passwords, and roles"
+                       configure the valid users, passwords, and roles"
                domain="Catalina"
                 group="Realm"
                  type="org.apache.catalina.realm.MemoryRealm">
@@ -1471,7 +1471,7 @@
 
     <attribute   name="pathname"
           description="The pathname of the XML file containing our database
-                        information"
+                       information"
                  type="java.lang.String"/>
 
   </mbean>
@@ -1612,7 +1612,7 @@
   <mbean         name="NamingContextListener"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Helper class used to initialize and populate the JNDI
-          context associated with each context and server"
+                       context associated with each context and server"
                domain="Catalina"
                 group="Listener"
                  type="org.apache.catalina.core.NamingContextListener">
@@ -1632,26 +1632,27 @@
   <mbean         name="NamingResources"
             className="org.apache.catalina.mbeans.NamingResourcesMBean"
           description="Holds and manages the naming resources defined in the
-      J2EE Enterprise Naming Context and their associated JNDI context"
+                       J2EE Enterprise Naming Context and their associated 
+                       JNDI context"
                domain="Catalina"
                 group="Resources"
                  type="org.apache.catalina.deploy.NamingResources">
 
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
-      for this web application"
+                       for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resources"
           description="MBean Names of all the defined resource references
-      for this application."
+                       for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resourceLinks"
           description="MBean Names of all the defined resource link references
-      for this application."
+                       for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
@@ -1729,19 +1730,19 @@
   <mbean         name="NonLoginAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation that checks
-            only security constraints not involving user authentication"
+                       only security constraints not involving user authentication"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.authenticator.NonLoginAuthenticator">
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
-                        session identifiers"
+                       session identifiers"
                  type="java.lang.String"/>
 
     <attribute   name="cache"
           description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
+                       is part of an HTTP session?"
                  type="boolean"/>
 
     <attribute   name="className"
@@ -1755,16 +1756,16 @@
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
   </mbean>
 
   <mbean         name="RemoteAddrValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that
-                        filters based on the string representation of the remote
-                        client's IP address"
+                       filters based on the string representation of the remote
+                       client's IP address"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.valves.RemoteAddrValve">
@@ -1792,8 +1793,8 @@
   <mbean         name="RemoteHostValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Concrete implementation of RequestFilterValve that
-                        filters based on the string representation of the remote
-                        client's host name"
+                       filters based on the string representation of the remote
+                       client's host name"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.valves.RemoteHostValve">
@@ -1820,8 +1821,8 @@
   <mbean         name="RequestDumperValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that logs interesting contents
-                        from the specified Request and the corresponding
-                        Response"
+                       from the specified Request and the corresponding
+                       Response"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.valves.RequestDumperValve">
@@ -1895,20 +1896,20 @@
   <mbean         name="SSLAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of
-                        authentication that utilizes SSL certificates to
-                        identify client users"
+                       authentication that utilizes SSL certificates to
+                       identify client users"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.authenticator.SSLAuthenticator">
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
-                        session identifiers"
+                       session identifiers"
                  type="java.lang.String"/>
 
     <attribute   name="cache"
           description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
+                       is part of an HTTP session?"
                  type="boolean"/>
 
     <attribute   name="className"
@@ -1922,8 +1923,8 @@
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
   </mbean>
 
@@ -1937,18 +1938,18 @@
 
     <attribute   name="cookies"
           description="Should we attempt to use cookies for session id
-                        communication?"
+                       communication?"
                  type="boolean"/>
 
     <attribute   name="cookies"
           description="Should we attempt to use cookies for session id
-                        communication?"
+                       communication?"
                  type="boolean"/>
 
     <attribute   name="crossContext"
           description="Should we allow the ServletContext.getContext() method to
-                        access the context of other web applications in this
-                        server?"
+                       access the context of other web applications in this
+                       server?"
                  type="boolean"/>
 
     <attribute   name="debug"
@@ -1961,7 +1962,7 @@
 
     <attribute   name="environments"
           description="MBean Names of the set of defined environment entries
-      for this web application"
+                       for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
@@ -1971,7 +1972,7 @@
 
     <attribute   name="override"
           description="The DefaultContext override flag for this web
-                        application"
+                       application"
                  type="boolean"/>
 
     <attribute   name="path"
@@ -1984,7 +1985,7 @@
 
     <attribute   name="resources"
           description="MBean Names of all the defined resource references
-      for this application."
+                       for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
@@ -2045,7 +2046,7 @@
   <mbean         name="StandardContextValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
-                        StandardContext container implementation"
+                       StandardContext container implementation"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.core.StandardContextValve">
@@ -2091,7 +2092,7 @@
   <mbean         name="StandardEngineValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
-                        StandardEngine container implementation"
+                       StandardEngine container implementation"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.core.StandardEngineValve">
@@ -2129,7 +2130,7 @@
                  
     <attribute   name="deployXML"
           description="deploy Context XML config files property"
-                 is="true"
+                   is="true"
                  type="boolean"/>
 
     <attribute   name="liveDeploy"
@@ -2146,7 +2147,7 @@
 
     <attribute   name="unpackWARs"
           description="Unpack WARs property"
-                 is="true"
+                   is="true"
                  type="boolean"/>
 
     <attribute   name="xmlNamespaceAware"
@@ -2173,13 +2174,13 @@
 
     <operation   name="getValves"
           description="Return the MBean Names of the Valves associated with this
-                        Host"
+                       Host"
                impact="INFO"
            returnType="java.lang.String[]"/>
 
     <operation   name="removeAlias"
           description="Remove the specified alias name from the aliases for this
-                        Host"
+                       Host"
                impact="ACTION"
            returnType="void">
       <parameter name="alias"
@@ -2193,7 +2194,7 @@
   <mbean         name="StandardHostValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
-                        StandardHost container implementation"
+                       StandardHost container implementation"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.core.StandardHostValve">
@@ -2219,12 +2220,12 @@
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
-                        session identifiers"
+                       session identifiers"
                  type="java.lang.String"/>
 
     <attribute   name="checkInterval"
           description="The interval (in seconds) between checks for expired
-                        sessions"
+                       sessions"
                  type="int"/>
 
     <attribute   name="className"
@@ -2238,13 +2239,13 @@
 
     <attribute   name="distributable"
           description="The distributable flag for Sessions created by this
-                        Manager"
+                       Manager"
                  type="boolean"/>
 
     <attribute   name="entropy"
           description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
+                       entropy of the initialization of our random number
+                       generator"
                  type="java.lang.String"/>
 
     <attribute   name="managedResource"
@@ -2253,17 +2254,17 @@
 
     <attribute   name="maxActiveSessions"
           description="The maximum number of active Sessions allowed, or -1
-                        for no limit"
+                       for no limit"
                  type="int"/>
 
     <attribute   name="maxInactiveInterval"
           description="The default maximum inactive interval for Sessions
-                        created by this Manager"
+                       created by this Manager"
                  type="int"/>
 
     <attribute   name="name"
           description="The descriptive name of this Manager implementation
-                        (for logging)"
+                       (for logging)"
                  type="java.lang.String"
             writeable="false"/>
 
@@ -2331,7 +2332,7 @@
   <mbean         name="StandardWrapperValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that implements the default basic behavior for the
-                        StandardWrapper container implementation"
+                       StandardWrapper container implementation"
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.core.StandardWrapperValve">
@@ -2351,7 +2352,7 @@
   <mbean         name="SystemErrLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to
-                        System.err"
+                       System.err"
                domain="Catalina"
                 group="Logger"
                  type="org.apache.catalina.logger.SystemErrLogger">
@@ -2367,7 +2368,7 @@
 
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be
-                        filtered"
+                       filtered"
                  type="int"/>
 
   </mbean>
@@ -2376,7 +2377,7 @@
   <mbean         name="SystemOutLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Simple implementation of Logger that writes to
-                        System.out"
+                       System.out"
                domain="Catalina"
                 group="Logger"
                  type="org.apache.catalina.logger.SystemOutLogger">
@@ -2392,7 +2393,7 @@
 
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be
-                        filtered"
+                       filtered"
                  type="int"/>
 
   </mbean>
@@ -2480,7 +2481,7 @@
   <mbean         name="UserDatabaseRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Realm connected to a UserDatabase as a global JNDI
-                        resource"
+                       resource"
                domain="Catalina"
                 group="Realm"
                  type="org.apache.catalina.realm.UserDatabaseRealm">
@@ -2504,14 +2505,14 @@
   <mbean         name="WebappLoader"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Classloader implementation which is specialized for
-                        handling web applications"
+                       handling web applications"
                domain="Catalina"
                 group="Loader"
                  type="org.apache.catalina.loader.WebappLoader">
 
     <attribute   name="checkInterval"
           description="The number of seconds between checks for modified
-                        classes"
+                       classes"
                  type="int"/>
 
     <attribute   name="className"
@@ -2525,7 +2526,7 @@
 
     <attribute   name="delegate"
           description="The 'follow standard delegation model' flag that will be
-                        used to configure our ClassLoader"
+                       used to configure our ClassLoader"
                  type="boolean"/>
 
     <attribute   name="reloadable"
