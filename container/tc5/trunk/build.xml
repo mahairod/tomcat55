@@ -639,6 +639,7 @@
         <include name="servlets-invoker.jar"/>
         <include name="servlets-default.jar"/>
         <include name="catalina.jar"/>
+        <include name="catalina-optional.jar"/>
       </fileset>
     </copy>
 
