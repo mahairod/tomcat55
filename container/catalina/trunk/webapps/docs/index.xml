@@ -154,6 +154,9 @@ the development of the <em>Tomcat</em> project.</p>
 <li><a href="jasper/docs/api/index.html"><strong>Jasper Javadocs</strong></a>
     - Javadoc API documentation for the <em>Jasper</em> JSP container
     portion of Tomcat 5.</li>
+<li><a href="architecture/index.html"><strong>Tomcat Architecture</strong></a>
+    - Documentation of the Tomcat Server Architecture.</li>
+    
 </ul>
 
 </section>
