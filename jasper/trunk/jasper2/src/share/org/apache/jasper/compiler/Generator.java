@@ -1035,15 +1035,19 @@ public class Generator {
                 // optimize the case where the bean is exposed with
                 // <jsp:useBean>, much as the code here does for
                 // getProperty.)
+
+		// The following holds true for the arguments passed to
+		// JspRuntimeLibrary.handleSetPropertyExpression():
+		// - 'pageContext' is a VariableResolver.
+		// - 'this' (either the generated Servlet or the generated tag
+		//   handler for Tag files) is a FunctionMapper.
                 out.printil("JspRuntimeLibrary.handleSetPropertyExpression(" +
                     "pageContext.findAttribute(\""  + name + "\"), \""
                     + property + "\", "
                     + quote(value.getValue()) + ", "
                     + "pageContext, "
-                    + "pageContext, "   // pageContext is a VariableResolver.
-                    + "this );");       // this (either the generated Servlet 
-                                        // or the generated tag handler for 
-                                        // Tag files) is a FunctionMapper.
+                    + "(javax.servlet.jsp.el.VariableResolver) pageContext, "
+                    + "(javax.servlet.jsp.el.FunctionMapper) this );");
             } else if( value.isNamedAttribute() ) {
                 // If the value for setProperty was specified via
                 // jsp:attribute, first generate code to evaluate
