@@ -42,8 +42,8 @@ import org.apache.catalina.cluster.io.ListenCallback;
 import org.apache.catalina.cluster.session.ReplicationStream;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.logging.Log;
+import org.apache.tomcat.util.IntrospectionUtils;
 /**
  * A <b>Cluster</b> implementation using simple multicast.
  * Responsible for setting
@@ -378,7 +378,7 @@ public class SimpleTcpCluster
                 (sm.getString("cluster.alreadyStarted"));
         log.info("Cluster is about to start");
         try {
-            MethodUtils.invokeMethod(getContainer(), "addValve", valve);
+            IntrospectionUtils.callMethod1(getContainer(), "addValve", valve, null, null);
             clusterReceiver.setIsSenderSynchronized(clusterSender.getIsSenderSynchronized());
             clusterReceiver.setCatalinaCluster(this);
             clusterReceiver.start();
@@ -390,11 +390,7 @@ public class SimpleTcpCluster
             try {
                 if ( clusterDeployer != null ) {
                     clusterDeployer.setCluster(this);
-                    Object deployer = MethodUtils.invokeMethod(
-                        getContainer(),
-                        "getDeployer",
-                        new Object[0],
-                        new Class[0]);
+                    Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
                     clusterDeployer.setDeployer( (org.apache.catalina.Deployer)
                                                 deployer);
                    clusterDeployer.start();

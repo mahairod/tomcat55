@@ -19,6 +19,7 @@ package org.apache.catalina.core;
 
 
 import java.beans.IndexedPropertyDescriptor;
+import java.beans.Introspector;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyDescriptor;
@@ -73,11 +74,11 @@ import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
 import org.apache.coyote.ProtocolHandler;
+import org.apache.tomcat.util.IntrospectionUtils;
 
 
 
@@ -1007,7 +1008,7 @@ public final class StandardServer
 
         // Acquire the list of properties for this bean
         PropertyDescriptor descriptors[] =
-            PropertyUtils.getPropertyDescriptors(bean);
+            Introspector.getBeanInfo(bean.getClass()).getPropertyDescriptors();
         if (descriptors == null) {
             descriptors = new PropertyDescriptor[0];
         }
@@ -1024,10 +1025,10 @@ public final class StandardServer
                 continue; // Must be a read-write primitive or String
             }
             Object value =
-                PropertyUtils.getSimpleProperty(bean,
+                IntrospectionUtils.getProperty(bean,
                                                 descriptors[i].getName());
             Object value2 =
-                PropertyUtils.getSimpleProperty(bean2,
+                IntrospectionUtils.getProperty(bean2,
                                                 descriptors[i].getName());
             if (value == null) {
                 continue; // Null values are not persisted

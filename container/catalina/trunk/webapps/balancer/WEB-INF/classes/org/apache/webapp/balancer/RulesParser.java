@@ -15,7 +15,7 @@
  */
 package org.apache.webapp.balancer;
 
-import org.apache.commons.digester.Digester;
+import org.apache.tomcat.util.digester.Digester;
 
 import java.io.InputStream;
 
@@ -78,7 +78,7 @@ public class RulesParser {
         digester.addSetProperties(rules + rule);
 
         // Add rule to chain
-        digester.addSetNext(rules + rule, "addRule");
+        digester.addSetNext(rules + rule, "addRule", "org.apache.webapp.balancer.Rule");
 
         return digester;
     }

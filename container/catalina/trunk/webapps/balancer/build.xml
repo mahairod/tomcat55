@@ -29,9 +29,7 @@ This is the build script for the balancer webapp.
   <!-- Compilation classpath -->
   <path id="balancer.classpath">
     <!-- Required by Digester -->
-    <pathelement location="${commons-beanutils.jar}"/>
-    <pathelement location="${commons-collections.jar}"/>
-    <pathelement location="${commons-digester.jar}"/>
+    <pathelement location="${catalina.deploy}/classes"/>
     <pathelement location="${servlet-api.jar}"/>
     <pathelement location="${commons-logging-api.jar}" />
   </path>
