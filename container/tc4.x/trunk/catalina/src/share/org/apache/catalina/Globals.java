@@ -90,7 +90,7 @@ public final class Globals {
      * java.lang.String).
      */
     public static final String CIPHER_SUITE_ATTR =
-        "javax.servlet.request.cipher-suite";
+        "javax.servlet.request.cipher_suite";
 
 
     /**
@@ -163,7 +163,7 @@ public final class Globals {
      * this SSL connection (as an object of type java.lang.Integer).
      */
     public static final String KEY_SIZE_ATTR =
-        "javax.servlet.request.key-size";
+        "javax.servlet.request.key_size";
 
 
     /**
@@ -203,6 +203,13 @@ public final class Globals {
      */
     public static final String SERVER_INFO = "Apache Tomcat/4.0-dev";
 
+
+    /**
+     * The request attribute under which we forward a servlet name to
+     * an error page.
+     */
+    public static final String SERVLET_NAME_ATTR =
+        "javax.servlet.error.servlet_name";
 
 
     /**

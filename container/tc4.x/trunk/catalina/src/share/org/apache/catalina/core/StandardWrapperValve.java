@@ -518,6 +518,9 @@ final class StandardWrapperValve
                               realError.getMessage());
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
                               realError);
+            Wrapper wrapper = (Wrapper) getContainer();
+            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                              wrapper.getName());
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
@@ -796,6 +799,9 @@ final class StandardWrapperValve
                               new Integer(statusCode));
 	    sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               message);
+            Wrapper wrapper = (Wrapper) getContainer();
+            sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+                              wrapper.getName());
             if (sreq instanceof HttpServletRequest)
                 sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
                                   ((HttpServletRequest) sreq).getRequestURI());
