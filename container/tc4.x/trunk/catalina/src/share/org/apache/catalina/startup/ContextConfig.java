@@ -412,11 +412,16 @@ public final class ContextConfig
         }
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
-            Connector [] connectors = service.findConnectors();
-            for (int i = 0; i < connectors.length; i++) {
-                secure = connectors[i].getSecure();
-                if (secure) {
-                    break;
+            // The service can be null when Tomcat is run in embedded mode
+            if (service == null) {
+                secure = true;
+            } else {
+                Connector [] connectors = service.findConnectors();
+                for (int i = 0; i < connectors.length; i++) {
+                    secure = connectors[i].getSecure();
+                    if (secure) {
+                        break;
+                    }
                 }
             }
         }
