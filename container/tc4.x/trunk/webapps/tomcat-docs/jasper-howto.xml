@@ -116,7 +116,7 @@ Explorer when using &lt;jsp:plugin&gt; tags.   Default
 
 <li><strong>fork</strong> - Have Ant fork JSP page compiles so they are
 performed in a seperate JVM from Tomcat? <code>true</code> or
-<code>false</code>, default <code>false</code>.</li>
+<code>false</code>, default <code>true</code>.</li>
 
 <li><strong>javaEncoding</strong> - Java file encoding to use for generating
 java source files. Default <code>UTF8</code>.</li>

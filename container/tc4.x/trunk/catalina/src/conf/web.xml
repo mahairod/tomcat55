@@ -117,7 +117,7 @@
   <!--                                                                      -->
   <!--   fork                Tell Ant to fork compiles of JSP pages so that -->
   <!--                       a separate JVM is used for JSP page compiles   -->
-  <!--                       from the one Tomcat is running in. [false]     -->
+  <!--                       from the one Tomcat is running in. [true]      -->
   <!--                                                                      -->
   <!--   javaEncoding        Java file encoding to use for generating java  -->
   <!--                       source files. [UTF8]                           -->
