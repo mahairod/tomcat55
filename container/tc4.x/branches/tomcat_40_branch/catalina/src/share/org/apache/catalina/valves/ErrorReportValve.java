@@ -248,16 +248,7 @@ public class ErrorReportValve
             message = "";
 
         // Do nothing on a 1xx status
-        if (statusCode < 200)
-            return;
-        // Do nothing on an OK status
-        if (statusCode == HttpServletResponse.SC_OK)
-            return;
-        // Do nothing on a NO MODIFIED status
-        if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
-            return;
-        // Do nothing on a NO CONTENT status
-        if (statusCode == HttpServletResponse.SC_NO_CONTENT)
+        if (statusCode < 300)
             return;
 
         // FIXME: Reset part of the request
