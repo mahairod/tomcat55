@@ -106,7 +106,7 @@ public class JspException extends Exception {
      */
     
     public JspException(String message, Throwable rootCause) {
-	super(message);
+	super(message, rootCause);
 	this.rootCause = rootCause;
     }
 
@@ -132,7 +132,7 @@ public class JspException extends Exception {
      */
 
     public JspException(Throwable rootCause) {
-	super(rootCause.getLocalizedMessage());
+	super(rootCause.getLocalizedMessage(), rootCause);
 	this.rootCause = rootCause;
     }
 
