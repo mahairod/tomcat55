@@ -194,7 +194,22 @@ public class JspCompilationContext {
         if (jspCompiler != null ) {
             return jspCompiler;
         }
-        jspCompiler = new Compiler(this, jsw);
+        jspCompiler = null;
+        try {
+            jspCompiler = 
+                (Compiler) Class.forName("org.apache.jasper.compiler.JDTCompiler").newInstance();
+        } catch (Throwable t) {
+            // Log ?
+            // FIXME: log
+        }
+        try {
+            jspCompiler = 
+                (Compiler) Class.forName("org.apache.jasper.compiler.AntCompiler").newInstance();
+        } catch (Throwable t) {
+            // Log ?
+            // FIXME: log
+        }
+        jspCompiler.init(this, jsw);
         return jspCompiler;
     }
 

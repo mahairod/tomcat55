@@ -432,13 +432,13 @@ public class ErrorDispatcher {
                                 String errMsg, String fname, Node.Nodes page)
 	        throws IOException, JasperException {
 
-	Vector errVec = new Vector();
-	StringBuffer errMsgBuf = null;
-	int lineNum = -1;
+        Vector errVec = new Vector();
+        StringBuffer errMsgBuf = null;
+        int lineNum = -1;
         JavacErrorDetail javacError = null;
-
+        
         BufferedReader reader = new BufferedReader(new StringReader(errMsg));
-
+        
         /*
          * Parse compilation errors. Each compilation error consists of a file
          * path and error line number, followed by a number of lines describing
@@ -446,82 +446,98 @@ public class ErrorDispatcher {
          */
         String line = null;
         while ((line = reader.readLine()) != null) {
-
+            
             /*
-	     * Error line number is delimited by set of colons.
-	     * Ignore colon following drive letter on Windows (fromIndex = 2).
-	     * XXX Handle deprecation warnings that don't have line info
-	     */
+             * Error line number is delimited by set of colons.
+             * Ignore colon following drive letter on Windows (fromIndex = 2).
+             * XXX Handle deprecation warnings that don't have line info
+             */
             int beginColon = line.indexOf(':', 2); 
             int endColon = line.indexOf(':', beginColon + 1);
             if ((beginColon >= 0) && (endColon >= 0)) {
                 if (javacError != null) {
                     // add previous error to error vector
                     errVec.add(javacError);
-		}
-
-		String lineNumStr = line.substring(beginColon + 1, endColon);
+                }
+                
+                String lineNumStr = line.substring(beginColon + 1, endColon);
                 try {
                     lineNum = Integer.parseInt(lineNumStr);
                 } catch (NumberFormatException e) {
                     // XXX
                 }
-
+                
                 errMsgBuf = new StringBuffer();
-
-                // Attempt to map javac error line number to line in JSP page
-		ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
-		page.visit(errVisitor);
-                Node errNode = errVisitor.getJspSourceNode();
-                if ((errNode != null) && (errNode.getStart() != null)) {
-                    javacError = new JavacErrorDetail(
-                                            fname,
-                                            lineNum,
-                                            errNode.getStart().getFile(),
-                                            errNode.getStart().getLineNumber(),
-                                            errMsgBuf);
-                } else {
-                    /*
-                     * javac error line number cannot be mapped to JSP page
-                     * line number. For example, this is the case if a 
-                     * scriptlet is missing a closing brace, which causes
-                     * havoc with the try-catch-finally block that the code
-                     * generator places around all generated code: As a result
-                     * of this, the javac error line numbers will be outside
-                     * the range of begin and end java line numbers that were
-                     * generated for the scriptlet, and therefore cannot be
-                     * mapped to the start line number of the scriptlet in the
-                     * JSP page.
-                     * Include just the javac error info in the error detail.
-                     */
-                    javacError = new JavacErrorDetail(
-                                            fname,
-                                            lineNum,
-                                            errMsgBuf);
-                }
+                
+                javacError = createJavacError(fname, page, errMsgBuf, lineNum);
             }
-
+            
             // Ignore messages preceding first error
             if (errMsgBuf != null) {
                 errMsgBuf.append(line);
                 errMsgBuf.append("\n");
             }
         }
-
+        
         // Add last error to error vector
         if (javacError != null) {
             errVec.add(javacError);
         } 
-
+        
         reader.close();
+        
+        JavacErrorDetail[] errDetails = null;
+        if (errVec.size() > 0) {
+            errDetails = new JavacErrorDetail[errVec.size()];
+            errVec.copyInto(errDetails);
+        }
+        
+        return errDetails;
+    }
 
-	JavacErrorDetail[] errDetails = null;
-	if (errVec.size() > 0) {
-	    errDetails = new JavacErrorDetail[errVec.size()];
-	    errVec.copyInto(errDetails);
-	}
 
-	return errDetails;
+    /**
+     * @param fname
+     * @param page
+     * @param errMsgBuf
+     * @param lineNum
+     * @return
+     * @throws JasperException
+     */
+    public static JavacErrorDetail createJavacError(String fname, Node.Nodes page, 
+            StringBuffer errMsgBuf, int lineNum) throws JasperException {
+        JavacErrorDetail javacError;
+        // Attempt to map javac error line number to line in JSP page
+        ErrorVisitor errVisitor = new ErrorVisitor(lineNum);
+        page.visit(errVisitor);
+        Node errNode = errVisitor.getJspSourceNode();
+        if ((errNode != null) && (errNode.getStart() != null)) {
+            javacError = new JavacErrorDetail(
+                    fname,
+                    lineNum,
+                    errNode.getStart().getFile(),
+                    errNode.getStart().getLineNumber(),
+                    errMsgBuf);
+        } else {
+            /*
+             * javac error line number cannot be mapped to JSP page
+             * line number. For example, this is the case if a 
+             * scriptlet is missing a closing brace, which causes
+             * havoc with the try-catch-finally block that the code
+             * generator places around all generated code: As a result
+             * of this, the javac error line numbers will be outside
+             * the range of begin and end java line numbers that were
+             * generated for the scriptlet, and therefore cannot be
+             * mapped to the start line number of the scriptlet in the
+             * JSP page.
+             * Include just the javac error info in the error detail.
+             */
+            javacError = new JavacErrorDetail(
+                    fname,
+                    lineNum,
+                    errMsgBuf);
+        }
+        return javacError;
     }
 
 

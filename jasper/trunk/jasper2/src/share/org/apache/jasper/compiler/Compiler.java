@@ -20,26 +20,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.servlet.JspServletWrapper;
-import org.apache.jasper.util.SystemLogHandler;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Javac;
-import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.PatternSet;
 
 /**
  * Main JSP compiler class. This class uses Ant for compiling.
@@ -51,8 +42,8 @@ import org.apache.tools.ant.types.PatternSet;
  * @author Remy Maucherat
  * @author Mark Roth
  */
-public class Compiler {
-    private static org.apache.commons.logging.Log log=
+public abstract class Compiler {
+    protected static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( Compiler.class );
 
     // ----------------------------------------------------------------- Static
@@ -67,75 +58,20 @@ public class Compiler {
 
     protected JspCompilationContext ctxt;
 
-    private ErrorDispatcher errDispatcher;
-    private PageInfo pageInfo;
-    private JspServletWrapper jsw;
-    private JasperAntLogger logger;
-    private TagFileProcessor tfp;
-
-    protected Project project=null;
+    protected ErrorDispatcher errDispatcher;
+    protected PageInfo pageInfo;
+    protected JspServletWrapper jsw;
+    protected TagFileProcessor tfp;
 
     protected Options options;
 
     protected Node.Nodes pageNodes;
     // ------------------------------------------------------------ Constructor
 
-
-    public Compiler(JspCompilationContext ctxt) {
-        this(ctxt, null);
-    }
-
-
-    public Compiler(JspCompilationContext ctxt, JspServletWrapper jsw) {
+    public void init(JspCompilationContext ctxt, JspServletWrapper jsw) {
         this.jsw = jsw;
         this.ctxt = ctxt;
         this.options = ctxt.getOptions();
-    }
-
-    // Lazy eval - if we don't need to compile we probably don't need the project
-    private Project getProject() {
-
-        if( project!=null ) return project;
-
-        // Initializing project
-        project = new Project();
-        logger = new JasperAntLogger();
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-	logger.setMessageOutputLevel(Project.MSG_INFO);
-        project.addBuildListener( logger);
-	if (System.getProperty("catalina.home") != null) {
-            project.setBasedir( System.getProperty("catalina.home"));
-        }
-        
-        if( options.getCompiler() != null ) {
-            if( log.isDebugEnabled() )
-                log.debug("Compiler " + options.getCompiler() );
-            project.setProperty("build.compiler", options.getCompiler() );
-        }
-        project.init();
-        return project;
-    }
-
-    class JasperAntLogger extends DefaultLogger {
-
-        private StringBuffer reportBuf = new StringBuffer();
-
-        protected void printMessage(final String message,
-                                    final PrintStream stream,
-                                    final int priority) {
-        }
-
-        protected void log(String message) {
-            reportBuf.append(message);
-            reportBuf.append(System.getProperty("line.separator"));
-        }
-
-        protected String getReport() {
-            String report = reportBuf.toString();
-            reportBuf.setLength(0);
-            return report;
-        }
     }
 
     // --------------------------------------------------------- Public Methods
@@ -146,7 +82,7 @@ public class Compiler {
      * @return a smap for the current JSP page, if one is generated,
      *         null otherwise
      */
-    private String[] generateJava() throws Exception {
+    protected String[] generateJava() throws Exception {
         
         String[] smapStr = null;
 
@@ -298,139 +234,10 @@ public class Compiler {
     /** 
      * Compile the servlet from .java file to .class file
      */
-    private void generateClass(String[] smap)
-        throws FileNotFoundException, JasperException, Exception {
-
-        long t1=System.currentTimeMillis();
-        String javaEncoding = ctxt.getOptions().getJavaEncoding();
-        String javaFileName = ctxt.getServletJavaFileName();
-        String classpath = ctxt.getClassPath(); 
-
-        String sep = System.getProperty("path.separator");
-
-        StringBuffer errorReport = new StringBuffer();
-
-        StringBuffer info=new StringBuffer();
-        info.append("Compile: javaFileName=" + javaFileName + "\n" );
-        info.append("    classpath=" + classpath + "\n" );
-
-        // Start capturing the System.err output for this thread
-        SystemLogHandler.setThread();
-
-        // Initializing javac task
-        getProject();
-        Javac javac = (Javac) project.createTask("javac");
-
-        // Initializing classpath
-        Path path = new Path(project);
-        path.setPath(System.getProperty("java.class.path"));
-        info.append("    cp=" + System.getProperty("java.class.path") + "\n");
-        StringTokenizer tokenizer = new StringTokenizer(classpath, sep);
-        while (tokenizer.hasMoreElements()) {
-            String pathElement = tokenizer.nextToken();
-            File repository = new File(pathElement);
-            path.setLocation(repository);
-            info.append("    cp=" + repository + "\n");
-        }
-
-        if( log.isDebugEnabled() )
-            log.debug( "Using classpath: " + System.getProperty("java.class.path") + sep
-                       + classpath);
-        
-        // Initializing sourcepath
-        Path srcPath = new Path(project);
-        srcPath.setLocation(options.getScratchDir());
-
-        info.append("    work dir=" + options.getScratchDir() + "\n");
-
-        // Initialize and set java extensions
-        String exts = System.getProperty("java.ext.dirs");
-        if (exts != null) {
-            Path extdirs = new Path(project);
-            extdirs.setPath(exts);
-            javac.setExtdirs(extdirs);
-            info.append("    extension dir=" + exts + "\n");
-        }
-
-        // Configure the compiler object
-        javac.setEncoding(javaEncoding);
-        javac.setClasspath(path);
-        javac.setDebug(ctxt.getOptions().getClassDebugInfo());
-        javac.setSrcdir(srcPath);
-        javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
-        javac.setFork(ctxt.getOptions().getFork());
-        info.append("    srcDir=" + srcPath + "\n" );
-
-        // Set the Java compiler to use
-        if (options.getCompiler() != null) {
-            javac.setCompiler(options.getCompiler());
-            info.append("    compiler=" + options.getCompiler() + "\n");
-        }
-
-        // Build includes path
-        PatternSet.NameEntry includes = javac.createInclude();
-
-        includes.setName(ctxt.getJavaPath());
-        info.append("    include="+ ctxt.getJavaPath() + "\n" );
-
-        BuildException be = null;
-
-        try {
-            if (ctxt.getOptions().getFork()) {
-                javac.execute();
-            } else {
-                synchronized(javacLock) {
-                    javac.execute();
-                }
-            }
-        } catch (BuildException e) {
-            be = e;
-            log.error( "Javac exception ", e);
-            log.error( "Env: " + info.toString());
-        }
-
-        errorReport.append(logger.getReport());
-
-        // Stop capturing the System.err output for this thread
-        String errorCapture = SystemLogHandler.unsetThread();
-        if (errorCapture != null) {
-            errorReport.append(System.getProperty("line.separator"));
-            errorReport.append(errorCapture);
-        }
-
-        if (!ctxt.keepGenerated()) {
-            File javaFile = new File(javaFileName);
-            javaFile.delete();
-        }
-
-        if (be != null) {
-            String errorReportString = errorReport.toString();
-            log.error("Error compiling file: " + javaFileName + " "
-                      + errorReportString);
-            JavacErrorDetail[] javacErrors = ErrorDispatcher.parseJavacErrors(
-                        errorReportString, javaFileName, pageNodes);
-            if (javacErrors != null) {
-                errDispatcher.javacError(javacErrors);
-            } else {
-                errDispatcher.javacError(errorReportString, be);
-            }
-        }
-
-        long t2=System.currentTimeMillis();
-        if( t2-t1 > 500 ) {
-            log.debug( "Compiled " + javaFileName + " " + (t2-t1));
-        }
-
-	if (ctxt.isPrototypeMode()) {
-	    return;
-	}
-
-        // JSR45 Support
-        if (! options.isSmapSuppressed()) {
-            SmapUtil.installSmap(smap);
-        }
-    }
-
+    protected abstract void generateClass(String[] smap)
+        throws FileNotFoundException, JasperException, Exception;
+    
+    
     /** 
      * Compile the jsp file from the current engine context
      */
@@ -482,8 +289,6 @@ public class Compiler {
             // memory footprint.
             tfp = null;
             errDispatcher = null;
-            logger = null;
-            project = null;
             pageInfo = null;
             pageNodes = null;
             if (ctxt.getWriter() != null) {
