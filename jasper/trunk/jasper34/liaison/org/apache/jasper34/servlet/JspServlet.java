@@ -55,263 +55,128 @@
 
 package org.apache.jasper34.servlet;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.SingleThreadModel;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.HttpJspPage;
-import javax.servlet.jsp.JspFactory;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.jsp.*;
 
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-
-import org.apache.jasper34.runtime.*;
-import org.apache.jasper34.core.*;
-import org.apache.jasper34.generator.*;
-import org.apache.jasper34.jsptree.*;
-import org.apache.jasper34.javacompiler.*;
-import org.apache.jasper34.liaison.*;
-import org.apache.jasper34.core.Compiler;
-
-import org.apache.tomcat.util.log.Log;
+import java.util.*;
+import java.io.*;
+import java.net.*;
 
 /**
- * The JSP engine (a.k.a Jasper)! 
+ * The JSP engine (a.k.a Jasper)!
+ * 
+ * There are 2 use cases for JspServlet:
+ * - "cooperating" servlet container. JspServlet is used to handle jsps,
+ * internaly. The container will register a mapping from *.jsp to JspServlet,
+ * allowing webapps to override this.
+ * 
+ * - use in "foreign" containers. Assuming a container using a different jsp
+ * implementation, you can set your web applications to use jasper, overriding
+ * the container's impl. In order to do that you must install all jasper
+ * binaries in WEB-INF/lib ( or in a common directory accessible to all
+ * webapps ) and map *.jsp to JspServlet in your web.xml.
  *
+ * Note that JspServlet is not needed for precompiled jsps ( using jspc ),
+ * in neither case ( unless you want to do runtime recompilation - but then
+ * why use jspc ? ).
+ *
+ * <b>Class loader issues. </b> In a servlet container that uses jasper
+ * and jspservlet you have 2 options for the required jasper classes.
+ * The servlet itself _must_ be visible in all applications class loader's.
+ * It depends on a minimal set of classes:
+ *  - org.apache.tomcat.util.compat.*
+ * The jasper implementation and it's dependencies can (should)  be installed
+ * in a separate directory, hidden from webapplications ( that avoids
+ * class colision and improve security ). You must pass the
+ * JASPER_CLASSPATH_OPTION init parameter to jasper.
+ *
+ * On foreign servers or if you don't use the JASPER_CLASSPATH_OPTION all 
+ * required jasper classes ( including xml parser, etc ) must be
+ * visible in the webapp class loader.
+ *
+ * The runtime also depends on a number of attributes in context:
+ * XXX TODO
+ *
+ * The following init parameters could be used to tune jasper's operation:
+ * XXX TODO
+ * 
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Costin Manolache
  */
 public class JspServlet extends HttpServlet {
+    /** Init parameter to pass the classpath to the jasper runtime
+     */
+    public static final String JASPER_CLASSPATH_OPTION="jasper.classpath";
 
-    Log loghelper = Log.getLog("JASPER_LOG", "JspServlet");
+    public static final String JSP_SERVLET_IMPL=
+	"org.apache.jasper34.liaison.JspServletLiaisonImpl";
     
     protected ServletContext context = null;
 
     // XXX Is it the config of JspServlet or of the jsp page ?
     protected ServletConfig config;
 
-    protected String serverInfo;
-
     protected Hashtable jsps = new Hashtable();
 
-    protected Options options;
+    protected JspServletLiaison jasperLiaison;
 
     /** Set to true to provide Too Much Information on errors */
     private final boolean insecure_TMI = false;
 
+    private void loadJspServletLiaison( ServletConfig config,
+				    ServletContext context )
+	throws ServletException
+    {
+	String cpath= config.getInitParameter( "jasper.classpath" );
+	ClassLoader cloader=this.getClass().getClassLoader();
+	try {
+	    URL[] urls=cpath2urls( cpath ); // XXX use compat
+	    
+	    if( urls != null ) {
+		cloader=new URLClassLoader( urls, cloader );
+	    }
+	    Class c=
+		cloader.loadClass( JSP_SERVLET_IMPL );
+	    jasperLiaison=(JspServletLiaison)c.newInstance();
+	    
+	    jasperLiaison.init( config, context);
+	} catch( Exception ex ) {
+	    ex.printStackTrace();
+	    throw new ServletException( ex );
+	}
+    }
+
+    private URL [] cpath2urls( String cpath ) {
+	if( cpath == null ) return null;
+	return null;
+    }
+    
     public void init(ServletConfig config)
 	throws ServletException
     {
 	super.init(config);
 	this.config = config;
 	this.context = config.getServletContext();
-        this.serverInfo = context.getServerInfo();
-        
-	options = new OptionsServletConfig(config, context);
-	//	if( debug>0 )
-	log("Init " + config );
 
-	// XXX each generate servlet will check that - so it works with JSPC
-	// and without JspServlet
-	if( JspFactory.getDefaultFactory() ==null )
-	    JspFactory.setDefaultFactory(new JspFactoryImpl());
+	loadJspServletLiaison( config, context );
     }
-
 
     public void service (HttpServletRequest request, 
     			 HttpServletResponse response)
 	throws ServletException, IOException
     {
-	try {
-            String includeUri 
-                = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+	if( jasperLiaison==null )
+	    throw new ServletException( "Initialization error" );
 
-            String jspUri;
-
-            if (includeUri == null)
-		jspUri = request.getServletPath();
-            else
-                jspUri = includeUri;
-
-            boolean precompile = isPreCompile(request);
-
-	    // XXX This seemed to be true all the time.
-	    // When do we have exception ??
-	    boolean isErrorPage = false; //exception != null;
-	
-	    JspServletWrapper wrapper = (JspServletWrapper) jsps.get(jspUri);
-	    if( debug>0 )
-		log("Service " + jspUri + " " + wrapper );
-	    if (wrapper == null) {
-		wrapper = new JspServletWrapper(jspUri, isErrorPage);
-		jsps.put(jspUri, wrapper);
-	    }
-
-	    wrapper.initWrapper( context, options, request, response);
-
-	    if( wrapper.isOutDated() ) {
-		compileJsp(wrapper, wrapper.jspUri, wrapper.isErrorPage,
-			   request, response);
-	    }
-	    
-
-	    // If a page is to only to be precompiled return.
-	    if (precompile)
-		return;
-	
-	    wrapper.service(request, response);
-
-	} catch (FileNotFoundException ex) {
-	    handleFileNotFoundException( ex, response );
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (ServletException e) {
-	    throw e;
-	} catch (IOException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    throw new ServletException(e);
-	}
-    }
-
-    void compileJsp(JspServletWrapper jsw,String jspUri,  boolean isErrorPage,
-		    HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
-	synchronized ( this ) {
-	    try {
-		// second check - maybe it was compiled while we
-		// waited for the sync 
-		if ( ! jsw.isOutDated() )
-		    return;
-		
-		Compiler compiler = new Compiler(jsw.containerL);
-		compiler.jsp2java( jsw.pageInfo );
-		String javaFile=
-		    jsw.pageInfo.getMangler().getJavaFileName();
-		
-		JavaCompiler javaC=
-		    compiler.createJavaCompiler( jsw.pageInfo );
-		compiler.prepareCompiler( javaC, jsw.pageInfo );
-		boolean status = javaC.compile( javaFile );
-		
-		if (status == false) {
-		    String msg = javaC.getCompilerMessage();
-		    throw new JasperException("Unable to compile " + msg);
-		    // XXX remember this - until the file is changed !!
-		}
-		
-		// remove java file if !keepgenerated, etc
-		compiler.postCompile(jsw.pageInfo);
-	       
-		if( jsw.theServlet == null) {
-		    // A (re)load happened - need to init the servlet
-		    jsw.load( this.config );
-		}
-	    } catch (ClassNotFoundException cex) {
-		throw new JasperException(
-	       	  ContainerLiaison.getString("jsp.error.unable.load"),cex);
-	    } catch (FileNotFoundException ex) {
-		throw ex;
-	    } catch (JasperException ex) {
-		throw ex;
-	    } catch (Exception ex) {
-		throw new JasperException(
-		 ContainerLiaison.getString("jsp.error.unable.compile"), ex);
-	    }
-	}
-    }
-
-    // XXX Do we need all this ??? 
-    private void handleFileNotFoundException( IOException ex,
-					      HttpServletResponse response)
-	throws IOException, IllegalStateException
-    {
-	try {
-	    if (insecure_TMI) {
-		response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-				       ContainerLiaison.getString
-				   ("jsp.error.file.not.found.TMI", 
-				    new Object[] { ex.getMessage() }));
-	    } else {
-		response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-				   ContainerLiaison.getString
-				   ("jsp.error.file.not.found", 
-				    new Object[] {}));
-	    }
-	} catch (IllegalStateException ise) {
-	    // logs are presumed to be secure,
-	    //  thus the TMI info can be logged
-	    ContainerLiaison.message(ContainerLiaison.getString
-					 ("jsp.error.file.not.found.TMI",
-					  new Object[] { ex.getMessage()}), 
-				     Log.ERROR);
-	    // rethrow FileNotFoundException so someone higher
-	    // up can handle
-	    if (insecure_TMI)
-		throw ex;
-	    else
-		throw new FileNotFoundException(ContainerLiaison.getString
-						("jsp.error.file.not.found", 
-						     new Object[] {}));
-	}
+	jasperLiaison.service( request, response );
     }
 
     /** Destroy all generated Jsp Servlets
      */
     public void destroy() {
-	ContainerLiaison.message("JspServlet.destroy()", Log.INFORMATION);
-
-	Enumeration servlets = jsps.elements();
-	while (servlets.hasMoreElements()) 
-	    ((JspServletWrapper) servlets.nextElement()).destroy();
+	if( jasperLiaison!=null )
+	    jasperLiaison.destroy();
     }
-
-
-    
-    // -------------------- Utils --------------------
-
-    /** Detect if we're in a precompile request
-     */
-    private boolean isPreCompile(HttpServletRequest request) 
-        throws ServletException 
-    {
-        boolean precompile = false;
-        String precom = request.getParameter(Constants.PRECOMPILE);
-        String qString = request.getQueryString();
-        
-        if (precom != null) {
-            if (precom.equals("true")) 
-                precompile = true;
-            else if (precom.equals("false")) 
-                precompile = false;
-            else {
-		// This is illegal.
-		throw new ServletException("Can't have request parameter " +
-					   Constants.PRECOMPILE +
-					   " set to " + precom);
-	    }
-	} else if (qString != null &&
-		   (qString.startsWith(Constants.PRECOMPILE) ||
-		    qString.indexOf("&" + Constants.PRECOMPILE) != -1))
-            precompile = true;
-
-        return precompile;
-    }
-    
-
-    private int debug=10;
-    public void log( String s ) {
-	System.out.println("JspServlet: " + s );
-    }
-
-
 }
