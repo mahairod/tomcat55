@@ -119,7 +119,7 @@
 
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
-      <srcfiles dir="${commons-daemon.home}/src" includes="**" />
+      <srcfiles dir="${cvs.base}/jakarta-commons/daemon" includes="**" />
     </uptodate>
   </target>
 
@@ -479,7 +479,7 @@
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
 
-    <ant dir="${commons-daemon.home}" target="dist" >
+    <ant dir="${cvs.base}/jakarta-commons/daemon" target="dist" >
         <property name="compile.optimize" value="false" />
         <property name="dist.home" value="${commons-daemon.home}" />
     </ant>
@@ -1698,7 +1698,7 @@
          command="checkout -P ${cvstag} jakarta-servletapi-5" 
          dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${cvstag} -d ${commons-daemon.home} ${commons-daemon.cvs.loc}"
+         command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
          dest="${cvs.base}"/>
 <!--
     <cvs cvsroot="${cvsroot}" quiet="true"
