@@ -116,6 +116,8 @@ public class ReplicationTransmitter implements ClusterSender
         {
             if (!sender.isConnected())
                 sender.connect();
+            //set the timeout, will be ignored by async senders
+            sender.setAckTimeout(getAckTimeout());
             sender.sendMessage(sessionId,data);
             sender.setSuspect(false);
             addStats(data.length);
@@ -146,8 +148,6 @@ public class ReplicationTransmitter implements ClusterSender
         {
 
             IDataSender sender = senders[i];
-            //set the timeout, will be ignored by async senders
-            sender.setAckTimeout(getAckTimeout());
             try
             {
                 sendMessageData(sessionId,data,sender);
