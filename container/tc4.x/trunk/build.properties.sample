@@ -175,11 +175,11 @@ jdbc20ext.lib=${jdbc20ext.home}
 jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
-# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.0 or later -----
-jmx.home=${base.path}/mx4j-1.0b3
+# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.1 or later -----
+jmx.home=${base.path}/mx4j-1.1
 jmx.lib=${jmx.home}/lib
-jmx.jar=${jmx.lib}/mx4j.jar
-jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.0b3.tar.gz
+jmx.jar=${jmx.lib}/mx4j-jmx.jar
+jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.tar.gz
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
