@@ -507,6 +507,11 @@ URL that specifies the domain name of the directory server to connect
 to, and optionally the port number and distinguished name (DN) of the
 required root naming context.</p>
 
+<p>If you have more than one provider you can configure an
+<strong>alternateURL</strong>.  If a socket connection can not be
+made to the provider at the <strong>connectionURL</strong> an
+attempt will be made to use the <strong>alternateURL</strong>.</p>
+
 <p>When making a connection in order to search the directory and
 retrieve user and role information, the realm authenticates itself to
 the directory with the username and password specified by the
