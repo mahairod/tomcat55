@@ -488,6 +488,12 @@ Catalina Bug Fixes:
 [4.1.13] ProxyDirContext:
          Peformance fix: allow directory caching.
 
+[4.1.14] Catalina:
+         Fix security manager package protection configuration.
+
+[4.1.14] ContextConfig:
+         Fix TLD processing.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -541,6 +547,7 @@ Coyote Bug Fixes:
 
 [4.1.13] Fix broken JSSE/SSL-support and include support for Cert-Auth with
          JSSE 1.1.x.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -733,6 +740,9 @@ Jasper Bug Fixes:
 [4.1.13] #13843
          JspServlet:
          Fix locking on Windows of big JSP files.
+
+[4.1.14] Compiler:
+         Add global synchronization on the javac invocation.
 
 
 ============================
