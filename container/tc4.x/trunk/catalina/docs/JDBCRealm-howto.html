@@ -222,7 +222,12 @@ mysql>
 </p>
 <h2>Using digested passwords</h2>
 <p>To use digested password you need to store them digested.
-To achieve this, you will  need to use the same digest strategies that JDBCrealm uses to store the passwords, inside JDBCRealm there is a static method with signature <code>final public static String Digest(String password,String algorithm)</code> this method is provided as a tool to be used outside JDBCRealm by an application that want to store passwords readable by JDBCRealm.</p>
+To achieve this, you will  need to use the same digest strategies that JDBCrealm uses to store the passwords, either by using:<br>
+<ul>
+    <li>The static method inside JDBCRealm. <code>final public static String Digest(String password,String algorithm)</code></li>
+    <li>Use the scripts in the bin directory, <code>digest.bat</code> for Windows or <code>digest.sh</code> for unix/linux systems</li>
+</ul>
+</p>
 <h2>Hints</h2>
 <p>
    
