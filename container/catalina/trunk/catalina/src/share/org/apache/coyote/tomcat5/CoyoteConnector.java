@@ -107,7 +107,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 
-public final class CoyoteConnector
+public class CoyoteConnector
     implements Connector, Lifecycle, MBeanRegistration
 {
     private static Log log = LogFactory.getLog(CoyoteConnector.class);
