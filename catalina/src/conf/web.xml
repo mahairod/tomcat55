@@ -76,8 +76,8 @@
 
   <!-- The "invoker" servlet, which executes anonymous servlet classes      -->
   <!-- that have not been defined in a web.xml file.  Traditionally, this   -->
-  <!-- servlet is mapped to URL pattern "/servlet/*", but you can map it    -->
-  <!-- to other patterns as well.  The extra path info portion of such a    -->
+  <!-- servlet is mapped to the URL pattern "/servlet/*", but you can map   -->
+  <!-- it to other patterns as well.  The extra path info portion of such a -->
   <!-- request must be the fully qualified class name of a Java class that  -->
   <!-- implements Servlet (or extends HttpServlet), or the servlet name     -->
   <!-- of an existing servlet definition.     This servlet supports the     -->
@@ -104,7 +104,7 @@
 
   <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
   <!-- used by Tomcat to support JSP pages.  Traditionally, this servlet    -->
-  <!-- is mapped to URL pattern "*.jsp".  This servlet supports the         -->
+  <!-- is mapped to the URL pattern "*.jsp".  This servlet supports the     -->
   <!-- following initialization parameters (default values are in square    -->
   <!-- brackets):                                                           -->
   <!--                                                                      -->
@@ -200,7 +200,7 @@
 
   <!-- Server Side Includes processing servlet, which processes SSI         -->
   <!-- directives in HTML pages consistent with similar support in web      -->
-  <!-- servers like Apache.  Traditionally, this servlet is mapped to       -->
+  <!-- servers like Apache.  Traditionally, this servlet is mapped to the   -->
   <!-- URL pattern "*.shtml".  This servlet supports the following          -->
   <!-- initialization parameters (default values are in square brackets):   -->
   <!--                                                                      -->
