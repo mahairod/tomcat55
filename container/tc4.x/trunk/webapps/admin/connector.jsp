@@ -30,8 +30,9 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <!-- will add the urls later once those screens get implemented -->
+           <%--
             <controls:action url="">  <bean:message key="actions.thisconnector.delete"/> </controls:action>
+            --%>
        </controls:actions>   
          </div>
       </td>

@@ -32,6 +32,7 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
+           <%--
             <controls:action url="">  <bean:message key="actions.logger.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.logger.delete"/> </controls:action>
             <controls:action> ------------------------------------- </controls:action>
@@ -44,8 +45,8 @@
             <controls:action url="">  <bean:message key="actions.valve.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valve.delete"/> </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <!-- will add the urls later once those screens get implemented -->
             <controls:action url="">  <bean:message key="actions.thiscontext.delete"/> </controls:action>
+           --%>
        </controls:actions>   
          </div>
       </td>
