@@ -162,7 +162,9 @@ public class ParserController {
     //*********************************************************************
     // Parse
 
-    public void parse(String inFileName) throws JasperException {
+    public void parse(String inFileName) 
+	throws FileNotFoundException, JasperException 
+    {
         parse(inFileName, null);
     }
 
@@ -174,7 +176,7 @@ public class ParserController {
      * @param The name of the jsp file to be parsed.
      */
     public void parse(String inFileName, String encoding)
-	throws JasperException
+	throws FileNotFoundException, JasperException
     {
         //p("parse(" + inFileName + ", " + encoding + ")");
         resolveFileName(inFileName);
@@ -212,8 +214,6 @@ public class ParserController {
             } else {
                 (new Parser(ctxt, file, encoding, reader, jspHandler)).parse();
             }
-        } catch (FileNotFoundException ex) {
-            throw new JasperException(ex);
         } finally {
             if (reader != null) {
                 try {
@@ -401,7 +401,7 @@ public class ParserController {
     }
 
     private InputStreamReader getReader(File file, String encoding)
-	throws JasperException
+	throws FileNotFoundException, JasperException
     {
         InputStream in;
         InputStreamReader reader;
@@ -419,8 +419,6 @@ public class ParserController {
 		reader = new InputStreamReader(in, encoding);
 	    }
 	    return reader;
-	} catch (FileNotFoundException ex) {
-	    throw new JasperException(ex);
 	} catch (UnsupportedEncodingException ex) {
 	    throw new JasperException(ex);
 	}
