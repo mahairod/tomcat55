@@ -63,8 +63,9 @@
     <copy file="${parser.jar}" 
      tofile="${catalina.build}/server/${catalina.jaxp.parser.jar}" />
     <!--   Catalina needs the regular expression library -->
-    <copy file="${regexp.jar}" 
-     tofile="${catalina.build}/server/regexp.jar"/>
+    <copy todir="${catalina.build}/server">
+      <fileset dir="${regexp.home}" includes="*.jar"/>
+    </copy>
     <!--   Catalina needs the JSSE packages -->
 <!--
     <copy file="${jcert.jar}" tofile="${catalina.build}/server/jcert.jar"/>
