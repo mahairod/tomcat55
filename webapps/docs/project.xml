@@ -47,8 +47,8 @@
     <menu name="Reference">
         <item name="Release Notes"         href="RELEASE-NOTES.txt"/>
         <item name="Tomcat Configuration"  href="config/index.html"/>
-        <item name="JK Documentation"      
-              href="http://jakarta.apache.org/tomcat/connectors-doc/jk2/index.html"/>
+        <item name="JK 1.2 Documentation"      
+              href="http://jakarta.apache.org/tomcat/jk-1.2/"/>
         <item name="Servlet API Javadocs"  href="servletapi/index.html"/>
         <item name="JSP API Javadocs"      href="jspapi/index.html"/>
     </menu>
