@@ -12,7 +12,7 @@ set stest=.\conf\servlet-testlist.txt
 set jtest=.\conf\jsp-testlist.txt
 set default=all
 
-set miscJars=.\lib\xml.jar;.\lib\moo.jar;.\client.jar
+set miscJars=.\lib\xml.jar;.\lib\moo.jar;.\check-client.jar
 set appJars=%miscJars%
 set sysJars=%JAVA_HOME%\lib\tools.jar
 
@@ -38,9 +38,9 @@ rem THIS PART INCLUDED from jakarta-tomcat/src/shell/tomcatEnv.bat
 rem -------------------------- begin tomcatEnv.bat -----------------------------
 set TOM_CLASSPATH=.
 set TOM_CLASSPATH=%TOMCAT_HOME%\webserver.jar;%TOM_CLASSPATH%
-set TOM_CLASSPATH=%TOMCAT_HOME%\servlet.jar;%TOM_CLASSPATH%
-set TOM_CLASSPATH=%TOMCAT_HOME%\jasper.jar;%TOM_CLASSPATH%
-set TOM_CLASSPATH=%TOMCAT_HOME%\xml.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\lib\servlet.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\lib\jasper.jar;%TOM_CLASSPATH%
+set TOM_CLASSPATH=%TOMCAT_HOME%\lib\xml.jar;%TOM_CLASSPATH%
 set TOM_CLASSPATH=%TOMCAT_HOME%\webpages\WEB-INF\classes\jsp\beans;%TOM_CLASSPATH%
 set TOM_CLASSPATH=%TOMCAT_HOME%\classes;%TOM_CLASSPATH%
 
