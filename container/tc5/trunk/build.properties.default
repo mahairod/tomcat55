@@ -59,7 +59,7 @@ base-xml.loc=http://archive.apache.org/dist/xml
 base-struts.loc=http://archive.apache.org/dist/struts
 
 # ----- Sourceforge files base location -----
-base-sf.loc=http://telia.dl.sourceforge.net/sourceforge
+base-sf.loc=http://unc.dl.sourceforge.net/sourceforge
 
 # --------------------------------------------------
 #                REQUIRED LIBRARIES
@@ -189,11 +189,11 @@ commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0.jar
 commons-fileupload.loc=${base-jakarta.loc}/commons/fileupload/binaries/commons-fileupload-1.0.tar.gz
 
 # ----- Java Management Extensions (JMX), JMX RI 1.2.1 or later or MX4J 2.0.1 or later -----
-jmx.home=${base.path}/mx4j-2.1.0/mx4j-2.1.0
+jmx.home=${base.path}/mx4j-2.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j.jar
 jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
-jmx.loc=${base-sf.loc}/mx4j/mx4j-2.1.0.zip
+jmx.loc=${base-sf.loc}/mx4j/mx4j-2.1.1.tar.gz
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
