@@ -198,15 +198,6 @@ public class StandardClassLoader
     }
 
 
-    // ----------------------------------------------------- Class Variables
-
-
-    /**
-     * JDK compatibility support
-     */
-    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
-
-
     // ----------------------------------------------------- Instance Variables
 
 
@@ -381,7 +372,7 @@ public class StandardClassLoader
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException
                 ("Invalid repository: " + repository);
-            jdkCompat.chainException(iae, e);
+            JdkCompat.getJdkCompat().chainException(iae, e);
             throw iae;
         }
 
@@ -956,7 +947,7 @@ public class StandardClassLoader
             } catch (Throwable t) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("addRepositoryInternal");
-                jdkCompat.chainException(iae, t);
+                JdkCompat.getJdkCompat().chainException(iae, t);
                 throw iae;
             } finally {
                 if (jarFile != null) {
