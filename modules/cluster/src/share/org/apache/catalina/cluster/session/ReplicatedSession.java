@@ -141,10 +141,10 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
      */
     public void setAttribute(String name, Object value)
     {
+        if (!(value instanceof java.io.Serializable))
+            throw new java.lang.IllegalArgumentException("Value for attribute "+name+" is not serializable.");
         setIsDirty(true);
         super.setAttribute(name,value);
-        if (!(value instanceof java.io.Serializable))
-            log("WARNING! Replication will fail, value for attribute "+name+" is not serializable.");
     }
 
 
