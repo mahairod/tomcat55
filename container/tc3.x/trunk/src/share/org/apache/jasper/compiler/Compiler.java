@@ -305,7 +305,8 @@ public abstract class Compiler {
     /**
      * Change the encoding for the reader if specified.
      */
-    public String changeEncodingIfNecessary(JspReader tmpReader) {
+    public String changeEncodingIfNecessary(JspReader tmpReader)
+    throws ParseException {
 
 	// A lot of code replicated from Parser.java
 	// Main aim is to "get-it-to-work".
