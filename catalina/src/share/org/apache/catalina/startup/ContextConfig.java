@@ -589,8 +589,10 @@ public final class ContextConfig
     protected void contextConfig() {
         
         // FIXME: Externalize default context.xml path the same way as web.xml
-        processContextConfig(new File(getBaseDir(), "conf/context.xml"));
-        processContextConfig(new File(getConfigBase(), "context.xml.default"));
+        if (!context.getOverride()) {
+            processContextConfig(new File(getBaseDir(), "conf/context.xml"));
+            processContextConfig(new File(getConfigBase(), "context.xml.default"));
+        }
         if (context.getConfigFile() != null)
             processContextConfig(new File(context.getConfigFile()));
         
@@ -601,8 +603,14 @@ public final class ContextConfig
      * Process a context.xml.
      */
     protected void processContextConfig(File file) {
+        
         if (log.isDebugEnabled())
             log.debug("Processing context [" + context.getName() + "] configuration file " + file);
+        
+        // Add as watched resource so that cascade reload occurs if a default
+        // config file is modified/added/removed
+        context.addWatchedResource(file.getAbsolutePath());
+
         InputSource source = null;
         InputStream stream = null;
         try {
@@ -856,8 +864,6 @@ public final class ContextConfig
         Container container = context.getParent();
         if( !context.getOverride() ) {
             if( container instanceof Host ) {
-                ((Host)container).importDefaultContext(context);
-
                 // Reset the value only if the attribute wasn't
                 // set on the context.
                 xmlValidation = context.getXmlValidation();
@@ -872,9 +878,6 @@ public final class ContextConfig
                 }
 
                 container = container.getParent();
-            }
-            if( container instanceof Engine ) {
-                ((Engine)container).importDefaultContext(context);
             }
         }
 
