@@ -116,9 +116,9 @@ public class Main {
 	try {
 	    ProjectHelper.configureProject(project, buildFile);
 	} catch (BuildException be) {
-	    String msg = "STOP: ";
+	    String msg = "BUILD CONFIG ERROR: ";
 	    System.out.println(msg + be.getMessage());
-	    return;
+	    System.exit(1);
 	}
 
         // cycle through command line defined properties after the
@@ -143,7 +143,7 @@ public class Main {
 	try {
 	    project.executeTarget(target);
 	} catch (BuildException be) {
-	    String msg = "STOP: ";
+	    String msg = "BUILD FATAL ERROR: ";
 	    System.out.println(msg + be.getMessage());
 	    return;
 	}

@@ -21,10 +21,6 @@
      manifest="src/etc/manifest"/>
   </target>
 
-  <target name="foo" depends="main">
-    <jar jarfile="foo.jar" basedir="build" items="org/apache/tools/ant/taskdefs"/>
-  </target>
-  
   <target name="clean">
     <deltree dir="build"/>
   </target>

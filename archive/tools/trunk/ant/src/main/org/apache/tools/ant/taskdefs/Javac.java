@@ -11,8 +11,27 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
+ * Task to compile Java source files. This task can take the following
+ * arguments:
+ * <ul>
+ * <li>sourcedir
+ * <li>destdir
+ * <li>deprecation
+ * <li>classpath
+ * <li>bootclasspath
+ * <li>extdirs
+ * <li>optimize
+ * <li>debug
+ * <li>target
+ * </ul>
+ * Of these arguments, the <b>sourcedir</b> and <b>destdir</b> are required.
+ * <p>
+ * When this task executes, it will recursively scan the sourcedir and
+ * destdir looking for Java source files to compile. This task makes its
+ * compile decision based on timestamp. Any other file in the
+ * sourcedir will be copied to the destdir allowing support files to be
+ * located properly in the classpath.
  *
- * 
  * @author duncan@x180.com
  */
 
@@ -24,39 +43,110 @@ public class Javac extends Task {
     private boolean debug = false;
     private boolean optimize = false;
     private boolean deprecation = true;
-    private String target = "1.1";
+    private String target;
     private String bootclasspath;
     private String extdirs;
 
     private Vector compileList = new Vector();
     private Hashtable filecopyList = new Hashtable();
 
+    /**
+     * Set the source dir to find the source Java files.
+     */
+    
     public void setSrcdir(String srcDirName) {
 	srcDir = project.resolveFile(srcDirName);
     }
 
+    /**
+     * Set the destination directory into which the Java source
+     * files should be compiled.
+     */
+    
     public void setDestdir(String destDirName) {
 	destDir = project.resolveFile(destDirName);
     }
 
+    /**
+     * Set the classpath to be used for this compilation.
+     */
+    
     public void setClasspath(String classpath) {
-	compileClasspath = classpath;
+
+        // XXX
+        // need to translate ':' and '/' chars to native
+        
+        compileClasspath = classpath;
     }
 
+    /**
+     * Sets the bootclasspath that will be used to compile the classes
+     * against.
+     */
+    
+    public void setBootclasspath(String bootclasspath) {
+
+        // XXX
+        // need to translate ':' and '/' chars to native
+        
+        this.bootclasspath = bootclasspath;
+    }
+
+    /**
+     * Sets the extension directories that will be used during the
+     * compilation.
+     */
+    
+    public void setExtdirs(String extdirs) {
+
+        // XXX
+        // need to translate ':' and '/' chars to native
+        
+        this.extdirs = extdirs;
+    }
+
+    
+    /**
+     * Set the deprecation flag. Valid strings are "on", "off", "true", and
+     * "false".
+     */
+    
     public void setDeprecation(String deprecation) {
-        if (deprecation.equalsIgnoreCase("on") || deprecation.equalsIgnoreCase("true"))
+        if (deprecation.equalsIgnoreCase("on") ||
+            deprecation.equalsIgnoreCase("true")) {
             this.deprecation = true;
-        else if (deprecation.equalsIgnoreCase("off") || deprecation.equalsIgnoreCase("false"))
+        } else {
             this.deprecation = false;
+        }
     }
     
-
+    
+    /**
+     * Set the debug flag. Valid strings are "on", "off", "true", and "false".
+     */
+    
     public void setDebug(String debugString) {
-	if (debugString.equalsIgnoreCase("on")) {
+	if (debugString.equalsIgnoreCase("on") ||
+            debugString.equalsIgnoreCase("true")) {
 	    debug = true;
-	}
+	} else {
+            debug = false;
+        }
     }
 
+    /**
+     * Sets the target VM that the classes will be compiled for. Valid
+     * strings are "1.1", "1.2", and "1.3".
+     */
+    
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    /**
+     * Executes the task.
+     */
+    
     public void execute() throws BuildException {
 
 	// first off, make sure that we've got a srcdir and destdir
@@ -118,6 +208,11 @@ public class Javac extends Task {
 	}
     }
 
+    /**
+     * Scans the directory looking for source files to be compiled and
+     * support files to be copied.
+     */
+    
     private void scanDir(File srcDir, File destDir) {
 
 	String[] list = srcDir.list(new DesirableFilter());
@@ -149,6 +244,13 @@ public class Javac extends Task {
 	}
     }
 
+    /**
+     * Builds the compilation classpath.
+     */
+
+    // XXX
+    // we need a way to not use the current classpath.
+    
     private String getCompileClasspath() {
 	StringBuffer classpath = new StringBuffer();
 
@@ -178,6 +280,11 @@ public class Javac extends Task {
 	return classpath.toString();
     }
     
+
+    /**
+     * Peforms a copmile using the classic compiler that shipped with
+     * JDK 1.1 and 1.2.
+     */
     
     private void doClassicCompile() throws BuildException {
 	project.log("Using classic compiler", project.MSG_VERBOSE);
@@ -198,8 +305,10 @@ public class Javac extends Task {
 	    argList.addElement(classpath);
 	    argList.addElement("-sourcepath");
 	    argList.addElement(srcDir.getAbsolutePath());
-	    argList.addElement("-target");
-	    argList.addElement(target);
+            if (target != null) {
+                argList.addElement("-target");
+                argList.addElement(target);
+            }
 	}
 	if (debug) {
 	    argList.addElement("-g");
@@ -244,16 +353,30 @@ public class Javac extends Task {
 
 	// XXX
 	// provide the compiler a different message sink - namely our own
-	
+
+        JavacOutputStream jos = new JavacOutputStream(project);
+        
 	sun.tools.javac.Main compiler =
-	    new sun.tools.javac.Main(System.out, "javac");
+	    new sun.tools.javac.Main(jos, "javac");
 	compiler.compile(args);
+        if (jos.getErrorFlag()) {
+            String msg = "Compile failed, messages should have been provided.";
+            throw new BuildException(msg);
+        }
     } 
 
+    /**
+     * Performs a compile using the newer compiler that ships with JDK 1.3
+     */
+    
     private void doModernCompile() throws BuildException {
 	project.log("Performing a Modern Compile");
     }
 
+    /**
+     * Performs a compile using the Jikes compile.
+     */
+    
     private void doJikesCompile() throws BuildException {
 	project.log("Performing a Jikes COmpile");
     }
