@@ -72,11 +72,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
@@ -384,8 +382,10 @@ public class SingleSignOn
          *  SSO.  If the session was logged out, we'll log out
          *  of all session associated with the SSO.
          */
-        if (System.currentTimeMillis() - session.getLastAccessedTime() >=
-                session.getMaxInactiveInterval() * 1000) {            
+        if ((session.getMaxInactiveInterval() > 0)
+            && (System.currentTimeMillis() - session.getLastAccessedTime() >=
+                session.getMaxInactiveInterval() * 1000)) {
+
             removeSession(ssoId, session);
         }
         else {
