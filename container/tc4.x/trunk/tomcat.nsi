@@ -2,8 +2,8 @@
 ; Tomcat 4 script for Nullsoft Installer
 ; $Id$
 
-Name "jakarta-tomcat-4.0"
-Caption "Jakarta Tomcat 4.0"
+Name "apache-tomcat-4.0"
+Caption "Apache Tomcat 4.0"
 OutFile tomcat4.exe
 CRCCheck on
 SetCompress force
@@ -19,7 +19,7 @@ DisabledBitmap tickno.bmp
 
 LicenseText "You must read the following license before installing:"
 LicenseData INSTALLLICENSE
-ComponentText "This will install the Jakarta Tomcat 4.0 servlet container on your computer:"
+ComponentText "This will install the Apache Tomcat 4.0 servlet container on your computer:"
 InstType Normal
 InstType Minimum
 InstType "Full (w/ Source Code)"
@@ -29,8 +29,8 @@ DirText "Please select a location to install Tomcat 4.0 (or use the default):"
 SetOverwrite on
 SetDateSave on
 
-InstallDir "$PROGRAMFILES\Jakarta Tomcat 4.0"
-InstallDirRegKey HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" ""
+InstallDir "$PROGRAMFILES\Apache Tomcat 4.0"
+InstallDirRegKey HKLM "SOFTWARE\Apache\Apache Tomcat 4.0" ""
 
 Section "Tomcat 4.0 (required)"
 
@@ -48,9 +48,7 @@ Section "Tomcat 4.0 (required)"
   File /r work
   SetOutPath $INSTDIR\webapps
   File /r webapps\manager
-  SetOutPath $INSTDIR\webapps\ROOT
-  File /r webapps\ROOT\WEB-INF
-  File webapps\ROOT\*.*
+  File /r webapps\ROOT
 
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
@@ -69,7 +67,7 @@ Section "NT Service (NT/2k/XP only)"
   SetOutPath $INSTDIR\bin
   File /oname=tomcat.exe bin\tomcat.exe
   
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Jakarta Tomcat" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Duser.dir="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Apache Tomcat" "$2" -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Duser.dir="$INSTDIR" -start org.apache.catalina.startup.BootstrapService -params start -stop org.apache.catalina.startup.BootstrapService -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
   
   ClearErrors
 
@@ -101,36 +99,36 @@ Section "Tomcat 4.0 Start Menu Group"
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "JavaHome"
 
-  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.0"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Tomcat Home Page.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Tomcat Home Page.lnk" \
                  "http://jakarta.apache.org/tomcat"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Uninstall Tomcat 4.0.lnk" \
                  "$INSTDIR\uninst-tomcat4.exe"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Tomcat 4.0 Program Directory.lnk" \
                  "$INSTDIR"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
                  '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
                  '-jar -Duser.dir="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
-  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.0\Configuration"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Server Configuration.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Configuration\Edit Server Configuration.lnk" \
                  notepad "$INSTDIR\conf\server.xml"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Webapp Defaults.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Configuration\Edit Webapp Defaults.lnk" \
                  notepad "$INSTDIR\conf\web.xml"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration\Edit Users.lnk" \
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Configuration\Edit Users.lnk" \
                  notepad "$INSTDIR\conf\tomcat-users.xml"
 
 SectionEnd
@@ -141,23 +139,14 @@ Section "Tomcat 4.0 Documentation"
 
   SectionIn 1 3
   SetOutPath $INSTDIR\webapps
-  File /r webapps\ROOT
+  File /r webapps\tomcat-docs
 
-  IfFileExists "$SMPROGRAMS\Jakarta Tomcat 4.0" 0 NoLinks
+  IfFileExists "$SMPROGRAMS\Apache Tomcat 4.0" 0 NoLinks
 
-  SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation"
+  SetOutPath "$SMPROGRAMS\Apache Tomcat 4.0"
 
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Tomcat Documentation.lnk" \
-                 "$INSTDIR\webapps\ROOT\docs\index.html"
-
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Catalina Javadoc.lnk" \
-                 "$INSTDIR\webapps\ROOT\catalina-javadoc\index.html"
-
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Jasper Javadoc.lnk" \
-                 "$INSTDIR\webapps\ROOT\jasper-javadoc\index.html"
-
-  CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Documentation\Servlet API Javadoc.lnk" \
-                 "$INSTDIR\webapps\ROOT\servletapi-javadoc\index.html"
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 4.0\Tomcat Documentation.lnk" \
+                 "$INSTDIR\webapps\tomcat-docs\index.html"
 
  NoLinks:
 
@@ -201,10 +190,10 @@ Section -post
   ; that any old installer that is readonly is overwritten.
   Delete $INSTDIR\uninst-tomcat4.exe 
 
-  WriteRegStr HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0" \
-                   "DisplayName" "Jakarta Tomcat 4.0 (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0" \
+  WriteRegStr HKLM "SOFTWARE\Apache\Apache Tomcat 4.0" "" $INSTDIR
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.0" \
+                   "DisplayName" "Apache Tomcat 4.0 (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.0" \
                    "UninstallString" '"$INSTDIR\uninst-tomcat4.exe"'
 
   Sleep 500
@@ -237,7 +226,7 @@ FunctionEnd
 
 Function .onInstSuccess
 
-  ExecShell open '$SMPROGRAMS\Jakarta Tomcat 4.0'
+  ExecShell open '$SMPROGRAMS\Apache Tomcat 4.0'
 
 FunctionEnd
 
@@ -247,7 +236,7 @@ Function doUpdate
   ; This function will be called if a previous Tomcat 4.0 installation has been
   ; found
 
-  ReadRegStr $1 HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" ""
+  ReadRegStr $1 HKLM "SOFTWARE\Apache\Apache Tomcat 4.0" ""
   IfErrors NoUpdate
 
   MessageBox MB_YESNO|MB_ICONQUESTION \
@@ -267,9 +256,7 @@ Function doUpdate
   File /r work
   SetOutPath $INSTDIR\webapps
   File /r webapps\manager
-  SetOutPath $INSTDIR\webapps\ROOT
-  File /r webapps\ROOT\WEB-INF
-  File webapps\ROOT\*.*
+  File /r webapps\ROOT
 
   MessageBox MB_OK "Update was successful."
 
@@ -281,7 +268,7 @@ NoUpdate:
 FunctionEnd
 
 
-UninstallText "This will uninstall Jakarta Tomcat 4.0 from your system:"
+UninstallText "This will uninstall Apache Tomcat 4.0 from your system:"
 UninstallExeName uninst-tomcat4.exe
 
 
@@ -300,13 +287,13 @@ Section Uninstall
       DeleteRegValue HKCR ".jsp" "backup_val"
   NoOwn:
 
-  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Jakarta Tomcat"'
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Apache Tomcat"'
   ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0"
-  DeleteRegKey HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0"
-  RMDir /r "$SMPROGRAMS\Jakarta Tomcat 4.0"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 4.0"
+  DeleteRegKey HKLM "SOFTWARE\Apache\Apache Tomcat 4.0"
+  RMDir /r "$SMPROGRAMS\Apache Tomcat 4.0"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
   RMDir /r "$INSTDIR\bin"
@@ -318,6 +305,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\server"
   RMDir /r "$INSTDIR\webapps\manager"
   RMDir /r "$INSTDIR\webapps\ROOT"
+  RMDir /r "$INSTDIR\webapps\tomcat-docs"
   RMDir /r "$INSTDIR\webapps\examples"
   RMDir /r "$INSTDIR\webapps\webdav"
   RMDir "$INSTDIR\webapps"
