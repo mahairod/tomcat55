@@ -37,6 +37,7 @@ class PageInfo {
     private HashMap jspPrefixMapper;
     private HashMap xmlPrefixMapper;
     private HashMap nonCustomTagPrefixMap;
+    private String jspFile;
     private String defaultLanguage = "java";
     private String language;
     private String defaultExtends = Constants.JSP_SERVLET_BASE;
@@ -76,7 +77,9 @@ class PageInfo {
     private Vector pluginDcls;		// Id's for tagplugin declarations
 
 
-    PageInfo(BeanRepository beanRepository) {
+    PageInfo(BeanRepository beanRepository, String jspFile) {
+
+        this.jspFile = jspFile;
 	this.beanRepository = beanRepository;
 	this.taglibsMap = new HashMap();
 	this.jspPrefixMapper = new HashMap();
@@ -118,8 +121,12 @@ class PageInfo {
 	return imports;
     }
 
+    public String getJspFile() {
+        return jspFile;
+    }
+
     public void addDependant(String d) {
-	if (!dependants.contains(d))
+	if (!dependants.contains(d) && !jspFile.equals(d))
             dependants.add(d);
     }
      
