@@ -128,6 +128,10 @@
                is="true"
                type="boolean"/>
       
+    <attribute name="antiJARLocking"
+               description="Take care to not lock jar files"
+               type="boolean" />
+
     <attribute name="antiResourceLocking"
                description="Take care to not lock resources"
                type="boolean" />
