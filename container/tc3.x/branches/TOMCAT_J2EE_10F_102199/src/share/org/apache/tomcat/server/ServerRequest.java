@@ -120,7 +120,8 @@ public class ServerRequest extends RequestImpl {
             return;
 	}
 
-	headers.read(sis);	
+	if(protocol!=null)
+	    headers.read(sis);	
 	processCookies();
 
 	contentLength = headers.getIntHeader("content-length");
