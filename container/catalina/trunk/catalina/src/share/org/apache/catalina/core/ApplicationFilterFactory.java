@@ -156,10 +156,6 @@ public final class ApplicationFilterFactory {
         
         if (attribute != null){
             requestPath = attribute.toString();
-            int semicolon = requestPath.indexOf(";");
-            if (semicolon >= 0) {
-                requestPath = requestPath.substring(0, semicolon);
-            }
         }
         
         HttpServletRequest hreq = null;
