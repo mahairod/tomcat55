@@ -48,10 +48,6 @@ Bugs That Must Be Addressed Before Final Release:
 
 Catalina    2883    Error page for 401 error code is not populated
 
-Catalina    3093    Base64.decode returns extra 0's at end of array
-
-Catalina    3232    Cookie values are URLDecoded but not URLEncoded
-
 Catalina    3292    Class reloading fails
 
 Connectors  1788    mod_webapp errors on Win2k
