@@ -112,6 +112,20 @@ public class SSLServerSocketFactory
 
 
     /**
+     * The name of our protocol handler package for the "https:" protocol.
+     */
+    private static final String PROTOCOL_HANDLER =
+        "com.sun.net.ssl.internal.www.protocol";
+
+
+    /**
+     * The name of the system property containing a "|" delimited list of
+     * protocol handler packages.
+     */
+    private static final String PROTOCOL_PACKAGES =
+        "java.protocol.handler.pkgs";
+
+    /**
      * The configured socket factory.
      */
     private javax.net.ssl.SSLServerSocketFactory sslProxy = null;
@@ -308,8 +322,24 @@ public class SSLServerSocketFactory
      */
     private synchronized void initialize() throws IOException {
 
+        initHandler();
         initKeyStore();
         initProxy();
+
+    }
+
+
+    /**
+     * Register our URLStreamHandler for the "https:" protocol.
+     */
+    private void initHandler() {
+
+        String packages = System.getProperty(PROTOCOL_PACKAGES);
+        if (packages == null)
+            packages = PROTOCOL_HANDLER;
+        else if (packages.indexOf(PROTOCOL_HANDLER) < 0)
+            packages += "|" + PROTOCOL_HANDLER;
+        System.setProperty(PROTOCOL_PACKAGES, packages);
 
     }
 
