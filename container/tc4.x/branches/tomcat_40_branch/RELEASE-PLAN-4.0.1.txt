@@ -39,19 +39,21 @@ release, please submit a bug report as quickly as possible.
 Bugs That Must Be Addressed Before Final Release:
 ------------------------------------------------
 
+Catalina    xxxx    Sign the release.
+
 Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
-                    (likely to be the same issue as 1788)
+                    (unconfirmed bug).
 
 Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4,
-                    and WebDAV.
+                    and WebDAV (unconfirmed bug).
 
 Catalina    3770    HttpSessionListener.sessionCreated() called twice for each
-                    session.
+                    session (under investigation).
 
 Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug may be
                     invalid).
 
-Catalina    3993    j_security_check gives 403 error.
+Catalina    3993    j_security_check gives 403 error (bug may be invalid).
 
 Catalina    4043    gotCatalinaHome and gotCatalinaBase labels in catalina.bat
                     indistinguishable for Windows 98 (unconfirmed bug).
@@ -60,13 +62,7 @@ Catalina    4043    gotCatalinaHome and gotCatalinaBase labels in catalina.bat
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
 
-Catalina    xxxx    Configuration files are packaged with DOS-style EOLs.
-
 Catalina    xxxx    Update localization bundles (Spanish and Japanese).
-
-Jasper      3668    Validation error reporting.
-
-Jasper      3704    Forward errors not reported when response is committed.
 
 Catalina    3953    If context is listed in server.xml then webapp servlets 
                     are loaded twice.
@@ -75,6 +71,9 @@ Catalina    3990    JNDI/LDAP Realm password authentication process.
 
 Connectors  4042    Webapp component requires Port directive versus Listen 
                     directive.
+
+Catalina    4083    Bad performance when using Cocoon 2 (likely to be 
+                    postponed).
 
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):

@@ -62,12 +62,18 @@ BUG FIXES AND IMPROVEMENTS:
 Generic Bug Fixes:
 ------------------
 
+Catalina.bat: Fix the path used for jsse.jar.
+
+Build.xml: Fixes for the DOS style CRLF problems.
+
 
 ------------------
 Catalina Bug Fixes:
 ------------------
 
 StandardContext: Don't start the context when the doc base doesn't exist.
+
+Documentation: Fixes in jndi-resources-howto.xml.
 
 
 ----------------
@@ -91,6 +97,9 @@ Bugzilla Bugs Resolved:
         in a fatal translation error if the class is abstract, an interface, 
         or a class without a public no-arg constructor.
 4023    Exceptions that terminate engine should be saved in a log.
+4067    jndi-resources-howto.xml fixes.
+4078    "%JSSE_HOME%\jsse.jar" should be "%JSSE_HOME%\lib\jsse.jar" 
+        in catalina.bat.
 
 
 ============================
@@ -256,6 +265,9 @@ and neither does IBM JDK for Linux.
 
 The problems can be fixed by reducing the default stack size. At bash shell, 
 do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
+
+GLIBC 2.2 / Linux 2.4 users should also define an environment variable:
+export LD_ASSUME_KERNEL=2.2.5
 
 
 
