@@ -1297,7 +1297,8 @@ public class WebappLoader
             }
 
             // Handle a need for reloading
-            notifyContext();
+            if (started)
+                notifyContext();
             break;
 
         }
