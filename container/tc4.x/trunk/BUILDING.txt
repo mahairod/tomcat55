@@ -79,7 +79,7 @@ process. The 1.4 release is now required.
 
   http://xml.apache.org/dist/xerces-j/
 
-  (Tomcat was tested with "Xerces-J-bin-1.4.3.zip")
+  (Tomcat was tested with "Xerces-J-bin.1.4.3.zip")
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory (conventionally named
