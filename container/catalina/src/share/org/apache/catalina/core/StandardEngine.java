@@ -402,9 +402,11 @@ public class StandardEngine
         if( oname==null ) {
             // not registered in JMX yet - standalone mode
             try {
-                domain=getName();
+                if (domain==null) {
+                    domain=getName();
+                }
                 log.info( "Register " + domain );
-                oname=new ObjectName(domain + ":type=Engine");
+                oname=new ObjectName(domain + ":type=Engine,name="+getName());
                 controller=oname;
                 Registry.getRegistry().registerComponent(this, oname, null);
             } catch( Throwable t ) {
@@ -573,8 +575,9 @@ public class StandardEngine
     }
 
     public ObjectName getParentName() throws MalformedObjectNameException {
+        String name = getService().getName();
         ObjectName serviceName=new ObjectName(domain +
-                        ":type=Service");
+                        ":type=Service,serviceName="+name);
         return serviceName;                
     }
     
@@ -583,7 +586,7 @@ public class StandardEngine
     {
         if( log.isDebugEnabled())
             log.debug("Create ObjectName " + domain + " " + parent );
-        return new ObjectName( domain + ":type=Engine");
+        return new ObjectName( domain + ":type=Engine,name="+getName());
     }
 
     
@@ -597,5 +600,18 @@ public class StandardEngine
         }
         
     }
+    
+    public String getDomain() {
+        if (domain!=null) {
+            return domain;
+        } else { 
+            return getName();
+        }
+    }
+    
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+    
 }
                                                           
