@@ -109,7 +109,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public final class FileStore
-    implements Lifecycle, Runnable, Store {
+    implements Store {
 
 
     // ----------------------------------------------------- Constants
@@ -125,16 +125,11 @@ public final class FileStore
 
 
     /**
-     * The interval (in seconds) between checks for expired sessions.
-     */
-    private int checkInterval = 60;
-
-
-    /**
      * The pathname of the directory in which Sessions are stored.
      * Relative to the temp directory for the web application.
      */
     private String directory = ".";
+
 
     /**
      * A File representing the directory in which Sessions are stored.
@@ -149,12 +144,6 @@ public final class FileStore
 
 
     /**
-     * The lifecycle event support for this component.
-     */
-    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
-
-
-    /**
      * The string manager for this package.
      */
     private StringManager sm =
@@ -162,27 +151,9 @@ public final class FileStore
 
 
     /**
-     * Has this component been started yet?
-     */
-    private boolean started = false;
-
-
-    /**
      * The property change support for this component.
      */
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-
-    /**
-     * The background thread.
-     */
-    private Thread thread = null;
-
-
-    /**
-     * The background thread completion semaphore.
-     */
-    private boolean threadDone = false;
 
 
     /**
@@ -197,39 +168,7 @@ public final class FileStore
     protected int debug = 0;
 
 
-    /**
-     * Name to register for the background thread.
-     */
-    private String threadName = "FileStore";
-
-
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the check interval (in seconds) for this Manager.
-     */
-    public int getCheckInterval() {
-
-        return (this.checkInterval);
-
-    }
-
-
-    /**
-     * Set the check interval (in seconds) for this Manager.
-     *
-     * @param checkInterval The new check interval
-     */
-    public void setCheckInterval(int checkInterval) {
-
-        int oldCheckInterval = this.checkInterval;
-        this.checkInterval = checkInterval;
-        support.firePropertyChange("checkInterval",
-                                   new Integer(oldCheckInterval),
-                                   new Integer(this.checkInterval));
-
-    }
 
 
     /**
@@ -495,6 +434,7 @@ public final class FileStore
 
     }
     
+
     /**
      * Remove a property change listener from this component.
      *
@@ -548,82 +488,6 @@ public final class FileStore
     }
 
 
-    // ------------------------------------------------------ Lifecycle Methods
-
-
-    /**
-     * Add a lifecycle event listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.addLifecycleListener(listener);
-
-    }
-
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     *
-     * @param listener The listener to add
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.removeLifecycleListener(listener);
-
-    }
-
-
-    /**
-     * Prepare for the beginning of active use of the public methods of this
-     * component.  This method should be called after <code>configure()</code>,
-     * and before any of the public methods of the component are utilized.
-     *
-     * @exception IllegalStateException if this component has already been
-     *  started
-     * @exception LifecycleException if this component detects a fatal error
-     *  that prevents this component from being used
-     */
-    public void start() throws LifecycleException {
-
-        // Validate and update our current component state
-        if (started)
-            throw new LifecycleException
-                (sm.getString("fileStore.alreadyStarted"));
-        lifecycle.fireLifecycleEvent(START_EVENT, null);
-        started = true;
-
-        // Start the background reaper thread
-        threadStart();
-
-    }
-
-
-    /**
-     * Gracefully terminate the active use of the public methods of this
-     * component.  This method should be the last one called on a given
-     * instance of this component.
-     *
-     * @exception IllegalStateException if this component has not been started
-     * @exception LifecycleException if this component detects a fatal error
-     *  that needs to be reported
-     */
-    public void stop() throws LifecycleException {
-
-        // Validate and update our current component state
-        if (!started)
-            throw new LifecycleException
-                (sm.getString("fileStore.notStarted"));
-        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-        started = false;
-
-        // Stop the background reaper thread
-        threadStop();
-
-    }
-
-
     /**
      * Log a message on the Logger associated with our Container (if any).
      *
@@ -636,13 +500,13 @@ public final class FileStore
         if (container != null)
             logger = container.getLogger();
         if (logger != null)
-            logger.log("Manager[" + container.getName() + "]: "
+            logger.log("FileStore[" + container.getName() + "]: "
                        + message);
         else {
             String containerName = null;
             if (container != null)
                 containerName = container.getName();
-            System.out.println("Manager[" + containerName
+            System.out.println("FileStore[" + containerName
                                + "]: " + message);
         }
 
@@ -672,13 +536,6 @@ public final class FileStore
         }
         return (file);
 
-// FIXME: It would be nice to keep this check, but
-// it doesn't work under Windows on paths that start
-// with a drive letter.
-//        if (!file.isAbsolute())
-//            return (null);
-//        return (file);
-
     }
 
     /**
@@ -702,121 +559,6 @@ public final class FileStore
 
     }
                 
-    /**
-     * Invalidate all sessions that have expired.
-     */
-    private void processExpires() {
-    
-        if(!started)
-            return;
-
-        long timeNow = System.currentTimeMillis();
-        String[] keys = null;
-        
-        try {
-            keys = keys();
-        } catch (IOException e) {
-            log (e.toString());
-            e.printStackTrace();
-            return;
-        }
-        
-        for (int i = 0; i < keys.length; i++) {
-            try {
-                StandardSession session = (StandardSession) load(keys[i]);
-                if (!session.isValid())
-                    continue;
-                int maxInactiveInterval = session.getMaxInactiveInterval();
-                if (maxInactiveInterval < 0)
-                    continue;
-                int timeIdle = // Truncate, do not round up
-                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-                if (timeIdle >= maxInactiveInterval) {
-                    session.expire();
-                    remove(session.getId());
-                }
-            } catch (IOException e) {
-                    log (e.toString());
-                    e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                    log (e.toString());
-                    e.printStackTrace();
-            }
-        }
-
-    }
-
-
-    /**
-     * Sleep for the duration specified by the <code>checkInterval</code>
-     * property.
-     */
-    private void threadSleep() {
-
-        try {
-            Thread.sleep(checkInterval * 1000L);
-        } catch (InterruptedException e) {
-            ;
-        }
-
-    }
-
-
-    /**
-     * Start the background thread that will periodically check for
-     * session timeouts.
-     */
-    private void threadStart() {
-
-        if (thread != null)
-            return;
-
-        threadDone = false;
-        thread = new Thread(this, threadName);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-
-    /**
-     * Stop the background thread that is periodically checking for
-     * session timeouts.
-     */
-    private void threadStop() {
-
-        if (thread == null)
-            return;
-
-        threadDone = true;
-        thread.interrupt();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        thread = null;
-
-    }
-
-
-    // ------------------------------------------------------ Background Thread
-
-
-    /**
-     * The background thread that checks for session timeouts and shutdown.
-     */
-    public void run() {
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-            threadSleep();
-            processExpires();
-        }
-
-    }
-
     // -------------------------------------------------------- Private Classes
 
 
