@@ -66,11 +66,22 @@ if [ "$1" = "debug" ] ; then
 
   shift
   pushd $CATALINA_HOME
-  jdb \
-     -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
-     -Xbootclasspath:$BP \
-     -classpath $CP -Dcatalina.home=$CATALINA_HOME \
-     org.apache.catalina.startup.Bootstrap "$@" start
+  if [ "$1" = "-security" ] ; then
+    shift
+    jdb \
+       $CATALINA_OPTS \
+       -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
+       -Xbootclasspath:$BP \
+       -classpath $CP -Dcatalina.home=$CATALINA_HOME \
+       org.apache.catalina.startup.Bootstrap "$@" start
+  else
+    jdb \
+       $CATALINA_OPTS \
+       -sourcepath ../../jakarta-tomcat-4.0/catalina/src/share \
+       -Xbootclasspath:$BP \
+       -classpath $CP -Dcatalina.home=$CATALINA_HOME \
+       org.apache.catalina.startup.Bootstrap "$@" start
+  fi
   popd
 
 elif [ "$1" = "embedded" ] ; then
@@ -95,18 +106,39 @@ elif [ "$1" = "env" ] ; then
 elif [ "$1" = "run" ] ; then
 
   shift
-  java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
-   -Dcatalina.home=$CATALINA_HOME \
-   org.apache.catalina.startup.Bootstrap "$@" start
+  if [ "$1" = "-security" ] ; then
+    echo Using Security Manager
+    shift
+    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+     -Djava.security.manager \
+     -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
+     -Dcatalina.home=$CATALINA_HOME \
+     org.apache.catalina.startup.Bootstrap "$@" start
+  else
+    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+     -Dcatalina.home=$CATALINA_HOME \
+     org.apache.catalina.startup.Bootstrap "$@" start
+  fi
 
 elif [ "$1" = "start" ] ; then
 
   shift
   touch $CATALINA_HOME/logs/catalina.out
-  java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
-   -Dcatalina.home=$CATALINA_HOME \
-   org.apache.catalina.startup.Bootstrap "$@" start \
-   >> $CATALINA_HOME/logs/catalina.out 2>&1 &
+  if [ "$1" = "-security" ] ; then
+    echo Using Security Manager
+    shift
+    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+     -Djava.security.manager \
+     -Djava.security.policy==$CATALINA_HOME/conf/catalina.policy \
+     -Dcatalina.home=$CATALINA_HOME \
+     org.apache.catalina.startup.Bootstrap "$@" start \
+     >> $CATALINA_HOME/logs/catalina.out 2>&1 &
+  else
+    java $CATALINA_OPTS -Xbootclasspath:$BP -classpath $CP \
+     -Dcatalina.home=$CATALINA_HOME \
+     org.apache.catalina.startup.Bootstrap "$@" start \
+     >> $CATALINA_HOME/logs/catalina.out 2>&1 &
+  fi
 
 elif [ "$1" = "stop" ] ; then
 
@@ -119,11 +151,14 @@ else
 
   echo "Usage: catalina.sh ( env | run | start | stop)"
   echo "Commands:"
-  echo "  debug - Start Catalina in a debugger"
-  echo "  env -   Set up environment variables that Catalina would use"
-  echo "  run -   Start Catalina in the current window"
-  echo "  start - Start Catalina in a separate window"
-  echo "  stop -  Stop Catalina"
+  echo "  debug             Start Catalina in a debugger"
+  echo "  debug -security   Debug Catalina with a security manager"
+  echo "  env               Set up environment variables that would be used"
+  echo "  run               Start Catalina in the current window"
+  echo "  run -security     Start in the current window with security manager"
+  echo "  start             Start Catalina in a separate window"
+  echo "  start -security   Start in a separate window with security manager"
+  echo "  stop -            Stop Catalina"
   exit 1
 
 fi

@@ -69,12 +69,20 @@ goto cleanup
 goto finish
 
 :doRun
-java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+if "%2" == "-security" goto doRunSecure
+java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+goto cleanup
+:doRunSecure
+java %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
-
 :doStart
-start java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home=%CATALINA_HOME% org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+if "%2" == "-security" goto doStartSecure
+start java %CATALINA_OPTS% -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %2 %3 %4 %5 %6 %7 %8 %9 start
+goto cleanup
+:doStartSecure
+echo Using Security Manager
+start java %CATALINA_OPTS% -Djava.security.manager -Djava.security.policy=="%CATALINA_HOME%/conf/catalina.policy" -Xbootclasspath:%BP% -Dcatalina.home="%CATALINA_HOME%" org.apache.catalina.startup.Bootstrap %3 %4 %5 %6 %7 %8 %9 start
 goto cleanup
 
 :doStop
