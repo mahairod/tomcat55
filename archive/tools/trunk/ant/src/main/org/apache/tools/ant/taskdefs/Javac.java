@@ -75,8 +75,7 @@ public class Javac extends Task {
 
 	String compiler = project.getProperty("build.compiler");
 	if (compiler == null) {
-	    String javaVersion = System.getProperty("java.version");
-	    if (javaVersion.startsWith("1.3")) {
+	    if (Project.getJavaVersion().startsWith("1.3")) {
 		compiler = "modern";
 	    } else {
 		compiler = "classic";
@@ -192,10 +191,7 @@ public class Javac extends Task {
 	argList.addElement(destDir.getAbsolutePath());
 	argList.addElement("-classpath");
 	// Just add "sourcepath" to classpath ( for JDK1.1 )
-        // Note: SGI JDK 1.1.x has java.version of "3.1 (Sun 1.1.x)"
-	String javaVersion = System.getProperty("java.version");
-	if (javaVersion.startsWith("1.1") ||
-               javaVersion.indexOf("Sun 1.1") != -1) {
+	if (Project.getJavaVersion().startsWith("1.1")) {
 	    argList.addElement(classpath + File.pathSeparator +
                                srcDir.getAbsolutePath());
 	} else {

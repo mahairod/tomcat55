@@ -22,6 +22,8 @@ public class Project {
     public static final int MSG_INFO = 2;
     public static final int MSG_VERBOSE = 3;
 
+    private static String javaVersion;
+
     private String name;
     private PrintStream out = System.out;
     private int msgOutputLevel = MSG_INFO;
@@ -118,6 +120,32 @@ public class Project {
 	return baseDir;
     }
     
+
+    public static String getJavaVersion() {
+        if (javaVersion != null) {
+            return javaVersion;
+        }
+
+        // Determine the Java version by looking at available classes
+        // java.lang.StrictMath was introduced in JDK 1.3
+        // java.lang.ThreadLocal was introduced in JDK 1.2
+        // java.lang.Void was introduced in JDK 1.1
+        // Count up version until a NoClassDefFoundError ends the try
+        try {
+            javaVersion = "1.0";
+            Class.forName("java.lang.Void");
+            javaVersion = "1.1";
+            Class.forName("java.lang.ThreadLocal");  
+            javaVersion = "1.2";
+            Class.forName("java.lang.StrictMath");
+            javaVersion = "1.3";
+        }
+        catch (Throwable t) {
+        }
+
+        return javaVersion;
+    }
+
     public void addTaskDefinition(String taskName, Class taskClass) {
 	String msg = " +User task: " + taskName + "     " +
 	    taskClass.getName();

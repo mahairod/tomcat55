@@ -33,8 +33,7 @@ public class Rmic extends Task {
         
         // in jdk 1.2, the system classes are not on the visible classpath.
         
-        String javaversion = System.getProperty("java.version");        
-        if (javaversion.startsWith("1.2")) {
+        if (Project.getJavaVersion().startsWith("1.2")) {
             String bootcp = System.getProperty("sun.boot.class.path");
             if (bootcp != null) {
                 classpath.append(pathsep);
