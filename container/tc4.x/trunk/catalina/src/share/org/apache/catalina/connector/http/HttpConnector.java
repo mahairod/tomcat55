@@ -839,7 +839,9 @@ public final class HttpConnector
 
         //        if (debug >= 2)
         //            log("recycle: Recycling processor " + processor);
-        processors.push(processor);
+        synchronized (processors) {
+            processors.push(processor);
+        }
 
     }
 
@@ -1035,7 +1037,7 @@ public final class HttpConnector
                     // If reopening fails, exit
                     synchronized (threadSync) {
                         if (started && !stopped)
-                            log("accept: ", e);
+                            log("accept error: ", e);
                         if (!stopped) {
                             //                    if (debug >= 3)
                             //                        log("run: Closing server socket");
