@@ -122,14 +122,8 @@ public final class ApplicationFilterFactory {
      * @param servlet The servlet instance to be wrapped
      */
     public ApplicationFilterChain createFilterChain(ServletRequest request,
-                                        Wrapper wrapper, int dispatcher) {
+                                        Wrapper wrapper, Servlet servlet, int dispatcher) {
 
-        Servlet servlet = null;
-        try {
-            servlet = ((StandardWrapper)wrapper).allocate();
-        } catch (ServletException se) {
-           // FIXME handle this properly here
-        }
         HttpServletRequest hreq = null;
         if (request instanceof HttpServletRequest) hreq = (HttpServletRequest)request;
         // If there is no servlet to execute, return null
