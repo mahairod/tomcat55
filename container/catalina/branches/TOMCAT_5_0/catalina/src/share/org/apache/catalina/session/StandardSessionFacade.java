@@ -27,6 +27,10 @@ import javax.servlet.http.HttpSessionContext;
 
 /**
  * Facade for the StandardSession object.
+ * <p>
+ * Please note that two sessions are considered equal
+ * only if they are "reference-equal." There is no equals()
+ * method implementation.
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$

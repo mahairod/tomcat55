@@ -67,6 +67,9 @@ import org.apache.catalina.util.StringManager;
  * <b>IMPLEMENTATION NOTE</b>:  If you add fields to this class, you must
  * make sure that you carry them over in the read/writeObject methods so
  * that this class is properly serialized.
+ * <p>
+ * Please note two sessions are only considered equal if they are
+ * "reference-equal."  There is no equals() method implementation.
  *
  * @author Craig R. McClanahan
  * @author Sean Legassick

@@ -95,6 +95,9 @@
       <fix>
         <bug>30762</bug>: Servlet#destroy was called before contextDestroyed. (yoavs)
       </fix>
+      <fix>
+        <bug>30650</bug>: Added explicit comments on session equals() implementation. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
