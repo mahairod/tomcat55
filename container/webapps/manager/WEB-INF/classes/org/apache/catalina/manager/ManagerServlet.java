@@ -784,6 +784,13 @@ public class ManagerServlet
             return;
         }
         
+        if (config != null && (config.startsWith("file:"))) {
+            config = config.substring("file:".length());
+        }
+        if (war != null && (war.startsWith("file:"))) {
+            war = war.substring("file:".length());
+        }
+        
         try {
             if (!isServiced(path)) {
                 addServiced(path);
@@ -792,8 +799,13 @@ public class ManagerServlet
                             new File(configBase, getConfigFile(path) + ".xml"));
                 }
                 if (war != null) {
-                    copy(new File(war), 
+               	    if (war.endsWith(".war")) {
+                        copy(new File(war), 
                             new File(getAppBase(), getDocBase(path) + ".war"));
+                    } else {
+                        copy(new File(war), 
+                            new File(getAppBase(), getDocBase(path)));
+                    }
                 }
                 check(path);
                 removeServiced(path);
@@ -1509,42 +1521,77 @@ public class ManagerServlet
 
 
     /**
-     * Copy a file.
+     * Copy the specified file or directory to the destination.
+     *
+     * @param src File object representing the source
+     * @param dest File object representing the destination
      */
-    private boolean copy(File src, File dest) {
-        FileInputStream is = null;
-        FileOutputStream os = null;
-        try {
-            is = new FileInputStream(src);
-            os = new FileOutputStream(dest);
-            byte[] buf = new byte[4096];
-            while (true) {
-                int len = is.read(buf);
-                if (len < 0)
-                    break;
-                os.write(buf, 0, len);
-            }
-            is.close();
-            os.close();
-        } catch (IOException e) {
-            return false;
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (Exception e) {
-                // Ignore
-            }
-            try {
-                if (os != null) {
-                    os.close();
-                }
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
-        return true;
+    public static boolean copy(File src, File dest) {
+        return copyInternal(src, dest, new byte[4096]);
     }
 
+    
+    /**
+     * Copy the specified file or directory to the destination.
+     *
+     * @param src File object representing the source
+     * @param dest File object representing the destination
+     */
+    public static boolean copyInternal(File src, File dest, byte[] buf) {
+        
+        boolean result = true;
+        
+        String files[] = null;
+        if (src.isDirectory()) {
+            files = src.list();
+            result = dest.mkdir();
+        } else {
+            files = new String[1];
+            files[0] = "";
+        }
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; (i < files.length) && result; i++) {
+            File fileSrc = new File(src, files[i]);
+            File fileDest = new File(dest, files[i]);
+            if (fileSrc.isDirectory()) {
+                result = copyInternal(fileSrc, fileDest, buf);
+            } else {
+                FileInputStream is = null;
+                FileOutputStream os = null;
+                try {
+                    is = new FileInputStream(fileSrc);
+                    os = new FileOutputStream(fileDest);
+                    int len = 0;
+                    while (true) {
+                        len = is.read(buf);
+                        if (len == -1)
+                            break;
+                        os.write(buf, 0, len);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    result = false;
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                    if (os != null) {
+                        try {
+                            os.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+        
+    }
+    
+    
 }
