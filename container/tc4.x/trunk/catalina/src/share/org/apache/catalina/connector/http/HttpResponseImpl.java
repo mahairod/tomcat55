@@ -80,6 +80,7 @@ import org.apache.catalina.connector.HttpResponseBase;
  * @author Craig R. McClanahan
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class HttpResponseImpl

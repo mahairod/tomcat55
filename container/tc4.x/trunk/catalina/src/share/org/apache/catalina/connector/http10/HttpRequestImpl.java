@@ -74,6 +74,7 @@ import org.apache.catalina.connector.HttpRequestBase;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class HttpRequestImpl

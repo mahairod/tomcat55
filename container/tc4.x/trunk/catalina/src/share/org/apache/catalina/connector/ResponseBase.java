@@ -90,6 +90,7 @@ import org.apache.catalina.util.StringManager;
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public abstract class ResponseBase

@@ -70,6 +70,7 @@ package org.apache.catalina.connector.http;
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class DefaultHeaders {

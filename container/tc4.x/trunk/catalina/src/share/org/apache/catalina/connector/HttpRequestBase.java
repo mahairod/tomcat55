@@ -103,6 +103,7 @@ import org.apache.catalina.util.StringParser;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public class HttpRequestBase

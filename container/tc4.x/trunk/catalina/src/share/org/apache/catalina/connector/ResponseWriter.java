@@ -80,6 +80,7 @@ import java.io.PrintWriter;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public class ResponseWriter extends PrintWriter {

@@ -73,6 +73,7 @@ import org.apache.catalina.connector.HttpResponseBase;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class HttpResponseImpl

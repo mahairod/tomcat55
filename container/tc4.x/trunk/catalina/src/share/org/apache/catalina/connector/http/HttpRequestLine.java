@@ -76,6 +76,7 @@ import org.apache.catalina.connector.HttpRequestBase;
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class HttpRequestLine {

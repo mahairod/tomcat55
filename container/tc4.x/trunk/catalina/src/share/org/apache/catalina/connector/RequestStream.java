@@ -80,6 +80,7 @@ import org.apache.catalina.util.StringManager;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public class RequestStream

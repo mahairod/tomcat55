@@ -72,6 +72,7 @@ import org.apache.catalina.connector.RequestStream;
  *
  *
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
+ * @deprecated
  */
 public class HttpRequestStream extends RequestStream {
 

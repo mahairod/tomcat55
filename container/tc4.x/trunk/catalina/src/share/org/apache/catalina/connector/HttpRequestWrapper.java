@@ -79,6 +79,7 @@ import org.apache.catalina.HttpRequest;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public abstract class HttpRequestWrapper

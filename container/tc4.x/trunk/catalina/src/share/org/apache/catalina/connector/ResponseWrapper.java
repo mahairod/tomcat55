@@ -86,6 +86,7 @@ import org.apache.catalina.Wrapper;
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 public abstract class ResponseWrapper implements Response {

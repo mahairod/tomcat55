@@ -109,6 +109,7 @@ import org.apache.catalina.util.StringParser;
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @version $Revision$ $Date$
+ * @deprecated
  */
 
 final class HttpProcessor
