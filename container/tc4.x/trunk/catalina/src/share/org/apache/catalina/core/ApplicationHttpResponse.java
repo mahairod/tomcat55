@@ -123,7 +123,9 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 
 	super(response);
 	setIncluded(included);
+        /*
 	calculateParent();
+        */
 
     }
 
@@ -148,7 +150,9 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
     /**
      * The parent object that is actually an internal response object.
      */
+    /*
     protected HttpServletResponse parent = null;
+    */
 
 
     /**
@@ -395,6 +399,7 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
      * @exception IllegalArgumentException if a parent Response cannot be
      *  identified
      */
+    /*
     void calculateParent() {
 
 	HttpServletResponse response = (HttpServletResponse) getResponse();
@@ -420,17 +425,20 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
 	this.parent = response;
 
     }
+    */
 
 
     /**
      * Get the parent of the wrapped servlet response that is actually an
      * internal Response implementation.
      */
+    /*
     HttpServletResponse getParent() {
 
 	return (this.parent);
 
     }
+    */
 
 
     /**
@@ -466,7 +474,9 @@ class ApplicationHttpResponse extends HttpServletResponseWrapper {
     void setResponse(HttpServletResponse response) {
 
 	;	// FIXME - cannot change the private "response" variable
+        /*
 	calculateParent();
+        */
 
     }
 

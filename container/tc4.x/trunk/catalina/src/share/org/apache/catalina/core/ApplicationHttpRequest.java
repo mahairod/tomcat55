@@ -161,7 +161,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     /**
      * The parent object that is actually an internal request object.
      */
+    /*
     protected HttpServletRequest parent = null;
+    */
 
 
     /**
@@ -412,6 +414,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * @exception IllegalArgumentException if a parent Request cannot be
      *  identified
      */
+    /*
     void calculateParent() {
 
 	HttpServletRequest request = (HttpServletRequest) getRequest();
@@ -437,6 +440,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	this.parent = request;
 
     }
+    */
 
 
     /**
@@ -465,11 +469,13 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * Get the parent of the wrapped servlet request that is actually an
      * internal Request implementation.
      */
+    /*
     HttpServletRequest getParent() {
 
 	return (this.parent);
 
     }
+    */
 
 
     /**
@@ -560,7 +566,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     void setRequest(HttpServletRequest request) {
 
 	;	// FIXME - cannot change the private "request" variable
+        /*
 	calculateParent();
+        */
 
 	// Initialize the attributes for this request
 	synchronized (attributes) {

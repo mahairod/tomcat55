@@ -496,7 +496,7 @@ final class ApplicationDispatcher
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // -------------------------------------------------------- Package Methods
 
 
     /**
@@ -628,7 +628,7 @@ final class ApplicationDispatcher
      *
      * @param message Message to be logged
      */
-    private void log(String message) {
+    void log(String message) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)
@@ -647,7 +647,7 @@ final class ApplicationDispatcher
      * @param message Message to be logged
      * @param throwable Associated exception
      */
-    private void log(String message, Throwable throwable) {
+    void log(String message, Throwable throwable) {
 
 	Logger logger = context.getLogger();
 	if (logger != null)

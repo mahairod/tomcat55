@@ -137,7 +137,9 @@ class ApplicationRequest extends ServletRequestWrapper {
     /**
      * The parent object that is actually an internal request object.
      */
+    /*
     protected ServletRequest parent = null;
+    */
 
 
     /**
@@ -226,7 +228,9 @@ class ApplicationRequest extends ServletRequestWrapper {
     public void setRequest(ServletRequest request) {
 
         super.setRequest(request);
+        /*
 	calculateParent();
+        */
 
 	// Initialize the attributes for this request
 	synchronized (attributes) {
@@ -273,6 +277,7 @@ class ApplicationRequest extends ServletRequestWrapper {
      * @exception IllegalArgumentException if a parent Request cannot be
      *  identified
      */
+    /*
     void calculateParent() {
 
 	ServletRequest request = getRequest();
@@ -297,17 +302,20 @@ class ApplicationRequest extends ServletRequestWrapper {
 	this.parent = request;
 
     }
+    */
 
 
     /**
      * Get the parent of the wrapped servlet request that is actually an
      * internal Request implementation.
      */
+    /*
     ServletRequest getParent() {
 
 	return (this.parent);
 
     }
+    */
 
 
 }
