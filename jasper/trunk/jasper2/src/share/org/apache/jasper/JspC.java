@@ -148,6 +148,7 @@ public class JspC implements Options {
     private static final String SWITCH_WEBAPP_XML = "-webxml";
     private static final String SWITCH_MAPPED = "-mapped";
     private static final String SWITCH_XPOWERED_BY = "-xpoweredBy";
+    private static final String SWITCH_CLASSPATH = "-classpath";
     private static final String SWITCH_DIE = "-die";
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
@@ -288,6 +289,8 @@ public class JspC implements Options {
                 mappedFile = true;
             } else if (tok.equals(SWITCH_XPOWERED_BY)) {
                 xpoweredBy = true;
+            } else if (tok.equals(SWITCH_CLASSPATH)) {
+                setClassPath(nextArg());
             } else if (tok.startsWith(SWITCH_DIE)) {
                 try {
                     dieLevel = Integer.parseInt(
