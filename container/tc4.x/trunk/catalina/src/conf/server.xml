@@ -202,11 +202,8 @@
         -->
 
         <!-- Tomcat Manager Context -->
-        <!-- To use the manager web application, uncomment this section -->
-        <!--
-          <Context path="/manager" docBase="manager" 
-           debug="0" privileged="true"/>
-        -->
+        <Context path="/manager" docBase="manager" 
+         debug="0" privileged="true"/>
 
         <!-- Tomcat Examples Context -->
         <Context path="/examples" docBase="examples" debug="0"
