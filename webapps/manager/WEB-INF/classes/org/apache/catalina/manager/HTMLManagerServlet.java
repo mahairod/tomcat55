@@ -420,8 +420,12 @@ public final class HTMLManagerServlet extends ManagerServlet {
                 args[3] = response.encodeURL
                     (request.getContextPath() +
                      "/html/sessions?path=" + displayPath);
-                args[4] =
-                    new Integer(context.getManager().findSessions().length);
+                if (context.getManager() != null) {
+                    args[4] = new Integer
+                        (context.getManager().findSessions().length);
+                } else {
+                    args[4] = new Integer(0);
+                }
                 writer.print
                     (MessageFormat.format(APPS_ROW_DETAILS_SECTION, args));
 
