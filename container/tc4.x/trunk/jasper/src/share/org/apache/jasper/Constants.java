@@ -244,11 +244,16 @@ public class Constants {
      *                       level. 
      */
     public static final void message(String key, Object[] args, int verbosityLevel) {
-	if (jasperLog == null)
+	if (jasperLog == null) {
 	    jasperLog = Logger.getLogger("JASPER_LOG");
+	    if (jasperLog == null) {
+		jasperLog = Logger.getDefaultLogger();
+	    }
+	}
 
-	if (jasperLog != null)
+	if (jasperLog != null) {
 	    jasperLog.log(getString(key, args), verbosityLevel);
+	}
     }
 
     public static Logger jasperLog = null;
