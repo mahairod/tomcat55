@@ -175,7 +175,12 @@ public class StandardContext
 
     // ----------------------------------------------------- Instance Variables
 
+    /**
+     * The alternate deployment descriptor name.
+     */ 
+     private String altDDName = null;
 
+     
     /**
      * The set of application listener class names configured for this
      * application, in the order they were encountered in the web.xml file.
@@ -785,6 +790,15 @@ public class StandardContext
 
     }
 
+    /**
+     * Set an alternate Deployment Descriptor name.
+     */
+    public void setAltDDName(String altDDName) {
+        this.altDDName = altDDName;
+        if (context != null) {
+            context.setAttribute(Globals.ALT_DD_ATTR,altDDName);
+        }
+    }
 
     /**
      * Set the display name of this web application.
@@ -1119,8 +1133,11 @@ public class StandardContext
      */
     public ServletContext getServletContext() {
 
-        if (context == null)
+        if (context == null) {
             context = new ApplicationContext(getBasePath(), this);
+            if (altDDName != null) 
+                context.setAttribute(Globals.ALT_DD_ATTR,altDDName);
+        }
         return (context);
 
     }
