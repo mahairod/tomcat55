@@ -341,15 +341,15 @@ final class ApplicationDispatcher
     public void forward(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
-        if( System.getSecurityManager() != null ) {
+        if (System.getSecurityManager() != null) {
             try {
                 PrivilegedForward dp = new PrivilegedForward(request,response);
                 AccessController.doPrivileged(dp);
-            } catch( PrivilegedActionException pe) {
+            } catch (PrivilegedActionException pe) {
                 Exception e = pe.getException();
-                if( e.getClass().getName().equals("javax.servlet.ServletException") )
-                    throw (ServletException)e;
-                throw (IOException)e;
+                if (e instanceof ServletException)
+                    throw (ServletException) e;
+                throw (IOException) e;
             }
         } else {
             doForward(request,response);
@@ -478,16 +478,16 @@ final class ApplicationDispatcher
     public void include(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
-        if( System.getSecurityManager() != null ) {
+        if (System.getSecurityManager() != null) {
             try {
                 PrivilegedInclude dp = new PrivilegedInclude(request,response);
                 AccessController.doPrivileged(dp);
-            } catch( PrivilegedActionException pe) {
+            } catch (PrivilegedActionException pe) {
                 Exception e = pe.getException();
                 pe.printStackTrace();
-                if( e.getClass().getName().equals("javax.servlet.ServletException") )
-                    throw (ServletException)e;
-                throw (IOException)e;
+                if (e instanceof ServletException)
+                    throw (ServletException) e;
+                throw (IOException) e;
             }
         } else {
             doInclude(request,response);
