@@ -48,7 +48,7 @@ base.path=/usr/local
 # --------------------------------------------------
 
 
-# ----- Commons Beanutils, version 1.3 or later -----
+# ----- Commons Beanutils, version 1.4 or later -----
 commons-beanutils.home=${base.path}/commons-beanutils-1.4
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
