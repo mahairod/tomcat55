@@ -368,12 +368,14 @@ public final class FormAuthenticator
             request.addLocale((Locale) locales.next());
         }
         request.clearParameters();
-        Iterator paramNames = saved.getParameterNames();
-        while (paramNames.hasNext()) {
-            String paramName = (String) paramNames.next();
-            String paramValues[] =
-              (String[]) saved.getParameterValues(paramName);
-            request.addParameter(paramName, paramValues);
+        if ("POST".equalsIgnoreCase(saved.getMethod())) {
+            Iterator paramNames = saved.getParameterNames();
+            while (paramNames.hasNext()) {
+                String paramName = (String) paramNames.next();
+                String paramValues[] =
+                    (String[]) saved.getParameterValues(paramName);
+                request.addParameter(paramName, paramValues);
+            }
         }
         request.setMethod(saved.getMethod());
         request.setQueryString(saved.getQueryString());
