@@ -18,7 +18,6 @@ package org.apache.catalina.cluster.mcast;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 /**
  * A <b>membership</b> implementation using simple multicast.
  * This is the representation of a multicast membership.

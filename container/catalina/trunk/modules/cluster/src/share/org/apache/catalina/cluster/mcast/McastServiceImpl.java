@@ -257,7 +257,7 @@ public class McastServiceImpl
             while ( doRun ) {
                 try {
                     send();
-                    this.sleep(time);
+                    Thread.sleep(time);
                 } catch ( Exception x ) {
                     log.warn("Unable to send mcast message.",x);
                 }

@@ -30,8 +30,6 @@ package org.apache.catalina.cluster.io;
  */
 
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.io.IOException;
 import org.apache.catalina.cluster.io.XByteBuffer;
 public class Jdk13ObjectReader
 {

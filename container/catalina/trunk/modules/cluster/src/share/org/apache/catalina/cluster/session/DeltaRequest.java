@@ -27,11 +27,9 @@ package org.apache.catalina.cluster.session;
  */
 
 import java.util.LinkedList;
-import javax.servlet.http.HttpSession;
 import java.io.Externalizable;
 import java.security.Principal;
 import org.apache.catalina.realm.GenericPrincipal;
-import org.apache.catalina.cluster.ClusterSession;
 
 
 public class DeltaRequest implements Externalizable {

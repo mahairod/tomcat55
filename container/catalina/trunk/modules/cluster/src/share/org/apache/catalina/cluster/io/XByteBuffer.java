@@ -144,7 +144,7 @@ public class XByteBuffer
 
         while ( start < bufSize ) {
             //first check start header
-            int index = this.firstIndexOf(buf,start,START_DATA);
+            int index = XByteBuffer.firstIndexOf(buf,start,START_DATA);
             //if the header (START_DATA) isn't the first thing or
             //the buffer isn't even 10 bytes
             if ( index != start || ((bufSize-start)<10) ) break;

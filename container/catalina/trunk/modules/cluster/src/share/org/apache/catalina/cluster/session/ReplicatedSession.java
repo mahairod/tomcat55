@@ -41,15 +41,10 @@ package org.apache.catalina.cluster.session;
  *
  */
 import org.apache.catalina.Manager;
-import org.apache.catalina.session.ManagerBase;
-import org.apache.catalina.realm.GenericPrincipal;
-import org.apache.catalina.SessionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.Principal;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class ReplicatedSession extends org.apache.catalina.session.StandardSession
 implements org.apache.catalina.cluster.ClusterSession{

@@ -18,7 +18,6 @@
 package org.apache.catalina.cluster.session;
 
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.catalina.Realm;

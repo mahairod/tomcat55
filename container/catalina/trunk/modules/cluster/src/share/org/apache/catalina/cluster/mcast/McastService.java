@@ -20,7 +20,6 @@ import org.apache.catalina.cluster.MembershipService;
 import java.util.Properties;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
-import java.util.Properties;
 
 /**
  * A <b>membership</b> implementation using simple multicast.
@@ -197,7 +196,7 @@ public class McastService implements MembershipService,MembershipListener {
 
         impl.start(level);
         log.info("Sleeping for "+(Long.parseLong(properties.getProperty("msgFrequency"))*4)+" secs to establish cluster membership");
-        Thread.currentThread().sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
+        Thread.sleep((Long.parseLong(properties.getProperty("msgFrequency"))*4));
 
     }
 
@@ -266,7 +265,7 @@ public class McastService implements MembershipService,MembershipListener {
         p.setProperty("tcpListenHost",args[0]);
         service.setProperties(p);
         service.start();
-        Thread.currentThread().sleep(60*1000*60);
+        Thread.sleep(60*1000*60);
     }
     public int getMcastSoTimeout() {
         return mcastSoTimeout;

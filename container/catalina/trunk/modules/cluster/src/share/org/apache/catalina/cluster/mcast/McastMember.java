@@ -93,9 +93,9 @@ public class McastMember implements Member, java.io.Serializable {
      */
     public java.util.HashMap getMemberProperties() {
         java.util.HashMap map = new java.util.HashMap(2);
-        map.put(this.TCP_LISTEN_HOST,this.host);
-        map.put(this.TCP_LISTEN_PORT,String.valueOf(this.port));
-        map.put(this.MEMBER_NAME,name);
+        map.put(McastMember.TCP_LISTEN_HOST,this.host);
+        map.put(McastMember.TCP_LISTEN_PORT,String.valueOf(this.port));
+        map.put(McastMember.MEMBER_NAME,name);
         return map;
     }
 

@@ -36,7 +36,6 @@ import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -52,7 +51,6 @@ import org.apache.catalina.SessionListener;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
-import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.session.Constants;
 import org.apache.catalina.cluster.ClusterSession;
 import org.apache.catalina.realm.GenericPrincipal;
@@ -440,7 +438,7 @@ public class DeltaSession
      */
     public String getInfo() {
 
-        return (this.info);
+        return (info);
 
     }
 

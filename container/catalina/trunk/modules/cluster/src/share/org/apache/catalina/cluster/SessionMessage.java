@@ -36,8 +36,7 @@ package org.apache.catalina.cluster;
  * </ul>
  *
  */
- import java.security.Principal;
- import org.apache.catalina.cluster.Member;
+
 public interface SessionMessage extends ClusterMessage, java.io.Serializable
 {
 
