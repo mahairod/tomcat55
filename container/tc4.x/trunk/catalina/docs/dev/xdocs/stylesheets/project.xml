@@ -24,6 +24,7 @@
     <menu name="Functional Specs">
         <item name="Default Servlet"       href="fs-default.html"/>
         <item name="Invoker Servlet"       href="fs-invoker.html"/>
+        <item name="JDBC Realm"            href="fs-jdbc-realm.html"/>
         <item name="JNDI Realm"            href="fs-jndi-realm.html"/>
     </menu>
 
