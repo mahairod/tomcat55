@@ -311,8 +311,9 @@ public class TagFileProcessor {
      * handler that it represents is referenced.  The tag file is not compiled
      * here.
      * @param pc the current ParserController used in this compilation
-     * @param tagile the path for the tagfile
-     * @param tagLibInfo the TaglibraryInfo object associated with this TagInfo
+     * @param name the tag name as specified in the TLD
+     * @param tagfile the path for the tagfile
+     * @param tagLibInfo the TagLibraryInfo object associated with this TagInfo
      * @return a TagInfo object assembled from the directives in the tag file.
      */
     public static TagInfo parseTagFile(ParserController pc,
@@ -320,7 +321,6 @@ public class TagFileProcessor {
                                        String tagfile,
 				       TagLibraryInfo tagLibInfo)
                 throws JasperException {
-
 
         Node.Nodes page = null;
 	try {
@@ -342,7 +342,7 @@ public class TagFileProcessor {
      * Compiles and loads a tagfile.
      */
     public static Class loadTagFile(JspCompilationContext ctxt,
-				          String tagFile, TagInfo tagInfo)
+				    String tagFile, TagInfo tagInfo)
 	throws JasperException {
 
 	JspRuntimeContext rctxt = ctxt.getRuntimeContext();

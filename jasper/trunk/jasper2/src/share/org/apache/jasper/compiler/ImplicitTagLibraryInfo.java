@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
+import javax.servlet.jsp.tagext.TagFileInfo;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 
@@ -101,7 +102,8 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 	    err.jspError("jsp.error.invalid.tagdir", tagdir);
 	}
 	
-	// Determine the value of the <short-name> element
+	// Determine the value of the <short-name> subelement of the
+	// "imaginary" <taglib> element
 	if (tagdir.equals(WEB_INF_TAGS)) {
 	    shortname = TAGS_SHORTNAME;
 	} else {
@@ -111,24 +113,30 @@ public class ImplicitTagLibraryInfo extends TagLibraryInfo {
 
 	Set dirList = ctxt.getResourcePaths(tagdir);
 	if (dirList != null) {
-	    Vector tagVector = new Vector();
+	    Vector vec = new Vector();
 	    Iterator it = dirList.iterator();
 	    while (it.hasNext()) {
 		String path = (String) it.next();
-		if (path.endsWith(".tld")) {
+		if (path.endsWith(TLD_SUFFIX)) {
 		    tldFile = path;
 		    break;
-		} else if (path.endsWith(".tag")) {
-		    tagVector.addElement(
-                                    TagFileProcessor.parseTagFile(pc,
-								  shortname,
-								  path,
-								  this)); 
+		} else if (path.endsWith(TAG_FILE_SUFFIX)) {
+		    // use the filename of the tag file, without the .tag
+		    // extension, as the <name> subelement of the "imaginary"
+		    // <tag-file> element
+		    String tagName = path.substring(path.lastIndexOf("/") + 1);
+		    tagName = tagName.substring(0,
+						tagName.lastIndexOf(TAG_FILE_SUFFIX));
+		    TagInfo tagInfo = TagFileProcessor.parseTagFile(pc,
+								    tagName,
+								    path,
+								    this); 
+		    vec.addElement(new TagFileInfo(tagName, path, tagInfo));
 		}
 	    }
 
-	    tags = new TagInfo[tagVector.size()];
-	    tagVector.copyInto (this.tags);
+	    this.tagFiles = new TagFileInfo[vec.size()];
+	    vec.copyInto(this.tagFiles);
 	}
     }
 
