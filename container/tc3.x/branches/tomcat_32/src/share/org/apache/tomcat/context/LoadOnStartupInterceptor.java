@@ -132,7 +132,7 @@ public class LoadOnStartupInterceptor extends BaseInterceptor {
 		    } catch (Exception ee) {
 			String msg = sm.getString("context.loadServlet.e",
 						  servletName);
-			System.out.println(msg);
+			System.out.println(msg+": "+ee.getMessage());
 		    } 
 		}
 	    }
