@@ -77,12 +77,15 @@ import java.net.Socket;
 public class SocketSender implements IDataSender
 {
 
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( org.apache.catalina.cluster.tcp.SimpleTcpCluster.class );
+
     private InetAddress address;
     private int port;
     private Socket sc = null;
     private boolean isSocketConnected = false;
     private boolean suspect;
-    private long ackTimeout = 5*1000;
+    private long ackTimeout = 150*1000;  //15 seconds socket read timeout (for acknowledgement)
     private long keepAliveTimeout = 60*1000; //keep socket open for no more than one min
     private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
     private long keepAliveConnectTime = 0;
@@ -108,7 +111,7 @@ public class SocketSender implements IDataSender
     public void connect() throws java.io.IOException
     {
         sc = new Socket(getAddress(),getPort());
-        //sc.setSoTimeout((int)ackTimeout);
+        sc.setSoTimeout((int)ackTimeout);
         isSocketConnected = true;
         this.keepAliveCount = 0;
         this.keepAliveConnectTime = System.currentTimeMillis();
@@ -129,6 +132,14 @@ public class SocketSender implements IDataSender
         return isSocketConnected;
     }
 
+    private void checkIfDisconnect() {
+        long ctime = System.currentTimeMillis() - this.keepAliveConnectTime;
+        if ( (ctime > this.keepAliveTimeout) ||
+             (this.keepAliveCount >= this.keepAliveMaxRequestCount) ) {
+            disconnect();
+        }
+    }
+
     /**
      * Blocking send
      * @param data
@@ -136,16 +147,10 @@ public class SocketSender implements IDataSender
      */
     public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException
     {
-        long ctime = System.currentTimeMillis() - this.keepAliveConnectTime;
-        if ( (ctime > this.keepAliveTimeout) ||
-             (this.keepAliveCount >= this.keepAliveMaxRequestCount) ) {
-            disconnect();
-        }
+        checkIfDisconnect();
         if ( !isConnected() ) connect();
         try
         {
-
-
             sc.getOutputStream().write(data);
             sc.getOutputStream().flush();
             waitForAck(ackTimeout);
@@ -159,13 +164,20 @@ public class SocketSender implements IDataSender
             waitForAck(ackTimeout);
         }
         this.keepAliveCount++;
+        checkIfDisconnect();
+
     }
 
-    private void waitForAck(long timeout)  throws java.io.IOException,
-        java.net.SocketTimeoutException {
-        int i = sc.getInputStream().read();
-        while ( (i!=-1) && (i!=3) ) {
-            i = sc.getInputStream().read();
+    private void waitForAck(long timeout)  throws java.io.IOException {
+        try {
+            int i = sc.getInputStream().read();
+            while ( (i != -1) && (i != 3)) {
+                i = sc.getInputStream().read();
+            }
+        } catch (java.net.SocketTimeoutException x ) {
+            log.warn("Wasn't able to read acknowledgement from server in "+this.ackTimeout+" ms."+
+                     " Disconnecting socket, and trying again.");
+            throw x;
         }
     }
 
