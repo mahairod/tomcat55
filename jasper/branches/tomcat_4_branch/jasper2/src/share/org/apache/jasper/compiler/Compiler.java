@@ -77,6 +77,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.PatternSet;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
@@ -238,8 +239,8 @@ public class Compiler {
      * Compile the jsp file from the current engine context
      */
     public void generateClass()
-        throws FileNotFoundException, JasperException, Exception
-    {
+        throws FileNotFoundException, JasperException, Exception {
+
         String javaEncoding = ctxt.getOptions().getJavaEncoding();
         String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
@@ -258,17 +259,21 @@ public class Compiler {
 
         // Initializing classpath
         Path path = new Path(project);
-        path.setPath(System.getProperty("java.class.path") + sep
-                     + classpath);
+        path.setPath(System.getProperty("java.class.path"));
+        StringTokenizer tokenizer = new StringTokenizer(classpath, sep);
+        while (tokenizer.hasMoreElements()) {
+            String pathElement = tokenizer.nextToken();
+            File repository = new File(pathElement);
+            path.setLocation(repository);
+        }
 
         // Initializing sourcepath
         Path srcPath = new Path(project);
-        srcPath.setPath(options.getScratchDir().getAbsolutePath());
+        srcPath.setLocation(options.getScratchDir());
 
         // Configure the compiler object
         javac.setEncoding(javaEncoding);
         javac.setClasspath(path);
-        //javac.setDestdir(new File(options.getScratchDir().getAbsolutePath()));
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
@@ -279,7 +284,8 @@ public class Compiler {
         }
 
         // Build includes path
-        javac.setIncludes(ctxt.getJspPath());
+        PatternSet.NameEntry includes = javac.createInclude();
+        includes.setName(ctxt.getJspPath());
 
         try {
             javac.execute();
