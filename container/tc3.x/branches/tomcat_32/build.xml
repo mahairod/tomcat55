@@ -56,6 +56,14 @@
     <chmod perm="+x" file="${tomcat.build}/bin/jspc.sh"/>
     <chmod perm="+x" file="${tomcat.build}/bin/startup.sh"/>
     <chmod perm="+x" file="${tomcat.build}/bin/shutdown.sh"/>
+
+    <!-- Fixups for the Application Developer's Guide -->
+    <fixcrlf srcdir="${tomcat.build}/doc/appdev/sample"
+           includes="**/*.bat" cr="add"/>
+    <fixcrlf srcdir="${tomcat.build}/doc/appdev/sample"
+           includes="build" cr="remove"/>
+    <chmod perm="+x" file="${tomcat.build}/doc/appdev/sample/build"/>
+
   </target>
 
   <!-- ==================== Build tomcat ==================== -->
@@ -214,6 +222,14 @@
     <chmod perm="+x" file="${tomcat.home}/bin/startup.sh"/>
     <chmod perm="+x" file="${tomcat.home}/bin/shutdown.sh"/>
     <chmod perm="+x" file="${tomcat.home}/bin/test-tomcat.sh"/>
+
+    <!-- Fixups for the Application Developer's Guide -->
+    <fixcrlf srcdir="${tomcat.home}/doc/appdev/sample"
+           includes="**/*.bat" cr="add"/>
+    <fixcrlf srcdir="${tomcat.home}/doc/appdev/sample"
+           includes="**/*.sh" cr="remove"/>
+    <chmod perm="+x" file="${tomcat.home}/doc/appdev/sample/build.sh"/>
+
   </target>
 
   <target name="j2ee-dist" depends="j2ee"> 

@@ -3,9 +3,8 @@
 # $Id$
 
 # Identify the custom class path components we need
-CP=$TOMCAT_HOME/classes:$TOMCAT_HOME/lib/ant.jar:$TOMCAT_HOME/lib/xml.jar
-CP=$CP:$TOMCAT_HOME/lib/jasper.jar:$TOMCAT_HOME/lib/servlet.jar
-CP=$CP:$TOMCAT_HOME/lib/webserver.jar
+CP=$TOMCAT_HOME/lib/ant.jar:$TOMCAT_HOME/lib/servlet.jar
+CP=$CP:$JAVA_HOME/lib/tools.jar
 
 # Execute ANT to perform the requested build target
 java -classpath $CP:$CLASSPATH org.apache.tools.ant.Main \

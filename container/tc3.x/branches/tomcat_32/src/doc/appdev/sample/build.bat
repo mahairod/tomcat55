@@ -2,32 +2,14 @@
 rem build.bat -- Build Script for the "Hello, World" Application
 rem $Id$
 
-if "%TOMCAT_HOME%" == "" goto notomcathome
-if "%CLASSPATH%" == "" goto noclasspath
+set _CP=%CP%
 
-:haveclasspath
-set _CLASSPATH=%CLASSPATH%
-set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME\classes
-goto restofclasspath
+rem Identify the custom class path components we need
+set CP=%TOMCAT_HOME%\lib\ant.jar;%TOMCAT_HOME%\lib\servlet.jar
+set CP=%CP%;%JAVA_HOME%\lib\tools.jar
 
-:noclasspath
-set _CLASSPATH=
-set CLASSPATH=%TOMCAT_HOME%\classes
+rem Execute ANT to perform the requird build target
+java -classpath %CP%;%CLASSPATH% org.apache.tools.ant.Main -Dtomcat.home=%TOMCAT_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
-:restofclasspath
-set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\ant.jar
-set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\jasper.jar
-set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\servlet.jar
-set CLASSPATH=%CLASSPATH%;%TOMCAT_HOME%\lib\webserver.jar
-
-rem Execute ANT to perform the requested build target
-java org.apache.tools.ant.Main -Dtomcat.home=%TOMCAT_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
-
-set CLASSPATH=%_CLASSPATH%
-set _CLASSPATH=
-goto end
-:notomcathome
-echo 
-echo you need to set TOMCAT_HOME to build this app
-echo
-:end
+set CP=%_CP%
+set _CP=
