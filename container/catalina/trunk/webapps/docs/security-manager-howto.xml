@@ -105,8 +105,7 @@ permission  org.apache.naming.JndiPermission  "jndi://localhost/examples/*";
     but disallow it from using file access to read any other files (unless
     permissions for those files are explicitly granted).</p>
 
-    <p>If you starts Tomcat with the <code>-nonaming</code> argument, 
-    Tomcat always dynamically creates the following file permission:</p>
+    <p>Also, Tomcat always dynamically creates the following file permission:</p>
 <source>  
 permission java.io.FilePermission "** your application context**", "read";
 </source>  
