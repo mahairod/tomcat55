@@ -97,6 +97,7 @@ import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 
@@ -630,7 +631,7 @@ final class ApplicationDispatcher
             if (queryString != null) {
                 wrequest.setAttribute(Globals.INCLUDE_QUERY_STRING_ATTR,
                                       queryString);
-		wrequest.setQueryParams(queryString);
+                wrequest.setQueryParams(queryString);
             }
             
             wrequest.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
@@ -774,14 +775,27 @@ final class ApplicationDispatcher
             support.fireInstanceEvent(InstanceEvent.AFTER_DISPATCH_EVENT,
                                       servlet, request, response);
             Throwable rootCause = e;
-            while (rootCause instanceof ServletException) {
-                Throwable t = ((ServletException) rootCause).getRootCause();
-                if (t != null) {
-                    rootCause = t;
-                } else {
-                    break;
+            Throwable rootCauseCheck = null;
+
+            // Extra aggressive rootCause finding
+            do {
+                try {
+                    rootCauseCheck = (Throwable)PropertyUtils.getProperty
+                                                (rootCause, "rootCause");
+                    if (rootCauseCheck!=null)
+                        rootCause = rootCauseCheck;
+
+                } catch (ClassCastException ex) {
+                    rootCauseCheck = null;
+                } catch (IllegalAccessException ex) {
+                    rootCauseCheck = null;
+                } catch (NoSuchMethodException ex) {
+                    rootCauseCheck = null;
+                } catch (java.lang.reflect.InvocationTargetException ex) {
+                    rootCauseCheck = null;
                 }
-            }
+            } while (rootCauseCheck != null);
+            
             log(sm.getString("applicationDispatcher.serviceException",
                              wrapper.getName()), rootCause);
             servletException = e;
