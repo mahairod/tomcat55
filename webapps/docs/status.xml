@@ -8,10 +8,59 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Project Status</title>
   </properties>
 
 <body>
+  <section name="Preface">
+    <p>
+      This document attempts to convey the current status of Tomcat development
+      in "big picture" terms.  This is not the place to check if an individual
+      bug report has been addressed or when an individual feature will be available.
+    </p>
+    <p>
+      This page is updated roughly once per every couple of Tomcat minor releases,
+      so for day-to-day status you should check the tomcat-user and tomcat-dev mailing
+      lists.  You can always inquire there as to the availability or status of a
+      specific feature or component.
+    </p>
+  </section>
+
+  <section name="Current Status Summary">
+    <p>
+      <b>Tomcat 5.0.27</b> was released on June 17th, 2004.  At that time, the TOMCAT_5_0
+      branch was tagged in CVS, and work on Tomcat 5.1 (or 5.5, or 5.next, we haven't
+      decided yet) began.  Until the first stable release of Tomcat 5.1, building from
+      CVS head may be unstable or broken: use the TOMCAT_5_0 branch tag to build
+      the Tomcat 5.0 releases.
+    </p>
+    <p>
+      <b>Tomcat 5.1</b> has several major goals.  They are discussed in the tomcat-dev
+      mailing list's "5.next" thread: 
+      <a href="http://marc.theaimsgroup.com/?l=tomcat-dev&amp;w=2&amp;r=1&amp;s=5.next&amp;q=b">MARC</a>.
+      The status of some of these items is detailed below.
+    </p>
+    <p>
+      <b>Tomcat 4.0.x</b> is relatively old, and not actively maintained or supported.
+      It is strongly recommended that users of these releases upgrade to the latest
+      stable Tomcat 5.0 release or at least the latest stable Tomcat 4.1 release.
+    </p>
+    <p>
+      <b>Tomcat 4.1.x</b> is no longer actively developed.  It is maintained to address
+      only showstopper, security, and Servlet Specification compliance issues.  Maintenance
+      for Tomcat 4.1.x will likely cease once a stable release or two of Tomcat 5.1 are out.
+      Users of Tomcat 4.1.x are strongly encouraged to upgrade to the latest stable Tomcat
+      5.0 release.
+    </p>
+    <p>
+      <b>Tomcat 3.3.x</b> is in roughly the same maintenance mode as Tomcat 4.1.x.
+    </p>
+    <p>
+      <b>Tomcat 3.2</b> and earlier are in roughly the same support state as Tomcat 4.0.x.
+      Users should upgrade to Tomcat 3.3.x or the latest stable Tomcat 5.0.x.
+    </p>
+  </section>
 
   <section name="How to read the report">
     
@@ -43,28 +92,23 @@
   <section name="TODO List">
 
     <status>
-      <item priority="High" owner="remm, funkman, yoavs">
-        Documentation updates for new user guide book.
+      <item priority="High" owner="remm, costin">
+        Refactor ClassLoaders for Tomcat 5.1.
       </item>
-      <item priority="Medium" owner="---">
-        Tag plugins for JSTL.
+      <item priority="High" owner="remm">
+        Refactor application deployment for Tomcat 5.1.
       </item>
-      <item priority="Medium" owner="remm">
-        Optimization of BASIC authentication handling.
+      <item priority="High" owner="remm">
+        Remove Logger interface and implementation, use commons-logging everywhere.
       </item>
-      <item priority="Low" owner="---">
-        Optimization of DIGEST authentication handling.
+      <item priority="Medium" owner="fhanik">
+        Enhance Cluster functionality for Tomcat 5.1.
       </item>
-      <item priority="Low" owner="---">
-        Realm / auth refactoring (one of the goals would be to add better 
-        support for DIGEST).
+      <item priority="Low" owner="yoavs, funkman">
+        Update docs, site, and FAQ for Tomcat 5.1 once ready.
       </item>
-      <item priority="Low" owner="---">
-        GUI for the deployer.
-      </item>
-      <item priority="Low" owner="---">
-        Java load balancer / cache (?) for use with Tomcat clustering, or
-        with session affinity.
+      <item priority="Low" owner="everyone">
+        Continue fixing bugs ;)
       </item>
     </status>
 
