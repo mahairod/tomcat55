@@ -4,13 +4,15 @@
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
 
-   <property name="build.compiler" value="classic"/>
+   <target name="init">
+     <property name="build.compiler" value="classic"/>
 
-   <property name="watchdog.build" value="../build/watchdog"/>
-   <property name="watchdog.dist" value="../dist/watchdog"/>
-   <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../build/tomcat/classes" />
-   <property name="tomcat.build" value="../build/tomcat"/>
-   <property name="tomcat.home" value="../dist/tomcat"/>
+     <property name="watchdog.build" value="../build/watchdog"/>
+     <property name="watchdog.dist" value="../dist/watchdog"/>
+     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../build/tomcat/classes" />
+     <property name="tomcat.build" value="../build/tomcat"/>
+     <property name="tomcat.home" value="../dist/tomcat"/>
+   </target>
 
    <target name="install" depends="dist">
       <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
@@ -74,6 +76,7 @@
       <chmod src="${watchdog.build}/runclient.sh" perm="+x"/>
       <chmod src="${watchdog.build}/runtest.sh" perm="+x"/> 
    </target>       
+
    <target name="main" depends="prepare">
 
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
@@ -102,7 +105,7 @@
         
       <jar jarfile="${watchdog.build}/lib/client.jar"
            basedir="${watchdog.build}/clients" 
-           items="org" />
+           includes="org/**" />
 
       <copydir src="${watchdog.build}/webapps/servlet-tests" 
                dest="${tomcat.build}/webapps/servlet-tests" />
@@ -142,15 +145,15 @@
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
-        items="org" />
+        includes="**/org/**" />
 
       <jar jarfile="${watchdog.dist}/webapps/servlet-tests.war"
         basedir="${watchdog.build}/webapps/servlet-tests" 
-        items="WEB-INF" />
+        includes="**/WEB-INF/**" />
 
       <jar jarfile="${watchdog.dist}/webapps/jsp-tests.war"
         basedir="${watchdog.build}/webapps/jsp-tests" 
-        items="WEB-INF,jsp" />
+        includes="**/WEB-INF/**,**/jsp/**" />
 
       <!-- build EAR -->
 
@@ -162,12 +165,15 @@
       <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
                 dest="${watchdog.build}/tmp/jsp-tests.war" />
       <jar jarfile="${watchdog.dist}/jcheck.ear"
-           basedir="${watchdog.build}/tmp" 
-           items="META-INF,jsp-tests.war,servlet-tests.war" />
+           basedir="${watchdog.build}/tmp" >
+         <include name="**/META-INF/**" />
+         <include name="**/jsp-tests.war" />
+         <include name="**/servlet-tests.war" />
+      </jar>
       
    </target>
 
-   <target name="clean">
+   <target name="clean" depends="init">
       <deltree dir="${watchdog.build}"/>
       <deltree dir="${watchdog.dist}"/>
    </target>
