@@ -222,7 +222,7 @@ SectionEnd
 
 Section -post
 
-  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --JavaOptions -Dcatalina.home="\"$INSTDIR\""#-Djava.endorsed.dirs="\"$INSTDIR\common\endorsed\""#-Dsun.io.useCanonCaches=false#-Xrs --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
+  ExecWait '"$INSTDIR\bin\tomcatw.exe" //US//Tomcat5 --JavaOptions -Dcatalina.home="\"$INSTDIR\""#-Djava.endorsed.dirs="\"$INSTDIR\common\endorsed\""#-Xrs --StdOutputFile "$INSTDIR\logs\stdout.log" --StdErrorFile "$INSTDIR\logs\stderr.log" --WorkingPath "$INSTDIR"'
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
