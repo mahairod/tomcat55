@@ -1395,13 +1395,6 @@ abstract class Node {
 	private String uri;
 	private String localName;
 	private String value;
-	/**
-	 * Value of the attribute after being proccessed, so that it
-	 * represents a Java expression, and not arbitary statements.
-	 * Currently only for CustomTag 's.
-	 * TODO: Maybe it's a good idea that it should contain NO EL.
-	 */
-	private String processedValue;
 	private boolean expression;
         private boolean el;
 	private boolean dynamic;
@@ -1519,14 +1512,6 @@ abstract class Node {
 	 */
 	public boolean isDynamic() {
 	    return dynamic;
-	}
-
-	public String getProcessedValue() {
-	    return processedValue;
-	}
-
-	public void setProcessedValue(String pv) {
-	    processedValue = pv;
 	}
     }
 
