@@ -130,12 +130,12 @@ regexp.jar=${regexp.lib}/jakarta-regexp-1.3.jar
 regexp.loc=${base-jakarta.loc}/regexp/binaries/jakarta-regexp-1.3.tar.gz
 
 
-# ----- Xerces XML Parser, version 2.6.0 -----
-xerces.home=${base.path}/xerces-2_6_0
+# ----- Xerces XML Parser, version 2.6.1 -----
+xerces.home=${base.path}/xerces-2_6_1
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.0.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.1.tar.gz
 
 
 # --------------------------------------------------
