@@ -117,21 +117,14 @@ public class ContextRuleSet extends RuleSetBase {
     public void addRuleInstances(Digester digester) {
 
         if (create) {
-            if (!isDefaultContext()) {
                 digester.addObjectCreate(prefix + "Context",
                         "org.apache.catalina.core.StandardContext",
                 "className");
-            } else {
-                digester.addObjectCreate(prefix + "Context",
-                        "org.apache.catalina.core.StandardDefaultContext",
-                "className");
-            }
         }
         digester.addSetProperties(prefix + "Context");
-        if (!isDefaultContext()) {
             digester.addRule(prefix + "Context",
                              new CopyParentClassLoaderRule());
-            if (create) {
+        if (create) {
             digester.addRule(prefix + "Context",
                              new LifecycleListenerRule
                                  ("org.apache.catalina.startup.ContextConfig",
@@ -139,13 +132,7 @@ public class ContextRuleSet extends RuleSetBase {
             digester.addSetNext(prefix + "Context",
                                 "addChild",
                                 "org.apache.catalina.Container");
-            }
-        } else {
-            digester.addSetNext(prefix + "Context",
-                                "addDefaultContext",
-                                "org.apache.catalina.DefaultContext");
         }
-
         digester.addCallMethod(prefix + "Context/InstanceListener",
                                "addInstanceListener", 0);
 
@@ -230,20 +217,6 @@ public class ContextRuleSet extends RuleSetBase {
                                "addWrapperListener", 0);
 
     }
-
-
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Are we processing a DefaultContext element?
-     */
-    protected boolean isDefaultContext() {
-
-        return (prefix.endsWith("/Default"));
-
-    }
-
 
 }
 
