@@ -420,9 +420,11 @@ Transport.send(message);
     </ul>
 
     <p><strong>NOTE</strong> - The default data source support in Tomcat
-    supports Tyrex.  However, it is possible to use any other connection pool
-    that implements <code>javax.sql.DataSource</code>, by writing your own
-    custom resource factory, as described
+    is based on the <strong>DBCP</strong> connection pool from the
+    <a href="http://jakarta.apache.org/commons">Jakarta Commons</a>
+    subproject.  However, it is possible to use any other connection pool
+    that implements <code>javax.sql.DataSource</code>, by writing your
+    own custom resource factory, as described
     <a href="#Adding Custom Resource Factories">below</a>.</p>
 
     <h3>1.  Install Your JDBC Driver</h3>
@@ -528,31 +530,6 @@ conn.close();
     JDBC driver.  Customize the <code>driverClassName</code> and
     <code>driverName</code> parameters to match your actual database's
     JDBC driver and connection URL.</p>
-
-  </subsection>
-
-  <subsection name="User Transactions">
-
-    <p>If you utilize Tyrex for your JDBC resource factory as described
-    <a href="#JDBC Data Sources">above</a>, you will also have support for
-    the <code>java.transaction.UserTransaction</code> resource provided by
-    Tyrex (since it is XA-capable).  To use this feature, code your
-    application as follows:</p>
-<source>
-Context initCtx = new InitialContext();
-Context envCtx = (Context) initCtx.lookup("java:comp/env");
-Transaction tx = (Transaction) envCtx.lookup("UserTransaction");
-
-tx.begin();
-... perform transactional operations on data ...
-tx.commit();
-</source>
-
-    <p>This is useful when you need to do "two-phased commits" across more
-    than one database, where the commit needs to either succeed completely
-    or fail completely across all associated databases.  This feature
-    requires a JDBC driver that also supports XA capabilities.  See the
-    J2EE and JDBC documentation for more information.</p>
 
   </subsection>
 
