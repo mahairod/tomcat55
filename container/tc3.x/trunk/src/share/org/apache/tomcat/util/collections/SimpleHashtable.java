@@ -308,8 +308,25 @@ public final class SimpleHashtable implements Enumeration
 	return null;
     }
 
-    public void remove(Object o) {
-	
+    public Object remove(Object key) {
+	Entry tab[] = table;
+	Entry prev=null;
+	int hash = key.hashCode();
+	int index = (hash & 0x7FFFFFFF) % tab.length;
+	for (Entry e = tab[index] ; e != null ; prev=e, e = e.next) {
+	    if ((e.hash == hash) && e.key.equals(key)) {
+		if( prev!=null ) {
+		    prev.next=e.next;
+		} else {
+		    tab[index]=e.next;
+		}
+	    }
+	    count--;
+	    Object res=e.value;
+	    e.value=null;
+	    return res;
+	}
+	return null;
     }
 
     /**
