@@ -97,7 +97,7 @@ import org.xml.sax.AttributeList;
  * @version $Revision$ $Date$
  */
 
-public final class Catalina {
+public class Catalina {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -106,31 +106,31 @@ public final class Catalina {
     /**
      * Pathname to the server configuration file.
      */
-    private String configFile = "conf/server.xml";
+    protected String configFile = "conf/server.xml";
 
 
     /**
      * Set the debugging detail level on our XmlMapper.
      */
-    private boolean debug = false;
+    protected boolean debug = false;
 
 
     /**
      * The server component we are starting or stopping
      */
-    private Server server = null;
+    protected Server server = null;
 
 
     /**
      * Are we starting a new server?
      */
-    private boolean starting = false;
+    protected boolean starting = false;
 
 
     /**
      * Are we stopping an existing server?
      */
-    private boolean stopping = false;
+    protected boolean stopping = false;
 
 
     // ----------------------------------------------------------- Main Program
@@ -180,7 +180,7 @@ public final class Catalina {
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
@@ -190,7 +190,7 @@ public final class Catalina {
      *
      * @param args Command line arguments to process
      */
-    private boolean arguments(String args[]) {
+    protected boolean arguments(String args[]) {
 
 	boolean isConfig = false;
 
@@ -222,7 +222,7 @@ public final class Catalina {
     /**
      * Return a File object representing our configuration file.
      */
-    private File configFile() {
+    protected File configFile() {
 
 	File file = new File(configFile);
 	if (!file.isAbsolute())
@@ -236,7 +236,7 @@ public final class Catalina {
     /**
      * Create and configure the XmlMapper we will be using for startup.
      */
-    private XmlMapper createStartMapper() {
+    protected XmlMapper createStartMapper() {
 
 	// Initialize the mapper
 	XmlMapper mapper = new XmlMapper();
@@ -473,7 +473,7 @@ public final class Catalina {
     /**
      * Create and configure the XmlMapper we will be using for shutdown.
      */
-    private XmlMapper createStopMapper() {
+    protected XmlMapper createStopMapper() {
 
         // Initialize the mapper
         XmlMapper mapper = new XmlMapper();
@@ -496,7 +496,7 @@ public final class Catalina {
     /**
      * Execute the processing that has been configured from the command line.
      */
-    private void execute() throws Exception {
+    protected void execute() throws Exception {
 
         if (starting)
 	    start();
@@ -509,7 +509,7 @@ public final class Catalina {
     /**
      * Start a new server instance.
      */
-    private void start() {
+    protected void start() {
 
         // Create and execute our mapper
         XmlMapper mapper = createStartMapper();
@@ -532,6 +532,8 @@ public final class Catalina {
 	    } catch (LifecycleException e) {
 	        System.out.println("Catalina.start: " + e);
 		e.printStackTrace(System.out);
+                System.out.println("----- Root Cause -----");
+                e.getThrowable().printStackTrace(System.out);
 	    }
 	}
 
@@ -546,6 +548,8 @@ public final class Catalina {
 	    } catch (LifecycleException e) {
 	        System.out.println("Catalina.stop: " + e);
 	        e.printStackTrace(System.out);
+                System.out.println("----- Root Cause -----");
+                e.getThrowable().printStackTrace(System.out);
 	    }
 	}
 
@@ -555,7 +559,7 @@ public final class Catalina {
     /**
      * Stop an existing server instance.
      */
-    private void stop() {
+    protected void stop() {
 
       // Create and execute our mapper
       XmlMapper mapper = createStopMapper();
@@ -591,7 +595,7 @@ public final class Catalina {
     /**
      * Print usage information for this application.
      */
-    private void usage() {
+    protected void usage() {
 
 	System.out.println("usage: java org.apache.catalina.startup.Catalina" +
 			" [ -config {pathname} ] [ -debug ] { start | stop }");
@@ -602,7 +606,7 @@ public final class Catalina {
 }
 
 
-// --------------------------------------------------- Private Classes
+// ------------------------------------------------------------ Private Classes
 
 
 /**
