@@ -13,7 +13,7 @@
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
   <property name="year"                  value="2004" />
-  <property name="version"               value="5.5" />
+  <property name="version"               value="5.5.0" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
@@ -739,7 +739,6 @@
     <copy todir="embed/lib" file="${commons-modeler.jar}"/>
     <copy todir="embed/lib" file="${commons-beanutils.jar}"/>
     <copy todir="embed/lib" file="${commons-collections.jar}"/>
-    <copy todir="embed/lib" file="${jmx.jar}"/>
     <copy todir="embed/lib" file="${regexp.jar}"/>
 
     <copy todir="embed/lib" file="${jasper-compiler-jdt.jar}"/>
@@ -1237,7 +1236,11 @@
 
     <!-- Copy the contents of each "build" directory -->
     <copy todir="${tomcat.dist}/bin">
-      <fileset dir="${tomcat.build}/bin" />
+      <fileset dir="${tomcat.build}/bin">
+      	<exclude name="catalina.xml"/>
+      	<exclude name="commons-launcher.jar"/>
+      	<exclude name="*-using-launcher.*"/>
+      </fileset>
     </copy>
     <copy todir="${tomcat.dist}/common/classes">
       <fileset dir="${tomcat.build}/common/classes" />
@@ -1414,7 +1417,7 @@
 
 
   <!-- ==================== RELEASE: Create Release ======================= -->
-  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-src-zip,package-src-tgz,clean-tester,run-tester,run-watchdog"
+  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-compat-zip,package-compat-tgz,package-admin-zip,package-admin-tgz,package-src-zip,package-src-tgz,clean-tester,run-tester"
    description="Create a Tomcat 5 packaged distribution">
 
     <filter token="VERSION" value="${version}"/>
@@ -1434,36 +1437,24 @@
 
   <target name="package-zip">
     <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}.zip">
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="bin/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="common/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="conf/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="logs/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="server/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="shared/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="webapps/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="work/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}"
-       includes="temp/**" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="LICENSE" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="NOTICE" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="README.txt" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="RELEASE-NOTES" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="RUNNING.txt" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="BENCHMARKS.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
+      	<include name="bin/**"/>
+     	<include name="conf/**"/>
+     	<include name="logs/**"/>
+     	<include name="server/**"/>
+     	<include name="shared/**"/>
+     	<include name="webapps/**"/>
+     	<include name="work/**"/>
+     	<include name="temp/**"/>
+     	<include name="LICENSE"/>
+     	<include name="NOTICE"/>
+     	<include name="README.txt"/>
+     	<include name="RELEASE-NOTES"/>
+     	<include name="RUNNING.txt"/>
+     	<include name="BENCHMARKS.txt"/>
+      	<exclude name="server/webapps/admin/**"/>
+      	<exclude name="conf/Catalina/localhost/admin.xml"/>
+      </zipfileset>
     </zip>
   </target>
 
@@ -1496,6 +1487,39 @@
        includes="RELEASE-NOTES" />
     </zip>
   </target>
+
+	  <target name="package-compat-zip">
+	    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-compat.zip">
+	      <zipfileset dir="${tomcat.compat}" prefix="${final.name}-compat" 
+	                  includes="**" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	       includes="LICENSE" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	       includes="NOTICE" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	       includes="README.txt" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	       includes="RELEASE-NOTES" />
+	    </zip>
+	  </target>
+
+	  <target name="package-admin-zip">
+	    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-admin.zip">
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	      	<include name="server/webapps/admin/**"/>
+	      	<include name="conf/Catalina/localhost/admin.xml"/>
+	        <exclude name="*.jsp" />
+	      </zipfileset>
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	       includes="LICENSE" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	       includes="NOTICE" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	       includes="README.txt" />
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	       includes="RELEASE-NOTES" />
+	    </zip>
+	  </target>
 
   <target name="prepare-release">
 
@@ -1536,6 +1560,7 @@
       </tarfileset>
       <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}">
         <include name="conf/**" />
+        <exclude name="conf/Catalina/localhost/admin.xml" />
       </tarfileset>
       <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
         <include name="bin/**" />
@@ -1565,6 +1590,7 @@
         <exclude name="bin/startup-using-launcher.sh" />
         <exclude name="conf/**" />
         <exclude name="src/**" />
+        <exclude name="server/webapps/admin/**" />
       </tarfileset>
     </tar>
   </target>
@@ -1604,6 +1630,44 @@
       </tarfileset>
     </tar>
   </target>
+
+	  <target name="package-compat-tgz">
+	    <fixcrlf srcdir="${tomcat.dist}" 
+	     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+	    <tar longfile="gnu" compression="gzip"
+	          tarfile="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz">
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-compat">
+	        <include name="LICENSE" />
+	        <include name="NOTICE" />
+	        <include name="README.txt" />
+	        <include name="RELEASE-NOTES" />
+	      </tarfileset>
+	      <tarfileset dir="${tomcat.compat}" prefix="${final.name}-compat">
+	        <include name="**" />
+	      </tarfileset>
+	    </tar>
+	  </target>
+
+	  <target name="package-admin-tgz">
+	    <fixcrlf srcdir="${tomcat.dist}" 
+	     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+	    <tar longfile="gnu" compression="gzip"
+	          tarfile="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz">
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	        <include name="LICENSE" />
+	        <include name="NOTICE" />
+	        <include name="README.txt" />
+	        <include name="RELEASE-NOTES" />
+	      </tarfileset>
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	        <include name="server/webapps/admin/**" />
+	        <exclude name="*.jsp" />
+	      </tarfileset>
+	        <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}-admin">
+	          <include name="conf/Catalina/localhost/admin.xml" />
+	        </tarfileset>
+	    </tar>
+	  </target>
 
   <target name="package-src-zip">
     <!-- Package Tomcat Source -->
