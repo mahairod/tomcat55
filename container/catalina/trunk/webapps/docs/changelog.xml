@@ -55,6 +55,9 @@
       <fix>
         <bug>32023</bug>: CGIServlet fails to handle post message with multipart/form data. (yoavs)
       </fix>
+      <fix>
+        <bug>32269</bug>: JNDIRealm fails with InvalidNameException to authenticate users if LDAP distinguished name (DN) contains slash or double quote character(s). (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
