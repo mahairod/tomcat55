@@ -323,7 +323,12 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	case Container.PREFIX_MAP:
 	    if( path.length() < ctPathL - 2  )
 		return false;
-	    return path.startsWith( ctPath.substring(0, ctPathL - 2  ));
+	    // determine how much to match
+	    int matchLen = ctPathL - 2;	// match up to, but not including the '/'
+	    // if more can be matched in the path, include matching the '/'
+	    if( path.length() > matchLen )
+		matchLen++;
+	    return path.startsWith( ctPath.substring(0, matchLen ));
 	case Container.EXTENSION_MAP:
 	    return ctPath.substring( 1 ).equals( URLUtil.getExtension( path ));
 	case Container.PATH_MAP:
