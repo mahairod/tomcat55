@@ -232,6 +232,11 @@ Generic Bug Fixes:
 [4.1.19] Administration Webapp:
          Add a check for empty validation query before setting it.
 
+[4.1.20] Startup scripts:
+         Fix classloading failures on JDK 1.4 related to commons-logging, 
+         which were caused by JARs being set as endorsed and added to the
+         system classloader.
+
 
 ------------------
 Catalina Bug Fixes:
