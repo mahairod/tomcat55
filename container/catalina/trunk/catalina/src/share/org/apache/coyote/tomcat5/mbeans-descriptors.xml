@@ -177,6 +177,10 @@
            description="Should Tomcat perform all authentications?"
                   type="boolean"/>
 
+    <attribute    name="threadPriority"
+           description="The thread priority for processors"
+                  type="int"/>
+
     <attribute   name="URIEncoding"
           description="Character encoding used to decode the URI"
                  type="java.lang.String"/>
