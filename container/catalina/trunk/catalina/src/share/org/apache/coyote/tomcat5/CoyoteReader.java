@@ -50,7 +50,7 @@ public class CoyoteReader
 
 
     public CoyoteReader(InputBuffer ib) {
-        super(ib);
+        super(ib, 1);
         this.ib = ib;
     }
 
