@@ -69,6 +69,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
@@ -80,7 +83,9 @@ import org.apache.naming.ContextBindings;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
@@ -194,7 +199,7 @@ final class StandardContextValve
         if (((StandardContext) container).getSwallowOutput()) {
             try {
                 SystemLogHandler.startCapture();
-                wrapper.getPipeline().invoke(request, response);
+                invokeInternal(wrapper, request, response);
             } finally {
                 String log = SystemLogHandler.stopCapture();
                 if (log != null && log.length() > 0) {
@@ -202,13 +207,74 @@ final class StandardContextValve
                 }
             }
         } else {
-            wrapper.getPipeline().invoke(request, response);
+            invokeInternal(wrapper, request, response);
         }
 
     }
 
 
     // -------------------------------------------------------- Private Methods
+
+
+    /**
+     * Call invoke.
+     */
+    private void invokeInternal(Wrapper wrapper, Request request, 
+                                Response response)
+        throws IOException, ServletException {
+
+        Object instances[] = 
+            ((StandardContext) container).getApplicationListeners();
+
+        ServletRequestEvent event = null;
+
+        if (instances.length > 0) {
+            event = new ServletRequestEvent
+                (((StandardContext) container).getServletContext(), 
+                 request.getRequest());
+            // create pre-service event
+            for (int i = 0; i < instances.length; i++) {
+                if (instances[i] == null)
+                    continue;
+                if (!(instances[i] instanceof ServletRequestListener))
+                    continue;
+                ServletRequestListener listener =
+                    (ServletRequestListener) instances[i];
+                try {
+                    listener.requestInitialized(event);
+                } catch (Throwable t) {
+                    log(sm.getString("requestListenerValve.requestInit",
+                                     instances[i].getClass().getName()), t);
+                    ServletRequest sreq = request.getRequest();
+                    sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
+                    return;
+                }
+            }
+        }
+
+        wrapper.getPipeline().invoke(request, response);
+
+        if (instances.length > 0) {
+            // create post-service event
+            for (int i = 0; i < instances.length; i++) {
+                if (instances[i] == null)
+                    continue;
+                if (!(instances[i] instanceof ServletRequestListener))
+                    continue;
+                ServletRequestListener listener =
+                    (ServletRequestListener) instances[i];
+                try {
+                    listener.requestDestroyed(event);
+                } catch (Throwable t) {
+                    log(sm.getString("requestListenerValve.requestDestroy",
+                                     instances[i].getClass().getName()), t);
+                    ServletRequest sreq = request.getRequest();
+                    sreq.setAttribute(Globals.EXCEPTION_ATTR,t);
+                }
+            }
+        }
+
+    }
 
 
     /**
@@ -272,5 +338,57 @@ final class StandardContextValve
         }
 
     }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     */
+    private void log(String message) {
+
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardContextValve[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardContextValve[" + containerName
+                               + "]: " + message);
+        }
+
+    }
+
+
+    /**
+     * Log a message on the Logger associated with our Container (if any)
+     *
+     * @param message Message to be logged
+     * @param throwable Associated exception
+     */
+    private void log(String message, Throwable throwable) {
+
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardContextValve[" + container.getName() + "]: "
+                       + message, throwable);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardContextValve[" + containerName
+                               + "]: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
+
+    }
+
 
 }

@@ -959,7 +959,7 @@ public class StandardWrapper
                         if (ex instanceof ClassNotFoundException){
                             throw (ClassNotFoundException)ex;
                         } else {
-                            log.error( "Error loading "
+                            getServletContext().log( "Error loading "
                                 + fclassLoader + " " + factualClass, ex );
                         }
                     }
@@ -974,7 +974,7 @@ public class StandardWrapper
                 unavailable(null);
 
 
-                log.error( "Error loading " + classLoader + " " + actualClass, e );
+                getServletContext().log( "Error loading " + classLoader + " " + actualClass, e );
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass),
                      e);
@@ -1067,7 +1067,7 @@ public class StandardWrapper
                 // said so, so do not call unavailable(null).
                 throw f;
             } catch (Throwable f) {
-                log.error("StandardWrapper.Throwable", f );
+                getServletContext().log("StandardWrapper.Throwable", f );
                 instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
                                                   servlet, f);
                 // If the servlet wanted to be unavailable it would have
@@ -1185,7 +1185,7 @@ public class StandardWrapper
      *  to mark this servlet as permanently unavailable
      */
     public void unavailable(UnavailableException unavailable) {
-        log.info(sm.getString("standardWrapper.unavailable", getName()));
+        getServletContext().log(sm.getString("standardWrapper.unavailable", getName()));
         if (unavailable == null)
             setAvailable(Long.MAX_VALUE);
         else if (unavailable.isPermanent())
@@ -1544,7 +1544,7 @@ public class StandardWrapper
         try {
             unload();
         } catch (ServletException e) {
-            log.error(sm.getString
+            getServletContext().log(sm.getString
                       ("standardWrapper.unloadException", getName()), e);
         }
 
