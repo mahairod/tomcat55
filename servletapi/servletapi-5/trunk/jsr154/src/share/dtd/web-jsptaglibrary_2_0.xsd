@@ -131,8 +131,11 @@
     <xsd:annotation>
       <xsd:documentation>
 
-	Provides a hint as to the content of the body of this tag.
-	Primarily intended for use by page composition tools.
+        Specifies the type of body that is valid for a tag.
+	This value is used by the JSP container to validate
+	that a tag invocation has the correct body syntax and
+	by page composition tools to assist the page author
+	in providing a valid tag body.
 
 	There are currently four values specified:
 
@@ -477,10 +480,11 @@
 	  <xsd:documentation>
 
 	    Specifies the format for the body of this tag.
-	    The default in JSP 1.2 was "JSP" but because this is an invalid
-	    setting for simple tag handlers, there is no longer a default
-	    in JSP 2.0.  A reasonable default for simple tag handlers is
-	    "scriptless" if the tag can have a body.
+	    The default in JSP 1.2 was "JSP" but because this
+	    is an invalid setting for simple tag handlers, there
+	    is no longer a default in JSP 2.0.  A reasonable
+	    default for simple tag handlers is "scriptless" if
+	    the tag can have a body.
 
 	  </xsd:documentation>
 	</xsd:annotation>
