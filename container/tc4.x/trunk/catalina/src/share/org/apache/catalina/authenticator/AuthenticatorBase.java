@@ -198,7 +198,7 @@ public abstract class AuthenticatorBase
      * Flag to determine if we disable proxy caching, or leave the issue
      * up to the webapp developer.
      */
-    protected boolean noProxyCaching = true;
+    protected boolean disableProxyCaching = true;
 
     /**
      * The lifecycle event support for this component.
@@ -397,8 +397,8 @@ public abstract class AuthenticatorBase
      * Return the flag that states if we add headers to disable caching by
      * proxies.
      */
-    public boolean getNoProxyCaching() {
-        return noProxyCaching;
+    public boolean getDisableProxyCaching() {
+        return disableProxyCaching;
     }
 
     /**
@@ -407,8 +407,8 @@ public abstract class AuthenticatorBase
      * @param nocache <code>true</code> if we add headers to disable proxy 
      *              caching, <code>false</code> if we leave the headers alone.
      */
-    public void setNoProxyCaching(boolean nocache) {
-        noProxyCaching = nocache;
+    public void setDisableProxyCaching(boolean nocache) {
+        disableProxyCaching = nocache;
     }
 
     // --------------------------------------------------------- Public Methods
@@ -498,7 +498,7 @@ public abstract class AuthenticatorBase
 
         // Make sure that constrained resources are not cached by web proxies
         // or browsers as caching can provide a security hole
-        if (noProxyCaching && 
+        if (disableProxyCaching && 
             !(((HttpServletRequest) hrequest.getRequest()).isSecure())) {
             HttpServletResponse sresponse = 
                 (HttpServletResponse) response.getResponse();
