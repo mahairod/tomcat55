@@ -304,21 +304,21 @@
          setting the protocol to "HTTP/1.0" -->
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/GetHeaders01"
+         request="${context.path}/GetHeaders01" debug="${debug}"
        inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
       outContent="GetHeaders01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="HTTP/1.0"
-         request="${context.path}/WrappedGetHeaders01"
+         request="${context.path}/WrappedGetHeaders01" debug="${debug}"
        inHeaders="Accept-Language:en-us##Accept-Language:en-gb"
       outContent="GetHeaders01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/GetInputStream01"
+         request="${context.path}/GetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
-         request="${context.path}/WrappedGetInputStream01"
+         request="${context.path}/WrappedGetInputStream01" debug="${debug}"
       outContent="GetInputStream01 PASSED"/>
 
 
@@ -331,11 +331,13 @@
     -->
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
          request="${context.path}/protected/Authentication01"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication01 PASSED"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+          debug="${debug}"
          request="${context.path}/protected/Authentication02"
        inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
       outContent="Authentication02 PASSED"/>
