@@ -130,7 +130,7 @@ of a very common case where iteration is used to present results in a table
 (for example), where there is no need to buffer or post-process the data
 rendered for each row.
 
-Custom Tag Libraries Can Declare Application Listeners [Rare]
+Custom Tag Libraries Can Declare Application Listeners [Medium]
 -------------------------------------------------------------
 A custom tag library can optionally declare a listener for application events,
 using the new servlet 2.3 capability.

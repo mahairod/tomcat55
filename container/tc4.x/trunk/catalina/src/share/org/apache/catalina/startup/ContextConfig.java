@@ -71,11 +71,15 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Stack;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.catalina.Authenticator;
@@ -374,10 +378,37 @@ public final class ContextConfig
 
 
     /**
+     * Create and return an XmlMapper configured to process a tag library
+     * descriptor, looking for additional listener classes to be registered.
+     */
+    private XmlMapper createTldMapper() {
+
+        XmlMapper mapper = new XmlMapper();
+        if (debug > 0)
+            mapper.setDebug(3);
+        mapper.setValidating(true);
+	File resourceFile = new File(System.getProperty("catalina.home"),
+				     Constants.TldDtdResourcePath_11);
+	mapper.registerDTDFile(Constants.TldDtdPublicId_11,
+			       resourceFile.toString());
+	resourceFile = new File(System.getProperty("catalina.home"),
+				Constants.TldDtdResourcePath_12);
+	mapper.registerDTDFile(Constants.TldDtdPublicId_12,
+			       resourceFile.toString());
+
+	mapper.addRule("taglib/listener/listener-class",
+		       mapper.methodSetter("addApplicationListener", 0));
+
+        return (mapper);
+
+    }
+
+
+    /**
      * Create and return an XmlMapper configured to process the web application
      * deployment descriptor (web.xml).
      */
-    private XmlMapper createMapper() {
+    private XmlMapper createWebMapper() {
 
 	XmlMapper mapper = new XmlMapper();
 	if (debug > 0)
@@ -884,9 +915,6 @@ public final class ContextConfig
 	    log(sm.getString("contextConfig.start"));
         ok = true;
 
-	// Configure a mapper to read a web application deployment descriptor
-	XmlMapper mapper = createMapper();
-
 	// Add missing Loader component if necessary
 	if (context.getLoader() == null) {
 	    if (debug > 0)
@@ -913,8 +941,13 @@ public final class ContextConfig
 	loaderConfig();
 
 	// Process the default and application web.xml files
+	XmlMapper mapper = createWebMapper();
 	defaultConfig(mapper);
 	applicationConfig(mapper);
+
+        // Scan tag library descriptor files for additional listener classes
+        if (ok)
+            tldConfig();
 
         // Configure a certificates exposer valve, if required
         if (ok)
@@ -973,7 +1006,160 @@ public final class ContextConfig
     }
 
 
+    /**
+     * Scan the tag library descriptors of all tag libraries we can find, and
+     * register any application descriptor classes that are found there.
+     */
+    private void tldConfig() {
+
+        // Acquire an XmlMapper to use for parsing
+        XmlMapper mapper = createTldMapper();
+
+        // First, scan tag libraries declared in our deployment descriptor
+        if (debug >= 1)
+            log("Scanning web.xml tag libraries");
+        ArrayList resourcePaths = new ArrayList(); // Already processed TLDs
+        String taglibs[] = context.findTaglibs();
+        for (int i = 0; i < taglibs.length; i++) {
+
+            // Calculate the resource path of the next tag library to check
+            String resourcePath = context.findTaglib(taglibs[i]);
+            if (!resourcePath.startsWith("/"))
+                resourcePath = "/WEB-INF/web.xml/../" + resourcePath;
+            if (debug >= 2)
+                log("  URI='" + taglibs[i] + "', ResourcePath='" +
+                    resourcePath + "'");
+            if (resourcePaths.contains(resourcePath)) {
+                if (debug >= 2)
+                    log("    Already processed");
+                continue;
+            }
+            resourcePaths.add(resourcePath);
+
+            // Process either a JAR file or a TLD at this location
+            if (!tldConfigJar(resourcePath, mapper))
+                tldConfigTld(resourcePath, mapper);
+
+        }
+
+        // Second, scan tag libraries defined in JAR files
+        // FIXME - Yet another dependence on files
+        if (debug >= 1)
+            log("Scanning library JAR files");
+	Resources resources = context.getResources();
+        URL libURL = null;
+        try {
+            libURL = resources.getResource("/WEB-INF/lib");
+        } catch (MalformedURLException e) {
+            ;
+        }
+
+	if ((libURL != null) && "file".equals(libURL.getProtocol())) {
+	    File libFile = new File(libURL.getFile());
+	    if (libFile.exists() && libFile.canRead() &&
+	        libFile.isDirectory()) {
+		String filenames[] = libFile.list();
+		for (int i = 0; i < filenames.length; i++) {
+		    if (!filenames[i].endsWith(".jar"))
+		        continue;
+                    String resourcePath = "/WEB-INF/lib/" + filenames[i];
+                    if (debug >= 2)
+                        log("  Trying '" + resourcePath + "'");
+                    tldConfigJar("/WEB-INF/lib/" + filenames[i], mapper);
+		}
+	    }
+	}
+
+    }
+
+
+    /**
+     * Process a TLD (if there is one) in the JAR file (if there is one) at
+     * the specified resource path.  Return <code>true</code> if we actually
+     * found and processed such a TLD, or <code>false</code> otherwise.
+     *
+     * @param resourcePath Context-relative resource path
+     * @param mapper XmlMapper to use for parsing
+     */
+    private boolean tldConfigJar(String resourcePath, XmlMapper mapper) {
+
+        JarFile jarFile = null;
+        InputStream stream = null;
+        try {
+            URL url = context.getServletContext().getResource(resourcePath);
+            if (url == null)
+                return (false);
+            url = new URL("jar:" + url.toString() + "!/");
+            JarURLConnection conn =
+                (JarURLConnection) url.openConnection();
+            jarFile = conn.getJarFile();
+            JarEntry jarEntry = jarFile.getJarEntry("META-INF/taglib.tld");
+            if (jarEntry == null)
+                return (false);
+            stream = jarFile.getInputStream(jarEntry);
+            mapper.readXml(stream, context);
+            stream.close();
+            return (true);
+        } catch (Exception e) {
+            if (debug >= 2)
+                log("    tldConfigJar(" + resourcePath + "): " + e);
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+            }
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (Throwable t) {
+                    ;
+                }
+            }
+            return (false);
+        }
+
+    }
+
+
+    /**
+     * Process a TLD (if there is one) at the specified resource path.
+     * Return <code>true</code> if we actually found and processed such
+     * a TLD, or <code>false</code> otherwise.
+     *
+     * @param resourcePath Context-relative resource path
+     * @param mapper XmlMapper to use for parsing
+     */
+    private boolean tldConfigTld(String resourcePath, XmlMapper mapper) {
+
+        InputStream stream = null;
+        try {
+            stream =
+                context.getServletContext().getResourceAsStream(resourcePath);
+            if (stream == null)
+                return (false);
+            mapper.readXml(stream, context);
+            stream.close();
+            return (true);            
+        } catch (Exception e) {
+            if (debug >= 2)
+                log("    tldConfigTld(" + resourcePath + "): " + e);
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (Throwable t) {
+                    ;
+                }
+            }
+            return (false);
+        }
+
+    }
+
+
 }
+
 
 
 // ----------------------------------------------------------- Private Classes
