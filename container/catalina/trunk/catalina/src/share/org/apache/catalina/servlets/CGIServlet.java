@@ -1817,7 +1817,7 @@ public final class CGIServlet extends HttpServlet {
                 }
             }
             qs.append(lineSeparator);
-            return qs.append(postInput).toString();
+            return qs.append(postInput.toString()).toString();
         }
 
 
