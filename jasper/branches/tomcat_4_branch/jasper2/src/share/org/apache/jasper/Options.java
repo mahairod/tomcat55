@@ -176,4 +176,9 @@ public interface Options {
     public String getJavaEncoding();
 
 
+    /**
+     * boolean flag to tell Ant whether to fork JSP page compilations.
+     */
+    public boolean getFork();
+
 }

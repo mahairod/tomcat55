@@ -303,6 +303,10 @@ public class JspC implements Options {
 	return "UTF-8";
     }
 
+    public boolean getFork() {
+        return false;
+    }
+
     public String getClassPath() {
         if( classPath != null )
             return classPath;

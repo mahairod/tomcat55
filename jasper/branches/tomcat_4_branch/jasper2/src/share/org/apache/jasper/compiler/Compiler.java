@@ -288,6 +288,7 @@ public class Compiler {
         javac.setDebug(ctxt.getOptions().getClassDebugInfo());
         javac.setSrcdir(srcPath);
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
+        javac.setFork(ctxt.getOptions().getFork());
 
         info.append("    srcDir=" + srcPath + "\n" );
 
@@ -304,8 +305,12 @@ public class Compiler {
 
         BuildException error=null;
         try {
-            synchronized(javacLock) {
+            if (ctxt.getOptions().getFork()) {
                 javac.execute();
+            } else {
+                synchronized(javacLock) {
+                    javac.execute();
+                }
             }
         } catch (BuildException e) {
             success = false;

@@ -89,6 +89,11 @@ public final class EmbededServletOptions implements Options {
     public boolean development = true;
 
     /**
+     * Should Ant fork its java compiles of JSP pages.
+     */
+    public boolean fork = false;
+
+    /**
      * Do you want to keep the generated Java files around?
      */
     public boolean keepGenerated = true;
@@ -279,6 +284,10 @@ public final class EmbededServletOptions implements Options {
 	return javaEncoding;
     }
 
+    public boolean getFork() {
+        return fork;
+    }
+
     /**
      * Create an EmbededServletOptions object using data available from
      * ServletConfig and ServletContext. 
@@ -428,6 +437,15 @@ public final class EmbededServletOptions implements Options {
         String javaEncoding = config.getInitParameter("javaEncoding");
         if (javaEncoding != null) {
             this.javaEncoding = javaEncoding;
+        }
+
+        String fork = config.getInitParameter("fork");
+        if (fork != null) {
+            if (fork.equalsIgnoreCase("true"))
+                this.fork = true;
+            else if (fork.equalsIgnoreCase("false"))
+                this.fork = false;
+            else Constants.message ("jsp.warning.fork", Logger.WARNING);
         }
 
 	// Setup the global Tag Libraries location cache for this
