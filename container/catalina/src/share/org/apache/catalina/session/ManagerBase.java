@@ -68,6 +68,9 @@ package org.apache.catalina.session;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -92,10 +95,13 @@ import org.apache.catalina.util.StringManager;
  */
 
 public abstract class ManagerBase implements Manager {
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ManagerBase.class );
 
     // ----------------------------------------------------- Instance Variables
 
+    protected DataInputStream randomIS=null;
+    protected String devRandomSource="/dev/urandom";
 
     /**
      * The default message digest algorithm to use if we cannot use
@@ -322,22 +328,26 @@ public abstract class ManagerBase implements Manager {
     public synchronized MessageDigest getDigest() {
 
         if (this.digest == null) {
-            if (debug >= 1)
-                log(sm.getString("managerBase.getting", algorithm));
+            long t1=System.currentTimeMillis();
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("managerBase.getting", algorithm));
             try {
                 this.digest = MessageDigest.getInstance(algorithm);
             } catch (NoSuchAlgorithmException e) {
-                log(sm.getString("managerBase.digest", algorithm), e);
+                log.error(sm.getString("managerBase.digest", algorithm), e);
                 try {
                     this.digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
                 } catch (NoSuchAlgorithmException f) {
-                    log(sm.getString("managerBase.digest",
+                    log.error(sm.getString("managerBase.digest",
                                      DEFAULT_ALGORITHM), e);
                     this.digest = null;
                 }
             }
-            if (debug >= 1)
-                log(sm.getString("managerBase.gotten"));
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("managerBase.gotten"));
+            long t2=System.currentTimeMillis();
+            if( log.isDebugEnabled() )
+                log.debug("getDigest() " + (t2-t1));
         }
 
         return (this.digest);
@@ -452,6 +462,35 @@ public abstract class ManagerBase implements Manager {
 
     }
 
+        /** Use /dev/random-type special device. This is new code, but may reduce the
+     *  big delay in generating the random.
+     *
+     *  You must specify a path to a random generator file. Use /dev/urandom
+     *  for linux ( or similar ) systems. Use /dev/random for maximum security
+     *  ( it may block if not enough "random" exist ). You can also use
+     *  a pipe that generates random.
+     *
+     *  The code will check if the file exists, and default to java Random
+     *  if not found. There is a significant performance difference, very
+     *  visible on the first call to getSession ( like in the first JSP )
+     *  - so use it if available.
+     */
+    public void setRandomFile( String s ) {
+	// as a hack, you can use a static file - and genarate the same
+	// session ids ( good for strange debugging )
+	try {
+	    devRandomSource=s;
+	    File f=new File( devRandomSource );
+	    if( ! f.exists() ) return;
+	    randomIS= new DataInputStream( new FileInputStream(f));
+	    randomIS.readLong();
+	    if( log.isDebugEnabled() )
+                log.debug( "Opening " + devRandomSource );
+	} catch( IOException ex ) {
+	    randomIS=null;
+	}
+    }
+
 
     /**
      * Return the random number generator instance we should use for
@@ -459,13 +498,12 @@ public abstract class ManagerBase implements Manager {
      * currently defined, construct and seed a new one.
      */
     public synchronized Random getRandom() {
-
         if (this.random == null) {
             synchronized (this) {
                 if (this.random == null) {
                     // Calculate the new random number generator seed
-                    log(sm.getString("managerBase.seeding", randomClass));
                     long seed = System.currentTimeMillis();
+                    long t1 = seed;
                     char entropy[] = getEntropy().toCharArray();
                     for (int i = 0; i < entropy.length; i++) {
                         long update = ((byte) entropy[i]) << ((i % 8) * 8);
@@ -478,12 +516,14 @@ public abstract class ManagerBase implements Manager {
                         this.random.setSeed(seed);
                     } catch (Exception e) {
                         // Fall back to the simple case
-                        log(sm.getString("managerBase.random", randomClass),
+                        log.error(sm.getString("managerBase.random", randomClass),
                             e);
                         this.random = new java.util.Random();
                         this.random.setSeed(seed);
                     }
-                    log(sm.getString("managerBase.complete", randomClass));
+                    long t2=System.currentTimeMillis();
+                    if( (t2-t1) > 100 )
+                        log.info(sm.getString("managerBase.seeding", randomClass) + " " + (t2-t1));
                 }
             }
         }
@@ -665,16 +705,33 @@ public abstract class ManagerBase implements Manager {
 
     // ------------------------------------------------------ Protected Methods
 
-
+    protected void getRandomBytes( byte bytes[] ) {
+        // Generate a byte array containing a session identifier
+        if( devRandomSource!=null && randomIS==null ) {
+            setRandomFile( devRandomSource );
+        }
+        if(randomIS!=null ) {
+            try {
+                int len=randomIS.read( bytes );
+                if( len==bytes.length ) {
+                    return;
+                }
+                log.debug("Got " + len + " " + bytes.length );
+            } catch( Exception ex ) {
+            }
+            devRandomSource=null;
+            randomIS=null;
+        }
+        Random random = getRandom();
+        getRandom().nextBytes(bytes);
+    }
+    
     /**
      * Generate and return a new session identifier.
      */
     protected synchronized String generateSessionId() {
-
-        // Generate a byte array containing a session identifier
-        Random random = getRandom();
         byte bytes[] = new byte[SESSION_ID_BYTES];
-        getRandom().nextBytes(bytes);
+        getRandomBytes( bytes );
         bytes = getDigest().digest(bytes);
 
         // Render the result as a String of hexadecimal digits
