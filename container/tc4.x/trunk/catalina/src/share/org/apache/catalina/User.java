@@ -130,6 +130,12 @@ public interface User {
 
 
     /**
+     * Return the {@link UserDatabase} within which this User is defined.
+     */
+    public UserDatabase getUserDatabase();
+
+
+    /**
      * Return the logon username of this user, which must be unique
      * within the scope of a {@link UserDatabase}.
      */

@@ -121,6 +121,12 @@ public interface Group {
 
 
     /**
+     * Return the {@link UserDatabase} within which this Group is defined.
+     */
+    public UserDatabase getUserDatabase();
+
+
+    /**
      * Return the set of {@link User}s that are members of this group.
      */
     public Iterator getUsers();

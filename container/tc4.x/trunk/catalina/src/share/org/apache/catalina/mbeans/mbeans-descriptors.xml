@@ -108,7 +108,7 @@
   <mbean         name="Group"
             className="org.apache.catalina.mbeans.GroupMBean"
           description="Group from a user database"
-               domain="Catalina"
+               domain="Users"
                 group="Group"
                  type="org.apache.catalina.Group">
 
@@ -598,7 +598,7 @@
   <mbean         name="MemoryUserDatabase"
             className="org.apache.catalina.mbeans.MemoryUserDatabaseMBean"
           description="In-memory user and group database"
-               domain="Catalina"
+               domain="Users"
                 group="UserDatabase"
                  type="org.apache.catalina.users.MemoryUserDatabase">
 
@@ -668,6 +668,24 @@
            returnType="java.lang.String">
       <parameter name="username"
           description="User name of the requested user"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeGroup"
+          description="Remove existing group (and all user memberships)"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="groupname"
+          description="Group name of the group to remove"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeUser"
+          description="Remove existing user (and all group memberships)"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="username"
+          description="User name of the user to remove"
                  type="java.lang.String"/>
     </operation>
 
@@ -1187,7 +1205,7 @@
   <mbean         name="User"
             className="org.apache.catalina.mbeans.UserMBean"
           description="User from a user database"
-               domain="Catalina"
+               domain="Users"
                 group="User"
                  type="org.apache.catalina.User">
 
@@ -1216,8 +1234,8 @@
           description="Add a new group membership for this user"
                impact="ACTION"
            returnType="void">
-      <parameter name="group"
-          description="MBean Name of the new group"
+      <parameter name="groupname"
+          description="Group name of the new group"
                  type="java.lang.String"/>
     </operation>
 
@@ -1234,8 +1252,8 @@
           description="Remove an old group membership for this user"
                impact="ACTION"
            returnType="void">
-      <parameter name="group"
-          description="MBean Name of the old group"
+      <parameter name="groupname"
+          description="Group name of the old group"
                  type="java.lang.String"/>
     </operation>
 

@@ -90,6 +90,12 @@ public interface UserDatabase {
 
 
     /**
+     * Return the unique global identifier of this user database.
+     */
+    public String getId();
+
+
+    /**
      * Return the set of {@link User}s defined in this user database.
      */
     public Iterator getUsers();

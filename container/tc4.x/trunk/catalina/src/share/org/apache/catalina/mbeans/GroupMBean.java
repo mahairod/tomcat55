@@ -4,6 +4,7 @@
  * $Date$
  *
  * ====================================================================
+ *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 2002 The Apache Software Foundation.  All rights
@@ -60,47 +61,51 @@
  *
  */
 
-
-package org.apache.catalina.users;
+package org.apache.catalina.mbeans;
 
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.management.MalformedObjectNameException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Group;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
+import org.apache.commons.modeler.BaseModelMBean;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
 
 
 /**
- * <p>Concrete implementation of {@link Group} for the
- * {@link MemoryUserDatabase} implementation of {@link UserDatabase}.</p>
+ * <p>A <strong>ModelMBean</strong> implementation for the
+ * <code>org.apache.catalina.Group</code> component.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
- * @since 4.1
  */
 
-public class MemoryGroup extends AbstractGroup {
+public class GroupMBean extends BaseModelMBean {
 
 
     // ----------------------------------------------------------- Constructors
 
 
     /**
-     * Package-private constructor used by the factory method in
-     * {@link MemoryUserDatabase}.
+     * Construct a <code>ModelMBean</code> with default
+     * <code>ModelMBeanInfo</code> information.
      *
-     * @param database The {@link MemoryUserDatabase} that owns this group
-     * @param groupname Group name of this group
-     * @param description Description of this group
+     * @exception MBeanException if the initializer of an object
+     *  throws an exception
+     * @exception RuntimeOperationsException if an IllegalArgumentException
+     *  occurs
      */
-    MemoryGroup(MemoryUserDatabase database,
-                String groupname, String description) {
+    public GroupMBean()
+        throws MBeanException, RuntimeOperationsException {
 
         super();
-        this.database = database;
-        setGroupname(groupname);
-        setDescription(description);
 
     }
 
@@ -109,75 +114,69 @@ public class MemoryGroup extends AbstractGroup {
 
 
     /**
-     * The {@link MemoryUserDatabase} that owns this group.
+     * The configuration information registry for our managed beans.
      */
-    protected MemoryUserDatabase database = null;
-
-
-    // --------------------------------------------------------- Public Methods
+    protected Registry registry = MBeanUtils.createRegistry();
 
 
     /**
-     * Return the {@link UserDatabase} within which this Group is defined.
+     * The <code>MBeanServer</code> in which we are registered.
      */
-    public UserDatabase getUserDatabase() {
-
-        return (this.database);
-
-    }
+    protected MBeanServer mserver = MBeanUtils.createServer();
 
 
     /**
-     * Return the set of {@link User}s that are members of this group.
+     * The <code>ManagedBean</code> information describing this MBean.
      */
-    public Iterator getUsers() {
+    protected ManagedBean managed =
+        registry.findManagedBean("Group");
 
-        String groupname = getGroupname();
+
+    // ------------------------------------------------------------- Attributes
+
+
+    /**
+     * Return the set of authorized roles for this group.
+     */
+    public String[] getRoles() {
+
+        Group group = (Group) this.resource;
         ArrayList results = new ArrayList();
-        Iterator users = database.getUsers();
-        while (users.hasNext()) {
-            MemoryUser user = (MemoryUser) users.next();
-            if (user.isInGroup(this)) {
-                results.add(user);
-            }
+        Iterator roles = group.getRoles();
+        while (roles.hasNext()) {
+            results.add(roles.next());
         }
-        return (results.iterator());
+        return ((String[]) results.toArray(new String[results.size()]));
 
     }
 
 
     /**
-     * <p>Return a String representation of this group in XML format.</p>
+     * Return the MBean Names of all users that are members of this group.
      */
-    public String toString() {
+    public String[] getUsers() {
 
-        StringBuffer sb = new StringBuffer("<group groupname='");
-        sb.append(groupname);
-        sb.append("'");
-        if (description != null) {
-            sb.append(" description='");
-            sb.append(description);
-            sb.append("'");
-        }
-        synchronized (roles) {
-            if (roles.size() > 0) {
-                sb.append(" roles='");
-                int n = 0;
-                Iterator values = roles.iterator();
-                while (values.hasNext()) {
-                    if (n > 0) {
-                        sb.append(',');
-                    }
-                    n++;
-                    sb.append((String) values.next());
-                }
-                sb.append("'");
+        Group group = (Group) this.resource;
+        ArrayList results = new ArrayList();
+        Iterator users = group.getUsers();
+        while (users.hasNext()) {
+            User user = null;
+            try {
+                user = (User) users.next();
+                ObjectName oname =
+                    MBeanUtils.createObjectName(managed.getDomain(), user);
+                results.add(oname.toString());
+            } catch (MalformedObjectNameException e) {
+                throw new IllegalArgumentException
+                    ("Cannot create object name for user " + user);
             }
         }
-        sb.append("/>");
-        return (sb.toString());
+        return ((String[]) results.toArray(new String[results.size()]));
 
     }
+
+
+    // ------------------------------------------------------------- Operations
 
 
 }

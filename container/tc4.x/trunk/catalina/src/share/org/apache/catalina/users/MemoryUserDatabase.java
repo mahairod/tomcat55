@@ -94,6 +94,32 @@ import org.xml.sax.Attributes;
 public class MemoryUserDatabase implements UserDatabase {
 
 
+    // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Create a new instance with default values.
+     */
+    public MemoryUserDatabase() {
+
+        super();
+
+    }
+
+
+    /**
+     * Create a new instance with the specified values.
+     *
+     * @param id Unique global identifier of this user database
+     */
+    public MemoryUserDatabase(String id) {
+
+        super();
+        this.id = id;
+
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -110,6 +136,12 @@ public class MemoryUserDatabase implements UserDatabase {
      * group name.
      */
     protected HashMap groups = new HashMap();
+
+
+    /**
+     * The unique global identifier of this user database.
+     */
+    protected String id = null;
 
 
     /**
@@ -180,6 +212,16 @@ public class MemoryUserDatabase implements UserDatabase {
         synchronized (groups) {
             return (groups.values().iterator());
         }
+
+    }
+
+
+    /**
+     * Return the unique global identifier of this user database.
+     */
+    public String getId() {
+
+        return (this.id);
 
     }
 

@@ -138,6 +138,16 @@ public class MemoryUser extends AbstractUser {
 
 
     /**
+     * Return the {@link UserDatabase} within which this User is defined.
+     */
+    public UserDatabase getUserDatabase() {
+
+        return (this.database);
+
+    }
+
+
+    /**
      * Add a new {@link Group} to those this user belongs to.
      *
      * @param group The new group

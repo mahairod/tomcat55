@@ -135,7 +135,7 @@ public class MemoryUserDatabaseFactory implements ObjectFactory {
 
         // Create and configure a MemoryUserDatabase instance based on the
         // RefAddr values associated with this Reference
-        MemoryUserDatabase database = new MemoryUserDatabase();
+        MemoryUserDatabase database = new MemoryUserDatabase(name.toString());
         RefAddr ra = null;
 
         ra = ref.get("encoding");
