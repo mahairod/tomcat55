@@ -92,7 +92,7 @@ public final class Enumerator implements Enumeration {
     public Enumerator(Iterator iterator, boolean clone) {
 
         super();
-        if (clone) {
+        if (!clone) {
             this.iterator = iterator;
         } else {
             List list = new LinkedList();
