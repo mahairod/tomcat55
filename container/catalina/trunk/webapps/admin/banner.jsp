@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -17,11 +17,11 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td align="left" valign="middle"> 
+      <td align="left" valign="middle">
         <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" height="120"></div>
       </td>
       <form method='post' action='/admin/commitChanges.do' target='_self'>
-      <td align="right" valign="middle"> 
+      <td align="right" valign="middle">
         <html:submit>
           <bean:message key="button.commit"/>
         </html:submit>
@@ -31,7 +31,7 @@
         <div class="table-normal-text" align="left">&nbsp </div>
       </td>
     <form method='post' action='/admin/logOut.do' target='_top'>
-      <td align="right" valign="middle"> 
+      <td align="right" valign="middle">
         <html:submit>
           <bean:message key="button.logout"/>
         </html:submit>

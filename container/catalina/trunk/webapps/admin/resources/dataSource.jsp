@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -44,7 +44,7 @@
           <bean:write name="dataSourceForm" property="nodeLabel"/>
         </div>
       </td>
-      <td align="right" nowrap> 
+      <td align="right" nowrap>
         <div class="page-title-text">
           <controls:actions>
             <controls:action selected="true">
@@ -65,7 +65,7 @@
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
                             URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" + 
+                            URLEncoder.encode(serviceInfo) + "&forward=" +
                             URLEncoder.encode("DataSources Delete List") %>'>
                 <bean:message key="resources.actions.datasrc.delete"/>
             </controls:action>
@@ -79,17 +79,17 @@
 <br>
 
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr><td><div class="table-title-text">  
+    <tr><td><div class="table-title-text">
         <bean:message key="resources.treeBuilder.datasources"/>
     </div></td></tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
 
-        <controls:table tableStyle="front-table" lineStyle="line-row">            
-          <controls:row header="true" 
+        <controls:table tableStyle="front-table" lineStyle="line-row">
+          <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>

@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -19,12 +19,12 @@
 <html:form method="POST" action="/DeleteHosts">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
+      <td width="81%">
         <div class="page-title-text" align="left">
           <bean:message key="actions.hosts.delete"/>
         </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
             <controls:actions>
               <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
@@ -35,14 +35,14 @@
     </tr>
   </table>
 
-<%@ include file="../buttons.jsp" %>    
+<%@ include file="../buttons.jsp" %>
   <br>
 
   <%-- Hosts List --%>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
         <table class="front-table" border="1"
          cellspacing="0" cellpadding="0" width="100%">
           <tr class="header-row">
@@ -58,15 +58,15 @@
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
               <logic:match name="host" value='<%= "host="+request.getServerName()+"," %>'>
-                <font color='red'>*</font>           
-              </logic:match>          
+                <font color='red'>*</font>
+              </logic:match>
               <logic:notMatch name="host" value='<%= "host="+request.getServerName()+"," %>'>
               <html:multibox property="hosts"
                                 value="<%= host.toString() %>"/>
-              </logic:notMatch>                 
+              </logic:notMatch>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
-              <html:link page='<%= "/EditHost.do?select=" + 
+              <html:link page='<%= "/EditHost.do?select=" +
                          java.net.URLEncoder.encode(host.toString()) %>'>
                 <controls:attribute name="host" attribute="name"/>
               </html:link>

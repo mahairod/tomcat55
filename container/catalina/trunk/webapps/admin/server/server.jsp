@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -25,7 +25,7 @@
            <bean:write name="serverForm" property="nodeLabel"/>
         </div>
       </td>
-      <td align="right" nowrap> 
+      <td align="right" nowrap>
         <div class="page-title-text">
         <controls:actions>
           <controls:action selected="true">
@@ -50,16 +50,16 @@
  <br>
 
   <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr><td><div class="table-title-text">  
+    <tr><td><div class="table-title-text">
       <bean:message key="server.properties"/>
     </div></td></tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
+    <tr>
       <td>
          <controls:table tableStyle="front-table" lineStyle="line-row">
-          <controls:row header="true" 
+          <controls:row header="true"
               labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>
               <bean:message key="service.property"/>

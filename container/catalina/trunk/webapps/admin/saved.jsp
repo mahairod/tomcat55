@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -17,9 +17,9 @@
     </script>
 
     <%@ include file="header.jsp" %>
-    
+
     <%-- display warnings if any --%>
-    <logic:present name="warning">    
+    <logic:present name="warning">
             <bean:message key="warning.header"/>
             <bean:message key='<%= (String) request.getAttribute("warning") %>'/>
             <br>

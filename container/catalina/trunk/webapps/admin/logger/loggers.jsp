@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+<%@ page language="java" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -20,12 +20,12 @@
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
+      <td width="81%">
         <div class="page-title-text" align="left">
           <bean:message key="actions.loggers.delete"/>
         </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
             <controls:actions>
               <controls:action selected="true">
@@ -40,14 +40,14 @@
     </tr>
   </table>
 
-<%@ include file="../buttons.jsp" %>    
+<%@ include file="../buttons.jsp" %>
   <br>
 
   <%-- Loggers List --%>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1"
          width="100%">
-    <tr><td> 
+    <tr><td>
 
       <table class="front-table" border="1"
        cellspacing="0" cellpadding="0" width="100%">
@@ -68,7 +68,7 @@
                                 value="<%= logger.toString() %>"/>
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
-              <html:link page='<%= "/EditLogger.do?select=" + 
+              <html:link page='<%= "/EditLogger.do?select=" +
                          java.net.URLEncoder.encode(logger.toString()) %>'>
                 <controls:attribute name="logger" attribute="className"/>
               </html:link>
