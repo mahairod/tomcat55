@@ -126,6 +126,8 @@ public class MBeanUtils {
     private static String exceptions[][] = {
         { "org.apache.ajp.tomcat4.Ajp13Connector",
           "Ajp13Connector" },
+        { "org.apache.coyote.tomcat4.Ajp13Connector",
+          "CoyoteConnector" },
         { "org.apache.catalina.core.StandardDefaultContext",
           "DefaultContext" },
         { "org.apache.catalina.connector.http10.HttpConnector",
@@ -693,6 +695,23 @@ public class MBeanUtils {
                                   ",address=" + httpConnector.getAddress());
             return (name);
         } else if ("org.apache.ajp.tomcat4.Ajp13Connector".equals
+                   (connector.getClass().getName())) {
+            try {
+                String address = (String)
+                    PropertyUtils.getSimpleProperty(connector, "address");
+                Integer port = (Integer)
+                    PropertyUtils.getSimpleProperty(connector, "port");
+                name = new ObjectName(domain + ":type=Connector" +
+                                      ",service=" +
+                                      connector.getService().getName() +
+                                      ",port=" + port +
+                                      ",address=" + address);
+                return (name);
+            } catch (Exception e) {
+                throw new MalformedObjectNameException
+                    ("Cannot create object name for " + connector);
+            }
+        } else if ("org.apache.coyote.tomcat4.CoyoteConnector".equals
                    (connector.getClass().getName())) {
             try {
                 String address = (String)
