@@ -1414,6 +1414,9 @@ public class WebappClassLoader
     protected Class findClassInternal(String name)
         throws ClassNotFoundException {
 
+        if (!validate(name))
+            throw new ClassNotFoundException(name);
+
         String tempPath = name.replace('.', '/');
         String classPath = tempPath + ".class";
 
@@ -1733,6 +1736,30 @@ public class WebappClassLoader
             // Some policy files may restrict this, even for the core,
             // so this exception is ignored
         }
+
+    }
+
+
+    /**
+     * Validate a classname. As per SRV.9.7.2, we must restict loading of 
+     * classes from J2SE (java.*) and classes of the servlet API 
+     * (javax.servlet.*). That should enhance robustness and prevent a number
+     * of user error (where an older version of servlet.jar would be present
+     * in /WEB-INF/lib).
+     * 
+     * @param name class name
+     * @return true if the name is valid
+     */
+    protected boolean validate(String name) {
+
+        if (name == null)
+            return false;
+        if (name.startsWith("java."))
+            return false;
+        if (name.startsWith("javax.servlet."))
+            return false;
+
+        return true;
 
     }
 
