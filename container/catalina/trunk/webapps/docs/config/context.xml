@@ -37,8 +37,7 @@
   directory hierarchy).</p>
 
   <p>You may define as many <strong>Context</strong> elements as you
-  wish, nested within a <a href="host.html">Host</a> element in
-  <code>conf/server.xml</code>.  Each such Context MUST have a unique
+  wish.  Each such Context MUST have a unique
   context path, which is defined by the <code>path</code> attribute.
   In addition, you MUST define a Context with a context path equal to
   a zero-length string.  This Context becomes the <em>default</em>
@@ -53,7 +52,9 @@
   Application Deployment</a> for more information. This method allows dynamic
   reconfiguration of the web application, since the main 
   <code>conf/server.xml</code> file cannot be reloaded without restarting
-  Tomcat.</p>
+  Tomcat. <b>Please note that for tomcat 5.x, unlike tomcat 4.x, it is NOT
+  recommended to place <Context> elements directory in the server.xml file.</b>
+  </p>
 
   <p>In addition to explicitly specified Context elements, there are
   several techniques by which Context elements can be created automatically
