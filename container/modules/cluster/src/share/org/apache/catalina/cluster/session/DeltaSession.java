@@ -641,7 +641,9 @@ public class DeltaSession
                 expire(true);
             } else if ( timeIdle >= (2*maxInactiveInterval) ) {
                 //if the session has been idle twice as long as allowed,
-                //the primary session has probably crashed
+                //the primary session has probably crashed, and no other
+                //requests are coming in. that is why we do this. otherwise
+                //we would have a memory leak
                 expire(true);
             }
         }
