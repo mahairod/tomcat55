@@ -43,7 +43,11 @@
       </update>
       <update>
         Modified RELEASE-PLAN-5.0.html to indicate status given start of work on Tomcat 5.next. (yoavs)
-	</update>
+      </update>
+      <update>
+        Added command lines utilities version.sh, version.bat to let you know what
+        version is installed. (funkman)
+      </update>
     </changelog>
   </subsection>
 
@@ -73,7 +77,7 @@
       <fix>
         <bug>29869</bug>: Better JMX/JSR77 support in StandardContext and StandardWrapper. (remm)
       </fix>
-      <update> 
+      <update>
         Fixed broken link to JK documenration from AJP Connector reference page. (yoavs)
       </update>
       <fix>
@@ -87,7 +91,7 @@
       </fix>
       <fix>
         <bug>30179</bug>: Improved Bootstrap catalina.properties handling. (yoavs)
-	</fix>
+    </fix>
     </changelog>
   </subsection>
 
@@ -222,7 +226,7 @@
       </fix>
     </changelog>
   </subsection>
-  
+
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -245,7 +249,7 @@
       </fix>
     </changelog>
   </subsection>
- 
+
   <subsection name="Coyote">
     <changelog>
       <fix>
@@ -323,32 +327,32 @@
       (luehe)
       </docs>
       <fix>
-      Make those classes in deploy non final so it is possible to customized 
+      Make those classes in deploy non final so it is possible to customized
       them (jfarcand)
       </fix>
       <fix>
-      <bug>28971</bug>: Regression: the server cookies should be parsed after the context 
-      is mapped, otherwise, the session cookie is never considered valid, and 
+      <bug>28971</bug>: Regression: the server cookies should be parsed after the context
+      is mapped, otherwise, the session cookie is never considered valid, and
       it will use the last one (remm).
       </fix>
       <fix>
-      <bug>28959</bug>: Fix again mark/reset functionality, and minimize 
+      <bug>28959</bug>: Fix again mark/reset functionality, and minimize
       the size of the allocated buffer (remm)
       </fix>
       <fix>
-      Make SingleSignOnEntry constructor public from package protected, 
+      Make SingleSignOnEntry constructor public from package protected,
       submitted by Brian Stansberry (remm)
       </fix>
       <fix>
-      <bug>22176</bug>: Allow username and/or password to start and/or end in 
+      <bug>22176</bug>: Allow username and/or password to start and/or end in
       a space when using BASIC authentication (markt)
       </fix>
       <fix>
-      <bug>22413</bug>: response.encodeURL(response.encodeURL("xxx.jsp") now 
+      <bug>22413</bug>: response.encodeURL(response.encodeURL("xxx.jsp") now
       works correctly in root context (markt)
       </fix>
       <fix>
-      Fix subject lost problem with JAAS realm, submitted by Janne Vaananen 
+      Fix subject lost problem with JAAS realm, submitted by Janne Vaananen
       (jfarcand)
       </fix>
       <fix>
@@ -365,7 +369,7 @@
     <changelog>
 
       <fix>
-      <bug>28850</bug>: Enable parsing error messages in the given Locale 
+      <bug>28850</bug>: Enable parsing error messages in the given Locale
       by using MessageFormat.setLocale (billbarker, luehe)
       </fix>
 
@@ -400,13 +404,13 @@
       Refactoring of Mark (luehe)
       </update>
       <fix>
-      <bug>28696</bug>: xsi:schemaLocation should be a valid attribute 
+      <bug>28696</bug>: xsi:schemaLocation should be a valid attribute
       for jsp:root (kinman)
       </fix>
       <fix>
-      <bug>28604</bug>: If compiling from JspC, the absolute (instead of 
-      context-relative) path of the JSP that caused the error is now printed 
-      (when compiling from JspServlet, we continue to print only the 
+      <bug>28604</bug>: If compiling from JspC, the absolute (instead of
+      context-relative) path of the JSP that caused the error is now printed
+      (when compiling from JspServlet, we continue to print only the
       context-relative path of the JSP) (luehe)
       </fix>
       <fix>
@@ -445,7 +449,7 @@
       Angus Mezick (markt)
       </fix>
       <fix>
-      <bug>21790</bug>: Modify noshade references to align with XHTML 
+      <bug>21790</bug>: Modify noshade references to align with XHTML
       reference guide, submitted by Henning Schmiedehausen (markt)
       </fix>
 
@@ -475,8 +479,8 @@
 
       <update>
       Change to list any additionally JNDI data-sources that are present
-      in the web.xml file, but not defined either globally or at the context 
-      level, on the context level maintenance page to make it possible 
+      in the web.xml file, but not defined either globally or at the context
+      level, on the context level maintenance page to make it possible
       to click on the data-source and edit it (amyroh)
       </update>
 
@@ -499,7 +503,7 @@
       Fix the problems with paths having spaces in service.bat (mturk)
       </fix>
       <fix>
-      <bug>28333</bug>: Add a message about cvs login in the case where 
+      <bug>28333</bug>: Add a message about cvs login in the case where
       checkout fails in the Ant netbuild (remm)
       </fix>
 
@@ -528,7 +532,7 @@
       Peter Rossbach (remm)
       </fix>
       <fix>
-      <bug>28107</bug>: Simplify Ant tasks declarations, submitted 
+      <bug>28107</bug>: Simplify Ant tasks declarations, submitted
       by Matt Raible (remm)
       </fix>
       <update>
@@ -536,7 +540,7 @@
       </update>
       <fix>
       <bug>13924</bug>: The spec states if an error page declaration doesn't
-      match the original exception and the exception is an instance 
+      match the original exception and the exception is an instance
       of ServletException then the exception should be unwrapped
       and a second pass made of the error page declarations (markt, luehe)
       </fix>
@@ -566,7 +570,7 @@
       <bug>19545</bug>: CGI issues with CONTENT_LENGTH (markt)
       </fix>
       <update>
-      Expose more of the session management methods at the top-level Manager 
+      Expose more of the session management methods at the top-level Manager
       interface (luehe)
       </update>
       <fix>
@@ -574,11 +578,11 @@
       (markt)
       </fix>
       <fix>
-      <bug>9851</bug>: Digest authentication failed with Mozilla and other 
+      <bug>9851</bug>: Digest authentication failed with Mozilla and other
       issues re RFC2617 (markt)
       </fix>
       <fix>
-      Always introspect for protocol hadlers, so that the attributes 
+      Always introspect for protocol hadlers, so that the attributes
       are meaningful (remm)
       </fix>
       <update>
@@ -611,7 +615,7 @@
       after each request if the security manager is enabled (remm)
       </update>
       <fix>
-      <bug>19254</bug>: Provide a basic implementation for the clean-native 
+      <bug>19254</bug>: Provide a basic implementation for the clean-native
       target, submitted by marcs (markt)
       </fix>
       <update>
@@ -635,7 +639,7 @@
     <changelog>
 
       <fix>
-      <bug>28244</bug>: XML Comment between jsp:attribute causes attributes 
+      <bug>28244</bug>: XML Comment between jsp:attribute causes attributes
       after the comment to be ignored (kinman)
       </fix>
       <fix>
@@ -649,12 +653,12 @@
       Added support for exception chaining if JDK 1.4 is present (luehe)
       </update>
       <fix>
-      Moved check for JSP resource existence into synchronized block 
-      (if JspServletWrapper==null), to avoid having multiple threads check 
+      Moved check for JSP resource existence into synchronized block
+      (if JspServletWrapper==null), to avoid having multiple threads check
       for it simultaneously (luehe)
       </fix>
       <update>
-      Added number of JSPs that have been *re*loaded to set of monitorable 
+      Added number of JSPs that have been *re*loaded to set of monitorable
       attributes (luehe)
       </update>
       <fix>
@@ -662,25 +666,25 @@
       handled correctly in XML syntax (kinman)
       </fix>
       <fix>
-      <bug>28380</bug>: Javac error with ':' and '.' in attribute names 
+      <bug>28380</bug>: Javac error with ':' and '.' in attribute names
       (kinman)
       </fix>
       <fix>
-      When in deployment (ie., !development) mode, save any compilation 
-      exceptions and rethrow them (instead of recompiling and getting the 
-      same exception over and over again) until the next scheduled 
+      When in deployment (ie., !development) mode, save any compilation
+      exceptions and rethrow them (instead of recompiling and getting the
+      same exception over and over again) until the next scheduled
       recompilation (luehe)
       </fix>
       <fix>
-      Close URLConnection's InputStream after getting lastModified date,  
+      Close URLConnection's InputStream after getting lastModified date,
       submitted by martin (luehe)
       </fix>
       <fix>
-      <bug>28147</bug>: Remove canonicalization, which is not very useful 
+      <bug>28147</bug>: Remove canonicalization, which is not very useful
       here, and can cause trouble with symlinks, submitted by Rick Wong (remm)
       </fix>
       <fix>
-      <bug>28603</bug>: JspC Ant task does not detect errors on a second 
+      <bug>28603</bug>: JspC Ant task does not detect errors on a second
       compile (luehe)
       </fix>
       <fix>
@@ -688,7 +692,7 @@
       (luehe)
       </fix>
       <fix>
-      Fixed another incidence where URLConnection was not closed when 
+      Fixed another incidence where URLConnection was not closed when
       checking for lastModified date of included resources (luehe)
       </fix>
 
@@ -701,30 +705,30 @@
     <changelog>
 
       <fix>
-      <bug>28161</bug>: The "smart" queue will now use the session message 
-      getUniqueId instead of sessionId, this makes sure that no messages are 
+      <bug>28161</bug>: The "smart" queue will now use the session message
+      getUniqueId instead of sessionId, this makes sure that no messages are
       overridden when the queue fills up (fhanik)
       </fix>
       <fix>
-      The async replication thread will now properly exit when members join 
+      The async replication thread will now properly exit when members join
       or leave the cluster (fhanik)
       </fix>
       <fix>
       Make sure to close the channel upon server stop (fhanik)
       </fix>
-      <fix> 
-      Membership alive time gets updated with each new broad cast, this will 
+      <fix>
+      Membership alive time gets updated with each new broad cast, this will
       keep the membership updated with the exact lifetime of each node, the
-      cluster sorts its members by desc alive time, and change the started 
+      cluster sorts its members by desc alive time, and change the started
       flag to be set earlier in the DeltaManager (fhanik)
       </fix>
       <fix>
-      Added all the interestOps to the synchronized blocks to guarantee 
+      Added all the interestOps to the synchronized blocks to guarantee
       non blocking behaviour at all times, submitted by Rainer Jung (fhanik)
       </fix>
       <update>
-      Added in the ability to run the DeltaManager/DeltaSession without 
-      a container, so that a different clustering plug in can be used 
+      Added in the ability to run the DeltaManager/DeltaSession without
+      a container, so that a different clustering plug in can be used
       to backup sessions in a primary/secondary store (fhanik)
       </update>
       <fix>
@@ -755,13 +759,13 @@
       (amyroh)
       </fix>
       <fix>
-      Display GlobalNamingResource config if web.xml has resource-ref 
+      Display GlobalNamingResource config if web.xml has resource-ref
       definition without Context Resource config (amyroh)
       </fix>
       <fix>
       Change to list any additionally JNDI data-sources that are present
       in the web.xml file, but not defined either globally or at the context
-      level, on the context level maintenance page to make it possible 
+      level, on the context level maintenance page to make it possible
       to click on the data-source and edit it (amyroh)
       </fix>
 
@@ -793,7 +797,7 @@
     <changelog>
 
       <fix>
-      Fix getContext("/") so current context is returned if called whilst 
+      Fix getContext("/") so current context is returned if called whilst
       in the root context (markt)
       </fix>
       <fix>
@@ -801,7 +805,7 @@
       a possible NPE (remm)
       </fix>
       <fix>
-      Allow webapp to override JspServlet (settings) inherited from global 
+      Allow webapp to override JspServlet (settings) inherited from global
       web.xml (luehe)
       </fix>
 
@@ -817,7 +821,7 @@
       Add detection for JDK 1.5 (billbarker)
       </fix>
       <fix>
-      <bug>16157</bug>: Set AuthType on HttpServletRequest, submitted by 
+      <bug>16157</bug>: Set AuthType on HttpServletRequest, submitted by
       Kan Ogawa (markt)
       </fix>
       <fix>
@@ -840,7 +844,7 @@
       (funkman)
       </update>
       <fix>
-      <bug>28236</bug>: when reallocating, make the buffer grow faster 
+      <bug>28236</bug>: when reallocating, make the buffer grow faster
       (512 bytes at a time was not sufficient) (remm)
       </fix>
 
@@ -859,7 +863,7 @@
       access() on a session should not set isNew false (fhanik)
       </fix>
       <fix>
-      <bug>28259</bug>: fixed the blocking interestOps(), although 
+      <bug>28259</bug>: fixed the blocking interestOps(), although
       selector.select() still doesn't wakeup when a new request comes in
       (fhanik)
       </fix>
@@ -930,7 +934,7 @@
     <changelog>
 
       <fix>
-      <bug>27917</bug>: Make certain that the endpoint is closed, even 
+      <bug>27917</bug>: Make certain that the endpoint is closed, even
       if Apache has already dropped the connection (billbarker)
       </fix>
       <fix>
@@ -954,7 +958,7 @@
       causes "null" (instead of) "" to be generated (kinman)
       </fix>
       <fix>
-      Return 500 error code if JSP error page mechanism is invoked 
+      Return 500 error code if JSP error page mechanism is invoked
       (the current impl used to return 200) (luehe)
       </fix>
       <fix>
@@ -998,7 +1002,7 @@
     <changelog>
 
       <fix>
-      The defaultHostName may be alias, so we need to also try to find if 
+      The defaultHostName may be alias, so we need to also try to find if
       the registered hosts' aliases contains the defaultHostName (jfarcand)
       </fix>
       <fix>
@@ -1012,18 +1016,18 @@
       Fix some setters and operations in MBeans (remm)
       </fix>
       <fix>
-      <bug>27127</bug>: Shutdown doesn't work with custom server port 
+      <bug>27127</bug>: Shutdown doesn't work with custom server port
       and non-default config file (remm)
       </fix>
       <fix>
       Fix logging of errors when pausing and resuming connector (remm)
       </fix>
       <fix>
-      <bug>27293</bug>: Fix if-unmodified-since check, using 
+      <bug>27293</bug>: Fix if-unmodified-since check, using
       the old-and-simple trick of adding 1000 (remm)
       </fix>
       <fix>
-      Provide an implementation for getName() and getPassword() 
+      Provide an implementation for getName() and getPassword()
       in UserDatabaseRealm, to add support for client cert (markt)
       </fix>
       <fix>
@@ -1031,7 +1035,7 @@
       context (remm)
       </fix>
       <fix>
-      <bug>27276</bug>: Fix NPE when a null password is set, submitted 
+      <bug>27276</bug>: Fix NPE when a null password is set, submitted
       by Rohan Lenard (remm)
       </fix>
       <fix>
@@ -1049,7 +1053,7 @@
       <bug>19852</bug>: Don't remove application parameters on stop (makt)
       </fix>
       <fix>
-      Avoid serializing Subject/Principal when persisting the session 
+      Avoid serializing Subject/Principal when persisting the session
       (jfarcand)
       </fix>
       <fix>
@@ -1063,7 +1067,7 @@
       Fix mark/reset functionality (remm)
       </fix>
       <fix>
-      <bug>27478</bug>: Fix crossContext flag when dispatching back 
+      <bug>27478</bug>: Fix crossContext flag when dispatching back
       to the original context (remm)
       </fix>
       <fix>
@@ -1076,11 +1080,11 @@
       Add error message about the absence of JMX when running standalone (remm)
       </add>
       <fix>
-      Initialize accessCount to 0, and call access when creating a session 
+      Initialize accessCount to 0, and call access when creating a session
       and in crossContext creations as well (remm, luehe)
       </fix>
       <fix>
-      <bug>17690</bug>: Display more helpful error message if docBase 
+      <bug>17690</bug>: Display more helpful error message if docBase
       is invalid for a WAR (mart)
       </fix>
       <fix>
@@ -1122,11 +1126,11 @@
       Set minSpareThreads / maxSpareThreads in JK (hgomez)
       </fix>
       <fix>
-      <bug>27299</bug>: Make sure HexUtils is accessed before some output 
+      <bug>27299</bug>: Make sure HexUtils is accessed before some output
       is made (remm)
       </fix>
       <fix>
-      <bug>20184</bug>, <bug>24763</bug>: getLen returns the length 
+      <bug>20184</bug>, <bug>24763</bug>: getLen returns the length
       excluding the header (truk)
       </fix>
       <fix>
@@ -1134,7 +1138,7 @@
       we actually allow enough (remm)
       </fix>
       <fix>
-      <bug>27513</bug>: Fix off by one when terminating threads, 
+      <bug>27513</bug>: Fix off by one when terminating threads,
       submitted by Sergei Zhirikov (remm)
       </fix>
       <fix>
@@ -1145,20 +1149,20 @@
       Fix problems with finding the Adapter in TC 5 (billbarker)
       </fix>
       <fix>
-      <bug>27629</bug>: Call close to release native memory, 
+      <bug>27629</bug>: Call close to release native memory,
       submitted by Christian Nester (remm)
       </fix>
       <fix>
-      <bug>27704</bug>: Result of request.getServletPath() wrong in case 
+      <bug>27704</bug>: Result of request.getServletPath() wrong in case
       JSP inside jsp-property-group (luehe)
       </fix>
       <fix>
-      If using clientAuth="want", then don't change it to "need" 
+      If using clientAuth="want", then don't change it to "need"
       when requesting the cert for CLIENT-CERT auth (billbarker)
       </fix>
       <fix>
-      Fix exception when attempting to pause the channel w/o specifying 
-      an address, and fix problem where requests weren't being unregistered 
+      Fix exception when attempting to pause the channel w/o specifying
+      an address, and fix problem where requests weren't being unregistered
       because of a misformatted Msg (billbarker)
       </fix>
       <fix>
@@ -1178,12 +1182,12 @@
       of swallowing it and just dumping its stack trace (luehe)
       </fix>
       <fix>
-      Add some intellignece to the compiler for generating code for useBean 
-      action. Generate direct instantiation (use new) when possible, 
-      use bean.instantiate when bean name is specified, and for the case 
-      of invalid bean class, either issue a translation time error (instead 
-      of javac error), or generate codes to throw InstantiationException 
-      at runtime, depending on a new compiler switch, 
+      Add some intellignece to the compiler for generating code for useBean
+      action. Generate direct instantiation (use new) when possible,
+      use bean.instantiate when bean name is specified, and for the case
+      of invalid bean class, either issue a translation time error (instead
+      of javac error), or generate codes to throw InstantiationException
+      at runtime, depending on a new compiler switch,
       errorOnUseBeanInvalidClassAttribute(defaulted to true) (kinman)
       </fix>
       <fix>
@@ -1205,7 +1209,7 @@
       (kinman)
       </fix>
       <fix>
-      <bug>27368</bug>: Annotate several node types with missing Java 
+      <bug>27368</bug>: Annotate several node types with missing Java
       line information (kinman)
       </fix>
       <fix>
@@ -1216,7 +1220,7 @@
       Added JSP monitoring facility (luehe)
       </add>
       <fix>
-      <bug>27517</bug>: The pageEncoding attribute is not used, when charset 
+      <bug>27517</bug>: The pageEncoding attribute is not used, when charset
       value is set (luehe)
       </fix>
       <update>
@@ -1233,11 +1237,11 @@
       <bug>14359</bug>: Remove last traces of largefile option (markt)
       </fix>
       <fix>
-      <bug>27642</bug>: trimSpaces property not settable via command-line 
+      <bug>27642</bug>: trimSpaces property not settable via command-line
       options (luehe)
       </fix>
       <fix>
-      <bug>18005</bug>: Provide a better error message if session expires 
+      <bug>18005</bug>: Provide a better error message if session expires
       during login process (markt)
       </fix>
       <fix>
@@ -1249,8 +1253,8 @@
       early startup (remm)
       </fix>
       <fix>
-      <bug>13499</bug>: If page output is unbuffered, illegal state exception 
-      is no longer thrown on forward if and only if nothing has been written 
+      <bug>13499</bug>: If page output is unbuffered, illegal state exception
+      is no longer thrown on forward if and only if nothing has been written
       to the page (markt)
       </fix>
 
@@ -1263,11 +1267,11 @@
     <changelog>
 
       <docs>
-      <bug>27307</bug>:  Improvements to DataSource HOWTO, 
+      <bug>27307</bug>:  Improvements to DataSource HOWTO,
       submitted by Felipe Leme (remm)
       </docs>
       <fix>
-      Escape '?' in generated XML of status servlet, submitted by Peter Lin 
+      Escape '?' in generated XML of status servlet, submitted by Peter Lin
       (remm)
       </fix>
       <update>
@@ -1279,7 +1283,7 @@
       (amyroh)
       </fix>
       <docs>
-      <bug>16507</bug>: Update valve docs to provide pointer to the Jakarta 
+      <bug>16507</bug>: Update valve docs to provide pointer to the Jakarta
       Regexp docs (markt)
       </docs>
       <update>
@@ -1309,8 +1313,8 @@
       <bug>27090</bug>: Make parameter encoding configurable (markt)
       </fix>
       <fix>
-      <bug>27100</bug>: Remove lock obsfucation functionality as it breaks 
-      a number of webdav clients and does not appear to be covered by 
+      <bug>27100</bug>: Remove lock obsfucation functionality as it breaks
+      a number of webdav clients and does not appear to be covered by
       the webdav spec (markt)
       </fix>
       <fix>
@@ -1320,15 +1324,15 @@
       Reenabled the doRun flag in the multicast service (fhanik)
       </fix>
       <fix>
-      <bug>27190</bug>: Ensure webdav servlet returns correct status 
+      <bug>27190</bug>: Ensure webdav servlet returns correct status
       in response to MOVE request (markt)
       </fix>
       <fix>
-      The new and valid flags have to be set before the creation listeners 
+      The new and valid flags have to be set before the creation listeners
       are invoked (fhanik)
       </fix>
       <fix>
-      Added in the server ip and port for debug purposes when logging 
+      Added in the server ip and port for debug purposes when logging
       a ACK timeout (fhanik)
       </fix>
 
@@ -1345,7 +1349,7 @@
     <changelog>
 
       <fix>
-      Updates and additions to Spanish translations, submitted by Jesus Marin 
+      Updates and additions to Spanish translations, submitted by Jesus Marin
       (larryi)
       </fix>
       <scode>
@@ -1374,11 +1378,11 @@
     <changelog>
 
       <fix>
-      <bug>12363</bug>: valueBound() must be called before the object is made 
+      <bug>12363</bug>: valueBound() must be called before the object is made
       available via getAttribute(), submitted by Pablo Morales (makt)
       </fix>
       <fix>
-      <bug>26237</bug>: fixed a typo in MemoryUserDatabase which would cause 
+      <bug>26237</bug>: fixed a typo in MemoryUserDatabase which would cause
       problems if the pathname is aboslute, submitted by Xavier Poinsard
       (remm)
       </fix>
@@ -1394,7 +1398,7 @@
       time is bigger than the session timeout (remm)
       </fix>
       <update>
-      Optimize session access: remove synchronization, minimize object 
+      Optimize session access: remove synchronization, minimize object
       allocation for events, and reduce the amount of hashtable lookups (remm)
       </update>
       <fix>
@@ -1406,7 +1410,7 @@
       should be set to 0 rather than -1 to disable timeout (markt)
       </fix>
       <fix>
-      Try to fix some character corruption in non-English resource strings 
+      Try to fix some character corruption in non-English resource strings
       in the nightly build (larryi)
       </fix>
       <fix>
@@ -1414,16 +1418,16 @@
       session is new, as well as cross context (remm)
       </fix>
       <fix>
-      <bug>26341</bug>: when calling the removeAttributes during session 
+      <bug>26341</bug>: when calling the removeAttributes during session
       expiration, notified attributes should see the session as invalid (remm)
       </fix>
       <fix>
-      <bug>26010</bug>: '_' was an inappropriate character to replace 
+      <bug>26010</bug>: '_' was an inappropriate character to replace
       the path separator, since it's a common character in HTTP; '#' will be
       used instead (remm)
       </fix>
       <fix>
-      Add missing setUseContextClassLoader call to avoid possible classloader 
+      Add missing setUseContextClassLoader call to avoid possible classloader
       issue when Tomcat is embedded (jfarcand)
       </fix>
       <update>
@@ -1454,11 +1458,11 @@
       request attributes (remm)
       </fix>
       <fix>
-      <bug>26487</bug>: RFC 2254 done on whole string instead of just DN, 
+      <bug>26487</bug>: RFC 2254 done on whole string instead of just DN,
       submitted by Jeff Tulley (funkman)
       </fix>
       <fix>
-      <bug>26715</bug>: Call endAccess after reading a session from storage 
+      <bug>26715</bug>: Call endAccess after reading a session from storage
       so that the session properly timeouts, submitted by Jochen Strunk
       (remm)
       </fix>
@@ -1470,7 +1474,7 @@
       Added support for configurable session id length (luehe)
       </update>
       <fix>
-      The forward request attributes must reflect the original request, so 
+      The forward request attributes must reflect the original request, so
       only set them if the request being passed doesn't have them (remm)
       </fix>
       <fix>
@@ -1489,7 +1493,7 @@
     <changelog>
 
       <fix>
-      Fix JMX self-registration of JK when loading the "normal" way 
+      Fix JMX self-registration of JK when loading the "normal" way
       (billbarker)
       </fix>
       <fix>
@@ -1520,7 +1524,7 @@
       Michael Becker (billbarker)
       </update>
       <add>
-      Implement clean shutdown of the connectors, using new pause and resume 
+      Implement clean shutdown of the connectors, using new pause and resume
       methods on the connector interface (remm)
       </add>
       <update>
@@ -1534,17 +1538,17 @@
       in RequestGroupInfo (luehe)
       </fix>
       <fix>
-      <bug>26492</bug>: consider all session ids sent as cookies until one is 
-      valid; also don't create cookie objects from sessionId cookies, which 
+      <bug>26492</bug>: consider all session ids sent as cookies until one is
+      valid; also don't create cookie objects from sessionId cookies, which
       seems consistent with sessionId hiding from the URL (remm)
       </fix>
       <fix>
-      <bug>25805</bug>: add localDataSource flag, based on code submitted 
+      <bug>25805</bug>: add localDataSource flag, based on code submitted
       by Neil Katin (remm)
       </fix>
       <fix>
-      <bug>26567</bug>: the mapper will complain if the default host is 
-      not known, which could make mapping fail without a way to easily 
+      <bug>26567</bug>: the mapper will complain if the default host is
+      not known, which could make mapping fail without a way to easily
       identify the cause (remm)
       </fix>
       <fix>
@@ -1564,7 +1568,7 @@
     <changelog>
 
       <fix>
-      <bug>26191</bug>: fix classcast exception is JSP document parser, 
+      <bug>26191</bug>: fix classcast exception is JSP document parser,
       submitted by Trond Aasan (remm)
       </fix>
       <fix>
@@ -1576,7 +1580,7 @@
       (kinman)
       </fix>
       <fix>
-      <bug>26335</bug>: modification check for tagfiles does not work 
+      <bug>26335</bug>: modification check for tagfiles does not work
       recursively (kinman)
       </fix>
       <fix>
@@ -1584,7 +1588,7 @@
       (kinman)
       </fix>
       <fix>
-      Implicit "pageContext" object no longer exposed in tag files, to comply 
+      Implicit "pageContext" object no longer exposed in tag files, to comply
       with JSP spec (luehe)
       </fix>
       <fix>
@@ -1600,7 +1604,7 @@
       that are known not to contain any TLDs (luehe)
       </update>
       <fix>
-      <bug>13960</bug>, <bug>13961</bug>: Javadocs fixes, submitted by 
+      <bug>13960</bug>, <bug>13961</bug>: Javadocs fixes, submitted by
       David Medinets (markt)
       </fix>
       <fix>
@@ -1621,7 +1625,7 @@
     <changelog>
 
       <fix>
-      <bug>12361</bug>: support CGI scripts in unpacked WARs: scripts are 
+      <bug>12361</bug>: support CGI scripts in unpacked WARs: scripts are
       extracted to the context work directory before execution (markt)
       </fix>
       <update>
@@ -1629,14 +1633,14 @@
       properties on the connector (larryi)
       </update>
       <fix>
-      Updating the admin webapp for the change in type of clientAuth 
+      Updating the admin webapp for the change in type of clientAuth
       (billbarker)
       </fix>
       <add>
       Add WebDAV webapp to TC5 (markt)
       </add>
       <docs>
-      <bug>13805</bug>: update docs to show that the shared directory 
+      <bug>13805</bug>: update docs to show that the shared directory
       is relative to CATALINA_BASE not CATALINA_HOME (markt)
       </docs>
       <update>
@@ -1646,7 +1650,7 @@
       Added in a module cluster interface (fhanik)
       </add>
       <add>
-      Refactored a lot of the cluster code: the cluster element has sub 
+      Refactored a lot of the cluster code: the cluster element has sub
       elements, makes the configuration is modular (fhanik)
       </add>
       <docs>
@@ -1657,11 +1661,11 @@
       (yoavs, remm)
       </docs>
       <update>
-      Add examples, introductory notes, and a brief how-to notes for tag 
+      Add examples, introductory notes, and a brief how-to notes for tag
       plugins (kinman)
       </update>
       <fix>
-      Fixed bug with the fact that the manager base has a static variable 
+      Fixed bug with the fact that the manager base has a static variable
       called name, caused session messages to be sent to the wrong managers
       (fhanik)
       </fix>
@@ -1675,11 +1679,11 @@
       Small docs updates for CGI and others (idarwin)
       </docs>
       <fix>
-      <bug>26906</bug>: The destination path needs to be normalised after the 
+      <bug>26906</bug>: The destination path needs to be normalised after the
       protocol and host has been removed (if present) (markt)
       </fix>
       <fix>
-      Lock token must be returned after lock creation, submitted 
+      Lock token must be returned after lock creation, submitted
       by Pieter van Prooijen (markt)
       </fix>
 
@@ -1742,7 +1746,7 @@
     <changelog>
 
       <fix>
-      Implemented the ability to not expire sessions on shutdown, since that 
+      Implemented the ability to not expire sessions on shutdown, since that
       will expire them across the cluster (fhanik)
       </fix>
       <fix>
@@ -1796,11 +1800,11 @@
       (jfarcand)
       </fix>
       <fix>
-      <bug>25193</bug>: Don't attempt to parse the parameters if the request 
+      <bug>25193</bug>: Don't attempt to parse the parameters if the request
       body wasn't fully read (remm)
       </fix>
       <fix>
-      <bug>25234</bug>: isValid already expires sessions, so 
+      <bug>25234</bug>: isValid already expires sessions, so
       backgroundProcess shouldn't call expire again, submitted by Paul Harvey
       (remm)
       </fix>
@@ -1808,7 +1812,7 @@
       Sync catalina.properties included in the JAR with the main one (remm)
       </fix>
       <fix>
-      Fix WebDAV servlet issues: <bug>23999</bug>, <bug>24001</bug>, 
+      Fix WebDAV servlet issues: <bug>23999</bug>, <bug>24001</bug>,
       <bug>24005</bug> (markt)
       </fix>
       <update>
@@ -1819,7 +1823,7 @@
       using RMI from Tomcat (remm)
       </fix>
       <update>
-      Fix authentication and authorization compliance with the final 
+      Fix authentication and authorization compliance with the final
       specification; also optimize algorithm (billbarker, remm)
       </update>
       <fix>
@@ -1833,33 +1837,33 @@
       <bug>23885</bug>: Strings for JAAS realm (funkman)
       </fix>
       <fix>
-      <bug>5762</bug>: Include port in HTTP_HOST environment variable, 
+      <bug>5762</bug>: Include port in HTTP_HOST environment variable,
       submitted by Martin Dengler (markt)
       </fix>
       <fix>
       <bug>5759</bug>: CGI servlet does not support extension mapping (markt)
       </fix>
       <fix>
-      <bug>25593</bug>: Set all common resources attributes on start, 
+      <bug>25593</bug>: Set all common resources attributes on start,
       including allowLinking (remm)
       </fix>
       <fix>
-      Reset the repositories array on certain method calls, and override 
+      Reset the repositories array on certain method calls, and override
       addURL to set hasExternalRepositories to true (remm)
       </fix>
       <fix>
-      Improve creation of cross context sessions: they will now timeout 
+      Improve creation of cross context sessions: they will now timeout
       correctly and they will appear as new when created (remm)
       </fix>
       <fix>
-      <bug>8859</bug>: Correct namespace handling for lock owners in WebDAV 
+      <bug>8859</bug>: Correct namespace handling for lock owners in WebDAV
       servlet (markt)
       </fix>
       <fix>
       Add a minTime attribute on servlets (remm)
       </fix>
       <fix>
-      <bug>25703</bug>: ExtendedLogValve use wrong filename after rotate 
+      <bug>25703</bug>: ExtendedLogValve use wrong filename after rotate
       or checkexits case, submitted by Peter Rossbach (funkman)
       </fix>
       <fix>
@@ -1867,8 +1871,8 @@
       the main class with JMX (remm)
       </fix>
       <fix>
-      <bug>25792</bug>: Fix session timeout implementation, which could 
-      lead to incorrect invalidation in some cases, submitted by Jarno 
+      <bug>25792</bug>: Fix session timeout implementation, which could
+      lead to incorrect invalidation in some cases, submitted by Jarno
       Peltoniemi (remm)
       </fix>
       <fix>
@@ -1880,7 +1884,7 @@
       Peter Rossbach (remm)
       </fix>
       <fix>
-      <bug>25886</bug>: Remove the check on the maximum amount of active 
+      <bug>25886</bug>: Remove the check on the maximum amount of active
       sessions during session creation (remm)
       </fix>
       <fix>
@@ -1892,17 +1896,17 @@
       task when unpackWARs is true now behaves correctly (markt)
       </fix>
       <fix>
-      <bug>25878</bug>: Add HostConfig after new Host is created via admin 
+      <bug>25878</bug>: Add HostConfig after new Host is created via admin
       and prevent duplicate errorReportValve creation after restart,
       submitted by Peter Rossbach (amyroh)
       </fix>
       <update>
-      <fix>25889</fix>: Allow configuring users and passwords, and 
+      <fix>25889</fix>: Allow configuring users and passwords, and
       automatically reconnect if connection fails for some reason, submitted by
       Peter Rossbach (remm)
       </update>
       <fix>
-      Fix array out of bounds when the docBase of a webapp is equal to "" 
+      Fix array out of bounds when the docBase of a webapp is equal to ""
       (remm)
       </fix>
       <fix>
@@ -1931,7 +1935,7 @@
       Update Japanese strings, submitted by Kazuhiro Kazama (larryi)
       </fix>
       <fix>
-      Fix JkCoyote to properly handle the distinction between localName/Port 
+      Fix JkCoyote to properly handle the distinction between localName/Port
       and serverName/Port (billbarker)
       </fix>
       <fix>
@@ -1943,16 +1947,16 @@
       arrays (larryi)
       </fix>
       <update>
-      Add a flag to allow using the encoding specified in the contentType or 
+      Add a flag to allow using the encoding specified in the contentType or
       using setCharacterEncoding for the URI paramters (remm)
       </update>
       <fix>
-      When redirecting to a folder, append the query string if not null, 
-      to avoid losing query parameters, and refactor to use the 
+      When redirecting to a folder, append the query string if not null,
+      to avoid losing query parameters, and refactor to use the
       new postParseRequest processing (remm)
       </fix>
       <fix>
-      <bug>25603</bug>: Adding a 'truststoreType' attribute, and making 
+      <bug>25603</bug>: Adding a 'truststoreType' attribute, and making
       the trustStorePassword default to the keystorePass (billbarker)
       </fix>
       <fix>
@@ -1966,7 +1970,7 @@
       Small cleanup of a thread startup in the thread pool (billbarker)
       </fix>
       <add>
-      Repackaging ApacheConfig and friends for Tomcat 5 in the 
+      Repackaging ApacheConfig and friends for Tomcat 5 in the
       org.apache.jk.config package (billbarker)
       </add>
       <fix>
@@ -1992,7 +1996,7 @@
       (remm)
       </fix>
       <fix>
-      Move the call to setSocketOptions to prevent a potential DoS condition 
+      Move the call to setSocketOptions to prevent a potential DoS condition
       when using SSL, submitted by Alex Chan (billbarker)
       </fix>
 
@@ -2023,7 +2027,7 @@
       Have JspC.execute() propagate its exceptions (luehe)
       </fix>
       <fix>
-      For tag files, don't issue error for multiple definition when both 
+      For tag files, don't issue error for multiple definition when both
       are for dynamic-attributes (kinman)
       </fix>
       <fix>
@@ -2050,7 +2054,7 @@
     <changelog>
 
       <fix>
-      Update Japanese admin webapp strings, submitted by Kazuhiro Kazama 
+      Update Japanese admin webapp strings, submitted by Kazuhiro Kazama
       (larryi)
       </fix>
       <fix>
@@ -2074,7 +2078,7 @@
       <bug>24771</bug>: Unable to create new connector (markt)
       </fix>
       <add>
-      Add manager statistics for each context, as well as navigation links 
+      Add manager statistics for each context, as well as navigation links
       so that this is actually useful (remm)
       </add>
       <docs>
@@ -2098,7 +2102,7 @@
       deploying a local webapp (remm)
       </docs>
       <docs>
-      <bug>9960</bug>: Clarify potential issues using xml context files 
+      <bug>9960</bug>: Clarify potential issues using xml context files
       and auto deployment (markt)
       </docs>
       <docs>
@@ -2106,7 +2110,7 @@
       (yoavs)
       </docs>
       <docs>
-      Add info that session persistence can be disabled by setting 
+      Add info that session persistence can be disabled by setting
       the attribute to an empty String (remm)
       </docs>
 
@@ -2147,7 +2151,7 @@
       Status servlets tweaks, to allow extending it (remm)
       </fix>
       <fix>
-      <bug>25948</bug>: Undeploy should be called with the displayed path 
+      <bug>25948</bug>: Undeploy should be called with the displayed path
       to be able to work on the root context, submitted by Peter Rossbach
       (remm)
       </fix>
@@ -2168,14 +2172,14 @@
       Clustering performance improvements (fhanik)
       </fix>
       <fix>
-      Fixed a bug in a dead lock with the pooled socket sender when a member 
+      Fixed a bug in a dead lock with the pooled socket sender when a member
       crashes (fhanik)
       </fix>
       <add>
       Implemented distributed expiration of sessions (fhanik)
       </add>
       <fix>
-      Print out a warning if no socket is returned from the pool and we are 
+      Print out a warning if no socket is returned from the pool and we are
       still connected (fhanik)
       </fix>
       <update>
@@ -2199,12 +2203,12 @@
       (amyroh)
       </fix>
       <fix>
-      <bug>25033</bug>: Calculating the object name should occur as early 
-      as possible, to fix a stop/start scenario based on different object 
+      <bug>25033</bug>: Calculating the object name should occur as early
+      as possible, to fix a stop/start scenario based on different object
       instances (remm)
       </fix>
       <fix>
-      Fix JMX object name generator when there are valves with 
+      Fix JMX object name generator when there are valves with
       the same classname in the pipeline (remm)
       </fix>
       <fix>
@@ -2238,7 +2242,7 @@
       In XML syntax, recognize \$ escape sequence in template text (kinman)
       </fix>
       <fix>
-      Make sure that white spaces in template texts around 
+      Make sure that white spaces in template texts around
       &lt;![CDATA[...]]&gt; are trimmed (kinman)
       </fix>
 
@@ -2304,27 +2308,27 @@
     <changelog>
 
       <update>
-      Merge digester's initialization logic into one class and add schema 
+      Merge digester's initialization logic into one class and add schema
       support for parsers other than Xerces (jfarcand)
       </update>
       <update>
-      Modify the MBean lifecycle for the containers: the MBeans will now be 
+      Modify the MBean lifecycle for the containers: the MBeans will now be
       removed only on destroy, rather than on stop (remm)
       </update>
       <fix>
-      <bug>9723</bug>: Avoid unnecessary calls to RequestUtil.filter, 
+      <bug>9723</bug>: Avoid unnecessary calls to RequestUtil.filter,
       submitted by Arvind Srinivasan (amyroh)
       </fix>
       <fix>
-      <bug>23853</bug>: add MBean description for DatasourceRealm, based on 
+      <bug>23853</bug>: add MBean description for DatasourceRealm, based on
       a patch by Kyle VanderBeek (amyroh)
       </fix>
       <fix>
-      Fix unregistration of valves on stop (the objectname should be reset so 
+      Fix unregistration of valves on stop (the objectname should be reset so
       that the valve is registered again) (remm)
       </fix>
       <fix>
-      Fix registration of the root context through JMX (basically, it's the 
+      Fix registration of the root context through JMX (basically, it's the
       usual "/" to "" conversion for the path) (remm)
       </fix>
       <update>
@@ -2336,16 +2340,16 @@
       DefaultContext (remm)
       </update>
       <fix>
-      In PersistentManagerBase, return the object instead of a null, and 
+      In PersistentManagerBase, return the object instead of a null, and
       throw the proper exception (jfarcand)
       </fix>
       <add>
-      Extend digester to be able to do system property replacement 
+      Extend digester to be able to do system property replacement
       in server.xml and the context config files, using the ${...} syntax
       used by Ant (remm)
       </add>
       <fix>
-      <bug>24006</bug>: allow header handling in WebDAV servlet, 
+      <bug>24006</bug>: allow header handling in WebDAV servlet,
       submitted by Mark Thomas (remm)
       </fix>
       <fix>
@@ -2360,8 +2364,8 @@
       (remm)
       </fix>
       <fix>
-      <bug>24832</bug>: Merge code from JDBC realm, fixing the valve after 
-      a restart of the database, submitted by submitted by Peter Rossbach 
+      <bug>24832</bug>: Merge code from JDBC realm, fixing the valve after
+      a restart of the database, submitted by submitted by Peter Rossbach
       (remm)
       </fix>
       <update>
@@ -2369,11 +2373,11 @@
       (remm)
       </update>
       <update>
-      When calling ServletContext.log, append the application's name so 
+      When calling ServletContext.log, append the application's name so
       we know from which application the log is coming (jfarcand)
       </update>
       <fix>
-      Don't throw an ISE if Session.getLastModified is called while the 
+      Don't throw an ISE if Session.getLastModified is called while the
       session is expiring, submitted by Brian Stansberry (remm)
       </fix>
       <fix>
@@ -2397,25 +2401,25 @@
       (jfarcand)
       </fix>
       <update>
-      Correct any maxThreads settings &lt; 10 in adjustLimits(), since 
+      Correct any maxThreads settings &lt; 10 in adjustLimits(), since
       they would result in a non functional connector (luehe)
       </update>
       <fix>
       <bug>24428</bug>: No continue if not HTTP/1.1 (remm)
       </fix>
       <fix>
-      Encode address property so Connector can handle IPV6 address 
+      Encode address property so Connector can handle IPV6 address
       in ObjectName (amyroh)
       </fix>
       <fix>
       Don't add the charset if it's the default one (remm)
       </fix>
       <fix>
-      Add getter for RequestInfo.globalProcessor - it was returning 
+      Add getter for RequestInfo.globalProcessor - it was returning
       AttributeNotFoundException because of missing getter (amyroh)
       </fix>
       <update>
-      Add a limit to the size of a POST which will be processed 
+      Add a limit to the size of a POST which will be processed
       using getParameter (remm)
       </update>
       <update>
@@ -2437,7 +2441,7 @@
       org.apache.tomcat.util.net.PoolTcpEndpoint acceptSocket (luehe)
       </fix>
       <fix>
-      The KeyStore implementation ("JKS") of the SUN provider converts 
+      The KeyStore implementation ("JKS") of the SUN provider converts
       alias names to lower case, so we need to do the same (luehe)
       </fix>
       <fix>
@@ -2474,7 +2478,7 @@
       Add some javadocs in EL related classes (kinman)
       </docs>
       <fix>
-      Use ISO-8859-1 as the default encoding for &lt;jsp:param&gt; since 
+      Use ISO-8859-1 as the default encoding for &lt;jsp:param&gt; since
       it is the default encoding for the request object (kinman)
       </fix>
       <update>
@@ -2483,7 +2487,7 @@
       going thru java.beans.Beans.instantiate() (kinman)
       </update>
       <update>
-      <bug>24506</bug>: provide an option to trim white spaces that appear 
+      <bug>24506</bug>: provide an option to trim white spaces that appear
       in a template text between two actions/directives; this is not spec
       compliant, so this is disabled by default (kinman)
       </update>
@@ -2491,7 +2495,7 @@
       Document Jasper option "trimSpaces" (kinman, remm)
       </docs>
       <fix>
-      '&lt;' operator used in simple Math throws an error: When used 
+      '&lt;' operator used in simple Math throws an error: When used
       with taglib (luehe)
       </fix>
       <docs>
@@ -2502,7 +2506,7 @@
       (kinman)
       </fix>
       <fix>
-      <bug>24779</bug>: Jasper fails to compile a valid JSP document 
+      <bug>24779</bug>: Jasper fails to compile a valid JSP document
       (xml syntax) when an EL string in template text contains a "[]" (kinman)
       </fix>
       <fix>
@@ -2521,7 +2525,7 @@
       Fix incorrect tags comments in the admin webapp (kinman)
       </fix>
       <fix>
-      <bug>24349</bug>: Avoid NPE (which renders the HTML manager servlet 
+      <bug>24349</bug>: Avoid NPE (which renders the HTML manager servlet
       unusable) if a context hasn't been started successfully, submitted by
       Ferenc Dobi (remm)
       </fix>
@@ -2530,7 +2534,7 @@
       Peter Rossbach (remm)
       </fix>
       <fix>
-      Fix the webapps docbase in the embed distribution, and some cleanup 
+      Fix the webapps docbase in the embed distribution, and some cleanup
       (remm)
       </fix>
       <update>
@@ -2618,11 +2622,11 @@
       <bug>23799</bug>: Canonicalize catalinaBase and catalinaHome (remm)
       </fix>
       <fix>
-      Start/stop ContainerBackgroundProcessor thread as part 
+      Start/stop ContainerBackgroundProcessor thread as part
       of StandardContext.start()/stop(), respectively (luehe)
       </fix>
       <fix>
-      Better increment the error count value by incrementing the count 
+      Better increment the error count value by incrementing the count
       everytime sendError is invoked (jfarcand)
       </fix>
       <update>
@@ -2630,7 +2634,7 @@
       elements (remm)
       </update>
       <update>
-      Added support for nesting a Context Listener and webapp Loader 
+      Added support for nesting a Context Listener and webapp Loader
       within a DefaultContext (glenn)
       </update>
       <fix>
@@ -2665,12 +2669,12 @@
       (billbarker)
       </fix>
       <fix>
-      Catch AccessControlException's so that unauthorized access to a socket 
+      Catch AccessControlException's so that unauthorized access to a socket
       when using the Java SecurityManager does not shutdown the worker thread
       (glenn)
       </fix>
       <fix>
-      Don't pretend that we are going to do something if the SSL handshake 
+      Don't pretend that we are going to do something if the SSL handshake
       fails (billbarker)
       </fix>
       <fix>
@@ -2686,7 +2690,7 @@
       <update>
       In case the server needs to reinitiate SSL handshake (with client auth
       enabled), consume request body and buffer it, so that it does not
-      interfere with client's handshake messages; with help from Bill Barker 
+      interfere with client's handshake messages; with help from Bill Barker
       (luehe)
       </update>
       <fix>
@@ -2710,14 +2714,14 @@
       Quote value of 'classid' attribute (luehe)
       </fix>
       <fix>
-      <bug>23691</bug>: Tweak the SMAP tracking code so that it works 
+      <bug>23691</bug>: Tweak the SMAP tracking code so that it works
       for classic custom tag and JSP fragments (kinman)
       </fix>
       <fix>
       Make Smap's FileSection work for windows too (kinman)
       </fix>
       <fix>
-      <bug>24019</bug>: Make sure that the "No Java compiler" error message 
+      <bug>24019</bug>: Make sure that the "No Java compiler" error message
       is produced only when there is really no javac (kinman)
       </fix>
 
@@ -2749,7 +2753,7 @@
       The clustered manager will now respect the distributable flag (fhanik)
       </fix>
       <fix>
-      The clustered manager will act like a standard manager if 
+      The clustered manager will act like a standard manager if
       the distributable flag is not set (fhanik)
       </fix>
       <update>
@@ -2762,12 +2766,12 @@
       Added in the suspect feature to avoid to much error printing (fhanik)
       </update>
       <fix>
-      Removed the session replication upon session creation, this happens at 
+      Removed the session replication upon session creation, this happens at
       the end of the request anyway (fhanik)
       </fix>
       <fix>
       In JMX land, the JSR 77 beans must be in the same domain as the engine;
-      this is due to a "limitation" of JMX which prevents retrieving 
+      this is due to a "limitation" of JMX which prevents retrieving
       attributes of a bean when the unregistration event is sent (remm)
       </fix>
       <fix>
@@ -2826,15 +2830,15 @@
       (luehe)
       </fix>
       <fix>
-      JMX registrations of servlets that map to the same jsp-file used 
+      JMX registrations of servlets that map to the same jsp-file used
       the same name (luehe)
       </fix>
       <update>
-      Separated JSESSION cookie configuration into its own method, which may 
+      Separated JSESSION cookie configuration into its own method, which may
       be overridden (luehe)
       </update>
       <fix>
-      Add missing doPrivileged block for adding cookies and encoding URLs 
+      Add missing doPrivileged block for adding cookies and encoding URLs
       (jfarcand)
       </fix>
       <fix>
@@ -2850,7 +2854,7 @@
       Avoid TLD-scanning the JARs under WEB-INF lib twice per webapp (luehe)
       </update>
       <fix>
-      Do not let the parsing error of a single TLD disrupt the parsing of 
+      Do not let the parsing error of a single TLD disrupt the parsing of
       remaining TLDs in the JAR (luehe)
       </fix>
       <fix>
@@ -2861,14 +2865,14 @@
       Don't save any context files if config base doesn't exist (remm)
       </fix>
       <update>
-      Add the possibility to specify straight URLs in the repository list 
+      Add the possibility to specify straight URLs in the repository list
       (= single JARs, remote repositories, etc) (remm)
       </update>
       <fix>
       Fix issues with wait-for-servlet-unload logic (remm)
       </fix>
       <fix>
-      <bug>23373</bug>: Prevent clobbering the server if we already have read 
+      <bug>23373</bug>: Prevent clobbering the server if we already have read
       server.xml (billbarker)
       </fix>
       <update>
@@ -2892,7 +2896,7 @@
       </fix>
       <fix>
       Set -Dsun.io.useCanonCaches=false for Windows, which is a Sun JDK 1.4.2
-      specific property, to ensure that case correct canonical paths are 
+      specific property, to ensure that case correct canonical paths are
       obtained (remm)
       </fix>
       <fix>
@@ -2900,7 +2904,7 @@
       (remm)
       </fix>
       <fix>
-      Add an example on how to configure GZIP compression in the main 
+      Add an example on how to configure GZIP compression in the main
       server.xml (hgomez)
       </fix>
       <fix>
@@ -2911,17 +2915,17 @@
       (jfarcand)
       </fix>
       <fix>
-      Need to call the listener when the session is invalidated because 
-      the interval between the time the session is marked invalid 
-      and the StandardrManager expires the session can't be predicted 
+      Need to call the listener when the session is invalidated because
+      the interval between the time the session is marked invalid
+      and the StandardrManager expires the session can't be predicted
       (jfarcand)
       </fix>
       <fix>
-      In the WebDAV servlet, decode and normalize destination path 
+      In the WebDAV servlet, decode and normalize destination path
       before doing anything else (remm)
       </fix>
       <fix>
-      Adjust logging in the JAAS realm according to suggestions from bug 
+      Adjust logging in the JAAS realm according to suggestions from bug
       <bug>23547</bug>, submitted by Adam Hardy (remm)
       </fix>
       <fix>
@@ -2937,15 +2941,15 @@
     <changelog>
 
       <fix>
-      Respond 400 to requests which contain '%' with no or invalid trailing 
+      Respond 400 to requests which contain '%' with no or invalid trailing
       hex digits (leith)
       </fix>
       <fix>
-      <bug>23276</bug>: Fix compatibility with Sun JDK 1.4.0, submitted by 
+      <bug>23276</bug>: Fix compatibility with Sun JDK 1.4.0, submitted by
       Steve Appling (remm)
       </fix>
       <fix>
-      Fix matching of the content types for which compression is allowed, 
+      Fix matching of the content types for which compression is allowed,
       submitted by Steve Appling (remm)
       </fix>
       <fix>
@@ -2972,12 +2976,12 @@
       Change the way to kill the thread after a server socket restart (remm)
       </fix>
       <fix>
-      In the TCP endpoint, use the appropriate exception for killing 
+      In the TCP endpoint, use the appropriate exception for killing
       the thread, improve if block, and replace while + break with a simpler if
       (remm)
       </fix>
       <fix>
-      Make the TrustStore a configurable option (so different Hosts can 
+      Make the TrustStore a configurable option (so different Hosts can
       have different TrustStores) (billbarker)
       </fix>
       <fix>
@@ -3023,9 +3027,9 @@
       Fixed javadocs for tldScanJar(File file) (luehe)
       </fix>
       <fix>
-      Fix a bug in Parser.isTemplateText(): Since '%' is not a delimiter 
-      in JspReader.parseToken(), an expression "&lt;%String s;%&gt;" after 
-      a template text would be treated as a template text when mappedfile 
+      Fix a bug in Parser.isTemplateText(): Since '%' is not a delimiter
+      in JspReader.parseToken(), an expression "&lt;%String s;%&gt;" after
+      a template text would be treated as a template text when mappedfile
       option is set to true, and got concatenated to the template text (kinman)
       </fix>
       <fix>
@@ -3065,7 +3069,7 @@
       (billbarker)
       </docs>
       <fix>
-      Fixes to Japanese translation of the manager, submitted by Kazuhiro 
+      Fixes to Japanese translation of the manager, submitted by Kazuhiro
       Kazama (remm)
       </fix>
       <fix>
@@ -3073,14 +3077,14 @@
       (amyroh)
       </fix>
       <update>
-      Add save command (saves either the full config, or a context config) to 
+      Add save command (saves either the full config, or a context config) to
       the manager (remm)
       </update>
       <fix>
       Fix for root context handling in the manager servlet (remm)
       </fix>
       <fix>
-      Fix to not display JAASRealm node since admin doesn't support editing 
+      Fix to not display JAASRealm node since admin doesn't support editing
       such Realm (amyroh)
       </fix>
       <fix>
@@ -3097,7 +3101,7 @@
       Fix the way the tree builder was querying JAASRealm (amyroh)
       </fix>
       <docs>
-      Update SSL docs, including adding notes for the current limitations 
+      Update SSL docs, including adding notes for the current limitations
       of IBM's implementation of JSSE (billbarker)
       </docs>
       <fix>
@@ -3158,16 +3162,16 @@
       <fix>
       Throw ThreadDeath for invalid classloader accesses (remm)
       </fix>
-      <fix> 
+      <fix>
       <bug>23131</bug>: Fix wrong classloader binding when reloading the web
       application after class modifications (remm)
       </fix>
       <fix>
-      Remove overriding the mapped servlet path with the jsp-file in the 
+      Remove overriding the mapped servlet path with the jsp-file in the
       request dispatcher (remm)
       </fix>
       <update>
-      Add a delegate flag on the context to allow easy configuration of the 
+      Add a delegate flag on the context to allow easy configuration of the
       delegation policy, which is easier to use with JMX embedding (remm)
       </update>
 
@@ -3184,7 +3188,7 @@
       the keystore algorithm (billbarker)
       </update>
       <fix>
-      Refactor thread pool logic to avoid deadlocks when no processor is 
+      Refactor thread pool logic to avoid deadlocks when no processor is
       available (billbarker)
       </fix>
       <fix>
@@ -3196,7 +3200,7 @@
       (billbarker)
       </fix>
       <update>
-      Refactor byte chunk buffering so that the written data fits inside the 
+      Refactor byte chunk buffering so that the written data fits inside the
       limit; the number of byte copies is similar to what it was before (remm)
       </update>
       <add>
@@ -3213,18 +3217,18 @@
     <changelog>
 
       <update>
-      Add an compilation option to generate writing char arrays instead 
+      Add an compilation option to generate writing char arrays instead
       of Strings for template texts (kinman)
       </update>
       <fix>
       Fix jsp-config problem (jfarcand)
       </fix>
       <fix>
-      Use out.print(expr) instead of out.write(String.valueOf(expr)) 
+      Use out.print(expr) instead of out.write(String.valueOf(expr))
       for outputting expressions in template texts (kinman)
       </fix>
       <fix>
-      Fix SMAPping for small text strings with genStrAsCharArray=false 
+      Fix SMAPping for small text strings with genStrAsCharArray=false
       (ecarmich)
       </fix>
 
@@ -3282,12 +3286,12 @@
 
       <update>
       Modify the commons-logging packaging (only the commons-logging API is
-      bundled now) to resolve the classloading problems, and remove the 
+      bundled now) to resolve the classloading problems, and remove the
       special case handling from the webapp classloader; pivileged webapps can
       now use log4j (remm)
       </update>
       <fix>
-      <bug>22986</bug>: Fix bad canonicalization call which was causing 
+      <bug>22986</bug>: Fix bad canonicalization call which was causing
       problems when a host appBase was absolute (remm)
       </fix>
 
@@ -3303,10 +3307,10 @@
       Add documentaion on mod_jk tools (glenn)
       </docs>
       <fix>
-      Handle query string decoding as a special case, using the character 
+      Handle query string decoding as a special case, using the character
       encoding specified for the rest of the URI in the connector, whereas the
-      encoding of the entity body was used; this can be UTF8 as per the W3C 
-      standard, but for interoperability, it is a one for one byte 
+      encoding of the entity body was used; this can be UTF8 as per the W3C
+      standard, but for interoperability, it is a one for one byte
       to character conversion (remm)
       </fix>
       <fix>
@@ -3317,12 +3321,12 @@
       MessageBytes.toChars should set the type to chars (remm)
       </fix>
       <update>
-      Make the update of the stats an explicit call (I believe it is valid to 
+      Make the update of the stats an explicit call (I believe it is valid to
       call recycle multiple times, and it is hard to avoid with HTTP keepalive)
       (remm)
       </update>
       <fix>
-      Decrease the timeout reduction ratio when the server gets loaded, and 
+      Decrease the timeout reduction ratio when the server gets loaded, and
       add a setStatus so an error is counted (remm)
       </fix>
 
@@ -3358,14 +3362,14 @@
       Servlet 2.4 schema update, submitted by Yutaka Yoshida (jfarcand)
       </update>
       <update>
-      Get ready for using JSR 160 RI (JMX Remote 1.0): copy additional, 
+      Get ready for using JSR 160 RI (JMX Remote 1.0): copy additional,
       optional, JMX binaries (remm)
       </update>
       <update>
       Replace MX4J 1.1.1 with the Sun JMX 1.2 RI (remm)
       </update>
       <scode>
-      Major update to Japanese internationalization, submitted by 
+      Major update to Japanese internationalization, submitted by
       Kazuhiro Kazama (remm)
       </scode>
       <fix>
@@ -3391,8 +3395,8 @@
       </update>
       <fix>
       Big JDBCRealm cleanup: fix for <bug>7116</bug>, <bug>10623</bug>,
-      <bug>11929</bug>, <bug>8091</bug>, and make authenticate synchronized 
-      since there are race conditions between the connection being opened, 
+      <bug>11929</bug>, <bug>8091</bug>, and make authenticate synchronized
+      since there are race conditions between the connection being opened,
       used and exceptions occuring (funkman)
       </fix>
       <fix>
@@ -3409,20 +3413,20 @@
       (remm)
       </fix>
       <fix>
-      <bug>22546</bug>: Fix small filter extension mapping bug, where if the 
-      extension of the request starts with the tested path, it would have 
+      <bug>22546</bug>: Fix small filter extension mapping bug, where if the
+      extension of the request starts with the tested path, it would have
       been matched (remm)
       </fix>
       <fix>
-      <bug>22695</bug>: don't check for session validity when activating and 
+      <bug>22695</bug>: don't check for session validity when activating and
       passivating (remm)
       </fix>
       <fix>
-      Do not create a new Subject everytime a Servlet/Filter is invoked, 
+      Do not create a new Subject everytime a Servlet/Filter is invoked,
       associate the same Subject to the AccessControlContext (jfarcand)
       </fix>
       <update>
-      When saving server.xml, don't save the value of properties which have 
+      When saving server.xml, don't save the value of properties which have
       their default values (remm)
       </update>
       <fix>
@@ -3430,7 +3434,7 @@
       NPE in toString after stop (remm)
       </fix>
       <fix>
-      Avoid references leak: clean up and recycle all thread local resources, 
+      Avoid references leak: clean up and recycle all thread local resources,
       and reset the context CL after invoking the pipeline (remm)
       </fix>
       <fix>
@@ -3438,7 +3442,7 @@
       (remm)
       </fix>
       <fix>
-      When saving server.xml, don't print the className if it's one of the 
+      When saving server.xml, don't print the className if it's one of the
       standard implementations, and add some fields to the exception list
       (remm)
       </fix>
@@ -3455,7 +3459,7 @@
       the Context element (remm)
       </update>
       <fix>
-      Include the pathInfo when a relative path is used to get a request 
+      Include the pathInfo when a relative path is used to get a request
       dispatcher, submitted by Mark Thomas (remm)
       </fix>
       <fix>
@@ -3463,19 +3467,19 @@
       by Christian Brensing (remm)
       </fix>
       <fix>
-      Deploy descriptors even if deployOnStartup is false, as they should be 
+      Deploy descriptors even if deployOnStartup is false, as they should be
       considered as if they were part of server.xml (remm)
       </fix>
       <fix>
-      Apply patch for <bug>22857</bug> and <bug>22858</bug> to CGI servlet, 
+      Apply patch for <bug>22857</bug> and <bug>22858</bug> to CGI servlet,
       submitted by Mark Thomas (amyroh)
       </fix>
       <fix>
-      Get the absolute path to the work dir, so that JARs in /WEB-INF/lib can 
+      Get the absolute path to the work dir, so that JARs in /WEB-INF/lib can
       be found when using non filesystem based resources (luehe)
       </fix>
       <fix>
-      XML-escape the values when writing out the tomcat-users.xml file, 
+      XML-escape the values when writing out the tomcat-users.xml file,
       submitted by Mark Thomas (billbarker)
       </fix>
 
@@ -3500,18 +3504,18 @@
     <changelog>
 
       <fix>
-      Also consider last element in comma-separated protocols list, or the 
+      Also consider last element in comma-separated protocols list, or the
       case where the list contains a single element and no commas (luehe)
       </fix>
       <fix>
       Implement getAttribute(key) in the protocol (amyroh)
       </fix>
       <fix>
-      Make certain that we are still in an https session before looking for 
+      Make certain that we are still in an https session before looking for
       certs, submitted by Mark Thomas (billbarker)
       </fix>
       <fix>
-      Adding accessors so that the JkCoyote connectors can play nice with the 
+      Adding accessors so that the JkCoyote connectors can play nice with the
       admin webapp (billbarker)
       </fix>
       <fix>
@@ -3562,19 +3566,19 @@
       Don't combine LineInfos from different files (ecarmich)
       </fix>
       <fix>
-      Set Node.startMark correctly in JSP document nodes created from 
-      character data: this fixes incorrect SMAPping of template text nodes 
-      containing line feeds, and incorrect error reporting for unparseable EL 
+      Set Node.startMark correctly in JSP document nodes created from
+      character data: this fixes incorrect SMAPping of template text nodes
+      containing line feeds, and incorrect error reporting for unparseable EL
       expression nodes (ecarmich)
       </fix>
       <fix>
-      JSP error page mechanism fails intermittently to display contents of 
+      JSP error page mechanism fails intermittently to display contents of
       error page, which occurred when a JSP was using a custom page context
       (luehe)
       </fix>
       <fix>
-      Use just the class name if package is imported, and in tag files, 
-      declare request as HttpServletRequest and response HttpServletResponse, 
+      Use just the class name if package is imported, and in tag files,
+      declare request as HttpServletRequest and response HttpServletResponse,
       as is the case in servlets (kinman)
       </fix>
 
@@ -3598,7 +3602,7 @@
       configuration (amyroh)
       </update>
       <fix>
-      Fix to return null when an error response is sent, submitted by 
+      Fix to return null when an error response is sent, submitted by
       Jeff Tulley (amyroh)
       </fix>
       <fix>
@@ -3608,14 +3612,14 @@
       <bug>22268</bug>: allow using SHA digest (amyroh)
       </fix>
       <fix>
-      In the default page, update links to the lists, and add a link to the 
+      In the default page, update links to the lists, and add a link to the
       open bugs (remm)
       </fix>
       <docs>
       Update for changes to jsvc from commons-daemon (remm)
       </docs>
       <add>
-      Refactor the status servlet, allowing for XML output in addition to the 
+      Refactor the status servlet, allowing for XML output in addition to the
       user friendly HTML, submitted by Peter Lin, based on code from John
       Turner (remm)
       </add>
@@ -3655,7 +3659,7 @@
     <changelog>
 
       <fix>
-      Fix bug where no static resource over 512 bytes would get cached 
+      Fix bug where no static resource over 512 bytes would get cached
       by default (remm)
       </fix>
       <fix>
@@ -3679,7 +3683,7 @@
       Revert a patch on CoyoteConnector causing a performance regression (remm)
       </fix>
       <fix>
-      When mapping to the default servlet, or mapping to a physical welcome 
+      When mapping to the default servlet, or mapping to a physical welcome
       file, String representation of the path is available, which saves some
       object creation (remm)
       </fix>
@@ -3720,7 +3724,7 @@
       JSP specification updates, submitted by Mark Roth (kinman)
       </update>
       <fix>
-      <bug>22494</bug>: Removed logVerbosityLevel doc and init-param from 
+      <bug>22494</bug>: Removed logVerbosityLevel doc and init-param from
       JSP Servlet, as they're no longer used, submitted by Eric Carmichael
       (yoavs)
       </fix>
@@ -3757,7 +3761,7 @@
       Log client abort exceptions as debug information (remm)
       </fix>
       <fix>
-      Found a way to avoid the extra restart caused by the web.xml tracker, 
+      Found a way to avoid the extra restart caused by the web.xml tracker,
       when the webapp was deployed by an outside source, such as the manager
       servlet (remm)
       </fix>
@@ -3768,14 +3772,14 @@
       When using the deployer, schema validation wasn't supported (remm)
       </fix>
       <fix>
-      Fix NPE when getMessage of an exception returns null in the 
+      Fix NPE when getMessage of an exception returns null in the
       DefaultServlet (jfarcand)
       </fix>
       <fix>
       Fix behavior of HttpSession.setMaxInactiveInterval() (luehe)
       </fix>
       <fix>
-      Cleanup of the XML descriptors for the model MBeans, removing old 
+      Cleanup of the XML descriptors for the model MBeans, removing old
       connectors and old attributes (remm)
       </fix>
       <update>
@@ -3785,8 +3789,8 @@
       </update>
       <add>
       Add new managerChecksFrequency attribute to StandardContext, allowing to
-      configure how often the manager session expiration and passivation 
-      checks will be called, similar to the intervals used in Tomcat 4.1.x 
+      configure how often the manager session expiration and passivation
+      checks will be called, similar to the intervals used in Tomcat 4.1.x
       (remm)
       </add>
       <fix>
@@ -3809,13 +3813,13 @@
       </update>
       <update>
       Added support for specifying comma-separated list of SSL protocol
-      variants to be enabled, which may be useful to disable the less secure 
+      variants to be enabled, which may be useful to disable the less secure
       SSLv2 (luehe)
       </update>
       <fix>
-      Fixed bug in CoyoteConnector getter methods for SSL related attributes, 
-      which would always return null if SSL properties were configured 
-      directly on the Connector element (instead of its nested and now 
+      Fixed bug in CoyoteConnector getter methods for SSL related attributes,
+      which would always return null if SSL properties were configured
+      directly on the Connector element (instead of its nested and now
       deprecated Factory element) (luehe)
       </fix>
       <update>
@@ -3825,7 +3829,7 @@
       Clone request attribute names iterator (luehe)
       </fix>
       <fix>
-      Fix client abort logging, and throw a client abort when an IOException 
+      Fix client abort logging, and throw a client abort when an IOException
       occurs when writing bytes (remm)
       </fix>
       <fix>
@@ -3843,12 +3847,12 @@
 
       <update>
       Allow a taglib to be defined more than once in taglib directives, even in
-      statically included files, and remove need for keeping a Stack for 
+      statically included files, and remove need for keeping a Stack for
       prefix bookkeeping (kinman)
       </update>
       <fix>
-      When including a JSP document (written in the XML syntax), in the 
-      resulting XML View of the translation unit the root element of 
+      When including a JSP document (written in the XML syntax), in the
+      resulting XML View of the translation unit the root element of
       the included segment must have the default namespace reset to "" (kinman)
       </fix>
       <fix>
@@ -3870,7 +3874,7 @@
       </fix>
       <fix>
       Add attibutes doctype-root-element, doctype-system and doctype-public
-      to &lt;jsp:output&gt; for outputing a DOCTYPE declaration in XML 
+      to &lt;jsp:output&gt; for outputing a DOCTYPE declaration in XML
       documents, per latest spec change (kinman)
       </fix>
       <fix>
@@ -3897,7 +3901,7 @@
     <changelog>
 
       <update>
-      Add two JMX related tasks, designed to use the jmxproxy servlet, 
+      Add two JMX related tasks, designed to use the jmxproxy servlet,
       submitted by Vivek Chopra (remm)
       </update>
       <docs>
@@ -3957,9 +3961,9 @@
       Jeff Tulley (funkman)
       </fix>
       <fix>
-      Fix for three related request dispatcher bugs, including 
+      Fix for three related request dispatcher bugs, including
       <bug>22013</bug>, <bug>4690</bug> (cross context sessions support), and
-      port the fix for ServletContext.getContext(...) when using the root 
+      port the fix for ServletContext.getContext(...) when using the root
       context (remm)
       </fix>
       <update>
@@ -3979,7 +3983,7 @@
       an exception (jfarcand)
       </fix>
       <fix>
-      <bug>22236</bug>: addAttributeValues may return null, this could 
+      <bug>22236</bug>: addAttributeValues may return null, this could
       trigger a NPE if debugging was turned up >=2 (funkman)
       </fix>
       <fix>
@@ -4011,16 +4015,16 @@
       Allow extending CoyoteConnector (jfarcand)
       </fix>
       <update>
-      <bug>22192</bug>: the context mapping algorithm actually needs to be 
-      similar to the algorithm used for widcard wrapper mapping; optimize 
-      wildcard mapping: since the amount of nesting the mapping has is known, 
+      <bug>22192</bug>: the context mapping algorithm actually needs to be
+      similar to the algorithm used for widcard wrapper mapping; optimize
+      wildcard mapping: since the amount of nesting the mapping has is known,
       some mapping operations can be avoided (remm)
       </update>
       <update>
       Allow for customization of JSSE trust and key managers (luehe)
       </update>
       <fix>
-      Added check for (keystoreType == null) before calling 
+      Added check for (keystoreType == null) before calling
       getKeyManagers/getTrustManagers (luehe)
       </fix>
       <fix>
@@ -4028,8 +4032,8 @@
       increases (remm)
       </fix>
       <fix>
-      Fix calculation of a request processing time (it must not include the 
-      time waiting for data in keepalive mode, or the time waiting for data 
+      Fix calculation of a request processing time (it must not include the
+      time waiting for data in keepalive mode, or the time waiting for data
       for an initial request on a connection) (remm)
       </fix>
       <fix>
@@ -4054,8 +4058,8 @@
       Gilles Scokart (remm)
       </fix>
       <fix>
-      <bug>21206</bug>: Fix including a JSP, where Jasper would do weird 
-      things whenever the outer request had a non null pathInfo; it will now 
+      <bug>21206</bug>: Fix including a JSP, where Jasper would do weird
+      things whenever the outer request had a non null pathInfo; it will now
       use the included servlet path correctly (remm)
       </fix>
       <fix>
@@ -4064,7 +4068,7 @@
       </fix>
       <update>
       Replaced JspServlet's "tagPoolSize" config param with the correct
-      "tagpoolMaxSize" in web.xml, and removed getTagPoolSize() from Options, 
+      "tagpoolMaxSize" in web.xml, and removed getTagPoolSize() from Options,
       because tag pool size is no longer needed at compile time (luehe)
       </update>
       <update>
@@ -4079,7 +4083,7 @@
       </docs>
       <update>
       Refactor some code in JspDocumentParser, since startPrefixMapping
-      got called before startElement, turn on push/pop prefixes for taglibs 
+      got called before startElement, turn on push/pop prefixes for taglibs
       in XML syntax, so that proper prefix can be located (kinman)
       </update>
       <fix>
@@ -4090,7 +4094,7 @@
       effect in classpath generation when tag files must be compiled (remm)
       </update>
       <fix>
-      In JspDocumentParser, pop is called in the same order as push, so 
+      In JspDocumentParser, pop is called in the same order as push, so
       the Stack should be replaced by a LinkedList (remm)
       </fix>
       <fix>
@@ -4101,11 +4105,11 @@
       submitted by Eric Carmichael (remm)
       </fix>
       <fix>
-      <bug>22006</bug>: Invalid SMAP line entries when running with 
+      <bug>22006</bug>: Invalid SMAP line entries when running with
       mappedfile=true, submitted by Eric Carmichael (remm)
       </fix>
       <fix>
-      Apply workaround for failure in optimizeLineSection() when there are 
+      Apply workaround for failure in optimizeLineSection() when there are
       entries with an outputStartLine of 0, Submitted by Eric Carmichael (remm)
       </fix>
       <fix>
@@ -4123,7 +4127,7 @@
     <changelog>
 
       <docs>
-      Update the documentation to reflect the fact that the Factory element 
+      Update the documentation to reflect the fact that the Factory element
       is no longer required to setup a stand-alone SSL Connector (billbarker)
       </docs>
       <update>
@@ -4135,7 +4139,7 @@
       is no longer ignored (remm)
       </fix>
       <fix>
-      Fixes to the manager servlet: cleanup URL handling, to be consistent 
+      Fixes to the manager servlet: cleanup URL handling, to be consistent
       with the HTML manager; don't send extra "OK" messages; fix update flag;
       make sure configFile is null if there's no context XML file (remm)
       </fix>
@@ -4147,8 +4151,8 @@
       in the status servlet (remm)
       </fix>
       <fix>
-      Display the remote host when in keepalive status, as well as the 
-      elapsed time (it corresponds mostly to the amount of time since 
+      Display the remote host when in keepalive status, as well as the
+      elapsed time (it corresponds mostly to the amount of time since
       the start of the previous request) (remm)
       </fix>
 
@@ -4209,7 +4213,7 @@
       The default socket factory class name is now the Coyote factory (remm)
       </fix>
       <add>
-      Add a new digester rule using the IntrospectionTools so that all 
+      Add a new digester rule using the IntrospectionTools so that all
       attributes are passed to the connector, including those which have no
       explicit setters (in which case the setProperty method is called) (remm)
       </add>
@@ -4248,19 +4252,19 @@
       class and have a customized version (jfarcand)
       </fix>
       <add>
-      Add code allowing configuring the resource cache size for a context 
+      Add code allowing configuring the resource cache size for a context
       (remm)
       </add>
       <update>
-      Refactor extension handling; available and required extensions are now 
+      Refactor extension handling; available and required extensions are now
       consistently NULL if not present (luehe)
       </update>
       <fix>
-      System resources were identified but then ignored when checking if 
+      System resources were identified but then ignored when checking if
       an app's dependencies could be resolved (luehe)
       </fix>
       <add>
-      Add the sslProtocol property on the connector to define the protocol 
+      Add the sslProtocol property on the connector to define the protocol
       used in SSL (luehe)
       </add>
       <update>
@@ -4275,7 +4279,7 @@
       </update>
       <fix>
       <bug>22032</bug>: missing security-policy in default configuration;
-      precompiled JSPs running under the security manager always have to 
+      precompiled JSPs running under the security manager always have to
       access org.apache.jasper.runtime.* classes (jfarcand)
       </fix>
       <update>
@@ -4317,13 +4321,13 @@
       Fix configuration of the maxThreads attribute of the thread pool (remm)
       </fix>
       <update>
-      Add a new protocol attribute on the Coyote connector, which can be used 
+      Add a new protocol attribute on the Coyote connector, which can be used
       rather than using the protocol handler classname; acceptable values are
       either "HTTP/1.1" or "AJP/1.3" (remm)
       </update>
       <update>
-      Improve the thread names and numbering, based on the associated 
-      connector name and the number of existing threads, so that reading 
+      Improve the thread names and numbering, based on the associated
+      connector name and the number of existing threads, so that reading
       a thread dump is significantly easier (remm)
       </update>
       <fix>
@@ -4335,13 +4339,13 @@
       </fix>
       <add>
       The HTTP/1.1 connector will now automatically scale down the timeout and
-      disable connection keepalive should the server start getting low on 
+      disable connection keepalive should the server start getting low on
       processors (remm)
       </add>
       <fix>
       Make certain that we tell Apache that we have finished with the request;
-      If the Adapter throws an exception before entering the Pipeline, we end 
-      up with both Apache and Tomcat trying to read the Channel and hence 
+      If the Adapter throws an exception before entering the Pipeline, we end
+      up with both Apache and Tomcat trying to read the Channel and hence
       not serving requests (billbarker)
       </fix>
 
@@ -4369,11 +4373,11 @@
       Refactor getDerivedPackageName and eliminate some duplicate code (kinman)
       </update>
       <fix>
-      <bug>21168</bug>: Incorrect paths in generated SMAP file entries, 
+      <bug>21168</bug>: Incorrect paths in generated SMAP file entries,
       submitted Eric Carmichael (luehe)
       </fix>
       <fix>
-      <bug>20155</bug>: The strutsel-exercise-taglib application can not 
+      <bug>20155</bug>: The strutsel-exercise-taglib application can not
       be compiled with jspc, because the correct class loader was not being
       set (kinman)
       </fix>
@@ -4382,7 +4386,7 @@
       (kinman)
       </update>
       <update>
-      Removed unused methods and instance variables in Collector and PageInfo 
+      Removed unused methods and instance variables in Collector and PageInfo
       (luehe)
       </update>
       <fix>
@@ -4403,11 +4407,11 @@
       administrator can get a complete view of the server (remm)
       </add>
       <update>
-      Beautify the status servlet, and integrate it with the HTML manager, 
+      Beautify the status servlet, and integrate it with the HTML manager,
       through links (remm)
       </update>
       <fix>
-      In the status servlet scoreboard, add missing whitespace between method 
+      In the status servlet scoreboard, add missing whitespace between method
       and URI (remm)
       </fix>
       <docs>
@@ -4449,7 +4453,7 @@
       part of the release process (remm)
       </add>
       <fix>
-      In the checkout target, only checkout modeler from commons instead 
+      In the checkout target, only checkout modeler from commons instead
       of all of commons (funkman)
       </fix>
       <fix>
@@ -4483,11 +4487,11 @@
       <bug>21341</bug>: Fix error page forwarding (remm)
       </fix>
       <fix>
-      In the extended log valve, if bytes are requested, then print bytes, 
+      In the extended log valve, if bytes are requested, then print bytes,
       not the date (funkman)
       </fix>
       <update>
-      Add a Container.getPipeline() to allow bypassing the (useless) 
+      Add a Container.getPipeline() to allow bypassing the (useless)
       invoke method (remm)
       </update>
       <add>
@@ -4510,8 +4514,8 @@
       remove associated hacks from StandardServer and StandardHost (remm)
       </update>
       <fix>
-      Like some of the other resources, application parameters must not be 
-      reset on a context stop, as they come from a Context element. 
+      Like some of the other resources, application parameters must not be
+      reset on a context stop, as they come from a Context element.
       Regular parameters read from web.xml should be fine. (remm)
       </fix>
       <fix>
@@ -4535,9 +4539,9 @@
       <update>
       Update security constraints processing to be compliant with the new
       behavior specified in the Servlet 2.4 specification, where security
-      constraints must now be combined. <code>SecurityConstraint 
+      constraints must now be combined. <code>SecurityConstraint
       Realm.findSecurityConstraint</code> is changed to
-      <code>SecurityConstraint[] findSecurityConstraints</code>, and 
+      <code>SecurityConstraint[] findSecurityConstraints</code>, and
       implemented in RealmBase. (billbarker)
       </update>
       <fix>
@@ -4545,11 +4549,11 @@
       (it would be ignored) (remm)
       </fix>
       <fix>
-      Do not redeploy a context when a context file is added, and the 
+      Do not redeploy a context when a context file is added, and the
       context wasn't deployed with the auto deployer (remm)
       </fix>
       <fix>
-      The SetDocBaseRule will not throw a NPE, and will attempt to guess 
+      The SetDocBaseRule will not throw a NPE, and will attempt to guess
       the context docbase if not set (remm)
       </fix>
 
@@ -4562,7 +4566,7 @@
     <changelog>
 
       <fix>
-      Slight re-factoring of the JSSE SSL implementation to allow it to work 
+      Slight re-factoring of the JSSE SSL implementation to allow it to work
       with non-Sun vendor's 1.4.x JVMs. (billbarker)
       </fix>
       <add>
@@ -4574,7 +4578,7 @@
       (jfarcand)
       </fix>
       <fix>
-      As mandated by the specs, the mapper will always redirect for physical 
+      As mandated by the specs, the mapper will always redirect for physical
       directories, and will always process physical welcome files mapping
       (billbarker)
       </fix>
@@ -4640,7 +4644,7 @@
       Add some Windows setup documentation (remm)
       </docs>
       <update>
-      Allow a WAR uploaded using the HTML manager to contain 
+      Allow a WAR uploaded using the HTML manager to contain
       a META-INF/context.xml context file, for consistency with the Ant deploy
       task (remm)
       </update>
@@ -4662,7 +4666,7 @@
     <changelog>
 
       <scode>
-      <bug>19912</bug>, <bug>19939</bug>, <bug>19940</bug>, <bug>19941</bug>: 
+      <bug>19912</bug>, <bug>19939</bug>, <bug>19940</bug>, <bug>19941</bug>:
       Many small typo fixes in resources, submitted by Chris Pepper (yoavs)
       </scode>
       <update>
@@ -4687,15 +4691,15 @@
       Cleanup Catalina and subcomponents Javadoc generation (remm)
       </scode>
       <fix>
-      Fix NPE in ApplicationHttpRequest when the object is created by a named 
+      Fix NPE in ApplicationHttpRequest when the object is created by a named
       dispatcher (jfarcand)
       </fix>
       <fix>
-      Escape '/' in the configFile name of a context, and strip out 
+      Escape '/' in the configFile name of a context, and strip out
       leading '/' (remm)
       </fix>
       <fix>
-      Initialize the context mapper after starting the context so that 
+      Initialize the context mapper after starting the context so that
       the welcome files are correctly set (remm)
       </fix>
       <fix>
@@ -4724,11 +4728,11 @@
       a context XML descriptor, using a new custom digester rule (remm)
       </update>
       <fix>
-      <bug>21419</bug>: Fix failure to start context when the Context element 
+      <bug>21419</bug>: Fix failure to start context when the Context element
       is included in server.xml, submitted by Torsten Fohrer (remm)
       </fix>
       <fix>
-      The pathinfo needs to be set in the ErrorDispatcherValve when 
+      The pathinfo needs to be set in the ErrorDispatcherValve when
       sreq.getAttribute(Globals.EXCEPTION_ATTR) returns null and also non null
       (jfarcand)
       </fix>
@@ -4736,8 +4740,8 @@
       <bug>21045</bug>: Update the message keys of the manager servlet (remm)
       </fix>
       <fix>
-      In the manager servlet, use the configFile when undeploying, 
-      to properly remove the config file even if it does not match the 
+      In the manager servlet, use the configFile when undeploying,
+      to properly remove the config file even if it does not match the
       context path (remm)
       </fix>
 
@@ -4756,7 +4760,7 @@
       Add support for enabling subset of supported SSL cipher suites (luehe)
       </add>
       <add>
-      Add support for enabling subset of supported SSL cipher suites in JSSE 
+      Add support for enabling subset of supported SSL cipher suites in JSSE
       implementation (luehe)
       </add>
       <fix>
@@ -4766,11 +4770,11 @@
       Add support for mapping host aliases (remm)
       </update>
       <update>
-      <bug>21219</bug>: Close the HTTP connection after certain error codes, 
+      <bug>21219</bug>: Close the HTTP connection after certain error codes,
       or an unexpected exception, similar to HTTPd behavior (billbarker)
       </update>
       <add>
-      Add support for enabling subset of supported SSL cipher suites 
+      Add support for enabling subset of supported SSL cipher suites
       in PureTLS implementation (billbarker)
       </add>
 
@@ -4802,18 +4806,18 @@
       compilation fails and all messages and traces are empty (remm)
       </update>
       <fix>
-      Allow the "value" attribute of &lt;jsp:param&gt; action to be non- 
+      Allow the "value" attribute of &lt;jsp:param&gt; action to be non-
       String types (kinman)
       </fix>
       <fix>
       Improve rare error message when static including fails (remm)
       </fix>
       <fix>
-      <bug>21067</bug>: EL expression that returns an array causes 
+      <bug>21067</bug>: EL expression that returns an array causes
       compilation error (kinman)
       </fix>
       <fix>
-      <bug>21440</bug>: Partial fix for &lt;jsp:include&gt; whose target 
+      <bug>21440</bug>: Partial fix for &lt;jsp:include&gt; whose target
       performing a 'forward' does not behave as expected (luehe)
       </fix>
 
@@ -4839,7 +4843,7 @@
       Fix broken Javadocs links (remm)
       </fix>
       <update>
-      Add a bugzilla query for all open TC 5 bugs, hoping people will help 
+      Add a bugzilla query for all open TC 5 bugs, hoping people will help
       address them (remm)
       </update>
       <docs>
@@ -4869,7 +4873,7 @@
       <bug>19808</bug>: Add the sit MIME mapping (funkman)
       </fix>
       <fix>
-      <bug>20263</bug>: Fix problems running Tomcat with procrun as a Windows 
+      <bug>20263</bug>: Fix problems running Tomcat with procrun as a Windows
       service, submitted by Mladen Turk (remm)
       </fix>
       <update>
@@ -4877,7 +4881,7 @@
       that the Unix wrapper can easily be used if needed (remm)
       </update>
       <update>
-      Upgrade to commons-fileupload 1.0 RC 1, submitted by Martin Cooper 
+      Upgrade to commons-fileupload 1.0 RC 1, submitted by Martin Cooper
       (billbarker)
       </update>
       <scode>
@@ -4887,7 +4891,7 @@
       Specification schema changes, submitted by Mark Roth (kinman)
       </update>
       <update>
-      Many tag handling specification clarifications, submitted by Mark Roth 
+      Many tag handling specification clarifications, submitted by Mark Roth
       (kinman)
       </update>
 
@@ -4901,14 +4905,14 @@
 
       <fix>
       Fix JMX registration order again during context startup: the object name
-      is constructed before the pipeline initialization, but the JMX 
+      is constructed before the pipeline initialization, but the JMX
       registration only occurs after the context is started (remm)
       </fix>
       <fix>
       Properly close WARs after expanding them in the deployer (remm)
       </fix>
       <update>
-      Fix handling of invalid WARs during auto deploy, which will be logged 
+      Fix handling of invalid WARs during auto deploy, which will be logged
       as a simple WARN without a stack trace, and reattempt deployment later
       (remm)
       </update>
@@ -4921,7 +4925,7 @@
       (jfarcand)
       </fix>
       <fix>
-      Container incorrectly processes invalid URL patterns in 
+      Container incorrectly processes invalid URL patterns in
       jsp-property-groups (jfarcand)
       </fix>
       <add>
@@ -4940,7 +4944,7 @@
       </update>
       <update>
       Update the host properties: liveDeploy becomes autoDeploy (dynamically
-      deploy and update web applications), and autoDeploy becomes 
+      deploy and update web applications), and autoDeploy becomes
       deployOnStartup (deploy webapps from appBase on startup) (remm)
       </update>
       <fix>
@@ -4948,7 +4952,7 @@
       a memory leak (remm)
       </fix>
       <add>
-      Add a mechanism to allow the classloader to release JAR file handles 
+      Add a mechanism to allow the classloader to release JAR file handles
       periodically (remm)
       </add>
       <fix>
@@ -4968,11 +4972,11 @@
       will return a file based URL (remm)
       </update>
       <update>
-      The special directories /WEB-INF/classes and /WEB-INF/lib are now 
+      The special directories /WEB-INF/classes and /WEB-INF/lib are now
       considered to be non cacheable, in order to conserve cache space (remm)
       </update>
       <fix>
-      Clear out constructs used for classloading, after a class has been 
+      Clear out constructs used for classloading, after a class has been
       successfully loaded (remm)
       </fix>
       <update>
@@ -4991,7 +4995,7 @@
       (jfarcand)
       </update>
       <fix>
-      <bug>20380</bug>: AccessLogValve incorrectly calculates timezone, 
+      <bug>20380</bug>: AccessLogValve incorrectly calculates timezone,
       <bug>16374</bug>: Date in file name configurable, <bug>16400</bug>:
       Allow logging to be conditional (funkman)
       </fix>
@@ -5013,7 +5017,7 @@
       (remm)
       </update>
       <fix>
-      unbindClassLoader was throwing NPE when newly added context 
+      unbindClassLoader was throwing NPE when newly added context
       was removed (amyroh)
       </fix>
       <fix>
@@ -5031,7 +5035,7 @@
       critical methods final, to enforce the Catalina design pattern (remm)
       </update>
       <update>
-      Request dispatcher optimizations, based on the belief that wrapping 
+      Request dispatcher optimizations, based on the belief that wrapping
       is only needed (if at all) for the special attributes (remm)
       </update>
       <update>
@@ -5046,33 +5050,33 @@
       associated thread) (remm)
       </add>
       <add>
-      Refactor application reloading, deployment handling and session 
+      Refactor application reloading, deployment handling and session
       expiration to be able to use a single thread per Catalina engine, opposed
       to one thread per feature per webapp or virtual host; this should save
-      resources and make Tomcat suitable for large scale web hosting; 
-      individual containers can still "own" their own reloading thread 
+      resources and make Tomcat suitable for large scale web hosting;
+      individual containers can still "own" their own reloading thread
       if they need to (remm)
       </add>
       <fix>
-      Fix a bug where the context is not registered again in JMX after a 
+      Fix a bug where the context is not registered again in JMX after a
       stop/start, which would break mapping (remm)
       </fix>
       <update>
       Implement context reloading as stop, followed by start, in an attempt
-      to avoid code duplication and clear user confusion on what a reload 
+      to avoid code duplication and clear user confusion on what a reload
       exactly does (remm)
       </update>
       <update>
-      Pass the request URI as a parameter to the request dispatcher, as this 
+      Pass the request URI as a parameter to the request dispatcher, as this
       avoids rebuilding it (remm)
       </update>
       <fix>
-      Unify the way we shutdown the server, and fix a classloading problem 
-      when the digester files are under common/lib instead of server/lib 
+      Unify the way we shutdown the server, and fix a classloading problem
+      when the digester files are under common/lib instead of server/lib
       (jfarcand)
       </fix>
       <fix>
-      Do not register a StandardContext instance when the context is stopped 
+      Do not register a StandardContext instance when the context is stopped
       (undeployed) (remm)
       </fix>
       <scode>
@@ -5082,7 +5086,7 @@
       Switch to the "new" mapper for request dispatcher mapping (remm)
       </update>
       <fix>
-      <bug>20018</bug>: ErrorPage directive doesn't work for HTTP error codes 
+      <bug>20018</bug>: ErrorPage directive doesn't work for HTTP error codes
       (400,500,..) (remm)
       </fix>
       <update>
@@ -5090,7 +5094,7 @@
       submitted by Remy Maucherat (jfarcand)
       </update>
       <fix>
-      Allow the getAttribute() method access to the wrapped request object 
+      Allow the getAttribute() method access to the wrapped request object
       (like setAttribute/removeAttribute) (jfarcand)
       </fix>
       <update>
@@ -5105,11 +5109,11 @@
       (remm)
       </update>
       <fix>
-      Fix to unregister valves that are other than Lifecycle 
+      Fix to unregister valves that are other than Lifecycle
       - RequestDumperValve (amyroh)
       </fix>
       <fix>
-      Service.removeConnector doesn't unregister connector mbeans; call 
+      Service.removeConnector doesn't unregister connector mbeans; call
       connector.destroy to unregister (amyroh)
       </fix>
       <fix>
@@ -5122,7 +5126,7 @@
       Register valve in JMX even if it's not an instance of Lifecycle (amyroh)
       </fix>
       <update>
-      Add support for OS/400 in the Catalina shell scripts, submitted 
+      Add support for OS/400 in the Catalina shell scripts, submitted
       by Robert Upshall (jfclere)
       </update>
       <fix>
@@ -5193,7 +5197,7 @@
       it can do context level mapping (remm)
       </update>
       <fix>
-      <bug>19991</bug>: Make sure that the SSL-Cert Note gets recycled 
+      <bug>19991</bug>: Make sure that the SSL-Cert Note gets recycled
       before processing the request (billbarker)
       </fix>
       <fix>
@@ -5201,7 +5205,7 @@
       (billbarker)
       </fix>
       <fix>
-      <bug>19958</bug>: IS.read() was actually accessing the char buffer, 
+      <bug>19958</bug>: IS.read() was actually accessing the char buffer,
       instead of using the readByte method which correctly uses the byte buffer
       (remm)
       </fix>
@@ -5218,7 +5222,7 @@
       (remm)
       </update>
       <fix>
-      <bug>19904</bug>: Don't search the query-string or anchor-tag for 
+      <bug>19904</bug>: Don't search the query-string or anchor-tag for
       the protocol (billbarker)
       </fix>
       <fix>
@@ -5247,7 +5251,7 @@
     <changelog>
 
       <fix>
-      <bug>20894</bug>: body-content value of "JSP" should be error 
+      <bug>20894</bug>: body-content value of "JSP" should be error
       if SimpleTag (kinman)
       </fix>
       <fix>
@@ -5281,11 +5285,11 @@
       Expose root cause of ELExceptions when no error page is defined (luehe)
       </fix>
       <fix>
-      Include &lt;jsp:param&gt; when checking if a page is scriptless, 
+      Include &lt;jsp:param&gt; when checking if a page is scriptless,
       submitted by Michael Walker (kinman)
       </fix>
       <fix>
-      Set correct class path for tag files, submitted by Michael Walker 
+      Set correct class path for tag files, submitted by Michael Walker
       (kinman)
       </fix>
       <fix>
@@ -5295,15 +5299,15 @@
       Exceptions not propagated to JSP error pages (luehe)
       </fix>
       <fix>
-      Make sure that the output directory exist, in case it was removed 
+      Make sure that the output directory exist, in case it was removed
       (kinman)
       </fix>
       <fix>
-      'xmlns' attributes that do not represent tag libraries are subject 
+      'xmlns' attributes that do not represent tag libraries are subject
       to TLD check (luehe)
       </fix>
       <fix>
-      Jasper *always* passes initial response character encoding 
+      Jasper *always* passes initial response character encoding
       to ServletResponse (luehe)
       </fix>
       <fix>
@@ -5357,14 +5361,14 @@
       (amyroh)
       </fix>
       <fix>
-      Fix to return an error page instead of error stack trace when a user 
+      Fix to return an error page instead of error stack trace when a user
       tries to create a context without creating a directory first (amyroh)
       </fix>
       <docs>
       Update manager documentation according to the new behavior (remm)
       </docs>
       <fix>
-      Disable realm operations for engine until JAAS realm is supported 
+      Disable realm operations for engine until JAAS realm is supported
       in admin (amyroh)
       </fix>
       <docs>
@@ -5377,7 +5381,7 @@
       Fix MySQL JDBC connection example (glenn)
       </docs>
       <fix>
-      Add proper MIME types for the content the JSPX examples generate, 
+      Add proper MIME types for the content the JSPX examples generate,
       submitted by Mark Roth (kinman)
       </fix>
 
