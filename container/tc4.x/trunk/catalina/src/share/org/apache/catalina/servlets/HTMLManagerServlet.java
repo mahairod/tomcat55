@@ -70,6 +70,7 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.servlet.ServletException;
@@ -127,6 +128,8 @@ public final class HTMLManagerServlet extends ManagerServlet {
 
         // Prepare our output writer to generate the response message
         response.setContentType("text/html");
+	Locale locale = Locale.getDefault();
+	response.setLocale(locale);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command
