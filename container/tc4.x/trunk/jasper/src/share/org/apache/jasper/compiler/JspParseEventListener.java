@@ -738,7 +738,12 @@ public class JspParseEventListener extends BaseJspListener {
 	    */
 	    try {
 		parserCtl.parse(file, encoding);
-	    } catch (Exception fnfe) {
+	    } catch (FileNotFoundException ex) {
+		throw new CompileException(
+					   start,
+					   Constants.getString("jsp.error.file.not.found",
+							       new Object[]{file}));
+	    } catch (Exception ex) {
 		throw new CompileException(
 					   start,
 					   Constants.getString("jsp.error.include.bad.file"));
