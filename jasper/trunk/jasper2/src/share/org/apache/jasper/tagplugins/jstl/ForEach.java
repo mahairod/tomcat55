@@ -61,7 +61,7 @@ public final class ForEach implements TagPlugin {
 	// If var is specified and the body contains an EL, then sycn
 	// the var attribute
 	if (hasVar /* && ctxt.hasEL() */) {
-	    ctxt.generateJavaSource("pageContext.setAttribute(");
+	    ctxt.generateJavaSource("_jspx_page_context.setAttribute(");
 	    ctxt.generateAttribute("var");
 	    ctxt.generateJavaSource(", String.valueOf(" + index + "));");
 	}
@@ -148,7 +148,7 @@ public final class ForEach implements TagPlugin {
 
 	ctxt.generateJavaSource("while (" + iterV + ".hasNext()){");
 	if (hasVar) {
-	    ctxt.generateJavaSource("pageContext.setAttribute(");
+	    ctxt.generateJavaSource("_jspx_page_context.setAttribute(");
 	    ctxt.generateAttribute("var");
 	    ctxt.generateJavaSource(", " + iterV + ".next());");
 	}

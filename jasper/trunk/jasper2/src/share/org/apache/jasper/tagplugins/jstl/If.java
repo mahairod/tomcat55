@@ -37,7 +37,7 @@ public final class If implements TagPlugin {
 		    scope = "PageContext.APPLICATION_SCOPE";
 		}
 	    }
-	    ctxt.generateJavaSource("pageContext.setAttribute(");
+	    ctxt.generateJavaSource("_jspx_page_context.setAttribute(");
 	    ctxt.generateAttribute("var");
 	    ctxt.generateJavaSource(", new Boolean(" + condV + ")," + scope + ");");
 	}
