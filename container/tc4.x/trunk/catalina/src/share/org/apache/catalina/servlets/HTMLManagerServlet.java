@@ -442,7 +442,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         args = new Object[7];
         args[0] = sm.getString("htmlManagerServlet.installTitle");
         args[1] = sm.getString("htmlManagerServlet.installServer");
-        args[2] = response.encodeURL(request.getContextPath() + "/html/intall");
+        args[2] = response.encodeURL(request.getContextPath() + "/html/install");
         args[3] = sm.getString("htmlManagerServlet.installPath");
         args[4] = sm.getString("htmlManagerServlet.installConfig");
         args[5] = sm.getString("htmlManagerServlet.installWar");
