@@ -100,6 +100,14 @@ Catalina New Features:
          open security holes in your application, so it should only be used
          if you are certain about what you are doing.
 
+[4.1.16] JNDIRealm:
+         Allow configuring how JNDI should handle referrals returned 
+         by the server.
+
+[4.1.16] AccessLogValve:
+         Allow disabling log file rotation, and add new patterns.
+
+
 -------------------
 Jasper New Features:
 -------------------
@@ -521,6 +529,23 @@ Catalina Bug Fixes:
          Properly refresh naming entries defined in the DefaultContext after a
          reload.
 
+[4.1.16] server.xml
+         Disable timeout for JK2 connector.
+
+[4.1.16] MBeanUtils:
+         Relax restrictions on valve MBeans creation.
+
+[4.1.16] #14781
+         CGIServlet:
+         Remove dependency on JDK 1.4.
+
+[4.1.16] FileStore:
+         Check for the existence of the session store file.
+
+[4.1.16] SSI:
+         Conditional SSI enhancement, better emulation of Apache SSI,
+         fix expression parser's handling of literals.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -593,6 +618,39 @@ Coyote Bug Fixes:
 [4.1.15] #14281
          Tomcat 4 Adapter OutputBuffer:
          Properly compute the total size of the content written.
+
+[4.1.16] Tomcat 4 Adapter:
+         Performance: Delayed evaluation of the remote host address.
+
+[4.1.16] HTTP/1.1 Http11Processor:
+         Performance: Allow disabling upload timeout.
+
+[4.1.16] #14658
+         Performance: Full reimplementation of PrintWriter, fixing syncing as
+         well as performance problems which occurred when a client abruplty
+         disconnected.
+
+[4.1.16] HTTP/1.1 Http11Processor:
+         Performance: Save on GC for commonly used Strings for protocol and
+         method name.
+
+[4.1.16] HTTP/1.1 InternalOutputBuffer:
+         Fix for an ArrayOutOfBound exception which could occur when 
+         IOException (usually caused by a client disconnect) was raised
+         during a commit.
+
+[4.1.16] JK2 ChannelSocket:
+         Handle timeout exceptions.
+
+[4.1.16] JK2 ChannelSocket:
+         Allow disabling channel socket for JNI, as well as binding a specific
+         adress.
+
+[4.1.16] JK2 HandlerRequest:
+         Fix null getRemoteHost.
+
+[4.1.16] JK2 HandlerRequest, JKCoyoteHandler:
+         Lazy extraction of ssl certs to speed up jk/ajp13 when under SSL.
 
 
 ----------------
@@ -803,6 +861,15 @@ Jasper Bug Fixes:
 
 [4.1.15] PageContextImpl:
          Avoid flushing after processing the page.
+
+[4.1.16] #14577
+         Generator:
+         Declarations should geneate a '\n' at end.
+
+[4.1.16] #14699
+         Generator:
+         Scripting variables declared AT_END do not work when tag
+         implements TryCatchFinally.
 
 
 ============================
