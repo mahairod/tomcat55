@@ -916,6 +916,63 @@
     </ant>
   </target>
 
+  <!-- ======================= TESTER: Run Catalina Tester Tests=========== -->
+  
+   <target name="dist-tester" 
+           description="Build the Catalina tester">
+
+    <ant dir="${catalina.home}/tester" target="dist">
+      <property name="tester.deploy" value="${tomcat.build}"/>
+    </ant>
+    <ant dir="${catalina.home}/tester" target="deploy">
+      <property name="tester.deploy" value="${tomcat.build}"/>
+    </ant>
+
+   </target>
+
+  <target name="run-tester"
+   description="Catalina Tests" depends="dist-tester">
+
+    <parallel>
+
+        <java classname="LauncherBootstrap" fork="yes">
+            <arg value="-launchfile"/>
+            <arg value="catalina.xml"/>
+            <arg value="-verbose"/>
+            <arg value="catalina"/>
+            <arg value="start"/>
+            <classpath>
+                <pathelement path="${java.class.path}"/>
+                <pathelement path="${tomcat.build}/bin"/>
+            </classpath>
+        </java>
+
+        <sequential>
+            <!-- Let tomcat starts before starting Tester -->
+            <sleep seconds="15"/>
+
+            <ant dir="${catalina.home}/tester/dist/bin" antfile="tester.xml" 
+                 target="all">
+              <property name="catalina.home" value="${tomcat.build}"/>
+            </ant>
+
+            <java classname="LauncherBootstrap" fork="yes">
+                <arg value="-launchfile"/>
+                <arg value="catalina.xml"/>
+                <arg value="-verbose"/>
+                <arg value="catalina"/>
+                <arg value="stop"/>
+                <classpath>
+                    <pathelement path="${java.class.path}"/>
+                    <pathelement path="${tomcat.build}/bin"/>
+                </classpath>
+            </java>
+        </sequential>
+
+    </parallel>  
+    
+  </target>
+
   <!-- ======================= WATCHDOG: Run Watchdog Tests================ -->
   
    <target name="dist-watchdog"  depends="proxyflags" 
@@ -947,7 +1004,7 @@
   </target>
   
   <target name="prepare-watchdog">
-    <copy todir="${catalina.build}/webapps">
+    <copy todir="${tomcat.build}/webapps">
       <fileset dir="${watchdog.home}/dist/webapps"/>
     </copy>
   </target>
@@ -964,13 +1021,13 @@
             <arg value="start"/>
             <classpath>
                 <pathelement path="${java.class.path}"/>
-                <pathelement path="${catalina.build}/bin"/>
+                <pathelement path="${tomcat.build}/bin"/>
             </classpath>
         </java>
 
         <sequential>
             <!-- Let tomcat starts before starting Watchdog -->
-            <sleep seconds="60"/>
+            <sleep seconds="15"/>
 
             <ant dir="${watchdog.home}/dist" target="${watchdog.target}"/>
 
@@ -982,7 +1039,7 @@
                 <arg value="stop"/>
                 <classpath>
                     <pathelement path="${java.class.path}"/>
-                    <pathelement path="${catalina.build}/bin"/>
+                    <pathelement path="${tomcat.build}/bin"/>
                 </classpath>
             </java>
         </sequential>
@@ -1003,7 +1060,7 @@
             <arg value="start"/>
             <classpath>
                 <pathelement path="${java.class.path}"/>
-                <pathelement path="${catalina.build}/bin"/>
+                <pathelement path="${tomcat.build}/bin"/>
             </classpath>
         </java>
 
@@ -1021,13 +1078,14 @@
                 <arg value="stop"/>
                 <classpath>
                     <pathelement path="${java.class.path}"/>
-                    <pathelement path="${catalina.build}/bin"/>
+                    <pathelement path="${tomcat.build}/bin"/>
                 </classpath>
             </java>
         </sequential>
     </parallel>  
     
   </target>
+
   <!-- ====================== DIST: Create Directories ==================== -->
   <target name="dist-prepare">
     <mkdir dir="${tomcat.dist}"/>
