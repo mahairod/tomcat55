@@ -784,7 +784,7 @@
     </a>
   </question>
   <answer>
-    See this mailing list <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108330970225012&amp;w=2">message.</a>
+    See this mailing list <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108330970225012&amp;w=2">message.</a>  For an example with log4j and tomcat running with JSVC (port 80), see <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=108578233003073&amp;w=2">this thread.</a>
   </answer>
 </section>
 
