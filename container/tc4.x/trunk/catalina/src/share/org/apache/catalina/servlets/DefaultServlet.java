@@ -1206,7 +1206,7 @@ public class DefaultServlet
                                    + range.start
                                    + "-" + range.end + "/"
                                    + range.length);
-                response.setContentLength((int) range.length);
+                response.setContentLength((int) (range.end - range.start));
 
                 if (contentType != null) {
                     if (debug > 0)
