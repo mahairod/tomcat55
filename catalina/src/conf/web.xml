@@ -345,6 +345,18 @@
 -->
 
 
+  <!-- ======================= Disable TRACE by default =================== -->
+
+  <security-constraint>
+    <web-resource-collection>
+       <web-resource-name>DisableExploitTraceHTTP</web-resource-name>
+       <url-pattern>/*</url-pattern>
+       <http-method>TRACE</http-method>
+    </web-resource-collection>
+    <auth-constraint/>
+  </security-constraint>
+
+
   <!-- ==================== Default Session Configuration ================= -->
   <!-- You can set the default session timeout (in minutes) for all newly   -->
   <!-- created sessions by modifying the value below.                       -->
