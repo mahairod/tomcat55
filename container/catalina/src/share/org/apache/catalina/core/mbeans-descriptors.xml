@@ -292,6 +292,18 @@
                returnType="void">
     </operation>
     
+    <operation name="findMappingObject"
+               description="Return an object which may be utilized for mapping to this component"
+               impact="INFO"
+               returnType="org.apache.catalina.Context">    
+    </operation>    
+    
+    <operation name="findStaticResources"
+               description="Return the naming resources associated with this web application"
+               impact="INFO"
+               returnType="javax.naming.directory.DirContext">    
+    </operation>
+    
   </mbean>
   
   <mbean name="StandardContextValve"
@@ -604,7 +616,31 @@
     <operation name="start" description="Start" impact="ACTION" returnType="void" />
     <operation name="stop" description="Stop" impact="ACTION" returnType="void" />
   </mbean>
-  
+
+  <mbean name="StandardWrapper"
+         description="Wrapper that represents an individual servlet definition"
+         domain="Catalina"
+         group="Wrapper"
+         type="org.apache.catalina.core.StandardWrapper">
+    
+    <attribute name="engineName"
+               description="Fully qualified class name of the managed object"
+               type="java.lang.String"
+               writeable="false"/>
+
+    <operation name="findMappings"
+               description="Return the mappings associated with this wrapper"
+               impact="INFO"
+               returnType="[Ljava.lang.String;">
+    </operation>
+               
+    <operation name="findMappingObject"
+               description="Return an object which may be utilized for mapping to this component"
+               impact="INFO"
+               returnType="org.apache.catalina.Wrapper">
+    </operation>
+    
+  </mbean>
   
   <mbean name="StandardWrapperValve"
          description="Valve that implements the default basic behavior for the
@@ -612,12 +648,12 @@
          domain="Catalina"
          group="Valve"
          type="org.apache.catalina.core.StandardWrapperValve">
-    
-    <attribute name="className"
-               description="Fully qualified class name of the managed object"
-               type="java.lang.String"
-               writeable="false"/>
-      
+         
+     <attribute name="className"
+                description="Fully qualified class name of the managed object"
+                type="java.lang.String"
+                writeable="false"/>  
+                    
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
