@@ -229,33 +229,41 @@ public class PageContextImpl extends PageContext {
 
 
     public void setAttribute(String name, Object attribute) {
-	attributes.put(name, attribute);
+        setAttribute(name, attribute, PAGE_SCOPE);
     }
 
-
     public void setAttribute(String name, Object o, int scope) {
-	switch (scope) {
-	    case PAGE_SCOPE:
-		attributes.put(name, o);
-	    break;
+        if (name == null) {
+            throw new NullPointerException("name may not be null");
+        }
 
-	    case REQUEST_SCOPE:
-		request.setAttribute(name, o);
-	    break;
+        if (o == null) {
+            throw new NullPointerException("object may not be null");
+        }
 
-	    case SESSION_SCOPE:
-		if (session == null)
-		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
-		else
-		    session.setAttribute(name, o);
-	    break;
+        switch (scope) {
+            case PAGE_SCOPE:
+                attributes.put(name, o);
+                break;
 
-	    case APPLICATION_SCOPE:
-		context.setAttribute(name, o);
-	    break;
+            case REQUEST_SCOPE:
+                request.setAttribute(name, o);
+                break;
 
-	    default:
-	}
+            case SESSION_SCOPE:
+                if (session == null)
+                    throw new IllegalArgumentException
+                        ("can't access SESSION_SCOPE without an HttpSession");
+                else
+                    session.setAttribute(name, o);
+                break;
+
+            case APPLICATION_SCOPE:
+                context.setAttribute(name, o);
+                break;
+
+            default:
+        }
     }
 
     public void removeAttribute(String name, int scope) {
