@@ -1582,6 +1582,10 @@ public class Generator {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() != scope)
 			continue;
+                    // If the scripting variable has been declared, skip codes
+                    // for saving and restoring it.
+                    if (n.getScriptingVars(scope).contains(varInfos[i]))
+                        continue;
 		    String varName = varInfos[i].getVarName();
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
@@ -1594,6 +1598,10 @@ public class Generator {
 		for (int i=0; i<tagVarInfos.length; i++) {
 		    if (tagVarInfos[i].getScope() != scope)
 			continue;
+                    // If the scripting variable has been declared, skip codes
+                    // for saving and restoring it.
+                    if (n.getScriptingVars(scope).contains(tagVarInfos[i]))
+                        continue;
 		    String varName = tagVarInfos[i].getNameGiven();
 		    if (varName == null) {
 			varName = n.getTagData().getAttributeString(
@@ -1631,6 +1639,10 @@ public class Generator {
 		for (int i=0; i<varInfos.length; i++) {
 		    if (varInfos[i].getScope() != scope)
 			continue;
+                    // If the scripting variable has been declared, skip codes
+                    // for saving and restoring it.
+                    if (n.getScriptingVars(scope).contains(varInfos[i]))
+                        continue;
 		    String varName = varInfos[i].getVarName();
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
@@ -1643,6 +1655,10 @@ public class Generator {
 		for (int i=0; i<tagVarInfos.length; i++) {
 		    if (tagVarInfos[i].getScope() != scope)
 			continue;
+                    // If the scripting variable has been declared, skip codes
+                    // for saving and restoring it.
+                    if (n.getScriptingVars(scope).contains(tagVarInfos[i]))
+                        continue;
 		    String varName = tagVarInfos[i].getNameGiven();
 		    if (varName == null) {
 			varName = n.getTagData().getAttributeString(
