@@ -190,9 +190,10 @@ public final class SaveServiceAction extends Action {
 
             try {
 
+                String domain = (new ObjectName(sObjectName)).getDomain();
                 // Ensure that the requested service name is unique
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.SERVICE_TYPE +
+                    new ObjectName(domain + TomcatTreeBuilder.SERVICE_TYPE +
                                    ",name=" + sform.getServiceName());
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
@@ -203,12 +204,11 @@ public final class SaveServiceAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
 
                 // Create a new StandardService object
                 values = new String[2];
-                values[0] = TomcatTreeBuilder.SERVER_TYPE;
+                values[0] = domain + TomcatTreeBuilder.SERVER_TYPE;
                 values[1] = sform.getServiceName();
                 operation = "createStandardService";
                 sObjectName = (String)
@@ -246,7 +246,7 @@ public final class SaveServiceAction extends Action {
                                                 "EditService.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true);
+                                                true, domain);
                         parentNode.addChild(childNode);
                         // FIXME - force a redisplay
                     } else {

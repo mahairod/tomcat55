@@ -76,6 +76,7 @@ import org.apache.webapp.admin.TreeControlNode;
  * for administering the resources (data sources).
  *
  * @author Manveen Kaur
+ * @author Amy Roh
  * @version $Revision$ $Date$
  * @since 4.1
  */
@@ -122,45 +123,46 @@ public class ResourcesTreeBuilder implements TreeBuilder {
     protected void addSubtree(TreeControlNode root,
                               MessageResources resources) {
 
+        String domain = root.getDomain();
         TreeControlNode subtree = new TreeControlNode
             ("Global Resource Administration",
              "folder_16_pad.gif",
              resources.getMessage("resources.treeBuilder.subtreeNode"),
              null,
              "content",
-             true);        
+             true, domain);        
         TreeControlNode datasources = new TreeControlNode
             ("Globally Administer Data Sources",
              "Datasource.gif",
              resources.getMessage("resources.treeBuilder.datasources"),
-             "resources/listDataSources.do?resourcetype=Global&forward=" +
-             URLEncoder.encode("DataSources List Setup"),
+             "resources/listDataSources.do?resourcetype=Global&domain=" +
+             domain + "&forward=" + URLEncoder.encode("DataSources List Setup"),
              "content",
-             false);
+             false, domain);
         TreeControlNode mailsessions = new TreeControlNode
             ("Globally Administer Mail Sessions ",
-            "Mailsession.gif",
-            resources.getMessage("resources.treeBuilder.mailsessions"),
-            "resources/listMailSessions.do?resourcetype=Global&forward=" +
-            URLEncoder.encode("MailSessions List Setup"),
-            "content",
-            false);
+             "Mailsession.gif",
+             resources.getMessage("resources.treeBuilder.mailsessions"),
+             "resources/listMailSessions.do?resourcetype=Global&domain=" +
+             domain + "&forward=" + URLEncoder.encode("MailSessions List Setup"),
+             "content",
+             false, domain);
         TreeControlNode userdbs = new TreeControlNode
             ("Globally Administer UserDatabase Entries",
              "Realm.gif",
              resources.getMessage("resources.treeBuilder.databases"),
-             "resources/listUserDatabases.do?forward=" +
-             URLEncoder.encode("UserDatabases List Setup"),
+             "resources/listUserDatabases.do?domain=" + domain + 
+             "&forward=" + URLEncoder.encode("UserDatabases List Setup"),
              "content",
-             false);
+             false, domain);
         TreeControlNode envs = new TreeControlNode
             ("Globally Administer Environment Entries",
              "EnvironmentEntries.gif",
-            resources.getMessage("resources.env.entries"),
-            "resources/listEnvEntries.do?resourcetype=Global&forward=" +
-            URLEncoder.encode("EnvEntries List Setup"),
-            "content",
-            false);
+             resources.getMessage("resources.env.entries"),
+             "resources/listEnvEntries.do?resourcetype=Global&domain=" +
+             domain+"&forward="+URLEncoder.encode("EnvEntries List Setup"),
+             "content",
+             false, domain);
         root.addChild(subtree);
         subtree.addChild(datasources);
         subtree.addChild(mailsessions);

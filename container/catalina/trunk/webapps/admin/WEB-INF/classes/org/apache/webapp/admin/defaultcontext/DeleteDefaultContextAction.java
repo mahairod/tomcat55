@@ -175,15 +175,22 @@ public class DeleteDefaultContextAction extends Action {
             patternObject = parent;
         } 
         
-	// fix this later
+        // FIXME delete DefaultContext not supported yet
         // Accumulate a list of all available contexts
         ArrayList list = new ArrayList();
         try {
             ObjectName poname = new ObjectName(patternObject);
-            String pattern = TomcatTreeBuilder.CONTEXT_TYPE +
-                             TomcatTreeBuilder.WILDCARD +
-                             ",host=" + poname.getKeyProperty("host") +
-                             ",service=" + poname.getKeyProperty("service"); 
+            String host = poname.getKeyProperty("host");
+            String pattern = null;
+            if (host != null) {
+                pattern = poname.getDomain()+ 
+                          TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                          TomcatTreeBuilder.WILDCARD +  
+                          ",host=" + poname.getKeyProperty("host"); 
+            } else {
+                pattern = poname.getDomain()+ 
+                          TomcatTreeBuilder.DEFAULTCONTEXT_TYPE; 
+            }   
             // get all available contexts only for this host
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();

@@ -165,10 +165,6 @@ public class DeleteServicesAction extends Action {
         String operation = "removeService";
         try {
 
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
@@ -176,6 +172,10 @@ public class DeleteServicesAction extends Action {
             // Remove the specified services
             for (int i = 0; i < services.length; i++) {
                 values[0] = services[i];
+                ObjectName oname = new ObjectName(services[i]);
+                String domain = oname.getDomain();
+                ObjectName fname = 
+                        TomcatTreeBuilder.getMBeanFactory(domain);
                 mBServer.invoke(fname, operation,
                                 values, removeServiceTypes);
                 if (control != null) {

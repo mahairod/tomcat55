@@ -187,8 +187,7 @@ public final class SaveMemoryRealmAction extends Action {
                 // Parent in this case needs to be the container mBean for the service 
                 try {                                                        
                     if ("Service".equalsIgnoreCase(pname.getKeyProperty("type"))) {
-                        sb.append(":type=Engine,service=");
-                        sb.append(pname.getKeyProperty("name"));
+                        sb.append(":type=Engine");
                         parent = sb.toString();
                     }
                 } catch (Exception e) {
@@ -211,9 +210,9 @@ public final class SaveMemoryRealmAction extends Action {
                     return (new ActionForward(mapping.getInput()));
                 }
 
+                String domain = oname.getDomain();
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
 
                 // Create a new StandardRealm object
                 values = new String[1];
@@ -239,7 +238,7 @@ public final class SaveMemoryRealmAction extends Action {
                                                 "EditRealm.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true);
+                                                true, domain);
                         parentNode.addChild(childNode);
                         // FIXME - force a redisplay
                     } else {

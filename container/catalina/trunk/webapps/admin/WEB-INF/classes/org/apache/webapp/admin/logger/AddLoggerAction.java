@@ -147,12 +147,12 @@ public class AddLoggerAction extends Action {
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
+                "AddLogger.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + type));        
         for (int i=0; i< loggerTypes.length; i++) {
             if (!type.equalsIgnoreCase(loggerTypes[i])) {
                 types.add(new LabelValueBean(loggerTypes[i],
-                "/admin/AddLogger.do?parent=" + URLEncoder.encode(parent) 
+                "AddLogger.do?parent=" + URLEncoder.encode(parent) 
                 + "&type=" + loggerTypes[i]));        
             }
         }

@@ -159,16 +159,13 @@ public class DeleteDefaultContextsAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-	// == fix this later
+    // == fix this later
         // Delete the specified DefaultContext
         String defaultContexts[]  = ((DefaultContextsForm) form).getDefaultContexts();
         String values[] = new String[1];
         String operation = "removeDefaultContext";
 
         try {
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
@@ -177,11 +174,13 @@ public class DeleteDefaultContextsAction extends Action {
             // Remove the specified default contexts
             for (int i = 0; i < defaultContexts.length; i++) {
                 values[0] = defaultContexts[i];
-                mBServer.invoke(fname, operation,
-                                values, removeDefaultContextTypes);
                 if (control != null) {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(defaultContexts[i]);
+                    String domain = node.getDomain();
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    mBServer.invoke(fname, operation,
+                                values, removeDefaultContextTypes);
                     if (node != null) {
                         node.remove();
                     } else {

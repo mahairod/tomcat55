@@ -166,6 +166,7 @@ public final class SaveConnectorAction extends Action {
         String adminAction = cform.getAdminAction();
         String cObjectName = cform.getObjectName();
         String connectorType = cform.getConnectorType();
+        ObjectName coname = null;
 
         // Perform a "Create Connector" transaction (if requested)
         if ("Create".equals(adminAction)) {
@@ -176,10 +177,10 @@ public final class SaveConnectorAction extends Action {
             try {
    
                 String serviceName = cform.getServiceName();
-                
+                coname = new ObjectName(cObjectName);
+                String domain = coname.getDomain();
                 ObjectName oname =
-                    new ObjectName(TomcatTreeBuilder.CONNECTOR_TYPE +
-                                   ",service=" + serviceName +
+                    new ObjectName(domain + TomcatTreeBuilder.CONNECTOR_TYPE +
                                    ",port=" + cform.getPortText() +
                                    ",address=" + cform.getAddress());
                                                 
@@ -193,13 +194,12 @@ public final class SaveConnectorAction extends Action {
                 }
 
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
 
                 // Create a new Connector object
                 values = new Object[3];                
                 values[0] = // parent 
-                    TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
+                    domain + TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
 
@@ -219,8 +219,8 @@ public final class SaveConnectorAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = 
-                          TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
+                    String parentName = domain + TomcatTreeBuilder.SERVICE_TYPE
+                         + ",name=" + serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
                         String nodeLabel =
@@ -234,7 +234,7 @@ public final class SaveConnectorAction extends Action {
                                                 "EditConnector.do?select=" +
                                                 encodedName,
                                                 "content",
-                                                true);
+                                                true, domain);
                         // FIXME--the node should be next to the rest of 
                         // the Connector nodes..
                         parentNode.addChild(childNode);
@@ -267,7 +267,7 @@ public final class SaveConnectorAction extends Action {
         String attribute = null;
         try {
 
-            ObjectName coname = new ObjectName(cObjectName);
+            coname = new ObjectName(cObjectName);
 
             attribute = "debug";
             int debug = 0;

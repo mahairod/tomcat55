@@ -164,22 +164,26 @@ public class DeleteConnectorsAction extends Action {
         String operation = "removeConnector";
         try {
 
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
+                
+            // Look up our MBeanFactory MBean
+            ObjectName fname = null;
+            String domain = null;
+            TreeControlNode node = null;
 
             // Remove the specified connectors
             for (int i = 0; i < connectors.length; i++) {
                 values[0] = connectors[i];
-                mBServer.invoke(fname, operation,
-                                values, removeConnectorTypes);
                 if (control != null) {
                     control.selectNode(null);
-                    TreeControlNode node = control.findNode(connectors[i]);
+                    node = control.findNode(connectors[i]);
+                    domain = node.getDomain();
+                    // Look up our MBeanFactory MBean
+                    fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    mBServer.invoke(fname, operation,
+                                values, removeConnectorTypes);
                     if (node != null) {
                         node.remove();
                     } else {

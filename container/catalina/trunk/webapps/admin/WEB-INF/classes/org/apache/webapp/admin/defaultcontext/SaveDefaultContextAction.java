@@ -196,14 +196,16 @@ public final class SaveDefaultContextAction extends Action {
                 ObjectName poname = new ObjectName(parentName);
 
                 String host = poname.getKeyProperty("host");
+                String domain = poname.getDomain();
                 ObjectName oname = null;
                 // Ensure that the requested default context name is unique
                 if (host!=null) {
-                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
-                                        ",host=" + host + ",service=" + 
-                                        poname.getKeyProperty("service"));
+                    oname = new ObjectName(domain +
+                                        TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                                        ",host=" + host);
                 } else {
-                    oname = new ObjectName(TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
+                    oname = new ObjectName(domain +
+                                        TomcatTreeBuilder.DEFAULTCONTEXT_TYPE +
                                         ",service=" + poname.getKeyProperty("name"));
                 }
                 
@@ -216,8 +218,7 @@ public final class SaveDefaultContextAction extends Action {
                 }
                 
                 // Look up our MBeanFactory MBean
-                ObjectName fname =
-                    new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+                ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
 
                 // Create a new DefaultContext object
                 values = new Object[1];
@@ -420,6 +421,7 @@ public final class SaveDefaultContextAction extends Action {
                                     HttpSession session) 
         throws Exception {
                               
+        String domain = oname.getDomain();
         TreeControl control = (TreeControl) session.getAttribute("treeControlTest");
         if (control != null) {
             TreeControlNode parentNode = control.findNode(parentName);
@@ -433,7 +435,7 @@ public final class SaveDefaultContextAction extends Action {
                                         "EditDefaultContext.do?select=" +
                                         encodedName,
                                         "content",
-                                        true);
+                                        true, domain);
                 parentNode.addChild(childNode);
                 // FIXME - force a redisplay
                 String type = oname.getKeyProperty("type");
@@ -448,14 +450,13 @@ public final class SaveDefaultContextAction extends Action {
                 if (host == null) {
                     host = "";
                 }        
-                String service = oname.getKeyProperty("service");
                 TreeControlNode subtree = new TreeControlNode
                     ("Context Resource Administration " + containerName,
                     "folder_16_pad.gif",
                     resources.getMessage("resources.treeBuilder.subtreeNode"),
                     null,
                     "content",
-                    true);        
+                    true, domain);        
                 childNode.addChild(subtree);
                 TreeControlNode datasources = new TreeControlNode
                     ("Context Data Sources " + containerName,
@@ -464,11 +465,10 @@ public final class SaveDefaultContextAction extends Action {
                     "resources/listDataSources.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("DataSources List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode mailsessions = new TreeControlNode
                     ("Context Mail Sessions " + containerName,
                     "Mailsession.gif",
@@ -476,11 +476,10 @@ public final class SaveDefaultContextAction extends Action {
                     "resources/listMailSessions.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("MailSessions List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode resourcelinks = new TreeControlNode
                     ("Resource Links " + containerName,
                     "ResourceLink.gif",
@@ -488,11 +487,10 @@ public final class SaveDefaultContextAction extends Action {
                     "resources/listResourceLinks.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("ResourceLinks List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 TreeControlNode envs = new TreeControlNode
                     ("Context Environment Entries "+ containerName,
                     "EnvironmentEntries.gif",
@@ -500,11 +498,10 @@ public final class SaveDefaultContextAction extends Action {
                     "resources/listEnvEntries.do?resourcetype=" + 
                     URLEncoder.encode(type) + "&path=" +
                     URLEncoder.encode(path) + "&host=" + 
-                    URLEncoder.encode(host) + "&service=" +
-                    URLEncoder.encode(service) + "&forward=" +
+                    URLEncoder.encode(host) + "&forward=" +
                     URLEncoder.encode("EnvEntries List Setup"),
                     "content",
-                    false);
+                    false, domain);
                 subtree.addChild(datasources);
                 subtree.addChild(mailsessions);
                 subtree.addChild(resourcelinks);

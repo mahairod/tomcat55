@@ -132,7 +132,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              resources.getMessage("users.treeBuilder.subtreeNode"),
              null,
              "content",
-             true);
+             true, "Users");
         TreeControlNode groups = new TreeControlNode
             ("Global Administer Groups",
              "Groups.gif",
@@ -142,7 +142,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              "&forward=" +
              URLEncoder.encode("Groups List Setup"),
              "content",
-             false);
+             false, "Users");
         TreeControlNode roles = new TreeControlNode
             ("Global Administer Roles",
              "Roles.gif",
@@ -152,7 +152,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              "&forward=" +
              URLEncoder.encode("Roles List Setup"),
              "content",
-             false);
+             false, "Users");
         TreeControlNode users = new TreeControlNode
             ("Global Administer Users",
              "Users.gif",
@@ -162,7 +162,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              "&forward=" +
              URLEncoder.encode("Users List Setup"),
              "content",
-             false);
+             false, "Users");
 
         root.addChild(subtree);
         subtree.addChild(users);

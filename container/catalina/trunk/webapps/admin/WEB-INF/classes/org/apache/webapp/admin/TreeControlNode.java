@@ -104,7 +104,7 @@ public class TreeControlNode implements Serializable {
     public TreeControlNode(String name,
                            String icon, String label,
                            String action, String target,
-                           boolean expanded) {
+                           boolean expanded, String domain) {
 
         super();
         this.name = name;
@@ -113,6 +113,7 @@ public class TreeControlNode implements Serializable {
         this.action = action;
         this.target = target;
         this.expanded = expanded;
+        this.domain = domain;
 
     }
 
@@ -140,6 +141,14 @@ public class TreeControlNode implements Serializable {
         return (this.action);
     }
 
+    /**
+     * The domain of this node.
+     */
+    protected String domain = null;
+
+    public String getDomain() {
+        return (this.domain);
+    }
 
     /**
      * Is this node currently expanded?

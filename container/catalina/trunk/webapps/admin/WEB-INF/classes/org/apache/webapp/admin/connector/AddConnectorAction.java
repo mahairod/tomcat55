@@ -174,12 +174,12 @@ public class AddConnectorAction extends Action {
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
-                "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName) 
+                "AddConnector.do?serviceName=" + URLEncoder.encode(serviceName) 
                 + "&type=" + type));        
          for (int i=0; i< schemeTypes.length; i++) {
             if (!type.equalsIgnoreCase(schemeTypes[i])) {
                 types.add(new LabelValueBean(schemeTypes[i],
-                "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
+                "AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
                 + "&type=" + schemeTypes[i]));        
             }
         }

@@ -165,10 +165,6 @@ public class DeleteLoggersAction extends Action {
         String operation = "removeLogger";
         try {
 
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
             // Look up our tree control data structure
             TreeControl control = (TreeControl)
                 session.getAttribute("treeControlTest");
@@ -176,11 +172,13 @@ public class DeleteLoggersAction extends Action {
             // Remove the specified loggers
             for (int i = 0; i < loggers.length; i++) {
                 values[0] = loggers[i];
-                mBServer.invoke(fname, operation,
-                                values, removeLoggerTypes);
                 if (control != null) {
                     control.selectNode(null);
                     TreeControlNode node = control.findNode(loggers[i]);
+                    String domain = node.getDomain();
+                    ObjectName fname = TomcatTreeBuilder.getMBeanFactory(domain);
+                    mBServer.invoke(fname, operation,
+                                values, removeLoggerTypes);
                     if (node != null) {
                         node.remove();
                     } else {

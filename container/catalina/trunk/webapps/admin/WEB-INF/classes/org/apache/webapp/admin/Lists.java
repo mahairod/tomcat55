@@ -78,6 +78,7 @@ import javax.management.ObjectName;
  * is returned.
  *
  * @author Craig R. McClanahan
+ * @author Amy Roh
  * @version $Revision$ $Date$
  */
 
@@ -227,14 +228,21 @@ public class Lists {
         throws Exception {
 
         StringBuffer sb = new StringBuffer(host.getDomain());
-        sb.append(":type=Context,host=");
-        sb.append(host.getKeyProperty("host"));
-        sb.append(",*");
+        sb.append(":j2eeType=WebModule,*");
         ObjectName search = new ObjectName(sb.toString());
         ArrayList contexts = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
+        String name = null;
+        ObjectName oname = null;
+        String hostPrefix = "//"+host.getKeyProperty("host");
+        String hostAttr = null;
         while (names.hasNext()) {
-            contexts.add(names.next().toString());
+        name = names.next().toString();
+        oname = new ObjectName(name);
+            hostAttr = oname.getKeyProperty("name");
+            if (hostAttr.startsWith(hostPrefix)) {
+                contexts.add(name);
+            }
         }
         Collections.sort(contexts);
         return (contexts);
@@ -287,10 +295,6 @@ public class Lists {
         if (host != null) {
             sb.append(",host=");
             sb.append(host);
-        }
-        String service = container.getKeyProperty("service");
-        if ("Service".equals(type)) {
-            service = container.getKeyProperty("name");
         }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList defaultContexts = new ArrayList();
@@ -393,10 +397,6 @@ public class Lists {
             sb.append(",host=");
             sb.append(host);
         }
-        String service = container.getKeyProperty("service");
-        if ("Service".equals(type)) {
-            service = container.getKeyProperty("name");
-        }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList loggers = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -456,10 +456,6 @@ public class Lists {
             sb.append(",host=");
             sb.append(host);
         }
-        String service = container.getKeyProperty("service");
-        if ("Service".equals(type)) {
-            service = container.getKeyProperty("name");
-        }
         ObjectName search = new ObjectName(sb.toString());
         ArrayList realms = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -507,13 +503,8 @@ public class Lists {
         String type = container.getKeyProperty("type");
         sb.append(TomcatTreeBuilder.WILDCARD);
         
-        String service = container.getKeyProperty("service");
         String host = container.getKeyProperty("host");
         String path = container.getKeyProperty("path");
-        
-        if ("Service".equals(type)) {
-            service = container.getKeyProperty("name");
-        }
         
         ObjectName search = new ObjectName(sb.toString());        
         ArrayList valves = new ArrayList();
@@ -586,10 +577,10 @@ public class Lists {
      *
      * @exception Exception if thrown while retrieving the list
      */
-    public static List getServers(MBeanServer mbserver)
+    public static List getServers(MBeanServer mbserver, String domain)
         throws Exception {
 
-        ObjectName search = new ObjectName("Catalina:type=Server,*");
+        ObjectName search = new ObjectName(domain+":type=Server,*");
         ArrayList servers = new ArrayList();
         Iterator names = mbserver.queryNames(search, null).iterator();
         while (names.hasNext()) {
@@ -659,15 +650,12 @@ public class Lists {
 
         // Get the admin app's service name
         StringBuffer sb = new StringBuffer(domain);
-        sb.append(":type=Context");
-        sb.append(",path=");
-        sb.append(request.getContextPath());
-        sb.append(",*");
+        sb.append(":type=Service,*");
         ObjectName search = new ObjectName(sb.toString());
         Iterator names = mbserver.queryNames(search, null).iterator();
         String service = null;
         while (names.hasNext()) {
-            service = ((ObjectName)names.next()).getKeyProperty("service");
+            service = ((ObjectName)names.next()).getKeyProperty("name");
         }
         return service;
 
@@ -689,19 +677,25 @@ public class Lists {
 
         // Get the admin app's host name
         StringBuffer sb = new StringBuffer(domain);
-        sb.append(":type=Context");
-        sb.append(",path=");
-        sb.append(request.getContextPath());
-        sb.append(",*");
+        sb.append(":j2eeType=WebModule,*"); 
         ObjectName search = new ObjectName(sb.toString());
         Iterator names = mbserver.queryNames(search, null).iterator();
+        String contextPath = request.getContextPath();
         String host = null;
-        while (names.hasNext()) {
-            host = ((ObjectName)names.next()).getKeyProperty("host");
+        String name = null;
+        ObjectName oname = null;
+        while (names.hasNext()) {       
+            name = names.next().toString();
+            oname = new ObjectName(name);
+            host = oname.getKeyProperty("name");
+            host = host.substring(2);
+            int i = host.indexOf("/");
+            if (contextPath.equals(host.substring(i))) {
+                host = host.substring(0,i);
+            }
         }
         return host;
 
     }
-
 
 }

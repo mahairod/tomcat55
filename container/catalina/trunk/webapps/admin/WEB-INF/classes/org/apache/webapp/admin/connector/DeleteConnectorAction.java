@@ -152,6 +152,7 @@ public class DeleteConnectorAction extends Action {
         }
         
         String serviceName = request.getParameter("serviceName");
+        String domain = null;
         // Set up a form bean containing the currently selected
         // objects to be deleted
         ConnectorsForm connectorsForm = new ConnectorsForm();
@@ -163,7 +164,7 @@ public class DeleteConnectorAction extends Action {
                         
             // get the service Name this selected host belongs to
             try {
-                serviceName = (new ObjectName(select)).getKeyProperty("service");
+                domain = (new ObjectName(select)).getDomain();
             } catch (Exception e) {
                 throw new ServletException
                 ("Error extracting service name from the connector to be deleted", e);
@@ -174,11 +175,8 @@ public class DeleteConnectorAction extends Action {
         // Accumulate a list of all available connectors
         ArrayList list = new ArrayList();
          try {
-            String pattern = TomcatTreeBuilder.CONNECTOR_TYPE +
-                TomcatTreeBuilder.WILDCARD; 
-            // get all available connectors only for this service
-            if (serviceName!= null) 
-                pattern = pattern.concat(",service=" + serviceName);            
+            String pattern = domain + ":" + TomcatTreeBuilder.CONNECTOR_TYPE +
+                TomcatTreeBuilder.WILDCARD;          
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();
             while (items.hasNext()) {

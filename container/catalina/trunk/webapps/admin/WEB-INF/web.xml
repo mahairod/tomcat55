@@ -87,6 +87,11 @@
         org.apache.webapp.admin.users.UsersTreeBuilder
     </param-value>
     </init-param>
+    <init-param>
+      <param-name>domain</param-name>
+      <param-value>Catalina</param-value>
+    </init-param>
+
     <load-on-startup>2</load-on-startup>
   </servlet>
 

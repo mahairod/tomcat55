@@ -179,10 +179,10 @@ public class DeleteContextAction extends Action {
         ArrayList list = new ArrayList();
         try {
             ObjectName poname = new ObjectName(patternObject);
-            String pattern = TomcatTreeBuilder.CONTEXT_TYPE +
+            String domain = poname.getDomain();
+            String pattern = domain + TomcatTreeBuilder.CONTEXT_TYPE +
                              TomcatTreeBuilder.WILDCARD +
-                             ",host=" + poname.getKeyProperty("host") +
-                             ",service=" + poname.getKeyProperty("service"); 
+                             ",host=" + poname.getKeyProperty("host"); 
             // get all available contexts only for this host
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();
