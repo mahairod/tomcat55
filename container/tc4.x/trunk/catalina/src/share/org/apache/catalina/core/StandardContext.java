@@ -3606,10 +3606,6 @@ public class StandardContext
                 ok = false;
         }
 
-        // Load and initialize all "load on startup" servlets
-        if (ok)
-            loadOnStartup(findChildren());
-
         // Unbinding thread
         unbindThread(oldCCL);
 
@@ -3626,11 +3622,16 @@ public class StandardContext
                 log(sm.getString("standardContext.startCleanup"), t);
             }
             setAvailable(false);
+            throw new LifecycleException(sm.getString("standardContext.startFailed"));
         }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
 
+        // Load and initialize all "load on startup" servlets
+        oldCCL = bindThread();
+        loadOnStartup(findChildren());
+        unbindThread(oldCCL);
     }
 
 
