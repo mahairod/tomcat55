@@ -1363,8 +1363,11 @@ abstract class Node {
 	    // Get the attribute value from this named attribute
 	    // (<jsp:attribute>).
 	    // Since this method is only for attributes that are not rtexpr,
-	    // we can assume the body of the jsp:attribute is a template text
-	    String text = null;
+	    // we can assume the body of the jsp:attribute is a template text.
+	    // According to JSP 2.0, if the body of the <jsp:attribute>
+	    // action is empty, it is equivalent of specifying "" as the value
+	    // of the attribute.
+	    String text = "";
 	    if (getBody() != null) {
 		AttributeVisitor attributeVisitor = new AttributeVisitor();
 		try {

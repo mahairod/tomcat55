@@ -820,15 +820,16 @@ class Validator {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
 			jspAttrs[attrs.getLength() + i]
 			    = new Node.JspAttribute(na, false);
-
-			NamedAttributeVisitor nav = new NamedAttributeVisitor();
-			na.getBody().visit(nav);
-			if (nav.hasDynamicContent()) {
+			NamedAttributeVisitor nav = null;
+			if (na.getBody() != null) {
+			    nav = new NamedAttributeVisitor();
+			    na.getBody().visit(nav);
+			}
+			if (nav != null && nav.hasDynamicContent()) {
 			    tagDataAttrs.put(na.getName(),
 					     TagData.REQUEST_TIME_VALUE);
 			} else {
-			    tagDataAttrs.put(na.getName(),
-					     na.getText());    
+			    tagDataAttrs.put(na.getName(), na.getText());    
 			}
 			found = true;
 			break;

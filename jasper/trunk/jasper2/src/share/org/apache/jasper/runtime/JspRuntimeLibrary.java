@@ -135,18 +135,111 @@ public class JspRuntimeLibrary {
         }
     }
 
-    public static Character getCharacter(String s) throws JasperException {
-	if (s.length() == 0) {
-	    err.jspError("jsp.error.bad_string_Character");
-	}
-	return new Character(s.charAt(0));
+    public static boolean coerceToBoolean(String s) {
+	if (s == null || s.length() == 0)
+	    return false;
+	else
+	    return Boolean.valueOf(s).booleanValue();
     }
 
-    public static char getChar(String s) throws JasperException {
-	if (s.length() == 0) {
-	    err.jspError("jsp.error.bad_string_Character");
+    public static byte coerceToByte(String s) {
+	if (s == null || s.length() == 0)
+	    return (byte) 0;
+	else
+	    return Byte.valueOf(s).byteValue();
+    }
+
+    public static char coerceToChar(String s) {
+	if (s == null || s.length() == 0) {
+	    return (char) 0;
+	} else {
+	    // this trick avoids escaping issues
+	    return (char)(int) s.charAt(0);
 	}
-	return s.charAt(0);
+    }
+
+    public static double coerceToDouble(String s) {
+	if (s == null || s.length() == 0)
+	    return (double) 0;
+	else
+	    return Double.valueOf(s).doubleValue();
+    }
+
+    public static float coerceToFloat(String s) {
+	if (s == null || s.length() == 0)
+	    return (float) 0;
+	else
+	    return Float.valueOf(s).floatValue();
+    }
+
+    public static int coerceToInt(String s) {
+	if (s == null || s.length() == 0)
+	    return 0;
+	else
+	    return Integer.valueOf(s).intValue();
+    }
+
+    public static short coerceToShort(String s) {
+	if (s == null || s.length() == 0)
+	    return (short) 0;
+	else
+	    return Short.valueOf(s).shortValue();
+    }
+
+    public static long coerceToLong(String s) {
+	if (s == null || s.length() == 0)
+	    return (long) 0;
+	else
+	    return Long.valueOf(s).longValue();
+    }
+
+    public static Object coerce(String s, Class target) {
+
+	boolean isNullOrEmpty = (s == null || s.length() == 0);
+
+	if (target == Boolean.class) {
+	    if (isNullOrEmpty) {
+		s = "false";
+	    }
+	    return new Boolean(s);
+	} else if (target == Byte.class) {
+	    if (isNullOrEmpty)
+		return new Byte((byte) 0);
+	    else
+		return new Byte(s);
+	} else if (target == Character.class) {
+	    if (isNullOrEmpty)
+		return new Character((char) 0);
+	    else 
+		return new Character(s.charAt(0));
+	} else if (target == Double.class) {
+	    if (isNullOrEmpty)
+		return new Double(0);
+	    else
+		return new Double(s);
+	} else if (target == Float.class) {
+	    if (isNullOrEmpty)
+		return new Float(0);
+	    else
+		return new Float(s);
+	} else if (target == Integer.class) {
+	    if (isNullOrEmpty)
+		return new Integer(0);
+	    else
+		return new Integer(s);
+	} else if (target == Short.class) {
+	    if (isNullOrEmpty)
+		return new Short((short) 0);
+	    else
+		return new Short(s);
+	} else if (target == Long.class) {
+	    if (isNullOrEmpty)
+		return new Long(0);
+	    else
+		return new Long(s);
+	} else {
+	    return null;
+	}
     }
 
    // __begin convertMethod

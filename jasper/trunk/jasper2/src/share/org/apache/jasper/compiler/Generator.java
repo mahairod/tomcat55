@@ -2511,7 +2511,19 @@ class Generator {
 	    }
 	}
 
-	private String convertString(Class c, String s, String attrName,
+	/*
+	 * @param c The target class to which to coerce the given string
+	 * @param s The string value
+	 * @param attrName The name of the attribute whose value is being
+	 * supplied
+	 * @param propEditorClass The property editor for the given attribute
+	 * @param isNamedAttribute true if the given attribute is a named
+	 * attribute (that is, specified using the jsp:attribute standard
+	 * action), and false otherwise
+	 */
+	private String convertString(Class c,
+				     String s,
+				     String attrName,
 				     Class propEditorClass,
 				     boolean isNamedAttribute)
 	            throws JasperException {
@@ -2530,107 +2542,37 @@ class Generator {
 	    } else if (c == String.class) {
 		return quoted;
 	    } else if (c == boolean.class) {
-		if (isNamedAttribute)
-		    return "Boolean.valueOf(" + s + ").booleanValue()";
-		else
-		    return Boolean.valueOf(s).toString();
+		return JspUtil.coerceToPrimitiveBoolean(s, isNamedAttribute);
 	    } else if (c == Boolean.class) {
-		if (isNamedAttribute)
-		    return "new Boolean(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Boolean(" + Boolean.valueOf(s).toString() + ")";
+		return JspUtil.coerceToBoolean(s, isNamedAttribute);
 	    } else if (c == byte.class) {
-		return "((byte)" + Byte.valueOf(s).toString() + ")";
+		return JspUtil.coerceToPrimitiveByte(s, isNamedAttribute);
 	    } else if (c == Byte.class) {
-		if (isNamedAttribute)
-		    return "new Byte(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Byte((byte)" + Byte.valueOf(s).toString() + ")";
+		return JspUtil.coerceToByte(s, isNamedAttribute);
 	    } else if (c == char.class) {
-		if (isNamedAttribute) {
-		    return "org.apache.jasper.runtime.JspRuntimeLibrary.getChar(" + s + ")";
-		} else {
-		    // non-normative (normative method would fail to compile)
-		    if (s.length() > 0) {
-			char ch = s.charAt(0);
-			// this trick avoids escaping issues
-			return "((char) " + (int) ch + ")";
-		    } else {
-			throw new NumberFormatException(
-                                err.getString("jsp.error.bad_string_char"));
-		    }
-		}
+		return JspUtil.coerceToChar(s, isNamedAttribute);
 	    } else if (c == Character.class) {
-		if (isNamedAttribute) {
-		    return "org.apache.jasper.runtime.JspRuntimeLibrary.getCharacter(" + s + ")";
-		} else {
-		    // non-normative (normative method would fail to compile)
-		    if (s.length() > 0) {
-			char ch = s.charAt(0);
-			// this trick avoids escaping issues
-			return "new Character((char) " + (int) ch + ")";
-		    } else {
-			throw new NumberFormatException(
-			    err.getString("jsp.error.bad_string_Character"));
-		    }
-		}
+		return JspUtil.coerceToCharacter(s, isNamedAttribute);
 	    } else if (c == double.class) {
-		if (isNamedAttribute)
-		    return "Double.valueOf(" + s + ").doubleValue()";
-		else
-		    return Double.valueOf(s).toString();
+		return JspUtil.coerceToPrimitiveDouble(s, isNamedAttribute);
 	    } else if (c == Double.class) {
-		if (isNamedAttribute)
-		    return "new Double(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Double(" + Double.valueOf(s).toString() + ")";
+		return JspUtil.coerceToDouble(s, isNamedAttribute);
 	    } else if (c == float.class) {
-		if (isNamedAttribute)
-		    return "Float.valueOf(" + s + ").floatValue()";
-		else
-		    return Float.valueOf(s).toString() + "f";
+		return JspUtil.coerceToPrimitiveFloat(s, isNamedAttribute);
 	    } else if (c == Float.class) {
-		if (isNamedAttribute)
-		    return "new Float(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Float(" + Float.valueOf(s).toString() + "f)";
+		return JspUtil.coerceToFloat(s, isNamedAttribute);
 	    } else if (c == int.class) {
-		if (isNamedAttribute)
-		    return "Integer.valueOf(" + s + ").intValue()";
-		else
-		    return Integer.valueOf(s).toString();
+		return JspUtil.coerceToInt(s, isNamedAttribute);
 	    } else if (c == Integer.class) {
-		if (isNamedAttribute)
-		    return "new Integer(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Integer(" + Integer.valueOf(s).toString() + ")";
+		return JspUtil.coerceToInteger(s, isNamedAttribute);
 	    } else if (c == short.class) {
-		if (isNamedAttribute)
-		    return "Short.valueOf(" + s + ").shortValue()";
-		else
-		    return "((short) " + Short.valueOf(s).toString() + ")";
+		return JspUtil.coerceToPrimitiveShort(s, isNamedAttribute);
 	    } else if (c == Short.class) {
-		if (isNamedAttribute)
-		    return "new Short(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Short(\"" + Short.valueOf(s).toString() + "\")";
+		return JspUtil.coerceToShort(s, isNamedAttribute);
 	    } else if (c == long.class) {
-		if (isNamedAttribute)
-		    return "Long.valueOf(" + s + ").longValue()";
-		else
-		    return Long.valueOf(s).toString() + "l";
+		return JspUtil.coerceToPrimitiveLong(s, isNamedAttribute);
 	    } else if (c == Long.class) {
-		if (isNamedAttribute)
-		    return "new Long(" + s + ")";
-		else
-		    // Detect format error at translation time
-		    return "new Long(" + Long.valueOf(s).toString() + "l)";
+		return JspUtil.coerceToLong(s, isNamedAttribute);
 	    } else if (c == Object.class) {
 		return "new String(" + quoted + ")";
 	    } else {
