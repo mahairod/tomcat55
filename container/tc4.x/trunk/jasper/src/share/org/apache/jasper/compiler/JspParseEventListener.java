@@ -713,16 +713,9 @@ public class JspParseEventListener extends BaseJspListener {
 	if (directive.equals("taglib")) {
             String uri = (String) attrs.get("uri");
             String prefix = (String) attrs.get("prefix");
-            try {
-                TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt,
-                                                               prefix,
-                                                               uri);
-                libraries.addTagLibrary(prefix, tl);
-            } catch (Exception ex) {
-                Object[] args = new Object[] { uri, ex.getMessage() };
-                throw new CompileException(start, Constants.getString("jsp.error.badtaglib",
-                                                              args));
-            }
+	    TagLibraryInfo tl = 
+		new TagLibraryInfoImpl(ctxt, prefix, uri);
+	    libraries.addTagLibrary(prefix, tl);
 	}
 
 	if (directive.equals("include")) {

@@ -78,7 +78,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.InputSource;
 
 /** 
@@ -92,6 +94,9 @@ public class JspUtil {
 
     private static final String OPEN_EXPR  = "<%=";
     private static final String CLOSE_EXPR = "%>";
+
+    private static ErrorHandler errorHandler = new MyErrorHandler();
+    private static EntityResolver entityResolver = new MyEntityResolver();
 
     public static char[] removeQuotes(char []chars) {
 	CharArrayWriter caw = new CharArrayWriter();
@@ -148,53 +153,53 @@ public class JspUtil {
         return returnString;
     }
 
-    // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDoc(InputStream in, String dtdResource, 
-    					  String dtdId) throws JasperException 
+    /**
+     * Parses the XML document contained in the InputStream.
+     */
+    public static Document parseXMLDoc(String uri, InputStream in) 
+	throws JasperException 
     {
-	return parseXMLDocJaxp(in, dtdResource, dtdId );
+	return parseXMLDocJaxp(uri, in);
     }
 
-    // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDocJaxp(InputStream in, String dtdResource, 
-					   String dtdId)
+    /**
+     * Parses the XML document contained in the InputStream.
+     * This XML document is either web.xml or a tld.
+     * [The TLD has to be cached internally (see MyEntityResolver)]
+     */
+    public static Document parseXMLDocJaxp(String uri, InputStream in)
 	throws JasperException
     {
 	try {
-	    Document tld;
-	    DocumentBuilderFactory docFactory = DocumentBuilderFactory.
-		newInstance();
+	    Document doc;
+	    DocumentBuilderFactory docFactory = 
+		DocumentBuilderFactory.newInstance();
 	    docFactory.setValidating(true);
 	    docFactory.setNamespaceAware(true);
 	    DocumentBuilder builder = docFactory.newDocumentBuilder();
-	    
-	    /***
-	     * These lines make sure that we have an internal catalog entry for
-	     * the taglib.dtdfile; this is so that jasper can run standalone 
-	     * without running out to the net to pick up the taglib.dtd file.
-	     */
-	    MyEntityResolver resolver =
-		new MyEntityResolver(dtdId, dtdResource);
-	    builder.setEntityResolver(resolver);
-	    tld = builder.parse(in);
-	    return tld;
-	} catch( ParserConfigurationException ex ) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.parse.error.in.TLD",
-						new Object[] {
-						    ex.getMessage()
-						}));
-	} catch ( SAXException sx ) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.parse.error.in.TLD",
-						new Object[] {
-						    sx.getMessage()
-						}));
+	    builder.setEntityResolver(entityResolver);
+	    builder.setErrorHandler(errorHandler);
+	    doc = builder.parse(in);
+	    return doc;
+	} catch (ParserConfigurationException ex) {
+            throw new JasperException(
+	        Constants.getString("jsp.error.parse.xml",
+				    new Object[]{uri, ex.getMessage()}));
+	} catch (SAXParseException ex) {
+            throw new JasperException(
+	        Constants.getString("jsp.error.parse.xml.line",
+				    new Object[]{uri,
+						 new Integer(ex.getLineNumber()),
+						 new Integer(ex.getColumnNumber()),
+						 ex.getMessage()}));
+	} catch (SAXException sx) {
+            throw new JasperException(
+                Constants.getString("jsp.error.parse.xml",
+				    new Object[]{uri, sx.getMessage()}));
         } catch (IOException io) {
-            throw new JasperException(Constants.
-				      getString("jsp.error.unable.to.open.TLD",
-						new Object[] {
-						    io.getMessage() }));
+            throw new JasperException(
+                Constants.getString("jsp.error.parse.xml",
+				    new Object[]{uri, io.toString()}));
 	}
     }
 
@@ -322,32 +327,48 @@ public class JspUtil {
 }
 
 class MyEntityResolver implements EntityResolver {
-
-    String dtdId;
-    String dtdResource;
-    
-    public MyEntityResolver(String id, String resource) {
-	this.dtdId = id;
-	this.dtdResource = resource;
-    }
-    
     public InputSource resolveEntity(String publicId, String systemId)
-	throws SAXException, IOException
+	throws SAXException
     {
-	//System.out.println ("publicId = " + publicId);
-	//System.out.println ("systemId is " + systemId);
-	//System.out.println ("resource is " + dtdResource);
-	if (publicId.equals(dtdId)) {
-	    InputStream input =
-		this.getClass().getResourceAsStream(dtdResource);
-	    InputSource isrc =
-		new InputSource(input);
-	    return isrc;
+	for (int i=0; i<Constants.CACHED_DTD_PUBLIC_IDS.length; i++) {
+	    String cachedDtdPublicId = Constants.CACHED_DTD_PUBLIC_IDS[i];
+	    if (cachedDtdPublicId.equals(publicId)) {
+		String resourcePath = Constants.CACHED_DTD_RESOURCE_PATHS[i];
+		InputStream input =
+		    this.getClass().getResourceAsStream(resourcePath);
+		if (input == null) {
+		    throw new SAXException(
+                        Constants.getString("jsp.error.internal.filenotfound", 
+					    new Object[]{resourcePath}));
+		}
+		InputSource isrc =
+		    new InputSource(input);
+		return isrc;
+	    }
 	}
-	else {
-	    //System.out.println ("returning null though dtdURL is " + dtdURL);
-	    return null;
-	}
+	throw new SAXException(
+	    Constants.getString("jsp.error.parse.xml.invalidPublicId",
+				new Object[]{publicId}));
+    }
+}
+
+class MyErrorHandler implements ErrorHandler {
+    public void warning(SAXParseException ex)
+	throws SAXException
+    {
+	// We ignore warnings
+    }
+
+    public void error(SAXParseException ex)
+	throws SAXException
+    {
+	throw ex;
+    }
+
+    public void fatalError(SAXParseException ex)
+	throws SAXException
+    {
+	throw ex;
     }
 }
 

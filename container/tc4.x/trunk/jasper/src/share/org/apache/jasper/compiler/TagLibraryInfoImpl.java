@@ -100,8 +100,8 @@ import org.apache.jasper.logging.Logger;
  * @author Pierre Delisle
  */
 public class TagLibraryInfoImpl extends TagLibraryInfo {
-    static private final String TLD = "META-INF/taglib.tld";
-    static private final String WEBAPP_INF = "/WEB-INF/web.xml";
+    static private final String TAGLIB_TLD = "META-INF/taglib.tld";
+    static private final String WEB_XML = "/WEB-INF/web.xml";
 
     Document tld;
 
@@ -154,7 +154,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
 
     public TagLibraryInfoImpl(JspCompilationContext ctxt, String prefix, String uriIn) 
-        throws IOException, JasperException
+        throws JasperException
     {
         super(prefix, uriIn);
 
@@ -166,13 +166,17 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	this.uri = uriIn;
 
         // Parse web.xml.
-        InputStream is = getResourceAsStream(WEBAPP_INF);
-
+	InputStream is;
+	try {
+	    is = getResourceAsStream(WEB_XML);
+	} catch (FileNotFoundException ex) {
+	    throw new JasperException(
+		Constants.getString("jsp.error.internal.file.not.found", 
+				    new Object[]{WEB_XML}));
+	}
         if (is != null) {
             Document webtld =
-                JspUtil.parseXMLDoc(is,
-                                    Constants.WEBAPP_DTD_RESOURCE,
-                                    Constants.WEBAPP_DTD_PUBLIC_ID);
+                JspUtil.parseXMLDoc(WEB_XML, is);
             NodeList nList =  webtld.getElementsByTagName("taglib");
 
             if (nList.getLength() != 0) {
@@ -227,16 +231,20 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
 
         if (!uri.endsWith("jar")) {
-	    in = getResourceAsStream(uri);
-	    
-	    if (in == null)
-		throw new JasperException(Constants.getString("jsp.error.tld_not_found",
-							      new Object[] {TLD}));
+	    try {
+		in = getResourceAsStream(uri);
+		if (in == null) throw new FileNotFoundException(uri);
+	    } catch (FileNotFoundException ex) {
+		throw new JasperException(
+                    Constants.getString("jsp.error.file.not.found",
+					new Object[] {uri}));
+	    }
 	    // Now parse the tld.
-	    parseTLD(in);
+	    parseTLD(uri, in);
 	}
 	    
 	// FIXME Take this stuff out when taglib changes are thoroughly tested.
+	/* @@@ taking it out... hopefully the sky won't fall -pierred
 	if (uri.endsWith("jar")) {
 	    
 	    if (!isRelativeURI(uri)) {
@@ -286,13 +294,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    boolean tldFound = false;
 	    ZipEntry entry;
 	    while ((entry = zin.getNextEntry()) != null) {
-		if (entry.getName().equals(TLD)) {
-		    /*******
-		     * This hack is necessary because XML reads until the end 
-		     * of an inputstream -- does not use available()
-		     * -- and closes the inputstream when it can't
-		     * read no more.
-		     */
+		if (entry.getName().equals(TAGLIB_TLD)) {
+		    // This hack is necessary because XML reads until the end 
+		    // of an inputstream -- does not use available()
+		    // -- and closes the inputstream when it can't
+		    // read no more.
 		    
 		    // BEGIN HACK
 		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -309,7 +315,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			= new ByteArrayInputStream(baos.toByteArray());
 		    // END HACK
 		    tldFound = true;
-		    parseTLD(bais);
+		    parseTLD(TAGLIB_TLD, bais);
 		} else {
 		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		    int b;
@@ -325,13 +331,13 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		zin.closeEntry();
 	    }
 	    
-	    if (!tldFound)
-		throw new JasperException(Constants.getString("jsp.error.tld_not_found",
-							      new Object[] {
-		    TLD
-			}
-							      ));
+	    if (!tldFound) {
+		throw new JasperException(
+                    Constants.getString("jsp.error.tld_not_found",
+		                        new Object[] {TAGLIB_TLD}));
+	    }
 	} // Take this out (END of if(endsWith("jar")))
+        */
     }
     
     /** Returns true if the given URI is relative in this web application, false if it is an internet URI.
@@ -341,14 +347,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     }
     
         
-    private void parseTLD(InputStream in) 
+    private void parseTLD(String uri, InputStream in) 
         throws JasperException
     {
         String validatorclass = null;
-	tld = JspUtil.parseXMLDoc(in,
-				  Constants.TAGLIB_DTD_RESOURCE,
-				  Constants.TAGLIB_DTD_PUBLIC_ID);
-	
+	tld = JspUtil.parseXMLDoc(uri, in);
         Vector tagVector = new Vector();
         NodeList list = tld.getElementsByTagName("taglib");
 
