@@ -531,7 +531,7 @@
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
   </target>
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
-    <copy todir="${catalina.build}/server/lib" file="${commons-dbcp.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
   </target>
   <target name="copy-jaas.jar" if="copy.jaas.jar">
     <copy todir="${catalina.build}/server/lib" file="${jaas.jar}"/>
@@ -567,7 +567,7 @@
     <copy todir="${catalina.build}/server/lib" file="${commons-modeler.jar}"/>
   </target>
   <target name="copy-pool.jar" if="copy.pool.jar">
-    <copy todir="${catalina.build}/server/lib" file="${commons-pool.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${commons-pool.jar}"/>
   </target>
   <target name="copy-tomcat-util.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
@@ -598,6 +598,8 @@
 
     <!-- Common Extensions -->
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
+    <copy todir="${catalina.build}/common/lib"
+           file="${commons-collections.jar}"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
@@ -609,8 +611,6 @@
     <!-- Catalina Server Libraries -->
     <copy todir="${catalina.build}/server/lib"
            file="${commons-beanutils.jar}"/>
-    <copy todir="${catalina.build}/server/lib"
-           file="${commons-collections.jar}"/>
     <copy todir="${catalina.build}/server/lib"
            file="${commons-digester.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
