@@ -787,7 +787,7 @@ public class HostConfig
                                 if (host.findChild(contextPath) != null) {
                                     ((Deployer) host).remove(contextPath, 
                                                              false);
-                                    deleteDir(expanded);
+                                    ExpandWar.deleteDir(expanded);
                                 }
                             } catch (Throwable t) {
                                 log.error(sm.getString
@@ -841,31 +841,6 @@ public class HostConfig
         }
         
         return result;
-    }
-
-
-    /**
-     * Delete the specified directory, including all of its contents and
-     * subdirectories recursively.
-     *
-     * @param dir File object representing the directory to be deleted
-     */
-    protected void deleteDir(File dir) {
-
-        String files[] = dir.list();
-        if (files == null) {
-            files = new String[0];
-        }
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(dir, files[i]);
-            if (file.isDirectory()) {
-                deleteDir(file);
-            } else {
-                file.delete();
-            }
-        }
-        dir.delete();
-
     }
 
 

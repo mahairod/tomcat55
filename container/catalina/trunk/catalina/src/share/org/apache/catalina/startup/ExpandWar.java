@@ -302,16 +302,26 @@ public class ExpandWar {
         throws IOException {
 
         File file = new File(docBase, name);
-        BufferedOutputStream output =
-            new BufferedOutputStream(new FileOutputStream(file));
-        byte buffer[] = new byte[2048];
-        while (true) {
-            int n = input.read(buffer);
-            if (n <= 0)
-                break;
-            output.write(buffer, 0, n);
+        BufferedOutputStream output = null;
+        try {
+            output = 
+                new BufferedOutputStream(new FileOutputStream(file));
+            byte buffer[] = new byte[2048];
+            while (true) {
+                int n = input.read(buffer);
+                if (n <= 0)
+                    break;
+                output.write(buffer, 0, n);
+            }
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
         }
-        output.close();
 
     }
 
