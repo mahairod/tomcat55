@@ -13,6 +13,344 @@
 
 <body>
 
+<section name="Tomcat 5.0.13 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <scode>
+      Import cleanups (hgomez)
+      </scode>
+      <fix>
+      Fix an incorrect test in the startup script (kinman)
+      </fix>
+      <update>
+      Switch back to Xerces 2.5.0 (jfarcand)
+      </update>
+      <update>
+      Update the J2EE 1.4 schema jsr154/src/share/dtd/j2ee_1_4.xsd
+      to clarify that fully-qualified-classType is a binary name, submitted
+      by Mark Roth (kinman)
+      </update>
+      <update>
+      Move the commons-daemon Windows binaries to jakarta-tomcat-connectors,
+      as they were Tomcat specific (mturk)
+      </update>
+      <update>
+      Changes are synchronizing with the latest Servlet 2.4 specification,
+      submitted by Yutaka Yoshida (jfarcand)
+      </update>
+      <update>
+      New view source and many fixes in JSP examples, submitted by Mark Roth
+      (kinman)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Sessions created in the target webapp of a cross-context were invalid
+      (luehe)
+      </fix>
+      <fix>
+      JMX registrations of servlets that map to the same jsp-file used 
+      the same name (luehe)
+      </fix>
+      <update>
+      Separated JSESSION cookie configuration into its own method, which may 
+      be overridden (luehe)
+      </update>
+      <fix>
+      Add missing doPrivileged block for adding cookies and encoding URLs 
+      (jfarcand)
+      </fix>
+      <fix>
+      Preload additional inner classes (jfarcand)
+      </fix>
+      <fix>
+      Fix to properly create Loader MBean at webapp restart (amyroh, remm)
+      </fix>
+      <fix>
+      Fix to properly create Manager MBean at webapp restart (amyroh)
+      </fix>
+      <update>
+      Avoid TLD-scanning the JARs under WEB-INF lib twice per webapp (luehe)
+      </update>
+      <fix>
+      Do not let the parsing error of a single TLD disrupt the parsing of 
+      remaining TLDs in the JAR (luehe)
+      </fix>
+      <fix>
+      Fix a problem rebuilding the context path given the context file name
+      (remm)
+      </fix>
+      <fix>
+      Don't save any context files if config base doesn't exist (remm)
+      </fix>
+      <update>
+      Add the possibility to specify straight URLs in the repository list 
+      (= single JARs, remote repositories, etc) (remm)
+      </update>
+      <fix>
+      Fix issues with wait-for-servlet-unload logic (remm)
+      </fix>
+      <fix>
+      <bug>23373</bug>: Prevent clobbering the server if we already have read 
+      server.xml (billbarker)
+      </fix>
+      <update>
+      Make RMI/IIOP port configurable (hgomez)
+      </update>
+      <update>
+      Properly implement schema validation with Xerces (jfarcand)
+      </update>
+      <update>
+      Added hard-coded list of names of JARs that are known not to contain any
+      TLDs, which can be overridden using the new TldConfig.setNoTldJars()
+      (luehe)
+      </update>
+      <fix>
+      Fix handling of root context when upacking a WAR; note that obviously
+      using a context path with a WAR which doesn't match the name will result
+      in the webapp being deployed twice (remm)
+      </fix>
+      <fix>
+      Remove debugging logs in LoggerBase (amyroh)
+      </fix>
+      <fix>
+      Set -Dsun.io.useCanonCaches=false for Windows, which is a Sun JDK 1.4.2
+      specific property, to ensure that case correct canonical paths are 
+      obtained (remm)
+      </fix>
+      <fix>
+      Print out a message after successful validation using the Validator task
+      (remm)
+      </fix>
+      <fix>
+      Add an example on how to configure GZIP compression in the main 
+      server.xml (hgomez)
+      </fix>
+      <fix>
+      Minor fixes in the scripts, mirroring the new paths (jfarcand)
+      </fix>
+      <fix>
+      <bug>23525</bug>: HttpSessionListener implementors are called too late
+      (jfarcand)
+      </fix>
+      <fix>
+      Need to call the listener when the session is invalidated because 
+      the interval between the time the session is marked invalid 
+      and the StandardrMmanager expires the session can't be predicted 
+      (jfarcand)
+      </fix>
+      <fix>
+      In the WebDAV servlet, decode and normalize destination path 
+      before doing anything else (remm)
+      </fix>
+      <fix>
+      Adjust logging in the JAAS realm according to suggestions from bug 
+      <bug>23547</bug>, submitted by Adam Hardy (remm)
+      </fix>
+      <fix>
+      Japanese translation update, submitted by Kazuhiro Kazama (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Respond 400 to requests which contain '%' with no or invalid trailing 
+      hex digits (leith)
+      </fix>
+      <fix>
+      <bug>23276</bug>: Fix compatibility with Sun JDK 1.4.0, submitted by 
+      Steve Appling (remm)
+      </fix>
+      <fix>
+      Fix matching of the content types for which compression is allowed, 
+      submitted by Steve Appling (remm)
+      </fix>
+      <fix>
+      Fix logging of errors which occur in setSocketOptions, and do not process
+      the connection in case of an error (remm)
+      </fix>
+      <fix>
+      Set the monitor thread as non daemon with the HTTP/1.1 connector (remm)
+      </fix>
+      <fix>
+      Fix trust store factory property name typo, submitted by Chris Halstaed
+      (billbarker)
+      </fix>
+      <fix>
+      Fix some action descriptions (hgomez)
+      </fix>
+      <update>
+      Improve configuration of GZIP compression (hgomez)
+      </update>
+      <fix>
+      Fix HTTP/1.1 on EBCDIC machine (jfclere)
+      </fix>
+      <fix>
+      Change the way to kill the thread after a server socket restart (remm)
+      </fix>
+      <fix>
+      In the TCP endpoint, use the appropriate exception for killing 
+      the thread, improve if block, and replace while + break with a simpler if
+      (remm)
+      </fix>
+      <fix>
+      Make the TrustStore a configurable option (so different Hosts can 
+      have different TrustStores) (billbarker)
+      </fix>
+      <fix>
+      Set the proper default for TCP no delay in HTTP protocol (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      For template texts that generate multiple Java lines, addidtional mapping
+      informantion are kept in the TemplateText node, to aid SMAP generation
+      (kinman)
+      </fix>
+      <fix>
+      <bug>22058</bug>: Fix bad SMAP mappings and compilation errors when using
+      fragments (kinman)
+      </fix>
+      <fix>
+      When a tag handler class is an inner class, it is specified in the TLD
+      in binary form (Outer$Inner): it needs to be converted to canonical
+      form (Outer.Inner) when generating Java files (kinman)
+      </fix>
+      <fix>
+      Add missing doPrivileged block in PageContextImpl (jfarcand)
+      </fix>
+      <fix>
+      Package protect the Jasper classes properly (jfarcand)
+      </fix>
+      <fix>
+      <bug>22833</bug>: Make sure scriptlet declarations get properly mapped
+      (kinman)
+      </fix>
+      <fix>
+      Fix another SMAP bug (kinman)
+      </fix>
+      <fix>
+      Fixed javadocs for tldScanJar(File file) (luehe)
+      </fix>
+      <fix>
+      Fix a bug in Parser.isTemplateText(): Since '%' is not a delimiter 
+      in JspReader.parseToken(), an expression "&lt;%String s;%&gt;" after 
+      a template text would be treated as a template text when mappedfile 
+      option is set to true, and got concatenated to the template text (kinman)
+      </fix>
+      <fix>
+      Fixed javadocs of parseTLD, which used to return boolean but was changed
+      to void (luehe)
+      </fix>
+      <fix>
+      Fix bug: \&lt;%foo%&gt; in template text hides expression (kinman)
+      </fix>
+      <fix>
+      Support java extension directories when invoking javac (kinman)
+      </fix>
+      <fix>
+      Fix Jasper script (kinman)
+      </fix>
+      <fix>
+      Some Javadoc improvements in Compiler (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Use the proper conversion for MB and KB, and fix formatting errors (remm)
+      </fix>
+      <fix>
+      Allow undeploying webapps when docBase isn't in the host appBase: their
+      context file will be removed, but the docBase will not be removed (remm)
+      </fix>
+      <docs>
+      Replace references to TC 4 with TC 5, submitted by Kazuhiro Kazama
+      (billbarker)
+      </docs>
+      <fix>
+      Fixes to Japanese translation of the manager, submitted by Kazuhiro 
+      Kazama (remm)
+      </fix>
+      <fix>
+      Do not allow duplicate port connector creation in the admin webapp
+      (amyroh)
+      </fix>
+      <update>
+      Add save command (saves either the full config, or a context config) to 
+      the manager (remm)
+      </update>
+      <fix>
+      Fix for root context handling in the manager servlet (remm)
+      </fix>
+      <fix>
+      Fix to not display JAASRealm node since admin doesn't support editing 
+      such Realm (amyroh)
+      </fix>
+      <fix>
+      Package the Manager class, which is supposedly "needed" by the
+      deployer (remm)
+      </fix>
+      <fix>
+      Fix JDBCRealm creation via admin (amyroh)
+      </fix>
+      <fix>
+      State the welcome file is index.jsp, not index.html (funkman)
+      </fix>
+      <fix>
+      Fix the way the tree builder was querying JAASRealm (amyroh)
+      </fix>
+      <docs>
+      Update SSL docs, including adding notes for the current limitations 
+      of IBM's implementation of JSSE (billbarker)
+      </docs>
+      <fix>
+      The Ant tasks will now decode the server messages using UTF-8, submitted
+      by Takashi Okamoto (remm)
+      </fix>
+      <docs>
+      Add JAAS realm documentation, submitted by Adam Hardy (remm)
+      </docs>
+      <fix>
+      Admin webapp Japanese translation update, submitted by Tanaka Yoshihiro
+      (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.12 (remm)">
 
   <subsection name="Catalina">
