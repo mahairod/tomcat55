@@ -228,7 +228,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (name.equals(Globals.DISPATCHER_TYPE_ATTR)) {
             return dispatcherType;
         } else if (name.equals(Globals.DISPATCHER_REQUEST_PATH_ATTR)) {
-            return requestDispatcherPath.toString();
+            if ( requestDispatcherPath != null ){
+                return requestDispatcherPath.toString();
+            } else {
+                return null;   
+            }
         }
 
         int pos = getSpecial(name);
