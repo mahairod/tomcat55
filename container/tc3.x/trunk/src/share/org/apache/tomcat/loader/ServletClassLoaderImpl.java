@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -60,10 +56,10 @@
  * [Additional notices, if required by prior licensing conditions]
  *
  */ 
-
-package org.apache.tomcat.core;
+package org.apache.tomcat.loader;
 
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.core.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -77,15 +73,14 @@ import java.util.*;
  *
  * @author Harish Prabandham
  */
-
 //
 // WARNING: Some of the APIs in this class are used by J2EE. 
 // Please talk to harishp@eng.sun.com before making any changes.
 //
-class ServletClassLoaderImpl extends NetworkClassLoader implements ServletClassLoader {
+public class ServletClassLoaderImpl extends NetworkClassLoader implements ServletClassLoader {
     private Context  context;
     
-    ServletClassLoaderImpl(Context context) {
+    public ServletClassLoaderImpl(Context context) {
         super(context.getClassLoader());
 	this.context = context;
         initURLs(); 
