@@ -299,7 +299,7 @@ public class JDBCRealm extends BaseInterceptor {
             ResultSet rs1 = preparedAuthenticate.executeQuery();
             boolean found = false;
             if (rs1.next()) {
-                if (credentials.equals(rs1.getString(1))) {
+                if (credentials.equals(rs1.getString(1).trim())) {
                     if (debug >= 2)
                         log(sm.getString("jdbcRealm.authenticateSuccess",
                                  username));
@@ -364,7 +364,7 @@ public class JDBCRealm extends BaseInterceptor {
           Vector vrol=new Vector();
 
           while (rs.next()) {
-              vrol.addElement(rs.getString(1));
+              vrol.addElement(rs.getString(1).trim());
           }
 
           String[] res=new String[vrol.size()];
@@ -448,12 +448,14 @@ public class JDBCRealm extends BaseInterceptor {
         String user=(String)cred.get("username");
         String password=(String)cred.get("password");
 	
-	if( authenticate( user, password ) ) {
-     	    if( debug > 0 ) log( "Auth ok, user=" + user );
-	    req.setRemoteUser( user );
-            Context ctx = req.getContext();
-            if (ctx != null)
-                req.setAuthType(ctx.getAuthMethod());
+	if( user !=null && password !=null ){
+            if ( authenticate( user, password ) ) {
+                if( debug > 0 ) log( "Auth ok, user=" + user );
+                req.setRemoteUser( user );
+                Context ctx = req.getContext();
+                if (ctx != null)
+                    req.setAuthType(ctx.getAuthMethod());
+            }
 	}
 	return 0;
     }
