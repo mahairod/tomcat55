@@ -368,7 +368,7 @@ public class StandardClassLoader
      *
      * @param path file directory path
      */
-    public void setPermissions(String path) {
+    protected void setPermissions(String path) {
         if( securityManager != null ) {
             if( path.startsWith("jndi:") || path.startsWith("jar:jndi:") ) {
                 permissionList.add(new JndiPermission(path + "*"));
@@ -385,7 +385,7 @@ public class StandardClassLoader
      *
      * @param url URL for a file or directory on local system
      */
-    public void setPermissions(URL url) {
+    protected void setPermissions(URL url) {
         setPermissions(url.toString());
     }
 
