@@ -49,6 +49,7 @@
   <property name="servlet.home"     value="../jakarta-servletapi-5/jsr154/dist"/>
   <property name="jsp.home"         value="../jakarta-servletapi-5/jsr152/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
+  <property name="build.home"       value="${tomcat.build}"/>
   <property name="servletapi.jar"   value="${tomcat.build}/common/lib/servlet-api.jar"/>
   <property name="jspapi.jar"       value="${tomcat.build}/common/lib/jsp-api.jar"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
@@ -82,9 +83,6 @@
     <mkdir dir="${tomcat.build}/classes" />
     <mkdir dir="${tomcat.build}/server/lib" />
     <mkdir dir="${tomcat.build}/common/lib" />
-
-    <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
-    <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
 
     <uptodate property="servletapi.build.notrequired"
               targetfile="${servletapi.jar}">
@@ -125,8 +123,11 @@
 
 
   <!-- ====================== DEPLOY: Copy Static Files =================== -->
-  <target name="deploy-static" depends="init"/>
-
+  <target name="deploy-static" depends="init">
+    <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
+    <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
+    <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
+  </target>
 
   <!-- ====================== Build all components =================== -->
   <target name="build-servletapi" unless="servletapi.build.notrequired" >
@@ -440,28 +441,30 @@
   <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
     <echo>========== Building: commons-modeler </echo>
 
-    <ant dir="${cvs.base}/jakarta-commons/modeler" target="jar" >
+    <ant dir="${cvs.base}/jakarta-commons/modeler" target="dist" >
+        <property name="dist.home" location="${commons-modeler.home}" />
         <property name="commons-logging.jar" location="${commons-logging.jar}" />
-        <property name="commons-modeler.jar" location="${tomcat.build}/server/lib/commons-modeler.jar" />
         <property name="jmx.jar" location="${jmx.jar}" />
         <property name="commons-digester.jar" location="${commons-digester.jar}" />
         <property name="build.home" value="${tomcat.build}" />
     </ant>
   </target>
 
+
   <target name="build-commons-el" unless="commons-el.build.notrequired" >
     <echo>========== Building: commons-el </echo>
 
-    <ant dir="${cvs.base}/jakarta-commons/el" target="jar-only" >
+    <ant dir="${cvs.base}/jakarta-commons/el" target="dist" >
         <property name="servlet-api.jar" location="${servlet-api.jar}" />
         <property name="commons-el.jar" location="${tomcat.build}/common/lib/commons-el.jar" />
         <property name="jsp-api.jar" value="${jspapi.jar}"/>
         <property name="compile.optimize" value="false" />
+        <property name="dist.home" value="commons-el.home" />
         <property name="build.home" value="${tomcat.build}" />
     </ant>
   </target>
 
-  <target name="build-all" depends="init,build-depends,build,build-webapps,embed"/>
+  <target name="build-all" depends="init,deploy-static,build,build-webapps,embed"/>
 
 
   <target name="build-depends" depends="init"
@@ -475,10 +478,17 @@
       <srcfiles dir="${cvs.base}/jakarta-commons/el/src/java" includes="**" />
     </uptodate>
 
-    <antcall target="build-commons-modeler" />
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
+
     <antcall target="build-commons-el" />
+    <antcall target="build-commons-modeler" />
+
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-daemon.cvs.loc}"/>
+      <param name="subdir" value="${commons-daemon.home}"/>
+      <param name="destfile" value="${commons-daemon.jar}"/>
+    </antcall>
 
   </target>
 
@@ -1316,12 +1326,6 @@
       <param name="destdir" value="${base.path}"/>
     </antcall>
 
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-daemon.cvs.loc}"/>
-      <param name="subdir" value="${commons-daemon.home}"/>
-      <param name="destfile" value="${commons-daemon.jar}"/>
-    </antcall>
-
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-launcher.loc}"/>
       <param name="destfile" value="${commons-launcher.jar}"/>
@@ -1338,23 +1342,6 @@
       <param name="destdir" value="${base.path}"/>
     </antcall>
 
-<!--
-    This is our own stuff - don't get binaries, we'll build it ourself
---> 
-    <ant target="cvsbuild">
-      <property name="location" value="${commons-modeler.cvs.loc}"/>
-      <property name="subdir" value="${commons-modeler.home}"/>
-      <property name="destfile" value="${commons-modeler.jar}"/>
-      <property name="jmx.jar" location="${jmx.jar}" />
-      <property name="commons-digester.jar" location="${commons-digester.jar}" />
-    </ant>
-
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-el.cvs.loc}"/>
-      <param name="subdir" value="${commons-el.home}"/>
-      <param name="destfile" value="${commons-el.jar}"/>
-    </antcall>
-
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
       <param name="destfile" value="${nsis.exe}"/>
@@ -1369,6 +1356,9 @@
       <param name="destfile" value="${tyrex.jar}"/>
       <param name="destdir" value="${tyrex.home}"/>
     </antcall>
+    
+    <!-- Build the dependencies that are not yet released -->
+    <antcall target="build-depends"/>
 
   </target>
 
