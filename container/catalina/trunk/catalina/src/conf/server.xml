@@ -353,16 +353,6 @@
                  directory="logs"  prefix="localhost_log." suffix=".txt"
             timestamp="true"/>
 
-        <!-- Define properties for each web application.  This is only needed
-             if you want to set non-default properties, or have web application
-             document roots in places other than the virtual host's appBase
-             directory.  -->
-
-        <!-- Tomcat Root Context -->
-        <!--
-          <Context path="" docBase="ROOT" debug="0">
-        -->
-
       </Host>
 
     </Engine>
