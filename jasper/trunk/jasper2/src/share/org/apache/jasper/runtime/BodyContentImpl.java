@@ -83,11 +83,21 @@ public class BodyContentImpl extends BodyContent {
     private int nextChar;
     static String lineSeparator = System.getProperty("line.separator");
     private boolean closed = false;
+    protected JspWriter writer = null;
 
     public BodyContentImpl (JspWriter writer) {
         super(writer);
+        this.writer = writer;
 	cb = new char[bufferSize];
 	nextChar = 0;
+    }
+
+    public JspWriter getEnclosingWriter() {
+        return writer;
+    }
+
+    public void setEnclosingWriter(JspWriter writer) {
+        this.writer = writer;
     }
 
     private void ensureOpen() throws IOException {
@@ -101,12 +111,10 @@ public class BodyContentImpl extends BodyContent {
      */
     public void write(int c) throws IOException {
 	ensureOpen();
-        synchronized (lock) {
-            if (nextChar >= bufferSize) {
-	        reAllocBuff (0);
-	    }
-            cb[nextChar++] = (char) c;
+        if (nextChar >= bufferSize) {
+            reAllocBuff (0);
         }
+        cb[nextChar++] = (char) c;
     }
 
     private void reAllocBuff (int len) {
@@ -148,21 +156,20 @@ public class BodyContentImpl extends BodyContent {
         throws IOException 
     {
 	ensureOpen();
-        synchronized (lock) {
 
-            if ((off < 0) || (off > cbuf.length) || (len < 0) ||
-                ((off + len) > cbuf.length) || ((off + len) < 0)) {
-                throw new IndexOutOfBoundsException();
-            } else if (len == 0) {
-                return;
-            } 
+        if ((off < 0) || (off > cbuf.length) || (len < 0) ||
+            ((off + len) > cbuf.length) || ((off + len) < 0)) {
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
+            return;
+        } 
 
-            if (len >= bufferSize - nextChar)
-		   reAllocBuff (len);
+        if (len >= bufferSize - nextChar)
+            reAllocBuff (len);
 
-            System.arraycopy(cbuf, off, cb, nextChar, len);
-	    nextChar+=len;
-        }
+        System.arraycopy(cbuf, off, cb, nextChar, len);
+        nextChar+=len;
+
     }
 
     /**
@@ -183,13 +190,11 @@ public class BodyContentImpl extends BodyContent {
      */
     public void write(String s, int off, int len) throws IOException {
 	ensureOpen();
-        synchronized (lock) {
-	    if (len >= bufferSize - nextChar)
-	        reAllocBuff(len);
+        if (len >= bufferSize - nextChar)
+            reAllocBuff(len);
 
-            s.getChars(off, off + len, cb, nextChar);
-	    nextChar += len;
-        }
+        s.getChars(off, off + len, cb, nextChar);
+        nextChar += len;
     }
 
     /**
@@ -371,10 +376,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(boolean x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -385,10 +388,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(char x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -399,10 +400,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(int x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -413,10 +412,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(long x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -427,10 +424,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(float x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -441,10 +436,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(double x) throws IOException{
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -455,10 +448,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(char x[]) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -469,10 +460,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(String x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -483,10 +472,8 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void println(Object x) throws IOException {
-	synchronized (lock) {
-	    print(x);
-	    println();
-	}
+        print(x);
+        println();
     }
 
     /**
@@ -499,9 +486,7 @@ public class BodyContentImpl extends BodyContent {
      */
 
     public void clear() throws IOException {
-        synchronized (lock) {
-	    nextChar = 0;
-	}
+        nextChar = 0;
     }
 
     /**
