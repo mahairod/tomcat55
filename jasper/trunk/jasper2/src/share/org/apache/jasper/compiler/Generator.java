@@ -764,7 +764,7 @@ class Generator {
 		if (attr.isELInterpreterInput()) {
 		    v = JspUtil.interpreterCall(this.isTagFile,
 		        attr.getValue(), expectedType, defaultPrefix,
-			"_jspx_fnmap" );
+			"_jspx_fnmap", false );
 		}
 		if (encode) {
 		    return "java.net.URLEncoder.encode(\"\" + " + v + ")";
@@ -843,7 +843,7 @@ class Generator {
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,
                         "${" + new String(n.getText()) + "}", String.class,
-			null, "_jspx_fnmap" )
+			null, "_jspx_fnmap", true )
                     + ");");
             } else {
                 out.printil("out.write(" +
@@ -2436,7 +2436,7 @@ class Generator {
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall(this.isTagFile,
-                        attrValue, c[0], n.getPrefix(), "_jspx_fnmap" );
+                        attrValue, c[0], n.getPrefix(), "_jspx_fnmap", false );
                 } else {
 		    attrValue = convertString(
                                 c[0], attrValue, attrName,

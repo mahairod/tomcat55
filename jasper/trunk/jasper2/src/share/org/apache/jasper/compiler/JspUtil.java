@@ -470,13 +470,15 @@ public class JspUtil {
      * @param expectedType the expected type of the interpreted result
      * @param defaultPrefix Default prefix, or literal "null"
      * @param fnmapvar Variable pointing to a function map.
+     * @param XmlEscape True if the result should do XML escaping
      * @return a String representing a call to the EL interpreter.
      */
     public static String interpreterCall(boolean isTagFile,
 					 String expression,
                                          Class expectedType,
                                          String defaultPrefix,
-                                         String fnmapvar ) 
+                                         String fnmapvar,
+                                         boolean XmlEscape ) 
     {
         /*
          * Determine which context object to use.
@@ -545,6 +547,7 @@ public class JspUtil {
                +       ", " + fnmapvar + ", "
                +       ((defaultPrefix == null) ? 
                             "null" : Generator.quote( defaultPrefix )) 
+	       + ", " + XmlEscape
                + ")");
  
  	/*

@@ -644,6 +644,28 @@ public class PageContextImpl
         }
     }
 
+    private static String XmlEscape(String s) {
+        if (s == null) return null;
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '<') {
+                sb.append("&lt;");
+            } else if (c == '>') {
+                sb.append("&gt;");
+            } else if (c == '\'') {
+                sb.append("&#039;");	// &apos;
+            } else if (c == '&') {
+                sb.append("&amp;");
+            } else if (c == '"') {
+                sb.append("&#034;");	// &quot;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * Proprietary method to evaluate EL expressions.
      * XXX - This method should go away once the EL interpreter moves
@@ -659,15 +681,18 @@ public class PageContextImpl
      */
     public static Object proprietaryEvaluate( final String expression, 
          final Class expectedType,  final PageContext pageContext,
-	 final ProtectedFunctionMapper functionMap,  final String defaultPrefix )
+	 final ProtectedFunctionMapper functionMap, final String defaultPrefix,
+	 final boolean escape )
        throws ELException
     {
 	final java.util.HashMap funcMap =
 		(functionMap == null)? null: functionMap.getFnMap();
                 
+	Object retValue;
         if (System.getSecurityManager() != null){
             try {
-                return AccessController.doPrivileged(new PrivilegedExceptionAction(){
+                retValue = AccessController.doPrivileged(
+			new PrivilegedExceptionAction(){
 
                     public Object run() throws Exception{
                        return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
@@ -681,13 +706,18 @@ public class PageContextImpl
             }
         } else {
             try{
-               return PageContextImpl.proprietaryEvaluator.evaluate( "<unknown>", 
+               retValue = PageContextImpl.proprietaryEvaluator.evaluate(
+		    "<unknown>", 
                     expression, expectedType, null, pageContext,
                     funcMap, defaultPrefix );
             } catch(JspException e){
                 throw new ELException( e );                
             }  
         }
+	if (escape) {
+	    retValue = XmlEscape(retValue.toString());
+	}
+	return retValue;
     }
 
     private JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
