@@ -147,10 +147,6 @@
     <ant dir="${api.home}/jsr154" target="dist" >
       <property name="servlet-api.dist" value="${servlet-api.home}" />
     </ant>
-    <mkdir dir="${servlet-api.home}"/>
-    <copy todir="${servlet-api.home}">
-      <fileset dir="${api.home}/jsr154/dist" includes="**" />
-    </copy>
   </target>
 
   <target name="build-jspapi" unless="jspapi.build.notrequired" >
