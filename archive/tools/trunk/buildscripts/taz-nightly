@@ -19,6 +19,7 @@ mv tomcat-$TDSTRING.log tomcat-$TDSTRING-sparc-sol-7-jdk117.log
 cp tomcat-$TDSTRING.tar.Z tomcat-foo.tar.Z
 uncompress tomcat-foo.tar.Z
 mv tomcat-foo.tar tomcat-$TDSTRING.tar
+bzip2 --stdout tomcat-$TDSTRING.tar > tomcat-$TDSTRING.bz2
 gzip tomcat-$TDSTRING.tar
 
 # Get Canoncial Windows build
