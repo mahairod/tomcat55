@@ -11,7 +11,8 @@
     <mkdir dir="build/classes"/>
 
     <!-- create classes -->
-    <javac srcdir="src/share" destdir="build/classes" />
+    <javac srcdir="src/share" destdir="build/classes" 
+	   classpath="./../servlet-2.2.0.jar" />
 
   </target>
 

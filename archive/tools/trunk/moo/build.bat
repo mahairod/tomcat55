@@ -6,7 +6,7 @@ if "%CLASSPATH%" == "" got noclasspath
 
 rem else
 set _CLASSPATH=%CLASSPATH%
-set CLASSPATH=.\..\ant.jar;.\..\servlet-2.2.0.jar;.\..\projectx-tr2.jar;%CLASSPATH%
+set CLASSPATH=.\..\ant.jar;.\..\projectx-tr2.jar;%CLASSPATH%
 goto next
 
 :noclasspath
