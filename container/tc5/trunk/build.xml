@@ -119,7 +119,7 @@
 
     <uptodate property="commons-daemon.build.notrequired"
               targetfile="${commons-daemon.jar}">
-      <srcfiles dir="${cvs.base}/jakarta-commons/daemon/src" includes="**" />
+      <srcfiles dir="${commons-daemon.home}/src" includes="**" />
     </uptodate>
   </target>
 
@@ -479,7 +479,7 @@
   <target name="build-commons-daemon" unless="commons-daemon.build.notrequired" description="build commons-daemon" >
     <echo>========== Building: commons-daemon </echo>
 
-    <ant dir="${cvs.base}/jakarta-commons/daemon" target="dist" >
+    <ant dir="${commons-daemon.home}" target="dist" >
         <property name="compile.optimize" value="false" />
         <property name="dist.home" value="${commons-daemon.home}" />
     </ant>
