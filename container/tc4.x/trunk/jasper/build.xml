@@ -7,13 +7,12 @@
   <property name="jasper.build"    value="../../build/jasper"/>
   <property name="jasper.deploy"   value="../../build/tomcat-4.0"/>
   <property name="jasper.dist"     value="../../dist/jasper"/>
-  <property name="jaxp.home"       value="../../jaxp"/>
+  <property name="xerces.home"     value="${basedir}/../xerces"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
 
 
   <!-- ================== Derived Property Values ========================= -->
-  <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
-  <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
+  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
 
@@ -37,11 +36,10 @@
     <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
     <!-- Shared Extensions -->
-    <!--   Japser needs the servlet API classes -->
+    <!--   Jasper needs the servlet API classes -->
     <copyfile src="${servlet.jar}" dest="${jasper.build}/lib/servlet.jar"/>
-    <!--   Jasper needs a JAXP-compatible XML parser -->
-    <copyfile src="${jaxp.jar}"    dest="${jasper.build}/lib/jaxp.jar"/>
-    <copyfile src="${parser.jar}"  dest="${jasper.build}/lib/zparser.jar"/>
+    <!--   Jasper needs Xerces (JAXP1.0/SAX2.0 compliant parser -->
+    <copyfile src="${xerces.jar}"    dest="${jasper.build}/lib/xerces.jar"/>
 
   </target>
 

@@ -7,21 +7,19 @@
   <property name="catalina.build"  value="../../build/catalina"/>
   <property name="catalina.deploy" value="../../build/tomcat-4.0"/>
   <property name="catalina.dist"   value="../../dist/catalina"/>
-  <property name="jaxp.home"       value="../../jaxp"/>
+  <property name="xerces.home"     value="${basedir}/../xerces"/>
   <property name="jsse.home"       value="../../jsse"/>
   <property name="regexp.home"     value="../../jakarta-regexp"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
 
 
   <!-- ================== Derived Property Values ========================= -->
-  <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
+  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
   <property name="jcert.jar"       value="${jsse.home}/lib/jcert.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
-  <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
   <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
-
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
@@ -53,9 +51,8 @@
     <copyfile src="${servlet.jar}" dest="${catalina.build}/lib/servlet.jar"/>
 
     <!-- Server Components -->
-    <!--   Catalina needs a JAXP-compatible XML parser -->
-    <copyfile src="${jaxp.jar}"    dest="${catalina.build}/server/jaxp.jar"/>
-    <copyfile src="${parser.jar}"  dest="${catalina.build}/server/parser.jar"/>
+    <!--   Catalina needs Xerces XML parser -->
+    <copyfile src="${xerces.jar}"  dest="${catalina.build}/server/xerces.jar"/>
     <!--   Catalina needs the regular expression library -->
     <copyfile src="${regexp.jar}"  dest="${catalina.build}/server/regexp.jar"/>
     <!--   Catalina needs the JSSE packages -->

@@ -11,7 +11,7 @@ rem                    that executes Ant [NONE]
 rem
 rem   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 rem
-rem   JAXP_HOME        Must point at your JAXP installation [REQUIRED]
+rem   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
 rem
 rem   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
 rem                    [../../jakarta-servletapi]
@@ -34,10 +34,10 @@ echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
 :gotJavaHome
 
-if not "%JAXP_HOME%" == "" goto gotJaxpHome
-echo You must set JAXP_HOME to point at your Java API for XML Parsing install
+if not "%XERCES_HOME%" == "" goto gotXercesHome
+echo You must set XERCES_HOME to point at your Xerces install
 goto cleanup
-:gotJaxpHome
+:gotXercesHome
 
 if not "%ANT_HOME%" == "" goto gotAntHome
 set ANT_HOME=../../jakarta-ant
@@ -56,7 +56,7 @@ set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Djaxp.home="%JAXP_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Dxerces.home="%XERCES_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------

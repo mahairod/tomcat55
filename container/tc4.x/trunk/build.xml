@@ -10,7 +10,7 @@
   <property name="jasper.build"    value="${basedir}/../build/jasper"/>
   <property name="jasper.deploy"   value="${basedir}/../build/tomcat-4.0"/>
   <property name="jasper.dist"     value="${basedir}/../dist/jasper"/>
-  <property name="jaxp.home"       value="${basedir}/../jaxp"/>
+  <property name="xerces.home"     value="${basedir}/../xerces"/>
   <property name="jsse.home"       value="${basedir}/../jsse"/>
   <property name="regexp.home"     value="${basedir}/../jakarta-regexp"/>
   <property name="servletapi.dist" value="${basedir}/../dist/servletapi"/>
@@ -23,10 +23,9 @@
 
 
   <!-- ================== Derived Property Values ========================= -->
-  <property name="jaxp.jar"        value="${jaxp.home}/jaxp.jar"/>
+  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
   <property name="jnet.jar"        value="${jsse.home}/lib/jnet.jar"/>
   <property name="jsse.jar"        value="${jsse.home}/lib/jsse.jar"/>
-  <property name="parser.jar"      value="${jaxp.home}/parser.jar"/>
   <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 

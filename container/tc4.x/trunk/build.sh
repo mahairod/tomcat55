@@ -11,7 +11,7 @@
 #
 #   JAVA_HOME        Must point at your Java Development Kit [REQUIRED]
 #
-#   JAXP_HOME        Must point at your JAXP installation [REQUIRED]
+#   XERCES_HOME      Must point at your XERCES installation [REQUIRED]
 #
 #   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
 #
@@ -40,8 +40,8 @@ if [ "$JAVA_HOME" = "" ] ; then
   exit 1
 fi
 
-if [ "$JAXP_HOME" = "" ] ; then
-  echo You must set JAXP_HOME to point at your Java API for XML Parsing install
+if [ "$XERCES_HOME" = "" ] ; then
+  echo You must set XERCES_HOME to point at your Xerces install
   exit 1
 fi
 
@@ -69,4 +69,4 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Djaxp.home=$JAXP_HOME -Djsse.home=$JSSE_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
+java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Dxerces.home=$XERCES_HOME -Djsse.home=$JSSE_HOME -Dregexp.home=$REGEXP_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
