@@ -1722,7 +1722,14 @@ public class DefaultServlet
 
         IOException exception = null;
 
-        // FIXME : i18n ?
+        // Optimization: If the binary content has already been loaded, send
+        // it directly
+        byte buffer[] = resourceInfo.file.getContent();
+        if (buffer != null) {
+            ostream.write(buffer, 0, buffer.length);
+            return;
+        }
+
         InputStream resourceInputStream = resourceInfo.getStream();
         InputStream istream = new BufferedInputStream
             (resourceInputStream, input);
