@@ -248,8 +248,6 @@ public final class Bootstrap {
             System.exit(2);
         }
 
-        System.exit(0);
-
     }
 
 
