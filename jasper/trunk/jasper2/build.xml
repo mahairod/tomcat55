@@ -19,8 +19,9 @@
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>
   <property name="ant.jar"           value="${ant.home}/lib/ant.jar"/>
-  <property name="servlet-api.jar"   value="${api.home}/servlet-api-2.4/lib/servlet-api.jar"/>
-  <property name="jsp-api.jar" value="${api.home}/jsp-api-2.0/lib/jsp-api.jar"/>
+  <property name="servlet-api.jar" value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
+  <property name="jsp-api.jar" value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
+
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
@@ -35,7 +36,6 @@
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-daemon-launcher.jar}"/>
-    <pathelement location="${jasper.build}/shared/classes"/>
     <pathelement location="${jasper.build}/shared/classes"/>
   </path>
 
