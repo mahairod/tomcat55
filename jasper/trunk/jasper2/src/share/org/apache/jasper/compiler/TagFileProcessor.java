@@ -380,6 +380,7 @@ public class TagFileProcessor {
 				      n.getTagData());
 		n.setTagHandlerClass(c);
 	    }
+	    visitBody(n);
 	}
     }
 
