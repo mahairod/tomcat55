@@ -27,11 +27,14 @@ This will build tests into a build directory located in this directory.
 Windows Note: If you get an "Out of Environment Space" message, you
 need to clean-up the initial environment of your command prompt window.
 
+
 To build a 'distribution' build (without the tests, and with all the
 classes jarrd up nice) execute:
 
         (unix)% ./build.sh dist
         (dos)> .\build.bat dist
+
+NOTE: dist does not work right now.
 
 To clean out the build (removes the build dir):
 
@@ -62,8 +65,10 @@ Tests can be run in two different ways:
 	- webserver.jar (tomcat servlet container)
 	- jasper.jar (JSP engine)
 
-	(The last three jars can be obtained from the jakarta-tomcat
-	 wrokspace by doing a distribution build).
+	The last three jars can be obtained from the jakarta-tomcat
+	workspace by doing a distribution build. Alternatively you can
+        just do a regular build and have <builddir>/tomcat/classes in
+        your CLASSPATH.
 	
    - Running Servlet tests
 
