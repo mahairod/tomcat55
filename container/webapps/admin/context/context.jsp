@@ -203,7 +203,7 @@
             </controls:data>
         </controls:row>
 
-<%-- input only allowed on create transaction --%>
+<%-- input only allowed on create transaction >
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.workdir"/>:</controls:label>
             <controls:data>
@@ -215,7 +215,7 @@
                <html:hidden property="workDir"/>
              </logic:equal>
             </controls:data>
-        </controls:row>
+        </controls:row--%>
    </controls:table>
     </td>
   </tr>
