@@ -72,6 +72,9 @@
 
     <available classname="junit.framework.TestCase" property="junit.present" />
     <available file="${jaxp.jar}" property="jaxp.jar.present" />
+    <available file="${jndi.jar}" property="jndi.jar.present" />
+    <available file="${activation.jar}" property="activation.jar.present" />
+    <available file="${mail.jar}" property="mail.jar.present" />
 
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
@@ -84,7 +87,6 @@
     <mkdir dir="${catalina.build}/server/lib"/>
 
   </target>
-
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
   <target name="build-static" depends="build-prepare,copy-jaxp-jar">
@@ -110,13 +112,18 @@
     <!-- Common Extensions -->
     <!--   All applications need the servlet API classes -->
     <copy file="${servlet.jar}" tofile="${catalina.build}/common/lib/servlet.jar" />
-    <!--   Copy the JNDI JAR file for use under JDK 1.2.2 -->
-    <copy file="${jndi.jar}"    tofile="${catalina.build}/common/lib/jndi.jar" />
-    <!--   Copy activation.jar and mail.jar for the mail resource factories -->
-    <copy file="${activation.jar}"
-        tofile="${catalina.build}/common/lib/activation.jar"/>
-    <copy file="${mail.jar}"
-        tofile="${catalina.build}/common/lib/mail.jar"/>
+    <!--   Copy the jndi, activation, and mail jar files only if they are present. -->
+    <copy todir="${catalina.build}/common/lib/">
+      <fileset dir="${jndi.home}">
+        <include name="lib/jndi.jar" if="jndi.jar.present"/>
+      </fileset>
+      <fileset dir="${activation.home}">
+        <include name="activation.jar" if="activation.jar.present"/>
+      </fileset>
+      <fileset dir="${mail.home}">
+        <include name="mail.jar" if="mail.jar.present"/>
+      </fileset>
+    </copy>
 
     <!-- Server Components -->
     <!--   Catalina needs JAXP compliant XML parser -->
