@@ -416,7 +416,6 @@ public final class DigestAuthenticator
         // System.out.println("Authenticate header value : " 
         //                   + authenticateHeader);
         response.setHeader("WWW-Authenticate", authenticateHeader);
-        response.setContentLength(0);
         
     }
 
