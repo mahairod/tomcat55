@@ -1,7 +1,7 @@
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 rem ---------------------------------------------------------------------------
-rem Stop script for the CATALINA Server
+rem Script to digest password using the algorithm specified
 rem
 rem $Id$
 rem ---------------------------------------------------------------------------
@@ -9,16 +9,16 @@ rem ---------------------------------------------------------------------------
 rem Guess CATALINA_HOME if not defined
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=.
-if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
+if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
 set CATALINA_HOME=..
 :gotHome
-if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
+if exist "%CATALINA_HOME%\bin\tool-wrapper.bat" goto okHome
 echo The CATALINA_HOME environment variable is not defined correctly
 echo This environment variable is needed to run this program
 goto end
 :okHome
 
-set EXECUTABLE=%CATALINA_HOME%\bin\catalina.bat
+set EXECUTABLE=%CATALINA_HOME%\bin\tool-wrapper.bat
 
 rem Check that target executable exists
 if exist "%EXECUTABLE%" goto okExec
@@ -36,6 +36,6 @@ shift
 goto setArgs
 :doneSetArgs
 
-call "%EXECUTABLE%" stop %CMD_LINE_ARGS%
+call "%EXECUTABLE%" -server org.apache.catalina.realm.RealmBase %CMD_LINE_ARGS%
 
 :end

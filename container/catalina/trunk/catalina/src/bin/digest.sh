@@ -1,6 +1,6 @@
 #!/bin/sh
 # -----------------------------------------------------------------------------
-# Start Script for the CATALINA Server
+# Script to digest password using the algorithm specified
 #
 # $Id$
 # -----------------------------------------------------------------------------
@@ -19,7 +19,7 @@ while [ -h "$PRG" ] ; do
 done
  
 PRGDIR=`dirname "$PRG"`
-EXECUTABLE=catalina.sh
+EXECUTABLE=tool-wrapper.sh
 
 # Check that target executable exists
 if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
@@ -28,4 +28,4 @@ if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
   exit 1
 fi
 
-exec "$PRGDIR"/"$EXECUTABLE" start "$@"
+exec "$PRGDIR"/"$EXECUTABLE" -server org.apache.catalina.realm.RealmBase "$@"

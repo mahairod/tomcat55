@@ -1,30 +1,33 @@
 @echo off
 if "%OS%" == "Windows_NT" setlocal
-
 rem ---------------------------------------------------------------------------
+rem Start script for the CATALINA Server
 rem
-rem Script for starting Catalina using the Launcher
-rem
+rem $Id$
 rem ---------------------------------------------------------------------------
 
-rem Get standard environment variables
-set PRG=%0
-if exist %PRG%\..\setenv.bat goto gotCmdPath
-rem %0 must have been found by DOS using the %PATH% so we assume that
-rem setenv.bat will also be found in the %PATH%
-goto doneSetenv
-:gotCmdPath
-call %PRG%\..\setenv.bat
-:doneSetenv
-
-rem Make sure prerequisite environment variables are set
-if not "%JAVA_HOME%" == "" goto gotJavaHome
-echo The JAVA_HOME environment variable is not defined
+rem Guess CATALINA_HOME if not defined
+if not "%CATALINA_HOME%" == "" goto gotHome
+set CATALINA_HOME=.
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
+set CATALINA_HOME=..
+:gotHome
+if exist "%CATALINA_HOME%\bin\catalina.bat" goto okHome
+echo The CATALINA_HOME environment variable is not defined correctly
 echo This environment variable is needed to run this program
 goto end
-:gotJavaHome
+:okHome
 
-rem Get command line arguments and save them with the proper quoting
+set EXECUTABLE=%CATALINA_HOME%\bin\catalina.bat
+
+rem Check that target executable exists
+if exist "%EXECUTABLE%" goto okExec
+echo Cannot find %EXECUTABLE%
+echo This file is needed to run this program
+goto end
+:okExec
+
+rem Get remaining unshifted command line arguments and save them in the
 set CMD_LINE_ARGS=
 :setArgs
 if ""%1""=="""" goto doneSetArgs
@@ -33,7 +36,6 @@ shift
 goto setArgs
 :doneSetArgs
 
-rem Execute the Launcher using the "catalina" target
-"%JAVA_HOME%\bin\java.exe" -classpath %PRG%\..;"%PATH%" LauncherBootstrap -launchfile catalina.xml -verbose catalina %CMD_LINE_ARGS% start
+call "%EXECUTABLE%" start %CMD_LINE_ARGS%
 
 :end
