@@ -387,6 +387,10 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         }
         return null;
     }
+
+    public String getName() {
+        return this.name;
+    }
     /**
      * Prepare for the beginning of active use of the public methods of this
      * component.  This method should be called after <code>configure()</code>,
@@ -398,21 +402,25 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
-    public void start() throws LifecycleException
-    {
+    public void start() throws LifecycleException {
         mManagerRunning = true;
         super.start();
         //start the javagroups channel
-        try
-        {
+        try {
             //the channel is already running
             if ( mChannelStarted ) return;
+            if (cluster.getMembers().length > 0) {
+                SessionMessage msg =
+                    new SessionMessage(this.getName(),
+                                       SessionMessage.EVT_GET_ALL_SESSIONS,
+                                       null,
+                                       null);
+                cluster.send(msg, cluster.getMembers()[0]);
+            }//end if
+            mChannelStarted = true;
+        }  catch ( Exception x ) {
+            log("Unable to start SimpleTcpReplicationManager",x,1);
         }
-        catch ( Exception x )
-        {
-            log("Unable to start javagroups channel",x,1);
-        }
-
     }
 
     /**

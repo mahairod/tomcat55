@@ -272,10 +272,10 @@ public class SimpleTcpCluster
             log.error("In SimpleTcpCluster.constructor()",x);
         }
 
-        if ( ServerFactory.getServer() instanceof StandardServer ) {
-            StandardServer server = (StandardServer) ServerFactory.getServer();
-            server.addLifecycleListener(this);
-        }
+//        if ( ServerFactory.getServer() instanceof StandardServer ) {
+//            StandardServer server = (StandardServer) ServerFactory.getServer();
+//            server.addLifecycleListener(this);
+//        }
 
     }
     /**
@@ -380,6 +380,11 @@ public class SimpleTcpCluster
     public String getProtocol() {
         return (this.protocol);
     }
+
+    public Member[] getMembers() {
+        return service.getMembers();
+    }
+
 
 
     // --------------------------------------------------------- Public Methods
@@ -650,19 +655,19 @@ public class SimpleTcpCluster
     }
 
     public void lifecycleEvent(LifecycleEvent lifecycleEvent){
-        if ( lifecycleEvent.getLifecycle().AFTER_START_EVENT.equals(lifecycleEvent.getType()) ) {
-            //The server has started
-            SessionMessage msg =
-                new SessionMessage(null,
-                                   SessionMessage.EVT_GET_ALL_SESSIONS,
-                                   null,
-                                   null);
-            if (service.getMembers().length > 0) {
-                Member mbr = service.getMembers()[0];
-                send(msg, mbr);
-            }
-
-        }//end if
+//        if ( lifecycleEvent.getLifecycle().AFTER_START_EVENT.equals(lifecycleEvent.getType()) ) {
+//            //The server has started
+//            SessionMessage msg =
+//                new SessionMessage(null,
+//                                   SessionMessage.EVT_GET_ALL_SESSIONS,
+//                                   null,
+//                                   null);
+//            if (service.getMembers().length > 0) {
+//                Member mbr = service.getMembers()[0];
+//                send(msg, mbr);
+//            }
+//
+//        }//end if
     }
     // ---------------------------------------------  Inner Class
 
