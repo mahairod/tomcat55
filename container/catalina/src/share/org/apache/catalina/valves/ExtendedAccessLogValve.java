@@ -1324,7 +1324,7 @@ public final class ExtendedAccessLogValve
             } else if ("requestedSessionIdFromCookie".equals(fieldInfo.value)){
                 fieldInfo.location = FieldInfo.X_LOC_REQUESTEDSESSIONIDFROMCOOKIE;
             } else if ("requestedSessionIdValid".equals(fieldInfo.value)){
-                fieldInfo.location = FieldInfo.X_LOC_REQUESTEDSESSIONID;
+                fieldInfo.location = FieldInfo.X_LOC_REQUESTEDSESSIONIDVALID;
             } else if ("contentLength".equals(fieldInfo.value)){
                 fieldInfo.location = FieldInfo.X_LOC_CONTENTLENGTH;
             } else if ("characterEncoding".equals(fieldInfo.value)){

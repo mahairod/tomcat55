@@ -67,6 +67,9 @@
       <update> 
         Fixed broken link to JK documenration from AJP Connector reference page. (yoavs)
       </update>
+      <fix>
+        <bug>30587</bug>: Typo in ExtendedAccessLogValve. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
