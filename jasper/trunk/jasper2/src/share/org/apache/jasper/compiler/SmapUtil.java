@@ -77,6 +77,7 @@ import org.apache.jasper.JspCompilationContext;
  * @author Shawn Bayern
  * @author Robert Field (inner SDEInstaller class)
  * @author Mark Roth
+ * @author Kin-man Chung
  */
 public class SmapUtil {
 
@@ -613,25 +614,16 @@ public class SmapUtil {
             int iOutputStartLine = n.getBeginJavaLine();
             smap.addLineData(iInputStartLine, fileName, 1, iOutputStartLine, 1);
 
-            //Walk through the node text the same way Generator.java's 
-            //visit(Node.TemplateText n) does.  Every time the 
-            //line number advances in the input file or the output file, 
-            //add a LineInfo with the new line numbers.
-            String text = n.getText();
-            int count = JspUtil.CHUNKSIZE;
-            for (int i = 0; i < text.length() - 1; i++) {
-                --count;
-                if (text.charAt(i) == '\n') {
-                    iInputStartLine++;
-                    if (breakAtLF || count < 0) {
-                        iOutputStartLine++;
-                        count = JspUtil.CHUNKSIZE;
-                    }
+            // Output additional mappings in the text
+            java.util.ArrayList extraSmap = n.getExtraSmap();
+
+            if (extraSmap != null) {
+                for (int i = 0; i < extraSmap.size(); i++) {
                     smap.addLineData(
-                        iInputStartLine,
+                        iInputStartLine+((Integer)extraSmap.get(i)).intValue(),
                         fileName,
                         1,
-                        iOutputStartLine,
+                        ++iOutputStartLine,
                         1);
                 }
             }

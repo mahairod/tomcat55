@@ -63,6 +63,7 @@ package org.apache.jasper.compiler;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.DynamicAttributes;
@@ -1921,6 +1922,8 @@ abstract class Node implements TagConstants {
      */
     public static class TemplateText extends Node {
 
+        private ArrayList extraSmap = null;
+
 	public TemplateText(String text, Mark start, Node parent) {
 	    super(null, null, text, start, parent);
 	}
@@ -1957,13 +1960,30 @@ abstract class Node implements TagConstants {
 	public boolean isAllSpace() {
 	    boolean isAllSpace = true;
 	    for (int i=0; i<text.length(); i++) {
-		if (!Character.isSpace(text.charAt(i))) {
+		if (!Character.isWhitespace(text.charAt(i))) {
 		    isAllSpace = false;
 		    break;
 		}
 	    }
 	    return isAllSpace;
 	}
+
+        /**
+         * Add a source to Java line mapping
+         * @param srcLine The postion of the source line, relative to the line
+         *        at the start of this node.  The corresponding java line is
+         *        assumed to be consecutive, i.e. one more than the last.
+         */
+        public void addSmap(int srcLine) {
+            if (extraSmap == null) {
+                extraSmap = new ArrayList();
+            }
+            extraSmap.add(new Integer(srcLine));
+        }
+
+        public ArrayList getExtraSmap() {
+            return extraSmap;
+        }
     }
 
     /*********************************************************************

@@ -1867,21 +1867,25 @@ class Generator {
                 return;
             }
 
-            if (ctxt.getOptions().genStringAsCharArray()) {
-                if (textSize <= 3) {
-                   // Spcial case small text strings
-                   n.setBeginJavaLine(out.getJavaLine());
-                   out.printil("out.write(" + quote(text.charAt(0)) + ");");
-                   if (textSize > 1) {
-                       out.printil("out.write(" + quote(text.charAt(1)) + ");");
+            if (textSize <= 3) {
+               // Special case small text strings
+               n.setBeginJavaLine(out.getJavaLine());
+               int lineInc = 0;
+               for (int i = 0; i < textSize; i++) {
+                   char ch = text.charAt(i);
+                   out.printil("out.write(" + quote(ch) + ");");
+                   if (i > 0) {
+                       n.addSmap(lineInc);
                    }
-                   if (textSize > 2) {
-                       out.printil("out.write(" + quote(text.charAt(2)) + ");");
+                   if (ch == '\n') {
+                       lineInc++;
                    }
-                   n.setEndJavaLine(out.getJavaLine());
-                   return;
                }
+               n.setEndJavaLine(out.getJavaLine());
+               return;
+           }
 
+            if (ctxt.getOptions().genStringAsCharArray()) {
                // Generate Strings as char arrays, for performance
                 ServletWriter caOut;
                 if (charArrayBuffer == null) {
@@ -1915,6 +1919,7 @@ class Generator {
             StringBuffer sb = new StringBuffer("out.write(\"");
             int initLength = sb.length();
             int count = JspUtil.CHUNKSIZE;
+            int srcLine = 0;	// relative to starting srouce line
             for (int i = 0; i < text.length(); i++) {
                 char ch = text.charAt(i);
                 --count;
@@ -1930,6 +1935,7 @@ class Generator {
                         break;
                     case '\n' :
                         sb.append('\\').append('n');
+                        srcLine++;
 
                         if (breakAtLF || count < 0) {
                             // Generate an out.write() when see a '\n' in template
@@ -1940,6 +1946,9 @@ class Generator {
                             }
                             sb.setLength(initLength);
                             count = JspUtil.CHUNKSIZE;
+
+                            // add a Smap for this line
+                            n.addSmap(srcLine);
                         }
                         break;
                     case '\t' : // Not sure we need this
