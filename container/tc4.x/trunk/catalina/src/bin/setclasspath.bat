@@ -10,7 +10,12 @@ echo The JAVA_HOME environment variable is not defined
 echo This environment variable is needed to run this program
 goto end
 :gotJavaHome
-if exist "%JAVA_HOME%\bin\java.exe" goto okJavaHome
+if not exist "%JAVA_HOME%\bin\java.exe" goto noJavaHome
+if not exist "%JAVA_HOME%\bin\javaw.exe" goto noJavaHome
+if not exist "%JAVA_HOME%\bin\jdb.exe" goto noJavaHome
+if not exist "%JAVA_HOME%\bin\javac.exe" goto noJavaHome
+goto okJavaHome
+:noJavaHome
 echo The JAVA_HOME environment variable is not defined correctly
 echo This environment variable is needed to run this program
 goto end
@@ -44,3 +49,6 @@ rem Also note the quoting as JAVA_HOME may contain spaces.
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 set _RUNJAVAW="%JAVA_HOME%\bin\javaw"
 set _RUNJDB="%JAVA_HOME%\bin\jdb"
+set _RUNJAVAC="%JAVA_HOME%\bin\javac"
+
+:end
