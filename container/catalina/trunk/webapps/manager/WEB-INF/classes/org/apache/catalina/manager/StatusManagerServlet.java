@@ -62,7 +62,7 @@
  */
 
 
-package org.apache.catalina.servlets;
+package org.apache.catalina.manager;
 
 
 import java.io.IOException;

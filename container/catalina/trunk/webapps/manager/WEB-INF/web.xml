@@ -20,7 +20,7 @@
    -->
   <servlet>
     <servlet-name>Manager</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.ManagerServlet</servlet-class>
+    <servlet-class>org.apache.catalina.manager.ManagerServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>2</param-value>
@@ -28,7 +28,7 @@
   </servlet>
   <servlet>
     <servlet-name>HTMLManager</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.HTMLManagerServlet</servlet-class>
+    <servlet-class>org.apache.catalina.manager.HTMLManagerServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>2</param-value>
@@ -36,7 +36,7 @@
   </servlet>
   <servlet>
     <servlet-name>Status</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.StatusManagerServlet</servlet-class>
+    <servlet-class>org.apache.catalina.manager.StatusManagerServlet</servlet-class>
     <init-param>
       <param-name>debug</param-name>
       <param-value>0</param-value>
