@@ -77,14 +77,8 @@ import javax.servlet.http.Cookie;
  * @author duncan@eng.sun.com
  */
 public class CookieTools {
-    static String pattern = "EEE, dd-MMM-yyyy HH:mm:ss z";
-    static Locale loc = Locale.US;
-    static TimeZone zone = TimeZone.getTimeZone("GMT");
-    static SimpleDateFormat df = new SimpleDateFormat(pattern, loc);
+
     static FieldPosition FieldPosition0=new FieldPosition(0);
-    static {
-	df.setTimeZone(zone);
-    }
 
     /** Return the header name to set the cookie, based on cookie
      *  version
@@ -142,7 +136,7 @@ public class CookieTools {
 	if (cookie.getMaxAge() >= 0) {
 	    if (version == 0) {
 		buf.append (";Expires=");
-		df.format(new Date( System.currentTimeMillis() + cookie.getMaxAge() *1000) ,buf, FieldPosition0 );
+		HttpDate.oldCookieFormat.format(new Date( System.currentTimeMillis() + cookie.getMaxAge() *1000) ,buf, FieldPosition0 );
 	    } else {
 		buf.append (";Max-Age=");
 		buf.append (cookie.getMaxAge());
