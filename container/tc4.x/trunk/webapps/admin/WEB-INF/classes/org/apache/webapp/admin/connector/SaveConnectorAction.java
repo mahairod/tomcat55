@@ -229,7 +229,7 @@ public final class SaveConnectorAction extends Action {
                             URLEncoder.encode(cObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(cObjectName,
-                                                "folder_16_pad.gif",
+                                                "Connector.gif",
                                                 nodeLabel,
                                                 "EditConnector.do?select=" +
                                                 encodedName,

@@ -234,7 +234,7 @@ public final class SaveMemoryRealmAction extends Action {
                             URLEncoder.encode(rObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(rObjectName,
-                                                "folder_16_pad.gif",
+                                                "Realm.gif",
                                                 nodeLabel,
                                                 "EditRealm.do?select=" +
                                                 encodedName,

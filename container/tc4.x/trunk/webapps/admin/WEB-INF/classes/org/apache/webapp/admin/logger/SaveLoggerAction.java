@@ -234,7 +234,7 @@ public final class SaveLoggerAction extends Action {
                             URLEncoder.encode(lObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(lObjectName,
-                                                "folder_16_pad.gif",
+                                                "Logger.gif",
                                                 nodeLabel,
                                                 "EditLogger.do?select=" +
                                                 encodedName,

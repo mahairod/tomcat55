@@ -225,7 +225,7 @@ public final class SaveHostAction extends Action {
                             URLEncoder.encode(hObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(hObjectName,
-                                                "folder_16_pad.gif",
+                                                "Host.gif",
                                                 nodeLabel,
                                                 "EditHost.do?select=" +
                                                 encodedName,

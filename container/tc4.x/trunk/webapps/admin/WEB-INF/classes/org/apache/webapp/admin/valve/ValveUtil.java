@@ -202,7 +202,7 @@ public final class ValveUtil {
                     URLEncoder.encode(vObjectName);
                     TreeControlNode childNode =
                     new TreeControlNode(vObjectName,
-                    "folder_16_pad.gif",
+                    "Valve.gif",
                     nodeLabel,
                     "EditValve.do?select=" + encodedName +
                     "&nodeLabel=" + URLEncoder.encode(nodeLabel) +

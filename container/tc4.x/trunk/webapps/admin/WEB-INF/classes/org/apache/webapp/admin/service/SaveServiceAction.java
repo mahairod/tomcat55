@@ -241,7 +241,7 @@ public final class SaveServiceAction extends Action {
                             URLEncoder.encode(sObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(sObjectName,
-                                                "folder_16_pad.gif",
+                                                "Service.gif",
                                                 nodeLabel,
                                                 "EditService.do?select=" +
                                                 encodedName,

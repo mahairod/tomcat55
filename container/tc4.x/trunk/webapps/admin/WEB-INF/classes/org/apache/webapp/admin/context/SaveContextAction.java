@@ -257,7 +257,7 @@ public final class SaveContextAction extends Action {
                             URLEncoder.encode(cObjectName);
                         TreeControlNode childNode =
                             new TreeControlNode(cObjectName,
-                                                "folder_16_pad.gif",
+                                                "Context.gif",
                                                 nodeLabel,
                                                 "EditContext.do?select=" +
                                                 encodedName,
