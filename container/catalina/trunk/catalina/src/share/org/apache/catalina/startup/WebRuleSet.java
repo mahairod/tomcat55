@@ -258,6 +258,12 @@ public class WebRuleSet extends RuleSetBase {
                                "setServletName", 0);
         digester.addCallMethod(prefix + "web-app/filter-mapping/url-pattern",
                                "setURLPattern", 0);
+        // added by Greg Murray
+        digester.addCallMethod(prefix + "web-app/filter-mapping/dispatcher",
+                               "setDispatcher", 0);
+
+         digester.addCallMethod(prefix + "web-app/listener/listener-class",
+                                "addApplicationListener", 0);
 
         digester.addCallMethod(prefix + "web-app/listener/listener-class",
                                "addApplicationListener", 0);
