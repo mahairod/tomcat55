@@ -177,6 +177,10 @@ public final class Tool {
             System.exit(1);
         }
 
+        // Print usage statement if no arguments
+        if (args.length == 0)
+            usage();
+
         // Process command line options
         int index = 0;
         while (true) {
