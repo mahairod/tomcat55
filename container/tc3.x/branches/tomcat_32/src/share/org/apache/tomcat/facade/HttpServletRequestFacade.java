@@ -89,7 +89,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
     HttpSessionFacade sessionFacade;
     ServletInputStreamFacade isFacade=null;
     BufferedReader reader;
-    static final NO_SESSION_FACADE=true;   
+    static final boolean NO_SESSION_FACADE=true;   
     private boolean usingStream = false;
     private boolean usingReader = false;
 
