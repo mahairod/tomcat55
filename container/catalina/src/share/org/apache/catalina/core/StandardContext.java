@@ -122,7 +122,6 @@ import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
 
-import org.apache.tomcat.util.log.SystemLogHandler;
 import org.apache.commons.modeler.Registry;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.logging.Log;
@@ -2697,48 +2696,6 @@ public class StandardContext
 
 
     /**
-     * Process the specified Request, and generate the corresponding Response,
-     * according to the design of this particular Container.
-     *
-     * @param request Request to be processed
-     * @param response Response to be produced
-     *
-     * @exception IOException if an input/output error occurred while
-     *  processing
-     * @exception ServletException if a ServletException was thrown
-     *  while processing this request
-     */
-    public void invoke(Request request, Response response)
-        throws IOException, ServletException {
-
-        // Wait if we are reloading
-        while (getPaused()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                ;
-            }
-        }
-
-        // Normal request processing
-        if (swallowOutput) {
-            try {
-                SystemLogHandler.startCapture();
-                super.invoke(request, response);
-            } finally {
-                String log = SystemLogHandler.stopCapture();
-                if (log != null && log.length() > 0) {
-                    log(log);
-                }
-            }
-        } else {
-            super.invoke(request, response);
-        }
-
-    }
-
-
-    /**
      * Reload this web application, if reloading is supported.
      * <p>
      * <b>IMPLEMENTATION NOTE</b>:  This method is designed to deal with
@@ -4602,7 +4559,7 @@ public class StandardContext
     /**
      * Return the request processing paused flag for this Context.
      */
-    private boolean getPaused() {
+    public boolean getPaused() {
 
         return (this.paused);
 
