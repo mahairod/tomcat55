@@ -836,8 +836,8 @@ public final class StandardLoader
 
             if (!(classpath.equals("")))
                 classpath = File.pathSeparator + classpath;
-            File classesDir = new File(workDir, "/classes");
-            classesDir.mkdir();
+            File classesDir = new File(workDir, classesName);
+            classesDir.mkdirs();
             classpath = classesDir.getAbsolutePath() + classpath;
 
             copyDir(resources, classesDir);
@@ -956,11 +956,14 @@ public final class StandardLoader
         // Loading the work directory
         File workDir = 
             (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-
         if (workDir != null) {
 
             DirContext resources = container.getResources();
             String libName = "/WEB-INF/lib";
+
+            File destDir = new File(workDir, libName);
+            destDir.mkdirs();
+
             DirContext libDir = null;
             // Looking up directory /WEB-INF/lib in the context
             try {
@@ -989,7 +992,7 @@ public final class StandardLoader
                             log(" Adding '" + "file: " +
                                 libName + "/" + filename + "'");
                             // Copying the file to the work dir
-                            File dest = new File(workDir, filename);
+                            File dest = new File(destDir, filename);
                             if (copy(fileURL.openStream(), 
                                      new FileOutputStream(dest))) {
                                 if (n > 0)
