@@ -91,7 +91,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
-
+import org.apache.catalina.core.ApplicationFilterFactory;
 
 /**
  * <p>Implementation of a Valve that handles the error dispatch (that is, will
@@ -231,6 +231,10 @@ public class ErrorDispatcherValve
             response.setAppCommitted(false);
             ServletRequest sreq = request.getRequest();
             ServletResponse sresp = response.getResponse();
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
+                                       errorPage.getLocation());
+            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+                                                 new Integer(ApplicationFilterFactory.ERROR));
             sreq.setAttribute
                 (Globals.STATUS_CODE_ATTR,
                  new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));

@@ -90,9 +90,13 @@ import org.apache.catalina.Wrapper;
 
 public final class ApplicationFilterFactory {
 
-    public static final int FORWARD =1;
-    public static final int INCLUDE  =3;
-    public static final int REQUEST = 4;
+    public static final int ERROR = 1;
+    public static final int FORWARD =2;
+    public static final int INCLUDE  =4;
+    public static final int REQUEST = 8;
+    
+    public static final String DISPATCHER_TYPE_ATTR="org.apache.catalina.core.DISPATCHER_TYPE";
+    public static final String DISPATCHER_REQUEST_PATH_ATTR="org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
 
     // ----------------------------------------------------------- Constructors
 
@@ -122,8 +126,15 @@ public final class ApplicationFilterFactory {
      * @param servlet The servlet instance to be wrapped
      */
     public ApplicationFilterChain createFilterChain(ServletRequest request,
-                                        Wrapper wrapper, Servlet servlet, int dispatcher) {
+                                        Wrapper wrapper, Servlet servlet) {
 
+        // get the dispatcher type
+        int dispatcher = -1; 
+        if (request.getAttribute(DISPATCHER_TYPE_ATTR) != null) {
+            Integer dispatcherInt = (Integer)request.getAttribute(DISPATCHER_TYPE_ATTR);
+            dispatcher = dispatcherInt.intValue();
+        }
+        String requestPath = (String)request.getAttribute(DISPATCHER_REQUEST_PATH_ATTR);
         HttpServletRequest hreq = null;
         if (request instanceof HttpServletRequest) hreq = (HttpServletRequest)request;
         // If there is no servlet to execute, return null
@@ -144,77 +155,42 @@ public final class ApplicationFilterFactory {
         // If there are no filter mappings, we are done
         if ((filterMaps == null) || (filterMaps.length == 0))
             return (filterChain);
-//        if (debug >= 1)
-//            log("createFilterChain:  Processing " + filterMaps.length +
-//                " filter map entries");
 
         // Acquire the information we will need to match filter mappings
-        String requestPath = null;
-        if (hreq != null) {
-            String contextPath = hreq.getContextPath();
-            if (contextPath == null)
-                contextPath = "";
-            String requestURI = hreq.getRequestURI();
-            //((HttpRequest) request).getDecodedRequestURI();
-            if (requestURI.length() >= contextPath.length())
-                requestPath = requestURI.substring(contextPath.length());
-        }
         String servletName = wrapper.getName();
-//        if (debug >= 1) {
-//            log(" requestPath=" + requestPath);
-//            log(" servletName=" + servletName);
-//        }
+
         int n = 0;
 
         // Add the relevant path-mapped filters to this filter chain
         for (int i = 0; i < filterMaps.length; i++) {
-//            if (debug >= 2)
-//                log(" Checking path-mapped filter '" +
-//                    filterMaps[i] + "'");
+
             if (!matchFiltersURL(filterMaps[i], requestPath, dispatcher))
                 continue;
             ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
                 context.findFilterConfig(filterMaps[i].getFilterName());
             if (filterConfig == null) {
-//                if (debug >= 2)
-//                    log(" Missing path-mapped filter '" +
-//                        filterMaps[i] + "'");
                 ;       // FIXME - log configuration problem
                 continue;
             }
-//            if (debug >= 2)
-//                log(" Adding path-mapped filter '" +
-//                    filterConfig.getFilterName() + "'");
             filterChain.addFilter(filterConfig);
             n++;
         }
 
         // Add filters that match on servlet name second
         for (int i = 0; i < filterMaps.length; i++) {
-//            if (debug >= 2)
-//                log(" Checking servlet-mapped filter '" +
-//                    filterMaps[i] + "'");
             if (!matchFiltersServlet(filterMaps[i], servletName, dispatcher))
                 continue;
             ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
                 context.findFilterConfig(filterMaps[i].getFilterName());
             if (filterConfig == null) {
-//                if (debug >= 2)
-//                    log(" Missing servlet-mapped filter '" +
-//                        filterMaps[i] + "'");
                 ;       // FIXME - log configuration problem
                 continue;
             }
-//            if (debug >= 2)
-//                log(" Adding servlet-mapped filter '" +
-//                     filterMaps[i] + "'");
             filterChain.addFilter(filterConfig);
             n++;
         }
 
         // Return the completed filter chain
-//        if (debug >= 2)
-//            log(" Returning chain with " + n + " filters");
         return (filterChain);
 
     }
@@ -230,10 +206,6 @@ public final class ApplicationFilterFactory {
     private boolean matchFiltersURL(FilterMap filterMap,
                                     String requestPath,
                                     int dispatcher) {
-
-//      if (debug >= 3)
-//          log("  Matching request path '" + requestPath +
-//              "' against mapping " + filterMap);
 
         if (requestPath == null)
             return (false);
@@ -286,8 +258,12 @@ public final class ApplicationFilterFactory {
         switch (dispatcher) {
             case FORWARD : {
                 if (filterMap.getDispatcherMapping() == FilterMap.FORWARD ||
-                    filterMap.getDispatcherMapping() == FilterMap.FORWARD_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.FORWARD_ERROR ||
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_ERROR_FORWARD ||
                     filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD_INCLUDE ||
                     filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD_INCLUDE) {
                         return true;
                 }
@@ -295,8 +271,12 @@ public final class ApplicationFilterFactory {
             }
             case INCLUDE : {
                 if (filterMap.getDispatcherMapping() == FilterMap.INCLUDE ||
-                    filterMap.getDispatcherMapping() == FilterMap.FORWARD_INCLUDE ||
-                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_INCLUDE||
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_ERROR ||
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_ERROR_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD_INCLUDE ||
                     filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD_INCLUDE) {
                         return true;
                 }
@@ -304,9 +284,26 @@ public final class ApplicationFilterFactory {
             }
             case REQUEST : {
                 if (filterMap.getDispatcherMapping() == FilterMap.REQUEST ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR ||
                     filterMap.getDispatcherMapping() == FilterMap.REQUEST_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_INCLUDE ||
                     filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD ||
-                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD_INCLUDE) {
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_FORWARD_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD_INCLUDE) {
+                        return true;
+                }
+                break;
+            }
+            case ERROR : {
+                if (filterMap.getDispatcherMapping() == FilterMap.ERROR ||
+                    filterMap.getDispatcherMapping() == FilterMap.FORWARD_ERROR || 
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_ERROR || 
+                    filterMap.getDispatcherMapping() == FilterMap.INCLUDE_ERROR_FORWARD || 
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_FORWARD_INCLUDE ||
+                    filterMap.getDispatcherMapping() == FilterMap.REQUEST_ERROR_INCLUDE) {
                         return true;
                 }
                 break;
