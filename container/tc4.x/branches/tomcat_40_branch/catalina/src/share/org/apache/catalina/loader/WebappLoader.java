@@ -809,7 +809,14 @@ public class WebappLoader
 
             String contextRoot = servletContext.getRealPath("/");
             if (contextRoot != null) {
-                classLoader.setPermissions(contextRoot);
+                try {
+                    contextRoot = 
+                        (new File(contextRoot)).getCanonicalPath() 
+                        + File.separator;
+                    classLoader.setPermissions(contextRoot);
+                } catch (IOException e) {
+                    // Ignore
+                }
             }
 
             URL classesURL =
