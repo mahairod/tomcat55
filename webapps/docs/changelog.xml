@@ -45,6 +45,7 @@
     <changelog>
       <fix>
         <bug>29597</bug>: Added -javaEncoding attribute support to JspC command-line. (yoavs)
+        <bug>29418</bug>: Same thing, -javaEncoding added to help with this umlauts bug. (yoavs)
       </fix>
     </changelog>
   </subsection>
