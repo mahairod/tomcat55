@@ -62,76 +62,38 @@
  */ 
 
 
-package org.apache.tomcat.core;
+package org.apache.tomcat.facade;
 
-import org.apache.tomcat.util.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import org.apache.tomcat.core.*;
+import java.util.Enumeration;
+import java.util.Vector;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
  * 
- * @author James Davidson [duncan@eng.sun.com]
- * @author James Todd [gonzo@eng.sun.com]
+ * @author duncan@eng.sun.com
  */
+final class SessionContextImpl implements HttpSessionContext {
 
-class ServletConfigImpl
-implements ServletConfig {
-
-    private Context context;
-    private Hashtable initArgs;
-    private String servletName = null;
-    private String servletClassName = null;
+    /**
+     *
+     * @deprecated
+     */
     
-    ServletConfigImpl() {
+    public HttpSession getSession(String sessionId) {
+        return null;
     }
 
-    void setContext( Context ctx ) {
-	context=ctx;
-    }
-    
-    ServletConfigImpl(Context context) {
-        this.context = context;
-    }
+    /**
+     *
+     * @deprecated
+     */
 
-    void setInitArgs(Hashtable initArgs) {
-        this.initArgs = initArgs;
-    }
-    
-    public ServletContext getServletContext() {
-        return context.getFacade();
-    }
+    public Enumeration getIds() {
+        // cheap hack to get an empty enum
+        Vector v = new Vector();
 
-    public String getInitParameter(String name) {
-        if (initArgs != null) {
-            return (String)initArgs.get(name);
-        } else {
-            return null;
-        }
-    }
-
-    public Enumeration getInitParameterNames() {
-        if (initArgs != null) {
-            return initArgs.keys();
-        } else {
-            // dirty hack to return an empty enumeration
-            Vector v = new Vector();
-
-            return v.elements();
-        }
-    }
-
-    public String getServletName() {
-      return (servletName != null) ? servletName : servletClassName;
-    }
-
-    void setServletName(String servletName) {
-        this.servletName = servletName;
-    }
-
-    void setServletClassName(String servletClassName) {
-        this.servletClassName = servletClassName;
+        return v.elements();
     }
 }

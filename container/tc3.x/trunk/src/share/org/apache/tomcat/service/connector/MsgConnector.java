@@ -81,5 +81,7 @@ public interface MsgConnector {
 
     public void send( MsgBuffer msg ) throws IOException;
 
+    public int receive( MsgBuffer msg ) throws IOException;
+
     
 }

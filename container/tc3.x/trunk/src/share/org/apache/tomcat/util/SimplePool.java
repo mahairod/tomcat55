@@ -96,6 +96,9 @@ public final class SimplePool  {
 	lock=new Object();
     }
 
+    public  void set(Object o) {
+	put(o);
+    }
     /**
      * Add the object to the pool, silent nothing if the pool is full
      */

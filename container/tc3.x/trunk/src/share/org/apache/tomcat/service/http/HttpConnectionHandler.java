@@ -183,7 +183,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
 	    reqA.readNextRequest(resA);
 
-	    int contentLength = reqA.getFacade().getIntHeader("content-length");
+	    int contentLength = reqA.getContentLength();
 	    if (contentLength != -1) {
 		BufferedServletInputStream sis =
 		    (BufferedServletInputStream)reqA.getInputStream();

@@ -136,7 +136,6 @@ public class MimeHeaders {
     /**
      * Creates a new MimeHeaders object using a default buffer size.
      */
-
     public MimeHeaders() {
 	this(512);
     }
@@ -144,12 +143,10 @@ public class MimeHeaders {
     /**
      * Clears all header fields.
      */
-
     public void clear() {
 	for (int i = 0; i < count; i++) {
 	    headers[i].reset();
 	}
-
 	count = 0;
     }
 

@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -64,36 +60,33 @@
 
 package org.apache.tomcat.core;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import org.apache.tomcat.util.*;
+import org.apache.tomcat.facade.*;
+import java.io.*;
+import java.net.*;
+import java.security.*;
+import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 /**
- * 
- * @author duncan@eng.sun.com
+ *   Control for facades - this is the only "gate" between servlets
+ *   and tomcat.
  */
-
-public class SessionContextImpl implements HttpSessionContext {
-
-    /**
-     *
-     * @deprecated
-     */
+public interface FacadeManager {
+    public ServletContext createServletContextFacade(Context ctx);
     
-    public HttpSession getSession(String sessionId) {
-        return null;
-    }
+    public  HttpServletRequest createHttpServletRequestFacade(Request req);
 
-    /**
-     *
-     * @deprecated
-     */
+    public  HttpServletResponse createHttpServletResponseFacade(Response res);
 
-    public Enumeration getIds() {
-        // cheap hack to get an empty enum
-        Vector v = new Vector();
+    public ServletConfig createServletConfig(ServletWrapper sw);
 
-        return v.elements();
-    }
+    public  void recycle( Request req );
+
+    public  Request getRealRequest( HttpServletRequest req ); 
+
+    public Context getRealContext( ServletContext ctx );
+
 }
+    
