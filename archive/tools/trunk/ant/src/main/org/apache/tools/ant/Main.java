@@ -91,6 +91,9 @@ public class Main {
 
     /** Set of properties that can be used by tasks */
     private static Properties definedProps = new Properties();
+    
+    /** The Ant security manager */
+    private static AntSecurityManager securityManager;
 
     /**
      * Command line entry point. This method kicks off the building
@@ -167,8 +170,12 @@ public class Main {
 	}
 
 	// ok, so if we've made it here, let's run the damn build allready
-        
 	runBuild();
+    
+    // se should force the exit() to allow everything to cleanup since
+    // there could be leftover threads running around (some stupid AWT code
+    // used for image generation does this! grrrr)
+    exit(0);
     }
 
     /**
@@ -195,7 +202,7 @@ public class Main {
 	} catch (BuildException be) {
 	    String msg = "BUILD CONFIG ERROR: ";
 	    System.out.println(msg + be.getMessage());
-	    System.exit(1);
+	    exit(1);
 	}
 
         // cycle through command line defined properties after the
@@ -217,6 +224,10 @@ public class Main {
 	    targetCount=1;
 	}
 
+        // set the security manager
+    securityManager = new AntSecurityManager();
+    System.setSecurityManager(securityManager);
+
         // actually do some work
 	try {
 	    for(int i=0; i< targetCount; i++) 
@@ -224,7 +235,10 @@ public class Main {
 	} catch (BuildException be) {
 	    String msg = "BUILD FATAL ERROR: ";
 	    System.out.println(msg + be.getMessage());
-	    return;
+        if (msgOutputLevel > Project.MSG_INFO) {
+            be.printStackTrace();
+        }
+        exit(1);
 	}
 
         // track our stop time and let the user know how long things
@@ -255,7 +269,9 @@ public class Main {
                    + lSep);     
 	System.out.println(msg.toString());
     }
+    
+    private static void exit(int code) {
+        securityManager.setExit(true);
+        System.exit(code);
+    }
 }
-
-
-

@@ -83,19 +83,22 @@ public class Replace extends Task {
             return;            
         }
         
+        if (dest == null) {
+            throw new BuildException("Error creating temp file.");
+        }
+                
         try {
             BufferedReader br = new BufferedReader(new FileReader(src));
             BufferedWriter bw = new BufferedWriter(new FileWriter(dest));
 
-            String line = null;
+            String line;
             
-            line = br.readLine();
-            
-            do {
+            while (true) {
                 line = br.readLine();
+                if (line == null) break;
                 if (line.length() != 0) bw.write(replace(line));
-                if (line != null) bw.newLine();
-            } while (line != null);
+                bw.newLine();
+            }
              
             bw.flush();
             bw.close();
@@ -139,7 +142,8 @@ public class Replace extends Task {
         
         while ((end = orig.indexOf(token, start)) > -1) {
             buffer.append(orig.substring(start, end));
-            start = end + token.length() + 1;
+            buffer.append(value);
+            start = end + token.length();
         }
         
         buffer.append(orig.substring(start));

@@ -149,7 +149,7 @@ public class Project {
 
     public void log(String msg, String tag, int msgLevel) {
 	if (msgLevel <= msgOutputLevel) {
-	    out.println(msg);
+	    out.println("[" + tag + "] " + msg);
 	}
     }
 

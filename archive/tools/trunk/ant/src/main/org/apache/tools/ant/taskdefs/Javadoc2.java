@@ -58,43 +58,35 @@ import org.apache.tools.ant.*;
 
 import java.io.*;
 import java.util.*;
-import java.lang.SecurityManager;
 
 /**
- * This Task makes it easy to generate javadoc 1.2 for a collection of source code.
-   <p> 
-   &lt;target name="javadoc"&gt;<br>
-    &lt;mkdir dir="${javadoc.destdir}"/&gt;<br>
-    &lt;javadoc2 sourcepath="${build.src}" destdir="${javadoc.destdir}"<br> 
-    packagenames="org.apache.ecs, org.apache.ecs.html, org.apache.ecs.filter,<br> 
-    org.apache.ecs.storage, org.apache.ecs.rtf, org.apache.ecs.xml"<br>     
-    /&gt;<br>
-    &lt;/target&gt;
-    <p>
-    It isn't perfect, but it works with the above example. If you would like to 
-    improve and test it more, that would be great. ;-)
+ * This Task makes it easy to generate javadocs for a collection of source code.
+ *
+ * Current known limitations are:
+ *  - multiple source path breaks operation
+ *  - patterns must be of the form "xxx.*", every other pattern doesn't work.
+ *  - the java comment-stripper reader is horribly slow
+ *  - stupid javadoc calls System.exit() and breaks Ant execution
+ *    (two solutions: security manager and decompilation for better hooks)
+ *  - there is no control on arguments sanity since they are left
+ *    to the javadoc implementation.
  *
  * @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
+ * @author Stefano Mazzocchi <a href="mailto:stefano@pache.org">stefano@apache.org</a>
  */
-public class Javadoc2 extends Task {
+public class Javadoc2 extends Java {
 
-    private File sourcePath = null;
+    private String sourcePath = null;
     private File destDir = null;
     private File overviewFile = null;
-    private String sourcefiles = null;
-    private String packagenames = null;
-    private String classnames = null;
-// Items that are already true throw an error via javadoc util if defined true
-// How stupid is that? ;-( Define them as false below.
-//    private boolean pub = true;
-//    private boolean prot = true;
-//    private boolean pack = true;
-//    private boolean author = true;
+    private String sourceFiles = null;
+    private String packageNames = null;
     private boolean pub = false;
     private boolean prot = false;
     private boolean pack = false;
     private boolean priv = false;
-    private boolean author = false;
+    private boolean author = true;
+    private boolean version = true;
     private String doclet = null;
     private File docletpath = null;
     private boolean old = false;
@@ -104,7 +96,6 @@ public class Javadoc2 extends Task {
     private boolean verbose = false;
     private String locale = null;
     private String encoding = null;
-    private boolean version = true;
     private boolean use = false;
     private boolean splitindex = false;
     private String windowtitle = null;
@@ -128,21 +119,17 @@ public class Javadoc2 extends Task {
     private Vector compileList = new Vector();
    
     public void setSourcepath(String src) {
-        sourcePath = project.resolveFile(src);
+        sourcePath = project.translatePath(src);
     }
     public void setDestdir(String src) {
         destDir = project.resolveFile(src);
     }
     public void setSourcefiles(String src) {
-        sourcefiles = src;
+        sourceFiles = src;
     }
     public void setPackagenames(String src) {
-        packagenames = src;
+        packageNames = src;
     }
-    public void setClassnames(String src) {
-        classnames = src;
-    }
-    
     public void setOverview(String src) {
         overviewFile = project.resolveFile(src);
     }
@@ -164,9 +151,6 @@ public class Javadoc2 extends Task {
     public void setDocletPath(String src) {
         docletpath = project.resolveFile(src);
     }
-    /**
-        Build javadoc to look like JDK 1.1
-    */
     public void setOld(String src) {
         old = new Boolean(src).booleanValue();
     }
@@ -254,11 +238,9 @@ public class Javadoc2 extends Task {
             String msg = "sourcePath and destDir attributes must be set!";
             throw new BuildException(msg);
         }
-        generate();
-    }
-    
-    private void generate() throws BuildException {
-        project.log("Generating JavaDoc", project.MSG_INFO);
+        
+        project.log("Generating Javadoc", project.MSG_INFO);
+        
         Vector argList = new Vector();
 
         if (overviewFile != null) {
@@ -368,71 +350,219 @@ public class Javadoc2 extends Task {
             argList.addElement("-docencoding");
             argList.addElement(docencoding);
         }
+        if (destDir != null) {
+            argList.addElement("-d");
+            argList.addElement(destDir.getAbsolutePath());
+        }
+        if (sourcePath != null) {
+            argList.addElement("-sourcepath");
+            argList.addElement(sourcePath);
+        }
 
-        argList.addElement("-sourcepath");
-        argList.addElement(sourcePath.getAbsolutePath());
-        argList.addElement("-d");
-        argList.addElement(destDir.getAbsolutePath());
-        
-        // must be after options
-        if ( packagenames != null ) {
-            if (packagenames.length() > 0) {
-                StringTokenizer tok =
-                new StringTokenizer(packagenames, ", ", false);
-                while (tok.hasMoreTokens()) {
-                    argList.addElement ( tok.nextToken().trim() );
+        if ((packageNames != null) && (packageNames.length() > 0)) {
+            Vector packages = new Vector();
+            StringTokenizer tok = new StringTokenizer(packageNames, ",", false);
+            while (tok.hasMoreTokens()) {
+                String name = tok.nextToken().trim();
+                if (name.endsWith(".*")) {
+                    packages.addElement(name);
+                } else {
+                    argList.addElement(name);
                 }
             }
-        }
-        if ( sourcefiles != null ) {
-            if (sourcefiles.length() > 0) {
-                StringTokenizer tok =
-                new StringTokenizer(sourcefiles, ", ", false);
-                while (tok.hasMoreTokens()) {
-                    argList.addElement ( tok.nextToken().trim() );
-                }
+            if (packages.size() > 0) {
+                evaluatePackages(sourcePath, packages, argList);
             }
         }
-        if ( classnames != null ) {
-            if (classnames.length() > 0) {
-                StringTokenizer tok =
-                new StringTokenizer(classnames, ", ", false);
-                while (tok.hasMoreTokens()) {
-                    argList.addElement ( tok.nextToken().trim() );
-                }
-            }
-        }
-        
-        project.log("Javadoc args: " + argList.toString(),
-                project.MSG_INFO);
-        
-        String[] args = new String[argList.size()];
-        for (int i = 0; i < argList.size(); i++) {
-            args[i] = (String)argList.elementAt(i);            
-        }        
 
-        // Assumes that this is in your classpath. Rightnow, it is 
-        // in the javac.jar file that comes with Ant, but James says that 
-        // this probably won't be the case in the future. In that case, then 
-        // we will need to have tools.jar in our classpath in order to find
-        // this utility. We could also try executing it via the command line
-        // javadoc utility, but that would suck because that would mean that 
-        // we would have two JVM's running just to generate this stuff. We would 
-        // also have to pass in a classpath specific for the project. Arg.
-        // Why can't Sun make our life easy and allow us to distribute 
-        // javac.jar with javadoc utility in it?
+        if ((sourceFiles != null) && (sourceFiles.length() > 0)) {
+            StringTokenizer tok = new StringTokenizer(sourceFiles, ",", false);
+            while (tok.hasMoreTokens()) {
+                argList.addElement(tok.nextToken().trim());
+            }
+        }
+
+        project.log("Javadoc args: " + argList.toString(), "javadoc", project.MSG_VERBOSE);
         
-/*        SecurityManager saveSecurityManager = System.getSecurityManager();
+        project.log("Javadoc execution", project.MSG_INFO);
+
+        run("com.sun.tools.javadoc.Main", argList);
+    }
+
+    /**
+     * Given a source path, a list of package patterns, fill the given list
+     * with the packages found in that path subdirs matching one of the given
+     * patterns.
+     */
+    private void evaluatePackages(String source, Vector packages, Vector list) {
+        project.log("Parsing source files for packages (will take a while)", project.MSG_INFO);
+
+        Hashtable map = mapClasses(new File(source));
+        
+        Enumeration e = map.keys();
+        while (e.hasMoreElements()) {
+            String pack = (String) e.nextElement();
+            for (int i = 0; i < packages.size(); i++) {
+                if (matches(pack, (String) packages.elementAt(i))) {
+                    list.addElement(pack);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Implements the pattern matching. For now it's only able to
+     * guarantee that "aaa.bbb.ccc" matches "aaa.*" and "aaa.bbb.*"
+     * FIXME: this code needs much improvement.
+     */
+    private boolean matches(String string, String pattern) {
+        return string.startsWith(pattern.substring(0, pattern.length() - 2));
+    }
+    
+    class JavaFilter implements FileFilter {
+        public boolean accept(File file) {
+            return (file.getName().endsWith(".java") || file.isDirectory());
+        }
+    }
+        
+    /**
+     * Returns an hashtable of packages linked to the last parsed
+     * file in that package. This map is use to return a list of unique
+     * packages as map keys.
+     */
+    private Hashtable mapClasses(File path) {
+        Hashtable map = new Hashtable();
+        
+        Vector files = new Vector();
+        getFiles(path, files, new JavaFilter());
+        
+        Enumeration e = files.elements();
+        while (e.hasMoreElements()) {
+            File file = (File) e.nextElement();
+            String packageName = getPackageName(file);
+            if (packageName != null) map.put(packageName, file);
+        }
+        
+        return map;
+    }
+    
+    /**
+     * Fills the given vector with files under the given path filtered
+     * by the given file filter.
+     */
+    private void getFiles(File path, Vector list, FileFilter filter) {
+        if (!path.exists()) {
+            throw new BuildException("Path " + path + " does not exist.");
+        }
+        
+        File[] files = path.listFiles(filter);
+        
+        if (files != null) {
+            int count = 0;
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) { 
+                    getFiles(files[i], list, filter);
+                } else {
+                    count++;
+                    list.addElement(files[i]);
+                }
+            }
+            if (count > 0) {
+                project.log("found " + count + " source files in " + path, "javadoc", project.MSG_VERBOSE);
+            }
+        } else {
+            throw new BuildException("Error occurred during " + path + " evaluation.");
+        }
+    }
+    
+    /**
+     * Return the package name of the given java source file.
+     * This method performs valid java parsing to figure out the package.
+     */
+    private String getPackageName(File file) {
+        String name = null;
+        
         try {
+            BufferedReader reader = new BufferedReader(new JavaReader(new FileReader(file)));
+            String line;
+            while (true) {
+                line = reader.readLine();
+                if (line == null) {
+                    project.log("Could not evaluate package for " + file, "javadoc", project.MSG_WARN);
+                    return null;
+                }
+                if (line.trim().startsWith("package ")) {
+                    name = line.substring(8, line.indexOf(";")).trim();
+                    break;
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            project.log("Exception " + e + " parsing " + file, "javadoc", project.MSG_WARN);
+            return null;
+        }
+        
+        project.log(file + " --> " + name, "javadoc", project.MSG_VERBOSE);
+        
+        return name;
+    }
+    
+    /**
+     * This is a java comment stripper reader that filters comments out
+     * for more significant java parsing.
+     */
+    class JavaReader extends FilterReader {
 
-            System.setSecurityManager(new NoExitSecurityManager());
-*/
-            com.sun.tools.javadoc.Main compiler =
-                new com.sun.tools.javadoc.Main();
-            compiler.main(args);
-//        } finally {
-//            System.setSecurityManager(saveSecurityManager);
-//        }
+        public JavaReader(Reader in) {
+            super(in);
+        }
+        
+        public int read() throws IOException {
+            int c = in.read();
+            if (c == '/') {
+                c = in.read();
+                if (c == '*') {
+                    while (true) {
+                        c = in.read();
+                        if (c == '*') {
+                            c = in.read();
+                            if (c == '/') {
+                                c = in.read();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return c;               
+        }
+        
+        /**
+         * FIXME: this method is the one called by BuffereReader and it should
+         * use char[] based methods instead of relying on single char ones
+         * to speed up execution. Please, make this faster.
+         */
+        public int read(char cbuf[], int off, int len) throws IOException {
+            for (int i = 0; i < len; i++) {
+                int c = read();
+                if (c == -1) {
+                    if (i == 0) {
+                        return -1;
+                    } else {
+                        return i;
+                    }
+                }
+                cbuf[off + i] = (char) c;
+            }
+            return len;
+        }
 
+        public long skip(long n) throws IOException {
+            for (long i = 0; i < n; i++) {
+                if (in.read() == -1) return i;
+            }
+            return n;
+        }
     }
 }
