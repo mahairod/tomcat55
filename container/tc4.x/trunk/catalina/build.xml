@@ -130,6 +130,10 @@
      classname="javax.mail.internet.MimeMessage" />
     <available property="jdk.1.3.present"
      classname="java.lang.reflect.Proxy" />
+    <!-- Compile Service API -->
+    <javac   srcdir="../service/java" destdir="${catalina.build}/classes"
+             deprecation="off" debug="on" optimize="off" target="1.2"
+             excludes="**/CVS/**" />
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
              classpath="${parser.jar}:${jaxp.jar}:${regexp.jar}:${servlet.jar}:${jcert.jar}:${jnet.jar}:${jsse.jar}:${jmxri.jar}"
@@ -159,7 +163,7 @@
     <!-- Construct bootstrap JAR file -->
     <jar   jarfile="${catalina.build}/bin/bootstrap.jar"
            basedir="${catalina.build}/classes"
-           includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/naming/JndiPermission.class" 
+           includes="org/apache/service/Service.class,org/apache/service/ServiceController.class,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/naming/JndiPermission.class" 
            manifest="etc/bootstrap.MF"
            />
     <jar   jarfile="${catalina.build}/common/lib/naming.jar"
