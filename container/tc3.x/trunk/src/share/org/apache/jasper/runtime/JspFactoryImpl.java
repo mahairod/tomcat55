@@ -111,7 +111,8 @@ public class JspFactoryImpl extends JspFactory {
     }
 
     public void releasePageContext(PageContext pc) {
-        pc.release();
+	if( pc==null ) return;
+	pc.release();
 	if( usePool) {
 	    pool.put( pc );
 	}
