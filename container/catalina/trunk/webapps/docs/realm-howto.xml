@@ -221,6 +221,15 @@ java org.apache.catalina.realm.RealmBase \
 <code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
 on your class path to make the <code>RealmBase</code> class available.</p>
 
+<p>Non-ASCII usernames and/or passwords are supported using
+<source>java org.apache.catalina.realm.RealmBase \
+    -a {algorithm} -e {encoding} {input}
+</source>
+but care is required to ensure that the non-ASCII input is
+correctly passed to the digester.
+The digester returns <code>{input}:{digest}</code>. If the input appears
+corrupted in the return, the digest will be invalid.</p>
+
 </subsection>
 
 

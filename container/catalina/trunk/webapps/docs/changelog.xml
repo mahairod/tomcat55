@@ -58,6 +58,10 @@
         Feature addition to add Redirector and failOnError support for all Catalina Ant tasks,
         submitted by Gabriele Garuglieri (remm)
       </add>
+      <fix>
+        <bug>31198</bug>: Fix FORM and DIGEST authentication for non-ASCII
+        usernames and passwords. (markt)
+      </fix>
     </changelog>
   </subsection>
 
