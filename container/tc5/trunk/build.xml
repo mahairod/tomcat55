@@ -965,6 +965,12 @@
     </antcall>
 
     <antcall target="cvsbuild">
+      <param name="location" value="${commons-el.loc}"/>
+      <param name="subdir" value="${commons-el.home}"/>
+      <param name="destfile" value="${commons-el.jar}"/>
+    </antcall>
+
+    <antcall target="cvsbuild">
       <param name="location" value="${commons-fileupload.loc}"/>
       <param name="subdir" value="${commons-fileupload.home}"/>
       <param name="destfile" value="${commons-fileupload.jar}"/>
