@@ -190,6 +190,7 @@ public abstract class JspContext {
      *
      * @param name the name of the attribute to search for
      * @return the value associated or null
+     * @throws NullPointerException if the name is null
      */
 
     abstract public Object findAttribute(String name);
@@ -199,6 +200,7 @@ public abstract class JspContext {
      * from all scopes.  Does nothing if there is no such object.
      *
      * @param name The name of the object to remove.
+     * @throws NullPointerException if the name is null
      */
 
     abstract public void removeAttribute(String name);
@@ -214,6 +216,7 @@ public abstract class JspContext {
      *     PageContext.SESSION_SCOPE but the page that was requested
      *     does not participate in a session or the session has been
      *     invalidated.
+     * @throws NullPointerException if the name is null
      */
 
     abstract public void removeAttribute(String name, int scope);
@@ -223,6 +226,7 @@ public abstract class JspContext {
      *
      * @param name the name of the attribute to return the scope for
      * @return the scope of the object associated with the name specified or 0
+     * @throws NullPointerException if the name is null
      */
 
     abstract public int getAttributesScope(String name);

@@ -105,6 +105,9 @@ public abstract class ExpressionEvaluator {
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
      *     encountered with no prefix, or "" if the default is no prefix.
+     *     If the value null is provided, an ELException will be thrown if
+     *     a function call is encountered with no prefix.  This is useful
+     *     for situations where a function must have a prefix.
      * @return The Expression object encapsulating the arguments.
      *
      * @exception ELException Thrown if parsing errors were found.
@@ -134,6 +137,9 @@ public abstract class ExpressionEvaluator {
      *     it is invoked.
      * @param defaultPrefix The default prefix to use when a function is
      *     encountered with no prefix, or "" if the default is no prefix.
+     *     If the value null is provided, an ELException will be thrown if
+     *     a function call is encountered with no prefix.  This is useful
+     *     for situations where a function must have a prefix.
      * @return The result of the expression evaluation.
      *
      * @exception ELException Thrown if the expression evaluation failed.
