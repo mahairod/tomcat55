@@ -90,6 +90,7 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.StringManager;
 
 
@@ -152,6 +153,7 @@ final class WrappedRequest
 	this.queryString = queryString;
 
 	// Initialize our parameters from the wrapped request.
+	parameters.setLocked(false);
 	names = srequest.getParameterNames();
 	while (names.hasMoreElements()) {
 	    String name = (String) names.nextElement();
@@ -187,6 +189,7 @@ final class WrappedRequest
 	        mergedValues[i] = oldValues[i - newValues.length];
 	    parameters.put(name, mergedValues);
 	}
+	parameters.setLocked(true);
 
 
     }
@@ -219,7 +222,7 @@ final class WrappedRequest
      * The parameters for this wrapped request (initialized from the underlying
      * request, but possibly amended).
      */
-    private HashMap parameters = new HashMap();
+    private ParameterMap parameters = new ParameterMap();
 
 
     /**
@@ -328,7 +331,9 @@ final class WrappedRequest
      * Clear the collection of parameters associated with this Request.
      */
     public void clearParameters() {
+        parameters.setLocked(false);
         request.clearParameters();
+	parameters.setLocked(true);
     }
 
 
@@ -610,7 +615,22 @@ final class WrappedRequest
      * Return the reconstructed URL for this request.
      */
     public StringBuffer getRequestURL() {
-        return (null); // FIXME - getRequestURL()
+        StringBuffer url = new StringBuffer();
+	String scheme = getScheme();
+	int port = getServerPort();
+	if (port < 0)
+	    port = 80; // Work around java.net.URL bug
+
+	url.append(scheme);
+	url.append("://");
+	url.append(getServerName());
+	if ((scheme.equals("http") && (port != 80))
+	    || (scheme.equals("https") && (port != 443))) {
+	    url.append(':');
+	    url.append(port);
+	}
+	url.append(getRequestURI());
+	return (url);
     }
 
 
@@ -1087,7 +1107,7 @@ final class WrappedRequest
      * Return a Map of the parameters for this request.
      */
     public Map getParameterMap() {
-        return (null); // FIXME - getParameterMap()
+        return (this.parameters);
     }
 
 
