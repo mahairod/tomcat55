@@ -521,6 +521,14 @@
         <mime-type>text/javascript</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>jsf</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jspf</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>kar</extension>
         <mime-type>audio/x-midi</mime-type>
     </mime-mapping>
@@ -789,8 +797,16 @@
         <mime-type>image/x-xbitmap</mime-type>
     </mime-mapping>
     <mime-mapping>
+        <extension>xml</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
         <extension>xpm</extension>
         <mime-type>image/x-xpixmap</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xsl</extension>
+        <mime-type>text/xml</mime-type>
     </mime-mapping>
     <mime-mapping>
         <extension>xwd</extension>
@@ -826,7 +842,7 @@
     <mime-mapping>
         <!-- WML Script Source -->
         <extension>wmls</extension>
-        <mime-type>text/vnd.wap.wmls</mime-type>
+        <mime-type>text/vnd.wap.wmlscript</mime-type>
     </mime-mapping>
     <mime-mapping>
         <!-- Compiled WML Script -->
