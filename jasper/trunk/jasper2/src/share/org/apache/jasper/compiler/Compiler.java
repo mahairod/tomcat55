@@ -367,9 +367,8 @@ public class Compiler {
 
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();
-        File f=new File( ctxt.getJspPath());
 
-        includes.setName(f.getCanonicalPath());
+        includes.setName( includes.setName(ctxt.getJspPath());
         info.append("    include="+ ctxt.getJspPath() + "\n" );
 
         try {
