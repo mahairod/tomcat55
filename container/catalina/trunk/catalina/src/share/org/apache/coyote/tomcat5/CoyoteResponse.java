@@ -207,15 +207,10 @@ public class CoyoteResponse
 
 
     /**
-     * The Context within which this Request is being processed.
-     */
-    protected Context context = null;
-
-    /**
      * Return the Context within which this Request is being processed.
      */
     public Context getContext() {
-        return (this.context);
+        return (request.getContext());
     }
 
     /**
@@ -227,7 +222,7 @@ public class CoyoteResponse
      * @param context The newly associated Context
      */
     public void setContext(Context context) {
-        this.context = context;
+        request.setContext(context);
     }
 
 
@@ -794,7 +789,7 @@ public class CoyoteResponse
             return;
         }
 
-        CharsetMapper cm = context.getCharsetMapper();
+        CharsetMapper cm = getContext().getCharsetMapper();
         String charset = cm.getCharset( locale );
         if ( charset != null ){
             coyoteResponse.setCharacterEncoding(charset);
