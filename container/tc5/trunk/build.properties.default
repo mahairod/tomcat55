@@ -151,10 +151,10 @@ log4j.loc=${base-jakarta.loc}/log4j/binaries/jakarta-log4j-1.2.8.tar.gz
 
 
 # ----- Commons DBCP, version 1.1 or later -----
-commons-dbcp.home=${base.path}/commons-dbcp-1.2
+commons-dbcp.home=${base.path}/commons-dbcp-1.2.1
 commons-dbcp.lib=${commons-dbcp.home}
-commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp-1.2.jar
-commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/commons-dbcp-1.2.tar.gz
+commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp-1.2.1.jar
+commons-dbcp.loc=${base-jakarta.loc}/commons/dbcp/binaries/commons-dbcp-1.2.1.tar.gz
 
 
 # ----- Commons HttpClient, version 2.0 or later -----
