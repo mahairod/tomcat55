@@ -81,6 +81,8 @@ Bug No.  Description
 
 13378	 Fix dependency on GenericServlet in the generated .java file.
 
+23101    Fix case dependency problem on Windows platforms.
+
 Configuration:
 
 Bug No.  Description
