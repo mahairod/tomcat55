@@ -112,6 +112,8 @@
        unless="jdbcse.present" />
       <exclude name="**/factory/TransactionFactory.java" 
        unless="jta.present" />
+      <exclude name="**/factory/MailSessionFactory.java"
+       unless="javamail.present" />
       <exclude name="**/factory/SendMailFactory.java"
        unless="javamail.present" />
       <exclude name="**/startup/CatalinaBlock.java" 

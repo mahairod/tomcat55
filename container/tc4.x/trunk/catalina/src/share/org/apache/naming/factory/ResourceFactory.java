@@ -148,6 +148,16 @@ public class ResourceFactory
                             .newInstance();
                     } catch(Throwable t) {
                     }
+                } else if (ref.getClassName().equals("javax.mail.Session")) {
+                    String javaxMailSessionFactoryClassName =
+                        System.getProperty("javax.mail.Session.Factory",
+                                           "org.apache.naming.factory.MailSessionFactory");
+                    try {
+                        factory = (ObjectFactory) 
+                            Class.forName(javaxMailSessionFactoryClassName)
+                            .newInstance();
+                    } catch(Throwable t) {
+                    }
                 }
             }
             if (factory != null) {
