@@ -36,6 +36,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 public class CGIProcessEnvironment extends ProcessEnvironment {
+    
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( CGIProcessEnvironment.class );
+    
     /** cgi command's query parameters */
     private Hashtable queryParameters = null;
 
@@ -340,8 +345,9 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
                 webAppRootDir = webAppRootDir + File.separator
                     + cgiPathPrefix;
             }
-            if (debug >= 2) {
-                log("findCGI: start = [" + webAppRootDir
+            
+            if (log.isDebugEnabled()) {
+                log.debug("findCGI: start = [" + webAppRootDir
                     + "], pathInfo = [" + pathInfo + "] ");
             }
             File currentLocation = new File(webAppRootDir);
@@ -349,15 +355,15 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
             while (!currentLocation.isFile() && dirWalker.hasMoreElements()) {
                 currentLocation = new
                     File(currentLocation, (String) dirWalker.nextElement());
-                if (debug >= 3) {
-                    log("findCGI: traversing to [" + currentLocation + "]");
+                if (log.isDebugEnabled())  {
+                    log.debug("findCGI: traversing to [" + currentLocation + "]");
                 }
             }
             if (!currentLocation.isFile()) {
                 return new String[] { null, null, null, null };
             } else {
-                if (debug >= 2) {
-                    log("findCGI: FOUND cgi at [" + currentLocation + "]");
+                if (log.isDebugEnabled())  {
+                    log.debug("findCGI: FOUND cgi at [" + currentLocation + "]");
                 }
                 path = currentLocation.getAbsolutePath();
                 name = currentLocation.getName();
@@ -370,8 +376,8 @@ public class CGIProcessEnvironment extends ProcessEnvironment {
                     scriptname = contextPath + servletPath + cginame;
                 }
             }
-            if (debug >= 1) {
-                log("findCGI calc: name=" + name + ", path=" + path
+            if (log.isDebugEnabled())  {
+                log.debug("findCGI calc: name=" + name + ", path=" + path
                     + ", scriptname=" + scriptname + ", cginame=" + cginame);
             }
             return new String[] { path, scriptname, cginame, name };
