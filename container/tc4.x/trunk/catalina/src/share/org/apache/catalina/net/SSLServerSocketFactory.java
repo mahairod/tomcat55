@@ -58,6 +58,7 @@
  */ 
 package org.apache.catalina.net;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -185,7 +186,7 @@ public class SSLServerSocketFactory
      * Pathname to the key store file to be used.
      */
     private String keystoreFile =
-        System.getProperty("user.home") + "/.keystore";
+        System.getProperty("user.home") + File.separator + ".keystore";
 
     public String getKeystoreFile() {
         return (this.keystoreFile);
