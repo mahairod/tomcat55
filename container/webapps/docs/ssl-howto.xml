@@ -8,13 +8,14 @@
 
     <properties>
         <author email="ccain@apache.org">Christopher Cain</author>
+        <author email="yoavs@apache.org">Yoav Shapira</author>
         <title>SSL Configuration HOW-TO</title>
     </properties>
 
 <body>
 
 
-<section name="Quick-Start Version">
+<section name="Quick Start">
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
@@ -173,14 +174,16 @@ hosts are commonly used with SSL in a production environment.</p>
 
 <section name="Configuration">
 
-<subsection name="Download and Install JSSE">
+<subsection name="Download and Install JSSE (if needed)">
+<p>Note that JSSE is bundled with Sun's JDK 1.4 and later, so if you're using
+JDK 1.4 and later, you can skip this step.</p>
+
 
 <p>Download the <em>Java Secure Socket Extensions</em> (JSSE) package,
 version 1.0.3 or later, from
 <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>.
 If you built Tomcat from source, you have probably already downloaded this
-package.  If you are running JDK 1.4.x, these classes have
-been integrated directly into the JDK, so you can skip this entire step.</p>
+package.</p>
 
 <p>After expanding the package, there are two ways to make it available to
 Tomcat (choose one or the other):</p>
@@ -502,6 +505,19 @@ of previous messages on this list, as well as subscription and unsubscription
 information, at
 <a href="http://jakarta.apache.org/site/mail.html">http://jakarta.apache.org/site/mail.html"</a>.</p>
 
+</section>
+
+<section name="Miscellaneous Tips and Bits">
+
+<p>To access the SSL session ID from the request, use:<br />
+
+  <code>
+    String sslID = (String)request.getAttribute("javax.servlet.request.ssl_session");
+  </code>
+<br />
+For additional discussion on this area, please see
+<a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=22679">Bugzilla</a>.
+</p>
 </section>
 
 </body>

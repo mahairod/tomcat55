@@ -35,6 +35,9 @@
       <fix>
         <bug>31132</bug>: Better -x/-r support for OS/400 in startup scripts. (yoavs)
       </fix>
+      <update>
+        <bug>22679</bug>: Added misc note on accessing session ID to SSL-HowTo. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
