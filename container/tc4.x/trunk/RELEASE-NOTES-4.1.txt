@@ -1244,6 +1244,10 @@ Catalina Bug Fixes:
          Incorrect handling of negative timeout in
          SingleSignOn.sessionEvent()
 
+[4.1.31] #19701
+         Session persistence
+         Fix serialization of array of custom class
+
 
 ----------------
 Coyote Bug Fixes:
