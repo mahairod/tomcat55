@@ -33,8 +33,12 @@
   </servlet>
 
   <!-- The mapping for the webdav servlet -->
-  <!-- Using /* as the mapping ensures that jasper etc are over-ridden and all
-       requests are processed by the webdav servlet -->
+  <!-- Using /* as the mapping ensures that jasper, welcome files etc are
+       over-ridden and all requests are processed by the webdav servlet.
+       This also overcomes a number of issues with some webdav clients
+       (including MS Webfolders) that do not respond correctly
+ to the
+       redirects (302) that result from using a mapping of / -->
   <servlet-mapping>
     <servlet-name>webdav</servlet-name>
     <url-pattern>/*</url-pattern>
