@@ -592,6 +592,7 @@ public class ManagerServlet
         File deployedPath = deployed;
         if (tag != null) {
             deployedPath = new File(versioned, tag);
+            deployedPath.mkdirs();
         }
 
         // Upload the web application archive to a local WAR file
@@ -693,7 +694,6 @@ public class ManagerServlet
 
         // Find the local WAR file
         File localWar = new File(deployedPath, basename + ".war");
-
         // Find the local context deployment file (if any)
         File localXml = new File(configBase, basename + ".xml");
 
@@ -705,8 +705,7 @@ public class ManagerServlet
 
         // Copy WAR and XML to the host base
         if (tag != null) {
-            deployedPath = deployed;
-            File localWarCopy = new File(deployedPath, basename + ".war");
+            File localWarCopy = new File(deployed, basename + ".war");
             copy(localWar, localWarCopy);
             try {
                 extractXml(localWar, localXml);
@@ -719,13 +718,29 @@ public class ManagerServlet
             localWar = localWarCopy;
         }
 
+        // Compute URLs
         String war = null;
-        String config = null;
-        if (localWar.exists()) {
-            war = localWar.getAbsolutePath();
+        try {
+            URL url = localWar.toURL();
+            war = url.toString();
+            war = "jar:" + war + "!/";
+        } catch(MalformedURLException e) {
+            log("managerServlet.badUrl[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            return;
         }
-        if (localXml.exists()) {
-            config = localXml.getAbsolutePath();
+        String config = null;
+        try {
+            if (localXml.exists()) {
+                URL url = localXml.toURL();
+                config = url.toString();
+            }
+        } catch (MalformedURLException e) {
+            log("managerServlet.badUrl[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            return;
         }
 
         // Deploy webapp
