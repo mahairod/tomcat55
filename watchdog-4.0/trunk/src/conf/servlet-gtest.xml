@@ -1461,7 +1461,7 @@
         <watchdog request="GET /servlet-tests/sresw/ServletResponseWrapperSetContentLengthTest HTTP/1.0"
             testName="ServletResponseWrapperSetContentLengthTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            expectHeaders="Content-Length:104"
+            expectHeaders="Content-Length:106"
             goldenFile="${wgdir}/javax_servlet/ServletResponseWrapper/ServletResponseWrapperSetContentLengthTest.html"
             assertion="The default behavior of this method is to call setContentLength(int len) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object writes a message to a static log file and calls the wrapped objects method. Servlet then tests the returned value and returns the result of the test plus the contents of the static log file."
