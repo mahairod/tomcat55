@@ -8,6 +8,7 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>Tomcat Developers</title>
   </properties>
 
@@ -42,7 +43,7 @@
       <li>Remy Maucherat (remm): Catalina, Connectors, Docs, Release 
           Manager</li>
       <li>Tim Funk (funkman): Catalina, Docs</li>
-      <li>Yoav Shapira (yoavs): Docs, JMX, Catalina, balancer</li>
+      <li>Yoav Shapira (yoavs): Docs, JMX, Catalina, balancer, Release Manager</li>
     </ul>
 
   </section>
