@@ -138,14 +138,14 @@ public class TcpReplicationThread extends WorkerThread
             channel.close();
             return;
         }
-        // resume interest in OP_READ, OP_WRITE
-        int resumeOps = key.interestOps() | SelectionKey.OP_READ;
-        long _debugstart = System.currentTimeMillis();
+        
         //acquire the interestOps mutex
         Object mutex = this.getPool().getInterestOpsMutex();
         synchronized (mutex) {
             // cycle the selector so this key is active again
             key.selector().wakeup();
+            // resume interest in OP_READ, OP_WRITE
+            int resumeOps = key.interestOps() | SelectionKey.OP_READ;
             key.interestOps(resumeOps);
         }
         
