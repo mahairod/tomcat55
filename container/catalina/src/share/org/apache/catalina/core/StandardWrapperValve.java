@@ -245,11 +245,8 @@ final class StandardWrapperValve
         }
 
         // Create the filter chain for this request
-        // Modifications by Greg Murray
         ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
-        ApplicationFilterChain filterChain = factory.createFilterChain(sreq, wrapper, ApplicationFilterFactory.REQUEST);
-        // Greg Murray Modifcations complete
-
+        ApplicationFilterChain filterChain = factory.createFilterChain(sreq, wrapper, servlet, ApplicationFilterFactory.REQUEST);
 
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
