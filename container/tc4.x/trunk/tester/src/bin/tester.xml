@@ -523,6 +523,13 @@
          request="${context.path}/JspParams02.jsp" debug="${debug}"
           status="500"/>
 
+    <!-- ========== Character Encoding and Escaping Tests ================= -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Encoding01.jsp" debug="${debug}"
+          golden="${golden.path}/Encoding01.txt"/>
+
+
   </target>
 
 
