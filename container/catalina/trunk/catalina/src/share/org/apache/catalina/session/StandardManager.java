@@ -396,7 +396,16 @@ public class StandardManager
             doLoad();
         }       
     }
-        
+
+
+    /**
+     * Get new session class to be used in the doLoad() method.
+     */
+    protected StandardSession getNewSession() {
+        return new StandardSession(this);
+    }
+
+
     /**
      * Load any currently active sessions that were previously unloaded
      * to the appropriate persistence mechanism, if any.  If persistence is not
@@ -466,11 +475,11 @@ public class StandardManager
                 if (debug >= 1)
                     log("Loading " + n + " persisted sessions");
                 for (int i = 0; i < n; i++) {
-                    StandardSession session = new StandardSession(this);
+                    StandardSession session = getNewSession();
                     session.readObjectData(ois);
                     session.setManager(this);
                     sessions.put(session.getId(), session);
-                    ((StandardSession) session).activate();
+                    session.activate();
                 }
             } catch (ClassNotFoundException e) {
               log(sm.getString("standardManager.loading.cnfe", e), e);
