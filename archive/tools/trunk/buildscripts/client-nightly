@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export BASEDIR=`dirname $0`
+BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
 ${SCRIPT_DIR}/do-prepare-dir
@@ -15,10 +15,11 @@ echo "<hosttype>$HOSTTYPE</hosttype>" >> $TLOGFILE
 echo "<ostype>$OSTYPE</ostype>" >> $TLOGFILE
 
 # echo $TSEP | cat >> $TLOGFILE
-${SCRIPT_DIR}/do-checkout 
+${SCRIPT_DIR}/do-checkout >> $TLOGFILE
 
 # echo $TSEP | cat >> $TLOGFILE
 ${SCRIPT_DIR}/do-build >> $TLOGFILE
+${SCRIPT_DIR}/do-build-test >> $TLOGFILE
 ${SCRIPT_DIR}/do-build-apache1.3 >> $TLOGFILE
 
 # echo $TSEP | cat >> $TLOGFILE
