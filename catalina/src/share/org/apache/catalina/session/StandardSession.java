@@ -321,6 +321,11 @@ public class StandardSession
      */
     public String getId() {
 
+         if ( !isValid() ) {
+             throw new IllegalStateException
+                 (sm.getString("standardSession.getId.ise"));
+         }
+
         return (this.id);
 
     }
