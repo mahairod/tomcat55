@@ -94,6 +94,10 @@ public class McastServiceImpl
      * When was the service started
      */
     protected long serviceStartTime = System.currentTimeMillis();
+    
+    protected int mcastTTL = -1;
+    protected int mcastSoTimeout = -1;
+    protected InetAddress mcastBindAddress = null;
 
     /**
      * Create a new mcast service impl
@@ -113,18 +117,17 @@ public class McastServiceImpl
         int port,
         InetAddress bind,
         InetAddress mcastAddress,
+        int ttl,
+        int soTimeout,
         MembershipListener service)
     throws IOException {
-        if ( bind != null) socket = new MulticastSocket(new java.net.InetSocketAddress(bind,port));
-        else socket = new MulticastSocket(port);
-        if ( bind != null ) {
-            log.info("Setting multihome multicast interface to:"+bind);
-            socket.setInterface(bind);
-            log.info("Done setting interface for multicast.");
-        }//end if
         this.member = member;
         address = mcastAddress;
         this.port = port;
+        this.mcastSoTimeout = soTimeout;
+        this.mcastTTL = ttl;
+        this.mcastBindAddress = bind;
+        setupSocket();
         sendPacket = new DatagramPacket(new byte[1000],1000);
         sendPacket.setAddress(address);
         sendPacket.setPort(port);
@@ -135,6 +138,25 @@ public class McastServiceImpl
         timeToExpiration = expireTime;
         this.service = service;
         this.sendFrequency = sendFrequency;
+    }
+    
+    protected void setupSocket() throws IOException {
+        if (mcastBindAddress != null) socket = new MulticastSocket(new java.net.
+            InetSocketAddress(mcastBindAddress, port));
+        else socket = new MulticastSocket(port);
+        if (mcastBindAddress != null) {
+            log.info("Setting multihome multicast interface to:" +
+                     mcastBindAddress);
+            socket.setInterface(mcastBindAddress);
+        } //end if
+        if ( mcastSoTimeout >= 0 ) {
+            log.info("Setting cluster mcast soTimeout to "+mcastSoTimeout);
+            socket.setSoTimeout(mcastSoTimeout);
+        }
+        if ( mcastTTL >= 0 ) {
+            log.info("Setting cluster mcast TTL to " + mcastTTL);
+            socket.setTimeToLive(mcastTTL);
+        }
     }
 
     /**
