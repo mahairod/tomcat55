@@ -62,6 +62,7 @@ package org.apache.jasper.compiler;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.JarFile;
 import javax.servlet.jsp.tagext.*;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,23 +88,24 @@ class JspDocumentParser extends DefaultHandler
     private static final String LEXICAL_HANDLER_PROPERTY
 	= "http://xml.org/sax/properties/lexical-handler";
 
+    private static final EnableDTDValidationException ENABLE_DTD_VALIDATION_EXCEPTION
+        = new EnableDTDValidationException("jsp.error.enable_dtd_validation",
+                                           null);
+
     private ParserController parserController;
     private JspCompilationContext ctxt;    
     private PageInfo pageInfo;
-
-    // XML document source
-    private InputSource inputSource;
-
     private String path;
 
     // Node representing the XML element currently being parsed
     private Node current;
 
-    // Document locator
     private Locator locator;
 
     // Flag indicating whether we are inside DTD declarations
     private boolean inDTD;
+
+    private boolean isValidating;
 
     private ErrorDispatcher err;
     private boolean isTagFile;
@@ -115,18 +117,17 @@ class JspDocumentParser extends DefaultHandler
      */
     public JspDocumentParser(ParserController pc,
 			     String path,
-			     InputStream inStream,
+			     JarFile jarFile,
 			     boolean isTagFile,
 			     boolean directivesOnly) {
-	this.parserController = pc;
-	this.ctxt = pc.getJspCompilationContext();
-	this.pageInfo = pc.getCompiler().getPageInfo();
-	this.err = pc.getCompiler().getErrorDispatcher();
-	this.path = path;
-	this.inputSource = new InputSource(inStream);
-	this.isTagFile = isTagFile;
-	this.directivesOnly = directivesOnly;
-	this.isTop = true;
+        this.parserController = pc;
+        this.ctxt = pc.getJspCompilationContext();
+        this.pageInfo = pc.getCompiler().getPageInfo();
+        this.err = pc.getCompiler().getErrorDispatcher();
+        this.path = path;
+        this.isTagFile = isTagFile;
+        this.directivesOnly = directivesOnly;
+        this.isTop = true;
     }
 
     /*
@@ -136,7 +137,7 @@ class JspDocumentParser extends DefaultHandler
      */
     public static Node.Nodes parse(ParserController pc,
 				   String path,
-				   InputStream inStream,
+				   JarFile jarFile,
 				   Node parent,
 				   boolean isTagFile,
 				   boolean directivesOnly,
@@ -145,8 +146,9 @@ class JspDocumentParser extends DefaultHandler
 				   boolean isEncodingSpecifiedInProlog)
 	        throws JasperException {
 
-	JspDocumentParser jspDocParser = new JspDocumentParser(pc, path,
-							       inStream,
+	JspDocumentParser jspDocParser = new JspDocumentParser(pc,
+                                                               path,
+							       jarFile,
 							       isTagFile,
 							       directivesOnly);
 	Node.Nodes pageNodes = null;
@@ -166,21 +168,25 @@ class JspDocumentParser extends DefaultHandler
 		jspDocParser.isTop = false;
 	    }
 
-	    // Use the default (non-validating) parser
-	    SAXParserFactory factory = SAXParserFactory.newInstance();
-	    factory.setNamespaceAware(true);
-	    // Preserve xmlns attributes
-	    factory.setFeature("http://xml.org/sax/features/namespace-prefixes",
-			       true);
-
-	    // Configure the parser
-	    SAXParser saxParser = factory.newSAXParser();
-	    XMLReader xmlReader = saxParser.getXMLReader();
-	    xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY, jspDocParser);
-	    xmlReader.setErrorHandler(jspDocParser);
-
 	    // Parse the input
-	    saxParser.parse(jspDocParser.inputSource, jspDocParser);
+            SAXParser saxParser = getSAXParser(false, jspDocParser);
+            try {
+                saxParser.parse(jspDocParser.getInputSource(
+                                                        path,
+                                                        jarFile,
+                                                        jspDocParser.ctxt,
+                                                        jspDocParser.err),
+                                jspDocParser);
+            } catch (EnableDTDValidationException e) {
+                saxParser = getSAXParser(true, jspDocParser);
+                jspDocParser.isValidating = true;
+                saxParser.parse(jspDocParser.getInputSource(
+                                                        path,
+                                                        jarFile,
+                                                        jspDocParser.ctxt,
+                                                        jspDocParser.err),
+                                jspDocParser);
+            }
 
 	    if (parent == null) {
 		jspDocParser.addInclude(dummyRoot,
@@ -194,9 +200,9 @@ class JspDocumentParser extends DefaultHandler
 	    jspDocParser.err.jspError("jsp.error.data.file.read", path, ioe);
 	} catch (Exception e) {
 	    jspDocParser.err.jspError(
-		new Mark(path, ((SAXParseException) e).getLineNumber(),
-			 ((SAXParseException) e).getColumnNumber()),
-		e.getMessage());
+                new Mark(path, ((SAXParseException) e).getLineNumber(),
+                         ((SAXParseException) e).getColumnNumber()),
+                e.getMessage());
 	}
 
 	return pageNodes;
@@ -537,7 +543,11 @@ class JspDocumentParser extends DefaultHandler
      * See org.xml.sax.ext.LexicalHandler.
      */
     public void startDTD(String name, String publicId,
-			 String systemId) throws SAXException {   
+			 String systemId) throws SAXException {
+        if (!isValidating) {
+            fatalError(ENABLE_DTD_VALIDATION_EXCEPTION);
+        }
+ 
 	inDTD = true;
     }
           
@@ -955,4 +965,68 @@ class JspDocumentParser extends DefaultHandler
 	    }
 	}
     }
+
+    /*
+     * Gets SAXParser.
+     *
+     * @param validating Indicates whether the requested SAXParser should
+     * be validating
+     * @param jspDocParser The JSP document parser
+     *
+     * @return The SAXParser
+     */
+    private static SAXParser getSAXParser(boolean validating,
+                                          JspDocumentParser jspDocParser)
+            throws Exception {
+          
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+
+        // Preserve xmlns attributes
+        factory.setFeature("http://xml.org/sax/features/namespace-prefixes",
+                           true);
+        factory.setFeature("http://xml.org/sax/features/validation",
+                           validating);
+
+        // Configure the parser
+        SAXParser saxParser = factory.newSAXParser();
+        XMLReader xmlReader = saxParser.getXMLReader();
+        xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY, jspDocParser);
+        xmlReader.setErrorHandler(jspDocParser);
+
+        return saxParser;
+    }
+
+    /*
+     * Gets an InputSource to the JSP document or tag file to be parsed.
+     *
+     * @param path The path to the JSP document or tag file to be parsed
+     * @param jarFile The JAR file from which to read the JSP document or tag
+     * file, or null if the JSP document or tag file is to be read from the
+     * filesystem
+     * @param ctxt The JSP compilation context
+     * @param err The error dispatcher
+     *
+     * @return An InputSource to the requested JSP document or tag file
+     */
+    private InputSource getInputSource(String path,
+                                       JarFile jarFile,
+                                       JspCompilationContext ctxt,
+                                       ErrorDispatcher err)
+            throws Exception {
+
+	return new InputSource(JspUtil.getInputStream(path, jarFile, ctxt,
+						      err));
+    }
+
+    /*
+     * Exception indicating that a DOCTYPE declaration is present, but
+     * validation is turned off.
+     */
+    private static class EnableDTDValidationException extends SAXParseException {
+
+        EnableDTDValidationException(String message, Locator loc) {
+            super(message, loc);
+        }
+    }  
 }
