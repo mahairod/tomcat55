@@ -2305,12 +2305,12 @@
   </mbean>
 
 
-  <mbean         name="JGCluster"
+  <mbean         name="SimpleTcpCluster"
             className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="JavaGrtoups Cluster implementation"
+          description="Tcp Cluster implementation"
                domain="Catalina"
                 group="Cluster"
-                 type="org.apache.catalina.cluster.JGCluster">
+                 type="org.apache.catalina.cluster.tcp.SimpleTcpCluster">
 
     <attribute   name="protocolStack"
           description="JavaGroups protocol stack selection"
@@ -2319,12 +2319,12 @@
   </mbean>
 
 
-  <mbean         name="JGManager"
+  <mbean         name="SimpleTcpReplicationManager"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Clustered implementation of the Manager interface"
                domain="Catalina"
                 group="Manager"
-                 type="org.apache.catalina.cluster.JGManager">
+                 type="org.apache.catalina.cluster.tcp.SimpleTcpReplicationManager">
 
     <attribute   name="algorithm"
           description="The message digest algorithm to be used when generating
@@ -2443,6 +2443,25 @@
                domain="Catalina"
                 group="Valve"
                  type="org.apache.catalina.core.StandardWrapperValve">
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+  </mbean>
+
+
+<mbean         name="ReplicationValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Valve for simple tcp replication"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.cluster.tcp.ReplicationValve">
 
     <attribute   name="className"
           description="Fully qualified class name of the managed object"
