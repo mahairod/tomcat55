@@ -302,7 +302,7 @@ final class ApplicationFilterChain implements FilterChain {
     /**
      * Set the servlet that will be executed at the end of this chain.
      *
-     * @param wrapper The Wrapper for the servlet to be executed
+     * @param servlet The Wrapper for the servlet to be executed
      */
     void setServlet(Servlet servlet) {
 

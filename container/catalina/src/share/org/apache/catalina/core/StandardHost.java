@@ -328,7 +328,7 @@ public class StandardHost
     /**
      * Set the deploy on startup flag value for this host.
      * 
-     * @param autoDeploy The new deploy on startup flag
+     * @param deployOnStartup The new deploy on startup flag
      */
     public void setDeployOnStartup(boolean deployOnStartup) {
 

@@ -165,7 +165,7 @@ final class StandardHostValve
      *
      * @param request The request being processed
      * @param response The response being generated
-     * @param exception The exception that occurred (which possibly wraps
+     * @param throwable The exception that occurred (which possibly wraps
      *  a root cause exception
      */
     protected void throwable(Request request, Response response,
