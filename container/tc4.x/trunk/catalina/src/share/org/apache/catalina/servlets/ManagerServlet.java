@@ -805,7 +805,19 @@ public class ManagerServlet
             writer.println(sm.getString("managerServlet.resourcesAll"));
         }
 
-        printResources(writer, "", global, type);
+        Class clazz = null;
+        try {
+            if (type != null) {
+                clazz = Class.forName(type);
+            }
+        } catch (Throwable t) {
+            log("ManagerServlet.resources[" + type + "]", t);
+            writer.println(sm.getString("managerServlet.exception",
+                                        t.toString()));
+            return;
+        }
+
+        printResources(writer, "", global, type, clazz);
 
     }
 
@@ -815,7 +827,7 @@ public class ManagerServlet
      */
     protected void printResources(PrintWriter writer, String prefix,
                                   javax.naming.Context namingContext,
-                                  String type) {
+                                  String type, Class clazz) {
 
         try {
             NamingEnumeration items = namingContext.listBindings("");
@@ -824,10 +836,10 @@ public class ManagerServlet
                 if (item.getObject() instanceof javax.naming.Context) {
                     printResources
                         (writer, prefix + item.getName() + "/",
-                         (javax.naming.Context) item.getObject(), type);
+                         (javax.naming.Context) item.getObject(), type, clazz);
                 } else {
-                    if ((type != null) &&
-                        (!type.equals(item.getClassName()))) {
+                    if ((clazz != null) &&
+                        (!(clazz.isInstance(item.getObject())))) {
                         continue;
                     }
                     writer.print(prefix + item.getName());
