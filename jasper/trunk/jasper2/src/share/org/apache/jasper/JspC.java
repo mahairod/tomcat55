@@ -1,12 +1,12 @@
 /*
  * Copyright 1999,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -108,6 +108,7 @@ public class JspC implements Options {
     private static final String SWITCH_TRIM_SPACES = "-trimSpaces";
     private static final String SWITCH_CLASSPATH = "-classpath";
     private static final String SWITCH_DIE = "-die";
+    private static final String SWITCH_POOLING = "-poolingEnabled";
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
     private static final int NO_WEBXML = 0;
@@ -116,19 +117,20 @@ public class JspC implements Options {
     private static final int DEFAULT_DIE_LEVEL = 1;
     private static final int NO_DIE_LEVEL = 0;
 
-    private static final String[] insertBefore = 
-    { "</web-app>", "<servlet-mapping>", "<session-config>", 
+    private static final String[] insertBefore =
+    { "</web-app>", "<servlet-mapping>", "<session-config>",
       "<mime-mapping>", "<welcome-file-list>", "<error-page>", "<taglib>",
       "<resource-env-ref>", "<resource-ref>", "<security-constraint>",
-      "<login-config>", "<security-role>", "<env-entry>", "<ejb-ref>", 
+      "<login-config>", "<security-role>", "<env-entry>", "<ejb-ref>",
       "<ejb-local-ref>" };
 
-    private static int die; 
+    private static int die;
     private String classPath = null;
     private URLClassLoader loader = null;
     private boolean trimSpaces = false;
     private boolean xpoweredBy;
     private boolean mappedFile = false;
+    private boolean poolingEnabled = true;
     private File scratchDir;
     private String ieClassId = DEFAULT_IE_CLASS_ID;
     private String targetPackage;
@@ -261,6 +263,13 @@ public class JspC implements Options {
                 die = dieLevel;
             } else if (tok.equals(SWITCH_HELP)) {
                 helpNeeded = true;
+            } else if (tok.equals(SWITCH_POOLING)) {
+                tok = nextArg();
+                if ("false".equals(tok)) {
+                    poolingEnabled = false;
+                } else {
+                    poolingEnabled = true;
+                }
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
@@ -296,7 +305,11 @@ public class JspC implements Options {
     }
 
     public boolean isPoolingEnabled() {
-        return true;
+        return poolingEnabled;
+    }
+
+    public void setPoolingEnabled(boolean poolingEnabled) {
+        this.poolingEnabled = poolingEnabled;
     }
 
     public boolean isXpoweredBy() {
@@ -312,19 +325,19 @@ public class JspC implements Options {
     }
 
     public int getTagPoolSize() {
-	return Constants.MAX_POOL_SIZE;
+        return Constants.MAX_POOL_SIZE;
     }
 
     /**
      * Are we supporting HTML mapped servlets?
      */
     public boolean getMappedFile() {
-	return mappedFile;
+        return mappedFile;
     }
 
     // Off-line compiler, no need for security manager
     public Object getProtectionDomain() {
-	return null;
+        return null;
     }
 
     public boolean getSendErrorToClient() {
@@ -366,14 +379,14 @@ public class JspC implements Options {
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
      */
     public boolean isSmapSuppressed() {
-	return true;
+        return true;
     }
 
    /**
      * Should SMAP info for JSR45 debugging be dumped to a file?
      */
     public boolean isSmapDumped() {
-	return false;
+        return false;
     }
 
     /**
@@ -413,7 +426,7 @@ public class JspC implements Options {
     }
 
     public TldLocationsCache getTldLocationsCache() {
-	return tldLocationsCache;
+    return tldLocationsCache;
     }
 
     /**
@@ -423,14 +436,14 @@ public class JspC implements Options {
      * @return String The encoding
      */
     public String getJavaEncoding() {
-	return javaEncoding;
+        return javaEncoding;
     }
 
     /**
      * Sets the encoding to use for
      * java files.
      *
-     * @param encodingName The name, e.g. "UTF-8" 
+     * @param encodingName The name, e.g. "UTF-8"
      */
     public void setJavaEncoding(String encodingName) {
       javaEncoding = encodingName;
@@ -531,7 +544,7 @@ public class JspC implements Options {
      * Obtain JSP configuration informantion specified in web.xml.
      */
     public JspConfig getJspConfig() {
-	return jspConfig;
+        return jspConfig;
     }
 
     public TagPluginManager getTagPluginManager() {
@@ -576,13 +589,13 @@ public class JspC implements Options {
         File webappBase = new File(uriRoot);
         File webXml = new File(webappBase, "WEB-INF/web.xml");
         File webXml2 = new File(webappBase, "WEB-INF/web2.xml");
-        String insertStartMarker = 
+        String insertStartMarker =
             Localizer.getMessage("jspc.webinc.insertStart");
-        String insertEndMarker = 
+        String insertEndMarker =
             Localizer.getMessage("jspc.webinc.insertEnd");
 
         BufferedReader reader = new BufferedReader(new FileReader(webXml));
-        BufferedReader fragmentReader = 
+        BufferedReader fragmentReader =
             new BufferedReader(new FileReader(webxmlFile));
         PrintWriter writer = new PrintWriter(new FileWriter(webXml2));
 
@@ -727,15 +740,15 @@ public class JspC implements Options {
                 rootCause = ((JasperException) rootCause).getRootCause();
             }
             log.error(Localizer.getMessage("jspc.error.generalException",
-					   file),
-		      rootCause);
+                       file),
+              rootCause);
             throw je;
 
         } catch (Exception e) {
-	    if ((e instanceof FileNotFoundException) && log.isWarnEnabled()) {
-		log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
-					      e.getMessage()));
-	    }
+        if ((e instanceof FileNotFoundException) && log.isWarnEnabled()) {
+        log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+                          e.getMessage()));
+        }
             throw new JasperException(e);
         }
     }
@@ -779,12 +792,12 @@ public class JspC implements Options {
     public void execute() throws JasperException {
 
         try {
-	    if (uriRoot == null) {
-		if( pages.size() == 0 ) {
-		    throw new JasperException(
-                        Localizer.getMessage("jsp.error.jspc.missingTarget"));
-		}
-		String firstJsp=(String)pages.elementAt( 0 );
+            if (uriRoot == null) {
+                if( pages.size() == 0 ) {
+                    throw new JasperException(
+                                Localizer.getMessage("jsp.error.jspc.missingTarget"));
+                }
+                String firstJsp=(String)pages.elementAt( 0 );
                 File firstJspF = new File( firstJsp );
                 if (!firstJspF.exists()) {
                    throw new JasperException(
@@ -792,58 +805,58 @@ public class JspC implements Options {
                                             firstJsp));
                 }
                 locateUriRoot( firstJspF );
-	    }
+            }
 
-	    if( context==null )
-		initServletContext();
+            if( context==null )
+                initServletContext();
 
-	    // No explicit page, we'll process all .jsp in the webapp
-	    if (pages.size() == 0) {
-		scanFiles( new File( uriRoot ));
-	    }
+            // No explicit page, we'll process all .jsp in the webapp
+            if (pages.size() == 0) {
+                scanFiles( new File( uriRoot ));
+            }
 
             if (uriRoot == null) {
-		throw new JasperException(
-                    Localizer.getMessage("jsp.error.jspc.no_uriroot"));
-	    }
-	    File uriRootF = new File(uriRoot);
-	    if (!uriRootF.exists() || !uriRootF.isDirectory()) {
-		throw new JasperException(
-                    Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
-	    }
+                throw new JasperException(
+                            Localizer.getMessage("jsp.error.jspc.no_uriroot"));
+            }
+            File uriRootF = new File(uriRoot);
+            if (!uriRootF.exists() || !uriRootF.isDirectory()) {
+                throw new JasperException(
+                            Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
+            }
 
-	    initWebXml();
+            initWebXml();
 
-	    Enumeration e = pages.elements();
-	    while (e.hasMoreElements()) {
-		String nextjsp = e.nextElement().toString();
-		try {
-		    File fjsp = new File(nextjsp);
-		    if (!fjsp.exists()) {
-			if (log.isWarnEnabled()) {
-			    log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
-							  fjsp.toString()));
-			}
-			continue;
-		    }
-		    String s = fjsp.getCanonicalPath();
-		    //System.out.println("**" + s);
-		    if (s.startsWith(uriRoot)) {
-			nextjsp = s.substring(uriRoot.length());
-		    }
-		} catch (IOException ioe) {
-		    // if we got problems dont change the file name
-		}
+            Enumeration e = pages.elements();
+            while (e.hasMoreElements()) {
+                String nextjsp = e.nextElement().toString();
+                try {
+                    File fjsp = new File(nextjsp);
+                    if (!fjsp.exists()) {
+                        if (log.isWarnEnabled()) {
+                            log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+                                          fjsp.toString()));
+                        }
+                        continue;
+                    }
+                    String s = fjsp.getCanonicalPath();
+                    //System.out.println("**" + s);
+                    if (s.startsWith(uriRoot)) {
+                        nextjsp = s.substring(uriRoot.length());
+                    }
+                } catch (IOException ioe) {
+                    // if we got problems dont change the file name
+                }
 
-		if (nextjsp.startsWith("." + File.separatorChar)) {
-		    nextjsp = nextjsp.substring(2);
-		}
+                if (nextjsp.startsWith("." + File.separatorChar)) {
+                    nextjsp = nextjsp.substring(2);
+                }
 
-		processFile(nextjsp);
-	    }
+                processFile(nextjsp);
+            }
 
-	    completeWebXml();
-	    
+            completeWebXml();
+
             if (addWebXmlMappings) {
                 mergeIntoWebXml();
             }
@@ -930,8 +943,7 @@ public class JspC implements Options {
             context =new JspCServletContext
                 (new PrintWriter(System.out),
                  new URL("file:" + uriRoot.replace('\\','/') + '/'));
-            tldLocationsCache = new
-                TldLocationsCache(context, true);
+            tldLocationsCache = new TldLocationsCache(context, true);
         } catch (MalformedURLException me) {
             System.out.println("**" + me);
         }
@@ -941,7 +953,7 @@ public class JspC implements Options {
     }
 
     private void initClassLoader(JspCompilationContext clctxt)
-	    throws IOException {
+        throws IOException {
 
         classPath = getClassPath();
 
@@ -1038,10 +1050,10 @@ public class JspC implements Options {
                     if (g.exists() && g.isDirectory()) {
                         uriRoot = f.getCanonicalPath();
                         uriBase = tUriBase;
-			if (log.isInfoEnabled()) {
-			    log.info(Localizer.getMessage("jspc.implicit.uriRoot",
-							  uriRoot));
-			}
+            if (log.isInfoEnabled()) {
+                log.info(Localizer.getMessage("jspc.implicit.uriRoot",
+                              uriRoot));
+            }
                         break;
                     }
                     if (f.exists() && f.isDirectory()) {
