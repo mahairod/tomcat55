@@ -469,6 +469,10 @@ public class Compiler {
             project = null;
             pageInfo = null;
             pageNodes = null;
+            if (ctxt.getWriter() != null) {
+                ctxt.getWriter().close();
+                ctxt.setWriter(null);
+            }
         }
     }
 
