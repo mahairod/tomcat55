@@ -311,3 +311,13 @@ and define your context like this:
 
 where "r:" is mapped to this share.
 
+6.11 Misconfiguration Can Cause CPU-Bound Loop
+
+If you misconfigure Tomcat 3.2 in a way that there is no valid context to
+handle a request (such as removing the root context and then attempting a
+request that should be handled by that context), Tomcat will enter a CPU-bound
+loop instead of responding with a 404 error.
+
+Workaround:  kill the offending Tomcat process and correct your server.xml
+file such that there is a properly configured root context.
+
