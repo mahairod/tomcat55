@@ -210,7 +210,6 @@ public final class StandardServer
         "org.apache.catalina.startup.EngineConfig",
         "org.apache.catalina.startup.HostConfig",
         "org.apache.catalina.valves.CertificatesValve",
-        "org.apache.catalina.valves.ErrorDispatcherValve",
         "org.apache.catalina.valves.ErrorReportValve",
         "org.apache.catalina.valves.RequestListenerValve",
     };
