@@ -14,13 +14,38 @@
 
 <body>
 
+<section name="Tomcat 5.0.28 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <fix>
+        <bug>30239</bug>: Updated IIS how-to to link to Wiki page with instrutions for IIS 5 and IIS 6 configurations. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Catalina">
+  </subsection>
+
+  <subsection name="Coyote">
+  </subsection>
+  
+  <subsection name="Jasper">
+  </subsection>
+  
+  <subsection name="Cluster">
+  </subsection>
+
+  <subsection name="Webapps">
+  </subsection>
+</section>
+
 <section name="Tomcat 5.0.27 (yoavs)">
   <subsection name="General">
     <changelog>
       <update>Updated dependencies on commons-dbcp (to 1.2.1), commons-pool (to 1.2), and commons-logging (to 1.0.4). (yoavs)
       </update>
       <fix>
-        <bug>29368</bug>: Replaced references to xmlParserAPIs.jar with xml-apis.jar, as the former is now deprecated in Xerces.  Users wishing to use old versions of Xerces that don't have xml-apis.jar can still do so without a problem.  Users wishing to build tomcat using xmlParserAPIs.jar instead of xml-apis.jar can also do so with a trivial edit in the build.xml file.
+        <bug>29368</bug>: Replaced references to xmlParserAPIs.jar with xml-apis.jar, as the former is now deprecated in Xerces.  Users wishing to use old versions of Xerces that don't have xml-apis.jar can still do so without a problem.  Users wishing to build tomcat using xmlParserAPIs.jar instead of xml-apis.jar can also do so with a trivial edit in the build.xml file. (yoavs)
       </fix>
     </changelog>
   </subsection>
