@@ -294,8 +294,9 @@ public class SingleSignOn
         // If so, we'll just remove the expired session from the
         // SSO.  If the session was logged out, we'll log out
         // of all session associated with the SSO.
-        if (System.currentTimeMillis() - session.getLastAccessedTime() >=
-            session.getMaxInactiveInterval() * 1000) {
+        if ((session.getMaxInactiveInterval() > 0)
+            && (System.currentTimeMillis() - session.getLastAccessedTime() >=
+                session.getMaxInactiveInterval() * 1000)) {
             removeSession(ssoId, session);
         } else {
             // The session was logged out.
