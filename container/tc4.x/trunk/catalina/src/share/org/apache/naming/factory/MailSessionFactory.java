@@ -160,7 +160,7 @@ public class MailSessionFactory implements ObjectFactory {
                     }
 
                     // Create and return the new Session object
-                    Session session = Session.getDefaultInstance(props, null);
+                    Session session = Session.getInstance(props, null);
                     return (session);
 
 		}
