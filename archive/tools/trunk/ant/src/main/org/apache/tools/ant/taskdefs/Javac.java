@@ -42,7 +42,7 @@ public class Javac extends Task {
     private String compileClasspath;
     private boolean debug = false;
     private boolean optimize = false;
-    private boolean deprecation = true;
+    private boolean deprecation = false;
     private String target;
     private String bootclasspath;
     private String extdirs;
