@@ -74,6 +74,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
@@ -353,7 +354,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     private void parseTLD(String uri, InputStream in) 
         throws JasperException
     {
-        String validatorclass = null;
 	tld = JspUtil.parseXMLDoc(uri, in);
         Vector tagVector = new Vector();
         NodeList list = tld.getElementsByTagName("taglib");
@@ -389,10 +389,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.info = t.getData();
-            } else if (tname.equals("validatorclass")) {
-                Text t = (Text) e.getFirstChild();
-                if (t != null)
-                    validatorclass = t.getData().trim();
+            } else if (tname.equals("validator")) {
+		this.tagLibraryValidator = createValidator(e);
             } else if (tname.equals("tag"))
                 tagVector.addElement(createTagInfo(e));
             else {
@@ -405,26 +403,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
         }
 
-        // Setup the TagLibraryValidator object if the validatorclass tag
-        // has been set for the library.
-        
-        TagLibraryValidator tlv = null;
-        if (validatorclass != null && !validatorclass.equals("")) {
-            try {
-                Class tlvClass = 
-		    ctxt.getClassLoader().loadClass(validatorclass);
-                tlv = (TagLibraryValidator) tlvClass.newInstance();
-                //@@@ removed in 1.2PFD tlv.setTagLibraryInfo(this);
-                this.tagLibraryValidator = tlv;
-            } catch (Exception ex) {
-                Constants.message("jsp.warning.tlvclass.is.null",
-				  new Object[] {
-				      validatorclass, 
-				      "EXCEPTION: " + ex.getMessage()
-				  },
-				  Logger.ERROR);
-            }
-        }
 
         this.tags = new TagInfo[tagVector.size()];
         tagVector.copyInto (this.tags);
@@ -638,6 +616,78 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         }
         return new TagVariableInfo(nameGiven, nameFromAttribute,
 				   className, declare, scope);
+    }
+
+    private TagLibraryValidator createValidator(Element elem) {
+        String validatorClass = null;
+	Map initParams = new Hashtable();
+        
+        NodeList list = elem.getChildNodes();
+        for(int i=0; i<list.getLength(); i++) {
+            Node tmp  = list.item(i);
+	    if (!(tmp instanceof Element)) continue;
+	    Element e = (Element) tmp;
+            String tname = e.getTagName();
+            if (tname.equals("validator-class"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    validatorClass = t.getData();
+            } else if (tname.equals("init-param"))  {
+		String[] initParam = createInitParam(e);
+		initParams.put(initParam[0], initParam[1]);
+            } else 
+                Constants.message("jsp.warning.unknown.element.in.validator", //@@@ add in properties
+                                  new Object[] {e.getTagName()},
+                                  Logger.WARNING);
+        }
+
+        TagLibraryValidator tlv = null;
+        if (validatorClass != null && !validatorClass.equals("")) {
+            try {
+                Class tlvClass = 
+		    ctxt.getClassLoader().loadClass(validatorClass);
+                tlv = (TagLibraryValidator)tlvClass.newInstance();
+                //@@@ removed in 1.2PFD tlv.setTagLibraryInfo(this);
+            } catch (Exception ex) {
+                Constants.message("jsp.warning.tlvclass.is.null",
+				  new Object[] {
+				      validatorClass, 
+				      "EXCEPTION: " + ex.getMessage()
+				  },
+				  Logger.ERROR);
+            }
+        }
+	if (tlv != null) {
+	    tlv.setInitParameters(initParams);
+	}
+	return tlv;
+    }
+
+    String[] createInitParam(Element elem) {
+        String[] initParam = new String[2];
+        
+        NodeList list = elem.getChildNodes();
+        for(int i=0; i<list.getLength(); i++) {
+            Node tmp  = list.item(i);
+	    if (!(tmp instanceof Element)) continue;
+	    Element e = (Element) tmp;
+            String tname = e.getTagName();
+            if (tname.equals("param-name"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    initParam[0] = t.getData();
+            } else if (tname.equals("param-value"))  {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    initParam[1] = t.getData();
+            } else if (tname.equals("description"))  {
+		// do nothing
+            } else 
+                Constants.message("jsp.warning.unknown.element.in.initParam", //@@@ properties
+                                  new Object[] {e.getTagName()},
+                                  Logger.WARNING);
+        }
+	return initParam;
     }
 
     static void copy(InputStream in, String fileName) 
