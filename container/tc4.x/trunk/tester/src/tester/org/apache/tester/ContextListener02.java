@@ -2,7 +2,7 @@
  *                                                                           *
  *                 The Apache Software License,  Version 1.1                 *
  *                                                                           *
- *         Copyright (c) 1999, 2000  The Apache Software Foundation.         *
+ *      Copyright (c) 1999, 2000, 2001  The Apache Software Foundation.      *
  *                           All rights reserved.                            *
  *                                                                           *
  * ========================================================================= *
@@ -55,152 +55,51 @@
  *                                                                           *
  * ========================================================================= */
 
-package org.apache.tester.shared;
+package org.apache.tester;
 
 
-import java.io.Serializable;
+import java.beans.PropertyEditorManager;
 import java.sql.Date;
-import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 
 /**
- * Simple JavaBean to use for session attribute tests.  It is Serializable
- * so that instances can be saved and restored across server restarts.
- * <p>
- * This is functionally equivalent to <code>SessionBean</code>, but stored
- * in a different package so that it gets deployed into a JAR file under
- * <code>$CATALINA_HOME/lib</code>.
+ * Application event listener for context events.  Ensures that the property
+ * editor classes for this web application are appropriately registered.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class SharedSessionBean implements
-    HttpSessionActivationListener, HttpSessionBindingListener, Serializable {
+public class ContextListener02
+    implements ServletContextListener {
 
 
-    // ------------------------------------------------------------- Properties
+    private ServletContext context = null;
 
 
-    /**
-     * A date property for use with property editor tests.
-     */
-    protected Date dateProperty =
-        new Date(System.currentTimeMillis());
-
-    public Date getDateProperty() {
-        return (this.dateProperty);
+    public void contextDestroyed(ServletContextEvent event) {
+        context.log("ContextListener02: contextDestroyed()");
+        context = null;
     }
 
-    public void setDateProperty(Date dateProperty) {
-        this.dateProperty = dateProperty;
-    }
-
-
-    /**
-     * The lifecycle events that have happened on this bean instance.
-     */
-    protected String lifecycle = "";
-
-    public String getLifecycle() {
-        return (this.lifecycle);
-    }
-
-    public void setLifecycle(String lifecycle) {
-        this.lifecycle = lifecycle;
-    }
-
-
-    /**
-     * A string property.
-     */
-    protected String stringProperty = "Default String Property Value";
-
-    public String getStringProperty() {
-        return (this.stringProperty);
-    }
-
-    public void setStringProperty(String stringProperty) {
-        this.stringProperty = stringProperty;
-    }
-
-
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Return a string representation of this bean.
-     */
-    public String toString() {
-
-        StringBuffer sb = new StringBuffer("SharedSessionBean[lifecycle=");
-        sb.append(this.lifecycle);
-        sb.append(",dateProperty=");
-        sb.append(dateProperty);
-        sb.append(",stringProperty=");
-        sb.append(this.stringProperty);
-        sb.append("]");
-        return (sb.toString());
-
-    }
-
-
-    // ---------------------------------- HttpSessionActivationListener Methods
-
-
-    /**
-     * Receive notification that this session was activated.
-     *
-     * @param event The session event that has occurred
-     */
-    public void sessionDidActivate(HttpSessionEvent event) {
-
-        lifecycle += "/sda";
-
-    }
-
-
-    /**
-     * Receive notification that this session will be passivated.
-     *
-     * @param event The session event that has occurred
-     */
-    public void sessionWillPassivate(HttpSessionEvent event) {
-
-        lifecycle += "/swp";
-
-    }
-
-
-    // ------------------------------------- HttpSessionBindingListener Methods
-
-
-    /**
-     * Receive notification that this attribute has been bound.
-     *
-     * @param event The session event that has occurred
-     */
-    public void valueBound(HttpSessionBindingEvent event) {
-
-        lifecycle += "/vb";
-
-    }
-
-
-    /**
-     * Receive notification that this attribute has been unbound.
-     *
-     * @param event The session event that has occurred
-     */
-    public void valueUnbound(HttpSessionBindingEvent event) {
-
-        lifecycle += "/vu";
-
+    public void contextInitialized(ServletContextEvent event) {
+        context = (ServletContext) event.getSource();
+        context.log("ContextListener02: contextInitialized()");
+        PropertyEditorManager.registerEditor(Date.class,
+                                             DatePropertyEditor.class);
+        context.log("ContextListener02: getEditorSearchPath() -->");
+        String search[] = PropertyEditorManager.getEditorSearchPath();
+        if (search == null)
+            search = new String[0];
+        for (int i = 0; i < search.length; i++)
+            context.log("ContextListener02:   " + search[i]);
+        context.log("ContextListener02: findEditor() --> " +
+                    PropertyEditorManager.findEditor(Date.class));
+               
     }
 
 
 }
-

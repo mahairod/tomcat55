@@ -537,6 +537,16 @@
          request="${context.path}/Encoding03.jsp" debug="${debug}"
           golden="${golden.path}/Encoding03.txt"/>
 
+    <!-- ========== Property Editor Support =============================== -->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Property01.jsp" debug="${debug}"
+          golden="${golden.path}/Property01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Property02.jsp" debug="${debug}"
+          status="500"/>
+
   </target>
 
 

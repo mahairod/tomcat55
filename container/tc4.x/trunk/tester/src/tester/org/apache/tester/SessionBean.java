@@ -59,6 +59,7 @@ package org.apache.tester;
 
 
 import java.io.Serializable;
+import java.sql.Date;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -78,6 +79,21 @@ public class SessionBean implements
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * A date property for use with property editor tests.
+     */
+    protected Date dateProperty =
+        new Date(System.currentTimeMillis());
+
+    public Date getDateProperty() {
+        return (this.dateProperty);
+    }
+
+    public void setDateProperty(Date dateProperty) {
+        this.dateProperty = dateProperty;
+    }
 
 
     /**
@@ -118,6 +134,8 @@ public class SessionBean implements
 
         StringBuffer sb = new StringBuffer("SessionBean[lifecycle=");
         sb.append(this.lifecycle);
+        sb.append(",dateProperty=");
+        sb.append(dateProperty);
         sb.append(",stringProperty=");
         sb.append(this.stringProperty);
         sb.append("]");

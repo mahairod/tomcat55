@@ -407,6 +407,10 @@
     </listener>
 
     <listener>
+        <listener-class>org.apache.tester.ContextListener02</listener-class>
+    </listener>
+
+    <listener>
         <listener-class>org.apache.tester.SessionListener01</listener-class>
     </listener>
 
