@@ -567,7 +567,7 @@ public final class ConnectorForm extends ActionForm {
             try {
                 // if min is a valid integer, then check that max >= min
                 int min = Integer.parseInt(minProcessorsText);
-                numberCheck("maxProcessorsText",  maxProcessorsText, true, min-1, 512);
+                numberCheck("maxProcessorsText",  maxProcessorsText, true, min, 512);
             } catch (Exception e) {
                 // check for the complete range
                 numberCheck("maxProcessorsText",  maxProcessorsText, true, 1, 512);
