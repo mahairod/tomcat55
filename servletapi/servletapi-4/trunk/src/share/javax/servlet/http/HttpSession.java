@@ -334,16 +334,22 @@ public interface HttpSession {
      * <p>After this method executes, and if the new object
      * implements <code>HttpSessionBindingListener</code>,
      * the container calls 
-     * <code>HttpSessionBindingListener.valueBound</code>.
+     * <code>HttpSessionBindingListener.valueBound</code>. The container then   
+     * notifies any <code>HttpSessionAttributeListener</code>s in the web 
+     * application.
      
      * <p>If an object was already bound to this session of this name
      * that implements <code>HttpSessionBindingListener</code>, its 
      * <code>HttpSessionBindingListener.valueUnbound</code> method is called.
      *
+     * <p>If the value passed in is null, this has the same effect as calling 
+     * <code>removeAttribute()<code>.
+     *
+     *
      * @param name			the name to which the object is bound;
      *					cannot be null
      *
-     * @param value			the object to be bound; cannot be null
+     * @param value			the object to be bound
      *
      * @exception IllegalStateException	if this method is called on an
      *					invalidated session
@@ -386,7 +392,9 @@ public interface HttpSession {
      * <p>After this method executes, and if the object
      * implements <code>HttpSessionBindingListener</code>,
      * the container calls 
-     * <code>HttpSessionBindingListener.valueUnbound</code>.
+     * <code>HttpSessionBindingListener.valueUnbound</code>. The container
+     * then notifies any <code>HttpSessionAttributeListener</code>s in the web 
+     * application.
      * 
      * 
      *
