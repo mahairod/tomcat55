@@ -98,6 +98,7 @@ public class ResponseStream
 
 	super();
 	closed = false;
+        commit = false;
 	count = 0;
 	this.response = response;
 	this.stream = response.getStream();
@@ -112,6 +113,12 @@ public class ResponseStream
      * Has this stream been closed?
      */
     protected boolean closed = false;
+
+
+    /**
+     * Should we commit the response when we are flushed?
+     */
+    protected boolean commit = false;
 
 
     /**
@@ -146,6 +153,31 @@ public class ResponseStream
     protected OutputStream stream = null;
 
 
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * [Package Private] Return the "commit response on flush" flag.
+     */
+    boolean getCommit() {
+
+        return (this.commit);
+
+    }
+
+
+    /**
+     * [Package Private] Set the "commit response on flush" flag.
+     *
+     * @param commit The new commit flag
+     */
+    void setCommit(boolean commit) {
+
+        this.commit = commit;
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -173,7 +205,8 @@ public class ResponseStream
 	if (closed)
 	    throw new IOException(sm.getString("responseStream.flush.closed"));
 
-	response.getResponse().flushBuffer();
+        if (commit)
+            response.getResponse().flushBuffer();
 
     }
 

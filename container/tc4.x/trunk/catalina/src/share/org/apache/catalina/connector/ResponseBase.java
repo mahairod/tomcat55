@@ -596,6 +596,7 @@ public abstract class ResponseBase
 
 	if (stream == null)
 	    stream = createOutputStream();
+        ((ResponseStream) stream).setCommit(true);
 	return (stream);
 
     }
@@ -628,9 +629,10 @@ public abstract class ResponseBase
 		(sm.getString("responseBase.getWriter.ise"));
 
 	stream = createOutputStream();
+        ((ResponseStream) stream).setCommit(false);
 	OutputStreamWriter osr =
 	  new OutputStreamWriter(stream, getCharacterEncoding());
-	writer = new PrintWriter(osr);
+	writer = new ResponseWriter(osr, (ResponseStream) stream);
 	return (writer);
 
     }
