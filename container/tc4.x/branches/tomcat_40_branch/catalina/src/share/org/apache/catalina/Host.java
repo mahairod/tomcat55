@@ -87,8 +87,7 @@ import org.apache.catalina.core.DefaultContext;
  * be some other implementation, or may be omitted if it is not necessary.
  * <p>
  * The child containers attached to a Host are generally implementations
- * of Host (representing a virtual host) or Context (representing individual
- * an individual servlet context), depending upon the Engine implementation.
+ * of Context (representing an individual servlet context).
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
