@@ -136,7 +136,7 @@ import org.apache.catalina.util.RequestUtil;
  * @version $Revision$ $Date$
  */
 
-public final class StandardContext
+public class StandardContext
     extends ContainerBase
     implements Context {
 
