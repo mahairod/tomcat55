@@ -341,6 +341,11 @@ public class StandardWrapper
     }
 
 
+    public String getEngineName() {
+        return ((StandardContext)getParent()).getEngineName();
+    }
+
+
     /**
      * Return descriptive information about this Container implementation and
      * the corresponding version number, in the format

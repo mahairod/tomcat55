@@ -2317,6 +2317,14 @@ public class StandardContext
 
 
     /**
+     * FIXME: Fooling introspection ...
+     */
+    public Context findMappingObject() {
+        return (Context) getMappingObject();
+    }
+    
+    
+    /**
      * Return the message destination with the specified name, if any;
      * otherwise, return <code>null</code>.
      *
@@ -5105,6 +5113,17 @@ public class StandardContext
      * Return the naming resources associated with this web application.
      */
     public javax.naming.directory.DirContext getStaticResources() {
+
+        return getResources();
+
+    }
+
+
+    /**
+     * Return the naming resources associated with this web application.
+     * FIXME: Fooling introspection ... 
+     */
+    public javax.naming.directory.DirContext findStaticResources() {
 
         return getResources();
 
