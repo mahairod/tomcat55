@@ -83,6 +83,7 @@ import org.apache.jasper.Constants;
  * @author Pierre Delisle
  * @author Kin-man Chung
  * @author Jan Luehe
+ * @author Denis Benoit
  */
 
 public class Generator {
