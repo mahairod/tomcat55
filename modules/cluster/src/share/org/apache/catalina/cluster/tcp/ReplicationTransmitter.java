@@ -62,21 +62,24 @@ public class ReplicationTransmitter implements ClusterSender
     public synchronized void add(Member member)
     {
         try {
-            IDataSender sender = IDataSenderFactory.getIDataSender(
-                replicationMode, member);
-            String key = sender.getAddress().getHostAddress() + ":" +
-                sender.getPort();
-            if (!map.containsKey(key))
-                map.put(sender.getAddress().getHostAddress() + ":" +
-                        sender.getPort(), sender);
+            String key = getKey(member);
+            if (!map.containsKey(key)) {
+                IDataSender sender = IDataSenderFactory.getIDataSender(
+                        replicationMode, member);
+                map.put(key, sender);
+            }
         }catch ( java.io.IOException x ) {
             log.error("Unable to create and add a IDataSender object.",x);
         }
     }//add
 
+    private String getKey(Member member) {
+        return member.getHost() + ":" + member.getPort();
+    }
+    
     public synchronized void remove(Member member)
     {
-        String key = member.getHost() + ":" + member.getPort();
+        String key = getKey(member);
         IDataSender toberemoved = (IDataSender) map.get(key);
         if (toberemoved == null)return;
         toberemoved.disconnect();

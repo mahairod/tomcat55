@@ -389,9 +389,6 @@ public class SimpleTcpCluster
             try {
                 if ( clusterDeployer != null ) {
                     clusterDeployer.setCluster(this);
-                    // Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
-                    // FIXME: clusterDeployer.setDeployer( (org.apache.catalina.Deployer) deployer);
-                    // clusterDeployer.setDeployer( deployer);
                     clusterDeployer.start();
                 }
             } catch (Throwable x) {
@@ -494,7 +491,8 @@ public class SimpleTcpCluster
 
     public void memberDisappeared(Member member)
     {
-        log.info("Received member disappeared:"+member);
+        if(log.isInfoEnabled())
+            log.info("Received member disappeared:"+member);
         try
         {
             clusterSender.remove(member);
