@@ -72,6 +72,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -349,8 +350,11 @@ public class ErrorReportValve
 
             if (writer != null) {
 
+                Locale locale = Locale.getDefault();
+
                 try {
                     hres.setContentType("text/html");
+                    hres.setLocale(locale);
                 } catch (Throwable t) {
                     if (debug >= 1)
                         log("status.setContentType", t);
