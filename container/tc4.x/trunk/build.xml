@@ -224,7 +224,7 @@
     <copy file="${javaservice.home}/bin/JavaService.exe" 
      tofile="${tomcat.dist}/bin/tomcat.exe" />
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />
-    <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis.exe">
+    <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis-bz2.exe">
       <arg value="tomcat.nsi" />
     </exec>
     <move file="${tomcat.dist}/tomcat4.exe" 
@@ -272,7 +272,7 @@
       <and>
         <os family="windows" />
         <available file="${javaservice.home}/bin/JavaService.exe" />
-        <available file="${nsis.home}\makensis.exe" />
+        <available file="${nsis.home}\makensis-bz2.exe" />
       </and>
     </condition>
   </target>

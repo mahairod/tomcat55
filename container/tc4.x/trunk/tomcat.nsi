@@ -55,6 +55,8 @@ Section "Tomcat (required)"
 
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
 
+  WriteUninstaller uninst-tomcat4.exe
+
 SectionEnd
 
 Section "NT Service (NT/2k/XP only)"
@@ -297,47 +299,7 @@ computer. Please download one from http://java.sun.com."
 FunctionEnd
 
 
-; =================
-; DoUpdate Function
-; =================
-;
-Function doUpdate
-
-  ; This function will be called if a previous Tomcat 4.1 installation has been
-  ; found
-
-  ReadRegStr $1 HKLM "SOFTWARE\Apache\Apache Tomcat 4.1" ""
-  IfErrors NoUpdate
-
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-      "A previous installation of Jakarata Tomcat 4.1 has been found in $1.\
- Do you want to upgrade it to the latest version ?" IDNO NoUpdate
-
-  SetOverwrite ifnewer
-  SetOutPath $INSTDIR
-  File tomcat.ico
-  File LICENSE
-  File /r bin
-  File /r common
-  File /r shared
-  File /r logs
-  File /r server
-  File /r work
-  SetOutPath $INSTDIR\webapps
-  File /r webapps\ROOT
-
-  MessageBox MB_OK "Update was successful."
-
-  ; Installation over
-  Abort
-
-NoUpdate:
-
-FunctionEnd
-
-
 UninstallText "This will uninstall Apache Tomcat 4.1 from your system:"
-UninstallExeName uninst-tomcat4.exe
 
 
 Section Uninstall
