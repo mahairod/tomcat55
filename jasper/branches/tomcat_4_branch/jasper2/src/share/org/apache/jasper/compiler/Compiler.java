@@ -161,7 +161,8 @@ public class Compiler {
             logger.setMessageOutputLevel( Project.MSG_INFO );
         }
         project.addBuildListener( logger );
-        
+        project.setBasedir( System.getProperty("catalina.home"));
+
         if( options.getCompiler() != null ) {
             Constants.jasperLog.log("Compiler " + options.getCompiler(), Logger.INFORMATION);
             project.setProperty("build.compiler", options.getCompiler() );
