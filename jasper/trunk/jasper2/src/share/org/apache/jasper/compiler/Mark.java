@@ -227,6 +227,22 @@ final class Mark {
 	return false;
     }
 
+    /**
+     * @return true if this Mark is greather than the <code>other</code>
+     * Mark, false otherwise.
+     */
+    public boolean isGreater(Mark other) {
+
+        boolean greater = false;
+
+        if (this.line > other.line) {
+            greater = true;
+        } else if (this.line == other.line && this.col > other.col) {
+            greater = true;
+        }
+
+        return greater;
+    }
 
     /**
      * Keep track of parser before parsing an included file.
