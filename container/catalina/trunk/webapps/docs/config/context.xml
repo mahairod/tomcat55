@@ -47,10 +47,13 @@
 
   <p>In addition to nesting <strong>Context</strong> elements inside a
   <a href="host.html">Host</a> element, you can also store them in
-  individual files (with a ".xml" extension) in the <code>appBase</code>
-  directory for a Host.  See
+  individual files (with a ".xml" extension) in the 
+  <code>$CATALINA_HOME/conf/[enginename]/[hostname]/</code> directory.  See
   <a href="host.html#Automatic Application Deployment">Automatic
-  Application Deployment</a> for more information.</p>
+  Application Deployment</a> for more information. This method allows dynamic
+  reconfiguration of the web application, since the main 
+  <code>conf/server.xml</code> file cannot be reloaded without restarting
+  Tomcat.</p>
 
   <p>In addition to explicitly specified Context elements, there are
   several techniques by which Context elements can be created automatically
@@ -80,6 +83,22 @@
     support the following attributes:</p>
 
     <attributes>
+
+      <attribute name="backgroundProcessorDelay" required="false">
+        <p>This value represents the delay in seconds between the 
+        invocation of the backgroundProcess method on this context and 
+        its child containers, including all wrappers. 
+        Child containers will not be invoked if their delay value is not 
+        negative (which would mean they are using their own processing 
+        thread). Setting this to a positive value will cause 
+        a thread to be spawn. After waiting the specified amount of time, 
+        the thread will invoke the backgroundProcess method on this host 
+        and all its child containers. A context will use background 
+        processing to perform session expiration and class monitoring for
+        reloading. If not specified, the default value for this attribute is 
+        -1, which means the context will rely on the background processing 
+        thread of its parent host.</p>
+      </attribute>
 
       <attribute name="className" required="false">
         <p>Java class name of the implementation to use.  This class must

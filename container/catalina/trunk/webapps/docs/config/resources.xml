@@ -81,6 +81,12 @@
         defaults to <code>true</code>.</p>
       </attribute>
 
+      <attribute name="cacheMaxSize" required="false">
+        <p>Maximum size in kilobytes (KB) of the cache associated with 
+        the resources, if cached is set to true. It defaults 
+        to <code>10240</code> (10 megabytes).</p>
+      </attribute>
+
       <attribute name="caseSensitive" required="false">
         <p>This boolean flag toggles case sensitivity for resourceson 
         the Windows platform. Defaults to <code>true</code>.</p>

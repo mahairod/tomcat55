@@ -78,6 +78,22 @@
         Deployment</a> for more information.</p>
       </attribute>
 
+      <attribute name="backgroundProcessorDelay" required="false">
+        <p>This value represents the delay in seconds between the 
+        invocation of the backgroundProcess method on this host and 
+        its child containers, including all contexts. 
+        Child containers will not be invoked if their delay value is not 
+        negative (which would mean they are using their own processing 
+        thread). Setting this to a positive value will cause 
+        a thread to be spawn. After waiting the specified amount of time, 
+        the thread will invoke the backgroundProcess method on this host 
+        and all its child containers. A host will use background processing to
+        perform live web application deployment related tasks. If not 
+        specified, the default value for this attribute is -1, which means 
+        the host will rely on the background processing thread of its parent 
+        engine.</p>
+      </attribute>
+
       <attribute name="className" required="false">
         <p>Java class name of the implementation to use.  This class must
         implement the <code>org.apache.catalina.Host</code> interface.
@@ -288,7 +304,7 @@
     automatically deployed, according to the rules described above. The 
     auto deployer will also track web applications for the following changes:
     <ul>
-        <li>An update to the conf/web.xml file will trigger a reload of the
+        <li>An update to the WEB-INF/web.xml file will trigger a reload of the
         web application</li>
         <li>An update to a WAR which has been expanded will trigger 
         an undeploy (<strong>with a removal of the expanded webapp</strong>), 
