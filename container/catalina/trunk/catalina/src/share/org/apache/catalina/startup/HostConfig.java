@@ -534,6 +534,10 @@ public class HostConfig
                         entry = jar.getJarEntry("META-INF/context.xml");
                         if (entry != null) {
                             istream = jar.getInputStream(entry);
+                         
+                            // Added for Bugzilla 29038
+                            xml.mkdirs();
+
                             ostream =
                                 new BufferedOutputStream
                                 (new FileOutputStream(xml), 1024);
