@@ -612,9 +612,11 @@ public final class AccessLogValve
             // If the date has changed, switch log files
             if (!dateStamp.equals(tsDate)) {
                 synchronized (this) {
-                    close();
-                    dateStamp = tsDate;
-                    open();
+                    if (!dateStamp.equals(tsDate)) {
+                        close();
+                        dateStamp = tsDate;
+                        open();
+                    }
                 }
             }
         }
