@@ -158,6 +158,14 @@ public class Constants {
         TAGLIB_DTD_RESOURCE = "/org/apache/jasper/resources/web-jsptaglib_1_1.dtd";
 
     /**
+     * ID and location of the DTD for web-app deployment descriptors. 
+     */
+    public static final String 
+        WEBAPP_DTD_PUBLIC_ID = "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN";
+    public static final String
+        WEBAPP_DTD_RESOURCE = "/org/apache/tomcat/deployment/web.dtd";
+    
+    /**
      * Default URLs to download the pluging for Netscape and IE.
      */
     public static final String NS_PLUGIN_URL = 

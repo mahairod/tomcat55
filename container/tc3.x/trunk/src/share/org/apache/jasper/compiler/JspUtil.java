@@ -60,7 +60,20 @@
  */ 
 package org.apache.jasper.compiler;
 
+import java.net.URL;
+
 import java.io.CharArrayWriter;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.jasper.Constants;
+import org.apache.jasper.JasperException;
+
+
+import org.w3c.dom.*;
+import org.xml.sax.*;
+import com.sun.xml.tree.*;
+import com.sun.xml.parser.*;
 
 /** 
  * This class has all the utility method(s).
@@ -114,6 +127,47 @@ public class JspUtil {
 	    returnString = returnString.substring (0, length - CLOSE_EXPR_2.length());
 	
 	return returnString;
+    }
+
+    // Parses the XML document contained in the InputStream.
+    public static XmlDocument parseXMLDoc(InputStream in, URL dtdURL, String dtdId)
+    throws JasperException {
+	XmlDocument tld;
+	XmlDocumentBuilder builder = new XmlDocumentBuilder();
+	
+        com.sun.xml.parser.ValidatingParser 
+            parser = new com.sun.xml.parser.ValidatingParser();
+
+        /***
+         * These lines make sure that we have an internal catalog entry for 
+         * the taglib.dtdfile; this is so that jasper can run standalone 
+         * without running out to the net to pick up the taglib.dtd file.
+         */
+        Resolver resolver = new Resolver();
+        resolver.registerCatalogEntry(dtdId, 
+                                      dtdURL.toString());
+        
+        try {
+            parser.setEntityResolver(resolver);
+            builder.setParser(parser);
+            builder.setDisableNamespaces(false);
+            parser.parse(new InputSource(in));
+        } catch (SAXException sx) {
+            throw new JasperException(Constants.getString("jsp.error.parse.error.in.TLD",
+                                                          new Object[] {
+		sx.getMessage()
+		    }
+                                                          ));
+        } catch (IOException io) {
+            throw new JasperException(Constants.getString("jsp.error.unable.to.open.TLD",
+                                                          new Object[] {
+		io.getMessage()
+		    }
+                                                          ));
+        }
+        
+        tld = builder.getDocument();
+	return tld;
     }
 }
 
