@@ -149,8 +149,6 @@ public interface Lifecycle {
      * methods of this component are utilized.  It should also send a
      * LifecycleEvent of type START_EVENT to any registered listeners.
      *
-     * @exception IllegalStateException if this component has already been
-     *  started
      * @exception LifecycleException if this component detects a fatal error
      *  that prevents this component from being used
      */
@@ -163,7 +161,6 @@ public interface Lifecycle {
      * instance of this component.  It should also send a LifecycleEvent
      * of type STOP_EVENT to any registered listeners.
      *
-     * @exception IllegalStateException if this component has not been started
      * @exception LifecycleException if this component detects a fatal error
      *  that needs to be reported
      */
