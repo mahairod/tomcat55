@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="index.html">
 
   &project;
 
@@ -64,6 +64,9 @@ are responsible for installing, configuring, and operating a Tomcat 5 server.
 <li><a href="class-loader-howto.html"><strong>Class Loader HOW-TO</strong></a>
     - Information about class loading in Tomcat 5, including where to place
     your application classes so that they are visible.</li>
+<li><a href="html-manager-howto.html"><strong>HTML Manager App HOW-TO</strong></a> -
+    Operating the <code>HTML Manager</code> web app to deploy, undeploy, and
+    redeploy applications while Tomcat is running.</li>
 <li><a href="jk2/index.html"><strong>JK Documenation</strong></a>
     - Complete documentation and HOWTOs on the JK native webserver connector,
       used to interface Tomcat with servers like Apache HTTPd, IIS

@@ -72,6 +72,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
@@ -101,6 +102,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
@@ -148,6 +150,7 @@ import org.apache.naming.resources.WARDirContext;
  * <li><b>/roles</b> - Enumerate the available security role names and
  *     descriptions from the user database connected to the <code>users</code>
  *     resource reference.
+ * <li><b>/serverinfo</b> - Display system OS and JVM properties.
  * <li><b>/sessions?path=/xxx</b> - List session information about the web
  *     application attached to context path <code>/xxx</code> for this
  *     virtual host.</li>
@@ -330,9 +333,10 @@ public class ManagerServlet
         String war = request.getParameter("war");
 
         // Prepare our output writer to generate the response message
-        response.setContentType("text/plain");
         Locale locale = Locale.getDefault();
+        String charset = context.getCharsetMapper().getCharset(locale);
         response.setLocale(locale);
+        response.setContentType("text/plain; charset=" + charset);
         PrintWriter writer = response.getWriter();
 
         // Process the requested command (note - "/deploy" is not listed here)
@@ -350,6 +354,8 @@ public class ManagerServlet
             resources(writer, type);
         } else if (command.equals("/roles")) {
             roles(writer);
+        } else if (command.equals("/serverinfo")) {
+            serverinfo(writer);
         } else if (command.equals("/sessions")) {
             sessions(writer, path);
         } else if (command.equals("/start")) {
@@ -497,7 +503,7 @@ public class ManagerServlet
         }
 
         // Validate the requested context path
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
+        if ((path == null) || path.length() == 0 || !path.startsWith("/")) {
             writer.println(sm.getString("managerServlet.invalidPath", path));
             return;
         }
@@ -585,8 +591,12 @@ public class ManagerServlet
     protected void install(PrintWriter writer, String config,
                            String path, String war) {
 
+        if (war != null && war.length() == 0) {
+            war = null;
+        }
+
         if (debug >= 1) {
-            if (config != null) {
+            if (config != null && config.length() > 0) {
                 if (war != null) {
                     log("install: Installing context configuration at '" +
                         config + "' from '" + war + "'");
@@ -600,7 +610,32 @@ public class ManagerServlet
             }
         }
 
-        if (config != null) {
+        // See if directory/war is relative to host appBase
+        if (war != null && war.indexOf('/') < 0 ) {
+            // Identify the appBase of the owning Host of this Context (if any)
+            String appBase = null;
+            File appBaseDir = null;
+            if (context.getParent() instanceof Host) {
+                appBase = ((Host) context.getParent()).getAppBase();
+                appBaseDir = new File(appBase);
+                if (!appBaseDir.isAbsolute()) {
+                    appBaseDir = new File(System.getProperty("catalina.base"),
+                                          appBase);
+                }
+                File file = new File(appBaseDir,war);
+                try {
+                    URL url = file.toURL();
+                    war = url.toString();
+                    if (war.toLowerCase().endsWith(".war")) {
+                        war = "jar:" + war + "!/";
+                    }
+                } catch(MalformedURLException e) {
+                    ;
+                }
+            }
+        }
+
+        if (config != null && config.length() > 0) {
 
             if ((war != null) &&
                 (!war.startsWith("file:") && !war.startsWith("jar:"))) {
@@ -624,7 +659,39 @@ public class ManagerServlet
 
         } else {
 
-            if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
+            if ((war == null) ||
+                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
+                writer.println(sm.getString("managerServlet.invalidWar", war));
+                return;
+            }
+
+            if (path == null || path.length() == 0) {
+                int end = war.length();
+                String filename = war.toLowerCase();
+                if (filename.endsWith("!/")) {
+                    filename = filename.substring(0,filename.length()-2);
+                    end -= 2;
+                }
+                if (filename.endsWith(".war")) {
+                    filename = filename.substring(0,filename.length()-4);
+                    end -= 4;
+                }
+                if (filename.endsWith("/")) {
+                    filename = filename.substring(0,filename.length()-1);
+                    end--;
+                }
+                int beg = filename.lastIndexOf('/') + 1;
+                if (beg < 0 || end < 0 || beg >= end) {
+                    writer.println(sm.getString("managerServlet.invalidWar", war));
+                    return;
+                }
+                path = "/" + war.substring(beg,end);
+                if (path.equals("/ROOT")) {
+                    path = "/";
+                }
+            }
+
+            if (path == null || path.length() == 0 || !path.startsWith("/")) {
                 writer.println(sm.getString("managerServlet.invalidPath",
                                             path));
                 return;
@@ -632,11 +699,6 @@ public class ManagerServlet
             String displayPath = path;
             if("/".equals(path)) {
                 path = "";
-            }
-            if ((war == null) ||
-                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
-                writer.println(sm.getString("managerServlet.invalidWar", war));
-                return;
             }
 
             try {
@@ -778,7 +840,7 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
-            deployer.remove(path);
+            deployer.remove(path,true);
             writer.println(sm.getString("managerServlet.removed", displayPath));
         } catch (Throwable t) {
             log("ManagerServlet.remove[" + displayPath + "]", t);
@@ -920,6 +982,35 @@ public class ManagerServlet
 
     }
 
+
+    /**
+     * Writes System OS and JVM properties.
+     * @param writer Writer to render to
+     */
+    protected void serverinfo(PrintWriter writer) {
+        if (debug >= 1)
+            log("serverinfo");
+        try {
+            StringBuffer props = new StringBuffer();
+            props.append("Tomcat Version: ");
+            props.append(ServerInfo.getServerInfo());
+            props.append("\nOS Name: ");
+            props.append(System.getProperty("os.name"));
+            props.append("\nOS Version: ");
+            props.append(System.getProperty("os.version"));
+            props.append("\nOS Architecture: ");
+            props.append(System.getProperty("os.arch"));
+            props.append("\nJVM Version: ");
+            props.append(System.getProperty("java.runtime.version"));
+            props.append("\nJVM Vendor: ");
+            props.append(System.getProperty("java.vm.vendor"));
+            writer.println(props.toString());
+        } catch (Throwable t) {
+            getServletContext().log("ManagerServlet.serverinfo",t);
+            writer.println(sm.getString("managerServlet.exception",
+                                        t.toString()));
+        }
+    }
 
     /**
      * Session information for the web application at the specified context path.
@@ -1135,7 +1226,6 @@ public class ManagerServlet
                 writer.println(sm.getString("managerServlet.noSelf"));
                 return;
             }
-
             deployer.remove(path);
             if (docBaseDir.isDirectory()) {
                 undeployDir(docBaseDir);

@@ -82,6 +82,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.ContextRuleSet;
+import org.apache.catalina.startup.ExpandWar;
 import org.apache.catalina.startup.NamingRuleSet;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.digester.Digester;
@@ -232,8 +233,14 @@ public class StandardHostDeployer implements Deployer {
                               contextPath, war.toString()));
         String url = war.toString();
         String docBase = null;
+        boolean isWAR = false;
         if (url.startsWith("jar:")) {
             url = url.substring(4, url.length() - 2);
+            if (!url.toLowerCase().endsWith(".war")) {
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.warURL", url));
+            }
+            isWAR = true;
         }
         if (url.startsWith("file://"))
             docBase = url.substring(7);
@@ -242,6 +249,48 @@ public class StandardHostDeployer implements Deployer {
         else
             throw new IllegalArgumentException
                 (sm.getString("standardHost.warURL", url));
+
+        // Determine if directory/war to install is in the host appBase
+        boolean isAppBase = false;
+        File appBase = new File(host.getAppBase());
+        if (!appBase.isAbsolute())
+            appBase = new File(System.getProperty("catalina.base"),
+                            host.getAppBase());
+        File contextFile = new File(docBase);
+        File baseDir = contextFile.getParentFile();
+        if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
+            isAppBase = true;
+        }
+
+        // For security, if deployXML is false only allow directories
+        // and war files from the hosts appBase
+        if (!host.isDeployXML() && !isAppBase) {
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.installBase", url));
+        }
+
+        // Make sure contextPath and directory/war names match when
+        // installing from the host appBase
+        if (isAppBase && (host.getAutoDeploy() || host.getLiveDeploy())) {
+            String filename = contextFile.getName();
+            if (isWAR) {
+                filename = filename.substring(0,filename.length()-4);
+            }
+            if (contextPath.length() == 0) {
+                if (!filename.equals("ROOT")) {
+                    throw new IllegalArgumentException
+                        (sm.getString("standardHost.pathMatch", "/", "ROOT"));
+                }
+            } else if (!filename.equals(contextPath.substring(1))) {
+                throw new IllegalArgumentException
+                    (sm.getString("standardHost.pathMatch", contextPath, filename));
+            }
+        }
+
+        // Expand war file if host wants wars unpacked
+        if (isWAR && host.isUnpackWARs()) {
+            docBase = ExpandWar.expand(host,war,contextPath);
+        }
 
         // Install the new web application
         try {
@@ -523,6 +572,128 @@ public class StandardHostDeployer implements Deployer {
 
 
     /**
+     * Remove an existing web application, attached to the specified context
+     * path.  If this application is successfully removed, a
+     * ContainerEvent of type <code>REMOVE_EVENT</code> will be sent to all
+     * registered listeners, with the removed <code>Context</code> as
+     * an argument. Deletes the web application war file and/or directory
+     * if they exist in the Host's appBase.
+     *
+     * @param contextPath The context path of the application to be removed
+     * @param undeploy boolean flag to remove web application from server
+     *
+     * @exception IllegalArgumentException if the specified context path
+     *  is malformed (it must be "" or start with a slash)
+     * @exception IllegalArgumentException if the specified context path does
+     *  not identify a currently installed web application
+     * @exception IOException if an input/output error occurs during
+     *  removal
+     */
+    public void remove(String contextPath, boolean undeploy)
+        throws IOException {
+
+        // Validate the format and state of our arguments
+        if (contextPath == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathRequired"));
+        if (!contextPath.equals("") && !contextPath.startsWith("/"))
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathFormat", contextPath));
+
+        // Locate the context and associated work directory
+        Context context = findDeployedApp(contextPath);
+        if (context == null)
+            throw new IllegalArgumentException
+                (sm.getString("standardHost.pathMissing", contextPath));
+
+        // Remove this web application
+        host.log(sm.getString("standardHost.removing", contextPath));
+        try {
+            // Get the work directory for the Context
+            File workDir = (File)
+                context.getServletContext().getAttribute(Globals.WORK_DIR_ATTR);
+            host.removeChild(context);
+
+            if (undeploy) {
+                // Remove the web application directory and/or war file if it
+                // exists in the Host's appBase directory.
+
+                // Determine if directory/war to remove is in the host appBase
+                boolean isAppBase = false;
+                File appBase = new File(host.getAppBase());
+                if (!appBase.isAbsolute())
+                    appBase = new File(System.getProperty("catalina.base"),
+                                       host.getAppBase());
+                File contextFile = new File(context.getDocBase());
+                File baseDir = contextFile.getParentFile();
+                if (appBase.getCanonicalPath().equals(baseDir.getCanonicalPath())) {
+                    isAppBase = true;
+                }
+
+                boolean isWAR = false;
+                if (contextFile.getName().toLowerCase().endsWith(".war")) {
+                    isWAR = true;
+                }
+                // Only remove directory and/or war if they are located in the
+                // Host's appBase and autoDeploy or liveDeploy are true
+                if (isAppBase && (host.getAutoDeploy() || host.getLiveDeploy())) {
+                    String filename = contextFile.getName();
+                    if (isWAR) {
+                        filename = filename.substring(0,filename.length()-4);
+                    }
+                    if (contextPath.length() == 0 && filename.equals("ROOT") ||
+                        filename.equals(contextPath.substring(1))) {
+                        if (!isWAR) {
+                            if (contextFile.isDirectory()) {
+                                deleteDir(contextFile);
+                            }
+                            if (host.isUnpackWARs()) {
+                                File contextWAR = new File(context.getDocBase() + ".war");
+                                if (contextWAR.exists()) {
+                                    contextWAR.delete();
+                                }
+                            }
+                        } else {
+                            contextFile.delete();
+                        }
+                    }
+                    if (host.isDeployXML()) {
+                        File docBaseXml = new File(appBase,filename + ".xml");
+                        docBaseXml.delete();
+                    }
+                }
+
+                // Remove the work directory for the Context
+                if (workDir == null &&
+                    context instanceof StandardContext &&
+                    ((StandardContext)context).getWorkDir() != null) {
+                    workDir = new File(((StandardContext)context).getWorkDir());
+                    if (!workDir.isAbsolute()) {
+                        File catalinaHome = new File(System.getProperty("catalina.base"));
+                        String catalinaHomePath = null;
+                        try {
+                            catalinaHomePath = catalinaHome.getCanonicalPath();
+                            workDir = new File(catalinaHomePath,
+                                               ((StandardContext)context).getWorkDir());
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+                if (workDir != null && workDir.exists()) {
+                    deleteDir(workDir);
+                }
+            }
+
+            host.fireContainerEvent(REMOVE_EVENT, context);
+        } catch (Exception e) {
+            host.log(sm.getString("standardHost.removeError", contextPath), e);
+            throw new IOException(e.toString());
+        }
+
+    }
+
+
+    /**
      * Start an existing web application, attached to the specified context
      * path.  Only starts a web application if it is not running.
      *
@@ -660,5 +831,29 @@ public class StandardHostDeployer implements Deployer {
 
     }
 
+
+    /**
+     * Delete the specified directory, including all of its contents and
+     * subdirectories recursively.
+     *
+     * @param dir File object representing the directory to be deleted
+     */
+    protected void deleteDir(File dir) {
+
+        String files[] = dir.list();
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(dir, files[i]);
+            if (file.isDirectory()) {
+                deleteDir(file);
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+
+    }
 
 }

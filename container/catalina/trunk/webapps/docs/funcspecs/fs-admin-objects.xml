@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="fs-admin-objects.html">
 
   &project;
 

@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="proxy-howto.html">
 
     &project;
 
@@ -103,8 +103,8 @@ ProxyPassReverse  /myapp  http://localhost:8081/myapp
     <li>Configure another <code>&lt;Service&gt;</code> that contains
         only a <code>&lt;Connector&gt;</code> for the proxy port.</li>
     <li>Configure appropriate <a href="config/engine.html">Engine</a>,
-        <a href="host.html">Host</a>, and
-        <a href="context.html">Context</a> elements for the virtual hosts
+        <a href="config/host.html">Host</a>, and
+        <a href="config/context.html">Context</a> elements for the virtual hosts
         and web applications accessible via proxying.</li>
     <li>Optionally, protect port 8081 with IP filters as described
         earlier.</li>
