@@ -58,6 +58,7 @@
     <!-- Copy static resource files -->
     <copydir  src="src/share"    dest="${jasper.build}/classes">
       <include name="**/*.properties"/>
+      <include name="**/*.dtd"/>
     </copydir>
 
   </target>
