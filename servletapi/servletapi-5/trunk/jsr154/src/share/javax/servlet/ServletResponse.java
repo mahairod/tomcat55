@@ -396,7 +396,7 @@ public interface ServletResponse {
 
     /**
      * Returns a boolean indicating if the response has been
-     * committed.  A commited response has already had its status 
+     * committed.  A committed response has already had its status 
      * code and headers written.
      *
      * @return		a boolean indicating if the response has been

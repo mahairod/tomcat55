@@ -276,7 +276,7 @@ public abstract class ServletOutputStream extends OutputStream {
      * followed by a carriage return-line feed (CRLF).
      *
      *
-     * @param s			the </code>String</code> to write to the client
+     * @param s			the <code>String</code> to write to the client
      *
      * @exception IOException 	if an input or output exception occurred
      *

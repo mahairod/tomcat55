@@ -135,7 +135,7 @@ public interface HttpServletResponse extends ServletResponse {
      * includes the logic to determine whether the session ID
      * needs to be encoded in the URL.  Because the rules for making
      * this determination can differ from those used to decide whether to
-     * encode a normal link, this method is separete from the
+     * encode a normal link, this method is separated from the
      * <code>encodeURL</code> method.
      * 
      * <p>All URLs sent to the <code>HttpServletResponse.sendRedirect</code>
@@ -339,7 +339,7 @@ public interface HttpServletResponse extends ServletResponse {
      * set the return status code when there is no error (for example,
      * for the status codes SC_OK or SC_MOVED_TEMPORARILY).  If there
      * is an error, and the caller wishes to invoke an error-page defined
-     * in the web applicaion, the <code>sendError</code> method should be used
+     * in the web application, the <code>sendError</code> method should be used
      * instead.
      * <p> The container clears the buffer and sets the Location header, preserving
      * cookies and other headers.
