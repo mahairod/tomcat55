@@ -49,16 +49,9 @@ public final class ServerForm extends ActionForm {
     private String portNumberText = "8080";
     
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-
-    /**
      * The text for the shutdown text.
      */    
     private String shutdownText = null;
-    
-    private List debugLvlVals = null;
     
     /**
      * The object name of the Connector this bean refers to.
@@ -85,24 +78,6 @@ public final class ServerForm extends ActionForm {
     }    
     
     /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-        
-    /**
      * Return the portNumberText.
      */
     public String getPortNumberText() {
@@ -117,24 +92,6 @@ public final class ServerForm extends ActionForm {
     public void setPortNumberText(String portNumberText) {
         
         this.portNumberText = portNumberText;
-        
-    }
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
         
     }
     
@@ -186,7 +143,6 @@ public final class ServerForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
         this.portNumberText = null;
-        this.debugLvl = "0";
         this.shutdownText = null;
         
     }

@@ -87,7 +87,6 @@ public class AddHostAction extends Action {
         hostFm.setAdminAction("Create");
         hostFm.setObjectName("");
         hostFm.setHostName("");
-        hostFm.setDebugLvl("0");
         hostFm.setServiceName(serviceName);
         hostFm.setAppBase("");
         hostFm.setAutoDeploy("true");
@@ -96,7 +95,6 @@ public class AddHostAction extends Action {
         hostFm.setUnpackWARs("true");   
         hostFm.setXmlNamespaceAware("false");
         hostFm.setXmlValidation("false");
-        hostFm.setDebugLvlVals(Lists.getDebugLevels());
         hostFm.setBooleanVals(Lists.getBooleanValues());
 
         // Forward to the host display page

@@ -34,53 +34,9 @@ public final class RequestDumperValveForm extends ValveForm {
         
     // ----------------------------------------------------- Instance Variables
 
-    /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-        
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
     
     // ------------------------------------------------------------- Properties
     
-    /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
-        
-    }
         
     // --------------------------------------------------------- Public Methods
     
@@ -93,8 +49,6 @@ public final class RequestDumperValveForm extends ValveForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
     
         super.reset(mapping, request);
-        this.debugLvl = "0";        
-        
     }
     
     

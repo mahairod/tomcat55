@@ -182,7 +182,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getConnectors(serviceNode, serviceName);
             getDefaultContexts(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
-            getLoggers(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
             getValves(serviceNode, serviceName);
         }
@@ -262,7 +261,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
             serviceNode.addChild(hostNode);
             getContexts(hostNode, hostName);            
             getDefaultContexts(hostNode, hostName);
-            getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
             getValves(hostNode, hostName);
         }
@@ -308,7 +306,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false, domain);
             hostNode.addChild(contextNode);
             getResources(contextNode, contextName);
-            getLoggers(contextNode, contextName);
             getRealms(contextNode, contextName);
             getValves(contextNode, contextName);
         }
@@ -352,41 +349,6 @@ public class TomcatTreeBuilder implements TreeBuilder{
     }  
     
     
-    /**
-     * Append nodes for any defined loggers for the specified container.
-     *
-     * @param containerNode Container node for the tree control
-     * @param containerName Object name of the parent container
-     *
-     * @exception Exception if an exception occurs building the tree
-     */
-    public void getLoggers(TreeControlNode containerNode,
-                           String containerName) throws Exception {
-
-        String domain = containerNode.getDomain();
-        Iterator loggerNames =
-            Lists.getLoggers(mBServer, containerName).iterator();
-        while (loggerNames.hasNext()) {
-            String loggerName = (String) loggerNames.next();
-            ObjectName objectName = new ObjectName(loggerName);
-            String nodeLabel = resources.getMessage(locale, 
-                "server.service.treeBuilder.loggerFor", containerNode.getLabel());
-            TreeControlNode loggerNode =
-                new TreeControlNode(loggerName,
-                                    "Logger.gif",
-                                    nodeLabel,
-                                    "EditLogger.do?select=" +
-                                    URLEncoder.encode(loggerName) +
-                                    "&nodeLabel=" +
-                                    URLEncoder.encode(nodeLabel),
-                                    "content",
-                                    false, domain);
-            containerNode.addChild(loggerNode);
-        }
-
-    }
-
-
     /**
      * Append nodes for any defined realms for the specified container.
      *

@@ -91,17 +91,6 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvlVals">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="debugLvl" styleId="debugLvlVals">
-                     <bean:define id="debugLvlVals" name="singleSignOnValveForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
       </controls:table>
       </td>
     </tr>

@@ -312,8 +312,6 @@ public final class JDBCRealmForm extends RealmForm {
 
         StringBuffer sb = new StringBuffer("UserDatabaseRealmForm[adminAction=");
         sb.append(getAdminAction());
-        sb.append(",debugLvl=");
-        sb.append(getDebugLvl());
         sb.append(",digest=");
         sb.append(digest);
         sb.append("',driver='");

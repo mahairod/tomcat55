@@ -91,17 +91,6 @@
             </controls:data>
         </controls:row>
 
-        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debuglevel">
-            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
-            <controls:data>
-               <html:select property="debugLvl" styleId="debuglevel">
-                     <bean:define id="debugLvlVals" name="accessLogValveForm" property="debugLvlVals"/>
-                     <html:options collection="debugLvlVals" property="value"
-                        labelProperty="label"/>
-                </html:select>
-            </controls:data>
-        </controls:row>
-
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text" styleId="directory">
             <controls:label><bean:message key="logger.directory"/>:</controls:label>
             <controls:data>

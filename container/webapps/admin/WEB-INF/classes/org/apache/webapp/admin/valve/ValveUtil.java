@@ -46,7 +46,6 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
 
 /**
  * A utility class that contains methods common across valves.
@@ -94,7 +93,7 @@ public final class ValveUtil {
         
         try {
             
-            String objectName = DeleteLoggerAction.getObjectName(parent,
+            String objectName = ValveUtil.getObjectName(parent,
             TomcatTreeBuilder.VALVE_TYPE);
                         
             String parentNodeName = parent;
@@ -235,5 +234,37 @@ public final class ValveUtil {
         return ((RE[]) reList.toArray(reArray));
 
     }    
+
+    public static String getObjectName(String parent, String MBeanType)
+    throws Exception{
+        
+        // Form the pattern that gets the logger for this particular
+        // service, host or context.
+        ObjectName poname = new ObjectName(parent);
+        String domain = poname.getDomain();
+        StringBuffer sb = new StringBuffer(domain+MBeanType);
+        String type = poname.getKeyProperty("type");
+        String j2eeType = poname.getKeyProperty("j2eeType");
+        String path = "";
+        String host = "";
+        String name = poname.getKeyProperty("name");
+        if ((name != null) && (name.length() > 0)) {
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            host = name.substring(0,i);
+            path = name.substring(i); 
+        }
+        if ("WebModule".equalsIgnoreCase(j2eeType)) { // container is context            
+            sb.append(",path="+path);
+            sb.append(",host="+host);
+        }
+        if ("Host".equalsIgnoreCase(type)) {    // container is host
+            sb.append(",host=");
+            sb.append(poname.getKeyProperty("host"));
+        }
+        if ("Service".equalsIgnoreCase(type)) {  // container is service
+        }
+        return sb.toString();  
+    }
 
 }

@@ -122,15 +122,6 @@ public final class SaveServerAction extends Action {
         // Perform attribute updates as requested
         String attribute = null;
         try{          
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(sform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(soname,
-                                  new Attribute("debug", new Integer(debug)));
             attribute = "port";
             int port = 0;
             try {

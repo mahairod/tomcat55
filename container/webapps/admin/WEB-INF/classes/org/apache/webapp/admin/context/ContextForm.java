@@ -77,11 +77,6 @@ public final class ContextForm extends ActionForm {
     private String crossContext = "false";
     
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-    
-    /**
      * The text for the document Base.
      */
     private String docBase = null;
@@ -122,11 +117,6 @@ public final class ContextForm extends ActionForm {
     private String ldrCheckInterval = "15";
     
     /**
-     * The text for the loader Debug level.
-     */
-    private String ldrDebugLvl = "0";
-    
-    /**
      * The text for the boolean value of loader reloadable.
      */
     private String ldrReloadable = "false";
@@ -136,10 +126,6 @@ public final class ContextForm extends ActionForm {
      */
     private String mgrCheckInterval = "60";
     
-    /**
-     * The text for the session manager Debug level.
-     */
-    private String mgrDebugLvl = "0";
     
     /**
      * The text for the session mgr session ID initializer.
@@ -150,11 +136,6 @@ public final class ContextForm extends ActionForm {
      * The text for the session mgr max active sessions.
      */
     private String mgrMaxSessions = "0";
-    
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
     
     /*
      * Represent boolean (true, false) values for cookies etc.
@@ -274,24 +255,6 @@ public final class ContextForm extends ActionForm {
     
     
     /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    /**
      * Return the booleanVals.
      */
     public List getBooleanVals() {
@@ -345,26 +308,6 @@ public final class ContextForm extends ActionForm {
     public void setCrossContext(String crossContext) {
         
         this.crossContext = crossContext;
-        
-    }
-    
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
         
     }
     
@@ -523,24 +466,6 @@ public final class ContextForm extends ActionForm {
         
     }
     
-    /**
-     * Return the Loader Debug Level Text.
-     */
-    
-    public String getLdrDebugLvl() {
-        
-        return this.ldrDebugLvl;
-        
-    }
-    
-    /**
-     * Set the Loader Debug Level Text.
-     */
-    public void setLdrDebugLvl(String ldrDebugLvl) {
-        
-        this.ldrDebugLvl = ldrDebugLvl;
-        
-    }
     
     /**
      * Return the loader reloadable boolean value.
@@ -575,25 +500,6 @@ public final class ContextForm extends ActionForm {
     public void setMgrCheckInterval(String mgrCheckInterval) {
         
         this.mgrCheckInterval = mgrCheckInterval;
-        
-    }
-    
-    /**
-     * Return the session mgr Debug Level Text.
-     */
-    
-    public String getMgrDebugLvl() {
-        
-        return this.mgrDebugLvl;
-        
-    }
-    
-    /**
-     * Set the session mgr Debug Level Text.
-     */
-    public void setMgrDebugLvl(String mgrDebugLvl) {
-        
-        this.mgrDebugLvl = mgrDebugLvl;
         
     }
     
@@ -652,7 +558,6 @@ public final class ContextForm extends ActionForm {
         // context properties
         this.cookies = "false";
         this.crossContext = "false";
-        this.debugLvl = "0";
         this.docBase = null;
         this.override= "false";
         this.path = null;
@@ -661,12 +566,10 @@ public final class ContextForm extends ActionForm {
         
         // loader properties
         this.ldrCheckInterval = "15";
-        this.ldrDebugLvl = "0";
         this.ldrReloadable = "true";
         
         // session manager properties
         this.mgrCheckInterval = "60";
-        this.mgrDebugLvl = "0";
         this.mgrSessionIDInit = "0";
         this.mgrMaxSessions = "-1";
     }
@@ -678,8 +581,6 @@ public final class ContextForm extends ActionForm {
 
         StringBuffer sb = new StringBuffer("ContextForm[adminAction=");
         sb.append(adminAction);
-        sb.append(",debugLvl=");
-        sb.append(debugLvl);
         sb.append(",docBase=");
         sb.append(docBase);
         sb.append(",path=");
@@ -698,13 +599,9 @@ public final class ContextForm extends ActionForm {
         // loader properties
         sb.append(",ldrCheckInterval=");
         sb.append(ldrCheckInterval);        
-        sb.append(",ldrDebugLvl=");
-        sb.append(ldrDebugLvl);
         sb.append(",ldrReloadable=");
         sb.append(ldrReloadable);
         // manager properties
-        sb.append(",mgrDebugLvl=");
-        sb.append(mgrDebugLvl);
         sb.append(",mgrCheckInterval=");
         sb.append(mgrCheckInterval);
         sb.append(",mgrSessionIDInit=");
