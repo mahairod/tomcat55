@@ -65,7 +65,8 @@
 package org.apache.tomcat.server;
 
 import org.apache.tomcat.core.*;
-import org.apache.tomcat.service.http.HttpAdapter;
+import org.apache.tomcat.service.http.*;
+import org.apache.tomcat.service.*;
 import org.apache.tomcat.net.*;
 import org.apache.tomcat.util.*;
 import java.io.*;
@@ -396,7 +397,9 @@ public class HttpServer {
 	    // find a connector for the vhost:port combination
 	    // Use props and CONNECTOR_PROP to load configuration info
 	    // default is HttpServerConnector
-	    addConnector(  new HttpAdapter() );
+	    SimpleTcpConnector sc=new SimpleTcpConnector();
+	    sc.setTcpConnectionHandler( new HttpConnectionHandler());
+	    addConnector(  sc );
 	}
     }
 }

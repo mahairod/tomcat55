@@ -386,7 +386,9 @@ public class ServletWrapper {
 		    servlet.service(req.getFacade(), res.getFacade());
 		}
 	    } else {
+		//System.out.print("X");
 		servlet.service(req.getFacade(), res.getFacade());
+		//System.out.print("Y");
 	    }
 	    
 	    for( int i=cI.length-1; i>=0; i-- ) {

@@ -136,7 +136,7 @@ public class ThreadPool  {
         if(0 == currentThreadCount) {
             throw new IllegalStateException();
         }
-
+	//	System.out.print("K");
         if(currentThreadsUsed == currentThreadCount) {
             if(currentThreadCount < maxThreads) {
                 int toOpen = currentThreadCount + minSpareThreads;
@@ -154,7 +154,7 @@ public class ThreadPool  {
                 }
             }
         }
-
+	//System.out.print("L");
 
         ControlRunnable c = (ControlRunnable)pool.lastElement();
         pool.removeElement(c);

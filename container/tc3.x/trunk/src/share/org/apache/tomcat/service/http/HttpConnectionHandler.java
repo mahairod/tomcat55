@@ -105,7 +105,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
 	//	System.out.println("New Connection");
 	try {
+	    //	    System.out.print("1");
 	    socket=connection.getSocket();
+	    //	    System.out.print("2");
 	    InputStream in=socket.getInputStream();
 	    OutputStream out=socket.getOutputStream();
 
@@ -119,9 +121,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    
 	    reqA.setSocket( socket );
 	    resA.setOutputStream( out );
-
+	    //	    System.out.print("7");
 	    reqA.readNextRequest(resA);
-
+	    //	    System.out.print("8");
 	    // XXX temporary fix for getServerName
 	    String hostHeader = reqA.getHeader("host");
 	    //  if it's not null, Request.getServerName() will take care
@@ -140,7 +142,9 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		reqA.setServerName(hostHeader);
              }
     
+	    //	    System.out.print("3");
 	    contextM.service( reqA, resA );
+	    //	    System.out.print("4");
 	    try {
                InputStream is = socket.getInputStream();
                int available = is.available ();
@@ -152,13 +156,14 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
                if (available > 1) {
                    is.skip (available);
                }
-	   }catch(NullPointerException npe) {
-	       // do nothing - we are just cleaning up, this is
-	       // a workaround for Netscape \n\r in POST - it is supposed
-	       // to be ignored
-	   } catch(java.net.SocketException ex) {
-	       // do nothing - same
-	   }
+	    }catch(NullPointerException npe) {
+		// do nothing - we are just cleaning up, this is
+		// a workaround for Netscape \n\r in POST - it is supposed
+		// to be ignored
+	    } catch(java.net.SocketException ex) {
+		// do nothing - same
+	    }
+	    //	    System.out.print("5");
 	} catch (Exception e) {
 	    contextM.log( "Error reading request " + e.getMessage());
 	} finally {
@@ -166,6 +171,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	    try { socket.close (); }
 	    catch (IOException e) { /* ignore */ }
         }
+	//	System.out.print("6");
     }
 
 
