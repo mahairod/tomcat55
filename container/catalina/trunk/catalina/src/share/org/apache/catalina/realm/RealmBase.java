@@ -351,8 +351,11 @@ public abstract class RealmBase
             }
         }
 
-        String serverDigest =
-            md5Encoder.encode(md5Helper.digest(valueBytes));
+        String serverDigest = null;
+        // Bugzilla 32137
+        synchronized(md5Helper) {
+            serverDigest = md5Encoder.encode(md5Helper.digest(valueBytes));
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Digest : " + clientDigest + " Username:" + username 
@@ -1092,8 +1095,11 @@ public abstract class RealmBase
             }
         }
 
-        byte[] digest =
-            md5Helper.digest(valueBytes);
+        byte[] digest = null;
+        // Bugzilla 32137
+        synchronized(md5Helper) {
+            digest = md5Helper.digest(valueBytes);
+        }
 
         return md5Encoder.encode(digest);
     }

@@ -55,6 +55,9 @@
       <fix>
         <bug>28709</bug>: javax.servlet.http.HttpServletRequest.isRequestedSessionIdValid() returns true for an invalidated session. (luehe)
       </fix>
+      <fix>
+        <bug>32137</bug>: Possible thread-safety issue in RealmBase. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
