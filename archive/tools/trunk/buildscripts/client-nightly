@@ -3,7 +3,7 @@
 BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
-${SCRIPT_DIR}/do-checkout 
+${SCRIPT_DIR}/do-checkout-tomcat
 
 ${SCRIPT_DIR}/do-build
 

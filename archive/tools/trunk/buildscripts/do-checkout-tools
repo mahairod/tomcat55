@@ -1,0 +1,28 @@
+#!/bin/sh
+
+BASEDIR=`dirname $0`
+. ${BASEDIR}/env-client
+
+echo "<checkout>"
+if [ -d ${BUILD_DIR}/result ]; then
+  echo 
+else
+  mkdir ${BUILD_DIR}/result
+fi
+
+if [ -d ${BUILD_DIR}/ws ]; then
+  rm -rf ${BUILD_DIR}/ws/jakarta-tools
+fi
+
+mkdir ${BUILD_DIR}/ws
+
+cd ${SRC_DIR}
+
+    # filter out boring messages
+cvs -d $CVSROOT checkout \
+		jakarta-tools \
+		    2>&1 \
+		| grep -v "cvs server: Updating" \
+		| grep -v "U "
+
+echo "</checkout>"

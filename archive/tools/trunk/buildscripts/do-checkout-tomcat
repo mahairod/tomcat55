@@ -11,7 +11,10 @@ else
 fi
 
 if [ -d ${BUILD_DIR}/ws ]; then
-  rm -rf ${BUILD_DIR}/ws
+  rm -rf ${BUILD_DIR}/ws/jakarta-tomcat  
+  rm -rf ${BUILD_DIR}/ws/jakarta-watchdog
+  rm -rf ${BUILD_DIR}/build
+  rm -rf ${BUILD_DIR}/dist
 fi
 
 mkdir ${BUILD_DIR}/ws
@@ -20,11 +23,9 @@ cd ${SRC_DIR}
 
     # filter out boring messages
 cvs -d $CVSROOT checkout \
-		jakarta-tools \
 		jakarta-tomcat \
 		jakarta-watchdog \
-		apache-1.3 \
-		apache-2.0 2>&1 \
+		    2>&1 \
 		| grep -v "cvs server: Updating" \
 		| grep -v "U "
 

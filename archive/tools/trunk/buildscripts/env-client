@@ -67,5 +67,10 @@ if [ -f ${HOME}/.env-jakarta ]; then
 fi
 
 
+# for 1.2 
+CLASSPATH=${JAVA_HOME}/lib/tools.jar:$CLASSPATH
+export CLASSPATH
+
+
 
 
