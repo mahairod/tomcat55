@@ -1207,26 +1207,15 @@ public class DefaultServlet
 	    return;
 	}
 
-        // Retrieve the Catalina context
+        // Retrieve the Catalina context and Resources implementation
         ApplicationContext context = (ApplicationContext) getServletContext();
-
-	// Convert the resource path to a URL
-	URL resourceURL = null;
-	try {
-	    resourceURL = context.getResource(path);
-	} catch (MalformedURLException e) {
-	    ;
-	}
-	if (resourceURL == null) {
-	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
-	    return;
-	}
-	if (debug > 0)
-	    log("DefaultServlet.serveResource:  Corresponding URL is '" +
-		resourceURL.toString() + "'");
-        
         Resources resources = context.getResources();
         ResourceInfo resourceInfo = new ResourceInfo(path, resources);
+
+        if (!resourceInfo.exists) {
+	    response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+	    return;
+        }
 
         // If the resource is a collection (aka a directory), we check 
         // the welcome files list.
@@ -1239,14 +1228,13 @@ public class DefaultServlet
 
             ResourceInfo welcomeFileInfo = checkWelcomeFiles(path, resources);
             if (welcomeFileInfo != null) {
-                resourceInfo = welcomeFileInfo;
-		RequestDispatcher rd =
-		  getServletContext().getRequestDispatcher
-		    (resourceInfo.path);
-		if (rd != null) {
-		    rd.forward(request, response);
-		    return;
-		}
+                String redirectPath = welcomeFileInfo.path;
+                String contextPath = request.getContextPath();
+                if ((contextPath != null) && (!contextPath.equals("/"))) {
+                    redirectPath = contextPath + redirectPath;
+                }
+                response.sendRedirect(redirectPath);
+                return;
             }
             
         }
