@@ -867,7 +867,6 @@ public class StandardWrapper
                 Wrapper jspWrapper = (Wrapper)
                     ((Context) getParent()).findChild(Constants.JSP_SERVLET_NAME);
                 if (jspWrapper != null) {
-                    actualClass = jspWrapper.getServletClass();
                     // Merge init parameters
                     String paramNames[] = jspWrapper.findInitParameters();
                     for (int i = 0; i < paramNames.length; i++) {
@@ -877,6 +876,7 @@ public class StandardWrapper
                                  jspWrapper.findInitParameter(paramNames[i]));
                         }
                     }
+                    return jspWrapper.allocate();
                 }
             }
 
