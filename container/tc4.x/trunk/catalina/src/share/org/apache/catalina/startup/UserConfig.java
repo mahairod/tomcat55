@@ -19,7 +19,6 @@ package org.apache.catalina.startup;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
