@@ -81,8 +81,9 @@ x installed (version 1.3.1 recommended), and do the following:
   that you unpack "ldap.jar" and "jaas.jar" into the "lib" subdirectory of
   the JNDI directory, parallel to "jndi.jar".
 
-* This is optional with JDK 1.3 or later.
-
+* This is optional with JDK 1.3 or later. It is required for building
+  with full.dist=on. The build process expects this to be in
+  {base.path}/jndi-1.2.1. 
 
 (4) Download and Install the Xerces 2 Distribution
 
@@ -291,8 +292,11 @@ x installed (version 1.3.1 recommended), and do the following:
 
     http://java.sun.com/products/jdbc/download.html
 
-* Place the jar in a convenient location.
+* Place the jar in a convenient location. The build process expects it
+  in ${base.path}/jdbc2_0-stdext.
 
+* No Tomcat class depends on JDBC directly. Tyrex and commons-dbcp
+  depend on it, and it is distributed with a full distribution.
 
 (14) Download and Install an implementation of the JMX 1.0 specification. This
      can be either MX4J (http://mx4j.sourceforge.net) or Sun JMX 1.0 Reference 
@@ -322,7 +326,10 @@ NOTE:  The Tomcat binaries are distrbuted with MX4J.
     http://java.sun.com/products/javabeans/glasgow/jaf.html
 
 * Unpack the package into a convenient location so that it
-  resides in its own subdirectory.
+  resides in its own subdirectory. The build process expects this by
+  default to be in ${base.path}/jaf-1.0.1 
+
+* The Java Activation Framework is used by the JavaMail optional package.
 
 
 (16) Download and Install JavaMail 1.2
@@ -332,7 +339,10 @@ NOTE:  The Tomcat binaries are distrbuted with MX4J.
     http://java.sun.com/products/javamail/index.html
 
 * Unpack the package into a convenient location so that
-  it resides in its own subdirectory.
+  it resides in its own subdirectory. The build process expects this
+  by default to be in ${base.path}/javamail-1.2
+
+* JavaMail is used to provide JNDI named mail sessions.
 
 
 (17) Download and Install the JSSE 1.0.2 Reference Implementation
@@ -343,17 +353,25 @@ NOTE:  The Tomcat binaries are distrbuted with MX4J.
     http://java.sun.com/products/jsse/
 
 * Unpack the reference implementation into a convenient location so that
-  it resides in its own subdirectory.
+  it resides in its own subdirectory. The build expects this to be in
+  ${base.path}/jsse-1.0.2.
+
+* This is optional with JDK 1.4 and later.
+
+* Used to provide SSL and Certificate support in Catalina and in Connectors.
 
 
 (18) Download and Install the Java Transaction APIs
 
-* Download the Java Transaction API (JTA) package (version 1.0.1) from:
+* Download the Java Transaction API (JTA) package (version 1.0.1a) from:
 
     http://java.sun.com/products/jta/
 
 * Unpack the package into a convenient location so that it resides in its
-  own subdirectory.
+  own subdirectory. By default, the Tomcat build expects this to be
+  {base.path}/jta-1_0_1a/
+
+* Used to provide JNDI named transaction factories.
 
 
 (19) Download and Install the Struts Binary Distribution

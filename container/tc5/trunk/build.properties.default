@@ -73,8 +73,8 @@ commons-daemon.loc=jakarta-commons-sandbox/daemon
 
 
 # ----- Commons Digester, version 20020815 or later -----
-commons-digester.home=${base.path}/commons-digester/dist
-commons-digester.lib=${commons-digester.home}
+commons-digester.home=${base.path}/commons-digester
+commons-digester.lib=${commons-digester.home}/dist
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 commons-digester.loc=jakarta-commons/digester
 
@@ -192,10 +192,10 @@ jnet.jar=${jsse.lib}/jnet.jar
 jsse.jar=${jsse.lib}/jsse.jar
 
 
-# ----- Java Transaction API (JTA), version 1.0.1 or later -----
-jta.home=${base.path}/jta-spec1_0_1
+# ----- Java Transaction API (JTA), version 1.0.1a or later -----
+jta.home=${base.path}/jta-1_0_1a
 jta.lib=${jta.home}
-jta.jar=${jta.lib}/jta-spec1_0_1.jar
+jta.jar=${jta.lib}/jta.jar
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
