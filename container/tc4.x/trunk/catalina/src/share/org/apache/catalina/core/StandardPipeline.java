@@ -97,13 +97,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class StandardPipeline
-    implements Pipeline, Contained, Lifecycle, ValveContext {
-
-
-    // -------------------------------------------------------------- Constants
-
-
-    protected static final String STATE = "pipelineState";
+    implements Pipeline, Contained, Lifecycle {
 
 
     // ----------------------------------------------------------- Constructors
@@ -472,11 +466,8 @@ public class StandardPipeline
     public void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        // Initialize the per-thread state for this thread
-        request.setNote(STATE, new PipelineState());
-
         // Invoke the first Valve in this pipeline for this request
-        invokeNext(request, response);
+        (new StandardPipelineValveContext()).invokeNext(request, response);
 
     }
 
@@ -534,51 +525,6 @@ public class StandardPipeline
     }
 
 
-    // --------------------------------------------------- ValveContext Methods
-
-
-    /**
-     * Cause the <code>invoke()</code> method of the next Valve that is part of
-     * the Pipeline currently being processed (if any) to be executed, passing
-     * on the specified request and response objects plus this
-     * <code>ValveContext</code> instance.  Exceptions thrown by a subsequently
-     * executed Valve (or a Filter or Servlet at the application level) will be
-     * passed on to our caller.
-     *
-     * If there are no more Valves to be executed, an appropriate
-     * ServletException will be thrown by this ValveContext.
-     *
-     * @param request The request currently being processed
-     * @param response The response currently being created
-     *
-     * @exception IOException if thrown by a subsequent Valve, Filter, or
-     *  Servlet
-     * @exception ServletException if thrown by a subsequent Valve, Filter,
-     *  or Servlet
-     * @exception ServletException if there are no further Valves configured
-     *  in the Pipeline currently being processed
-     */
-    public void invokeNext(Request request, Response response)
-        throws IOException, ServletException {
-
-        // Identify the current subscript for the current request thread
-        PipelineState pipelineState = (PipelineState) request.getNote(STATE);
-        int subscript = pipelineState.stage;
-        pipelineState.stage = pipelineState.stage + 1;
-
-        // Invoke the requested Valve for the current request thread
-        if (subscript < valves.length) {
-            valves[subscript].invoke(request, response, this);
-        } else if ((subscript == valves.length) && (basic != null)) {
-            basic.invoke(request, response, this);
-        } else {
-            throw new ServletException
-                (sm.getString("standardPipeline.noValve"));
-        }
-
-    }
-
-
     // ------------------------------------------------------ Protected Methods
 
 
@@ -625,13 +571,72 @@ public class StandardPipeline
     }
 
 
-    // ---------------------------------------------- PipelineState Inner Class
+    // ------------------------------- StandardPipelineValveContext Inner Class
 
 
-    protected class PipelineState {
+    protected class StandardPipelineValveContext
+        implements ValveContext {
 
 
-        int stage = 0;
+        // ------------------------------------------------- Instance Variables
+
+
+        protected int stage = 0;
+
+
+        // --------------------------------------------------------- Properties
+
+
+        /**
+          * Return descriptive information about this ValveContext 
+          * implementation.
+          */
+        public String getInfo() {
+            return info;
+        }
+
+
+        // ----------------------------------------------------- Public Methods
+
+
+        /**
+         * Cause the <code>invoke()</code> method of the next Valve that is 
+         * part of the Pipeline currently being processed (if any) to be 
+         * executed, passing on the specified request and response objects 
+         * plus this <code>ValveContext</code> instance.  Exceptions thrown by
+         * a subsequently executed Valve (or a Filter or Servlet at the 
+         * application level) will be passed on to our caller.
+         *
+         * If there are no more Valves to be executed, an appropriate
+         * ServletException will be thrown by this ValveContext.
+         *
+         * @param request The request currently being processed
+         * @param response The response currently being created
+         *
+         * @exception IOException if thrown by a subsequent Valve, Filter, or
+         *  Servlet
+         * @exception ServletException if thrown by a subsequent Valve, Filter,
+         *  or Servlet
+         * @exception ServletException if there are no further Valves 
+         *  configured in the Pipeline currently being processed
+         */
+        public void invokeNext(Request request, Response response)
+            throws IOException, ServletException {
+
+            int subscript = stage;
+            stage = stage + 1;
+
+            // Invoke the requested Valve for the current request thread
+            if (subscript < valves.length) {
+                valves[subscript].invoke(request, response, this);
+            } else if ((subscript == valves.length) && (basic != null)) {
+                basic.invoke(request, response, this);
+            } else {
+                throw new ServletException
+                    (sm.getString("standardPipeline.noValve"));
+            }
+
+        }
 
 
     }
