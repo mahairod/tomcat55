@@ -17,10 +17,7 @@
 
       <mkdir dir="${watchdog.build}"/>
       <mkdir dir="${watchdog.build}/clients"/>
-      <mkdir dir="${watchdog.build}/conf" />
       <mkdir dir="${watchdog.build}/lib" />
-      <mkdir dir="${watchdog.build}/bin" />
-      <mkdir dir="${watchdog.build}/doc" />
       <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
 
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
@@ -47,6 +44,7 @@
       <copydir src="src/bin" dest="${watchdog.build}/bin"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
 
+      <copydir src="doc" dest="${watchdog.build}/doc" />
       <copyfile src="Readme" 
                 dest="${watchdog.build}/doc/Readme"/>
 
@@ -93,13 +91,11 @@
    <target name="dist" depends="main">
 
       <mkdir dir="${watchdog.dist}"/>
-      <mkdir dir="${watchdog.dist}/conf" />
       <mkdir dir="${watchdog.dist}/lib" />
-      <mkdir dir="${watchdog.dist}/bin" />
-      <mkdir dir="${watchdog.dist}/doc" />
       <mkdir dir="${watchdog.dist}/webapps" />
       <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
 
+      <copydir src="doc" dest="${watchdog.dist}/doc" />
       <copyfile src="Readme" 
                 dest="${watchdog.dist}/doc/Readme"/>
 
