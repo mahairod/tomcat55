@@ -63,6 +63,8 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.beans.*;
 import java.net.URLEncoder;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import javax.servlet.jsp.tagext.*;
 import org.xml.sax.Attributes;
@@ -91,6 +93,9 @@ public class Generator {
     private JspCompilationContext ctxt;
     private boolean breakAtLF;
     private PageInfo pageInfo;
+    private FinallyApplyer finallies;
+    private int tryBit;
+    private Stack tryStack;
 
     /**
      * @param s the input string
@@ -199,6 +204,17 @@ public class Generator {
 
 	// Constructor (empty so far) here
 	// Other methods here
+        out.printil("private void addTagToVector(java.util.Vector tags, int index, javax.servlet.jsp.tagext.Tag tag) {");
+        out.pushIndent();
+        out.printil("if (index + 1 > tags.size())");
+        out.pushIndent();
+        out.printil("tags.setSize(index + 1);");
+        out.popIndent();
+        out.printil("tags.setElementAt(tag, index);");
+        out.popIndent();
+        out.printil("}");
+        out.println();
+        out.println();
 
 	// Now the service method
 	out.printin("public void ");
@@ -222,6 +238,8 @@ public class Generator {
 	out.printil("ServletConfig config = null;");
 	out.printil("JspWriter out = null;");
 	out.printil("Object page = this;");
+        out.printil("java.util.BitSet bitmask = new java.util.BitSet();");
+        out.printil("java.util.Vector tags = new java.util.Vector();");
 
 	out.printil("try {");
 	out.pushIndent();
@@ -882,6 +900,10 @@ public class Generator {
 	    out.println(" ---- */");
 
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
+
+            boolean implementsTryCatchFinally =
+                TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
+
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
 	    out.print(tagHandlerVar);
@@ -895,8 +917,22 @@ public class Generator {
 	    declareTagVariableInfos(tagVarInfos, n.getTagData(),
 				    VariableInfo.AT_BEGIN);
 	    
-	    out.printil("try {");
-	    out.pushIndent();
+            if (implementsTryCatchFinally) {
+                out.printil("try {");
+                out.pushIndent();
+            } else {
+                out.printil("// try {");
+                out.printin("bitmask.set(");
+                Integer tryBitVal = new Integer(tryBit++);
+                tryStack.push(tryBitVal);
+                out.print(tryBitVal.toString());
+                out.println(");");
+                out.printin("addTagToVector(tags, ");
+                out.print(tryBitVal.toString());
+                out.print(", ");
+                out.print(tagHandlerVar);
+                out.println(");");
+            }
 	    out.printin("int ");
 	    out.print(tagEvalVar);
 	    out.print(" = ");
@@ -918,8 +954,17 @@ public class Generator {
 		out.pushIndent();
 		
 		if (isBodyTag) {
-		    out.printil("try {");
-		    out.pushIndent();
+                    out.printil("// try {");
+                    out.printin("bitmask.set(");
+                    Integer tryBitVal = new Integer(tryBit++);
+                    tryStack.push(tryBitVal);
+                    out.print(tryBitVal.toString());
+                    out.println(");");
+                    out.printin("addTagToVector(tags, ");
+                    out.print(tryBitVal.toString());
+                    out.print(", ");
+                    out.print(tagHandlerVar);
+                    out.println(");");
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
@@ -981,21 +1026,37 @@ public class Generator {
 
 	    if (n.getBody() != null) {
 		if (implementsBodyTag) {
-		    out.popIndent(); // try
+                    Integer tryBitVal = (Integer)tryStack.pop();
+                    out.printil("// } finally {");
+                    out.printin("bitmask.clear(");
+                    out.print(tryBitVal.toString());
+                    out.println(");");
 
-		    out.printil("} finally {");
-		    out.pushIndent();
+                    out.printin("addTagToVector(tags, ");
+                    out.print(tryBitVal.toString());
+                    out.print(", ");
+                    out.print(tagHandlerVar);
+                    out.println(");");
+
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
 		    out.printil("out = pageContext.popBody();");
 		    out.popIndent();
-		    
-		    out.popIndent();
-		    out.printil("}");
+
+                    finallies.beginPartMethod(tryBitVal.intValue());
+                    finallies.print("      if (");
+                    finallies.print("((javax.servlet.jsp.tagext.BodyTag)tags.elementAt(");
+                    finallies.print(tryBitVal.toString());
+                    finallies.print(")).doAfterBody()");
+                    finallies.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
+                    finallies.println("        out = pageContext.popBody();");
+
+                    finallies.endPartMethod();
+                    out.printil("// }");
 		}
-		
+
 		out.popIndent(); // EVAL_BODY
 		out.printil("}");
 	    }
@@ -1007,26 +1068,38 @@ public class Generator {
 	    out.printil("return;");
 	    out.popIndent();
 
-	    out.popIndent(); // try
-
 	    // TryCatchFinally
 	    if (implementsTryCatchFinally) {
+                out.popIndent(); // try
 		out.printil("} catch (Throwable _jspx_exception) {");
 		out.pushIndent();
 		out.printin(tagHandlerVar);
 		out.println(".doCatch(_jspx_exception);");
 		out.popIndent();
-	    }
-	    out.printil("} finally {");
-	    out.pushIndent();
-	    if (implementsTryCatchFinally) {
+                out.printil("} finally {");
+                out.pushIndent();
 		out.printin(tagHandlerVar);
 		out.println(".doFinally();");
+                out.printin(tagHandlerVar);
+                out.println(".release();");
+                out.popIndent();
+                out.printil("}");
+            } else {
+                Integer tryBitVal = (Integer)tryStack.pop();
+                out.printil("// } finally {");
+                out.printin("bitmask.clear(");
+                out.print(tryBitVal.toString());
+                out.println(");");
+                out.printin(tagHandlerVar);
+                out.println(".release();");
+                out.printil("// }");
+                finallies.beginPartMethod(tryBitVal.intValue());
+                finallies.printin("((javax.servlet.jsp.tagext.Tag)tags.elementAt(");
+                finallies.print(tryBitVal.toString());
+                finallies.print("))");
+                finallies.println(".release();");
+                finallies.endPartMethod();
 	    }
-	    out.printin(tagHandlerVar);
-	    out.println(".release();");
-	    out.popIndent();
-	    out.printil("}");
 
 	    // Declare and update AT_END variables
 	    updateVariableInfos(varInfos, VariableInfo.AT_END, true);
@@ -1302,13 +1375,28 @@ public class Generator {
         out.pushIndent();
 
         // Do stuff here for finally actions...
+
+        out.printil("try {");
+        out.pushIndent();
+        out.printil("finallies(bitmask, out, tags, pageContext);");
+        out.popIndent();
+        out.printil("} catch (javax.servlet.jsp.JspException e) {");
+        out.pushIndent();
+        out.printil("if (pageContext != null) pageContext.handlePageException(e);");
+        out.popIndent();
+        out.printil("}");
         out.printil("if (_jspxFactory != null) _jspxFactory.releasePageContext(pageContext);");
+
         out.popIndent();
         out.printil("}");
 
         // Close the service method
         out.popIndent();
         out.printil("}");
+
+        // Call the final method
+        finallies.done();
+        out.printil(finallies.toString());
 
         // Close the class definition
         out.popIndent();
@@ -1325,6 +1413,8 @@ public class Generator {
 	pageInfo = compiler.getPageInfo();
 	beanInfo = pageInfo.getBeanRepository();
 	breakAtLF = ctxt.getOptions().getMappedFile();
+        finallies = new FinallyApplyer();
+        tryStack = new Stack();
     }
 
     /**
@@ -1419,5 +1509,55 @@ public class Generator {
 	    return tagHandlerClass;
 	}
     }
+
+    private static class FinallyApplyer {
+        private PrintStream finalOutput;
+        private ByteArrayOutputStream rawOutput;
+
+        FinallyApplyer() {
+            rawOutput = new ByteArrayOutputStream();
+            finalOutput = new PrintStream(rawOutput, true);
+
+            finalOutput.println();
+            finalOutput.println("  private void finallies(java.util.BitSet bitmask, JspWriter out, java.util.Vector tags, PageContext pageContext)");
+            finalOutput.println("  throws javax.servlet.jsp.JspException {");
+        }
+
+        public void done() {
+            finalOutput.println("  }");
+        }
+
+        public void beginPartMethod(int bit) {
+            finalOutput.print("    if (bitmask.get(");
+            finalOutput.print(bit);
+            finalOutput.println(")) {");
+        }
+
+        public void endPartMethod() {
+            finalOutput.println("    }");
+            finalOutput.println();
+        }
+
+        public void println(String aLine) {
+            if (null != aLine) {
+                finalOutput.print(aLine);
+            }
+            finalOutput.println();
+        }
+
+        public void printin(String partLine) {
+            finalOutput.print("      ");
+            finalOutput.print(partLine);
+        }
+
+        public void print(String partLine) {
+            finalOutput.print(partLine);
+        }
+
+        public String toString() {
+            return rawOutput.toString();
+        }
+    }
+
 }
 
