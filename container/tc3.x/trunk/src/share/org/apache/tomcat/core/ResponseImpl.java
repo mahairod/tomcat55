@@ -401,6 +401,14 @@ public class ResponseImpl implements Response {
 	userCookies.addElement(cookie);
     }
 
+    public Enumeration getCookies() {
+	return userCookies.elements();
+    }
+
+    public Enumeration getSystemCookies() {
+	return systemCookies.elements();
+    }
+
     public void addSystemCookie(Cookie cookie) {
 	systemCookies.addElement(cookie);
     }

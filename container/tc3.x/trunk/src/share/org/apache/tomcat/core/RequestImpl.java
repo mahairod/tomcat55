@@ -176,6 +176,7 @@ public class RequestImpl  implements Request {
     public String getServerName() {
 	if(serverName!=null) return serverName;
 
+	// XXX Move to interceptor!!!
 	String hostHeader = this.getHeader("host");
 	if (hostHeader != null) {
 	    int i = hostHeader.indexOf(':');
