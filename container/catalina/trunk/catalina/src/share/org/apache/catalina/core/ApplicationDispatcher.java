@@ -428,15 +428,6 @@ final class ApplicationDispatcher
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
             String contextPath = context.getPath();
-            /*
-            StringBuffer sb = new StringBuffer();
-            if (contextPath != null)
-                sb.append(contextPath);
-            if (servletPath != null)
-                sb.append(servletPath);
-            if (pathInfo != null)
-                sb.append(pathInfo);
-            */
             wrequest.setContextPath(contextPath);
             wrequest.setRequestURI(requestURI);
             wrequest.setServletPath(servletPath);
