@@ -114,6 +114,14 @@
         At boot, is order of start up (Apache vs Tomcat) important?
       </a>
     </li>
+    <li>
+      <a href="#jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+      </a>
+    </li>
   </ul>
 </p>
 </section>
@@ -257,6 +265,31 @@
     No. This way - either apache or tomcat can be restarted at any time
     independent of one another.
   </answer>
+
+  <question>
+    <a name="jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+    </a>
+  </question>
+  <answer>
+    JK2 is not finding your <code>workers2.properties</code> file.
+    Specify it's location in your <code>httpd.conf</code> file by adding:
+
+    <br /><br />
+    <code>
+        JkSet config.file /full/system/path/to/workers2.properties
+    </code>
+    <br /><br />
+    <a href='http://marc.theaimsgroup.com/?t=105784893200003&amp;r=1&amp;w=2'>
+        Thread which spawned this question.
+    </a>
+  </answer>
+
+
+
 
 
 </section>

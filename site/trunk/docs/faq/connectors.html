@@ -101,6 +101,14 @@
         At boot, is order of start up (Apache vs Tomcat) important?
       </a>
     </li>
+    <li>
+      <a href="#jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+      </a>
+    </li>
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -241,6 +249,31 @@
     No. This way - either apache or tomcat can be restarted at any time
     independent of one another.
   </div><br>
+
+  <b style="font-size: larger">
+    <a name="jkloc">
+     JK2 doesn't seem to be using my settings in my
+     <code>workers2.properties</code> file
+     such as creating the shm file or mapping the URIs listed to Tomcat,
+     what's wrong?
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    JK2 is not finding your <code>workers2.properties</code> file.
+    Specify it's location in your <code>httpd.conf</code> file by adding:
+
+    <br><br>
+    <code>
+        JkSet config.file /full/system/path/to/workers2.properties
+    </code>
+    <br><br>
+    <a href="http://marc.theaimsgroup.com/?t=105784893200003&r=1&w=2">
+        Thread which spawned this question.
+    </a>
+  </div><br>
+
+
+
 
 
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
