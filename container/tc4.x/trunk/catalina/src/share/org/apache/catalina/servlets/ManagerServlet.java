@@ -76,8 +76,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import javax.naming.Binding;
 import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -804,19 +804,38 @@ public class ManagerServlet
         } else {
             writer.println(sm.getString("managerServlet.resourcesAll"));
         }
+
+        printResources(writer, "", global, type);
+
+    }
+
+
+    /**
+     * List the resources of the given context.
+     */
+    protected void printResources(PrintWriter writer, String prefix,
+                                  javax.naming.Context namingContext,
+                                  String type) {
+
         try {
-            NamingEnumeration items = global.list("");
+            NamingEnumeration items = namingContext.listBindings("");
             while (items.hasMore()) {
-                NameClassPair item = (NameClassPair) items.next();
-                if ((type != null) &&
-                    (!type.equals(item.getClassName()))) {
-                    continue;
+                Binding item = (Binding) items.next();
+                if (item.getObject() instanceof javax.naming.Context) {
+                    printResources
+                        (writer, prefix + item.getName() + "/",
+                         (javax.naming.Context) item.getObject(), type);
+                } else {
+                    if ((type != null) &&
+                        (!type.equals(item.getClassName()))) {
+                        continue;
+                    }
+                    writer.print(prefix + item.getName());
+                    writer.print(':');
+                    writer.print(item.getClassName());
+                    // Do we want a description if available?
+                    writer.println();
                 }
-                writer.print(item.getName());
-                writer.print(':');
-                writer.print(item.getClassName());
-                // Do we want a description if available?
-                writer.println();
             }
         } catch (Throwable t) {
             log("ManagerServlet.resources[" + type + "]", t);
