@@ -94,7 +94,6 @@ public class Constants {
 	"javax.servlet.*", 
 	"javax.servlet.http.*", 
 	"javax.servlet.jsp.*", 
-        "javax.servlet.jsp.tagext.*",
 	"org.apache.jasper.runtime.*", 
     };
 

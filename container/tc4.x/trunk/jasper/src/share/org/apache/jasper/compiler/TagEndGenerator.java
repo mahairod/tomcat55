@@ -127,7 +127,7 @@ public class TagEndGenerator
 
         if (hasBody) {
             if (implementsIterationTag)
-                writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_AGAIN);");
+                writer.println("} while ("+thVarName+".doAfterBody() == javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN);");
             else
                 writer.println("} while (false);");
         }
@@ -150,7 +150,7 @@ public class TagEndGenerator
 
                 writer.println("} finally {");
                 writer.pushIndent();
-                writer.println("if ("+evalVarName+" != Tag.EVAL_BODY_INCLUDE)");
+                writer.println("if ("+evalVarName+" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
                 writer.pushIndent();
                 writer.println("out = pageContext.popBody();");
                 writer.popIndent();
@@ -163,7 +163,7 @@ public class TagEndGenerator
 	    writer.println("}");
         }
 
-	writer.println("if ("+thVarName+".doEndTag() == Tag.SKIP_PAGE)");
+	writer.println("if ("+thVarName+".doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE)");
 	writer.pushIndent(); writer.println("return;"); writer.popIndent();
 
 	writer.popIndent(); // try

@@ -353,7 +353,7 @@ public class TagBeginGenerator
         //        types of exceptions? -akv
 
         if (!implementsBodyTag) {
-            writer.println("if ("+evalVar+" == BodyTag.EVAL_BODY_BUFFERED)");
+            writer.println("if ("+evalVar+" == javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_BUFFERED)");
             writer.pushIndent();
             writer.println("throw new JspTagException(\"Since tag handler "+tc.getTagHandlerClass()+
                            " does not implement BodyTag, it can't return BodyTag.EVAL_BODY_TAG\");");
@@ -361,18 +361,18 @@ public class TagBeginGenerator
         }
 
         if (hasBody) {
-            writer.println("if ("+evalVar+" != Tag.SKIP_BODY) {");
+            writer.println("if ("+evalVar+" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
 	    writer.pushIndent();
 
 	    if (implementsBodyTag) {
                 writer.println("try {");
                 writer.pushIndent();
 
-	        writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
+	        writer.println("if ("+evalVar+" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
 	        writer.pushIndent();
 
 	        writer.println("out = pageContext.pushBody();");
-	        writer.println(thVarName+".setBodyContent((BodyContent) out);");
+	        writer.println(thVarName+".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
 
 	        writer.popIndent();
 	        writer.println("}");
