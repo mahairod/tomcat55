@@ -79,35 +79,9 @@ import org.apache.webapp.admin.LabelValueBean;
  * @version $Revision$ $Date$
  */
 
-public final class JNDIRealmForm extends ActionForm {
+public final class JNDIRealmForm extends RealmForm {
     
     // ----------------------------------------------------- Instance Variables
-    
-   /**
-     * The administrative action represented by this form.
-     */
-    private String adminAction = "Edit";
-
-    /**
-     * The object name of the Realm this bean refers to.
-     */
-    private String objectName = null;
-
-    /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-        
-    /**
-     * The text for the realm type.
-     * Specifies if it is a JNDI, JNDI or MemoryRealm.
-     */
-    private String realmType = null;
-    
-    /**
-     * The text for the node label.
-     */
-    private String nodeLabel = null;
     
     /**
      * The text for the search subtree.
@@ -163,107 +137,15 @@ public final class JNDIRealmForm extends ActionForm {
      * The text for the user search Pattern.
      */
     private String userPattern = null;
-    
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
-    
+        
     /**
      * Set of valid values for search subtrees(true/false).
      */
     private List searchVals = null;
     
-    /**
-     * The object name of the parent of this Realm.
-     */
-    private String parentObjectName = null;
-
-    /**
-     * Set of valid values for realms.
-     */
-    private List realmTypeVals = null;
     
-    /**
-     * The text for whether "delete this realm" operation is allowed
-     * on the realm or not.
-     */
-    private String allowDeletion = null;
- 
     // ------------------------------------------------------------- Properties
-    
-       /**
-     * Return the administrative action represented by this form.
-     */
-    public String getAdminAction() {
-
-        return this.adminAction;
-
-    }
-
-    /**
-     * Set the administrative action represented by this form.
-     */
-    public void setAdminAction(String adminAction) {
-
-        this.adminAction = adminAction;
-
-    }
-
-    /**
-     * Return the Object Name.
-     */
-    public String getObjectName() {
         
-        return this.objectName;
-        
-    }
-    
-    /**
-     * Set the Object Name.
-     */
-    public void setObjectName(String objectName) {
-        
-        this.objectName = objectName;
-        
-    }
-    
-    /**
-     * Return the Realm type.
-     */
-    public String getRealmType() {
-        
-        return this.realmType;
-        
-    }
-    
-    /**
-     * Set the Realm type.
-     */
-    public void setRealmType(String realmType) {
-        
-        this.realmType = realmType;
-        
-    }
-    
-    /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
     /**
      * Return the search Vals.
      */
@@ -281,25 +163,7 @@ public final class JNDIRealmForm extends ActionForm {
         this.searchVals = searchVals;
         
     }
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    public String getDebugLvl() {
         
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
-        
-    }
-    
     /**
      * Return the search boolean Text.
      */
@@ -387,24 +251,6 @@ public final class JNDIRealmForm extends ActionForm {
     public void setRolePattern(String rolePattern ) {
         
         this.rolePattern  = rolePattern ;
-        
-    }
-    
-    /**
-     * Return the label of the node that was clicked.
-     */
-    public String getNodeLabel() {
-        
-        return this.nodeLabel;
-        
-    }
-    
-    /**
-     * Set the node label.
-     */
-    public void setNodeLabel(String nodeLabel) {
-        
-        this.nodeLabel = nodeLabel;
         
     }
     
@@ -519,62 +365,6 @@ public final class JNDIRealmForm extends ActionForm {
         
     }
     
-     /**
-     * Return the parent object name of the Realm this bean refers to.
-     */
-    public String getParentObjectName() {
-
-        return this.parentObjectName;
-
-    }
-
-
-    /**
-     * Set the parent object name of the Realm this bean refers to.
-     */
-    public void setParentObjectName(String parentObjectName) {
-
-        this.parentObjectName = parentObjectName;
-
-    }
-    
-        
-   /**
-     * Return the realmTypeVals.
-     */
-    public List getRealmTypeVals() {
-        
-        return this.realmTypeVals;
-        
-    }
-    
-    /**
-     * Set the realmTypeVals.
-     */
-    public void setRealmTypeVals(List realmTypeVals) {
-        
-        this.realmTypeVals = realmTypeVals;
-        
-    }
-    
-    /**
-     * Return the allow deletion value.
-     */
-    public String getAllowDeletion() {
-        
-        return this.allowDeletion;
-        
-    }
-    
-    /**
-     * Set the allow Deletion value.
-     */
-    public void setAllowDeletion(String allowDeletion) {
-        
-        this.allowDeletion = allowDeletion;
-        
-    }
-
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -585,8 +375,7 @@ public final class JNDIRealmForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
-        this.objectName = null;
-        this.debugLvl = "0";
+        super.reset(mapping, request);
         this.search="false";
         
         this.digest = null;
@@ -609,9 +398,9 @@ public final class JNDIRealmForm extends ActionForm {
     public String toString() {
 
         StringBuffer sb = new StringBuffer("UserDatabaseRealmForm[adminAction=");
-        sb.append(adminAction);
+        sb.append(getAdminAction());
         sb.append(",debugLvl=");
-        sb.append(debugLvl);
+        sb.append(getDebugLvl());
         sb.append(",search=");
         sb.append(search);
         sb.append(",digest=");
@@ -635,9 +424,9 @@ public final class JNDIRealmForm extends ActionForm {
         sb.append(",contextFactory=");
         sb.append(contextFactory);
         sb.append("',objectName='");
-        sb.append(objectName);
+        sb.append(getObjectName());
         sb.append("',realmType=");
-        sb.append(realmType);
+        sb.append(getRealmType());
         sb.append("]");
         return (sb.toString());
 
@@ -660,7 +449,6 @@ public final class JNDIRealmForm extends ActionForm {
         ActionErrors errors = new ActionErrors();
         
         String submit = request.getParameter("submit");
-        String type = request.getParameter("realmType");
         
         // front end validation when save is clicked.
         if (submit != null) {
