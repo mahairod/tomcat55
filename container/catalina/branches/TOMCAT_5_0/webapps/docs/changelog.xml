@@ -35,6 +35,13 @@
       </fix>
     </changelog>
   </subsection>
+  <subsection name="Webapps">
+    <changelog>
+      <fix>
+        <bug>29526</bug>: Manager redeployment locked JAR because of context.xml stream. (yoavs)
+      </fix>
+    </changelog>
+  </subsection>
 </section>
 
 <section name="Tomcat 5.0.28 (yoavs)">

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
@@ -845,7 +846,10 @@ public class ManagerServlet
                         }
                         contextXml = new URL(contextWar +
                                              "META-INF/context.xml");
-                        stream = contextXml.openStream();
+                        URLConnection jarUrlConnection=contextXml.openConnection();
+                        jarUrlConnection.setUseCaches(false);
+                        stream = jarUrlConnection.getInputStream();;
+
                         // WAR contains META-INF/context.xml resource - install
                         deployer.install(new URL(contextWar));
                         return;
