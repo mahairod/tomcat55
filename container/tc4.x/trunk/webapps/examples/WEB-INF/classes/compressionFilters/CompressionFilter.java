@@ -129,7 +129,7 @@ public class CompressionFilter implements Filter{
             if (str!=null) {
                 compressionThreshold = Integer.parseInt(str);
                 if (compressionThreshold != 0 && compressionThreshold < minThreshold) {
-			  if (debug > 0) {
+                    if (debug > 0) {
                         System.out.println("compressionThreshold should be either 0 - no compression or >= " + minThreshold);
                         System.out.println("compressionThreshold set to " + minThreshold);
                     }
