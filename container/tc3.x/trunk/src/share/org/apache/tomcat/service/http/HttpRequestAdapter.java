@@ -120,10 +120,12 @@ public class HttpRequestAdapter extends RequestImpl {
 	//    return if an error was detected in processing the
 	//    request line
 
-        if (response.getStatus() >=
-	    HttpServletResponse.SC_BAD_REQUEST) {
-            return;
-	}
+	// read headers if at least we have a protocol >=1.0, or the
+	// error will be reported to early
+	//         if (response.getStatus() >=
+	// 	    HttpServletResponse.SC_BAD_REQUEST) {
+	//             return;
+	// 	}
 
 	// for 0.9, we don't have headers!
 	if(protocol!=null)
@@ -227,11 +229,7 @@ public class HttpRequestAdapter extends RequestImpl {
 	}
 
 	if (requestErrorCode != 0) {
-            try {
-	        response.getFacade().sendError(requestErrorCode, msg);
-	    } catch (IOException ioe) {
-            }
-
+	    response.setStatus(requestErrorCode);
 	    return;
 	}
 

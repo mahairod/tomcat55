@@ -358,8 +358,16 @@ public class ServletWrapper {
 	    
 	    handleReload();
 
-	    if( ! initialized )
-		loadServlet();
+	    if( ! initialized ) {
+		try {
+		    loadServlet();
+		} catch(Exception ex ) {
+		    // return not found
+		    res.setStatus( 404 );
+		    contextM.handleError( req, res, null, 404 );
+		    return;
+		}
+	    }
 	    
 	    // XXX to expensive  per/request, un-load is not so frequent and
 	    // the API doesn't require a special state for destroy
