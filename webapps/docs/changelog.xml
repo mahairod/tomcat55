@@ -99,9 +99,37 @@
       <fix>
          Remove the last DefaultContext artifacts (pero)
       </fix>
+      <fix>
+         <bug>32031</bug>: using createConnector with "http" protocol (remm)
+      </fix>
+      <fix>
+         Add configFile attribute in JMX descriptors (remm)
+      </fix>
+      <fix>
+         Fix autodeployer handling of a war which includes a /META-INF/context.xml, so that it is
+         correctly registered and can be reloaded correctly (remm)
+      </fix>
+      <fix>
+         <bug>32137</bug>: Use of MessageDigest should be synced in DIGEST (remm)
+      </fix>
+      <fix>
+         Add info log when the autodeployer reloads a context (remm)
+      </fix>
     </changelog>
   </subsection>
 
+  <subsection name="Coyote">
+    <changelog>
+      <update>
+        Small HTTP/1.1 optimizations: replace usage of Strings with constant byte arrays, and
+        simplify the code converting Strings to bytes (remm)
+      </update>
+      <update>
+        Greatly reduce the amount of recycle method calls on the buffers (remm)
+      </update>
+    </changelog>
+  </subsection>
+  
   <subsection name="Jasper">
     <changelog>
       <update>
@@ -136,6 +164,12 @@
     <changelog>
       <update>
         <bug>32019</bug>: Remove maxlength=64 restriction on env entry values in admin webapp. (yoavs)
+      </update>
+      <fix>
+        Fix various problems in realm docs, submitted by Phil Mocek. (remm)
+      </fix>
+      <update>
+        Add log4j docs submitted by Allistair Crossley. (remm)
       </update>
     </changelog>
   </subsection>
