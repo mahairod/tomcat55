@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -2132,9 +2133,48 @@ public final class StandardContext
      */
     public void start() throws LifecycleException {
 
+	// Create context attributes that will be required
 	postWelcomeFiles();
 	postWorkDirectory();
+
+	// Standard container startup
 	super.start();
+
+	// Collect "load on startup" servlets that need to be initialized
+	TreeMap map = new TreeMap();
+	Container children[] = findChildren();
+	for (int i = 0; i < children.length; i++) {
+	    Wrapper wrapper = (Wrapper) children[i];
+	    int loadOnStartup = wrapper.getLoadOnStartup();
+	    if (loadOnStartup < 0)
+		continue;
+	    if (loadOnStartup == 0)	// Arbitrarily put them last
+		loadOnStartup = Integer.MAX_VALUE;
+	    Integer key = new Integer(loadOnStartup);
+	    ArrayList list = (ArrayList) map.get(key);
+	    if (list == null) {
+		list = new ArrayList();
+		map.put(key, list);
+	    }
+	    list.add(wrapper);
+	}
+
+	// Load the collected "load on startup" servlets
+	Iterator keys = map.keySet().iterator();
+	while (keys.hasNext()) {
+	    Integer key = (Integer) keys.next();
+	    ArrayList list = (ArrayList) map.get(key);
+	    Iterator wrappers = list.iterator();
+	    while (wrappers.hasNext()) {
+		Wrapper wrapper = (Wrapper) wrappers.next();
+		try {
+		    wrapper.load();
+		} catch (ServletException e) {
+		    log(sm.getString("standardWrapper.loadException",
+				     getName()), e);
+		}
+	    }
+	}
 
     }
 

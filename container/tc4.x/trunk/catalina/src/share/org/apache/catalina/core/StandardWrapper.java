@@ -993,13 +993,7 @@ public final class StandardWrapper
 	super.start();
 
 	// Load and initialize an instance of this servlet if requested
-	if (loadOnStartup < 0)
-	    return;
-        try {
-	    load();
-	} catch (ServletException e) {
-	    log(sm.getString("standardWrapper.loadException", getName()), e);
-	}
+	// MOVED TO StandardContext START() METHOD
 
     }
 
