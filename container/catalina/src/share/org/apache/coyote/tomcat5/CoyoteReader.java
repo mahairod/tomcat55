@@ -43,7 +43,7 @@ public class CoyoteReader
     protected InputBuffer ib;
 
 
-    protected final char[] lineBuffer = new char[MAX_LINE_LENGTH];
+    protected char[] lineBuffer = null;
 
 
     // ----------------------------------------------------------- Constructors
@@ -52,6 +52,17 @@ public class CoyoteReader
     public CoyoteReader(InputBuffer ib) {
         super(ib, 1);
         this.ib = ib;
+    }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Clear facade.
+     */
+    void clear() {
+        ib = null;
     }
 
 
@@ -113,6 +124,10 @@ public class CoyoteReader
 
     public String readLine()
         throws IOException {
+
+        if (lineBuffer == null) {
+            lineBuffer = new char[MAX_LINE_LENGTH];
+       }
 
         String result = null;
 

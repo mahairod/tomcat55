@@ -48,7 +48,7 @@ public final class Constants {
     /**
      * Security flag.
      */
-    protected static final boolean SECURITY = 
+    public static final boolean SECURITY = 
         (System.getSecurityManager() != null);
 
 

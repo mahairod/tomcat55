@@ -49,6 +49,17 @@ public class CoyoteInputStream
     }
 
 
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Clear facade.
+     */
+    void clear() {
+        ib = null;
+    }
+
+
     // --------------------------------------------- ServletInputStream Methods
 
 
