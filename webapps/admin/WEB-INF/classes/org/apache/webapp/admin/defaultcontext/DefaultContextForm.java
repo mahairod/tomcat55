@@ -127,6 +127,11 @@ public final class DefaultContextForm extends ActionForm {
     private String reloadable = "false";
 
     /**
+     * The text for swallowOutput boolean.
+     */
+    private String swallowOutput = "false";
+
+    /**
      * The text for use naming boolean.
      */
     private String useNaming = "true";
@@ -383,6 +388,25 @@ public final class DefaultContextForm extends ActionForm {
     }
 
     /**
+     * Return the swallowOutput boolean value.
+     */
+
+    public String getSwallowOutput() {
+
+        return this.swallowOutput;
+
+    }
+
+    /**
+     * Set the swallowOutput value.
+     */
+    public void setSwallowOutput(String swallowOutput) {
+
+        this.swallowOutput = swallowOutput;
+
+    }
+
+    /**
      * Return the use naming boolean value.
      */
     
@@ -549,6 +573,7 @@ public final class DefaultContextForm extends ActionForm {
         this.cookies = "true";
         this.crossContext = "true";
         this.reloadable = "false";
+        this.swallowOutput = "false";
         this.useNaming = "true";
         
         // loader properties
@@ -576,6 +601,8 @@ public final class DefaultContextForm extends ActionForm {
         sb.append(crossContext);
         sb.append(",reloadable=");
         sb.append(reloadable);
+        sb.append(",swallowOutput=");
+        sb.append(swallowOutput);
         sb.append(",useNaming=");
         sb.append(useNaming);        
         // loader properties

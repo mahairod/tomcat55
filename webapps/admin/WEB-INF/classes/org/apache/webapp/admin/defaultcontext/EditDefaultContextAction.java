@@ -238,6 +238,9 @@ public class EditDefaultContextAction extends Action {
             attribute = "reloadable";
             defaultContextFm.setReloadable
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+            attribute = "swallowOutput";
+            defaultContextFm.setSwallowOutput
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
             attribute = "debug";

@@ -348,6 +348,11 @@
           description="The reloadable flag for this web application"
                  type="boolean"/>
 
+    <attribute   name="swallowOutput"
+          description="Flag to set to cause the system.out and system.err
+      to be redirected to the logger when executing a servlet"
+                 type="boolean"/>
+
     <attribute   name="useNaming"
           description="Create JNDI naming context?"
                    is="true"
@@ -1997,6 +2002,11 @@
                        for this application."
                  type="java.lang.String[]"
             writeable="false"/>
+
+    <attribute   name="swallowOutput"
+          description="Flag to set to cause the system.out and system.err
+      to be redirected to the logger when executing a servlet"
+                 type="boolean"/>
 
     <attribute   name="useNaming"
           description="Create a JNDI naming context for this application?"

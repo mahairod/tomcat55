@@ -152,6 +152,7 @@ public class AddDefaultContextAction extends Action {
         defaultContextFm.setCookies("true");
         defaultContextFm.setCrossContext("true");
         defaultContextFm.setReloadable("false");
+        defaultContextFm.setSwallowOutput("false");
         defaultContextFm.setUseNaming("true");
         //loader initialization
         defaultContextFm.setLdrCheckInterval("15");

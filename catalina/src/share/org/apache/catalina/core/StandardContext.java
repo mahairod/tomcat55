@@ -146,7 +146,7 @@ import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
 
-
+import org.apache.tomcat.util.log.SystemLogHandler;
 
 /**
  * Standard implementation of the <b>Context</b> interface.  Each
@@ -435,6 +435,13 @@ public class StandardContext
      * HTTP status code (as an Integer).
      */
     private HashMap statusPages = new HashMap();
+
+
+    /**
+     * Set flag to true to cause the system.out and system.err to be redirected
+     * to the logger when executing a servlet.
+     */
+    private boolean swallowOutput = false;
 
 
     /**
@@ -1119,6 +1126,34 @@ public class StandardContext
         support.firePropertyChange("sessionTimeout",
                                    new Integer(oldSessionTimeout),
                                    new Integer(this.sessionTimeout));
+
+    }
+
+
+    /**
+     * Return the value of the swallowOutput flag.
+     */
+    public boolean getSwallowOutput() {
+
+        return (this.swallowOutput);
+
+    }
+
+
+    /**
+     * Set the value of the swallowOutput flag. If set to true, the system.out
+     * and system.err will be redirected to the logger during a servlet
+     * execution.
+     *
+     * @param swallowOuptut The new value
+     */
+    public void setSwallowOutput(boolean swallowOutput) {
+
+        boolean oldSwallowOutput = this.swallowOutput;
+        this.swallowOutput = swallowOutput;
+        support.firePropertyChange("swallowOutput",
+                                   new Boolean(oldSwallowOutput),
+                                   new Boolean(this.swallowOutput));
 
     }
 
@@ -2521,7 +2556,19 @@ public class StandardContext
         }
 
         // Normal request processing
-        super.invoke(request, response);
+        if (swallowOutput) {
+            try {
+                SystemLogHandler.startCapture();
+                super.invoke(request, response);
+            } finally {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    log(log);
+                }
+            }
+        } else {
+            super.invoke(request, response);
+        }
 
     }
 
