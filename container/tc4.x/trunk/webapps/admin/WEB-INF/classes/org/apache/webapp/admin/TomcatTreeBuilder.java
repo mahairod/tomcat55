@@ -210,6 +210,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getHosts(serviceNode, serviceName);
             getLoggers(serviceNode, serviceName);
             getRealms(serviceNode, serviceName);
+            getValves(serviceNode, serviceName);
         }
 
     }
@@ -280,6 +281,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             getContexts(hostNode, hostName);            
             getLoggers(hostNode, hostName);
             getRealms(hostNode, hostName);
+            getValves(hostNode, hostName);
         }
 
     }    
@@ -315,8 +317,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
             hostNode.addChild(contextNode);
             getLoggers(contextNode, contextName);
             getRealms(contextNode, contextName);
+            getValves(contextNode, contextName);
         }
-
     }
     
     
@@ -382,6 +384,37 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     false);
             containerNode.addChild(realmNode);
         }
+        
+    }   
+        
+   /**
+     * Append nodes for any defined valves for the specified container.
+     *
+     * @param containerNode Container node for the tree control
+     * @param containerName Object name of the parent container
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
+    public void getValves(TreeControlNode containerNode,
+                          String containerName) throws Exception {
 
-    }    
+        Iterator valveNames =
+                Lists.getValves(mBServer, containerName).iterator();        
+        while (valveNames.hasNext()) {
+            String valveName = (String) valveNames.next();
+            ObjectName objectName = new ObjectName(valveName);
+            String nodeLabel = "Valve for " + containerNode.getLabel();
+            TreeControlNode valveNode =
+                new TreeControlNode(valveName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "EditValve.do?select=" +
+                                    URLEncoder.encode(valveName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    false);
+            containerNode.addChild(valveNode);
+        }
+    }
 }
