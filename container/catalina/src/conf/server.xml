@@ -88,7 +88,7 @@
                enableLookups="true" redirectPort="8443"
                acceptCount="10" debug="0" connectionTimeout="20000"
                useURIValidationHack="false" />
-    <!-- Note : To disable connection timeouts, set connectionTimeout value 
+    <!-- Note : To disable connection timeouts, set connectionTimeout value
      to -1 -->
 
     <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
@@ -220,7 +220,7 @@
       -->
 
       <!-- Define the default virtual host -->
-      <Host name="localhost" debug="0" appBase="webapps" 
+      <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true">
 
         <!-- Normally, users must authenticate themselves to each web app
@@ -293,22 +293,22 @@
 -->
 
 
-          <!-- PersistentManager: Uncomment the section below to test Persistent 
+          <!-- PersistentManager: Uncomment the section below to test Persistent
 		       Sessions.
-                         
+
                saveOnRestart: If true, all active sessions will be saved
                  to the Store when Catalina is shutdown, regardless of
-                 other settings. All Sessions found in the Store will be 
+                 other settings. All Sessions found in the Store will be
                  loaded on startup. Sessions past their expiration are
                  ignored in both cases.
-               maxActiveSessions: If 0 or greater, having too many active 
+               maxActiveSessions: If 0 or greater, having too many active
                  sessions will result in some being swapped out. minIdleSwap
                  limits this. -1 means unlimited sessions are allowed.
                  0 means sessions will almost always be swapped out after
                  use - this will be noticeably slow for your users.
                minIdleSwap: Sessions must be idle for at least this long
-                 (in seconds) before they will be swapped out due to 
-               maxActiveSessions. This avoids thrashing when the site is 
+                 (in seconds) before they will be swapped out due to
+               maxActiveSessions. This avoids thrashing when the site is
                  highly active. -1 or 0 means there is no minimum - sessions
                  can be swapped out at any time.
                maxIdleSwap: Sessions will be swapped out if idle for this
@@ -319,13 +319,13 @@
                  If set to >= 0, guarantees that all sessions found in the
                  Store will be loaded on startup.
                maxIdleBackup: Sessions will be backed up (saved to the Store,
-                 but left in active memory) if idle for this long (in seconds), 
+                 but left in active memory) if idle for this long (in seconds),
                  and all sessions found in the Store will be loaded on startup.
                  If set to -1 sessions will not be backed up, 0 means they
                  should be backed up shortly after being used.
 
                To clear sessions from the Store, set maxActiveSessions, maxIdleSwap,
-               and minIdleBackup all to -1, saveOnRestart to false, then restart 
+               and minIdleBackup all to -1, saveOnRestart to false, then restart
                Catalina.
           -->
 		  <!--
@@ -346,7 +346,7 @@
           <Resource name="jdbc/EmployeeAppDb" auth="SERVLET"
                     type="javax.sql.DataSource"/>
           <ResourceParams name="jdbc/EmployeeAppDb">
-            <parameter><name>user</name><value>sa</value></parameter>
+            <parameter><name>username</name><value>sa</value></parameter>
             <parameter><name>password</name><value></value></parameter>
             <parameter><name>driverClassName</name>
               <value>org.hsql.jdbcDriver</value></parameter>
@@ -361,7 +361,7 @@
               <value>localhost</value>
             </parameter>
           </ResourceParams>
-          <ResourceLink name="linkToGlobalResource" 
+          <ResourceLink name="linkToGlobalResource"
                     global="simpleValue"
                     type="java.lang.Integer"/>
         </Context>
