@@ -253,7 +253,7 @@ public interface Container {
 
 
     /**
-     * Get the delay between the invocation of the execute method on
+     * Get the delay between the invocation of the backgroundProcess method on
      * this container and its children. Child containers will not be invoked
      * if their delay value is not negative (which would mean they are using 
      * their own thread). Setting this to a positive value will cause 
@@ -261,17 +261,17 @@ public interface Container {
      * the thread will invoke the executePeriodic method on this container 
      * and all its children.
      */
-    public int getExecuteDelay();
+    public int getBackgroundProcessorDelay();
 
 
     /**
      * Set the delay between the invocation of the execute method on this
      * container and its children.
      * 
-     * @param delay The delay in seconds between the invocation of execute 
-     *              methods
+     * @param delay The delay in seconds between the invocation of 
+     *              backgroundProcess methods
      */
-    public void setExecuteDelay(int delay);
+    public void setBackgroundProcessorDelay(int delay);
 
 
     /**
@@ -374,7 +374,7 @@ public interface Container {
      * invoked inside the classloading context of this container. Unexpected
      * throwables will be caught and logged.
      */
-    public void execute();
+    public void backgroundProcess();
 
 
     /**
