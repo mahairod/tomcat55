@@ -516,33 +516,58 @@ public class Embedded  extends StandardService implements Lifecycle {
      * Create, configure, and return a new TCP/IP socket connector
      * based on the specified properties.
      *
-     * @param address InetAddress to listen to, or <code>null</code>
-     *  to listen on all address on this server
+     * @param address InetAddress to bind to, or <code>null</code> if the
+     * connector is supposed to bind to all addresses on this server
      * @param port Port number to listen to
-     * @param secure Should this port be SSL-enabled?
+     * @param secure true if the generated connector is supposed to be
+     * SSL-enabled, and false otherwise
      */
     public Connector createConnector(InetAddress address, int port,
                                      boolean secure) {
+	return createConnector(address != null? address.toString() : null,
+			       port, secure);
+    }
 
-        if( log.isDebugEnabled() )
-            log.debug("Creating connector for address='" +
-                       ((address == null) ? "ALL" : address.getHostAddress()) +
-                       "' port='" + port + "' secure='" + secure + "'");
-
+    public Connector createConnector(String address, int port,
+                                     boolean secure) {
         String protocol = "http";
         if (secure) {
             protocol = "https";
         }
 
         return createConnector(address, port, protocol);
-
     }
 
 
     public Connector createConnector(InetAddress address, int port,
                                      String protocol) {
+	return createConnector(address != null? address.toString() : null,
+			       port, protocol);
+    }
+
+    public Connector createConnector(String address, int port,
+				     String protocol) {
 
         Connector connector = null;
+
+	if (address != null) {
+	    /*
+	     * InetAddress.toString() returns a string of the form
+	     * "<hostname>/<literal_IP>". Get the latter part, so that the
+	     * address can be parsed (back) into an InetAddress using
+	     * InetAddress.getByName().
+	     */
+	    int index = address.indexOf('/');
+	    if (index != -1) {
+		address = address.substring(index + 1);
+	    }
+	}
+
+	if (log.isDebugEnabled()) {
+            log.debug("Creating connector for address='" +
+		      ((address == null) ? "ALL" : address) +
+		      "' port='" + port + "' protocol='" + protocol + "'");
+	}
 
         try {
 
