@@ -158,8 +158,6 @@ public final class EnvEntryForm extends BaseForm {
         typeVals.add(new LabelValueBean("java.lang.Long", "java.lang.Long"));
         typeVals.add(new LabelValueBean("java.lang.Short", "java.lang.Short"));        
         typeVals.add(new LabelValueBean("java.lang.String", "java.lang.String"));           
-        typeVals.add(new LabelValueBean("java.lang.hehe", "java.lang.hehe"));
-        typeVals.add(new LabelValueBean("java.util.Vector", "java.util.Vector"));
         
     }
 
