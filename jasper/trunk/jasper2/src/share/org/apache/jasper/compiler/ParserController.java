@@ -419,7 +419,7 @@ class ParserController implements TagConstants {
 	 */
 	sourceEnc = jspConfigPageEnc;
 	if (sourceEnc == null) {
-	    sourceEnc = getSourceEncodingForJspSyntax(jspReader, startMark);
+	    sourceEnc = getPageEncodingForJspSyntax(jspReader, startMark);
 	}
 
 	return;
@@ -428,38 +428,70 @@ class ParserController implements TagConstants {
     /*
      * Determines page source encoding for JSP page or tag file in JSP syntax
      */
-    private String getSourceEncodingForJspSyntax(JspReader jspReader,
+    private String getPageEncodingForJspSyntax(JspReader jspReader,
 						 Mark startMark)
 	        throws JasperException {
 
 	String encoding = null;
 
+	/*
+	 * Determine page encoding from directive of the form <%@ page %> or
+	 * <%@ tag %>
+	 */
 	jspReader.reset(startMark);
 	while (jspReader.skipUntil("<%@") != null) {
 	    jspReader.skipSpaces();
 	    // compare for "tag ", so we don't match "taglib"
 	    if (jspReader.matches("tag ") || jspReader.matches("page")) {
 		jspReader.skipSpaces();
-		Attributes attrs = Parser.parseAttributes(this, jspReader);
-		encoding = attrs.getValue("pageEncoding");
-		if (encoding != null) {
-		    break;
-		}
-		String contentType = attrs.getValue("contentType");
-		if (contentType != null) {
-		    int loc = contentType.indexOf(CHARSET);
-		    if (loc != -1) {
-			encoding = contentType.substring(loc
-							 + CHARSET.length());
-			break;
-		    }
-		}
+		encoding = getPageEncodingFromDirective(
+                        Parser.parseAttributes(this, jspReader));
+		if (encoding != null) break;
+	    }
+	}
+
+	if (encoding == null) {
+	    /*
+	     * Determine page encoding from page directive of the form
+	     * <jsp:directive.page>
+	     */
+	    jspReader.reset(startMark);
+	    while (jspReader.skipUntil("<jsp:directive.page") != null) {
+		jspReader.skipSpaces();
+		encoding = getPageEncodingFromDirective(
+                        Parser.parseAttributes(this, jspReader));
+		if (encoding != null) break;
 	    }
 	}
 
 	if (encoding == null) {
 	    // Default to "ISO-8859-1" per JSP spec
 	    encoding = "ISO-8859-1";
+	}
+
+	return encoding;
+    }
+
+    /*
+     * Scans the given attributes for the 'pageEncoding' attribute, if present,
+     * or the 'contentType' attribute, and gets the page encoding from them.
+     *
+     * In the case of the 'contentType' attribute, the page encoding is taken
+     * from its 'charset' component.
+     *
+     * @param attrs The attributes from which to determine the page encoding
+     * @return The page encoding
+     */
+    private String getPageEncodingFromDirective(Attributes attrs) {
+	String encoding = attrs.getValue("pageEncoding");
+	if (encoding == null) {
+	    String contentType = attrs.getValue("contentType");
+	    if (contentType != null) {
+		int loc = contentType.indexOf(CHARSET);
+		if (loc != -1) {
+		    encoding = contentType.substring(loc + CHARSET.length());
+		}
+	    }
 	}
 
 	return encoding;
