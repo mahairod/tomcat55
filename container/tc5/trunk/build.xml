@@ -1694,7 +1694,7 @@
          command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
          dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P ${cvstag} jakarta-commons" 
+         command="checkout -P ${cvstag} ${commons-modeler.cvs.loc}" 
          dest="${cvs.base}"/>
   </target>
 
