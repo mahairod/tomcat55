@@ -120,6 +120,28 @@ public final class DefaultRealmConnector
 
 
     /**
+     * Returns the Principal associated with the specified username and
+     * credentials, if there is one, or <code>null</code> otherwise.
+     *
+     * @param username Username of the Principal to look up
+     * @param credentials Credentials to use in authenticating this username
+     *
+     * @exception IllegalStateException if called before <code>start()</code>
+     *  has been called, or after <code>stop()</code> has been called
+     */
+    public Principal authenticate(String username, byte[] credentials) {
+
+	if (context == null) {
+	    // XXX Internationalization
+	    throw new IllegalStateException("DefaultRealmConnector:  " +
+					    "Not started");
+	}
+	return (null);
+
+    }
+
+
+    /**
      * Returns <code>true</code> if the specified Principal has been
      * granted the specified role in this realm, or <code>false</code>
      * otherwise.
