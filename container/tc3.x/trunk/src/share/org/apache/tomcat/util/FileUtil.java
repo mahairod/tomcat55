@@ -163,9 +163,9 @@ public class FileUtil {
 	// happens on flavors of Windows.
 	if (File.separatorChar  == '\\') {
 	    // On Windows check ignore case....
-	    if (!realPath.equalsIgnoreCase(canPath)){
+	    if (!realPath.equals(canPath)){
             int ls=realPath.lastIndexOf('\\');
-            if ( (ls > 0) && !realPath.substring(0,ls).equalsIgnoreCase(canPath) )
+            if ( (ls > 0) && !realPath.substring(0,ls).equals(canPath) )
         		return null;
 	    }
 	}
