@@ -131,8 +131,9 @@ public class ContextInterceptor implements RequestInterceptor {
 	    }
 	} while (ctx == null);
 
+	// no map - root context
 	if (ctx == null) {
-	    ctx = cm.getDefaultContext();
+	    ctx = cm.getContext( "" );
 	}
 
 	return ctx;

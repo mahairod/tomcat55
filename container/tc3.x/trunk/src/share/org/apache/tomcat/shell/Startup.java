@@ -154,12 +154,8 @@ public class Startup {
 		    contextConfig.isWorkDirPersistent());
 		context.setIsWARValidated(contextConfig.isWARValidated());
 
-		if (contextConfig.getPath().equals(
-                    org.apache.tomcat.core.Constants.Context.Default.Path)) {
-		    contextManager.setDefaultContext(context);
-		    contextManager.setServerInfo(
-		        contextManager.getDefaultContext().getEngineHeader());
-		}
+		// no need to check if it's the "default" context ( == root contex == "/"),
+		// we treat the root as a normal context
 
 		// Register the global service and lifecycle interceptors
 		// with each new context

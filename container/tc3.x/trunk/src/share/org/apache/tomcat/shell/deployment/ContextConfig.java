@@ -98,14 +98,11 @@ public class ContextConfig {
     }
 
     void setPath(String path) {
-        String p = path;
-
-        if (p.equals("") ||
-            p.equals("/")) {
-            p = org.apache.tomcat.core.Constants.Context.Default.Path;
-        }
-
-        this.path = p;
+	// use "/" for empty path
+	if("/".equals(path))
+	    this.path="";
+	else
+	    this.path = path;
     }
 
     public URL getDocumentBase() {
