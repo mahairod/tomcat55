@@ -13,10 +13,10 @@ PORT=8080
 default=$1
 
 if [ "$2" != "" ] ; then
-    PORT=$2
+    HOST=$2
 fi
 if [ "$3" != "" ] ; then
-    HOST=$3
+    PORT=$3
 fi
 
 if [ -f $HOME/.watchdogrc ] ; then 
@@ -78,7 +78,7 @@ if [ "${default}" = jsp -o "${default}" = all ] ; then
 fi
 
 if [ "${default}" = servlet -o "${default}" = all ] ; then
-    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST}=\
+    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
         -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/servlet.xml servlet-test
 fi
 
