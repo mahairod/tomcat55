@@ -60,8 +60,8 @@ package org.apache.jasper34.cli;
 import java.io.*;
 
 import org.apache.jasper34.generator.*;
-import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.core.*;
+import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.jsptree.*;
 import org.apache.jasper34.liaison.*;
@@ -69,7 +69,7 @@ import org.apache.jasper34.parser.*;
 
 //import org.apache.jasper.runtime.JspLoader;
 // Use the jasper loader - the only function used is to add a jar
-import org.apache.jasper34.servlet.JasperLoader;
+//import org.apache.jasper34.servlet.JasperLoader;
 import org.apache.jasper34.runtime.JasperException;
 
 /**
@@ -79,12 +79,13 @@ import org.apache.jasper34.runtime.JasperException;
  *
  *@author Danno Ferrin
  */
-public class CommandLineContext implements JspCompilationContext {
+public class CommandLineContext extends ContainerLiaison
+{
 
     String classPath;
     JspReader reader;
     ServletWriter writer;
-    JasperLoader loader;
+    ClassLoader loader;
     boolean errPage;
     String jspFile;
     String servletClassName;
@@ -100,7 +101,7 @@ public class CommandLineContext implements JspCompilationContext {
     boolean classNameLocked;
     boolean outputInDirs;
 
-    public CommandLineContext(JasperLoader newLoader, String newClassPath,
+    public CommandLineContext(ClassLoader newLoader, String newClassPath,
                               String newJspFile, String newUriBase,
                               String newUriRoot, boolean newErrPage,
                               Options newOptions)
@@ -132,7 +133,7 @@ public class CommandLineContext implements JspCompilationContext {
             uriRoot = new File(tUriRoot);
             if (!uriRoot.exists() || !uriRoot.isDirectory()) {
                throw new JasperException(
-                        Constants.getString("jsp.error.jspc.uriroot_not_dir"));
+                        ContainerLiaison.getString("jsp.error.jspc.uriroot_not_dir"));
             }
         }
     }
@@ -166,9 +167,9 @@ public class CommandLineContext implements JspCompilationContext {
         return loader;
     }
 
-    public void addJar( String jar ) throws IOException  {
-	loader.addJar( jar );
-    }
+//     public void addJar( String jar ) throws IOException  {
+// 	loader.addJar( jar );
+//     }
     
     /**
      * Are we processing something that has been declared as an
@@ -309,15 +310,6 @@ public class CommandLineContext implements JspCompilationContext {
 
     public boolean isOutputInDirs() {
         return outputInDirs;
-    }
-
-    /**
-     * Create a "Compiler" object based on some init param data. This
-     * is not done yet. Right now we're just hardcoding the actual
-     * compilers that are created. 
-     */
-    public Compiler createCompiler() throws JasperException {
-        return new CommandLineCompiler(this);
     }
 
 
