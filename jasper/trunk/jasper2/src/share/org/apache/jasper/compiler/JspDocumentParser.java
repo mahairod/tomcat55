@@ -435,19 +435,26 @@ class JspDocumentParser extends DefaultHandler
 	    return;
 	}
 
-	if (current instanceof Node.NamedAttribute
-	        && ((Node.NamedAttribute) current).isTrim()) {
-	    // Ignore any whitespace (including spaces, carriage returns,
-	    // line feeds, and tabs, that appear at the beginning and at the
-	    // end of the body of the <jsp:attribute> action.
+	if (current instanceof Node.NamedAttribute) {
 	    Node.Nodes subelems = ((Node.NamedAttribute) current).getBody();
-	    Node firstNode = subelems.getNode(0);
-	    if (firstNode instanceof Node.TemplateText) {
-		((Node.TemplateText) firstNode).ltrim();
+	    if (subelems == null) {
+                throw new SAXParseException(
+		        err.getString("jsp.error.empty.body.not.allowed",
+				      "&lt;jsp:attribute"),
+			locator);
 	    }
-	    Node lastNode = subelems.getNode(subelems.size() - 1);
-	    if (lastNode instanceof Node.TemplateText) {
-		((Node.TemplateText) lastNode).rtrim();
+	    if (((Node.NamedAttribute) current).isTrim()) {
+		// Ignore any whitespace (including spaces, carriage returns,
+		// line feeds, and tabs, that appear at the beginning and at
+		// the end of the body of the <jsp:attribute> action.
+		Node firstNode = subelems.getNode(0);
+		if (firstNode instanceof Node.TemplateText) {
+		    ((Node.TemplateText) firstNode).ltrim();
+		}
+		Node lastNode = subelems.getNode(subelems.size() - 1);
+		if (lastNode instanceof Node.TemplateText) {
+		    ((Node.TemplateText) lastNode).rtrim();
+		}
 	    }
 	} else if (current instanceof Node.ScriptingElement) {
 	    checkScriptingBody((Node.ScriptingElement) current);
