@@ -70,6 +70,9 @@ import java.net.UnknownHostException;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.catalina.ServerFactory;
+import org.apache.catalina.core.StandardServer;
+
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -109,7 +112,9 @@ import org.apache.commons.logging.Log;
  */
 
 public class SimpleTcpCluster
-    implements Cluster, Lifecycle,MembershipListener, ListenCallback {
+    implements Cluster, Lifecycle,
+               MembershipListener, ListenCallback,
+               LifecycleListener {
 
 
     private static org.apache.commons.logging.Log log =
@@ -231,7 +236,10 @@ public class SimpleTcpCluster
      */
     protected HashMap managers = new HashMap();
 
-
+    /**
+     * Nr of milliseconds between every heart beat
+     */
+    protected long msgFrequency = 500;
     /**
      * A reference to the membership service.
      */
@@ -249,6 +257,11 @@ public class SimpleTcpCluster
             tcpAddress = java.net.InetAddress.getLocalHost();
         }catch ( Exception x ) {
             log.error("In SimpleTcpCluster.constructor()",x);
+        }
+
+        if ( ServerFactory.getServer() instanceof StandardServer ) {
+            StandardServer server = (StandardServer) ServerFactory.getServer();
+            server.addLifecycleListener(this);
         }
 
     }
@@ -319,6 +332,7 @@ public class SimpleTcpCluster
         support.firePropertyChange("container",
                                    oldContainer,
                                    this.container);
+        //this.container.
     }
 
 
@@ -431,22 +445,14 @@ public class SimpleTcpCluster
             mReplicationListener.start();
             mReplicationTransmitter = new ReplicationTransmitter(new SocketSender[0]);
             mReplicationTransmitter.start();
-            SessionMessage msg =
-                new SessionMessage(null,
-                                   SessionMessage.EVT_GET_ALL_SESSIONS,
-                                   null,
-                                   null);
+
             //wait 5 seconds to establish the view membership
-            log.info("Sleeping for 5 secs to establish cluster membership");
+            log.info("Sleeping for "+(msgFrequency*4)+" secs to establish cluster membership");
             service = MembershipFactory.getMembershipService(serviceclass,svcproperties);
             service.addMembershipListener(this);
             service.start();
             localMember = service.getLocalMember();
-            Thread.currentThread().sleep(5000);
-            if (service.getMembers().length > 0) {
-                Member mbr = service.getMembers()[0];
-                send(msg, mbr);
-            }
+            Thread.currentThread().sleep((msgFrequency*4));
             this.started = true;
         } catch ( Exception x ) {
             log.error("Unable to start cluster.",x);
@@ -556,6 +562,7 @@ public class SimpleTcpCluster
     public void setMcastFrequency(long time)
     {
         svcproperties.setProperty("msgFrequency",String.valueOf(time));
+        msgFrequency = time;
     }
 
     public void setMcastDropTime(long time)
@@ -620,6 +627,22 @@ public class SimpleTcpCluster
         } catch ( Exception x ) {
             log.error("Unable to deserialize session message.",x);
         }
+    }
+
+    public void lifecycleEvent(LifecycleEvent lifecycleEvent){
+        if ( lifecycleEvent.getLifecycle().AFTER_START_EVENT.equals(lifecycleEvent.getType()) ) {
+            //The server has started
+            SessionMessage msg =
+                new SessionMessage(null,
+                                   SessionMessage.EVT_GET_ALL_SESSIONS,
+                                   null,
+                                   null);
+            if (service.getMembers().length > 0) {
+                Member mbr = service.getMembers()[0];
+                send(msg, mbr);
+            }
+
+        }//end if
     }
     // ---------------------------------------------  Inner Class
 
