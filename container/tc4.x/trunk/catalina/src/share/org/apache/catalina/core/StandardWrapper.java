@@ -221,6 +221,12 @@ public final class StandardWrapper
     private boolean singleThreadModel = false;
 
 
+    /**
+     * Are we unloading our servlet instance at the moment?
+     */
+    private boolean unloading = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -577,6 +583,11 @@ public final class StandardWrapper
 	if (debug >= 1)
 	    log("Allocating an instance");
 
+        // If we are currently unloading this servlet, throw an exception
+        if (unloading)
+            throw new ServletException
+              (sm.getString("standardWrapper.unloading", getName()));
+
 	// Load and initialize our instance if necessary
 	if (instance == null) {
 	    try {
@@ -930,6 +941,25 @@ public final class StandardWrapper
 	// Nothing to do if we have never loaded the instance
 	if (instance == null)
 	    return;
+        unloading = true;
+
+        // Loaf a while if the current instance is allocated
+        if (allocated) {
+            boolean first = true;
+            while (allocated) {
+                if (first) {
+                    if (debug >= 1)
+                        log("Waiting for instance to be deallocated");
+                    first = false;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    ;
+                }
+            }
+        }
+              
 
 	// Call the servlet destroy() method
 	try {
@@ -943,6 +973,7 @@ public final class StandardWrapper
 	      (InstanceEvent.AFTER_DESTROY_EVENT, instance);
 	    instance = null;
 	    fireContainerEvent("unload", this);
+            unloading = false;
 	    throw new ServletException
 		(sm.getString("standardWrapper.destroyException", getName()),
 		 t);
@@ -951,6 +982,7 @@ public final class StandardWrapper
 	// Deregister the destroyed instance
 	instance = null;
         jasperLoader = null;
+        unloading = false;
 	fireContainerEvent("unload", this);
 
     }
