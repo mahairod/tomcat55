@@ -1733,10 +1733,29 @@ public class StandardContext
      */
     public void addChild(Container child) {
 
-        if (!(child instanceof Wrapper))
+        if (!(child instanceof Wrapper)) {
             throw new IllegalArgumentException
                 (sm.getString("standardContext.notWrapper"));
+        }
+
         Wrapper wrapper = (Wrapper) child;
+
+        /*
+         * Allow webapp to override JspServlet inherited from global web.xml.
+         * The webapp-specific JspServlet inherits all the mappings specified
+         * in the global web.xml, and may add additional ones.
+         */
+        if ("jsp".equals(wrapper.getName())) {
+            Wrapper jspServlet = (Wrapper) findChild("jsp");
+            if (jspServlet != null) {
+                String[] jspMappings = jspServlet.findMappings();
+                for (int i=0; jspMappings!=null && i<jspMappings.length; i++) {
+                    wrapper.addMapping(jspMappings[i]);
+                }
+                removeChild(jspServlet);
+            }
+        }
+
         String jspFile = wrapper.getJspFile();
         if ((jspFile != null) && !jspFile.startsWith("/")) {
             if (isServlet22()) {
