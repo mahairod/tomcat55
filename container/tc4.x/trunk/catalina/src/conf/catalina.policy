@@ -142,15 +142,26 @@ grant {
 // };
 //
 // The permissions granted to the context WEB-INF/classes directory
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/classes/-" {
+//
+// Permissions granted to a web applications /WEB-INF/classes
+// need to use the JNDI naming convention Tomcat 4 uses to identify
+// these resources.  The naming convention is
+// "jndi:/<virtual host name>/<web application directory>/WEB-INF/classes/
+//
+// grant codeBase "jndi:/localhost/examples/WEB-INF/classes/-" {
 // };
 //
+// Permissions granted to a web applications /WEB-INF/lib
+// need to use the JNDI naming convention Tomcat 4 uses to identify
+// these resources.  The naming convention is
+// "jar:jndi:/<virtual host name>/<web application directory>/WEB-INF/lib/
+//
 // The permission granted to your JDBC driver
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar" {
+// grant codeBase "jar:jndi:/localhost/examples/WEB-INF/lib/driver.jar" {
 //      permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
 // };
 // The permission granted to the scrape taglib
-// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar" {
+// grant codeBase "jar:jndi:localhost/webapps/examples/WEB-INF/lib/scrape.jar" {
 //      permission java.net.SocketPermission "*.noaa.gov:80", "connect";
 // };
 
