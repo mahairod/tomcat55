@@ -1045,7 +1045,7 @@ public class DefaultServlet
         if ((path == null) ||
             path.toUpperCase().startsWith("/WEB-INF") ||
             path.toUpperCase().startsWith("/META-INF")) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, request.getRequestURI());
             return;
         }
 
@@ -1054,7 +1054,7 @@ public class DefaultServlet
         ResourceInfo resourceInfo = new ResourceInfo(path, resources);
 
         if (!resourceInfo.exists) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, request.getRequestURI());
             return;
         }
 
@@ -1062,7 +1062,7 @@ public class DefaultServlet
         // ends with "/" or "\", return NOT FOUND
         if (!resourceInfo.collection) {
             if (path.endsWith("/") || (path.endsWith("\\"))) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, path);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, request.getRequestURI());
                 return;
             }
         }
@@ -1111,7 +1111,7 @@ public class DefaultServlet
             // suppress them
             if (!listings) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                   resourceInfo.path);
+                                   request.getRequestURI());
                 return;
             }
             contentType = "text/html;charset=UTF-8";
