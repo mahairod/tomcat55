@@ -286,7 +286,11 @@ public final class FormAuthenticator
         requestURI = savedRequestURL(session);
         if (debug >= 1)
             log("Redirecting to original '" + requestURI + "'");
-        hres.sendRedirect(hres.encodeRedirectURL(requestURI));
+        if (requestURI == null)
+            hres.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                           sm.getString("authenticator.formlogin"));
+        else
+            hres.sendRedirect(hres.encodeRedirectURL(requestURI));
         return (false);
 
     }
