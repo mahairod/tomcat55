@@ -90,17 +90,15 @@
 
     <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8080 -->
     <Connector port="8080"
-               maxThreads="100" minSpareThreads="1" maxSpareThreads="10"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
                enableLookups="false" redirectPort="8443" acceptCount="100"
                debug="0" connectionTimeout="20000" 
                disableUploadTimeout="true" />
-    <!-- Note : To disable connection timeouts, set connectionTimeout value
-     to -1 -->
 
     <!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 -->
     <!--
     <Connector port="8443" 
-               maxThreads="50" minSpareThreads="1" maxSpareThreads="5"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
                enableLookups="false" disableUploadTimeout="true"
                acceptCount="100" debug="0" scheme="https" secure="true">
       <Factory clientAuth="false" protocol="TLS" />
@@ -118,7 +116,7 @@
     <!-- See proxy documentation for more information about using this. -->
     <!--
     <Connector port="8082" 
-               maxThreads="100" minSpareThreads="1" maxSpareThreads="10"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
                enableLookups="false"
                acceptCount="100" debug="0" connectionTimeout="20000"
                proxyPort="80" disableUploadTimeout="true" />
