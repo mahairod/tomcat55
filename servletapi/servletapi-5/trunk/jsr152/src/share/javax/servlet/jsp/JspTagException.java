@@ -96,7 +96,7 @@ public class JspTagException extends JspException {
      *				normal operation, making this JSP Tag
      *				exception necessary
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     public JspTagException(String message, Throwable rootCause) {
 	super( message, rootCause );
@@ -121,7 +121,7 @@ public class JspTagException extends JspException {
      *				normal operation, making the JSP Tag 
      *                          exception necessary
      *
-     * @since JSP2.0
+     * @since 2.0
      */
 
     public JspTagException(Throwable rootCause) {

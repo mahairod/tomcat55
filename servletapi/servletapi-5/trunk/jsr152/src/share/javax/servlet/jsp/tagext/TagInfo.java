@@ -66,28 +66,28 @@ package javax.servlet.jsp.tagext;
 public class TagInfo {
 
     /**
-     * static constant for getBodyContent() when it is JSP
+     * Static constant for getBodyContent() when it is JSP.
      */
 
     public static final String BODY_CONTENT_JSP = "JSP";
 
     /**
-     * static constant for getBodyContent() when it is Tag dependent
+     * Static constant for getBodyContent() when it is Tag dependent.
      */
 
     public static final String BODY_CONTENT_TAG_DEPENDENT = "TAGDEPENDENT";
 
 
     /**
-     * static constant for getBodyContent() when it is empty
+     * Static constant for getBodyContent() when it is empty.
      */
 
     public static final String BODY_CONTENT_EMPTY = "EMPTY";
     
     /**
-     * static constant for getBodyContent() when it is scriptless
+     * Static constant for getBodyContent() when it is scriptless.
      * 
-     * @since JSP2.0
+     * @since 2.0
      */ 
     public static final String BODY_CONTENT_SCRIPTLESS = "SCRIPTLESS";
 
@@ -207,7 +207,7 @@ public class TagInfo {
      * @param tvi An array of a TagVariableInfo (or null)
      * @param dynamicAttributes True if supports dynamic attributes
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     public TagInfo(String tagName,
             String tagClassName,
@@ -241,7 +241,8 @@ public class TagInfo {
     /**
      * The name of the Tag.
      *
-     * @return The (short) name of the tag.
+     * @return The (short) name of the tag, or null
+     *         if not defined.
      */
 
     public String getTagName() {
@@ -252,9 +253,9 @@ public class TagInfo {
      * Attribute information (in the TLD) on this tag.
      * The return is an array describing the attributes of this tag, as
      * indicated in the TLD.
-     * A null return means no attributes.
      *
-     * @return The array of TagAttributeInfo for this tag.
+     * @return The array of TagAttributeInfo for this tag, or a
+     *         zero-length array if the tag has no attributes.
      */
 
    public TagAttributeInfo[] getAttributes() {
@@ -269,7 +270,9 @@ public class TagInfo {
      * otherwise, {"id", Object}
      *
      * @param data TagData describing this action.
-     * @return Array of VariableInfo elements.
+     * @return Array of VariableInfo elements, or a zero length
+     *         array if the associated TagExtraInfo defines no scripting
+     *         variables.
      */
 
    public VariableInfo[] getVariableInfo(TagData data) {
@@ -302,7 +305,7 @@ public class TagInfo {
      * @param data The translation-time TagData instance.
      * @return A null object, or zero length array if no errors, an
      *     array of ValidationMessages otherwise.
-     * @since JSP2.0
+     * @since 2.0
      */
     public ValidationMessage[] validate( TagData data ) {
 	TagExtraInfo tei = getTagExtraInfo();
@@ -313,7 +316,7 @@ public class TagInfo {
     }
 
     /**
-     * Set the instance for extra tag information
+     * Set the instance for extra tag information.
      * 
      * @param tei the TagExtraInfo instance
      */
@@ -323,7 +326,7 @@ public class TagInfo {
 
 
     /**
-     * The instance (if any) for extra tag information
+     * The instance (if any) for extra tag information.
      * 
      * @return The TagExtraInfo instance, if any.
      */
@@ -345,6 +348,8 @@ public class TagInfo {
 
     /**
      * The bodycontent information for this tag.
+     * If the bodycontent is not defined for this
+     * tag, the default of JSP will be returned.
      *
      * @return the body content string.
      */
@@ -357,7 +362,8 @@ public class TagInfo {
     /**
      * The information string for the tag.
      *
-     * @return the info string
+     * @return the info string, or null if 
+     *         not defined
      */
 
     public String getInfoString() {
@@ -387,7 +393,7 @@ public class TagInfo {
     /**
      * The instance of TabLibraryInfo we belong to.
      *
-     * @return the tab library instance we belong to.
+     * @return the tag library instance we belong to
      */
 
     public TagLibraryInfo getTagLibrary() {
@@ -399,9 +405,10 @@ public class TagInfo {
 
 
     /**
-     * Get the displayName
+     * Get the displayName.
      *
-     * @return A short name to be displayed by tools
+     * @return A short name to be displayed by tools,
+     *         or null if not defined
      */
 
     public String getDisplayName() {
@@ -409,9 +416,10 @@ public class TagInfo {
     }
 
     /**
-     * Get the path to the small icon
+     * Get the path to the small icon.
      *
-     * @return Path to a small icon to be displayed by tools
+     * @return Path to a small icon to be displayed by tools,
+     *         or null if not defined
      */
 
     public String getSmallIcon() {
@@ -419,9 +427,10 @@ public class TagInfo {
     }
 
     /**
-     * Get the path to the large icon
+     * Get the path to the large icon.
      *
-     * @return Path to a large icon to be displayed by tools
+     * @return Path to a large icon to be displayed by tools,
+     *         or null if not defined
      */
 
     public String getLargeIcon() {
@@ -429,9 +438,11 @@ public class TagInfo {
     }
 
     /**
-     * Get TagVariableInfo objects associated with this TagInfo
+     * Get TagVariableInfo objects associated with this TagInfo.
      *
-     * @return A TagVariableInfo object associated with this 
+     * @return Array of TagVariableInfo objects corresponding to
+     *         variables declared by this tag, or a zero length
+     *         array if no variables have been declared
      */
 
     public TagVariableInfo[] getTagVariableInfos() {
@@ -442,10 +453,10 @@ public class TagInfo {
     // ============== JSP 2.0 TLD Information ========
 
     /**
-     * Get dynamicAttributes associated with this TagInfo
+     * Get dynamicAttributes associated with this TagInfo.
      *
      * @return True if tag handler supports dynamic attributes
-     * @since JSP2.0
+     * @since 2.0
      */
     public boolean hasDynamicAttributes() {
         return dynamicAttributes;
@@ -454,7 +465,6 @@ public class TagInfo {
     /*
      * private fields for 1.1 info
      */
-
     private String             tagName; // the name of the tag
     private String             tagClassName;
     private String             bodyContent;

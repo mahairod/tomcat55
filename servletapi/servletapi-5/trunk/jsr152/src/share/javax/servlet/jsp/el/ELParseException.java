@@ -59,7 +59,7 @@ import java.text.MessageFormat;
 /**
  * Represents a parsing error encountered while parsing an EL expression.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 
 public class ELParseException extends ELException {
@@ -67,7 +67,7 @@ public class ELParseException extends ELException {
  //-------------------------------------
   /**
    * Creates an ELParseException with no detail message.
-   **/
+   */
   public ELParseException ()
   {
     super ();

@@ -68,7 +68,7 @@ package javax.servlet.jsp.tagext;
 public class TagVariableInfo {
 
     /**
-     * Constructor for TagVariableInfo
+     * Constructor for TagVariableInfo.
      *
      * @param nameGiven value of &lt;name-given&gt;
      * @param nameFromAttribute value of &lt;name-from-attribute&gt;
@@ -90,7 +90,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the &lt;name-given&gt; element
+     * The body of the &lt;name-given&gt; element.
      *
      * @return The variable name as a constant
      */
@@ -124,7 +124,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the &lt;declare&gt; element
+     * The body of the &lt;declare&gt; element.
      *
      * @return Whether the variable is to be declared or not.
      *         If not defined in the TLD, 'true' will be returned.
@@ -135,7 +135,7 @@ public class TagVariableInfo {
     }
 
     /**
-     * The body of the &lt;scope&gt; element
+     * The body of the &lt;scope&gt; element.
      *
      * @return The scope to give the variable.  NESTED
      *         scope will be returned if not defined in 

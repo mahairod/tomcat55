@@ -70,15 +70,15 @@ import javax.servlet.jsp.*;
  * adapter is passed to setParent() instead.  A classic Tag Handler can
  * call getAdaptee() to retrieve the encapsulated SimpleTag instance.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public class TagAdapter 
     implements Tag
 {
-    /** The simple tag that's being adapted */
+    /** The simple tag that's being adapted. */
     private SimpleTag simpleTagAdaptee;
 
-    /** The parent, of this tag, converted (if necessary) to be of type Tag */
+    /** The parent, of this tag, converted (if necessary) to be of type Tag. */
     private Tag parent;
 
     // Flag indicating whether we have already determined the parent
