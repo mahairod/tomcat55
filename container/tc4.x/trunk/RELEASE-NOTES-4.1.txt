@@ -65,7 +65,6 @@ General New Features:
 [4.1.19] Administration Webapp:
          Complete the accessibility requirements to pass section 508.
 
-
 ---------------------
 Catalina New Features:
 ---------------------
@@ -129,6 +128,11 @@ Catalina New Features:
 
 [4.1.20] GlobalResourcesLifecycleListener:
          Allow the listener to be associated with a Service.
+
+[4.1.25] ExtendedAccessLogValve:
+         An implementation of the W3c Extended Log File Format. See
+         http://www.w3.org/TR/WD-logfile.html for more information
+         about the format. 
 
 
 -------------------
@@ -734,6 +738,33 @@ Catalina Bug Fixes:
 [4.1.25] #9851
          Improve Digest Authentication compatibility
 
+[4.1.25] #20380
+         AccessLogValve incorrectly calculates timezone.
+
+[4.1.25] #16374
+         AccessLogValve Date in file name configurable.
+
+[4.1.25] #16400
+         AccessLogValve Allow logging to be conditional.
+
+[4.1.25] AccessLogValve Add %D, %T for time to serve request.
+
+[4.1.25] StandardContext:
+         Fix listener shutdown order for JNDI access.
+
+[4.1.25] StandardContext:
+         Return facaded context.
+
+[4.1.25] StandardWrapper:
+         Fix SingleThreadModel NPE after a reload.
+
+[4.1.25] WebappClassLoader:
+         Display more debugging when a CL stopped error occurs.
+
+[4.1.25] StandardSession:
+         Clone enumerated list to allow mutating.
+
+
 ----------------
 Coyote Bug Fixes:
 ----------------
@@ -912,6 +943,9 @@ Coyote Bug Fixes:
          CoyoteResponse:
          Fix value of the committed flag after the response is finished.
 
+[4.1.25] Shell scripts:
+         Add support for OS/400.
+
 [4.1.25] JkHandler:
          Fix decoding of SSL CLIENT-CERTs passed from Apache/IIS/iPlanet.
 
@@ -919,18 +953,33 @@ Coyote Bug Fixes:
          Fix potential path-traversal problem in mappings.
 
 [4.1.25] JSSE SSL:
-         Re-factor to remove dependencies on Sun classes when using a 1.4.x JVM.
-         It should now be possible to set up a SSL Connector with any vendors 
-         1.4.x JVM, without having to install Sun's JSSE 1.0.x.
+         Re-factor to remove dependencies on Sun classes when using a 1.4.x 
+         JVM. It should now be possible to set up a SSL Connector 
+         with any vendors 1.4.x JVM, without having to install 
+         Sun's JSSE 1.0.x.
 
 [4.1.25] PureTLS SSL:
          Fix problems with getting the CLIENT-CERT.
+
+[4.1.25] CoyoteConnector:
+         Disable server socket timeout by default, to minimize the amount of 
+         generated garbage, especially in SSL mode.
 
 [4.1.25] #21219
          Http11Processor:
          Drop the client connection (nicely, if possible, rudely if not) in the
          event of a serious protocol error.
- 
+
+[4.1.25] CoyoteRequestFacade:
+         Fix double facading of the request object.
+
+[4.1.25] HandlerRequest:
+         Fix incorrect recycling of SSL certificates in JK 2.
+
+[4.1.25] Http11Processor:
+         Catch exceptions which could occur in prepareRequest.
+
+
 ----------------
 Jasper Bug Fixes:
 ----------------
@@ -1237,6 +1286,16 @@ Jasper Bug Fixes:
 
 [4.1.24] JspC:
          Set the thread context class loader to the specified classpath.
+
+[4.1.25] #18314
+         PageDataImpl:
+         Multiple declarations of same taglib cause exception during 
+         validation.
+
+[4.1.25] #18496
+         Parser:
+         Special characters not escaped in "Unterminated ... tag" 
+         error message.
 
 
 ============================
