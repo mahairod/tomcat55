@@ -196,18 +196,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(accessLogger);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(accessLogger);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             ((StandardHost)host).addValve(accessLogger);
         }
@@ -348,7 +347,6 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
@@ -385,19 +383,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(fileLogger);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setLogger(fileLogger);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(fileLogger);
         }
@@ -493,19 +489,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setRealm(realm);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setRealm(realm);
         }
@@ -535,19 +529,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setRealm(realm);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setRealm(realm);
         }
@@ -577,19 +569,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setRealm(realm);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setRealm(realm);
         }
@@ -619,18 +609,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             ((StandardHost)host).addValve(valve);
         }
@@ -660,18 +649,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             ((StandardHost)host).addValve(valve);
         }
@@ -701,18 +689,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             ((StandardHost)host).addValve(valve);
         }
@@ -742,18 +729,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             ((StandardContext)context).addValve(valve);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             ((StandardEngine)engine).addValve(valve);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             ((StandardHost)host).addValve(valve);
         }
@@ -948,20 +934,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        //if (tname.equals("StandardContext")) {
-        if (tname.equals("Context")) {        
+        if (type.equals("Context")) {        
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(logger);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setLogger(logger);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(logger);
         }
@@ -991,19 +974,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        //String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setLogger(logger);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setLogger(logger);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setLogger(logger);
         }
@@ -1032,19 +1013,17 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        //String tname = findObjectName(type);
-        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("Context")) {
+        if (type.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
             context.setRealm(realm);
-        } else if (tname.equals("Engine")) {
+        } else if (type.equals("Engine")) {
             engine.setRealm(realm);
-        } else if (tname.equals("Host")) {
+        } else if (type.equals("Host")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             host.setRealm(realm);
         }
