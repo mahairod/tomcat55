@@ -852,7 +852,7 @@ public final class StandardWrapper
                 if (jspWrapper != null)
                     actualClass = jspWrapper.getServletClass();
             }
-    
+
             // Complain if no servlet class has been specified
             if (actualClass == null) {
                 unavailable(null);
@@ -1333,6 +1333,8 @@ public final class StandardWrapper
         // Load and initialize an instance of this servlet if requested
         // MOVED TO StandardContext START() METHOD
 
+        setAvailable(0L);
+
     }
 
 
@@ -1343,6 +1345,8 @@ public final class StandardWrapper
      * @exception LifecycleException if a fatal error occurs during shutdown
      */
     public void stop() throws LifecycleException {
+
+        setAvailable(Long.MAX_VALUE);
 
         // Shut down our servlet instance (if it has been initialized)
         try {
