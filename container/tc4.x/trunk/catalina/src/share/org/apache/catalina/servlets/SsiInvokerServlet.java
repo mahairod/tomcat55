@@ -227,6 +227,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 
         ServletContext servletContext = getServletContext();
         String path = getRelativePath(req);
+
         URL resource = servletContext.getResource(path);
         SsiEnvironment ssiEnv = null;
         StringBuffer command = new StringBuffer();
@@ -264,7 +265,19 @@ public final class SsiInvokerServlet extends HttpServlet {
                                                       req, res, path);
         ssiEnv.setIsVirtualWebappRelative(isVirtualWebappRelative);
 
-        res.setContentType("text/html;charset=UTF-8");
+        // Find content type.
+        String contentType =
+            getServletContext().getMimeType(path);
+
+        // Set the appropriate output headers
+        if (contentType != null) {
+            if (debug > 0)
+                log("DefaultServlet.serveFile:  contentType='" +
+                    contentType + "'");
+                res.setContentType(contentType);
+        }
+
+        // res.setContentType("text/html;charset=UTF-8");
 
         if (expires != null) {
             res.setDateHeader("Expires", (
