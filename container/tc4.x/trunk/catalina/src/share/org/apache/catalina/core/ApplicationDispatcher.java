@@ -81,6 +81,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
+import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -174,6 +175,15 @@ final class ApplicationDispatcher
 		this.pathInfo + ", queryString=" + queryString +
                 ", name=" + this.name);
 
+        // If this is a wrapper for a JSP page (<jsp-file>), tweak
+        // the request parameters appropriately
+        String jspFile = wrapper.getJspFile();
+        if (jspFile != null) {
+            if (debug >= 1)
+                log("-->servletPath=" + jspFile);
+            this.servletPath = jspFile;
+        }
+
     }
 
 
@@ -189,7 +199,7 @@ final class ApplicationDispatcher
     /**
      * The debugging detail level for this component.
      */
-    private int debug = 0;
+    private int debug = 1;
 
 
     /**
@@ -292,8 +302,8 @@ final class ApplicationDispatcher
 	// Handle an HTTP named dispatcher forward
 	else if ((servletPath == null) && (pathInfo == null)) {
 
-	    if (debug >= 1)
-		log(" Named Dispatcher Forward");
+            if (debug >= 1)
+                log(" Named Dispatcher Forward");
             invoke(request, response);
 
 	}
@@ -411,6 +421,8 @@ final class ApplicationDispatcher
 	    ApplicationHttpRequest wrequest =
 		new ApplicationHttpRequest((HttpServletRequest) request);
             wrequest.setAttribute(Globals.NAMED_DISPATCHER_ATTR, name);
+            if (servletPath != null)
+                wrequest.setServletPath(servletPath);
             invoke(wrequest, wresponse);
 
 	}
