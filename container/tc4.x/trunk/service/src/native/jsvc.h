@@ -54,6 +54,10 @@
  * on the Apache Software Foundation, please see <http://www.apache.org/>.   *
  *                                                                           *
  * ========================================================================= */
+
+// CVS $Id$
+// Author: Pier Fumagalli <mailto:pier.fumagalli@eng.sun.com>
+
 #ifndef _JSVC_H_
 #define _JSVC_H_
 
