@@ -20,6 +20,9 @@
       <fix>
         <bug>32210</bug>: Fixed Realm HowTo. (yoavs)
       </fix>
+      <fix>
+        <bug>33204</bug>: Fixed SSL HowTo. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
