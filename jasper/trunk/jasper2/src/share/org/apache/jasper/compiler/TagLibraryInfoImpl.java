@@ -480,7 +480,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage(
-                            "jsp.warning.unknown.element.in.attribute", tname));
+                            "jsp.warning.unknown.element.in.tagfile", tname));
                 }
             }
         }
