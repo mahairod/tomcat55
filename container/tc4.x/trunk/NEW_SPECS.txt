@@ -122,8 +122,8 @@ used to validate:
 - Mis-use (or abuse) of JSP or custom tag features.  For example, you could
   use a validator to prohibit the use of scriptlets.
 
-Enhancements to Iteration Support [Rare]
-----------------------------------------
+Enhancements to Iteration Support [Medium Well]
+-----------------------------------------------
 Enhancements to the custom tag mechanism support the ability to perform
 iteration without nesting the body content.  This optimizes the performance
 of a very common case where iteration is used to present results in a table
