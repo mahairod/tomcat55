@@ -481,7 +481,8 @@ public class SimpleTcpCluster
 
     public void memberAdded(Member member) {
         try  {
-            log.info("Replication member added:" + member);
+            if(log.isInfoEnabled())
+                log.info("Replication member added:" + member);
             clusterSender.add(member);
         } catch ( Exception x ) {
             log.error("Unable to connect to replication system.",x);
@@ -512,6 +513,48 @@ public class SimpleTcpCluster
     public void setPrintToScreen(boolean printToScreen) {
         this.printToScreen = printToScreen;
     }
+    /**
+     * @return Returns the msgSendTime.
+     */
+    public long getMsgSendTime() {
+        return msgSendTime;
+    }
+
+    /**
+     * @return Returns the lastChecked.
+     */
+    public long getLastChecked() {
+        return lastChecked;
+    }
+
+    /**
+     * @return Returns the nrOfMsgsReceived.
+    */
+    public long getNrOfMsgsReceived() {
+	return nrOfMsgsReceived;
+    }
+    
+    /**
+     * @return Returns the expireSessionsOnShutdown.
+     */
+    public boolean isExpireSessionsOnShutdown() {
+        return expireSessionsOnShutdown;
+    }
+
+    /**
+     * @return Returns the printToScreen.
+     */
+    public boolean isPrintToScreen() {
+        return printToScreen;
+    }
+    
+    /**
+     * @return Returns the useDirtyFlag.
+     */
+    public boolean isUseDirtyFlag() {
+        return useDirtyFlag;
+    }
+
     public void setUseDirtyFlag(boolean useDirtyFlag) {
         this.useDirtyFlag = useDirtyFlag;
     }
@@ -526,7 +569,8 @@ public class SimpleTcpCluster
             if ( myobj != null && myobj instanceof SessionMessage ) {
                 
                 SessionMessage msg = (SessionMessage)myobj;
-                log.debug("Assuming clocks are synched: Replication took="+(System.currentTimeMillis()-msg.getTimestamp())+" ms.");
+               	if(log.isDebugEnabled())               	 
+                    log.debug("Assuming clocks are synched: Replication took="+(System.currentTimeMillis()-msg.getTimestamp())+" ms.");
                 String ctxname = msg.getContextName();
                 //check if the message is a EVT_GET_ALL_SESSIONS,
                 //if so, wait until we are fully started up
@@ -539,7 +583,8 @@ public class SimpleTcpCluster
                             mgr.messageDataReceived(msg);
                         else {
                             //this happens a lot before the system has started up
-                            log.debug("Context manager doesn't exist:" + key);
+                            if(log.isDebugEnabled())
+                                 log.debug("Context manager doesn't exist:" + key);
                         }
                     }//while
                 } else {
@@ -547,7 +592,8 @@ public class SimpleTcpCluster
                     if (mgr != null)
                         mgr.messageDataReceived(msg);
                     else
-                        log.warn("Context manager doesn't exist:" + ctxname);
+                       	if(log.isWarnEnabled())
+                            log.warn("Context manager doesn't exist:" + ctxname);
                 }//end if
             }  else {
                 //invoke all the listeners
@@ -568,7 +614,8 @@ public class SimpleTcpCluster
     }
 
     public void lifecycleEvent(LifecycleEvent lifecycleEvent){
-        log.debug("\nlifecycleEvent\n\nType"+lifecycleEvent.getType()+
+       	if(log.isDebugEnabled())
+       	    log.debug("\nlifecycleEvent\n\nType"+lifecycleEvent.getType()+
                            "\nData"+lifecycleEvent.getData()+
                            "\n\n\n");
     }
@@ -619,7 +666,8 @@ public class SimpleTcpCluster
      *  is already attached to an existing web application
      */
     public void installContext(String contextPath, URL war) {
-        log.debug("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");
+       	if(log.isDebugEnabled())
+       	   log.debug("\n\n\n\nCluster Install called for context:"+contextPath+"\n\n\n\n");
     }
 
 
@@ -653,8 +701,10 @@ public class SimpleTcpCluster
     private void perfMessageRecvd(long timeSent) {
         nrOfMsgsReceived++;
         msgSendTime+=(System.currentTimeMillis()-timeSent);
-        if ( (System.currentTimeMillis() - lastChecked) > 5000 ) {
-            log.debug("Calc msg send time total="+msgSendTime+"ms num request="+nrOfMsgsReceived+" average per msg="+(msgSendTime/nrOfMsgsReceived)+"ms.");
+       	if(log.isDebugEnabled()) {
+       	   if ( (System.currentTimeMillis() - lastChecked) > 5000 ) {
+                 log.debug("Calc msg send time total="+msgSendTime+"ms num request="+nrOfMsgsReceived+" average per msg="+(msgSendTime/nrOfMsgsReceived)+"ms.");
+           }
         }
     }
 
@@ -687,6 +737,8 @@ public class SimpleTcpCluster
         this.valve = valve;
     }
     
+    public Valve getValve() { return valve ; }
+   
     public void addClusterListener(MessageListener listener) {
         if ( !clusterListeners.contains(listener) ) {
             clusterListeners.addElement(listener);

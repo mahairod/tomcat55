@@ -40,7 +40,8 @@ public class ReplicationTransmitter implements ClusterSender
         nrOfRequests++;
         totalBytes+=length;
         if ( (nrOfRequests % 100) == 0 ) {
-            log.info("Nr of bytes sent="+totalBytes+" over "+nrOfRequests+" =="+(totalBytes/nrOfRequests)+" bytes/request");
+           	if(log.isInfoEnabled())
+           	    log.info("Nr of bytes sent="+totalBytes+" over "+nrOfRequests+" =="+(totalBytes/nrOfRequests)+" bytes/request");
         }
 
     }
@@ -48,7 +49,8 @@ public class ReplicationTransmitter implements ClusterSender
     public void setReplicationMode(String mode) {
         String msg = IDataSenderFactory.validateMode(mode);
         if (msg == null) {
-            log.debug("Setting replcation mode to " + mode);
+           	if(log.isDebugEnabled())
+           	     log.debug("Setting replcation mode to " + mode);
             this.replicationMode = mode;
         }
         else
@@ -122,11 +124,13 @@ public class ReplicationTransmitter implements ClusterSender
             sender.setSuspect(false);
             addStats(data.length);
         }catch ( Exception x)
-        {
-            if ( !sender.getSuspect() ) {
-                log.warn("Unable to send replicated message, is server down?",
+        {  
+        	if(log.isWarnEnabled()) {
+                if ( !sender.getSuspect() ) {
+                    log.warn("Unable to send replicated message, is server down?",
                          x);
-            }
+                }
+        	}
             sender.setSuspect(true);
 
         }
