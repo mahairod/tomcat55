@@ -4542,6 +4542,9 @@ public class StandardContext
             broadcaster.sendNotification(notification);
         } 
         super.destroy();
+
+        instanceListeners = new String[0];
+        applicationListeners = new String[0];
     }
     
     private void resetContext() throws Exception, MBeanRegistrationException {
