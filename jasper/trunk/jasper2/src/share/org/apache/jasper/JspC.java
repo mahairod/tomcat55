@@ -810,7 +810,8 @@ public class JspC implements Options {
         try {
 	    if (uriRoot == null) {
 		if( pages.size() == 0 ) {
-		    throw new JasperException("No uriRoot or files");
+		    throw new JasperException(
+                        Localizer.getMessage("jsp.error.jspc.missingTarget"));
 		}
 		String firstJsp=(String)pages.elementAt( 0 );
                 File firstJspF = new File( firstJsp );
