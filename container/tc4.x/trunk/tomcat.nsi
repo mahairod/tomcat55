@@ -176,6 +176,7 @@ Section "Tomcat Source Code"
   SectionIn 3
   SetOutPath $INSTDIR
   File /r src
+  File /r jtc-src
 
 SectionEnd
 
@@ -338,6 +339,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\work"
   RMDir /r "$INSTDIR\temp"
   RMDir /r "$INSTDIR\src"
+  RMDir /r "$INSTDIR\jtc-src"
   RMDir "$INSTDIR"
 
   ; if $INSTDIR was removed, skip these next ones

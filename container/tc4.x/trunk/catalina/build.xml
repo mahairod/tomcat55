@@ -19,6 +19,29 @@
   <property name="test.webapp"       value="../webapps/build/examples"/>
   <property name="test.webapp.war"   value="${java.io.tmpdir}/webapp.war"/>
 
+  <!-- Source dependencies -->
+  <property name="tomcat-util.home"       value="${jtc.home}/util"/>
+  <property name="tomcat-coyote.home"     value="${jtc.home}/coyote"/>
+  <property name="tomcat-jk.home"         value="${jtc.home}/jk"/>
+  <property name="tomcat-webapp.home"     value="${jtc.home}/webapp"/>
+  <property name="tomcat-http11.home"     value="${jtc.home}/http11"/>
+
+  <!-- Dependent JARs -->
+  <property name="tomcat-util.jar"
+           value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
+  <property name="tomcat-coyote.jar"
+           value="${tomcat-coyote.home}/build/lib/tomcat-coyote.jar"/>
+  <property name="tomcat-coyote-catalina.jar"
+           value="${tomcat-coyote.home}/build/lib/tomcat-coyote-catalina.jar"/>
+  <property name="tomcat-jk.jar"
+           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-ajp.jar"/>
+  <property name="tomcat-jk2.jar"
+           value="${tomcat-jk.home}/build/WEB-INF/lib/tomcat-ajp2.jar"/>
+  <property name="tomcat-webapp.jar"
+           value="${tomcat-webapp.home}/build/lib/tomcat-webapp.jar"/>
+  <property name="tomcat-http11.jar"
+           value="${tomcat-http11.home}/build/lib/tomcat-coyote-http11.jar"/>
+
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
@@ -29,6 +52,7 @@
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
+    <pathelement location="${tomcat-util.jar}"/>
     <pathelement location="${jaas.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jdbc20ext.jar}"/>
@@ -75,6 +99,16 @@
     <pathelement location="${catalina.build}/tests"/>
   </path>
 
+  <!-- Source path -->
+  <path id="javadoc.sourcepath">
+    <pathelement location="src/share"/>
+    <pathelement location="${tomcat-util.home}/java"/>
+    <pathelement location="${tomcat-coyote.home}/src/java"/>
+    <pathelement location="${tomcat-jk.home}/java"/>
+    <pathelement location="${tomcat-webapp.home}/java"/>
+    <pathelement location="${tomcat-http11.home}/src/java"/>
+  </path>
+
 
   <!-- =================== BUILD: Set compile flags ======================= -->
   <target name="flags">
@@ -88,6 +122,9 @@
     <!-- Ant flags -->
     <available property="style.available"
      classname="org.apache.tools.ant.taskdefs.optional.TraXLiaison" />
+
+    <!-- Source path -->
+    <available property="jtc.home.present" file="${jtc.home}" />
 
     <!-- Class availability flags -->
     <available property="beanutils.present"
@@ -275,12 +312,6 @@
 
 
     <!-- Conditional copy flags (determined from the flags above) -->
-    <condition property="copy.tomcat-ajp.jar">
-      <or>
-        <equals arg1="${full.dist}" arg2="on" />
-        <equals arg1="${tomcat-ajp.jar.present}" arg2="true" />
-      </or>
-    </condition>
     <condition property="copy.dbcp.jar">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
@@ -426,6 +457,9 @@
     <echo message="jdk.1.3.present=${jdk.1.3.present}" />
     <echo message="jdk.1.4.present=${jdk.1.4.present}" />
 
+    <echo message="--- Source Dependencies ---" />
+    <echo message="jtc.home.present=${jtc.home.present}" />
+
     <echo message="--- Required Libraries ---" />
     <echo message="beanutils.present=${beanutils.present}" />
     <echo message="collections.present=${collections.present}" />
@@ -456,7 +490,6 @@
     <echo message="xerces.jar.present(except JDK 1.4+)=${xerces.jar.present}" />
 
     <echo message="--- Optional JARs ---" />
-    <echo message="tomcat-ajp.jar.present=${tomcat-ajp.jar.present}" />
     <echo message="dbcp.jar.present=${dbcp.jar.present}" />
     <echo message="jaas.jar.present=${jaas.jar.present}" />
     <echo message="javamail.jar.present=${javamail.jar.present}" />
@@ -467,7 +500,6 @@
     <echo message="ldap.jar.present=${ldap.jar.present}" />
     <echo message="modeler.jar.present=${modeler.jar.present}" />
     <echo message="pool.jar.present=${pool.jar.present}" />
-    <echo message="tomcat-util.jar.present=${tomcat-util.jar.present}" />
     <echo message="tyrex.jar.present=${tyrex.jar.present}" />
 
     <echo message="--- Conditional compilation flags ---" />
@@ -484,7 +516,6 @@
     <echo message="compile.tyrex=${compile.tyrex}" />
 
     <echo message="--- Distribution flags ---" />
-    <echo message="copy.tomcat-ajp.jar=${copy.tomcat-ajp.jar}" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
     <echo message="copy.jaas.jar=${copy.jaas.jar}" />
     <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
@@ -521,9 +552,6 @@
 
 
   <!-- ======================== BUILD: Copy JARs ========================== -->
-  <target name="copy-tomcat-ajp.jar" if="copy.tomcat-ajp.jar">
-    <copy todir="${catalina.build}/server/lib" file="${tomcat-ajp.jar}"/>
-  </target>
   <target name="copy-activation.jar" if="copy.javamail.jar">
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
@@ -578,7 +606,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-tomcat-ajp.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tomcat-util.jar,copy-tyrex.jar,copy-xerces.jar">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces.jar">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -616,8 +644,19 @@
   </target>
 
 
-  <!-- ================= BUILD: Compile Server Components ================= -->
-  <target name="build-main" depends="build-static">
+  <!-- =================== BUILD: Build tomcat-util ======================= -->
+  <target name="build-tomcat-util">
+
+    <ant dir="${tomcat-util.home}" target="build-main"/>
+
+    <copy todir="${catalina.build}/server/lib"
+           file="${tomcat-util.jar}"/>
+
+  </target>
+
+
+  <!-- ================ BUILD: Compile Catalina Components ================ -->
+  <target name="build-catalina">
 
     <!-- Compile Service API -->
     <javac srcdir="../service/java" destdir="${catalina.build}/server/classes"
@@ -677,26 +716,94 @@
   </target>
 
 
+  <!-- ================== BUILD: Build tomcat-coyote ====================== -->
+  <target name="build-tomcat-coyote">
+
+    <ant dir="${tomcat-coyote.home}" target="compile">
+      <property name="catalina.home" value="${catalina.deploy}"/>
+    </ant>
+
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-coyote.jar}"/>
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-coyote-catalina.jar}"/>
+
+  </target>
+
+
+  <!-- ==================== BUILD: Build tomcat-ajp ======================= -->
+  <target name="build-tomcat-jk">
+
+    <ant dir="${tomcat-jk.home}" target="build-main">
+      <property name="tomcat40.home" value="${catalina.deploy}"/>
+      <property name="tomcat41.home" value="${catalina.deploy}"/>
+    </ant>
+
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-jk.jar}"/>
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-jk2.jar}"/>
+
+  </target>
+
+
+  <!-- ================== BUILD: Build tomcat-webapp ====================== -->
+  <target name="build-tomcat-webapp">
+
+    <ant dir="${tomcat-webapp.home}" target="compile">
+      <property name="catalina.home" value="${catalina.deploy}"/>
+    </ant>
+
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-webapp.jar}"/>
+
+  </target>
+
+
+  <!-- ============== BUILD: Build tomcat-coyote-http11 =================== -->
+  <target name="build-tomcat-http11">
+
+    <ant dir="${tomcat-http11.home}" target="compile"/>
+
+    <copy todir="${catalina.deploy}/server/lib"
+           file="${tomcat-http11.jar}"/>
+
+  </target>
+
+
+  <!-- ================= BUILD: Compile All Server Components ============= -->
+  <target name="build-main" depends="build-static,build-tomcat-util,build-catalina">
+  </target>
+
+
   <!-- ================ BUILD: Create Catalina Javadocs =================== -->
   <target name="javadoc">
     <delete dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
     <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
       classpathref="catalina.classpath"
-      sourcepath="src/share"
+      sourcepathref="javadoc.sourcepath"
       destdir="${catalina.build}/javadoc"
       author="true"
       version="true"
       windowtitle="Catalina Internal API Documentation"
       doctitle="Catalina API"
-      bottom="Copyright &#169; 2000-2001 Apache Software Foundation.  All Rights Reserved."
+      bottom="Copyright &#169; 2000-2002 Apache Software Foundation.  All Rights Reserved."
     />
   </target>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
+
     <delete dir="${catalina.build}"/>
+
+    <ant dir="${tomcat-util.home}" target="clean"/>
+    <ant dir="${tomcat-coyote.home}" target="clean"/>
+    <ant dir="${tomcat-jk.home}" target="clean"/>
+    <ant dir="${tomcat-webapp.home}" target="clean"/>
+    <ant dir="${tomcat-http11.home}" target="clean"/>
+
   </target>
 
 
@@ -820,7 +927,7 @@
 
 
   <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
-  <target name="deploy" depends="deploy-static,build-main"
+  <target name="deploy-catalina" depends="deploy-static,build-main"
    description="Build and deploy Catalina component">
 
     <!-- Catalina Bootstrap JAR File -->
@@ -846,7 +953,6 @@
       <fileset dir="${catalina.build}/server/classes">
         <exclude name="org/apache/catalina/ant/**" />
         <exclude name="org/apache/naming/**" />
-        <exclude name="**/connector/warp/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
         <exclude name="org/apache/catalina/startup/BootstrapService.class" />
         <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
@@ -953,11 +1059,12 @@
       </fileset>
     </jar>
 
-    <!-- WARP Connector JAR File -->
-    <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
-          basedir="${catalina.build}/server/classes" 
-          includes="**/connector/warp/**" />
+  </target>
 
+
+  <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
+  <target name="deploy" depends="deploy-catalina,build-tomcat-coyote,build-tomcat-jk,build-tomcat-webapp,build-tomcat-http11"
+   description="Build and deploy Catalina">
   </target>
 
 

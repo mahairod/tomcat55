@@ -110,6 +110,17 @@ process. The 1.4 release is now required.
   the symbolic name "${tomcat.source}" is used to refer to the full
   pathname of the release directory.
 
+* Use Anonymous CVS (as described on the Jakarta web site at
+  <http://jakarta.apache.org/site/cvsindex.html>, or
+  download a source distribution of the "jakarta-tomcat-connectors" repository.
+
+* Unpack the source distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-tomcat-connectors").  By default, the build system will try to find
+  this repository in the "${tomcat.source}/../jakarta-tomcat-connectors"
+  directory.  Set the "jtc.home" property in the build.properties file 
+  described below (see 24) if it resides in a different directory.
+
 
 (5) Download and Install the Servlet API Binary Distribution
 

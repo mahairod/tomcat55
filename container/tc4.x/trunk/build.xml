@@ -1,5 +1,6 @@
 <project name="Tomcat 4.0" default="deploy" basedir=".">
 
+
   <!-- ===================== Initialize Property Values =================== -->
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
@@ -14,6 +15,9 @@
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
+  <property name="jtc.project"           value="jakarta-tomcat-connectors" />
+  <property name="jtc.final.name"        value="${jtc.project}-${version}" />
+  <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
@@ -26,9 +30,10 @@
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
   <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
 
-  <!-- Default AJP and UTIL components for the usual case -->
-  <property name="tomcat-ajp.jar"   value="${basedir}/lib/tomcat-ajp.jar"/>
-  <property name="tomcat-util.jar"  value="${basedir}/lib/tomcat-util.jar"/>
+
+  <!-- Source dependencies -->
+  <property name="jtc.home"
+           value="${basedir}/../jakarta-tomcat-connectors"/>
 
 
   <!-- =================== DETECT: Display configuration ================== -->
@@ -205,6 +210,14 @@
         <exclude name="build.properties"/>
       </fileset>
     </copy>
+    <mkdir  dir="${tomcat.dist}/jtc-src"/>
+    <copy todir="${tomcat.dist}/jtc-src">
+      <fileset dir="${jtc.home}">
+        <exclude name="**/build/**"/>
+        <exclude name="**/dist/**"/>
+        <exclude name="build.properties"/>
+      </fileset>
+    </copy>
   </target>
 
 
@@ -331,12 +344,19 @@
   </target>
 
   <target name="package-src-zip">
+    <!-- Package Tomcat Source -->
     <zip zipfile="${tomcat.dist}/${final-src.name}.zip">
       <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" />
+    </zip>
+    <!-- Package JTC Source -->
+    <zip zipfile="${tomcat.dist}/${jtc.final-src.name}.zip">
+      <zipfileset dir="${tomcat.dist}/jtc-src" 
+               prefix="${jtc.final-src.name}" />
     </zip>
   </target>
 
   <target name="package-src-tgz">
+    <!-- Package Tomcat Source -->
     <mkdir dir="${tomcat.dist}/${final-src.name}" />
     <copy todir="${tomcat.dist}/${final-src.name}">
       <fileset dir="${tomcat.dist}/src">
@@ -354,6 +374,25 @@
     <gzip zipfile="${tomcat.dist}/${final-src.name}.tar.gz"
      src="${tomcat.dist}/${final-src.name}.tar"/>
     <delete file="${tomcat.dist}/${final-src.name}.tar" />
+    <!-- Package JTC Source -->
+    <mkdir dir="${tomcat.dist}/${jtc.final-src.name}" />
+    <copy todir="${tomcat.dist}/${jtc.final-src.name}">
+      <fileset dir="${tomcat.dist}/jtc-src">
+        <include name="**" />
+      </fileset>
+    </copy>
+    <!-- Note: Will break with Ant 1.4.1; Works with 1.5 Alpha -->
+    <fixcrlf srcdir="${tomcat.dist}/${jtc.final-src.name}" 
+     excludes="**/*.jar,**/*.gif,**/*.bmp,**/*.jpg,**/*.ico" eol="lf"/>
+    <tar longfile="gnu" tarfile="${tomcat.dist}/${jtc.final-src.name}.tar">
+      <tarfileset dir="${tomcat.dist}">
+        <include name="${jtc.final-src.name}/**" />
+      </tarfileset>
+    </tar>
+    <delete dir="${tomcat.dist}/${jtc.final-src.name}" />
+    <gzip zipfile="${tomcat.dist}/${jtc.final-src.name}.tar.gz"
+     src="${tomcat.dist}/${jtc.final-src.name}.tar"/>
+    <delete file="${tomcat.dist}/${jtc.final-src.name}.tar" />
   </target>
 
 
