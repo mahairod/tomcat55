@@ -554,8 +554,8 @@ public class HostConfig
 
         // Assume this is a configuration descriptor and deploy it
         log.debug(sm.getString("hostConfig.deployDescriptor", file));
+        Context context = null;
         try {
-            Context context = null;
             synchronized (digester) {
                 try {
                     context = (Context) digester.parse(contextXml);
@@ -654,7 +654,9 @@ public class HostConfig
                                    file), t);
         }
 
-        deployed.put(contextPath, deployedApp);
+        if (context != null && host.findChild(context.getName()) != null) {
+            deployed.put(contextPath, deployedApp);
+        }
     }
 
 
