@@ -80,6 +80,8 @@ import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
 import org.apache.catalina.deploy.LoginConfig;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 
@@ -93,6 +95,8 @@ import org.apache.catalina.deploy.LoginConfig;
 
 public class FormAuthenticator
     extends AuthenticatorBase {
+    private static Log log = LogFactory.getLog(FormAuthenticator.class);
+
 
 
     // ----------------------------------------------------- Instance Variables
@@ -149,8 +153,8 @@ public class FormAuthenticator
         // Have we already authenticated someone?
         Principal principal = hreq.getUserPrincipal();
         if (principal != null) {
-            if (debug >= 1)
-                log("Already authenticated '" +
+            if (log.isDebugEnabled())
+                log.debug("Already authenticated '" +
                     principal.getName() + "'");
             String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
             if (ssoId != null)
@@ -161,15 +165,15 @@ public class FormAuthenticator
         // Have we authenticated this user before but have caching disabled?
         if (!cache) {
             session = getSession(request, true);
-            if (debug >= 1)
-                log("Checking for reauthenticate in session " + session);
+            if (log.isDebugEnabled())
+                log.debug("Checking for reauthenticate in session " + session);
             String username =
                 (String) session.getNote(Constants.SESS_USERNAME_NOTE);
             String password =
                 (String) session.getNote(Constants.SESS_PASSWORD_NOTE);
             if ((username != null) && (password != null)) {
-                if (debug >= 1)
-                    log("Reauthenticating username '" + username + "'");
+                if (log.isDebugEnabled())
+                    log.debug("Reauthenticating username '" + username + "'");
                 principal =
                     context.getRealm().authenticate(username, password);
                 if (principal != null) {
@@ -179,8 +183,8 @@ public class FormAuthenticator
                              username, password);
                     return (true);
                 }
-                if (debug >= 1)
-                    log("Reauthentication failed, proceed normally");
+                if (log.isDebugEnabled())
+                    log.debug("Reauthentication failed, proceed normally");
             }
         }
 
@@ -188,8 +192,8 @@ public class FormAuthenticator
         // authentication?  If so, forward the *original* request instead.
         if (matchRequest(request)) {
             session = getSession(request, true);
-            if (debug >= 1)
-                log("Restore request from session '" + session.getId() + "'");
+            if (log.isDebugEnabled())
+                log.debug("Restore request from session '" + session.getId() + "'");
             principal = (Principal)
                 session.getNote(Constants.FORM_PRINCIPAL_NOTE);
             register(request, response, principal, Constants.FORM_METHOD,
@@ -199,12 +203,12 @@ public class FormAuthenticator
             if (ssoId != null)
                 associate(ssoId, session);
             if (restoreRequest(request, session)) {
-                if (debug >= 1)
-                    log("Proceed to restored request");
+                if (log.isDebugEnabled())
+                    log.debug("Proceed to restored request");
                 return (true);
             } else {
-                if (debug >= 1)
-                    log("Restore of original request failed");
+                if (log.isDebugEnabled())
+                    log.debug("Restore of original request failed");
                 hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return (false);
             }
@@ -221,8 +225,8 @@ public class FormAuthenticator
         // redirect" performed below.
         String loginURI = contextPath + config.getLoginPage();
         if (requestURI.equals(loginURI)) {
-            if (debug >= 1)
-                log("Requesting login page normally");
+            if (log.isDebugEnabled())
+                log.debug("Requesting login page normally");
             return (true);      // Display the login page in the usual manner
         }
 
@@ -231,8 +235,8 @@ public class FormAuthenticator
         // within the protected area of our security constraint
         String errorURI = contextPath + config.getErrorPage();
         if (requestURI.equals(errorURI)) {
-            if (debug >= 1)
-                log("Requesting error page normally");
+            if (log.isDebugEnabled())
+                log.debug("Requesting error page normally");
             return (true);      // Display the error page in the usual manner
         }
 
@@ -244,11 +248,11 @@ public class FormAuthenticator
         // No -- Save this request and redirect to the form login page
         if (!loginAction) {
             session = getSession(request, true);
-            if (debug >= 1)
-                log("Save request in session '" + session.getId() + "'");
+            if (log.isDebugEnabled())
+                log.debug("Save request in session '" + session.getId() + "'");
             saveRequest(request, session);
-            if (debug >= 1)
-                log("Redirect to login page '" + loginURI + "'");
+            if (log.isDebugEnabled())
+                log.debug("Redirect to login page '" + loginURI + "'");
             hres.sendRedirect(hres.encodeRedirectURL(loginURI));
             return (false);
         }
@@ -258,19 +262,19 @@ public class FormAuthenticator
         Realm realm = context.getRealm();
         String username = hreq.getParameter(Constants.FORM_USERNAME);
         String password = hreq.getParameter(Constants.FORM_PASSWORD);
-        if (debug >= 1)
-            log("Authenticating username '" + username + "'");
+        if (log.isDebugEnabled())
+            log.debug("Authenticating username '" + username + "'");
         principal = realm.authenticate(username, password);
         if (principal == null) {
-            if (debug >= 1)
-                log("Redirect to error page '" + errorURI + "'");
+            if (log.isDebugEnabled())
+                log.debug("Redirect to error page '" + errorURI + "'");
             hres.sendRedirect(hres.encodeRedirectURL(errorURI));
             return (false);
         }
 
         // Save the authenticated Principal in our session
-        if (debug >= 1)
-            log("Authentication of '" + username + "' was successful");
+        if (log.isDebugEnabled())
+            log.debug("Authentication of '" + username + "' was successful");
         if (session == null)
             session = getSession(request, true);
         session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
@@ -284,8 +288,8 @@ public class FormAuthenticator
         // Redirect the user to the original request URI (which will cause
         // the original request to be restored)
         requestURI = savedRequestURL(session);
-        if (debug >= 1)
-            log("Redirecting to original '" + requestURI + "'");
+        if (log.isDebugEnabled())
+            log.debug("Redirecting to original '" + requestURI + "'");
         if (requestURI == null)
             hres.sendError(HttpServletResponse.SC_BAD_REQUEST,
                            sm.getString("authenticator.formlogin"));
