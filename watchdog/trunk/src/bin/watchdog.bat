@@ -39,5 +39,9 @@ set WATCHDOG_HOME=
 set PORT=
 set HOST=
 
+goto end
+
 :exit
 echo usage: %0 {all/jsp/servlet} [serverhost] [serverport]
+
+:end
