@@ -73,7 +73,7 @@ import org.apache.jasper.compiler.Node;
  */
 public class SmapUtil {
 
-    static final boolean verbose = false;
+    private static final boolean verbose = false;
 
     //*********************************************************************
     // Constants
@@ -139,10 +139,9 @@ public class SmapUtil {
         File outSmap = new File(ctxt.getClassFileName() + ".smap");
         File outServlet = new File(ctxt.getClassFileName());
         SDEInstaller.install(outServlet, outSmap);
-        if( !ctxt.keepGenerated() ) {
+//        if( !ctxt.keepGenerated() ) {
             outSmap.delete();
-        }
-      
+//        }
     }
 
 
@@ -186,18 +185,19 @@ public class SmapUtil {
             } else if (args.length == 3) {
                 install(new File(args[0]), new File(args[1]), new File(args[2]));
             } else {
-                abort("Usage: <command> <input class file> " + 
-                                   "<attribute file> <output class file name>\n" +
+                System.err.println("Usage: <command> <input class file> " + 
+                      "<attribute file> <output class file name>\n" +
                       "<command> <input/output class file> <attribute file>");
             }
         }
 
         static void install(File inClassFile, File attrFile, File outClassFile)
-                                                                throws IOException {
+                throws IOException {
             new SDEInstaller(inClassFile, attrFile, outClassFile);
         }
 
-        static void install(File inOutClassFile, File attrFile) throws IOException {
+        static void install(File inOutClassFile, File attrFile)
+                throws IOException {
             File tmpFile = new File(inOutClassFile.getPath() + "tmp");
             new SDEInstaller(inOutClassFile, attrFile, tmpFile);
             if (!inOutClassFile.delete()) {
@@ -208,17 +208,13 @@ public class SmapUtil {
             }
         }
 
-        static void abort(String msg) {
-            System.err.println(msg);
-            System.exit(1);
-        }
-
-        SDEInstaller(File inClassFile, File attrFile, File outClassFile) throws IOException {
+        SDEInstaller(File inClassFile, File attrFile, File outClassFile)
+                throws IOException {
             if (!inClassFile.exists()) {
-                abort("no such file: " + inClassFile);
+                throw new FileNotFoundException("no such file: " + inClassFile);
             }
             if (!attrFile.exists()) {
-                abort("no such file: " + attrFile);
+                throw new FileNotFoundException("no such file: " + attrFile);
             }
  
             // get the bytes
@@ -240,18 +236,22 @@ public class SmapUtil {
             int len = (int)input.length();
             byte[] bytes = new byte[len];
             if (inStream.read(bytes, 0, len) != len) {
-                abort("expected size: " + len);
+                throw new IOException("expected size: " + len);
             }
             inStream.close();
             return bytes;
         }
 
-        void addSDE() throws UnsupportedEncodingException {
+        void addSDE() throws UnsupportedEncodingException, IOException {
             int i;
             copy(4 + 2 + 2); // magic min/maj version
             int constantPoolCountPos = genPos;
             int constantPoolCount = readU2();
+            if (verbose) {
+                System.out.println("constant pool count: " + constantPoolCount);
+            }
             writeU2(constantPoolCount);
+
             // copy old constant pool return index of SDE symbol, if found
             sdeIndex = copyConstantPool(constantPoolCount);
             if (sdeIndex < 0) {
@@ -403,7 +403,8 @@ public class SmapUtil {
             }
         }
     
-        int copyConstantPool(int constantPoolCount) throws UnsupportedEncodingException {
+        int copyConstantPool(int constantPoolCount)
+                throws UnsupportedEncodingException, IOException {
             int sdeIndex = -1;
             // copy const pool index zero not in class file
             for (int i = 1; i < constantPoolCount; ++i) {
@@ -412,6 +413,9 @@ public class SmapUtil {
                 switch (tag) {
                     case 7:  // Class
                     case 8:  // String
+                        if (verbose) {
+                            System.out.println(i + " copying 2 bytes");
+                        }
                         copy(2); 
                         break;
                     case 9:  // Field
@@ -420,11 +424,18 @@ public class SmapUtil {
                     case 3:  // Integer
                     case 4:  // Float
                     case 12: // NameAndType
+                        if (verbose) {
+                            System.out.println(i + " copying 4 bytes");
+                        }
                         copy(4); 
                         break;
                     case 5:  // Long
                     case 6:  // Double
+                        if (verbose) {
+                            System.out.println(i + " copying 8 bytes");
+                        }
                         copy(8); 
+                        i++;
                         break;
                     case 1:  // Utf8
                         int len = readU2(); 
@@ -440,8 +451,7 @@ public class SmapUtil {
                         writeBytes(utf8);
                         break;
                     default: 
-                        abort("unexpected tag: " + tag); 
-                        break;
+                        throw new IOException("unexpected tag: " + tag); 
                 }
             }
             return sdeIndex;
@@ -457,35 +467,26 @@ public class SmapUtil {
         }
     }
     public static void evaluateNodes(Node.Nodes nodes, SmapStratum s) {
-      if( nodes != null && nodes.size()>0) {
-        int numChildNodes = nodes.size();
-        for( int i = 0; i < numChildNodes; i++ ) {
-          Node n = nodes.getNode( i );
-          Mark mark = n.getStart();
+        if( nodes != null && nodes.size()>0) {
+            int numChildNodes = nodes.size();
+            for( int i = 0; i < numChildNodes; i++ ) {
+                Node n = nodes.getNode( i );
+                Mark mark = n.getStart();
 
-          if (verbose) {
-            System.out.println("Mark(start): line="+ mark.getLineNumber() +
-                " col="+mark.getColumnNumber() +"Node: begLine="+
-                n.getBeginJavaLine() +" endLine="+n.getEndJavaLine());
-          }
-          String unqualifiedName = unqualify(mark.getFile());
-          s.addFile(unqualifiedName);
-          s.addLineData(mark.getLineNumber(),
+                if (verbose) {
+                System.out.println("Mark(start): line="+ mark.getLineNumber() +
+                    " col="+mark.getColumnNumber() +"Node: begLine="+
+                    n.getBeginJavaLine() +" endLine="+n.getEndJavaLine());
+                }
+                String unqualifiedName = unqualify(mark.getFile());
+                s.addFile(unqualifiedName);
+                s.addLineData(mark.getLineNumber(),
                         unqualifiedName,
                         1,
                         n.getBeginJavaLine(),
                         n.getEndJavaLine() - n.getBeginJavaLine());
-          evaluateNodes(nodes.getNode(i).getBody(), s);
-
-/*
-int inputStartLine,
-String inputFileName,
-int inputLineCount,
-int outputStartLine,
-int outputLineIncrement
-*/
+                evaluateNodes(nodes.getNode(i).getBody(), s);
+            }
         }
-      }
     }
-
 }
