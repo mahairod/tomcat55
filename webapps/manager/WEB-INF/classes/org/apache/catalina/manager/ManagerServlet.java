@@ -353,7 +353,7 @@ public class ManagerServlet
         boolean update = false;
         if ((request.getParameter("update") != null) 
             && (request.getParameter("update").equals("true"))) {
-            update = false;
+            update = true;
         }
 
         // Prepare our output writer to generate the response message
@@ -435,7 +435,7 @@ public class ManagerServlet
         boolean update = false;
         if ((request.getParameter("update") != null) 
             && (request.getParameter("update").equals("true"))) {
-            update = false;
+            update = true;
         }
 
         // Prepare our output writer to generate the response message
@@ -616,6 +616,18 @@ public class ManagerServlet
             localWar = localWarCopy;
         }
 
+        String war = null;
+        try {
+            URL url = localWar.toURL();
+            war = url.toString();
+            war = "jar:" + war + "!/";
+        } catch(MalformedURLException e) {
+            log("managerServlet.badUrl[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            return;
+        }
+
         // Extract the nested context deployment file (if any)
         File localXml = new File(configBase, basename + ".xml");
         if (debug >= 2) {
@@ -629,14 +641,21 @@ public class ManagerServlet
                                         e.toString()));
             return;
         }
+        String config = null;
+        try {
+            if (localXml.exists()) {
+                URL url = localXml.toURL();
+                config = url.toString();
+            }
+        } catch (MalformedURLException e) {
+            log("managerServlet.badUrl[" + displayPath + "]", e);
+            writer.println(sm.getString("managerServlet.exception",
+                                        e.toString()));
+            return;
+        }
 
         // Deploy this web application
-        deploy(writer, localXml.getAbsolutePath(), path, 
-               localWar.getAbsolutePath(), update);
-
-        // Acknowledge successful completion of this deploy command
-        writer.println(sm.getString("managerServlet.deployed",
-                                    displayPath));
+        deploy(writer, config, path, war, update);
 
     }
 
@@ -792,6 +811,7 @@ public class ManagerServlet
                 log("ManagerServlet.configure[" + config + "]", t);
                 writer.println(sm.getString("managerServlet.exception",
                                             t.toString()));
+                return;
             }
 
         } else {
