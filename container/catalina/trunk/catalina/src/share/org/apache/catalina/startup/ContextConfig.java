@@ -493,9 +493,8 @@ public final class ContextConfig
         // to support servlet.jar that does not contains the schema
         if (url != null){
             tldDigester.setSchema(url.toString());
+            tldDigester = registerLocalSchema(tldDigester);
         }
-
-        tldDigester = registerLocalSchema(tldDigester);
 
         tldDigester.addRuleSet(new TldRuleSet());
         return (tldDigester);
@@ -527,9 +526,8 @@ public final class ContextConfig
         // to support servlet.jar that does not contains the schema
         if (url != null){
             webDigester.setSchema(url.toString());
+            webDigester = registerLocalSchema(webDigester);
         }
-
-        webDigester = registerLocalSchema(webDigester);
 
         webDigester.addRuleSet(new WebRuleSet());
         return (webDigester);
