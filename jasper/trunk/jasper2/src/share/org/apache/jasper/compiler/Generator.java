@@ -1048,7 +1048,7 @@ class Generator {
             if (beanInfo.checkVariable(name)) {
                 // Bean is defined using useBean, introspect at compile time
                 Class bean = beanInfo.getBeanType(name);
-                String beanName = bean.getName();
+                String beanName = JspUtil.getCanonicalName(bean);
                 java.lang.reflect.Method meth =
                     JspRuntimeLibrary.getReadMethod(bean, property);
                 String methodName = meth.getName();
@@ -2121,21 +2121,23 @@ class Generator {
             declareScriptingVars(n, VariableInfo.AT_BEGIN);
             saveScriptingVars(n, VariableInfo.AT_BEGIN);
 
-            out.printin(tagHandlerClass.getName());
+            String tagHandlerClassName =
+                JspUtil.getCanonicalName(tagHandlerClass);
+            out.printin(tagHandlerClassName);
             out.print(" ");
             out.print(tagHandlerVar);
             out.print(" = ");
             if (isPoolingEnabled) {
                 out.print("(");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.print(") ");
                 out.print(n.getTagHandlerPoolName());
                 out.print(".get(");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.println(".class);");
             } else {
                 out.print("new ");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.println("();");
             }
 
@@ -2333,12 +2335,14 @@ class Generator {
             declareScriptingVars(n, VariableInfo.AT_BEGIN);
             saveScriptingVars(n, VariableInfo.AT_BEGIN);
 
-            out.printin(tagHandlerClass.getName());
+            String tagHandlerClassName =
+                JspUtil.getCanonicalName(tagHandlerClass);
+            out.printin(tagHandlerClassName);
             out.print(" ");
             out.print(tagHandlerVar);
             out.print(" = ");
             out.print("new ");
-            out.print(tagHandlerClass.getName());
+            out.print(tagHandlerClassName);
             out.println("();");
 
             generateSetters(n, tagHandlerVar, handlerInfo, true);
@@ -2853,16 +2857,17 @@ class Generator {
             }
 
             if (propEditorClass != null) {
+                String className = JspUtil.getCanonicalName(c);
                 return "("
-                    + c.getName()
+                    + className
                     + ")org.apache.jasper.runtime.JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor("
-                    + c.getName()
+                    + className
                     + ".class, \""
                     + attrName
                     + "\", "
                     + quoted
                     + ", "
-                    + propEditorClass.getName()
+                    + JspUtil.getCanonicalName(propEditorClass)
                     + ".class)";
             } else if (c == String.class) {
                 return quoted;
@@ -2901,10 +2906,11 @@ class Generator {
             } else if (c == Object.class) {
                 return "new String(" + quoted + ")";
             } else {
+                String className = JspUtil.getCanonicalName(c);
                 return "("
-                    + c.getName()
+                    + className
                     + ")org.apache.jasper.runtime.JspRuntimeLibrary.getValueFromPropertyEditorManager("
-                    + c.getName()
+                    + className
                     + ".class, \""
                     + attrName
                     + "\", "

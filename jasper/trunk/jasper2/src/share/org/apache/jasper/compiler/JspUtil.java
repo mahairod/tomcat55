@@ -1102,5 +1102,30 @@ public class JspUtil {
 	}
 	return resultType.toString();
     }
+
+    /**
+     * Compute the canonical name from a Class instance.  Note that a
+     * simple replacment of '$' with '.' of a binary name would not work,
+     * as '$' is a legal Java Identifier character.
+     * @param c A instance of java.lang.Class
+     * @return  The canonical name of c.
+     */
+    public static String getCanonicalName(Class c) {
+
+        String binaryName = c.getName();
+        c = c.getDeclaringClass();
+
+        if (c == null) {
+            return binaryName;
+        }
+
+        StringBuffer buf = new StringBuffer(binaryName);
+        do {
+            buf.setCharAt(c.getName().length(), '.');
+            c = c.getDeclaringClass();
+        } while ( c != null);
+
+        return buf.toString();
+    }
 }
 
