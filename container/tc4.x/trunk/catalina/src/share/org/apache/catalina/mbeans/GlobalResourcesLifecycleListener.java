@@ -173,10 +173,9 @@ public class GlobalResourcesLifecycleListener
                 ("No global naming context defined for server");
         }
 
-        log( "Global context " + context + " " + context.getClass().getName());
         if( ! (context instanceof Context) )
             return;
-                
+
         // Recurse through the defined global JNDI resources context
         try {
             createMBeans("", (Context)context);
