@@ -5144,7 +5144,7 @@ public class StandardContext
     /** Support for "stateManageable" JSR77 
      * 
      */
-    public boolean getStateManageable() {
+    public boolean IsStateManageable() {
         return true;
     }
     
@@ -5166,10 +5166,43 @@ public class StandardContext
         // 2 - STOPPING
         return 3; // STOPPED
     }
-
+    
+    /**
+     * The J2EE Server ObjectName this module is deployed on.
+     */     
+    private String server = null;
+    
+    /**
+     * The Java virtual machines on which this module is running.
+     */       
+    private String[] javaVMs = null;
+    
+    public String getServer() {
+        return server;
+    }
+        
+    public String setServer(String server) {
+        return this.server=server;
+    }
+        
+    public String[] getJavaVMs() {
+        return javaVMs;
+    }
+        
+    public String[] setJavaVMs(String[] javaVMs) {
+        return this.javaVMs = javaVMs;
+    }
+    
     public long getStartTime() {
         return startupTime;
     }
     
+    public boolean IsEventProvider() {
+        return false;
+    }
+    
+    public boolean IsStatisticsProvider() {
+        return false;
+    }
     
 }
