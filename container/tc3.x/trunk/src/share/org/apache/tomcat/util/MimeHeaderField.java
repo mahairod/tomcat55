@@ -134,6 +134,10 @@ public class MimeHeaderField {
 	type = T_NULL;
     }
 
+    public int getType() {
+	return type;
+    }
+    
     /**
      * Sets the header field name to the specified string.
      * @param s the header field name String
@@ -342,43 +346,6 @@ public class MimeHeaderField {
 	System.arraycopy(b, 0, buf, off, DATELEN);
 	return DATELEN;
     }    
-
-    
-    /**
-     * Parses a header field from a subarray of bytes.
-     * @param b the bytes to parse
-     * @param off the start offset of the bytes
-     * @param len the length of the bytes
-     * @exception IllegalArgumentException if the header format was invalid
-     */
-    public boolean parse(byte[] b, int off, int len)
-    {
-	int start = off;
-	byte c;
-
-	while ((c = b[off++]) != ':' && c != ' ') {
-	    if (c == '\n') {
-		System.out.println("Parse error, empty line: " + new String( b, off, len ));
-		return false;
-	    }
-	}
-
-	setName(b, start, off - start - 1);
-
-	while (c == ' ') {
-	    c = b[off++];
-	}
-
-	if (c != ':') {
-	    System.out.println("Parse error, missing : in  " + new String( b, off, len ));
-	    return false;
-	}
-
-	while ((c = b[off++]) == ' ');
-
-	setValue(b, off - 1, len - (off - start - 1));
-	return true;
-    }
 
     /**
      * Writes this header field to the specified servlet output stream.
