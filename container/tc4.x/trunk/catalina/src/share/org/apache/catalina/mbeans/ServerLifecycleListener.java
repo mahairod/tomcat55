@@ -78,6 +78,7 @@ import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -310,6 +311,13 @@ public class ServerLifecycleListener
                             log("Creating MBean for Context " + context);
                         MBeanUtils.createMBean(context);
                         // context.addContainerListener(this);
+                        // If the context is privileged, give a reference to it
+                        // in a servlet context attribute
+                        if (context.getPrivileged()) {
+                            context.getServletContext().setAttribute
+                                (Globals.MBEAN_SERVER_ATTR, 
+                                 MBeanUtils.createServer());
+                        }
                     }
 
                 }
