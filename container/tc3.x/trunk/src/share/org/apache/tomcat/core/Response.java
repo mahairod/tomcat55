@@ -396,7 +396,8 @@ public class Response {
     public void writeHeaders() throws IOException {
 	if(omitHeaders)
 	    return;
-	resA.setStatus( status, RequestUtil.getStatusString(status));
+
+	resA.setStatus( status, sm.getString("sc."+ status ));
 	fixHeaders();
 	resA.addMimeHeaders( headers );
     }
