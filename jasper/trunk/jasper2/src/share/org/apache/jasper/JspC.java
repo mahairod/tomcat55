@@ -565,18 +565,18 @@ public class JspC implements Options {
         }
 
         if (servletout != null) {
-            servletout.write("\n\t<servlet>\n\t\t<servlet-name>");
+            servletout.write("\n    <servlet>\n        <servlet-name>");
             servletout.write(thisServletName);
-            servletout.write("</servlet-name>\n\t\t<servlet-class>");
+            servletout.write("</servlet-name>\n        <servlet-class>");
             servletout.write(thisServletName);
-            servletout.write("</servlet-class>\n\t</servlet>\n");
+            servletout.write("</servlet-class>\n    </servlet>\n");
         }
         if (mappingout != null) {
-            mappingout.write("\n\t<servlet-mapping>\n\t\t<servlet-name>");
+            mappingout.write("\n    <servlet-mapping>\n        <servlet-name>");
             mappingout.write(thisServletName);
-            mappingout.write("</servlet-name>\n\t\t<url-pattern>");
+            mappingout.write("</servlet-name>\n        <url-pattern>");
             mappingout.write(file.replace('\\', '/'));
-            mappingout.write("</url-pattern>\n\t</servlet-mapping>\n");
+            mappingout.write("</url-pattern>\n    </servlet-mapping>\n");
 
         }
     }
