@@ -148,6 +148,17 @@ final class StandardEngineValve
             return;     // NOTE - Not much else we can do generically
         }
 
+        // Validate that any HTTP/1.1 request included a host header
+        HttpServletRequest hrequest = (HttpServletRequest) request;
+        if ("HTTP/1.1".equals(hrequest.getProtocol()) &&
+            (hrequest.getServerName() == null)) {
+            ((HttpServletResponse) response.getResponse()).sendError
+                (HttpServletResponse.SC_BAD_REQUEST,
+                 sm.getString("standardEngine.noHostHeader",
+                              request.getRequest().getServerName()));
+            return;
+        }
+
         // Select the Host to be used for this Request
         StandardEngine engine = (StandardEngine) getContainer();
         Host host = (Host) engine.map(request, true);
