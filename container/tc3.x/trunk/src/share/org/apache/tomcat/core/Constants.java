@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -171,9 +167,9 @@ public class Constants {
     }
 
     public static class JSP {
-	public static final String NAME = "jsp";
+        public static final String NAME = "jsp";
 	public static final String CLASSNAME = "org.apache.jasper.runtime.JspServlet";
-	
+     
         public static class Directive {
             public static class Compile {
                 public static final String Name = "jsp_precompile";
@@ -200,7 +196,7 @@ public class Constants {
         public static final String ERROR_MESSAGE =
             "javax.servlet.error.message";
         public static final String RESOLVED_SERVLET =
-            "javax.servlet.resolved";
+            "org.apache.tomcat.servlet.resolved";
     }
 
     public static class Locale {

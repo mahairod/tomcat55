@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -635,7 +631,10 @@ public class Context {
 	request.setServletPath(result.getServletPath());
 	request.setPathInfo(result.getPathInfo());
 
-        if (result.getMappedPath() != null) {
+        if (result.getResolvedServlet() != null) {
+            request.setAttribute(Constants.Attribute.RESOLVED_SERVLET,
+                result.getResolvedServlet());
+        } else if (result.getMappedPath() != null) {
             request.setAttribute(Constants.Attribute.RESOLVED_SERVLET,
                 result.getMappedPath());
         } else {
