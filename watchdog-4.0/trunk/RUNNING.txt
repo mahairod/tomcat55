@@ -96,9 +96,9 @@ subdirectory of your source distribution.
 
 (4) Install Watchdog Web Applications in your Servlet Container
 
-In the "${watchdog.home}/webapps" directory, you will find two web application
-archives (WAR) files, representing the two test applications (one for JSP pages
-and one for servlets).  Use the standard deployment tools provided by your
+In the "${watchdog.home}/webapps" directory, you will find multiple web application
+archive (WAR) files, representing the test applications (for JavaServer Pages
+1.2 and Servlet 2.3).  Use the standard deployment tools provided by your
 container to deploy these two applications.
 
 Alternatively, if your server is compatible with Java2 Enterprise Edition
