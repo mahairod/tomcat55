@@ -65,6 +65,8 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Service;
@@ -81,7 +83,11 @@ import org.apache.commons.modeler.BaseModelMBean;
 
 public class StandardServiceMBean extends BaseModelMBean {
 
-
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = MBeanUtils.createServer();
+    
     // ----------------------------------------------------------- Constructors
 
 
@@ -120,10 +126,12 @@ public class StandardServiceMBean extends BaseModelMBean {
         throws Exception {
 
         Service service = (Service) this.resource;
-        // look up connector's MBean in MBeanServer
-        BaseModelMBean connectorMBean = null;
-        //Connector = connectorMBean.getManagedResource();
+        ObjectName oname = new ObjectName(connector);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Connector connectorObj = null;
+        if (obj instanceof Connector) {
+            connectorObj = (Connector) obj;
+        }
         service.addConnector(connectorObj);
 
     }
@@ -140,10 +148,12 @@ public class StandardServiceMBean extends BaseModelMBean {
         throws Exception {
 
         Service service = (Service) this.resource;
-        // look up connector's MBean in MBeanServer
-        BaseModelMBean connectorMBean = null;
-        //Connector = connectorMBean.getManagedResource();
+        ObjectName oname = new ObjectName(connector);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Connector connectorObj = null;
+        if (obj instanceof Connector) {
+            connectorObj = (Connector) obj;
+        }
         service.removeConnector(connectorObj);
 
     }

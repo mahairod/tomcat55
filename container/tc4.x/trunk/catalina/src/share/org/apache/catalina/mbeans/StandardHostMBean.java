@@ -66,6 +66,7 @@ package org.apache.catalina.mbeans;
 
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
@@ -89,6 +90,10 @@ import org.apache.commons.modeler.ManagedBean;
 
 public class StandardHostMBean extends BaseModelMBean {
 
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = MBeanUtils.createServer();
 
     // ----------------------------------------------------------- Constructors
 
@@ -144,10 +149,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up context's MBean in MBeanServer
-        StandardContextMBean contextMBean = null;
-        //StandardContext contextObj = contextMBean.getManagedResource();
+        ObjectName oname = new ObjectName(context);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         StandardContext contextObj = null;
+        if (obj instanceof StandardContext) {
+            contextObj = (StandardContext) obj;
+        }
         host.addChild(contextObj);
 
     }
@@ -164,10 +171,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         host.addValve(valveObj);
 
     }
@@ -196,9 +205,7 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         Registry registry = MBeanUtils.createRegistry();
-        MBeanServer mserver = MBeanUtils.createServer();
         StandardHost host = (StandardHost) this.resource;
-
         String mname = MBeanUtils.createManagedName(host);
         ManagedBean managed = registry.findManagedBean(mname);
         String domain = null;
@@ -209,7 +216,7 @@ public class StandardHostMBean extends BaseModelMBean {
             domain = mserver.getDefaultDomain();
         Valve [] valves = host.getValves();
         String [] mbeanNames = new String[valves.length];
-        for (int i=0; i<valves.length; i++) {
+        for (int i = 0; i < valves.length; i++) {
             mbeanNames[i] =
                 MBeanUtils.createObjectName(domain, valves[i]).toString();
         }
@@ -246,10 +253,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up context's MBean in MBeanServer
-        StandardContextMBean contextMBean = null;
-        //StandardContext contextObj = contextMBean.getManagedResource();
+        ObjectName oname = new ObjectName(context);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         StandardContext contextObj = null;
+        if (obj instanceof StandardContext) {
+            contextObj = (StandardContext) obj;
+        }
         host.removeChild(contextObj);
 
     }
@@ -266,10 +275,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         host.removeValve(valveObj);
 
     }
@@ -286,10 +297,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up logger's MBean in MBeanServer
-        BaseModelMBean loggerMBean = null;
-        //logger loggerObj = loggerMBean.getManagedResource();
+        ObjectName oname = new ObjectName(logger);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Logger loggerObj = null;
+        if (obj instanceof Logger) {
+            loggerObj = (Logger) obj;
+        }
         host.setLogger(loggerObj);
 
     }
@@ -306,10 +319,12 @@ public class StandardHostMBean extends BaseModelMBean {
         throws Exception {
 
         StandardHost host = (StandardHost) this.resource;
-        // look up realm's MBean in MBeanServer
-        BaseModelMBean realmMBean = null;
-        // Realm realmObj = realmMBean.getManagedResource();
+        ObjectName oname = new ObjectName(realm);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Realm realmObj = null;
+        if (obj instanceof Realm) {
+            realmObj = (Realm) obj;
+        }
         host.setRealm(realmObj);
 
     }

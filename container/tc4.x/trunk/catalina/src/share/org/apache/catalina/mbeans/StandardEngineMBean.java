@@ -65,6 +65,8 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Container;
 import org.apache.catalina.Engine;
@@ -88,7 +90,11 @@ import org.apache.commons.modeler.BaseModelMBean;
 
 public class StandardEngineMBean extends BaseModelMBean {
 
-
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = MBeanUtils.createServer();
+    
     // ----------------------------------------------------------- Constructors
 
 
@@ -127,10 +133,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up host's MBean in MBeanServer
-        BaseModelMBean hostMBean = null;
-        //Host hostObj = hostMBean.getManagedResource();
+        ObjectName oname = new ObjectName(host);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Host hostObj = null;
+        if (obj instanceof Host) {
+            hostObj = (Host) obj;
+        }
         engine.addChild(hostObj);
 
     }
@@ -147,10 +155,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up host's MBean in MBeanServer
-        BaseModelMBean hostMBean = null;
-        //Host hostObj = hostMBean.getManagedResource();
+        ObjectName oname = new ObjectName(host);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Host hostObj = null;
+        if (obj instanceof Host) {
+            hostObj = (Host) obj;
+        }
         engine.removeChild(hostObj);
 
     }
@@ -167,10 +177,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         engine.addValve(valveObj);
 
     }
@@ -187,10 +199,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         engine.removeValve(valveObj);
 
     }
@@ -207,10 +221,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up logger's MBean in MBeanServer
-        BaseModelMBean loggerMBean = null;
-        //logger loggerObj = loggerMBean.getManagedResource();
+        ObjectName oname = new ObjectName(logger);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Logger loggerObj = null;
+        if (obj instanceof Logger) {
+            loggerObj = (Logger) obj;
+        }
         engine.setLogger(loggerObj);
 
     }
@@ -227,10 +243,12 @@ public class StandardEngineMBean extends BaseModelMBean {
         throws Exception {
 
         StandardEngine engine = (StandardEngine) this.resource;
-        // look up realm's MBean in MBeanServer
-        BaseModelMBean realmMBean = null;
-        // Realm realmObj = realmMBean.getManagedResource();
+        ObjectName oname = new ObjectName(realm);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Realm realmObj = null;
+        if (obj instanceof Realm) {
+            realmObj = (Realm) obj;
+        }
         engine.setRealm(realmObj);
 
     }

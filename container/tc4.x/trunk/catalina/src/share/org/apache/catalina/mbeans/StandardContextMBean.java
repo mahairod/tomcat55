@@ -65,6 +65,8 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
@@ -85,6 +87,10 @@ import org.apache.commons.modeler.BaseModelMBean;
 
 public class StandardContextMBean extends BaseModelMBean {
 
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = MBeanUtils.createServer();
 
     // ----------------------------------------------------------- Constructors
 
@@ -124,10 +130,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         context.addValve(valveObj);
 
     }
@@ -144,10 +152,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up valve's MBean in MBeanServer
-        BaseModelMBean valveMBean = null;
-        //Valve valveObj = valveMBean.getManagedResource();
+        ObjectName oname = new ObjectName(valve);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Valve valveObj = null;
+        if (obj instanceof Valve) {
+            valveObj = (Valve) obj;
+        }
         context.removeValve(valveObj);
 
     }
@@ -164,10 +174,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up loader's MBean in MBeanServer
-        BaseModelMBean loaderMBean = null;
-        //Loader loaderObj = loaderMBean.getManagedResource();
+        ObjectName oname = new ObjectName(loader);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Loader loaderObj = null;
+        if (obj instanceof Loader) {
+            loaderObj = (Loader) obj;
+        }
         context.setLoader(loaderObj);
 
     }
@@ -184,10 +196,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up logger's MBean in MBeanServer
-        BaseModelMBean loggerMBean = null;
-        //logger loggerObj = loggerMBean.getManagedResource();
+        ObjectName oname = new ObjectName(logger);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Logger loggerObj = null;
+        if (obj instanceof Logger) {
+            loggerObj = (Logger) obj;
+        }
         context.setLogger(loggerObj);
 
     }
@@ -204,10 +218,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up manager's MBean in MBeanServer
-        BaseModelMBean managerMBean = null;
-        // Manager managerObj = managerMBean.getManagedResource();
+        ObjectName oname = new ObjectName(manager);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Manager managerObj = null;
+        if (obj instanceof Manager) {
+            managerObj = (Manager) obj;
+        }
         context.setManager(managerObj);
 
     }
@@ -224,10 +240,12 @@ public class StandardContextMBean extends BaseModelMBean {
         throws Exception {
 
         StandardContext context = (StandardContext) this.resource;
-        // look up realm's MBean in MBeanServer
-        BaseModelMBean realmMBean = null;
-        // Realm realmObj = realmMBean.getManagedResource();
+        ObjectName oname = new ObjectName(realm);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Realm realmObj = null;
+        if (obj instanceof Realm) {
+            realmObj = (Realm) obj;
+        }
         context.setRealm(realmObj);
 
     }

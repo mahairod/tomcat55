@@ -880,6 +880,10 @@
           description="The document root for this web application"
                  type="java.lang.String"/>
 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+
     <attribute   name="override"
           description="The DefaultContext override flag for this web application"
                  type="boolean"/>
@@ -973,6 +977,10 @@
           description="Name of the default Host for this Engine"
                  type="java.lang.String"/>
 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+                 
     <attribute   name="name"
           description="Unique name of this Engine"
                  type="java.lang.String"/>
@@ -1049,6 +1057,10 @@
           description="The debugging detail level for this component"
                  type="int"/>
 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+                 
     <attribute   name="name"
           description="Unique name of this Host"
                  type="java.lang.String"/>
@@ -1169,6 +1181,10 @@
           description="A String initialization parameter used to increase the entropy of the initialization of our random number generator"
                  type="java.lang.String"/>
 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+                 
     <attribute   name="maxActiveSessions"
           description="The maximum number of active Sessions allowed, or -1 for no limit"
                  type="int"/>
@@ -1200,6 +1216,10 @@
           description="The debugging detail level for this component"
                  type="int"/>
 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
+                 
     <attribute   name="port"
           description="TCP port for shutdown messages"
                  type="int"/>
@@ -1235,6 +1255,10 @@
                domain="Catalina"
                 group="Service"
                  type="org.apache.catalina.core.StandardService">
+                 
+    <attribute   name="managedResource"
+          description="The managed resource this MBean is associated with"
+                 type="java.lang.Object"/>
 
     <attribute   name="name"
           description="Unique name of this Service"

@@ -65,6 +65,8 @@ package org.apache.catalina.mbeans;
 
 
 import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
@@ -82,6 +84,11 @@ import org.apache.commons.modeler.BaseModelMBean;
 
 public class StandardServerMBean extends BaseModelMBean {
 
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = MBeanUtils.createServer();
+    
 
     // ----------------------------------------------------------- Constructors
 
@@ -122,10 +129,12 @@ public class StandardServerMBean extends BaseModelMBean {
         throws Exception {
 
         Server server = (Server) this.resource;
-        // look up service's MBean in MBeanServer
-        StandardServiceMBean serviceMBean = null;
-        //Service serviceObj = serviceMBean.getManagedResource();
+        ObjectName oname = new ObjectName(service);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Service serviceObj = null;
+        if (obj instanceof Service) {
+            serviceObj = (Service) obj;
+        }
         server.addService(serviceObj);
 
     }
@@ -141,10 +150,12 @@ public class StandardServerMBean extends BaseModelMBean {
         throws Exception {
 
         Server server = (Server) this.resource;
-        // look up service's MBean in MBeanServer
-        StandardServiceMBean serviceMBean = null;
-        //Service service = serviceMBean.getManagedResource();
+        ObjectName oname = new ObjectName(service);
+        Object obj = mserver.getAttribute(oname, "managedResource");
         Service serviceObj = null;
+        if (obj instanceof Service) {
+            serviceObj = (Service) obj;
+        }
         MBeanUtils.destroyMBean(serviceObj);
         server.removeService(serviceObj);
 

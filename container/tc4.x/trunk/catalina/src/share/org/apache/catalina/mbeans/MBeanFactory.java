@@ -162,14 +162,12 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         AccessLogValve accessLogger = new AccessLogValve();
         accessLogger.setContainer(container);
         ObjectName oname = MBeanUtils.createObjectName(domain, accessLogger);
@@ -197,17 +195,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Host.
-        StandardHostMBean hostMBean = null;
-        //Host host = hostMBean.getManagedObject();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Host host = null;
+        if (obj instanceof Host) {
+            host = (Host) obj;
+        }
         StandardDefaultContext context = new StandardDefaultContext();
-
         context.setParent(host);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, context);
         MBeanUtils.createMBean(context);
         context.setParent(null);
@@ -216,7 +211,7 @@ public class MBeanFactory extends BaseModelMBean {
 
     }
 
-    
+
     /**
      * Create a new FileLogger.
      *
@@ -233,14 +228,12 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         FileLogger fileLogger = new FileLogger();
         fileLogger.setContainer(container);
         ObjectName oname = MBeanUtils.createObjectName(domain, fileLogger);
@@ -270,21 +263,17 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Service.
-        StandardServiceMBean serviceMBean = null;
-        //Service service = serviceMBean.getManagedObject();
-        //Service service = (Service) this.resource;
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Service service = null;
+        if (obj instanceof Service) {
+            service = (Service) obj;
+        }
         org.apache.catalina.connector.http10.HttpConnector connector =
             new org.apache.catalina.connector.http10.HttpConnector();
-
         connector.setAddress(address);
         connector.setPort(port);
         connector.setService(service);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, connector);
         MBeanUtils.createMBean(connector);
         connector.setService(null);
@@ -312,21 +301,17 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Service.
-        StandardServiceMBean serviceMBean = null;
-        //Service service = serviceMBean.getManagedObject();
-        //Service service = (Service) this.resource;
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Service service = null;
+        if (obj instanceof Service) {
+            service = (Service) obj;
+        }
         org.apache.catalina.connector.http.HttpConnector connector =
             new org.apache.catalina.connector.http.HttpConnector();
-
         connector.setAddress(address);
         connector.setPort(port);
         connector.setService(service);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, connector);
         MBeanUtils.createMBean(connector);
         connector.setService(null);
@@ -352,17 +337,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         JDBCRealm realm = new JDBCRealm();
         realm.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, realm);
         MBeanUtils.createMBean(realm);
         realm.setContainer(null);
@@ -388,17 +370,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         JNDIRealm realm = new JNDIRealm();
         realm.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, realm);
         MBeanUtils.createMBean(realm);
         realm.setContainer(null);
@@ -424,17 +403,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         MemoryRealm realm = new MemoryRealm();
         realm.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, realm);
         MBeanUtils.createMBean(realm);
         realm.setContainer(null);
@@ -460,17 +436,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         RemoteAddrValve valve = new RemoteAddrValve();
         valve.setContainer(container);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, valve);
         MBeanUtils.createMBean(valve);
         valve.setContainer(null);
@@ -496,17 +469,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         RemoteHostValve valve = new RemoteHostValve();
         valve.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, valve);
         MBeanUtils.createMBean(valve);
         valve.setContainer(null);
@@ -532,17 +502,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         RequestDumperValve valve = new RequestDumperValve();
         valve.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, valve);
         MBeanUtils.createMBean(valve);
         valve.setContainer(null);
@@ -568,17 +535,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         SingleSignOn singleSignOn = new SingleSignOn();
         singleSignOn.setContainer(container);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, singleSignOn);
         MBeanUtils.createMBean(singleSignOn);
         singleSignOn.setContainer(null);
@@ -605,18 +569,15 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Host.
-        StandardHostMBean hostMBean = null;
-        //Host host = hostMBean.getManagedObject();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Host host = null;
+        if (obj instanceof Host) {
+            host = (Host) obj;
+        }
         StandardContext context = new StandardContext();
-
         context.setPath(path);
         context.setParent(host);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, context);
         MBeanUtils.createMBean(context);
         context.setParent(null);
@@ -643,17 +604,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Service.
-        StandardServiceMBean serviceMBean = null;
-        //Service service = serviceMBean.getManagedObject();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Service service = null;
+        if (obj instanceof Service) {
+            service = (Service) obj;
+        }
         StandardEngine engine = new StandardEngine();
-
         engine.setService(service);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, service);
         MBeanUtils.createMBean(service);
         engine.setService(null);
@@ -680,18 +638,15 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Engine.
-        StandardEngineMBean engineMBean = null;
-        // Engine engine = engineMBean.getManagedObject();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Engine engine = null;
+        if (obj instanceof Engine) {
+            engine = (Engine) obj;
+        }
         StandardHost host = new StandardHost();
-
         host.setName(name);
         host.setParent(engine);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, host);
         MBeanUtils.createMBean(host);
         host.setParent(null);
@@ -717,14 +672,12 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         StandardManager manager = new StandardManager();
         manager.setContainer(container);
         ObjectName oname = MBeanUtils.createObjectName(domain, manager);
@@ -754,18 +707,15 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Server.
-        StandardServerMBean serverMBean = null;
-        //Server server = serverMBean.getManagedObject();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Server server = null;
+        if (obj instanceof Server) {
+            server = (Server) obj;
+        }
         StandardService service = new StandardService();
-
         service.setName(name);
         service.setServer(server);
-
         ObjectName oname = MBeanUtils.createObjectName(domain, service);
         MBeanUtils.createMBean(service);
         service.setServer(null);
@@ -792,17 +742,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         SystemErrLogger logger = new SystemErrLogger();
         logger.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, logger);
         MBeanUtils.createMBean(logger);
         logger.setContainer(null);
@@ -828,17 +775,14 @@ public class MBeanFactory extends BaseModelMBean {
             domain = managed.getDomain();
         if (domain == null)
             domain = mserver.getDefaultDomain();
-
         ObjectName pname = new ObjectName(parent);
-        ObjectInstance oinstance = mserver.getObjectInstance(pname);
-        // look up the MBean for the owning Container.
-        BaseModelMBean containerMBean = null;
-        //Container container = containerMBean.getManagedResource();
+        Object obj = mserver.getAttribute(pname, "managedResource");
         Container container = null;
-
+        if (obj instanceof Container) {
+            container = (Container) obj;
+        }
         SystemOutLogger logger = new SystemOutLogger();
         logger.setContainer(container);
-        
         ObjectName oname = MBeanUtils.createObjectName(domain, logger);
         MBeanUtils.createMBean(logger);
         logger.setContainer(null);
