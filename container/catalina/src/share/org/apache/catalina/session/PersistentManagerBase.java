@@ -583,12 +583,8 @@ public abstract class PersistentManagerBase
         Session sessions[] = findSessions();
 
         for (int i = 0; i < sessions.length; i++) {
-            StandardSession session = (StandardSession) sessions[i];
-            if (!session.isValid()) {
-                expiredSessions++;
-	    }
+            sessions[i].isValid();
         }
-
     }
 
 
