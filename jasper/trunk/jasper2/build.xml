@@ -29,6 +29,7 @@
     <pathelement location="${servlet-api.jar}"/>
     <pathelement location="${jsp-api.jar}"/>
     <pathelement location="${tools.jar}"/>
+    <pathelement location="${jasper-compiler-jdt.jar}"/>
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xml-apis.jar}"/>
@@ -85,7 +86,7 @@
 
   <!-- =================== BUILD: Copy Launcher Files ===================== -->
   <target name="copy-launcher.jars" if="copy.launcher.jars">
-    <copy todir="${jasper.build}/common/lib" file="${ant.jar}"/>
+    <!-- <copy todir="${jasper.build}/common/lib" file="${ant.jar}"/> -->
     <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher.jar}"/>
     <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher-bootstrap.class}"/>
     <copy todir="${jasper.build}/bin">
@@ -248,7 +249,7 @@
           tofile="${jasper.deploy}/common/lib/jasper-runtime.jar" />
 
     <!-- Copy JARs -->
-    <copy todir="${jasper.deploy}/common/lib" file="${ant.jar}"/>
+    <copy todir="${jasper.deploy}/common/lib" file="${jasper-compiler-jdt.jar}"/>
     <copy todir="${jasper.deploy}/common/lib" file="${jsp-api.jar}"/>
     <copy todir="${jasper.deploy}/common/lib" file="${commons-el.jar}"/>
 
