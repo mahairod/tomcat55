@@ -133,7 +133,7 @@ public class ContextResourceMBean extends BaseModelMBean {
     public Object getAttribute(String name)
         throws AttributeNotFoundException, MBeanException,
         ReflectionException {
-
+ 
         // Validate the input parameters
         if (name == null)
             throw new RuntimeOperationsException
@@ -177,7 +177,7 @@ public class ContextResourceMBean extends BaseModelMBean {
                     ("Cannot find attribute "+cr.getName());
             }
         }
-       
+        
         return value;
         
     }
@@ -235,11 +235,13 @@ public class ContextResourceMBean extends BaseModelMBean {
             ResourceParams rp = 
                 cr.getNamingResource().findResourceParams(cr.getName());
             if (rp != null) {
-                rp.addParameter(name, (String) value);
+                String valueStr = ""+value;
+                rp.addParameter(name, valueStr);
             } else {
                 rp = new ResourceParams();
                 rp.setName(cr.getName());
-                rp.addParameter(name, (String) value);
+                String valueStr = ""+value;
+                rp.addParameter(name, valueStr);
                 cr.getNamingResource().addResourceParams(rp);
             }
         }
