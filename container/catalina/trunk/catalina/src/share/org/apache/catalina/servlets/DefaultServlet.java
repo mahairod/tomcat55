@@ -1825,7 +1825,7 @@ public class DefaultServlet
             long lastModified = resourceInfo.date;
             long headerValue = request.getDateHeader("If-Unmodified-Since");
             if (headerValue != -1) {
-                if ( lastModified > headerValue ) {
+                if ( lastModified > (headerValue + 1000)) {
                     // The entity has not been modified since the date
                     // specified by the client. This is not an error case.
                     response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
