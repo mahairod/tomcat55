@@ -363,7 +363,10 @@ public class JspReader {
     skip:
         for (ret = mark(), ch = nextChar() ; ch != -1 ;
                  ret = mark(), prev = ch, ch = nextChar()) {
-            if (ch == limit.charAt(0) && prev != '\\') {
+            if (ch == '\\' && prev == '\\') {
+                ch = 0;     // Double \ is not an escape char anymore
+            }
+            else if (ch == limit.charAt(0) && prev != '\\') {
                 for (int i = 1 ; i < limlen ; i++) {
                     if (peekChar() == limit.charAt(i))
                         nextChar();
