@@ -213,8 +213,11 @@
     <mkdir  dir="${tomcat.dist}/jtc-src"/>
     <copy todir="${tomcat.dist}/jtc-src">
       <fileset dir="${jtc.home}">
-        <exclude name="**/build/**"/>
-        <exclude name="**/dist/**"/>
+        <exclude name="coyote/build/**"/>
+        <exclude name="http11/build/**"/>
+        <exclude name="jk/build/**"/>
+        <exclude name="util/build/**"/>
+        <exclude name="webapp/build/**"/>
         <exclude name="build.properties"/>
       </fileset>
     </copy>
