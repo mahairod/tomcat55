@@ -813,13 +813,7 @@ public class StandardManager
         for (int i = 0; i < sessions.length; i++) {
             StandardSession session = (StandardSession) sessions[i];
             if (!session.isValid()) {
-                try {
-                    expiredSessions++;
-                    session.expire();
-                } catch (Throwable t) {
-                    log.error(sm.getString
-                              ("standardManager.expireException"), t);
-                }
+                expiredSessions++;
             }
         }
         long timeEnd = System.currentTimeMillis();
