@@ -641,12 +641,17 @@ public class JspC implements Options {
         while (true) {
             String line2 = fragmentReader.readLine();
             if (line2 == null) {
+                writer.println();
                 break;
             }
             writer.println(line2);
         }
         writer.println(insertEndMarker);
+        writer.println();
 
+        for (int i = 0; i < pos; i++) {
+            writer.print(" ");
+        }
         writer.println(line.substring(pos));
 
         while (true) {
