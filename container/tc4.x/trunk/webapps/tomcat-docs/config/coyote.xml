@@ -269,7 +269,8 @@
     <attribute name="className" required="true">
       <p>The fully qualified class name of the SSL server socket
       factory implementation class.  You must specify
-      <code>org.apache.catalina.net.SSLServerSocketFactory</code> here.</p>
+      <code>org.apache.coyote.tomcat4.CoyoteServerSocketFactory</code> here.
+      </p>
     </attribute>
 
     <attribute name="clientAuth" required="false">

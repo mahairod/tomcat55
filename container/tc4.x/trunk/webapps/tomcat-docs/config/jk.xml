@@ -16,6 +16,9 @@
 
 <section name="Introduction">
 
+  <p><b>IMPORTANT NOTE: The JK connector is now deprecated. Use the 
+  Coyote JK 2 connector instead.</b></p>
+
   <p>The <strong>JK Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>JK</code> protocol (also known as the AJP protocol).

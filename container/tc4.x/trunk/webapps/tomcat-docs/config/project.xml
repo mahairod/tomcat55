@@ -23,9 +23,9 @@
 
     <menu name="Connectors">
         <item name="Coyote HTTP/1.1"       href="coyote.html"/>
-        <item name="JK"                    href="jk.html"/>
-        <item name="JK 2"                  href="jk2.html"/>
+        <item name="Coyote JK 2"           href="jk2.html"/>
         <item name="HTTP/1.1"              href="http11.html"/>
+        <item name="JK"                    href="jk.html"/>
         <item name="Webapp"                href="webapp.html"/>
     </menu>
 

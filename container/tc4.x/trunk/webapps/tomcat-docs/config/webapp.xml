@@ -16,6 +16,9 @@
 
 <section name="Introduction">
 
+  <p><b>IMPORTANT NOTE: The Webapp connector is now deprecated. Use
+  the Coyote JK 2 connector instead.</b></p>
+
   <p>The <strong>Webapp Connector</strong> element represents a
   <strong>Connector</strong> component that communicates with a web
   connector via the <code>WARP</code> protocol.  This is used for cases
