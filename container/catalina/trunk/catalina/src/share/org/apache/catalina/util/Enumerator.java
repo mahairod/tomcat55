@@ -69,7 +69,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -139,11 +139,11 @@ public final class Enumerator implements Enumeration {
     public Enumerator(Iterator iterator, boolean clone) {
 
         super();
-        if (clone) {
+        if (!clone) {
             this.iterator = iterator;
         } else {
-            List list = new LinkedList();
-            while(iterator.hasNext()) {
+            List list = new ArrayList();
+            while (iterator.hasNext()) {
                 list.add(iterator.next());
             }
             this.iterator = list.iterator();   
