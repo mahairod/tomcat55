@@ -230,34 +230,20 @@ public final class FileRealmConnector
 	try {
 	    this.database = new FileRealmDatabase(stream);
 	} catch (IOException e) {
-	    try {
-		stream.close();
-	    } catch (IOException f) {
-		;
-	    }
 	    throw new IllegalArgumentException(
 		sm.getString("file.start.read", filename) + ": " + e);
 	} catch (SAXParseException e) {
-	    try {
-		stream.close();
-	    } catch (IOException f) {
-		;
-	    }
 	    throw new IllegalArgumentException(
 		sm.getString("file.start.parse", filename) + ": " + e);
 	} catch (SAXException e) {
+	    throw new IllegalArgumentException(
+		sm.getString("file.start.process", filename) + ": " + e);
+	} finally {
 	    try {
 		stream.close();
 	    } catch (IOException f) {
 		;
 	    }
-	    throw new IllegalArgumentException(
-		sm.getString("file.start.process", filename) + ": " + e);
-	}
-	try {
-	    stream.close();
-	} catch (IOException e) {
-	    ;
 	}
 
 	// Store a local reference to our associated context
