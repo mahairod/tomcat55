@@ -117,7 +117,7 @@ public class Constants {
         "  </td>\n" +
         " </tr>\n" +
         "</table>\n" +
-        "<hr size=\"1\" noshade\"\">\n" +
+        "<hr size=\"1\" noshade=\"noshade\">\n" +
         "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
         " <tr>\n" +
         "  <td class=\"page-title\" bordercolor=\"#000000\" " +
@@ -183,7 +183,7 @@ public class Constants {
         "\n";
 
     public static final String HTML_TAIL_SECTION =
-        "<hr size=\"1\" noshade\"\">\n" +
+        "<hr size=\"1\" noshade=\"noshade\">\n" +
         "<center><font size=\"-1\" color=\"#525D76\">\n" +
         " <em>Copyright &copy; 1999-2003, Apache Software Foundation</em>" +
         "</font></center>\n" +
