@@ -68,6 +68,7 @@ import java.net.URLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.util.Date;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.Attribute;
@@ -200,7 +201,23 @@ public class DirContextURLConnection
      * Return the last modified date.
      */
     public long getLastModified() {
-        return getHeaderFieldDate(ResourceAttributes.LAST_MODIFIED, 0);
+        if (!connected) {
+            // Try to connect (silently)
+            try {
+                connect();
+            } catch (IOException e) {
+            }
+        }
+        Attribute lastModified = 
+            attributes.get(ResourceAttributes.LAST_MODIFIED);
+        if (lastModified != null) {
+            try {
+                Date lmDate = (Date) lastModified.get();
+                return lmDate.getTime();
+            } catch (Exception e) {
+            }
+        }
+        return 0;
     }
     
     
