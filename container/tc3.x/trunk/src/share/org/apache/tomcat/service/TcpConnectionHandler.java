@@ -76,7 +76,7 @@ import org.apache.tomcat.util.*;
 public interface TcpConnectionHandler {
     public void setAttribute(String name, Object value );
     
-    public void init( );
+    public Object[] init( );
 
-    public void processConnection(TcpConnection connection);    
+    public void processConnection(TcpConnection connection, Object thData[]);    
 }

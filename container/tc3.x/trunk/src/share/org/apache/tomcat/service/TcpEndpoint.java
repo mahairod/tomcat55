@@ -299,7 +299,7 @@ class TcpConnectionThread implements Runnable {
     }
     
     public void run() {
-	handler.processConnection(connection);
+	handler.processConnection(connection, null);
     }
 }
     

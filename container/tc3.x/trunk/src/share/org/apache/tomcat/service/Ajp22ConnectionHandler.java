@@ -81,7 +81,8 @@ public class Ajp22ConnectionHandler  implements  TcpConnectionHandler {
     public Ajp22ConnectionHandler() {
     }
 
-    public void init( ) {
+    public Object[] init( ) {
+	return null;
     }
 
     public void setAttribute(String name, Object value ) {
@@ -99,7 +100,7 @@ public class Ajp22ConnectionHandler  implements  TcpConnectionHandler {
     //    Nothing overriden, right now AJPRequest implment AJP and read everything.
     //    "Shortcuts" to be added here ( Vhost and context set by Apache, etc)
     // XXX handleEndpoint( Endpoint x )
-    public void processConnection(TcpConnection connection) {
+    public void processConnection(TcpConnection connection, Object thData[]) {
 	Socket socket;
 
 	try {
