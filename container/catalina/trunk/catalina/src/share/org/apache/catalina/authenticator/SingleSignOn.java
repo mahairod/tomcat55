@@ -419,9 +419,9 @@ public class SingleSignOn
 
         StringBuffer sb = new StringBuffer("SingleSignOn[");
 	if (container == null )
-	    sb.append(container.getName());
-	else
 	    sb.append("Container is null");
+	else
+	    sb.append(container.getName());
         sb.append("]");
         return (sb.toString());
 
