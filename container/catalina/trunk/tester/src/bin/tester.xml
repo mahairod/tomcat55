@@ -1516,9 +1516,6 @@
 
     <!-- ========== Other ServletRequest Tests ============================ -->
 
-    <!-- Servlet compliance tests, until equivalent tests are included
-         in jakarta-watchdog-4.0.  -->
-
     <!-- HttpURLConnection does not handle multiple headers for the same
          name correctly, so use native socket connections, selected by
          setting the protocol to "HTTP/1.0" -->
