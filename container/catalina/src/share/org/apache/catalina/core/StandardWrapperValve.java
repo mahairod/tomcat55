@@ -248,16 +248,21 @@ final class StandardWrapperValve
             String contextPath = hreq.getContextPath();
             if (contextPath == null)
                 contextPath = "";
-            String requestURI = hreq.getRequestURI();
+            String requestURI = ((HttpRequest) hreq).getDecodedRequestURI();
             if (requestURI.length() >= contextPath.length())
                 requestPath = requestURI.substring(contextPath.length());
         }
-        sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
-                                        new Integer(ApplicationFilterFactory.REQUEST));
-        sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, requestPath);
+        sreq.setAttribute
+            (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+             new Integer(ApplicationFilterFactory.REQUEST));
+        sreq.setAttribute
+            (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR, 
+             requestPath);
         // Create the filter chain for this request
-        ApplicationFilterFactory factory = ApplicationFilterFactory.getInstance();
-        ApplicationFilterChain filterChain = factory.createFilterChain(sreq, wrapper, servlet);
+        ApplicationFilterFactory factory = 
+            ApplicationFilterFactory.getInstance();
+        ApplicationFilterChain filterChain = 
+            factory.createFilterChain(sreq, wrapper, servlet);
 
         // Call the filter chain for this request
         // NOTE: This also calls the servlet's service() method
