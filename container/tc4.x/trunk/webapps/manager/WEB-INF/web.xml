@@ -45,4 +45,12 @@
     <realm-name>Tomcat Manager Application</realm-name>
   </login-config>
 
+  <!-- Security roles referenced by this web application -->
+  <security-role>
+    <description>
+      The role that is required to log in to the Manager Application
+    </description>
+    <role-name>manager</role-name>
+  </security-role>
+
 </web-app>

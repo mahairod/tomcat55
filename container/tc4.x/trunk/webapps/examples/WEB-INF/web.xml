@@ -222,6 +222,14 @@
       </form-login-config>
     </login-config>
 
+    <!-- Security roles referenced by this web application -->
+    <security-role>
+      <role-name>role1</role-name>
+    </security-role>
+    <security-role>
+      <role-name>tomcat</role-name>
+    </security-role>
+
     <!-- Environment entry examples -->
     <!--env-entry>
       <env-entry-description>

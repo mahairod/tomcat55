@@ -593,6 +593,9 @@ public final class ContextConfig
         // Process the default and application web.xml files
         defaultConfig();
         applicationConfig();
+        if (ok) {
+            validateSecurityRoles();
+        }
 
         // Scan tag library descriptor files for additional listener classes
         if (ok) {
@@ -1049,6 +1052,50 @@ public final class ContextConfig
 
         // Return the completed set
         return (resourcePaths);
+
+    }
+
+
+    /**
+     * Validate the usage of security role names in the web application
+     * deployment descriptor.  If any problems are found, issue warning
+     * messages (for backwards compatibility) and add the missing roles.
+     * (To make these problems fatal instead, simply set the <code>ok</code>
+     * instance variable to <code>false</code> as well).
+     */
+    private void validateSecurityRoles() {
+
+        // Check role names used in <security-constraint> elements
+        SecurityConstraint constraints[] = context.findConstraints();
+        for (int i = 0; i < constraints.length; i++) {
+            String roles[] = constraints[i].findAuthRoles();
+            for (int j = 0; j < roles.length; j++) {
+                if (!"*".equals(roles[j]) &&
+                    !context.findSecurityRole(roles[j])) {
+                    log(sm.getString("contextConfig.role.auth", roles[j]));
+                    context.addSecurityRole(roles[j]);
+                }
+            }
+        }
+
+        // Check role names used in <servlet> elements
+        Container wrappers[] = context.findChildren();
+        for (int i = 0; i < wrappers.length; i++) {
+            Wrapper wrapper = (Wrapper) wrappers[i];
+            String runAs = wrapper.getRunAs();
+            if ((runAs != null) && !context.findSecurityRole(runAs)) {
+                log(sm.getString("contextConfig.role.runas", runAs));
+                context.addSecurityRole(runAs);
+            }
+            String names[] = wrapper.findSecurityReferences();
+            for (int j = 0; j < names.length; j++) {
+                String link = wrapper.findSecurityReference(names[j]);
+                if ((link != null) && !context.findSecurityRole(link)) {
+                    log(sm.getString("contextConfig.role.link", link));
+                    context.addSecurityRole(link);
+                }
+            }
+        }
 
     }
 

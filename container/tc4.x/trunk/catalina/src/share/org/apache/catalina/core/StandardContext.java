@@ -1606,7 +1606,7 @@ public class StandardContext
             String results[] =new String[securityRoles.length + 1];
             for (int i = 0; i < securityRoles.length; i++)
                 results[i] = securityRoles[i];
-            results[securityRoles.length] = name;
+            results[securityRoles.length] = role;
             securityRoles = results;
         }
         fireContainerEvent("addSecurityRole", role);
