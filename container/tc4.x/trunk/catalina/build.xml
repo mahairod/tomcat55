@@ -89,7 +89,7 @@
   <target name="build-main" depends="build-static">
 
 
-    <!-- =================== Conditional Compilation Falgs ================ -->
+    <!-- =================== Conditional Compilation Flags ================ -->
     <available property="tyrex.present"
      classname="tyrex.jdbc.xa.EnabledDataSource" />
     <available property="jdbcse.present"
@@ -98,6 +98,8 @@
      classname="javax.transaction.UserTransaction" />
     <available property="avalon.present" 
      classname="org.apache.avalon.blocks.Block" />
+    <available property="javamail.present"
+     classname="javax.mail.internet.MimeMessage" />
 
     <!-- Compile internal server components -->
     <javac   srcdir="src/share" destdir="${catalina.build}/classes"
@@ -110,6 +112,8 @@
        unless="jdbcse.present" />
       <exclude name="**/factory/TransactionFactory.java" 
        unless="jta.present" />
+      <exclude name="**/factory/SendMailFactory.java"
+       unless="javamail.present" />
       <exclude name="**/startup/CatalinaBlock.java" 
        unless="avalon.present" />
     </javac>
