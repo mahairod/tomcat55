@@ -2027,6 +2027,13 @@ public class StandardContext
 
         // Add this mapping to our registered set
         synchronized (servletMappings) {
+            String name2 = (String) servletMappings.get(pattern);
+            if (name2 != null) {
+                // Don't allow more than one servlet on the same pattern
+                Wrapper wrapper = (Wrapper) findChild(name2);
+                wrapper.removeMapping(pattern);
+                mapper.removeWrapper(pattern);
+            }
             servletMappings.put(pattern, name);
         }
         Wrapper wrapper = (Wrapper) findChild(name);
