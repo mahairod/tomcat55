@@ -351,7 +351,7 @@ static int init_ws_service(apache_private_data_t *private_data,
     s->remote_host  = NULL_FOR_EMPTY(s->remote_host);
 
     s->remote_addr  = NULL_FOR_EMPTY(r->connection->remote_ip);
-    s->server_name  = (char *)(r->hostname ? r->server->server_hostname : r->hostname);
+    s->server_name  = (char *)(r->hostname ? r->hostname : r->server->server_hostname);
     s->server_port  = r->server->port;
     s->server_software = (char *)ap_get_server_version();
 
@@ -831,13 +831,10 @@ static void *merge_jk_config(ap_pool *p,
 
 static void jk_init(server_rec *s, ap_pool *p)
 {
-    char *env = getenv("WAS_BORN_BY_APACHE");
     jk_map_t *init_map = NULL;
     jk_server_conf_t *conf =
         (jk_server_conf_t *)ap_get_module_config(s->module_config, &jk_module);
 
-    fprintf(stdout, "jk_post_config %s\n", env ? env : "NULL"); fflush(stdout);
-        
     if(conf->log_file && conf->log_level >= 0) {
         if(!jk_open_file_logger(&(conf->log), 
                                 conf->log_file, 
@@ -858,14 +855,15 @@ static void jk_init(server_rec *s, ap_pool *p)
 
     if(map_alloc(&init_map)) {
         if(map_read_properties(init_map, conf->worker_file)) {
-            if(!env) {
-                putenv("WAS_BORN_BY_APACHE=true");
-                return;
-            } else {
+
+#if MODULE_MAGIC_NUMBER >= 19980527
+    			/* Tell apache we're here */
+    			ap_add_version_component("mod_jk");
+#endif
+
                 if(wc_open(init_map, conf->log)) {
                     return;
                 }            
-            }
         }
     }
 
@@ -890,7 +888,6 @@ static int jk_translate(request_rec *r)
             if(worker) {
                 r->handler = ap_pstrdup(r->pool, JK_HANDLER);
                 ap_table_setn(r->notes, JK_WORKER_ID, worker);
-                return OK;
             }
         }
     }
