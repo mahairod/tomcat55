@@ -66,7 +66,7 @@ import java.io.PrintWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
-import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 
@@ -83,9 +83,9 @@ import org.apache.jasper.JasperException;
 public abstract class Compiler {
     protected JavaCompiler javac;
     protected Mangler mangler;
-    protected JspEngineContext ctxt;
+    protected JspCompilationContext ctxt;
 
-    protected Compiler(JspEngineContext ctxt) {
+    protected Compiler(JspCompilationContext ctxt) {
         this.ctxt = ctxt;
     }
     
@@ -134,7 +134,7 @@ public abstract class Compiler {
 
         JspReader reader = JspReader.createJspReader(
             ctxt.getJspFile(),
-            ctxt.getServletContext(),
+            ctxt,
             jspEncoding
         );
 

@@ -61,7 +61,7 @@
 package org.apache.jasper.compiler;
 
 import org.apache.jasper.JasperException;
-import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JspCompilationContext;
 
 /**
  * Interface that all generators implement. 
@@ -71,5 +71,5 @@ import org.apache.jasper.JspEngineContext;
 public interface Generator {
     void generate (ServletWriter out, Class phase) throws JasperException;
     boolean generateCoordinates(Class phase);
-    void init(JspEngineContext ctxt) throws JasperException;
+    void init(JspCompilationContext ctxt) throws JasperException;
 }

@@ -61,7 +61,7 @@
 
 package org.apache.jasper.compiler;
 
-import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 
 /**
@@ -70,9 +70,9 @@ import org.apache.jasper.JasperException;
  * @author Anil K. Vijendran
  */
 abstract class GeneratorBase implements Generator {
-    protected JspEngineContext ctxt;
+    protected JspCompilationContext ctxt;
 
-    public void init(JspEngineContext ctxt) throws JasperException {
+    public void init(JspCompilationContext ctxt) throws JasperException {
         this.ctxt = ctxt;
     }
     
