@@ -239,7 +239,7 @@ public class PageContextImpl extends PageContext {
 		if (session == null)
 		    throw new IllegalArgumentException("can't access SESSION_SCOPE without an HttpSession");
 		else
-                    session.setAttribute(name, null);
+                    session.removeAttribute(name);
                 // was:
                 //		    session.removeValue(name);
                 // REVISIT Verify this is correct - akv
