@@ -230,6 +230,12 @@
              mcastAddr = the multicast address, has to be the same for all the nodes
 
              mcastPort = the multicast port, has to be the same for all the nodes
+             
+             mcastBindAddr = bind the multicast socket to a specific address
+             
+             mcastTTL = the multicast TTL if you want to limit your broadcast
+             
+             mcastSoTimeout = the multicast readtimeout 
 
              mcastFrequency = the number of milliseconds in between sending a "I'm alive" heartbeat
 
