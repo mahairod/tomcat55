@@ -183,10 +183,9 @@ public final class StandardEngineMapper
 	String server = request.getRequest().getServerName();
 	if (server == null)
 	    server = engine.getDefaultHost();
-	else
-	    server = server.toLowerCase();
 	if (server == null)
 	    return (null);
+        server = server.toLowerCase();
 	if (debug >= 1)
 	    engine.log("Mapping server name '" + server + "'");
 
