@@ -730,8 +730,39 @@ public class DefaultServlet
      */
     protected String normalize(String path) {
 
-	// Normalize the slashes and add leading slash if necessary
 	String normalized = path;
+
+	// Resolve encoded characters in the normalized path,
+	// which also handles encoded spaces so we can skip that later.
+	// Placed at the beginning of the chain so that encoded 
+	// bad stuff(tm) can be caught by the later checks
+	while (true) {
+	    int index = normalized.indexOf("%");
+	    if (index < 0)
+		break;
+	    char replaceChar;
+	    try {
+		replaceChar = (char) ( 
+		    Short.parseShort( 
+			normalized.substring( index + 1, index + 3 ), 16 
+		    )  
+		);
+	    } catch ( NumberFormatException nfe ) {
+		return (null); // bad encoded characters in url
+	    }
+	    // check for control characters ( values 00-1f and 7f-9f), 
+	    // return null if present. See:
+	    // http://www.unicode.org/charts/PDF/U0000.pdf 
+	    // http://www.unicode.org/charts/PDF/U0080.pdf
+	    if ( Character.isISOControl( replaceChar ) ) {
+		return (null);
+	    }
+	    normalized = normalized.substring(0, index) +
+		replaceChar +
+		normalized.substring(index + 3);
+        }
+
+	// Normalize the slashes and add leading slash if necessary
 	if (normalized.indexOf('\\') >= 0)
 	    normalized = normalized.replace('\\', '/');
 	if (!normalized.startsWith("/"))
@@ -745,15 +776,6 @@ public class DefaultServlet
 	    normalized = normalized.substring(0, index) +
 		normalized.substring(index + 1);
 	}
-
-	// Resolve occurrences of "%20" in the normalized path
-	while (true) {
-	    int index = normalized.indexOf("%20");
-	    if (index < 0)
-		break;
-	    normalized = normalized.substring(0, index) + " " +
-		normalized.substring(index + 3);
-        }
 
 	// Resolve occurrences of "/./" in the normalized path
 	while (true) {
