@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar
+ADDL_CLASSPATH=./../ant.jar:./../projectx-tr2.jar:./../javac.jar
 
-if [[ -n $CLASSPATH ]]; then
+if test -n $CLASSPATH ; then
   export CLASSPATH=$ADDL_CLASSPATH:$CLASSPATH
 else
   export CLASSPATH=$ADDL_CLASSPATH
