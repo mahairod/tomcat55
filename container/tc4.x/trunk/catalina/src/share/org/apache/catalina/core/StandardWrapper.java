@@ -725,7 +725,7 @@ public final class StandardWrapper
         }
 
         // Special case class loader for the Jasper JSP servlet
-        if (this.name.equals(Constants.JSP_SERVLET_NAME)) {
+        if (actualClass.equals(Constants.JSP_SERVLET_CLASS)) {
             if (jasperLoader == null) {
                 jasperLoader = createJasperLoader(classLoader);
 		// Preload below class to prevent defineClassInPackage
