@@ -54,6 +54,8 @@
  */
 package javax.servlet.jsp.tagext;
 
+import javax.servlet.jsp.JspException;
+
 /**
  * For a tag to declare that it accepts dynamic attributes, it must implement
  * this interface.  The entry for the tag in the Tag Library Descriptor must 
@@ -65,7 +67,7 @@ package javax.servlet.jsp.tagext;
  * value of the attribute.  It is the responsibility of the tag to 
  * remember the names and values of the dynamic attributes.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface DynamicAttributes {
     
@@ -83,6 +85,6 @@ public interface DynamicAttributes {
      */
     public void setDynamicAttribute(
         String uri, String localName, Object value ) 
-        throws javax.servlet.jsp.JspException;
+        throws JspException;
     
 }

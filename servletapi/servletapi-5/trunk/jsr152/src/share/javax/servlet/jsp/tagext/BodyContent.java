@@ -171,9 +171,8 @@ public abstract class BodyContent extends JspWriter {
 	return enclosingWriter;
     }
 
-    /**
-     * private fields
-     */
-    
+
+    // private fields
+
     private JspWriter enclosingWriter;
  }

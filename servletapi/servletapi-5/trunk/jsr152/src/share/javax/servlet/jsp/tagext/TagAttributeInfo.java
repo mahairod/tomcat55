@@ -105,7 +105,7 @@ public class TagAttributeInfo {
      * @param reqTime Whether this attribute holds a request-time Attribute.
      * @param fragment Whether this attribute is of type JspFragment
      *
-     * @since JSP2.0
+     * @since 2.0
      */
 
     public TagAttributeInfo(String name, boolean required,
@@ -172,11 +172,11 @@ public class TagAttributeInfo {
     }
 
     /**
-     * Whether this attribute is of type JspFragment
+     * Whether this attribute is of type JspFragment.
      *
      * @return if the attribute is of type JspFragment
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     public boolean isFragment() {
 	return fragment;

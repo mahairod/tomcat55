@@ -61,7 +61,7 @@ package javax.servlet.jsp.el;
  * <p>Classes implementing this interface may, for instance, consult tag library
  * information to resolve the map. </p>
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public interface FunctionMapper
 {

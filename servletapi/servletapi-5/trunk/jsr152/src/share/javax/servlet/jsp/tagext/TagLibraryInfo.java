@@ -58,10 +58,6 @@ package javax.servlet.jsp.tagext;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
 
-import java.net.URL;
-
-import java.io.InputStream;
-
 /**
  * Translation-time information associated with a taglib directive, and its
  * underlying TLD file.
@@ -78,36 +74,15 @@ abstract public class TagLibraryInfo {
      * Constructor.
      *
      * This will invoke the constructors for TagInfo, and TagAttributeInfo
-     * after parsing the TLD file.  Sets tagdir to null.
+     * after parsing the TLD file.
      *
      * @param prefix the prefix actually used by the taglib directive
      * @param uri the URI actually used by the taglib directive
      */
     protected TagLibraryInfo(String prefix, String uri) {
-	this( prefix, uri, null );
-    }
-
-    /**
-     * JSP 2.0 Constructor.
-     *
-     * This will invoke the constructors for TagInfo, and TagAttributeInfo
-     * after parsing the TLD file.
-     *
-     * @param prefix the prefix actually used by the taglib directive
-     * @param uri the URI actually used by the taglib directive.  Either
-     *     uri or tagdir must be null.
-     * @param tagdir the directory of tag files, starting with /WEB-INF/tags/
-     *     if this directive is specifying the directory of an implicit 
-     *     tag library composed of tag files.  Either uri or tagdir 
-     *     must be null.
-     * @since JSP2.0
-     */
-    protected TagLibraryInfo(String prefix, String uri, String tagdir) {
 	this.prefix = prefix;
 	this.uri    = uri;
-	this.tagdir = tagdir;
     }
-
 
     // ==== methods accessing taglib information =======
 
@@ -120,17 +95,6 @@ abstract public class TagLibraryInfo {
    
     public String getURI() {
         return uri;
-    }
-
-    /**
-     * The value of the tagdir attribute from the &lt;%@ taglib directive for
-     * this tag library.
-     *
-     * @return the value of the tagdir attribute
-     * @since JSP2.0
-     */
-    public String getTagdir() {
-	return tagdir;
     }
 
     /**
@@ -194,7 +158,9 @@ abstract public class TagLibraryInfo {
     /**
      * An array describing the tags that are defined in this tag library.
      *
-     * @return the tags defined in this tag lib
+     * @return the TagInfo objects corresponding to the tags defined by this
+     *         tag library, or a zero length array if this tag library
+     *         defines no tags
      */
     public TagInfo[] getTags() {
         return tags;
@@ -203,8 +169,10 @@ abstract public class TagLibraryInfo {
     /**
      * An array describing the tag files that are defined in this tag library.
      *
-     * @return the tag files defined in this tag lib
-     * @since JSP2.0
+     * @return the TagFileInfo objects corresponding to the tag files defined
+     *         by this tag library, or a zero length array if this
+     *         tag library defines no tags files
+     * @since 2.0
      */
     public TagFileInfo[] getTagFiles() {
         return tagFiles;
@@ -213,10 +181,11 @@ abstract public class TagLibraryInfo {
 
     /**
      * Get the TagInfo for a given tag name, looking through all the
-     * tags in this tag library.  Returns null if no tag is found.
+     * tags in this tag library.
      *
      * @param shortname The short name (no prefix) of the tag
-     * @return the TagInfo for that tag. 
+     * @return the TagInfo for the tag with the specified short name, or
+     *         null if no such tag is found
      */
 
     public TagInfo getTag(String shortname) {
@@ -236,11 +205,12 @@ abstract public class TagLibraryInfo {
 
     /**
      * Get the TagFileInfo for a given tag name, looking through all the
-     * tag files in this tag library.  Returns null if no tag file is found.
+     * tag files in this tag library.
      *
      * @param shortname The short name (no prefix) of the tag
-     * @return the TagFileInfo for that tag file. 
-     * @since JSP2.0
+     * @return the TagFileInfo for the specified Tag file, or null
+     *         if no Tag file is found
+     * @since 2.0
      */
     public TagFileInfo getTagFile(String shortname) {
         TagFileInfo tagFiles[] = getTagFiles();
@@ -260,8 +230,9 @@ abstract public class TagLibraryInfo {
     /**
      * An array describing the functions that are defined in this tag library.
      *
-     * @return the functions defined in this tag lib
-     * @since JSP2.0
+     * @return the functions defined in this tag library, or a zero
+     *         length array if the tag library defines no functions.
+     * @since 2.0
      */
     public FunctionInfo[] getFunctions() {
         return functions;
@@ -273,8 +244,9 @@ abstract public class TagLibraryInfo {
      * functions in this tag library.
      *
      * @param name The name (no prefix) of the function
-     * @return the FunctionInfo for that function. 
-     * @since JSP2.0
+     * @return the FunctionInfo for the function with the given name, or null
+     *         if no such function exists
+     * @since 2.0
      */
     public FunctionInfo getFunction(String name) {
 
@@ -295,7 +267,7 @@ abstract public class TagLibraryInfo {
     // Protected fields
 
     /**
-     * The prefix assigned to this taglib from the taglib directive
+     * The prefix assigned to this taglib from the taglib directive.
      */
     protected String        prefix;
     
@@ -306,14 +278,6 @@ abstract public class TagLibraryInfo {
     protected String        uri;
     
     /**
-     * The value of the tagdir attribute from the &lt;%@ taglib directive for
-     * this tag library.
-     *
-     * @since JSP2.0
-     */
-    protected String        tagdir;
-
-    /**
      * An array describing the tags that are defined in this tag library.
      */
     protected TagInfo[]     tags;
@@ -321,26 +285,26 @@ abstract public class TagLibraryInfo {
     /**
      * An array describing the tag files that are defined in this tag library.
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     protected TagFileInfo[] tagFiles;
     
     /**
      * An array describing the functions that are defined in this tag library.
      *
-     * @since JSP2.0
+     * @since 2.0
      */
     protected FunctionInfo[] functions;
 
     // Tag Library Data
     
     /**
-     * The version of the tag library
+     * The version of the tag library.
      */
     protected String tlibversion; // required
     
     /**
-     * The version of the JSP specification this tag library is written to
+     * The version of the JSP specification this tag library is written to.
      */
     protected String jspversion;  // required
     

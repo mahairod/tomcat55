@@ -60,7 +60,7 @@ import java.text.MessageFormat;
  * Represents any of the exception conditions that arise during the
  * operation evaluation of the evaluator.
  *
- * @since JSP2.0
+ * @since 2.0
  */
 public class ELException
   extends Exception
@@ -93,7 +93,7 @@ public class ELException
 
   //-------------------------------------
   /**
-   * Creates an ELException with the given root cause
+   * Creates an ELException with the given root cause.
    *
    * @param pRootCause the originating cause of this exception
    **/
@@ -119,10 +119,10 @@ public class ELException
 
   //-------------------------------------
   /**
-   * Returns the root cause
+   * Returns the root cause.
    *
    * @return the root cause of this exception
-   **/
+   */
   public Throwable getRootCause ()
   {
     return mRootCause;

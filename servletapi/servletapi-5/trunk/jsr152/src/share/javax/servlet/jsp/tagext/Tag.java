@@ -243,9 +243,9 @@ public interface Tag extends JspTag {
      * implements BodyTag.
      *
      * <p>
-     * The JSP container will resynchronize
-     * any variable values that are indicated as so in TagExtraInfo after the
-     * invocation of doStartTag().
+     * The JSP container will resynchronize any variable values that are 
+     * indicated as so in TagExtraInfo or the TLD after the invocation of 
+     * doStartTag().
      *
      * @return EVAL_BODY_INCLUDE if the tag wants to process body, SKIP_BODY 
      *     if it does not want to process it.
@@ -263,7 +263,7 @@ public interface Tag extends JspTag {
      *
      * <p>
      * This method will be called after returning from doStartTag. The
-     * body of the action may or not have been evaluated, depending on
+     * body of the action may or may not have been evaluated, depending on
      * the return value of doStartTag.
      *
      * <p>
@@ -275,9 +275,9 @@ public interface Tag extends JspTag {
      * only the current page evaluation is stopped.
      *
      * <p>
-     * The JSP container will resynchronize
-     * any variable values that are indicated as so in TagExtraInfo after the
-     * invocation of doEndTag().
+     * The JSP container will resynchronize any variable values that are 
+     * indicated as so in TagExtraInfo or the TLD after the invocation of 
+     * doEndTag().
      *
      * @return indication of whether to continue evaluating the JSP page.
      * @throws JspException if an error occurred while processing this tag

@@ -61,12 +61,15 @@ package javax.servlet.jsp;
  * the pagein the case where one tag invokes another (as can be
  * the case with tag files).  The effect is similar to that of a 
  * Classic Tag Handler returning Tag.SKIP_PAGE from doEndTag().
- * Jsp Fragments may also throw this exception.
+ * Jsp Fragments may also throw this exception.  This exception
+ * should not be thrown manually in a JSP page - the behavior is
+ * undefined.  The exception is intended to be thrown inside 
+ * SimpleTag handlers and in JSP fragments.
  * 
  * @see javax.servlet.jsp.tagext.SimpleTag#doTag
  * @see javax.servlet.jsp.tagext.JspFragment#invoke
  * @see javax.servlet.jsp.tagext.Tag#doEndTag
- * @since JSP2.0
+ * @since 2.0
  */
 public class SkipPageException
     extends JspException

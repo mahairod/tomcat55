@@ -200,9 +200,9 @@ public interface BodyTag extends IterationTag {
      * tags whose doStartTag() method returns SKIP_BODY or EVAL_BODY_INCLUDE.
      *
      * <p>
-     * The JSP container will resynchronize
-     * any variable values that are indicated as so in TagExtraInfo after the
-     * invocation of doInitBody().
+     * The JSP container will resynchronize any variable values that 
+     * are indicated as so in TagExtraInfo or TLD after the invocation of 
+     * doInitBody().
      *
      * @throws JspException
      * @see #doAfterBody

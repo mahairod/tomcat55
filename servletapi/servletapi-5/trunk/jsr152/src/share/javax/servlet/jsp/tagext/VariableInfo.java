@@ -140,10 +140,12 @@ package javax.servlet.jsp.tagext;
  * <ul>
  * <li>
  * for NESTED, after doInitBody and doAfterBody for a tag handler implementing
- * BodyTag, and after doStartTag otherwise.
+ * BodyTag, after doAfterBody for a tag handler implementing IterationTag,
+ * and in all cases, after doStartTag.
  * <li>
- * for AT_BEGIN, after doInitBody, doAfterBody, and doEndTag
- * for a tag handler implementing BodyTag, and doStartTag and doEndTag otherwise.
+ * for AT_BEGIN, after doInitBody, doAfterBody for a tag handler implementing
+ * BodyTag, after doAfterBody for a tag handler implementing IterationTag, and
+ * in all cases after doStartTag and doEndTag.
  * <li>
  * for AT_END, after doEndTag method.
  * </ul>
@@ -158,17 +160,18 @@ package javax.servlet.jsp.tagext;
 public class VariableInfo {
 
     /**
-     *Scope information that scripting variable is visible only within the start/end tags
+     * Scope information that scripting variable is visible only within the
+     * start/end tags.
      */
     public static final int NESTED = 0;
 
     /**
-     * Scope information that scripting variable is visible after start tag
+     * Scope information that scripting variable is visible after start tag.
      */
     public static final int AT_BEGIN = 1;
 
     /**
-     * Scope information that scripting variable is visible after end tag
+     * Scope information that scripting variable is visible after end tag.
      */
     public static final int AT_END = 2;
 
@@ -198,7 +201,7 @@ public class VariableInfo {
     // Accessor methods
     
     /**
-     * Returns the name of the scripting variable
+     * Returns the name of the scripting variable.
      *
      * @return the name of the scripting variable
      */
@@ -207,7 +210,7 @@ public class VariableInfo {
     }
     
     /**
-     * Returns the type of this variable
+     * Returns the type of this variable.
      *
      * @return the type of this variable
      */

@@ -55,8 +55,6 @@
  
 package javax.servlet.jsp;
 
-import java.io.IOException;
-
 import java.util.Enumeration;
 
 import javax.servlet.jsp.el.ExpressionEvaluator;
@@ -90,7 +88,7 @@ import javax.servlet.jsp.el.VariableResolver;
  * <ul>
  * <code>getOut()</code>
  *
- * @since JSP2.0
+ * @since 2.0
  */
 
 public abstract class JspContext {
@@ -136,7 +134,7 @@ public abstract class JspContext {
     abstract public void setAttribute(String name, Object attribute);
 
     /**
-     * register the name and object specified with appropriate scope semantics
+     * Register the name and object specified with appropriate scope semantics.
      * 
      * @param name the name of the attribute to set
      * @param o    the object to associate with the name
@@ -218,7 +216,7 @@ public abstract class JspContext {
     abstract public int getAttributesScope(String name);
 
     /**
-     * Enumerate all the attributes in a given scope
+     * Enumerate all the attributes in a given scope.
      *
      * @param scope the scope to enumerate all the attributes for
      * @return an enumeration of names (java.lang.String) of all the 
@@ -241,17 +239,17 @@ public abstract class JspContext {
      * ExpressionEvaluator that can parse EL expressions.
      *
      * @return A valid instance of an ExpressionEvaluator.
-     * @since JSP2.0
+     * @since 2.0
      */
     public abstract ExpressionEvaluator getExpressionEvaluator();
     
     /**
      * Returns an instance of a VariableResolver that provides access to the
      * implicit objects specified in the JSP specification using this JspContext
-     * as the context object
+     * as the context object.
      *
      * @return A valid instance of a VariableResolver.
-     * @since JSP2.0
+     * @since 2.0
      */
     public abstract VariableResolver getVariableResolver();
     
@@ -273,7 +271,7 @@ public abstract class JspContext {
      * @param writer The Writer for the returned JspWriter to send
      *     output to.
      * @return a new JspWriter that writes to the given Writer.
-     * @since JSP2.0
+     * @since 2.0
      */
     public JspWriter pushBody( java.io.Writer writer ) {
         return null; // XXX to implement
@@ -282,7 +280,7 @@ public abstract class JspContext {
     /**
      * Return the previous JspWriter "out" saved by the matching
      * pushBody(), and update the value of the "out" attribute in
-     * the page scope attribute namespace of the JspContext
+     * the page scope attribute namespace of the JspContext.
      *
      * @return the saved JspWriter.
      */
