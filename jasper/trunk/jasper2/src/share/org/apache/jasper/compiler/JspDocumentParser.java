@@ -102,13 +102,18 @@ class JspDocumentParser
     private boolean directivesOnly;
     private boolean isTop;
 
+    // Nesting level of Tag dependent bodies
+    private int tagDependentNesting = 0;
+    // Flag set to delay incrmenting tagDependentNesting until jsp:body
+    // is first encountered
+    private boolean tagDependentPending = false;
+
     /*
      * Constructor
      */
     public JspDocumentParser(
         ParserController pc,
         String path,
-        JarFile jarFile,
         boolean isTagFile,
         boolean directivesOnly) {
         this.parserController = pc;
@@ -139,7 +144,7 @@ class JspDocumentParser
         throws JasperException {
 
         JspDocumentParser jspDocParser =
-            new JspDocumentParser(pc, path, jarFile, isTagFile, directivesOnly);
+            new JspDocumentParser(pc, path, isTagFile, directivesOnly);
         Node.Nodes pageNodes = null;
 
         try {
@@ -324,7 +329,52 @@ class JspDocumentParser
 
         Node node = null;
 
-        if (JSP_URI.equals(uri)) {
+        if (tagDependentPending && JSP_URI.equals(uri) &&
+                     localName.equals(BODY_ACTION)) {
+            tagDependentNesting++;
+            current =
+                parseStandardAction(
+                    qName,
+                    localName,
+                    nonTaglibAttrs,
+                    nonTaglibXmlnsAttrs,
+                    taglibAttrs,
+                    startMark,
+                    current);
+            tagDependentPending = false;
+            return;
+        }
+
+        if (tagDependentPending && JSP_URI.equals(uri) &&
+                     localName.equals(ATTRIBUTE_ACTION)) {
+            current =
+                parseStandardAction(
+                    qName,
+                    localName,
+                    nonTaglibAttrs,
+                    nonTaglibXmlnsAttrs,
+                    taglibAttrs,
+                    startMark,
+                    current);
+            return;
+        }
+
+        if (tagDependentPending) {
+            tagDependentPending = false;
+            tagDependentNesting++;
+        }
+
+        if (tagDependentNesting > 0) {
+            node =
+                new Node.UninterpretedTag(
+                    qName,
+                    localName,
+                    nonTaglibAttrs,
+                    nonTaglibXmlnsAttrs,
+                    taglibAttrs,
+                    startMark,
+                    current);
+        } else if (JSP_URI.equals(uri)) {
             node =
                 parseStandardAction(
                     qName,
@@ -357,16 +407,14 @@ class JspDocumentParser
                         current);
             } else {
                 // custom action
-                Node.CustomTag custom = (Node.CustomTag) node;
-	        String bodyType;
-	        if (custom.getTagInfo() != null) {
-	            bodyType = custom.getTagInfo().getBodyContent();
-	        } else {
-	            bodyType = custom.getTagFileInfo().getTagInfo().getBodyContent();
-	        }
+	        String bodyType = getBodyType((Node.CustomTag) node);
+
                 if (scriptlessBodyNode == null
                         && bodyType.equalsIgnoreCase(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
                     scriptlessBodyNode = node;
+                }
+                else if (TagInfo.BODY_CONTENT_TAG_DEPENDENT.equalsIgnoreCase(bodyType)) {
+                    tagDependentPending = true;
                 }
             }
         }
@@ -425,6 +473,22 @@ class JspDocumentParser
                 }
             }
         }
+
+        if (!isAllSpace && tagDependentPending) {
+            tagDependentPending = false;
+            tagDependentNesting++;
+        }
+
+        if (tagDependentNesting > 0) {
+            if (charBuffer.length() > 0) {
+                new Node.TemplateText(charBuffer.toString(), startMark, current);
+            }
+            startMark = new Mark(path, locator.getLineNumber(),
+                                 locator.getColumnNumber());
+            charBuffer = null;
+            return;
+        }
+
         if ((current instanceof Node.JspText)
             || (current instanceof Node.NamedAttribute)
             || !isAllSpace) {
@@ -569,6 +633,10 @@ class JspDocumentParser
             }
         } else if (current instanceof Node.ScriptingElement) {
             checkScriptingBody((Node.ScriptingElement)current);
+        }
+
+        if ( isTagDependent(current)) {
+            tagDependentNesting--;
         }
 
         if (current.getParent() != null) {
@@ -1333,5 +1401,24 @@ class JspDocumentParser
         EnableDTDValidationException(String message, Locator loc) {
             super(message, loc);
         }
+    }
+
+    private static String getBodyType(Node.CustomTag custom) {
+
+        if (custom.getTagInfo() != null) {
+            return custom.getTagInfo().getBodyContent();
+        }
+
+        return custom.getTagFileInfo().getTagInfo().getBodyContent();
+    }
+
+    private boolean isTagDependent(Node n) {
+
+        if (n instanceof Node.CustomTag) {
+            String bodyType = getBodyType((Node.CustomTag) n);
+            return
+                TagInfo.BODY_CONTENT_TAG_DEPENDENT.equalsIgnoreCase(bodyType);
+        }
+        return false;
     }
 }
