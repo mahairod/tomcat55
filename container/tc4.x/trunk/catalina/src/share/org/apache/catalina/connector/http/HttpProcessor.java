@@ -291,6 +291,19 @@ final class HttpProcessor
     private HttpRequestLine requestLine = new HttpRequestLine();
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return a String value representing this object.
+     */
+    public String toString() {
+
+        return (this.threadName);
+
+    }
+
+
     // -------------------------------------------------------- Package Methods
 
 

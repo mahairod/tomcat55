@@ -602,6 +602,8 @@ public final class HttpConnector
      */
     public Request createRequest() {
 
+        //        if (debug >= 2)
+        //            log("createRequest: Creating new request");
 	HttpRequestImpl request = new HttpRequestImpl();
 	request.setConnector(this);
 	return (request);
@@ -615,6 +617,8 @@ public final class HttpConnector
      */
     public Response createResponse() {
 
+        //        if (debug >= 2)
+        //            log("createResponse: Creating new response");
 	HttpResponseImpl response = new HttpResponseImpl();
 	response.setConnector(this);
 	return (response);
@@ -632,6 +636,8 @@ public final class HttpConnector
      */
     void recycle(HttpProcessor processor) {
 
+        //        if (debug >= 2)
+        //            log("recycle: Recycling processor " + processor);
         processors.push(processor);
 
     }
@@ -649,12 +655,20 @@ public final class HttpConnector
     private HttpProcessor createProcessor() {
 
 	synchronized (processors) {
-	    if (processors.size() > 0)
+	    if (processors.size() > 0) {
+                //                if (debug >= 2)
+                //                    log("createProcessor: Reusing existing processor");
 		return ((HttpProcessor) processors.pop());
-	    if ((maxProcessors > 0) && (curProcessors < maxProcessors))
+            }
+	    if ((maxProcessors > 0) && (curProcessors < maxProcessors)) {
+                //                if (debug >= 2)
+                //                    log("createProcessor: Creating new processor");
 	        return (newProcessor());
-	    else
+            } else {
+                //                if (debug >= 2)
+                //                    log("createProcessor: Cannot create new processor");
 	        return (null);
+            }
 	}
 
     }
@@ -701,6 +715,8 @@ public final class HttpConnector
      */
     private HttpProcessor newProcessor() {
 
+        //        if (debug >= 2)
+        //            log("newProcessor: Creating new processor");
         HttpProcessor processor = new HttpProcessor(this, curProcessors++);
 	if (processor instanceof Lifecycle) {
 	    try {
@@ -762,18 +778,32 @@ public final class HttpConnector
 	    // Accept the next incoming connection from the server socket
 	    Socket socket = null;
 	    try {
+                //                if (debug >= 3)
+                //                    log("run: Waiting on serverSocket.accept()");
 		socket = serverSocket.accept();
+                //                if (debug >= 3)
+                //                    log("run: Returned from serverSocket.accept()");
                 if (connectionTimeout > 0)
                     socket.setSoTimeout(connectionTimeout);
             } catch (AccessControlException ace) {
-                log("socket accept security exception: " + ace.getMessage());
+                log("socket accept security exception", ace);
                 continue;
 	    } catch (IOException e) {
+                //                if (debug >= 3)
+                //                    log("run: Accept returned IOException", e);
 		if (started && !stopped)
 		    log("accept: ", e);
 		try {
+                    //                    if (debug >= 3)
+                    //                        log("run: Closing server socket");
                     serverSocket.close();
-                    serverSocket = open();
+                    if (!stopped) {
+                        //                        if (debug >= 3)
+                        //                            log("run: Reopening server socket");
+                        serverSocket = open();
+                    }
+                    //                    if (debug >= 3)
+                    //                        log("run: IOException processing completed");
                 } catch (IOException ex) {
                     // If reopening fails, exit
                     log("socket reopen: ", ex);
@@ -793,6 +823,8 @@ public final class HttpConnector
 		}
 		continue;
 	    }
+            //            if (debug >= 3)
+            //                log("run: Assigning socket to processor " + processor);
 	    processor.assign(socket);
 
 	    // The processor will recycle itself when it finishes
@@ -800,6 +832,8 @@ public final class HttpConnector
 	}
 
 	// Notify the threadStop() method that we have shut ourselves down
+        //        if (debug >= 3)
+        //            log("run: Notifying threadStop() that we have shut down");
 	synchronized (threadSync) {
 	    threadSync.notifyAll();
 	}
@@ -937,11 +971,11 @@ public final class HttpConnector
 	    } catch (IOException e) {
 		;
 	    }
-	    serverSocket = null;
 	}
 
 	// Stop our background thread
 	threadStop();
+        serverSocket = null;
 
     }
 
