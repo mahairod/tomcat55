@@ -4254,6 +4254,10 @@ public class StandardContext
         // Stop our filters
         filterStop();
 
+        // Clear all application-originated servlet context attributes
+        if (context != null)
+            context.clearAttributes();
+
         // Stop ContainerBackgroundProcessor thread
         super.threadStop();
 
