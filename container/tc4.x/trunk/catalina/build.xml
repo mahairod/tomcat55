@@ -166,6 +166,22 @@
   </target>
 
 
+  <!-- ==================== BUILD: Catalina Developer Docs ================ -->
+  <target name="dev-doc">
+    <delete dir="${catalina.build}/dev-doc"/>
+    <mkdir dir="${catalina.build}/dev-doc"/>
+    <mkdir dir="${catalina.build}/dev-doc/images"/>
+    <copy todir="${catalina.build}/dev-doc/images">
+      <fileset dir="docs/dev/xdocs/images"/>
+    </copy>
+    <style basedir="docs/dev/xdocs"
+           destdir="${catalina.build}/dev-doc"
+         extension=".html"
+             style="stylesheets/tempoarary.xsl"
+          includes="*.xml"/>
+  </target>
+
+
   <!-- ======================= BUILD: Clean Directory ===================== -->
   <target name="build-clean">
     <delete dir="${catalina.build}"/>

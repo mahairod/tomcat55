@@ -75,7 +75,7 @@ described further below:</p>
     <li><code>$JAVA_HOME/lib/tools.jar</code> - The Javac
         compiler used to compile the servlets generated from JSP pages
         (if present on your system).</li>
-    </ul>
+    </ul></li>
 <li><strong>Common</strong> - This class loader is initialized to include all 
     unpacked classes in the <code>$CATALINA_HOME/common/classes</code>
     directory (if it exists), and all JAR files in the
@@ -246,17 +246,17 @@ parser, you have three choices:</p>
 <p>For more information about class loaders in general, see the Java Language
 Specification, and the Javadocs for the following classes:</p>
 <ul>
-<li><code>java.lang.ClassLoader</code>
-<li><code>java.net.URLClassLoader</code>
+<li><code>java.lang.ClassLoader</code></li>
+<li><code>java.net.URLClassLoader</code></li>
 </ul>
 
 <p>The implementation class for all Catalina internal class loaders is
 <code>StandardClassLoader</code>.  Required and available optional packages
 are described using the <code>Extension</code> class.  For more information,
-see the source code and/or Javadocs for the following classes:
+see the source code and/or Javadocs for the following classes:</p>
 <ul>
-<li><code>org.apache.catalina.loader.StandardClassLoader</code>
-<li><code>org.apache.catalina.loader.Extension</code>
+<li><code>org.apache.catalina.loader.StandardClassLoader</code></li>
+<li><code>org.apache.catalina.loader.Extension</code></li>
 </ul>
 
 </subsection>

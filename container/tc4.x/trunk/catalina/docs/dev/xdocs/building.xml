@@ -72,14 +72,14 @@
           and install it.</li>
       <li>Add the full pathname of the <code>jdbc2_0-stdext.jar</code> file
           to your <code>CLASSPATH</code> environment variable.</li>
-      </ul>
+      </ul></li>
   <li><strong>JavaMail</strong>:
       <ul>
       <li>These steps are required <strong>only</strong> if you want to build
           the object factories for supporting mail-releated resource entries
           in your web application deployment descriptors.</li>
       <li>Download the JavaMail from
-          <a href="http://java.sun.com/products/javamail>http://java.sun.com/products/javamail</a>
+          <a href="http://java.sun.com/products/javamail">http://java.sun.com/products/javamail</a>
           and install it.</li>
       <li>Download the JavaBeans Activation Framework (JAF) from
           <a href="http://java.sun.com/beans/glasgow/jaf.html">http://java.sun.com/beans/glasgow/jaf.html</a>
@@ -129,7 +129,7 @@
       <li>These steps are required <strong>only</strong> if you want to build
           support for the Tyrex JNDI-accessed data source resources.</li>
       <li>Download the JTA package from
-          <http://java.sun.com/products/jta">http://java.sun.com/products/jta</a>
+          <a href="http://java.sun.com/products/jta">http://java.sun.com/products/jta</a>
           and install it.</li>
       <li>Add the full pathname of the <code>jta-spec1_0_1.jar</code> file
           (or equivalent) to your <code>CLASSPATH</code> environment
@@ -160,7 +160,7 @@
   binary distribution of each of these packages.</p>
 
   <ul>
-  <li><strong>Ant</strong> Build Tool</strong>:
+  <li><strong>Ant Build Tool</strong>:
       <ul>
       <li>Download and install the latest production release of Ant from
           <a href="http://jakarta.apache.org/site/binindex.html">http://jakarta.apache.org/site/binindex.html</a>.
@@ -172,7 +172,7 @@
           by adding <code>$ANT_HOME/bin</code> to your
           <code>PATH</code> environment variable.  This
           is not currently required, but is likely to be required by later
-          changes in the build process.
+          changes in the build process.</li>
       </ul></li>
   <li><strong>Regular Expressions Library</strong>:
       <ul>
@@ -182,6 +182,7 @@
           full pathname of the directory in which REGEXP is installed.</li>
       </ul></li>
   <li><strong>Servlet API Classes</strong>:
+      <ul>
       <li>Download and install a recent nightly build of the
           <code>jakarta-servletapi-4</code> CVS repository from
           <a href="http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly">http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly</a></li>
@@ -199,7 +200,7 @@
   <p>You can download a nightly snapshot of the Tomcat 4.0 source repository at
   <a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src">http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src</a>
   or follow the directions for
-  <a href="http://jakarta.apache.org/site/cvsindex.html>anonymous CVS access</a>
+  <a href="http://jakarta.apache.org/site/cvsindex.html">anonymous CVS access</a>
   as described on the Jakarta web site.</p>
 
   <p>After downloading and installing the Tomcat source code, and all of the

@@ -9,12 +9,12 @@
     
     <body>
     <menu name="Overview">
-        <item name="Front Page"            href="/index.html"/>
+        <item name="Front Page"            href="index.html"/>
 <!--
         <item name="Architecture"          href="FIXME"/>
 -->
-        <item name="Building"              href="/building.html"/>
-        <item name="Class Loaders"         href="/classloaders.html"/>
+        <item name="Building"              href="building.html"/>
+        <item name="Class Loaders"         href="classloaders.html"/>
 <!--
         <item name="Javadocs"              href="FIXME"/>
         <item name="Source Organization"   href="FIXME"/>
@@ -22,8 +22,8 @@
     </menu>
 
     <menu name="Functional Specs">
-        <item name="Default Servlet"       href="/fs-default.html"/>
-        <item name="Invoker Servlet"       href="/fs-invoker.html"/>
+        <item name="Default Servlet"       href="fs-default.html"/>
+        <item name="Invoker Servlet"       href="fs-invoker.html"/>
     </menu>
 
     </body>

@@ -104,7 +104,7 @@
     method of the invoker servlet is called:</p>
     <ul>
     <li>Ensure that the container has called <code>setWrapper()</code>.  If
-        not, throw a permanent <code>UnavailableException</code>.
+        not, throw a permanent <code>UnavailableException</code>.</li>
     <li>Look up and cache the <code>Context</code> that corresponds to our
         <code>Wrapper</code>.  This is the component with which new servlet
         definitions and mappings will be registered.</li>
@@ -140,7 +140,7 @@
         <ol>
         <li>Ask our associated <code>Context</code> to find and return a
             child <code>Wrapper</code> named <code>{ServletSelector}</code>.
-            <li>
+            </li>
         <li>If there is no such child, skip to the next major step.</li>
         <li>Register a new servlet mapping for this <code>Wrapper</code>,
             using a URL pattern calculated as follows:
@@ -211,7 +211,7 @@
   <li>When an existing servlet definition is accessed by name, the request
       will be ultimately processed by the same servlet instance that would
       have processed it had a mapping to that servlet definition been used
-      on the request directly.
+      on the request directly.</li>
   <li>It is possible to access an anonymous servlet by class name
       through the invoker.</li>
   <li>When an anonymous servlet is accessed, the servlet instance is processed
@@ -230,8 +230,8 @@
   <li>It is possible to use any HTTP method (including GET and POST) that
       is supported by the Servlet class that is ultimately executed.</li>
   <li>The invoker servlet should never be asked to process a second or
-      subsequent request for the same <code>{ServletSelector} (because it
-      will have registered an appropriate servlet mapping.</li>
+      subsequent request for the same <code>{ServletSelector}</code> (because
+      it will have registered an appropriate servlet mapping.</li>
   </ul>
 
 </section>

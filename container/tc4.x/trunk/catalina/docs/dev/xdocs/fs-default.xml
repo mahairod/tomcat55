@@ -30,9 +30,9 @@
     <ul>
     <li><a href="http://java.sun.com/products/servlet/download.html">
         Servlet Specification</a> (Version 2.3 PFD2)</li>
-    <li><a href="http://www.rfc-editor.org/rfc/rfc2046.txt>Multipurpose
+    <li><a href="http://www.rfc-editor.org/rfc/rfc2046.txt">Multipurpose
         Internet Mail Extensions (MIME) Part Two: Media Types</a></li>
-    <li><a href="http://www.rfc-editor.org/rfc/rfc2616.txt>Hypertext
+    <li><a href="http://www.rfc-editor.org/rfc/rfc2616.txt">Hypertext
         Transfer Protocol -- HTTP/1.1</a></li>
     </ul>
 
@@ -152,7 +152,7 @@
         <li>If one of the specified welcome files exists, redirect to the
             path for that welcome file so that it will be served explicitly.
             </li>
-        </ul>
+        </ul></li>
     <li>If the request being processed contains an <code>If-Range</code>
         header, perform the processing described in the HTTP/1.1 specification
         to determine whether the client's information is up to date.</li>
@@ -163,7 +163,7 @@
         <li>If directory listings are suppressed, return HTTP status 404
             (not found).</li>
         <li>Set the content type to <code>text/html</code>.</li>
-        </ul>
+        </ul></li>
     <li>Determine the range(s) to be returned, based on the existence of
         any <code>If-Range</code> and <code>Range</code> headers.</li>
     <li>If the requested resource is a directory, include an <code>ETag</code>
