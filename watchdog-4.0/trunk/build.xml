@@ -58,7 +58,7 @@
 
    <!-- Compile the test suite -->
 
-   <target name="main" depends="prepare">
+   <target name="compile" depends="prepare">
 
       <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
              destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
@@ -97,6 +97,20 @@
 
    </target>
 
+   <!-- Convert the JSP syntax pages to their XML equivalents -->
+   <target name="xml" depends="prepare,compile">
+
+       <java classname="org.apache.jspxml.GetWorkspaceInXML" fork="true"
+             classpath="${watchdog-classpath}:${watchdog.build}/src/tools">
+          <sysproperty key="JSP_ROOT" value="${watchdog.build}/webapps/jsp-tests/jsp"/>
+          <sysproperty key="WATCHDOG_HOME" value="${watchdog.build}"/>
+       </java>
+
+   </target>
+
+   <!-- Default build target -->
+   <target name="main" depends="xml"/>
+
    <!-- Prepare the distribution destination directory -->
 
    <target name="dist" depends="main">
@@ -124,11 +138,11 @@
       <copydir src="src/clients/org/apache/jcheck/servlet/client" 
               dest="${watchdog.dist}/lib/servlet-golden"/>
 
-      <copydir  src="src/bin" dest="${watchdog.dist}/bin"/>
+      <copydir  src="${watchdog.build}/bin" dest="${watchdog.dist}/bin"/>
       <fixcrlf  srcdir="${watchdog.dist}/bin" includes="*.sh" cr="remove"/>
       <fixcrlf  srcdir="${watchdog.dist}/bin" includes="*.bat" cr="add"/>
       <chmod       dir="${watchdog.dist}/bin" includes="*.sh" perm="+x"/>
-      <copydir  src="src/conf" dest="${watchdog.dist}/conf" />
+      <copydir  src="${watchdog.build}/conf" dest="${watchdog.dist}/conf" />
     
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
