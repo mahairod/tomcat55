@@ -4527,6 +4527,9 @@ public class StandardContext
                     ((Lifecycle) children[i]).stop();
             }
 
+            // Now stop the listeners, Bugzilla 30762
+            listenerStop();
+
             // Stop resources
             resourcesStop();
 
@@ -4542,9 +4545,6 @@ public class StandardContext
             if ((loader != null) && (loader instanceof Lifecycle)) {
                 ((Lifecycle) loader).stop();
             }
-
-            // Now stop the listeners, Bugzilla 30762
-            listenerStop();
 
         } finally {
 
