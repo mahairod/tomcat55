@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_2.dtd">
+
+<!-- a tab library descriptor -->
+
+<taglib>
+  <!-- after this the default space is
+	"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+   -->
+
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.2</jspversion>
+  <shortname>simple</shortname>
+  <uri>1.0</uri>
+  <info>
+	A simple tag library for the examples
+  </info>
+
+  <!-- Test Tag -->
+ 
+  <tag>
+      <name>test</name>
+      <tagclass>tags.TestTag</tagclass>
+      <teiclass>tags.TestTagExtraInfo</teiclass>
+      <bodycontent>tagdependent</bodycontent>
+      <info>
+  	test message.
+      </info>
+      <attribute>
+  	<name>toBrowser</name>
+  	<required>false</required>
+      </attribute>
+      <attribute>
+        <name>att1</name>
+        <required>true</required>
+      </attribute>
+      <attribute>
+        <name>att2</name>
+        <required>false</required>
+      </attribute>
+  </tag>    	
+  
+
+ <!-- Page Tag -->
+  <tag>
+    <name>page</name>
+    <tagclass>tags.PageTag</tagclass>
+    <bodycontent>tagdependent</bodycontent>
+    <info>
+	Test message.
+    </info>
+    <attribute>
+	<name>toBrowser</name>
+	<required>false</required>
+    </attribute>
+    <attribute>
+      <name>att1</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+
+ <!-- LifeCycle Tag -->
+  <tag>
+    <name>lifeCycle</name>
+    <tagclass>tags.LifeCycleTag</tagclass>
+    <bodycontent>tagdependent</bodycontent>
+    <info>
+	Test message.
+    </info>
+    <attribute>
+	<name>toBrowser</name>
+	<required>false</required>
+    </attribute>
+    <attribute>
+      <name>att1</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>att2</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>att3</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>att4</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>att5</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>att6</name>
+      <required>true</required>
+    </attribute>
+</tag>
+
+</taglib>
