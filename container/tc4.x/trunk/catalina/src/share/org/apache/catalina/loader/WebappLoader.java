@@ -130,7 +130,7 @@ public class WebappLoader
 
 
     /**
-     * Construct a new StandardLoader with no defined parent class loader
+     * Construct a new WebappLoader with no defined parent class loader
      * (so that the actual parent will be the system class loader).
      */
     public WebappLoader() {
@@ -141,7 +141,7 @@ public class WebappLoader
 
 
     /**
-     * Construct a new StandardLoader with the specified class loader
+     * Construct a new WebappLoader with the specified class loader
      * to be defined as the parent of the ClassLoader we ultimately create.
      *
      * @param parent The parent class loader
@@ -264,7 +264,7 @@ public class WebappLoader
     /**
      * Name to register for the background thread.
      */
-    private String threadName = "StandardLoader";
+    private String threadName = "WebappLoader";
 
 
     /**
@@ -492,7 +492,7 @@ public class WebappLoader
     public void addRepository(String repository) {
 
         if (debug >= 1)
-	    log(sm.getString("standardLoader.addRepository", repository));
+	    log(sm.getString("webappLoader.addRepository", repository));
         for (int i = 0; i < repositories.length; i++) {
             if (repository.equals(repositories[i]))
                 return;
@@ -591,9 +591,9 @@ public class WebappLoader
 	// Validate and update our current component state
 	if (started)
 	    throw new LifecycleException
-		(sm.getString("standardLoader.alreadyStarted"));
+		(sm.getString("webappLoader.alreadyStarted"));
 	if (debug >= 1)
-	    log(sm.getString("standardLoader.starting"));
+	    log(sm.getString("webappLoader.starting"));
 	lifecycle.fireLifecycleEvent(START_EVENT, null);
 	started = true;
 
@@ -668,7 +668,7 @@ public class WebappLoader
 
 	// Start our background thread if we are reloadable
 	if (reloadable) {
-	    log(sm.getString("standardLoader.reloading"));
+	    log(sm.getString("webappLoader.reloading"));
 	    try {
 		threadStart();
 	    } catch (IllegalStateException e) {
@@ -689,9 +689,9 @@ public class WebappLoader
 	// Validate and update our current component state
 	if (!started)
 	    throw new LifecycleException
-		(sm.getString("standardLoader.notStarted"));
+		(sm.getString("webappLoader.notStarted"));
 	if (debug >= 1)
-	    log(sm.getString("standardLoader.stopping"));
+	    log(sm.getString("webappLoader.stopping"));
 	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 	started = false;
 
@@ -736,7 +736,7 @@ public class WebappLoader
 		setReloadable
 		    ( ((Boolean) event.getNewValue()).booleanValue() );
 	    } catch (NumberFormatException e) {
-		log(sm.getString("standardLoader.reloadable",
+		log(sm.getString("webappLoader.reloadable",
 				 event.getNewValue().toString()));
 	    }
 	}
@@ -758,13 +758,13 @@ public class WebappLoader
 	if (container != null)
 	    logger = container.getLogger();
 	if (logger != null)
-	    logger.log("StandardLoader[" + container.getName() + "]: "
+	    logger.log("WebappLoader[" + container.getName() + "]: "
 		       + message);
 	else {
 	    String containerName = null;
 	    if (container != null)
 		containerName = container.getName();
-	    System.out.println("StandardLoader[" + containerName
+	    System.out.println("WebappLoader[" + containerName
 			       + "]: " + message);
 	}
 
@@ -783,13 +783,13 @@ public class WebappLoader
 	if (container != null)
 	    logger = container.getLogger();
 	if (logger != null) {
-	    logger.log("StandardLoader[" + container.getName() + "] "
+	    logger.log("WebappLoader[" + container.getName() + "] "
 		       + message, throwable);
 	} else {
 	    String containerName = null;
 	    if (container != null)
 		containerName = container.getName();
-	    System.out.println("StandardLoader[" + containerName
+	    System.out.println("WebappLoader[" + containerName
 			       + "]: " + message);
 	    System.out.println("" + throwable);
 	    throwable.printStackTrace(System.out);
@@ -828,6 +828,8 @@ public class WebappLoader
             (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
         if (workDir == null)
             return;
+
+        log(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
 
         // Reset repositories
         repositories = new String[0];
@@ -871,7 +873,8 @@ public class WebappLoader
                 classRepository.mkdirs();
                 classpath.append(classRepository.getAbsolutePath());
                 
-                System.out.println("Deploy class files: " + classesPath + " To: " + classRepository.getAbsolutePath());
+                log(sm.getString("webappLoader.classDeploy", classesPath,
+                                 classRepository.getAbsolutePath()));
                 
                 copyDir(classes, classRepository);
                 
@@ -922,7 +925,8 @@ public class WebappLoader
                     // impossible to update it or remove it at runtime)
                     File destFile = new File(destDir, binding.getName());
 
-                    System.out.println("Deploy JAR: " + filename + " To: " + destFile.getAbsolutePath());
+                    log(sm.getString("webappLoader.jarDeploy", filename,
+                                     destFile.getAbsolutePath()));
                     
                     Resource jarResource = (Resource) binding.getObject();
                     if (copy(jarResource.streamContent(), 
@@ -1099,16 +1103,16 @@ public class WebappLoader
 	// Validate our current state
 	if (!reloadable)
 	    throw new IllegalStateException
-		(sm.getString("standardLoader.notReloadable"));
+		(sm.getString("webappLoader.notReloadable"));
 	if (!(container instanceof Context))
 	    throw new IllegalStateException
-		(sm.getString("standardLoader.notContext"));
+		(sm.getString("webappLoader.notContext"));
 
 	// Start the background thread
 	if (debug >= 1)
 	    log(" Starting background thread");
 	threadDone = false;
-	threadName = "StandardLoader[" + container.getName() + "]";
+	threadName = "WebappLoader[" + container.getName() + "]";
 	thread = new Thread(this, threadName);
 	thread.setDaemon(true);
 	thread.start();
