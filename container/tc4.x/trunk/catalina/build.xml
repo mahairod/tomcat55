@@ -771,7 +771,9 @@
   <!-- =================== BUILD: Build tomcat-util ======================= -->
   <target name="build-tomcat-util">
 
-    <ant dir="${tomcat-util.home}" target="build-main"/>
+    <ant dir="${tomcat-util.home}" target="build-main">
+       <property name="jmx.jar" value="${jmx.jar}" />
+    </ant>
 
     <copy todir="${catalina.build}/server/lib"
            file="${tomcat-util.jar}"/>
@@ -855,6 +857,7 @@
       <property name="tomcat40.home" value="${catalina.deploy}"/>
       <property name="tomcat41.home" value="${catalina.deploy}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+      <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
