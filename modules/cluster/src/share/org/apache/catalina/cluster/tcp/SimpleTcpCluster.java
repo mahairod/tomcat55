@@ -58,8 +58,17 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * setting up a cluster and provides callers with a valid multicast
  * receiver/sender.
  * 
+ * FIXME remove install/remove/start/stop context dummys
+ * FIXME better stats
+ * FIXME factor out receiver handling
+ * FIXME Support JMX and Lifecycle Listener Notification (start/stop member) (start/stop context/manager)
+ * FIXME optimize message package creation
+ * FIXME better compress message handling
+ * FIXME Clearer implementation from notifyListenersOnReplication flag
+ *
  * @author Filip Hanik
  * @author Remy Maucherat
+ * @author Peter Rossbach
  * @version $Revision$, $Date$
  */
 
@@ -297,10 +306,18 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         return manager;
     }
 
+    /* remove an application form cluster replication bus
+     * FIXME notify someone (JMX(Listener)
+     * @see org.apache.catalina.cluster.CatalinaCluster#removeManager(java.lang.String)
+     */
     public void removeManager(String name) {
         managers.remove(name);
     }
 
+    /* add an application to cluster replication bus
+     * FIXME notify someone (JMX(Listener)
+     * @see org.apache.catalina.cluster.CatalinaCluster#addManager(java.lang.String, org.apache.catalina.cluster.ClusterManager)
+     */
     public void addManager(String name, ClusterManager manager) {
         manager.setName(name);
         manager.setCluster(this);
@@ -366,6 +383,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * other nodes in the cluster, and request the current session state to be
      * transferred to this node.
      * 
+     * FIXME notify someone (JMX(Listener)   
      * @exception IllegalStateException
      *                if this component has already been started
      * @exception LifecycleException
@@ -389,7 +407,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
             }
             registerMBeans();
-            clusterReceiver.setWaitForAck(clusterSender.isWaitForAck());
+            clusterReceiver.setSendAck(clusterSender.isWaitForAck());
             clusterReceiver.setCatalinaCluster(this);
             clusterReceiver.start();
             clusterSender.setCatalinaCluster(this);
@@ -435,26 +453,37 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                         && (smsg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS)
                         && (membershipService.getMembers().length > 0)) {
                     destination = membershipService.getMembers()[0];
-                }//end if
-            }//end if
-            msg.setTimestamp(System.currentTimeMillis());
-            java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
-            java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(
-                    outs);
-            out.writeObject(msg);
-            byte[] data = outs.toByteArray();
+                }
+            }
+            byte[] data = createMessageData(msg);
             if (destination != null) {
                 Member tcpdest = dest;
                 if ((tcpdest != null)
                         && (!membershipService.getLocalMember().equals(tcpdest))) {
                     clusterSender.sendMessage(msg.getUniqueId(), data, tcpdest);
-                }//end if
+                }
             } else {
                 clusterSender.sendMessage(msg.getUniqueId(), data);
             }
         } catch (Exception x) {
             log.error("Unable to send message through cluster sender.", x);
         }
+    }
+
+    /**
+     * Send Message create Timestamp and generate message bytes form msg
+     * @param msg cluster message
+     * @return cluster message as byte array
+     * @throws IOException
+     */
+    protected byte[] createMessageData(ClusterMessage msg) throws IOException {
+        msg.setTimestamp(System.currentTimeMillis());
+        java.io.ByteArrayOutputStream outs = new java.io.ByteArrayOutputStream();
+        java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(
+                outs);
+        out.writeObject(msg);
+        byte[] data = outs.toByteArray();
+        return data;
     }
 
     /**
@@ -473,6 +502,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * This will disconnect the cluster communication channel and stop the
      * listener thread.
      * 
+     * FIXME notify someone (JMX(Listener)
      * @exception IllegalStateException
      *                if this component has not been started
      * @exception LifecycleException
@@ -504,6 +534,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         started = false;
     }
 
+    /* New cluster member is registered
+     * FIXME notify someone (JMX(Listener)
+     * @see org.apache.catalina.cluster.MembershipListener#memberAdded(org.apache.catalina.cluster.Member)
+     */
     public void memberAdded(Member member) {
         try {
             if (log.isInfoEnabled())
@@ -515,6 +549,10 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     }
 
+    /* Cluster member is gone
+     * FIXME notify someone (JMX(Listener)
+     * @see org.apache.catalina.cluster.MembershipListener#memberDisappeared(org.apache.catalina.cluster.Member)
+     */
     public void memberDisappeared(Member member) {
         if (log.isInfoEnabled())
             log.info("Received member disappeared:" + member);
@@ -587,13 +625,15 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                     new java.io.ByteArrayInputStream(data), getClass()
                             .getClassLoader());
             Object myobj = stream.readObject();
+            if (log.isDebugEnabled()
+                    && myobj != null && myobj instanceof ClusterMessage)
+                log.debug("Assuming clocks are synched: Replication for " 
+                        + ((ClusterMessage) myobj).getUniqueId() + " took="
+                        + (System.currentTimeMillis() - ((ClusterMessage) myobj).getTimestamp())
+                        + " ms.");
             if (myobj != null && myobj instanceof SessionMessage) {
 
                 SessionMessage msg = (SessionMessage) myobj;
-                if (log.isDebugEnabled())
-                    log.debug("Assuming clocks are synched: Replication took="
-                            + (System.currentTimeMillis() - msg.getTimestamp())
-                            + " ms.");
                 String ctxname = msg.getContextName();
                 //check if the message is a EVT_GET_ALL_SESSIONS,
                 //if so, wait until we are fully started up
@@ -611,14 +651,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                                 log.debug("Context manager doesn't exist:"
                                         + key);
                         }
-                    }//while
+                    }
                 } else {
                     ClusterManager mgr = (ClusterManager) managers.get(ctxname);
                     if (mgr != null)
                         mgr.messageDataReceived(msg);
                     else if (log.isWarnEnabled())
                         log.warn("Context manager doesn't exist:" + ctxname);
-                }//end if
+                }
             } else {
                 //invoke all the listeners
                 for (int i = 0; i < clusterListeners.size(); i++) {
@@ -626,11 +666,14 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                             .elementAt(i);
                     if (myobj != null && myobj instanceof ClusterMessage
                             && listener.accept((ClusterMessage) myobj)) {
-                        listener.messageReceived((ClusterMessage) myobj);
-                    }//end if
-
-                }//for
-            }//end if
+                      listener.messageReceived((ClusterMessage) myobj);
+                    } else
+                        if(log.isDebugEnabled())
+                            log.debug("Message " + myobj.toString() 
+                                    + " from type " + myobj.getClass().getName() 
+                                    + " transfered but no listener registered");
+                }
+            }
 
         } catch (Exception x) {
             log.error("Unable to deserialize session message.", x);
