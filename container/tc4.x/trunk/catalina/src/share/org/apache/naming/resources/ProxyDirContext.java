@@ -267,7 +267,6 @@ public class ProxyDirContext implements DirContext {
         if (entry != null) {
             if (entry.resource != null) {
                 // Check content caching.
-                
                 return entry.resource;
             } else {
                 return entry.context;
@@ -1375,7 +1374,8 @@ public class ProxyDirContext implements DirContext {
     /**
      * Lookup in cache.
      */
-    protected CacheEntry cacheLookup(String name) {
+    protected CacheEntry cacheLookup(String name)
+        throws NamingException {
         if (cache == null)
             return (null);
         CacheEntry cacheEntry = (CacheEntry) cache.get(name);
@@ -1383,9 +1383,7 @@ public class ProxyDirContext implements DirContext {
             cacheEntry = new CacheEntry();
             cacheEntry.name = name;
             // Load entry
-            if (!cacheLoad(cacheEntry))
-                return null;
-            return (cacheEntry);
+            cacheLoad(cacheEntry);
         } else {
             if (!validate(cacheEntry)) {
                 if (!revalidate(cacheEntry)) {
@@ -1396,8 +1394,11 @@ public class ProxyDirContext implements DirContext {
                         System.currentTimeMillis() + cacheTTL;
                 }
             }
-            return (cacheEntry);
         }
+        if (!cacheEntry.exists) {
+            throw new NamingException("Resource not found");
+        }
+        return (cacheEntry);
     }
 
 
@@ -1405,8 +1406,10 @@ public class ProxyDirContext implements DirContext {
      * Validate entry.
      */
     protected boolean validate(CacheEntry entry) {
-        if ((entry.resource != null) 
-            && (entry.resource.getContent() != null) 
+        if (((!entry.exists)
+             || (entry.context != null)
+             || ((entry.resource != null) 
+                 && (entry.resource.getContent() != null)))
             && (System.currentTimeMillis() < entry.timestamp)) {
             return true;
         }
@@ -1420,6 +1423,8 @@ public class ProxyDirContext implements DirContext {
     protected boolean revalidate(CacheEntry entry) {
         // Get the attributes at the given path, and check the last 
         // modification date
+        if (!entry.exists)
+            return false;
         if (entry.attributes == null)
             return false;
         long lastModified = entry.attributes.getLastModified();
@@ -1447,14 +1452,12 @@ public class ProxyDirContext implements DirContext {
     /**
      * Load entry into cache.
      */
-    protected boolean cacheLoad(CacheEntry entry) {
-
-        if (cache == null)
-            return false;
+    protected void cacheLoad(CacheEntry entry) {
 
         String name = entry.name;
 
         // Retrieve missing info
+        boolean exists = true;
 
         // Retrieving attributes
         if (entry.attributes == null) {
@@ -1467,12 +1470,12 @@ public class ProxyDirContext implements DirContext {
                     entry.attributes = (ResourceAttributes) attributes;
                 }
             } catch (NamingException e) {
-                return false;
+                exists = false;
             }
         }
 
         // Retriving object
-        if ((entry.resource == null) && (entry.context == null)) {
+        if ((exists) && (entry.resource == null) && (entry.context == null)) {
             try {
                 Object object = dirContext.lookup(name);
                 if (object instanceof InputStream) {
@@ -1486,12 +1489,13 @@ public class ProxyDirContext implements DirContext {
                         (object.toString().getBytes()));
                 }
             } catch (NamingException e) {
-                return false;
+                exists = false;
             }
         }
 
         // Load object content
-        if ((entry.resource != null) && (entry.resource.getContent() == null) 
+        if ((exists) && (entry.resource != null) 
+            && (entry.resource.getContent() == null) 
             && (entry.attributes.getContentLength() >= 0)
             && (entry.attributes.getContentLength() < cacheObjectMaxSize)) {
             int length = (int) entry.attributes.getContentLength();
@@ -1518,14 +1522,15 @@ public class ProxyDirContext implements DirContext {
                 }
             }
         }
-        
+
+        // Set existence flag
+        entry.exists = exists;
+
         // Set timestamp
         entry.timestamp = System.currentTimeMillis() + cacheTTL;
 
         // Add new entry to cache
         cache.put(name, entry);
-
-        return true;
 
     }
 
@@ -1554,6 +1559,7 @@ public class ProxyDirContext implements DirContext {
         ResourceAttributes attributes = null;
         Resource resource = null;
         DirContext context = null;
+        boolean exists = true;
 
 
         // ----------------------------------------------------- Public Methods
@@ -1565,11 +1571,13 @@ public class ProxyDirContext implements DirContext {
             attributes = null;
             resource = null;
             context = null;
+            exists = true;
         }
 
 
         public String toString() {
             return ("Cache entry: " + name + "\n"
+                    + "Exists: " + exists + "\n"
                     + "Attributes: " + attributes + "\n"
                     + "Resource: " + resource + "\n"
                     + "Context: " + context);
