@@ -60,6 +60,7 @@ import java.util.*;
 import javax.servlet.jsp.tagext.*;
 
 import org.xml.sax.InputSource;
+import org.xml.sax.Attributes;
 
 import org.apache.jasper.*;
 
@@ -112,6 +113,11 @@ public class ParserController {
      */
     private static final String XML_PROLOG_TAG = "<?xml";
     private static final String JSP_ROOT_TAG   = "<jsp:root";
+
+    /*
+     * The 'new' encoding required to read a page.
+     */
+    private String newEncoding;
 
     /*
      * Information to allow us to dynamically generate the
@@ -195,11 +201,13 @@ public class ParserController {
             reader = getReader(file, encoding, absFileName);
             figureOutJspDocument(file, encoding, reader);
             //p("isXml = " + isXml + "   hasTaglib = " + hasTaglib);
-
-            // dispatch to the proper parser
+	    encoding = (newEncoding!=null) ? newEncoding : encoding;
 	    try {
 		reader.close();
 	    } catch (IOException ex) {}
+
+            // dispatch to the proper parser
+	    
             reader = getReader(file, encoding, absFileName);
             if (isXml) {
                 (new ParserXJspSax(filePath, reader, jspHandler)).parse();
@@ -245,10 +253,37 @@ public class ParserController {
                 isXml = true;
             } else {
                 isXml = false;
-                return;
             }
         }
 
+	// Figure out the encoding of the page
+	// FIXME: We assume xml parser will take care of
+        // encoding for page in XML syntax. Correct?
+	newEncoding = null;
+        jspReader.reset(startMark);
+	while (jspReader.skipUntil("<%@") != null) {
+	    jspReader.skipSpaces();
+	    if (jspReader.matches("page")) {
+		jspReader.advance(4);
+		jspReader.skipSpaces();
+		Attributes attrs = jspReader.parseTagAttributes();
+		String attribute = "pageEncoding";
+		newEncoding = attrs.getValue("pageEncoding");
+		if (newEncoding == null) {
+		    String contentType = attrs.getValue("contentType");
+		    if (contentType != null) {
+			int loc = contentType.indexOf("charset=");
+			if (loc != -1) {
+			    newEncoding = contentType.substring(loc+8);
+			    return;
+			}
+		    }
+		} else {
+		    return;
+		}
+	    }
+	}
+								    
 	/* NOT COMPILED
         // This is an XML document. Let's see if it uses tag libraries.
         jspReader.reset(startMark);
@@ -412,7 +447,9 @@ public class ParserController {
 	    }
 	    return reader;
 	} catch (UnsupportedEncodingException ex) {
-	    throw new JasperException(ex);
+	    throw new JasperException(
+                Constants.getString("jsp.error.unsupported.encoding",
+				    new Object[]{encoding}));
 	}
     }
 

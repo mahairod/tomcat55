@@ -174,7 +174,8 @@ public class Parser {
 	    new JspUtil.ValidAttribute ("info"),
 	    new JspUtil.ValidAttribute ("errorPage"),
 	    new JspUtil.ValidAttribute ("isErrorPage"),
-	    new JspUtil.ValidAttribute ("contentType")
+	    new JspUtil.ValidAttribute ("contentType"),
+	    new JspUtil.ValidAttribute ("pageEncoding")
 	};
 
 	private static final JspUtil.ValidAttribute[] includeDvalidAttrs = {

@@ -417,6 +417,7 @@ public class JspParseEventListener extends BaseJspListener {
     static final String errorPageStr = "errorPage";
     static final String isErrorPageStr = "isErrorPage";
     static final String contentTypeStr = "contentType";
+    static final String pageEncodingStr = "pageEncoding";
 
 
     PageDirectiveHandlerInfo[] pdhis = new PageDirectiveHandlerInfo[] {
@@ -430,6 +431,7 @@ public class JspParseEventListener extends BaseJspListener {
         new PageDirectiveHandlerInfo(infoStr, new InfoHandler()),
         new PageDirectiveHandlerInfo(isErrorPageStr, new IsErrorPageHandler()),
         new PageDirectiveHandlerInfo(contentTypeStr, new ContentTypeHandler()),
+        new PageDirectiveHandlerInfo(pageEncodingStr, new PageEncodingHandler()),
         new PageDirectiveHandlerInfo(errorPageStr, new ErrorPageHandler())
     };
 
@@ -450,6 +452,25 @@ public class JspParseEventListener extends BaseJspListener {
                 throw new CompileException(start,
 					   Constants.getString("jsp.error.page.invalid.contenttype"));
             listener.servletContentType = contentType;
+        }
+    }
+
+    static final class PageEncodingHandler implements PageDirectiveHandler {
+        public void handlePageDirectiveAttribute(JspParseEventListener listener,
+                                                 String pageEncoding,
+                                                 Mark start, Mark stop)
+            throws JasperException
+        {
+            if (pageEncoding == null)
+                throw new CompileException(start,
+					   Constants.getString("jsp.error.page.invalid.pageencoding"));
+	    // We do nothing with pageEncoding.
+	    // This is handled by the parser
+	    // to set the encoding type on the reader before we even
+	    // start parsing the page.
+	    // No restriction on one such attribute per translation unit.
+	    // We can have one per page.
+	    // FIXME: we do not track multiple occurrences per page 
         }
     }
 
@@ -744,9 +765,8 @@ public class JspParseEventListener extends BaseJspListener {
 					   Constants.getString("jsp.error.file.not.found",
 							       new Object[]{file}));
 	    } catch (Exception ex) {
-		throw new CompileException(
-					   start,
-					   Constants.getString("jsp.error.include.bad.file"));
+		throw new CompileException(start,
+					   ex.getMessage());
 	    }
 	}
 	xo.append("jsp:directive." + directive, attrs);
