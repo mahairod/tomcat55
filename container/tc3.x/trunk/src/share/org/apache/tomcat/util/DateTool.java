@@ -107,8 +107,7 @@ public class DateTool {
     /** Pattern used for old cookies
      */
     public final static String OLD_COOKIE_PATTERN = "EEE, dd-MMM-yyyy HH:mm:ss z";
-    
-    
+
     /** DateFormat to be used to format dates
      */
     public final static SimpleDateFormat rfc1123Format =

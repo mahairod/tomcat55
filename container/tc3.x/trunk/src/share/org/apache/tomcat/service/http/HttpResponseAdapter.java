@@ -141,7 +141,7 @@ public class HttpResponseAdapter extends  ResponseImpl {
 	// This avoids redundant setting of date ( very expensive ).
 	// XXX XXX Check if IIS, NES do generate the date
 	MimeHeaderField dateH= headers.find( "Date" );
-	if( dateH == null ) {
+	if( false && dateH == null ) {
 	    // no date header set by user
 	    dateH=headers.putHeader();
 	    dateH.setName("Date");

@@ -187,7 +187,8 @@ public class Ascii {
      */
 
     public static int parseInt(byte[] b, int off, int len)
-    throws NumberFormatException {
+	throws NumberFormatException
+    {
         int c;
 
 	if (b == null || len <= 0 || !isDigit(c = b[off++])) {
