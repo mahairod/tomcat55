@@ -708,12 +708,14 @@ public class ManagerServlet
                     writer.println(sm.getString("managerServlet.listitem",
                                                 displayPath,
                                                 "running",
-                                      "" + context.getManager().findSessions().length));
+                                      "" + context.getManager().findSessions().length,
+                                                context.getDocBase()));
                 } else {
                     writer.println(sm.getString("managerServlet.listitem",
                                                 displayPath,
                                                 "stopped",
-                                                "0"));
+                                                "0",
+                                                context.getDocBase()));
                 }
             }
         }
