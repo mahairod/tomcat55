@@ -121,17 +121,21 @@ import org.apache.catalina.util.StringManager;
 
 
 /**
- * 
+ * Dummy request object, used for request dispatcher mapping, as well as
+ * JSP precompilation.
  *
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class MappingRequest
+public class DummyRequest
     implements HttpRequest, HttpServletRequest {
 
-    public MappingRequest(String contextPath, String decodedURI,
-                          String queryString) {
+    public DummyRequest() {
+    }
+
+    public DummyRequest(String contextPath, String decodedURI,
+                        String queryString) {
         this.contextPath = contextPath;
         this.decodedURI = decodedURI;
         this.queryString = queryString;

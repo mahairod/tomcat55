@@ -93,8 +93,6 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import org.apache.catalina.connector.HttpRequestBase;
-import org.apache.catalina.connector.HttpResponseBase;
 import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
@@ -941,10 +939,10 @@ public final class StandardWrapper
                 // Invoke jspInit on JSP pages
                 if ((loadOnStartup >= 0) && (jspFile != null)) {
                     // Invoking jspInit
-                    HttpRequestBase req = new HttpRequestBase();
-                    HttpResponseBase res = new HttpResponseBase();
+                    DummyRequest req = new DummyRequest();
                     req.setServletPath(jspFile);
                     req.setQueryString("jsp_precompile=true");
+                    DummyResponse res = new DummyResponse();
                     
                     if( System.getSecurityManager() != null) {
                         Class[] classType = new Class[]{ServletRequest.class, 
