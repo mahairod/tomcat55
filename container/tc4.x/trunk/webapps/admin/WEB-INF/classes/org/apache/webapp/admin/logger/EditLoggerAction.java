@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,53 +59,43 @@
  *
  */
 
-
-package org.apache.webapp.admin.host;
+package org.apache.webapp.admin.logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.ObjectInstance;
-import javax.management.modelmbean.ModelMBean;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
-import org.apache.webapp.admin.ApplicationServlet;
-import org.apache.webapp.admin.TomcatTreeBuilder;
-import org.apache.webapp.admin.TreeControl;
-import org.apache.webapp.admin.TreeControlNode;
+import javax.management.MBeanServer;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.JMException;
 
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.Lists;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
- * The <code>Action</code> that completes <em>Delete Hosts</em>
- * transactions.
+ * The <code>Action</code> that sets up <em>Edit Logger</em> transactions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class DeleteHostsAction extends Action {
-
-
-    /**
-     * Signature for the <code>removeHost</code> operation.
-     */
-    private String removeHostTypes[] =
-    { "java.lang.String",      // Object name
-    };
-
+public class EditLoggerAction extends Action {
+    
 
     /**
      * The MBeanServer we will be interacting with.
@@ -117,10 +107,9 @@ public class DeleteHostsAction extends Action {
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-
+    
 
     // --------------------------------------------------------- Public Methods
-    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -143,14 +132,13 @@ public class DeleteHostsAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
         
-        
-        // Look up the components we will be using as needed
+        // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-
+        
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -159,54 +147,85 @@ public class DeleteHostsAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        // Delete the specified Hosts
-        String hosts[]  = ((HostsForm) form).getHosts();
-        String values[] = new String[1];
-        String operation = "removeHost";
-
+        // Set up the object names of the MBeans we are manipulating
+        ObjectName lname = null;
+        StringBuffer sb = null;
         try {
-            // Look up our MBeanFactory MBean
-            ObjectName fname =
-                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
-
-            // Look up our tree control data structure
-            TreeControl control = (TreeControl)
-                session.getAttribute("treeControlTest");
-
-            // Remove the specified hosts
-            for (int i = 0; i < hosts.length; i++) {
-                values[0] = hosts[i];
-                mBServer.invoke(fname, operation,
-                                values, removeHostTypes);
-                if (control != null) {
-                    control.selectNode(null);
-                    TreeControlNode node = control.findNode(hosts[i]);
-                    if (node != null) {
-                        node.remove();
-                    } else {
-                        getServlet().log("Missing TreeControlNode for " +
-                                         hosts[i]);
-                    }
-                } else {
-                    getServlet().log("Missing TreeControl attribute");
-                }
-            }
-
+            lname = new ObjectName(request.getParameter("select"));
         } catch (Exception e) {
-            getServlet().log
-                (resources.getMessage(locale, "users.error.invoke",
-                                      operation), e);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 resources.getMessage(locale, "users.error.invoke",
-                                      operation));
+            String message =
+                resources.getMessage("error.loggerName.bad",
+                                     request.getParameter("select"));
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
             return (null);
-
         }
 
-        // Report successful completion of this transaction
-        return (mapping.findForward("Save Successful"));
+        // Fill in the form values for display and editing
+        LoggerForm loggerFm = new LoggerForm();
+        session.setAttribute("loggerForm", loggerFm);
+        loggerFm.setAdminAction("Edit");
+        loggerFm.setObjectName(lname.toString());
+        sb = new StringBuffer("Logger (");
+        // FIX ME
+        sb.append(lname.getKeyProperty("className"));
+        sb.append(")");
+        loggerFm.setNodeLabel(sb.toString());
+        // FIX ME
+        loggerFm.setLoggerName("Logger");
+        loggerFm.setDebugLvlVals(Lists.getDebugLevels());        
+        loggerFm.setVerbosityLvlVals(Lists.getVerbosityLevels());        
+        loggerFm.setBooleanVals(Lists.getBooleanValues());
+        String attribute = null;
+        try {
 
+            // Copy scalar properties
+
+            // Calculate the type of logger we are managing
+            attribute = "className";
+            String className = 
+                (String) mBServer.getAttribute(lname, attribute);
+            int period = className.lastIndexOf('.');
+            String loggerType = className.substring(period + 1);
+            loggerFm.setLoggerType(loggerType);            
+            attribute = "debug";
+            loggerFm.setDebugLvl
+                (((Integer) mBServer.getAttribute(lname, attribute)).toString());            
+            attribute = "verbosity";
+            loggerFm.setVerbosityLvl
+                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            
+            if ("FileLogger".equals(loggerType)) {
+            // Initialize rest of variables.
+                attribute = "directory";
+                loggerFm.setDirectory
+                    ((String) mBServer.getAttribute(lname, attribute));
+                attribute = "prefix";
+                loggerFm.setPrefix
+                    ((String) mBServer.getAttribute(lname, attribute));
+                attribute = "suffix";
+                loggerFm.setSuffix
+                    ((String) mBServer.getAttribute(lname, attribute));           
+                attribute = "timestamp";
+                loggerFm.setTimestamp
+                    (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
+            }
+
+        } catch (Throwable t) {
+            getServlet().log
+                (resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute), t);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.attribute.get",
+                                      attribute));
+            return (null);
+        }
+        
+        // Forward to the logger display page
+        return (mapping.findForward("Logger"));
+        
     }
-    
+
+
 }

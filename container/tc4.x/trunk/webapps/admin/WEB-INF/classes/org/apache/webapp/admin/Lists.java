@@ -114,6 +114,19 @@ public class Lists {
     }
 
     /**
+     * Precomputed list of verbosity level labels and values.
+     */
+    private static List verbosityLevels = new ArrayList();
+
+    static {
+        verbosityLevels.add(new LabelValueBean("0", "0"));
+        verbosityLevels.add(new LabelValueBean("1", "1"));
+        verbosityLevels.add(new LabelValueBean("2", "2"));
+        verbosityLevels.add(new LabelValueBean("3", "3"));
+        verbosityLevels.add(new LabelValueBean("4", "4"));
+    }
+
+    /**
      * Precomputed list of (true,false) labels and values.
      */
     private static List booleanValues = new ArrayList();
@@ -122,7 +135,7 @@ public class Lists {
             booleanValues.add(new LabelValueBean("True", "true"));
             booleanValues.add(new LabelValueBean("False", "false"));
     }
-
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -133,6 +146,16 @@ public class Lists {
     public static List getDebugLevels() {
 
         return (debugLevels);
+
+    }
+    
+    /**
+     * Return a <code>List</code> of {@link LabelValueBean}s for the legal
+     * settings for <code>verbosity</code> properties.
+     */
+    public static List getVerbosityLevels() {
+
+        return (verbosityLevels);
 
     }
 

@@ -344,7 +344,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 new TreeControlNode(loggerName,
                                     "folder_16_pad.gif",
                                     nodeLabel,
-                                    "setUpLogger.do?select=" +
+                                    "EditLogger.do?select=" +
                                     URLEncoder.encode(loggerName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),

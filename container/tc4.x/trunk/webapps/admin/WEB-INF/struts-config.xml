@@ -27,10 +27,6 @@
     <form-bean      name="contextForm"
                     type="org.apache.webapp.admin.context.ContextForm"/>
                     
-    <!-- Logger form bean -->
-    <form-bean      name="loggerForm"
-                    type="org.apache.webapp.admin.logger.LoggerForm"/>
-
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
@@ -67,6 +63,14 @@
                     
     <form-bean      name="hostsForm"
                     type="org.apache.webapp.admin.host.HostsForm"/>
+
+   <!-- ============= Logger Module ============= -->
+
+    <form-bean      name="loggerForm"
+                    type="org.apache.webapp.admin.logger.LoggerForm"/>
+                    
+    <form-bean      name="loggersForm"
+                    type="org.apache.webapp.admin.logger.LoggersForm"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -124,19 +128,7 @@
     <forward        name="Connector"
                     path="/connector.jsp"
                 redirect="false"/>
-        
-    <forward        name="Host"
-                    path="/host/host.jsp"
-                redirect="false"/>
 
-    <forward        name="Add Host"
-                    path="/host/addHost.jsp"
-                redirect="false"/>
- 
-    <forward        name="Delete Host"
-                    path="/host/deleteHost.jsp"
-                redirect="false"/>
-       
     <forward        name="Context"
                     path="/context.jsp"
                 redirect="false"/>
@@ -149,10 +141,6 @@
                     path="/blank.jsp"
                 redirect="false"/>
 
-    <forward        name="Logger"
-                    path="/logger.jsp"
-                redirect="false"/>
-  
     <forward        name="User"
                     path="/user.jsp"
                 redirect="false"/>
@@ -172,7 +160,6 @@
     <forward        name="UserDBRealm"
                     path="/realm/userDBRealm.jsp"
                 redirect="false"/>
-
 
     <!-- ============ Service Module ============== -->
 
@@ -194,6 +181,17 @@
                     path="/host/hosts.jsp"
                 redirect="false"/>
 
+    <!-- ============ Logger Module ============== -->
+
+    <forward        name="Logger"
+                    path="/logger/logger.jsp"
+                redirect="false"/>
+
+    <forward        name="Loggers"
+                    path="/logger/loggers.jsp"
+                redirect="false"/>
+
+            
     <!-- ========== User Database Module ========== -->
 
     <forward        name="Group"
@@ -291,13 +289,6 @@
                scope="session">
     </action>
     
-    <!-- Set up Logger datastructure -->
-    <action    path="/setUpLogger"
-               type="org.apache.webapp.admin.logger.SetUpLoggerAction"
-               name="loggerForm"
-               scope="session">
-    </action>
-
     <!-- Set up Memory Realm datastructure -->
     <action    path="/setUpMemoryRealm"
                type="org.apache.webapp.admin.realm.SetUpMemoryRealmAction"
@@ -356,14 +347,6 @@
                name="contextForm"
               scope="session"
               input="/context.jsp">
-    </action>
-    
-     <!-- Process a logger change -->
-    <action    path="/logger"
-               type="org.apache.webapp.admin.logger.LoggerAction"
-               name="loggerForm"
-              scope="session"
-              input="/logger.jsp">
     </action>
     
     <!-- Process a set-locale action -->
@@ -465,6 +448,37 @@
                type="org.apache.webapp.admin.host.SaveHostAction"
                name="hostForm"
               input="/host/host.jsp"
+               scope="session"/>
+
+    <!-- ============= Logger Module ============== -->
+
+    <!-- Set up Add Logger transaction -->
+    <action    path="/AddLogger"
+               type="org.apache.webapp.admin.logger.AddLoggerAction">
+    </action>
+
+    <!-- Set up Delete Loggers transaction -->
+    <action    path="/DeleteLogger"
+               type="org.apache.webapp.admin.logger.DeleteLoggerAction"
+               name="loggersForm"
+               scope="request"/>
+
+    <!-- Perform Delete Loggers transaction -->
+    <action    path="/DeleteLoggers"
+               type="org.apache.webapp.admin.logger.DeleteLoggersAction"
+               name="loggersForm"
+               scope="request"/>
+
+    <!-- Set up Edit Logger transaction -->
+    <action    path="/EditLogger"
+               type="org.apache.webapp.admin.logger.EditLoggerAction">
+    </action>
+
+    <!-- Perform Save Logger transaction -->
+    <action    path="/SaveLogger"
+               type="org.apache.webapp.admin.logger.SaveLoggerAction"
+               name="loggerForm"
+              input="/logger/logger.jsp"
                scope="session"/>
                
     <!-- ========== User Database Module ========== -->

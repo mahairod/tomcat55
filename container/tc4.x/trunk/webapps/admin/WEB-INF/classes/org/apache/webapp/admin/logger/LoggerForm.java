@@ -67,7 +67,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import java.net.InetAddress;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Form bean for the logger page.
@@ -79,11 +79,16 @@ import java.util.ArrayList;
 public final class LoggerForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
-     
+    
     /**
-     * The text for the debug level.
+     * The administrative action represented by this form.
      */
-    private String debugLvl = "0";
+    private String adminAction = "Edit";
+
+  /**
+     * The object name of the Logger this bean refers to.
+     */
+    private String objectName = null;
     
     /**
      * The text for the logger name, used to retrieve
@@ -96,28 +101,18 @@ public final class LoggerForm extends ActionForm {
      * Specifies if it is a FileLogger, or SysErr or SysOut Logger.
      */
     private String loggerType = null;
+
+    /**
+     * The text for the debug level.
+     */
+    private String debugLvl = "0";
     
     /**
      * The text for the verbosity.
      */
     private String verbosityLvl = null;
     
-    /**
-     * Set of valid values for debug level.
-     */
-    private ArrayList debugLvlVals = null;
-    
-    /**
-     * Set of valid values for verbosity level.
-     */
-    private ArrayList verbosityLvlVals = null;
-    
-    /*
-     * Represent boolean (true, false) values for timestamp.
-     */    
-    private ArrayList booleanVals = null;
-    
-    /**
+   /**
      * The text for the directory.
      */
     private String directory = null;
@@ -142,9 +137,50 @@ public final class LoggerForm extends ActionForm {
      */
     private String nodeLabel = null;
     
+    private List debugLvlVals = null;
+    private List verbosityLvlVals = null;
+    private List booleanVals = null;
     
     // ------------------------------------------------------------- Properties
     
+       /**
+     * Return the administrative action represented by this form.
+     */
+    public String getAdminAction() {
+
+        return this.adminAction;
+
+    }
+
+
+    /**
+     * Set the administrative action represented by this form.
+     */
+    public void setAdminAction(String adminAction) {
+
+        this.adminAction = adminAction;
+
+    }
+
+    /**
+     * Return the object name of the Logger this bean refers to.
+     */
+    public String getObjectName() {
+
+        return this.objectName;
+
+    }
+
+
+    /**
+     * Set the object name of the Logger this bean refers to.
+     */
+    public void setObjectName(String objectName) {
+
+        this.objectName = objectName;
+
+    }
+
     /**
      * Return the Logger Name.
      */
@@ -198,44 +234,7 @@ public final class LoggerForm extends ActionForm {
         this.verbosityLvl = verbosityLvl;
         
     }
-    
-    /**
-     * Return the debugVals.
-     */
-    public ArrayList getDebugLvlVals() {
         
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(ArrayList debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    
-    /**
-     * Return the verbosityLvl Vals.
-     */
-    public ArrayList getVerbosityLvlVals() {
-        
-        return this.verbosityLvlVals;
-        
-    }
-    
-    /**
-     * Set the verbosityLvl Vals.
-     */
-    public void setVerbosityLvlVals(ArrayList verbosityLvlVals) {
-        
-        this.verbosityLvlVals = verbosityLvlVals;
-        
-    }
-    
     /**
      * Return the Debug Level Text.
      */
@@ -251,24 +250,6 @@ public final class LoggerForm extends ActionForm {
     public void setDebugLvl(String debugLvl) {
         
         this.debugLvl = debugLvl;
-        
-    }
-    
-    /**
-     * Return the booleanVals.
-     */
-    public ArrayList getBooleanVals() {
-        
-        return this.booleanVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setBooleanVals(ArrayList booleanVals) {
-        
-        this.booleanVals = booleanVals;
         
     }
     
@@ -361,6 +342,61 @@ public final class LoggerForm extends ActionForm {
         
     }
     
+    /**
+     * Return the debugVals.
+     */
+    public List getDebugLvlVals() {
+        
+        return this.debugLvlVals;
+        
+    }
+    
+    /**
+     * Set the debugVals.
+     */
+    public void setDebugLvlVals(List debugLvlVals) {
+        
+        this.debugLvlVals = debugLvlVals;
+        
+    }
+    
+    
+    /**
+     * Return the verbosity level values.
+     */
+    public List getVerbosityLvlVals() {
+        
+        return this.verbosityLvlVals;
+        
+    }
+    
+    /**
+     * Set the verbosity level values.
+     */
+    public void setVerbosityLvlVals(List verbosityLvlVals) {
+        
+        this.verbosityLvlVals = verbosityLvlVals;
+        
+    }
+    
+    /**
+     * Return the booleanVals.
+     */
+    public List getBooleanVals() {
+        
+        return this.booleanVals;
+        
+    }
+    
+    /**
+     * Set the booleanVals.
+     */
+    public void setBooleanVals(List booleanVals) {
+        
+        this.booleanVals = booleanVals;
+        
+    }
+    
     // --------------------------------------------------------- Public Methods
     
     /**
@@ -371,10 +407,11 @@ public final class LoggerForm extends ActionForm {
      */
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
-        //FIX ME -- is this needed for debug and verbosity?
+        this.objectName = null;
+        this.loggerName = null;
+        this.loggerType = null;
         this.debugLvl = "0";
-        this.verbosityLvl = "0";
-        
+        this.verbosityLvl = "0";        
         this.directory = null;
         this.prefix = null;
         this.suffix = null;
@@ -382,6 +419,34 @@ public final class LoggerForm extends ActionForm {
         
     }
     
+    /**
+     * Render this object as a String.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("LoggerForm[adminAction=");
+        sb.append(adminAction);
+        sb.append(",debugLvl=");
+        sb.append(debugLvl);
+        sb.append("verbosityLvl,=");
+        sb.append(verbosityLvl);
+        sb.append(",directory=");
+        sb.append(directory);
+        sb.append(",prefix='");
+        sb.append(prefix);
+        sb.append(",suffix='");
+        sb.append(suffix);
+        sb.append(",loggerType='");
+        sb.append(loggerType);
+        sb.append("',objectName='");
+        sb.append(objectName);
+        sb.append("',loggerName=");
+        sb.append(loggerName);
+        sb.append("]");
+        return (sb.toString());
+
+    }
+
     /**
      * Validate the properties that have been set from this HTTP request,
      * and return an <code>ActionErrors</code> object that encapsulates any

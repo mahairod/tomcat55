@@ -1,5 +1,6 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+
+<%@ page language="java" import="java.net.URLEncoder" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -7,7 +8,7 @@
 
 <html:html locale="true">
 
-<%@ include file="header.jsp" %>
+<%@ include file="../users/header.jsp" %>
 
 <!-- Body -->
 <body bgcolor="white">
@@ -16,30 +17,43 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/logger">
+<html:form method="POST" action="/SaveLogger">
+
+  <bean:define id="loggerName" name="loggerForm" property="loggerName"/>
+  <bean:define id="thisObjectName" type="java.lang.String"
+               name="loggerForm" property="objectName"/>
+  <html:hidden property="adminAction"/>
+  <html:hidden property="objectName"/>
+  <html:hidden property="loggerType"/>
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
-       <html:hidden property="loggerName"/>
-       <html:hidden property="loggerType"/>
        <div class="page-title-text" align="left"> 
-          <bean:write name="loggerForm" property="nodeLabel" scope="session"/>
+         <logic:equal name="loggerForm" property="adminAction" value="Create">
+            <bean:message key="actions.loggers.create"/>
+          </logic:equal>
+          <logic:equal name="loggerForm" property="adminAction" value="Edit">
+            <bean:message key="actions.loggers.edit"/>
+          </logic:equal>
        </div>
       </td>
       <td width="19%"> 
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
-            <controls:action> --------------------------------- </controls:action>
+            <controls:action disabled="true"> --------------------------------- </controls:action>
             <%--
-            <controls:action url="">  <bean:message key="actions.thislogger.delete"/> </controls:action>
-            --%>
+            <controls:action url='<%= "/DeleteLogger.do?select=" +
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.loggers.delete"/> 
+            </controls:action>            --%>
        </controls:actions>   
          </div>
       </td>
     </tr>
   </table>
-    <%@ include file="buttons.jsp" %>
+    <%@ include file="../buttons.jsp" %>
   <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -146,7 +160,7 @@
  </logic:equal>
   
     
-    <%@ include file="buttons.jsp" %>
+    <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>
 <p>&nbsp;</p>
