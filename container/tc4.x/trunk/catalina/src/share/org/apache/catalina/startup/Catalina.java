@@ -465,7 +465,8 @@ public class Catalina {
             digester.parse(is);
             fis.close();
         } catch (Exception e) {
-            System.out.println("Catalina.start: " + e);
+            System.out.println("Catalina.start using "
+                               + configFile() + ": " + e);
             e.printStackTrace(System.out);
             System.exit(1);
         }
