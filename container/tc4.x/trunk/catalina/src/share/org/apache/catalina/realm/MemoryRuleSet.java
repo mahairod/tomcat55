@@ -169,6 +169,9 @@ final class MemoryUserRule extends Rule {
     public void begin(Attributes attributes) throws Exception {
 
         String username = attributes.getValue("name");
+        if (username == null) {
+            username = attributes.getValue("username");
+        }
         String password = attributes.getValue("password");
         String roles = attributes.getValue("roles");
 
