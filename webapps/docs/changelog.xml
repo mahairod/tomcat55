@@ -14,6 +14,47 @@
 
 <body>
 
+<section name="Tomcat 5.0.26 (yoavs)">
+
+  <subsection name="General">
+    <changelog>
+      <fix>
+        <bug>28335</bug>: Fixed JavaDocs.
+      </fix>
+      <update>
+        Changed build dependency on JUnit from 3.7 to 3.8.1.
+      </update>
+    </changelog>
+  </subsection>
+  
+  <subsection name="Catalina">
+    <changelog>
+    </changelog>
+  </subsection>
+ 
+  <subsection name="Coyote">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Cluster">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Webapps">
+    <changelog>
+    </changelog>
+  </subsection>
+
+</section>
+
+
 <section name="Tomcat 5.0.25 (yoavs)">
 
   <subsection name="General">
