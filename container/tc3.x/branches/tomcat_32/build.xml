@@ -47,8 +47,8 @@
     <copyfile src="${servlet.jar}" dest="${tomcat.build}/lib/servlet.jar"/>
     <copyfile src="LICENSE" dest="${tomcat.build}/LICENSE"/>
 
-    <fixcrlf srcdir="${tomcat.build}" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${tomcat.build}" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${tomcat.build}" includes="**/*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tomcat.build}" includes="**/*.bat" cr="add"/>
 
     <chmod perm="+x" file="${tomcat.build}/bin/ant"/>
     <chmod perm="+x" file="${tomcat.build}/bin/antRun"/>
