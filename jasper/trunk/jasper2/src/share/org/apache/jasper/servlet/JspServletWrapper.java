@@ -122,6 +122,7 @@ public class JspServletWrapper {
     private ServletConfig config;
     private Options options;
     private boolean firstTime = true;
+    private boolean reload = true;
     private boolean isTagFile;
     private int tripCount;
 
@@ -169,14 +170,18 @@ public class JspServletWrapper {
         return ctxt;
     }
 
+    public void setReload(boolean reload) {
+        this.reload = reload;
+    }
+
     public Servlet getServlet()
         throws ServletException, IOException, FileNotFoundException
     {
-        if (ctxt.isReload()) {
+        if (reload) {
             synchronized (this) {
                 // Synchronizing on jsw enables simultaneous loading
                 // of different pages, but not the same page.
-                if (ctxt.isReload()) {
+                if (reload) {
                     // This is to maintain the original protocol.
                     destroy();
                     
@@ -215,7 +220,7 @@ public class JspServletWrapper {
                     ctxt.compile();
                 }
             }
-            if (ctxt.isReload()) {
+            if (reload) {
                 tagHandlerClass = ctxt.load();
             }
         } catch (FileNotFoundException ex) {
@@ -248,7 +253,7 @@ public class JspServletWrapper {
 	try {
 	    Object target;
 	    if (isTagFile) {
-                if (ctxt.isReload()) {
+                if (reload) {
                     tagHandlerClass = ctxt.load();
                 }
 		target = tagHandlerClass.newInstance();
@@ -298,7 +303,7 @@ public class JspServletWrapper {
                 }
             }
 
-            if (ctxt.isReload()) {
+            if (reload) {
                 getServlet();
             }
 

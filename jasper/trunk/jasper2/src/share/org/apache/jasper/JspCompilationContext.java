@@ -115,8 +115,7 @@ public class JspCompilationContext {
     private JspRuntimeContext rctxt;
 
     private int removed = 0;
-    private boolean reload = true;
-    
+
     private URLClassLoader jspLoader;
     private URL[] outUrls;
     private Class servletClass;
@@ -570,7 +569,7 @@ public class JspCompilationContext {
 	if (isPackagedTagFile || jspCompiler.isOutDated()) {
             try {
                 jspCompiler.compile();
-                reload = true;
+                jsw.setReload(true);
             } catch (JasperException ex) {
                 throw ex;
             } catch (Exception ex) {
@@ -579,12 +578,6 @@ public class JspCompilationContext {
 					  ex);
             }
 	}
-    }
-
-    /** True if the servlet needs loading
-     */
-    public boolean isReload() {
-        return reload;
     }
 
     // ==================== Manipulating the class ====================
@@ -616,7 +609,7 @@ public class JspCompilationContext {
 				      ex);
         }
         removed = 0;
-        reload = false;
+        jsw.setReload(false);
         return servletClass;
     }
 
