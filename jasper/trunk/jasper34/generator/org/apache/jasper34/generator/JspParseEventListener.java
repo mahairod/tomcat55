@@ -162,7 +162,8 @@ public class JspParseEventListener implements ParseEventListener {
             String uri = (String) attrs.get("uri");
             String prefix = (String) attrs.get("prefix");
             try {
-		pageInfo.libraries.addTagLibrary( prefix, uri );
+		pageInfo.libraries.addTagLibrary( prefix, uri,
+						  pageInfo.getJspFile() );
             } catch (Exception ex) {
                 Object[] args = new Object[] { uri, ex.getMessage() };
                 throw new CompileException(start, containerL.getString("jsp.error.badtaglib",

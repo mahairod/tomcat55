@@ -120,8 +120,10 @@ public class ServletWriter extends JavaSourceGenerator {
     private void generateHeader(JspPageInfo pageInfo)
 	throws JasperException
     {
-        String servletPackageName = pageInfo.getServletPackageName();
-        String servletClassName = pageInfo.getServletClassName();
+        String servletPackageName =
+	    pageInfo.getMangler().getPackageName();
+        String servletClassName =
+	    pageInfo.getMangler().getClassName();
 	// First the package name:
 	this.setPackage( servletPackageName );
 	
@@ -233,7 +235,8 @@ public class ServletWriter extends JavaSourceGenerator {
     private void generateConstructor(JspPageInfo pageInfo )
 	throws JasperException
     {
-        this.println("public "+ pageInfo.getServletClassName()+"( ) {");
+        this.println("public "+
+		     pageInfo.getMangler().getClassName()+"( ) {");
         this.println("}");
         this.println();
     }
