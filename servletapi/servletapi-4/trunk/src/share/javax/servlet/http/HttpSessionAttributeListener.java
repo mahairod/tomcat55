@@ -63,11 +63,12 @@ package javax.servlet.http;
 import java.util.EventListener;
 
 	/** This listener interface can be implemented in order to
-	* get notifications of changes made to sessions within this web application.
-	 * @since	v 2.3
+	* get notifications of changes to the attribute lists of sessions within
+	* this web application.
+	* @since	v 2.3
 */
 
-public interface HttpSessionAttributesListener extends EventListener {
+public interface HttpSessionAttributeListener extends EventListener {
 	/** Notification that an attribute has been added to a session.*/
     public void attributeAdded ( HttpSessionBindingEvent se );
 	/** Notification that an attribute has been removed from a session.*/

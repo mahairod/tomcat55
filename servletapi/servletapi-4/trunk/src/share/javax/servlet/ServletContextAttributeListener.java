@@ -10,7 +10,7 @@ import java.util.EventListener;
 	 * @since	v 2.3
 	*/
 
-public interface ServletContextAttributesListener extends EventListener {
+public interface ServletContextAttributeListener extends EventListener {
 	/** Notification that a new attribute was added to the servlet context. Called after the attribute is added.*/
 public void attributeAdded(ServletContextAttributeEvent scab);
 	/** Notification that an existing attribute has been remved from the servlet context. Called after the attribute is removed.*/
