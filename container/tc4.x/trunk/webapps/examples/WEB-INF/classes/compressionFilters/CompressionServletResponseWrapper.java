@@ -276,8 +276,19 @@ public class CompressionServletResponseWrapper extends HttpServletResponseWrappe
         if (debug > 1) {
             System.out.println("stream is set to "+stream+" in getWriter");
         }
-        String charset = getCharsetFromContentType(contentType);
-        writer = new PrintWriter((charset == null)? new OutputStreamWriter(stream) : new OutputStreamWriter(stream, charset));
+        //String charset = getCharsetFromContentType(contentType);
+        String charEnc = origResponse.getCharacterEncoding();
+        if (debug > 1) {
+            System.out.println("character encoding is " + charEnc);
+        }
+        // HttpServletResponse.getCharacterEncoding() shouldn't return null
+        // according the spec, so feel free to remove that "if"
+        if (charEnc != null) {
+            writer = new PrintWriter(new OutputStreamWriter(stream, charEnc));
+        } else {
+            writer = new PrintWriter(stream);
+        }
+        
         return (writer);
 
     }
