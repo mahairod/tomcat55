@@ -484,7 +484,12 @@ public class DeltaManager
                     session.setManager(this);
                     session.setValid(true);
                     session.setPrimarySession(false);
+                    //in case the nodes in the cluster are out of 
+                    //time synch, this will make sure that we have the
+                    //correct timestamp, isValid returns true, cause accessCount=1
                     session.access();
+                    //make sure that the session gets ready to expire if needed
+                    session.setAccessCount(0);
                     sessions.put(session.getId(), session);
                 }
             } catch (ClassNotFoundException e) {
