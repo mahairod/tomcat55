@@ -355,7 +355,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
         if (urlPort == -1) {
             urlPort = 80;
         }
-	if (request.getServerPort() != urlPort)
+	int serverPort = request.getServerPort();
+	if (serverPort == -1)	// Work around bug in java.net.URL.getHost()
+	    serverPort = 80;
+	if (serverPort != urlPort)
 	    return (false);
 	String contextPath = request.getContext().getPath();
 	if ((contextPath != null) && (contextPath.length() > 0)) {
