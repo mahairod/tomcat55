@@ -86,7 +86,7 @@ import org.apache.catalina.util.StringManager;
  * @author Jean-Francois Arcand
  */
 
-public class SecurityUtil{
+public final class SecurityUtil{
     
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( SecurityUtil.class );
