@@ -368,6 +368,20 @@ public final class FileResources extends ResourcesBase {
         }
 
 	File file = new File(base, normalized.substring(1));
+
+        String absPath = normalize(file.getAbsolutePath());
+        String canPath = null;
+        try {
+            canPath = file.getCanonicalPath();
+            if (canPath != null)
+                canPath = normalize(canPath);
+        } catch (IOException e) {
+        }
+        if ((canPath == null) || (absPath == null)
+            || (!canPath.equals(absPath)))
+            return (false);
+
+        //File file = file(normalized.substring(1));
         if (file != null) {
             //            if (debug >= 1)
             //                log("exists(" + path + ") --> " + file.exists() +
@@ -694,10 +708,22 @@ public final class FileResources extends ResourcesBase {
 	if (name == null)
 	    return (null);
 	File file = new File(base, name.substring(1));
-	if (file.exists() && file.canRead())
-	    return (file);
-	else
+        if (file.exists() && file.canRead()) {
+            String absPath = normalize(file.getAbsolutePath());
+            String canPath = null;
+            try {
+                canPath = file.getCanonicalPath();
+                if (canPath != null)
+                    canPath = normalize(canPath);
+            } catch (IOException e) {
+            }
+            if ((canPath == null) || (absPath == null)
+                || (!canPath.equals(absPath)))
+                return (null);
+            return (file);
+	} else {
 	    return (null);
+        }
 
     }
 
