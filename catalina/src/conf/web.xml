@@ -125,10 +125,6 @@
   <!--   keepgenerated       Should we keep the generated Java source code  -->
   <!--                       for each page instead of deleting it? [true]   -->
   <!--                                                                      -->
-  <!--   largefile           Should we store the static content of JSP      -->
-  <!--                       pages in external data files, to reduce the    -->
-  <!--                       size of the generated servlets?  [false]       -->
-  <!--                                                                      -->
   <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
   <!--                       by this servlet.  Increasing levels cause the  -->
   <!--                       generation of more messages.  Valid values are -->
@@ -143,6 +139,10 @@
   <!--                                                                      -->
   <!--   suppressSmap        Should the generation of SMAP info for JSR45   -->
   <!--                       debugging be suppressed? [false]               -->
+  <!--                                                                      -->
+  <!--   dumpSmap            Should the SMAP info for JSR45 debugging be    -->
+  <!--                       dumped to a file? [false]                      -->
+  <!--                       False if suppressSmap is true                  -->
   <!--                                                                      -->
   <!--   scratchdir          What scratch directory should we use when      -->
   <!--                       compiling JSP pages?  [default work directory  -->
