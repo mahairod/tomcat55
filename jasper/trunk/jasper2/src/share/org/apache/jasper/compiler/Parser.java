@@ -97,6 +97,7 @@ public class Parser {
     private ErrorDispatcher err;
     private int scriptlessCount;
     private boolean isTagFile;
+    private boolean directivesOnly;
     
     // Virtual body content types, to make parsing a little easier.
     // These are not accessible from outside the parser.
@@ -110,7 +111,8 @@ public class Parser {
     /**
      * The constructor
      */
-    private Parser(ParserController pc, JspReader reader, boolean isTagFile) {
+    private Parser(ParserController pc, JspReader reader, boolean isTagFile,
+		   boolean directivesOnly) {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
@@ -119,6 +121,7 @@ public class Parser {
 	this.currentFile = reader.mark().getFile();
         this.scriptlessCount = 0;
 	this.isTagFile = isTagFile;
+	this.directivesOnly = directivesOnly;
         start = reader.mark();
     }
 
@@ -134,10 +137,18 @@ public class Parser {
     public static Node.Nodes parse(ParserController pc,
 				   JspReader reader,
 				   Node parent,
-				   boolean isTagFile) throws JasperException {
-	Parser parser = new Parser(pc, reader, isTagFile);
+				   boolean isTagFile,
+				   boolean directivesOnly)
+		throws JasperException {
+
+	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly);
 
 	Node.Root root = new Node.Root(null, reader.mark(), parent);
+
+	if (directivesOnly) {
+	    parser.parseTagFileDirectives(root);
+	    return new Node.Nodes(root);
+	}
 
 	// For the Top level page, add inlcude-prelude and include-coda
 	PageInfo pageInfo = pc.getCompiler().getPageInfo();
@@ -174,7 +185,7 @@ public class Parser {
     public static Attributes parseAttributes(ParserController pc,
 					     JspReader reader)
 		throws JasperException {
-	Parser tmpParser = new Parser(pc, reader, false);
+	Parser tmpParser = new Parser(pc, reader, false, false);
 	return tmpParser.parseAttributes();
     }
 
@@ -394,6 +405,7 @@ public class Parser {
      *   Directive ::= ( S Attribute)*
      */
     private void parseTaglibDirective(Node parent) throws JasperException {
+
 	Attributes attrs = parseAttributes();
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
@@ -452,6 +464,11 @@ public class Parser {
 	    directive = "&lt;%@ include";
 	    parseIncludeDirective(parent);
 	} else if (reader.matches("taglib")) {
+	    if (directivesOnly) {
+	        // No need to get the tagLibInfo objects.  This alos suppresses
+	        // parsing of any tag files used in this tag file.
+	        return;
+	    }
 	    directive = "&lt;%@ taglib";
 	    parseTaglibDirective(parent);
 	} else if (reader.matches("tag")) {
@@ -1356,14 +1373,14 @@ public class Parser {
      *                 | ( '<jsp:declaration'  XMLDeclarationBody )
      *                 | ( '<%='               ExpressionBody     )
      *                 | ( '<jsp:expression'   XMLExpressionBody  )
-     *                  | ( '${'                ELExpressionBody   )
+     *                 | ( '${'                ELExpressionBody   )
      *                 | ( '<%'                ScriptletBody      )
      *                 | ( '<jsp:scriptlet'    XMLScriptletBody   )
-     *                  | ( '<jsp:text'         XMLTemplateText    )
+     *                 | ( '<jsp:text'         XMLTemplateText    )
      *                 | ( '<jsp:'             StandardAction     )
      *                 | ( '<'                 CustomAction
-     *                                          CustomActionBody   )
-     *			| TemplateText
+     *                                         CustomActionBody   )
+     *	               | TemplateText
      */
     private void parseElements(Node parent) 
         throws JasperException 
@@ -1407,21 +1424,21 @@ public class Parser {
     }
 
     /*
-     * ScriptlessBody ::=   ( '<%--'              JSPCommentBody      )
+     * ScriptlessBody ::=  ( '<%--'              JSPCommentBody      )
      *                   | ( '<%@'               DirectiveBody       )
-     *                    | ( '<jsp:directive.'   XMLDirectiveBody    )
+     *                   | ( '<jsp:directive.'   XMLDirectiveBody    )
      *                   | ( '<%!'               <TRANSLATION_ERROR> )
-     *                    | ( '<jsp:declaration'  <TRANSLATION_ERROR> )
+     *                   | ( '<jsp:declaration'  <TRANSLATION_ERROR> )
      *                   | ( '<%='               <TRANSLATION_ERROR> )
      *                   | ( '<jsp:expression'   <TRANSLATION_ERROR> )
      *                   | ( '<%'                <TRANSLATION_ERROR> )
      *                   | ( '<jsp:scriptlet'    <TRANSLATION_ERROR> )
-     *                    | ( '<jsp:text'         XMLTemplateText     )
-     *                    | ( '${'                ELExpressionBody    )
+     *                   | ( '<jsp:text'         XMLTemplateText     )
+     *                   | ( '${'                ELExpressionBody    )
      *                   | ( '<jsp:'             StandardAction      )
      *                   | ( '<'                 CustomAction
-     *                                            CustomActionBody    )
-     *			  | TemplateText
+     *                                           CustomActionBody    )
+     *                   | TemplateText
      */
     private void parseElementsScriptless(Node parent) 
         throws JasperException 
@@ -1724,6 +1741,23 @@ public class Parser {
 	}
 
 	return JAVAX_BODY_CONTENT_TEMPLATE_TEXT;
+    }
+
+    private void parseTagFileDirectives(Node parent)
+        throws JasperException
+    {
+	reader.setSingleFile(true);
+	reader.skipUntil("<");
+        while (reader.hasMoreInput()) {
+            if (reader.matches("%--")) {
+                parseComment(parent);
+            } else if (reader.matches("%@")) {
+                parseDirective(parent);
+            } else if (reader.matches("jsp:directive.")) {
+                parseXMLDirective(parent);
+            }
+	    reader.skipUntil("<");
+	}
     }
 }
 

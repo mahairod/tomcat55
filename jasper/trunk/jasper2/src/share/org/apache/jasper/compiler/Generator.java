@@ -1479,8 +1479,6 @@ public class Generator {
 	    String tagEvalVar = "_jspx_eval_" + baseVar;
 	    String tagHandlerVar = "_jspx_th_" + baseVar;
 
-	    Class tagHandlerClass = n.getTagHandlerClass();
-
 	    // If the tag contains no scripting element, generate its codes
 	    // to a method.
 	    ServletWriter outSave = null;

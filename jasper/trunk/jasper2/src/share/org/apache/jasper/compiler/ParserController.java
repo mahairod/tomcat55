@@ -114,9 +114,16 @@ public class ParserController {
     /*
      * Tells if the file to be parsed is a regular jsp page or tag file.
      * Usually we get the info from the compilation context, but it can
-     * be temporarily overrideen with a parameter to the parse method
+     * be temporarily overridden with a parameter to the parse method,
+     * when parsing a tag file for its tagFileInfo content.
      */
     private boolean isTagFile = false;
+
+    /*
+     * True if the file to be parsed is a tag file and only we are only
+     * interested for the directives needed for constructing a TagFileInfo.
+     */ 
+    private boolean directivesOnly = false;
 
     /*
      * The encoding of the "top" file. This encoding is used
@@ -158,6 +165,7 @@ public class ParserController {
     public Node.Nodes parse(String inFileName)
 	        throws FileNotFoundException, JasperException, IOException {
 	isTagFile = ctxt.isTagFile();
+	directivesOnly = false;
 	return parseFile(inFileName, null);
     }
 
@@ -182,6 +190,7 @@ public class ParserController {
 	        throws FileNotFoundException, JasperException, IOException {
 	isTagFile = true;
 	isTopFile = true;
+	directivesOnly = true;
 	return parseFile(inFileName, null);
     }
 
@@ -190,6 +199,8 @@ public class ParserController {
      * This is invoked recursively to handle 'include' directives.
      *
      * @param inFileName The name of the jsp file to be parsed.
+     * @param parent The parent node for the parser, and is non-null when
+     *               parsing an included file
      */
     private Node.Nodes parseFile(String inFileName, Node parent)
 	        throws FileNotFoundException, JasperException, IOException {
@@ -231,7 +242,8 @@ public class ParserController {
 		JspReader r = new JspReader(ctxt, absFileName, encoding,
 					    reader,
 					    compiler.getErrorDispatcher());
-                parsedPage = Parser.parse(this, r, parent, isTagFile);
+                parsedPage = Parser.parse(this, r, parent, isTagFile,
+					  directivesOnly);
             }
 	    baseDirStack.pop();
         } finally {
