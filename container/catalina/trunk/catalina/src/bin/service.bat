@@ -64,12 +64,21 @@ rem Each command line option is prefixed with PR_
 set PR_DISPLAYNAME=Apache Tomcat
 set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
 set PR_INSTALL=%EXECUTABLE%
-
-"%EXECUTABLE%" //IS//%SERVICE_NAME% --LogPath %CATALINA_HOME%\logs --Jvm auto --Classpath %CATALINA_HOME%\bin\bootstrap.jar --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
+set PR_LOGPATH=%CATALINA_HOME%\logs
+set PR_CLASSPATH=%CATALINA_HOME%\bin\bootstrap.jar
+"%EXECUTABLE%" //IS//%SERVICE_NAME% --Jvm auto --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
+rem Clear the environment variables. They are not needed any more.
+set PR_DISPLAYNAME=
+set PR_DESCRIPTION=
+set PR_INSTALL=
+set PR_LOGPATH=
+set PR_CLASSPATH=
 rem Set extra parameters
 "%EXECUTABLE%" //US//%SERVICE_NAME% --JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\common\endorsed" --StartMode jvm --StopMode jvm
 rem More extra parameters
-"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp" --StdOutput %CATALINA_HOME%\logs\stdout.log
+set PR_STDOUTPUT=%CATALINA_HOME%\logs\stdout.log
+set PR_STDERROR=%CATALINA_HOME%\logs\stderr.log
+"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp"
 echo The service '%SERVICE_NAME%' has been installed
 
 :end
