@@ -95,6 +95,16 @@ import org.apache.catalina.util.StringManager;
  * The following actions and parameters (starting after the servlet path)
  * are supported:
  * <ul>
+ * <li><b>/install?config={config-url}</b> - Install and start a new
+ *     web application, based on the contents of the context configuration
+ *     file found at the specified URL.  The <code>docBase</code> attribute
+ *     of the context configuration file is used to locate the actual
+ *     WAR or directory containing the application.</li>
+ * <li><b>/install?config={config-url}&war={war-url}/</b> - Install and start
+ *     a new web application, based on the contents of the context
+ *     configuration file found at <code>{config-url}</code>, overriding the
+ *     <code>docBase</code> attribute with the contents of the web
+ *     application archive found at <code>{war-url}</code>.</li>
  * <li><b>/install?path=/xxx&war={war-url}</b> - Install and start a new
  *     web application attached to context path <code>/xxx</code>, based
  *     on the contents of the web application archive found at the
@@ -263,6 +273,7 @@ public class ManagerServlet
         String command = request.getPathInfo();
         if (command == null)
             command = request.getServletPath();
+        String config = request.getParameter("config");
         String path = request.getParameter("path");
         String war = request.getParameter("war");
 
@@ -274,7 +285,7 @@ public class ManagerServlet
         if (command == null) {
             writer.println(sm.getString("managerServlet.noCommand"));
         } else if (command.equals("/install")) {
-            install(writer, path, war);
+            install(writer, config, path, war);
         } else if (command.equals("/list")) {
             list(writer);
         } else if (command.equals("/reload")) {
@@ -345,41 +356,86 @@ public class ManagerServlet
      * web application archive.
      *
      * @param writer Writer to render results to
+     * @param config URL of the context configuration file to be installed
      * @param path Context path of the application to be installed
      * @param war URL of the web application archive to be installed
      */
-    protected void install(PrintWriter writer, String path, String war) {
+    protected void install(PrintWriter writer, String config,
+                           String path, String war) {
 
-        if (debug >= 1)
-            log("install: Installing web application at '" + path +
-                "' from '" + war + "'");
-
-        if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
-            writer.println(sm.getString("managerServlet.invalidPath", path));
-            return;
+        if (debug >= 1) {
+            if (config != null) {
+                if (war != null) {
+                    log("install: Installing context configuration at '" +
+                        config + "' from '" + war + "'");
+                } else {
+                    log("install: Installing context configuration at '" +
+                        config + "'");
+                }
+            } else {
+                log("install: Installing web application at '" + path +
+                    "' from '" + war + "'");
+            }
         }
-        String displayPath = path;
-        if( path.equals("/") )
-            path = "";
-        if ((war == null) ||
-            (!war.startsWith("file:") && !war.startsWith("jar:"))) {
-            writer.println(sm.getString("managerServlet.invalidWar", war));
-            return;
-        }
 
-        try {
-            Context context =  deployer.findDeployedApp(path);
-            if (context != null) {
-                writer.println(sm.getString("managerServlet.alreadyContext",
-                                            displayPath));
+        if (config != null) {
+
+            if ((war != null) &&
+                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
+                writer.println(sm.getString("managerServlet.invalidWar", war));
                 return;
             }
-            deployer.install(path, new URL(war));
-            writer.println(sm.getString("managerServlet.installed", displayPath));
-        } catch (Throwable t) {
-            getServletContext().log("ManagerServlet.install[" + displayPath + "]", t);
-            writer.println(sm.getString("managerServlet.exception",
-                                        t.toString()));
+
+            try {
+                if (war == null) {
+                    deployer.install(new URL(config), null);
+                } else {
+                    deployer.install(new URL(config), new URL(war));
+                }
+                writer.println(sm.getString("managerServlet.configured",
+                                            config));
+            } catch (Throwable t) {
+                getServletContext().log("ManagerServlet.configure[" +
+                                        config + "]", t);
+                writer.println(sm.getString("managerServlet.exception",
+                                            t.toString()));
+            }
+
+        } else {
+
+            if ((path == null) || (!path.startsWith("/") && path.equals(""))) {
+                writer.println(sm.getString("managerServlet.invalidPath",
+                                            path));
+                return;
+            }
+            String displayPath = path;
+            if("/".equals(path)) {
+                path = "";
+            }
+            if ((war == null) ||
+                (!war.startsWith("file:") && !war.startsWith("jar:"))) {
+                writer.println(sm.getString("managerServlet.invalidWar", war));
+                return;
+            }
+
+            try {
+                Context context =  deployer.findDeployedApp(path);
+                if (context != null) {
+                    writer.println
+                        (sm.getString("managerServlet.alreadyContext",
+                                      displayPath));
+                    return;
+                }
+                deployer.install(path, new URL(war));
+                writer.println(sm.getString("managerServlet.installed",
+                                            displayPath));
+            } catch (Throwable t) {
+                getServletContext().log("ManagerServlet.install[" +
+                                        displayPath + "]", t);
+                writer.println(sm.getString("managerServlet.exception",
+                                            t.toString()));
+            }
+
         }
 
     }
