@@ -94,38 +94,30 @@
          group="Context"
          type="org.apache.catalina.core.StandardContext">
     
+    <attribute name="children"
+               description="Object names of all children"
+               type="[Ljavax.management.ObjectName;"/>
+               
     <attribute   name="cookies"
                description="Should we attempt to use cookies for session id
                communication?"
-               type="boolean"/>
-      
-    <attribute name="crossContext"
-               description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
-               type="boolean"/>
-      
-    <attribute name="defaultWebXml"
-               description="Location of the default web.xml resource or file"
-               type="java.lang.String"/>
-      
-    <attribute name="engineName"
-               description="Name of the engine domain, if different from the context domain"
-               type="java.lang.String"/>
-
-    <attribute name="objectName"
-               description="Name of the object"
-               type="java.lang.String"/>
-      
-    <attribute name="privileged"
-               description="Access to tomcat internals"
                type="boolean"/>
       
     <attribute name="compilerClasspath"
                description="The compiler classpath to use"
                type="java.lang.String"/>
       
+    <attribute name="crossContext"
+               description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
+               type="boolean"/>
+      
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
+               
+    <attribute name="defaultWebXml"
+               description="Location of the default web.xml resource or file"
+               type="java.lang.String"/>
                
     <attribute name="deploymentDescriptor"
                description="String deployment descriptor "
@@ -134,17 +126,25 @@
     <attribute name="docBase"
                description="The document root for this web application"
                type="java.lang.String"/>
-
-    <attribute name="valveObjectNames"
-               description="ObjectNames for the valves associated with this container"
-               type="[Ljavax.management.ObjectName;"
-               writeable="false"/>
+      
+    <attribute name="engineName"
+               description="Name of the engine domain, if different from the context domain"
+               type="java.lang.String"/>
 
     <attribute name="environments"
                description="MBean Names of the set of defined environment entries for this web application"
                type="[Ljava.lang.String;"
                writeable="false"/>
-      
+
+    <attribute name="eventProvider"
+               description="Event provider support for this managed object"
+               is="true"
+               type="boolean"/>
+                              
+    <attribute name="javaVMs"
+               description="The Java virtual machines on which this module is running"
+               type="[Ljava.lang.String;"/>
+
     <attribute name="loader"
                description="Associated loader."
                type="org.apache.catalina.Loader" />
@@ -157,6 +157,10 @@
                description="The object used for mapping"
                type="java.lang.Object"/>
       
+    <attribute name="objectName"
+               description="Name of the object"
+               type="java.lang.String"/>
+      
     <attribute name="override"
                description="The DefaultContext override flag for this web application"
                type="boolean"/>
@@ -168,24 +172,11 @@
     <attribute name="path"
                description="The context path for this Context"
                type="java.lang.String"/>
-      
-    <attribute name="startupTime"
-               description="Startup time for this context"
-               type="long"/>
                
-    <attribute name="state"
-               description="Current state of this component"
-               type="int"/>
-                     
-    <attribute name="tldScanTime"
-               description="Time spend scanning jars for TLDs for this context"
-               type="long"/>
+    <attribute name="privileged"
+               description="Access to tomcat internals"
+               type="boolean"/>
       
-    <attribute name="servlets"
-               description="JSR77 list of servlets"
-               type="[Ljava.lang.String;"
-               writeable="false"/>
-
     <attribute name="reloadable"
                description="The reloadable flag for this web application"
                type="boolean"/>
@@ -194,7 +185,34 @@
                description="MBean Names of all the defined resource references for this application."
                type="[Ljava.lang.String;"
                writeable="false"/>
-      
+
+    <attribute name="server"
+               description="The J2EE Server this module is deployed on"
+               type="java.lang.String"/>
+                              
+    <attribute name="servlets"
+               description="JSR77 list of servlets"
+               type="[Ljava.lang.String;"
+               writeable="false"/>
+               
+    <attribute name="startupTime"
+               description="Startup time for this context"
+               type="long"/>
+               
+    <attribute name="state"
+               description="Current state of this component"
+               type="int"/>
+                     
+    <attribute name="stateManageable"
+               description="State management support for this managed object"
+               is="true"
+               type="boolean"/>
+               
+    <attribute name="statisticsProvider"
+               description="Performance statistics support for this managed object"
+               is="true"
+               type="boolean"/>
+               
     <attribute name="staticResources"
                description="Static resources associated with the context."
                type="javax.naming.directory.DirContext"
@@ -203,11 +221,20 @@
     <attribute   name="swallowOutput"
                description="Flag to set to cause the system.out and system.err to be redirected to the logger when executing a servlet"
                type="boolean"/>
+               
+    <attribute name="tldScanTime"
+               description="Time spend scanning jars for TLDs for this context"
+               type="long"/>
 
     <attribute name="useNaming"
                description="Create a JNDI naming context for this application?"
                is="true"
                type="boolean"/>
+               
+    <attribute name="valveObjectNames"
+               description="ObjectNames for the valves associated with this container"
+               type="[Ljavax.management.ObjectName;"
+               writeable="false"/>
 
     <attribute name="welcomeFiles"
                description="The welcome files for this context"
@@ -217,10 +244,6 @@
     <attribute name="workDir"
                description="The pathname to the work directory for this context"
                type="java.lang.String"/>
-      
-    <attribute name="children"
-               description="Object names of all children"
-               type="[Ljavax.management.ObjectName;"/>
       
     <operation name="addEnvironment"
                description="Add an environment entry for this web application"
@@ -626,16 +649,31 @@
          domain="Catalina"
          group="Wrapper"
          type="org.apache.catalina.core.StandardWrapper">
-    
+               
     <attribute name="engineName"
                description="Fully qualified class name of the managed object"
                type="java.lang.String"
                writeable="false"/>
+               
+    <attribute name="eventProvider"
+               description="Event provider support for this managed object"
+               is="true"
+               type="boolean"/>
 
     <attribute name="objectName"
                description="Name of the object"
                type="java.lang.String"/>
 
+    <attribute name="stateManageable"
+               description="State management support for this managed object"
+               is="true"
+               type="boolean"/>
+
+    <attribute name="statisticsProvider"
+               description="Performance statistics support for this managed object"
+               is="true"
+               type="boolean"/>
+                              
     <operation name="findMappings"
                description="Return the mappings associated with this wrapper"
                impact="INFO"

@@ -1578,4 +1578,22 @@ public class StandardWrapper
             log.info("Error registering servlet with jmx " + this);
         }
     }
+    
+
+    // ------------------------------------------------------------- Attributes
+        
+        
+    public boolean IsEventProvider() {
+        return false;
+    }
+    
+    public boolean IsStateManageable() {
+        return false;
+    }
+    
+    public boolean IsStatisticsProvider() {
+        return false;
+    }
+        
+        
 }
