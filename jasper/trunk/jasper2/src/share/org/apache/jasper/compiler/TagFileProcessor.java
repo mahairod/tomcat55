@@ -413,6 +413,7 @@ class TagFileProcessor {
         JspCompilationContext ctxt = compiler.getCompilationContext();
         JspRuntimeContext rctxt = ctxt.getRuntimeContext();
         JspServletWrapper wrapper = null;
+        int tripCount;
         if( rctxt != null ) {
             wrapper =
                 (JspServletWrapper) rctxt.getWrapper(tagFilePath);
@@ -427,6 +428,8 @@ class TagFileProcessor {
                                                     (JarFile) ctxt.getTagFileJars().get(tagFilePath));
                     rctxt.addWrapper(tagFilePath,wrapper);
                 }
+                tripCount = wrapper.incTripCount();
+
             }
         } else {
             wrapper = new JspServletWrapper(ctxt.getServletContext(),
@@ -436,11 +439,11 @@ class TagFileProcessor {
                                             ctxt.getRuntimeContext(),
                                             (JarFile)ctxt.getTagFileJars().get(tagFilePath)
                                             );
+            tripCount = wrapper.incTripCount();
         }
                                                                              
 
         Class tagClazz;
-        int tripCount = wrapper.incTripCount();
         try {
             if (tripCount > 0) {
                 // When tripCount is greater than zero, a circular
