@@ -119,7 +119,7 @@ regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-
 
 # ----- Xerces XML Parser, version 2.3.0 -----
 xerces.home=${base.path}/xerces-2_3_0
-xerces.lib=${xerces.home}
+xerces.lib=${xerces.home}/tools
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 xerces.loc=http://xml.apache.org/dist/xerces-j/old_xerces2/Xerces-J-bin.2.3.0.tar.gz
