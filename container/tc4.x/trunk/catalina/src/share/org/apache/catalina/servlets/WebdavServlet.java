@@ -510,8 +510,10 @@ public class WebdavServlet
                     String[] children = 
                         resources.getCollectionMembers(currentPath);
                     
-                    for (int i=0; i<children.length; i++) {
-                        stackBelow.push(children[i]);
+                    if (children != null) {
+                        for (int i=0; i<children.length; i++) {
+                            stackBelow.push(children[i]);
+                        }
                     }
                     
                     if (depth > 0) {
