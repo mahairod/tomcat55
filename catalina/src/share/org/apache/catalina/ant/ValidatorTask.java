@@ -68,8 +68,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Constants;
-import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.DigesterFactory;
 import org.apache.commons.digester.Digester;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -134,7 +135,7 @@ public class ValidatorTask extends Task {
         Thread.currentThread().setContextClassLoader
             (ValidatorTask.class.getClassLoader());
 
-        Digester digester = ContextConfig.createWebXmlDigester(true, true);
+        Digester digester = DigesterFactory.newDigester(true, true, null);
         try {
             file = file.getCanonicalFile();
             InputStream stream = 
