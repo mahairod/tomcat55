@@ -193,7 +193,9 @@ public class XmlOutputter {
      * [StringBuffer is an argument so we can reuse the method
      * to generate the "header" in a different stream. The header
      * can only be generated once we've processed all parts
-     * of the translation unit]
+     * of the translation unit].
+     * Since XML allows only one value be specified for an attribute,
+     * page.import directives are accumlated and outputted as one.
      */
     void append(String tag, Attributes attrs, StringBuffer buff, boolean hasNoBody) {
         buff.append("<").append(tag);
@@ -203,12 +205,36 @@ public class XmlOutputter {
             else buff.append(">");
         } else {
             buff.append("\n");
+            boolean pageImportSeen = false;
             int attrsLength = attrs.getLength();
             for (int i = 0; i < attrsLength; i++) {
+                // Skip page.import directive here
                 String name = attrs.getQName(i);
+                if (tag.equals("jsp:directive.page") && name.equals("import")) {
+                    pageImportSeen = true;
+                    continue;
+                }
                 String value = attrs.getValue(i);
                 buff.append("  ").append(name).append("=\"");
 		buff.append(JspUtil.getExprInXml(value)).append("\"\n");
+            }
+            if (pageImportSeen) {
+                // Values of page.import are now put together, spearated by ,'s
+                boolean first = true;
+                for (int i = 0; i < attrsLength; i++) {
+                    String name = attrs.getQName(i);
+                    if (!tag.equals("jsp:directive.page") || !name.equals("import"))
+                         continue;
+                    String value = attrs.getValue(i);
+                    if (first) {
+                        first = false;
+                        buff.append("  import=\"");
+                    }
+                    else
+                        buff.append(",");
+                    buff.append(JspUtil.getExprInXml(value));
+                }
+                buff.append("\"\n");
             }
             if (hasNoBody)
                 buff.append("/>\n");
