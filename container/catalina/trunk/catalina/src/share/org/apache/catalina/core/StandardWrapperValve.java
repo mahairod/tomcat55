@@ -124,6 +124,14 @@ final class StandardWrapperValve
      */
     private FilterDef filterDef = null;
 
+    // Some JMX statistics. This vavle is associated with a StandardWrapper.
+    // We exponse the StandardWrapper as JMX ( j2eeType=Servlet ). The fields
+    // are here for performance.
+    private long processingTime;
+    private long maxTime;
+    private int requestCount;
+    private int errorCount;
+
 
     /**
      * The descriptive information related to this implementation.
@@ -173,6 +181,9 @@ final class StandardWrapperValve
         // Initialize local variables we may need
         boolean unavailable = false;
         Throwable throwable = null;
+        // This should be a Request attribute...
+        long t1=System.currentTimeMillis();
+        requestCount++;
         StandardWrapper wrapper = (StandardWrapper) getContainer();
         ServletRequest sreq = request.getRequest();
         ServletResponse sres = response.getResponse();
@@ -354,6 +365,11 @@ final class StandardWrapperValve
                 exception(request, response, e);
             }
         }
+        long t2=System.currentTimeMillis();
+
+        long time=t2-t1;
+        processingTime += time;
+        if( time > maxTime) maxTime=time;
 
     }
 
@@ -373,7 +389,7 @@ final class StandardWrapperValve
      */
     private void exception(Request request, Response response,
                            Throwable exception) {
-
+        errorCount++;
         ServletRequest sreq = request.getRequest();
         sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
 
@@ -435,5 +451,36 @@ final class StandardWrapperValve
 
     }
 
+    public long getProcessingTime() {
+        return processingTime;
+    }
+
+    public void setProcessingTime(long processingTime) {
+        this.processingTime = processingTime;
+    }
+
+    public long getMaxTime() {
+        return maxTime;
+    }
+
+    public void setMaxTime(long maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public int getRequestCount() {
+        return requestCount;
+    }
+
+    public void setRequestCount(int requestCount) {
+        this.requestCount = requestCount;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setErrorCount(int errorCount) {
+        this.errorCount = errorCount;
+    }
 
 }
