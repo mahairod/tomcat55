@@ -217,7 +217,6 @@ public class Ajp13ConnectorRequest extends RequestImpl
                 break;
 
                 case SC_A_REQ_ATTRIBUTE :
-                    isSSL = true;
 		            attributes.put(msg.getString(), msg.getString());
                 break;
 
