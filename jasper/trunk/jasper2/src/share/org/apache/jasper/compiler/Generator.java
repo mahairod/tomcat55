@@ -2766,14 +2766,14 @@ public class Generator {
         }
         
         if (ci.isHasUsebean()) {
-            out.println("HttpSession session = pageContext.getSession();");
-            out.println("ServletContext application = pageContext.getServletContext();");
+            out.printil("HttpSession session = pageContext.getSession();");
+            out.printil("ServletContext application = pageContext.getServletContext();");
         }
         if (ci.isHasUsebean() || ci.isHasIncludeAction() || ci.isHasSetProperty()) {
-            out.println("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
+            out.printil("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
         }
         if (ci.isHasIncludeAction()) {
-            out.println("HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();");
+            out.printil("HttpServletResponse response = (HttpServletResponse)pageContext.getResponse();");
         }
     }
     
