@@ -953,8 +953,8 @@ class Validator {
 	    String scope = n.getTextAttribute ("scope");
 	    JspUtil.checkScope(scope, n, err);
 
-	    String var = n.getAttributeValue("var");
-	    String varReader = n.getAttributeValue("varReader");
+	    String var = n.getTextAttribute("var");
+	    String varReader = n.getTextAttribute("varReader");
 	    if (scope != null && var == null && varReader == null) {
 		err.jspError(n, "jsp.error.missing_var_or_varReader");
 	    }
@@ -970,8 +970,8 @@ class Validator {
 	    String scope = n.getTextAttribute ("scope");
 	    JspUtil.checkScope(scope, n, err);
 
-	    String var = n.getAttributeValue("var");
-	    String varReader = n.getAttributeValue("varReader");
+	    String var = n.getTextAttribute("var");
+	    String varReader = n.getTextAttribute("varReader");
 	    if (scope != null && var == null && varReader == null) {
 		err.jspError(n, "jsp.error.missing_var_or_varReader");
 	    }
