@@ -69,45 +69,15 @@ import java.util.*;
 import javax.servlet.http.*;
 
 /**
- * Will process the request and determine the session Id, and set it
- * in the Request.
- * It also marks the session as accessed.
- *
- * This implementation only handles Cookies sessions, please extend or
- * add new interceptors for other methods.
+ *  Will generate the output headers ( cookies, etc ) plus tomcat-specific headers.
  * 
  */
-public class SessionInterceptor implements RequestInterceptor {
+public class FixHeaders implements RequestInterceptor {
     
-    public SessionInterceptor() {
+    public FixHeaders() {
     }
 	
     public int requestMap(Request request ) {
-	// look for session id -- cookies only right now
-	String sessionId = null;
-
-	Cookie cookies[]=request.getCookies(); // assert !=null
-	
-	for( int i=0; i<cookies.length; i++ ) {
-	    Cookie cookie = cookies[i]; 
-
-	    if (cookie.getName().equals(
-					org.apache.tomcat.core.Constants.SESSION_COOKIE_NAME)) {
-		sessionId = cookie.getValue();
-
-		if (sessionId != null) {
-		    request.setRequestedSessionId(sessionId);
-		}
-	    }
-	}
-
-	if (sessionId != null) {
-	    Context ctx=request.getContext();
-	    SessionManager sM=ctx.getSessionManager();
-
-	    sM.accessed( ctx, request, sessionId );
-	}
-
 	return 0;
     }
 
@@ -115,7 +85,60 @@ public class SessionInterceptor implements RequestInterceptor {
 	return 0;
     }
 
-    public int beforeBody( Request rrequest, Response response ) {
+    public int beforeBody( Request request, Response response ) {
+	HttpDate date = new HttpDate(System.currentTimeMillis());
+	response.setHeader("Date", date.toString());
+	response.setHeader("Status", Integer.toString(response.getStatus()));
+        response.setHeader("Content-Type", response.getContentType());
+
+	String contentLanguage=response.getLocale().getLanguage();
+	if (contentLanguage != null) {
+            response.setHeader("Content-Language",contentLanguage);
+        }
+
+	// context is null if we are in a error handler before the context is
+	// set ( i.e. 414, wrong request )
+	if( request.getContext() != null)
+	    response.setHeader("Servlet-Engine", request.getContext().getEngineHeader());
+
+
+	int contentLength=response.getContentLength();
+        if (contentLength != -1) {
+            response.setHeader("Content-Length", Integer.toString(contentLength));
+        }
+
+        // write cookies
+        Enumeration cookieEnum = null;
+        cookieEnum = response.getSystemCookies();
+        while (cookieEnum.hasMoreElements()) {
+            Cookie c  = (Cookie)cookieEnum.nextElement();
+            response.addHeader( CookieTools.getCookieHeaderName(c),
+			       CookieTools.getCookieHeaderValue(c));
+	    if( c.getVersion() == 1 ) {
+		// add a version 0 header too.
+		// XXX what if the user set both headers??
+		Cookie c0 = (Cookie)c.clone();
+		c0.setVersion(0);
+		response.addHeader( CookieTools.getCookieHeaderName(c0),
+				    CookieTools.getCookieHeaderValue(c0));
+	    }
+        }
+	
+	// XXX duplicated code, ugly
+        cookieEnum = response.getCookies();
+        while (cookieEnum.hasMoreElements()) {
+            Cookie c  = (Cookie)cookieEnum.nextElement();
+            response.addHeader( CookieTools.getCookieHeaderName(c),
+		       CookieTools.getCookieHeaderValue(c));
+	    if( c.getVersion() == 1 ) {
+		// add a version 0 header too.
+		// XXX what if the user set both headers??
+		Cookie c0 = (Cookie)c.clone();
+		c0.setVersion(0);
+		response.addHeader( CookieTools.getCookieHeaderName(c0),
+				   CookieTools.getCookieHeaderValue(c0));
+	    }
+        }
 	return 0;
     }
 

@@ -314,7 +314,7 @@ class Ajp11 {
 class Ajp11ResponseAdapter extends HttpResponseAdapter {
     /** Override setStatus
      */
-    public void setStatus( int status, String message) throws IOException {
+    public void sendStatus( int status, String message) throws IOException {
 	statusSB.setLength(0);
 	statusSB.append("Status: " ).append( status ).append("\r\n");
 	sout.write(statusSB.toString().getBytes());

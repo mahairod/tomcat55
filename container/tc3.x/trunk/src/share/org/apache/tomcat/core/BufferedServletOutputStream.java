@@ -121,13 +121,7 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	resA.doWrite( buffer, pos, count);
     }
 
-    protected void endResponse() throws IOException {
-	resA.endResponse();
-    }
-
     protected void sendHeaders() throws IOException {
- 	if(resA!=null)
- 	    resA.writeHeaders();
 	if(resA!=null)
 	    resA.endHeaders();
     }
@@ -259,7 +253,6 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	reallyFlush();
 	closed = true;
 	//	out.close();
-	endResponse();
     }
 
     public boolean isContentWritten() {

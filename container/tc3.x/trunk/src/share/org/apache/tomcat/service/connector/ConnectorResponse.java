@@ -100,12 +100,12 @@ public class ConnectorResponse extends ResponseImpl {
     }
 
     // XXX if more headers that MAX_SIZE, send 2 packets!   
-    public void writeHeaders() throws IOException {
-	//	System.out.println("Writing headers");
-        if (omitHeaders) {
+    public void endHeaders() throws IOException {
+	super.endHeaders();
+	
+        if (request.getProtocol() == null) {
             return;
         }
-	fixHeaders();
 	
 	MsgBuffer msg=con.getMsgBuffer();
 	msg.reset();
@@ -125,7 +125,8 @@ public class ConnectorResponse extends ResponseImpl {
      }
 
 
-    public void endResponse() throws IOException {
+    public void finish() throws IOException {
+	super.finish();
 	MsgBuffer msg=con.getMsgBuffer();
 	msg.reset();
 	msg.appendInt( END_RESPONSE );

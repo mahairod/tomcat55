@@ -91,8 +91,15 @@ extends HttpServletResponseFacade {
     
     public void sendError(int sc, String msg) throws IOException {
 	//	/*XXX*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
-        getRealResponse().sendBodyText("Included servlet error: " + sc +
-                                       ": " + msg + "\r\n");
+	String s="Included servlet error: " + sc + ": " + msg + "\r\n";
+        Response response=getRealResponse();
+	if( response.isUsingStream() ) {
+	    ServletOutputStream out = response.getOutputStream();
+	    out.print(s);
+	} else {
+	    PrintWriter out = response.getWriter();
+	    out.print(s);
+	}
     }
 
     public void sendRedirect(String location) throws IOException {

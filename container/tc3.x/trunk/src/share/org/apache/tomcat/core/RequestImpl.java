@@ -141,8 +141,8 @@ public class RequestImpl  implements Request {
     protected String remoteHost;
 
 
-    protected StringManager sm =
-        StringManager.getManager(Constants.Package);
+    protected static StringManager sm =
+        StringManager.getManager("org.apache.tomcat.core");
 
     public RequestImpl() {
  	headers = new MimeHeaders();
@@ -746,5 +746,11 @@ public class RequestImpl  implements Request {
 	sb.append( ",MP:" + getMappedPath() );
 	sb.append( "," + getWrapper() +") ");
 	return sb.toString();
+    }
+
+
+    // utility method - should be in a different class
+    public static String getMessage( int status ) {
+	return sm.getString("sc."+ status);
     }
 }

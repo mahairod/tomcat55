@@ -75,14 +75,18 @@ public interface RequestInterceptor {
     
     /** Will detect the context path for a request
      */
-    //    public int contextMap(Request request);
-    // XXX name will change!
-    public int handleRequestContextMap(Request request);
+    public int contextMap(Request request);
 
     /** Handle mapping inside a context
      */
-    //    public int requestMap(Request request);
+    public int requestMap(Request request);
 
+    /** Called before the first body write, and before sending
+     *  the headers. The interceptor have a chance to change the
+     *  output headers.
+     */
+    public int beforeBody( Request request, Response response);
+    
     /** Security
      */
     //    public int authentication(Request request);
@@ -99,5 +103,4 @@ public interface RequestInterceptor {
 
     //    public int log(Request request);
 
-    public int handleRequest( Request request);
 }
