@@ -606,8 +606,11 @@ public abstract class ResponseBase
 
         committed = true;
         if (bufferCount > 0) {
-            output.write(buffer, 0, bufferCount);
-            bufferCount = 0;
+            try {
+                output.write(buffer, 0, bufferCount);
+            } finally {
+                bufferCount = 0;
+            }
         }
 
     }
