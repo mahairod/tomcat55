@@ -84,7 +84,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
@@ -171,7 +170,6 @@ final class StandardWrapperValve
 	boolean unavailable = false;
 	Throwable throwable = null;
 	StandardWrapper wrapper = (StandardWrapper) getContainer();
-	InstanceSupport support = wrapper.getInstanceSupport();
 	ServletRequest sreq = request.getRequest();
 	ServletResponse sres = response.getResponse();
 	Servlet servlet = null;
@@ -250,37 +248,25 @@ final class StandardWrapperValve
         // NOTE: This also calls the servlet's service() method
 	try {
 	    if ((servlet != null) && (filterChain != null)) {
-		support.fireInstanceEvent(InstanceEvent.BEFORE_SERVICE_EVENT,
-					  servlet);
                 filterChain.doFilter(sreq, sres);
-		support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-					  servlet);
 	    }
 	} catch (IOException e) {
-	    support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-				      servlet);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    ;	// No reporting to the response
 	    ;	// No change in availability status
 	} catch (UnavailableException e) {
-	    support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-				      servlet);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;
 	    exception(request, response, e);
 	    wrapper.unavailable(e);
 	} catch (ServletException e) {
-	    support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-				      servlet);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;
 	    exception(request, response, e);
 	} catch (Throwable e) {
-	    support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
-				      servlet);
 	    log(sm.getString("standardWrapper.serviceException",
 			     wrapper.getName()), e);
 	    throwable = e;
@@ -347,9 +333,10 @@ final class StandardWrapperValve
         ApplicationFilterChain filterChain =
           new ApplicationFilterChain();
         filterChain.setServlet(servlet);
+        StandardWrapper wrapper = (StandardWrapper) getContainer();
+        filterChain.setSupport(wrapper.getInstanceSupport());
 
         // Acquire the filter mappings for this Context
-        Wrapper wrapper = (Wrapper) getContainer();
         StandardContext context = (StandardContext) wrapper.getParent();
         FilterMap filterMaps[] = context.findFilterMaps();
 

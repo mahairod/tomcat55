@@ -66,13 +66,14 @@ package org.apache.catalina;
 
 
 import java.util.EventObject;
+import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
 
 /**
  * General event for notifying listeners of significant events related to
- * a specific instance of a servlet, as opposed to the Wrapper component
- * that manages it.
+ * a specific instance of a Servlet, or a specific instance of a Filter,
+ * as opposed to the Wrapper component that manages it.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -126,7 +127,41 @@ public final class InstanceEvent
     public static final String AFTER_DESTROY_EVENT = "afterDestroy";
 
 
+    /**
+     * The event indicating that the <code>doFilter()</code> method of a
+     * Filter is about to be called.  The <code>filter</code> property
+     * contains a reference to the relevant filter instance.
+     */
+    public static final String BEFORE_FILTER_EVENT = "beforeFilter";
+
+
+    /**
+     * The event indicating that the <code>doFilter()</code> method of a
+     * Filter has returned.  The <code>filter</code> property contains
+     * a reference to the relevant filter instance.
+     */
+    public static final String AFTER_FILTER_EVENT = "afterFilter";
+
+
     // ----------------------------------------------------------- Constructors
+
+
+    /**
+     * Construct a new InstanceEvent with the specified parameters.
+     *
+     * @param wrapper Wrapper managing this servlet instance
+     * @param filter Filter instance for which this event occurred
+     * @param type Event type (required)
+     */
+    public InstanceEvent(Wrapper wrapper, Filter filter, String type) {
+
+      super(wrapper);
+      this.wrapper = wrapper;
+      this.filter = filter;
+      this.servlet = null;
+      this.type = type;
+
+    }
 
 
     /**
@@ -140,6 +175,7 @@ public final class InstanceEvent
 
       super(wrapper);
       this.wrapper = wrapper;
+      this.filter = null;
       this.servlet = servlet;
       this.type = type;
 
@@ -150,7 +186,15 @@ public final class InstanceEvent
 
 
     /**
-     * The Servlet instance for which this event occurred.
+     * The Filter instance for which this event occurred (BEFORE_FILTER_EVENT
+     * and AFTER_FILTER_EVENT only).
+     */
+    private Filter filter = null;
+
+
+    /**
+     * The Servlet instance for which this event occurred (not present on
+     * BEFORE_FILTER_EVENT or AFTER_FILTER_EVENT events).
      */
     private Servlet servlet = null;
 
@@ -168,6 +212,16 @@ public final class InstanceEvent
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the filter instance for which this event occurred.
+     */
+    public Filter getFilter() {
+
+        return (this.filter);
+
+    }
 
 
     /**

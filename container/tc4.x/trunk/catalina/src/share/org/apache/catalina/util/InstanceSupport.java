@@ -65,6 +65,7 @@
 package org.apache.catalina.util;
 
 
+import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.InstanceListener;
@@ -115,6 +116,19 @@ public final class InstanceSupport {
     private Wrapper wrapper = null;
 
 
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the Wrapper with which we are associated.
+     */
+    public Wrapper getWrapper() {
+
+        return (this.wrapper);
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -143,9 +157,36 @@ public final class InstanceSupport {
      * this notification synchronously using the calling thread.
      *
      * @param type Event type
-     * @param data Event data
+     * @param filter The relevant Filter for this event
+     */
+    public void fireInstanceEvent(String type, Filter filter) {
+
+        if (listeners.length == 0)
+            return;
+
+	InstanceEvent event = new InstanceEvent(wrapper, filter, type);
+	InstanceListener interested[] = null;
+	synchronized (listeners) {
+	    interested = (InstanceListener[]) listeners.clone();
+	}
+	for (int i = 0; i < interested.length; i++)
+	    interested[i].instanceEvent(event);
+
+    }
+
+
+    /**
+     * Notify all lifecycle event listeners that a particular event has
+     * occurred for this Container.  The default implementation performs
+     * this notification synchronously using the calling thread.
+     *
+     * @param type Event type
+     * @param servlet The relevant Servlet for this event
      */
     public void fireInstanceEvent(String type, Servlet servlet) {
+
+        if (listeners.length == 0)
+            return;
 
 	InstanceEvent event = new InstanceEvent(wrapper, servlet, type);
 	InstanceListener interested[] = null;
