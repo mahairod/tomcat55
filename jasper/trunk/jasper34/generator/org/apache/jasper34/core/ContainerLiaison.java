@@ -78,31 +78,32 @@ import org.apache.jasper34.runtime.JasperException;
  * @author Costin Manolache
  */
 public abstract class ContainerLiaison {
-
-    static ContainerLiaison liaison;
-
-    public static ContainerLiaison getContainerLiaison() {
-	return liaison;
+    protected Options options;
+    
+    protected ContainerLiaison() {
     }
-
-    public static void setContainerLiaison( ContainerLiaison l ) {
-	liaison=l;
-    }
+    
 
     // -------------------- Options --------------------
     /**
      * Get hold of the Options object for this context. 
      */
-    public abstract Options getOptions();
+    public Options getOptions() {
+	return options;
+    }
 
-
+    public void setOptions( Options opt ) {
+	options=opt;
+    }
 
     // --------------------  resource access --------------------
     
     /** 
-     * Get the full value of a URI relative to this compilations context
+     * Get the full value of a URI relative to a compiled page.
+     * Used only by taglib code to find the taglib descriptor relative
+     * to the JSP file.
      */
-    public abstract String resolveRelativeUri(String uri);
+    public abstract String resolveRelativeUri(String uri, String jspBase);
 
     /**
      * Gets a resource as a stream, relative to the meanings of this
@@ -115,6 +116,8 @@ public abstract class ContainerLiaison {
     /** 
      * Gets the actual path of a URI relative to the context of
      * the compilation.
+     * Used to get a real file relative to the base context.
+     * Used in JspReader, CommandLineContext, TagLibReader, JspServlet
      */
     public abstract String getRealPath(String path);
 
@@ -133,7 +136,7 @@ public abstract class ContainerLiaison {
 	implementation ( TagLibReader ).
     */
     public abstract void readTLD( TagLibraries libs, TagLibraryInfoImpl tl,
-			 String prefix, String uri )
+				  String prefix, String uri, String jspBase )
 	throws IOException, JasperException;
 
 
@@ -159,7 +162,25 @@ public abstract class ContainerLiaison {
      */
     public abstract String getOutputDir();
 
+    // -------------------- New messages --------------------
 
+    public void log( String msg ) {
+	log( msg, null );
+    }
+
+    public void log( String msg, Throwable t ) {
+	System.out.println("ContainerLiaison: " + msg );
+	if( t!=null )
+	    t.printStackTrace();
+    }
+
+    public void logKey( String key, String param1 ) {
+	// XXX optimize
+	String msg= getString( key, new Object[] { param1 });
+	log( msg );
+    }
+    
+//     public abstract void log( String msg, Throwable t );
     
     // -------------------- messages --------------------
     // XXX TODO
@@ -230,6 +251,19 @@ public abstract class ContainerLiaison {
 	StringManager.getManager("org.apache.jasper34.runtime.res");
 
     private static Log jasperLog = null;    
+
+    // -------------------- Default liaison --------------------
+    
+    static ContainerLiaison liaison;
+
+    public static ContainerLiaison getContainerLiaison() {
+	return liaison;
+    }
+
+    public static void setContainerLiaison( ContainerLiaison l ) {
+	liaison=l;
+    }
+
 
 
 }
