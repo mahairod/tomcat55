@@ -89,7 +89,7 @@
                port="8080" minProcessors="5" maxProcessors="75"
                enableLookups="true" redirectPort="8443"
                acceptCount="10" debug="0" connectionTimeout="20000"
-               useURINormalizationHack="true" />
+               useURIValidationHack="false" />
     <!-- Note : To disable connection timeouts, set connectionTimeout value 
      to -1 -->
 
@@ -99,7 +99,7 @@
                port="8443" minProcessors="5" maxProcessors="75"
                enableLookups="true"
 	       acceptCount="10" debug="0" scheme="https" secure="true"
-               useURINormalizationHack="true">
+               useURIValidationHack="false">
       <Factory className="org.apache.catalina.net.SSLServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
@@ -117,7 +117,7 @@
                port="8082" minProcessors="5" maxProcessors="75"
                enableLookups="true"
                acceptCount="10" debug="0" connectionTimeout="20000"
-               proxyPort="80" useURINormalizationHack="true" />
+               proxyPort="80" useURIValidationHack="false" />
     -->
 
     <!-- Define a non-SSL legacy HTTP/1.1 Test Connector on port 8083 -->
