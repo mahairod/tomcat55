@@ -172,7 +172,7 @@ public class UserDatabaseRealm
      *
      * @param resourceName The new global JNDI name
      */
-    public void setResourceName(String name) {
+    public void setResourceName(String resourceName) {
 
         this.resourceName = resourceName;
 
