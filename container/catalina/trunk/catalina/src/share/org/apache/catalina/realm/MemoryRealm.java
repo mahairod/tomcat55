@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.util.StringManager;
@@ -87,7 +88,7 @@ public class MemoryRealm  extends RealmBase {
     /**
      * The set of valid Principals for this Realm, keyed by user name.
      */
-    private HashMap principals = new HashMap();
+    private Map principals = new HashMap();
 
 
     /**
@@ -266,6 +267,15 @@ public class MemoryRealm  extends RealmBase {
 
         return (Principal) principals.get(username);
 
+    }
+
+    /**
+     * Returns the principals for this realm.
+     *
+     * @return The principals, keyed by user name (a String)
+     */
+    protected Map getPrincipals() {
+        return principals;
     }
 
 
