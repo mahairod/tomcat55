@@ -1505,23 +1505,32 @@ public class Parser {
         } else if (reader.matches("<jsp:directive.")) {
             parseXMLDirective(parent);
         } else if (reader.matches("<%!")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Declarations" );
         } else if (reader.matches("<jsp:declaration")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Declarations" );
         } else if (reader.matches("<%=")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Expressions" );
         } else if (reader.matches("<jsp:expression")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Expressions" );
         } else if (reader.matches("<%")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Scriptlets" );
         } else if (reader.matches("<jsp:scriptlet")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Scriptlets" );
         } else if (reader.matches("<jsp:text")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"&lt;jsp:text" );
         } else if (reader.matches("${")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Expression language" );
         } else if (reader.matches("<jsp:")) {
-            err.jspError( reader.mark(), "jsp.error.not.in.template" );
+            err.jspError( reader.mark(), "jsp.error.not.in.template",
+		"Standard actions" );
 	} else {
             parseTemplateText(parent);
 	}
@@ -1736,6 +1745,10 @@ public class Parser {
 	    }
 	} else if (n instanceof Node.PlugIn) {
 	    if ("width".equals(name) || "height".equals(name)) {
+		return TagInfo.BODY_CONTENT_JSP;
+	    }
+	} else if (n instanceof Node.ParamAction) {
+	    if ("value".equals(name)) {
 		return TagInfo.BODY_CONTENT_JSP;
 	    }
 	}
