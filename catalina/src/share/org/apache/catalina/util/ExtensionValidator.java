@@ -62,28 +62,23 @@ public final class ExtensionValidator {
     private static StringManager sm =
         StringManager.getManager("org.apache.catalina.util");
     
-    private static ExtensionValidator validator = null;
     private static HashMap containerAvailableExtensions = null;
     private static ArrayList containerManifestResources = null;
     private static ResourceBundle messages = null;
 
 
-    // ----------------------------------------------------------- Constructors
+    // ----------------------------------------------------- Static Initializer
 
 
     /**
-     *  Access to this class can only be made through the factory method
-     *  getInstance()
-     *
-     *  This private constructor loads the container level extensions that are
+     *  This static initializer loads the container level extensions that are
      *  available to all web applications. This method scans all extension 
      *  directories available via the "java.ext.dirs" System property. 
      *
      *  The System Class-Path is also scanned for jar files that may contain 
-     *  available extensions. The system extensions are loaded only the 
-     *  first time an instance of the ExtensionValidator is created.
+     *  available extensions.
      */
-    private ExtensionValidator() throws IOException {
+    static {
 
         // check for container level optional packages
         String systemClasspath = System.getProperty("java.class.path");
@@ -97,7 +92,12 @@ public final class ExtensionValidator {
             if (classpathItem.toLowerCase().endsWith(".jar")) {
                 File item = new File(classpathItem);
                 if (item.exists()) {
-                    addSystemResource(item);
+                    try {
+                        addSystemResource(item);
+                    } catch (IOException e) {
+                        log.error(sm.getString
+                                  ("extensionValidator.failload", item), e);
+                    }
                 }
             }
         }
@@ -115,11 +115,18 @@ public final class ExtensionValidator {
                 File[] files = targetDir.listFiles();
                 for (int i = 0; i < files.length; i++) {
                     if (files[i].getName().toLowerCase().endsWith(".jar")) {
-                        addSystemResource(files[i]);
+                        try {
+                            addSystemResource(files[i]);
+                        } catch (IOException e) {
+                            log.error
+                                (sm.getString
+                                 ("extensionValidator.failload", files[i]), e);
+                        }
                     }
                 }
             }
         }
+
     }
 
 
@@ -214,19 +221,10 @@ public final class ExtensionValidator {
 
         return validateManifestResources(appName, appManifestResources);
     }
-    
-    /**
-     * Return an instance of the ExtensionValidator. 
-     * The ExtensionValidator is a singleton.
-     */
-    public static ExtensionValidator getInstance() throws IOException {
-        if (validator == null) {
-            validator = new ExtensionValidator();
-        }
-        return validator;
-    }
-    
+
+
     // -------------------------------------------------------- Private Methods
+
 
     /**
      * Validates a <code>ArrayList</code> of <code>ManifestResource</code> 
