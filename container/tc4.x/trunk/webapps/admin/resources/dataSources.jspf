@@ -32,7 +32,6 @@
                                URLEncoder.encode(dataSource) %>'>
             <controls:attribute name="dataSource" attribute="url"/>
           </html:link>
-            <controls:attribute name="dataSource" attribute="name"/>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;
           <controls:attribute name="dataSource" attribute="driverClassName"/>
