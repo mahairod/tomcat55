@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # $Id$
 # Ksh wrapper around ant build system.
@@ -9,7 +9,7 @@ echo $baseDir .....
 
 ADDL_CLASSPATH=../jakarta-ant/lib/ant.jar:$JAVA_HOME/lib/tools.jar
 
-if [ -n $CLASSPATH ]; then
+if [ -n "$CLASSPATH" ]; then
   CLASSPATH=$CLASSPATH:$ADDL_CLASSPATH
 else
   CLASSPATH=$ADDL_CLASSPATH
