@@ -181,11 +181,12 @@ public class NamingResourcesMBean extends BaseModelMBean {
      *
      * @param envName New environment entry name
      */
-    public void addEnvironment(String envName, String type) {
+    public String addEnvironment(String envName, String type) 
+        throws MalformedObjectNameException {
 
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
-            return;
+            return null;
         }
         ContextEnvironment env = nresources.findEnvironment(envName);
         if (env != null) {
@@ -197,6 +198,13 @@ public class NamingResourcesMBean extends BaseModelMBean {
         env.setType(type);
         nresources.addEnvironment(env);
         // FIXME add to the javax.naming.directory.DirContext
+        
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("ContextEnvironment");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), env);
+        return (oname.toString());
+        
     }
 
     
@@ -205,11 +213,12 @@ public class NamingResourcesMBean extends BaseModelMBean {
      *
      * @param resourceName New resource reference name
      */
-    public void addResource(String resourceName, String type) {
+    public String addResource(String resourceName, String type) 
+        throws MalformedObjectNameException {
         
         NamingResources nresources = (NamingResources) this.resource;
         if (nresources == null) {
-            return;
+            return null;
         }
         ContextResource resource = nresources.findResource(resourceName);
         if (resource != null) {
@@ -221,7 +230,12 @@ public class NamingResourcesMBean extends BaseModelMBean {
         resource.setType(type);
         nresources.addResource(resource);
         // FIXME
-
+        
+        // Return the corresponding MBean name
+        ManagedBean managed = registry.findManagedBean("ContextResource");
+        ObjectName oname =
+            MBeanUtils.createObjectName(managed.getDomain(), resource);
+        return (oname.toString());
     }
 
     
