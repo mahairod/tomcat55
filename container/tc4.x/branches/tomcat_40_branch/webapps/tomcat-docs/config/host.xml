@@ -247,7 +247,7 @@
 <source>
 &lt;Host name="www.mycompany.com" ...&gt;
   ...
-  &lt;Alias name="mycompany.com"/&gt;
+  &lt;Alias&gt;mycompany.com&lt;/Alias&gt;
   ...
 &lt;/Host&gt;
 </source>
