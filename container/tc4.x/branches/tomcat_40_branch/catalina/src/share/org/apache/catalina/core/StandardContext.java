@@ -235,7 +235,7 @@ public class StandardContext
      * Should we allow the <code>ServletContext.getContext()</code> method
      * to access the context of other web applications in this server?
      */
-    private boolean crossContext = true;
+    private boolean crossContext = false;
 
 
     /**
