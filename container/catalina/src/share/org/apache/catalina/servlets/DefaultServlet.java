@@ -513,7 +513,8 @@ public class DefaultServlet
             serveResource(request, response, true);
         } catch( IOException ex ) {
             // we probably have this check somewhere else too.
-            if( ex.getMessage().indexOf("Broken pipe") >= 0 ) {
+            if( ex.getMessage() != null 
+                && ex.getMessage().indexOf("Broken pipe") >= 0 ) {
                 // ignore it.
             }
             throw ex;
