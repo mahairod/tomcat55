@@ -971,7 +971,7 @@ public class JspUtil {
                 String comp = path.substring(start,pos);
                 comps.add(comp);
             }
-            start = pos +1;
+            start = pos + pat.length();
             pos = path.indexOf(pat,start);
         }
         if( start < path.length()) {
