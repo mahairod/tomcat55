@@ -32,11 +32,10 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Pipeline;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
@@ -79,6 +78,12 @@ public abstract class ValveBase
      */
     protected static String info =
         "org.apache.catalina.core.ValveBase/1.0";
+
+
+    /**
+     * The next Valve in the pipeline this Valve is a component of.
+     */
+    protected Valve next = null;
 
 
     /**
@@ -145,6 +150,29 @@ public abstract class ValveBase
     }
 
 
+    /**
+     * Return the next Valve in this pipeline, or <code>null</code> if this
+     * is the last Valve in the pipeline.
+     */
+    public Valve getNext() {
+
+        return (next);
+
+    }
+
+
+    /**
+     * Set the Valve that follows this one in the pipeline it is part of.
+     *
+     * @param valve The new next valve
+     */
+    public void setNext(Valve valve) {
+
+        this.next = valve;
+
+    }
+
+
     //---------------------------------------------------------- Public Methods
 
 
@@ -162,8 +190,7 @@ public abstract class ValveBase
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public abstract void invoke(Request request, Response response,
-                                ValveContext context)
+    public abstract void invoke(Request request, Response response)
         throws IOException, ServletException;
 
     // -------------------- JMX and Registration  --------------------

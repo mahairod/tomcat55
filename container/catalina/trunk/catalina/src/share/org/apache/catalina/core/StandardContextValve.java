@@ -28,12 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
@@ -104,19 +102,17 @@ final class StandardContextValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public final void invoke(Request request, Response response,
-                             ValveContext valveContext)
+    public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Disallow any direct access to resources under WEB-INF or META-INF
-        HttpRequest hreq = (HttpRequest) request;
-        MessageBytes requestPathMB = hreq.getRequestPathMB();
+        MessageBytes requestPathMB = request.getRequestPathMB();
         if ((requestPathMB.startsWithIgnoreCase("/META-INF/", 0))
             || (requestPathMB.equalsIgnoreCase("/META-INF"))
             || (requestPathMB.startsWithIgnoreCase("/WEB-INF/", 0))
             || (requestPathMB.equalsIgnoreCase("/WEB-INF"))) {
-            String requestURI = hreq.getDecodedRequestURI();
-            notFound(requestURI, (HttpServletResponse) response.getResponse());
+            String requestURI = request.getDecodedRequestURI();
+            notFound(requestURI, response);
             return;
         }
 
@@ -132,8 +128,8 @@ final class StandardContextValve
         // Select the Wrapper to be used for this Request
         Wrapper wrapper = request.getWrapper();
         if (wrapper == null) {
-            String requestURI = hreq.getDecodedRequestURI();
-            notFound(requestURI, (HttpServletResponse) response.getResponse());
+            String requestURI = request.getDecodedRequestURI();
+            notFound(requestURI, response);
             return;
         }
 

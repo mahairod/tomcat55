@@ -15,7 +15,7 @@
  */
 
 
-package org.apache.coyote.tomcat5;
+package org.apache.catalina.connector;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -26,17 +26,13 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Service;
 import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
@@ -57,10 +53,10 @@ import org.apache.tomcat.util.http.mapper.Mapper;
  */
 
 
-public class CoyoteConnector
-    implements Connector, Lifecycle, MBeanRegistration
+public class Connector
+    implements Lifecycle, MBeanRegistration
 {
-    private static Log log = LogFactory.getLog(CoyoteConnector.class);
+    private static Log log = LogFactory.getLog(Connector.class);
 
 
     // ----------------------------------------------------- Instance Variables
@@ -124,12 +120,6 @@ public class CoyoteConnector
      * The "enable DNS lookups" flag for this Connector.
      */
     private boolean enableLookups = false;
-
-
-    /**
-     * The server socket factory for this component.
-     */
-    private ServerSocketFactory factory = null;
 
 
     /*
@@ -693,28 +683,6 @@ public class CoyoteConnector
 
 
     /**
-     * Return the server socket factory used by this Container.
-     */
-    public ServerSocketFactory getFactory() {
-
-        return (this.factory);
-
-    }
-
-
-    /**
-     * Set the server socket factory used by this Container.
-     *
-     * @param factory The new server socket factory
-     */
-    public void setFactory(ServerSocketFactory factory) {
-
-        this.factory = factory;
-
-    }
-
-
-    /**
      * Return descriptive information about this Connector implementation.
      */
     public String getInfo() {
@@ -1227,7 +1195,7 @@ public class CoyoteConnector
      */
     public Request createRequest() {
 
-        CoyoteRequest request = new CoyoteRequest();
+        Request request = new Request();
         request.setConnector(this);
         return (request);
 
@@ -1240,7 +1208,7 @@ public class CoyoteConnector
      */
     public Response createResponse() {
 
-        CoyoteResponse response = new CoyoteResponse();
+        Response response = new Response();
         response.setConnector(this);
         return (response);
 
@@ -1373,44 +1341,6 @@ public class CoyoteConnector
 
         IntrospectionUtils.setProperty(protocolHandler, "jkHome",
                                        System.getProperty("catalina.base"));
-
-        // Configure secure socket factory
-        // XXX For backwards compatibility only.
-        if (factory instanceof CoyoteServerSocketFactory) {
-            IntrospectionUtils.setProperty(protocolHandler, "secure",
-                                           "" + true);
-            CoyoteServerSocketFactory ssf =
-                (CoyoteServerSocketFactory) factory;
-            IntrospectionUtils.setProperty(protocolHandler, "algorithm",
-                                           ssf.getAlgorithm());
-            IntrospectionUtils.setProperty(protocolHandler, "clientauth",
-                                           ssf.getClientAuth());
-            IntrospectionUtils.setProperty(protocolHandler, "keystore",
-                                           ssf.getKeystoreFile());
-            IntrospectionUtils.setProperty(protocolHandler, "randomfile",
-                                           ssf.getRandomFile());
-            IntrospectionUtils.setProperty(protocolHandler, "rootfile",
-                                           ssf.getRootFile());
-
-            IntrospectionUtils.setProperty(protocolHandler, "keypass",
-                                           ssf.getKeystorePass());
-            IntrospectionUtils.setProperty(protocolHandler, "keytype",
-                                           ssf.getKeystoreType());
-            IntrospectionUtils.setProperty(protocolHandler, "protocol",
-                                           ssf.getProtocol());
-            IntrospectionUtils.setProperty(protocolHandler, "protocols",
-                                           ssf.getProtocols());
-            IntrospectionUtils.setProperty(protocolHandler,
-                                           "sSLImplementation",
-                                           ssf.getSSLImplementation());
-            IntrospectionUtils.setProperty(protocolHandler, "ciphers",
-                                           ssf.getCiphers());
-            IntrospectionUtils.setProperty(protocolHandler, "keyAlias",
-                                           ssf.getKeyAlias());
-        } else {
-            IntrospectionUtils.setProperty(protocolHandler, "secure",
-                                           "" + secure);
-        }
 
         /* Set the configured properties.  This only sets the ones that were
          * explicitly configured.  Default values are the responsibility of
@@ -1591,11 +1521,6 @@ public class CoyoteConnector
         String prop = (String) getProperty("clientauth");
         if (prop != null) {
             ret = prop;
-        } else {	
-            ServerSocketFactory factory = this.getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getClientAuth();
-            }
         }
 
         return ret;
@@ -1603,31 +1528,16 @@ public class CoyoteConnector
 
     public void setClientAuth(String clientAuth) {
         setProperty("clientauth", clientAuth);
-        ServerSocketFactory factory = this.getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setClientAuth(clientAuth);
-        }
     }
 
 
     public String getKeystoreFile() {
         String ret = (String) getProperty("keystore");
-        if (ret == null) {
-            ServerSocketFactory factory = this.getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getKeystoreFile();
-            }
-        }
-
         return ret;
     }
 
     public void setKeystoreFile(String keystoreFile) {
         setProperty("keystore", keystoreFile);
-        ServerSocketFactory factory = this.getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setKeystoreFile(keystoreFile);
-        }
     }
 
     /**
@@ -1635,13 +1545,6 @@ public class CoyoteConnector
      */
     public String getKeystorePass() {
         String ret = (String) getProperty("keypass");
-        if (ret == null) {
-            ServerSocketFactory factory = getFactory();
-            if (factory instanceof CoyoteServerSocketFactory ) {
-                return ((CoyoteServerSocketFactory)factory).getKeystorePass();
-            }
-        }
-
         return ret;
     }
 
@@ -1650,10 +1553,6 @@ public class CoyoteConnector
      */
     public void setKeystorePass(String keystorePass) {
         setProperty("keypass", keystorePass);
-        ServerSocketFactory factory = getFactory();
-        if( factory instanceof CoyoteServerSocketFactory ) {
-            ((CoyoteServerSocketFactory)factory).setKeystorePass(keystorePass);
-        }
     }
     
     /**
@@ -1665,13 +1564,6 @@ public class CoyoteConnector
      */
     public String getCiphers() {
         String ret = (String) getProperty("ciphers");
-        if (ret == null) {
-            ServerSocketFactory factory = getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getCiphers();
-            }
-        }
-
         return ret;
     }
 
@@ -1685,10 +1577,6 @@ public class CoyoteConnector
      */
     public void setCiphers(String ciphers) {
         setProperty("ciphers", ciphers);
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setCiphers(ciphers);
-        }
     }
 
     /**
@@ -1699,13 +1587,6 @@ public class CoyoteConnector
      */
     public String getKeyAlias() {
         String ret = (String) getProperty("keyAlias");
-        if (ret == null) {
-            ServerSocketFactory factory = getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getKeyAlias();
-            }
-        }
-
         return ret;
     }
 
@@ -1718,10 +1599,6 @@ public class CoyoteConnector
      */
     public void setKeyAlias(String alias) {
         setProperty("keyAlias", alias);
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setKeyAlias(alias);
-        }
     }
 
     /**
@@ -1731,13 +1608,6 @@ public class CoyoteConnector
      */
     public String getSslProtocol() {
         String ret = (String) getProperty("sslProtocol");
-        if (ret == null) {
-            ServerSocketFactory factory = getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getProtocol();
-            }
-        }
-
         return ret;
     }
 
@@ -1748,10 +1618,6 @@ public class CoyoteConnector
      */
     public void setSslProtocol(String sslProtocol) {
         setProperty("sslProtocol", sslProtocol);
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setProtocol(sslProtocol);
-        }
     }
 
     /**
@@ -1761,13 +1627,6 @@ public class CoyoteConnector
      */
     public String getSslProtocols() {
         String ret = (String) getProperty("sslProtocols");
-        if (ret == null) {
-            ServerSocketFactory factory = getFactory();
-            if (factory instanceof CoyoteServerSocketFactory) {
-                ret = ((CoyoteServerSocketFactory)factory).getProtocols();
-            }
-        }
-
         return ret;
     }
 
@@ -1778,10 +1637,6 @@ public class CoyoteConnector
      */
     public void setSslProtocols(String sslProtocols) {
         setProperty("sslProtocols", sslProtocols);
-        ServerSocketFactory factory = getFactory();
-        if (factory instanceof CoyoteServerSocketFactory) {
-            ((CoyoteServerSocketFactory)factory).setProtocols(sslProtocols);
-        }
     }
 
 

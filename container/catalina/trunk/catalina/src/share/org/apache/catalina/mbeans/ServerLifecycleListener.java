@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.util.StringTokenizer;
 import javax.management.MBeanException;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
 import org.apache.catalina.ContainerListener;
@@ -41,6 +40,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;

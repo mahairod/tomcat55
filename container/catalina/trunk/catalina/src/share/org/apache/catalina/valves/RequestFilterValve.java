@@ -25,9 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -201,8 +200,7 @@ public abstract class RequestFilterValve
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public abstract void invoke(Request request, Response response,
-                                ValveContext context)
+    public abstract void invoke(Request request, Response response)
         throws IOException, ServletException;
 
 
@@ -265,8 +263,7 @@ public abstract class RequestFilterValve
      * @exception ServletException if a servlet error occurs
      */
     protected void process(String property,
-                           Request request, Response response,
-                           ValveContext context)
+                           Request request, Response response)
         throws IOException, ServletException {
 
         // Check the deny patterns, if any
@@ -284,14 +281,14 @@ public abstract class RequestFilterValve
         // Check the allow patterns, if any
         for (int i = 0; i < allows.length; i++) {
             if (allows[i].match(property)) {
-                context.invokeNext(request, response);
+                getNext().invoke(request, response);
                 return;
             }
         }
 
         // Allow if denies specified but not allows
         if ((denies.length > 0) && (allows.length == 0)) {
-            context.invokeNext(request, response);
+            getNext().invoke(request, response);
             return;
         }
 

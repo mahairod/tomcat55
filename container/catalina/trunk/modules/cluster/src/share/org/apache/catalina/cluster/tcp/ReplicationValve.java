@@ -21,30 +21,18 @@ package org.apache.catalina.cluster.tcp;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
+
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.Valve;
-import org.apache.catalina.ValveContext;
-import org.apache.catalina.util.StringManager;
-import org.apache.catalina.valves.*;
-import org.apache.catalina.cluster.SessionMessage;
+
 import org.apache.catalina.cluster.CatalinaCluster;
-import org.apache.catalina.cluster.ClusterSession;
 import org.apache.catalina.cluster.ClusterManager;
+import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.util.StringManager;
+import org.apache.catalina.valves.Constants;
+import org.apache.catalina.valves.ValveBase;
 
 /**
  * <p>Implementation of a Valve that logs interesting contents from the
@@ -131,22 +119,19 @@ public class ReplicationValve
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void invoke(Request request, Response response,
-                       ValveContext context)
+    public void invoke(Request request, Response response)
         throws IOException, ServletException
     {
         long totalstart = System.currentTimeMillis();
         //this happens before the request
         //long _debugstart = System.currentTimeMillis();
-        context.invokeNext(request, response);
+        getNext().invoke(request, response);
         //System.out.println("[DEBUG] Regular invoke took="+(System.currentTimeMillis()-_debugstart)+" ms.");
         //this happens after the request
         try
         {
             long start = System.currentTimeMillis();
-            HttpRequest hrequest = (HttpRequest) request;
-            HttpServletRequest hreq = (HttpServletRequest) hrequest.getRequest();
-            HttpSession session = hreq.getSession(false);
+            HttpSession session = request.getSession(false);
             
             if (!( request.getContext().getManager() instanceof ClusterManager) ) return;
             
@@ -186,7 +171,7 @@ public class ReplicationValve
 
 
 
-            String uri = hrequest.getDecodedRequestURI();
+            String uri = request.getDecodedRequestURI();
             boolean filterfound = false;
 
             for ( int i=0; (i<reqFilters.length) && (!filterfound); i++ )

@@ -19,6 +19,7 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.management.ObjectName;
 import javax.servlet.ServletException;
@@ -30,9 +31,9 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Pipeline;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
@@ -57,9 +58,8 @@ import org.apache.commons.modeler.Registry;
 public class StandardPipeline
     implements Pipeline, Contained, Lifecycle 
  {
-    private static Log log = LogFactory.getLog(StandardPipeline.class);
 
-   
+    private static Log log = LogFactory.getLog(StandardPipeline.class);
 
     // ----------------------------------------------------------- Constructors
 
@@ -135,10 +135,9 @@ public class StandardPipeline
 
 
     /**
-     * The set of Valves (not including the Basic one, if any) associated with
-     * this Pipeline.
+     * The first valve associated with this Pipeline.
      */
-    protected Valve valves[] = new Valve[0];
+    protected Valve first = null;
 
 
     // --------------------------------------------------------- Public Methods
@@ -235,16 +234,16 @@ public class StandardPipeline
         started = true;
 
         // Start the Valves in our pipeline (including the basic), if any
-        for (int i = 0; i < valves.length; i++) {
-            if (valves[i] instanceof Lifecycle)
-                ((Lifecycle) valves[i]).start();
-            registerValve(valves[i]);
+        Valve current = first;
+        if (current == null) {
+        	current = basic;
         }
-        if ((basic != null) && (basic instanceof Lifecycle))
-            ((Lifecycle) basic).start();
-        
-        if( basic!=null )
-            registerValve(basic);
+        while (current != null) {
+            if (current instanceof Lifecycle)
+                ((Lifecycle) current).start();
+            registerValve(current);
+        	current = current.getNext();
+        }
 
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(START_EVENT, null);
@@ -276,16 +275,15 @@ public class StandardPipeline
         started = false;
 
         // Stop the Valves in our pipeline (including the basic), if any
-        if ((basic != null) && (basic instanceof Lifecycle)) 
-            ((Lifecycle) basic).stop();
-        if( basic!=null ) {
-            unregisterValve(basic);
+        Valve current = first;
+        if (current == null) {
+        	current = basic;
         }
-        for (int i = 0; i < valves.length; i++) {
-            if (valves[i] instanceof Lifecycle)
-                ((Lifecycle) valves[i]).stop();
-            unregisterValve(valves[i]);
-        
+        while (current != null) {
+            if (current instanceof Lifecycle)
+                ((Lifecycle) current).stop();
+            unregisterValve(current);
+        	current = current.getNext();
         }
 
         // Notify our interested LifecycleListeners
@@ -406,6 +404,17 @@ public class StandardPipeline
                 return;
             }
         }
+
+        // Update the pipeline
+        Valve current = first;
+        while (current != null) {
+        	if (current.getNext() == oldBasic) {
+        		current.setNext(valve);
+        		break;
+        	}
+        	current = current.getNext();
+        }
+        
         this.basic = valve;
 
     }
@@ -450,11 +459,19 @@ public class StandardPipeline
         }
 
         // Add this Valve to the set associated with this Pipeline
-        synchronized (valves) {
-            Valve results[] = new Valve[valves.length +1];
-            System.arraycopy(valves, 0, results, 0, valves.length);
-            results[valves.length] = valve;
-            valves = results;
+        if (first == null) {
+        	first = valve;
+        	valve.setNext(basic);
+        } else {
+            Valve current = first;
+            while (current != null) {
+				if (current.getNext() == basic) {
+					current.setNext(valve);
+					valve.setNext(basic);
+					break;
+				}
+				current = current.getNext();
+			}
         }
 
     }
@@ -467,26 +484,36 @@ public class StandardPipeline
      */
     public Valve[] getValves() {
 
-        if (basic == null)
-            return (valves);
-        synchronized (valves) {
-            Valve results[] = new Valve[valves.length + 1];
-            System.arraycopy(valves, 0, results, 0, valves.length);
-            results[valves.length] = basic;
-            return (results);
+    	ArrayList valveList = new ArrayList();
+        Valve current = first;
+        if (current == null) {
+        	current = basic;
         }
+        while (current != null) {
+        	valveList.add(current);
+        	current = current.getNext();
+        }
+
+        return ((Valve[]) valveList.toArray(new Valve[0]));
 
     }
 
     public ObjectName[] getValveObjectNames() {
-        ObjectName oname[]=new ObjectName[valves.length + 1];
-        for( int i=0; i<valves.length; i++ ) {
-            if( valves[i] instanceof ValveBase )
-                oname[i]=((ValveBase)valves[i]).getObjectName();
+
+    	ArrayList valveList = new ArrayList();
+        Valve current = first;
+        if (current == null) {
+        	current = basic;
         }
-        if( basic instanceof ValveBase )
-            oname[valves.length]=((ValveBase)basic).getObjectName();
-        return oname;
+        while (current != null) {
+        	if (current instanceof ValveBase) {
+        		valveList.add(((ValveBase) current).getObjectName());
+        	}
+        	current = current.getNext();
+        }
+
+        return ((ObjectName[]) valveList.toArray(new ObjectName[0]));
+
     }
 
     /**
@@ -507,18 +534,11 @@ public class StandardPipeline
         throws IOException, ServletException {
 
         // Invoke the first Valve in this pipeline for this request
-        //(new StandardPipelineValveContext()).invokeNext(request, response);
-
-        StandardValveContext valveContext = 
-            (StandardValveContext) request.getValveContext();
-        if (valveContext == null) {
-            valveContext = new StandardValveContext();
-            request.setValveContext(valveContext);
-        }
-
-        valveContext.set(basic, valves);
-        valveContext.invokeNext(request, response);
-        valveContext.set(null, null);
+    	if (first != null) {
+    		first.invoke(request, response);
+    	} else {
+    		basic.invoke(request, response);
+    	}
 
     }
 
@@ -533,36 +553,17 @@ public class StandardPipeline
      */
     public void removeValve(Valve valve) {
 
-        synchronized (valves) {
-
-            // Locate this Valve in our list
-            int j = -1;
-            for (int i = 0; i < valves.length; i++) {
-                if (valve == valves[i]) {
-                    j = i;
-                    break;
-                }
+        Valve current = first;
+        while (current != null) {
+            if (current.getNext() == valve) {
+                current.setNext(valve.getNext());
+                break;
             }
-            if (j < 0)
-                return;
-
-            // Remove this valve from our list
-            Valve results[] = new Valve[valves.length - 1];
-            int n = 0;
-            for (int i = 0; i < valves.length; i++) {
-                if (i == j)
-                    continue;
-                results[n++] = valves[i];
-            }
-            valves = results;
-            try {
-                if (valve instanceof Contained)
-                    ((Contained) valve).setContainer(null);
-            } catch (Throwable t) {
-                ;
-            }
-
+            current = current.getNext();
         }
+
+        if (valve instanceof Contained)
+            ((Contained) valve).setContainer(null);
 
         // Stop this valve if necessary
         if (started) {
@@ -576,7 +577,7 @@ public class StandardPipeline
             // Unregister the removed valave
             unregisterValve(valve);
         }
-
+    
     }
 
 
@@ -584,10 +585,11 @@ public class StandardPipeline
 
 
     /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
+	 * Log a message on the Logger associated with our Container (if any).
+	 * 
+	 * @param message
+	 *            Message to be logged
+	 */
     protected void log(String message) {
 
         Logger logger = null;

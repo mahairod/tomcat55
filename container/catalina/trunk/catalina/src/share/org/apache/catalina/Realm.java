@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.SecurityConstraint;
 /**
  * A <b>Realm</b> is a read-only facade for an underlying security realm
@@ -129,7 +131,7 @@ public interface Realm {
      *
      * @param request Request we are processing
      */
-    public SecurityConstraint [] findSecurityConstraints(HttpRequest request,
+    public SecurityConstraint [] findSecurityConstraints(Request request,
                                                      Context context);
     /**
      * Perform access control based on the specified authorization constraint.
@@ -143,8 +145,8 @@ public interface Realm {
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasResourcePermission(HttpRequest request,
-                                         HttpResponse response,
+    public boolean hasResourcePermission(Request request,
+                                         Response response,
                                          SecurityConstraint [] constraint,
                                          Context context)
         throws IOException;
@@ -172,8 +174,8 @@ public interface Realm {
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasUserDataPermission(HttpRequest request,
-                                         HttpResponse response,
+    public boolean hasUserDataPermission(Request request,
+                                         Response response,
                                          SecurityConstraint []constraint)
         throws IOException;
     

@@ -23,21 +23,15 @@ import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
@@ -109,14 +103,13 @@ final class StandardHostValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public final void invoke(Request request, Response response,
-                             ValveContext valveContext)
+    public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Select the Context to be used for this Request
         Context context = request.getContext();
         if (context == null) {
-            ((HttpServletResponse) response.getResponse()).sendError
+            response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  sm.getString("standardHost.noContext"));
             return;
@@ -130,16 +123,13 @@ final class StandardHostValve
                     (context.getLoader().getClassLoader());
         }
         
-        // Update the session last access time for our session (if any)
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-
         // Ask this Context to process this request
         context.getPipeline().invoke(request, response);
 
         // Error page processing
         response.setSuspended(false);
 
-        Throwable t = (Throwable) hreq.getAttribute(Globals.EXCEPTION_ATTR);
+        Throwable t = (Throwable) request.getAttribute(Globals.EXCEPTION_ATTR);
 
         if (t != null) {
             throwable(request, response, t);
@@ -199,32 +189,29 @@ final class StandardHostValve
 
         if (errorPage != null) {
             response.setAppCommitted(false);
-            ServletRequest sreq = request.getRequest();
-            ServletResponse sresp = response.getResponse();
-            sreq.setAttribute
+            request.setAttribute
                 (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
                  errorPage.getLocation());
-            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                               new Integer(ApplicationFilterFactory.ERROR));
-            sreq.setAttribute
+            request.setAttribute
                 (Globals.STATUS_CODE_ATTR,
                  new Integer(HttpServletResponse.SC_INTERNAL_SERVER_ERROR));
-            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
+            request.setAttribute(Globals.ERROR_MESSAGE_ATTR,
                               throwable.getMessage());
-            sreq.setAttribute(Globals.EXCEPTION_ATTR,
+            request.setAttribute(Globals.EXCEPTION_ATTR,
                               realError);
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
-                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+            	request.setAttribute(Globals.SERVLET_NAME_ATTR,
                                   wrapper.getName());
-            if (sreq instanceof HttpServletRequest)
-                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-                                  ((HttpServletRequest) sreq).getRequestURI());
-            sreq.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
+            request.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+            		             request.getRequestURI());
+            request.setAttribute(Globals.EXCEPTION_TYPE_ATTR,
                               realError.getClass());
             if (custom(request, response, errorPage)) {
                 try {
-                    sresp.flushBuffer();
+                    response.flushBuffer();
                 } catch (IOException e) {
                     log("Exception Processing " + errorPage, e);
                 }
@@ -234,15 +221,11 @@ final class StandardHostValve
             // that was thrown during request processing. Check if an
             // error-page for error code 500 was specified and if so, 
             // send that page back as the response.
-            ServletResponse sresp = (ServletResponse) response;
-            if (sresp instanceof HttpServletResponse) {
-                ((HttpServletResponse) sresp).setStatus(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                // The response is an error
-                response.setError();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            // The response is an error
+            response.setError();
 
-                status(request, response);
-            }
+            status(request, response);
         }
             
 
@@ -260,13 +243,7 @@ final class StandardHostValve
      */
     protected void status(Request request, Response response) {
 
-        // Do nothing on non-HTTP responses
-        if (!(response instanceof HttpResponse))
-            return;
-        HttpResponse hresponse = (HttpResponse) response;
-        if (!(response.getResponse() instanceof HttpServletResponse))
-            return;
-        int statusCode = hresponse.getStatus();
+        int statusCode = response.getStatus();
 
         // Handle a custom error page for this status code
         Context context = request.getContext();
@@ -276,31 +253,28 @@ final class StandardHostValve
         ErrorPage errorPage = context.findErrorPage(statusCode);
         if (errorPage != null) {
             response.setAppCommitted(false);
-            ServletRequest sreq = request.getRequest();
-            ServletResponse sresp = response.getResponse();
-            sreq.setAttribute(Globals.STATUS_CODE_ATTR,
+            request.setAttribute(Globals.STATUS_CODE_ATTR,
                               new Integer(statusCode));
-	    String message = RequestUtil.filter(hresponse.getMessage());
+	    String message = RequestUtil.filter(response.getMessage());
             if (message == null)
                 message = "";
-            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR, message);
-            sreq.setAttribute
+            request.setAttribute(Globals.ERROR_MESSAGE_ATTR, message);
+            request.setAttribute
                 (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
                  errorPage.getLocation());
-            sreq.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
+            request.setAttribute(ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
                               new Integer(ApplicationFilterFactory.ERROR));
             
              
             Wrapper wrapper = request.getWrapper();
             if (wrapper != null)
-                sreq.setAttribute(Globals.SERVLET_NAME_ATTR,
+            	request.setAttribute(Globals.SERVLET_NAME_ATTR,
                                   wrapper.getName());
-            if (sreq instanceof HttpServletRequest)
-                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
-                                  ((HttpServletRequest) sreq).getRequestURI());
+            request.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+            		             request.getRequestURI());
             if (custom(request, response, errorPage)) {
                 try {
-                    sresp.flushBuffer();
+                    response.flushBuffer();
                 } catch (IOException e) {
                     log("Exception Processing " + errorPage, e);
                 }
@@ -358,23 +332,7 @@ final class StandardHostValve
         if (debug >= 1)
             log("Processing " + errorPage);
 
-        // Validate our current environment
-        if (!(request instanceof HttpRequest)) {
-            if (debug >= 1)
-                log(" Not processing an HTTP request --> default handling");
-            return (false);     // NOTE - Nothing we can do generically
-        }
-        HttpServletRequest hreq =
-            (HttpServletRequest) request.getRequest();
-        if (!(response instanceof HttpResponse)) {
-            if (debug >= 1)
-                log("Not processing an HTTP response --> default handling");
-            return (false);     // NOTE - Nothing we can do generically
-        }
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
-        
-        ((HttpRequest) request).setPathInfo(errorPage.getLocation());
+        request.setPathInfo(errorPage.getLocation());
 
         try {
 
@@ -382,18 +340,18 @@ final class StandardHostValve
             //hres.reset();
             // Reset the response (keeping the real error code and message)
             Integer statusCodeObj =
-                (Integer) hreq.getAttribute(Globals.STATUS_CODE_ATTR);
+                (Integer) request.getAttribute(Globals.STATUS_CODE_ATTR);
             int statusCode = statusCodeObj.intValue();
             String message = 
-                (String) hreq.getAttribute(Globals.ERROR_MESSAGE_ATTR);
-            ((HttpResponse) response).reset(statusCode, message);
+                (String) request.getAttribute(Globals.ERROR_MESSAGE_ATTR);
+            response.reset(statusCode, message);
 
             // Forward control to the specified location
             ServletContext servletContext =
                 request.getContext().getServletContext();
             RequestDispatcher rd =
                 servletContext.getRequestDispatcher(errorPage.getLocation());
-            rd.forward(hreq, hres);
+            rd.forward(request, response);
 
             // If we forward, the response is suspended again
             response.setSuspended(false);

@@ -17,23 +17,24 @@
 
 package org.apache.catalina.connector;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-
-import org.apache.catalina.Request;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
- * Facade class that wraps a Catalina-internal <b>Request</b>
- * object.  All methods are delegated to the wrapped request.
+ * Facade class that wraps a Coyote request object.  
+ * All methods are delegated to the wrapped request.
  *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
@@ -41,9 +42,133 @@ import org.apache.catalina.Request;
  * @version $Revision$ $Date$
  */
 
-public class RequestFacade implements ServletRequest {
 
+public class RequestFacade 
+    implements HttpServletRequest {
+        
+        
+    // ----------------------------------------------------------- DoPrivileged
+    
+    private final class GetAttributePrivilegedAction implements PrivilegedAction{
+        
+        public Object run() {
+            return request.getAttributeNames();
+        }            
+    }
+     
+    
+    private final class GetParameterMapPrivilegedAction implements PrivilegedAction{
+        
+        public Object run() {
+            return request.getParameterMap();
+        }        
+    }    
+    
+    
+    private final class GetRequestDispatcherPrivilegedAction implements PrivilegedAction{
+        private String path;
+        public GetRequestDispatcherPrivilegedAction(String path){
+            this.path = path;
+        }
+        
+        public Object run() {   
+            return request.getRequestDispatcher(path);
+       }           
+    }    
+    
+    
+    private final class GetParameterPrivilegedAction implements PrivilegedAction{
+        public String name;
+        public GetParameterPrivilegedAction(String name){
+            this.name = name;
+        }
+        public Object run() {       
+            return request.getParameter(name);
+        }           
+    }    
+    
+     
+    private final class GetParameterNamesPrivilegedAction implements PrivilegedAction{
+        
+        public Object run() {          
+            return request.getParameterNames();
+        }           
+    } 
+    
+    
+    private final class GetParameterValuePrivilegedAction implements PrivilegedAction{
+        public String name;
+        public GetParameterValuePrivilegedAction(String name){
+            this.name = name;
+        }
+        public Object run() {       
+            return request.getParameterValues(name);
+        }           
+    }    
+  
+    
+    private final class GetCookiesPrivilegedAction implements PrivilegedAction{
+        
+       public Object run() {       
+            return request.getCookies();
+        }           
+    }      
+    
+    
+    private final class GetCharacterEncodingPrivilegedAction implements PrivilegedAction{
+        
+        public Object run() {       
+            return request.getCharacterEncoding();
+        }           
+    }   
+        
+    
+    private final class GetHeadersPrivilegedAction implements PrivilegedAction{
+        private String name;
+        public GetHeadersPrivilegedAction(String name){
+            this.name = name;
+        }
+        
+        public Object run() {       
+            return request.getHeaders(name);
+        }           
+    }    
+        
+    
+    private final class GetHeaderNamesPrivilegedAction implements PrivilegedAction{
 
+        public Object run() {       
+            return request.getHeaderNames();
+        }           
+    }  
+            
+    
+    private final class GetLocalePrivilegedAction implements PrivilegedAction{
+
+        public Object run() {       
+            return request.getLocale();
+        }           
+    }    
+            
+    
+    private final class GetLocalesPrivilegedAction implements PrivilegedAction{
+
+        public Object run() {       
+            return request.getLocales();
+        }           
+    }    
+    
+    private final class GetSessionPrivilegedAction implements PrivilegedAction{
+        private boolean create;
+        
+        public GetSessionPrivilegedAction(boolean create){
+            this.create = create;
+        }
+                
+        public Object run() {  
+            return request.getSession(create);
+        }           
+    }      
     // ----------------------------------------------------------- Constructors
 
 
@@ -54,8 +179,7 @@ public class RequestFacade implements ServletRequest {
      */
     public RequestFacade(Request request) {
 
-        super();
-        this.request = (ServletRequest) request;
+        this.request = request;
 
     }
 
@@ -66,7 +190,7 @@ public class RequestFacade implements ServletRequest {
     /**
      * The wrapped request.
      */
-    protected ServletRequest request = null;
+    protected Request request = null;
 
 
     // --------------------------------------------------------- Public Methods
@@ -89,12 +213,22 @@ public class RequestFacade implements ServletRequest {
 
 
     public Enumeration getAttributeNames() {
-        return request.getAttributeNames();
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new GetAttributePrivilegedAction());        
+        } else {
+            return request.getAttributeNames();
+        }
     }
 
 
     public String getCharacterEncoding() {
-        return request.getCharacterEncoding();
+        if (System.getSecurityManager() != null){
+            return (String)AccessController.doPrivileged(
+                new GetCharacterEncodingPrivilegedAction());
+        } else {
+            return request.getCharacterEncoding();
+        }         
     }
 
 
@@ -121,22 +255,54 @@ public class RequestFacade implements ServletRequest {
 
 
     public String getParameter(String name) {
-        return request.getParameter(name);
+        if (System.getSecurityManager() != null){
+            return (String)AccessController.doPrivileged(
+                new GetParameterPrivilegedAction(name));
+        } else {
+            return request.getParameter(name);
+        }
     }
 
 
     public Enumeration getParameterNames() {
-        return request.getParameterNames();
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new GetParameterNamesPrivilegedAction());
+        } else {
+            return request.getParameterNames();
+        }
     }
 
 
     public String[] getParameterValues(String name) {
-        return request.getParameterValues(name);
+
+        String[] ret = null;
+
+        /*
+         * Clone the returned array only if there is a security manager
+         * in place, so that performance won't suffer in the nonsecure case
+         */
+        if (System.getSecurityManager() != null){
+            ret = (String[]) AccessController.doPrivileged(
+                new GetParameterValuePrivilegedAction(name));
+            if (ret != null) {
+                ret = (String[]) ret.clone();
+            }
+        } else {
+            ret = request.getParameterValues(name);
+        }
+
+        return ret;
     }
 
 
     public Map getParameterMap() {
-        return request.getParameterMap();
+        if (System.getSecurityManager() != null){
+            return (Map)AccessController.doPrivileged(
+                new GetParameterMapPrivilegedAction());        
+        } else {
+            return request.getParameterMap();
+        }
     }
 
 
@@ -187,12 +353,22 @@ public class RequestFacade implements ServletRequest {
 
 
     public Locale getLocale() {
-        return request.getLocale();
+        if (System.getSecurityManager() != null){
+            return (Locale)AccessController.doPrivileged(
+                new GetLocalePrivilegedAction());
+        } else {
+            return request.getLocale();
+        }        
     }
 
 
     public Enumeration getLocales() {
-        return request.getLocales();
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new GetLocalesPrivilegedAction());
+        } else {
+            return request.getLocales();
+        }        
     }
 
 
@@ -202,8 +378,12 @@ public class RequestFacade implements ServletRequest {
 
 
     public RequestDispatcher getRequestDispatcher(String path) {
-        // TODO : Facade !!
-        return request.getRequestDispatcher(path);
+        if (System.getSecurityManager() != null){
+            return (RequestDispatcher)AccessController.doPrivileged(
+                new GetRequestDispatcherPrivilegedAction(path));
+        } else {
+            return request.getRequestDispatcher(path);
+        }
     }
 
 
@@ -211,37 +391,181 @@ public class RequestFacade implements ServletRequest {
         return request.getRealPath(path);
     }
 
-    /**
-     * Returns the Internet Protocol (IP) source port of the client
-     * or last proxy that sent the request.
-     */    
-    public int getRemotePort(){
-        return request.getRemotePort();
+
+    public String getAuthType() {
+        return request.getAuthType();
     }
 
 
-    /**
-     * Returns the host name of the Internet Protocol (IP) interface on
-     * which the request was received.
-     */
-    public String getLocalName(){
-        return request.getLocalName();
+    public Cookie[] getCookies() {
+
+        Cookie[] ret = null;
+
+        /*
+         * Clone the returned array only if there is a security manager
+         * in place, so that performance won't suffer in the nonsecure case
+         */
+        if (System.getSecurityManager() != null){
+            ret = (Cookie[])AccessController.doPrivileged(
+                new GetCookiesPrivilegedAction());
+            if (ret != null) {
+                ret = (Cookie[]) ret.clone();
+            }
+        } else {
+            ret = request.getCookies();
+        }
+
+        return ret;
     }
 
-    /**
-     * Returns the Internet Protocol (IP) address of the interface on
-     * which the request  was received.
-     */       
-    public String getLocalAddr(){
-        return request.getLocalAddr();
+
+    public long getDateHeader(String name) {
+        return request.getDateHeader(name);
     }
 
-    
-    /**
-     * Returns the Internet Protocol (IP) port number of the interface
-     * on which the request was received.
-     */
-    public int getLocalPort(){
-        return request.getLocalPort();
+
+    public String getHeader(String name) {
+        return request.getHeader(name);
     }
+
+
+    public Enumeration getHeaders(String name) {
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new GetHeadersPrivilegedAction(name));
+        } else {
+            return request.getHeaders(name);
+        }         
+    }
+
+
+    public Enumeration getHeaderNames() {
+        if (System.getSecurityManager() != null){
+            return (Enumeration)AccessController.doPrivileged(
+                new GetHeaderNamesPrivilegedAction());
+        } else {
+            return request.getHeaderNames();
+        }             
+    }
+
+
+    public int getIntHeader(String name) {
+        return request.getIntHeader(name);
+    }
+
+
+    public String getMethod() {
+        return request.getMethod();
+    }
+
+
+    public String getPathInfo() {
+        return request.getPathInfo();
+    }
+
+
+    public String getPathTranslated() {
+        return request.getPathTranslated();
+    }
+
+
+    public String getContextPath() {
+        return request.getContextPath();
+    }
+
+
+    public String getQueryString() {
+        return request.getQueryString();
+    }
+
+
+    public String getRemoteUser() {
+        return request.getRemoteUser();
+    }
+
+
+    public boolean isUserInRole(String role) {
+        return request.isUserInRole(role);
+    }
+
+
+    public java.security.Principal getUserPrincipal() {
+        return request.getUserPrincipal();
+    }
+
+
+    public String getRequestedSessionId() {
+        return request.getRequestedSessionId();
+    }
+
+
+    public String getRequestURI() {
+        return request.getRequestURI();
+    }
+
+
+    public StringBuffer getRequestURL() {
+        return request.getRequestURL();
+    }
+
+
+    public String getServletPath() {
+        return request.getServletPath();
+    }
+
+
+    public HttpSession getSession(boolean create) {
+
+        if (System.getSecurityManager() != null){
+            return (HttpSession)AccessController.
+                doPrivileged(new GetSessionPrivilegedAction(create));
+        } else {
+            return request.getSession(create);
+        }
+    }
+
+    public HttpSession getSession() {
+        return getSession(true);
+    }
+
+
+    public boolean isRequestedSessionIdValid() {
+        return request.isRequestedSessionIdValid();
+    }
+
+
+    public boolean isRequestedSessionIdFromCookie() {
+        return request.isRequestedSessionIdFromCookie();
+    }
+
+
+    public boolean isRequestedSessionIdFromURL() {
+        return request.isRequestedSessionIdFromURL();
+    }
+
+
+    public boolean isRequestedSessionIdFromUrl() {
+        return request.isRequestedSessionIdFromURL();
+    }
+
+
+    public String getLocalAddr() {
+		return request.getLocalAddr();
+	}
+
+
+	public String getLocalName() {
+		return request.getLocalName();
+	}
+
+
+	public int getLocalPort() {
+		return request.getLocalPort();
+	}
+
+
+	public int getRemotePort() {
+		return request.getRemotePort();
+	}
+
 }

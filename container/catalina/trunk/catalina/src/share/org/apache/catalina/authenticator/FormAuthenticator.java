@@ -30,10 +30,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Session;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,20 +96,16 @@ public class FormAuthenticator
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean authenticate(HttpRequest request,
-                                HttpResponse response,
+    public boolean authenticate(Request request,
+                                Response response,
                                 LoginConfig config)
         throws IOException {
 
         // References to objects we will need later
-        HttpServletRequest hreq =
-          (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-          (HttpServletResponse) response.getResponse();
         Session session = null;
 
         // Have we already authenticated someone?
-        Principal principal = hreq.getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
         if (principal != null) {
             if (log.isDebugEnabled())
@@ -183,7 +179,7 @@ public class FormAuthenticator
             } else {
                 if (log.isDebugEnabled())
                     log.debug("Restore of original request failed");
-                hres.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return (false);
             }
         }
@@ -192,7 +188,7 @@ public class FormAuthenticator
         MessageBytes uriMB = MessageBytes.newInstance();
         CharChunk uriCC = uriMB.getCharChunk();
         uriCC.setLimit(-1);
-        String contextPath = hreq.getContextPath();
+        String contextPath = request.getContextPath();
         String requestURI = request.getDecodedRequestURI();
         response.setContext(request.getContext());
 
@@ -211,7 +207,7 @@ public class FormAuthenticator
                 context.getServletContext().getRequestDispatcher
                 (config.getLoginPage());
             try {
-                disp.forward(hreq, hres);
+                disp.forward(request, response);
                 response.finishResponse();
             } catch (Throwable t) {
                 log.warn("Unexpected error forwarding to login page", t);
@@ -222,8 +218,8 @@ public class FormAuthenticator
         // Yes -- Validate the specified credentials and redirect
         // to the error page if they are not correct
         Realm realm = context.getRealm();
-        String username = hreq.getParameter(Constants.FORM_USERNAME);
-        String password = hreq.getParameter(Constants.FORM_PASSWORD);
+        String username = request.getParameter(Constants.FORM_USERNAME);
+        String password = request.getParameter(Constants.FORM_PASSWORD);
         if (log.isDebugEnabled())
             log.debug("Authenticating username '" + username + "'");
         principal = realm.authenticate(username, password);
@@ -232,7 +228,7 @@ public class FormAuthenticator
                 context.getServletContext().getRequestDispatcher
                 (config.getErrorPage());
             try {
-                disp.forward(hreq, hres);
+                disp.forward(request, response);
             } catch (Throwable t) {
                 log.warn("Unexpected error forwarding to error page", t);
             }
@@ -247,8 +243,8 @@ public class FormAuthenticator
         if (session == null) {
             if (debug >=1)
                 log("User took so long to log on the session expired");
-            hres.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
-                           sm.getString("authenticator.sessionExpired"));
+            response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+                               sm.getString("authenticator.sessionExpired"));
             return (false);
         }
 
@@ -267,10 +263,10 @@ public class FormAuthenticator
         if (log.isDebugEnabled())
             log.debug("Redirecting to original '" + requestURI + "'");
         if (requestURI == null)
-            hres.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                           sm.getString("authenticator.formlogin"));
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                               sm.getString("authenticator.formlogin"));
         else
-            hres.sendRedirect(hres.encodeRedirectURL(requestURI));
+            response.sendRedirect(response.encodeRedirectURL(requestURI));
         return (false);
 
     }
@@ -285,7 +281,7 @@ public class FormAuthenticator
      *
      * @param request The request to be verified
      */
-    protected boolean matchRequest(HttpRequest request) {
+    protected boolean matchRequest(Request request) {
 
       // Has a session been created?
       Session session = getSession(request, false);
@@ -321,7 +317,7 @@ public class FormAuthenticator
      * @param request The request to be restored
      * @param session The session containing the saved information
      */
-    protected boolean restoreRequest(HttpRequest request, Session session) {
+    protected boolean restoreRequest(Request request, Session session) {
 
         // Retrieve and remove the SavedRequest object from our session
         SavedRequest saved = (SavedRequest)
@@ -375,7 +371,7 @@ public class FormAuthenticator
      * @param request The request to be saved
      * @param session The session to contain the saved information
      */
-    private void saveRequest(HttpRequest request, Session session) {
+    private void saveRequest(Request request, Session session) {
 
         // Create and populate a SavedRequest object for this request
         HttpServletRequest hreq = (HttpServletRequest) request.getRequest();

@@ -23,6 +23,9 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.naming.directory.DirContext;
 
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+
 
 /**
  * A <b>Container</b> is an object that can execute requests received from

@@ -37,13 +37,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.Host;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Connector;
+import org.apache.catalina.connector.Response;
 import org.apache.tomcat.util.buf.MessageBytes;
 
 
@@ -56,7 +54,7 @@ import org.apache.tomcat.util.buf.MessageBytes;
  */
 
 public class DummyRequest
-    implements HttpRequest, HttpServletRequest {
+    implements HttpServletRequest {
 
     public DummyRequest() {
     }
@@ -77,7 +75,6 @@ public class DummyRequest
     protected Wrapper wrapper = null;
 
     protected FilterChain filterChain = null;
-    protected ValveContext valveContext = null;
     
     private static Enumeration dummyEnum = new Enumeration(){
         public boolean hasMoreElements(){
@@ -150,14 +147,6 @@ public class DummyRequest
 
     public MessageBytes getServletPathMB() {
         return null;
-    }
-
-    public ValveContext getValveContext() {
-        return (this.valveContext);
-    }
-
-    public void setValveContext(ValveContext valveContext) {
-        this.valveContext = valveContext;
     }
 
     public Wrapper getWrapper() {

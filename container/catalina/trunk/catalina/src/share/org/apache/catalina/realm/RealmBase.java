@@ -30,18 +30,17 @@ import java.util.ArrayList;
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
@@ -396,8 +395,8 @@ public abstract class RealmBase
      * @param request Request we are processing
      * @param context Context the Request is mapped to
      */
-    public SecurityConstraint [] findSecurityConstraints(HttpRequest request,
-                                                     Context context) {
+    public SecurityConstraint [] findSecurityConstraints(Request request,
+                                                         Context context) {
 
         ArrayList results = null;
         // Are there any defined security constraints?
@@ -409,10 +408,9 @@ public abstract class RealmBase
         }
 
         // Check each defined security constraint
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
         String uri = request.getRequestPathMB().toString();
         
-        String method = hreq.getMethod();
+        String method = request.getMethod();
         int i;
         boolean found = false;
         for (i = 0; i < constraints.length; i++) {
@@ -595,8 +593,8 @@ public abstract class RealmBase
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasResourcePermission(HttpRequest request,
-                                         HttpResponse response,
+    public boolean hasResourcePermission(Request request,
+                                         Response response,
                                          SecurityConstraint []constraints,
                                          Context context)
         throws IOException {
@@ -630,8 +628,7 @@ public abstract class RealmBase
         }
 
         // Which user principal have we already authenticated?
-        Principal principal =
-            ((HttpServletRequest) request.getRequest()).getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         for(int i=0; i < constraints.length; i++) {
             SecurityConstraint constraint = constraints[i];
             String roles[] = constraint.findAuthRoles();
@@ -646,7 +643,7 @@ public abstract class RealmBase
 
             if (roles.length == 0) {
                 if(constraint.getAuthConstraint()) {
-                    ((HttpServletResponse) response.getResponse()).sendError
+                    response.sendError
                         (HttpServletResponse.SC_FORBIDDEN,
                          sm.getString("realmBase.forbidden"));
                     if( log.isDebugEnabled() ) log.debug("No roles ");
@@ -658,7 +655,7 @@ public abstract class RealmBase
             } else if (principal == null) {
                 if (log.isDebugEnabled())
                     log.debug("  No user authenticated, cannot grant access");
-                ((HttpServletResponse) response.getResponse()).sendError
+                response.sendError
                     (HttpServletResponse.SC_FORBIDDEN,
                      sm.getString("realmBase.notAuthenticated"));
                 return (false);
@@ -673,7 +670,7 @@ public abstract class RealmBase
             }
         }
         // Return a "Forbidden" message denying access to this resource
-        ((HttpServletResponse) response.getResponse()).sendError
+        response.sendError
             (HttpServletResponse.SC_FORBIDDEN,
              sm.getString("realmBase.forbidden"));
         return (false);
@@ -728,9 +725,9 @@ public abstract class RealmBase
      *
      * @exception IOException if an input/output error occurs
      */
-    public boolean hasUserDataPermission(HttpRequest request,
-                                    HttpResponse response,
-                                    SecurityConstraint []constraints)
+    public boolean hasUserDataPermission(Request request,
+                                         Response response,
+                                         SecurityConstraint []constraints)
         throws IOException {
 
         // Is there a relevant user data constraint?
@@ -761,46 +758,42 @@ public abstract class RealmBase
             return (true);
         }
         // Initialize variables we need to determine the appropriate action
-        HttpServletRequest hrequest =
-            (HttpServletRequest) request.getRequest();
-        HttpServletResponse hresponse =
-            (HttpServletResponse) response.getResponse();
         int redirectPort = request.getConnector().getRedirectPort();
 
         // Is redirecting disabled?
         if (redirectPort <= 0) {
             if (log.isDebugEnabled())
                 log.debug("  SSL redirect is disabled");
-            hresponse.sendError
+            response.sendError
                 (HttpServletResponse.SC_FORBIDDEN,
-                 hrequest.getRequestURI());
+                 request.getRequestURI());
             return (false);
         }
 
         // Redirect to the corresponding SSL port
         StringBuffer file = new StringBuffer();
         String protocol = "https";
-        String host = hrequest.getServerName();
+        String host = request.getServerName();
         // Protocol
         file.append(protocol).append("://");
         // Host with port
         file.append(host).append(":").append(redirectPort);
         // URI
-        file.append(hrequest.getRequestURI());
-        String requestedSessionId = hrequest.getRequestedSessionId();
+        file.append(request.getRequestURI());
+        String requestedSessionId = request.getRequestedSessionId();
         if ((requestedSessionId != null) &&
-            hrequest.isRequestedSessionIdFromURL()) {
+            request.isRequestedSessionIdFromURL()) {
             file.append(";jsessionid=");
             file.append(requestedSessionId);
         }
-        String queryString = hrequest.getQueryString();
+        String queryString = request.getQueryString();
         if (queryString != null) {
             file.append('?');
             file.append(queryString);
         }
         if (log.isDebugEnabled())
             log.debug("  Redirecting to " + file.toString());
-        hresponse.sendRedirect(file.toString());
+        response.sendRedirect(file.toString());
         return (false);
 
     }

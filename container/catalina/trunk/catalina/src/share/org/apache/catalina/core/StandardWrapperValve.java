@@ -25,19 +25,15 @@ import javax.management.ObjectName;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -92,8 +88,7 @@ final class StandardWrapperValve
      * @exception IOException if an input/output error occurred
      * @exception ServletException if a servlet error occurred
      */
-    public final void invoke(Request request, Response response,
-                             ValveContext valveContext)
+    public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
         // Initialize local variables we may need
@@ -103,15 +98,11 @@ final class StandardWrapperValve
         long t1=System.currentTimeMillis();
         requestCount++;
         StandardWrapper wrapper = (StandardWrapper) getContainer();
-        HttpRequest hrequest = (HttpRequest) request;
         Servlet servlet = null;
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-            (HttpServletResponse) response.getResponse();
 
         // Check for the application being marked unavailable
         if (!((Context) wrapper.getParent()).getAvailable()) {
-            hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+        	response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                            sm.getString("standardContext.isUnavailable"));
             unavailable = true;
         }
@@ -120,17 +111,17 @@ final class StandardWrapperValve
         if (!unavailable && wrapper.isUnavailable()) {
             log(sm.getString("standardWrapper.isUnavailable",
                              wrapper.getName()));
-            if (hres == null) {
+            if (response == null) {
                 ;       // NOTE - Not much we can do generically
             } else {
                 long available = wrapper.getAvailable();
                 if ((available > 0L) && (available < Long.MAX_VALUE)) {
-                    hres.setDateHeader("Retry-After", available);
-                    hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                	response.setDateHeader("Retry-After", available);
+                	response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                                sm.getString("standardWrapper.isUnavailable",
                                             wrapper.getName()));
                 } else if (available == Long.MAX_VALUE) {
-                    hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+                	response.sendError(HttpServletResponse.SC_NOT_FOUND,
                                sm.getString("standardWrapper.notFound",
                                             wrapper.getName()));
                 }
@@ -146,12 +137,12 @@ final class StandardWrapperValve
         } catch (UnavailableException e) {
             long available = wrapper.getAvailable();
             if ((available > 0L) && (available < Long.MAX_VALUE)) {
-                hres.setDateHeader("Retry-After", available);
-                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+            	response.setDateHeader("Retry-After", available);
+            	response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                            sm.getString("standardWrapper.isUnavailable",
                                         wrapper.getName()));
             } else if (available == Long.MAX_VALUE) {
-                hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+            	response.sendError(HttpServletResponse.SC_NOT_FOUND,
                            sm.getString("standardWrapper.notFound",
                                         wrapper.getName()));
             }
@@ -173,7 +164,7 @@ final class StandardWrapperValve
         try {
             response.sendAcknowledgement();
         } catch (IOException e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        	request.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.acknowledgeException",
                              wrapper.getName()), e);
             throwable = e;
@@ -186,13 +177,13 @@ final class StandardWrapperValve
             servlet = null;
         }
         MessageBytes requestPathMB = null;
-        if (hreq != null) {
-            requestPathMB = hrequest.getRequestPathMB();
+        if (request != null) {
+            requestPathMB = request.getRequestPathMB();
         }
-        hreq.setAttribute
+        request.setAttribute
             (ApplicationFilterFactory.DISPATCHER_TYPE_ATTR,
              ApplicationFilterFactory.REQUEST_INTEGER);
-        hreq.setAttribute
+        request.setAttribute
             (ApplicationFilterFactory.DISPATCHER_REQUEST_PATH_ATTR,
              requestPathMB);
         // Create the filter chain for this request
@@ -207,25 +198,25 @@ final class StandardWrapperValve
         try {
             String jspFile = wrapper.getJspFile();
             if (jspFile != null)
-                hreq.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
+            	request.setAttribute(Globals.JSP_FILE_ATTR, jspFile);
             else
-                hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            	request.removeAttribute(Globals.JSP_FILE_ATTR);
             if ((servlet != null) && (filterChain != null)) {
-                filterChain.doFilter(hreq, hres);
+                filterChain.doFilter(request, response);
             }
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
         } catch (ClientAbortException e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        	request.removeAttribute(Globals.JSP_FILE_ATTR);
             throwable = e;
             exception(request, response, e);
         } catch (IOException e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        	request.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
             exception(request, response, e);
         } catch (UnavailableException e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        	request.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             //            throwable = e;
@@ -233,19 +224,19 @@ final class StandardWrapperValve
             wrapper.unavailable(e);
             long available = wrapper.getAvailable();
             if ((available > 0L) && (available < Long.MAX_VALUE)) {
-                hres.setDateHeader("Retry-After", available);
-                hres.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                response.setDateHeader("Retry-After", available);
+                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                            sm.getString("standardWrapper.isUnavailable",
                                         wrapper.getName()));
             } else if (available == Long.MAX_VALUE) {
-                hres.sendError(HttpServletResponse.SC_NOT_FOUND,
+            	response.sendError(HttpServletResponse.SC_NOT_FOUND,
                             sm.getString("standardWrapper.notFound",
                                         wrapper.getName()));
             }
             // Do not save exception in 'throwable', because we
             // do not want to do exception(request, response, e) processing
         } catch (ServletException e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        	request.removeAttribute(Globals.JSP_FILE_ATTR);
             Throwable rootCause = e;
             Throwable rootCauseCheck = null;
 
@@ -275,7 +266,7 @@ final class StandardWrapperValve
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
-            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            request.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
                              wrapper.getName()), e);
             throwable = e;
@@ -401,13 +392,8 @@ final class StandardWrapperValve
      */
     private void exception(Request request, Response response,
                            Throwable exception) {
-        ServletRequest sreq = request.getRequest();
-        sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
-
-        ServletResponse sresponse = response.getResponse();
-        if (sresponse instanceof HttpServletResponse)
-            ((HttpServletResponse) sresponse).setStatus
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    	request.setAttribute(Globals.EXCEPTION_ATTR, exception);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
     }
 
