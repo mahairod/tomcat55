@@ -77,6 +77,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
 import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.buf.StringCache;
 
 
 
@@ -2075,6 +2076,16 @@ public final class StandardServer
             }
         }
         
+        // Register global String cache
+        try {
+            ObjectName oname2 = 
+                new ObjectName(oname.getDomain() + ":type=StringCache");
+            Registry.getRegistry(null, null)
+                .registerComponent(new StringCache(), oname2, null );
+        } catch (Exception e) {
+            log.error("Error registering ",e);
+        }
+
         // Initialize our defined Services
         for (int i = 0; i < services.length; i++) {
             services[i].initialize();
