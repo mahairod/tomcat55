@@ -634,14 +634,14 @@ public class Validator {
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (attrs.getQName(i).equals(tldAttrs[j].getName())) {
 			if (tldAttrs[j].canBeRequestTime()) {
-                            Class expectedType;
+                            Class expectedType = String.class;
                             try {
+                                String typeStr = tldAttrs[j].getTypeName();
                                 if( tldAttrs[j].isFragment() ) {
                                     expectedType = JspFragment.class;
                                 }
-                                else {
-                                    expectedType = Class.forName(
-                                        tldAttrs[j].getTypeName() );
+                                else if( typeStr != null ) {
+                                    expectedType = Class.forName( typeStr );
                                 }
                                 jspAttrs[i]
                                     = getJspAttribute(attrs.getQName(i),
@@ -707,14 +707,14 @@ public class Validator {
 		for (int j=0; j<tldAttrs.length; j++) {
 		    if (na.getName().equals(tldAttrs[j].getName())) {
 			if (tldAttrs[j].canBeRequestTime()) {
-                            Class expectedType;
+                            Class expectedType = String.class;
                             try {
+                                String typeStr = tldAttrs[j].getTypeName();
                                 if( tldAttrs[j].isFragment() ) {
                                     expectedType = JspFragment.class;
                                 }
-                                else {
-                                    expectedType = Class.forName(
-                                        tldAttrs[j].getTypeName() );
+                                else if( typeStr != null ) {
+                                    expectedType = Class.forName( typeStr );
                                 }
                                 jspAttrs[attrs.getLength() + i]
                                     = getJspAttribute(na.getName(), null, null,
