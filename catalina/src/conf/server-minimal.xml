@@ -11,7 +11,7 @@
         <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
       </parameter>
       <parameter>
-        <name>pathaame</name>
+        <name>pathname</name>
         <value>conf/tomcat-users.xml</value>
       </parameter>
     </ResourceParams>
