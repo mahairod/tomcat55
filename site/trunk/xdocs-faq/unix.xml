@@ -74,6 +74,7 @@
   </a>
   </question>
   <answer>
+    <p>
     You either need to run headless or run an alternate X-server. Some more
     information can be found
     <a href="http://marc.theaimsgroup.com/?t=104803047600003&amp;r=1&amp;w=2">
@@ -86,6 +87,11 @@
     <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=101614645312259&amp;w=2">
         here
     </a>.
+    </p>
+
+    <p> Or if your are using a JVM 1.4 or better, you can use the system property
+        <tt>java.awt.headless=true</tt>
+    </p>
   </answer>
 
   <question>

@@ -57,13 +57,12 @@
     </ul>
 
      As of December 3, 2003 Tomcat 5 has been declared stable.
+
     <br/><br/>
 
-     There are 2 flavors of Tomcat 4: 4.0.X and 4.1.X. The 4.1.x version is
-     still slowly receiving new enhancements but this
-     trend is subsiding while more attention is paid to Tomcat5.
-     Version 4.0.X is only receiving security fixes. Both (4.0 and 4.1)
-     are suitable for production.
+     There are 2 flavors of Tomcat 4: 4.0.X and 4.1.X - both of which
+     are not receiving enhancments. (Excluding security issues)
+     Both (4.0 and 4.1) are suitable for production.
      Version 4.1.X is significantly faster than 4.0.X.
     <br/><br/>
 
