@@ -274,7 +274,7 @@ public class RequestUtil {
      * @author: cut & paste from JServ, much faster that previous tomcat impl 
      */
     public final static String URLDecode(String str)
-	throws NumberFormatException, StringIndexOutOfBoundsException
+	throws NumberFormatException, StringIndexOutOfBoundsException,IllegalArgumentException
     {
         if (str == null)  return  null;
 
@@ -312,18 +312,11 @@ public class RequestUtil {
                 strPos++;
                 continue;
             } else if (metaChar == '%') {
-		// We throw the original exception - the super will deal with it
-		//                try {
-		dec.append((char) Integer.parseInt(
-						   str.substring(strPos + 1, strPos + 3), 16));
-		//                } catch (NumberFormatException e) {
-		//                    throw new IllegalArgumentException("invalid hexadecimal "
-		//                    + str.substring(strPos + 1, strPos + 3)
-		//                    + " in URLencoded string (illegal unescaped '%'?)" );
-		//                } catch (StringIndexOutOfBoundsException e) {
-		//                    throw new IllegalArgumentException("illegal unescaped '%' "
-		//                    + " in URLencoded string" );
-		//                }
+                char c = (char) Integer.parseInt(str.substring(strPos + 1, strPos + 3), 16);
+                if(c == '/' || c == '\0')
+                    throw new IllegalArgumentException("URL contains encoded special chars.");
+
+                dec.append(c);
                 strPos += 3;
             }
         }
