@@ -2503,7 +2503,7 @@ public class StandardContext
         setPaused(false);
 
         // Notify our interested LifecycleListeners
-        lifecycle.fireLifecycleEvent(Lifecycle.RELOAD_EVENT, null);
+        lifecycle.fireLifecycleEvent(Context.RELOAD_EVENT, null);
 
     }
 

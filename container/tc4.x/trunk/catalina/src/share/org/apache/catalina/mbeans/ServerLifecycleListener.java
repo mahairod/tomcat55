@@ -179,7 +179,7 @@ public class ServerLifecycleListener
                 return;
             createMBeans();
         } else if (Lifecycle.STOP_EVENT.equals(event.getType())) {
-        } else if (Lifecycle.RELOAD_EVENT.equals(event.getType())) {
+        } else if (Context.RELOAD_EVENT.equals(event.getType())) {
             // Give context a new handle to the MBean server if the
             // context has been reloaded since reloading causes the
             // context to lose its previous handle to the server

@@ -104,6 +104,15 @@ import org.apache.catalina.util.CharsetMapper;
 public interface Context extends Container {
 
 
+    // ----------------------------------------------------- Manifest Constants
+
+
+    /**
+     * The LifecycleEvent type sent when a context is reloaded.
+     */
+    public static final String RELOAD_EVENT = "reload";
+
+
     // ------------------------------------------------------------- Properties
 
 
