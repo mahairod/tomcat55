@@ -25,6 +25,7 @@
 
 <!-- START Configured Filters -->
 
+    <!-- START Filter -->
     <filter>
         <filter-name>
             ServletMappedDoFilter_Filter
@@ -63,6 +64,50 @@
             </param-value>
         </init-param>
     </filter>
+    <!-- END Filter -->
+
+    <!-- START FilterConfig -->
+    <filter>
+        <filter-name>
+            ServletMappedFilterChain_Filter1
+        </filter-name>
+        <display-name>
+            ServletMappedFilterChain_Filter1
+        </display-name>
+        <filter-class>
+            tests.javax_servlet.FilterChain.FilterChain_Filter1
+        </filter-class>
+        <init-param>
+            <param-name>
+                attribute1
+            </param-name>
+            <param-value>
+                tests.javax_servlet.FilterChain.FilterChain_Filter1.SERVLET_MAPPED
+            </param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>
+            ServletMappedFilterChain_Filter2
+        </filter-name>
+        <display-name>
+            ServletMappedFilterChain_Filter2
+        </display-name>
+        <filter-class>
+            tests.javax_servlet.FilterChain.FilterChain_Filter2
+        </filter-class>
+        <init-param>
+            <param-name>
+                attribute2
+            </param-name>
+            <param-value>
+                tests.javax_servlet.FilterChain.FilterChain_Filter2.SERVLET_MAPPED
+            </param-value>
+        </init-param>
+    </filter>
+    <!-- END FilterConfig -->
+
+    <!-- START Filter Mapping -->
     <filter-mapping>
         <filter-name>
             ServletMappedDoFilter_Filter
@@ -79,6 +124,26 @@
             InitFilterConfigTest
         </servlet-name>
     </filter-mapping>
+    <!-- END Filter Mapping -->
+
+    <!-- START FilterConfig Mapping -->
+    <filter-mapping>
+        <filter-name>
+            ServletMappedFilterChain_Filter1
+        </filter-name>
+        <servlet-name>
+            FilterChainTestLogicalName
+        </servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>
+            ServletMappedFilterChain_Filter2
+        </filter-name>
+        <servlet-name>
+            FilterChainTestLogicalName
+        </servlet-name>
+    </filter-mapping>
+    <!-- END FilterConfig Mapping -->
     
 <!-- END Configured Filters -->
 
@@ -327,7 +392,7 @@
     </servlet-class>
   </servlet>
 
- <!-- Filters -->
+ <!-- Filter -->
 
     <servlet>
         <servlet-name>
@@ -344,6 +409,20 @@
         </servlet-name>
         <servlet-class>
             tests.javax_servlet.Filter.InitFilterConfigTestServlet
+        </servlet-class>
+    </servlet>
+
+ <!-- FilterConfig -->
+
+    <servlet>
+        <servlet-name>
+            FilterChainTestLogicalName
+        </servlet-name>
+        <display-name>
+            FilterChainTest
+        </display-name>
+        <servlet-class>
+            tests.javax_servlet.FilterChain.FilterChainTestServlet
         </servlet-class>
     </servlet>
  
@@ -2184,6 +2263,17 @@
         </servlet-name>
         <url-pattern>
             /InitFilterConfigTest
+        </url-pattern>
+    </servlet-mapping>
+
+  <!-- FilterConfig -->
+
+    <servlet-mapping>
+        <servlet-name>
+            FilterChainTestLogicalName
+        </servlet-name>
+        <url-pattern>
+            /FilterChainTest
         </url-pattern>
     </servlet-mapping>
 
