@@ -220,6 +220,8 @@ public final class ExtensionValidator {
             } 
         } catch (javax.naming.NamingException nex) {
             // Application does not contain a MANIFEST.MF file
+        } catch (java.util.NoSuchElementException nse) {
+            // Application does not contain a MANIFEST.MF file
         }  catch (java.io.IOException iox) {
             // Unable to load MANIFEST.MF file
         }
