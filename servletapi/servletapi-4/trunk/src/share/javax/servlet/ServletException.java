@@ -129,8 +129,8 @@ public class ServletException extends Exception {
      */
     
     public ServletException(String message, Throwable rootCause) {
-	super(message);
-	this.rootCause = rootCause;
+       super(message, rootCause);
+       this.rootCause = rootCause;
     }
 
 
@@ -158,8 +158,8 @@ public class ServletException extends Exception {
      */
 
     public ServletException(Throwable rootCause) {
-	super(rootCause.getLocalizedMessage());
-	this.rootCause = rootCause;
+       super(rootCause.getLocalizedMessage(), rootCause);
+       this.rootCause = rootCause;
     }
   
   
