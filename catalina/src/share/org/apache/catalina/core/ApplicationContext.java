@@ -520,7 +520,7 @@ public class ApplicationContext
     public URL getResource(String path)
         throws MalformedURLException {
 
-        if (!path.startsWith("/")) {
+        if (path == null || !path.startsWith("/")) {
             throw new MalformedURLException(sm.getString("applicationContext.requestDispatcher.iae", path));
         }
         
