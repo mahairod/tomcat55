@@ -79,9 +79,9 @@ import javax.servlet.http.*;
  */
 final class ServletConfigImpl implements ServletConfig {
 
-    ServletWrapper servletW;
+    ServletInfo servletW;
     
-    ServletConfigImpl( ServletWrapper sw) {
+    ServletConfigImpl( ServletInfo sw) {
 	servletW=sw;
     }
 
