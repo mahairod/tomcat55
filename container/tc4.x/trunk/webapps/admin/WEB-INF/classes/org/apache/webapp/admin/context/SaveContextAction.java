@@ -63,17 +63,11 @@ package org.apache.webapp.admin.context;
 
 
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -185,10 +179,13 @@ public final class SaveContextAction extends Action {
         String cObjectName = cform.getObjectName();
         String lObjectName = cform.getLoaderObjectName();
         String mObjectName = cform.getManagerObjectName();
+        String oNamePath = "";
         if ((cform.getPath() == null) || (cform.getPath().length()<1)) {
-            cform.setPath("/");
+            oNamePath = ("/");
+        } else {
+            oNamePath = cform.getPath();
         }
-       
+
         // Perform a "Create Context" transaction (if requested)
         if ("Create".equals(adminAction)) {
 
@@ -203,7 +200,7 @@ public final class SaveContextAction extends Action {
                 // Ensure that the requested context name is unique
                 ObjectName oname =
                     new ObjectName(TomcatTreeBuilder.CONTEXT_TYPE +
-                                   ",path=" + cform.getPath() +
+                                   ",path=" + oNamePath +
                                    ",host=" + honame.getKeyProperty("host") +
                                    ",service=" + honame.getKeyProperty("service"));
                 
@@ -222,7 +219,7 @@ public final class SaveContextAction extends Action {
                 // Create a new StandardContext object
                 values = new Object[3];
                 values[0] = parentName;
-                values[1] = cform.getPath();
+                values[1] = oNamePath;
                 values[2] = cform.getDocBase();
 
                 operation = "createStandardContext";    
