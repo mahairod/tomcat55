@@ -66,38 +66,43 @@ import javax.servlet.http.*;
 
 /**
  * HttpServletResponse wrapper that converts all output characters to
- * upper case.
+ * upper case via an intermediate buffer.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseResponse extends HttpServletResponseWrapper {
+public class CharArrayResponse extends HttpServletResponseWrapper {
 
 
-    HttpServletResponse response = null;
+    CharArrayWriterUpperCase writer = null;
 
-    boolean stream = false; // Wrap our own output stream
-
-    public UpperCaseResponse(HttpServletResponse response) {
-        this(response, false);
-    }
-
-    public UpperCaseResponse(HttpServletResponse response, boolean stream) {
+    public CharArrayResponse(HttpServletResponse response) {
         super(response);
-        this.response = response;
-        this.stream = stream;
+        writer = new CharArrayWriterUpperCase();
     }
 
-    public ServletOutputStream getOutputStream() throws IOException {
-        return (new UpperCaseOutputStream(response.getOutputStream()));
+    public void flushBuffer() throws IOException {
+        int n = 0;
+        Reader reader = getReader();
+        PrintWriter writer = getResponse().getWriter();
+        while (true) {
+            int ch = reader.read();
+            if (ch < 0)
+                break;
+            n++;
+            writer.print((char) ch);
+        }
+        writer.println("[" + n + "]");
+        this.writer.reset();
+    }
+
+    public Reader getReader() {
+        return (new CharArrayReader(writer.toCharArray()));
     }
 
     public PrintWriter getWriter() throws IOException {
-        if (stream)
-            return (new PrintWriter(getOutputStream(), true));
-        else
-            return (new UpperCaseWriter(response.getWriter()));
+        return (new PrintWriter(writer, true));
     }
 
 

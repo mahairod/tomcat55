@@ -59,49 +59,27 @@ package org.apache.tester;
 
 
 import java.io.*;
-import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 /**
- * HttpServletResponse wrapper that converts all output characters to
- * upper case.
+ * Basis for testing wrapped responses with combinations of forwarding to
+ * or including both servlets and JSP pages.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseResponse extends HttpServletResponseWrapper {
+public class ResponseWrap01a extends HttpServlet {
 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
 
-    HttpServletResponse response = null;
+        // Prepare this response
+        response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
+        writer.println("ResponseWrap01a PASSED");
 
-    boolean stream = false; // Wrap our own output stream
-
-    public UpperCaseResponse(HttpServletResponse response) {
-        this(response, false);
     }
-
-    public UpperCaseResponse(HttpServletResponse response, boolean stream) {
-        super(response);
-        this.response = response;
-        this.stream = stream;
-    }
-
-    public ServletOutputStream getOutputStream() throws IOException {
-        return (new UpperCaseOutputStream(response.getOutputStream()));
-    }
-
-    public PrintWriter getWriter() throws IOException {
-        if (stream)
-            return (new PrintWriter(getOutputStream(), true));
-        else
-            return (new UpperCaseWriter(response.getWriter()));
-    }
-
 
 }
-
-
-

@@ -737,6 +737,24 @@
          request="${context.path}/Include07" debug="${debug}"
           golden="${golden.path}/Include07.txt"/>
 
+    <!-- ========== Response Wrapping ===================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ResponseWrap01?type=F&amp;page=/ResponseWrap01a"
+      outContent="RESPONSEWRAP01A PASSED" debug="${debug}" />
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ResponseWrap01?type=F&amp;page=/ResponseWrap01b.jsp"
+      outContent="RESPONSEWRAP01B PASSED" debug="${debug}" />
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ResponseWrap01?type=I&amp;page=/ResponseWrap01c"
+      outContent="RESPONSEWRAP01C PASSED" debug="${debug}" />
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/ResponseWrap01?type=I&amp;page=/ResponseWrap01d.jsp"
+      outContent="RESPONSEWRAP01D PASSED" debug="${debug}" />
+
   </target>
 
 

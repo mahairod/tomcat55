@@ -59,49 +59,52 @@ package org.apache.tester;
 
 
 import java.io.*;
-import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 /**
- * HttpServletResponse wrapper that converts all output characters to
- * upper case.
+ * Basis for testing wrapped responses with combinations of forwarding to
+ * or including both servlets and JSP pages.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseResponse extends HttpServletResponseWrapper {
+public class ResponseWrap01 extends HttpServlet {
 
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws IOException, ServletException {
 
-    HttpServletResponse response = null;
+        // Acquire request parameters
+        String type = request.getParameter("type");
+        String page = request.getParameter("page");
 
-    boolean stream = false; // Wrap our own output stream
+        // Prepare this response
+        response.setContentType("text/plain");
+        //	PrintWriter writer = response.getWriter();
 
-    public UpperCaseResponse(HttpServletResponse response) {
-        this(response, false);
+        // Forward or include as requested
+        RequestDispatcher rd =
+            getServletContext().getRequestDispatcher(page);
+        if (rd == null) {
+            PrintWriter writer = response.getWriter();
+            writer.println("ResponseWrap01 FAILED - No request dispatcher" +
+                           " for " + page);
+        } else if ("F".equals(type)) {
+            HttpServletResponseWrapper wrapper =
+                new CharArrayResponse(response);
+            rd.forward(request, wrapper);
+            wrapper.flushBuffer();
+        } else {
+            HttpServletResponseWrapper wrapper =
+                new CharArrayResponse(response);
+            rd.include(request, wrapper);
+            wrapper.flushBuffer();
+        }
+
+        // No filter wrapping for this test series
+        StaticLogger.reset();
+
     }
-
-    public UpperCaseResponse(HttpServletResponse response, boolean stream) {
-        super(response);
-        this.response = response;
-        this.stream = stream;
-    }
-
-    public ServletOutputStream getOutputStream() throws IOException {
-        return (new UpperCaseOutputStream(response.getOutputStream()));
-    }
-
-    public PrintWriter getWriter() throws IOException {
-        if (stream)
-            return (new PrintWriter(getOutputStream(), true));
-        else
-            return (new UpperCaseWriter(response.getWriter()));
-    }
-
 
 }
-
-
-

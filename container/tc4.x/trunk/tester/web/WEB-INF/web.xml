@@ -759,6 +759,21 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ResponseWrap01</servlet-name>
+        <servlet-class>org.apache.tester.ResponseWrap01</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ResponseWrap01a</servlet-name>
+        <servlet-class>org.apache.tester.ResponseWrap01a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ResponseWrap01c</servlet-name>
+        <servlet-class>org.apache.tester.ResponseWrap01c</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>Session01</servlet-name>
         <servlet-class>org.apache.tester.Session01</servlet-class>
     </servlet>
@@ -1374,6 +1389,21 @@
     <servlet-mapping>
         <servlet-name>Resources06</servlet-name>
         <url-pattern>/WrappedResources06</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ResponseWrap01</servlet-name>
+        <url-pattern>/ResponseWrap01</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ResponseWrap01a</servlet-name>
+        <url-pattern>/ResponseWrap01a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ResponseWrap01c</servlet-name>
+        <url-pattern>/ResponseWrap01c</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

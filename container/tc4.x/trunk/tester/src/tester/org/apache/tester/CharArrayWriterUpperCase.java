@@ -65,43 +65,69 @@ import javax.servlet.http.*;
 
 
 /**
- * HttpServletResponse wrapper that converts all output characters to
- * upper case.
+ * Implementation of CharArrayWriter that upper cases its output.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class UpperCaseResponse extends HttpServletResponseWrapper {
+public class CharArrayWriterUpperCase extends CharArrayWriter {
 
 
-    HttpServletResponse response = null;
+    CharArrayWriter writer = new CharArrayWriter();
 
-    boolean stream = false; // Wrap our own output stream
-
-    public UpperCaseResponse(HttpServletResponse response) {
-        this(response, false);
+    public void close() {
+        writer.close();
     }
 
-    public UpperCaseResponse(HttpServletResponse response, boolean stream) {
-        super(response);
-        this.response = response;
-        this.stream = stream;
+    public void flush() {
+        writer.flush();
     }
 
-    public ServletOutputStream getOutputStream() throws IOException {
-        return (new UpperCaseOutputStream(response.getOutputStream()));
+    public void reset() {
+        writer.reset();
     }
 
-    public PrintWriter getWriter() throws IOException {
-        if (stream)
-            return (new PrintWriter(getOutputStream(), true));
-        else
-            return (new UpperCaseWriter(response.getWriter()));
+    public int size() {
+        return (writer.size());
+    }
+
+    public char[] toCharArray() {
+        return (writer.toCharArray());
+    }
+
+    public String toString() {
+        return (writer.toString());
+    }
+
+    public void write(int c) {
+        char ch = (char) c;
+        if (Character.isLowerCase(ch))
+            ch = Character.toUpperCase(ch);
+        writer.write((int) ch);
+    }
+
+    public void write(char c[]) throws IOException {
+        write(c, 0, c.length);
+    }
+
+    public void write(char c[], int off, int len) {
+        for (int i = off; i < (off + len); i++)
+            write(c[i]);
+    }
+
+    public void write(String str) throws IOException {
+        write(str, 0, str.length());
+    }
+
+    public void write(String str, int off, int len) {
+        for (int i = off; i < (off + len); i++)
+            write(str.charAt(i));
+    }
+
+    public void writeTo(Writer out) throws IOException {
+        writer.writeTo(out);
     }
 
 
 }
-
-
-
