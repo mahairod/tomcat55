@@ -268,9 +268,6 @@ public class SimpleTcpCluster
     }
 
     
-
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -369,9 +366,11 @@ public class SimpleTcpCluster
         if (started)
             throw new LifecycleException
                 (sm.getString("cluster.alreadyStarted"));
-        log.info("Cluster is about to start");
+        if(log.isInfoEnabled())
+            log.info("Cluster is about to start");
         try {
-            log.debug("Invoking addValve on "+getContainer()+ " with class="+valve.getClass().getName());
+            if(log.isDebugEnabled())
+                log.debug("Invoking addValve on "+getContainer()+ " with class="+valve.getClass().getName());
             IntrospectionUtils.callMethodN(getContainer(), 
                 "addValve", 
                 new Object[]  {valve}, 
@@ -387,7 +386,7 @@ public class SimpleTcpCluster
             try {
                 if ( clusterDeployer != null ) {
                     clusterDeployer.setCluster(this);
-                    Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
+                    // Object deployer = IntrospectionUtils.getProperty(getContainer(), "deployer");
                     // FIXME: clusterDeployer.setDeployer( (org.apache.catalina.Deployer) deployer);
                     // clusterDeployer.setDeployer( deployer);
                     clusterDeployer.start();
