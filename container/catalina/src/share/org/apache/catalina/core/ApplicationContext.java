@@ -511,7 +511,7 @@ public class ApplicationContext
             if (context.isFilesystemBased()) {
                 jarFile = new File(basePath, path);
             } else {
-                jarFile = new File(context.getWorkDir(), path);
+                jarFile = new File(context.getWorkPath(), path);
             }
             if (jarFile.exists()) {
                 return jarFile.toURL();
