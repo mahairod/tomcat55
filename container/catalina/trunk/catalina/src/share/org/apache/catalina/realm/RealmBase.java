@@ -21,6 +21,7 @@ package org.apache.catalina.realm;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -337,8 +338,22 @@ public abstract class RealmBase
             return null;
         String serverDigestValue = md5a1 + ":" + nOnce + ":" + nc + ":"
             + cnonce + ":" + qop + ":" + md5a2;
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = serverDigestValue.getBytes();
+        } else {
+            try {
+                valueBytes = serverDigestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                log.error("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                throw new IllegalArgumentException(uee.getMessage());
+            }
+        }
+
         String serverDigest =
-            md5Encoder.encode(md5Helper.digest(serverDigestValue.getBytes()));
+            md5Encoder.encode(md5Helper.digest(valueBytes));
+
         if (log.isDebugEnabled()) {
             log.debug("Digest : " + clientDigest + " Username:" + username 
                     + " ClientSigest:" + clientDigest + " nOnce:" + nOnce 
@@ -1022,7 +1037,12 @@ public abstract class RealmBase
                 if(getDigestEncoding() == null) {
                     bytes = credentials.getBytes();
                 } else {
-                    bytes = credentials.getBytes(getDigestEncoding());
+                    try {
+                        bytes = credentials.getBytes(getDigestEncoding());
+                    } catch (UnsupportedEncodingException uee) {
+                        log.error("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                        throw new IllegalArgumentException(uee.getMessage());
+                    }
                 }
                 md.update(bytes);
 
@@ -1047,8 +1067,8 @@ public abstract class RealmBase
             try {
                 md5Helper = MessageDigest.getInstance("MD5");
             } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-                throw new IllegalStateException();
+                log.error("Couldn't get MD5 digest: ", e);
+                throw new IllegalStateException(e.getMessage());
             }
         }
 
@@ -1059,8 +1079,22 @@ public abstract class RealmBase
     	
         String digestValue = username + ":" + realmName + ":"
             + getPassword(username);
+
+        byte[] valueBytes = null;
+        if(getDigestEncoding() == null) {
+            valueBytes = digestValue.getBytes();
+        } else {
+            try {
+                valueBytes = digestValue.getBytes(getDigestEncoding());
+            } catch (UnsupportedEncodingException uee) {
+                log.error("Illegal digestEncoding: " + getDigestEncoding(), uee);
+                throw new IllegalArgumentException(uee.getMessage());
+            }
+        }
+
         byte[] digest =
-            md5Helper.digest(digestValue.getBytes());
+            md5Helper.digest(valueBytes);
+
         return md5Encoder.encode(digest);
     }
 
