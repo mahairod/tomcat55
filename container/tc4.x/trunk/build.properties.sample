@@ -146,10 +146,10 @@ jdbc20ext.lib=${jdbc20ext.home}
 jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
-# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or OpenJMX 1.0b2 or later -----
-jmx.home=${base.path}/openjmx-1.0
+# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.0 or later -----
+jmx.home=${base.path}/mx4j-1.0
 jmx.lib=${jmx.home}/lib
-jmx.jar=${jmx.lib}/openjmx.jar
+jmx.jar=${jmx.lib}/mx4j.jar
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
@@ -183,12 +183,14 @@ nsis.home=${base.path}/nsis
 
 
 # ----- Struts, version 1.0.1 or later -----
-struts.home=${base.path}/jakarta-struts-1.0.1
+struts.home=${base.path}/jakarta-struts-1.0.2
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
+
 
 # ----- Tyrex Data Source, version 0.9.7 -----
 tyrex.home=${base.path}/tyrex-0.9.7.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
+
 
