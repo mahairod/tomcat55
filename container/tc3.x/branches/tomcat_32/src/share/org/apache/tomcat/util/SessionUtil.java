@@ -67,6 +67,7 @@ package org.apache.tomcat.util;
 
 import javax.servlet.http.Cookie;
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.util.compat.*;
 
 import java.security.*;
 
@@ -174,6 +175,8 @@ public final class SessionUtil {
 
     }
 
+    static Jdk11Compat jdk11Compat=Jdk11Compat.getJdkCompat();
+
     /**
      * Generate and return a new session identifier.
      */
@@ -185,21 +188,30 @@ public final class SessionUtil {
          * JSP or servlet may not have sufficient Permissions.
          */
         if( System.getSecurityManager() != null ) {
-            class doInit implements PrivilegedAction {
-                private String jsIdent;
-                public doInit(String ident) {
-                    jsIdent = ident;
-                }           
-                public Object run() {
-                    return SessionIdGenerator.generateId(jsIdent);
-                }           
-            }    
-            doInit di = new doInit(jsIdent);
-            return (String)AccessController.doPrivileged(di);
+            PriviledgedIdGenerator di=new PriviledgedIdGenerator(jsIdent);
+	    try {
+		return (String)jdk11Compat.doPrivileged(di);
+	    } catch( Exception ex) {
+		ex.printStackTrace();
+		return null;
+	    }
         } else {            
             return SessionIdGenerator.generateId(jsIdent);
 	}
     }
+
+    static class PriviledgedIdGenerator extends Action {
+	// SessionIdGenerator sg;
+	String jsIdent;
+	public PriviledgedIdGenerator(String jsIdent ) {
+	    //this.sg=sg;
+	    this.jsIdent=jsIdent;
+	}           
+	public Object run() {
+	    //	    return sg.getIdentifier(jsIdent);
+	    return SessionIdGenerator.generateId(jsIdent);
+	}           
+    }    
 
     /**
      * Return the session id from the specified array of cookies,
