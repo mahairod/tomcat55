@@ -279,8 +279,11 @@ public class PoolTcpEndpoint  { // implements Endpoint {
         		            accepted = null;
         		        }
     		        }
+			if( factory != null && accepted != null)
+			    factory.initSocket( accepted );
     	        }
     	    }
+	    
     	} catch(InterruptedIOException iioe) {
     	    // normal part -- should happen regularly so
     	    // that the endpoint can release if the server
@@ -365,10 +368,8 @@ class TcpWorkerThread implements ThreadPoolRunnable {
 	// Create per-thread cache
 	while(endpoint.running) {
 	    Socket s = endpoint.acceptSocket();
-
 	    if(null != s) {
 		// Continue accepting on another thread...
-		
 		endpoint.tp.runIt(this);
 		
 		try {

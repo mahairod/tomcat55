@@ -201,5 +201,8 @@ public abstract class ServerSocketFactory implements Cloneable {
     public abstract ServerSocket createSocket (int port,
         int backlog, InetAddress ifAddress)
     throws IOException, InstantiationException;
+
+    public void initSocket( Socket s ) {
+    }
 }
 
