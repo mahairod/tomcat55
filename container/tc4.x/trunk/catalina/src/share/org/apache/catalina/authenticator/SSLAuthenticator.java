@@ -67,7 +67,7 @@ package org.apache.catalina.authenticator;
 
 import java.io.IOException;
 import java.security.Principal;
-import javax.security.cert.X509Certificate;
+import java.security.cert.X509Certificate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Globals;
