@@ -50,7 +50,7 @@ public class CookieExample extends HttpServlet {
         out.println("<h3>" + title + "</h3>");
 
         Cookie[] cookies = request.getCookies();
-        if (cookies.length > 0) {
+        if ((cookies != null) && (cookies.length > 0)) {
             out.println(rb.getString("cookies.cookies") + "<br>");
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = cookies[i];
