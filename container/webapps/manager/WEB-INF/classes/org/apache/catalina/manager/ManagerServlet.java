@@ -1211,7 +1211,8 @@ public class ManagerServlet
             log("serverinfo");
         try {
             StringBuffer props = new StringBuffer();
-            props.append("Tomcat Version: ");
+            props.append("OK - Server info");
+            props.append("\nTomcat Version: ");
             props.append(ServerInfo.getServerInfo());
             props.append("\nOS Name: ");
             props.append(System.getProperty("os.name"));
