@@ -243,7 +243,9 @@ public class McastServiceImpl
                 try {
                     receive();
                 } catch ( Exception x ) {
-                    log.warn("Error receiving mcast package.",x);
+                    log.warn("Error receiving mcast package. Sleeping 500ms",x);
+                    try { Thread.sleep(500); } catch ( Exception ignore ){}
+                    
                 }
             }
         }
@@ -260,10 +262,10 @@ public class McastServiceImpl
             while ( doRun ) {
                 try {
                     send();
-                    Thread.sleep(time);
                 } catch ( Exception x ) {
                     log.warn("Unable to send mcast message.",x);
                 }
+                try { Thread.sleep(time); } catch ( Exception ignore ) {}
             }
         }
     }//class SenderThread
