@@ -94,7 +94,7 @@
     <option project="jakarta-avalon"/>
     <option project="jakarta-avalon-phoenix"/>
     <depend project="jakarta-tomcat-coyote"/>
-    <depend project="jakarta-tomcat-util"/>
+    <depend project="jakarta-tomcat-util" runtime="true"/>
     <depend project="jakarta-servletapi-4"/>
     <depend project="jakarta-regexp"/>
     <option project="junit" />
