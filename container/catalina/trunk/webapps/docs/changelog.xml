@@ -43,6 +43,9 @@
       <fix>
         <bug>28875</bug>: Made ErrorReportValve use UTF-8 encoding by default. (yoavs)
       </fix>
+      <fix>
+        <bug>30325</bug>: Only set CATALINA_HOME if not already set (in bin/catalina.sh). (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
