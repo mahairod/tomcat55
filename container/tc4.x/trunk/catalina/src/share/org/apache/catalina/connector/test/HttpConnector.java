@@ -638,7 +638,8 @@ public final class HttpConnector
 	}
 
 	// Open a server socket on the specified address
-	InetAddress[] addresses = InetAddress.getAllByName("localhost");
+	InetAddress[] addresses =
+	    InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
 	int i;
 	for (i = 0; i < addresses.length; i++) {
 	    if (addresses[i].getHostAddress().equals(address))
