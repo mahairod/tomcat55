@@ -15,7 +15,7 @@
 
 <section name="Introduction">
 
-<p>Tomcat 4 uses JMX MBeans as the technology for implementing 
+<p>Tomcat 5 uses JMX MBeans as the technology for implementing 
 manageability of Tomcat.</p>
 
 <p>The descriptions of JMX MBeans for Catalina are in the 
