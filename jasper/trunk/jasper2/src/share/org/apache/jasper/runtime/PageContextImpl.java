@@ -265,14 +265,20 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public Object getAttribute(String name) {
-	if (name == null)
-	    throw new NullPointerException("Null name");
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
 	return attributes.get(name);
     }
 
     public Object getAttribute(String name, int scope) {
-	if (name == null)
-	    throw new NullPointerException("Null name");
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
 
 	switch (scope) {
 	    case PAGE_SCOPE:
@@ -297,8 +303,10 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public void setAttribute(String name, Object attribute) {
+
 	if (name == null) {
-	    throw new NullPointerException("Null name");
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
 	}
 
 	if (attribute != null) {
@@ -308,10 +316,11 @@ public class PageContextImpl extends PageContext implements VariableResolver {
 	}
     }
 
-
     public void setAttribute(String name, Object o, int scope) {
+
 	if (name == null) {
-	    throw new NullPointerException("Null name");
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
 	}
 
 	if (o != null) {

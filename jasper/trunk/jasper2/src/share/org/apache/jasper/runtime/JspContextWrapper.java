@@ -87,7 +87,10 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
+
 import org.apache.commons.el.VariableResolverImpl;
+
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * Implementation of a JSP Context Wrapper.
@@ -152,10 +155,22 @@ public class JspContextWrapper
     }
     
     public Object getAttribute(String name) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	return pageAttributes.get(name);
     }
 
     public Object getAttribute(String name, int scope) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (scope == PAGE_SCOPE) {
 	    return pageAttributes.get(name);
 	}
@@ -164,6 +179,12 @@ public class JspContextWrapper
     }
 
     public void setAttribute(String name, Object value) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (value != null) {
 	    pageAttributes.put(name, value);
 	} else {
@@ -172,6 +193,12 @@ public class JspContextWrapper
     }
 
     public void setAttribute(String name, Object value, int scope) {
+
+	if (name == null) {
+	    throw new NullPointerException(
+	            Localizer.getMessage("jsp.error.attribute.null_name"));
+	}
+
 	if (scope == PAGE_SCOPE) {
 	    if (value != null) {
 		pageAttributes.put(name, value);
