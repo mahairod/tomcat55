@@ -176,26 +176,26 @@ public final class SaveDataSourceAction extends Action {
 
             Object params[] = new Object[2];
             params[0] = dataSourceForm.getJndiName();
-            params[1] = ResourceUtils.DATASOURCE_CLASS;     
-            
+            params[1] = ResourceUtils.DATASOURCE_CLASS;
+
             String resourcetype = dataSourceForm.getResourcetype();
             String path = dataSourceForm.getPath();
             String host = dataSourceForm.getHost();
             String service = dataSourceForm.getService();
-            
+
             ObjectName oname = null;
 
             try {
                 if (resourcetype!=null) {
                     // Construct the MBean Name for the naming source
                     if (resourcetype.equals("Global")) {
-                        oname = 
+                        oname =
                             new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
                             ResourceUtils.GLOBAL_TYPE);
-                    } else if (resourcetype.equals("Context")) {            
-                        oname = 
-                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE + 
-                            ResourceUtils.CONTEXT_TYPE + ",path=" + path + 
+                    } else if (resourcetype.equals("Context")) {
+                        oname =
+                            new ObjectName (ResourceUtils.NAMINGRESOURCES_TYPE +
+                            ResourceUtils.CONTEXT_TYPE + ",path=" + path +
                             ",host=" + host + ",service=" + service);
                     } else if (resourcetype.equals("DefaultContext")) {
                         // add defaultcontext support later
@@ -205,7 +205,7 @@ public final class SaveDataSourceAction extends Action {
                 // Create the new object and associated MBean
                 objectName = (String) mserver.invoke(oname, "addResource",
                                                      params, signature);
-                                     
+
             } catch (Exception e) {
 
                 getServlet().log
@@ -219,11 +219,11 @@ public final class SaveDataSourceAction extends Action {
             }
 
         }
-        
+
         // Perform an "Update User database" transaction
         String attribute = null;
         try {
-            
+
             ObjectName oname = new ObjectName(objectName);
 
             attribute = "url";
@@ -234,7 +234,7 @@ public final class SaveDataSourceAction extends Action {
             mserver.setAttribute
                 (oname,
                  new Attribute(attribute, dataSourceForm.getDriverClass()));
-            attribute = "user";
+            attribute = "username";
             mserver.setAttribute
                 (oname,
                  new Attribute(attribute, dataSourceForm.getUsername()));
@@ -271,7 +271,7 @@ public final class SaveDataSourceAction extends Action {
             return (null);
 
         }
-        
+
         // Proceed to the list entries screen
         return (mapping.findForward("DataSources List Setup"));
 

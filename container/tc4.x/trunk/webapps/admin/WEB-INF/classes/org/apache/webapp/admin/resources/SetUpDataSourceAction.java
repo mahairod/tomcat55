@@ -115,7 +115,7 @@ public final class SetUpDataSourceAction extends Action {
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-    
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -156,8 +156,8 @@ public final class SetUpDataSourceAction extends Action {
         String path = request.getParameter("path");
         String host = request.getParameter("host");
         String service = request.getParameter("service");
-        
-        DataSourceForm dataSourceForm = new DataSourceForm();       
+
+        DataSourceForm dataSourceForm = new DataSourceForm();
         dataSourceForm.setResourcetype(resourcetype);
         dataSourceForm.setPath(path);
         dataSourceForm.setHost(host);
@@ -172,12 +172,12 @@ public final class SetUpDataSourceAction extends Action {
             dataSourceForm.setIdle("2");
             dataSourceForm.setWait("5000");
             dataSourceForm.setType(ResourceUtils.DATASOURCE_CLASS);
-            
+
         } else {
             dataSourceForm.setNodeLabel
                 (resources.getMessage(locale, "resources.actions.datasrc.edit"));
             dataSourceForm.setObjectName(objectName);
-            
+
             String attribute = null;
             try {
                 ObjectName oname = new ObjectName(objectName);
@@ -190,7 +190,7 @@ public final class SetUpDataSourceAction extends Action {
                 attribute = "driverClassName";
                 dataSourceForm.setDriverClass
                     ((String) mserver.getAttribute(oname, attribute));
-                attribute = "user";
+                attribute = "username";
                 dataSourceForm.setUsername
                     ((String) mserver.getAttribute(oname, attribute));
                 attribute = "password";
@@ -199,7 +199,7 @@ public final class SetUpDataSourceAction extends Action {
                 try {
                     attribute = "maxActive";
                     dataSourceForm.setActive
-                        ((String) mserver.getAttribute(oname, attribute));                
+                        ((String) mserver.getAttribute(oname, attribute));
                 } catch (Exception e) {
                     // if maxActive not defined, display default value
                     dataSourceForm.setActive("4");
@@ -207,11 +207,11 @@ public final class SetUpDataSourceAction extends Action {
                 try {
                     attribute = "maxIdle";
                     dataSourceForm.setIdle
-                        ((String) mserver.getAttribute(oname, attribute)); 
+                        ((String) mserver.getAttribute(oname, attribute));
                 } catch (Exception e) {
                     // if maxIdle not defined, display default value
                     dataSourceForm.setIdle("2");
-                }                    
+                }
                 try {
                     attribute = "maxWait";
                     dataSourceForm.setWait
@@ -236,9 +236,9 @@ public final class SetUpDataSourceAction extends Action {
                      resources.getMessage
                          (locale, "users.error.attribute.get", attribute));
                 return (null);
-            } 
+            }
         }
-            
+
         // Stash the form bean and forward to the display page
         saveToken(request);
         request.setAttribute("dataSourceForm", dataSourceForm);
