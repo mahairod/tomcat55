@@ -55,7 +55,7 @@ goto end
 
 :doInstall
 rem Install the service
-%EXECUTABLE% //IS//%SERVICE_NAME% --DisplayName "Apache Tomcat" --Description "Apache Tomcat Server - http://jakarta.apache.org/tomcat/"  --Install "%EXECUTABLE%" --ImagePath "%CATALINA_HOME%\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --Startup manual
+%EXECUTABLE% //IS//%SERVICE_NAME% --DisplayName "Apache Tomcat" --Description "Apache Tomcat Server - http://jakarta.apache.org/tomcat/"  --Install "%EXECUTABLE%" --ImagePath "%CATALINA_HOME%\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --Startup manual
 rem Set extra parameters
 %EXECUTABLE% //US//%SERVICE_NAME% --JavaOptions -Dcatalina.home="\"%CATALINA_HOME%\""#-Djava.endorsed.dirs="\"%CATALINA_HOME%\common\endorsed\""#-Xrs --StdOutputFile "%CATALINA_HOME%\logs\stdout.log" --StdErrorFile "%CATALINA_HOME%\logs\stderr.log" --WorkingPath "%CATALINA_HOME%\bin"
 echo The service '%SERVICE_NAME%' has been installed
