@@ -117,18 +117,20 @@ import org.apache.catalina.util.StringManager;
 public final class ApplicationContext
     implements ServletContext {
 
-    protected class PrivilegedGetRequestDispatcher implements PrivilegedAction {
+
+    protected class PrivilegedGetRequestDispatcher 
+        implements PrivilegedAction {
+        
         private String contextPath;
         private String relativeURI;
         private String queryString;                                       
 
         PrivilegedGetRequestDispatcher(String contextPath, String relativeURI,
-	    String queryString)
-        {                                    
+                                       String queryString) {
             this.contextPath = contextPath;
             this.relativeURI = relativeURI;
             this.queryString = queryString;
-        }                                 
+        }
                                           
         public Object run() {
 	    HttpRequestBase request = new HttpRequestBase();
@@ -141,30 +143,37 @@ public final class ApplicationContext
                 return (null);  
 
             // Construct a RequestDispatcher to process this request
-            HttpServletRequest hrequest = (HttpServletRequest) request.getRequest();
-            return (RequestDispatcher) new ApplicationDispatcher(wrapper,
-                hrequest.getServletPath(),     
-                hrequest.getPathInfo(),   
-                hrequest.getQueryString(),
-                null);
-        }                                    
+            HttpServletRequest hrequest = 
+                (HttpServletRequest) request.getRequest();
+            return (RequestDispatcher) new ApplicationDispatcher
+                (wrapper,
+                 hrequest.getServletPath(),     
+                 hrequest.getPathInfo(),   
+                 hrequest.getQueryString(),
+                 null);
+        }
+        
     }
 
-    protected class PrivilegedGetResource implements PrivilegedExceptionAction {
+
+    protected class PrivilegedGetResource 
+        implements PrivilegedExceptionAction {
+        
 	private String path;
 	private DirContext resources;
 
-        PrivilegedGetResource(String path, DirContext resources)
-        {
+        PrivilegedGetResource(String path, DirContext resources) {
             this.path = path;
             this.resources = resources;
         }
-         
+        
         public Object run() throws Exception {
             return new URL("jndi", null, 0, path,
                    new DirContextURLStreamHandler(resources));
         }
+        
     }
+
 
     // ----------------------------------------------------------- Constructors
 
@@ -506,7 +515,7 @@ public final class ApplicationContext
                                new DirContextURLStreamHandler(resources));
 		}
             } catch (Exception e) {
-		e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         return (null);
