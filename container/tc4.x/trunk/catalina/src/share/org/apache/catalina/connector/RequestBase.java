@@ -157,6 +157,12 @@ public abstract class RequestBase
 
 
     /**
+     * The facade associated with this request.
+     */
+    protected RequestFacade facade = new RequestFacade(this);
+
+
+    /**
      * Descriptive information about this Request implementation.
      */
     protected static final String info =
@@ -345,7 +351,7 @@ public abstract class RequestBase
      */
     public ServletRequest getRequest() {
 
-	return new RequestFacade(this);
+        return (facade);
 
     }
 

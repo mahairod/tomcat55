@@ -128,6 +128,12 @@ public class HttpResponseBase
 
 
     /**
+     * The facade associated with this response.
+     */
+    protected HttpResponseFacade facade = new HttpResponseFacade(this);
+
+
+    /**
      * The HTTP headers explicitly added via addHeader(), but not including
      * those to be added with setContentLength(), setContentType(), and so on.
      * This collection is keyed by the header name, and the elements are
@@ -170,7 +176,7 @@ public class HttpResponseBase
      */
     public ServletResponse getResponse() {
 
-        return new HttpResponseFacade(this);
+        return (facade);
 
     }
 

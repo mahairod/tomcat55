@@ -153,6 +153,12 @@ public abstract class ResponseBase
 
 
     /**
+     * The facade associated with this response.
+     */
+    protected ResponseFacade facade = new ResponseFacade(this);
+
+
+    /**
      * Are we currently processing inside a RequestDispatcher.include()?
      */
     protected boolean included = false;
@@ -331,7 +337,7 @@ public abstract class ResponseBase
      */
     public ServletResponse getResponse() {
 
-	return new ResponseFacade(this);
+	return (facade);
 
     }
 

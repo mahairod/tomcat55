@@ -152,6 +152,13 @@ public final class StandardWrapper
 
 
     /**
+     * The facade associated with this wrapper.
+     */
+    private StandardWrapperFacade facade =
+        new StandardWrapperFacade(this);
+
+
+    /**
      * The descriptive information string for this implementation.
      */
     private static final String info =
@@ -823,7 +830,7 @@ public final class StandardWrapper
 	    instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
 					      servlet);
             Thread.currentThread().setContextClassLoader(classLoader);
-	    servlet.init(new StandardWrapperFacade(this));
+	    servlet.init(facade);
 	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
 					      servlet);
 	} catch (UnavailableException f) {

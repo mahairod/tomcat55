@@ -184,6 +184,13 @@ class StandardSession
 
 
     /**
+     * The facade associated with this session.  NOTE:  This value is not
+     * included in the serialized version of this object.
+     */
+    private transient StandardSessionFacade facade = null;
+
+
+    /**
      * The session identifier of this Session.
      */
     private String id = null;
@@ -477,7 +484,9 @@ class StandardSession
      */
     public HttpSession getSession() {
 
-        return ((HttpSession) this);
+        if (facade == null)
+            facade = new StandardSessionFacade(this);
+        return (facade);
 
     }
 

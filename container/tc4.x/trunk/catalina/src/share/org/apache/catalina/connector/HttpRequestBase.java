@@ -148,6 +148,12 @@ public class HttpRequestBase
 
 
     /**
+     * The facade associated with this request.
+     */
+    protected HttpRequestFacade facade = new HttpRequestFacade(this);
+
+
+    /**
      * The HTTP headers associated with this Request, keyed by name.  The
      * values are ArrayLists of the corresponding header values.
      */
@@ -269,7 +275,7 @@ public class HttpRequestBase
      */
     public ServletRequest getRequest() {
 
-        return new HttpRequestFacade(this);
+        return (facade);
 
     }
 
