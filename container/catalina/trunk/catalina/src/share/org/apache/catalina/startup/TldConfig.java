@@ -69,6 +69,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URLConnection;
+import java.net.URLClassLoader;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -105,6 +107,9 @@ public final class TldConfig  {
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( TldConfig.class );
+
+    private static final String FILE_URL_PREFIX = "file:";
+    private static final int FILE_URL_PREFIX_LEN = FILE_URL_PREFIX.length();
 
     // ----------------------------------------------------- Instance Variables
 
@@ -199,32 +204,23 @@ public final class TldConfig  {
             }
         }
 
-        // Acquire this list of TLD resource paths to be processed
+        /*
+	 * Acquire the list of TLD resource paths, possibly embedded in JAR
+	 * files, to be processed
+	 */
         Set resourcePaths = tldScanResourcePaths();
+	Set globalJarPaths = getGlobalJarPaths();
 
-        if( tldCache!= null && tldCache.exists()) {
-            // Find last modified
-            Iterator paths = resourcePaths.iterator();
-            long lastModified=0;
-            while (paths.hasNext()) {
-                String path = (String) paths.next();
-                URL url = context.getServletContext().getResource(path);
-                if( url==null ) {
-                    log.info( "Null url "+ path );
-                    break;
-                }
-                long lastM=url.openConnection().getLastModified();
-                if( lastM > lastModified ) lastModified=lastM;
-                if( log.isDebugEnabled() )
-                    log.debug( "Last modified " + path + " " + lastM);
-            }
-
-            if( lastModified < tldCache.lastModified()) {
+	// Check to see if we can use cached listeners
+        if (tldCache != null && tldCache.exists()) {
+            long lastModified = getLastModified(resourcePaths, globalJarPaths);
+            if (lastModified < tldCache.lastModified()) {
                 processCache(tldCache);
                 return;
             }
         }
-        // Scan each accumulated resource paths for TLDs to be processed
+
+        // Scan each accumulated resource path for TLDs to be processed
         Iterator paths = resourcePaths.iterator();
         while (paths.hasNext()) {
             String path = (String) paths.next();
@@ -234,7 +230,12 @@ public final class TldConfig  {
                 tldScanTld(path);
             }
         }
-        String list[]=getTldListeners();
+        paths = globalJarPaths.iterator();
+        while (paths.hasNext()) {
+            tldScanJar((JarURLConnection) paths.next());
+        }
+
+        String list[] = getTldListeners();
 
         if( tldCache!= null ) {
             log.info( "Saving tld cache: " + tldCache + " " + list.length);
@@ -262,6 +263,48 @@ public final class TldConfig  {
     }
 
     // -------------------------------------------------------- Private Methods
+
+    /*
+     * Returns the last modification date of the given sets of resources.
+     *
+     * @param resourcePaths
+     * @param globalJarPaths
+     *
+     * @return Last modification date
+     */
+    private long getLastModified(Set resourcePaths, Set globalJarPaths)
+            throws Exception {
+
+	long lastModified = 0;
+
+	Iterator paths = resourcePaths.iterator();
+	while (paths.hasNext()) {
+	    String path = (String) paths.next();
+	    URL url = context.getServletContext().getResource(path);
+	    if (url == null) {
+		log.info( "Null url "+ path );
+		break;
+	    }
+	    long lastM = url.openConnection().getLastModified();
+	    if (lastM > lastModified) lastModified = lastM;
+	    if (log.isDebugEnabled()) {
+		log.debug( "Last modified " + path + " " + lastM);
+	    }
+	}
+
+	paths = globalJarPaths.iterator();
+	while (paths.hasNext()) {
+	    JarURLConnection conn = (JarURLConnection) paths.next();
+	    long lastM = conn.getLastModified();
+	    if (lastM > lastModified) lastModified = lastM;
+	    if (log.isDebugEnabled()) {
+		log.debug("Last modified " + conn.getJarFileURL().toString()
+			  + " " + lastM);
+	    }
+	}
+
+	return lastModified;
+    }
 
     private void processCache(File tldCache ) throws IOException {
         // read the cache and return;
@@ -394,21 +437,33 @@ public final class TldConfig  {
             log.debug(" Scanning JAR at resource path '" + resourcePath + "'");
         }
 
+	URL url = context.getServletContext().getResource(resourcePath);
+	if (url == null) {
+	    throw new IllegalArgumentException
+		(sm.getString("contextConfig.tldResourcePath",
+			      resourcePath));
+	}
+	url = new URL("jar:" + url.toString() + "!/");
+	tldScanJar((JarURLConnection) url.openConnection());
+    }
+
+    /*
+     * Scans all TLD entries in the given JAR for application listeners.
+     *
+     * @param conn URLConnection to the JAR file whose TLD entries are
+     * scanned for application listeners
+     */
+    private void tldScanJar(JarURLConnection conn) throws Exception {
+
         JarFile jarFile = null;
         String name = null;
         InputStream inputStream = null;
-        try {
-            URL url = context.getServletContext().getResource(resourcePath);
-            if (url == null) {
-                throw new IllegalArgumentException
-                    (sm.getString("contextConfig.tldResourcePath",
-                                  resourcePath));
-            }
-            url = new URL("jar:" + url.toString() + "!/");
-            JarURLConnection conn =
-                (JarURLConnection) url.openConnection();
-            conn.setUseCaches(false);
-            jarFile = conn.getJarFile();
+
+	String jarPath = conn.getJarFileURL().toString();
+
+	try {
+	    conn.setUseCaches(false);
+	    jarFile = conn.getJarFile();
             Enumeration entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = (JarEntry) entries.nextElement();
@@ -434,10 +489,13 @@ public final class TldConfig  {
             // XXX Why do we wrap it ? The signature is 'throws Exception'
             if (name == null) {
                     log.error(sm.getString("contextConfig.tldJarException",
-                                  resourcePath, context.getPath()), e);
+					   jarPath, context.getPath()),
+			      e);
             } else {
                     log.error(sm.getString("contextConfig.tldEntryException",
-                                  name, resourcePath, context.getPath()), e);
+					   name, jarPath,
+					   context.getPath()),
+			      e);
             }
         } finally {
             if (inputStream != null) {
@@ -460,7 +518,6 @@ public final class TldConfig  {
         }
 
     }
-
 
     /**
      * Scan the TLD contents in the specified input stream, and register
@@ -486,7 +543,6 @@ public final class TldConfig  {
         }
 
     }
-
 
     /**
      * Scan the TLD contents at the specified resource path, and register
@@ -531,7 +587,6 @@ public final class TldConfig  {
 
     }
 
-
     /**
      * Accumulate and return a Set of resource paths to be analyzed for
      * tag library descriptors.  Each element of the returned set will be
@@ -568,38 +623,66 @@ public final class TldConfig  {
             resourcePaths.add(resourcePath);
         }
 
-        // Scan TLDs in the /WEB-INF subdirectory of the web application
+        DirContext resources = context.getResources();
+	if (resources != null) {
+	    tldScanResourcePathsWebInf(resources, resourcePaths);
+	    tldScanResourcePathsWebInfLibJars(resources, resourcePaths);
+	}
+
+        // Return the completed set
+        return (resourcePaths);
+
+    }
+
+    /*
+     * Scans TLDs in the /WEB-INF subdirectory of the web application.
+     *
+     * @param resources The web application's resources
+     * @param resourcePaths The set of resource paths to add to
+     */
+    private void tldScanResourcePathsWebInf(DirContext resources,
+					    Set resourcePaths) 
+            throws IOException {
+
         if (log.isTraceEnabled()) {
             log.trace("  Scanning TLDs in /WEB-INF subdirectory");
         }
-        DirContext resources = context.getResources();
-        if( resources!=null ) {
-            try {
-                NamingEnumeration items = resources.list("/WEB-INF");
-                while (items.hasMoreElements()) {
-                    NameClassPair item = (NameClassPair) items.nextElement();
-                    String resourcePath = "/WEB-INF/" + item.getName();
-                    // FIXME - JSP 2.0 is not explicit about whether we should
-                    // scan subdirectories of /WEB-INF for TLDs also
-                    if (!resourcePath.endsWith(".tld")) {
-                        continue;
-                    }
-                    if (log.isTraceEnabled()) {
-                        log.trace("   Adding path '" + resourcePath + "'");
-                    }
-                    resourcePaths.add(resourcePath);
-                }
-            } catch (NamingException e) {
-                ; // Silent catch: it's valid that no /WEB-INF directory exists
-            }
-        } else {
-            log.info("No resource " + context + " " + context.getClass());
-        }
 
-        // Scan JARs in the /WEB-INF/lib subdirectory of the web application
+	try {
+	    NamingEnumeration items = resources.list("/WEB-INF");
+	    while (items.hasMoreElements()) {
+		NameClassPair item = (NameClassPair) items.nextElement();
+		String resourcePath = "/WEB-INF/" + item.getName();
+		// FIXME - JSP 2.0 is not explicit about whether we should
+		// scan subdirectories of /WEB-INF for TLDs also
+		if (!resourcePath.endsWith(".tld")) {
+		    continue;
+		}
+		if (log.isTraceEnabled()) {
+		    log.trace("   Adding path '" + resourcePath + "'");
+		}
+		resourcePaths.add(resourcePath);
+	    }
+	} catch (NamingException e) {
+	    ; // Silent catch: it's valid that no /WEB-INF directory exists
+	}
+    }
+
+    /*
+     * Adds any JARs in the /WEB-INF/lib subdirectory of the web application
+     * to the given set of resource paths.
+     *
+     * @param resources The web application's resources
+     * @param resourcePaths The set of resource paths to add to
+     */
+    private void tldScanResourcePathsWebInfLibJars(DirContext resources,
+						   Set resourcePaths)
+            throws IOException {
+
         if (log.isTraceEnabled()) {
             log.trace("  Scanning JARs in /WEB-INF/lib subdirectory");
         }
+
         try {
             NamingEnumeration items = resources.list("/WEB-INF/lib");
             while (items.hasMoreElements()) {
@@ -616,10 +699,47 @@ public final class TldConfig  {
         } catch (NamingException e) {
             ; // Silent catch: it's valid that no /WEB-INF/lib directory exists
         }
-
-        // Return the completed set
-        return (resourcePaths);
-
     }
 
+    /*
+     * Returns the paths to all JAR files accessible to all parent
+     * classloaders of the web application class loader.
+     *
+     * This is a Tomcat-specific extension to the TLD search order defined in
+     * the JSP spec, which will allow tag libraries packaged as JAR
+     * files to be shared by web applications by simply dropping them in a 
+     * location that all web applications have access to (e.g.,
+     * <CATALINA_HOME>/common/lib).
+     *
+     * @return Set of paths to all JAR files accessible to all parent class
+     * loaders of the web application class loader
+     */
+    private Set getGlobalJarPaths() throws IOException {
+
+        Set globalJarPaths = new HashSet();
+
+	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	while (loader != null) {
+	    if (loader instanceof URLClassLoader) {
+		URL[] urls = ((URLClassLoader) loader).getURLs();
+		for (int i=0; i<urls.length; i++) {
+		    URLConnection conn = urls[i].openConnection();
+		    if (conn instanceof JarURLConnection) {
+			globalJarPaths.add((JarURLConnection) conn);
+		    } else {
+			String urlStr = urls[i].toString();
+			if (urlStr.startsWith("file:")
+			        && urlStr.endsWith(".jar")) {
+			    URL jarURL = new URL("jar:" + urlStr + "!/");
+			    globalJarPaths.add((JarURLConnection)
+					       jarURL.openConnection());
+			}
+		    }
+		}
+	    }
+	    loader = loader.getParent();
+	}
+
+	return globalJarPaths;
+    }
 }
