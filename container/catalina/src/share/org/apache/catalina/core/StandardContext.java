@@ -4034,7 +4034,7 @@ public class StandardContext
                     ((Lifecycle) pipeline).start();
 		}
 
-                if(getProcessTlds() {
+                if(getProcessTlds()) {
 		    processTlds();
 		}
 
