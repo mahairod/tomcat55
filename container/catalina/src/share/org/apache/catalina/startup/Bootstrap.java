@@ -63,13 +63,10 @@ public final class Bootstrap {
 
 
     private static final String JMX_ERROR_MESSAGE =
-        "Due to new licensing guidelines mandated by the Apache Software\n"
-        + "Foundation Board of Directors, a JMX implementation can no longer\n"
-        + "be distributed with the Apache Tomcat binaries. As a result, you \n"
-        + "must download a JMX 1.2 implementation (such as the Sun Reference\n"
-        + "Implementation) and copy the JAR containing the API and \n"
-        + "implementation of the JMX specification to: \n" 
-        + "${catalina.home}/bin/jmx.jar";
+        "This release of Apache Tomcat was packaged to run on J2SE 5.0 \n"
+        + "or later. It can be run on earlier JVMs by downloading and \n"
+        + "installing a compatibility package from the Apache Tomcat \n"
+        + "binary download page.";
 
 
     /**
