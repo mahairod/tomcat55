@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  *
  * The Apache Software License, Version 1.1
@@ -144,13 +140,6 @@ public final class SessionUtil {
 	else
 	    return (url);
 
-    }
-
-    /**
-     * Generate and return a new session identifier.
-     */
-    public static String generateSessionId() {
-        return SessionIdGenerator.generateId();
     }
 
     /**

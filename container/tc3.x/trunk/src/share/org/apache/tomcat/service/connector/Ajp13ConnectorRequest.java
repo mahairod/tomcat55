@@ -225,7 +225,7 @@ public class Ajp13ConnectorRequest extends Request
         }
 
         if(isSSL) {
-            setScheme("https");
+            this.scheme().setString("https");
         }
 
 	MessageBytes clB=headers.getValue("content-length");

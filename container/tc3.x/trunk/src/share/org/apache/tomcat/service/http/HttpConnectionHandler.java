@@ -185,7 +185,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 
 	    reqA.readNextRequest(resA);
 	    if( secure ) {
-		reqA.setScheme( "https" );
+		reqA.scheme().setString( "https" );
 	    }
 	    
 	    contextM.service( reqA, resA );
