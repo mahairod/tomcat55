@@ -23,6 +23,7 @@
       <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
       <copydir src="src/server/jsp-tests" dest="${watchdog.build}/webapps/jsp-tests"/>
+      <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
       <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-tools/projectx-tr2.jar"
