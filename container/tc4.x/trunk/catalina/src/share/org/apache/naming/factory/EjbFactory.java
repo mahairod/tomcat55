@@ -121,15 +121,26 @@ public class EjbFactory
                 // Load home interface and checking if bean correctly
                 // implements specified home interface
                 String homeClassName = ref.getClassName();
-                Class home = Class.forName(homeClassName);
-                if (home.isInstance(beanObj)) {
-                    return beanObj;
-                } else {
-                    throw new NamingException
-                        ("Bean of type " + beanObj.getClass().getName() 
-                         + " doesn't implement home interface " 
-                         + home.getName());
+                try {
+                    Class home = Class.forName(homeClassName);
+                    if (home.isInstance(beanObj)) {
+                        System.out.println("Bean of type " 
+                                           + beanObj.getClass().getName() 
+                                           + " doesn't implement home interface " 
+                                           + home.getName());
+                    } else {
+                        /*
+                          throw new NamingException
+                          ("Bean of type " + beanObj.getClass().getName() 
+                          + " doesn't implement home interface " 
+                          + home.getName());
+                        */
+                    }
+                } catch (ClassNotFoundException e) {
+                    System.out.println("Couldn't load home interface "
+                                       + homeClassName);
                 }
+                return beanObj;
             }
             
             ObjectFactory factory = null;
