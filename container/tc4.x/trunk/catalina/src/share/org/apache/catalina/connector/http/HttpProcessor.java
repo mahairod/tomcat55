@@ -798,6 +798,15 @@ final class HttpProcessor
             } catch (EOFException e) {
                 ok = false;
             } catch (InterruptedIOException e) {
+                if (debug > 1) {
+                    try {
+                        log("process.parse", e);
+                        ((HttpServletResponse) response.getResponse())
+                            .sendError(HttpServletResponse.SC_BAD_REQUEST);
+                    } catch (Exception f) {
+                        ;
+                    }
+                }
                 ok = false;
             } catch (Exception e) {
                 try {
@@ -825,6 +834,8 @@ final class HttpProcessor
                 } catch (Exception f) {
                     ;
                 }
+                ok = false;
+            } catch (InterruptedIOException e) {
                 ok = false;
             } catch (Throwable e) {
                 log("process.invoke", e);
