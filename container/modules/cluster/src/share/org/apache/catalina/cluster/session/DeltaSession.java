@@ -129,6 +129,9 @@ public class DeltaSession
     implements HttpSession, Session, Serializable,
                ClusterSession {
 
+    public static org.apache.commons.logging.Log log =
+                   org.apache.commons.logging.LogFactory.getLog( DeltaManager.class );
+
 
     // ----------------------------------------------------------- Constructors
 
@@ -321,7 +324,13 @@ public class DeltaSession
      * made a request on another server.
      */
     private transient boolean isPrimarySession = true;
-
+    
+    /**
+     * The delta request contains all the action info
+     * 
+     */
+    private transient DeltaRequest deltaRequest = null;
+    
     // ----------------------------------------------------- Session Properties
 
     /**
@@ -447,7 +456,7 @@ public class DeltaSession
                         ;
                     }
                     // FIXME - should we do anything besides log these?
-                    log(sm.getString("standardSession.sessionEvent"), t);
+                    log.error(sm.getString("standardSession.sessionEvent"), t);
                 }
             }
         }
@@ -530,6 +539,8 @@ public class DeltaSession
         this.maxInactiveInterval = interval;
         if (isValid && interval == 0) {
             expire();
+        } else {
+            deltaRequest.setMaxInactiveInterval(interval);
         }
 
     }
@@ -541,9 +552,8 @@ public class DeltaSession
      * @param isNew The new value for the <code>isNew</code> flag
      */
     public void setNew(boolean isNew) {
-
         this.isNew = isNew;
-
+        deltaRequest.setNew(isNew);
     }
 
 
@@ -574,7 +584,7 @@ public class DeltaSession
         Principal oldPrincipal = this.principal;
         this.principal = principal;
         support.firePropertyChange("principal", oldPrincipal, this.principal);
-
+        deltaRequest.setPrincipal(principal);
     }
 
 
@@ -605,7 +615,7 @@ public class DeltaSession
      * Return the <code>isValid</code> flag for this session.
      */
     public boolean isValid() {
-
+        
         if (this.expiring){
             return true;
         }
@@ -617,7 +627,7 @@ public class DeltaSession
         if (maxInactiveInterval >= 0) {
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
-            if (timeIdle >= maxInactiveInterval) {
+            if ( (timeIdle >= maxInactiveInterval) && (isPrimarySession()) ) {
                 expire(true);
             }
         }
@@ -728,7 +738,7 @@ public class DeltaSession
                             ;
                         }
                         // FIXME - should we do anything besides log these?
-                        log(sm.getString("standardSession.sessionEvent"), t);
+                        log.error(sm.getString("standardSession.sessionEvent"), t);
                     }
                 }
             }
@@ -899,6 +909,15 @@ public class DeltaSession
 
         writeObject(stream);
 
+    }
+    
+    public void resetDeltaRequest() {
+        if ( deltaRequest == null ) {
+            deltaRequest = new DeltaRequest(getId(),false);
+        } else {
+            deltaRequest.reset();
+            deltaRequest.setSessionId(getId());
+        }
     }
 
 
@@ -1161,6 +1180,8 @@ public class DeltaSession
                 return;
             }
         }
+        
+        deltaRequest.removeAttribute(name);
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
         if (!notify) {
@@ -1201,7 +1222,7 @@ public class DeltaSession
                     ;
                 }
                 // FIXME - should we do anything besides log these?
-                log(sm.getString("standardSession.attributeEvent"), t);
+                log.error(sm.getString("standardSession.attributeEvent"), t);
             }
         }
 
@@ -1265,6 +1286,8 @@ public class DeltaSession
         if ( ! (value instanceof java.io.Serializable) ) {
             throw new IllegalArgumentException("Attribute ["+name+"] is not serializable");
         }
+        
+        deltaRequest.setAttribute(name,value);
 
         // Validate our current state
         if (!isValid())
@@ -1343,7 +1366,7 @@ public class DeltaSession
                     ;
                 }
                 // FIXME - should we do anything besides log these?
-                log(sm.getString("standardSession.attributeEvent"), t);
+                log.error(sm.getString("standardSession.attributeEvent"), t);
             }
         }
 
@@ -1379,8 +1402,8 @@ public class DeltaSession
         principal = null;        // Transient only
         //        setId((String) stream.readObject());
         id = (String) stream.readObject();
-        if (debug >= 2)
-            log("readObject() loading session " + id);
+        if (log.isDebugEnabled())
+            log.debug("readObject() loading session " + id);
 
         // Deserialize the attribute count and attribute values
         if (attributes == null)
@@ -1393,8 +1416,8 @@ public class DeltaSession
             Object value = (Object) stream.readObject();
             if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
                 continue;
-            if (debug >= 2)
-                log("  loading attribute '" + name +
+            if (log.isDebugEnabled())
+                log.debug("  loading attribute '" + name +
                     "' with value '" + value + "'");
             synchronized (attributes) {
                 attributes.put(name, value);
@@ -1434,8 +1457,8 @@ public class DeltaSession
         stream.writeObject(new Boolean(isValid));
         stream.writeObject(new Long(thisAccessedTime));
         stream.writeObject(id);
-        if (debug >= 2)
-            log("writeObject() storing session " + id);
+        if (log.isDebugEnabled())
+            log.debug("writeObject() storing session " + id);
 
         // Accumulate the names of serializable and non-serializable attributes
         String keys[] = keys();
@@ -1461,15 +1484,14 @@ public class DeltaSession
             stream.writeObject((String) saveNames.get(i));
             try {
                 stream.writeObject(saveValues.get(i));
-                if (debug >= 2)
-                    log("  storing attribute '" + saveNames.get(i) +
+                if (log.isDebugEnabled())
+                    log.debug("  storing attribute '" + saveNames.get(i) +
                         "' with value '" + saveValues.get(i) + "'");
             } catch (NotSerializableException e) {
-                log(sm.getString("standardSession.notSerializable",
+                log.error(sm.getString("standardSession.notSerializable",
                                  saveNames.get(i), id), e);
                 stream.writeObject(NOT_SERIALIZED);
-                if (debug >= 2)
-                    log("  storing attribute '" + saveNames.get(i) +
+                log.error("  storing attribute '" + saveNames.get(i) +
                         "' with value NOT_SERIALIZED");
             }
         }
@@ -1489,7 +1511,7 @@ public class DeltaSession
             try {
                 expire();
             } catch (Throwable t) {
-                log(sm.getString("standardSession.expireException"), t);
+                log.error(sm.getString("standardSession.expireException"), t);
             }
         }
 
@@ -1583,37 +1605,8 @@ public class DeltaSession
     }
 
 
-    /**
-     * Log a message on the Logger associated with our Manager (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        //if ((manager != null) && (manager instanceof ManagerBase)) {
-            //noop, implement proper logging
-        //} else {
-            System.out.println("DeltaSession: " + message);
-        //}
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Manager (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        //if ((manager != null) && (manager instanceof ManagerBase)) {
-        //    ((ManagerBase) manager).log(message, throwable);
-        //} else {
-            System.out.println("DeltaSession: " + message);
-            throwable.printStackTrace(System.out);
-        //}
-
+    public DeltaRequest getDeltaRequest() {
+        return deltaRequest;
     }
 
 

@@ -88,10 +88,10 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.*;
-import org.apache.catalina.cluster.session.SimpleTcpReplicationManager;
 import org.apache.catalina.cluster.SessionMessage;
 import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
 import org.apache.catalina.cluster.ClusterSession;
+import org.apache.catalina.cluster.ClusterManager;
 
 /**
  * <p>Implementation of a Valve that logs interesting contents from the
@@ -187,10 +187,13 @@ public class ReplicationValve
             HttpRequest hrequest = (HttpRequest) request;
             HttpServletRequest hreq = (HttpServletRequest) hrequest.getRequest();
             HttpSession session = hreq.getSession(false);
-            SimpleTcpReplicationManager manager = (SimpleTcpReplicationManager)request.getContext().getManager();
+            
+            if (!( request.getContext().getManager() instanceof ClusterManager) ) return;
+            
+            ClusterManager manager = (ClusterManager)request.getContext().getManager();
             SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
             if ( cluster == null ) {
-                log("No cluster configured for this request.",2);
+                log.warn("No cluster configured for this request.");
                 return;
             }
             //first check for session invalidations
@@ -203,7 +206,7 @@ public class ReplicationValve
                         if (imsg != null)
                             cluster.send(imsg);
                     }catch ( Exception x ) {
-                        log("Unable to send session invalid message over cluster.",x,2);
+                        log.error("Unable to send session invalid message over cluster.",x);
                     }
                 }
             }
@@ -218,7 +221,7 @@ public class ReplicationValve
                 return;
 
             if ( (request.getContext().getManager()==null) ||
-                 (!(request.getContext().getManager() instanceof SimpleTcpReplicationManager)))
+                 (!(request.getContext().getManager() instanceof ClusterManager)))
                 return;
 
 
@@ -234,17 +237,10 @@ public class ReplicationValve
             if ( filterfound )
                 return;
 
-            if ( debug > 4 ) log("Invoking replication request on "+uri,4);
+            log.debug("Invoking replication request on "+uri);
 
-            ClusterSession cs = (ClusterSession)session;
+            
             SessionMessage msg = manager.requestCompleted(id);
-            if ( (msg == null) && (!cs.isPrimarySession()) ) {
-                msg = new SessionMessage(manager.getName(),
-                                         SessionMessage.EVT_SESSION_ACCESSED,
-                                         null,
-                                         id);
-            }
-            cs.setPrimarySession(true);
 
             if ( msg == null ) return;
 
@@ -254,7 +250,7 @@ public class ReplicationValve
 
         }catch (Exception x)
         {
-            log("Unable to perform replication request.",x,2);
+            log.error("Unable to perform replication request.",x);
         }
     }
 
@@ -274,20 +270,20 @@ public class ReplicationValve
 
     public void setFilter(String filter)
     {
-        log("Loading request filters="+filter,3);
+        log.debug("Loading request filters="+filter);
         java.util.StringTokenizer t = new java.util.StringTokenizer(filter,";");
         this.reqFilters = new java.util.regex.Pattern[t.countTokens()];
         int i = 0;
         while ( t.hasMoreTokens() )
         {
             String s = t.nextToken();
-            log("Request filter="+s,3);
+            log.debug("Request filter="+s);
             try
             {
                 reqFilters[i++] = java.util.regex.Pattern.compile(s);
             }catch ( Exception x )
             {
-                log("Unable to compile filter "+s,x,3);
+                log.error("Unable to compile filter "+s,x);
             }
         }
     }
@@ -299,28 +295,6 @@ public class ReplicationValve
 
     // ------------------------------------------------------ Protected Methods
 
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message,int level) {
-        if ( debug < level ) return;
-        log.debug(message);
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable,int level) {
-        if ( debug < level ) return;
-        log.debug(message,throwable);
-    }
 
 
 }
