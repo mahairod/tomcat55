@@ -32,6 +32,13 @@
       <update>
       Replace MX4J 1.1.1 with the Sun JMX 1.2 RI (remm)
       </update>
+      <scode>
+      Major update to Japanese internationalization, submitted by 
+      Kazuhiro Kazama (remm)
+      </scode>
+      <fix>
+      Fix bad imports (remm)
+      </fix>
 
     </changelog>
 
@@ -119,6 +126,26 @@
       Include the patInfo when a relative path is used to get a request 
       dispatcher, submitted by Mark Thomas (remm)
       </fix>
+      <fix>
+      <bug>20029</bug>: fix "-force" shell script parameter handling, submitted
+      by Christian Brensing (remm)
+      </fix>
+      <fix>
+      Deploy descriptors even if deployOnStartup is false, as they should be 
+      considered as if they were part of server.xml (remm)
+      </fix>
+      <fix>
+      Apply patch for <bug>22857</bug> and <bug>22858</bug> to CGI servlet, 
+      submitted by Mark Thomas (amyroh)
+      </fix>
+      <fix>
+      Get the absolute path to the work dir, so that JARs in /WEB-INF/lib can 
+      be found when using non filesystem based resources (luehe)
+      </fix>
+      <fix>
+      XML-escape the values when writing out the tomcat-users.xml file, 
+      submitted by Mark Thomas (billbarker)
+      </fix>
 
     </changelog>
 
@@ -154,6 +181,9 @@
       <fix>
       Adding accessors so that the JkCoyote connectors can play nice with the 
       admin webapp (billbarker)
+      </fix>
+      <fix>
+      Fix parsing of the content-type header in Response (luehe)
       </fix>
 
     </changelog>
@@ -205,6 +235,16 @@
       containing line feeds, and incorrect error reporting for unparseable EL 
       expression nodes (ecarmich)
       </fix>
+      <fix>
+      JSP error page mechanism fails intermittently to display contents of 
+      error page, which occurred when a JSP was using a custom page context
+      (luehe)
+      </fix>
+      <fix>
+      Use just the class name if package is imported, and in tag files, 
+      declare request as HttpServletRequest and response HttpServletResponse, 
+      as is the case in servlets (kinman)
+      </fix>
 
     </changelog>
 
@@ -239,6 +279,20 @@
       In the default page, update links to the lists, and add a link to the 
       open bugs (remm)
       </fix>
+      <docs>
+      Update for changes to jsvc from commons-daemon (remm)
+      </docs>
+      <add>
+      Refactor the status servlet, allowing for XML output in addition to the 
+      user friendly HTML, submitted by Peter Lin, based on code from John
+      Turner (remm)
+      </add>
+      <update>
+      Implement the XML processor state status (remm)
+      </update>
+      <docs>
+      Update classloader documentation according to the current behavior (remm)
+      </docs>
 
     </changelog>
 
