@@ -195,8 +195,12 @@ public interface HttpServletResponse extends ServletResponse {
 
     /**
      * Sends an error response to the client using the specified
-     * status.  The server generally creates the 
-     * response to look like a normal server error page.
+     * status clearing the buffer.  The server defaults to creating the 
+     * response to look like an HTML-formatted server error page.
+     *
+     * If an <error-page> declaration has been made for the web application
+     * corresponding to the status code passed in, it will be served back in 
+     * preference to the suggested msg parameter. 
      *
      * <p>If the response has already been committed, this method throws 
      * an IllegalStateException.
@@ -328,7 +332,8 @@ public interface HttpServletResponse extends ServletResponse {
      * Sets the status code for this response.  This method is used to
      * set the return status code when there is no error (for example,
      * for the status codes SC_OK or SC_MOVED_TEMPORARILY).  If there
-     * is an error, the <code>sendError</code> method should be used
+     * is an error, and the caller wishes to invoke an <error-page> defined
+     * in the web applicaion, the <code>sendError</code> method should be used
      * instead.
      * <p> The container clears the buffer and sets the Location header, preserving
      * cookies and other headers.
