@@ -1,13 +1,51 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
+<!-- TEMPORARY DTD FOR THE SERVLET 2.3 WEB APPLICATION DEPLOYMENT
+     DESCRIPTOR.  THIS WILL BE REPLACED BY THE OFFICIAL ONE WHEN
+     IT IS POSTED -->
+
 <!-- The web-app element is the root of the deployment descriptor for
 a web application -->
 	
 <!ELEMENT web-app (icon?, display-name?, description?, distributable?,
-context-param*, servlet*, servlet-mapping*, session-config?,
+context-param*, filter*, filter-mapping*, listener*,
+servlet*, servlet-mapping*, session-config?,
 mime-mapping*, welcome-file-list?, error-page*, taglib*,
 resource-ref*, security-constraint*, login-config?, security-role*,
 env-entry*, ejb-ref*)>
+
+<!-- Declares a filter in the web application deployment descriptor.
+The filter is mapped to either a servlet or a URL pattern in the
+filter-mapping element, using the filter-name value to reference.
+Filters can access the initialization parameters declared in the
+deployment descriptor at runtime via the FilterConfig interface. -->
+
+<!ELEMENT filter (icon?, filter-name, display-name?, description?,
+filter-class, init-param*)>
+
+<!-- The logical name of the filter.  This name is used to map
+the filter.  -->
+
+<!ELEMENT filter-name (#PCDATA)>
+
+<!-- The fully qualified classname of the filter. -->
+
+<!ELEMENT filter-class (#PCDATA)>
+
+<!-- Declaration of the filter mappings in this web application.
+The conatiner used the filter-mapping declarations to decide which
+filters to apply to a request, and in what order.  The container
+matches the request URI to a Servlet in the normal way.  To determine
+which filters to apply it matches filter-mapping declarations either
+on servlet-name, or on url-pattern for each filter-mapping element,
+depending on which style is used.  The order in which filters are
+invoked is the order in which filter-mapping declarations that match
+a request URI for a servlet appear in the list of filter-mapping
+elements.  The filter-name value must be the value of the filter-
+name sub-elements of one of the filter declarations in the
+deployment descriptor. -->
+
+<!ELEMENT filter-mapping (filter-name, (url-pattern | servlet-name))>
 
 <!-- The icon element contains a small-icon and a large-icon element
 which specify the location within the web application for a small and
@@ -56,6 +94,16 @@ application's servlet context initialization parameters. -->
 <!-- The param-value element contains the value of a parameter. -->
 
 <!ELEMENT param-value (#PCDATA)>
+
+<!-- The listener element indicates the deployment properties
+for a web application listener bean. -->
+
+<!ELEMENT listener (listener-class)>
+
+<!-- The listener-class element declares a class in the application
+must be registered as a web application listener bean. -->
+
+<!ELEMENT listener-class (#PCDATA)>
 
 <!-- The servlet element contains the declarative data of a
 servlet. If a jsp-file is specified and the load-on-startup element is
@@ -333,7 +381,8 @@ java.lang.Double, java.lang.Float. -->
 <!-- The ejb-ref element is used to declare a reference to an
 enterprise bean.  -->
 
-<!ELEMENT ejb-ref (description?, ejb-ref-name, ejb-ref-type, home, remote, ejb-link?)>
+<!ELEMENT ejb-ref (description?, ejb-ref-name, ejb-ref-type, home,
+remote, ejb-link?, runAs?)>
 
 <!-- The ejb-ref-name element contains the name of an EJB
 reference. This is the JNDI name that the servlet code uses to get a
@@ -364,6 +413,11 @@ application package. -->
 
 <!ELEMENT ejb-link (#PCDATA)>
 
+<!-- The runAs element must contain the name of a security role
+defined for this web application. -->
+
+<!ELEMENT runAs (#PCDATA)>
+
 <!-- The ID mechanism is to allow tools to easily make tool-specific
 references to the elements of the deployment descriptor. This allows
 tools that produce additional deployment information (i.e information
@@ -373,6 +427,10 @@ these tools-specific files to the information in the standard web-app
 deployment descriptor. -->
 
 <!ATTLIST web-app id ID #IMPLIED>
+<!ATTLIST filter id ID #IMPLIED>
+<!ATTLIST filter-name id ID #IMPLIED>
+<!ATTLIST filter-class id ID #IMPLIED>
+<!ATTLIST filter-mapping id ID #IMPLIED>
 <!ATTLIST icon id ID #IMPLIED>
 <!ATTLIST small-icon id ID #IMPLIED>
 <!ATTLIST large-icon id ID #IMPLIED>
@@ -382,6 +440,8 @@ deployment descriptor. -->
 <!ATTLIST context-param id ID #IMPLIED>
 <!ATTLIST param-name id ID #IMPLIED>
 <!ATTLIST param-value id ID #IMPLIED>
+<!ATTLIST listener id ID #IMPLIED>
+<!ATTLIST listener-class id ID #IMPLIED>
 <!ATTLIST servlet id ID #IMPLIED>
 <!ATTLIST servlet-name id ID #IMPLIED>
 <!ATTLIST servlet-class id ID #IMPLIED>
@@ -435,5 +495,5 @@ deployment descriptor. -->
 <!ATTLIST home id ID #IMPLIED>
 <!ATTLIST remote id ID #IMPLIED>
 <!ATTLIST ejb-link id ID #IMPLIED>
-
+<!ATTLIST runAs iid ID #IMPLIED>
 

@@ -126,6 +126,20 @@ public final class StandardContext
 
 
     /**
+     * The set of application listener class names configured for this
+     * application, in the order they were encountered in the web.xml file.
+     */
+    private String applicationListeners[] = new String[0];
+
+
+    /**
+     * The set of instantiated application listener objects, in a one-to-one
+     * correspondence to the class names in <code>applicationListeners</code>.
+     */
+    private Object applicationListenersObjects[] = new Object[0];
+
+
+    /**
      * The security constraints for this web application.
      */
     private SecurityConstraint constraints[] = new SecurityConstraint[0];
@@ -312,6 +326,39 @@ public final class StandardContext
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the set of initialized application listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @exception IllegalStateException if this method is called before
+     *  this application has started, or after it has been stopped
+     */
+    public Object[] getApplicationListeners() {
+
+        if (!started)
+	    throw new IllegalStateException
+	      (sm.getString("standardContext.notStarted"));
+
+	return (applicationListenersObjects);
+
+    }
+
+
+    /**
+     * Store the set of initialized application listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @param listeners The set of instantiated listener objects.
+     */
+    public void setApplicationListeners(Object listeners[]) {
+
+        applicationListenersObjects = listeners;
+
+    }
 
 
     /**
@@ -600,6 +647,28 @@ public final class StandardContext
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Add a new Listener class name to the set of Listeners
+     * configured for this application.
+     *
+     * @param listener Java class name of a listener class
+     */
+    public void addApplicationListener(String listener) {
+
+	synchronized (applicationListeners) {
+	    String results[] =new String[applicationListeners.length + 1];
+	    for (int i = 0; i < applicationListeners.length; i++)
+		results[i] = applicationListeners[i];
+	    results[applicationListeners.length] = listener;
+	    applicationListeners = results;
+	}
+	fireContainerEvent("addApplicationListener", listener);
+
+	// FIXME - add instance if already started?
+
+    }
 
 
     /**
@@ -991,6 +1060,17 @@ public final class StandardContext
 	}
 
 	return (wrapper);
+
+    }
+
+
+    /**
+     * Return the set of application listener class names configured
+     * for this application.
+     */
+    public String[] findApplicationListeners() {
+
+        return (applicationListeners);
 
     }
 
@@ -1604,6 +1684,46 @@ public final class StandardContext
 
 
     /**
+     * Remove the specified application listener class from the set of
+     * listeners for this application.
+     *
+     * @param listener Java class name of the listener to be removed
+     */
+    public void removeApplicationListener(String listener) {
+
+	synchronized (applicationListeners) {
+
+	    // Make sure this welcome file is currently present
+	    int n = -1;
+	    for (int i = 0; i < applicationListeners.length; i++) {
+		if (applicationListeners[i].equals(listener)) {
+		    n = i;
+		    break;
+		}
+	    }
+	    if (n < 0)
+		return;
+
+	    // Remove the specified constraint
+	    int j = 0;
+	    String results[] = new String[applicationListeners.length - 1];
+	    for (int i = 0; i < applicationListeners.length; i++) {
+		if (i != n)
+		    results[j++] = applicationListeners[i];
+	    }
+	    applicationListeners = results;
+
+	}
+
+	// Inform interested listeners
+	fireContainerEvent("removeApplicationListener", listener);
+
+	// FIXME - behavior if already started?
+
+    }
+
+
+    /**
      * Remove any EJB resource reference with the specified name.
      *
      * @param name Name of the EJB resource reference to remove
@@ -1956,7 +2076,7 @@ public final class StandardContext
     /**
      * Start this Context component.
      *
-     * @param LifecycleException if a startup error occurs
+     * @exception LifecycleException if a startup error occurs
      */
     public void start() throws LifecycleException {
 

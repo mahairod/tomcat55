@@ -101,6 +101,27 @@ public interface Context extends Container {
 
 
     /**
+     * Return the set of initialized application listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @exception IllegalStateException if this method is called before
+     *  this application has started, or after it has been stopped
+     */
+    public Object[] getApplicationListeners();
+
+
+    /**
+     * Store the set of initialized application listener objects,
+     * in the order they were specified in the web application deployment
+     * descriptor, for this application.
+     *
+     * @param listeners The set of instantiated listener objects.
+     */
+    public void setApplicationListeners(Object listeners[]);
+
+
+    /**
      * Return the "use cookies for session ids" flag.
      */
     public boolean getCookies();
@@ -242,6 +263,15 @@ public interface Context extends Container {
 
 
     /**
+     * Add a new Listener class name to the set of Listeners
+     * configured for this application.
+     *
+     * @param listener Java class name of a listener class
+     */
+    public void addApplicationListener(String listener);
+
+
+    /**
      * Add a security constraint to the set for this web application.
      */
     public void addConstraint(SecurityConstraint constraint);
@@ -377,6 +407,13 @@ public interface Context extends Container {
      * will have been called, but no properties will have been set.
      */
     public Wrapper createWrapper();
+
+
+    /**
+     * Return the set of application listener class names configured
+     * for this application.
+     */
+    public String[] findApplicationListeners();
 
 
     /**
@@ -596,6 +633,15 @@ public interface Context extends Container {
      *  property is set to <code>false</code>.
      */
     public void reload();
+
+
+    /**
+     * Remove the specified application listener class from the set of
+     * listeners for this application.
+     *
+     * @param listener Java class name of the listener to be removed
+     */
+    public void removeApplicationListener(String listener);
 
 
     /**

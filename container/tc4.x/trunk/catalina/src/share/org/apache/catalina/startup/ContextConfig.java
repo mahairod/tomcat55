@@ -375,6 +375,9 @@ public final class ContextConfig
 	mapper.addRule("web-app/error-page/location",
 		       mapper.methodSetter("setLocation", 0));
 
+	mapper.addRule("web-app/listener/listener-class",
+		       mapper.methodSetter("addApplicationListener", 0));
+
 	mapper.addRule("web-app/login-config",
 		       mapper.methodSetter("setLoginConfig", 4));
 	mapper.addRule("web-app/login-config/auth-method",
@@ -522,6 +525,54 @@ public final class ContextConfig
 		log(sm.getString("contextConfig.defaultClose"), e);
 	    }
 	}
+
+    }
+
+
+    /**
+     * Configure the set of instantiated application event listeners
+     * for this Context.
+     */
+    private void listenerConfig() {
+
+        ClassLoader loader = context.getLoader().getClassLoader();
+	String listeners[] = context.findApplicationListeners();
+        Object results[] = new Object[listeners.length];
+	boolean error = false;
+	for (int i = 0; i < results.length; i++) {
+	  try {
+	      Class clazz = loader.loadClass(listeners[i]);
+	      results[i] = clazz.newInstance();
+	  } catch (Throwable t) {
+	      // FIXME - should we do anything besides log these?
+	      log(sm.getString("standardContext.applicationListener",
+			       listeners[i]), t);
+	      error = true;
+	  }
+
+	}
+	if (!error)
+	    context.setApplicationListeners(results);
+
+    }
+
+
+    /**
+     * Send an application start event to all interested listeners.
+     */
+    private void listenerStartEvent() {
+
+      ; // FIXME - listenerStartEvent()
+
+    }
+
+
+    /**
+     * Send an application stop event to all interested listeners.
+     */
+    private void listenerStopEvent() {
+
+      ; // FIXME - listenerStopEvent()
 
     }
 
@@ -675,6 +726,13 @@ public final class ContextConfig
 	// Configure an authenticator if we need one
 	authenticatorConfig();
 
+	// Configure the application event listeners for this Context
+	// PREREQUISITE:  class loader has been configured
+	listenerConfig();
+
+	// Send an application start event to all interested listeners
+	listenerStartEvent();
+
     }
 
 
@@ -685,6 +743,12 @@ public final class ContextConfig
 
 	if (debug > 0)
 	    log(sm.getString("contextConfig.stop"));
+
+	// Send an application stop event to all interested listeners
+	listenerStopEvent();
+
+	// Release references to the listener objects themselves
+	context.setApplicationListeners(null);
 
     }
 
