@@ -1567,10 +1567,10 @@ public class StandardWrapper
 
         setAvailable(Long.MAX_VALUE);
         
-        // Send j2ee.state.stoping notification 
+        // Send j2ee.state.stopping notification 
         if (this.getObjectName() != null) {
             Notification notification = 
-                new Notification("j2ee.state.stoping", this.getObjectName(), 
+                new Notification("j2ee.state.stopping", this.getObjectName(), 
                                 sequenceNumber++);
             broadcaster.sendNotification(notification);
         }
@@ -1586,7 +1586,7 @@ public class StandardWrapper
         // Shut down this component
         super.stop();
 
-        // Send j2ee.state.stopped notification 
+        // Send j2ee.state.stoppped notification 
         if (this.getObjectName() != null) {
             Notification notification = 
                 new Notification("j2ee.state.stopped", this.getObjectName(), 
