@@ -1090,23 +1090,10 @@ class Parser {
      *                )
      */
     private void parseFallBack(Node parent) throws JasperException {
-        if( reader.matches( "/>" ) ) {
-            // No elements, don't create node.
-        }
-        else if( reader.matches( ">" ) ) {
-            Mark bodyStart = reader.mark();
-            Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
-            if (bodyEnd == null) {
-                err.jspError(start, "jsp.error.unterminated", 
-                    "&lt;jsp:fallback");
-            }
-            new Node.FallBackAction(start, reader.getText(bodyStart, bodyEnd),
-				    parent);
-        }
-        else {
-            err.jspError( reader.mark(), "jsp.error.unterminated",
-                "&lt;jsp:fallback" );
-        }
+	Mark bodyStart = reader.mark();
+	Node fallBackNode = new Node.FallBackAction(start, parent);
+	parseOptionalBody(fallBackNode, "jsp:fallback", 
+			  JAVAX_BODY_CONTENT_TEMPLATE_TEXT);
     }
 
     /*

@@ -682,8 +682,8 @@ abstract class Node {
      */
     public static class FallBackAction extends Node {
 
-	public FallBackAction(Mark start, String text, Node parent) {
-	    super(text, start, parent);
+	public FallBackAction(Mark start, Node parent) {
+	    super(start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {

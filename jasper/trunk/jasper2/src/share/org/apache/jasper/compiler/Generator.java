@@ -1458,15 +1458,8 @@ class Generator {
 	     * Fallback
 	     */
 	    if (n.getBody() != null) {
-		n.getBody().visit(new Node.Visitor() {
-		    public void visit(Node.FallBackAction n) {
-			n.setBeginJavaLine(out.getJavaLine());
-			out.printil("out.write(" +
-				    quote(new String(n.getText())) + ");");
-			out.printil("out.write(\"\\n\");");
-			n.setEndJavaLine(out.getJavaLine());
-		    }
-		});
+		visitBody(n);
+		out.printil("out.write(\"\\n\");");
 	    }
 
 	    out.printil("out.write(" + quote("</NOEMBED></EMBED>") + ");");
