@@ -47,30 +47,66 @@ public class DataSender implements IDataSender {
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "DataSender/1.2";
+    private static final String info = "DataSender/1.3";
 
+    /**
+     * receiver address
+     */
     private InetAddress address;
 
+    /**
+     * receiver port
+     */
     private int port;
 
-    private Socket sc = null;
+    /**
+     * current sender socket
+     */
+    private Socket socket = null;
 
+    /**
+     * is Socket really connected
+     */
     private boolean isSocketConnected = false;
 
+    /**
+     * sender is in suspect state (last transfer failed)
+     */
     private boolean suspect;
 
+    /**
+     * wait time for ack
+     */
     private long ackTimeout;
 
+    /**
+     * number of requests
+     */
     protected long nrOfRequests = 0;
 
+    /**
+     * total bytes to transfer
+     */
     protected long totalBytes = 0;
 
+    /**
+     * number of connects
+     */
     protected long connectCounter = 0;
 
+    /**
+     * number of explizit disconnects
+     */
     protected long disconnectCounter = 0;
 
+    /**
+     * number of failing acks
+     */
     protected long missingAckCounter = 0;
 
+    /**
+     * number of data resends (second trys after socket failure)
+     */
     protected long dataResendCounter = 0;
 
     /**
@@ -106,26 +142,40 @@ public class DataSender implements IDataSender {
     /**
      * Last connect timestamp
      */
-    private long keepAliveConnectTime = 0;
+    protected long keepAliveConnectTime = 0;
 
     /**
      * keepalive counter
      */
-    private int keepAliveCount = 0;
+    protected int keepAliveCount = 0;
 
+    /**
+     * wait for receiver Ack
+     */
     private boolean waitForAck = true;
 
-    private int socketCloseCounter;
+    /**
+     * number of socket close
+     */
+    private int socketCloseCounter = 0 ;
 
-    private int socketOpenCounter;
+    /**
+     * number of socket open
+     */
+    private int socketOpenCounter = 0 ;
+
+    /**
+     * number of socket open failures
+     */
+    private int socketOpenFailureCounter = 0 ;
 
     // ------------------------------------------------------------- Constructor
 
     public DataSender(InetAddress host, int port) {
         this.address = host;
         this.port = port;
-        if (log.isInfoEnabled())
-            log.info(sm.getString("IDataSender.create", address, new Integer(
+        if (log.isDebugEnabled())
+            log.debug(sm.getString("IDataSender.create", address, new Integer(
                     port)));
     }
 
@@ -190,6 +240,7 @@ public class DataSender implements IDataSender {
     public boolean isDoProcessingStats() {
         return doProcessingStats;
     }
+    
     /**
      * @param doProcessingStats The doProcessingStats to set.
      */
@@ -225,6 +276,13 @@ public class DataSender implements IDataSender {
         return socketOpenCounter;
     }
     
+    /**
+     * @return Returns the socketOpenFailureCounter.
+     */
+    public int getSocketOpenFailureCounter() {
+        return socketOpenFailureCounter;
+    }
+
     /**
      * @return Returns the socketCloseCounter.
      */
@@ -324,50 +382,75 @@ public class DataSender implements IDataSender {
         this.waitForAck = waitForAck;
     }
 
+    /**
+     * @return Returns the socket.
+     */
+    public Socket getSocket() {
+        return socket;
+    }
+    /**
+     * @param socket The socket to set.
+     */
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
     // --------------------------------------------------------- Public Methods
 
+    /**
+     * Connect other cluster member receiver 
+     * @see org.apache.catalina.cluster.tcp.IDataSender#connect()
+     */
     public void connect() throws java.io.IOException {
-        connectCounter++;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
-                    new Integer(port)));
         openSocket();
-    }
+        if(isConnected()) {
+            connectCounter++;
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("IDataSender.connect", address.getHostAddress(),
+                        new Integer(port),new Long(connectCounter)));
+        }
+   }
 
  
     /**
-     * close socket
+     * disconnect and close socket
      * 
      * @see org.apache.catalina.cluster.tcp.IDataSender#disconnect()
      * @see DataSender#closeSocket()
      */
     public void disconnect() {
-        disconnectCounter++;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
-                    new Integer(port)));
+        boolean connect = isConnected() ;
         closeSocket();
+        if(connect) {
+            disconnectCounter++;
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("IDataSender.disconnect", address.getHostAddress(),
+                    new Integer(port),new Long(disconnectCounter)));
+        }
     }
 
     /**
      * Check, if time to close socket! Important for AsyncSocketSender that
      * replication thread is not fork again! <b>Only work when keepAliveTimeout
      * or keepAliveMaxRequestCount greater -1 </b>
+     * FIXME Can we close a socket when a message wait for ack?
      * @return true, is socket close
      * @see DataSender#closeSocket()
      */
-    public boolean checkIfCloseSocket() {
+    public synchronized boolean checkIfCloseSocket() {
         boolean isCloseSocket = true ;
-        long ctime = System.currentTimeMillis() - this.keepAliveConnectTime;
-        if ((keepAliveTimeout > -1 && ctime > this.keepAliveTimeout)
-                || (keepAliveMaxRequestCount > -1 && this.keepAliveCount >= this.keepAliveMaxRequestCount)) {
-            closeSocket();
-        } else
-            isCloseSocket = false ;
+        if(isConnected()) {
+            if ((keepAliveTimeout > -1 
+                    && (System.currentTimeMillis() - this.keepAliveConnectTime) > this.keepAliveTimeout)
+                || (keepAliveMaxRequestCount > -1 
+                    && this.keepAliveCount >= this.keepAliveMaxRequestCount)) {
+                closeSocket();
+            } else
+                isCloseSocket = false ;
+        }
         return isCloseSocket;
     }
 
-    /*
+    /**
      * Send message
      * 
      * @see org.apache.catalina.cluster.tcp.IDataSender#sendMessage(java.lang.String,
@@ -378,7 +461,7 @@ public class DataSender implements IDataSender {
         pushMessage(messageid, data);
     }
 
-    /*
+    /**
      * Reset sender statistics
      */
     public synchronized void resetStatistics() {
@@ -389,6 +472,7 @@ public class DataSender implements IDataSender {
         missingAckCounter = 0;
         dataResendCounter = 0;
         socketOpenCounter =isConnected() ? 1 : 0;
+        socketOpenFailureCounter = 0 ;
         socketCloseCounter = 0;
         processingTime = 0 ;
         minProcessingTime = Long.MAX_VALUE ;
@@ -404,24 +488,43 @@ public class DataSender implements IDataSender {
         return buf.toString();
     }
 
-    // --------------------------------------------------------- Protected
-    // Methods
+    // --------------------------------------------------------- Protected Methods
+ 
+    /**
+     * open real socket and set time out when waitForAck is enabled
+     * @throws IOException
+     * @throws SocketException
+     */
+    protected void openSocket() throws IOException, SocketException {
+       if(isConnected())
+           closeSocket() ;
+       try {
+            createSocket();
+            if (isWaitForAck())
+                socket.setSoTimeout((int) ackTimeout);
+            isSocketConnected = true;
+            socketOpenCounter++;
+            this.keepAliveCount = 0;
+            this.keepAliveConnectTime = System.currentTimeMillis();
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("IDataSender.openSocket", address
+                        .getHostAddress(), new Integer(port),new Long(socketOpenCounter)));
+      } catch (IOException ex1) {
+            socketOpenFailureCounter++ ;
+            if (log.isDebugEnabled())
+                log.debug(sm.getString("IDataSender.openSocket.failure",
+                        address.getHostAddress(), new Integer(port),new Long(socketOpenFailureCounter)), ex1);
+            throw ex1;
+        }
+        
+     }
 
     /**
      * @throws IOException
      * @throws SocketException
      */
-    protected void openSocket() throws IOException, SocketException {
-        socketOpenCounter++;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("IDataSender.openSocket", address.getHostAddress(), new Integer(
-                    port)));
-        sc = new Socket(getAddress(), getPort());
-        if (isWaitForAck())
-            sc.setSoTimeout((int) ackTimeout);
-        isSocketConnected = true;
-        this.keepAliveCount = 0;
-        this.keepAliveConnectTime = System.currentTimeMillis();
+    protected void createSocket() throws IOException, SocketException {
+        socket = new Socket(getAddress(), getPort());
     }
 
     /**
@@ -431,17 +534,22 @@ public class DataSender implements IDataSender {
      * @see DataSender#checkIfCloseSocket()
      */
     protected void closeSocket() {
-        if(isSocketConnected) {
+        if(isConnected()) {
+             if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException x) {
+                } finally {
+                    socket = null;
+                }
+            }
+            this.keepAliveCount = 0;
+            isSocketConnected = false;
             socketCloseCounter++;
             if (log.isDebugEnabled())
                 log.debug(sm.getString("IDataSender.closeSocket",
-                        address.getHostAddress(), new Integer(port)));
-            try {
-                sc.close();
-            } catch (Exception x) {
-            }
-            isSocketConnected = false;
-        }
+                        address.getHostAddress(), new Integer(port),new Long(socketCloseCounter)));
+       }
     }
 
     /**
@@ -462,6 +570,10 @@ public class DataSender implements IDataSender {
         }
     }
 
+    /**
+     * Add processing stats times
+     * @param startTime
+     */
     protected void addProcessingStats(long startTime) {
         long time = System.currentTimeMillis() - startTime ;
         if(time < minProcessingTime)
@@ -472,10 +584,19 @@ public class DataSender implements IDataSender {
     }
     
     /**
-     * push messages with only one socket at a time
+     * Push messages with only one socket at a time
+     * Wait for ack is needed and make auto retry when write message is failed.
+     * After sending error close and reopen socket again.
      * 
+     * After successfull sending update stats
+     * 
+     * @see #checkIfCloseSocket()
+     * @see #openSocket()
+     * @see #writeData(byte[])
+     * 
+     * FIXME Handling of java.net.SocketTimeoutException from waitForAck()
      * @param messageid
-     *            unique message id
+     *            unique message id / need only for log message )
      * @param data
      *            data to send
      * @throws java.io.IOException
@@ -490,10 +611,7 @@ public class DataSender implements IDataSender {
         if (!isConnected())
             openSocket();
         try {
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-            if (isWaitForAck())
-                waitForAck(ackTimeout);
+            writeData(data);
         } catch (java.io.IOException x) {
             // second try with fresh connection
             dataResendCounter++;
@@ -502,10 +620,7 @@ public class DataSender implements IDataSender {
                         new Integer(port)));
             closeSocket();
             openSocket();
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-            if (isWaitForAck())
-                waitForAck(ackTimeout);
+            writeData(data);
         }
         this.keepAliveCount++;
         checkIfCloseSocket();
@@ -520,16 +635,28 @@ public class DataSender implements IDataSender {
     }
 
     /**
+     * @param data
+     * @throws IOException
+     */
+    protected void writeData(byte[] data) throws IOException {
+        socket.getOutputStream().write(data);
+        socket.getOutputStream().flush();
+        if (isWaitForAck())
+            waitForAck(ackTimeout);
+    }
+
+    /**
      * Wait for Acknowledgement from other server
-     * 
+     * FIXME Handle SocketTimeoutException - Retry message ?
      * @param timeout
      * @throws java.io.IOException
+     * @throws java.net.SocketTimeoutException
      */
     protected void waitForAck(long timeout) throws java.io.IOException {
         try {
-            int i = sc.getInputStream().read();
+            int i = socket.getInputStream().read();
             while ((i != -1) && (i != 3)) {
-                i = sc.getInputStream().read();
+                i = socket.getInputStream().read();
             }
         } catch (java.net.SocketTimeoutException x) {
             missingAckCounter++;

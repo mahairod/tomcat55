@@ -71,7 +71,20 @@ public class ReplicationTransmitter implements ClusterSender {
      */
     private long totalBytes = 0;
 
+    /**
+     * number of failure
+     */
     private long failureCounter = 0;
+
+    /**
+     * Iteration count for background processing.
+     */
+    private int count = 0;
+
+    /**
+     * Frequency of the check sender keepAlive Socket Status.
+     */
+    protected int processSenderFrequency = 2;
 
     /**
      * current sender replication mode
@@ -249,6 +262,21 @@ public class ReplicationTransmitter implements ClusterSender {
         setProperty("waitForAck", String.valueOf(waitForAck));
     }
 
+    
+    /**
+     * @return Returns the processSenderFrequency.
+     */
+    public int getProcessSenderFrequency() {
+        return processSenderFrequency;
+    }
+    
+    /**
+     * @param processSenderFrequency The processSenderFrequency to set.
+     */
+    public void setProcessSenderFrequency(int processSenderFrequency) {
+        this.processSenderFrequency = processSenderFrequency;
+    }
+    
     /*
      * configured in cluster
      * 
@@ -413,6 +441,36 @@ public class ReplicationTransmitter implements ClusterSender {
             }
         }
 
+    }
+
+    /**
+     * Call transmitter to check for sender socket status
+     * 
+     * @see SimpleTcpCluster#backgroundProcess()
+     */
+    public void backgroundProcess() {
+        count = (count + 1) % processSenderFrequency;
+        if (count == 0) {
+            checkIfCloseSocket();
+        }
+    }
+
+    /**
+     * Check all DataSender Socket to close socket at keepAlive mode
+     * @see DataSender#checkIfCloseSocket()
+     */
+    public void checkIfCloseSocket() {
+        if (map.size() > 0) {
+            if (log.isTraceEnabled())
+                log.trace("check sender close socket");
+            java.util.Iterator iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                IDataSender sender = (IDataSender) ((java.util.Map.Entry) iter
+                        .next()).getValue();
+                if (sender != null && sender instanceof DataSender)
+                    ((DataSender) sender).checkIfCloseSocket();
+            }
+        }
     }
 
     /**
