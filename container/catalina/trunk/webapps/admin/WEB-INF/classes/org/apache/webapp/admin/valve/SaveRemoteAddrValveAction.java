@@ -154,9 +154,10 @@ public final class SaveRemoteAddrValveAction extends Action {
                
         // Perform a "Create Valve" transaction (if requested)
         if ("Create".equals(adminAction)) {
-           return ValveUtil.
-                  createValve(parent, valveType, response, request, mapping,
-                  (ApplicationServlet) getServlet());
+
+            vObjectName = ValveUtil.createValve(parent, valveType, 
+                                response, request, mapping, 
+                                (ApplicationServlet) getServlet());
            
         }
 
