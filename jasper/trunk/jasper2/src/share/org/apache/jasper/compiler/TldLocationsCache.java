@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999,2004 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,8 +178,8 @@ public class TldLocationsCache {
      */
     public String[] getLocation(String uri) throws JasperException {
         if (!initialized) {
-	    init();
-	}
+            init();
+        }
         return (String[]) mappings.get(uri);
     }
 
@@ -204,11 +204,11 @@ public class TldLocationsCache {
         try {
             processWebDotXml();
             scanJars();
-	    processTldsInFileSystem("/WEB-INF/");
+            processTldsInFileSystem("/WEB-INF/");
             initialized = true;
         } catch (Exception ex) {
-            throw new JasperException(Localizer.getMessage("jsp.error.internal.tldinit",
-							   ex.getMessage()));
+            throw new JasperException(Localizer.getMessage(
+                    "jsp.error.internal.tldinit", ex.getMessage()));
         }
     }
 
@@ -221,20 +221,20 @@ public class TldLocationsCache {
         InputStream is = ctxt.getResourceAsStream(WEB_XML);
         if (is == null) {
             if (log.isWarnEnabled()) {
-		log.warn(Localizer.getMessage("jsp.error.internal.filenotfound",
-					      WEB_XML));
-	    }
+                log.warn(Localizer.getMessage("jsp.error.internal.filenotfound",
+                                              WEB_XML));
+            }
             return;
         }
 
         // Parse the web application deployment descriptor
         TreeNode webtld = new ParserUtils().parseXMLDocument(WEB_XML, is);
 
-	// Allow taglib to be an element of the root or jsp-config (JSP2.0)
-	TreeNode jspConfig = webtld.findChild("jsp-config");
-	if (jspConfig != null) {
-	    webtld = jspConfig;
-	}
+        // Allow taglib to be an element of the root or jsp-config (JSP2.0)
+        TreeNode jspConfig = webtld.findChild("jsp-config");
+        if (jspConfig != null) {
+            webtld = jspConfig;
+        }
         Iterator taglibs = webtld.findChildren("taglib");
         while (taglibs.hasNext()) {
 
@@ -256,9 +256,9 @@ public class TldLocationsCache {
                 tagLoc = "/WEB-INF/" + tagLoc;
             String tagLoc2 = null;
             if (tagLoc.endsWith(JAR_FILE_SUFFIX)) {
-		tagLoc = ctxt.getResource(tagLoc).toString();
+                tagLoc = ctxt.getResource(tagLoc).toString();
                 tagLoc2 = "META-INF/taglib.tld";
-	    }
+            }
             mappings.put(tagUri, new String[] { tagLoc, tagLoc2 });
         }
     }
@@ -273,13 +273,13 @@ public class TldLocationsCache {
      * JAR should be ignored, false otherwise
      */
     private void scanJar(JarURLConnection conn, boolean ignore)
-	        throws JasperException {
+                throws JasperException {
 
         JarFile jarFile = null;
-	String resourcePath = conn.getJarFileURL().toString();
+        String resourcePath = conn.getJarFileURL().toString();
 
         try {
-	    if (redeployMode) {
+            if (redeployMode) {
                 conn.setUseCaches(false);
             }
             jarFile = conn.getJarFile();
@@ -292,8 +292,8 @@ public class TldLocationsCache {
                 InputStream stream = jarFile.getInputStream(entry);
                 try {
                     String uri = getUriFromTld(resourcePath, stream);
-		    // Add implicit map entry only if its uri is not already
-		    // present in the map
+                    // Add implicit map entry only if its uri is not already
+                    // present in the map
                     if (uri != null && mappings.get(uri) == null) {
                         mappings.put(uri, new String[]{ resourcePath, name });
                     }
@@ -302,8 +302,8 @@ public class TldLocationsCache {
                         try {
                             stream.close();
                         } catch (Throwable t) {
-			    // do nothing
-			}
+                            // do nothing
+                        }
                     }
                 }
             }
@@ -314,13 +314,13 @@ public class TldLocationsCache {
                     try {
                         jarFile.close();
                     } catch (Throwable t) {
-			// ignore
-		    }
+                        // ignore
+                    }
                 }
             }
-	    if (!ignore) {
-		throw new JasperException(ex);
-	    }
+            if (!ignore) {
+                throw new JasperException(ex);
+            }
         } finally {
             if (redeployMode) {
                 // if in redeploy mode, always close the jar
@@ -328,8 +328,8 @@ public class TldLocationsCache {
                     try {
                         jarFile.close();
                     } catch (Throwable t) {
-			// ignore
-		    }
+                        // ignore
+                    }
                 }
             }
         }
@@ -341,21 +341,21 @@ public class TldLocationsCache {
      * element.
      */
     private void processTldsInFileSystem(String startPath)
-	    throws Exception {
+            throws Exception {
 
-	Set dirList = ctxt.getResourcePaths(startPath);
-	if (dirList != null) {
-	    Iterator it = dirList.iterator();
-	    while (it.hasNext()) {
-		String path = (String) it.next();
+        Set dirList = ctxt.getResourcePaths(startPath);
+        if (dirList != null) {
+            Iterator it = dirList.iterator();
+            while (it.hasNext()) {
+                String path = (String) it.next();
                 if (path.endsWith("/")) {
                     processTldsInFileSystem(path);
                 }
                 if (!path.endsWith(".tld")) {
-		    continue;
-		}
-		InputStream stream = ctxt.getResourceAsStream(path);
-		String uri = null;
+                    continue;
+                }
+                InputStream stream = ctxt.getResourceAsStream(path);
+                String uri = null;
                 try {
                     uri = getUriFromTld(path, stream);
                 } finally {
@@ -363,17 +363,17 @@ public class TldLocationsCache {
                         try {
                             stream.close();
                         } catch (Throwable t) {
-			    // do nothing
-			}
+                            // do nothing
+                        }
                     }
                 }
-		// Add implicit map entry only if its uri is not already
-		// present in the map
-		if (uri != null && mappings.get(uri) == null) {
-		    mappings.put(uri, new String[] { path, null });
-		}
-	    }
-	}
+                // Add implicit map entry only if its uri is not already
+                // present in the map
+                if (uri != null && mappings.get(uri) == null) {
+                    mappings.put(uri, new String[] { path, null });
+                }
+            }
+        }
     }
 
     /*
@@ -411,26 +411,26 @@ public class TldLocationsCache {
      */
     private void scanJars() throws Exception {
 
-	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	while (loader != null) {
-	    if (loader instanceof URLClassLoader) {
-		URL[] urls = ((URLClassLoader) loader).getURLs();
-		for (int i=0; i<urls.length; i++) {
-		    URLConnection conn = urls[i].openConnection();
-		    if (conn instanceof JarURLConnection) {
-			scanJar((JarURLConnection) conn, true);
-		    } else {
-			String urlStr = urls[i].toString();
-			if (urlStr.startsWith(FILE_PROTOCOL)
-			            && urlStr.endsWith(JAR_FILE_SUFFIX)) {
-			    URL jarURL = new URL("jar:" + urlStr + "!/");
-			    scanJar((JarURLConnection) jarURL.openConnection(),
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        while (loader != null) {
+            if (loader instanceof URLClassLoader) {
+                URL[] urls = ((URLClassLoader) loader).getURLs();
+                for (int i=0; i<urls.length; i++) {
+                    URLConnection conn = urls[i].openConnection();
+                    if (conn instanceof JarURLConnection) {
+                        scanJar((JarURLConnection) conn, true);
+                    } else {
+                        String urlStr = urls[i].toString();
+                        if (urlStr.startsWith(FILE_PROTOCOL)
+                                    && urlStr.endsWith(JAR_FILE_SUFFIX)) {
+                            URL jarURL = new URL("jar:" + urlStr + "!/");
+                            scanJar((JarURLConnection) jarURL.openConnection(),
                                     true);
-			}
-		    }
-		}
-	    }
-	    loader = loader.getParent();
-	}
+                        }
+                    }
+                }
+            }
+            loader = loader.getParent();
+        }
     }
 }
