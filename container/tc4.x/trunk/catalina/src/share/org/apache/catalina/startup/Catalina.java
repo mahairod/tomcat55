@@ -69,6 +69,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
 import java.net.Socket;
 import java.security.Security;
 import java.util.Stack;
@@ -77,7 +78,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Server;
-import org.apache.catalina.loader.StandardLoader;
+import org.apache.catalina.Loader;
 import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
@@ -358,12 +359,12 @@ public class Catalina {
         mapper.addRule("Server/Service/Engine/Host/Cluster",
                        mapper.setProperties());
         mapper.addRule("Server/Service/Engine/Host/Cluster",
-                       mapper.addChild("setCluster", "org.apache.catalina.Cluster"));
+                       mapper.addChild("setCluster", 
+                                       "org.apache.catalina.Cluster"));
         
         createStartMapperContext("Server/Service/Engine/Host/Context", mapper);
-        createStartMapperDefaultContext(
-                                        "Server/Service/Engine/Host/DefaultContext",
-                                        mapper);
+        createStartMapperDefaultContext
+            ("Server/Service/Engine/Host/DefaultContext", mapper);
         
         mapper.addRule("Server/Service/Engine/Host/Context/Manager/Store",
                        mapper.objectCreate(null, "className"));
@@ -536,8 +537,8 @@ public class Catalina {
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-        mapper.addRule(prefix + "/Loader",
-                       new CreateLoaderAction());
+        mapper.addRule(prefix + "/Loader", new CreateLoaderAction
+            ("org.apache.catalina.WebappLoader", "className"));
 	mapper.addRule(prefix + "/Loader",
 		       mapper.setProperties());
 	mapper.addRule(prefix + "/Loader", mapper.addChild
@@ -863,9 +864,35 @@ final class CreateLoaderAction extends XmlAction {
     /**
      * Construct a new action.
      */
-    public CreateLoaderAction() {
-        super();
+    public CreateLoaderAction(String loaderClass) {
+
+        this(loaderClass, null);
+
     }
+
+
+    /**
+     * Construct a new action.
+     */
+    public CreateLoaderAction(String loaderClass, String attributeName) {
+
+        super();
+        this.loaderClass = loaderClass;
+        this.attributeName = attributeName;
+
+    }
+
+
+    /**
+     * Classname of the loader.
+     */
+    protected String loaderClass;
+
+
+    /**
+     * The attribute name of the optional override class (if any).
+     */
+    protected String attributeName;
 
 
     /**
@@ -879,7 +906,18 @@ final class CreateLoaderAction extends XmlAction {
         ClassLoader parentClassLoader = container.getParentClassLoader();
 
         // Instantiate a new Loader implementation object
-        StandardLoader loader = new StandardLoader(parentClassLoader);
+	String className = loaderClass;
+	if (attributeName != null) {
+	    int top = context.getTagCount() - 1;
+	    AttributeList attributes = context.getAttributeList(top);
+	    if (attributes.getValue(attributeName) != null)
+		className = attributes.getValue(attributeName);
+	}
+	Class clazz = Class.forName(className);
+        Class[] paramTypes = { ClassLoader.class };
+        Object[] arguments = { parentClassLoader };
+        Constructor constructor = clazz.getDeclaredConstructor(paramTypes);
+        Loader loader = (Loader) constructor.newInstance(arguments);
 
         // Push the new loader onto the stack
         stack.push(loader);
