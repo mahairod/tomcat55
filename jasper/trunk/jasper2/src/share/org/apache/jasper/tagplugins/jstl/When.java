@@ -73,13 +73,13 @@ public final class When implements TagPlugin {
 	    return;
 	}
 
-	if ("true".equals(parentContext.getAttribute("hasBeenHere"))) {
+	if ("true".equals(parentContext.getPluginAttribute("hasBeenHere"))) {
 	    ctxt.generateJavaSource("} else if(");
 	    // See comment below for the reason we generate the extra "}" here.
 	}
 	else {
 	    ctxt.generateJavaSource("if(");
-	    parentContext.setAttribute("hasBeenHere", "true");
+	    parentContext.setPluginAttribute("hasBeenHere", "true");
 	}
 	ctxt.generateAttribute("test");
 	ctxt.generateJavaSource("){");

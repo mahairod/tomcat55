@@ -146,8 +146,8 @@ public interface TagPluginContext {
     /**
      * Get the PluginContext for the parent of this custom tag.  NOTE:
      * The operations available for PluginContext so obtained is limited
-     * to getAttribute and setAttribute, and queries (e.g. isScriptless(),
-     * There should be no generate*().
+     * to getPluginAttribute and setPluginAttribute, and queries (e.g.
+     * isScriptless().  There should be no calls to generate*().
      * @return The pluginContext for the parent node.
      *         null if the parent is not a custom tag, or if the pluginConxt
      *         if not available (because useTagPlugin is false, e.g).
@@ -156,12 +156,14 @@ public interface TagPluginContext {
 
     /**
      * Associate the attribute with a value in the current tagplugin context.
+     * The plugin attributes can be used for communication among tags that
+     * must work together as a group.  See <c:when> for an example.
      */
-    void setAttribute(String attr, Object value);
+    void setPluginAttribute(String attr, Object value);
 
     /**
      * Get the value of an attribute in the current tagplugin context.
      */
-    Object getAttribute(String attr);
+    Object getPluginAttribute(String attr);
 }
 
