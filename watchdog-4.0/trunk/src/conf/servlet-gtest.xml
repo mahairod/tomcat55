@@ -586,6 +586,49 @@
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/javax_servlet/UnavailableException/UnavailableException_Constructor2Test.html" />
 
+  <!-- javax_servlet_Error tests -->
+
+    <gtest request="GET /servlet-tests/ServletToServletErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToServletErrorPageTest.html"
+        testName="ServletToServletErrorPageTest"
+        assertion="Servlet error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.ArithmeticException.  The Servlet error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+    />
+
+    <gtest request="GET /servlet-tests/ServletToServletError501PageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToServletError501PageTest.html"
+        testName="ServletToServletError501PageTest"
+        assertion="Servlet error handlers can be installed for specific HTTP status codes."
+        testStrategy="The target servlet will class HttpServletResponse.sendError( int status, String message ).  The Servlet error page should display non-null values for status_code, message, request_uri, and servlet_name"
+    />
+        
+    <gtest request="GET /servlet-tests/ServletToJSPErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPErrorPageTest.html"
+        testName="ServletToJSPErrorPageTest"
+        assertion="JSP error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+    />
+
+
+    <gtest request="GET /servlet-tests/ServletToJSPError502PageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPError502PageTest.html"
+        testName="ServletToJSPError502PageTest"
+        assertion="JSP error handlers can be installed for specific HTTP status codes."
+        testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, message, request_uri, and servlet_name"
+    />
+
+
+    <gtest request="GET /servlet-tests/ServletToHTMLErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToHTMLErrorPageTest.html"
+        testName="ServletToHTMLErrorPageTest"
+        assertion="Static HTML page error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.NumberFormatException.  The static HTML error page should be returned to the client."
+    />
 
   <!-- javax_servlet_http_Cookie tests -->
 
