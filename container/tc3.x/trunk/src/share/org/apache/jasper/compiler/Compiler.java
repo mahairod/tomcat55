@@ -164,12 +164,16 @@ public abstract class Compiler {
             }
         }
 
+        // I'm nuking
+        //          System.getProperty("jsp.class.path", ".") 
+        // business. If anyone badly needs this we can talk. -akv
+
         String sep = System.getProperty("path.separator");
         String[] argv = new String[] 
         {
             "-classpath",
-            System.getProperty("java.class.path")+ sep + classpath + sep +
-            System.getProperty("jsp.class.path", ".") + sep + ctxt.getOutputDir(),
+            System.getProperty("java.class.path")+ sep + classpath 
+            + sep + ctxt.getOutputDir(),
             "-d", ctxt.getOutputDir(),
             javaFileName
         };
