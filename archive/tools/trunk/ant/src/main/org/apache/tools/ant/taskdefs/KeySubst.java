@@ -67,10 +67,9 @@ import java.util.*;
  * @author Jon S. Stevens <a href="mailto:jon@clearink.com">jon@clearink.com</a>
  */
 public class KeySubst extends Task {
-    private File source; // required
-    private File dest; // required
+    private File source = null;
+    private File dest = null;
     private String sep = "*";
-    private static String delim = "@";
     private Hashtable replacements = new Hashtable();
     
     /**
@@ -86,6 +85,7 @@ public class KeySubst extends Task {
         BufferedWriter bw = null;
         try {
             br = new BufferedReader(new FileReader(source));
+            dest.delete();
             bw = new BufferedWriter(new FileWriter(dest));
 
             String line = null;
@@ -93,9 +93,13 @@ public class KeySubst extends Task {
             int length;
             line = br.readLine();
             while (line != null) {
-                newline = replace ( line, replacements );
-                bw.write ( newline );
-                bw.newLine();
+                if ( line.length() == 0 ) {
+                    bw.newLine();
+                } else {
+                    newline = KeySubst.replace ( line, replacements );
+                    bw.write ( newline );
+                    bw.newLine();
+                }
                 line = br.readLine();
             }
             bw.flush();
@@ -127,14 +131,6 @@ public class KeySubst extends Task {
         this.sep = sep;
     }
     /**
-        Sets the deliminator characters that go around the 
-        keywords. Ie: @foo@. The "@" in this case is the 
-        deliminator. It is also the default.
-    */
-    public void setDelim(String delim) {
-        this.delim = delim;
-    }
-    /**
         Format string is like this:
         <p>
         name=value*name2=value
@@ -155,62 +151,52 @@ public class KeySubst extends Task {
                 
                 String name = itok.nextToken();
                 String value = itok.nextToken();
-//                System.out.println ( "KeySubst Name: " + name );
-//                System.out.println ( "KeySubst Value: " + value );
+//                project.log ( "Name: " + name );
+//                project.log ( "Value: " + value );
                 replacements.put ( name, value );
             }
         }
     }
         
-/*
+
     public static void main(String[] args)
     {
         try{
         Hashtable hash = new Hashtable();
-        hash.put ( "w", "yoaaaau" );
-        hash.put ( "a", "ffff" );
-        System.out.println ( KeySubst.replace ( "f @w@ - @a@ are", hash ) );
+        hash.put ( "VERSION", "1.0.3" );
+        hash.put ( "b", "ffff" );
+        System.out.println ( KeySubst.replace ( "$f ${VERSION} f ${b} jj $", hash ) );
         }catch ( Exception e)
         {
             e.printStackTrace();
         }
     }
-*/
+
     /**
         Does replacement on text using the hashtable of keys.
-        This could probably be done a lot better, but for now 
-        it does the job and this isn't a time criticial application.
         
         @returns the string with the replacements in it.
     */
-    public static String replace ( String text, Hashtable keys )
+    public static String replace ( String origString, Hashtable keys )
         throws BuildException
     {
-        StringBuffer sb=new StringBuffer();
-        int i=0;
-        int prev=0;
-        int pos=0;
-        while( (pos=text.indexOf( delim, prev )) >= 0 ) {
-            if(pos>0)
-                sb.append( text.substring( prev, pos ) );
-
-            pos++;
-            int endName=text.indexOf( delim, pos );
-
-            String n=text.substring( pos, endName );
-            if ( keys.containsKey( n ) )
-            {
-                sb.append ( (String) keys.get(n) );
-                sb.append ( text.charAt( pos + n.length() + 1 ) );
-                prev=pos + n.length() + 2;
+        StringBuffer finalString=new StringBuffer();
+        int index=0;
+        int i = 0;
+        String key = null;
+        while ((index = origString.indexOf("${", i)) > -1) {
+            key = origString.substring(index + 2, origString.indexOf("}", index+3));
+            finalString.append (origString.substring(i, index));
+            if ( keys.containsKey ( key ) ) {
+                finalString.append (keys.get(key));
+            } else {
+                finalString.append ( "${" );
+                finalString.append ( key );
+                finalString.append ( "}" );
             }
-            else
-            {
-                sb.append ( delim + n + delim);
-                prev=endName + 1;
-            }
+            i = index + 3 + key.length();
         }
-        if( prev < text.length() ) sb.append( text.substring( prev ) );
-        return sb.toString();
+        finalString.append (origString.substring(i));
+        return finalString.toString();
     }
 }
