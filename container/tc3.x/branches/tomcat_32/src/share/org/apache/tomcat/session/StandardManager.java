@@ -213,13 +213,11 @@ public final class StandardManager implements Runnable  {
      * descriptor (web.xml). This method lets the Context conforgure the
      * session manager according to this value.
      *
-     * @param minutes The session inactivity timeout in minutes.
+     * @param minutes The session inactivity timeout in minutes.  A negative time indicates the session should never timeout.
      */
     public void setSessionTimeOut(int minutes) {
-        if(-1 != minutes) {
-            // The manager works with seconds...
-            setMaxInactiveInterval(minutes * 60);
-        }
+        // The manager works with seconds...
+        setMaxInactiveInterval(minutes * 60);
     }
 
     /**
