@@ -140,7 +140,7 @@ public class Compiler {
         // Setup the ServletWriter
         //String javaEncoding = "BADENC77";           // perhaps debatable?
 	String javaEncoding = "UTF8";           // perhaps debatable?
-	System.out.println("SERVLET ENCODING IS: " + javaEncoding);
+        //	System.out.println("SERVLET ENCODING IS: " + javaEncoding);
         ServletWriter writer = 
             (new ServletWriter
                 (new PrintWriter
