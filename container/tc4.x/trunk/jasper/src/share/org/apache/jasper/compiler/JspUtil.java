@@ -380,7 +380,7 @@ public class JspUtil {
             } else if (c == '&') {
                 sb.append("&amp;");
             } else if (c == '"') {
-                sb.append("&quote;");
+                sb.append("&quot;");
             } else {
                 sb.append(c);
             }
