@@ -12,7 +12,7 @@
         </td>
       </logic:present>
       <td width="20%"><div align="left" class="table-header-text">
-        <bean:message key="resources.datasrc.jndi"/>
+        <bean:message key="service.name"/>
       </div></td>
       <td><div align="left" class="table-header-text">
         <bean:message key="resources.datasrc.jdbcclass"/>
@@ -28,20 +28,14 @@
           </td>
         </logic:present>
         <td><div align="left" class="table-normal-text">
-          <%-- FIX ME-- JNDI name, for resource with class 
-               javax.sql.DataSource only
           <html:link page='<%= "/resources/setUpDataSource.do?objectName=" + 
                                URLEncoder.encode(dataSource) %>'>
             <controls:attribute name="dataSource" attribute="url"/>
           </html:link>
-          --%>
             <controls:attribute name="dataSource" attribute="name"/>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;
-        <%-- FIX ME -- JDBC driver class
           <controls:attribute name="dataSource" attribute="driverClassName"/>
-          --%>
-          <controls:attribute name="dataSource" attribute="type"/>
         </div></td>
       </tr>
     </logic:iterate>
