@@ -115,7 +115,7 @@ public class ContextInterceptor implements RequestInterceptor {
 
         lookup:
 	do {
-	    ctx = cm.getMappedContext(path);
+	    ctx = cm.getContext(path);
 	    if (ctx == null) {
 	        int i = path.lastIndexOf('/');
 		if (i > -1 && path.length() > 1) {
