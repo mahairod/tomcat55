@@ -164,7 +164,7 @@ public abstract class Compiler {
 
         ctxt.setReader(reader);
         ctxt.setWriter(writer);
-        
+
         ParseEventListener listener = new JspParseEventListener(ctxt);
         
         Parser p = new Parser(reader, listener);
@@ -206,7 +206,13 @@ public abstract class Compiler {
          * anything to the constructor which will be less. 
          */
         ByteArrayOutputStream out = new ByteArrayOutputStream (256);
-    
+
+        // if no compiler was set we can kick out now
+
+        if (javac == null) {
+            return true;
+        }
+
         /**
          * Configure the compiler object
          */
