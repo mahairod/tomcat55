@@ -88,6 +88,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -552,7 +553,7 @@ public class WebappClassLoader
 
             long lastModified =
                 ((ResourceAttributes) resources.getAttributes(jar))
-                .getLastModified().getTime();
+                .getLastModified();
 
             String[] result = new String[paths.length + 1];
             for (i = 0; i < paths.length; i++) {
@@ -700,7 +701,7 @@ public class WebappClassLoader
             try {
                 long lastModified =
                     ((ResourceAttributes) resources.getAttributes(paths[i]))
-                    .getLastModified().getTime();
+                    .getLastModified();
                 if (lastModified != lastModifiedDates[i]) {
                     log("  Resource '" + paths[i]
                         + "' was modified; Date is now: "
@@ -941,7 +942,52 @@ public class WebappClassLoader
 
         if (debug >= 3)
             log("    findResources(" + name + ")");
-        return (super.findResources(name));
+
+        Vector result = new Vector();
+
+        int jarFilesLength = jarFiles.length;
+        int repositoriesLength = repositories.length;
+
+        int i;
+
+        // Looking at the repositories
+        for (i = 0; i < repositoriesLength; i++) {
+            try {
+                String fullPath = repositories[i] + name;
+                resources.lookup(fullPath);
+                // Note : Not getting an exception here means the resource was
+                // found
+                try {
+                    result.addElement(new File(files[i], name).toURL());
+                } catch (MalformedURLException e) {
+                    // Ignore
+                }
+            } catch (NamingException e) {
+            }
+        }
+
+        // Looking at the JAR files
+        for (i = 0; i < jarFilesLength; i++) {
+            JarEntry jarEntry = jarFiles[i].getJarEntry(name);
+            if (jarEntry != null) {
+                try {
+                    String jarFakeUrl = jarRealFiles[i].toURL().toString();
+                    jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
+                    result.addElement(new URL(jarFakeUrl));
+                } catch (MalformedURLException e) {
+                    // Ignore
+                }
+            }
+        }
+
+        // Adding the results of a call to the superclass
+        Enumeration otherResourcePaths = super.findResources(name);
+
+        while (otherResourcePaths.hasMoreElements()) {
+            result.addElement(otherResourcePaths.nextElement());
+        }
+
+        return result.elements();
 
     }
 
@@ -1553,7 +1599,7 @@ public class WebappClassLoader
                 ResourceAttributes attributes =
                     (ResourceAttributes) resources.getAttributes(fullPath);
                 contentLength = (int) attributes.getContentLength();
-                entry.lastModified = attributes.getLastModified().getTime();
+                entry.lastModified = attributes.getLastModified();
                 try {
                     binaryStream = resource.streamContent();
                 } catch (IOException e) {

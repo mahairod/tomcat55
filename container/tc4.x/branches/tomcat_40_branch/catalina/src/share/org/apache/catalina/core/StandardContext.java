@@ -311,14 +311,6 @@ public class StandardContext
 
 
     /**
-     * The special class loader created for Jasper in order to isolate
-     * its use of an XML parser from the libraries made visible to
-     * web applications.
-     */
-    private ClassLoader jasperLoader = null;
-
-
-    /**
      * The local  EJB resource references for this web application, keyed by
      * name.
      */
@@ -815,7 +807,6 @@ public class StandardContext
     public synchronized void setLoader(Loader loader) {
 
         super.setLoader(loader);
-        jasperLoader = null;
 
     }
 
@@ -1119,52 +1110,6 @@ public class StandardContext
         support.firePropertyChange("charsetMapperClass",
                                    oldCharsetMapperClass,
                                    this.charsetMapperClass);
-
-    }
-
-
-    /**
-     * Return the special class loader for Jasper for this web application,
-     * creating one if required.
-     */
-    public synchronized ClassLoader getJasperLoader() {
-
-        // Return the existing class loader (if any)
-        if (jasperLoader != null) {
-            return (jasperLoader);
-        }
-
-        // Can we set up the corresponding Jasper class loader?
-        if (loader == null) {
-            return (null);
-        }
-        ClassLoader classLoader = loader.getClassLoader();
-        if (classLoader == null) {
-            return (null);
-        }
-
-        // Set up the Jasper class loader
-        StandardClassLoader newLoader = new StandardClassLoader(classLoader);
-        newLoader.setDelegate(true);
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "jasper");
-        if (directory.exists() && directory.canRead() &&
-            directory.isDirectory()) {
-            String filenames[] = directory.list();
-            for (int i = 0; i < filenames.length; i++) {
-                if (!filenames[i].endsWith(".jar"))
-                    continue;
-                File file = new File(directory, filenames[i]);
-                try {
-                    URL url = new URL("file", null, file.getCanonicalPath());
-                    newLoader.addRepository(url.toString());
-                } catch (IOException e) {
-                    throw new IllegalArgumentException(e.toString());
-                }
-            }
-        }
-        jasperLoader = newLoader;
-        return (jasperLoader);
 
     }
 
@@ -2430,9 +2375,6 @@ public class StandardContext
         // Binding thread
         unbindThread(oldCCL);
 
-        // Dump the old Jasper loader
-        jasperLoader = null;
-
         // Shut down our application class loader
         if ((loader != null) && (loader instanceof Lifecycle)) {
             try {
@@ -3460,9 +3402,6 @@ public class StandardContext
 
         // Unbinding thread
         unbindThread(oldCCL);
-
-        // Dump the old Jasper loader
-        jasperLoader = null;
 
         if (debug >= 1)
             log("Stopping complete");

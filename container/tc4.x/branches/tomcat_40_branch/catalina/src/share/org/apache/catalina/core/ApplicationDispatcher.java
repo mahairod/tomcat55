@@ -92,6 +92,7 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
@@ -435,23 +436,29 @@ final class ApplicationDispatcher
         // Commit and close the response before we return
         if (debug >= 1)
             log(" Committing and closing response");
-        response.flushBuffer();
-        try {
-            PrintWriter writer = response.getWriter();
-            writer.flush();
-            writer.close();
-        } catch (IllegalStateException e) {
+
+        if (response instanceof ResponseFacade) {
+            ((ResponseFacade) response).finish();
+        } else {
+            // Close anyway
+            response.flushBuffer();
             try {
-                ServletOutputStream stream = response.getOutputStream();
-                stream.flush();
-                stream.close();
-            } catch (IllegalStateException f) {
-                ;
-            } catch (IOException f) {
+                PrintWriter writer = response.getWriter();
+                writer.flush();
+                writer.close();
+            } catch (IllegalStateException e) {
+                try {
+                    ServletOutputStream stream = response.getOutputStream();
+                    stream.flush();
+                    stream.close();
+                } catch (IllegalStateException f) {
+                    ;
+                } catch (IOException f) {
+                    ;
+                }
+            } catch (IOException e) {
                 ;
             }
-        } catch (IOException e) {
-            ;
         }
 
     }

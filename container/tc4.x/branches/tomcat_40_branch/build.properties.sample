@@ -26,18 +26,20 @@ compile.optimize=on
 base.path=/usr/local
 
 
-# ----- Tomcat Util -----
-tomcat-util.jar=../../jakarta-tomcat-connectors/util/build/lib/tomcat-util.jar
+# ----- Jakarta Tomcat Connectors path -----
+jakarta-tomcat-connector.home=../../jakarta-tomcat-connectors
+
+
+# ----- Tomcat utils -----
+tomcat-util.jar=../lib/tomcat-util.jar
 
 
 # ----- JK 1.3 connector for Tomcat 4.0 -----
-ajp.jar=../../jakarta-tomcat-connectors/jk/build/lib/ajp.jar
+tomcat-ajp.jar=../lib/tomcat-ajp.jar
 
 
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
-regexp.home=${base.path}/jakarta-regexp-1.2
-regexp.lib=${regexp.home}
-regexp.jar=${regexp.home}/jakarta-regexp-1.2.jar
+regexp.jar=../lib/jakarta-regexp-1.2.jar
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
@@ -115,5 +117,4 @@ tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
 xerces.home=${base.path}/xerces-1_4_3
 xerces.lib=${xerces.home}
 xerces.jar=${xerces.lib}/xerces.jar
-
 

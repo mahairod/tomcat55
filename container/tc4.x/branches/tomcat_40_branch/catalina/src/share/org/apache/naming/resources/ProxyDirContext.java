@@ -67,6 +67,7 @@ package org.apache.naming.resources;
 import java.util.Hashtable;
 import java.util.Date;
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import javax.naming.Context;
 import javax.naming.Name;
@@ -112,6 +113,8 @@ public class ProxyDirContext implements DirContext {
             if (((BaseDirContext) dirContext).isCached()) {
                 cache = new Hashtable();
                 cacheTTL = ((BaseDirContext) dirContext).getCacheTTL();
+                cacheObjectMaxSize = 
+                    ((BaseDirContext) dirContext).getCacheObjectMaxSize();
             }
         }
         hostName = (String) env.get(HOST);
@@ -165,6 +168,12 @@ public class ProxyDirContext implements DirContext {
     protected int cacheTTL = 5000; // 5s
 
 
+    /**
+     * Max size of resources which will have their content cached.
+     */
+    protected int cacheObjectMaxSize = 32768; // 32 KB
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -213,6 +222,8 @@ public class ProxyDirContext implements DirContext {
         CacheEntry entry = cacheLookup(name.toString());
         if (entry != null) {
             if (entry.resource != null) {
+                // Check content caching.
+                
                 return entry.resource;
             } else {
                 return entry.context;
@@ -1350,8 +1361,9 @@ public class ProxyDirContext implements DirContext {
      * Validate entry.
      */
     protected boolean validate(CacheEntry entry) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime < entry.timestamp) {
+        if ((entry.resource != null) 
+            && (entry.resource.getContent() != null) 
+            && (System.currentTimeMillis() < entry.timestamp)) {
             return true;
         }
         return false;
@@ -1366,11 +1378,9 @@ public class ProxyDirContext implements DirContext {
         // modification date
         if (entry.attributes == null)
             return false;
-        Date lastModificationDate = entry.attributes.getLastModified();
-        if ((lastModificationDate == null) 
-            || (lastModificationDate.getTime() <= 0))
+        long lastModified = entry.attributes.getLastModified();
+        if (lastModified <= 0)
             return false;
-        long lastModified = lastModificationDate.getTime();
         try {
             Attributes tempAttributes = dirContext.getAttributes(entry.name);
             ResourceAttributes attributes = null;
@@ -1379,10 +1389,8 @@ public class ProxyDirContext implements DirContext {
             } else {
                 attributes = (ResourceAttributes) tempAttributes;
             }
-            lastModificationDate = attributes.getLastModified();
-            if (lastModificationDate == null)
-                return false;
-            return (lastModified == lastModificationDate.getTime());
+            long lastModified2 = attributes.getLastModified();
+            return (lastModified == lastModified2);
         } catch (NamingException e) {
             return false;
         }
@@ -1393,10 +1401,14 @@ public class ProxyDirContext implements DirContext {
      * Load entry into cache.
      */
     protected boolean cacheLoad(CacheEntry entry) {
+
         if (cache == null)
             return false;
+
         String name = entry.name;
+
         // Retrieve missing info
+
         // Retrieving attributes
         if (entry.attributes == null) {
             try {
@@ -1411,6 +1423,7 @@ public class ProxyDirContext implements DirContext {
                 return false;
             }
         }
+
         // Retriving object
         if ((entry.resource == null) && (entry.context == null)) {
             try {
@@ -1429,14 +1442,44 @@ public class ProxyDirContext implements DirContext {
                 return false;
             }
         }
-        // Load content
-        // TODO
+
+        // Load object content
+        if ((entry.resource != null) && (entry.resource.getContent() == null) 
+            && (entry.attributes.getContentLength() >= 0)
+            && (entry.attributes.getContentLength() < cacheObjectMaxSize)) {
+            int length = (int) entry.attributes.getContentLength();
+            InputStream is = null;
+            try {
+                is = entry.resource.streamContent();
+                int pos = 0;
+                byte[] b = new byte[length];
+                while (pos < length) {
+                    int n = is.read(b, pos, length - pos);
+                    if (n < 0)
+                        break;
+                    pos = pos + n;
+                }
+                entry.resource.setContent(b);
+            } catch (IOException e) {
+                ; // Ignore
+            } finally {
+                try {
+                    if (is != null)
+                        is.close();
+                } catch (IOException e) {
+                    ; // Ignore
+                }
+            }
+        }
         
         // Set timestamp
         entry.timestamp = System.currentTimeMillis() + cacheTTL;
+
         // Add new entry to cache
         cache.put(name, entry);
+
         return true;
+
     }
 
 

@@ -77,8 +77,6 @@ Jasper      3779    The value of <jsp:param> should be URL encoded.
 Jasper      3822    Drive letter causes a NumberFormatException when JSP 
                     compiler parses errors.
 
-Catalina    3936    WebappClassLoader does not implement getResources().
-
 Catalina    3973    Session.getAttribute() locks-up in 
                     HttpSessionListener.sessionDestroyed().
 

@@ -85,7 +85,7 @@ import javax.naming.directory.Attribute;
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$
  */
-public class ResourceAttributes extends BasicAttributes {
+public class ResourceAttributes implements Attributes {
     
     
     // -------------------------------------------------------------- Constants
@@ -102,7 +102,7 @@ public class ResourceAttributes extends BasicAttributes {
     /**
      * Creation date.
      */
-    public static final String ALTERNATE_CREATION_DATE = "last-modified";
+    public static final String ALTERNATE_CREATION_DATE = "creation-date";
     
     
     /**
@@ -202,7 +202,6 @@ public class ResourceAttributes extends BasicAttributes {
      * Default constructor.
      */
     public ResourceAttributes() {
-        super(false);
     }
     
     
@@ -210,26 +209,7 @@ public class ResourceAttributes extends BasicAttributes {
      * Merges with another attribute set.
      */
     public ResourceAttributes(Attributes attributes) {
-        super(false);
-        // Merging attributes
-        try {
-            Enumeration enum = attributes.getAll();
-            while (enum.hasMoreElements()) {
-                Attribute attribute = (Attribute) enum.nextElement();
-                // FIXME: Check if it's a protected attribute ?
-                put(attribute);
-            }
-        } catch (Throwable t) {
-        }
-    }
-    
-    
-    /**
-     * Package private constructor (used for caching).
-     */
-    ResourceAttributes(Hashtable attributes) {
-        super(false);
-        this.protectedAttributes = attributes;
+        this.attributes = attributes;
     }
     
     
@@ -237,273 +217,440 @@ public class ResourceAttributes extends BasicAttributes {
 
 
     /**
-     * Protected attributes.
+     * Collection flag.
      */
-    protected Hashtable protectedAttributes = new Hashtable();
+    protected boolean collection = false;
+
+
+    /**
+     * Content length.
+     */
+    protected long contentLength = -1;
+
+
+    /**
+     * Creation time.
+     */
+    protected long creation = -1;
+
+
+    /**
+     * Creation date.
+     */
+    protected Date creationDate = null;
+
+
+    /**
+     * Last modified time.
+     */
+    protected long lastModified = -1;
+
+
+    /**
+     * Last modified date.
+     */
+    protected Date lastModifiedDate = null;
+
+
+    /**
+     * Name.
+     */
+    protected String name = null;
+
+
+    /**
+     * External attributes.
+     */
+    protected Attributes attributes = null;
 
 
     // ------------------------------------------------------------- Properties
 
 
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Creation date accessor.
-     * 
-     * @return Creation date
-     */
-    public Date getCreationDate() {
-        Attribute creationDate = getProtectedAttribute(CREATION_DATE);
-        if (creationDate == null)
-            creationDate = getProtectedAttribute(ALTERNATE_CREATION_DATE);
-        if (creationDate == null)
-            return null;
-        try {
-            if (creationDate.get() instanceof Date) {
-                return (Date) creationDate.get();
-            } else {
-                String creationDateValue = creationDate.get().toString();
-                Date result = null;
-                // Parsing the HTTP Date
-                for (int i = 0; (result == null) && 
-                         (i < formats.length); i++) {
-                    try {
-                        result = formats[i].parse(creationDateValue);
-                    } catch (ParseException e) {
-                        ;
-                    }
-                }
-                return result;
-            }
-        } catch (NamingException e) {
-            // No value for the attribute (shouldn't happen)
-            return null;
-        }
-    }
-    
-    
-    /**
-     * Last modified date accessor.
-     * 
-     * @return Last modification date
-     */
-    public Date getLastModified() {
-        Attribute lastModified = getProtectedAttribute(LAST_MODIFIED);
-        if (lastModified == null)
-            lastModified = getProtectedAttribute(ALTERNATE_LAST_MODIFIED);
-        if (lastModified == null)
-            return null;
-        try {
-            if (lastModified.get() instanceof Date) {
-                return (Date) lastModified.get();
-            } else {
-                String lastModifiedValue = lastModified.get().toString();
-                Date result = null;
-                // Parsing the HTTP Date
-                for (int i = 0; (result == null) && 
-                         (i < formats.length); i++) {
-                    try {
-                        result = formats[i].parse(lastModifiedValue);
-                    } catch (ParseException e) {
-                        ;
-                    }
-                }
-                return result;
-            }
-        } catch (NamingException e) {
-            // No value for the attribute (shouldn't happen)
-            return null;
-        }
-    }
-    
-    
-    /**
-     * Content length accessor.
-     * 
-     * @return String
-     */
-    public long getContentLength() {
-        Attribute contentLength = getProtectedAttribute(CONTENT_LENGTH);
-        if (contentLength == null)
-            contentLength = getProtectedAttribute(ALTERNATE_CONTENT_LENGTH);
-        if (contentLength == null)
-            return -1L;
-        try {
-            if (contentLength.get() instanceof Long) {
-                return ((Long) contentLength.get()).longValue();
-            }
-            if (contentLength.get() instanceof String) {
-                return (new Long((String) contentLength.get())).longValue();
-            }
-        } catch (NamingException e) {
-        }
-        return -1L;
-        
-    }
-    
-    
     /**
      * Is collection.
      */
     public boolean isCollection() {
-        return (getResourceType().equals(COLLECTION_TYPE));
+        if (attributes != null) {
+            return (getResourceType().equals(COLLECTION_TYPE));
+        } else {
+            return (collection);
+        }
     }
     
     
     /**
-     * Name accessor.
+     * Set collection flag.
      * 
-     * @return String name 
+     * @return value of the collection flag
      */
-    public String getName() {
-        Attribute name = getProtectedAttribute(NAME);
-        try {
-            if (name == null) {
-                return "";
-            } else {
-                return (String) name.get();
+    public void setCollection(boolean collection) {
+        this.collection = collection;
+        if (attributes != null) {
+            String value = "";
+            if (collection)
+                value = COLLECTION_TYPE;
+            attributes.put(TYPE, value);
+        }
+    }
+    
+    
+    /**
+     * Get content length.
+     * 
+     * @return content length value
+     */
+    public long getContentLength() {
+        if (contentLength != -1L)
+            return contentLength;
+        if (attributes != null) {
+            Attribute attribute = attributes.get(CONTENT_LENGTH);
+            if (attribute != null) {
+                try {
+                    Object value = attribute.get();
+                    if (value instanceof Long) {
+                        contentLength = ((Long) value).longValue();
+                    } else {
+                        try {
+                            contentLength = Long.parseLong(value.toString());
+                        } catch (NumberFormatException e) {
+                            ; // Ignore
+                        }
+                    }
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
             }
-        } catch (NamingException e) {
-            return "";
         }
+        return contentLength;
     }
-
-
+    
+    
     /**
-     * Resource type accessor.
+     * Set content length.
      * 
-     * @return String resource type
+     * @param contentLength New content length value
      */
-    public String getResourceType() {
-        Attribute resourceType = getProtectedAttribute(TYPE);
-        if (resourceType == null)
-            resourceType = getProtectedAttribute(ALTERNATE_TYPE);
-        if (resourceType == null)
-            return "";
-        try {
-            return (String) resourceType.get();
-        } catch (NamingException e) {
-            return "";
-        }
-    }
-
-
-    /**
-     * Get attribute.
-     */
-    public Attribute get(String attrID) {
-        // Try in the protected list first
-        Attribute result = getProtectedAttribute(attrID);
-        if (result != null)
-            return result;
-        else
-            return super.get(attrID);
+    public void setContentLength(long contentLength) {
+        this.contentLength = contentLength;
+        if (attributes != null)
+            attributes.put(CONTENT_LENGTH, new Long(contentLength));
     }
     
     
     /**
-     * Get all attributes.
-     */
-    public NamingEnumeration getAll() {
-        Enumeration enum = super.getAll();
-        Vector attributes = new Vector();
-        while (enum.hasMoreElements()) {
-            Object obj = enum.nextElement();
-            attributes.addElement(obj);
-        }
-        enum = protectedAttributes.elements();
-        while (enum.hasMoreElements()) {
-            Object obj = enum.nextElement();
-            attributes.addElement(obj);
-        }
-        return new RecyclableNamingEnumeration(attributes);
-    }
-    
-    
-    /**
-     * Get all attribute IDs.
-     */
-    public NamingEnumeration getIDs() {
-        Enumeration enum = super.getIDs();
-        Vector attributeIDs = new Vector();
-        while (enum.hasMoreElements()) {
-            Object obj = enum.nextElement();
-            attributeIDs.addElement(obj);
-        }
-        enum = protectedAttributes.elements();
-        while (enum.hasMoreElements()) {
-            Object obj = ((Attribute) enum.nextElement()).getID();
-            attributeIDs.addElement(obj);
-        }
-        return new RecyclableNamingEnumeration(attributeIDs);
-    }
-    
-    
-    /**
-     * Retrieves the number of attributes in the attribute set.
-     */
-    public int size() {
-        return (protectedAttributes.size() + super.size());
-    }
-    
-    
-    /**
-     * Generates the string representation of this attribute set.
-     * The string consists of each attribute identifier and the contents
-     * of each attribute. The contents of this string is useful
-     * for debugging and is not meant to be interpreted programmatically.
+     * Get creation time.
      * 
-     * @return A non-null string listing the contents of this attribute set.
+     * @return creation time value
      */
-    public String toString() {
-        String result = protectedAttributes.toString();
-        if (super.size() > 0)
-            result += super.toString();
-        return result;
+    public long getCreation() {
+        if (creation != -1L)
+            return creation;
+        if (creationDate != null)
+            return creationDate.getTime();
+        if (attributes != null) {
+            Attribute attribute = attributes.get(CREATION_DATE);
+            if (attribute != null) {
+                try {
+                    Object value = attribute.get();
+                    if (value instanceof Long) {
+                        creation = ((Long) value).longValue();
+                    } else if (value instanceof Date) {
+                        creation = ((Date) value).getTime();
+                        creationDate = (Date) value;
+                    } else {
+                        String creationDateValue = value.toString();
+                        Date result = null;
+                        // Parsing the HTTP Date
+                        for (int i = 0; (result == null) && 
+                                 (i < formats.length); i++) {
+                            try {
+                                result = formats[i].parse(creationDateValue);
+                            } catch (ParseException e) {
+                                ;
+                            }
+                        }
+                        if (result != null) {
+                            creation = result.getTime();
+                            creationDate = result;
+                        }
+                    }
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        return creation;
     }
     
     
-    // -------------------------------------------------------- Package Methods
-
-
+    /**
+     * Set creation.
+     * 
+     * @param creation New creation value
+     */
+    public void setCreation(long creation) {
+        this.creation = creation;
+        this.creationDate = null;
+        if (attributes != null)
+            attributes.put(CREATION_DATE, new Date(creation));
+    }
+    
+    
+    /**
+     * Get creation date.
+     * 
+     * @return Creation date value
+     */
+    public Date getCreationDate() {
+        if (creationDate != null)
+            return creationDate;
+        if (creation != -1L) {
+            creationDate = new Date(creation);
+            return creationDate;
+        }
+        if (attributes != null) {
+            Attribute attribute = attributes.get(CREATION_DATE);
+            if (attribute != null) {
+                try {
+                    Object value = attribute.get();
+                    if (value instanceof Long) {
+                        creation = ((Long) value).longValue();
+                        creationDate = new Date(creation);
+                    } else if (value instanceof Date) {
+                        creation = ((Date) value).getTime();
+                        creationDate = (Date) value;
+                    } else {
+                        String creationDateValue = value.toString();
+                        Date result = null;
+                        // Parsing the HTTP Date
+                        for (int i = 0; (result == null) && 
+                                 (i < formats.length); i++) {
+                            try {
+                                result = formats[i].parse(creationDateValue);
+                            } catch (ParseException e) {
+                                ;
+                            }
+                        }
+                        if (result != null) {
+                            creation = result.getTime();
+                            creationDate = result;
+                        }
+                    }
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        return creationDate;
+    }
+    
+    
     /**
      * Creation date mutator.
      * 
      * @param creationDate New creation date
      */
     public void setCreationDate(Date creationDate) {
-        setProtectedAttribute(CREATION_DATE, creationDate);
+        this.creation = creationDate.getTime();
+        this.creationDate = creationDate;
+        if (attributes != null)
+            attributes.put(CREATION_DATE, creationDate);
     }
     
     
     /**
-     * Last modified mutator.
+     * Get last modified time.
      * 
-     * @param lastModified New last modified date
+     * @return lastModified time value
+     */
+    public long getLastModified() {
+        if (lastModified != -1L)
+            return lastModified;
+        if (lastModifiedDate != null)
+            return lastModifiedDate.getTime();
+        if (attributes != null) {
+            Attribute attribute = attributes.get(LAST_MODIFIED);
+            if (attribute != null) {
+                try {
+                    Object value = attribute.get();
+                    if (value instanceof Long) {
+                        lastModified = ((Long) value).longValue();
+                    } else if (value instanceof Date) {
+                        lastModified = ((Date) value).getTime();
+                        lastModifiedDate = (Date) value;
+                    } else {
+                        String lastModifiedDateValue = value.toString();
+                        Date result = null;
+                        // Parsing the HTTP Date
+                        for (int i = 0; (result == null) && 
+                                 (i < formats.length); i++) {
+                            try {
+                                result = 
+                                    formats[i].parse(lastModifiedDateValue);
+                            } catch (ParseException e) {
+                                ;
+                            }
+                        }
+                        if (result != null) {
+                            lastModified = result.getTime();
+                            lastModifiedDate = result;
+                        }
+                    }
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        return lastModified;
+    }
+    
+    
+    /**
+     * Set last modified.
+     * 
+     * @param lastModified New last modified value
+     */
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+        this.lastModifiedDate = null;
+        if (attributes != null)
+            attributes.put(LAST_MODIFIED, new Date(lastModified));
+    }
+    
+    
+    /**
+     * Set last modified date.
+     * 
+     * @param lastModified New last modified date value
+     * @deprecated
      */
     public void setLastModified(Date lastModified) {
-        setProtectedAttribute(LAST_MODIFIED, lastModified);
+        setLastModifiedDate(lastModified);
     }
-    
-    
+
+
     /**
-     * Content length mutator.
+     * Get lastModified date.
      * 
-     * @param contentLength New content length
+     * @return LastModified date value
      */
-    public void setContentLength(long contentLength) {
-        setProtectedAttribute(CONTENT_LENGTH, new Long(contentLength));
+    public Date getLastModifiedDate() {
+        if (lastModifiedDate != null)
+            return lastModifiedDate;
+        if (lastModified != -1L) {
+            lastModifiedDate = new Date(lastModified);
+            return lastModifiedDate;
+        }
+        if (attributes != null) {
+            Attribute attribute = attributes.get(LAST_MODIFIED);
+            if (attribute != null) {
+                try {
+                    Object value = attribute.get();
+                    if (value instanceof Long) {
+                        lastModified = ((Long) value).longValue();
+                        lastModifiedDate = new Date(lastModified);
+                    } else if (value instanceof Date) {
+                        lastModified = ((Date) value).getTime();
+                        lastModifiedDate = (Date) value;
+                    } else {
+                        String lastModifiedDateValue = value.toString();
+                        Date result = null;
+                        // Parsing the HTTP Date
+                        for (int i = 0; (result == null) && 
+                                 (i < formats.length); i++) {
+                            try {
+                                result = 
+                                    formats[i].parse(lastModifiedDateValue);
+                            } catch (ParseException e) {
+                                ;
+                            }
+                        }
+                        if (result != null) {
+                            lastModified = result.getTime();
+                            lastModifiedDate = result;
+                        }
+                    }
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        return lastModifiedDate;
     }
     
     
     /**
-     * Name mutator.
+     * Last modified date mutator.
      * 
-     * @param name New name
+     * @param lastModifiedDate New last modified date
+     */
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModified = lastModifiedDate.getTime();
+        this.lastModifiedDate = lastModifiedDate;
+        if (attributes != null)
+            attributes.put(LAST_MODIFIED, lastModifiedDate);
+    }
+    
+    
+    /**
+     * Get name.
+     * 
+     * @return Name value
+     */
+    public String getName() {
+        if (name != null)
+            return name;
+        if (attributes != null) {
+            Attribute attribute = attributes.get(NAME);
+            if (attribute != null) {
+                try {
+                    name = attribute.get().toString();
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        return name;
+    }
+
+
+    /**
+     * Set name.
+     * 
+     * @param name New name value
      */
     public void setName(String name) {
-        setProtectedAttribute(NAME, name);
+        this.name = name;
+        if (attributes != null)
+            attributes.put(NAME, name);
+    }
+    
+    
+    /**
+     * Get resource type.
+     * 
+     * @return String resource type
+     */
+    public String getResourceType() {
+        String result = null;
+        if (attributes != null) {
+            Attribute attribute = attributes.get(TYPE);
+            if (attribute != null) {
+                try {
+                    result = attribute.get().toString();
+                } catch (NamingException e) {
+                    ; // No value for the attribute
+                }
+            }
+        }
+        if (result == null) {
+            if (collection)
+                result = COLLECTION_TYPE;
+            else
+                result = "";
+        }
+        return result;
     }
     
     
@@ -513,73 +660,157 @@ public class ResourceAttributes extends BasicAttributes {
      * @param resourceType New resource type
      */
     public void setResourceType(String resourceType) {
-        setProtectedAttribute(TYPE, resourceType);
+        collection = resourceType.equals(COLLECTION_TYPE);
+        if (attributes != null)
+            attributes.put(TYPE, resourceType);
     }
     
     
+    // ----------------------------------------------------- Attributes Methods
+
+
     /**
-     * Get all the attributes in a Hashtable. Will mutate the 
-     * protectedAttributes hashtable.
+     * Get attribute.
      */
-    Hashtable getAttributes() {
-        Enumeration enum = super.getAll();
-        while (enum.hasMoreElements()) {
-            Attribute attribute = (Attribute) enum.nextElement();
-            String id = attribute.getID();
-            if (!protectedAttributes.containsKey(id)) {
-                protectedAttributes.put(id, attribute);
+    public Attribute get(String attrID) {
+        if (attributes == null) {
+            if (attrID.equals(CREATION_DATE)) {
+                return new BasicAttribute(CREATION_DATE, getCreationDate());
+            } else if (attrID.equals(ALTERNATE_CREATION_DATE)) {
+                return new BasicAttribute(ALTERNATE_CREATION_DATE, 
+                                          getCreationDate());
+            } else if (attrID.equals(LAST_MODIFIED)) {
+                return new BasicAttribute(LAST_MODIFIED, 
+                                          getLastModifiedDate());
+            } else if (attrID.equals(ALTERNATE_LAST_MODIFIED)) {
+                return new BasicAttribute(ALTERNATE_LAST_MODIFIED,
+                                          getLastModifiedDate());
+            } else if (attrID.equals(NAME)) {
+                return new BasicAttribute(NAME, getName());
+            } else if (attrID.equals(TYPE)) {
+                return new BasicAttribute(TYPE, getResourceType());
+            } else if (attrID.equals(ALTERNATE_TYPE)) {
+                return new BasicAttribute(ALTERNATE_TYPE, getResourceType());
+            } else if (attrID.equals(CONTENT_LENGTH)) {
+                return new BasicAttribute(CONTENT_LENGTH, 
+                                          new Long(getContentLength()));
+            } else if (attrID.equals(ALTERNATE_CONTENT_LENGTH)) {
+                return new BasicAttribute(ALTERNATE_CONTENT_LENGTH, 
+                                          new Long(getContentLength()));
             }
-        }
-        return protectedAttributes;
-    }
-    
-    
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Protected attribute mutator.
-     * 
-     * @param name Attribute name
-     * @param value Attribute value
-     */
-    protected void setProtectedAttribute(String name, Object value) {
-        Attribute attribute = new BasicAttribute(name, value);
-        protectedAttributes.put(name, attribute);
-    }
-    
-    
-    /**
-     * Protected attribute accessor.
-     * 
-     * @param name Attribute name
-     */
-    protected Attribute getProtectedAttribute(String name) {
-        Attribute result = null;
-        if (name.startsWith(Constants.DEFAULT_NAMESPACE)) {
-            result = (Attribute) protectedAttributes.get
-                (name.substring(Constants.DEFAULT_NAMESPACE.length()));
         } else {
-            result = (Attribute) protectedAttributes.get(name);
+            return attributes.get(attrID);
         }
-        if (result != null)
-            return result;
-        return super.get(name);
+        return null;
     }
     
     
     /**
-     * Initialize the set of protected attributes.
+     * Put attribute.
      */
-    protected void intializeAttributes() {
-        setCreationDate(new Date());
-        setProtectedAttribute(NAME, "");
-        // By default, a resource is a collection
-        setProtectedAttribute(TYPE, "<collection/>");
-        setProtectedAttribute(SOURCE, "");
-        setContentLength(-1);
-        setLastModified(new Date());
+    public Attribute put(Attribute attribute) {
+        if (attributes == null) {
+            try {
+                return put(attribute.getID(), attribute.get());
+            } catch (NamingException e) {
+                return null;
+            }
+        } else {
+            return attributes.put(attribute);
+        }
     }
-
-
+    
+    
+    /**
+     * Put attribute.
+     */
+    public Attribute put(String attrID, Object val) {
+        if (attributes == null) {
+            return null; // No reason to implement this
+        } else {
+            return attributes.put(attrID, val);
+        }
+    }
+    
+    
+    /**
+     * Remove attribute.
+     */
+    public Attribute remove(String attrID) {
+        if (attributes == null) {
+            return null; // No reason to implement this
+        } else {
+            return attributes.remove(attrID);
+        }
+    }
+    
+    
+    /**
+     * Get all attributes.
+     */
+    public NamingEnumeration getAll() {
+        if (attributes == null) {
+            Vector attributes = new Vector();
+            attributes.addElement(new BasicAttribute
+                                  (CREATION_DATE, getCreationDate()));
+            attributes.addElement(new BasicAttribute
+                                  (LAST_MODIFIED, getLastModifiedDate()));
+            attributes.addElement(new BasicAttribute(NAME, getName()));
+            attributes.addElement(new BasicAttribute(TYPE, getResourceType()));
+            attributes.addElement
+                (new BasicAttribute(CONTENT_LENGTH, 
+                                    new Long(getContentLength())));
+            return new RecyclableNamingEnumeration(attributes);
+        } else {
+            return attributes.getAll();
+        }
+    }
+    
+    
+    /**
+     * Get all attribute IDs.
+     */
+    public NamingEnumeration getIDs() {
+        if (attributes == null) {
+            Vector attributeIDs = new Vector();
+            attributeIDs.addElement(CREATION_DATE);
+            attributeIDs.addElement(LAST_MODIFIED);
+            attributeIDs.addElement(NAME);
+            attributeIDs.addElement(TYPE);
+            attributeIDs.addElement(CONTENT_LENGTH);
+            return new RecyclableNamingEnumeration(attributeIDs);
+        } else {
+            return attributes.getIDs();
+        }
+    }
+    
+    
+    /**
+     * Retrieves the number of attributes in the attribute set.
+     */
+    public int size() {
+        if (attributes == null) {
+            return 5;
+        } else {
+            return attributes.size();
+        }
+    }
+    
+    
+    /**
+     * Clone the attributes object (WARNING: fake cloning).
+     */
+    public Object clone() {
+        return this;
+    }
+    
+    
+    /**
+     * Case sensitivity.
+     */
+    public boolean isCaseIgnored() {
+        return false;
+    }
+    
+    
 }

@@ -41,8 +41,7 @@ Section "Tomcat 4.0 (required)"
   File LICENSE
   File /r bin
   File /r common
-  File /r jasper
-  File /r lib
+  File /r shared
   File /r logs
   File /r server
   File /r work
@@ -249,8 +248,7 @@ Function doUpdate
   File LICENSE
   File /r bin
   File /r common
-  File /r jasper
-  File /r lib
+  File /r shared
   File /r logs
   File /r server
   File /r work
@@ -299,8 +297,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\bin"
   RMDir /r "$INSTDIR\common"
   Delete "$INSTDIR\conf\*.dtd"
-  RMDir /r "$INSTDIR\jasper"
-  RMDir /r "$INSTDIR\lib"
+  RMDir /r "$INSTDIR\shared"
   RMDir "$INSTDIR\logs"
   RMDir /r "$INSTDIR\server"
   RMDir /r "$INSTDIR\webapps\manager"

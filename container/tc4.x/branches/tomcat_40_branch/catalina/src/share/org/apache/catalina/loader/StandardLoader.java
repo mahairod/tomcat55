@@ -116,6 +116,8 @@ import org.apache.catalina.util.StringManager;
  *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
+ * @deprecated StandardLoader is slower and less robust than WebappLoader for
+ *             loading web applications. Use WebappLoader instead.
  * @version $Revision$ $Date$
  */
 

@@ -118,8 +118,9 @@ public class Resource {
      */
     public InputStream streamContent()
         throws IOException {
-        if (binaryContent != null)
+        if (binaryContent != null) {
             return new ByteArrayInputStream(binaryContent);
+        }
         return inputStream;
     }
     
@@ -129,8 +130,7 @@ public class Resource {
      * 
      * @return binary content
      */
-    public byte[] getContent()
-        throws IOException {
+    public byte[] getContent() {
         return binaryContent;
     }
     

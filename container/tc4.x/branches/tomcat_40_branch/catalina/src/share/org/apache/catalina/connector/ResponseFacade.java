@@ -95,6 +95,7 @@ public class ResponseFacade implements ServletResponse {
      * @param response The response to be wrapped
      */
     public ResponseFacade(Response response) {
+        this.resp = response;
         this.response = (ServletResponse) response;
     }
 
@@ -108,6 +109,29 @@ public class ResponseFacade implements ServletResponse {
     protected ServletResponse response = null;
 
 
+    /**
+     * The wrapped response.
+     */
+    protected Response resp = null;
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public void finish() {
+
+        resp.setSuspended(true);
+
+    }
+
+
+    public boolean isFinished() {
+
+        return resp.isSuspended();
+
+    }
+
+
     // ------------------------------------------------ ServletResponse Methods
 
 
@@ -118,28 +142,56 @@ public class ResponseFacade implements ServletResponse {
 
     public ServletOutputStream getOutputStream()
         throws IOException {
+
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
         return response.getOutputStream();
+
     }
 
 
     public PrintWriter getWriter()
         throws IOException {
+
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
         return response.getWriter();
+
     }
 
 
     public void setContentLength(int len) {
+
+        if (isCommitted())
+            return;
+
         response.setContentLength(len);
+
     }
 
 
     public void setContentType(String type) {
+
+        if (isCommitted())
+            return;
+
         response.setContentType(type);
+
     }
 
 
     public void setBufferSize(int size) {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.setBufferSize(size);
+
     }
 
 
@@ -150,26 +202,50 @@ public class ResponseFacade implements ServletResponse {
 
     public void flushBuffer()
         throws IOException {
+
+        if (isFinished())
+            throw new IllegalStateException
+                (/*sm.getString("responseFacade.finished")*/);
+
+        resp.setAppCommitted(true);
+
         response.flushBuffer();
+
     }
 
 
     public void resetBuffer() {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.resetBuffer();
+
     }
 
 
     public boolean isCommitted() {
-        return response.isCommitted();
+        return (resp.isAppCommitted());
     }
 
 
     public void reset() {
+
+        if (isCommitted())
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
+
         response.reset();
+
     }
 
 
     public void setLocale(Locale loc) {
+
+        if (isCommitted())
+            return;
+
         response.setLocale(loc);
     }
 

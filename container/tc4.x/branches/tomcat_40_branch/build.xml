@@ -18,6 +18,9 @@
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
   <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
 
+  <!-- Default AJP and UTIL components for the usual case -->
+  <property name="tomcat-ajp.jar"   value="${basedir}/lib/tomcat-ajp.jar"/>
+  <property name="tomcat-util.jar"  value="${basedir}/lib/tomcat-util.jar"/>
 
 
   <!-- =================== DETECT: Display configuration ================== -->
@@ -91,17 +94,16 @@
   <target name="dist-prepare">
     <mkdir dir="${tomcat.dist}"/>
     <mkdir dir="${tomcat.dist}/bin"/>
-    <mkdir dir="${tomcat.dist}/classes"/>
     <mkdir dir="${tomcat.dist}/common"/>
     <mkdir dir="${tomcat.dist}/common/classes"/>
     <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/conf"/>
-    <mkdir dir="${tomcat.dist}/jasper"/>
-    <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/logs"/>
     <mkdir dir="${tomcat.dist}/server"/>
     <mkdir dir="${tomcat.dist}/server/classes"/>
     <mkdir dir="${tomcat.dist}/server/lib"/>
+    <mkdir dir="${tomcat.dist}/classes"/>
+    <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/webapps"/>
     <mkdir dir="${tomcat.dist}/work"/>
   </target>
@@ -110,6 +112,7 @@
   <!-- ====================== DIST: Copy Static Files ===================== -->
   <target name="dist-static" depends="dist-prepare">
 
+    <!-- Copy the top-level documentation files -->
     <copy todir="${tomcat.dist}">
       <fileset dir=".">
         <include name="LICENSE"/>
@@ -121,27 +124,39 @@
       </fileset>
     </copy>
 
+    <!-- Copy the contents of each "build" directory -->
     <copy todir="${tomcat.dist}/bin">
       <fileset dir="${tomcat.build}/bin" />
     </copy>
-    <copy todir="${tomcat.dist}/conf">
-      <fileset dir="${tomcat.build}/conf" />
-    </copy>
-    <copy todir="${tomcat.dist}/jasper">
-      <fileset dir="${tomcat.build}/jasper" />
+    <copy todir="${tomcat.dist}/common/classes">
+      <fileset dir="${tomcat.build}/common/classes" />
     </copy>
     <copy todir="${tomcat.dist}/common/lib">
       <fileset dir="${tomcat.build}/common/lib" />
     </copy>
-    <copy todir="${tomcat.dist}/lib">
-      <fileset dir="${tomcat.build}/lib" />
+    <copy todir="${tomcat.dist}/conf">
+      <fileset dir="${tomcat.build}/conf" />
+    </copy>
+    <copy todir="${tomcat.dist}/server/classes">
+      <fileset dir="${tomcat.build}/server/classes" />
     </copy>
     <copy todir="${tomcat.dist}/server/lib">
       <fileset dir="${tomcat.build}/server/lib" />
     </copy>
-    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh" eol="lf"/>
+    <copy todir="${tomcat.dist}/classes">
+      <fileset dir="${tomcat.build}/classes" />
+    </copy>
+    <copy todir="${tomcat.dist}/lib">
+      <fileset dir="${tomcat.build}/lib" />
+    </copy>
+    <copy todir="${tomcat.dist}/webapps">
+      <fileset dir="${tomcat.build}/webapps" />
+    </copy>
+
+    <!-- Correct permissions and line endings on "bin" scripts -->
+    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh"  eol="lf"/>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" eol="crlf"/>
-    <chmod      dir="${tomcat.dist}/bin"   includes="*.sh" perm="+x"/>
+    <chmod      dir="${tomcat.dist}/bin"   includes="*.sh"  perm="+x"/>
 
   </target>
 
@@ -180,9 +195,6 @@
   <!-- ====================== DIST: Create Archives ======================= -->
   <target name="dist" depends="deploy,dist-static,dist-javadoc"
    description="Create binary distribution">
-    <copy todir="${tomcat.dist}/webapps">
-      <fileset dir="${tomcat.build}/webapps" />
-    </copy>
   </target>
 
 

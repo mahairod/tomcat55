@@ -450,16 +450,7 @@ public class FileDirContext extends BaseDirContext {
             throw new NamingException
                 (sm.getString("resources.notFound", name));
 
-        // Return all the attributes all the time
-        // FIXME
-        ResourceAttributes attrs = new ResourceAttributes();
-        attrs.setCreationDate(new Date(file.lastModified()));
-        attrs.setName(file.getName());
-        if (!file.isDirectory())
-            attrs.setResourceType("");
-        attrs.setContentLength(file.length());
-        attrs.setLastModified(new Date(file.lastModified()));
-        return attrs;
+        return new FileResourceAttributes(file);
 
     }
 
@@ -944,7 +935,19 @@ public class FileDirContext extends BaseDirContext {
         // --------------------------------------------------- Member Variables
         
         
+        /**
+         * Associated file object.
+         */
         protected File file;
+        
+        
+        /**
+         * File length.
+         */
+        protected long length = -1L;
+        
+        
+        // --------------------------------------------------- Resource Methods
         
         
         /**
@@ -954,9 +957,146 @@ public class FileDirContext extends BaseDirContext {
          */
         public InputStream streamContent()
             throws IOException {
-            if (binaryContent == null)
+            if (binaryContent == null) {
                 inputStream = new FileInputStream(file);
+            }
             return super.streamContent();
+        }
+        
+        
+    }
+
+
+    // ------------------------------------- FileResourceAttributes Inner Class
+
+
+    /**
+     * This specialized resource attribute implementation does some lazy 
+     * reading (to speed up simple checks, like checking the last modified 
+     * date).
+     */
+    protected class FileResourceAttributes extends ResourceAttributes {
+
+
+        // -------------------------------------------------------- Constructor
+
+
+        public FileResourceAttributes(File file) {
+            this.file = file;
+        }
+        
+        // --------------------------------------------------- Member Variables
+        
+        
+        protected File file;
+        
+        
+        protected boolean accessed = false;
+        
+        
+        // ----------------------------------------- ResourceAttributes Methods
+        
+        
+        /**
+         * Is collection.
+         */
+        public boolean isCollection() {
+            if (!accessed) {
+                collection = file.isDirectory();
+                accessed = true;
+            }
+            return super.isCollection();
+        }
+        
+        
+        /**
+         * Get content length.
+         * 
+         * @return content length value
+         */
+        public long getContentLength() {
+            if (contentLength != -1L)
+                return contentLength;
+            contentLength = file.length();
+            return contentLength;
+        }
+        
+        
+        /**
+         * Get creation time.
+         * 
+         * @return creation time value
+         */
+        public long getCreation() {
+            if (creation != -1L)
+                return creation;
+            creation = file.lastModified();
+            return creation;
+        }
+        
+        
+        /**
+         * Get creation date.
+         * 
+         * @return Creation date value
+         */
+        public Date getCreationDate() {
+            if (creation == -1L) {
+                creation = file.lastModified();
+            }
+            return super.getCreationDate();
+        }
+        
+        
+        /**
+         * Get last modified time.
+         * 
+         * @return lastModified time value
+         */
+        public long getLastModified() {
+            if (lastModified != -1L)
+                return lastModified;
+            lastModified = file.lastModified();
+            return lastModified;
+        }
+        
+        
+        /**
+         * Get lastModified date.
+         * 
+         * @return LastModified date value
+         */
+        public Date getLastModifiedDate() {
+            if (lastModified == -1L) {
+                lastModified = file.lastModified();
+            }
+            return super.getLastModifiedDate();
+        }
+        
+        
+        /**
+         * Get name.
+         * 
+         * @return Name value
+         */
+        public String getName() {
+            if (name == null)
+                name = file.getName();
+            return name;
+        }
+        
+        
+        /**
+         * Get resource type.
+         * 
+         * @return String resource type
+         */
+        public String getResourceType() {
+            if (!accessed) {
+                collection = file.isDirectory();
+                accessed = true;
+            }
+            return super.getResourceType();
         }
         
         
