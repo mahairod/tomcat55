@@ -218,12 +218,6 @@ public class StandardHost
      private boolean xmlNamespaceAware = false;
 
 
-    /*
-     * Enables/disables generation of X-Powered-By response header
-     */
-    private boolean xpoweredBy;
-
-
     // ------------------------------------------------------------- Properties
 
 
@@ -559,31 +553,6 @@ public class StandardHost
     public void setWorkDir(String workDir) {
 
         this.workDir = workDir;
-    }
-
-
-    /**
-     * Indicates whether the generation of an X-Powered-By response header for
-     * servlet-generated responses is enabled or disabled for this Host.
-     *
-     * @return true if generation of X-Powered-By response header is enabled,
-     * false otherwise
-     */
-    public boolean isXpoweredBy() {
-	return xpoweredBy;
-    }
-
-
-    /**
-     * Enables or disables the generation of an X-Powered-By header (with value
-     * Servlet/2.4) for all servlet-generated responses from contexts
-     * registered with this Host.
-     *
-     * @param xpoweredBy true if generation of X-Powered-By response header is
-     * to be enabled, false otherwise
-     */
-    public void setXpoweredBy(boolean xpoweredBy) {
-	this.xpoweredBy = xpoweredBy;
     }
 
 

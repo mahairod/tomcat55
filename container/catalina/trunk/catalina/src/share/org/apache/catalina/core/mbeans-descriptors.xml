@@ -111,10 +111,6 @@
                description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
                type="boolean"/>
 
-    <attribute name="xpoweredBy"
-               description="Enables/disables X-Powered-By header for servlet-generated responses"
-               type="boolean"/>
-      
     <attribute name="debug"
                description="The debugging detail level for this component"
                type="int"/>
@@ -483,10 +479,6 @@
                description="Attribute value used to turn on/off XML validation"
                type="boolean"/>
 
-    <attribute name="xpoweredBy"
-               description="Enables/disables X-Powered-By header for servlet-generated responses"
-               type="boolean"/>
-      
     <attribute name="children"
                description="Object names of all children"
                type="[Ljavax.management.ObjectName;"/>
