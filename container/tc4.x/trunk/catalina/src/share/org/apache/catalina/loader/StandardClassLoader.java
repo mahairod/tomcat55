@@ -1062,7 +1062,8 @@ public class StandardClassLoader
             streamHandler = factory.createURLStreamHandler(protocol);
 
         // Validate the manifest of a JAR file repository
-        if (!repository.endsWith(File.separator)) {
+        if (!repository.endsWith(File.separator) &&
+            !repository.endsWith("/")) {
             JarFile jarFile = null;
             try {
                 Manifest manifest = null;
