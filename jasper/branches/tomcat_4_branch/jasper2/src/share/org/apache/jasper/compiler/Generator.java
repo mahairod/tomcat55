@@ -1381,6 +1381,10 @@ public class Generator {
 			
 			out.popIndent();
 			out.printil("}");
+		    } else {
+			// Synchronize AT_BEGIN and NESTED scripting variables
+			syncScriptingVars(n, VariableInfo.AT_BEGIN);
+			syncScriptingVars(n, VariableInfo.NESTED);
 		    }
 
 		    out.printil("do {");
