@@ -70,6 +70,9 @@
       <fix>
         <bug>30587</bug>: Typo in ExtendedAccessLogValve. (yoavs)
       </fix>
+      <fix>
+        <bug>30561</bug>: Broken restart of NamingService. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
