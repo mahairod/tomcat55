@@ -52,7 +52,7 @@ public class SessionExample extends HttpServlet {
 
         out.println("<h3>" + title + "</h3>");
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
         out.println(rb.getString("sessions.id") + " " + session.getId());
         out.println("<br>");
         out.println(rb.getString("sessions.created") + " ");
