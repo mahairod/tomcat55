@@ -2262,6 +2262,7 @@ public class StandardContext
             results[watchedResources.length] = name;
             watchedResources = results;
         }
+        fireContainerEvent("addWatchedResource", name);
 
     }
 
@@ -3335,6 +3336,8 @@ public class StandardContext
             watchedResources = results;
 
         }
+
+        fireContainerEvent("removeWatchedResource", name);
 
     }
     
