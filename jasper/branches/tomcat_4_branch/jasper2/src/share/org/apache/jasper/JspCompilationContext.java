@@ -113,8 +113,7 @@ public class JspCompilationContext {
     protected JspRuntimeContext rctxt;
 
     protected int removed = 0;
-    protected boolean reload = true;
-    
+
     protected URLClassLoader jspLoader;
     protected URL [] outUrls = new URL[1];
     protected Class servletClass;
@@ -472,7 +471,7 @@ public class JspCompilationContext {
         if (jspCompiler.isOutDated()) {
             try {
                 jspCompiler.compile();
-                reload = true;
+                jsw.setReload(true);
             } catch (JasperException ex) {
                 throw ex;
             } catch (Exception ex) {
@@ -480,12 +479,6 @@ public class JspCompilationContext {
                     Constants.getString("jsp.error.unable.compile"),ex);
             }
         }
-    }
-
-    /** True if the servlet needs loading
-     */
-    public boolean isReload() {
-        return reload;
     }
 
     // ==================== Manipulating the class ====================
@@ -511,7 +504,7 @@ public class JspCompilationContext {
                 (Constants.getString("jsp.error.unable.compile"), ex);
         }
         removed = 0;
-        reload = false;
+        jsw.setReload(false);
         return servletClass;
     }
 

@@ -111,6 +111,7 @@ public class JspServletWrapper {
     private ServletConfig config;
     private Options options;
     private boolean firstTime = true;
+    private boolean reload = true;
 
     JspServletWrapper(ServletConfig config, Options options, String jspUri,
                       boolean isErrorPage, JspRuntimeContext rctxt)
@@ -130,14 +131,18 @@ public class JspServletWrapper {
         return ctxt;
     }
 
+    public void setReload(boolean reload) {
+        this.reload = reload;
+    }
+
     public Servlet getServlet()
         throws ServletException, IOException, FileNotFoundException
     {
-        if (ctxt.isReload()) {
+        if (reload) {
             synchronized (this) {
                 // Synchronizing on jsw enables simultaneous loading
                 // of different pages, but not the same page.
-                if (ctxt.isReload()) {
+                if (reload) {
                     // This is to maintain the original protocol.
                     destroy();
                     
@@ -185,7 +190,7 @@ public class JspServletWrapper {
                 }
             }
 
-            if (ctxt.isReload()) {
+            if (reload) {
                 getServlet();
             }
 
