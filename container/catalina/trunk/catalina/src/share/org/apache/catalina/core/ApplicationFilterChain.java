@@ -99,6 +99,12 @@ import org.apache.catalina.security.SecurityUtil;
 final class ApplicationFilterChain implements FilterChain {
 
 
+    // -------------------------------------------------------------- Constants
+
+
+    public static final int INCREMENT = 10;
+
+
     // ----------------------------------------------------------- Constructors
 
 
@@ -116,17 +122,23 @@ final class ApplicationFilterChain implements FilterChain {
 
 
     /**
-     * The set of filters that will be executed on this chain.
+     * Filters.
      */
-    private ArrayList filters = new ArrayList();
+    private ApplicationFilterConfig[] filters = 
+        new ApplicationFilterConfig[0];
 
 
     /**
-     * The iterator that is used to maintain the current position in the filter chain.
-     * This iterator is called the first time that <code>doFilter()</code>
-     * is called.
+     * The int which is used to maintain the current position 
+     * in the filter chain.
      */
-    private Iterator iterator = null;
+    private int pos = 0;
+
+
+    /**
+     * The int which gives the current number of filters in the chain.
+     */
+    private int n = 0;
 
 
     /**
@@ -171,9 +183,9 @@ final class ApplicationFilterChain implements FilterChain {
             final ServletResponse res = response;
             try {
                 java.security.AccessController.doPrivileged(
-                    new java.security.PrivilegedExceptionAction()
-                    {
-                        public Object run() throws ServletException, IOException {
+                    new java.security.PrivilegedExceptionAction() {
+                        public Object run() 
+                            throws ServletException, IOException {
                             internalDoFilter(req,res);
                             return null;
                         }
@@ -195,17 +207,13 @@ final class ApplicationFilterChain implements FilterChain {
         }
     }
 
-    private void internalDoFilter(ServletRequest request, ServletResponse response)
+    private void internalDoFilter(ServletRequest request, 
+                                  ServletResponse response)
         throws IOException, ServletException {
 
-        // Construct an iterator the first time this method is called
-        if (this.iterator == null)
-            this.iterator = filters.iterator();
-
         // Call the next filter if there is one
-        if (this.iterator.hasNext()) {
-            ApplicationFilterConfig filterConfig =
-              (ApplicationFilterConfig) iterator.next();
+        if (pos < n) {
+            ApplicationFilterConfig filterConfig = filters[pos++];
             Filter filter = null;
             try {
                 filter = filterConfig.getFilter();
@@ -215,15 +223,14 @@ final class ApplicationFilterChain implements FilterChain {
                 if( System.getSecurityManager() != null ) {
                     final ServletRequest req = request;
                     final ServletResponse res = response;
-                    Principal principal = ((HttpServletRequest) req).getUserPrincipal();
+                    Principal principal = 
+                        ((HttpServletRequest) req).getUserPrincipal();
                     Class[] classType = new Class[]{ServletRequest.class, 
                                                     ServletResponse.class,
                                                     FilterChain.class};
                     Object[] args = new Object[]{req, res, this};
-                    SecurityUtil.doAsPrivilege("doFilter",
-                                               filter,
-                                               classType, 
-                                               args);                                                   
+                    SecurityUtil.doAsPrivilege
+                        ("doFilter", filter, classType, args);
                 } else {  
                     filter.doFilter(request, response, this);
                 }
@@ -267,7 +274,8 @@ final class ApplicationFilterChain implements FilterChain {
                 if( System.getSecurityManager() != null ) {
                     final ServletRequest req = request;
                     final ServletResponse res = response;
-                    Principal principal = ((HttpServletRequest) req).getUserPrincipal();
+                    Principal principal = 
+                        ((HttpServletRequest) req).getUserPrincipal();
                     Class[] classType = new Class[]{ServletRequest.class, 
                                                      ServletResponse.class};
                     Object[] args = new Object[]{req, res};
@@ -318,7 +326,13 @@ final class ApplicationFilterChain implements FilterChain {
      */
     void addFilter(ApplicationFilterConfig filterConfig) {
 
-        this.filters.add(filterConfig);
+        if (n == filters.length) {
+            ApplicationFilterConfig[] newFilters =
+                new ApplicationFilterConfig[n + INCREMENT];
+            System.arraycopy(filters, 0, newFilters, 0, n);
+            filters = newFilters;
+        }
+        filters[n++] = filterConfig;
 
     }
 
@@ -328,9 +342,9 @@ final class ApplicationFilterChain implements FilterChain {
      */
     void release() {
 
-        this.filters.clear();
-        this.iterator = null;
-        this.servlet = null;
+        n = 0;
+        pos = 0;
+        servlet = null;
 
     }
 
