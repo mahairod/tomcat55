@@ -80,8 +80,8 @@ import javax.servlet.jsp.el.FunctionMapper;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.compiler.Localizer;
 
 // for JSTL expression interpreter
 import javax.servlet.jsp.PageContext;
@@ -348,9 +348,8 @@ public class JspRuntimeLibrary {
 	    if ( method != null ) {
 		if (type.isArray()) {
                     if (request == null) {
-			throw new JasperException(Constants.getString(
-                                "jsp.error.beans.setproperty.noindexset",
-				new Object[] {}));
+			throw new JasperException(
+		            Localizer.getMessage("jsp.error.beans.setproperty.noindexset"));
                     }
 		    Class t = type.getComponentType();
 		    String[] values = request.getParameterValues(param);
@@ -375,14 +374,16 @@ public class JspRuntimeLibrary {
 	}
         if (!ignoreMethodNF && (method == null)) {
             if (type == null) {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.noproperty",
-			new Object[] { prop, bean.getClass().getName() }));
+		throw new JasperException(
+                    Localizer.getMessage("jsp.error.beans.noproperty",
+					 prop,
+					 bean.getClass().getName()));
             } else {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.nomethod.setproperty",
-			new Object[] { prop, type.getName(),
-				       bean.getClass().getName() }));
+		throw new JasperException(
+	            Localizer.getMessage("jsp.error.beans.nomethod.setproperty",
+					 prop,
+					 type.getName(),
+					 bean.getClass().getName()));
             }
         }
     }
@@ -611,8 +612,8 @@ public class JspRuntimeLibrary {
     public static Object handleGetProperty(Object o, String prop)
     throws JasperException {
         if (o == null) {
-	    throw new JasperException(Constants.getString(
-	            "jsp.error.beans.nullbean", new Object[] {}));
+	    throw new JasperException(
+	            Localizer.getMessage("jsp.error.beans.nullbean"));
         }
 	Object value = null;
         try {
@@ -794,23 +795,25 @@ public class JspRuntimeLibrary {
 		}
             } else {        
                 // just in case introspection silently fails.
-                throw new JasperException(Constants.getString(
-		        "jsp.error.beans.nobeaninfo",
-			new Object[] { beanClass.getName() }));
+                throw new JasperException(
+                    Localizer.getMessage("jsp.error.beans.nobeaninfo",
+					 beanClass.getName()));
             }
         } catch (Exception ex) {
             throw new JasperException (ex);
         }
         if (method == null) {
             if (type == null) {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.noproperty",
-			new Object[] { prop, beanClass.getName() }));
+		throw new JasperException(
+                        Localizer.getMessage("jsp.error.beans.noproperty",
+					     prop,
+					     beanClass.getName()));
             } else {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.nomethod.setproperty",
-			new Object[] { prop, type.getName(),
-				       beanClass.getName() }));
+		throw new JasperException(
+		    Localizer.getMessage("jsp.error.beans.nomethod.setproperty",
+					 prop,
+					 type.getName(),
+					 beanClass.getName()));
             }
         }
         return method;
@@ -836,22 +839,22 @@ public class JspRuntimeLibrary {
                 }
             } else {        
                 // just in case introspection silently fails.
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.nobeaninfo",
-			new Object[] { beanClass.getName() }));
+		throw new JasperException(
+                    Localizer.getMessage("jsp.error.beans.nobeaninfo",
+					 beanClass.getName()));
 	    }
 	} catch (Exception ex) {
 	    throw new JasperException (ex);
 	}
         if (method == null) {
             if (type == null) {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.noproperty",
-			new Object[] { prop, beanClass.getName() }));
+		throw new JasperException(
+                    Localizer.getMessage("jsp.error.beans.noproperty", prop,
+					 beanClass.getName()));
             } else {
-		throw new JasperException(Constants.getString(
-                        "jsp.error.beans.nomethod",
-			new Object[] { prop, beanClass.getName() }));
+		throw new JasperException(
+                    Localizer.getMessage("jsp.error.beans.nomethod", prop,
+					 beanClass.getName()));
             }
         }
 

@@ -1123,8 +1123,8 @@ class Validator {
             if (errors != null && errors.length != 0) {
 		StringBuffer errMsg = new StringBuffer();
                 errMsg.append("<h3>");
-                errMsg.append(err.getString("jsp.error.tei.invalid.attributes",
-					    n.getName()));
+                errMsg.append(Localizer.getMessage("jsp.error.tei.invalid.attributes",
+						   n.getName()));
                 errMsg.append("</h3>");
                 for (int i=0; i<errors.length; i++) {
                     errMsg.append("<p>");
@@ -1228,8 +1228,8 @@ class Validator {
 		    errMsg = new StringBuffer();
 		}
                 errMsg.append("<h3>");
-                errMsg.append(errDisp.getString("jsp.error.tlv.invalid.page",
-						tli.getShortName()));
+                errMsg.append(Localizer.getMessage("jsp.error.tlv.invalid.page",
+						   tli.getShortName()));
                 errMsg.append("</h3>");
                 for (int i=0; i<errors.length; i++) {
 		    if (errors[i] != null) {

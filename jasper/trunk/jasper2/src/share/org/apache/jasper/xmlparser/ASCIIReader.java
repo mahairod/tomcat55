@@ -60,7 +60,7 @@ package org.apache.jasper.xmlparser;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
-import org.apache.jasper.compiler.ErrorDispatcher;
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * A simple ASCII byte reader. This is an optimized reader for reading
@@ -90,8 +90,6 @@ public class ASCIIReader
     /** Byte buffer. */
     protected byte[] fBuffer;
 
-    private ErrorDispatcher err;
-
     //
     // Constructors
     //
@@ -102,13 +100,10 @@ public class ASCIIReader
      *
      * @param inputStream The input stream.
      * @param size        The initial buffer size.
-     * @param err         The error dispatcher.
      */
-    public ASCIIReader(InputStream inputStream, int size,
-		       ErrorDispatcher err) {
+    public ASCIIReader(InputStream inputStream, int size) {
         fInputStream = inputStream;
         fBuffer = new byte[size];
-	this.err = err;
     }
 
     //
@@ -131,8 +126,8 @@ public class ASCIIReader
     public int read() throws IOException {
         int b0 = fInputStream.read();
         if (b0 > 0x80) {
-            throw new IOException(err.getString("jsp.error.xml.invalidASCII",
-						Integer.toString(b0)));
+            throw new IOException(Localizer.getMessage("jsp.error.xml.invalidASCII",
+						       Integer.toString(b0)));
         }
         return b0;
     } // read():int
@@ -159,8 +154,8 @@ public class ASCIIReader
         for (int i = 0; i < count; i++) {
             int b0 = fBuffer[i];
             if (b0 > 0x80) {
-                throw new IOException(err.getString("jsp.error.xml.invalidASCII",
-						    Integer.toString(b0)));
+                throw new IOException(Localizer.getMessage("jsp.error.xml.invalidASCII",
+							   Integer.toString(b0)));
             }
             ch[offset + i] = (char)b0;
         }

@@ -62,7 +62,6 @@ import javax.servlet.jsp.tagext.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.Attributes;
 import org.apache.jasper.*;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.xmlparser.XMLEncodingDetector;
 
 /**

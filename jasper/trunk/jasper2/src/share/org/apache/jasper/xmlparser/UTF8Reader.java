@@ -61,7 +61,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UTFDataFormatException;
-import org.apache.jasper.compiler.ErrorDispatcher;
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * @author Andy Clark, IBM
@@ -99,8 +99,6 @@ public class UTF8Reader
     /** Surrogate character. */
     private int fSurrogate = -1;
 
-    private ErrorDispatcher err;
-
     //
     // Constructors
     //
@@ -111,12 +109,10 @@ public class UTF8Reader
      *
      * @param inputStream The input stream.
      * @param size        The initial buffer size.
-     * @param err         The error dispatcher.
      */
-    public UTF8Reader(InputStream inputStream, int size, ErrorDispatcher err) {
+    public UTF8Reader(InputStream inputStream, int size) {
         fInputStream = inputStream;
         fBuffer = new byte[size];
-        this.err = err;
     }
 
     //
@@ -604,8 +600,9 @@ public class UTF8Reader
      *                          or if some other I/O error occurs
      */
     public void mark(int readAheadLimit) throws IOException {
-	    throw new IOException(err.getString("jsp.error.xml.operationNotSupported",
-						"mark()", "UTF-8"));
+	throw new IOException(
+                Localizer.getMessage("jsp.error.xml.operationNotSupported",
+				     "mark()", "UTF-8"));
     }
 
     /**
@@ -646,9 +643,9 @@ public class UTF8Reader
         throws UTFDataFormatException {
 
         throw new UTFDataFormatException(
-                err.getString("jsp.error.xml.expectedByte",
-			      Integer.toString(position),
-			      Integer.toString(count)));
+                Localizer.getMessage("jsp.error.xml.expectedByte",
+				     Integer.toString(position),
+				     Integer.toString(count)));
 
     } // expectedByte(int,int,int)
 
@@ -657,17 +654,17 @@ public class UTF8Reader
         throws UTFDataFormatException {
 
         throw new UTFDataFormatException(
-                err.getString("jsp.error.xml.invalidByte",
-			      Integer.toString(position),
-			      Integer.toString(count)));
+                Localizer.getMessage("jsp.error.xml.invalidByte",
+				     Integer.toString(position),
+				     Integer.toString(count)));
     } // invalidByte(int,int,int,int)
 
     /** Throws an exception for invalid surrogate bits. */
     private void invalidSurrogate(int uuuuu) throws UTFDataFormatException {
         
         throw new UTFDataFormatException(
-                err.getString("jsp.error.xml.invalidHighSurrogate",
-			      Integer.toHexString(uuuuu)));
+                Localizer.getMessage("jsp.error.xml.invalidHighSurrogate",
+				     Integer.toHexString(uuuuu)));
     } // invalidSurrogate(int)
 
 } // class UTF8Reader

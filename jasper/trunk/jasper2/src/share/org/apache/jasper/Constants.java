@@ -141,8 +141,6 @@ public class Constants {
      * Default tag handler pool size.
      */
     public static final int MAX_POOL_SIZE = 5;
-    public static final Integer MAX_POOL_SIZE_INTEGER
-	= new Integer(MAX_POOL_SIZE);
 
     /**
      * The query parameter that causes the JSP engine to just
@@ -228,84 +226,6 @@ public class Constants {
      */
     public static final String TEMP_VARIABLE_NAME_PREFIX =
         "_jspx_temp";
-
-    /**
-     * This is where all our error messages and such are stored. 
-     */
-    private static ResourceBundle resources;
-    
-    private static void initResources() {
-	try {
-	    resources =
-		ResourceBundle.getBundle("org.apache.jasper.resources.messages");
-	} catch (MissingResourceException e) {
-	    throw new Error("Fatal Error: missing resource bundle: "+e.getClassName());
-	}
-    }
-
-    /**
-     * Get hold of a "message" or any string from our resources
-     * database. 
-     */
-    public static final String getString(String key) {
-        return getString(key, null);
-    }
-
-    /**
-     * Format the string that is looked up using "key" using "args". 
-     */
-    public static final String getString(String key, Object[] args) {
-        if (resources == null) 
-            initResources();
-        
-        try {
-            String msg = resources.getString(key);
-            if (args == null)
-                return msg;
-            MessageFormat form = new MessageFormat(msg);
-            return form.format(args);
-        } catch (MissingResourceException ignore) {
-            throw new Error("Fatal Error: missing resource: "+ignore.getClassName());
-        }
-    }
-
-    /** 
-     * Print a message into standard error with a certain verbosity
-     * level. 
-     * 
-     * @param key is used to look up the text for the message (using
-     *            getString()). 
-     * @param verbosityLevel is used to determine if this output is
-     *                       appropriate for the current verbosity
-     *                       level. 
-     */
-    public static final void message(String key, int verbosityLevel) {
-        message(key, null, verbosityLevel);
-    }
-
-
-    /**
-     * Print a message into standard error with a certain verbosity
-     * level after formatting it using "args". 
-     *
-     * @param key is used to look up the message. 
-     * @param args is used to format the message. 
-     * @param verbosityLevel is used to determine if this output is
-     *                       appropriate for the current verbosity
-     *                       level. 
-     */
-    public static final void message(String key, Object[] args, int verbosityLevel) {
-	if (jasperLog == null) {
-	    jasperLog = Logger.getLogger("JASPER_LOG");
-	    if (jasperLog == null) {
-		jasperLog = Logger.getDefaultLogger();
-	    }
-	}
-
-	if (jasperLog != null) {
-	    jasperLog.log(getString(key, args), verbosityLevel);
-	}
-    }
 
     public static Logger jasperLog = null;
 }

@@ -69,17 +69,6 @@ import org.apache.jasper.JasperException;
  */
 class DefaultErrorHandler implements ErrorHandler {
 
-    private ErrorDispatcher err;
-
-    /*
-     * Constructor.
-     *
-     * @param err Error dispatcher for localization support
-     */
-    DefaultErrorHandler(ErrorDispatcher err) {
-	this.err = err;
-    }
-
     /*
      * Processes the given JSP parse error.
      *
@@ -121,13 +110,14 @@ class DefaultErrorHandler implements ErrorHandler {
 		new Integer(details[i].getJspBeginLineNumber()), 
 		details[i].getJspFileName()
 	    };
-	    buf.append(err.getString("jsp.error.single.line.number", args));
-	    buf.append(err.getString("jsp.error.corresponding.servlet"));
+	    buf.append(Localizer.getMessage("jsp.error.single.line.number",
+					   args));
+	    buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
 	    buf.append(details[i].getErrorMessage());
 	    buf.append('\n');
 	}
 
-	throw new JasperException(err.getString("jsp.error.unable.compile")
+	throw new JasperException(Localizer.getMessage("jsp.error.unable.compile")
 				  + buf);
     }
 }

@@ -68,11 +68,11 @@ import java.util.Iterator;
 import javax.servlet.ServletContext;
 
 import org.apache.jasper.Constants;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the jsp-config element in WEB_INF/web.xml.  This is used
@@ -83,7 +83,10 @@ import org.apache.jasper.xmlparser.TreeNode;
 
 public class JspConfig {
 
-    static private final String WEB_XML = "/WEB-INF/web.xml";
+    private static final String WEB_XML = "/WEB-INF/web.xml";
+
+    // Logger
+    private static Log log = LogFactory.getLog(JspConfig.class);
 
     private Vector jspProperties = null;
     private ServletContext ctxt;
@@ -182,10 +185,10 @@ public class JspConfig {
                      } else if (file.startsWith("*.")) {
                          extension = file.substring(file.indexOf('.')+1);
                      } else {
-                         Constants.message(
-                             "jsp.warning.bad.urlpattern.propertygroup",
-                             new Object[] {urlPattern},
-                             Logger.WARNING);
+                         if (log.isWarnEnabled()) {
+			     log.warn(Localizer.getMessage("jsp.warning.bad.urlpattern.propertygroup",
+							   urlPattern));
+			 }
                          continue;
                      }
                  }

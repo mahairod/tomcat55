@@ -68,6 +68,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.apache.jasper.Constants;
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * Write text to a character-output stream, buffering characters so as
@@ -171,22 +172,25 @@ public class JspWriterImpl extends JspWriter {
      */
     public final void clear() throws IOException {
         if (bufferSize == 0)
-            throw new IllegalStateException(Constants.getString("jsp.error.ise_on_clear"));
+            throw new IllegalStateException(
+                    Localizer.getMessage("jsp.error.ise_on_clear"));
         if (flushed)
-            throw new IOException(Constants.getString("jsp.error.attempt_to_clear_flushed_buffer"));
+            throw new IOException(
+                    Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
         ensureOpen();
         nextChar = 0;
     }
 
     public void clearBuffer() throws IOException {
         if (bufferSize == 0)
-            throw new IllegalStateException(Constants.getString("jsp.error.ise_on_clear"));
+            throw new IllegalStateException(
+                    Localizer.getMessage("jsp.error.ise_on_clear"));
         ensureOpen();
         nextChar = 0;
     }
 
     private final void bufferOverflow() throws IOException {
-        throw new IOException(Constants.getString("jsp.error.overflow"));
+        throw new IOException(Localizer.getMessage("jsp.error.overflow"));
     }
 
     /**

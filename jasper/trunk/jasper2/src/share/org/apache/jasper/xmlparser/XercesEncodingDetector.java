@@ -239,10 +239,10 @@ public class XercesEncodingDetector extends XMLEncodingDetector {
         // try to use an optimized reader
         String ENCODING = encoding.toUpperCase(Locale.ENGLISH);
         if (ENCODING.equals("UTF-8")) {
-            return new UTF8Reader(inputStream, fBufferSize, err);
+            return new UTF8Reader(inputStream, fBufferSize);
         }
         if (ENCODING.equals("US-ASCII")) {
-            return new ASCIIReader(inputStream, fBufferSize, err);
+            return new ASCIIReader(inputStream, fBufferSize);
         }
         if (ENCODING.equals("ISO-10646-UCS-4")) {
             if (isBigEndian != null) {

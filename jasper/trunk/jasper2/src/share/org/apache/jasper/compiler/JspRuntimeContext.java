@@ -84,9 +84,10 @@ import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.runtime.JspFactoryImpl;
 import org.apache.jasper.servlet.JspServletWrapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class for tracking JSP compile time file dependencies when the
@@ -102,6 +103,9 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @version $Revision$
  */
 public final class JspRuntimeContext implements Runnable {
+
+    // Logger
+    private static Log log = LogFactory.getLog(JspRuntimeContext.class);
 
     /**
      * Preload classes required at runtime by a JSP servlet so that
@@ -170,16 +174,15 @@ public final class JspRuntimeContext implements Runnable {
             parentClassLoader =
                 (URLClassLoader)this.getClass().getClassLoader();
         }
-        if (parentClassLoader != null) {
-            Constants.message("jsp.message.parent_class_loader_is",
-                              new Object[] {
-                                  parentClassLoader.toString()
-                              }, Logger.DEBUG);
-        } else {
-            Constants.message("jsp.message.parent_class_loader_is",
-                              new Object[] {
-                                  "<none>"
-                              }, Logger.DEBUG);
+
+	if (log.isDebugEnabled()) {
+	    if (parentClassLoader != null) {
+		log.debug(Localizer.getMessage("jsp.message.parent_class_loader_is",
+					       parentClassLoader.toString()));
+	    } else {
+		log.debug(Localizer.getMessage("jsp.message.parent_class_loader_is",
+					       "<none>"));
+	    }
         }
 
         initSecurity();
@@ -329,7 +332,8 @@ public final class JspRuntimeContext implements Runnable {
                 } catch (FileNotFoundException ex) {
                     ctxt.incrementRemoved();
                 } catch (Throwable t) {
-                    jsw.getServletContext().log("Background compile failed",t);
+                    jsw.getServletContext().log("Background compile failed",
+						t);
                 }
             }
         }

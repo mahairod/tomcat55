@@ -86,8 +86,10 @@ import org.apache.jasper.Options;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.JspUtil;
+import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.runtime.JspSourceDependent;
-import org.apache.jasper.logging.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The JSP engine (a.k.a Jasper).
@@ -107,6 +109,9 @@ import org.apache.jasper.logging.Logger;
  */
 
 public class JspServletWrapper {
+
+    // Logger
+    private static Log log = LogFactory.getLog(JspServletWrapper.class);
 
     private Servlet theServlet;
     private String jspUri;
@@ -284,7 +289,7 @@ public class JspServletWrapper {
                 response.setDateHeader("Retry-After", available);
                 response.sendError
                     (HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                     Constants.getString("jsp.error.unavailable"));
+                     Localizer.getMessage("jsp.error.unavailable"));
             }
 
             if (options.getDevelopment()  || firstTime ) {
@@ -344,10 +349,9 @@ public class JspServletWrapper {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, 
                                       ex.getMessage());
                 } catch (IllegalStateException ise) {
-                    Constants.jasperLog.log(
-                        Constants.getString("jsp.error.file.not.found",
-			                    new Object[] { ex.getMessage() }),
-                        ex, Logger.ERROR);
+                    log.error(Localizer.getMessage("jsp.error.file.not.found",
+						   ex.getMessage()),
+			      ex);
                 }
             }
         } catch (ServletException ex) {

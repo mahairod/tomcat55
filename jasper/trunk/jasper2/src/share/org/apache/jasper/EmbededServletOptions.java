@@ -62,18 +62,18 @@
 package org.apache.jasper;
 
 import java.io.File;
+import java.util.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.apache.jasper.logging.Logger;
-
 import org.apache.jasper.compiler.TldLocationsCache;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
+import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.xmlparser.ParserUtils;
-
-import java.util.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 
@@ -83,7 +83,11 @@ import java.util.*;
  * @author Pierre Delisle
  */
 public final class EmbededServletOptions implements Options {
-    private Properties settings=new Properties();
+
+    // Logger
+    private static Log log = LogFactory.getLog(EmbededServletOptions.class);
+
+    private Properties settings = new Properties();
     
     /**
      * Is Jasper being used in development mode?
@@ -342,21 +346,29 @@ public final class EmbededServletOptions implements Options {
         
         String keepgen = config.getInitParameter("keepgenerated");
         if (keepgen != null) {
-            if (keepgen.equalsIgnoreCase("true"))
+            if (keepgen.equalsIgnoreCase("true")) {
                 this.keepGenerated = true;
-            else if (keepgen.equalsIgnoreCase("false"))
+            } else if (keepgen.equalsIgnoreCase("false")) {
                 this.keepGenerated = false;
-            else Constants.message ("jsp.warning.keepgen", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.keepgen"));
+		}
+	    }
         }
             
 
         String largeFile = config.getInitParameter("largefile"); 
         if (largeFile != null) {
-            if (largeFile.equalsIgnoreCase("true"))
+            if (largeFile.equalsIgnoreCase("true")) {
                 this.largeFile = true;
-            else if (largeFile.equalsIgnoreCase("false"))
+            } else if (largeFile.equalsIgnoreCase("false")) {
                 this.largeFile = false;
-            else Constants.message ("jsp.warning.largeFile", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.largeFile"));
+		}
+	    }
         }
 	
 	this.isPoolingEnabled = true;
@@ -364,10 +376,13 @@ public final class EmbededServletOptions implements Options {
 	    = config.getInitParameter("enablePooling"); 
         if (poolingEnabledParam != null
   	        && !poolingEnabledParam.equalsIgnoreCase("true")) {
-            if (poolingEnabledParam.equalsIgnoreCase("false"))
+            if (poolingEnabledParam.equalsIgnoreCase("false")) {
                 this.isPoolingEnabled = false;
-            else Constants.message("jsp.warning.enablePooling",
-				   Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.enablePooling"));
+		}		       	   
+	    }
         }
 
         String tagPoolSizeParam = config.getInitParameter("tagPoolSize");
@@ -376,42 +391,56 @@ public final class EmbededServletOptions implements Options {
                 this.tagPoolSize = Integer.parseInt(tagPoolSizeParam);
                 if (this.tagPoolSize <= 0) {
                     this.tagPoolSize = Constants.MAX_POOL_SIZE;
-                    Constants.message("jsp.warning.invalidTagPoolSize",
-				      new Object[] { Constants.MAX_POOL_SIZE_INTEGER },
-                                      Logger.WARNING);
+		    if (log.isWarnEnabled()) {
+			log.warn(Localizer.getMessage("jsp.warning.invalidTagPoolSize",
+						      Integer.toString(Constants.MAX_POOL_SIZE)));
+		    }
                 }
             } catch(NumberFormatException ex) {
-                Constants.message("jsp.warning.invalidTagPoolSize",
-				  new Object[] { Constants.MAX_POOL_SIZE_INTEGER },
-				  Logger.WARNING);
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.invalidTagPoolSize",
+						  Integer.toString(Constants.MAX_POOL_SIZE)));
+		}
             }
         }
 
         String mapFile = config.getInitParameter("mappedfile"); 
         if (mapFile != null) {
-            if (mapFile.equalsIgnoreCase("true"))
+            if (mapFile.equalsIgnoreCase("true")) {
                 this.mappedFile = true;
-            else if (mapFile.equalsIgnoreCase("false"))
+            } else if (mapFile.equalsIgnoreCase("false")) {
                 this.mappedFile = false;
-            else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.mappedFile"));
+		}
+	    }
         }
 	
         String senderr = config.getInitParameter("sendErrToClient");
         if (senderr != null) {
-            if (senderr.equalsIgnoreCase("true"))
+            if (senderr.equalsIgnoreCase("true")) {
                 this.sendErrorToClient = true;
-            else if (senderr.equalsIgnoreCase("false"))
+            } else if (senderr.equalsIgnoreCase("false")) {
                 this.sendErrorToClient = false;
-            else Constants.message ("jsp.warning.sendErrToClient", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.sendErrToClient"));
+		}
+	    }
         }
 
         String debugInfo = config.getInitParameter("classdebuginfo");
         if (debugInfo != null) {
-            if (debugInfo.equalsIgnoreCase("true"))
+            if (debugInfo.equalsIgnoreCase("true")) {
                 this.classDebugInfo  = true;
-            else if (debugInfo.equalsIgnoreCase("false"))
+            } else if (debugInfo.equalsIgnoreCase("false")) {
                 this.classDebugInfo  = false;
-            else Constants.message ("jsp.warning.classDebugInfo", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.classDebugInfo"));
+		}
+	    }
         }
 
         String checkInterval = config.getInitParameter("checkInterval");
@@ -420,30 +449,41 @@ public final class EmbededServletOptions implements Options {
 		this.checkInterval = Integer.parseInt(checkInterval);
                 if (this.checkInterval == 0) {
                     this.checkInterval = 300;
-                    Constants.message("jsp.warning.checkInterval",
-                                      Logger.WARNING);
+		    if (log.isWarnEnabled()) {
+			log.warn(Localizer.getMessage("jsp.warning.checkInterval"));
+		    }
                 }
             } catch(NumberFormatException ex) {
-                Constants.message ("jsp.warning.checkInterval", Logger.WARNING);
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.checkInterval"));
+		}
             }
         }
 
         String development = config.getInitParameter("development");
         if (development != null) {
-            if (development.equalsIgnoreCase("true"))
+            if (development.equalsIgnoreCase("true")) {
                 this.development = true;
-            else if (development.equalsIgnoreCase("false"))
+            } else if (development.equalsIgnoreCase("false")) {
                 this.development = false;
-            else Constants.message ("jsp.warning.development", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.development"));
+		}
+	    }
         }
 
         String reloading = config.getInitParameter("reloading");
         if (reloading != null) {
-            if (reloading.equalsIgnoreCase("true"))
+            if (reloading.equalsIgnoreCase("true")) {
                 this.reloading = true;
-            else if (reloading.equalsIgnoreCase("false"))
+            } else if (reloading.equalsIgnoreCase("false")) {
                 this.reloading = false;
-            else Constants.message ("jsp.warning.reloading", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.reloading"));
+		}
+	    }
         }
 
         String ieClassId = config.getInitParameter("ieClassId");
@@ -472,16 +512,14 @@ public final class EmbededServletOptions implements Options {
             }
         }      
         if (this.scratchDir == null) {
-            Constants.message("jsp.error.no.scratch.dir", Logger.FATAL);
+            log.fatal(Localizer.getMessage("jsp.error.no.scratch.dir"));
             return;
         }
             
         if (!(scratchDir.exists() && scratchDir.canRead() &&
               scratchDir.canWrite() && scratchDir.isDirectory()))
-            Constants.message("jsp.error.bad.scratch.dir",
-                              new Object[] {
-                                  scratchDir.getAbsolutePath()
-                              }, Logger.FATAL);
+            log.fatal(Localizer.getMessage("jsp.error.bad.scratch.dir",
+					   scratchDir.getAbsolutePath()));
                                   
         this.compiler = config.getInitParameter("compiler");
 
@@ -492,11 +530,15 @@ public final class EmbededServletOptions implements Options {
 
         String fork = config.getInitParameter("fork");
         if (fork != null) {
-            if (fork.equalsIgnoreCase("true"))
+            if (fork.equalsIgnoreCase("true")) {
                 this.fork = true;
-            else if (fork.equalsIgnoreCase("false"))
+            } else if (fork.equalsIgnoreCase("false")) {
                 this.fork = false;
-            else Constants.message ("jsp.warning.fork", Logger.WARNING);
+            } else {
+		if (log.isWarnEnabled()) {
+		    log.warn(Localizer.getMessage("jsp.warning.fork"));
+		}
+	    }
         }
 
 	// Setup the global Tag Libraries location cache for this

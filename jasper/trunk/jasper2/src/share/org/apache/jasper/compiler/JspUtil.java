@@ -75,7 +75,6 @@ import java.util.zip.ZipEntry;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.logging.Logger;
 
 import org.xml.sax.Attributes;
 
@@ -656,9 +655,8 @@ public class JspUtil {
                 } while( ws.indexOf( paren ) != -1 );
 
                 if( !paren.equals( "(" ) ) {
-                    throw new JasperException( err.getString(
-                        "jsp.error.tld.fn.invalid.signature.parenexpected",
-                        tagName, this.methodName ) );
+                    err.jspError("jsp.error.tld.fn.invalid.signature.parenexpected",
+				 tagName, this.methodName);
                 }
 
                 // ( <arg-type> S? ( ',' S? <arg-type> S? )* )? ')'
@@ -673,9 +671,8 @@ public class JspUtil {
                     ArrayList parameterTypes = new ArrayList();
                     do {
                         if( ",(".indexOf( argType ) != -1 ) {
-                            throw new JasperException( err.getString(
-                                "jsp.error.tld.fn.invalid.signature",
-                                tagName, this.methodName ) );
+                            err.jspError("jsp.error.tld.fn.invalid.signature",
+					 tagName, this.methodName);
                         }
 
                         parameterTypes.add(toClass(argType, loader));
@@ -689,9 +686,8 @@ public class JspUtil {
                             break;
                         }
                         if( !comma.equals( "," ) ) {
-                            throw new JasperException( err.getString(
-                             "jsp.error.tld.fn.invalid.signature.commaexpected",
-                                tagName, this.methodName ) );
+                            err.jspError("jsp.error.tld.fn.invalid.signature.commaexpected",
+					 tagName, this.methodName);
                         }
 
                         // <arg-type>
@@ -704,14 +700,12 @@ public class JspUtil {
                 }
             }
             catch( NoSuchElementException e ) {
-                throw new JasperException( err.getString(
-                    "jsp.error.tld.fn.invalid.signature",
-                    tagName, this.methodName ) );
+                err.jspError("jsp.error.tld.fn.invalid.signature",
+			     tagName, this.methodName);
             }
             catch( ClassNotFoundException e ) {
-                throw new JasperException( err.getString(
-                    "jsp.error.tld.fn.invalid.signature.classnotfound",
-                    e.getMessage(), tagName, this.methodName ) );
+                err.jspError("jsp.error.tld.fn.invalid.signature.classnotfound",
+			     e.getMessage(), tagName, this.methodName);
             }
         }
         

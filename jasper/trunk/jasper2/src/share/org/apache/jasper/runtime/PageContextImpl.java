@@ -94,8 +94,10 @@ import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
 import org.apache.jasper.Constants;
-import org.apache.jasper.logging.Logger;
+import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.runtime.el.jstl.JSTLVariableResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Implementation of the PageContext class from the JSP spec.
@@ -107,12 +109,10 @@ import org.apache.jasper.runtime.el.jstl.JSTLVariableResolver;
  * @author Pierre Delisle
  * @author Mark Roth
  */
-public class PageContextImpl
-    extends PageContext
-    implements VariableResolver
-{
+public class PageContextImpl extends PageContext implements VariableResolver {
 
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "PageContextImpl");
+    // Logger
+    private static Log log = LogFactory.getLog(PageContextImpl.class);
 
     /**
      * The expression evaluator, for evaluating EL expressions.
@@ -219,7 +219,7 @@ public class PageContextImpl
                 ((JspWriterImpl)out).flushBuffer();
             }
 	} catch (IOException ex) {
-	    loghelper.log("Internal error flushing the buffer in release()");
+	    log.warn("Internal error flushing the buffer in release()");
 	}
 
 	servlet      = null;
@@ -486,8 +486,8 @@ public class PageContextImpl
 	try {
 	    out.clear();
 	} catch (IOException ex) {
-	    throw new IllegalStateException(Constants.getString(
-			"jsp.error.attempt_to_clear_flushed_buffer"));
+	    throw new IllegalStateException(
+                Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
 	}
 
 	// Make sure that the response object is not the wrapper for include
@@ -733,7 +733,7 @@ public class PageContextImpl
         try {
             return new JspWriterImpl(response, bufferSize, autoFlush);
         } catch( Throwable t ) {
-            loghelper.log("creating out", t);
+            log.warn("creating out", t);
             return null;
         }
     }

@@ -71,11 +71,14 @@ import org.apache.jasper.compiler.TldLocationsCache;
 
 import org.apache.jasper.servlet.JspCServletContext;
 
-import org.apache.jasper.logging.Logger;
-import org.apache.jasper.logging.JasperLogger;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.compiler.TagPluginManager;
+import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.logging.Logger;
+import org.apache.jasper.logging.JasperLogger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Shell for the jspc compiler.  Handles all options associated with the
@@ -115,6 +118,9 @@ public class JspC implements Options {
 
     public static final String DEFAULT_IE_CLASS_ID =
             "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
+
+    // Logger
+    private static Log log = LogFactory.getLog(JspC.class);
 
     public static final String SWITCH_VERBOSE = "-v";
     public static final String SWITCH_QUIET = "-q";
@@ -190,7 +196,7 @@ public class JspC implements Options {
     CharArrayWriter servletout;
     CharArrayWriter mappingout;
 
-    static PrintStream log;
+    static PrintStream logStream;
 
     JspCServletContext context;
 
@@ -586,18 +592,21 @@ public class JspC implements Options {
             // Generate mapping
             generateWebMapping( file, clctxt );
             if ( showSuccess ) {
-                log.println( "Built File: " + file );
+                logStream.println( "Built File: " + file );
             }
             return true;
         } catch (FileNotFoundException fne) {
-            Constants.message("jspc.error.fileDoesNotExist",
-                              new Object[] {fne.getMessage()}, Logger.WARNING);
+	    if (log.isWarnEnabled()) {
+		log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+					      fne.getMessage()));
+	    }
             throw new JasperException( fne );
         } catch (Exception e) {
-            Constants.message("jspc.error.generalException",
-                    new Object[] {file, e}, Logger.ERROR);
+            log.error(Localizer.getMessage("jspc.error.generalException",
+					   file),
+		      e);
             if ( listErrors ) {
-	        log.println( "Error in File: " + file );
+	        logStream.println( "Error in File: " + file );
 		return true;
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
@@ -623,9 +632,10 @@ public class JspC implements Options {
                     if (g.exists() && g.isDirectory()) {
                         uriRoot = f.getCanonicalPath();
                         uriBase = tUriBase;
-                        Constants.message("jspc.implicit.uriRoot",
-                                          new Object[] { uriRoot },
-                                              Logger.INFORMATION);
+			if (log.isInfoEnabled()) {
+			    log.info(Localizer.getMessage("jspc.implicit.uriRoot",
+							  uriRoot));
+			}
                         break;
                     }
                     if (f.exists() && f.isDirectory()) {
@@ -717,9 +727,9 @@ public class JspC implements Options {
                 mappingout = null;
             }
             if (webxmlLevel >= ALL_WEBXML) {
-                mapout.write(Constants.getString("jspc.webxml.header"));
+                mapout.write(Localizer.getMessage("jspc.webxml.header"));
             } else if (webxmlLevel>= INC_WEBXML) {
-                mapout.write(Constants.getString("jspc.webinc.header"));
+                mapout.write(Localizer.getMessage("jspc.webinc.header"));
             }
         } catch (IOException ioe) {
             mapout = null;
@@ -734,9 +744,9 @@ public class JspC implements Options {
                 servletout.writeTo(mapout);
                 mappingout.writeTo(mapout);
                 if (webxmlLevel >= ALL_WEBXML) {
-                    mapout.write(Constants.getString("jspc.webxml.footer"));
+                    mapout.write(Localizer.getMessage("jspc.webxml.footer"));
                 } else if (webxmlLevel >= INC_WEBXML) {
-                    mapout.write(Constants.getString("jspc.webinc.footer"));
+                    mapout.write(Localizer.getMessage("jspc.webinc.footer"));
                 }
                 mapout.close();
             } catch (IOException ioe) {
@@ -777,7 +787,8 @@ public class JspC implements Options {
 
         File uriRootF = new File(uriRoot);
         if (!uriRootF.exists() || !uriRootF.isDirectory()) {
-            throw new JasperException(Constants.getString("jsp.error.jspc.uriroot_not_dir"));
+            throw new JasperException(
+                    Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
         }
 
         if( context==null )
@@ -791,8 +802,10 @@ public class JspC implements Options {
             try {
                 File fjsp = new File(nextjsp);
                 if (!fjsp.exists()) {
-                    Constants.message("jspc.error.fileDoesNotExist",
-                                      new Object[] {fjsp}, Logger.WARNING);
+		    if (log.isWarnEnabled()) {
+			log.warn(Localizer.getMessage("jspc.error.fileDoesNotExist",
+						      fjsp.toString()));
+		    }
                     continue;
                 }
                 String s = fjsp.getCanonicalPath();
@@ -824,10 +837,10 @@ public class JspC implements Options {
 
     public static void main(String arg[]) {
         if (arg.length == 0) {
-           System.out.println(Constants.getString("jspc.usage"));
+           System.out.println(Localizer.getMessage("jspc.usage"));
         } else {
             try {
-                log=System.out;
+                logStream = System.out;
                 JspC jspc = new JspC();
                 jspc.setArgs(arg);
                 jspc.execute();
@@ -878,10 +891,9 @@ public class JspC implements Options {
                     verbosityLevel
                      = Integer.parseInt(tok.substring(SWITCH_VERBOSE.length()));
                 } catch (NumberFormatException nfe) {
-                    log.println(
-                        "Verbosity level "
-                        + tok.substring(SWITCH_VERBOSE.length())
-                        + " is not valid.  Option ignored.");
+                    logStream.println("Verbosity level "
+				      + tok.substring(SWITCH_VERBOSE.length())
+				      + " is not valid.  Option ignored.");
                 }
             } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
                 tok = nextArg();
@@ -959,7 +971,7 @@ public class JspC implements Options {
      * @param log
      */
     public static void setLog( PrintStream log ) {
-	    JspC.log = log;
+	    JspC.logStream = log;
     }
 
     /**

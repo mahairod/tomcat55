@@ -68,7 +68,7 @@ import javax.servlet.http.*;
 import javax.servlet.jsp.*;
 
 import org.apache.jasper.JasperException;
-import org.apache.jasper.Constants;
+import org.apache.jasper.compiler.Localizer;
 
 /**
  * This is the super class of all JSP-generated servlets.
@@ -118,7 +118,7 @@ public abstract class HttpJspBase
     }
     
     public String getServletInfo() {
-	return Constants.getString ("jsp.engine.info");
+	return Localizer.getMessage("jsp.engine.info");
     }
 
     public final void destroy() {

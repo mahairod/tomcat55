@@ -226,8 +226,9 @@ class JspDocumentParser extends DefaultHandler
 	try {
 	    attrsCopy = addCustomTagLibraries(attrs);
 	} catch (JasperException je) {
-	    throw new SAXParseException( err.getString(
-                "jsp.error.could.not.add.taglibraries" ), locator, je );
+	    throw new SAXParseException(
+                    Localizer.getMessage("jsp.error.could.not.add.taglibraries"),
+		    locator, je );
 	}
 
 	if (qName.equals(JSP_ROOT)) {
@@ -241,7 +242,7 @@ class JspDocumentParser extends DefaultHandler
 	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
 	    if (isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.istagfile", qName),
+		    Localizer.getMessage("jsp.error.action.istagfile", qName),
 		    locator);
 	    }
 	    node = new Node.PageDirective(attrsCopy, start, current);
@@ -286,7 +287,8 @@ class JspDocumentParser extends DefaultHandler
 	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
 		    locator);
 	    }
 	    node = new Node.TagDirective(attrsCopy, start, current);
@@ -298,28 +300,32 @@ class JspDocumentParser extends DefaultHandler
 	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
 		    locator);
 	    }
 	    node = new Node.AttributeDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
 		    locator);
 	    }
 	    node = new Node.VariableDirective(attrsCopy, start, current);
 	} else if (qName.equals(JSP_INVOKE)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
 		    locator);
 	    }
 	    node = new Node.InvokeAction(attrsCopy, start, current);
 	} else if (qName.equals(JSP_DO_BODY)) {
 	    if (!isTagFile) {
 		throw new SAXParseException(
-		    err.getString("jsp.error.action.isnottagfile", qName),
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
 		    locator);
 	    }
 	    node = new Node.DoBodyAction(attrsCopy, start, current);
@@ -389,7 +395,8 @@ class JspDocumentParser extends DefaultHandler
 		    for (; ; i++) {
 			if (i >= limit) {
 			    throw new SAXParseException(
-				err.getString("jsp.error.unterminated", "${"),
+				Localizer.getMessage("jsp.error.unterminated",
+						     "${"),
 				locator);
 
 			}
@@ -592,8 +599,8 @@ class JspDocumentParser extends DefaultHandler
 	TagInfo tagInfo = tagLibInfo.getTag(shortName);
         TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortName);
 	if (tagInfo == null && tagFileInfo == null) {
-	    throw new SAXException(err.getString("jsp.error.bad_tag",
-						 shortName, prefix));
+	    throw new SAXException(Localizer.getMessage("jsp.error.bad_tag",
+							shortName, prefix));
 	}
 	Class tagHandlerClass = null;
 	if (tagFileInfo == null) {
@@ -601,9 +608,9 @@ class JspDocumentParser extends DefaultHandler
 	        tagHandlerClass
 		    = ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
 	    } catch (Exception e) {
-	        throw new SAXException(err.getString(
-						"jsp.error.unable.loadclass",
-						 shortName, prefix));
+	        throw new SAXException(
+		        Localizer.getMessage("jsp.error.unable.loadclass",
+					     shortName, prefix));
 	    }
 	} else {
             tagInfo = tagFileInfo.getTagInfo();
@@ -641,9 +648,9 @@ class JspDocumentParser extends DefaultHandler
 
                 if( taglibs.containsKey( prefix ) ) {
                     // Prefix already in taglib map.
-                    throw new JasperException( err.getString(
-                        "jsp.error.xmlns.redefinition.notimplemented",
-                        prefix ) );
+                    throw new JasperException(
+                            Localizer.getMessage("jsp.error.xmlns.redefinition.notimplemented",
+						 prefix));
                 }
 
 		// get the uri
@@ -715,7 +722,7 @@ class JspDocumentParser extends DefaultHandler
 			elemType = JSP_DECLARATION;
 		    if (scriptingElem instanceof Node.Expression)
 			elemType = JSP_EXPRESSION;
-		    String msg = err.getString(
+		    String msg = Localizer.getMessage(
                         "jsp.error.parse.xml.scripting.invalid.body",
 			elemType);
 		    throw new SAXException(msg);
@@ -761,9 +768,9 @@ class JspDocumentParser extends DefaultHandler
 	try {
 	    parserController.parse(fname, includeDir, null);
 	} catch (FileNotFoundException fnfe) {
-	    throw new SAXParseException(err.getString(
-                                            "jsp.error.file.not.found", fname),
-					locator, fnfe);
+	    throw new SAXParseException(
+                    Localizer.getMessage("jsp.error.file.not.found", fname),
+		    locator, fnfe);
 	} catch (Exception e) {
 	    throw new SAXException(e);
 	}

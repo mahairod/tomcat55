@@ -81,10 +81,14 @@ import org.apache.jasper.Options;
 import org.apache.jasper.EmbededServletOptions;
 
 import org.apache.jasper.compiler.JspRuntimeContext;
+import org.apache.jasper.compiler.Localizer;
 
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.logging.DefaultLogger;
 import org.apache.jasper.logging.JasperLogger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The JSP engine (a.k.a Jasper).
@@ -103,6 +107,9 @@ import org.apache.jasper.logging.JasperLogger;
  * @author Glenn Nielsen
  */
 public class JspServlet extends HttpServlet {
+
+    // Logger
+    private static Log log = LogFactory.getLog(JspServlet.class);
 
     private Logger.Helper loghelper;
 
@@ -131,11 +138,11 @@ public class JspServlet extends HttpServlet {
         // Initialize the JSP Runtime Context
         rctxt = new JspRuntimeContext(context,options);
 
-	Constants.message("jsp.message.scratch.dir.is", 
-            new Object[] { options.getScratchDir().toString() },
-            Logger.INFORMATION );
-        Constants.message("jsp.message.dont.modify.servlets",
-            Logger.INFORMATION);
+	if (log.isInfoEnabled()) {
+	    log.info(Localizer.getMessage("jsp.message.scratch.dir.is", 
+					  options.getScratchDir().toString()));
+	    log.info(Localizer.getMessage("jsp.message.dont.modify.servlets"));
+	}
     }
 
 

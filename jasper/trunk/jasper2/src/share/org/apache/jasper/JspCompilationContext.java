@@ -71,6 +71,7 @@ import javax.servlet.jsp.tagext.TagData;
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.ServletWriter;
 import org.apache.jasper.compiler.Compiler;
+import org.apache.jasper.compiler.Localizer;
 import org.apache.jasper.servlet.JspServletWrapper;
 import org.apache.jasper.servlet.JasperLoader;
 
@@ -574,8 +575,8 @@ public class JspCompilationContext {
                 throw ex;
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new JasperException(
-                    Constants.getString("jsp.error.unable.compile"),ex);
+                throw new JasperException(Localizer.getMessage("jsp.error.unable.compile"),
+					  ex);
             }
 	}
     }
@@ -608,11 +609,11 @@ public class JspCompilationContext {
             }
             servletClass = jspLoader.loadClass(name);
         } catch (ClassNotFoundException cex) {
-            throw new JasperException(
-                Constants.getString("jsp.error.unable.load"),cex);
+            throw new JasperException(Localizer.getMessage("jsp.error.unable.load"),
+				      cex);
         } catch (Exception ex) {
-            throw new JasperException
-                (Constants.getString("jsp.error.unable.compile"), ex);
+            throw new JasperException(Localizer.getMessage("jsp.error.unable.compile"),
+				      ex);
         }
         removed = 0;
         reload = false;

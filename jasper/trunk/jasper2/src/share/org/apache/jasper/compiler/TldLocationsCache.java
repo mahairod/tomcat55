@@ -73,9 +73,10 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
-import org.apache.jasper.logging.Logger;
 import org.apache.jasper.xmlparser.ParserUtils;
 import org.apache.jasper.xmlparser.TreeNode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A container for all tag libraries that are defined "globally"
@@ -111,6 +112,9 @@ import org.apache.jasper.xmlparser.TreeNode;
  */
 
 public class TldLocationsCache {
+
+    // Logger
+    private static Log log = LogFactory.getLog(TldLocationsCache.class);
 
     /**
      * The types of URI one may specify for a tag library
@@ -168,9 +172,7 @@ public class TldLocationsCache {
 	    processTldsInFileSystem();
             initialized = true;
         } catch (JasperException ex) {
-            Constants.message("jsp.error.internal.tldinit",
-                              new Object[] { ex.getMessage() },
-                              Logger.ERROR);
+            log.error(Localizer.getMessage("jsp.error.internal.tldinit"), ex);
         }
     }
 
@@ -182,9 +184,10 @@ public class TldLocationsCache {
         // Acquire an input stream to the web application deployment descriptor
         InputStream is = ctxt.getResourceAsStream(WEB_XML);
         if (is == null) {
-            Constants.message("jsp.error.internal.filenotfound",
-                              new Object[] {WEB_XML},
-                              Logger.WARNING);
+            if (log.isWarnEnabled()) {
+		log.warn(Localizer.getMessage("jsp.error.internal.filenotfound",
+					      WEB_XML));
+	    }
             return;
         }
 

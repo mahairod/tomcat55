@@ -64,6 +64,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.compiler.Localizer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -91,11 +95,13 @@ import org.xml.sax.SAXParseException;
 
 public class ParserUtils {
 
+    // Logger
+    static Log log = LogFactory.getLog(ParserUtils.class);
+
     /**
      * An error handler for use when parsing XML documents.
      */
     static ErrorHandler errorHandler = new MyErrorHandler();
-
 
     /**
      * An entity resolver for use when parsing XML documents.
@@ -135,24 +141,20 @@ public class ParserUtils {
             document = builder.parse(is);
 	} catch (ParserConfigurationException ex) {
             throw new JasperException
-                (Constants.getString("jsp.error.parse.xml",
-                                     new Object[]{uri, ex.getMessage()}));
+                (Localizer.getMessage("jsp.error.parse.xml", uri), ex);
 	} catch (SAXParseException ex) {
             throw new JasperException
-                (Constants.getString
-                 ("jsp.error.parse.xml.line",
-                  new Object[]{uri,
-                               new Integer(ex.getLineNumber()),
-                               new Integer(ex.getColumnNumber()),
-                               ex.getMessage()}));
+                (Localizer.getMessage("jsp.error.parse.xml.line",
+				      uri,
+				      Integer.toString(ex.getLineNumber()),
+				      Integer.toString(ex.getColumnNumber())),
+		 ex);
 	} catch (SAXException sx) {
             throw new JasperException
-                (Constants.getString("jsp.error.parse.xml",
-                                     new Object[]{uri, sx.getMessage()}));
+                (Localizer.getMessage("jsp.error.parse.xml", uri), sx);
         } catch (IOException io) {
             throw new JasperException
-                (Constants.getString("jsp.error.parse.xml",
-                                     new Object[]{uri, io.toString()}));
+                (Localizer.getMessage("jsp.error.parse.xml", uri), io);
 	}
 
         // Convert the resulting document to a graph of TreeNodes
@@ -227,8 +229,8 @@ class MyEntityResolver implements EntityResolver {
 		    this.getClass().getResourceAsStream(resourcePath);
 		if (input == null) {
 		    throw new SAXException(
-                        Constants.getString("jsp.error.internal.filenotfound", 
-					    new Object[]{resourcePath}));
+                        Localizer.getMessage("jsp.error.internal.filenotfound",
+					     resourcePath));
 		}
 		InputSource isrc = new InputSource(input);
 		return isrc;
@@ -236,8 +238,8 @@ class MyEntityResolver implements EntityResolver {
 	}
         System.out.println("Resolve entity failed"  + publicId + " "
 			   + systemId );
-	Constants.message("jsp.error.parse.xml.invalidPublicId",
-			  new Object[]{publicId}, Logger.ERROR);
+	ParserUtils.log.error(Localizer.getMessage("jsp.error.parse.xml.invalidPublicId",
+						   publicId));
         return null;
     }
 }
