@@ -12,8 +12,10 @@
 
     <ant target="deploy">
       <property name="catalina.target" value="deploy-catalina" />
-      <property name="jtc.home" value="/home/bob/jk/jakarta-tomcat-connectors" />
-      <property name="catalina.home" value="/home/bob/jk/jakarta-tomcat-catalina" />
+      <property name="jtc.home" project="jakarta-tomcat-connectors"
+            reference="home"/> 
+      <property name="catalina.home" project="jakarta-tomcat-catalina"
+            reference="home"/> 
       <property name="tomcat.build" path="build"/> 
       <property name="ant.home" reference="home" project="jakarta-ant"/>
       <property name="jsse.home" reference="home" project="jsse"/>
