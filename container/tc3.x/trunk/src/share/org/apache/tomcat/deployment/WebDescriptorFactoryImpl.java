@@ -1,10 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
- * ====================================================================
- *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -116,6 +110,9 @@ implements WebDescriptorFactory {
             WebResourceCollection.class, WebResourceCollectionImpl.class);
 	this.interfaceToImplementationMap.put(ResourceReference.class,
             ResourceReferenceImpl.class);
+
+        this.interfaceToImplementationMap.put(TagLibConfig.class, 
+                                              TagLibConfigImpl.class);
     }
 
     public Object createDescriptor(Class interfaceType) {

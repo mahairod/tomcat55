@@ -1,10 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
- * ====================================================================
- *
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -114,8 +108,16 @@ public interface WebApplicationDescriptor extends WebDescriptor {
     
     public LoginConfiguration getLoginConfiguration();
     public void setLoginConfiguration(LoginConfiguration loginConfiguration);
-    // XXXX missing from DTD ?
+
+    /** Get all the TLD location/uri mappings. */
+    public Enumeration getTagLibConfigs();
+    public void addTagLibConfig(TagLibConfig tldConfig);
+    
+    // XXX
+    // commented out in anticipation they'll eventually be supported
+/*
     public Enumeration getLocalizedContentDescriptors();
     public void addLocalizedContentDescriptor(LocalizedContentDescriptor localizedContentDescriptor);
+*/
 }
 
