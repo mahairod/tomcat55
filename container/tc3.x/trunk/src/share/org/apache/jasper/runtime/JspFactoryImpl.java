@@ -124,6 +124,10 @@ public class JspFactoryImpl extends JspFactory {
 
     public void releasePageContext(PageContext pc) {
 	if( pc==null ) return;
+	JspWriterImpl out=(JspWriterImpl)pc.getOut();
+	if( out!=null ) {
+	    out.flushBuffer();
+	}
 	pc.release();
 	if( usePool) {
 	    pool.put( pc );
