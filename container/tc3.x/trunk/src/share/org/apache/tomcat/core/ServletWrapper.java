@@ -592,7 +592,6 @@ public class ServletWrapper {
     {
 	Request rrequest=request.getRealRequest();
 	Response rresponse=rrequest.getResponse();
-
 	handleRequest( rrequest, rresponse );
     }
 

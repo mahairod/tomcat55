@@ -93,13 +93,22 @@ public class HttpServletRequestFacade implements HttpServletRequest {
 	// the right permission !!!
 	return request;
     }
-    
-    public HttpServletRequestFacade(Request request) {
+
+    /** Not public - called only from RequestImpl
+     */
+    HttpServletRequestFacade(Request request) {
 	// XXX In JDK1.2, call a security class to see if the code has
 	// the right permission !!!
         this.request = request;
     }
 
+    /** Not public - is called only from RequestImpl
+     */
+    void recycle() {
+	usingReader=false;
+	usingStream=false;
+    }
+    
     public Object getAttribute(String name) {
 	return request.getAttribute(name);
     }

@@ -82,8 +82,11 @@ public class ConnectorRequest extends RequestImpl {
     int blen;
     int pos;
 
-    public ConnectorRequest( MsgConnector con ) {
+    public ConnectorRequest() {
 	super();
+    }
+
+    public void setConnector( MsgConnector con ) {
 	this.con=con;
 	pos=0;
 	this.in = new BufferedServletInputStream( this ); 

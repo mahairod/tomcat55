@@ -100,12 +100,9 @@ public class JNIConnectionHandler {
 
         try {
     	    JNIRequestAdapter reqA = new JNIRequestAdapter(contextM, this);
-	    reqA.setContextManager( contextM );
     	    JNIResponseAdapter resA =new JNIResponseAdapter(this);
-
-    	    reqA.setResponse(resA);
-    	    resA.setRequest(reqA);
-
+	    contextM.initRequest( reqA , resA );
+	    
             resA.setRequestAttr(s, l);
     	    reqA.readNextRequest(s, l);
 

@@ -96,7 +96,7 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 	Object thData[]=new Object[2];
 	HttpRequestAdapter reqA=new HttpRequestAdapter();
 	HttpResponseAdapter resA=new HttpResponseAdapter();
-	
+	contextM.initRequest( reqA, resA );
 	thData[0]=reqA;
 	thData[1]=resA;
 	
@@ -132,10 +132,11 @@ public class HttpConnectionHandler  implements  TcpConnectionHandler {
 		if( reqA!=null ) reqA.recycle();
 		if( resA!=null ) resA.recycle();
 	    }
-	    if( reqA==null) reqA=new HttpRequestAdapter();
-	    if( resA==null) resA=new HttpResponseAdapter();
-
-	    reqA.setContextManager( contextM );
+	    if( reqA==null || resA==null ) {
+		reqA=new HttpRequestAdapter();
+		resA=new HttpResponseAdapter();
+		contextM.initRequest( reqA, resA );
+	    }
 	    
 	    resA.setRequest(reqA);
 	    reqA.setResponse( resA );

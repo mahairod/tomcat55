@@ -141,10 +141,21 @@ implements HttpServletResponse {
     }
     
     public ServletOutputStream getOutputStream() {
+	if (response.isUsingWriter() ) {
+	    String msg = sm.getString("serverResponse.outputStream.ise");
+	    throw new IllegalStateException(msg);
+	}
+	response.setUsingStream( true );
 	return response.getOutputStream();
+	// response.getBufferedOutputStream().getServletOutputStreamFacade();
     }
 
     public PrintWriter getWriter() throws IOException {
+	if (response.isUsingStream() ) {
+	    String msg = sm.getString("serverResponse.writer.ise");
+	    throw new IllegalStateException(msg);
+	}
+	response.setUsingWriter( true );
 	return response.getWriter();
     }
 
