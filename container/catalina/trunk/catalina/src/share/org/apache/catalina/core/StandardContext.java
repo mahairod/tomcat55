@@ -4536,9 +4536,6 @@ public class StandardContext
         // If you extend this - override this method and make sure to clean up
         children=new HashMap();
         log.debug("resetContext " + oname + " " + mserver);
-        // Unregister the mbean so when ContainerBase.removeChild() is called
-        // the associated mbean is unregistered.
-        destroy();
     }
 
     /**
