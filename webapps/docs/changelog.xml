@@ -38,10 +38,12 @@
       <update>
         <bug>22679</bug>: Added misc note on accessing session ID to SSL-HowTo. (yoavs)
       </update>
+ <!-- ByteBufferAccessLogValve.java is not inside!!
       <update>
         Add an asynchrounous access log valve based on NIO (jfarcand) 
       </update>
-      <update>
+ -->
+       <update>
         <bug>32249</bug>: Updated logging documentation. (yoavs)
       </update>
       <update>
@@ -90,6 +92,12 @@
       </fix>
       <fix>
         <bug>32430</bug>: Class cast exception in toString() method within CGI servlet. (markt)
+      </fix>
+      <fix>
+         Add some log.isXXXEnabled checks at StandardContext and HostConfig (pero)
+      </fix>
+      <fix>
+         Remove the last DefaultContext artifacts (pero)
       </fix>
     </changelog>
   </subsection>
