@@ -694,7 +694,7 @@ public class HostConfig
         if (deployXML && !xml.exists()) {
             try {
                 jar = new JarFile(dir);
-                entry = jar.getJarEntry("META-INF/context.xml");
+                entry = jar.getJarEntry(Constants.ApplicationContextXml);
                 if (entry != null) {
                     istream = jar.getInputStream(entry);
                     
@@ -877,7 +877,7 @@ public class HostConfig
             context.setDocBase(file);
             if (deployXML) {
                 context.setConfigFile
-                    ((new File(dir, "META-INF/context.xml")).getAbsolutePath());
+                    ((new File(dir, Constants.ApplicationContextXml)).getAbsolutePath());
             }
             host.addChild(context);
             deployedApp.redeployResources.put(dir.getAbsolutePath(),
