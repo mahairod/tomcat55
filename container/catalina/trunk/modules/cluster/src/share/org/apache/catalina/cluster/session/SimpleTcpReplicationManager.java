@@ -145,15 +145,15 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     protected boolean distributable = true;
 
     protected org.apache.catalina.cluster.tcp.SimpleTcpCluster cluster;
-    
+
     protected java.util.HashMap invalidatedSessions = new java.util.HashMap();
-    
+
     /**
      * Flag to keep track if the state has been transferred or not
      * Assumes false.
      */
     protected boolean stateTransferred = false;
-    
+
     /**
      * Constructor, just calls super()
      *
@@ -206,12 +206,12 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
      */
     public void unload() throws IOException {
         if ( !getDistributable() ) {
-            super.unload();   
+            super.unload();
         }
     }
     public void load() throws ClassNotFoundException, IOException {
         if ( !getDistributable() ) {
-            super.load();   
+            super.load();
         }
     }
     public int getDebug()
@@ -270,11 +270,13 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         if ( notify && (cluster!=null) )
         {
             //notify javagroups
-            SessionMessage msg = new SessionMessage(this.name,
-                                                    SessionMessage.EVT_SESSION_CREATED,
-                                                    writeSession(session),
-                                                    session.getId());
-            cluster.send(msg);
+
+            //SessionMessage msg = new SessionMessage(this.name,
+            //                                        SessionMessage.EVT_SESSION_CREATED,
+            //                                        writeSession(session),
+            //                                        session.getId());
+            //cluster.send(msg);
+            ((ReplicatedSession)session).setIsDirty(true);
         }
         return (session);
     }//createSession
@@ -300,22 +302,22 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         add(session);
         return session;
     }
-    
+
     public void sessionInvalidated(String sessionId) {
         synchronized ( invalidatedSessions ) {
             invalidatedSessions.put(sessionId, sessionId);
         }
     }
-    
+
     public String[] getInvalidatedSessions() {
         synchronized ( invalidatedSessions ) {
             String[] result = new String[invalidatedSessions.size()];
             invalidatedSessions.values().toArray(result);
             return result;
         }
-        
+
     }
-    
+
     public SessionMessage requestCompleted(String sessionId)
     {
         if (  !getDistributable() ) {
@@ -341,12 +343,12 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 if (session != null) {
                     //return immediately if the session is not dirty
                     if (useDirtyFlag && (!session.isDirty())) {
-                        //but before we return doing nothing, 
+                        //but before we return doing nothing,
                         //see if we should send
                         //an updated last access message so that
                         //sessions across cluster dont expire
                         long interval = session.getMaxInactiveInterval();
-                        long lastaccdist = System.currentTimeMillis() - 
+                        long lastaccdist = System.currentTimeMillis() -
                             session.getLastAccessWasDistributed();
                         if ( ((interval*1000) / lastaccdist)< 3 ) {
                             SessionMessage accmsg = new SessionMessage(name,
@@ -358,7 +360,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                         }
                         return null;
                     }
-                        
+
                     session.setIsDirty(false);
                     if (getDebug() > 5) {
                         try {
@@ -427,7 +429,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         {
             java.io.ByteArrayInputStream session_data = new java.io.ByteArrayInputStream(data);
             ReplicationStream session_in = new ReplicationStream(session_data,container.getLoader().getClassLoader());
-            
+
             Session session = sessionId!=null?this.findSession(sessionId):null;
             //clear the old values from the existing session
             if ( session!=null ) {
@@ -435,7 +437,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 rs.expire(false);
                 session = null;
             }//end if
-            
+
             if (session==null) session = createSession(false,false);
             boolean hasPrincipal = session_in.readBoolean();
             SerializablePrincipal p = null;
@@ -480,7 +482,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 log("Starting... no cluster associated with this context:"+getName(),1);
                 return;
             }
-            
+
             if (cluster.getMembers().length > 0) {
                 Member mbr = cluster.getMembers()[0];
                 SessionMessage msg =
@@ -651,7 +653,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
             log("InMemoryReplicationManager.messageDataReceived()", ex);
         }//catch
     }
-    
+
     public boolean isStateTransferred() {
         return stateTransferred;
     }
