@@ -82,8 +82,8 @@ public class ServletWriter {
     // The sink writer:
     PrintWriter writer;
     
-    // servlet line numbers start from 1, but we pre-increment
-    private int javaLine = 0;
+    // servlet line numbers start from 1
+    private int javaLine = 1;
 
 
     public ServletWriter(PrintWriter writer) {

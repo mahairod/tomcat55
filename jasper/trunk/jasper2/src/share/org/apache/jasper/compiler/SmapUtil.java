@@ -592,7 +592,8 @@ public class SmapUtil {
             }
         }
 
-        private void doSmap(Node n, int inLineCount, int outIncrement) {
+        private void doSmap(Node n, int inLineCount, int outIncrement,
+			    int skippedLines) {
             Mark mark = n.getStart();
 	    if (mark == null) {
                  return;
@@ -600,28 +601,57 @@ public class SmapUtil {
 
             String unqualifiedName = unqualify(mark.getFile());
             smap.addFile(unqualifiedName, mark.getFile());
-            smap.addLineData(mark.getLineNumber(),
+            smap.addLineData(mark.getLineNumber() + skippedLines,
                           mark.getFile(),
-                          inLineCount,
-                          n.getBeginJavaLine(),
+                          inLineCount - skippedLines,
+                          n.getBeginJavaLine() + skippedLines,
                           outIncrement);
         }
 
         private void doSmap(Node n) {
-            doSmap(n, 1, n.getEndJavaLine() - n.getBeginJavaLine());
+            doSmap(n, 1, n.getEndJavaLine() - n.getBeginJavaLine(), 0);
         }
 
         private void doSmapText(Node n) {
             String text = n.getText();
             int index = 0;
+	    int next = 0;
             int lineCount = 1;
-            // count lines inside text
-            while ((index = text.indexOf('\n', index)) > -1 ) {
+	    int skippedLines = 0;
+	    boolean slashStarSeen = false;
+	    boolean beginning = true;
+
+            // Count lines inside text, but skipping comment lines at the
+	    // beginning of the text.
+            while ((next = text.indexOf('\n', index)) > -1 ) {
+		if (beginning) {
+		    String line = text.substring(index, next).trim();
+		    if (!slashStarSeen && line.startsWith("/*")) {
+			slashStarSeen = true;
+		    }
+		    if (slashStarSeen) {
+			skippedLines++;
+			int endIndex = line.indexOf("*/");
+			if (endIndex >= 0) {
+			    // End of /* */ comment
+			    slashStarSeen = false;
+			    if (endIndex < line.length() - 2) {
+				// Some executable code after comment
+				skippedLines--;
+				beginning = false;
+			    }
+			}
+		    } else if (line.length() == 0 || line.startsWith("//")) {
+			skippedLines++;
+		    } else {
+			beginning = false;
+		    }
+		}
                 lineCount++;
-                index++;
+                index = next + 1;
             }
 
-            doSmap(n, lineCount, 1);
+            doSmap(n, lineCount, 1, skippedLines);
         }
     }
 }
