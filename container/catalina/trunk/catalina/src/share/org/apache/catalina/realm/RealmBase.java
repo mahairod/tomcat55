@@ -511,7 +511,10 @@ public abstract class RealmBase
                             matched = true;
                             length = pattern.length();
                         } else if(pattern.regionMatches(0,uri,0,
-                                                        pattern.length()-1)) {
+                                                        pattern.length()-1) ||
+                                  (pattern.length()-2 == uri.length() &&
+                                   pattern.regionMatches(0,uri,0,
+                                                        pattern.length()-2))) {
                             matched = true;
                             length = pattern.length();
                         }
