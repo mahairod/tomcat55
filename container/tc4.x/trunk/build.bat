@@ -75,9 +75,8 @@ java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Djaxp.home="%JA
 
 
 rem ----- Restore Environment Variables ---------------------------------------
-
 :cleanup
-set SERVLETAPI_HOME=%_SERVLETAPIHOME%
+set SERVLETAPI_HOME=%_SERVLETAPI_HOME%
 set _SERVLETAPIHOME=
 set CLASSPATH=%_CLASSPATH%
 set _CLASSPATH=
