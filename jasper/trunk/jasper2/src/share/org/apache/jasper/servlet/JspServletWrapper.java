@@ -73,6 +73,7 @@ public class JspServletWrapper {
     private boolean reload = true;
     private boolean isTagFile;
     private int tripCount;
+    private JasperException compileException;
 
     /*
      * JspServletWrapper for JSP pages.
@@ -143,8 +144,6 @@ public class JspServletWrapper {
 
                     if (!firstTime) {
                         ctxt.getRuntimeContext().incrementJspReloadCount();
-                    } else {
-                        firstTime = false;
                     }
 
                     reload = false;
@@ -158,6 +157,16 @@ public class JspServletWrapper {
         return config.getServletContext();
     }
 
+    /*
+     * Sets the compilation exception for this JspServletWrapper.
+     *
+     * @param je The compilation exception
+     */
+    public void setCompilationException(JasperException je) {
+        this.compileException = je;
+    }
+
+
     /**
      * Compile (if needed) and load a tag file
      */
@@ -169,9 +178,17 @@ public class JspServletWrapper {
             }
             if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
+                    if (firstTime) {
+                        firstTime = false;
+                    }
                     ctxt.compile();
                 }
+            } else {
+                if (compileException != null) {
+                    throw compileException;
+                }
             }
+
             if (reload) {
                 tagHandlerClass = ctxt.load();
             }
@@ -249,9 +266,16 @@ public class JspServletWrapper {
                      Localizer.getMessage("jsp.error.unavailable"));
             }
 
-            if (options.getDevelopment()  || firstTime ) {
+            if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
+                    if (firstTime) {
+                        firstTime = false;
+                    }
                     ctxt.compile();
+                }
+            } else {
+                if (compileException != null) {
+                    throw compileException;
                 }
             }
 

@@ -506,12 +506,17 @@ public class JspCompilationContext {
             try {
                 jspCompiler.compile();
                 jsw.setReload(true);
+                jsw.setCompilationException(null);
             } catch (JasperException ex) {
+                jsw.setCompilationException(ex);
                 throw ex;
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new JasperException(Localizer.getMessage("jsp.error.unable.compile"),
-                                          ex);
+                JasperException je = new JasperException(
+                            Localizer.getMessage("jsp.error.unable.compile"),
+                            ex);
+                jsw.setCompilationException(je);
+                throw je;
             }
         }
     }
