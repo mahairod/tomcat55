@@ -344,8 +344,17 @@ public class StandardPipeline
         if( valve instanceof ValveBase &&
                 ((ValveBase)valve).getObjectName()==null ) {
             try {
+                
+                String domain=((ContainerBase)container).getDomain();
+                if( container instanceof StandardContext ) {
+                    domain=((StandardContext)container).getEngineName();
+                }
+                if( container instanceof StandardWrapper) {
+                    Container ctx=((StandardWrapper)container).getParent();
+                    domain=((StandardContext)ctx).getEngineName();
+                }
                 ObjectName vname=((ValveBase)valve).createObjectName(
-                        ((ContainerBase)container).getDomain(),
+                        domain,
                         ((ContainerBase)container).getObjectName());
                 if( vname != null ) {
                     ((ValveBase)valve).setObjectName(vname);
