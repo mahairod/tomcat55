@@ -97,8 +97,6 @@ implements org.apache.catalina.cluster.ClusterManager
 
     protected String name;
 
-    protected int debug = 0;
-
     protected boolean distributable = true;
 
     protected CatalinaCluster cluster;
@@ -137,7 +135,7 @@ implements org.apache.catalina.cluster.ClusterManager
     }
 
     public void setCluster(CatalinaCluster cluster) {
-        this.log("Cluster associated with SimpleTcpReplicationManager");
+        this.log.debug("Cluster associated with SimpleTcpReplicationManager");
         this.cluster = cluster;
     }
 
@@ -148,7 +146,7 @@ implements org.apache.catalina.cluster.ClusterManager
 
     public void setPrintToScreen(boolean printtoscreen)
     {
-        log("Setting screen debug to:"+printtoscreen);
+        log.debug("Setting screen debug to:"+printtoscreen);
         mPrintToScreen = printtoscreen;
     }
 
@@ -166,15 +164,6 @@ implements org.apache.catalina.cluster.ClusterManager
         }
     }
 
-    public int getDebug()
-    {
-        return this.debug;
-    }
-
-    public void setDebug(int debug) {
-        this.debug = debug;
-        //super.setDebug(debug);
-    }
     /**
      * Creates a HTTP session.
      * Most of the code in here is copied from the StandardManager.
@@ -314,7 +303,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     }
 
                     session.setIsDirty(false);
-                    if (getDebug() > 5) {
+                    if (log.isDebugEnabled()) {
                         try {
                             log.debug("Sending session to cluster=" + session);
                         }
@@ -330,7 +319,7 @@ implements org.apache.catalina.cluster.ClusterManager
         }
         catch (Exception x )
         {
-            log("Unable to replicate session",x);
+            log.error("Unable to replicate session",x);
         }
         return null;
     }
@@ -361,7 +350,7 @@ implements org.apache.catalina.cluster.ClusterManager
         }
         catch ( Exception x )
         {
-            log("Failed to serialize the session!",x,1);
+            log.error("Failed to serialize the session!",x);
         }
         return null;
     }
@@ -422,7 +411,7 @@ implements org.apache.catalina.cluster.ClusterManager
         }
         catch ( Exception x )
         {
-            log("Failed to deserialize the session!",x,1);
+            log.error("Failed to deserialize the session!",x);
         }
         return null;
     }
@@ -448,9 +437,9 @@ implements org.apache.catalina.cluster.ClusterManager
         try {
             //the channel is already running
             if ( mChannelStarted ) return;
-            log("Starting clustering manager...:"+getName(),1);
+            log.error("Starting clustering manager...:"+getName());
             if ( cluster == null ) {
-                log("Starting... no cluster associated with this context:"+getName(),1);
+                log.error("Starting... no cluster associated with this context:"+getName());
                 return;
             }
 
@@ -485,7 +474,7 @@ implements org.apache.catalina.cluster.ClusterManager
             }//end if
             mChannelStarted = true;
         }  catch ( Exception x ) {
-            log("Unable to start SimpleTcpReplicationManager",x,1);
+            log.error("Unable to start SimpleTcpReplicationManager",x);
         }
     }
 
@@ -513,7 +502,7 @@ implements org.apache.catalina.cluster.ClusterManager
         }
         catch ( Exception x )
         {
-            log("Unable to stop javagroups channel",x,1);
+            log.error("Unable to stop SimpleTcpReplicationManager",x);
         }
     }
 
@@ -535,8 +524,8 @@ implements org.apache.catalina.cluster.ClusterManager
      */
     protected void messageReceived( SessionMessage msg, Member sender ) {
         try  {
-            log("Received SessionMessage of type="+msg.getEventTypeString(),3);
-            log("Received SessionMessage sender="+sender,3);
+            log.debug("Received SessionMessage of type="+msg.getEventTypeString());
+            log.debug("Received SessionMessage sender="+sender);
             switch ( msg.getEventType() ) {
                 case SessionMessage.EVT_GET_ALL_SESSIONS: {
                     //get a list of all the session from this manager
@@ -577,8 +566,8 @@ implements org.apache.catalina.cluster.ClusterManager
                 }
                 case SessionMessage.EVT_SESSION_CREATED: {
                     Session session = this.readSession(msg.getSession(),msg.getSessionID());
-                    if ( getDebug()  > 5 ) {
-                        log("Received replicated session=" + session +
+                    if ( log.isDebugEnabled() ) {
+                        log.debug("Received replicated session=" + session +
                             " isValid=" + session.isValid());
                     }
                     break;
@@ -607,7 +596,7 @@ implements org.apache.catalina.cluster.ClusterManager
         }
         catch ( Exception x )
         {
-            log("Unable to receive message through TCP channel",x,1);
+            log.error("Unable to receive message through TCP channel",x);
         }
     }
 
@@ -615,7 +604,7 @@ implements org.apache.catalina.cluster.ClusterManager
         try {
             messageReceived(msg, msg.getAddress()!=null?(Member)msg.getAddress():null);
         } catch(Throwable ex){
-            log("InMemoryReplicationManager.messageDataReceived()", ex);
+            log.error("InMemoryReplicationManager.messageDataReceived()", ex);
         }//catch
     }
 
@@ -623,31 +612,6 @@ implements org.apache.catalina.cluster.ClusterManager
         return stateTransferred;
     }
 
-    public void log(String msg)  {
-        log(msg,3);
-    }
-
-    public void log(String msg, Throwable x) {
-        log(msg,x,3);
-    }
-    public void log(String msg, int level) {
-        if ( getDebug() >= level ) {
-            String lmsg = msg;
-            if ( mPrintToScreen ) System.out.println(lmsg);
-            log.info(lmsg);
-        }
-    }
-
-    public void log(String msg, Throwable x, int level)  {
-        if ( getDebug() >= level )  {
-            String lmsg = msg;
-            if ( mPrintToScreen ) {
-                System.out.println(lmsg);
-                x.printStackTrace();
-            }
-            log.error(lmsg,x);
-        }//end if
-    }
     public void setName(String name) {
         this.name = name;
     }

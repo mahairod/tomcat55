@@ -239,7 +239,7 @@ implements org.apache.catalina.cluster.ClusterSession{
     protected void log(String message) {
 
         if ((mManager != null) && (mManager instanceof SimpleTcpReplicationManager)) {
-            ((SimpleTcpReplicationManager) mManager).log(message);
+            ((SimpleTcpReplicationManager) mManager).log.debug("ReplicatedSession: " + message);
         } else {
             System.out.println("ReplicatedSession: " + message);
         }
@@ -249,7 +249,7 @@ implements org.apache.catalina.cluster.ClusterSession{
     protected void log(String message, Throwable x) {
 
         if ((mManager != null) && (mManager instanceof SimpleTcpReplicationManager)) {
-            ((SimpleTcpReplicationManager) mManager).log(message,x);
+            ((SimpleTcpReplicationManager) mManager).log.error("ReplicatedSession: " + message,x);
         } else {
             System.out.println("ReplicatedSession: " + message);
             x.printStackTrace();
