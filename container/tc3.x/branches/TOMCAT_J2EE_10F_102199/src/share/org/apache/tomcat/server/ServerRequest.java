@@ -109,7 +109,17 @@ public class ServerRequest extends RequestImpl {
 	ServletInputStreamImpl sis = new ServletInputStreamImpl(this, sin);
 	this.in=sis;
 	
-	processRequestLine(sis.readLine());
+	try {
+		processRequestLine(sis.readLine());
+	}catch(IOException ioe) {
+		// We cannot do much... but lets make sure atleast
+		// that we send the right thing back to the
+		// browser.
+		if(response.getStatus() == HttpServletResponse.SC_OK) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return;
+		}
+	}
 
 	// XXX
 	//    return if an error was detected in processing the

@@ -352,7 +352,8 @@ public class DefaultServlet extends HttpServlet {
         // return 404 instead of the JSP source
 	// On all platforms, makes sure we don't let ../'s through
         // Unfortunately, on Unix, it prevents symlinks from working
-	if (! absPath.equals(canPath)) {
+	// So, a check for File.separator("\\").....
+	if (File.separator.equals("\\") && (!absPath.equals(canPath)) ) {
 	    response.sendError(response.SC_NOT_FOUND);
 
 	    return;
