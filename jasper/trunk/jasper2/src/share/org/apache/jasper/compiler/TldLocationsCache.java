@@ -58,13 +58,16 @@ import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
+import java.io.DataInputStream;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.*;
 import java.net.JarURLConnection;
-import java.net.*;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.net.URL;
 
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
@@ -147,14 +150,15 @@ public class TldLocationsCache {
         this(ctxt, false);
     }
 
-    /** Constructs a new instance of TldLocationsCache. 
+    /** Constructor. 
+     *
      * @param ctxt the servlet context of the web application in which Jasper 
-     *   is running
+     * is running
      * @param redeployMode if true, then the compiler will allow redeploying 
-     *   a tag library from the same jar, at the expense of slowing down the server 
-     *   a bit. Note that this may only work on JDK 1.3.1_01a and later, because 
-     *   of JDK bug 4211817 fixed in this release.
-     *   If redeployMode is false, a faster but less capable mode will be used.
+     * a tag library from the same jar, at the expense of slowing down the
+     * server a bit. Note that this may only work on JDK 1.3.1_01a and later,
+     * because of JDK bug 4211817 fixed in this release.
+     * If redeployMode is false, a faster but less capable mode will be used.
      */
     public TldLocationsCache(ServletContext ctxt, boolean redeployMode) {
         this.ctxt = ctxt;
@@ -164,14 +168,62 @@ public class TldLocationsCache {
         initialized = false;
     }
 
+    /**
+     * Get the 'location' of the TLD associated with 
+     * a given taglib 'uri'.
+     * 
+     * @return An array of two Strings. The first one is
+     * real path to the TLD. If the path to the TLD points
+     * to a jar file, then the second string is the
+     * name of the entry for the TLD in the jar file.
+     * Returns null if the uri is not associated to
+     * a tag library 'exposed' in the web application.
+     * A tag library is 'exposed' either explicitely in 
+     * web.xml or implicitely via the uri tag in the TLD 
+     * of a taglib deployed in a jar file (WEB-INF/lib).
+     */
+    public String[] getLocation(String uri) 
+        throws JasperException
+    {
+        if( ! initialized ) init();
+        return (String[])mappings.get(uri);
+    }
+
+    /** 
+     * Returns the type of a URI:
+     *     ABS_URI
+     *     ROOT_REL_URI
+     *     NOROOT_REL_URI
+     */
+    public static int uriType(String uri) {
+        if (uri.indexOf(':') != -1) {
+            return ABS_URI;
+        } else if (uri.startsWith("/")) {
+            return ROOT_REL_URI;
+        } else {
+            return NOROOT_REL_URI;
+        }
+    }
+
+    public TagLibraryInfo getTagLibraryInfo(String uri) {
+        if (!initialized) init();
+        return (TagLibraryInfo) tlds.get(uri);
+    }
+
+    public void addTagLibraryInfo(String uri, TagLibraryInfo tld) {
+        if (!initialized) init();
+        tlds.put(uri, tld);
+    }
+
     private void init() {
-        if( initialized ) return;
+        if (initialized) return;
         try {
             processWebDotXml();
             processJars();
 	    processTldsInFileSystem("/WEB-INF/");
+	    processTldsInGlobalJars();
             initialized = true;
-        } catch (JasperException ex) {
+        } catch (Exception ex) {
             log.error(Localizer.getMessage("jsp.error.internal.tldinit"), ex);
         }
     }
@@ -229,14 +281,21 @@ public class TldLocationsCache {
      * Processes any JAR files contained in this web application's
      * WEB-INF/lib directory.
      */
-    private void processJars() throws JasperException {
+    private void processJars() throws Exception {
+
         Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
         if (libSet != null) {
             Iterator it = libSet.iterator();
             while (it.hasNext()) {
                 String resourcePath = (String) it.next();
-                if (resourcePath.endsWith(".jar")) 
-                    processTldsInJar(resourcePath);
+                if (resourcePath.endsWith(".jar")) {
+		    URL url = ctxt.getResource(resourcePath);
+		    if (url == null)
+			return;
+		    URL jarURL = new URL("jar:" + url.toString() + "!/");
+		    processTldsInJar((JarURLConnection)
+				     jarURL.openConnection());
+		}
             }
         }
     }
@@ -247,20 +306,16 @@ public class TldLocationsCache {
      * an implicit map entry to the taglib map for any TLD that has a <uri>
      * element.
      *
-     * @param resourcePath Context-relative resource path
+     * @param conn The JarURLConnection to the JAR file containing the TLDs
      */
-    private void processTldsInJar(String resourcePath) throws JasperException {
+    private void processTldsInJar(JarURLConnection conn)
+	        throws JasperException {
 
         JarFile jarFile = null;
-        InputStream stream = null;
+	String resourcePath = conn.getJarFileURL().toString();
 
         try {
-            URL url = ctxt.getResource(resourcePath);
-            if (url == null) return;
-            url = new URL("jar:" + url.toString() + "!/");
-            JarURLConnection conn =
-                (JarURLConnection) url.openConnection();
-            if (redeployMode) {
+	    if (redeployMode) {
                 conn.setUseCaches(false);
             }
             jarFile = conn.getJarFile();
@@ -270,7 +325,7 @@ public class TldLocationsCache {
                 String name = entry.getName();
                 if (!name.startsWith("META-INF/")) continue;
                 if (!name.endsWith(".tld")) continue;
-                stream = jarFile.getInputStream(entry);
+                InputStream stream = jarFile.getInputStream(entry);
                 try {
                     String uri = getUriFromTld(resourcePath, stream);
 		    // Add implicit map entry only if its uri is not already
@@ -320,7 +375,7 @@ public class TldLocationsCache {
      * element.
      */
     private void processTldsInFileSystem(String startPath)
-	    throws JasperException {
+	    throws Exception {
 
 	Set dirList = ctxt.getResourcePaths(startPath);
 	if (dirList != null) {
@@ -374,56 +429,37 @@ public class TldLocationsCache {
         return null;
     }
 
-    //*********************************************************************
-    // Accessors
-
-    /**
-     * Get the 'location' of the TLD associated with 
-     * a given taglib 'uri'.
-     * 
-     * @return An array of two Strings. The first one is
-     * real path to the TLD. If the path to the TLD points
-     * to a jar file, then the second string is the
-     * name of the entry for the TLD in the jar file.
-     * Returns null if the uri is not associated to
-     * a tag library 'exposed' in the web application.
-     * A tag library is 'exposed' either explicitely in 
-     * web.xml or implicitely via the uri tag in the TLD 
-     * of a taglib deployed in a jar file (WEB-INF/lib).
+    /*
+     * Processes any TLDs in all JAR files accessible to all parent
+     * classloaders of the web application's classloader.
+     *
+     * This is a Tomcat-specific extension to the TLD search order defined in
+     * the JSP spec, which will allow tag libraries packaged as JAR
+     * files to be shared by web applications by simply dropping them in a 
+     * location that all web applications have access to (e.g.,
+     * <CATALINA_HOME>/common/lib).
      */
-    public String[] getLocation(String uri) 
-        throws JasperException
-    {
-        if( ! initialized ) init();
-        return (String[])mappings.get(uri);
-    }
+    private void processTldsInGlobalJars() throws Exception {
 
-    //*********************************************************************
-    // Utility methods
-
-    /** 
-     * Returns the type of a URI:
-     *     ABS_URI
-     *     ROOT_REL_URI
-     *     NOROOT_REL_URI
-     */
-    public static int uriType(String uri) {
-        if (uri.indexOf(':') != -1) {
-            return ABS_URI;
-        } else if (uri.startsWith("/")) {
-            return ROOT_REL_URI;
-        } else {
-            return NOROOT_REL_URI;
-        }
-    }
-
-    public TagLibraryInfo getTagLibraryInfo(String uri) {
-        if (!initialized) init();
-        return (TagLibraryInfo) tlds.get(uri);
-    }
-
-    public void addTagLibraryInfo(String uri, TagLibraryInfo tld) {
-        if (!initialized) init();
-        tlds.put(uri, tld);
+	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	while (loader != null) {
+	    if (loader instanceof URLClassLoader) {
+		URL[] urls = ((URLClassLoader) loader).getURLs();
+		for (int i=0; i<urls.length; i++) {
+		    URLConnection conn = urls[i].openConnection();
+		    if (conn instanceof JarURLConnection) {
+			processTldsInJar((JarURLConnection) conn);
+		    } else {
+			String urlStr = urls[i].toString();
+			if (urlStr.startsWith("file:") && urlStr.endsWith(".jar")) {
+			    URL jarURL = new URL("jar:" + urlStr + "!/");
+			    processTldsInJar((JarURLConnection)
+					     jarURL.openConnection());
+			}
+		    }
+		}
+	    }
+	    loader = loader.getParent();
+	}
     }
 }

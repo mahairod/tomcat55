@@ -206,10 +206,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    ZipEntry jarEntry = null;
 	    InputStream stream = null;
 	    try {
-                String path = location[0] ;
-                url = ctxt.getResource(path);
-                if (url == null) return;
-		url = new URL("jar:" + url.toString() + "!/");
+		url = new URL("jar:" + location[0] + "!/");
 		JarURLConnection conn = (JarURLConnection)
 		    url.openConnection();
 		conn.connect(); //@@@ necessary???
