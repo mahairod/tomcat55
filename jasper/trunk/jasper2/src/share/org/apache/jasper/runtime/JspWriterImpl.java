@@ -98,6 +98,7 @@ public class JspWriterImpl extends JspWriter {
         closed = false;
         out = null;
 	nextChar = 0;
+        response = null;
     }
 
     /**
