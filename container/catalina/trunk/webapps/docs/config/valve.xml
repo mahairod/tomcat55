@@ -60,7 +60,12 @@
 
       <attribute name="className" required="true">
         <p>Java class name of the implementation to use.  This MUST be set to
-        <strong>org.apache.catalina.valves.AccessLogValve</strong>.</p>
+        <strong>org.apache.catalina.valves.AccessLogValve</strong> to use the
+        default access log valve. To use a more optimized access log valve
+        designed for production use, you MUST set this attribute to 
+        <strong>org.apache.catalina.valves.FastCommonAccessLogValve</strong>.
+        In this case, only the <code>common</code> and <code>combined</code>
+        patterns are supported.</p>
       </attribute>
 
       <attribute name="directory" required="false">
@@ -76,7 +81,9 @@
         from the request and response to be logged, or the word
         <code>common</code> or <code>combined</code> to select a
         standard format.  See below for more information on configuring
-        this attribute.</p>
+        this attribute. Note that the optimized access does only support
+        <code>common</code> and <code>combined</code> as the value for this
+        attribute.</p>
       </attribute>
 
       <attribute name="prefix" required="false">
