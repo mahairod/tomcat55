@@ -260,6 +260,8 @@ public class Handler {
 		}
 		context.log("Exception in init  " + ex.getMessage(), ex );
                 if (res.isIncluded()) { // Only propogate on includes
+		    // save error URI if necessary
+		    contextM.saveErrorURI( req, res );
                     if (ex instanceof IOException)
                         throw (IOException) ex;
                     else if (ex instanceof ServletException)
@@ -294,6 +296,8 @@ public class Handler {
 
         // Rethrow the exception if we are inside an include
         if (res.isIncluded()) {
+	    // save error URI if necessary
+	    contextM.saveErrorURI( req, res );
             //            context.log("Rethrowing doService exception: " + t);
             if (t instanceof IOException)
                 throw (IOException) t;

@@ -994,6 +994,11 @@ public class ContextManager {
 
     // -------------------- Error handling --------------------
 
+    public void saveErrorURI( Request req, Response res ) {
+	if (res.getErrorURI() == null)
+	    res.setErrorURI( (String)req.getAttribute("javax.servlet.include.request_uri"));
+    }
+
     /** Called for error-codes
      */
     public void handleStatus( Request req, Response res, int code ) {
@@ -1060,9 +1065,6 @@ public class ContextManager {
      * or use the default handler.
      */
     void handleError( Request req, Response res , Throwable t  ) {
-	// if error already handled
-	if (res.isErrorHandled())
-	    return;
 	Context ctx = req.getContext();
 	if(ctx==null) {
 	    ctx=getContext("");
@@ -1084,8 +1086,6 @@ public class ContextManager {
             req.setAttribute("tomcat.servlet.error.unavailableTime", new Integer(unavailableTime));
 	    res.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE); // 503
 	    handleStatus( req, res, HttpServletResponse.SC_SERVICE_UNAVAILABLE );
-	    // indicate error handling has been called
-	    res.setErrorHandled(true);
 	    return;
 	}
 	else if( t instanceof IllegalStateException ) {
@@ -1152,9 +1152,6 @@ public class ContextManager {
         } catch( ServletException e) {
             ;   // ASSERT: Only thrown by included servlets
         }
-
-	// indicate error handling has been called
-	res.setErrorHandled(true);
     }
 
     public ServletWrapper getHandlerForPath( Context ctx, String path ) {

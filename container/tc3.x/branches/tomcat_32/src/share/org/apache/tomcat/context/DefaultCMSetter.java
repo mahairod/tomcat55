@@ -216,6 +216,7 @@ class ExceptionHandler extends ServletWrapper {
 	throws Exception
     {
 	String msg=(String)req.getAttribute("javax.servlet.error.message");
+	String errorURI = res.getErrorURI();
 	
 	Throwable e= (Throwable)req.
 	    getAttribute("tomcat.servlet.error.throwable");
@@ -230,7 +231,7 @@ class ExceptionHandler extends ServletWrapper {
 	
 	StringBuffer buf = new StringBuffer();
 	buf.append("<h1>");
-	if( res.isIncluded() ) {
+	if( errorURI != null ) {
 	    buf.append(sm.getString("defaulterrorpage.includedservlet") ).
 		append(" ");
 	}  else {
@@ -247,12 +248,11 @@ class ExceptionHandler extends ServletWrapper {
 	    .append(req.getRequestURI())
 	    .append("</h2>");
 
-	if ( res.isIncluded() && contextM.getShowDebugInfo()) {
+	if ( errorURI != null && contextM.getShowDebugInfo()) {
 	    buf.append("\r\n<h2>")
 		.append(sm.getString("defaulterrorpage.errorlocation"))
 		.append(" ")
-		.append((String)req.
-			getAttribute("javax.servlet.include.request_uri"))
+		.append(errorURI)
 		.append("</h2>");
 	}
 
@@ -329,6 +329,7 @@ class StatusHandler extends ServletWrapper {
 	throws Exception
     {
 	String msg=(String)req.getAttribute("javax.servlet.error.message");
+	String errorURI = res.getErrorURI();
 	
 	res.setContentType("text/html");
 	// res is reset !!!
@@ -337,7 +338,8 @@ class StatusHandler extends ServletWrapper {
 	
 	StringBuffer buf = new StringBuffer();
 	buf.append("<head><title>");
-	if( res.isIncluded() ) {
+	// if an included request originated
+	if( errorURI != null ) {
 	    // use error code from include
 	    sc = ((Integer)req.getAttribute("javax.servlet.error.status_code")).intValue();
 	    buf.append(sm.getString("defaulterrorpage.includedservlet") );
@@ -349,7 +351,7 @@ class StatusHandler extends ServletWrapper {
 	buf.append("</title></head>\r\n");
 
 	buf.append("<h1>");
-	if( res.isIncluded() ) {
+	if( errorURI != null ) {
 	    buf.append(sm.getString("defaulterrorpage.includedservlet") )
 		.append(" ");
 	}  else {
@@ -366,12 +368,11 @@ class StatusHandler extends ServletWrapper {
 	    .append(req.getRequestURI())
 	    .append("</h2>");
 
-	if ( sc >= 400 && res.isIncluded() && contextM.getShowDebugInfo()) {
+	if ( sc >= 400 && errorURI != null && contextM.getShowDebugInfo()) {
 	    buf.append("\r\n<h2>")
 		.append(sm.getString("defaulterrorpage.errorlocation"))
 		.append(" ")
-		.append((String)req.
-			getAttribute("javax.servlet.include.request_uri"))
+		.append(errorURI)
 		.append("</h2>");
 	}
 

@@ -143,15 +143,15 @@ public interface Response {
      */
     public void setIncluded(boolean b);
 
-    /** True if error has been handled
+    /** Saves the request that originates an error.
      */
-    public boolean isErrorHandled();
-
-    /** This is used to indicate that error handling has been performed.
-     *  It is used to avoid invoking the error handling more than once
-     *  as exceptions are passed up the call stack.
+    public void setErrorURI(String uri) ;
+    
+    /** This is used to retrieve the included request that
+     *  originated an error when the error is handled at the
+     *  top level request.
      */
-    public void setErrorHandled(boolean b);
+    public String getErrorURI() ;
     
     // -------------------- Buffering --------------------
     

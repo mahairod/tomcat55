@@ -108,7 +108,7 @@ public class ResponseImpl implements Response {
     protected boolean commited = false;
     
     boolean notIncluded=true;
-    boolean errorHandled=false;
+    String errorURI=null;
 
     // default implementation will just append everything here
     StringBuffer body=null;
@@ -157,12 +157,12 @@ public class ResponseImpl implements Response {
 	}
     }
 
-    public boolean isErrorHandled() {
-	return errorHandled;
+    public void setErrorURI(String uri) {
+	errorURI = uri;
     }
 
-    public void setErrorHandled( boolean handled ) {
-	errorHandled = handled;
+    public String getErrorURI() {
+	return errorURI;
     }
     
     public boolean isStarted() {
@@ -184,7 +184,7 @@ public class ResponseImpl implements Response {
 	started = false;
 	commited = false;
 	notIncluded=true;
-	errorHandled=false;
+	errorURI=null;
 	// adapter
 	body=null;
 	if( out != null ) out.recycle();
