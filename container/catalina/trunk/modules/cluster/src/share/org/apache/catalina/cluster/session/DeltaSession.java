@@ -674,7 +674,7 @@ public class DeltaSession implements HttpSession, Session, Serializable,
         // Mark this session as "being expired" if needed
         if (expiring)
             return;
-        String expiredId = getId();
+        String expiredId = getIdInternal();
 
         synchronized (this) {
 
