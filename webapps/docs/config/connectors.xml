@@ -53,7 +53,7 @@ The following table lists most of the existing Tomcat connectors.
 </p>
 
 <table border="1">
-<tr><th colspan="4">HTTP Connectors for Tomcat 4.x</th></tr>
+<tr><th colspan="4">HTTP Connectors for Tomcat 5</th></tr>
 <tr><th>Client</th><th>Protocol</th><th>Tomcat className</th><th>Notes</th></tr>
 
 <tr><td>Ancient browser</td><td>HTTP/1.0</td>

@@ -64,7 +64,7 @@
          You can also enable an SSL HTTP/1.1 Connector on port 8443 by
          following the instructions below and uncommenting the second Connector
          entry.  SSL support requires the following steps (see the SSL Config
-         HOWTO in the Tomcat 4.0 documentation bundle for more detailed
+         HOWTO in the Tomcat 5 documentation bundle for more detailed
          instructions):
          * Download and install JSSE 1.0.2 or later, and put the JAR files
            into "$JAVA_HOME/jre/lib/ext".
@@ -159,7 +159,7 @@
            particular virtual host, or a particular application, nest this
            element inside the corresponding <Host> or <Context> entry instead.
 
-           For a similar mechanism that is portable to all Servlet 2.3
+           For a similar mechanism that is portable to all Servlet 2.4
            containers, check out the "RequestDumperFilter" Filter in the
            example application (the source for this filter may be found in
            "$CATALINA_HOME/webapps/examples/WEB-INF/classes/filters").
@@ -372,7 +372,7 @@
 
   </Service>
 
-  <!-- The MOD_WEBAPP connector is used to connect Apache 1.3 with Tomcat 4.0
+  <!-- The MOD_WEBAPP connector is used to connect Apache 1.3 with Tomcat 5
        as its servlet container. Please read the README.txt file coming with
        the WebApp Module distribution on how to build it.
        (Or check out the "jakarta-tomcat-connectors/webapp" CVS repository)

@@ -111,13 +111,13 @@ file named <code>build.properties</code> in your project's top-level
 directory.  The supported properties are listed in the comments inside
 the sample <code>build.xml</code> script.  At a minimum, you will generally
 need to define the <code>catalina.home</code> property defining where
-Tomcat 4 is installed, and the manager application username and password.
+Tomcat 5 is installed, and the manager application username and password.
 You might end up with something like this:</p>
 <source>
 # Context path to install this application on
 app.path=/hello
 
-# Tomcat 4 installation directory
+# Tomcat 5 installation directory
 catalina.home=/usr/local/jakarta-tomcat-4.0
 
 # Manager webapp username and password
@@ -225,7 +225,7 @@ quickest way to do that is to use the custom Ant tasks that are included in
 the sample <code>build.xml</code> script.  Using these commands might follow
 a pattern like this:</p>
 <ul>
-<li><em>Start Tomcat 4 if needed</em>.  If Tomcat 4 is not already running,
+<li><em>Start Tomcat 5 if needed</em>.  If Tomcat 5 is not already running,
     you will need to start it in the usual way.
     <br/><br/></li>
 <li><em>Compile your application</em>.  Use the <code>ant compile</code>

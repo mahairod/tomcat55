@@ -33,7 +33,7 @@ document for web application developers as well as administrators, see
 to be provided).</p>
 
 <p>For information about utilizing the <em>Single Sign On</em> feature of
-Tomcat 4 (allowing a user to authenticate themselves once across the entire
+Tomcat 5 (allowing a user to authenticate themselves once across the entire
 set of web applications associated with a virtual host), see
 <a href="config/host.html#Single Sign On">here</a>.</p>
 
@@ -60,7 +60,7 @@ applications to <em>declare</em> their security requirements (in the
 defining the interface between a servlet container and the associated user
 and role information.  In many cases, however, it is desireable to "connect"
 a servlet container to some existing authentication database or mechanism
-that already exists in the production environment.  Therefore, Tomcat 4
+that already exists in the production environment.  Therefore, Tomcat 5
 defines a Java interface (<code>org.apache.catalina.Realm</code>) that
 can be implemented by "plug in" components to establish this connection.
 Three standard plug-ins are provided, supporting connection to three different
@@ -77,7 +77,7 @@ sources of authentication information:</p>
 </ul>
 
 <p>It is also possible to write your own <code>Realm</code> implementation,
-and integrate it with Tomcat 4.  However, doing this is beyond the scope of
+and integrate it with Tomcat 5.  However, doing this is beyond the scope of
 this document.  See (<strong>FIXME</strong> - reference to developer stuff)
 for more information.</p>
 
@@ -127,7 +127,7 @@ different elements, which has a direct impact on the "scope" of that Realm
 
 <h3>Introduction</h3>
 
-<p><strong>JDBCRealm</strong> is an implementation of the Tomcat 4
+<p><strong>JDBCRealm</strong> is an implementation of the Tomcat 5
 <code>Realm</code> interface that looks up users in a relational database
 accessed via a JDBC driver.  There is substantial configuration flexibility
 that lets you adapt to existing table and column names, as long as your
@@ -169,11 +169,11 @@ database structure conforms to the following requirements:</p>
 <li>Place a copy of the JDBC driver you will be using inside the
     <code>$CATALINA_HOME/server/lib</code> directory (if you do not need it
     visible to web applications) or <code>$CATALINA_HOME/common/lib</code>
-    (if it will be used both by Tomcat 4 <em>and</em> by your apps).
+    (if it will be used both by Tomcat 5 <em>and</em> by your apps).
     Note that <strong>only</strong> JAR files are recognized!</li>
 <li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
     <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
-<li>Restart Tomcat 4 if it is already running.</li>
+<li>Restart Tomcat 5 if it is already running.</li>
 </ol>
 
 <h3>Realm Element Attributes</h3>
@@ -290,7 +290,7 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 <p>JDBCRealm operates according to the following rules:</p>
 <ul>
 <li>When a user attempts to access a protected resource for the first time,
-    Tomcat 4 will call the <code>authenticate()</code> method of this
+    Tomcat 5 will call the <code>authenticate()</code> method of this
     <code>Realm</code>.  Thus, any changes you have made to the database
     directly (new users, changed passwords or roles, etc.) will be immediately
     reflected.</li>
@@ -318,7 +318,7 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 
 <h3>Introduction</h3>
 
-<p><strong>JNDIRealm</strong> is an implementation of the Tomcat 4
+<p><strong>JNDIRealm</strong> is an implementation of the Tomcat 5
 <code>Realm</code> interface that looks up users in an LDAP directory
 server accessed by a JNDI provider (typically, the standard LDAP
 provider that is available with the JNDI API classes). The realm
@@ -493,10 +493,10 @@ the name of this attribute.</p>
     <code>ldap.jar</code> available with JNDI) inside the
     <code>$CATALINA_HOME/server/lib</code> directory (if you do not need it
     visible to web applications) or <code>$CATALINA_HOME/common/lib</code>
-    (if it will be used both by Tomcat 4 <em>and</em> by your apps).</li>
+    (if it will be used both by Tomcat 5 <em>and</em> by your apps).</li>
 <li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
     <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
-<li>Restart Tomcat 4 if it is already running.</li>
+<li>Restart Tomcat 5 if it is already running.</li>
 </ol>
 
 <h3>Realm Element Attributes</h3>
@@ -832,7 +832,7 @@ authentication is usually to be preferred.</p>
 <p>JNDIRealm operates according to the following rules:</p>
 <ul>
 <li>When a user attempts to access a protected resource for the first time,
-    Tomcat 4 will call the <code>authenticate()</code> method of this
+    Tomcat 5 will call the <code>authenticate()</code> method of this
     <code>Realm</code>.  Thus, any changes you have made to the directory
     (new users, changed passwords or roles, etc.) will be immediately
     reflected.</li>
@@ -861,7 +861,7 @@ authentication is usually to be preferred.</p>
 <h3>Introduction</h3>
 
 <p><strong>MemoryRealm</strong> is a simple demonstration implementation of the
-Tomcat 4 <code>Realm</code> interface.  It is not designed for production use.
+Tomcat 5 <code>Realm</code> interface.  It is not designed for production use.
 At startup time, MemoryRealm loads information about all users, and their
 corresponding roles, from an XML document (by default, this document is loaded from <code>$CATALINA_HOME/conf/tomcat-users.xml</code>).  Changes to the data
 in this file are not recognized until Tomcat is restarted.</p>
@@ -923,7 +923,7 @@ valid user, consisting of the following attributes:</p>
 
 <h3>Example</h3>
 
-<p>The default installation of Tomcat 4 is configured with a MemoryRealm
+<p>The default installation of Tomcat 5 is configured with a MemoryRealm
 nested inside the <code>&lt;Engine&gt;</code> element, so that it applies
 to all virtual hosts and web applications.  The default contents of the
 <code>conf/tomcat-users.xml</code> file is:</p>
@@ -944,7 +944,7 @@ to all virtual hosts and web applications.  The default contents of the
     this file will <strong>not</strong> be recognized until Tomcat is
     restarted.</li>
 <li>When a user attempts to access a protected resource for the first time,
-    Tomcat 4 will call the <code>authenticate()</code> method of this
+    Tomcat 5 will call the <code>authenticate()</code> method of this
     <code>Realm</code>.</li>
 <li>Once a user has been authenticated, the user (and his or her associated
     roles) are cached within Tomcat for the duration of the user's login.
@@ -1028,7 +1028,7 @@ on your class path to make the <code>RealmBase</code> class available.</p>
 
 <subsection name="Example Application">
 
-<p>The example application shipped with Tomcat 4 includes an area that is
+<p>The example application shipped with Tomcat 5 includes an area that is
 protected by a security constraint, utilizing form-based login.  To access it,
 point your browser at
 <a href="http://localhost:8080/examples/jsp/security/protected/">http://localhost:8080/examples/jsp/security/protected/</a>
@@ -1041,7 +1041,7 @@ and log on with one of the usernames and passwords described for the default
 <subsection name="Manager Application">
 
 <p>If you wish to use the <a href="manager-howto.html">Manager Application</a>
-to deploy and undeploy applications in a running Tomcat 4 installation, you
+to deploy and undeploy applications in a running Tomcat 5 installation, you
 MUST add the "manager" role to at least one username in your selected Realm
 implementation.  This is because the manager web application itself uses a
 security constraint that requires role "manager" to access ANY request URI

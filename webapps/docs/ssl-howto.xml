@@ -18,15 +18,15 @@
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
-    to refer to the directory into which you have installed Tomcat 4,
+    to refer to the directory into which you have installed Tomcat 5,
     and is the base directory against which most relative paths are
-    resolved.  However, if you have configured Tomcat 4 for multiple
+    resolved.  However, if you have configured Tomcat 5 for multiple
     instances by setting a CATALINA_BASE directory, you should use
     $CATALINA_BASE instead of $CATALINA_HOME for each of these
     references.</p>
     </em></blockquote>
 
-<p>To install and configure SSL support on Tomcat 4, you need to follow
+<p>To install and configure SSL support on Tomcat 5, you need to follow
 these simple steps.  For more information, read the rest of this HOW-TO.</p>
 <ol>
 <li>Download JSSE 1.0.2 (or later) from
@@ -266,7 +266,7 @@ Certificate that can be used by your server.</p>
 <p>The final step is to configure your secure socket in the
 <code>$CATALINA_HOME/conf/server.xml</code> file, where
 <code>$CATALINA_HOME</code> represents the directory into which you
-installed Tomcat 4.  An example <code>&lt;Connector&gt;</code> element
+installed Tomcat 5.  An example <code>&lt;Connector&gt;</code> element
 for an SSL connector is included in the default <code>server.xml</code>
 file installed with Tomcat.  It will look something like this:</p>
 <source>
@@ -302,7 +302,7 @@ numbers lower than 1024 on many operating systems.</p>
   value specified for the <code>redirectPort</code> attribute on the
   non-SSL connector.  This allows Tomcat to automatically redirect
   users who attempt to access a page with a security constraint specifying
-  that SSL is required, as required by the Servlet 2.3 Specification.</p>
+  that SSL is required, as required by the Servlet 2.4 Specification.</p>
   </em></blockquote>
 
 <p>You will notice a <code>Factory</code> element nested inside the

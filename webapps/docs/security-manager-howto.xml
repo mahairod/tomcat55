@@ -51,7 +51,7 @@
   by Tomcat will have.  There are a number of Permission classes that are
   a standard part of the JDK, and you can create your own Permission class
   for use in your own web applications.  Both techniques are used in
-  Tomcat 4.</p>
+  Tomcat 5.</p>
 
 
   <subsection name="Standard Permissions">
@@ -145,7 +145,7 @@ grant [signedBy &lt;signer&gt;,] [codeBase &lt;code source&gt;] {
   looks like this:</p>
 <source>
 // ============================================================================
-// catalina.corepolicy - Security Policy Permissions for Tomcat 4.0
+// catalina.corepolicy - Security Policy Permissions for Tomcat 5
 //
 // This file contains a default set of security policies to be enforced (by the
 // JVM) when Catalina is executed with the "-security" option.  In addition

@@ -154,7 +154,7 @@
             is restricted to users with role "manager".</b>
             Users are defined in <code>$CATALINA_HOME/conf/tomcat-users.xml</code>.</p>
 
-            <p>Included with this release are a host of sample Servlets and JSPs (with associated source code), extensive documentation (including the Servlet 2.3 and JSP 1.2 API JavaDoc), and an introductory guide to developing web applications.</p>
+            <p>Included with this release are a host of sample Servlets and JSPs (with associated source code), extensive documentation (including the Servlet 2.4 and JSP 2.0 API JavaDoc), and an introductory guide to developing web applications.</p>
 
             <p>Tomcat mailing lists are available at the Jakarta project web site:</p>
 
