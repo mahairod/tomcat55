@@ -32,21 +32,25 @@
   support the following attributes:</p>
 
   <attributes>
+
     <attribute name="className" required="false">
       <p>Java class name of the implementation to use.  This class must
       implement the <code>org.apache.catalina.Server</code> interface.
       If no class name is specified, the standard implementation will
       be used.</p>
     </attribute>
+
     <attribute name="port" required="true">
       <p>The TCP/IP port number on which this server waits for a shutdown
       command.  This connection must be initiated from the same server
       computer that is running this instance of Tomcat.</p>
     </attribute>
+
     <attribute name="shutdown" required="true">
       <p>The command string that must be received via a TCP/IP connection
       to the specified port number, in order to shut down Tomcat.</p>
     </attribute>
+
   </attributes>
 
   </subsection>
@@ -59,7 +63,6 @@
   common attributes listed above):</p>
 
   <attributes>
-
   </attributes>
 
   </subsection>

@@ -33,12 +33,14 @@
   support the following attributes:</p>
 
   <attributes>
+
     <attribute name="className" required="false">
       <p>Java class name of the implementation to use.  This class must
       implement the <code>org.apache.catalina.Service</code> interface.
       If no class name is specified, the standard implementation will
       be used.</p>
     </attribute>
+
     <attribute name="name" required="true">
       <p>The display name of this <strong>Service</strong>, which will
       be included in log messages if you utilize standard Catalina
@@ -46,6 +48,7 @@
       associated with a particular <a href="server.html">Server</a>
       must be unique.</p>
     </attribute>
+
   </attributes>
 
   </subsection>

@@ -163,13 +163,6 @@
         this manager implementation.</p>
       </attribute>
 
-      <attribute name="debug" required="false">
-        <p>The level of debugging detail logged by this <strong>Manager</strong>
-        to the associated <a href="logger.html">Logger</a>.  Higher numbers
-        generate more detailed output.  If not specified, the default
-        debugging detail level is zero (0).</p>
-      </attribute>
-
       <attribute name="entropy" required="false">
         <p>A String value that is utilized when seeding the random number
         generator used to create session identifiers for this Manager.
@@ -276,13 +269,6 @@
       to use this implementation.</p>
     </attribute>
 
-    <attribute name="debug" required="false">
-      <p>The level of debugging detail logged by this <strong>Store</strong>
-      to the associated <a href="logger.html">Logger</a>.  Higher numbers
-      generate more detailed output.  If not specified, the default
-      debugging detail level is zero (0).</p>
-    </attribute>
-
     <attribute name="directory" required="false">
       <p>Absolute or relative (to the temporary work directory for this web
       application) pathname of the directory into which individual session
@@ -325,13 +311,6 @@
       <p>The connection URL that will be handed to the configured JDBC
       driver to establish a connection to the database containing our
       session table.</p>
-    </attribute>
-
-    <attribute name="debug" required="false">
-      <p>The level of debugging detail logged by this <strong>Store</strong>
-      to the associated <a href="logger.html">Logger</a>.  Higher numbers
-      generate more detailed output.  If not specified, the default
-      debugging detail level is zero (0).</p>
     </attribute>
 
     <attribute name="driverName" required="true">

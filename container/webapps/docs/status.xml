@@ -31,7 +31,7 @@
     <p>
       <b>Tomcat 5.0.27</b> was released on June 17th, 2004.  At that time, the TOMCAT_5_0
       branch was tagged in CVS, and work on Tomcat 5.5 began.  Until the first stable 
-      release of Tomcat 5.1, building from
+      release of Tomcat 5.5, building from
       CVS head may be unstable or broken: use the TOMCAT_5_0 branch tag to build
       the Tomcat 5.0 releases.
     </p>
@@ -94,20 +94,14 @@
   <section name="TODO List">
 
     <status>
-      <item priority="High" owner="remm, costin">
-        Refactor ClassLoaders for Tomcat 5.1.
-      </item>
-      <item priority="High" owner="remm">
-        Refactor application deployment for Tomcat 5.1.
-      </item>
-      <item priority="High" owner="remm">
-        Remove Logger interface and implementation, use commons-logging everywhere.
+      <item priority="High" owner="costin">
+        Refactor ClassLoaders for Tomcat 5.5 to allow container plugins.
       </item>
       <item priority="Medium" owner="fhanik">
-        Enhance Cluster functionality for Tomcat 5.1.
+        Enhance Cluster functionality for Tomcat 5.5.
       </item>
-      <item priority="Low" owner="yoavs, funkman">
-        Update docs, site, and FAQ for Tomcat 5.1 once ready.
+      <item priority="Low" owner="yoavs, remm, funkman">
+        Update docs, site, and FAQ for Tomcat 5.5 once ready.
       </item>
       <item priority="Low" owner="everyone">
         Continue fixing bugs ;)

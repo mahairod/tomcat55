@@ -500,20 +500,15 @@ conn.close();
 
     <h3>4.  Configure Tomcat's Resource Factory</h3>
 
-    <p>To configure Tomcat's resource factory, add an elements like this to the
-    <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
-    <code>Context</code> element for this web application.</p>
+    <p>To configure Tomcat's resource factory, add an element like this to the
+    <code>/META-INF/context.xml</code> file in the web application.</p>
 <source>
 &lt;Context ...&gt;
   ...
   &lt;Resource name="jdbc/EmployeeDB" auth="Container"
-            type="javax.sql.DataSource"
-            username="dbusername"
-            password="dbpassword"
-            driverClassName="org.hsql.jdbcDriver"
-            url="jdbc:HypersonicSQL:database"
-            maxActive="8"
-            maxIdle="4"/&gt;
+            type="javax.sql.DataSource" username="dbusername" password="dbpassword"
+            driverClassName="org.hsql.jdbcDriver" url="jdbc:HypersonicSQL:database"
+            maxActive="8" maxIdle="4"/&gt;
   ...
 &lt;/Context&gt;
 </source>
