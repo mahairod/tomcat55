@@ -191,6 +191,10 @@ final class CoyoteAdapter
 
         }
 
+        if (connector.isXpoweredBy()) {
+            response.addHeader("X-Powered-By", "Servlet/2.4");
+        }
+
         try {
             // Parse and set Catalina and configuration specific 
             // request parameters
