@@ -72,6 +72,8 @@ import java.net.MalformedURLException;
 // import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,6 +110,18 @@ public class HttpResponseBase
     extends ResponseBase
     implements HttpResponse, HttpServletResponse {
 
+
+    protected class PrivilegedFlushBuffer
+        implements PrivilegedExceptionAction {
+                                              
+        PrivilegedFlushBuffer() {
+        }                              
+                                       
+        public Object run() throws Exception {
+            doFlushBuffer();
+            return null;
+        }                                                             
+    }
 
     // ----------------------------------------------------- Instance Variables
 
@@ -734,6 +748,21 @@ public class HttpResponseBase
      * @exception IOException if an input/output error occurs
      */
     public void flushBuffer() throws IOException {
+
+        if( System.getSecurityManager() != null ) {
+            try {
+                PrivilegedFlushBuffer dp = new PrivilegedFlushBuffer();
+                AccessController.doPrivileged(dp);
+            } catch( PrivilegedActionException pe) {
+                throw (IOException)pe.getException();
+            }
+        } else {
+            doFlushBuffer();
+        }
+
+    }
+
+    private void doFlushBuffer() throws IOException {
 
         if (!isCommitted())
             sendHeaders();

@@ -841,7 +841,7 @@
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <include name="org/apache/catalina/loader/Extension.class" />
         <include name="org/apache/catalina/loader/Reloader.class" />
-        <include name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <include name="org/apache/catalina/startup/SecurityClassLoad.class" />
         <include name="org/apache/naming/JndiPermission.class" />
       </fileset>
     </jar>
@@ -858,7 +858,7 @@
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <exclude name="org/apache/catalina/loader/Extension.class" />
         <exclude name="org/apache/catalina/loader/Reloader.class" />
-        <exclude name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <exclude name="org/apache/catalina/startup/SecurityClassLoad.class" />
         <exclude name="org/apache/catalina/servlets/**" />
         <exclude name="org/apache/catalina/util/ssi/**" />
       </fileset>
