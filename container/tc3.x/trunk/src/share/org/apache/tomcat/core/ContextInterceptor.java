@@ -128,8 +128,7 @@ public interface ContextInterceptor {
      *  here and path in addMapping into UrlMatch and transport, roles and wrapper
      *  under UrlAction ( or something like that ).
      */
-    public void addSecurityConstraint( Context ctx, String path[], String methods[],
-				       String transport, String roles[] ) throws TomcatException;
+    public void addSecurityConstraint( Context ctx, String path, Container dirConf ) throws TomcatException;
 
 
     /** Servlet Init  notification
