@@ -111,6 +111,13 @@ xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
 
 
+# ----- JSTL 1.0 -----
+jstl.home=${base.path}/jakarta-taglibs/jstl-1.0
+jstl.lib=${jstl.home}/lib
+jstl.jar=${jstl.lib}/jstl.jar
+jstl-impl.jar=${jstl.lib}/standard.jar
+
+
 # --------------------------------------------------
 #                OPTIONAL LIBRARIES
 # --------------------------------------------------
