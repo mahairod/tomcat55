@@ -319,54 +319,166 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 <h3>Introduction</h3>
 
 <p><strong>JNDIRealm</strong> is an implementation of the Tomcat 4
-<code>Realm</code> interface that looks up users in a directory server
-accessed by a JNDI provider (typically, the standard LDAP provider that
-is available with the JNDI API classes).  There is substantial configuration
-flexibility that lets you adapt to the existing schema inside your directory
-server, as long as it conforms to the following requirements:</p>
+<code>Realm</code> interface that looks up users in an LDAP directory
+server accessed by a JNDI provider (typically, the standard LDAP
+provider that is available with the JNDI API classes). The realm
+supports a variety of approaches to using a directory for
+authentication.</p>
+
+<h4>Connecting to the directory</h4>
+
+<p>The realm's connection to the directory is defined by the
+<strong>connectionURL</strong> configuration attribute. This is a URL
+whose format is defined by the JNDI provider. It is usually an LDAP
+URL that specifies the domain name of the directory server to connect
+to, and optionally the port number and distinguished name (DN) of the
+required root naming context.</p>
+
+<p>When making a connection in order to search the directory and
+retrieve user and role information, the realm authenticates itself to
+the directory with the username and password specified by the
+<strong>connectionName</strong> and
+<strong>connectionPassword</strong> properties. If these properties
+are not specified the connection is anonymous. This is sufficient in
+many cases.
+</p>
+
+
+<h4>Selecting the user's directory entry</h4>
+
+<p>Each user that can be authenticated must be represented in the
+directory by an individual entry that corresponds to an element in the
+initial <code>DirContext</code> defined by the
+<strong>connectionURL</strong> attribute. This user entry must have an
+attribute containing the username that is presented for
+authentication.</p>
+
+<p>Often the distinguished name of the user's entry contains the
+username presented for authentication but is otherwise the same for
+all users. In this case the <strong>userPattern</strong> attribute may
+be used to specify the DN, with "{0}" marking where
+the username should be substituted.</p>
+
+<p>Otherwise the realm must search the directory to find a unique entry
+containing the username. The following attributes configure this
+search:
+
+     <ul>
+     <li><strong>userBase</strong> - the entry that is the base of
+         the subtree containing users.  If not specified, the search
+         base is the top-level context.</li>
+
+     <li><strong>userSubtree</strong> - the search scope. Set to
+         <code>true</code> if you wish to search the entire subtree
+         rooted at the <strong>userBase</strong> entry. The default value
+         of <code>false</code> requests a single-level search
+         including only the top level.</li>
+
+     <li><strong>userSearch</strong> - pattern specifying the LDAP
+         search filter to use after substitution of the username.</li>
+
+    </ul>
+</p>
+
+
+<h4>Authenticating the user</h4>
+
 <ul>
-<li>Each user that can be authenticated is represented by an individual
-    element in the top level <code>DirContext</code> that is accessed
-    via the <code>connectionURL</code> attribute.</li>
-<li>The <em>user</em> element must have the following characteristics:
-    <ul>
-    <li>The distinguished name (<code>dn</code>) attribute of this element
-        contains the username that is presented for authentication.</li>
-    <li>There must be an attribute (identified by the <code>userPassword</code>
-        attribute of our <code>Realm</code> element) that contains the user's
-        password, either in clear text or digested (see below for more info).
-        </li>
-    </ul></li>
-<li>Each group of users that has been assigned a particular role is
-    represented by an individual element in the top level
-    <code>DirContext</code> that is accessed via the
-    <code>connectionURL</code> attribute.</li>
-<li>The <em>user group</em> element must have the following characteristics:
-    <ul>
-    <li>The set of all possible groups of interest can be selected by an LDAP
-        search pattern configured by the <code>roleSearch</code> attribute
-        of our <code>Realm</code> element.</li>
-    <li>The <code>roleSearch</code> pattern optionally includes pattern
-        replacements "{0}" for the distinguished name, and/or "{1} for the
-        username, of the authenticated user for which roles will be
-        retrieved.</li>
-    <li>The <code>roleBase</code> attribute can be set to the element that
-        is the base of the search for matching roles.  If not specified,
-        the entire directory context will be searched.</li>
-    <li>The <code>roleSubtree</code> attribute can be set to <code>true</code>
-        if you wish to search the entire subtree of the directory context.
-        The default value of <code>false</code> requests a search of only the
-        current level.</li>
-    <li>The element includes an attribute (whose name is configured by the
-        <code>roleName</code> attribute of our <code>Realm</code> element)
-        containing the name of the role represented by this element.</li>
-    </ul></li>
-<li>There must be an administrator username and password that Tomcat can
-    use to establish a connection to the directory server, with at least
-    read-only access to the information described above.  A future
-    version of Tomcat will support an option to use the user's username and
-    password to attempt this connection.</li>
+<li>
+<p><b>Bind mode</b></p>
+
+<p>By default the realm authenticates a user by binding to
+the directory with the DN of the entry for that user and the password
+presented by the user. If this simple bind succeeds the user is considered to
+be authenticated.</p>
+
+<p>For security reasons a directory may store a digest of the user's
+password rather than the clear text version (see <a href="#Digested
+Passwords">Digested Passwords</a> for more information). In that case,
+as part of the simple bind operation the directory automatically
+computes the correct digest of the plaintext password presented by the
+user before validating it against the stored value. In bind mode,
+therefore, the realm is not involved in digest processing. The
+<strong>digest</strong> attribute is not used, and will be ignored if
+set.</p>
+</li>
+
+<li>
+<p><b>Comparison mode</b></p>
+<p>Alternatively, the realm may retrieve the stored
+password from the directory and compare it explicitly with the value
+presented by the user. This mode is configured by setting the
+<strong>userPassword</strong> attribute to the name of a directory
+attribute in the user's entry that contains the password.</p>
+
+<p>Comparison mode has some disadvantages. First, the
+<strong>connectionName</strong> and
+<strong>connectionPassword</strong> attributes must be configured to
+allow the realm to read users' passwords in the directory. For
+security reasons this is generally undesirable; indeed many directory
+implementations will not allow even the directory manager to read
+these passwords. In addition, the realm must handle password digests
+itself, including variations in the algorithms used and ways of
+representing password hashes in the directory. However, the realm may
+sometimes need access to the stored password, for example to support
+HTTP Digest Access Authentication (RFC 2069). (Note that HTTP digest
+authentication is different from the storage of password digests in
+the repository for user information as discussed above).
+</p>
+</li>
 </ul>
+
+<h4>Assigning roles to the user</h4>
+
+<p>The directory realm supports two approaches to the representation
+of roles in the directory:</p>
+
+<ul>
+<li>
+<p><b>Roles as explicit directory entries</b></p>
+
+<p>Roles may be represented by explicit directory entries. A role
+entry is usually an LDAP group entry with one attribute
+containing the name of the role and another whose values are the
+distinguished names or usernames of the users in that role.  The
+following attributes configure a directory search to
+find the names of roles associated with the authenticated user:</p>
+
+<ul>
+<li><strong>roleBase</strong> - the base entry for the role search.
+    If not specified, the search base is the top-level directory
+    context.</li>
+
+<li><strong>roleSubtree</strong> - the search
+    scope. Set to <code>true</code> if you wish to search the entire
+    subtree rooted at the <code>roleBase</code> entry. The default
+    value of <code>false</code> requests a single-level search
+    including the top level only.</li>
+
+<li><strong>roleSearch</strong> - the LDAP search filter for
+    selecting role entries. It optionally includes pattern
+    replacements "{0}" for the distinguished name and/or "{1}" for the
+    username of the authenticated user.</li>
+
+<li><strong>roleName</strong> - the attribute in a role entry
+     containing the name of that role.</li>
+
+</ul>
+
+</li>
+</ul>
+
+<ul>
+<li>
+<p><b>Roles as an attribute of the user entry</b></p>
+
+<p>Role names may also be held as the values of an attribute in the
+user's directory entry. Use <strong>userRoleName</strong> to specify
+the name of this attribute.</p>
+
+</li>
+</ul>
+<p>A combination of both approaches to role representation may be used.</p>
 
 <h3>Quick Start</h3>
 
@@ -374,8 +486,8 @@ server, as long as it conforms to the following requirements:</p>
 <ol>
 <li>Make sure your directory server is configured with a schema that matches
     the requirements listed above.</li>
-<li>Configure a username and password for use by Tomcat, that has
-    at least read only access to the information described above.  (Tomcat will
+<li>If required, configure a username and password for use by Tomcat, that has
+    read only access to the information described above.  (Tomcat will
     never attempt to modify this information.)</li>
 <li>Place a copy of the JNDI driver you will be using (typically
     <code>ldap.jar</code> available with JNDI) inside the
@@ -395,81 +507,159 @@ as described <a href="#Configuring a Realm">above</a>.  The following
 attributes are supported by this implementation:</p>
 
 <attributes>
-
   <attribute name="className" required="true">
     <p>The fully qualified Java class name of this Realm implementation.
     You <strong>MUST</strong> specify the value
     "<code>org.apache.catalina.realm.JNDIRealm</code>" here.</p>
   </attribute>
 
-  <attribute name="connectionName" required="true">
-    <p>The directory server username used to establish a JNDI connection.</p>
-  </attribute>
 
-  <attribute name="connectionPassword" required="true">
-    <p>The directory server password used to establish a JNDI connection.</p>
-  </attribute>
+      <attribute name="connectionName" required="false">
+        <p>The directory username to use when establishing a
+        connection to the directory for LDAP search operations. If not
+        specified an anonymous connection is made, which is often
+        sufficient unless you specify the <code>userPassword</code>
+        property.</p>
+      </attribute>
 
-  <attribute name="connectionURL" required="true">
-    <p>The directory server URL used to establish a JNDI connection.</p>
-  </attribute>
+      <attribute name="connectionPassword" required="false">
+        <p>The directory password to use when establishing a
+        connection to the directory for LDAP search operations. If not
+        specified an anonymous connection is made, which is often
+        sufficient unless you specify the <code>userPassword</code>
+        property.</p>
+      </attribute>
 
-  <attribute name="contextFactory" required="false">
-    <p>The fully qualified Java class name of the JNDI context factory to be
-    used for this connection.  By default, the standard JNDI LDAP provider
-    is used (<code>com.sun.jndi.ldap.LdapCtxFactory</code>).</p>
-  </attribute>
+      <attribute name="connectionURL" required="true">
+        <p>The connection URL to be passed to the JNDI driver when
+        establishing a connection to the directory.</p>
+      </attribute>
 
-  <attribute name="debug" required="false">
-    <p>The level of debugging detail logged by this Realm
-    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
-    generate more detailed output.  If not specified, the default
-    debugging detail level is zero (0).</p>
-  </attribute>
+      <attribute name="contextFactory" required="false">
+        <p>The fully qualified Java class name of the JNDI context
+        factory to be used for this connection.  By default, the standard
+        JNDI LDAP provider is used
+        (<code>com.sun.jndi.ldap.LdapCtxFactory</code>).</p>
+      </attribute>
 
-  <attribute name="digest" required="false">
-    <p>The digest algorithm used to store passwords in non-plaintext formats.
-    Valid values are those accepted for the algorithm name by the
-    <code>java.security.MessageDigest</code> class.  See
-    <a href="#Digested Passwords">Digested Passwords</a> for more
-    information.  If not specified, passwords are stored in clear text.</p>
-  </attribute>
+      <attribute name="debug" required="false">
+      <p>The level of debugging detail logged by this Realm to the
+      associated <a href="config/logger.html">Logger</a>.  Higher
+      numbers generate more detailed output.  If not specified, the
+      default debugging detail level is zero (0).</p>
+      </attribute>
 
-  <attribute name="roleBase" required="false">
-    <p>The base element for role searches.  If not specified, the top level
-    element in the directory context will be used.</p>
-  </attribute>
+      <attribute name="digest" required="false">
+        <p>The digest algorithm to apply to the plaintext password offered
+        by the user before comparing it with the value retrieved from the
+        directory.  Valid values are those accepted for the algorithm name
+        by the <code>java.security.MessageDigest</code> class.  See <a
+        href="#Digested Passwords">Digested Passwords</a> for more
+        information. If not specified the plaintext password is assumed to
+        be retrieved. Not required unless <code>userPassword</code> is
+        specified</p>
+      </attribute>
 
-  <attribute name="roleName" required="true">
-    <p>The name of the directory server attribute containing the role name.</p>
-  </attribute>
+      <attribute name="roleBase" required="false">
+        <p>The base directory entry for performing role searches. If
+        not specified, the top level element in the directory context
+        will be used.</p>
+      </attribute>
 
-  <attribute name="roleSearch" required="true">
-    <p>An LDAP search pattern for selecting roles in this Realm, following the
-    syntax supported by the <code>java.text.MessageFormat</code> class.  Use
-    <code>{0}</code> to substitute in the distinguished name of the user you
-    want roles for, and/or <code>{1}</code> to substitute in the username of
-    the user you want roles for.</p>
-  </attribute>
+      <attribute name="roleName" required="false">
+        <p>The name of the attribute that contains role names in the
+        directory entries found by a role search. In addition you can
+        use the <code>userRoleName</code> property to specify the name
+        of an attribute, in the user's entry, containing additional
+        role names.  If <code>roleName</code> is not specified a role
+        search does not take place, and roles are taken only from the
+        user's entry.</p>
+      </attribute>
 
-  <attribute name="roleSubtree" required="false">
-    <p>Set to <code>true</code> if you want role searches to search subtrees
-    of the element selected by <code>roleBase</code>.  The default value of
-    <code>false</code> causes only the top level element to be searched.</p>
-  </attribute>
+      <attribute name="roleSearch" required="false">
+        <p>The LDAP filter expression used for performing role
+        searches, following the syntax supported by the
+        <code>java.text.MessageFormat</code> class.  Use
+        <code>{0}</code> to substitute the distinguished name (DN) of
+        the user, and/or <code>{1}</code> to substitute the
+        username. If not specified a role search does not take place
+        and roles are taken only from the attribute in the user's
+        entry specified by the <code>userRoleName</code> property.</p>
+      </attribute>
 
-  <attribute name="userPassword" required="true">
-    <p>The name of the directory server attribute (in the user element) that
-    contains the cleartext or digested user password (depending on the setting
-    of the <code>digest</code> attribute).</p>
-  </attribute>
+      <attribute name="roleSubtree" required="false">
+        <p>Set to <code>true</code> if you want to search the entire
+        subtree of the element specified by the <code>roleBase</code>
+        property for role entries associated with the user. The
+        default value of <code>false</code> causes only the top level
+        to be searched.</p>
+      </attribute>
 
-  <attribute name="userPattern" required="true">
-    <p>An LDAP search pattern for selecting users in this Realm, following the
-    syntax supported by the <code>java.text.MessageFormat</code> class.  Use
-    <code>{0}</code> to substitute in the distinguished name of the user you
-    want to select.</p>
-  </attribute>
+      <attribute name="userBase" required="false">
+        <p>The base element for user searches performed using the
+        <code>userSearch</code> expression.  If not specified, the top
+        level element in the directory context will be used. Not used
+        if you are using the <code>userPattern</code> expression.</p>
+      </attribute>
+
+      <attribute name="userPassword" required="false">
+        <p>Name of the attribute in the user's entry containing the
+        user's password.  If you specify this value, JNDIRealm will
+        bind to the directory using the values specified by
+        <code>connectionName</code> and
+        <code>connectionPassword</code> properties, and retrieve the
+        corresponding attribute for comparison to the value specified
+        by the user being authenticated.  If the <code>digest</code>
+        attribute is set, the specified digest algorithm is applied to
+        the password offered by the user before comparing it with the
+        value retrieved from the directory.  If you do
+        <strong>not</strong> specify this value, JNDIRealm will
+        attempt a simple bind to the directory using the DN of the
+        user's entry and password specified by the user, with a
+        successful bind being interpreted as an authenticated
+        user.</p>
+      </attribute>
+
+      <attribute name="userPattern" required="false">
+        <p>A pattern for the distinguished name (DN) of the user's
+        directory entry, following the syntax supported by the
+        <code>java.text.MessageFormat</code> class with
+        <code>{0}</code> marking where the actual username should be
+        inserted. You can use this property instead of
+        <code>userSearch</code>, <code>userSubtree</code> and
+        <code>userBase</code> when the distinguished name contains the
+        username and is otherwise the same for all users.</p>
+      </attribute>
+
+      <attribute name="userRoleName" required="false">
+        <p>The name of an attribute in the user's directory entry
+        containing zero or more values for the names of roles assigned
+        to this user.  In addition you can use the
+        <code>roleName</code> property to specify the name of an
+        attribute to be retrieved from individual role entries found
+        by searching the directory. If <code>userRoleName</code> is
+        not specified all the roles for a user derive from the role
+        search.</p>
+      </attribute>
+
+      <attribute name="userSearch" required="false">
+        <p>The LDAP filter expression to use when searching for a
+        user's directory entry, with <code>{0}</code> marking where
+        the actual username should be inserted.  Use this property
+        (along with the <code>userBase</code> and
+        <code>userSubtree</code> properties) instead of
+        <code>userPattern</code> to search the directory for the
+        user's entry.</p>
+      </attribute>
+
+      <attribute name="userSubtree" required="false">
+        <p>Set to <code>true</code> if you want to search the entire
+        subtree of the element specified by the <code>userBase</code>
+        property for the user's entry. The default value of
+        <code>false</code> causes only the top level to be searched.
+        Not used if you are using the <code>userPattern</code>
+        expression.</p>
+      </attribute>
 
 </attributes>
 
@@ -490,75 +680,152 @@ rootdn "cn=Manager,dc=mycompany,dc=com"
 rootpw secret
 </source>
 
-<p>These settings help us identify values for the values to be specified for
-<code>connectionName</code>, and <code>connectionPassword</code>, and we
-will assume for <code>connectionURL</code> that the directory server runs on
-the same machine as Tomcat.  See
-<a href="http://java.sun.com/products/jndi/docs.html">http://java.sun.com/products/jndi/docs.html</a>
-for more information about configuring and using the JNDI LDAP provider.</p>
+<p>We will assume for <code>connectionURL</code> that the directory
+server runs on the same machine as Tomcat.  See <a
+href="http://java.sun.com/products/jndi/docs.html">http://java.sun.com/products/jndi/docs.html</a>
+for more information about configuring and using the JNDI LDAP
+provider.</p>
 
 <p>Next, assume that this directory server has been populated with elements
-as shown below (in LDIF format), which define the same users and roles
-as the default <code>$CATALINA_HOME/conf/tomcat-users.xml</code> does for
-MemoryRealm:</p>
+as shown below (in LDIF format):</p>
+
 <source>
-# Define a user named 'tomcat'
-dn: cn=tomcat,dc=mycompany,dc=com
-cn: tomcat
-userPassword: tomcat
-sn: Tomcat User
-objectClass: person
 
-# Define a user named 'role1'
-dn: cn=role1,dc=mycompany,dc=com
-cn: role1
-userPassword: tomcat
-sn: Role1 User
-objectClass: person
+# Define top-level entry
+dn: dc=mycompany,dc=com
+objectClass: dcObject
+dc:mycompany
 
-# Define a user named 'both'
-dn: cn=both,dc=mycompany,dc=com
-cn: both
-userPassword: tomcat
-sn: Both User
-objectClass: person
+# Define an entry to contain people
+# searches for users are based on this entry
+dn: ou=people,dc=mycompany,dc=com
+objectClass: organizationalUnit
+ou: people
 
-# Define an entry to base role searches on
-dn: dc=roles,dc=mycompany,dc=com
-cn: roles
-objectClass: person
-sn: Roles Entry
+# Define a user entry for Janet Jones
+dn: uid=jjones,ou=people,dc=mycompany,dc=com
+objectClass: inetOrgPerson
+uid: jjones
+sn: jones
+cn: janet jones
+mail: j.jones@mycompany.com
+userPassword: janet
 
-# Define all members of the 'tomcat' role
-dn: cn=tomcat,dc=roles,dc=mycompany,dc=com
-cn: tomcat
+# Define a user entry for Fred Bloggs
+dn: uid=fbloggs,ou=people,dc=mycompany,dc=com
+objectClass: inetOrgPerson
+uid: fbloggs
+sn: bloggs
+cn: fred bloggs
+mail: f.bloggs@mycompany.com
+userPassword: fred
+
+# Define an entry to contain LDAP groups
+# searches for roles are based on this entry
+dn: ou=groups,dc=mycompany,dc=com
+objectClass: organizationalUnit
+ou: groups
+
+# Define an entry for the "tomcat" role
+dn: cn=tomcat,ou=groups,dc=mycompany,dc=com
 objectClass: groupOfUniqueNames
-uniqueMember: cn=tomcat,dc=mycompany,dc=com
-uniqueMember: cn=both,dc=mycompany,dc=com
+cn: tomcat
+uniqueMember: uid=jjones,ou=people,dc=mycompany,dc=com
+uniqueMember: uid=fbloggs,ou=people,dc=mycompany,dc=com
 
-# Define all members of the 'role1' role
-dn: cn=role1,dc=roles,dc=mycompany,dc=com
-cn: role1
+# Define an entry for the "role1" role
+dn: cn=role1,ou=groups,dc=mycompany,dc=com
 objectClass: groupOfUniqueNames
-uniqueMember: cn=role1,dc=mycompany,dc=com
-uniqueMember: cn=both,dc=mycompany,dc=com
+cn: role1
+uniqueMember: uid=fbloggs,ou=people,dc=mycompany,dc=com
 </source>
 
-<p>An example <code>Realm</code> element for the OpenLDAP directory server
-configured as described above might look like this:</p>
+<p>An example <code>Realm</code> element for the OpenLDAP directory
+server configured as described above might look like this, assuming
+that users use their uid (e.g. jjones) to login to the
+application and that an anonymous connection is sufficient to search
+the directory and retrieve role information:</p>
+
+<source>
+&lt;Realm   className="org.apache.catalina.realm.JNDIRealm" debug="99"
+     connectionURL="ldap://localhost:389"
+       userPattern="uid={0},ou=people,dc=mycompany,dc=com"
+          roleBase="ou=groups,dc=mycompany,dc=com"
+          roleName="cn"
+        roleSearch="(uniqueMember={0})"
+/&gt;
+</source>
+
+<p>With this configuration, the realm will determine the user's
+distinguished name by substituting the username into the
+<code>userPattern</code>, authenticate by binding to the directory
+with this DN and the password received from the user, and search the
+directory to find the user's roles.</p>
+
+<p>Now suppose that users are expected to enter their email address
+rather than their userid when logging in. In this case the realm must
+search the directory for the user's entry. (A search is also necessary
+when user entries are held in multiple subtrees corresponding perhaps
+to different organizational units or company locations).</p>
+
+<p>Further, suppose that in addition to the group entries you want to
+use an attribute of the user's entry to hold roles. Now the entry for
+Janet Jones might read as follows:</p>
+
+<source>
+dn: uid=jjones,ou=people,dc=mycompany,dc=com
+objectClass: inetOrgPerson
+uid: jjones
+sn: jones
+cn: janet jones
+mail: j.jones@mycompany.com
+memberOf: role2
+memberOf: role3
+userPassword: janet
+</source>
+
+<p> This realm configuration would satisfy the new requirements:</p>
+
+<source>
+&lt;Realm   className="org.apache.catalina.realm.JNDIRealm" debug="99"
+     connectionURL="ldap://localhost:389"
+          userBase="ou=people,dc=mycompany,dc=com"
+        userSearch="(mail={0})"
+      userRoleName="memberOf"
+          roleBase="ou=groups,dc=mycompany,dc=com"
+          roleName="cn"
+        roleSearch="(uniqueMember={0})"
+/&gt;
+</source>
+
+<p>Now when Janet Jones logs in as "j.jones@mycompany.com", the realm
+searches the directory for a unique entry with that value as its mail
+attribute and attempts to bind to the directory as
+<code>uid=jjones,ou=people,dc=mycompany,dc=com</code> with the given
+password. If authentication succeeds, she is assigned three roles:
+"role2" and "role3", the values of the "memberOf" attribute in her
+directory entry, and "tomcat", the value of the "cn" attribute in the
+only group entry of which she is a member.</p>
+
+<p>Finally, to authenticate the user by retrieving
+the password from the directory and making a local comparison in the
+realm, you might use a realm configuration like this:</p>
+
 <source>
 &lt;Realm   className="org.apache.catalina.realm.JNDIRealm" debug="99"
     connectionName="cn=Manager,dc=mycompany,dc=com"
 connectionPassword="secret"
      connectionURL="ldap://localhost:389"
-          roleBase="dc=roles,dc=mcclan,dc=net"
+      userPassword="userPassword"
+       userPattern="uid={0},ou=people,dc=mycompany,dc=com"
+          roleBase="ou=groups,dc=mycompany,dc=com"
           roleName="cn"
         roleSearch="(uniqueMember={0})"
-       roleSubtree="false"
-      userPassword="userPassword"
-       userPattern="cn={0},dc=mycompany,dc=com"
 /&gt;
 </source>
+
+<p>However, as discussed above, the default bind mode for
+authentication is usually to be preferred.</p>
 
 <h3>Additional Notes</h3>
 
@@ -566,14 +833,14 @@ connectionPassword="secret"
 <ul>
 <li>When a user attempts to access a protected resource for the first time,
     Tomcat 4 will call the <code>authenticate()</code> method of this
-    <code>Realm</code>.  Thus, any changes you have made to the database
-    directly (new users, changed passwords or roles, etc.) will be immediately
+    <code>Realm</code>.  Thus, any changes you have made to the directory
+    (new users, changed passwords or roles, etc.) will be immediately
     reflected.</li>
 <li>Once a user has been authenticated, the user (and his or her associated
     roles) are cached within Tomcat for the duration of the user's login.
     (For FORM-based authentication, that means until the session times out or
     is invalidated; for BASIC authentication, that means until the user
-    closes their browser).  Any changes to the database information for an
+    closes their browser).  Any changes to the directory information for an
     already authenticated user will <strong>not</strong> be reflected until
     the next time that user logs on again.</li>
 <li>Administering the information in the directory server
@@ -706,22 +973,26 @@ to all virtual hosts and web applications.  The default contents of the
 
 <subsection name="Digested Passwords">
 
-<p>For each of the standard <code>Realm</code> implementations, the user's
-password (by default) is stored in clear text.  In many environments, this is
-undesireable because casual observers of the authentication data can collect
-enough information to log on successfully, and impersonate other users.
-To avoid this problem, the standard implementations support the concept of
-<em>digesting</em> user passwords.  This causes the stored version of the
-passwords to be encoded (in a form that is not easily reversible), but that
-the <code>Realm</code> implementation can still utilize for authentication.</p>
+<p>For each of the standard <code>Realm</code> implementations, the
+user's password (by default) is stored in clear text.  In many
+environments, this is undesireable because casual observers of the
+authentication data can collect enough information to log on
+successfully, and impersonate other users.  To avoid this problem, the
+standard implementations support the concept of <em>digesting</em>
+user passwords.  This allows the stored version of the passwords to be
+encoded (in a form that is not easily reversible), but that the
+<code>Realm</code> implementation can still utilize for
+authentication.</p>
 
-<p>Digested passwords are selected by specifying the <code>digest</code>
-attribute on your <code>&lt;Realm&gt;</code> element.  The value for this
-attribute must be one of the digest algorithms supported by the
-<code>java.security.MessageDigest</code> class (SHA, MD2, or MD5).  When you
-select this option, the contents of the password that is stored in the
-<code>Realm</code> must be the cleartext version of the password, as digested
-by the specified algorithm.</p>
+<p>When a standard realm authenticates by retrieving the stored
+password and comparing it with the value presented by the user, you
+can select digested passwords by specifying the <code>digest</code>
+attribute on your <code>&lt;Realm&gt;</code> element.  The value for
+this attribute must be one of the digest algorithms supported by the
+<code>java.security.MessageDigest</code> class (SHA, MD2, or MD5).
+When you select this option, the contents of the password that is
+stored in the <code>Realm</code> must be the cleartext version of the
+password, as digested by the specified algorithm.</p>
 
 <p>When the <code>authenticate()</code> method of the Realm is called, the
 (cleartext) password specified by the user is itself digested by the same

@@ -160,27 +160,54 @@
 
     <p>The <strong>JNDI Directory Realm</strong> connects Catalina to
     an LDAP Directory, accessed through an appropriate JNDI driver,
-    to perform lookups of usernames, passwords, and their associated
-    roles.  Because the lookup is done each time that it is required,
-    changes to the directory will be immediately reflected in the
+    that stores usernames, passwords, and their associated
+    roles. Changes to the directory are immediately reflected in the
     information used to authenticate new logins.</p>
 
-    <p>A rich set of additional attributes lets you configure the required
-    connection to the underlying directory, as well as the element and
-    attribute names used to retrieve the required information:</p>
+
+    <p>The directory realm supports a variety of approaches to using
+    LDAP for authentication:</p>
+
+    <ul>
+    <li>The realm can either use a pattern to determine the
+    distinguished name (DN) of the user's directory entry, or search
+    the directory to locate that entry.
+    </li>
+
+    <li>The realm can authenticate the user either by binding to the
+    directory with the DN of the user's entry and the password
+    presented by the user, or by retrieving the password from the
+    user's entry and performing a comparison locally.
+    </li>
+
+    <li>Roles may be represented in the directory as explicit entries
+    found by a directory search (e.g. group entries of which the user
+    is a member), as the values of an attribute in the user's entry,
+    or both.
+    </li>
+    </ul>
+
+    <p> A rich set of additional attributes lets you configure the
+    required behaviour as well as the connection to the underlying
+    directory and the element and attribute names used to retrieve
+    information from the directory:</p>
 
     <attributes>
 
       <attribute name="connectionName" required="false">
-        <p>The directory username to use when establishing the JNDI
-        connection.  This attribute is required if you specify the
-        <code>userPassword</code> property, and not used otherwise.</p>
+        <p>The directory username to use when establishing a
+        connection to the directory for LDAP search operations. If not
+        specified an anonymous connection is made, which is often
+        sufficient unless you specify the <code>userPassword</code>
+        property.</p>
       </attribute>
 
       <attribute name="connectionPassword" required="false">
-        <p>The directory password to use when establishing the JNDI
-        connection.  This attribute is required if you specify the
-        <code>userPassword</code> property, and not used otherwise.</p>
+        <p>The directory password to use when establishing a
+        connection to the directory for LDAP search operations. If not
+        specified an anonymous connection is made, which is often
+        sufficient unless you specify the <code>userPassword</code>
+        property.</p>
       </attribute>
 
       <attribute name="connectionURL" required="true">
@@ -194,28 +221,38 @@
         assumes that the standard JNDI LDAP provider will be utilized.</p>
       </attribute>
 
-      <attribute name="roleBase" required="true">
-        <p>The base directory element for performing role searches.</p>
+      <attribute name="roleBase" required="false">
+        <p>The base directory entry for performing role searches. If
+        not specified the top-level element in the directory context
+        will be used.</p>
       </attribute>
 
       <attribute name="roleName" required="false">
-        <p>The name of the directory attribute to retrieve when selecting
-        the assigned roles for a user.  If not specified, use the
-        <code>userRoleName</code> property to specify the name of an
-        attribute, in the user's entry, that contains zero or more role
-        names assigned to this user.</p>
+        <p>The name of the attribute that contains role names in the
+        directory entries found by a role search. In addition you can
+        use the <code>userRoleName</code> property to specify the name
+        of an attribute, in the user's entry, containing additional
+        role names.  If <code>roleName</code> is not specified a role
+        search does not take place, and roles are taken only from the
+        user's entry.</p>
       </attribute>
 
-      <attribute name="roleSearch" required="true">
-        <p>The LDAP search expression to use when selecting roles for a
-        particular user, with <code>{0}</code> marking where the actual
-        username should be inserted.</p>
+      <attribute name="roleSearch" required="false">
+        <p>The LDAP filter expression used for performing role
+        searches.  Use <code>{0}</code> to substitute the
+        distinguished name (DN) of the user, and/or <code>{1}</code> to
+        substitute the username. If not specified a role search does
+        not take place and roles are taken only from the attribute in
+        the user's entry specified by the <code>userRoleName</code>
+        property.</p>
       </attribute>
 
-      <attribute name="roleSubtree" required="true">
-        <p>Set to <code>true</code> to search subtrees of the elements
-        selected by the <code>roleSearch</code> search expression.  Set
-        to <code>false</code> to not search subtrees.</p>
+      <attribute name="roleSubtree" required="false">
+        <p>Set to <code>true</code> if you want to search the entire
+        subtree of the element specified by the <code>roleBase</code>
+        property for role entries associated with the user. The
+        default value of <code>false</code> causes only the top level
+        to be searched.</p>
       </attribute>
 
       <attribute name="userBase" required="false">
@@ -225,50 +262,57 @@
       </attribute>
 
       <attribute name="userPassword" required="false">
-        <p>Name of the LDAP element containing the user's password.  If you
-        specify this value, JNDIRealm will bind to the directory using
-        the values specified by <code>connectionName</code> and
+        <p>Name of the attribute in the user's entry containing the
+        user's password.  If you specify this value, JNDIRealm will
+        bind to the directory using the values specified by
+        <code>connectionName</code> and
         <code>connectionPassword</code> properties, and retrieve the
-        corresponding attribute for comparison to the value specified by
-        the user being authenticated.  If you do <strong>not</strong>
-        specify this value, JNDIRealm will attempt to bind to the
-        directory using the username and password specified by the user,
-        with a successful bind being interpreted as an authenticated user.</p>
+        corresponding attribute for comparison to the value specified
+        by the user being authenticated.  If you do
+        <strong>not</strong> specify this value, JNDIRealm will
+        attempt a simple bind to the directory using the DN of the
+        user's entry and the password presented by the user, with a
+        successful bind being interpreted as an authenticated
+        user.</p>
       </attribute>
 
       <attribute name="userPattern" required="false">
-        <p>The LDAP search expression to use when retrieving the attributes
-        of a particular user, with <code>{0}</code> marking where the
-        actual username should be inserted.  Use this property instead of
-        <code>userSearch</code> if you want to select a particular single
-        entry based on the username.</p>
+        <p>Pattern for the distinguished name (DN) of the user's
+        directory entry, with <code>{0}</code> marking where the
+        actual username should be inserted. You can use this property
+        instead of <code>userSearch</code>, <code>userSubtree</code>
+        and <code>userBase</code> when the distinguished name contains
+        the username and is otherwise the same for all users.</p>
       </attribute>
 
       <attribute name="userRoleName" required="false">
-        <p>The name of a directory attribute, in the user's entry, containing
-        zero or more values for the names of roles assigned to this user.  If
-        not specified, use the <code>roleName</code> property to specify
-        the name of a particular attribute that is retrieved from individual
-        role entries associated with this user.</p>
+        <p>The name of an attribute in the user's directory entry
+        containing zero or more values for the names of roles assigned
+        to this user.  In addition you can use the
+        <code>roleName</code> property to specify the name of an
+        attribute to be retrieved from individual role entries found
+        by searching the directory. If <code>userRoleName</code> is
+        not specified all the roles for a user derive from the role
+        search.</p>
       </attribute>
 
       <attribute name="userSearch" required="false">
-        <p>The LDAP search expression to use when retrieving the attributes
-        of a particular user, with <code>{0}</code> marking where the
-        actual username should be inserted.  Use this property instead of
-        <code>userPattern</code> if you want to search the entire directory
-        (under the optional additional control of the <code>userBase</code>
-        and <code>userSubtree</code> properties) instead of retrieving a
-        particular named entry.</p>
+        <p>The LDAP filter expression to use when searching for a
+        user's directory entry, with <code>{0}</code> marking where
+        the actual username should be inserted.  Use this property
+        (along with the <code>userBase</code> and
+        <code>userSubtree</code> properties) instead of
+        <code>userPattern</code> to search the directory for the
+        user's entry.</p>
       </attribute>
 
       <attribute name="userSubtree" required="false">
-        <p>Set to <code>true</code> if you are using the
-        <code>userSearch</code> pattern to search for authenticated users,
-        and you want to search subtrees of the element specified by the
-        <code>userBase</code> element.  The default value of <code>false</code>
-        causes only the specified level to be searched.  Not used if you are
-        using the <code>userPattern</code> expression.</p>
+        <p>Set to <code>true</code> if you want to search the entire
+        subtree of the element specified by the <code>userBase</code>
+        property for the user's entry. The default value of
+        <code>false</code> causes only the top level to be searched.
+        Not used if you are using the <code>userPattern</code>
+        expression.</p>
       </attribute>
 
     </attributes>
