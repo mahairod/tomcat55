@@ -37,7 +37,7 @@ ${StrRep}
   !define MUI_WELCOMEFINISHPAGE_BITMAP side_left.bmp 
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\webapps\ROOT\RELEASE-NOTES.txt"
   !define MUI_FINISHPAGE_RUN $INSTDIR\bin\tomcat5w.exe
-  !define MUI_FINISHPAGE_RUN_PARAMETERS //MS//Tomcat5
+  !define MUI_FINISHPAGE_RUN_PARAMETERS //MR//Tomcat5
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
   !define MUI_ABORTWARNING
@@ -187,6 +187,8 @@ Section "Service" SecTomcatService
   Pop $2
 
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Startup auto'
+  ; Bahave like Apache Httpd (put the icon in try on login)
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "ApacheTomcatMonitor" '"$INSTDIR\bin\tomcat5w.exe" //MS//Tomcat5'
 
   ClearErrors
 
@@ -595,6 +597,8 @@ Section Uninstall
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
+  ; Stop Tomcat service monitor if running
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5w.exe" //MQ//Tomcat5'
   ; Delete Tomcat service
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //DS//Tomcat5'
   ClearErrors
@@ -602,6 +606,7 @@ Section Uninstall
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Apache Tomcat 5.5"
   DeleteRegKey HKLM "SOFTWARE\Apache Software Foundation\Tomcat\5.5"
+  DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Run" "ApacheTomcatMonitor"
   RMDir /r "$SMPROGRAMS\Apache Tomcat 5.5"
   Delete "$INSTDIR\tomcat.ico"
   Delete "$INSTDIR\LICENSE"
