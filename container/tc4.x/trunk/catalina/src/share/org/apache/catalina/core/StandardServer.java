@@ -303,6 +303,8 @@ public final class StandardServer
      */
     public void addService(Service service) {
 
+        service.setServer(this);
+
         synchronized (services) {
             Service results[] = new Service[services.length + 1];
             System.arraycopy(services, 0, results, 0, services.length);
