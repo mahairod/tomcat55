@@ -71,7 +71,6 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
@@ -158,21 +157,21 @@ public abstract class StoreBase
      * Return the info for this Store.
      */
     public String getInfo() {
-	return(info);
+        return(info);
     }
 
     /**
      * Return the thread name for this Store.
      */
     public String getThreadName() {
-	return(threadName);
+        return(threadName);
     }
 
     /**
      * Return the name for this Store, used for logging.
      */
     public String getStoreName() {
-	return(storeName);
+        return(storeName);
     }
 
     /**
@@ -181,14 +180,14 @@ public abstract class StoreBase
      * @param debug The new debugging detail level
      */
     public void setDebug(int debug) {
-	this.debug = debug;
+        this.debug = debug;
     }
 
     /**
      * Return the debugging detail level for this Store.
      */
     public int getDebug() {
-	return(this.debug);
+        return(this.debug);
     }
 
 
@@ -198,18 +197,18 @@ public abstract class StoreBase
      * @param checkInterval The new check interval
      */
     public void setCheckInterval(int checkInterval) {
-	int oldCheckInterval = this.checkInterval;
-	this.checkInterval = checkInterval;
-	support.firePropertyChange("checkInterval",
-				   new Integer(oldCheckInterval),
-				   new Integer(this.checkInterval));
+        int oldCheckInterval = this.checkInterval;
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   new Integer(oldCheckInterval),
+                                   new Integer(this.checkInterval));
     }
 
     /**
      * Return the check interval (in seconds) for this Store.
      */
     public int getCheckInterval() {
-	return(this.checkInterval);
+        return(this.checkInterval);
     }
 
     /**
@@ -218,9 +217,9 @@ public abstract class StoreBase
      * @param manager The newly associated Manager
      */
     public void setManager(Manager manager) {
-	Manager oldManager = this.manager;
-	this.manager = manager;
-	support.firePropertyChange("manager", oldManager, this.manager);
+        Manager oldManager = this.manager;
+        this.manager = manager;
+        support.firePropertyChange("manager", oldManager, this.manager);
     }
 
     /**
@@ -238,7 +237,7 @@ public abstract class StoreBase
      * @param listener The listener to add
      */
     public void addLifecycleListener(LifecycleListener listener) {
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
     }
 
     /**
@@ -247,7 +246,7 @@ public abstract class StoreBase
      * @param listener The listener to add
      */
     public void removeLifecycleListener(LifecycleListener listener) {
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
     }
 
     /**
@@ -256,7 +255,7 @@ public abstract class StoreBase
      * @param listener a value of type 'PropertyChangeListener'
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
     }
 
     /**
@@ -265,7 +264,7 @@ public abstract class StoreBase
      * @param listener The listener to remove
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
     }
 
     // --------------------------------------------------------- Protected Methods
@@ -277,42 +276,42 @@ public abstract class StoreBase
      *
      */
     protected void processExpires() {
-	long timeNow = System.currentTimeMillis();
-	String[] keys = null;
-
+        long timeNow = System.currentTimeMillis();
+        String[] keys = null;
+        
     	if(!started)
     	    return;
-	
-	try {
-	    keys = keys();
-	} catch (IOException e) {
-	    log (e.toString());
-	    e.printStackTrace();
-	    return;
-	}
-	
-	for (int i = 0; i < keys.length; i++) {
-	    try {
-		StandardSession session = (StandardSession) load(keys[i]);
-		if (!session.isValid())
-		    continue;
-		int maxInactiveInterval = session.getMaxInactiveInterval();
-		if (maxInactiveInterval < 0)
-		    continue;
-		int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-		if (timeIdle >= maxInactiveInterval) {
-		    session.expire();
-		    remove(session.getId());
-		}
-	    } catch (IOException e) {
-	    	log (e.toString());
-	    	e.printStackTrace();
-	    } catch (ClassNotFoundException e) {
-	    	log (e.toString());
-	    	e.printStackTrace();
-	    }
-	}
+        
+        try {
+            keys = keys();
+        } catch (IOException e) {
+            log (e.toString());
+            e.printStackTrace();
+            return;
+        }
+        
+        for (int i = 0; i < keys.length; i++) {
+            try {
+                StandardSession session = (StandardSession) load(keys[i]);
+                if (!session.isValid())
+                    continue;
+                int maxInactiveInterval = session.getMaxInactiveInterval();
+                if (maxInactiveInterval < 0)
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle >= maxInactiveInterval) {
+                    session.expire();
+                    remove(session.getId());
+                }
+            } catch (IOException e) {
+                log (e.toString());
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                log (e.toString());
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -321,40 +320,22 @@ public abstract class StoreBase
      * @param message Message to be logged
      */
     protected void log(String message) {
-	Logger logger = null;
-	Container container = manager.getContainer();
-
-	if (container != null)
-	    logger = container.getLogger();
-
-	if (logger != null) {
-	    logger.log(getStoreName()+"[" + container.getName() + "]: "
-		       + message);
-	} else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println(getStoreName()+"[" + containerName
-			       + "]: " + message);
-	}
-    }
-
-    /**
-     * Called from <b>start()</b> and used for concrete Store
-     * implementations that need to add their own <b>start()</b> code.
-     *
-     */
-    protected void storeStart() {
-	;
-    }
-
-    /**
-     * Called from <b>stop()</b> and used for concrete Store
-     * implementations that need to add their own <b>stop()</b> code.
-     *
-     */
-    protected void storeStop() {
-	;
+        Logger logger = null;
+        Container container = manager.getContainer();
+        
+        if (container != null)
+            logger = container.getLogger();
+        
+        if (logger != null) {
+            logger.log(getStoreName()+"[" + container.getName() + "]: "
+                       + message);
+        } else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println(getStoreName()+"[" + containerName
+                               + "]: " + message);
+        }
     }
 
     // --------------------------------------------------------- Thread Methods
@@ -363,11 +344,11 @@ public abstract class StoreBase
      * The background thread that checks for session timeouts and shutdown.
      */
     public void run() {
-	// Loop until the termination semaphore is set
-	while (!threadDone) {
-	    threadSleep();
-	    processExpires();
-	}
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
+            threadSleep();
+            processExpires();
+        }
     }
 
     /**
@@ -381,18 +362,15 @@ public abstract class StoreBase
      *  that prevents this component from being used
      */
     public void start() throws LifecycleException {
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString(getStoreName()+".alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
-
-	// Start the background reaper thread
-	threadStart();
-
-	// Start the Store
-	storeStart();
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString(getStoreName()+".alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
+        
+        // Start the background reaper thread
+        threadStart();
     }
 
     /**
@@ -405,62 +383,59 @@ public abstract class StoreBase
      *  that needs to be reported
      */
     public void stop() throws LifecycleException {
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString(getStoreName()+".notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
-
-	// Stop the background reaper thread
-	threadStop();
-
-	// Stop the Store.
-	storeStop();
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString(getStoreName()+".notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
+        
+        // Stop the background reaper thread
+        threadStop();
     }
-
+    
     /**
      * Start the background thread that will periodically check for
      * session timeouts.
      */
     protected void threadStart() {
-	if (thread != null)
-	    return;
-
-	threadDone = false;
-	thread = new Thread(this, getThreadName());
-	thread.setDaemon(true);
-	thread.start();
+        if (thread != null)
+            return;
+        
+        threadDone = false;
+        thread = new Thread(this, getThreadName());
+        thread.setDaemon(true);
+        thread.start();
     }
-
+    
     /**
      * Sleep for the duration specified by the <code>checkInterval</code>
      * property.
      */
     protected void threadSleep() {
-	try {
-	    Thread.sleep(checkInterval * 1000L);
-	} catch (InterruptedException e) {
-	    ;
-	}
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
     }
-
+    
     /**
      * Stop the background thread that is periodically checking for
      * session timeouts.
      */
     protected void threadStop() {
-	if (thread == null)
-	    return;
-
-	threadDone = true;
-	thread.interrupt();
-	try {
-	    thread.join();
-	} catch (InterruptedException e) {
-	    ;
-	}
-
-	thread = null;
+        if (thread == null)
+            return;
+        
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
+        
+        thread = null;
     }
 }
