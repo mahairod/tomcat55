@@ -33,7 +33,7 @@
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpEnvEntry.do?objectName=" + 
                                URLEncoder.encode(envEntry) + "&parent=" +
-                               URLEncoder.encode(parentName) %>'>
+                               URLEncoder.encode(parentInfo) %>'>
             <controls:attribute name="envEntry" attribute="name"/>
           </html:link>
         </div></td>
