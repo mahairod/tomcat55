@@ -810,11 +810,11 @@ final class ApplicationDispatcher
                 wrapper.deallocate(servlet);
             }
         } catch (ServletException e) {
-            log.error(sm.getString("applicationDispatcher.deallocateException",
+            log(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = e;
         } catch (Throwable e) {
-            log.error(sm.getString("applicationDispatcher.deallocateException",
+            log(sm.getString("applicationDispatcher.deallocateException",
                              wrapper.getName()), e);
             servletException = new ServletException
                 (sm.getString("applicationDispatcher.deallocateException",
