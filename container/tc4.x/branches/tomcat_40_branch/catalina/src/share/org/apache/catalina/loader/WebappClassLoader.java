@@ -1113,12 +1113,9 @@ public class WebappClassLoader
             // FIXME - cache???
             if (debug >= 2)
                 log("  --> Returning stream from local");
-            try {
-               return (url.openStream());
-            } catch (IOException e) {
-               log("url.openStream(" + url.toString() + ")", e);
-               return (null);
-            }
+            stream = findLoadedResource(name);
+            if (stream != null)
+                return (stream);
         }
 
         // (3) Delegate to parent unconditionally
