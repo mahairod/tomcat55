@@ -46,7 +46,7 @@ This is the output of a simple JSP using XML format.
 
 
 <jsp:text>
-  <p>This sentence is enclosed in a jsp:text element.</p>
+  &lt;p&gt;This sentence is enclosed in a jsp:text element.&lt;/p&gt;
 </jsp:text>
 
 </body>
