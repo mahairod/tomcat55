@@ -335,7 +335,7 @@ This command is the logical opposite of the <code>/remove</code> command.</p>
 <h3>Install a Directory or WAR by URL</h3>
 
 <p>Install a web application directory or ".war" file located on the Tomcat
-server. If no <code>path</code> is specified the directory name or the war file
+server. If no <code>path</code> is specified, the directory name or the war file
 name without the ".war" extension is used as the path. The <code>war</code>
 parameter specifies a URL (including the <code>file:</code> scheme) for either
 a directory or a web application archive (WAR) file. The supported syntax for
@@ -439,7 +439,7 @@ directory and either the Host is configured with autoDeploy=true or
 liveDeploy=true, the Context path must match the directory name or
 war file name without the ".war" extension.</p>
 
-<p>For security when untrusted users can manage web applications the
+<p>For security when untrusted users can manage web applications, the
 Host deployXML flag can be set to false.  This prevents untrusted users
 from installing web applications using a configuration XML file and
 also prevents them from installing application directories or ".war"
@@ -596,7 +596,7 @@ http://localhost:8080/manager/remove?path=/examples
 </source>
 
 <p><strong><font color="red">WARNING</font> - This command will delete the
-contents of the web application directory and/or ".war file if it exists within
+contents of the web application directory and/or ".war" file if it exists within
 the <code>appBase</code> directory (typically "webapps") for this virtual host
 </strong>.  The web application temporary work directory is also deleted.  If
 you simply want to take an application out of service, you should use the
@@ -793,7 +793,7 @@ http://localhost:8080/manager/start?path=/examples
 <p>Signal a stopped application to restart, and make itself available again.
 Stopping and starting is useful, for example, if the database required by
 your application becomes temporarily unavailable.  It is usually better to
-stop the web application that relies on this database, rather than letting
+stop the web application that relies on this database rather than letting
 users continuously encounter database exceptions.</p>
 
 <p>If this command succeeds, you will see a response like this:</p>

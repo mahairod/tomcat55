@@ -15,12 +15,10 @@
 
 <section name="Introduction">
 
-<p>In many production environments, it is very useful to have the capability
-to manage your web applications without having to shut down and restart the
-entire Tomcat container.  The <a href="manager-howto.html">manager</a> web
-application provides this capability. This documentation is for the HTML web
-interface version of the manager which makes administering web applications
-easier.</p>
+<p>In many production environments it is very useful to have the capability
+to manage your web applications without having to shut down and restart
+Tomcat.  This document is for the HTML web interface to the web application
+<a href="manager-howto.html">manager</a>.</p>
 
 <p>The interface is divided into five sections:
 <ul>
@@ -41,9 +39,9 @@ easier.</p>
 
 <p>
 Displays information about the success or failure of the last web application
-manager command you performed. If it suceeded <strong>OK</strong> is displayed
+manager command you performed. If it succeeded <strong>OK</strong> is displayed
 and may be followed by a success message. If it failed <strong>FAIL</strong>
-is displayed followed by an error message. Common failure messages will be
+is displayed followed by an error message. Common failure messages are
 documented below for each command.  The complete list of failure messages for
 each command can be found in the <a href="manager-howto.html">manager</a> web
 application documentation.
@@ -105,7 +103,7 @@ the following is displayed:
 <p>Signal a stopped application to restart, and make itself available again.
 Stopping and starting is useful, for example, if the database required by
 your application becomes temporarily unavailable.  It is usually better to
-stop the web application that relies on this database, rather than letting
+stop the web application that relies on this database rather than letting
 users continuously encounter database exceptions.</p>
 
 <p>If this command succeeds, you will see a Message like this:</p>
@@ -190,7 +188,8 @@ directory or when you have added or updated jar files in the
 <code>/WEB-INF/lib</code> directory.
 </p>
 <p><strong>NOTE:</strong> The <code>/WEB-INF/web.xml</code>
-web application configuration file is not reread on a reload.
+web application configuration file is not checked on a reload;
+the previous web.xml configuration is used.
 If you have made changes to your web.xml file you must stop
 then start the web application.
 </p>
@@ -240,7 +239,7 @@ error message.  Possible causes for problems include:
 <subsection name="Remove">
 
 <p><strong><font color="red">WARNING</font> - This command will delete the
-contents of the web application directory and/or ".war fileif it exists within
+contents of the web application directory and/or ".war" file if it exists within
 the <code>appBase</code> directory (typically "webapps") for this virtual host
 </strong>.  The web application temporary work directory is also deleted.  If
 you simply want to take an application out of service, you should use the
@@ -292,7 +291,7 @@ error message.  Possible causes for problems include:
 on the Tomcat server or you can upload a web application archive (WAR)
 file to the server.</p>
 
-<p>To install an application fill in the appropriate fields for the type
+<p>To install an application, fill in the appropriate fields for the type
 of install you want to do and then submit it using the <i>Install</i>
 button.</p>
 
@@ -307,9 +306,9 @@ This command is the logical opposite of the <em>Remove</em> command.</p>
 <h3>Install a Directory or WAR by URL</h3>
 
 <p>Install a web application directory or ".war" file located on the Tomcat
-server. If no <i>Context Path:</i> is specified the directory name or the
+server. If no <i>Context Path</i> is specified, the directory name or the
 war file name without the ".war" extension is used as the path. The
-<i>WAR or Directory URL:</i> specifies a URL (including the <code>file:</code>
+<i>WAR or Directory URL</i> specifies a URL (including the <code>file:</code>
 scheme) for either a directory or a web application archive (WAR) file. The
 supported syntax for a URL referring to a WAR file is described on the Javadocs
 page for the <code>java.net.JarURLConnection</code> class.  Use only URLs that
@@ -337,10 +336,10 @@ WAR or Directory URL: jar:file:/path/to/bar.war!/
 <h3>Install a Directory or War from the Host appBase</h3>
 
 <p>Install a web application directory or ".war" file located in your Host
-appBase directory. If no <i>Context Path:</i> is specified the directory name
+appBase directory. If no <i>Context Path</i> is specified the directory name
 or the war file name without the ".war" extension is used as the path.</p>
 
-<p>In this example the web application located in a sub directory named
+<p>In this example the web application located in a subdirectory named
 <code>foo</code> in the Host appBase directory of the Tomcat server is
 installed as the web application context named <code>/foo</code>. Notice
 that there is no <code>path</code> parameter so the context path defaults
@@ -361,9 +360,9 @@ WAR or Directory URL: bar.war
 
 <h3>Install using a Context configuration ".xml" file</h3>
 
-<p>If the Host deployXML flag is set to true you can install a web
+<p>If the Host deployXML flag is set to true, you can install a web
 application using a Context configuration ".xml" file and an optional
-".war" file or web application directory. The <i>Context Path:</i>
+".war" file or web application directory. The <i>Context Path</i>
 is not used when installing a web application using a context ".xml"
 configuration file.</p>
 
@@ -383,7 +382,7 @@ example:
 </source>
 </p>
 
-<p>Use of the <i>WAR or Directory URL:</i> is optional. When used
+<p>Use of the <i>WAR or Directory URL</i> is optional. When used
 to select a web application ".war" file or directory it overrides any
 docBase configured in the context configuration ".xml" file.</p>
 
@@ -452,7 +451,7 @@ directory and either the Host is configured with autoDeploy=true or
 liveDeploy=true, the Context path must match the directory name or
 war file name without the ".war" extension.</p>
 
-<p>For security when untrusted users can manage web applications the
+<p>For security when untrusted users can manage web applications, the
 Host deployXML flag can be set to false.  This prevents untrusted users
 from installing web applications using a configuration XML file and
 also prevents them from installing application directories or ".war"
