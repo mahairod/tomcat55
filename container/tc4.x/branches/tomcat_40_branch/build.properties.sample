@@ -27,7 +27,7 @@ regexp.jar=${regexp.home}/jakarta-regexp-1.2.jar
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
-servlet.home=${base.path}/jakarta-servletapi-4/
+servlet.home=${base.path}/jakarta-servletapi-4/dist
 servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
 
