@@ -55,6 +55,9 @@
       <fix>
         <bug>32130</bug>: Check for null or empty file listing in FileStore#keys. (yoavs)
       </fix>
+      <update> 
+        <bug>32276</bug>: Add developer info to Realm How-To. (yoavs) 
+      </update> 
     </changelog>
   </subsection>
 
