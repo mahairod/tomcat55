@@ -1719,16 +1719,15 @@ public class Generator {
 	    }
 	    
 	    // Invoke fragment with parameter map
-	    String getterMethodName
-		= getAccessorMethodName(n.getAttributeValue("fragment"),
-					true);
 	    String varReader = n.getAttributeValue("varReader");
 	    if (varReader != null) {
 		out.printil("sout = new java.io.StringWriter();");
-		out.printin(getterMethodName);
+		out.printin("get");
+		out.print(toUpperCaseFirstChar(n.getAttributeValue("fragment")));
 		out.println("().invoke(sout, params);");
 	    } else {
-		out.printin(getterMethodName);
+		out.printin("get");
+		out.print(toUpperCaseFirstChar(n.getAttributeValue("fragment")));
 		out.println("().invoke(null, params);");
 	    }
 
@@ -2685,41 +2684,48 @@ public class Generator {
      */
     public static void generateTagHandler(ServletWriter out,
 					  Compiler compiler,
-					  Node.Nodes page)
+					  Node.Nodes page,
+					  TagInfo tagInfo)
 	                throws JasperException {
 	Generator gen = new Generator(out, compiler);
-	gen.generateTagHandlerPreamble(page);
+	gen.generateTagHandlerPreamble(tagInfo);
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, null));
-	gen.generateTagHandlerPostamble(page);
+	gen.generateTagHandlerPostamble();
     }
 
     /*
      * XXX
      */
-    private void generateTagHandlerPreamble(Node.Nodes page)
+    private void generateTagHandlerPreamble(TagInfo tagInfo)
 	    throws JasperException {
 
 	// Generate class declaration
 	out.printin("public class ");
-	out.print("XXX");
+	out.print(tagInfo.getTagName());
 	out.print(" extends javax.servlet.jsp.tagext.SimpleTagSupport {");
 	out.pushIndent();
 	
 	// Class body begins here
-	MethodsBuffer accessorsBuf = new MethodsBuffer();
-	MethodsBuffer setAttributeBuf = new MethodsBuffer();
-	generateTagHandlerDeclarations(page, accessorsBuf, setAttributeBuf);
-	out.printMultiLn(accessorsBuf.toString());
+
+	generateTagHandlerDeclarations(tagInfo);
+
 	out.printil("public int doTag() throws JspException {");
+	out.pushIndent();
+	// Declare parameter map for fragment/body invocation
+	out.println("java.util.Map params = null;");
+
+	// Declare writer used for storing result of fragment/body invocation
+	// if 'varReader' attribute is specified
+	out.println("java.io.Writer sout = null;");
+
 	out.printil("javax.servlet.jsp.JspWriter out = jspContext.getOut();");
 	out.printil("jspContext.pushPageScope();");
-	// create page-scope attributes for each tag attribute
-	out.printMultiLn(setAttributeBuf.toString());
+	generatePageScopedVariables(tagInfo);
 	out.printil("try {");
 	out.pushIndent();
     }
 
-    private void generateTagHandlerPostamble(Node.Nodes page) {
+    private void generateTagHandlerPostamble() {
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
@@ -2728,50 +2734,51 @@ public class Generator {
 	out.printil("}");
 	out.println();
 	out.printil("return EVAL_PAGE;");
+	out.popIndent();
+	out.printil("}");
+	out.popIndent();
+	out.printil("}");
     }
 
     /**
-     * Generates declarations for tag handler attributes.
+     * Generates declarations for tag handler attributes, and defines the
+     * getter and setter methods for each.
      */
-    private void generateTagHandlerDeclarations(Node.Nodes page,
-						MethodsBuffer accessorsBuf,
-						MethodsBuffer setAttributeBuf)
+    private void generateTagHandlerDeclarations(TagInfo tagInfo)
 	        throws JasperException {
 
-	class DeclarationVisitor extends Node.Visitor {
+	TagAttributeInfo[] attrInfos;
+	TagFragmentAttributeInfo[] fragAttrInfos;
 
-	    private MethodsBuffer accessorsBuf;
-	    private MethodsBuffer setAttributeBuf;
+	attrInfos = tagInfo.getAttributes();
+	fragAttrInfos = tagInfo.getFragmentAttributes();
 
-	    public DeclarationVisitor(MethodsBuffer accessorsBuf,
-				      MethodsBuffer setAttributeBuf) {
-		this.accessorsBuf = accessorsBuf;
-		this.setAttributeBuf = setAttributeBuf;
-	    }
-
-	    public void visit(Node.AttributeDirective n)
-		    throws JasperException {
-
-		boolean isFragment
-		    = "true".equalsIgnoreCase(n.getAttributeValue("fragment"));
-		if (isFragment)
-		    out.printin("private javax.servlet.jsp.tagext.JspFragment ");
-		else
-		    out.printin("private String ");
-		String attrName = n.getAttributeValue("name");
-		out.print(attrName);
+	// Declare "normal" attributes
+	if (attrInfos != null) {
+	    for (int i=0; i<attrInfos.length; i++) {
+		out.printin("private String ");
+		out.print(attrInfos[i].getName());
 		out.println(";");
+	    }
+	}
 
-		// generate getter and setter methods
-		ServletWriter outSave = out;
-		out = accessorsBuf.getOut();
-		if (isFragment)
-		    out.printin("public javax.servlet.jsp.tagext.JspFragment get");
-		else
-		    out.printin("public String get");
-		String getterMethodName = getAccessorMethodName(attrName,
-								true);
-		out.print(getterMethodName);
+	// Declare fragment attributes
+	if (fragAttrInfos != null) {
+	    for (int i=0; i<fragAttrInfos.length; i++) {
+		out.printin("private javax.servlet.jsp.tagext.JspFragment ");
+		out.print(fragAttrInfos[i].getName());
+		out.println(";");
+	    }
+	}
+
+	// Define getter and setter methods for "normal" attributes
+	if (attrInfos != null) {
+	    for (int i=0; i<attrInfos.length; i++) {
+		// getter method
+		String attrName = attrInfos[i].getName();
+		String attrUpperCase = toUpperCaseFirstChar(attrName);
+		out.printin("public String get");
+		out.print(attrUpperCase);
 		out.println("() {");
 		out.pushIndent();
 		out.printin("return this.");
@@ -2780,12 +2787,11 @@ public class Generator {
 		out.popIndent();
 		out.printil("}");
 		out.println();
+
+		// setter method
 		out.printin("public void set");
-		out.print(getAccessorMethodName(attrName, false));
-		if (isFragment)
-		    out.printin("javax.servlet.jsp.tagext.JspFragment ");
-		else
-		    out.printin("String ");
+		out.print(attrUpperCase);
+		out.printin("String ");
 		out.print(attrName);
 		out.println(") {");
 		out.pushIndent();
@@ -2796,38 +2802,81 @@ public class Generator {
 		out.println(";");
 		out.popIndent();
 		out.printil("}");
-
-		// set attribute in JspContext
-		out = setAttributeBuf.getOut();
-		out.printin("this.jspContext.setAttribute(\"");
-		out.print(attrName);
-		out.print("\", ");
-		out.print(getterMethodName);
-		out.println("());");
-
-		out = outSave;
 	    }
 	}
 
-	out.println();
+	// Define getter and setter methods for fragment attributes
+	if (fragAttrInfos != null) {
+	    for (int i=0; i<fragAttrInfos.length; i++) {
+		// getter method
+		String attrName = fragAttrInfos[i].getName();
+		String attrUpperCase = toUpperCaseFirstChar(attrName);
+		out.printin("public javax.servlet.jsp.tagext.JspFragment get");
+		out.print(attrUpperCase);
+		out.println("() {");
+		out.pushIndent();
+		out.printin("return this.");
+		out.print(attrName);
+		out.println(";");
+		out.popIndent();
+		out.printil("}");
+		out.println();
 
-	// Parameter map for fragment/body invocation
-	out.println("java.util.Map params = null;");
-
-	// Used for storing result of fragment/body invocation if 'varReader'
-	// attribute is specified
-	out.println("java.io.Writer sout = null;");
-
-	page.visit(new DeclarationVisitor(accessorsBuf, setAttributeBuf));
+		// setter method
+		out.printin("public void set");
+		out.print(attrUpperCase);
+		out.printin("javax.servlet.jsp.tagext.JspFragment ");
+		out.print(attrName);
+		out.println(") {");
+		out.pushIndent();
+		out.printin("this.");
+		out.print(attrName);
+		out.print(" = ");
+		out.print(attrName);
+		out.println(";");
+		out.popIndent();
+		out.printil("}");
+	    }
+	}
     }
 
-    private String getAccessorMethodName(String attrName, boolean getter) {
+    /*
+     * Creates a page-scoped variable for each tag attribute declared.
+     */
+    private void generatePageScopedVariables(TagInfo tagInfo) {
+
+	// "normal" attributes
+	TagAttributeInfo[] attrInfos = tagInfo.getAttributes();
+	if (attrInfos != null) {
+	    for (int i=0; i<attrInfos.length; i++) {
+		String attrName = attrInfos[i].getName();
+		out.printin("this.jspContext.setAttribute(\"");
+		out.print(attrName);
+		out.print("\", get");
+		out.print(toUpperCaseFirstChar(attrName));
+		out.println("());");
+	    }
+	}
+
+	// fragment attributes
+	TagFragmentAttributeInfo[] fragAttrInfos
+	    = tagInfo.getFragmentAttributes();
+	if (fragAttrInfos != null) {
+	    for (int i=0; i<fragAttrInfos.length; i++) {
+		String attrName = fragAttrInfos[i].getName();
+		out.printin("this.jspContext.setAttribute(\"");
+		out.print(attrName);
+		out.print("\", get");
+		out.print(toUpperCaseFirstChar(attrName));
+		out.println("());");
+	    }
+	}
+    }
+
+    private String toUpperCaseFirstChar(String attrName) {
 	char[] attrChars = attrName.toCharArray();
 	attrChars[0] = Character.toUpperCase(attrChars[0]);
-	if (getter)
-	    return "get" + new String(attrChars);
-	else
-	    return "set" + new String(attrChars);
+	return new String(attrChars);
     }
 
     /**
