@@ -78,6 +78,20 @@
       </fix>
      </changelog>
    </subsection>
+   <subsection name="Cluster">
+    <changelog>
+       <fix>
+          Fix JvmRouteBinderValve primary failover attribute to
+          org.apache.catalina.cluster.session.JvmRouteOrignalSessionID (pero)
+       </fix>
+       <add>
+          Integrate new fastasyncqueue cluster sender mode.
+          Support queue size limitation,
+          get all queued objects and send it to the backup node,
+          no queue thread lock contention under high replication load,
+          submitted by Rainer Jung (pero)
+       </add>
+   </subsection>
    <subsection name="Webapps">
      <changelog>
        <update>
