@@ -171,7 +171,7 @@ final class StandardHostValve
             Manager manager = context.getManager();
             if (manager != null) {
                 Session session = manager.findSession(sessionId);
-                if ((session != null) && session.isValid())
+                if (session != null)
                     session.access();
             }
         }
