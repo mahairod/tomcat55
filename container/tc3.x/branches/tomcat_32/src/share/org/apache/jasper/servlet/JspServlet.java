@@ -418,7 +418,7 @@ public class JspServlet extends HttpServlet {
          * Several threads may be handling requests for the same jspUri.
          * Only one of them is allowed to create the JspServletWrapper.
          */
-        synchronized(this){
+        synchronized(jsps){
             wrapper = (JspServletWrapper) jsps.get(jspUri);
             if(wrapper == null) {
                 wrapper = new JspServletWrapper(jspUri, isErrorPage);
@@ -593,7 +593,14 @@ public class JspServlet extends HttpServlet {
                                                           req, res);
         boolean outDated = false; 
 
-        Compiler compiler = ctxt.createCompiler();
+        synchronized(jsw){
+            /*
+             * Creating a compiler opens the associated .class file (if it exists)
+             * and reads the actual class name.  If we allow a compiler to be
+             * created while a compile is going on then bad things can happen.
+             */
+            Compiler compiler = ctxt.createCompiler();
+        }
 
         try {
 
