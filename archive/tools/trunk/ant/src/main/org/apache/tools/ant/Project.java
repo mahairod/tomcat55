@@ -310,7 +310,9 @@ public class Project {
 
     public File resolveFile(String fileName) {
 	// deal with absolute files
-	if(fileName.startsWith("/") ) return new File( fileName );
+	if (fileName.startsWith("/")) return new File( fileName );
+	if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
+	    if (fileName.indexOf(":\\")==1) return new File( fileName );
 
 	File file = new File(baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
