@@ -61,6 +61,9 @@
       <fix>
         <bug>29485</bug>: I broke the HTML manager when adding JavaScript confirmation, fixed now ;) (yoavs)
       </fix>
+      <fix>
+        <bug>31058</bug>: Ensure StatusTransformer escapes query string for XML. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 </section>
