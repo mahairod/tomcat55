@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="marc.saegesser@apropos.com">Marc A. Saegesser</author>
+    <title>Jakarta Tomcat</title>
+  </properties>
+
+<body>
+
+<section name="Jakarta Tomcat">
+
+<p>Tomcat is the official Reference Implementation for the <a 
+href="http://java.sun.com/products/servlets">Java Servlet</a> and <a 
+href="http://java.sun.com/products/jsp">JavaServer Pages</a> technologies.  
+The Java Servlet and JavaServer Pages specifications are developed by Sun 
+under the <a href="http://java.sun.com/aboutJava/communityprocess/">Java 
+Community Process</a>.  </p> 
+
+<p>Tomcat is developed in an open and participatory environment and 
+released under the <a href="http://www.apache.org/licenses">Apache 
+Software License</a>.  Tomcat is intended to be a collaboration of the 
+best-of-breed developers from around the world.  We invite you to 
+participate in this open development project.  To learn more about getting 
+involved, <a href="/site/getinvolved.html">click here</a>.  </p> 
+
+</section>
+
+<section name="Tomcat Versions">
+<p>There are several versions of Tomcat currently available for download.  Version 3.1.1
+is a legacy release.  Version 3.2.1 is the current production quality release.  Tomcat 3.3
+is the latest continuation of the Tomcat 3.x architecture.  All Tomcat 3.x releases
+trace their heritage back to the original Servlet and JSP implementations that Sun
+donated to the Apache Software Foundation.  The 3.x versions all implement the
+Servlet 2.2 and JSP 1.1 specifications.  
+</p>
+
+<p>Tomcat 4.0 implements a new servlet container ( called Catalina) that 
+is based on completely new architecture.  The 4.x releases will implement 
+the Servlet 2.3 and JSP 1.2 specifications.  </p> 
+
+<p>The releases are described in more detail below to help you determine 
+which one is right for you.  More details about each release can be found in 
+the associated release notes.  </p> 
+
+<p><strong>Tomcat 3.1.x</strong>.  The 3.1 release contained several 
+improvements over Tomcat 3.0, including servlet reloading, WAR file 
+support and added connectors for the IIS and Netscape web servers.  The 
+latest maintenance release, 3.1.1, contained fixes for security problems.  
+There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat 
+3.1 should update to 3.1.1 to close the security holes and they are 
+strongly encouraged to migrate to the current production release, Tocmat 
+3.2.1.</p> 
+
+<p><strong>Tomcat 3.2.x</strong>.  Tomcat 3.2.1 is the current 
+production quality release.  Few new features were added in this release;  
+the major effort was a refactoring of the internals to improve 
+performance and stability.  The 3.2.1 release, like 3.1.1, was a security patch.
+Tomcat 3.2.2 is currently in the final stages of beta review and is 
+expected to be released in the near future.  Version 3.2.2 fixes a large 
+number of bugs and all known specification compliance issues.  When released,
+version 3.2.2 will be the production quality Tomcat release.  The 3.2.x branch
+will continue in maintenance mode, but no new feature releases are planned.</p> 
+
+<p><strong>Tomcat 3.3</strong>.  Tomcat 3.3 continues the refactoring that 
+was begun in version 3.2 and carries it to its logical conclusion.  
+Version 3.3 provides a much more modular design and allows the servlet 
+container to be customized by adding and removing modules that control the 
+processing of servlet requests.  This version also contains many 
+performance improvements.  Version 3.3 is currently under development and 
+the beta process is expected to begin shortly.</p> 
+
+<p><strong>Tomcat 4.0</strong>.  Tomcat 4.0 is the next generatation of 
+Tomcat.  The 4.0 servlet container (Catalina) has been developed from the 
+ground up for flexibility and performance.  Version 4.0 implements the 
+Servlet 2.3 and JSP 1.2 specifications.  These specifications are 
+currently in public review and may change before their final publication.  
+Tomcat 4.0 is currently undergoing beta testing, but the final release is 
+dependant on the finalization of the specifications.</p> 
+
+</section>
+
+</body>
+</document>
+
