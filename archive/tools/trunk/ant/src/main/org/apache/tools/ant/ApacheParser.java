@@ -56,6 +56,7 @@ package org.apache.tools.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -73,7 +74,8 @@ public class ApacheParser extends Parser {
     public Document parse(File buildFile)
     throws SAXException, IOException {
         DOMParser p=new DOMParser();
-        p.parse(buildFile.toURL().toExternalForm());
+        URL url=new URL("file","",buildFile.getAbsolutePath());
+        p.parse(url.toExternalForm());
         return(p.getDocument());
     }
 }
