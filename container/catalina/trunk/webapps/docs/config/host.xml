@@ -264,7 +264,7 @@
     <p>If you are using the standard <strong>Host</strong> implementation,
     the following actions take place automatically when Catalina is first
     started, if the <code>deployOnStartup</code> property is set to
-    <code>true</code> (which is the default value:</p>
+    <code>true</code> (which is the default value):</p>
     <ul>
     <li>Any XML file in the 
         <code>$CATALINA_HOME/conf/[engine_name]/[host_name]</code> directory is
@@ -272,7 +272,7 @@
         <a href="context.html">Context</a> element (and its associated
         subelements) for a single web application.  The <code>docBase</code>
         attribute of this <code>&lt;Context&gt;</code> element will typically
-        be the absolute pathname to a web applicationd directory, or the
+        be the absolute pathname to a web application directory, or the
         absolute pathname of a web application archive (WAR) file (which
         will not be expanded).</li>
     <li>Any web application archive file that does not have a corresponding
@@ -314,6 +314,12 @@
         a deployment of the associated web application</li>
     </ul>
     </p>
+
+    <p>When using automatic deployment, the <code>docBase</code> defined by
+    an XML <a href="context.html">Context</a> file should be outside of the
+    <code>appBase</code> directory. If this is not the case difficulties
+    may be experienced deploying the web application or the application may
+    be deployed twice.</p>
 
   </subsection>
 
