@@ -111,6 +111,7 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
+import org.apache.coyote.tomcat5.CoyoteConnector;
 
 
 /**
@@ -1134,12 +1135,14 @@ public class MBeanFactory extends BaseModelMBean {
             // if (((address.equals("null")) &&
             if ((connAddress==null) && port.equals(connPort)) {
                 service.removeConnector(conns[i]);
+                ((CoyoteConnector)conns[i]).destroy();
                 break;
             }
             // } else if (address.equals(connAddress))
             if (port.equals(connPort)) {
                 // Remove this component from its parent component
                 service.removeConnector(conns[i]);
+                ((CoyoteConnector)conns[i]).destroy();
                 break;
             }
         }
