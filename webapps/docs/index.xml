@@ -135,6 +135,28 @@ itself, or to better understand its internal architecture and operation.</p>
 </section>
 
 
+<section name="Coyote Developers">
+
+<p>Coyote includes a low level connector API, a set of low level utility
+objects, as well as high performance implementations for the HTTP/1.1, AJP 1.3
+and JNI protocols. Catalina is based on the Coyote API.</p>
+
+<p>The following documents are for Java developers who wish to contribute to
+the development of the <em>Coyote</em> connector portion of Tomcat
+itself, or to better understand its internal architecture and operation.</p>
+
+<ul>
+<li><a href="coyote/api/org/apache/coyote/package-summary.html"><strong>Coyote API Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Coyote</em> API.</li>
+<li><a href="coyote/http11/api/index.html"><strong>Coyote HTTP/1.1 Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Coyote HTTP/1.1</em> connector.</li>
+<li><a href="coyote/util/index.html"><strong>Util API Javadocs</strong></a>
+    - Javadoc API documentation for the <em>Coyote Utilties</em> API.</li>
+</ul>
+
+</section>
+
+
 <section name="Jasper Developers">
 
 <p>The following documents are for Java developers who wish to contribute to

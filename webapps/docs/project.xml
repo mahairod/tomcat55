@@ -29,7 +29,7 @@
     <menu name="Administrators">
         <item name="CGI HOW-TO"            href="cgi-howto.html"/>
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
-        <item name="JK Documentation"      href="jk2/index.html"/>
+        <item name="JK Documentation"      href="coyote/jk2/index.html"/>
         <item name="JNDI DataSource HOW-TO" 
               href="jndi-datasource-examples-howto.html"/>
         <item name="JNDI Resources HOW-TO" href="jndi-resources-howto.html"/>
@@ -52,6 +52,12 @@
         <item name="Changelog"             href="CHANGELOG.txt"/>
         <item name="Functional Specs."     href="catalina/funcspecs/index.html"/>
         <item name="Javadocs"              href="catalina/docs/api/index.html"/>
+    </menu>
+
+    <menu name="Coyote Developers">
+        <item name="Coyote Javadocs"     href="coyote/api/org/apache/coyote/package-summary.html"/>
+        <item name="HTTP/1.1 Javadocs"   href="coyote/http11/api/index.html"/>
+        <item name="Util Javadocs"       href="coyote/util/index.html"/>
     </menu>
 
     <menu name="Jasper Developers">
