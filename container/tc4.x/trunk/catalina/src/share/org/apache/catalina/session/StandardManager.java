@@ -746,9 +746,15 @@ public class StandardManager
                 continue;
             int timeIdle = // Truncate, do not round up
                 (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-            if (timeIdle >= maxInactiveInterval)
-                session.expire();
+            if (timeIdle >= maxInactiveInterval) {
+                try {
+                    session.expire();
+                } catch (Throwable t) {
+                    log(sm.getString("standardManager.expireException"), t);
+                }
+            }
         }
+
     }
 
 
