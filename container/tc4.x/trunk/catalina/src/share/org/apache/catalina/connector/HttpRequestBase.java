@@ -76,7 +76,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.RequestDispatcher;
@@ -94,7 +93,6 @@ import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ParameterMap;
 import org.apache.catalina.util.RequestUtil;
-import org.apache.catalina.util.StringParser;
 
 
 /**
@@ -793,13 +791,24 @@ public class HttpRequestBase
         if (servletPath == null)
             servletPath = getServletPath();
 
-        int pos = servletPath.lastIndexOf('/');
+        // Add the path info, if there is any
+        String pathInfo = getPathInfo();
+        String requestPath = null;
+
+        if (pathInfo == null) {
+            requestPath = servletPath;
+        } else {
+            requestPath = servletPath + pathInfo;
+        }
+
+        int pos = requestPath.lastIndexOf('/');
+
         String relative = null;
         if (pos >= 0) {
             relative = RequestUtil.normalize
-                (servletPath.substring(0, pos + 1) + path);
+                (requestPath.substring(0, pos + 1) + path);
         } else {
-            relative = RequestUtil.normalize(servletPath + path);
+            relative = RequestUtil.normalize(requestPath + path);
         }
 
         return (context.getServletContext().getRequestDispatcher(relative));
