@@ -418,7 +418,7 @@ implements org.apache.catalina.cluster.ClusterManager
         try {
             //the channel is already running
             if ( mChannelStarted ) return;
-            log.error("Starting clustering manager...:"+getName());
+            log.info("Starting clustering manager...:"+getName());
             if ( cluster == null ) {
                 log.error("Starting... no cluster associated with this context:"+getName());
                 return;
