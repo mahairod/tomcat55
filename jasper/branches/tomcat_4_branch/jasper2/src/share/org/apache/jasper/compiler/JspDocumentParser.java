@@ -434,15 +434,6 @@ public class JspDocumentParser extends DefaultHandler
 
 		// get the uri
 		String uri = attrs.getValue(i);
-		/*
-		 * make sure that a relative path is prefixed with
-		 * urn:jsptld:path
-		 */
-		if (uri.charAt(0) == '/') {
-		    throw new JasperException(
-	                err.getString("jsp.error.xml.taglib.uri.not_prefixed",
-				      uri));
-		}
 		if (uri.startsWith(URN_JSPTLD)) {
 		    // uri value is of the form "urn:jsptld:path"
 		    uri = uri.substring(URN_JSPTLD.length());
