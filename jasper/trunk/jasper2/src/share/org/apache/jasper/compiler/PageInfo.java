@@ -88,10 +88,6 @@ class PageInfo {
     private boolean threadSafe = true;
     private boolean isErrorPage = false;
     private String errorPage = null;
-    private String pageEncoding = null;
-
-    // Encoding specified in JSP config element
-    private String configEncoding;
 
     /*
      * Indicates whether an encoding has been explicitly specified in the
@@ -258,36 +254,12 @@ class PageInfo {
 	this.isErrorPage = isErrorPage;
     }
 
-    public void setPageEncoding(String pageEncoding) {
-	this.pageEncoding = pageEncoding;
-    }
-
-    public String getPageEncoding() {
-	return pageEncoding;
-    }
-
     public void setIsEncodingSpecifiedInProlog(boolean isSpecified) {
 	this.isEncodingSpecifiedInProlog = isSpecified;
     }
 
     public boolean isEncodingSpecifiedInProlog() {
 	return this.isEncodingSpecifiedInProlog;
-    }
-
-    /*
-     * Sets the encoding specified in the JSP config element whose URL pattern
-     * matches this page.
-     */
-    public void setConfigEncoding(String enc) {
-	this.configEncoding = enc;
-    }
-
-    /*
-     * Gets the encoding specified in the JSP config element whose URL pattern
-     * matches this page.
-     */
-    public String getConfigEncoding() {
-	return this.configEncoding;
     }
 
     public int getMaxTagNesting() {

@@ -255,7 +255,7 @@ class Validator {
 		     * Report any encoding conflict, treating "UTF-16",
 		     * "UTF-16BE", and "UTF-16LE" as identical.
 		     */
-		    compareEncodings(value, n, pageInfo);
+		    comparePageEncodings(value, n, pageInfo);
 		}
 	    }
 
@@ -301,7 +301,7 @@ class Validator {
 		    if (pageEncodingSeen) 
 			err.jspError(n, "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
-		    pageInfo.setPageEncoding(value);
+		    n.getRoot().setPageEncoding(value);
 		}
 	    }
 
@@ -323,17 +323,19 @@ class Validator {
 	}
 
 	/*
-	 * Compares the encoding specified in the 'pageEncoding' attribute of
-	 * the page directive with the encoding explicitly specified in the
-	 * XML prolog (only for XML syntax) and the encoding specified in
-	 * the JSP config element whose URL pattern matches the page, and 
-	 * throws an error in case of a mismatch.
+	 * Compares the page encoding specified in the 'pageEncoding'
+	 * attribute of the page directive with the encoding explicitly
+	 * specified in the XML prolog (only for XML syntax) and the encoding
+	 * specified in the JSP config element whose URL pattern matches the
+	 * page, and throws an error in case of a mismatch.
 	 */
-	private void compareEncodings(String pageDirEnc, Node n,
-				      PageInfo pageInfo)
+	private void comparePageEncodings(String pageDirEnc,
+					  Node.PageDirective n,
+					  PageInfo pageInfo)
 	            throws JasperException {
 
-	    String configEnc = pageInfo.getConfigEncoding();
+	    String configEnc = n.getRoot().getJspConfigPageEncoding();
+
 	    if (configEnc != null && !pageDirEnc.equals(configEnc) 
 		    && (!pageDirEnc.startsWith("UTF-16")
 			|| !configEnc.startsWith("UTF-16"))) {
@@ -341,8 +343,9 @@ class Validator {
 			     configEnc, pageDirEnc);
 	    }
 
-	    if (n.isXmlSyntax() && pageInfo.isEncodingSpecifiedInProlog()) {
-		String pageEnc = pageInfo.getPageEncoding();
+	    if (n.getRoot().isXmlSyntax()
+		    && pageInfo.isEncodingSpecifiedInProlog()) {
+		String pageEnc = n.getRoot().getPageEncoding();
 		if (!pageDirEnc.equals(pageEnc) 
 		        && (!pageDirEnc.startsWith("UTF-16")
 			    || !pageEnc.startsWith("UTF-16"))) {
@@ -1053,7 +1056,7 @@ class Validator {
 	    // valid attribute value in xml).
 
             if (value != null) {
-                if (n.isXmlSyntax() && value.startsWith("%=")) {
+                if (n.getRoot().isXmlSyntax() && value.startsWith("%=")) {
                     result = new Node.JspAttribute(
                                         qName,
 					uri,
@@ -1063,7 +1066,7 @@ class Validator {
 					null,
 					dynamic);
                 }
-                else if(!n.isXmlSyntax() && value.startsWith("<%=")) {
+                else if(!n.getRoot().isXmlSyntax() && value.startsWith("<%=")) {
                     result = new Node.JspAttribute(
                                         qName,
 					uri,
@@ -1125,8 +1128,8 @@ class Validator {
 	 * EL expression.
 	 */
 	private boolean isExpression(Node n, String value) {
-	    if ((n.isXmlSyntax() && value.startsWith("%="))
-		    || (!n.isXmlSyntax() && value.startsWith("<%="))
+	    if ((n.getRoot().isXmlSyntax() && value.startsWith("%="))
+		    || (!n.getRoot().isXmlSyntax() && value.startsWith("<%="))
    		    || (value.indexOf("${") != -1 && !pageInfo.isELIgnored()))
 		return true;
 	    else
@@ -1208,7 +1211,7 @@ class Validator {
 		    String function = func.getName();
 		    String uri = null;
 
-		    if (n.isXmlSyntax()) {
+		    if (n.getRoot().isXmlSyntax()) {
 		        uri = findUri(prefix, n);
 		    } else if (prefix != null) {
 			Hashtable prefixMapper = pageInfo.getPrefixMapper();
@@ -1314,7 +1317,7 @@ class Validator {
 	    if (isXml) {
 		charset = "UTF-8";
 	    } else {
-		charset = pageInfo.getPageEncoding();
+		charset = page.getRoot().getPageEncoding();
 		// The resulting charset might be null
 	    }
 

@@ -144,13 +144,17 @@ class Parser implements TagConstants {
 				   Node parent,
 				   boolean isTagFile,
 				   boolean directivesOnly,
-				   JarFile jarFile)
+				   JarFile jarFile,
+				   String pageEnc,
+				   String jspConfigPageEnc)
 		throws JasperException {
 
 	Parser parser = new Parser(pc, reader, isTagFile, directivesOnly,
 				   jarFile);
 
 	Node.Root root = new Node.Root(reader.mark(), parent, false);
+	root.setPageEncoding(pageEnc);
+	root.setJspConfigPageEncoding(jspConfigPageEnc);
 
 	if (directivesOnly) {
 	    parser.parseTagFileDirectives(root);

@@ -342,18 +342,12 @@ abstract class Node implements TagConstants {
 	return isDummy;
     }
 
-    /**
-     * @return true if the current page is in xml syntax, false otherwise.
-     */
-    public boolean isXmlSyntax() {
-	Node r = this;
-	while (!(r instanceof Node.Root)) {
-	    r = r.getParent();
-	    if (r == null)
-		return false;
+    public Node.Root getRoot() {
+	Node n = this;
+	while (!(n instanceof Node.Root)) {
+	    n = n.getParent();
 	}
-
-	return r.isXmlSyntax();
+	return (Node.Root) n;
     }
 
     /**
@@ -395,14 +389,11 @@ abstract class Node implements TagConstants {
 	private Root parentRoot;
 	private boolean isXmlSyntax;
 
-	/*
-	 * Constructor for dummy root.
-	 */
-	Root(boolean isXmlSyntax) {
-	    this.isXmlSyntax = isXmlSyntax;
-	    this.qName = JSP_ROOT_ACTION;
-	    this.localName = ROOT_ACTION;
-	}
+	// Source encoding of the page containing this Root
+	private String pageEnc;
+	
+	// Page encoding specified in JSP config element
+	private String jspConfigPageEnc;
 
 	/*
 	 * Constructor.
@@ -428,8 +419,32 @@ abstract class Node implements TagConstants {
 	    return isXmlSyntax;
 	}
 
+	/*
+	 * Sets the encoding specified in the JSP config element whose URL
+	 * pattern matches the page containing this Root.
+	 */
+	public void setJspConfigPageEncoding(String enc) {
+	    jspConfigPageEnc = enc;
+	}
+
+	/*
+	 * Gets the encoding specified in the JSP config element whose URL
+	 * pattern matches the page containing this Root.
+	 */
+	public String getJspConfigPageEncoding() {
+	    return jspConfigPageEnc;
+	}
+
+	public void setPageEncoding(String enc) {
+	    pageEnc = enc;
+	}
+
+	public String getPageEncoding() {
+	    return pageEnc;
+	}
+
 	/**
-	 * @return The enclosing root to this root. Usually represents the
+	 * @return The enclosing root to this Root. Usually represents the
 	 * page that includes this one.
 	 */
 	public Root getParentRoot() {
@@ -440,15 +455,11 @@ abstract class Node implements TagConstants {
     /**
      * Represents the root of a Jsp document (XML syntax)
      */
-    public static class JspRoot extends Root {
+    public static class JspRoot extends Node {
 
 	public JspRoot(String qName, Attributes attrs, Attributes xmlnsAttrs,
 		       Mark start, Node parent) {
-	    super(start, parent, true);
-	    this.qName = qName;
-	    this.localName = ROOT_ACTION;
-	    this.attrs = attrs;
-	    this.xmlnsAttrs = xmlnsAttrs;
+	    super(qName, ROOT_ACTION, attrs, xmlnsAttrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {

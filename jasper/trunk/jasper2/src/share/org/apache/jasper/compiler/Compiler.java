@@ -213,7 +213,6 @@ public class Compiler {
 	    pageInfo.setELIgnoredSpecified(true);
 	}
 	pageInfo.setIsXmlConfig(JspUtil.booleanValue(jspProperty.isXml()));
-	pageInfo.setConfigEncoding(jspProperty.getPageEncoding());
 	pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
 	pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
 	if (jspProperty.getIncludePrelude() != null) {

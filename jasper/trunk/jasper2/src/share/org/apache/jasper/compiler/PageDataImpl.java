@@ -293,7 +293,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
-	    if (!n.isXmlSyntax()) {
+	    if (!n.getRoot().isXmlSyntax()) {
 		buf.append("<").append(JSP_TEXT_ACTION);
 		buf.append(" jsp:id=\"");
 		buf.append(jspId++).append("\">");
@@ -301,7 +301,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	    buf.append("${");
 	    buf.append(n.getText());
 	    buf.append("}");
-	    if (!n.isXmlSyntax()) {
+	    if (!n.getRoot().isXmlSyntax()) {
 		buf.append(JSP_TEXT_ACTION_END);
 	    }
 	    buf.append("\n");
@@ -388,7 +388,7 @@ class PageDataImpl extends PageData implements TagConstants {
 	     * If the template text came from a JSP page written in JSP syntax,
 	     * create a jsp:text element for it (JSP 5.3.2).
 	     */
-	    appendText(n.getText(), !n.isXmlSyntax());
+	    appendText(n.getText(), !n.getRoot().isXmlSyntax());
 	}
 
 	/*

@@ -103,8 +103,8 @@ class ParserController {
     private static final String JSP_ROOT_TAG = "<jsp:root";
 
     /*
-     * Tells if the file being processed is the "top" file
-     * in the translation unit.
+     * Tells if the file being processed is the "top" file in the translation
+     * unit.
      */
     private boolean isTopFile = true;
 
@@ -194,9 +194,12 @@ class ParserController {
 	Node.Nodes parsedPage = null;
 	String absFileName = resolveFileName(inFileName);
 
+	String jspConfigPageEnc = getJspConfigPageEncoding(absFileName);
+
 	// Figure out what type of JSP document and encoding type we are
 	// dealing with
-	figureOutJspDocument(absFileName, jarFile);
+	determineSyntaxAndEncoding(absFileName, jarFile,
+				   jspConfigPageEnc);
 
 	if (isTopFile) {
 	    if (isXml && pageInfo.isEncodingSpecifiedInProlog()) {
@@ -206,7 +209,6 @@ class ParserController {
 		 * (if any), treating "UTF-16", "UTF-16BE", and "UTF-16LE" as
 		 * identical.
 		 */
-		String jspConfigPageEnc = pageInfo.getConfigEncoding();
 		if (jspConfigPageEnc != null
 		        && !jspConfigPageEnc.equals(sourceEnc)
 		        && (!jspConfigPageEnc.startsWith("UTF-16")
@@ -215,7 +217,6 @@ class ParserController {
 				 sourceEnc, jspConfigPageEnc);
 		}
 	    }
-	    pageInfo.setPageEncoding(sourceEnc);
 	    isTopFile = false;
 	} else {
 	    compiler.getPageInfo().addDependant(absFileName);
@@ -226,21 +227,13 @@ class ParserController {
 	    // JSP document (XML syntax)
 	    InputStream inStream = null;
 	    try {
-		// XXX Files included using the include directive must be read
-		// using the character encoding of the including page. 
-		// However, I am wondering how to implement this if an
-		// included JSP document contains its own XML prolog. Since
-		// we're handing the included JSP document off to the XML
-		// (e.g., SAX) parser, we have no control over how it's parsed:
-		// the parser will determine the encoding from the XML prolog
-		// on its own, and use it. We can't tell the parser to use
-		// a different encoding.
 		inStream = JspUtil.getInputStream(absFileName, jarFile, ctxt,
 						  err);
 		parsedPage = JspDocumentParser.parse(this, absFileName,
 						     inStream, parent,
-						     isTagFile,
-						     directivesOnly);
+						     isTagFile, directivesOnly,
+						     sourceEnc,
+						     jspConfigPageEnc);
 	    } finally {
 		if (inStream != null) {
 		    try {
@@ -253,21 +246,14 @@ class ParserController {
 	    // Standard syntax
 	    InputStreamReader inStreamReader = null;
 	    try {
-		// Files included using the include directive must be read
-		// using the character encoding of the including page, which is
-		// the encoding returned by pageInfo.getPageEncoding().
-		inStreamReader = JspUtil.getReader(absFileName,
-						   pageInfo.getPageEncoding(),
-						   jarFile,
-						   ctxt,
-						   err);
-		JspReader jspReader = new JspReader(ctxt,
-						    absFileName,
-						    pageInfo.getPageEncoding(),
-						    inStreamReader,
+		inStreamReader = JspUtil.getReader(absFileName, sourceEnc,
+						   jarFile, ctxt, err);
+		JspReader jspReader = new JspReader(ctxt, absFileName,
+						    sourceEnc, inStreamReader,
 						    err);
                 parsedPage = Parser.parse(this, jspReader, parent, isTagFile,
-					  directivesOnly, jarFile);
+					  directivesOnly, jarFile, sourceEnc,
+					  jspConfigPageEnc);
             } finally {
 		if (inStreamReader != null) {
 		    try {
@@ -281,6 +267,25 @@ class ParserController {
 	baseDirStack.pop();
 
 	return parsedPage;
+    }
+
+    /*
+     * Checks to see if the given URI is matched by a URL pattern specified in
+     * a jsp-property-group in web.xml, and if so, returns the value of the
+     * <page-encoding> element.
+     *
+     * @param absFileName The URI to match
+     *
+     * @return The value of the <page-encoding> attribute of the 
+     * jsp-property-group with matching URL pattern
+     */
+    private String getJspConfigPageEncoding(String absFileName)
+            throws JasperException {
+
+	JspConfig jspConfig = ctxt.getOptions().getJspConfig();
+	JspConfig.JspProperty jspProperty
+	    = jspConfig.findJspProperty(absFileName);
+	return jspProperty.getPageEncoding();
     }
 
     /**
@@ -298,8 +303,12 @@ class ParserController {
      * If these properties are already specified in the jsp-config element
      * in web.xml, then they are used.
      */
-    private void figureOutJspDocument(String fname, JarFile jarFile)
+    private void determineSyntaxAndEncoding(String absFileName,
+					    JarFile jarFile,
+					    String jspConfigPageEnc)
 	        throws JasperException, IOException {
+
+	isXml = false;
 
 	/*
 	 * 'true' if the syntax of the page (XML or standard) is identified by
@@ -307,7 +316,6 @@ class ParserController {
 	 * the ".jspx" suffix
 	 */
 	boolean isExternal = false;
-	isXml = false;
 
 	/*
 	 * Indicates whether we need to revert from temporary usage of
@@ -319,7 +327,8 @@ class ParserController {
 	    // If <is-xml> is specified in a <jsp-property-group>, it is used.
 	    isXml = pageInfo.isXmlConfig();
 	    isExternal = true;
-	} else if (fname.endsWith(".jspx") || fname.endsWith(".tagx")) {
+	} else if (absFileName.endsWith(".jspx")
+		       || absFileName.endsWith(".tagx")) {
 	    isXml = true;
 	    isExternal = true;
 	}
@@ -327,7 +336,7 @@ class ParserController {
 	if (isExternal && !isXml) {
 	    // JSP (standard) syntax. Use encoding specified in jsp-config
 	    // if provided.
-	    sourceEnc = pageInfo.getConfigEncoding();
+	    sourceEnc = jspConfigPageEnc;
 	    if (sourceEnc != null) {
 		return;
 	    }
@@ -335,8 +344,8 @@ class ParserController {
 	    sourceEnc = "ISO-8859-1";
 	} else {
 	    // XML syntax or unknown, (auto)detect encoding ...
-	    Object[] ret = XMLEncodingDetector.getEncoding(fname, jarFile,
-							   ctxt, err);
+	    Object[] ret = XMLEncodingDetector.getEncoding(absFileName,
+							   jarFile, ctxt, err);
 	    sourceEnc = (String) ret[0];
 	    if (((Boolean) ret[1]).booleanValue()) {
 		pageInfo.setIsEncodingSpecifiedInProlog(true);
@@ -382,7 +391,8 @@ class ParserController {
 	 */
 	JspReader jspReader = null;
 	try {
-	    jspReader = new JspReader(ctxt, fname, sourceEnc, jarFile, err);
+	    jspReader = new JspReader(ctxt, absFileName, sourceEnc, jarFile,
+				      err);
 	} catch (FileNotFoundException ex) {
 	    throw new JasperException(ex);
 	}
@@ -407,7 +417,7 @@ class ParserController {
 	 * Determine the page encoding from the page directive, unless it's
 	 * specified via JSP config.
 	 */
-	sourceEnc = pageInfo.getConfigEncoding();
+	sourceEnc = jspConfigPageEnc;
 	if (sourceEnc == null) {
 	    sourceEnc = getSourceEncodingForJspSyntax(jspReader, startMark);
 	}
@@ -456,12 +466,10 @@ class ParserController {
     }
 
     /*
-     * Resolve the name of the file and update
-     * baseDirStack() to keep track ot the current
-     * base directory for each included file.
-     * The 'root' file is always an 'absolute' path,
-     * so no need to put an initial value in the
-     * baseDirStack.
+     * Resolve the name of the file and update baseDirStack() to keep track of
+     * the current base directory for each included file.
+     * The 'root' file is always an 'absolute' path, so no need to put an
+     * initial value in the baseDirStack.
      */
     private String resolveFileName(String inFileName) {
         String fileName = inFileName.replace('\\', '/');

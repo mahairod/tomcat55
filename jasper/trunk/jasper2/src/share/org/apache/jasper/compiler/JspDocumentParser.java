@@ -144,34 +144,39 @@ class JspDocumentParser extends DefaultHandler
 				   InputStream inStream,
 				   Node parent,
 				   boolean isTagFile,
-				   boolean directivesOnly)
+				   boolean directivesOnly,
+				   String pageEnc,
+				   String jspConfigPageEnc)
 	        throws JasperException {
 
-	JspDocumentParser handler = new JspDocumentParser(pc, path, inStream,
-							  isTagFile,
-							  directivesOnly);
+	JspDocumentParser jspDocParser = new JspDocumentParser(pc, path,
+							       inStream,
+							       isTagFile,
+							       directivesOnly);
+
 	// It's an error to have a prelude or a coda associated with
 	// a JSP document
-	if (!handler.pageInfo.getIncludePrelude().isEmpty()) {
-	    String file = (String) handler.pageInfo.getIncludePrelude().get(0);
-	    handler.err.jspError("jsp.error.prelude.xml", path, file);
+	if (!jspDocParser.pageInfo.getIncludePrelude().isEmpty()) {
+	    String file = (String) jspDocParser.pageInfo.getIncludePrelude().get(0);
+	    jspDocParser.err.jspError("jsp.error.prelude.xml", path, file);
 	}
-	if (!handler.pageInfo.getIncludeCoda().isEmpty()) {
-	    String file = (String) handler.pageInfo.getIncludeCoda().get(0);
-	    handler.err.jspError("jsp.error.coda.xml", path, file);
+	if (!jspDocParser.pageInfo.getIncludeCoda().isEmpty()) {
+	    String file = (String) jspDocParser.pageInfo.getIncludeCoda().get(0);
+	    jspDocParser.err.jspError("jsp.error.coda.xml", path, file);
 	}
 
 	Node.Nodes pageNodes = null;
-	Node.Root jspRoot = null;
 
 	try {
-	    if (parent == null) {
-		// create dummy <jsp:root> element
-		jspRoot = new Node.Root(true);
-		handler.current = jspRoot;
-	    } else {
-		handler.isTop = false;
-		handler.current = parent;
+
+	    // Create dummy root and initialize it with given page encodings
+	    Node.Root dummyRoot = new Node.Root(null, parent, true);
+	    dummyRoot.setPageEncoding(pageEnc);
+	    dummyRoot.setJspConfigPageEncoding(jspConfigPageEnc);
+	    jspDocParser.current = dummyRoot;
+
+	    if (parent != null) {
+		jspDocParser.isTop = false;
 	    }
 
 	    // Use the default (non-validating) parser
@@ -184,22 +189,19 @@ class JspDocumentParser extends DefaultHandler
 	    // Configure the parser
 	    SAXParser saxParser = factory.newSAXParser();
 	    XMLReader xmlReader = saxParser.getXMLReader();
-	    xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY, handler);
-	    xmlReader.setErrorHandler(handler);
+	    xmlReader.setProperty(LEXICAL_HANDLER_PROPERTY, jspDocParser);
+	    xmlReader.setErrorHandler(jspDocParser);
 
 	    // Parse the input
-	    saxParser.parse(handler.inputSource, handler);
+	    saxParser.parse(jspDocParser.inputSource, jspDocParser);
 
-	    if (parent == null) {
-		// Create Node.Nodes from dummy (top-level) <jsp:root>
-		pageNodes = new Node.Nodes(jspRoot);
-	    } else {
-		pageNodes = parent.getBody();
-	    }
+	    // Create Node.Nodes from dummy root
+	    pageNodes = new Node.Nodes(dummyRoot);
+
 	} catch (IOException ioe) {
-	    handler.err.jspError("jsp.error.data.file.read", path, ioe);
+	    jspDocParser.err.jspError("jsp.error.data.file.read", path, ioe);
 	} catch (Exception e) {
-	    handler.err.jspError(e);
+	    jspDocParser.err.jspError(e);
 	}
 
 	return pageNodes;
@@ -812,10 +814,13 @@ class JspDocumentParser extends DefaultHandler
     }
 
     /*
-     * Parses the given file that is being specified in the given include
-     * directive.
+     * Parses the given file included via an include directive.
+     *
+     * @param fname The path to the included resource, as specified by the
+     * 'file' attribute of the include directive
+     * @param parent The Node representing the include directive
      */
-    private void processIncludeDirective(String fname, Node includeDir) 
+    private void processIncludeDirective(String fname, Node parent) 
 		throws SAXException {
 
 	if (fname == null) {
@@ -823,7 +828,7 @@ class JspDocumentParser extends DefaultHandler
 	}
 
 	try {
-	    parserController.parse(fname, includeDir, null);
+	    parserController.parse(fname, parent, null);
 	} catch (FileNotFoundException fnfe) {
 	    throw new SAXParseException(
                     Localizer.getMessage("jsp.error.file.not.found", fname),
