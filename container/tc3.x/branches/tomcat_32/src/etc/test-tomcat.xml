@@ -538,12 +538,6 @@
              returnCode="${http.protocol} 404"
       />
 
-      <!-- hit unavailable servlet 2nd time -->
-      <gtest host="${host}" port="${port}"  request="GET /test/servlet/Unavailable HTTP/1.0"
-             returnCode="${http.protocol} 503"
-      />
-
-
    </target>
 
    <target name="get-tomcat" depends="get">
@@ -728,7 +722,7 @@
       <gtest host="${host}" port="${port}"  request="GET /test/servlet/PermanentlyUnavailable2 HTTP/1.0"
              returnCode="${http.protocol} 503"
       />
-      <!-- 3rd hit on the unavailable servlet should succeed -->
+      <!-- 2nd hit on the unavailable servlet should succeed -->
       <gtest host="${host}" port="${port}"  request="GET /test/servlet/Unavailable HTTP/1.0"
              returnCode="${http.protocol} 200"
              responseMatch="Hello"
