@@ -165,7 +165,13 @@ public final class ContextConfig
      */
     private int debug = 0;
 
-
+    
+    /**
+     * The default web application's deployment descriptor location.
+     */
+    private String defaultWebXml = Constants.DefaultWebXml;
+    
+    
     /**
      * Track any fatal errors during startup configuration processing.
      */
@@ -202,7 +208,7 @@ public final class ContextConfig
      */
     private static boolean xmlNamespaceAware = false;
 
-    
+        
     // ------------------------------------------------------------- Properties
 
 
@@ -224,6 +230,28 @@ public final class ContextConfig
     public void setDebug(int debug) {
 
         this.debug = debug;
+
+    }
+    
+    
+    /**
+     * Return the location of the default deployment descriptor
+     */
+    public String getDefaultWebXml() {
+
+        return (this.defaultWebXml);
+
+    }
+
+
+    /**
+     * Set the location of the default deployment descriptor
+     *
+     * @param path Absolute/relative path to the default web.xml
+     */
+    public void setDefaultWebXml(String path) {
+
+        this.defaultWebXml = path;
 
     }
 
@@ -603,10 +631,11 @@ public final class ContextConfig
         long t1=System.currentTimeMillis();
 
         // Open the default web.xml file, if it exists
-        File file = new File(Constants.DefaultWebXml);
-        if (!file.isAbsolute())
+        File file = new File(this.defaultWebXml);
+        if (!file.isAbsolute()) {
             file = new File(System.getProperty("catalina.base"),
-                            Constants.DefaultWebXml);
+                            this.defaultWebXml);
+        }
         FileInputStream stream = null;
         try {
             stream = new FileInputStream(file.getCanonicalPath());
