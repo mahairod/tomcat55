@@ -38,7 +38,7 @@ fi
 
 echo Running tests against ${host}:${port}
 
-addtl_classpath=${basedir}/classes:${basedir}/lib/client.jar:${basedir}/lib/moo.jar:${basedir}/../tomcat/classes
+addtl_classpath=${basedir}/classes:${basedir}/client.jar:${basedir}/lib/moo.jar:${basedir}/../tomcat/classes
 # XXX add tomcat.jar
 # XXX test if classes exists
 
