@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document url="setup.html">
+
+  &project;
+
+  <properties>
+    <author email="remm@apache.org">Remy Maucherat</author>
+    <title>Tomcat Setup</title>
+  </properties>
+
+<body>
+
+  <section name="Introduction">
+
+
+
+  </section>
+
+</body>
+</document>
