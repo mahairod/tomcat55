@@ -83,6 +83,11 @@ import javax.servlet.jsp.*;
  * popBody methods of the PageContext class.  A BodyContent is enclosed
  * within another JspWriter (maybe another BodyContent object) following
  * the structure of their associated actions.
+ *
+ * <p>
+ * A BodyContent is made available to a BodyTag through a setBodyContent()
+ * call.  The tag handler can use the object until after the call to
+ * doEndTag().
  */
 
 public abstract class BodyContent extends JspWriter {
