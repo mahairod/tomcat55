@@ -418,7 +418,14 @@ final class CoyoteAdapter
                         log.debug(" Requested cookie session id is " +
                             ((HttpServletRequest) request.getRequest())
                             .getRequestedSessionId());
+                } else {
+                    if (!request.isRequestedSessionIdValid()) {
+                        // Replace the session id until one is valid
+                        request.setRequestedSessionId
+                            (scookie.getValue().toString());
+                    }
                 }
+                continue;
             }
             try {
                 Cookie cookie = new Cookie(scookie.getName().toString(),
