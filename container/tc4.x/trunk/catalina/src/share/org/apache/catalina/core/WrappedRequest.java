@@ -62,7 +62,7 @@
  */
 
 
-package org.apache.tomcat.core;
+package org.apache.catalina.core;
 
 
 import java.io.BufferedReader;
@@ -81,14 +81,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUtils;
-import org.apache.tomcat.Connector;
-import org.apache.tomcat.Context;
-import org.apache.tomcat.HttpRequest;
-import org.apache.tomcat.Request;
-import org.apache.tomcat.Response;
-import org.apache.tomcat.Wrapper;
-import org.apache.tomcat.util.Enumerator;
-import org.apache.tomcat.util.StringManager;
+import org.apache.catalina.Connector;
+import org.apache.catalina.Context;
+import org.apache.catalina.HttpRequest;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.StringManager;
 
 
 /**
@@ -210,7 +210,7 @@ final class WrappedRequest
      * Descriptive information about this implementation.
      */
     private static final String info =
-      "org.apache.tomcat.core.WrappedRequest/1.0";
+      "org.apache.catalina.core.WrappedRequest/1.0";
 
 
     /**
