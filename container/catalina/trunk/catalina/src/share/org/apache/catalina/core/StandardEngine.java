@@ -413,8 +413,8 @@ public class StandardEngine
             // for consistency...: we are probably in embeded mode
             try {
                 service=new StandardService();
-                service.initialize();
                 service.setContainer( this );
+                service.initialize();
             } catch( Throwable t ) {
                 t.printStackTrace();
             }
