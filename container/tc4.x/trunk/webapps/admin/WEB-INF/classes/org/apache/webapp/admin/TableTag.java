@@ -184,8 +184,21 @@ public class TableTag extends BodyTagSupport {
     }
     
     // --------------------------------------------------------- Public Methods
-    
-    
+
+
+    public int doStartTag() throws JspException {
+
+        this.headers.clear();
+        this.labels.clear();
+        this.datas.clear();
+        this.labelStyles.clear();
+        this.dataStyles.clear();
+
+        return (EVAL_BODY_TAG);
+
+    }
+
+
     /**
      * Render this instant actions control.
      *

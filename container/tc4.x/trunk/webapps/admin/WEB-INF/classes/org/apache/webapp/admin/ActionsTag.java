@@ -166,6 +166,17 @@ public class ActionsTag extends BodyTagSupport {
     // --------------------------------------------------------- Public Methods
 
 
+    public int doStartTag() throws JspException {
+
+        this.labels.clear();
+        this.selecteds.clear();
+        this.urls.clear();
+
+        return (EVAL_BODY_TAG);
+
+    }
+
+
     /**
      * Render this instant actions control.
      *
