@@ -166,6 +166,20 @@ public interface Context extends Container {
 
 
     /**
+     * Return the path to a file to save this Context information.
+     */
+    public String getConfigFile();
+
+
+    /**
+     * Set the path to a file to save this Context information.
+     *
+     * @param configFile The path to a file to save this Context information.
+     */
+    public void setConfigFile(String configFile);
+
+
+    /**
      * Return the "correctly configured" flag for this Context.
      */
     public boolean getConfigured();
@@ -275,7 +289,7 @@ public interface Context extends Container {
 
     /**
      * Set the naming resources for this web application.
-     * 
+     *
      * @param namingResources The new naming resources
      */
     public void setNamingResources(NamingResources namingResources);
@@ -347,7 +361,7 @@ public interface Context extends Container {
 
     /**
      * Set the privileged flag for this web application.
-     * 
+     *
      * @param privileged The new privileged flag
      */
     public void setPrivileged(boolean privileged);
