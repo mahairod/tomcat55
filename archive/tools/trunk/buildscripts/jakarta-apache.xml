@@ -98,6 +98,8 @@
      <exec dir="${ws.dir}/tmp"  command="compress tomcat.tar "/>
      <exec dir="${ws.dir}/tmp"  command="tar cf tomcat.tar tomcat" />
      <exec dir="${ws.dir}/tmp"  command="bzip2 tomcat.tar "/>
+     <copyfile src="${ws.dir}/tmp/tomcat.tar.Z" dest="${nightly.dir}/tomcat.tar.Z" />
+     <copyfile src="${ws.dir}/tmp/tomcat.tar.bz2" dest="${nightly.dir}/tomcat.tar.bz2" />
    </target>
 
    <target name="ant.zip2tar"  depends="prepare">
@@ -108,6 +110,8 @@
      <exec dir="${ws.dir}/tmp"  command="compress ant.tar "/>
      <exec dir="${ws.dir}/tmp"  command="tar cf ant.tar ant" />
      <exec dir="${ws.dir}/tmp"  command="bzip2 ant.tar "/>
+     <copyfile src="${ws.dir}/tmp/ant.tar.Z" dest="${nightly.dir}/ant.tar.Z" />
+     <copyfile src="${ws.dir}/tmp/ant.tar.bz2" dest="${nightly.dir}/ant.tar.bz2" />
    </target>
 
    <target name="remove-old"  depends="prepare">

@@ -1,5 +1,0 @@
-PATH=/usr/java1.2/bin:/usr/ucb:/usr/ccs/bin:/usr/local/bin:/usr/openwin/bin:$PATH
-JAVA_HOME=/usr/java1.2
-FTP_DIR=/export/home/ftp/pub/tomcat
-
-export FTP_DIR OSTYPE HOSTTYPE PATH JAVA_HOME

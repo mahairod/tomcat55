@@ -1,6 +1,0 @@
-FTP_DIR=/home/ftp/pub/tomcat
-JAVA_HOME=/usr/java
-PATH=${JAVA_HOME}/bin:$PATH
-
-export JAVA_HOME PATH
-export FTP_DIR OSTYPE HOSTTYPE

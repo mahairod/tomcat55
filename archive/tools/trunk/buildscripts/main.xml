@@ -1,6 +1,6 @@
 <project name="source-snapshots" default="tomcat" basedir=".">
    <!-- ******************** Initialization ******************** -->
-  <target name="prepare">
+  <target name="init">
     <tstamp />
     <property name="ws.dir" value="${user.home}/ws" />
     <!-- keep it in sync with jakarta-apache.xml -->
@@ -10,7 +10,6 @@
     <property name="package.dir" value="${user.home}/public_html" />
     <!-- Allow user to override any of the hardcoded directories -->
     <property file="${user.home}/.ant.properties" />
-    <mkdir dir="${ws.dir}" />
    </target>
 
   <target name="clean.src" depends="prepare">
@@ -22,7 +21,7 @@
      <deltree dir="${ws.dir}/jakarta-watchdog.src.zip" />
   </target>
 
-  <target name="clean" depends="prepare">
+  <target name="clean" depends="init">
      <deltree dir="${ws.dir}/build" />
      <deltree dir="${ws.dir}/dist" />
      <deltree dir="${dist.dir}/ant" />
@@ -30,23 +29,23 @@
   </target>
 
    <!-- ******************** Getting sources ******************** -->
-  <target name="tomcat.get" depends="prepare">
+  <target name="tomcat.get" depends="init">
     <get src="${nightly.url}/src/jakarta-tomcat.src.zip" dest="${ws.dir}/jakarta-tomcat.src.zip" />
     <expand src="${ws.dir}/jakarta-tomcat.src.zip" dest="${ws.dir}" />
   </target>
   
-  <target name="tools.get" depends="prepare">
+  <target name="tools.get" depends="init">
     <get src="${nightly.url}/src/jakarta-tools.src.zip" dest="${ws.dir}/jakarta-tools.src.zip" />
     <expand src="${ws.dir}/jakarta-tools.src.zip" dest="${ws.dir}" />
   </target>
 
-  <target name="watchdog.get" depends="prepare">
+  <target name="watchdog.get" depends="init">
     <get src="${nightly.url}/src/jakarta-watchdog.src.zip" dest="${ws.dir}/jakarta-watchdog.src.zip" />
     <expand src="${ws.dir}/jakarta-watchdog.src.zip" dest="${ws.dir}" />
   </target>
 
    <!-- ******************** Building  ******************** -->
-  <target name="tomcat" depends="prepare">
+  <target name="tomcat" depends="init">
      <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="dist" />
      <zip zipfile="${package.dir}/tomcat/tomcat.zip" basedir="${tomcat.home}/.." 
           items="tomcat" />
@@ -54,31 +53,31 @@
      <copyfile src="${package.dir}/tomcat/tomcat.zip" dest="${package.dir}/tomcat/tomcat-${DSTAMP}.zip" />
   </target>
 
-  <target name="ant" depends="prepare">
+  <target name="ant" depends="init">
      <ant dir="${ws.dir}/jakarta-tools/ant" antfile="${ws.dir}/jakarta-tools/ant/build.xml" target="dist" /> 
      <zip zipfile="${package.dir}/ant/ant.zip" basedir="${dist.dir}" items="ant"/>
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${os.name}-${DSTAMP}.zip" />
      <copyfile src="${package.dir}/ant/ant.zip" dest="${package.dir}/ant/ant-${DSTAMP}.zip" />
    </target>
 
-   <target name="test-build" depends="prepare">
+   <target name="test-build" depends="init">
      <ant dir="${ws.dir}/jakarta-tomcat" antfile="${ws.dir}/jakarta-tomcat/build.xml" target="test" />
    </target>
 
-   <target name="watchdog" depends="prepare">
+   <target name="watchdog" depends="init">
      <ant dir="${ws.dir}/jakarta-watchdog" antfile="${ws.dir}/jakarta-watchdog/build.xml" target="dist" />
    </target>
 
    <!-- ******************** Testing  ******************** -->
-   <target name="tomcat-test" depends="prepare">
+   <target name="tomcat-test" depends="init">
      <exec dir="${ws.dir}/build/tomcat/test" command="sh runtest.sh " output="${package.dir}/tomcat/tomcat-test.log" />
    </target>
 
-   <target name="watchdog-test" depends="prepare">
+   <target name="watchdog-test" depends="init">
      <exec dir="${ws.dir}/build/watchdog" command="sh runtest.sh  " output="${package.dir}/tomcat/watchdog-test.log" />
    </target>
 
-   <target name="test-apache" depends="prepare">
+   <target name="test-apache" depends="init">
      <exec dir="${ws.dir}" command="/usr/local/apache/bin/apachectl start" />
      <exec dir="${ws.dir}/build/tomcat/test" command="sh runtest.sh " output="${package.dir}/tomcat/tomcat-test.log" />
      <exec dir="${ws.dir}/build/watchdog" command="sh runtest.sh  " output="${package.dir}/tomcat/watchdog-test.log" />
@@ -87,7 +86,7 @@
 
 
    <!-- ******************** Platform specific packages  ******************** -->
-   <target name="pkg" depends="prepare"> 
+   <target name="pkg" depends="init"> 
      <deltree dir="${ws.dir}/build/ASFtomcat" />
      <exec os="SunOS" dir="${ws.dir}/jakarta-tomcat/src/etc" command="pkgmk -o -f prototype -d ${ws.dir}/build  -r / " />
      <zip zipfile="${package.dir}/tomcat/ASFtomcat-pkg.zip" 
@@ -102,7 +101,7 @@
   </target>
 
 
-  <target name="tomcat.rpm" depends="prepare"> 
+  <target name="tomcat.rpm" depends="init"> 
     <copyfile src="${ws.dir}/jakarta-tomcat.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tomcat.src.zip" />
     <copyfile src="${ws.dir}/jakarta-tools.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tools.src.zip" />
     <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tomcat/src/etc/tomcat.spec " />
@@ -110,27 +109,27 @@
     <copyfile src="/usr/src/redhat/SRPMS/tomcat-3.0-0.src.rpm" dest="${package.dir}/tomcat/tomcat-3.0-0.src.rpm" />
   </target>
 
-  <target name="ant.rpm" depends="prepare"> 
+  <target name="ant.rpm" depends="init"> 
     <copyfile src="${ws.dir}/jakarta-tools.src.zip" dest="/usr/src/redhat/SOURCES/jakarta-tools.src.zip" />
     <exec os="Linux" dir="${ws.dir}" command="rpm -ba --target noarch ${ws.dir}/jakarta-tools/ant/src/etc/ant.spec " />
     <copyfile src="/usr/src/redhat/RPMS/noarch/ant-1.0-0.noarch.rpm" dest="${package.dir}/ant/ant-1.0-0.noarch.rpm" />
     <copyfile src="/usr/src/redhat/SRPMS/ant-1.0-0.src.rpm" dest="${package.dir}/ant/ant-1.0-0.src.rpm" />
   </target>
 
-  <target name="rpm"  depends="prepare,tomcat.rpm,ant.rpm"> 
+  <target name="rpm"  depends="init,tomcat.rpm,ant.rpm"> 
   </target>
 
    <!-- ******************** Agregate targets  ******************** -->
-  <target name="get.all" depends="prepare,clean.src,tomcat.get,tools.get,watchdog.get">
+  <target name="get.all" depends="init,clean.src,tomcat.get,tools.get,watchdog.get">
   </target>
 
-  <target name="build" depends="prepare,tomcat,ant,tomcat,ant,test-build,watchdog">
+  <target name="build" depends="init,tomcat,ant,tomcat,ant,test-build,watchdog">
   </target>
 
-  <target name="all" depends="prepare,clean,get.all,build">
+  <target name="all" depends="init,clean,get.all,build">
   </target>
 
-  <target name="test" depends="prepare,tomcat-test,watchdog-test">
+  <target name="test" depends="init,tomcat-test,watchdog-test">
   </target>
   
 </project>

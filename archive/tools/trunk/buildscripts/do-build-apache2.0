@@ -1,9 +1,7 @@
 #!/bin/sh
 
-BASEDIR=`dirname $0`
-. ${BASEDIR}/env-client
+# needs APACHE_HOME and SRC_DIR env 
 
-echo "<build name=\"apache-2.0\">"
 cd ${SRC_DIR}/apache-2.0
 mkdir src/modules/extra
 cp src/modules/example/Makefile.tmpl src/modules/extra
@@ -13,4 +11,3 @@ cp src/modules/example/Makefile.tmpl src/modules/extra
 	    --enable-module=ajp23 
 make
 make install
-echo "</build>"
