@@ -95,13 +95,9 @@ public class ConnectorMBean extends ClassNameMBean {
 	   throw new MBeanException(e);
         } 	    
 	
-	if (("algorithm").equals(name) || ("keystoreType").equals(name) ||
-            ("maxThreads").equals(name) || ("maxSpareThreads").equals(name) ||
-            ("minSpareThreads").equals(name)) {
+	if (isProtocolProperty(name)) {
                 
-            if (("keystoreType").equals(name)) {
-                name = "keyType";
-            }
+            name = translateAttributeName(name);
                 
             ProtocolHandler protocolHandler = connector.getProtocolHandler();
 	    /* check the Protocol first, since JkCoyote has an independent
@@ -110,6 +106,8 @@ public class ConnectorMBean extends ClassNameMBean {
             try {
                 if( protocolHandler != null ) {
                     attribute = IntrospectionUtils.getAttribute(protocolHandler, name);
+                } else {
+                    attribute = connector.getProperty(name);
                 }
             } catch (Exception e) {
                 throw new MBeanException(e);
@@ -161,13 +159,9 @@ public class ConnectorMBean extends ClassNameMBean {
 	   throw new MBeanException(e);
         } 	    
 	
-        if (("algorithm").equals(name) || ("keystoreType").equals(name) ||
-            ("maxThreads").equals(name) || ("maxSpareThreads").equals(name) ||
-            ("minSpareThreads").equals(name)) {
+        if (isProtocolProperty(name)) {
 
-            if (("keystoreType").equals(name)) {
-                name = "keyType";
-            }
+            name = translateAttributeName(name);
             
             ProtocolHandler protocolHandler = connector.getProtocolHandler();
 	    /* check the Protocol first, since JkCoyote has an independent
@@ -176,7 +170,9 @@ public class ConnectorMBean extends ClassNameMBean {
             try {
                 if( protocolHandler != null ) {
                     IntrospectionUtils.setAttribute(protocolHandler, name, value);
-                }   
+                } else {
+                    connector.setProperty(name, value);
+                }
             } catch (Exception e) {
                 throw new MBeanException(e);
             }
@@ -190,5 +186,41 @@ public class ConnectorMBean extends ClassNameMBean {
 
     // ------------------------------------------------------------- Operations
     
-    
+    // ------------------------------------------------------------- Methods
+
+    /**
+     * Test for a property that is really on the Protocol.
+     */
+    private boolean isProtocolProperty(String name) {
+        return ("algorithm").equals(name) || 
+            ("keystoreType").equals(name) ||
+            ("maxThreads").equals(name) || 
+            ("maxSpareThreads").equals(name) ||
+            ("minSpareThreads").equals(name);
+    }    
+
+    /*
+     * Translate the attribute name from the legacy Factory names to their
+     * internal protocol names.
+     */
+    private String translateAttributeName(String name) {
+	if ("clientAuth".equals(name)) {
+	    return "clientauth";
+	} else if ("keystoreFile".equals(name)) {
+	    return "keystore";
+	} else if ("randomFile".equals(name)) {
+	    return "randomfile";
+	} else if ("rootFile".equals(name)) {
+	    return "rootfile";
+	} else if ("keystorePass".equals(name)) {
+	    return "keypass";
+	} else if ("keystoreType".equals(name)) {
+	    return "keytype";
+	} else if ("sslProtocol".equals(name)) {
+	    return "protocol";
+	} else if ("sslProtocols".equals(name)) {
+	    return "protocols";
+	}
+	return name;
+    }
 }
