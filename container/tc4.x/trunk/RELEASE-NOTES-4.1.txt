@@ -313,6 +313,12 @@ Generic Bug Fixes:
 [4.1.28] Docs:
          Minor docs updates.
 
+[4.1.30] Administration Webapp:
+         Add new connector attributes to the admin webapp.
+
+[4.1.30] Docs:
+         Docs updates.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -837,6 +843,39 @@ Catalina Bug Fixes:
 [4.1.29] StandardDefaultContext:
          Fix support for defining ResourceLink.
 
+[4.1.30] AuthenticatorBase:
+         Port updates from TC 5, including SingleSignOn fixes.
+
+[4.1.30] StandardContext:
+         If session timeout is zero or less, session should not timeout 
+         (10656).
+
+[4.1.30] StandardHostDeployer:
+         Fix deployment to root webapp.
+
+[4.1.30] Various JDBC and JNDI realms fixes.
+
+[4.1.30] Various CGI servlet fixes.
+
+[4.1.30] DefaultServlet:
+         URL encode redirects.
+
+[4.1.30] WebDAV servlet:
+         Port fixes.
+
+[4.1.30] PersistentManagerBase:
+         Improve session expiration robustness.
+
+[4.1.30] StandardSession:
+         valueBound() must be called before the object is made available
+         via getAttribute().
+
+[4.1.30] StandardReportValve:
+         Stack traces are now escaped to ensure correct display.
+
+[4.1.30] ExtendedAccessLogValve:
+         Port patch.
+
 
 ----------------
 Coyote Bug Fixes:
@@ -1066,6 +1105,8 @@ Coyote Bug Fixes:
 [4.1.27] #21984
          HandlerReqest:
          Fix potential Dos condition when given a mal-formed URI.
+
+[4.1.20] Upgrade to Connectors from Tomcat 5.0.18.
 
 
 ----------------
