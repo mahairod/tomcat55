@@ -956,6 +956,7 @@ public abstract class Node {
 
 	public void visit(JspText n) throws JasperException {
 	    doVisit(n);
+	    visitBody(n);
 	}
 
 	public void visit(TemplateText n) throws JasperException {
