@@ -94,11 +94,11 @@ commons-el.cvs.loc=jakarta-commons/el
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
-commons-logging.home=${base.path}/commons-logging-1.0.2
+commons-logging.home=${base.path}/commons-logging-1.0.3
 commons-logging.lib=${commons-logging.home}
 commons-logging-api.jar=${commons-logging.lib}/commons-logging-api.jar
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
-commons-logging.loc=http://www.apache.org/dist/jakarta/commons/logging/binaries/logging.1.0.2.tar.gz
+commons-logging.loc=http://www.apache.org/dist/jakarta/commons/logging/binaries/commons-logging-1.0.3.tar.gz
 
 
 # ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
