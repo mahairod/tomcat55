@@ -369,20 +369,21 @@ public final class JspRuntimeContext implements Runnable {
         if( policy != null ) {
             try {          
                 // Get the permissions for the web app context
-                String contextDir = context.getRealPath("/");
-                if( contextDir == null ) {
-                    contextDir = options.getScratchDir().toString();
+                String docBase = context.getRealPath("/");
+                if( docBase == null ) {
+                    docBase = options.getScratchDir().toString();
                 }
-                URL url = new URL("file:" + contextDir);
+                if (!docBase.endsWith(File.separator)){
+                    docBase = docBase + File.separator;
+                }
+                File contextDir = new File(docBase);
+                URL url = contextDir.getCanonicalFile().toURL();
                 codeSource = new CodeSource(url,null);
                 permissionCollection = policy.getPermissions(codeSource);
 
                 // Create a file read permission for web app context directory
-                if (contextDir.endsWith(File.separator)) {
-                    contextDir = contextDir + "-";
-                } else {
-                    contextDir = contextDir + File.separator + "-";
-                }
+                docBase = docBase + "-";
+                permissionCollection.add(new FilePermission(docBase,"read"));
 
                 // Create a file read permission for web app tempdir (work) directory
                 String workDir = options.getScratchDir().toString();
@@ -425,7 +426,8 @@ public final class JspRuntimeContext implements Runnable {
                         permissionCollection.add(
                                 new FilePermission(jndiUrl,"read") );
                 }
-            } catch(MalformedURLException mfe) {
+            } catch(Exception e) {
+                context.log("Security Init for context failed",e);
             }
         }
     }
