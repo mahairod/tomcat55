@@ -173,17 +173,6 @@ if [ "$1" = "debug" ] ; then
     fi
   fi
 
-elif [ "$1" = "embedded" ] ; then
-
-  shift
-  echo "Embedded Classpath: $CLASSPATH"
-  exec "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
-    -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
-    -Dcatalina.base="$CATALINA_BASE" \
-    -Dcatalina.home="$CATALINA_HOME" \
-    -Djava.io.tmpdir="$CATALINA_TMPDIR" \
-    org.apache.catalina.startup.Embedded "$@"
-
 elif [ "$1" = "run" ]; then
 
   shift
@@ -270,7 +259,6 @@ else
     echo "  debug             Start Catalina in a debugger"
     echo "  debug -security   Debug Catalina with a security manager"
   fi
-  echo "  embedded          Start Catalina in embedded mode"
   echo "  jpda start        Start Catalina under JPDA debugger"
   echo "  run               Start Catalina in the current window"
   echo "  run -security     Start in the current window with security manager"
