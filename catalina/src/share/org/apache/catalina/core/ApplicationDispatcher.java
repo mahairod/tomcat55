@@ -461,7 +461,11 @@ final class ApplicationDispatcher
         if  (response instanceof ResponseFacade) {
             ((ResponseFacade) response).finish();
         } else {
-            log.error( "Shouldn't happen - old code", new Throwable());
+            // Servlet SRV.6.2.2. The Resquest/Response may have been wrapped
+            // and may no longer be instance of RequestFacade 
+            if (log.isDebugEnabled()){
+                log.debug( " The Response is vehiculed using a wrapper: " + response.getClass().getName() );
+            }
 
             // Close anyway
             try {
