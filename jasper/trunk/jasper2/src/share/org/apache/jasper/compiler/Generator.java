@@ -2506,8 +2506,13 @@ public class Generator {
 		    // XXX assert(c.length > 0)
 		}
 
-		if (attrs[i].isExpression() || attrs[i].isNamedAttribute()) {
+		if (attrs[i].isExpression()) {
 		    // Do nothing
+		} else if (attrs[i].isNamedAttribute()) {
+		    attrValue = convertString(
+                                c[0], attrValue, attrName,
+				handlerInfo.getPropertyEditorClass(attrName),
+				false);
 		} else if (attrs[i].isELInterpreterInput()) {
                     // run attrValue through the expression interpreter
                     attrValue = JspUtil.interpreterCall(this.isTagFile,
@@ -2515,7 +2520,8 @@ public class Generator {
                 } else {
 		    attrValue = convertString(
                                 c[0], attrValue, attrName,
-				handlerInfo.getPropertyEditorClass(attrName));
+				handlerInfo.getPropertyEditorClass(attrName),
+				true);
 		}
 		
 		if (attrs[i].isDynamic()) {
@@ -2546,17 +2552,22 @@ public class Generator {
 	}
 
 	private String convertString(Class c, String s, String attrName,
-				     Class propEditorClass)
+				     Class propEditorClass, boolean quote)
 	            throws JasperException {
-	    
+
+	    String quoted = s;
+	    if (quote) {
+		quoted = quote(s);
+	    }
+
 	    if (propEditorClass != null) {
 		return "(" + c.getName()
 		    + ")JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor("
 		    + c.getName() + ".class, \"" + attrName + "\", "
-		    + quote(s) + ", "
+		    + quoted + ", "
 		    + propEditorClass.getName() + ".class)";
 	    } else if (c == String.class) {
-		return quote(s);
+		return quoted;
 	    } else if (c == boolean.class) {
 		return Boolean.valueOf(s).toString();
 	    } else if (c == Boolean.class) {
@@ -2606,12 +2617,12 @@ public class Generator {
 	    } else if (c == Long.class) {
 		return "new Long(" + Long.valueOf(s).toString() + "l)";
 	    } else if (c == Object.class) {
-		return "new String(" + quote(s) + ")";
+		return "new String(" + quoted + ")";
 	    } else {
 		return "(" + c.getName()
 		    + ")JspRuntimeLibrary.getValueFromPropertyEditorManager("
 		    + c.getName() + ".class, \"" + attrName + "\", "
-		    + quote(s) + ")";
+		    + quoted + ")";
 	    }
 	}   
 
