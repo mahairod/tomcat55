@@ -203,69 +203,11 @@ public abstract class PersistentManagerBase
      */
     protected long processingTime = 0;
 
-    /**
-     * Frequency of the session expiration, and related manager operations.
-     * Manager operations will be done once for the specified amount of
-     * backgrondProcess calls (ie, the lower the amount, the most often the
-     * checks will occur).
-     */
-    protected int processExpiresFrequency = 6;
-
-  
-    /**
-     * Iteration count for background processing.
-     */
-    private int count = 0;
 
     // ------------------------------------------------------------- Properties
 
-    /**
-     * Return the frequency of manager checks.
-     */
-    public int getProcessExpiresFrequency() {
-
-        return (this.processExpiresFrequency);
-
-    }
-
-
-    /**
-     * Set the manager checks frequency.
-     *
-     * @param processExpiresFrequency the new manager checks frequency
-     */
-    public void setProcessExpiresFrequency(int processExpiresFrequency) {
-
-        if (processExpiresFrequency <= 0) {
-            return;
-        }
-
-        int oldProcessExpiresFrequency = this.processExpiresFrequency;
-        this.processExpiresFrequency = processExpiresFrequency;
-        support.firePropertyChange("processExpiresFrequency",
-                                   new Integer(oldProcessExpiresFrequency),
-                                   new Integer(this.processExpiresFrequency));
-
-    }
     
-    /**
-	 * Implements the Manager interface, direct call to processExpires and processPersistenceChecks
-	 */
-	public void backgroundProcess() {
-		count = (count + 1) % processExpiresFrequency;
-		if (count == 0) {
-			long timeNow = System.currentTimeMillis();
-
-			processExpires();
-			processPersistenceChecks();
-			if ((getStore() != null) && (getStore() instanceof StoreBase)) {
-				((StoreBase) getStore()).processExpires();
-			}
-
-			long timeEnd = System.currentTimeMillis();
-			processingTime += (timeEnd - timeNow);
-		}
-	}
+  
 
 
     /**
@@ -469,17 +411,6 @@ public abstract class PersistentManagerBase
         this.rejectedSessions = rejectedSessions;
     }
 
-
-    public long getProcessingTime() {
-        return processingTime;
-    }
-
-
-    public void setProcessingTime(long processingTime) {
-        this.processingTime = processingTime;
-    }
-
-
     /**
      * Return the descriptive short name of this Manager implementation.
      */
@@ -601,23 +532,38 @@ public abstract class PersistentManagerBase
 
 
     /**
-	 * Invalidate all sessions that have expired.
-	 */
+     * Implements the Manager interface, direct call to processExpires and processPersistenceChecks
+     */
 	public void processExpires() {
 		
-		Session sessions[] = findSessions();
-
-		for (int i = 0; i < sessions.length; i++) {
-			sessions[i].isValid();
-		}
-		
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
+        int expireHere = 0 ;
+        if(log.isDebugEnabled())
+             log.debug("Start expire sessions " + getName() + " at " + timeNow + " sessioncount " + sessions.length);
+        for (int i = 0; i < sessions.length; i++) {
+            if (!sessions[i].isValid()) {
+                expiredSessions++;
+                expireHere++;
+            }
+        }
+        processPersistenceChecks();
+        if ((getStore() != null) && (getStore() instanceof StoreBase)) {
+            ((StoreBase) getStore()).processExpires();
+        }
+        
+        long timeEnd = System.currentTimeMillis();
+        if(log.isDebugEnabled())
+             log.debug("End expire sessions " + getName() + " processingTime " + (timeEnd - timeNow) + " expired sessions: " + expireHere);
+        processingTime += (timeEnd - timeNow);
+ 		
 	}
 
 
     /**
-	 * Called by the background thread after active sessions have been checked
-	 * for expiration, to allow sessions to be swapped out, backed up, etc.
-	 */
+     * Called by the background thread after active sessions have been checked
+     * for expiration, to allow sessions to be swapped out, backed up, etc.
+     */
     public void processPersistenceChecks() {
 
         processMaxIdleSwaps();
