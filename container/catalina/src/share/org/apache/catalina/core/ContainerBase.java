@@ -381,7 +381,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) oldLoader).stop();
             } catch (LifecycleException e) {
-                log("ContainerBase.setLoader: stop: ", e);
+                log.error("ContainerBase.setLoader: stop: ", e);
             }
         }
 
@@ -393,7 +393,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) loader).start();
             } catch (LifecycleException e) {
-                log("ContainerBase.setLoader: start: ", e);
+                log.error("ContainerBase.setLoader: start: ", e);
             }
         }
 
@@ -438,7 +438,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) oldLogger).stop();
             } catch (LifecycleException e) {
-                log("ContainerBase.setLogger: stop: ", e);
+                log.error("ContainerBase.setLogger: stop: ", e);
             }
         }
 
@@ -450,7 +450,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) logger).start();
             } catch (LifecycleException e) {
-                log("ContainerBase.setLogger: start: ", e);
+                log.error("ContainerBase.setLogger: start: ", e);
             }
         }
 
@@ -495,7 +495,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) oldManager).stop();
             } catch (LifecycleException e) {
-                log("ContainerBase.setManager: stop: ", e);
+                log.error("ContainerBase.setManager: stop: ", e);
             }
         }
 
@@ -507,7 +507,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) manager).start();
             } catch (LifecycleException e) {
-                log("ContainerBase.setManager: start: ", e);
+                log.error("ContainerBase.setManager: start: ", e);
             }
         }
 
@@ -535,7 +535,7 @@ public abstract class ContainerBase
     /**
      * Set the Cluster with which this Container is associated.
      *
-     * @param manager The newly associated Cluster
+     * @param cluster The newly associated Cluster
      */
     public synchronized void setCluster(Cluster cluster) {
         // Change components if necessary
@@ -550,7 +550,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) oldCluster).stop();
             } catch (LifecycleException e) {
-                log("ContainerBase.setCluster: stop: ", e);
+                log.error("ContainerBase.setCluster: stop: ", e);
             }
         }
 
@@ -563,7 +563,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) cluster).start();
             } catch (LifecycleException e) {
-                log("ContainerBase.setCluster: start: ", e);
+                log.error("ContainerBase.setCluster: start: ", e);
             }
         }
 
@@ -641,11 +641,11 @@ public abstract class ContainerBase
      * been configured.
      */
     public ClassLoader getParentClassLoader() {
-
         if (parentClassLoader != null)
             return (parentClassLoader);
-        if (parent != null)
+        if (parent != null) {
             return (parent.getParentClassLoader());
+        }
         return (ClassLoader.getSystemClassLoader());
 
     }
@@ -661,7 +661,6 @@ public abstract class ContainerBase
      * @param parent The new parent class loader
      */
     public void setParentClassLoader(ClassLoader parent) {
-
         ClassLoader oldParentClassLoader = this.parentClassLoader;
         this.parentClassLoader = parent;
         support.firePropertyChange("parentClassLoader", oldParentClassLoader,
@@ -716,7 +715,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) oldRealm).stop();
             } catch (LifecycleException e) {
-                log("ContainerBase.setRealm: stop: ", e);
+                log.error("ContainerBase.setRealm: stop: ", e);
             }
         }
 
@@ -728,7 +727,7 @@ public abstract class ContainerBase
             try {
                 ((Lifecycle) realm).start();
             } catch (LifecycleException e) {
-                log("ContainerBase.setRealm: start: ", e);
+                log.error("ContainerBase.setRealm: start: ", e);
             }
         }
 
@@ -745,7 +744,6 @@ public abstract class ContainerBase
       * return <code>null</code>.
      */
     public DirContext getResources() {
-
         if (resources != null)
             return (resources);
         if (parent != null)
@@ -762,6 +760,9 @@ public abstract class ContainerBase
      * @param resources The newly associated DirContext
      */
     public synchronized void setResources(DirContext resources) {
+        // Called from StandardContext.setResources()
+        //              <- StandardContext.start() 
+        //              <- ContainerBase.addChildInternal() 
 
         // Change components if necessary
         DirContext oldResources = this.resources;
@@ -820,7 +821,7 @@ public abstract class ContainerBase
                 try {
                     ((Lifecycle) child).start();
                 } catch (LifecycleException e) {
-                    log("ContainerBase.addChild: start: ", e);
+                    log.error("ContainerBase.addChild: start: ", e);
                     throw new IllegalStateException
                         ("ContainerBase.addChild: start: " + e);
                 }
@@ -866,7 +867,7 @@ public abstract class ContainerBase
                 try {
                     ((Lifecycle) mapper).start();
                 } catch (LifecycleException e) {
-                    log("ContainerBase.addMapper: start: ", e);
+                    log.error("ContainerBase.addMapper: start: ", e);
                     throw new IllegalStateException
                         ("ContainerBase.addMapper: start: " + e);
                 }
@@ -1033,9 +1034,15 @@ public abstract class ContainerBase
         }
         if (started && (child instanceof Lifecycle)) {
             try {
-                ((Lifecycle) child).stop();
+                if( child instanceof ContainerBase ) {
+                    if( ((ContainerBase)child).started ) {
+                        ((Lifecycle) child).stop();
+                    }
+                } else {
+                    ((Lifecycle) child).stop();
+                }
             } catch (LifecycleException e) {
-                log("ContainerBase.removeChild: stop: ", e);
+                log.error("ContainerBase.removeChild: stop: ", e);
             }
         }
         fireContainerEvent(REMOVE_CHILD_EVENT, child);
@@ -1074,7 +1081,7 @@ public abstract class ContainerBase
                 try {
                     ((Lifecycle) mapper).stop();
                 } catch (LifecycleException e) {
-                    log("ContainerBase.removeMapper: stop: ", e);
+                    log.error("ContainerBase.removeMapper: stop: ", e);
                     throw new IllegalStateException
                         ("ContainerBase.removeMapper: stop: " + e);
                 }
@@ -1376,7 +1383,7 @@ public abstract class ContainerBase
             mapper.setProtocol("http");
             addMapper(mapper);
         } catch (Exception e) {
-            log(sm.getString("containerBase.addDefaultMapper", mapperClass),
+            log.error(sm.getString("containerBase.addDefaultMapper", mapperClass),
                 e);
         }
 
@@ -1413,12 +1420,11 @@ public abstract class ContainerBase
      */
     protected void log(String message) {
 
-        Logger logger = getLogger();
-        if (logger != null)
-            logger.log(logName() + ": " + message);
-        else
-            System.out.println(logName() + ": " + message);
-
+//         Logger logger = getLogger();
+//         if (logger != null)
+//             logger.log(logName() + ": " + message);
+//         else
+            log.info(message);
     }
 
 
@@ -1435,8 +1441,7 @@ public abstract class ContainerBase
         if (logger != null)
             logger.log(logName() + ": " + message, throwable);
         else {
-            System.out.println(logName() + ": " + message + ": " + throwable);
-            throwable.printStackTrace(System.out);
+            log.error( message, throwable );
         }
 
     }
@@ -1455,6 +1460,7 @@ public abstract class ContainerBase
 
     }
 
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ContainerBase.class );
 }
 
