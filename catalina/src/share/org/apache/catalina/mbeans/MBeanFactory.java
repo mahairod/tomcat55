@@ -16,10 +16,8 @@
 
 package org.apache.catalina.mbeans;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Vector;
 import java.io.File;
+import java.util.Vector;
 
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
@@ -27,7 +25,6 @@ import javax.management.ObjectName;
 import javax.management.RuntimeOperationsException;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Server;
@@ -38,7 +35,6 @@ import org.apache.catalina.authenticator.SingleSignOn;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardDefaultContext;
 import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.core.StandardService;
@@ -154,6 +150,7 @@ public class MBeanFactory extends BaseModelMBean {
      * Get Parent DefaultContext to add its child component 
      * from parent's ObjectName
      */
+    /*
     private DefaultContext getDefaultContext(ObjectName pname) 
         throws Exception {
         
@@ -172,6 +169,7 @@ public class MBeanFactory extends BaseModelMBean {
         }
         return null;
     }
+    */
     
 
     /**
@@ -340,6 +338,7 @@ public class MBeanFactory extends BaseModelMBean {
         throws Exception {
         // XXX FIXME
         // Create a new StandardDefaultContext instance
+        /*
         StandardDefaultContext context = new StandardDefaultContext();
 
         // Add the new instance to its parent component
@@ -361,6 +360,8 @@ public class MBeanFactory extends BaseModelMBean {
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), context);
         return (oname.toString());
+        */
+        return null;
 
     }
 

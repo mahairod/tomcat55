@@ -18,22 +18,17 @@
 package org.apache.catalina.core;
 
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Host;
-import org.apache.catalina.Realm;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Realm;
 import org.apache.catalina.Valve;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.startup.HostConfig;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.modeler.Registry;
 
 
@@ -157,12 +152,6 @@ public class StandardHost
 
 
     /**
-     * DefaultContext config
-     */
-    private DefaultContext defaultContext;
-
-
-    /**
      * Attribute value used to turn on/off XML validation
      */
      private boolean xmlValidation = false;
@@ -253,30 +242,6 @@ public class StandardHost
         support.firePropertyChange("configClass",
                                    oldConfigClass, this.configClass);
 
-    }
-
-
-    /**
-     * Set the DefaultContext
-     * for new web applications.
-     *
-     * @param defaultContext The new DefaultContext
-     */
-    public void addDefaultContext(DefaultContext defaultContext) {
-
-        DefaultContext oldDefaultContext = this.defaultContext;
-        this.defaultContext = defaultContext;
-        support.firePropertyChange("defaultContext",
-                                   oldDefaultContext, this.defaultContext);
-
-    }
-
-
-    /**
-     * Retrieve the DefaultContext for new web applications.
-     */
-    public DefaultContext getDefaultContext() {
-        return (this.defaultContext);
     }
 
 
@@ -516,35 +481,6 @@ public class StandardHost
 
     // --------------------------------------------------------- Public Methods
 
-
-    /**
-     * Install the StandardContext portion of the DefaultContext
-     * configuration into current Context.
-     *
-     * @param context current web application context
-     */
-    public void installDefaultContext(Context context) {
-
-        if (defaultContext != null &&
-            defaultContext instanceof StandardDefaultContext) {
-
-            ((StandardDefaultContext)defaultContext).installDefaultContext(context);
-        }
-
-    }
-
-
-    /**
-     * Import the DefaultContext config into a web application context.
-     *
-     * @param context web application context to import default context
-     */
-    public void importDefaultContext(Context context) {
-
-        if( this.defaultContext != null )
-            this.defaultContext.importDefaultContext(context);
-
-    }
 
     /**
      * Add an alias name that should be mapped to this same Host.
