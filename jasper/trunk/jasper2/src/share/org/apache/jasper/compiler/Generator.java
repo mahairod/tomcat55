@@ -1044,7 +1044,7 @@ public class Generator {
 		    out.print(", ");
 		}
 		out.println("org.apache.jasper.runtime.PageContextImpl pageContext, JspxState _jspxState)");
-		out.printil("        throws java.io.IOException, javax.servlet.jsp.JspException {");
+		out.printil("        throws Throwable {");
 		out.pushIndent();
 
 		// Initilaize local variables used in this method.
