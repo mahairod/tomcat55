@@ -570,6 +570,23 @@
          request="${context.path}/WrappedLifecycle02" method="POST"
       outContent="Lifecycle02 PASSED" debug="${debug}"/>
 
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Lifecycle03?step=1" debug="${debug}"
+          status="503"/>
+
+<!-- NOTE - cannot do this as originally intended, because the
+     servlet was marked as permanently unavailable, so just
+     check for another 503 instead!
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Lifecycle03?step=2"
+      outContent="Lifecycle03 PASSED" debug="${debug}"/>
+-->
+
+    <tester host="${host}" port="${port}" protocol="HTTP/1.0"
+         request="${context.path}/Lifecycle03?step=2" debug="${debug}"
+          status="503"/>
+
   </target>
 
 

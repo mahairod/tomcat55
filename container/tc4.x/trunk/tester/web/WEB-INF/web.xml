@@ -315,6 +315,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedLifecycle03</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedReflection01</url-pattern>
     </filter-mapping>
 
@@ -825,6 +830,11 @@
     <servlet>
         <servlet-name>Lifecycle02</servlet-name>
         <servlet-class>org.apache.tester.Lifecycle02</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Lifecycle03</servlet-name>
+        <servlet-class>org.apache.tester.Lifecycle03</servlet-class>
     </servlet>
 
     <servlet>
@@ -1522,6 +1532,16 @@
     <servlet-mapping>
         <servlet-name>Lifecycle02</servlet-name>
         <url-pattern>/WrappedLifecycle02</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle03</servlet-name>
+        <url-pattern>/Lifecycle03</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Lifecycle03</servlet-name>
+        <url-pattern>/WrappedLifecycle03</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
