@@ -539,8 +539,7 @@ class Generator {
 	    out.printil("HttpSession session = null;");
 
 	if (pageInfo.isIsErrorPage()) {
-            out.printil("Throwable exception = (Throwable) request.getAttribute(\"javax.servlet.jsp.jspException\");");
-	    out.printil("request.setAttribute(\"javax.servlet.error.exception\", exception);");
+            out.printil("Throwable exception = org.apache.jasper.runtime.JspRuntimeLibrary.getThrowable(request);");
 	}
 
 	out.printil("ServletContext application = null;");

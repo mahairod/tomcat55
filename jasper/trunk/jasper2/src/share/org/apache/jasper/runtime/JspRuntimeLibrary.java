@@ -100,6 +100,11 @@ import javax.servlet.jsp.PageContext;
  * @author Shawn Bayern
  */
 public class JspRuntimeLibrary {
+    
+    private static final String SERVLET_EXCEPTION
+	= "javax.servlet.error.exception";
+    private static final String JSP_EXCEPTION
+	= "javax.servlet.jsp.jspException";
 
     protected static class PrivilegedIntrospectHelper
 	implements PrivilegedExceptionAction {
@@ -128,6 +133,20 @@ public class JspRuntimeLibrary {
                 bean,prop,value,request,param,ignoreMethodNF);
             return null;
         }
+    }
+
+    /**
+     * Returns the value of the javax.servlet.error.exception request
+     * attribute value, if present, otherwise the value of the
+     * javax.servlet.jsp.jspException request attribute value.
+     */
+    public static Throwable getThrowable(ServletRequest request) {
+	Throwable error = (Throwable) request.getAttribute(SERVLET_EXCEPTION);
+	if (error == null) {
+	    error = (Throwable) request.getAttribute(JSP_EXCEPTION);
+	}
+
+	return error;
     }
 
     public static boolean coerceToBoolean(String s) {
