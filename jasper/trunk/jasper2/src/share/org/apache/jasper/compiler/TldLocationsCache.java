@@ -203,9 +203,8 @@ public class TldLocationsCache {
         if (initialized) return;
         try {
             processWebDotXml();
-            processJars();
+            scanJars();
 	    processTldsInFileSystem("/WEB-INF/");
-	    processTldsInGlobalJars();
             initialized = true;
         } catch (Exception ex) {
             throw new JasperException(Localizer.getMessage("jsp.error.internal.tldinit",
@@ -265,39 +264,15 @@ public class TldLocationsCache {
     }
 
     /**
-     * Processes any JAR files contained in this web application's
-     * WEB-INF/lib directory.
-     */
-    private void processJars() throws Exception {
-
-        Set libSet = ctxt.getResourcePaths("/WEB-INF/lib");
-        if (libSet != null) {
-            Iterator it = libSet.iterator();
-            while (it.hasNext()) {
-                String resourcePath = (String) it.next();
-                if (resourcePath.endsWith(JAR_FILE_SUFFIX)) {
-		    URL url = ctxt.getResource(resourcePath);
-		    if (url == null)
-			return;
-		    URL jarURL = new URL("jar:" + url.toString() + "!/");
-		    processTldsInJar((JarURLConnection) jarURL.openConnection(),
-				     false);
-		}
-            }
-        }
-    }
-
-    /**
-     * Parses any TLD files located in the META-INF directory (or any 
-     * subdirectory of it) of the JAR file at the given resource path, and adds
-     * an implicit map entry to the taglib map for any TLD that has a <uri>
-     * element.
+     * Scans the given JarURLConnection for TLD files located in META-INF
+     * (or a subdirectory of it), adding an implicit map entry to the taglib
+     * map for any TLD that has a <uri> element.
      *
-     * @param conn The JarURLConnection to the JAR file containing the TLDs
+     * @param conn The JarURLConnection to the JAR file to scan
      * @param ignore true if any exceptions raised when processing the given
      * JAR should be ignored, false otherwise
      */
-    private void processTldsInJar(JarURLConnection conn, boolean ignore)
+    private void scanJar(JarURLConnection conn, boolean ignore)
 	        throws JasperException {
 
         JarFile jarFile = null;
@@ -421,16 +396,20 @@ public class TldLocationsCache {
     }
 
     /*
-     * Processes any TLDs in all JAR files accessible to all parent
-     * classloaders of the web application's classloader.
+     * Scans all JARs accessible to the webapp's classloader and its
+     * parent classloaders for TLDs.
+     * 
+     * The list of JARs always includes the JARs under WEB-INF/lib, as well as
+     * all shared JARs in the classloader delegation chain of the webapp's
+     * classloader.
      *
-     * This is a Tomcat-specific extension to the TLD search order defined in
-     * the JSP spec, which will allow tag libraries packaged as JAR
+     * The latter constitutes a Tomcat-specific extension to the TLD search
+     * order defined in the JSP spec. It allows tag libraries packaged as JAR
      * files to be shared by web applications by simply dropping them in a 
      * location that all web applications have access to (e.g.,
      * <CATALINA_HOME>/common/lib).
      */
-    private void processTldsInGlobalJars() throws Exception {
+    private void scanJars() throws Exception {
 
 	ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	while (loader != null) {
@@ -439,14 +418,14 @@ public class TldLocationsCache {
 		for (int i=0; i<urls.length; i++) {
 		    URLConnection conn = urls[i].openConnection();
 		    if (conn instanceof JarURLConnection) {
-			processTldsInJar((JarURLConnection) conn, true);
+			scanJar((JarURLConnection) conn, true);
 		    } else {
 			String urlStr = urls[i].toString();
 			if (urlStr.startsWith(FILE_PROTOCOL)
 			            && urlStr.endsWith(JAR_FILE_SUFFIX)) {
 			    URL jarURL = new URL("jar:" + urlStr + "!/");
-			    processTldsInJar((JarURLConnection)
-					     jarURL.openConnection(), true);
+			    scanJar((JarURLConnection) jarURL.openConnection(),
+                                    true);
 			}
 		    }
 		}
