@@ -156,7 +156,7 @@ public class DummyRequest
     protected FilterChain filterChain = null;
     protected ValveContext valveContext = null;
     
-    protected Enumeration dummyEnum = new Enumeration(){
+    private static Enumeration dummyEnum = new Enumeration(){
         public boolean hasMoreElements(){
             return false;
         }
