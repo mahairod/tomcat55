@@ -181,6 +181,16 @@
          request="${context.path}/WrappedDecoding0%31/extr%61?servlet=/WrappedDecoding01&amp;path=/extra"
       outContent="Decoding01 PASSED"/>
 
+    <!-- Verify we can access the JSP page normally -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/jsp/snp/snoop.jsp"
+          status="200"/>
+
+    <!-- DefaultServlet should not decode the path again -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="/examples/jsp/snp/snoop%252ejsp"
+          status="404"/>
+
   </target>
 
 
