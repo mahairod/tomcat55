@@ -132,6 +132,13 @@ public class PoolTcpEndpoint extends TcpEndpoint  { // implements Endpoint {
     }
 
     public void setMaxThreads(int maxThreads) {
+        if(1 == maxThreads) {
+            /*
+             * We use one thread to listen and one to service, so we need
+             * at least two threads!!! GS
+			 */
+            maxThreads = 2;
+        }
         tp.setMaxThreads(maxThreads);
     }
 
