@@ -172,8 +172,6 @@ public class JspCompiler extends Compiler implements Mangler {
      */
     public boolean isOutDated() {
 
-        long time = System.currentTimeMillis();
-
         long jspRealLastModified = 0;
 
         try {
