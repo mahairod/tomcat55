@@ -76,7 +76,7 @@ import java.util.Map;
  *
  * once initialized, the validate(String, String, PageData) method will
  * be invoked, where the first two arguments are the prefix
- * and uri arguments used in the taglib directive.  The prefix is intended
+ * and uri for this tag library in the XML View.  The prefix is intended
  * to make it easier to produce an error message.  However, it is not
  * always accurate.  In the case where a single URI is mapped to more 
  * than one prefix in the XML view, the prefix of the first URI is provided.
