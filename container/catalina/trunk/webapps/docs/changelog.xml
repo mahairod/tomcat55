@@ -30,6 +30,9 @@
       <fix>
         <bug>29472</bug>: Embedded overrides add/remove Connector, but not findConnectors (luehe)
       </fix>
+      <fix>
+        <bug>29561</bug>: NullPointerException in Compiler.java:547 (luehe)
+      </fix>
     </changelog>
   </subsection>
 
