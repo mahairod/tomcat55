@@ -4,12 +4,12 @@ BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
 echo "<test name=\"jakarta-tomcat\">"
-cd ${BUILD_DIR}/ws/build/tomcat/test
+cd ${SRC_DIR}/build/tomcat/test
 sh runtest.sh
 echo "</test>"
 
 echo "<test name=\"jakarta-watchdog\">"
-cd ${BUILD_DIR}/ws/build/watchdog
+cd ${SRC_DIR}/build/watchdog
 sh runtest.sh
 echo "</test>"
 

@@ -15,23 +15,23 @@ echo "<ostype>$OSTYPE</ostype>" >> $TLOGFILE
 
 echo  >> $TLOGFILE
 echo  >> $TLOGFILE
-${SCRIPT_DIR}/do-build-tomcat 2>&1 >> $TLOGFILE
+${SCRIPT_DIR}/do-build-tomcat >> $TLOGFILE 2>&1 
 
 echo  >> $TLOGFILE
 echo  >> $TLOGFILE
-${SCRIPT_DIR}/do-build-test 2>&1 >> $TLOGFILE
+${SCRIPT_DIR}/do-build-test >> $TLOGFILE 2>&1 
 
 echo  >> $TLOGFILE
 echo  >> $TLOGFILE
-${SCRIPT_DIR}/do-build-apache1.3 2>&1 >> $TLOGFILE
+${SCRIPT_DIR}/do-build-apache1.3 >> $TLOGFILE 2>&1 
 
 echo  >> $TLOGFILE
 echo  >> $TLOGFILE
-${SCRIPT_DIR}/do-test 2>&1 >> $TLOGFILE
+${SCRIPT_DIR}/do-test >> $TLOGFILE 2>&1 
 
 echo  >> $TLOGFILE
 echo  >> $TLOGFILE
-${SCRIPT_DIR}/do-package 2>&1 >> $TLOGFILE
+${SCRIPT_DIR}/do-package  >> $TLOGFILE  2>&1
 
 echo "<build-end>" `date` "</build-end>"  >> $TLOGFILE    
 echo "</build-report>" >> $TLOGFILE

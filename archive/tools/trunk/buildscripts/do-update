@@ -4,7 +4,7 @@ BASEDIR=`dirname $0`
 . ${BASEDIR}/env-client
 
 echo "<update>"
-cd ${BUILD_DIR}/ws
+cd ${SRC_DIR}
 
     # filter out boring messages
 for i in jakarta-tools jakarta-tomcat jakarta-watchdog apache-1.3 apache-2.0

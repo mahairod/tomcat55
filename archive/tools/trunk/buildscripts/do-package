@@ -5,15 +5,21 @@ BASEDIR=`dirname $0`
 
 echo PACKAGE:
 
-cd ${BUILD_DIR}/ws/dist/tomcat
+cd ${SRC_DIR}/dist/tomcat
 
 tar cf ${BUILD_DIR}/result/tomcat-$TDSTRING.tar *
 cd ${BUILD_DIR}/result
 compress -f tomcat-$TDSTRING.tar
 
-cp tomcat-$TDSTRING.tar.Z tomcat-$TDSTRING.log $FTP_DIR
+cp tomcat-$TDSTRING.tar.Z tomcat-${HOSTTYPE}-${OSTYPE}-$TDSTRING.log $FTP_DIR
 
 cd /opt/apache-1.3.9
-tar cf ${BUILD_DIR}/result/tomcat-$TDSTRING.tar *
+tar cf ${BUILD_DIR}/result/apache-1.3.9.tar *
 cd ${BUILD_DIR}/result
-compress -f tomcat-$TDSTRING.tar
+compress -f apache-1.3.9.tar
+
+cp /opt/apache-1.3.9/libexec/mod_ajp23.so .
+compress -f mod_ajp23.so
+mv mod_ajp23.so.Z mod_ajp23-${HOSTTYPE}-${OSTYPE}-$TDSTRING.Z
+
+

@@ -6,7 +6,7 @@ BASEDIR=`dirname $0`
 # XXX will become do-build-tomcat
 
 echo "<build name=\"jakarta-tomcat\">"
-cd ${BUILD_DIR}/ws/jakarta-tomcat
+cd ${SRC_DIR}/jakarta-tomcat
 sh build.sh dist
 echo "</build>"
 
