@@ -15,7 +15,7 @@
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
-  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
+  <target name="all" depends="ROOT,Authentication,CaseSensitive,Decoding,ErrorPage,FilterResponse,Jndi,RequestDispatcher,Resources,ServletRequest,ServletResponse,HttpSession,XercesTest,SSITest"/>
 
 
   <target name="ROOT">
@@ -343,6 +343,52 @@
           status="200"
       outContent="ErrorPage10 PASSED"/>
 
+
+  </target>
+
+
+  <target name="FilterResponse">
+
+    <!-- ========== Apply Upper Case Filter =============================== -->
+
+    <!-- Output from a servlet -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/FilterResponse01"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE01 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedFilterResponse01"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE01 PASSED"/>
+
+    <!-- Output from a JSP Page -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/FilterResponse02.jsp"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE02 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedFilterResponse02.jsp"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE02 PASSED"/>
+
+    <!-- Output from a static page -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/FilterResponse03.txt"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE03 PASSED"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedFilterResponse03.txt"
+           debug="${debug}"
+          status="200"
+      outContent="FILTERRESPONSE03 PASSED"/>
 
   </target>
 
