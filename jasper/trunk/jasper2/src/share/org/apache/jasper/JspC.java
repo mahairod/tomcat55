@@ -109,6 +109,7 @@ public class JspC implements Options {
     private static final String SWITCH_CLASSPATH = "-classpath";
     private static final String SWITCH_DIE = "-die";
     private static final String SWITCH_POOLING = "-poolingEnabled";
+    private static final String SWITCH_ENCODING = "-javaEncoding";
     private static final String SHOW_SUCCESS ="-s";
     private static final String LIST_ERRORS = "-l";
     private static final int NO_WEBXML = 0;
@@ -270,6 +271,8 @@ public class JspC implements Options {
                 } else {
                     poolingEnabled = true;
                 }
+            } else if (tok.equals(SWITCH_ENCODING)) {
+                setJavaEncoding(nextArg());
             } else {
                 if (tok.startsWith("-")) {
                     throw new JasperException("Unrecognized option: " + tok +
