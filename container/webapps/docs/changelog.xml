@@ -19,7 +19,7 @@
   <subsection name="General">
     <changelog>
       <fix>
-        <bug>28335</bug>: Fixed JavaDocs.
+        <bug>28335</bug>: Fixed JavaDocs. (yoavs)
       </fix>
       <update>
         Changed build dependency on JUnit from 3.7 to 3.8.1. (yoavs)
@@ -49,6 +49,9 @@
       </fix>
       <fix>
         <bug>29038</bug>: Create directories above context xml file as needed. (yoavs)
+      </fix>
+      <fix>
+        <bug>28533</bug>: Fixed without-jni check in jk_java.m4. (yoavs)
       </fix>
     </changelog>
   </subsection>
