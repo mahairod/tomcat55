@@ -153,6 +153,10 @@ implements HttpServletResponse {
     }
     
     public void sendError(int sc, String msg) throws IOException {
+	if (isCommitted())
+	    throw new IllegalStateException(sm.getString("hsrf.error.ise"));
+	else
+	    reset();
 	setStatus( sc );
 	Request request=response.getRequest();
 	request.setAttribute("javax.servlet.error.message", msg);
