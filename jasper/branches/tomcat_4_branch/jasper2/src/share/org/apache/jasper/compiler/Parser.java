@@ -610,13 +610,8 @@ public class Parser {
 	    err.jspError(reader.mark(), "jsp.error.fallback.notclosed");
 	}
 
-	Mark bodyStart = reader.mark();
-        Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
-        if (bodyEnd == null) {
-            err.jspError(start, "jsp.error.unterminated", "<jsp:fallback>");
-	}
-	char[] text = reader.getText(bodyStart, bodyEnd);
-        new Node.FallBackAction(start, text, parent);
+        Node.FallBackAction fallback = new Node.FallBackAction(start, parent);
+	parseBodyText(fallback, "jsp:fallback");
     }
 
     /*

@@ -233,6 +233,8 @@ public class JspDocumentParser extends DefaultHandler
 	    node = new Node.PlugIn(attrsCopy, start, current);
 	} else if (qName.equals(JSP_TEXT_TAG)) {
 	    node = new Node.JspText(start, current);
+	} else if (qName.equals(JSP_FALLBACK_TAG)) {
+	    node = new Node.FallBackAction(start, current);
 	} else {
 	    node = getCustomTag(qName, attrsCopy, start, current);
 	    if (node == null) {
