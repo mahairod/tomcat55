@@ -84,10 +84,10 @@ public class Jndi01 extends HttpServlet {
         try {
             ctx = new InitialContext();
             ctx.lookup("java:/comp");
-            log("initialized successfully");
+            log("initialized successfully in init()");
         } catch (NamingException e) {
             e.printStackTrace();
-            log("Cannot create context", e);
+            log("Cannot create context in init()", e);
             throw new ServletException(e);
         }
     }
@@ -97,10 +97,10 @@ public class Jndi01 extends HttpServlet {
         try {
             ctx = new InitialContext();
             ctx.lookup("java:/comp");
-            log("initialized successfully");
+            log("initialized successfully in destroy()");
         } catch (NamingException e) {
             e.printStackTrace();
-            log("Cannot create context", e);
+            log("Cannot create context in destroy()", e);
         }
     }
 
