@@ -670,9 +670,11 @@ public final class ContextForm extends ActionForm {
                 errors.add("docBase", new ActionError("error.docBase.required"));
             }
             
+            /* FIXME - zero length path ok on the root context
             if ((path == null) || (path.length() < 1)) {
                 errors.add("path", new ActionError("error.path.required"));
             }
+            */
             
             if ((workDir == null) || (workDir.length() < 1)) {
                 errors.add("workDir", new ActionError("error.workDir.required"));

@@ -122,18 +122,17 @@ public class TomcatTreeBuilder implements TreeBuilder{
     private static MBeanServer mBServer = null;
     
     public void buildTree(TreeControl treeControl,
-    ApplicationServlet servlet,
-    HttpServletRequest request) {
-        
+                          ApplicationServlet servlet,
+                          HttpServletRequest request) {
+
         try {
             mBServer = servlet.getServer();
             TreeControlNode root = treeControl.getRoot();
-            TreeControlNode server = getServer();
-            root.addChild(server);
-            getServices(server);
-        }catch(Throwable t){
+            getServers(root);
+        } catch(Throwable t){
             t.printStackTrace(System.out);
         }
+
     }
     
     public static ObjectInstance getMBeanFactory()
@@ -146,351 +145,249 @@ public class TomcatTreeBuilder implements TreeBuilder{
         return mBeanFactory;
     }
     
-    public TreeControlNode getServer()
-    throws JMException, ServletException {
+
+    /**
+     * Append nodes for all defined servers.
+     *
+     * @param rootNode Root node for the tree control
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
+    public void getServers(TreeControlNode rootNode)
+        throws Exception {
         
-        Iterator serverItr =
-        mBServer.queryMBeans(new ObjectName(SERVER_TYPE + WILDCARD),
-        null).iterator();
-        String serverObjName =
-        (((ObjectInstance)serverItr.next()).getObjectName()).toString();
-        
-        // HACK to take into account special characters like = and &
-        // in the node name, could remove this code if encode URL
-        // and later request.getParameter() could deal with = and &
-        // character in parameter values. Decoding name not needed
-        // because Tomcat does this automatically
-        
-        String encodedServerName =  URLEncoder.encode(serverObjName);
-        String encodedNodeLabel =  URLEncoder.encode(SERVER_LABEL);
-        
-        TreeControlNode serverNode =
-        new TreeControlNode(serverObjName,
-        "folder_16_pad.gif", SERVER_LABEL,
-        "setUpServer.do?select=" + encodedServerName
-        +"&nodeLabel=" + encodedNodeLabel,
-        "content", true);
-        
-        return serverNode;
+        Iterator serverNames =
+            Lists.getServers(mBServer).iterator();
+        while (serverNames.hasNext()) {
+            String serverName = (String) serverNames.next();
+            ObjectName objectName = new ObjectName(serverName);
+            String nodeLabel = SERVER_LABEL;
+            TreeControlNode serverNode =
+                new TreeControlNode(serverName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpServer.do?select=" +
+                                    URLEncoder.encode(serverName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    true);
+            rootNode.addChild(serverNode);
+            getServices(serverNode, serverName);
+        }
         
     }
     
-    public void getServices(TreeControlNode serverNode)
-    throws JMException, ServletException {
-        
-        Iterator serviceItr =
-        mBServer.queryMBeans(new ObjectName(SERVICE_TYPE + WILDCARD) ,
-        null).iterator();
-        
-        String encodedServiceName;
-        
-        while(serviceItr.hasNext()){
-            ObjectInstance service = (ObjectInstance)serviceItr.next();
-            
-            String serviceName =
-            (String)mBServer.getAttribute(service.getObjectName(),"name");
-            
-            // HACK to take into account special characters like = and &
-            // in the node name, could remove this code if encode URL
-            // and later request.getParameter() could deal with = and &
-            // character in parameter values. Decoding name not needed
-            // because Tomcat does this automatically
-            
-            encodedServiceName =  URLEncoder.encode(service.getObjectName().toString());
-            
-            String nodeLabel = "Service (" + serviceName + ")";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
+
+    /**
+     * Append nodes for all defined services for the specified server.
+     *
+     * @param serverNode Server node for the tree control
+     * @param serverName Object name of the parent server
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
+    public void getServices(TreeControlNode serverNode, String serverName)
+        throws Exception {
+
+        Iterator serviceNames =
+            Lists.getServices(mBServer, serverName).iterator();
+        while (serviceNames.hasNext()) {
+            String serviceName = (String) serviceNames.next();
+            ObjectName objectName = new ObjectName(serviceName);
+            String nodeLabel =
+                "Service (" + objectName.getKeyProperty("name") + ")";
             TreeControlNode serviceNode =
-            new TreeControlNode(service.getObjectName().toString(),
-            "folder_16_pad.gif",
-            nodeLabel,
-            "EditService.do?select=" + encodedServiceName
-            +"&nodeLabel=" + encodedNodeLabel,
-            "content", true);
-            
+                new TreeControlNode(serviceName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "EditService.do?select=" +
+                                    URLEncoder.encode(serviceName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    true);
             serverNode.addChild(serviceNode);
-            
             getConnectors(serviceNode, serviceName);
             getHosts(serviceNode, serviceName);
-            getLoggers(serviceNode, serviceName, null, null, 0);
-            getRealms(serviceNode, serviceName, null, null, 0);
+            getLoggers(serviceNode, serviceName);
+            getRealms(serviceNode, serviceName);
         }
+
     }
     
+
+    /**
+     * Append nodes for all defined connectors for the specified service.
+     *
+     * @param serviceNode Service node for the tree control
+     * @param serviceName Object name of the parent service
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
     public void getConnectors(TreeControlNode serviceNode, String serviceName)
-    throws JMException{
+        throws Exception{
         
-        Iterator ConnectorItr =
-        (mBServer.queryMBeans(new ObjectName(CONNECTOR_TYPE + WILDCARD +
-        ",service=" + serviceName),
-        null)).iterator();
-        
-        TreeControlNode connectorNode = null;
-        String encodedConnectorName;
-        
-        while(ConnectorItr.hasNext()){
-            
-            ObjectInstance connectorObj = (ObjectInstance)ConnectorItr.next();
-            
-            String connectorName =
-            (String)mBServer.getAttribute(connectorObj.getObjectName(),
-            "scheme");
-            
-            encodedConnectorName =  URLEncoder.encode(connectorObj.getObjectName().toString());
-            
-            String nodeLabel = "Connector (" + connectorName + ")";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
-            connectorNode =
-            new TreeControlNode(connectorObj.getObjectName().toString(),
-            "folder_16_pad.gif",
-            nodeLabel,
-            "setUpConnector.do?select=" + encodedConnectorName
-            + "&nodeLabel="+ encodedNodeLabel,
-            "content", true);
-            
+        Iterator connectorNames =
+            Lists.getConnectors(mBServer, serviceName).iterator();
+        while (connectorNames.hasNext()) {
+            String connectorName = (String) connectorNames.next();
+            ObjectName objectName = new ObjectName(connectorName);
+            String nodeLabel =
+                "Connector (" + objectName.getKeyProperty("port") + ")";
+            TreeControlNode connectorNode =
+                new TreeControlNode(connectorName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpConnector.do?select=" +
+                                    URLEncoder.encode(connectorName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    true);
             serviceNode.addChild(connectorNode);
         }
     }
     
+
+    /**
+     * Append nodes for all defined hosts for the specified service.
+     *
+     * @param serviceNode Service node for the tree control
+     * @param serviceName Object name of the parent service
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
     public void getHosts(TreeControlNode serviceNode, String serviceName)
-    throws JMException{
+        throws Exception {
         
-        Iterator HostItr =
-        (mBServer.queryMBeans(new ObjectName(HOST_TYPE + WILDCARD +
-        ",service=" + serviceName), null)).iterator();
-        
-        TreeControlNode hostNode = null;
-        String encodedHostName;
-        
-        while(HostItr.hasNext()){
-            
-            ObjectInstance hostObj = (ObjectInstance)HostItr.next();
-            
-            String hostName =
-            (String)mBServer.getAttribute(hostObj.getObjectName(),
-            "name");
-            
-            encodedHostName =  URLEncoder.encode(hostObj.getObjectName().toString());
-            
-            String nodeLabel="Host (" + hostName + ")";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
-            hostNode =
-            new TreeControlNode(hostObj.getObjectName().toString(),
-            "folder_16_pad.gif",
-            nodeLabel,
-            "setUpHost.do?select=" + encodedHostName
-            +"&nodeLabel="+ encodedNodeLabel,
-            "content", true);
-            
+        Iterator hostNames =
+            Lists.getHosts(mBServer, serviceName).iterator();
+        while (hostNames.hasNext()) {
+            String hostName = (String) hostNames.next();
+            ObjectName objectName = new ObjectName(hostName);
+            String nodeLabel =
+                "Host (" + objectName.getKeyProperty("name") + ")";
+            TreeControlNode hostNode =
+                new TreeControlNode(hostName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpHost.do?select=" +
+                                    URLEncoder.encode(hostName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    true);
             serviceNode.addChild(hostNode);
-            
-            getContexts(hostNode, hostName, serviceName);
-            getLoggers(hostNode, serviceName, hostName, null, 1);
-            getRealms(hostNode, serviceName, hostName, null, 1);
-        }
-    }
-    
-    public void getContexts(TreeControlNode hostNode, String hostName, String serviceName)
-    throws JMException{
-        
-        Iterator contextItr =
-        (mBServer.queryMBeans(new ObjectName(CONTEXT_TYPE + WILDCARD +
-        ",host=" + hostName + ",service=" + serviceName), null)).iterator();
-        
-        TreeControlNode contextNode = null;
-        String encodedContextName;
-        
-        // arraylist to store and sort the list of available contexts.
-        ArrayList contextList = new ArrayList();
-        while(contextItr.hasNext()){
-            
-            ObjectInstance contextObj = (ObjectInstance)contextItr.next();
-            contextList.add(contextObj.getObjectName().toString());
+            getContexts(hostNode, hostName);
+            getLoggers(hostNode, hostName);
+            getRealms(hostNode, hostName);
         }
 
-        // sorting the list so that the contexts displayed in the tree are in
-        // alphabetic order.
-        Collections.sort(contextList);
+    }
+    
+
+    /**
+     * Append nodes for all defined contexts for the specified host.
+     *
+     * @param hostNode Host node for the tree control
+     * @param hostName Object name of the parent host
+     *
+     * @exception Exception if an exception occurs building the tree
+     */
+    public void getContexts(TreeControlNode hostNode, String hostName)
+        throws Exception {
         
-        for (int i=0; i<contextList.size(); i++) {
-            String context = (String)contextList.get(i);
-            ObjectName oName = new ObjectName(context);
-            String contextName =
-            (String)mBServer.getAttribute(oName , "path");
-            
-            encodedContextName =  URLEncoder.encode(context);
-            String nodeLabel="Context (" + contextName + ")";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
-            contextNode =
-            new TreeControlNode(context,
-            "folder_16_pad.gif",
-            nodeLabel,
-            "setUpContext.do?select=" + encodedContextName
-            +"&nodeLabel="+ encodedNodeLabel,
-            "content", false);
-            
+        Iterator contextNames =
+            Lists.getContexts(mBServer, hostName).iterator();
+        while (contextNames.hasNext()) {
+            String contextName = (String) contextNames.next();
+            ObjectName objectName = new ObjectName(contextName);
+            String nodeLabel =
+                "Context (" + objectName.getKeyProperty("path") + ")";
+            TreeControlNode contextNode =
+                new TreeControlNode(contextName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpContext.do?select=" +
+                                    URLEncoder.encode(contextName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    false);
             hostNode.addChild(contextNode);
-            //get all loggers for this context
-            if (contextName.length() > 0) {
-                getLoggers(contextNode, serviceName, hostName, contextName, 2);
-                getRealms(contextNode, serviceName, hostName, contextName, 2);
-            }
+            getLoggers(contextNode, contextName);
+            getRealms(contextNode, contextName);
         }
-        
-        
+
     }
     
     
     /**
-     * Add the required logger nodes to the specified node instance.
+     * Append nodes for any defined loggers for the specified container.
      *
-     * @param node The <code>TreeControlNode</code> to which we should
-     * add our logger nodes.
-     * @param serviceName The service to which this logger belongs.
-     * @param hostName The host to which this logger belongs.
-     * @param contextName The context to which this logger belongs.
-     * @param type (0,1,2)  Get all loggers for a particular service(0),
-     * host(1), context (2).
+     * @param containerNode Container node for the tree control
+     * @param containerName Object name of the parent container
+     *
+     * @exception Exception if an exception occurs building the tree
      */
-    public void getLoggers(TreeControlNode node, String serviceName,
-    String hostName, String contextName, int type)
-    throws JMException{
-        
-        Iterator loggerItr = null;
-        
-        if (type == 0) {
-            loggerItr =
-            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
-            ",service=" + serviceName), null)).iterator();
-        }  else if (type == 1) {
-            loggerItr =
-            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
-            ",host=" + hostName + ",service=" + serviceName), null)).iterator();
-        } else if (type == 2) {
-            loggerItr =
-            (mBServer.queryMBeans(new ObjectName(LOGGER_TYPE +
-            ",path=" + contextName + ",host=" + hostName +
-            ",service=" + serviceName), null)).iterator();
+    public void getLoggers(TreeControlNode containerNode,
+                           String containerName) throws Exception {
+
+        Iterator loggerNames =
+            Lists.getLoggers(mBServer, containerName).iterator();
+        while (loggerNames.hasNext()) {
+            String loggerName = (String) loggerNames.next();
+            ObjectName objectName = new ObjectName(loggerName);
+            String nodeLabel = "Logger for " + containerNode.getLabel();
+            TreeControlNode loggerNode =
+                new TreeControlNode(loggerName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpLogger.do?select=" +
+                                    URLEncoder.encode(loggerName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    false);
+            containerNode.addChild(loggerNode);
         }
-        
-        TreeControlNode loggerNode = null;
-        String encodedLoggerName;
-        
-        while(loggerItr.hasNext()){
-            
-            ObjectInstance loggerObj = (ObjectInstance)loggerItr.next();
-            ObjectName loggerObjName = loggerObj.getObjectName();
-            encodedLoggerName =  URLEncoder.encode(loggerObj.getObjectName().toString());
-            
-            String className =
-            (String)mBServer.getAttribute(loggerObj.getObjectName(),
-            SetUpLoggerAction.CLASSNAME_PROP_NAME);
-            
-            String loggerType = null;
-            int period = className.lastIndexOf(".");
-            if (period >= 0)
-                loggerType = className.substring(period + 1);
-            
-            String encodedLoggerType =  URLEncoder.encode(loggerType);
-            
-            String nodeLabel="Logger";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
-            loggerNode =
-            new TreeControlNode(loggerObj.getObjectName().toString(),
-            "folder_16_pad.gif",
-            nodeLabel,
-            "setUpLogger.do?select=" + encodedLoggerName
-            +"&nodeLabel="+ encodedNodeLabel
-            +"&type="+ encodedLoggerType,
-            "content", true);
-            
-            node.addChild(loggerNode);
-        }
+
     }
-    
+
+
     /**
-     * Add the required realm nodes to the specified node instance.
+     * Append nodes for any defined realms for the specified container.
      *
-     * @param node The <code>TreeControlNode</code> to which we should
-     * add our realm nodes.
-     * @param serviceName The service to which this realm belongs.
-     * @param hostName The host to which this realm belongs.
-     * @param contextName The context to which this realm belongs.
-     * @param type (0,1,2)  Get all realms for a particular service(0),
-     * host(1), context (2).
+     * @param containerNode Container node for the tree control
+     * @param containerName Object name of the parent container
+     *
+     * @exception Exception if an exception occurs building the tree
      */
-    public void getRealms(TreeControlNode node, String serviceName,
-    String hostName, String contextName, int type)
-    throws JMException{
-        
-        Iterator realmItr = null;
-        
-        if (type == 0) {
-            realmItr =
-            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
-            ",service=" + serviceName), null)).iterator();
-        }  else if (type == 1) {
-            realmItr =
-            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
-            ",host=" + hostName + ",service=" + serviceName), null)).iterator();
-        } else if (type == 2) {
-            realmItr =
-            (mBServer.queryMBeans(new ObjectName(REALM_TYPE +
-            ",path=" + contextName + ",host=" + hostName +
-            ",service=" + serviceName), null)).iterator();
+    public void getRealms(TreeControlNode containerNode,
+                          String containerName) throws Exception {
+
+        Iterator realmNames =
+            Lists.getRealms(mBServer, containerName).iterator();
+        while (realmNames.hasNext()) {
+            String realmName = (String) realmNames.next();
+            ObjectName objectName = new ObjectName(realmName);
+            String nodeLabel = "Realm for " + containerNode.getLabel();
+            TreeControlNode realmNode =
+                new TreeControlNode(realmName,
+                                    "folder_16_pad.gif",
+                                    nodeLabel,
+                                    "setUpRealm.do?select=" +
+                                    URLEncoder.encode(realmName) +
+                                    "&nodeLabel=" +
+                                    URLEncoder.encode(nodeLabel),
+                                    "content",
+                                    false);
+            // FIXME - Need a generic SetUpRealmAction for all types
+            // containerNode.addChild(realmNode);
         }
-        
-        TreeControlNode realmNode = null;
-        String encodedRealmName;
-        
-        while(realmItr.hasNext()){
-            
-            ObjectInstance realmObj = (ObjectInstance)realmItr.next();
-            ObjectName realmObjName = realmObj.getObjectName();
-            encodedRealmName =  URLEncoder.encode(realmObj.getObjectName().toString());
-            
-            String className =
-            (String)mBServer.getAttribute(realmObj.getObjectName(),
-            SetUpLoggerAction.CLASSNAME_PROP_NAME);
-            
-            String realmType = null;
-            int period = className.lastIndexOf(".");
-            if (period >= 0)
-                realmType = className.substring(period + 1);
-            
-            String setUpAction = null;
-            if ((SetUpUserDBRealmAction.JDBC_REALM).equalsIgnoreCase(realmType)) {
-                setUpAction = "setUpJDBCRealm";
-            } else if ((SetUpUserDBRealmAction.JNDI_REALM).equalsIgnoreCase(realmType)) {
-                setUpAction = "setUpJNDIRealm";
-            } else if ((SetUpUserDBRealmAction.MEMORY_REALM).equalsIgnoreCase(realmType)) {
-                setUpAction = "setUpMemoryRealm";
-            } else {
-                // UserDatabaseRealm
-                setUpAction = "setUpUserDBRealm";
-            }
-            
-            String encodedRealmType =  URLEncoder.encode(realmType);
-            
-            String nodeLabel= "Realm";
-            String encodedNodeLabel =  URLEncoder.encode(nodeLabel);
-            
-            realmNode =
-            new TreeControlNode(realmObj.getObjectName().toString(),
-            "folder_16_pad.gif",
-            nodeLabel,
-            setUpAction +".do?select=" + encodedRealmName
-            +"&nodeLabel="+ encodedNodeLabel
-            +"&type="+ encodedRealmType,
-            "content", true);
-            
-            node.addChild(realmNode);
-        }
+
     }
+
     
 }

@@ -89,7 +89,12 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="host.name"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
               <html:text property="name" size="24" maxlength="24"/>
+--%>
+              <bean:write name="hostForm" property="name"/>
+              <html:hidden property="name"/>
             </controls:data>
         </controls:row>
 
@@ -97,7 +102,12 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="host.base"/>:</controls:label>
             <controls:data>
-              <html:text property="appBase" size="24" maxlength="24"/>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
+              <html:text property="appBase" size="24"/>
+--%>
+              <bean:write name="hostForm" property="appBase"/>
+              <html:hidden property="appBase"/>
             </controls:data>
         </controls:row>
 

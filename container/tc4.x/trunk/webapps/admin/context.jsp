@@ -109,7 +109,12 @@
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.docBase"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
                <html:text property="docBase" size="30"/>
+--%>
+               <bean:write name="contextForm" property="docBase"/>
+               <html:hidden property="docBase"/>
             </controls:data>
         </controls:row>
 
@@ -128,7 +133,12 @@
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.path"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
                <html:text property="path" size="30"/>
+--%>
+               <bean:write name="contextForm" property="path"/>
+               <html:hidden property="path"/>
             </controls:data>
         </controls:row>
 
@@ -157,7 +167,12 @@
        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="context.workdir"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
                <html:text property="workDir" size="30"/>
+--%>
+               <bean:write name="contextForm" property="workDir"/>
+               <html:hidden property="workDir"/>
             </controls:data>
         </controls:row>
    </controls:table>

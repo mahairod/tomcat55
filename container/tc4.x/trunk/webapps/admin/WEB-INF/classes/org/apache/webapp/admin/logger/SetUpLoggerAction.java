@@ -158,7 +158,8 @@ public class SetUpLoggerAction extends Action {
         }
         
         String selectedName = request.getParameter("select");
-        String loggerType = request.getParameter("type");
+        //        String loggerType = request.getParameter("type");
+        String loggerType = null;
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
         
@@ -215,13 +216,15 @@ public class SetUpLoggerAction extends Action {
         String attribute = null;
         try{
             
-            Iterator loggerItr =
-            mBServer.queryMBeans(new
-            ObjectName(selectedName), null).iterator();
+            ObjectName loggerObjName = new ObjectName(selectedName);
             
-            ObjectInstance objInstance = (ObjectInstance)loggerItr.next();
-            ObjectName loggerObjName = (objInstance).getObjectName();
-            
+            // Calculate the type of logger we are managing
+            attribute = "className";
+            String className = (String) mBServer.getAttribute(loggerObjName,
+                                                              attribute);
+            int period = className.lastIndexOf('.');
+            loggerType = className.substring(period + 1);
+
             // common attributes for all logger types.
             debug = (Integer) mBServer.getAttribute(loggerObjName,
             attribute=DEBUG_PROP_NAME);
@@ -229,7 +232,7 @@ public class SetUpLoggerAction extends Action {
             verbosity = (Integer) mBServer.getAttribute(loggerObjName,
             attribute=VERBOSITY_PROP_NAME);
             
-            if (FILE_LOGGER.equalsIgnoreCase(loggerType)) {
+            if (FILE_LOGGER.equals(loggerType)) {
                 // Initialize rest of variables.
                 
                 directory = (String) mBServer.getAttribute(loggerObjName,
@@ -269,7 +272,7 @@ public class SetUpLoggerAction extends Action {
         loggerFm.setLoggerName(selectedName);
         loggerFm.setNodeLabel(nodeLabel);
         
-        if (FILE_LOGGER.equalsIgnoreCase(loggerType)) {
+        if (FILE_LOGGER.equals(loggerType)) {
             
             loggerFm.setDirectory(directory);
             loggerFm.setPrefix(prefix);

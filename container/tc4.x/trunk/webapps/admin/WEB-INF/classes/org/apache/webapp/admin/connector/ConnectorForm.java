@@ -545,7 +545,7 @@ public final class ConnectorForm extends ActionForm {
             
             /* general */
             numberCheck("acceptCountText", acceptCountText, true, 0, 128);
-            numberCheck("connTimeOutText", connTimeOutText, true, 0, 60000);
+            numberCheck("connTimeOutText", connTimeOutText, true, -1, 60000);
             numberCheck("bufferSizeText", bufferSizeText, true, 1, 8192);
             
             /* The IP address can also be null -- which means open the
@@ -560,7 +560,7 @@ public final class ConnectorForm extends ActionForm {
             
             /* ports */
             numberCheck("portNumber",  portText, true, 1, 65535);
-            numberCheck("redirectPortText",  redirectPortText, true, 0, 65535);
+            numberCheck("redirectPortText",  redirectPortText, true, -1, 65535);
             
             /* processors*/
             numberCheck("minProcessorsText",  minProcessorsText, true, 1, 512);
@@ -581,7 +581,8 @@ public final class ConnectorForm extends ActionForm {
                     errors.add("proxyName", new ActionError("error.proxyName.invalid"));
                 }
             }      
-            numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);      
+            // FIXME - depends on Connector type
+            // numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
         }
         
         return errors;

@@ -106,7 +106,12 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.address.ip"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
                <html:text property="address" size="20"/>    
+--%>
+               <bean:write name="connectorForm" property="address"/>
+               <html:hidden property="address"/>
             </controls:data>
         </controls:row>
  
@@ -118,7 +123,12 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="server.portnumber"/>:</controls:label>
             <controls:data>
+<%-- FIXME - input only allowed on create transaction --%>
+<%--
                <html:text property="portText" size="5"/> 
+--%>
+               <bean:write name="connectorForm" property="portText"/>
+               <html:hidden property="portText"/>
             </controls:data>
         </controls:row>
 
@@ -148,6 +158,9 @@
             </controls:data>
         </controls:row>
 
+<%-- FIXME - The proxyName and proxyPort properties not supported   --%>
+<%--         on all connectors, so comment this section out for now --%>
+<%--
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Proxy</controls:label>
             <controls:data>&nbsp;</controls:data>
@@ -166,6 +179,7 @@
                 <html:text property="proxyPortText" size="5"/> 
             </controls:data>
         </controls:row>
+--%>
       </controls:table>
   
       </td>

@@ -274,6 +274,7 @@ public class SetUpConnectorAction extends Action {
             ((Integer) mBServer.getAttribute(connectorObjName,
             attribute)).toString());
             
+            /* FIXME - Not supported on all types
             attribute = PROXY_NAME_PROP_NAME;
             connectorFm.setProxyName(
             (String) mBServer.getAttribute(connectorObjName,
@@ -283,6 +284,7 @@ public class SetUpConnectorAction extends Action {
             connectorFm.setProxyPortText(
             ((Integer) mBServer.getAttribute(connectorObjName,
             attribute)).toString());
+            */
             
         } catch(Throwable t){
             getServlet().log

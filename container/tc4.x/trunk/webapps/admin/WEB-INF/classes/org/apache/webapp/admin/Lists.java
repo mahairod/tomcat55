@@ -265,4 +265,203 @@ public class Lists {
     }
 
 
+    /**
+     * Return a list of <code>Logger</code> object name strings
+     * for the specified container (service, host, or context) object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select
+     *                  loggers
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getLoggers(MBeanServer mbserver, ObjectName container)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(container.getDomain());
+        sb.append(":type=Logger");
+        String type = container.getKeyProperty("type");
+        String path = container.getKeyProperty("path");
+        if (path != null) {
+            sb.append(",path=");
+            sb.append(path);
+        }
+        String host = container.getKeyProperty("host");
+        if ("Host".equals(type)) {
+            host = container.getKeyProperty("name");
+        }
+        if (host != null) {
+            sb.append(",host=");
+            sb.append(host);
+        }
+        String service = container.getKeyProperty("service");
+        if ("Service".equals(type)) {
+            service = container.getKeyProperty("name");
+        }
+        if (service != null) {
+            sb.append(",service=");
+            sb.append(service);
+        }
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList loggers = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            loggers.add(names.next().toString());
+        }
+        Collections.sort(loggers);
+        return (loggers);
+
+    }
+
+
+    /**
+     * Return a list of <code>Logger</code> object name strings
+     * for the specified container (service, host, or context) object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select
+     *                  loggers
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getLoggers(MBeanServer mbserver, String container)
+        throws Exception {
+
+        return (getLoggers(mbserver, new ObjectName(container)));
+
+    }
+
+
+    /**
+     * Return a list of <code>Realm</code> object name strings
+     * for the specified container (service, host, or context) object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select
+     *                  realms
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getRealms(MBeanServer mbserver, ObjectName container)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(container.getDomain());
+        sb.append(":type=Realm");
+        String type = container.getKeyProperty("type");
+        String path = container.getKeyProperty("path");
+        if (path != null) {
+            sb.append(",path=");
+            sb.append(path);
+        }
+        String host = container.getKeyProperty("host");
+        if ("Host".equals(type)) {
+            host = container.getKeyProperty("name");
+        }
+        if (host != null) {
+            sb.append(",host=");
+            sb.append(host);
+        }
+        String service = container.getKeyProperty("service");
+        if ("Service".equals(type)) {
+            service = container.getKeyProperty("name");
+        }
+        if (service != null) {
+            sb.append(",service=");
+            sb.append(service);
+        }
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList realms = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            realms.add(names.next().toString());
+        }
+        Collections.sort(realms);
+        return (realms);
+
+    }
+
+
+    /**
+     * Return a list of <code>Realm</code> object name strings
+     * for the specified container (service, host, or context) object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param container Object name of the container for which to select
+     *                  realms
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getRealms(MBeanServer mbserver, String container)
+        throws Exception {
+
+        return (getRealms(mbserver, new ObjectName(container)));
+
+    }
+
+
+    /**
+     * Return a list of <code>Server</code> object name strings.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getServers(MBeanServer mbserver)
+        throws Exception {
+
+        ObjectName search = new ObjectName("Catalina:type=Server,*");
+        ArrayList servers = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            servers.add(names.next().toString());
+        }
+        Collections.sort(servers);
+        return (servers);
+
+    }
+
+
+    /**
+     * Return a list of <code>Service</code> object name strings
+     * for the specified <code>Server</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param server Object name of the server for which to select services
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getServices(MBeanServer mbserver, ObjectName server)
+        throws Exception {
+
+        StringBuffer sb = new StringBuffer(server.getDomain());
+        sb.append(":type=Service,*");
+        ObjectName search = new ObjectName(sb.toString());
+        ArrayList services = new ArrayList();
+        Iterator names = mbserver.queryNames(search, null).iterator();
+        while (names.hasNext()) {
+            services.add(names.next().toString());
+        }
+        Collections.sort(services);
+        return (services);
+
+    }
+
+
+    /**
+     * Return a list of <code>Service</code> object name strings
+     * for the specified <code>Server</code> object name.
+     *
+     * @param mbserver MBeanServer from which to retrieve the list
+     * @param server Object name of the server for which to select services
+     *
+     * @exception Exception if thrown while retrieving the list
+     */
+    public static List getServices(MBeanServer mbserver, String server)
+        throws Exception {
+
+        return (getServices(mbserver, new ObjectName(server)));
+
+    }
+
+
 }
