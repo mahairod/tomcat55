@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -15,7 +15,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -23,15 +23,15 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:  
- *       "This product includes software developed by the 
+ *    any, must include the following acknowlegement:
+ *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
  * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
- *    from this software without prior written permission. For written 
+ *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache"
@@ -59,7 +59,7 @@
  *
  * [Additional notices, if required by prior licensing conditions]
  *
- */ 
+ */
 
 
 package org.apache.tomcat.core;
@@ -81,7 +81,7 @@ import javax.servlet.http.*;
  */
 
 public class RequestImpl extends Request {
-    
+
     protected StringManager sm =
         StringManager.getManager(Constants.Package);
     protected ServletInputStream in;
@@ -90,7 +90,7 @@ public class RequestImpl extends Request {
     protected int serverPort;
     protected String remoteAddr;
     protected String remoteHost;
-    
+
     public RequestImpl() {
         super();
     }
@@ -106,7 +106,7 @@ public class RequestImpl extends Request {
     public long getDateHeader(String name) {
         return headers.getDateHeader(name);
     }
-    
+
     public String getHeader(String name) {
         return headers.getHeader(name);
     }
@@ -123,15 +123,15 @@ public class RequestImpl extends Request {
 
 	return v.elements();
     }
-    
+
     public int getIntHeader(String name)  {
         return headers.getIntHeader(name);
     }
-    
+
     public Enumeration getHeaderNames() {
         return headers.names();
     }
-    
+
     public ServletInputStream getInputStream()
     throws IOException {
     	if (in == null) {
@@ -140,7 +140,7 @@ public class RequestImpl extends Request {
     	    throw new IOException(msg);
     	}
 
-    	return in;    
+    	return in;
     }
 
     public BufferedReader getReader()
@@ -159,11 +159,11 @@ public class RequestImpl extends Request {
             new InputStreamReader(getInputStream(), encoding);
 	return new BufferedReader(r);
     }
-    
+
     // XXX
     // the server name should be pulled from a server object of some
     // sort, not just set and got.
-    
+
     public String getServerName() {
 	return serverName;
     }
@@ -171,7 +171,7 @@ public class RequestImpl extends Request {
     public void setServerName(String serverName) {
 	this.serverName = serverName;
     }
-    
+
     public void processCookies() {
     	String cookieString = headers.getHeader("cookie");
 	if (cookieString != null) {
@@ -185,7 +185,7 @@ public class RequestImpl extends Request {
                     // XXX
                     // the trims here are a *hack* -- this should
                     // be more properly fixed to be spec compliant
-                    
+
                     String name = token.substring(0, i).trim();
                     String value = token.substring(i+1, token.length()).trim();
                     Cookie cookie = new Cookie(name, value);
@@ -194,14 +194,14 @@ public class RequestImpl extends Request {
                     // we have a bad cookie.... just let it go
                 }
             }
-        }	
+        }
     }
-    
+
     // XXX
     // general comment -- we've got one form of this method that takes
     // a string, another that takes an inputstream -- they don't work
     // well together. FIX
-    
+
     public void processFormData(String data) {
 
         // XXX
@@ -241,12 +241,12 @@ public class RequestImpl extends Request {
                 read += in.read(buf, read, buf.length - read);
             } while (read < contentLength && read != -1);
         } catch (IOException e) {
-            
+
         }
         String s = new String(buf, 0, read);
         processFormData(s);
     }
-    
+
     public String unUrlDecode(String data) {
 	StringBuffer buf = new StringBuffer();
 	for (int i = 0; i < data.length(); i++) {
@@ -271,7 +271,7 @@ public class RequestImpl extends Request {
 		    if (rest.length()==2)
 			i++;
 		}
-		
+
 		break;
 	    default:
 		buf.append(c);
@@ -279,8 +279,8 @@ public class RequestImpl extends Request {
 	    }
 	}
 	return buf.toString();
-    }           
-	
+    }
+
     // XXX This method is duplicated in core/Response.java
     public String getCharsetFromContentType(String type) {
         // Basically return everything after ";charset="
@@ -304,15 +304,15 @@ public class RequestImpl extends Request {
     public int getServerPort() {
         return serverPort;
     }
-    
+
     public String getRemoteAddr() {
         return remoteAddr;
     }
-    
+
     public String getRemoteHost() {
 	return remoteHost;
-    }    
-    
+    }
+
     public void setHeaders( MimeHeaders h ) {
 	headers=h;
     }
@@ -324,7 +324,7 @@ public class RequestImpl extends Request {
     public void setServerPort( int port ) {
 	serverPort=port;
     }
-    
+
     public void setRemoteAddress(String addr) {
 	this.remoteAddr = addr;
     }
@@ -346,19 +346,20 @@ public class RequestImpl extends Request {
     }
 
     public void setQueryString(String queryString) {
-	this.queryString = queryString;
-
-        setParameters(HttpUtils.parseQueryString(queryString));
+        this.queryString = queryString;
+        if (queryString != null) {
+            setParameters(HttpUtils.parseQueryString(queryString));
+        }
     }
 
     public void setParameters(Hashtable parameters) {
 	this.parameters = parameters;
     }
-        
+
     public void setContentLength( int  len ) {
 	this.contentLength=len;
     }
-        
+
     public void setContentType( String type ) {
 	this.contentType=type;
     }
