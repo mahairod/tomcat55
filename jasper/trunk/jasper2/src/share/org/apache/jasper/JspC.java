@@ -302,7 +302,15 @@ public class JspC implements Options {
      *  resolve includes
      */
     public void setUriroot( String s ) {
-        uriRoot=s;
+        if( s==null ) {
+            uriRoot=s;
+            return;
+        }
+        try {
+            uriRoot=new File( s ).getCanonicalPath();
+        } catch( Exception ex ) {
+            uriRoot=s;
+        }
     }
 
     public void setVerbose( int level ) {
