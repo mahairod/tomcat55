@@ -63,9 +63,12 @@
 package org.apache.webapp.admin;
 
 
+import java.util.List;
+import java.util.Iterator;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import org.apache.struts.action.ActionServlet;
 
 
 /**
@@ -73,6 +76,7 @@ import javax.servlet.http.HttpSessionListener;
  * for the tree control test.
  *
  * @author Craig R. McClanahan
+ * @author Patrick Luby
  * @version $Revision$ $Date$
  */
 
@@ -91,14 +95,32 @@ public class TreeControlTestListener implements HttpSessionListener {
 
         HttpSession session = event.getSession();
 
+        // Create the ROOT-NODE
         TreeControlNode root =
             new TreeControlNode("ROOT-NODE",
                                 null, "Root Node",
                                 "treeControlTest.do?select=ROOT-NODE",
                                 null, true);
         TreeControl control = new TreeControl(root);
+        control.selectNode("ROOT-NODE");
         TreeControlNode parent = null;
         TreeControlNode child = null;
+
+        // Create child nodes based on the servlet's init parameter
+        List treeBuilders = TreeBuilders.getTreeBuilders();
+
+        Iterator iterator = treeBuilders.iterator();
+        while (iterator.hasNext()) {
+
+            String currentBuilder = (String)(iterator.next());
+            if (currentBuilder == null || currentBuilder.length() < 1)
+                continue;
+
+            // FIXME: We need to dynamically load the class name that
+            // currentBuilder is set to and invoke its buildTree method.
+            // However, right now, we only invoke the hard-code tree below
+        if (!currentBuilder.equals("org.apache.webapp.admin.TomcatTreeBuilder"))
+            continue;
 
         parent =
             new TreeControlNode("CATALINA",
@@ -137,7 +159,6 @@ public class TreeControlTestListener implements HttpSessionListener {
                                 "treeControlTest.do?select=SERVICE-TOMCAT-APACHE",
                                 null, true);
         parent.addChild(child);
-        control.selectNode("SERVICE-TOMCAT-APACHE");
         parent = child;
 
         child =
@@ -162,6 +183,8 @@ public class TreeControlTestListener implements HttpSessionListener {
                                 "treeControlTest.do?select=RESOURCES",
                                 null, true);
         parent.addChild(child);
+            // FIXME: end of hard-coding that needs to be replaced
+        }
 
         event.getSession().getServletContext().log
             ("TreeControlTestListener:  Session " +
