@@ -865,7 +865,7 @@ public class DefaultServlet
 	// bad stuff(tm) can be caught by the later checks
         String normalized = path;
         if (normalized.indexOf('%') >= 0)
-            normalized = RequestUtil.URLDecode(normalized, "UTF-8");
+            normalized = RequestUtil.URLDecode(normalized, "UTF8");
         if (normalized == null)
             return (null);
         
@@ -931,7 +931,7 @@ public class DefaultServlet
 	ByteArrayOutputStream buf = new ByteArrayOutputStream(maxBytesPerChar);
         OutputStreamWriter writer = null;
         try {
-            writer = new OutputStreamWriter(buf, "UTF-8");
+            writer = new OutputStreamWriter(buf, "UTF8");
         } catch (Exception e) {
             e.printStackTrace();
             writer = new OutputStreamWriter(buf);
