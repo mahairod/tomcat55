@@ -842,7 +842,7 @@ class Parser {
 
         Node invokeNode = new Node.InvokeAction(attrs, start, parent);
         
-        parseOptionalBody(invokeNode, "jsp:invoke", JAVAX_BODY_CONTENT_PARAM);
+        parseEmptyBody(invokeNode, "jsp:invoke");
     }
 
     private void parseDoBody(Node parent) throws JasperException {
@@ -851,7 +851,7 @@ class Parser {
 
         Node doBodyNode = new Node.DoBodyAction(attrs, start, parent);
         
-        parseOptionalBody(doBodyNode, "jsp:doBody", JAVAX_BODY_CONTENT_PARAM);
+        parseEmptyBody(doBodyNode, "jsp:doBody");
     }
 
     /*

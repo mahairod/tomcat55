@@ -1832,84 +1832,27 @@ class Generator {
 
         public void visit(Node.InvokeAction n) throws JasperException {
 
-	    /**
-	     * A visitor to handle <jsp:param> in a <jsp:invoke>
-	     */
-	    class ParamVisitor extends Node.Visitor {
+	    // Copy virtual page scope of tag file to page scope of invoking
+	    // page
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
-		// The name of the fragment to which the <jsp:param> applies
-		private String fragName;
-
-		public ParamVisitor(String fragName) {
-		    this.fragName = fragName;
-		}
-
-                public void visit(Node.ParamAction n) throws JasperException {
-		    out.printin("_jspx_params.put(");
-		    out.print(quote(n.getTextAttribute("name")));
-		    out.print(", ");
-		    out.print(attributeValue(n.getValue(), false,
-					     getParamClass(n), "null"));
-		    out.println(");");
-		}
-
-		/*
-		 * Checks to see if the given <jsp:param> matches a tag file
-		 * variable scoped to the same fragment as the enclosing
-		 * <jsp:invoke>. If a match is found, the class specified in
-		 * the variable directive's 'variable-class' attribute (if 
-		 * present) is loaded and returned.
-		 */
-		private Class getParamClass(Node.ParamAction n)
-		            throws JasperException {
-
-		    Class clazz = String.class;
-
-		    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-		    if (tagVars != null) {
-			String paramName = n.getTextAttribute("name");
-			for (int i=0; i<tagVars.length; i++) {
-			    String varName = tagVars[i].getNameGiven();
-			    if (varName == null) {
-				// XXX name-from-attribute:
-				// What to do in this case?
-			    }
-			    String tagVarFrag = tagVars[i].getFragment();
-			    if (!paramName.equals(varName)
-				    || tagVarFrag == null
-				    || !this.fragName.equals(tagVarFrag))
-				continue;
-			    try {
-				clazz = JspUtil.toClass(tagVars[i].getClassName(), loader);
-			    } catch (ClassNotFoundException cnfe) {
-				throw new JasperException(cnfe);
-			    }
-			}
-		    }
-
-		    return clazz;
-		}
-	    }
-
-	    // Assemble parameter map
-	    out.printil("_jspx_params = new java.util.HashMap();");
-	    if (n.getBody() != null) {
-		prepareParams(n);
-		n.getBody().visit(new ParamVisitor(
-                                            n.getTextAttribute("fragment")));
-	    }
-	    
-	    // Invoke fragment with parameter map
+	    // Invoke fragment
 	    String varReaderAttr = n.getTextAttribute("varReader");
 	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
 		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
-		out.println(".invoke(_jspx_sout, _jspx_params);");
+		out.println(".invoke(_jspx_sout);");
 	    } else {
 		out.printin(toGetterMethod(n.getTextAttribute("fragment")));
-		out.println(".invoke(null, _jspx_params);");
+		out.println(".invoke(null);");
 	    }
+
+	    // Copy page scope of invoking page back to virtual page scope of
+	    // tag file
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
@@ -1932,67 +1875,25 @@ class Generator {
 
         public void visit(Node.DoBodyAction n) throws JasperException {
 
-	    /**
-	     * A visitor to handle <jsp:param> in a <jsp:doBody>
-	     */
-	    class ParamVisitor extends Node.Visitor {
+	    // Copy virtual page scope of tag file to page scope of invoking
+	    // page
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
-                public void visit(Node.ParamAction n) throws JasperException {
-		    out.printin("_jspx_params.put(");
-		    out.print(quote(n.getTextAttribute("name")));
-		    out.print(", ");
-		    out.print(attributeValue(n.getValue(), false,
-					     String.class, "null"));
-		    out.println(");");
-		}
-	    }
-
-	    // Assemble parameter map
-	    out.printil("_jspx_params = new java.util.HashMap();");
-	    if (n.getBody() != null) {
-		prepareParams(n);
-		n.getBody().visit(new ParamVisitor());
-	    }
-
-	    // Add AT_BEGIN and NESTED scripting variables (that are not 
-	    // scoped to any fragment) to parameter map
-	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	    if (tagVars != null) {
-		for (int i=0; i<tagVars.length; i++) {
-		    if (tagVars[i].getFragment() != null) {
-			continue;
-		    }
-		    int scope = tagVars[i].getScope();
-		    if (scope != VariableInfo.AT_BEGIN
-			    && scope != VariableInfo.NESTED) {
-			continue;
-		    }
-		    out.printin("_jspx_params.put(");
-		    String name = tagVars[i].getNameGiven();
-		    if (name != null) {
-			out.print(quote(name));
-			out.print(", pageContext.getAttribute(");
-			out.print(quote(name));
-			out.println("));");
-		    } else {
-			String getter = toGetterMethod(tagVars[i].getNameFromAttribute());
-			out.print(getter);
-			out.print(", pageContext.getAttribute(");
-			out.print(getter);
-			out.println("));");
-		    }
-		}
-	    }
-
-	    // Invoke body with parameter map
+	    // Invoke body
 	    String varReaderAttr = n.getTextAttribute("varReader");
 	    String varAttr = n.getTextAttribute("var");
 	    if (varReaderAttr != null || varAttr != null) {
 		out.printil("_jspx_sout = new java.io.StringWriter();");
-		out.printil("getJspBody().invoke(_jspx_sout, _jspx_params);");
+		out.printil("getJspBody().invoke(_jspx_sout);");
 	    } else {
-		out.printil("getJspBody().invoke(null, _jspx_params);");
+		out.printil("getJspBody().invoke(null);");
 	    }
+
+	    // Copy page scope of invoking page back to virtual page scope of
+	    // tag file
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
 
 	    // Store varReader in appropriate scope
 	    if (varReaderAttr != null || varAttr != null) {
@@ -2986,25 +2887,6 @@ class Generator {
 	 * Class body begins here
 	 */
 
-	// Declare parameter map for fragment/body invocation. This must be
-	// declared as an instance variable (as opposed to a local variable in
-	// doTag()), so that it is accessible:
-	//
-	// - from the JspFragmentHelper subclass specific to the automatically
-	//   generated tag handler, in case the fragment/body invocation is
-	//   contained in a fragment body, as in:
-	//     <my:simple>
-	//       <jsp:invoke fragment="frag"/>
-	//     </my:simple>
-	//
-	// - from the invocation of a classic tag handler that is separated out
-        //   into its own method, if the fragment/body invocation is
-	//   encapsulated in a custom action, as in:
-	//     <my:classic>
-	//       <jsp:invoke fragment="frag"/>
-	//     </my:classic>
-	out.printil("private java.util.Map _jspx_params = null;");
-
 	generateDeclarations(tag);
 
 	// Static initializations here
@@ -3071,38 +2953,9 @@ class Generator {
     }
 
     private void generateTagHandlerPostamble( TagInfo tagInfo ) {
-        // Note: Before this point, the page author must have updated the
-        // scoped variables with the synced versions.  We now transfer any
-        // of those scoped variables that are in the locally-scoped page
-        // context to the "real" page context of the calling code.
-        out.printil( "// Sync up variables with caller's page context:" );
-        
-        TagVariableInfo[] tagVariableInfo = tagInfo.getTagVariableInfos();
-        for( int i = 0; tagVariableInfo != null
-		 && i < tagVariableInfo.length; i++ ) {
-            // XXX - Spec bug: Note, we don't know the value of 
-            // this attribute at translation time, because we're defining
-            // the tag, and we don't know how page authors will call it.
-            // Instead, we make a best guess at runtime of what the
-            // name of the attribute is.  There are lots of potential 
-            // problems with this approach and this implementation, but
-            // we're expecting the spec to change.
-            if( ( tagVariableInfo[i].getScope() == VariableInfo.AT_BEGIN ) ||
-                ( tagVariableInfo[i].getScope() == VariableInfo.AT_END ) )
-            {
-                String var = tagVariableInfo[i].getNameFromAttribute();
-                if( var == null ) {
-                    var = "\"" + tagVariableInfo[i].getNameGiven() + "\"";
-                }
-                out.printil( "if( jspContext.getAttributesScope( " + var + 
-                    " ) == JspContext.PAGE_SCOPE ) {" );
-                out.pushIndent();
-                out.printil( "super.jspContext.setAttribute( " + var + 
-                    ", jspContext.getAttribute( " + var + " ) );" );
-                out.popIndent();
-                out.printil( "}" );
-            }
-        }
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_END);");
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).restoreNestedVariables();");
         
         out.popIndent();
         
@@ -3204,16 +3057,43 @@ class Generator {
         
         // Define setter for JspContext so we can create a wrapper and
         // store both the original and the wrapper.  We need the wrapper
-        // to maask the page context from the tag file and simulate a 
+        // to mask the page context from the tag file and simulate a 
         // fresh page context.  We need the original to do things like
         // sync AT_BEGIN and AT_END scripting variables.
         out.printil( "protected JspContext jspContext;" );
         out.println();
         out.printil( "public void setJspContext( JspContext ctx ) {" );
         out.pushIndent();
-        out.printil( "super.setJspContext( ctx );" );
-        out.printil( "this.jspContext = new org.apache.jasper.runtime.JspContextWrapper( ctx );" );
-        out.popIndent();
+        out.printil( "super.setJspContext(ctx);" );
+
+	out.printil("java.util.Vector _jspx_nested = new java.util.Vector();");
+	out.printil("java.util.Vector _jspx_at_begin = new java.util.Vector();");
+	out.printil("java.util.Vector _jspx_at_end = new java.util.Vector();");
+	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	for (int i=0; tagVars != null && i<tagVars.length; i++) {
+		String name = tagVars[i].getNameGiven();
+		/* XXX
+		if (name == null) {
+		    name = toGetterMethod(tagVars[i].getNameFromAttribute());
+		}
+		*/
+		switch(tagVars[i].getScope()) {
+		case VariableInfo.NESTED:
+		    out.printin("_jspx_nested.addElement(");
+		    break;
+		case VariableInfo.AT_BEGIN:
+		    out.printin("_jspx_at_begin.addElement(");
+		    break;
+		case VariableInfo.AT_END:
+		    out.printin("_jspx_at_end.addElement(");
+		    break;
+		} // switch
+		
+		out.print(quote(name));
+		out.println(");");
+	}
+	out.printil( "this.jspContext = new org.apache.jasper.runtime.JspContextWrapper(ctx, _jspx_nested, _jspx_at_begin, _jspx_at_end);" );
+	out.popIndent();
         out.printil( "}" );
         out.println();
         out.printil( "public JspContext getJspContext() {" );
@@ -3477,8 +3357,7 @@ class Generator {
 	    } else {
 		out.printin("public void invoke");
 	    }
-	    out.println(result.getId() + "( " +
-			"java.io.Writer out, java.util.Map params ) " );
+	    out.println(result.getId() + "( " + "java.io.Writer out ) " );
             out.pushIndent();
             // Note: Throwable required because methods like _jspx_meth_*
             // throw Throwable.
@@ -3515,19 +3394,12 @@ class Generator {
             }
             
             // Generate postamble:
-            out.printil( "public void invoke( java.io.Writer writer, " +
-			 "java.util.Map params )" );
+            out.printil( "public void invoke( java.io.Writer writer )" );
             out.pushIndent();
             out.printil( "throws javax.servlet.jsp.JspException" );
             out.popIndent();
             out.printil( "{" );
             out.pushIndent();
-            out.printil( "java.util.Map _jspx_originalValues = null;" );
-            out.printil( "if( params != null ) {" );
-            out.pushIndent();
-            out.printil( "_jspx_originalValues = preparePageScope( params );");
-            out.popIndent();
-            out.printil( "}" );
 	    out.printil( "java.io.Writer out = null;" );
             out.printil( "if( writer != null ) {" );
             out.pushIndent();
@@ -3545,7 +3417,7 @@ class Generator {
 	    for( int i = 0; i < fragments.size(); i++ ) {
                 out.printil( "case " + i + ":" );
                 out.pushIndent();
-                out.printil( "invoke" + i + "( out, params );" );
+                out.printil( "invoke" + i + "( out );" );
                 out.printil( "break;" );
                 out.popIndent();
             }
@@ -3569,11 +3441,6 @@ class Generator {
             out.popIndent();
             out.printil( "}" );
 	    
-            out.printil( "if( params != null ) {" );
-            out.pushIndent();
-            out.printil( "restorePageScope( _jspx_originalValues );");
-            out.popIndent();
-            out.printil( "}" );
             out.popIndent();
             out.printil( "}" ); // finally
             out.popIndent();

@@ -157,8 +157,7 @@ class ScriptingVariabler {
 	    } else {
 		for (int i=0; i<tagVarInfos.length; i++) {
 		    if (tagVarInfos[i].getScope() != scope
-			    || !tagVarInfos[i].getDeclare()
-			    || tagVarInfos[i].getFragment() != null) {
+			    || !tagVarInfos[i].getDeclare()) {
 			continue;
 		    }
 		    String varName = tagVarInfos[i].getNameGiven();

@@ -343,7 +343,6 @@ class Validator {
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
 	private TagInfo tagInfo;
-	private TagData tagData;
         private ClassLoader loader;
 
 	// A FunctionMapper, used to validate EL expressions.
@@ -428,7 +427,6 @@ class Validator {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
 	    this.tagInfo = compiler.getCompilationContext().getTagInfo();
-	    this.tagData = compiler.getCompilationContext().getTagData();
 	    this.loader = compiler.getCompilationContext().getClassLoader();
             this.functionMapper = new ValidatorFunctionMapper( this.pageInfo, 
                 this.err, this.loader );
@@ -956,54 +954,6 @@ class Validator {
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.invoke.varAndVarReader");
 	    }
-
-	    Node.Nodes subelements = n.getBody();
-	    if (subelements != null) {
-		for (int i=0; i<subelements.size(); i++) {
-		    Node subelem = subelements.getNode(i);
-		    if (!(subelem instanceof Node.ParamAction)) {
-			err.jspError(n, "jsp.error.invoke.invalidBodyContent");
-		    }
-		}
-	    }
-
-	    /*
-	     * One <jsp:param> element must be present for each variable
-	     * declared using the variable directive that has a 'fragment'
-	     * attribute equal to the name of the fragment being invoked.
-	     */
-	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	    if (tagVars != null) {
-		String frag = n.getAttributeValue("fragment");
-		for (int i=0; i<tagVars.length; i++) {
-		    String varName = tagVars[i].getNameGiven();
-		    if (varName == null) {
-			varName = tagData.getAttributeString(
-			                tagVars[i].getNameFromAttribute());
-		    }
-		    String tagVarFrag = tagVars[i].getFragment();
-		    if (tagVarFrag == null || !tagVarFrag.equals(frag))
-			continue;
-		    if (subelements == null) {
-			err.jspError(n, "jsp.error.invoke.missingParam",
-				     varName);
-		    }
-		    boolean found = false;
-		    for (int j=0; j<subelements.size() && !found; j++) {
-			Node subelem = subelements.getNode(j);
-			String paramName = subelem.getAttributeValue("name");
-			if (varName.equals(paramName)) {
-			    found = true;
-			}
-		    }
-		    if (!found) {
-			err.jspError(n, "jsp.error.invoke.missingParam",
-				     varName);
-		    }
-		}
-	    }
-
-            visitBody(n);
 	}
 
 	public void visit(Node.DoBodyAction n) throws JasperException {
@@ -1013,44 +963,6 @@ class Validator {
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.doBody.varAndVarReader");
 	    }
-
-	    Node.Nodes subelements = n.getBody();
-	    if (subelements != null) {
-		for (int i=0; i<subelements.size(); i++) {
-		    Node subelem = subelements.getNode(i);
-		    if (!(subelem instanceof Node.ParamAction)) {
-			err.jspError(n, "jsp.error.doBody.invalidBodyContent");
-		    }
-		}
-	    }
-
-	    /*
-	     * A translation error must occur if a <jsp:param> is specified
-	     * with the same name as a variable with a scope of AT_BEGIN or
-	     * NESTED.
-	     */
-	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
-	    if (tagVars != null && subelements != null) {
-		for (int i=0; i<tagVars.length; i++) {
-		    if (tagVars[i].getScope() == VariableInfo.AT_END)
-			continue;
-		    String varName = tagVars[i].getNameGiven();
-		    if (varName == null) {
-			varName = tagData.getAttributeString(
-			                tagVars[i].getNameFromAttribute());
-		    }
-		    for (int j=0; j<subelements.size(); j++) {
-			Node subelem = subelements.getNode(j);
-			String paramName = subelem.getAttributeValue("name");
-			if (varName.equals(paramName)) {
-			    err.jspError(n, "jsp.error.doBody.invalidParam",
-					 varName);
-			}
-		    }
-		}
-	    }	    
-
-            visitBody(n);
 	}
     }
 

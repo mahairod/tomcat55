@@ -523,7 +523,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	String className = "java.lang.String";
 	boolean declare = true;
 	int scope = VariableInfo.NESTED;
-	String fragment = null;
 
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
@@ -550,8 +549,6 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 			scope = VariableInfo.AT_END;
 		    }
 		}
-	    } else if ("fragment".equals(tname)) {
-                fragment = element.getBody();
 	    } else if ("description".equals(tname) ||    // Ignored elements
 		     false ) {
             } else {
@@ -561,7 +558,7 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
 	    }
         }
         return new TagVariableInfo(nameGiven, nameFromAttribute,
-				   className, declare, scope, fragment);
+				   className, declare, scope);
     }
 
     private TagLibraryValidator createValidator(TreeNode elem) {

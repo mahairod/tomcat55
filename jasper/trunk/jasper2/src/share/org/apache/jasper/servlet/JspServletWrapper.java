@@ -136,18 +136,20 @@ public class JspServletWrapper {
     /*
      * JspServletWrapper for tag files.
      */
-    public JspServletWrapper(ServletContext servletContext, Options options,
-			     String tagFilePath, TagInfo tagInfo,
-			     TagData tagData, JspRuntimeContext rctxt,
+    public JspServletWrapper(ServletContext servletContext,
+			     Options options,
+			     String tagFilePath,
+			     TagInfo tagInfo,
+			     JspRuntimeContext rctxt,
 			     Hashtable tagFileJars)
-            throws JasperException {
+	    throws JasperException {
 
 	this.isTagFile = true;
         this.config = null;	// not used
         this.options = options;
 	this.jspUri = tagFilePath;
 	this.tripCount = 0;
-        ctxt = new JspCompilationContext(jspUri, tagInfo, tagData, options,
+        ctxt = new JspCompilationContext(jspUri, tagInfo, options,
 					 servletContext, this, rctxt,
 					 tagFileJars);
 

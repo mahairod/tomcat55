@@ -66,6 +66,8 @@ import java.io.Writer;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
+import java.util.Iterator;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -78,8 +80,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.VariableInfo;
+import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.el.ELException;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
@@ -93,15 +96,38 @@ import javax.servlet.jsp.el.VariableResolver;
  * setJspContext().
  *
  * @author Kin-man Chung
+ * @author Jan Luehe
  */
-public class JspContextWrapper extends PageContext implements VariableResolver {
+public class JspContextWrapper
+            extends PageContext implements VariableResolver {
 
-    private PageContext pageContext;
+    // Invoking JSP context
+    private PageContext invokingJspCtxt;
+
     private transient Hashtable	pageAttributes;
 
-    public JspContextWrapper(JspContext jspContext) {
-        this.pageContext = (PageContext) jspContext;
+    // Vector of NESTED scripting variables
+    private Vector nestedVars;
+
+    // Vector of AT_BEGIN scripting variables
+    private Vector atBeginVars;
+
+    // Vector of AT_END scripting variables
+    private Vector atEndVars;
+
+    private Hashtable originalNestedVars;
+
+    public JspContextWrapper(JspContext jspContext, Vector nestedVars,
+			     Vector atBeginVars, Vector atEndVars) {
+        this.invokingJspCtxt = (PageContext) jspContext;
+	this.nestedVars = nestedVars;
+	this.atBeginVars = atBeginVars;
+	this.atEndVars = atEndVars;
 	this.pageAttributes = new Hashtable(16);
+	this.originalNestedVars = new Hashtable(nestedVars.size());
+
+	copyPageToTagScope(VariableInfo.AT_BEGIN);
+	saveNestedVariables();
     }
 
     public void initialize(Servlet servlet, ServletRequest request,
@@ -121,7 +147,7 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
 	    return pageAttributes.get(name);
 	}
 
-	return pageContext.getAttribute(name, scope);
+	return invokingJspCtxt.getAttribute(name, scope);
     }
 
     public void setAttribute(String name, Object attribute) {
@@ -132,36 +158,45 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
 	if (scope == PAGE_SCOPE) {
 	    pageAttributes.put(name, o);
 	} else {
-	    pageContext.setAttribute(name, o, scope);
+	    invokingJspCtxt.setAttribute(name, o, scope);
 	}
     }
 
     public Object findAttribute(String name) {
         Object o = pageAttributes.get(name);
-        if (o != null)
-            return o;
+        if (o == null) {
+	    o = invokingJspCtxt.getAttribute(name, REQUEST_SCOPE);
+	    if (o == null) {
+		if (getSession() != null) {
+		    o = invokingJspCtxt.getAttribute(name, SESSION_SCOPE);
+		}
+		if (o == null) {
+		    o = invokingJspCtxt.getAttribute(name, APPLICATION_SCOPE);
+		} 
+	    }
+	}
 
-	return pageContext.findAttribute(name);
+	return o;
+    }
+
+    public void removeAttribute(String name) {
+	removeAttribute(name, PAGE_SCOPE);
+	invokingJspCtxt.removeAttribute(name);
     }
 
     public void removeAttribute(String name, int scope) {
 	if (scope == PAGE_SCOPE){
 	    pageAttributes.remove(name);
 	} else {
-	    pageContext.removeAttribute(name, scope);
+	    invokingJspCtxt.removeAttribute(name, scope);
 	}
-    }
-
-    public void removeAttribute(String name) {
-	removeAttribute(name, PAGE_SCOPE);
-	pageContext.removeAttribute(name);
     }
 
     public int getAttributesScope(String name) {
 	if (pageAttributes.get(name) != null) {
 	    return PAGE_SCOPE;
 	} else {
-	    return pageContext.getAttributesScope(name);
+	    return invokingJspCtxt.getAttributesScope(name);
 	}
     }
 
@@ -170,55 +205,55 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
             return pageAttributes.keys();
 	}
 
-	return pageContext.getAttributeNamesInScope(scope);
+	return invokingJspCtxt.getAttributeNamesInScope(scope);
     }
 
     public void release() {
-	pageContext.release();
+	invokingJspCtxt.release();
     }
 
     public JspWriter getOut() {
-	return pageContext.getOut();
+	return invokingJspCtxt.getOut();
     }
 
     public HttpSession getSession() {
-	return pageContext.getSession();
+	return invokingJspCtxt.getSession();
     }
 
     public Object getPage() {
-	return pageContext.getPage();
+	return invokingJspCtxt.getPage();
     }
 
     public ServletRequest getRequest() {
-	return pageContext.getRequest();
+	return invokingJspCtxt.getRequest();
     }
 
     public ServletResponse getResponse() {
-	return pageContext.getResponse();
+	return invokingJspCtxt.getResponse();
     }
 
     public Exception getException() {
-	return pageContext.getException();
+	return invokingJspCtxt.getException();
     }
 
     public ServletConfig getServletConfig() {
-	return pageContext.getServletConfig();
+	return invokingJspCtxt.getServletConfig();
     }
 
     public ServletContext getServletContext() {
-	return pageContext.getServletContext();
+	return invokingJspCtxt.getServletContext();
     }
 
     public void forward(String relativeUrlPath)
         throws ServletException, IOException
     {
-	pageContext.forward(relativeUrlPath);
+	invokingJspCtxt.forward(relativeUrlPath);
     }
 
     public void include(String relativeUrlPath)
 	throws ServletException, IOException
     {
-	pageContext.include(relativeUrlPath);
+	invokingJspCtxt.include(relativeUrlPath);
     }
 
     public void include(String relativeUrlPath, boolean flush) 
@@ -231,19 +266,19 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
     }
 
     public BodyContent pushBody() {
-	return pageContext.pushBody();
+	return invokingJspCtxt.pushBody();
     }
 
     public JspWriter pushBody(Writer writer) {
-	return pageContext.pushBody(writer);
+	return invokingJspCtxt.pushBody(writer);
     }
 
     public JspWriter popBody() {
-        return pageContext.popBody();
+        return invokingJspCtxt.popBody();
     }
 
     public ExpressionEvaluator getExpressionEvaluator() {
-	return pageContext.getExpressionEvaluator();
+	return invokingJspCtxt.getExpressionEvaluator();
     }
 
     public void handlePageException(Exception ex)
@@ -257,7 +292,7 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
     public void handlePageException(Throwable t)
         throws IOException, ServletException 
     {
-	pageContext.handlePageException(t);
+	invokingJspCtxt.handlePageException(t);
     }
 
     /**
@@ -266,12 +301,103 @@ public class JspContextWrapper extends PageContext implements VariableResolver {
     public Object resolveVariable( String pName, Object pContext )
         throws ELException
     {
-	if (pageContext instanceof PageContextImpl) {
-	    return ((PageContextImpl)pageContext).
-			resolveVariable(pName, pContext);
+	if (invokingJspCtxt instanceof PageContextImpl) {
+	    return ((PageContextImpl) invokingJspCtxt).resolveVariable(pName,
+								       pContext);
 	}
 
-	return ((JspContextWrapper)pageContext).
-			resolveVariable(pName, pContext);
+	return ((JspContextWrapper) invokingJspCtxt).resolveVariable(pName,
+								     pContext);
+    }
+
+    /**
+     * Copies the variables of the given scope from the page scope of the
+     * invoking JSP context to the virtual page scope of this JSP context
+     * wrapper.
+     *
+     * @param scope variable scope (one of NESTED or AT_BEGIN)
+     */
+    public void copyPageToTagScope(int scope) {
+	Iterator iter = null;
+
+	switch (scope) {
+	case VariableInfo.NESTED:
+	    iter = nestedVars.iterator();
+	    break;
+	case VariableInfo.AT_BEGIN:
+	    iter = atBeginVars.iterator();
+	    break;
+	}
+
+	while (iter.hasNext()) {
+	    String varName = (String) iter.next();
+	    Object obj = invokingJspCtxt.getAttribute(varName);
+	    if (obj != null) {
+		setAttribute(varName, obj);
+	    }
+	}
+    }
+
+    /**
+     * Copies the variables of the given scope from the virtual page scope of
+     * this JSP context wrapper to the page scope of the invoking JSP context.
+     *
+     * @param scope variable scope (one of NESTED, AT_BEGIN, or AT_END)
+     */
+    public void copyTagToPageScope(int scope) {
+	Iterator iter = null;
+
+	switch (scope) {
+	case VariableInfo.NESTED:
+	    iter = nestedVars.iterator();
+	    break;
+	case VariableInfo.AT_BEGIN:
+	    iter = atBeginVars.iterator();
+	    break;
+	case VariableInfo.AT_END:
+	    iter = atEndVars.iterator();
+	    break;
+	}
+
+	while (iter.hasNext()) {
+	    String varName = (String) iter.next();
+	    Object obj = getAttribute(varName);
+	    if (obj != null) {
+		invokingJspCtxt.setAttribute(varName, obj);
+	    }
+	}
+    }
+
+    /**
+     * Saves the values of any NESTED variables that are present in
+     * the invoking JSP context, so they can later be restored.
+     */
+    public void saveNestedVariables() {
+	Iterator iter = nestedVars.iterator();
+	while (iter.hasNext()) {
+	    String varName = (String) iter.next();
+	    Object obj = invokingJspCtxt.getAttribute(varName);
+	    if (obj != null) {
+		originalNestedVars.put(varName, obj);
+	    }
+	}
+    }
+
+    /**
+     * Restores the values of any NESTED variables in the invoking JSP
+     * context.
+     */
+    public void restoreNestedVariables() {
+	Iterator iter = nestedVars.iterator();
+	while (iter.hasNext()) {
+	    String varName = (String) iter.next();
+	    Object obj = originalNestedVars.get(varName);
+	    if (obj != null) {
+		invokingJspCtxt.setAttribute(varName, obj);
+	    } else {
+		invokingJspCtxt.removeAttribute(varName, PAGE_SCOPE);
+	    }
+	}
     }
 }
+

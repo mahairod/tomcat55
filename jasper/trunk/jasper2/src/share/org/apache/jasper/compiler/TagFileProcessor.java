@@ -113,11 +113,9 @@ class TagFileProcessor {
 
 	private static final JspUtil.ValidAttribute[] variableDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("name-given"),
-	    new JspUtil.ValidAttribute("name-from-attribute"),
 	    new JspUtil.ValidAttribute("variable-class"),
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("declare"),
-	    new JspUtil.ValidAttribute("fragment"),
 	    new JspUtil.ValidAttribute("description")
 	};
 
@@ -144,7 +142,6 @@ class TagFileProcessor {
 
         private Vector attributeVector = new Vector();
         private Vector variableVector = new Vector();
-        private Map fragmentAttributesMap = new Hashtable();
 
         public TagFileVisitor(Compiler compiler, TagLibraryInfo tagLibInfo,
 			      String name) {
@@ -188,7 +185,6 @@ class TagFileProcessor {
 					n.getAttributeValue("fragment"));
 	    String type = n.getAttributeValue("type");
             if (fragment) {
-                fragmentAttributesMap.put(attrName, n);
                 // type is fixed to "JspFragment" and a translation error
                 // must occur if specified.
                 if (type != null) {
@@ -216,7 +212,6 @@ class TagFileProcessor {
                                     variableDirectiveAttrs, err);
 
             String nameGiven = n.getAttributeValue("name-given");
-            String nameFromAttribute = n.getAttributeValue("name-from-attribute");
             String className = n.getAttributeValue("variable-class");
             if (className == null)
                 className = "java.lang.String";
@@ -238,26 +233,11 @@ class TagFileProcessor {
                 }
             }
 
-            String fragment = n.getAttributeValue("fragment");
-	    if (fragment != null) {
-		if (declareStr != null || scopeStr != null) {
-		    err.jspError(n, "jsp.error.fragmentWithDeclareOrScope");
-		}
-
-		// Find the attribute node with matching name
-		Node.AttributeDirective attributeDirective =
-		    (Node.AttributeDirective) fragmentAttributesMap.get(fragment);
-		if (attributeDirective == null) {
-		    err.jspError(n, "jsp.error.nomatching.fragment", fragment);
-		}
-		variableVector.addElement(
-                    new TagVariableInfo(nameGiven, nameFromAttribute,
-                                        className, declare, scope, fragment));
-	    } else {
-		variableVector.addElement(
-                    new TagVariableInfo(nameGiven, nameFromAttribute,
-                                        className, declare, scope));
-	    }
+	    variableVector.addElement(new TagVariableInfo(nameGiven,
+							  null,
+							  className,
+							  declare,
+							  scope));
         }
 
         public TagInfo getTagInfo() {
@@ -339,7 +319,7 @@ class TagFileProcessor {
      */
     private Class loadTagFile(Compiler compiler,
 			      String tagFilePath, TagInfo tagInfo,
-			      TagData tagData, PageInfo parentPageInfo)
+			      PageInfo parentPageInfo)
 	throws JasperException {
 
 	JspCompilationContext ctxt = compiler.getCompilationContext();
@@ -350,12 +330,11 @@ class TagFileProcessor {
 	synchronized(rctxt) {
 	    if (wrapper == null) {
 	        wrapper = new JspServletWrapper(ctxt.getServletContext(),
-					    ctxt.getOptions(),
-					    tagFilePath,
-					    tagInfo,
-					    tagData,
-					    ctxt.getRuntimeContext(),
-					    ctxt.getTagFileJars());
+						ctxt.getOptions(),
+						tagFilePath,
+						tagInfo,
+						ctxt.getRuntimeContext(),
+						ctxt.getTagFileJars());
 	        rctxt.addWrapper(tagFilePath,wrapper);
 	    }
 
@@ -373,7 +352,6 @@ class TagFileProcessor {
                                             ctxt.getOptions(),
                                             tagFilePath,
                                             tagInfo,
-                                            tagData,
                                             ctxt.getRuntimeContext(),
                                             ctxt.getTagFileJars());
 	            tagClass = tempWrapper.loadTagFilePrototype();
@@ -423,7 +401,7 @@ class TagFileProcessor {
 		String tagFilePath = tagFileInfo.getPath();
 		pageInfo.addDependant(tagFilePath);
 		Class c = loadTagFile(compiler, tagFilePath, n.getTagInfo(),
-				      n.getTagData(), pageInfo);
+				      pageInfo);
 		n.setTagHandlerClass(c);
 	    }
 	    visitBody(n);

@@ -122,7 +122,6 @@ public class JspCompilationContext {
     private boolean isTagFile;
     private boolean protoTypeMode;
     private TagInfo tagInfo;
-    private TagData tagData;
 
     // jspURI _must_ be relative to the context
     public JspCompilationContext(String jspUri,
@@ -159,7 +158,6 @@ public class JspCompilationContext {
 
     public JspCompilationContext(String tagfile,
 				 TagInfo tagInfo, 
-				 TagData tagData,
                                  Options options,
                                  ServletContext context,
 				 JspServletWrapper jsw,
@@ -169,7 +167,6 @@ public class JspCompilationContext {
         this(tagfile, false, options, context, jsw, rctxt);
         this.isTagFile = true;
         this.tagInfo = tagInfo;
-	this.tagData = tagData;
 	this.tagFileJars = tagFileJars;
 	if (tagFileJars != null && tagFileJars.get(tagfile) != null) {
 	    isPackagedTagFile = true;
@@ -378,10 +375,6 @@ public class JspCompilationContext {
 
     public void setPrototypeMode(boolean pm) {
 	protoTypeMode = pm;
-    }
-
-    public TagData getTagData() {
-	return tagData;
     }
 
     /**
