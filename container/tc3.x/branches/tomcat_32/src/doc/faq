@@ -225,7 +225,7 @@ Q: What do different init parameters for the JSP engine mean?
           jsp
       </servlet-name>
       <servlet-class>
-          org.apache.jasper.runtime.JSPServlet
+          org.apache.jasper.runtime.JspServlet
       </servlet-class>
       <init-param>
           <param-name>
