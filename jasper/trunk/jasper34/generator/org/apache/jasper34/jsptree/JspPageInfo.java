@@ -148,6 +148,15 @@ public class JspPageInfo {
                 ctxt.getServletClassName() + ".dat";
     }
 
+    // -------------------- Getters --------------------
+    // XXX remove all public fields.
+
+    public Options getOptions() {
+	return ctxt.getOptions();
+    }
+    
+    // -------------------- Setters --------------------
+    
     public final void addGenerator(GeneratorBase gen) throws JasperException {
         gen.init(ctxt);
         generators.addElement(gen);

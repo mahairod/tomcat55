@@ -63,6 +63,7 @@ package org.apache.jasper34.generator;
 import java.util.Vector;
 import org.apache.jasper34.runtime.JasperException;
 import org.apache.jasper34.parser.*;
+import org.apache.jasper34.core.Constants;
 import org.apache.jasper34.jsptree.*;
 /**
  * StoredCharDataGenerator generates HTML and other data present in
@@ -109,7 +110,8 @@ public class StoredCharDataGenerator extends GeneratorBase
             writer.popIndent();
             writer.println("} catch (Exception ex) {");
             writer.pushIndent();
-            writer.println("throw new org.apache.jasper.JasperException(\"Unable to open data file\");");
+            writer.println("throw new " +
+			   Constants.JSP_RUNTIME_PACKAGE + ".JasperException(\"Unable to open data file\");");
             writer.popIndent();
             writer.println("} finally {");
             writer.pushIndent();

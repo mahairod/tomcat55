@@ -127,7 +127,7 @@ public class CharDataGenerator extends GeneratorBase
 	    }
 	}
 	writer.print(sb.toString());
-	writer.print("\");\n");
+	writer.println("\");");
     }
 
 

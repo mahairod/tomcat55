@@ -79,10 +79,11 @@ public class JavaSourceGenerator {
     // Current indent level:
     protected int indent = 0;
 
+    // line numbers start from 1, but we pre-increment
     protected int javaLine=0;
     
     // The sink writer:
-    protected PrintWriter writer;
+    private PrintWriter writer;
     
     public JavaSourceGenerator(PrintWriter writer) {
 	this.writer = writer;
@@ -99,6 +100,11 @@ public class JavaSourceGenerator {
 	
     }
 
+    // -------------------- Access informations --------------------
+
+    public int getJavaLine() {
+	return javaLine;
+    }
 
     // -------------------- Prepare generator --------------------
 
@@ -238,11 +244,21 @@ public class JavaSourceGenerator {
      */
     public void println(String line) {
 	javaLine++;
+	if( line.indexOf( '\n' ) >= 0 ) {
+	    System.out.println("Warning, wrong line " + line );
+	    /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	}
 	writer.println(SPACES.substring(0, indent)+line);
     }
 
+    /** Println with no indentation
+     */
     public void printlnNI(String line) {
 	javaLine++;
+	if( line.indexOf( '\n' ) >= 0 ) {
+	    System.out.println("Warning, wrong line " + line );
+	    /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	}
 	writer.println(line);
     }
 
@@ -259,6 +275,10 @@ public class JavaSourceGenerator {
     
     
     public void print(String s) {
+	if( s.indexOf( '\n' ) >= 0 ) {
+	    System.out.println("Warning, wrong line " + s );
+	    /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	}
 	writer.print(s);
     }
 

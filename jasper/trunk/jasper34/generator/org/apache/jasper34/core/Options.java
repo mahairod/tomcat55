@@ -137,4 +137,8 @@ public interface Options {
      * page servlet.
      */
     public String getJavaEncoding();
+
+    /** Generate comment-style line number mappings
+     */
+    public boolean getGenerateCommentMapping();
 }

@@ -78,7 +78,8 @@ public class ExpressionGenerator extends GeneratorBase
     }
     
     public void generateServiceMethod(ServletWriter writer) {
-	writer.println("out.print("+new String(JspUtil.removeQuotes(chars))+");");
+	writer.printMultiLn("out.print("+
+			    new String(JspUtil.removeQuotes(chars))+");");
     }
 }
 
