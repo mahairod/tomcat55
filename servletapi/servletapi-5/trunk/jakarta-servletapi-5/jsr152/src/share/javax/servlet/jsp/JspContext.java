@@ -78,6 +78,12 @@ import javax.servlet.jsp.el.VariableResolver;
  *     scripting environment
  * </ul>
  *
+ * <p><B>Methods Intended for Container Generated Code</B>
+ * <p>
+ * The following methods enable the <B>management of nested</B> JspWriter 
+ * streams to implement Tag Extensions: <code>pushBody()</code> and
+ * <code>popBody()</code>
+ *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
  * The following methods provide <B>convenient access</B> to implicit objects:
@@ -152,7 +158,6 @@ public abstract class JspContext {
      *     or null if not found.
      * 
      * @throws NullPointerException if the name is null
-     * @throws IllegalArgumentException if the scope is invalid
      */
 
     abstract public Object getAttribute(String name);
@@ -198,6 +203,7 @@ public abstract class JspContext {
      *
      * @param name The name of the object to remove.
      * @param scope The scope where to look.
+     * @throws IllegalArgumentException if the scope is invalid
      */
 
     abstract public void removeAttribute(String name, int scope);
@@ -217,6 +223,7 @@ public abstract class JspContext {
      * @param scope the scope to enumerate all the attributes for
      * @return an enumeration of names (java.lang.String) of all the 
      *     attributes the specified scope
+     * @throws IllegalArgumentException if the scope is invalid
      */
 
     abstract public Enumeration getAttributeNamesInScope(int scope);
@@ -247,4 +254,39 @@ public abstract class JspContext {
      * @since JSP2.0
      */
     public abstract VariableResolver getVariableResolver();
+    
+    /**
+     * Return a new JspWriter object that sends output to the
+     * provided Writer.  Saves the current "out" JspWriter,
+     * and updates the value of the "out" attribute in the
+     * page scope attribute namespace of the JspContext.
+     * <p>The returned JspWriter must implement all methods and
+     * behave as though it were unbuffered.  More specifically:
+     * <ul>
+     *   <li>clear() must throw an IOException</li>
+     *   <li>clearBuffer() does nothing</li>
+     *   <li>getBufferSize() always returns 0</li>
+     *   <li>getRemaining() always returns 0</li>
+     * </ul>
+     * </p>
+     *
+     * @param writer The Writer for the returned JspWriter to send
+     *     output to.
+     * @return a new JspWriter that writes to the given Writer.
+     * @since JSP2.0
+     */
+    public JspWriter pushBody( java.io.Writer writer ) {
+        return null; // XXX to implement
+    }
+    
+    /**
+     * Return the previous JspWriter "out" saved by the matching
+     * pushBody(), and update the value of the "out" attribute in
+     * the page scope attribute namespace of the JspContext
+     *
+     * @return the saved JspWriter.
+     */
+    public JspWriter popBody() {
+        return null; // XXX to implement
+    }
 }

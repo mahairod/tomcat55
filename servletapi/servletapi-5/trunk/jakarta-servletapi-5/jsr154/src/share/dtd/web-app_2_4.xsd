@@ -8,7 +8,7 @@
      version="2.4">
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-app_2_4.xsds	1.40 02/09/19
+@(#)web-app_2_4.xsds	1.44 02/09/30
 </xsd:documentation>
 </xsd:annotation>
 
@@ -49,10 +49,12 @@ Subject to Standard License Terms and Conditions.
 
 <xsd:annotation>
 <xsd:documentation>
+<![CDATA[
 
-This is the XML Schema for the Servlet 2.4 deployment
-descriptor.  All Servlet deployment descriptors must
-indicate the web application schema by using the J2EE
+This is the XML Schema for the Servlet 2.4 deployment descriptor.
+The deployment descriptor must be named "WEB-INF/web.xml" in the
+web application's war file.  All Servlet deployment descriptors
+must indicate the web application schema by using the J2EE
 namespace:
 
 http://java.sun.com/xml/ns/j2ee
@@ -60,12 +62,12 @@ http://java.sun.com/xml/ns/j2ee
 and by indicating the version of the schema by
 using the version element as shown below:
 
-    &lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="..."
-     version="2.4">
-    ...
-    &lt;/web-app>
+    <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="..."
+      version="2.4">
+      ...
+    </web-app>
 
 The instance documents may indicate the published version of
 the schema using the xsi:schemaLocation attribute for J2EE
@@ -73,6 +75,7 @@ namespace with the following location:
 
 http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd
 
+]]>
 </xsd:documentation>
 </xsd:annotation>
 
@@ -332,16 +335,16 @@ Used in: login-config
 <xsd:annotation>
 <xsd:documentation>
 
-The dispatcher has three legal values, FORWARD and REQUEST
-and INCLUDE. A value of FORWARD means the Filter
-will be applied under RequestDispatcher.forward() calls.
-A value of REQUEST means the Filter will be applied
-under ordinary client calls to the path or servlet. A value of
-INCLUDE means the Filter will be applied under
-RequestDispatcher.include() calls.
-The absence of any dispatcher elements in a
-filter-mapping indicates a default of applying
-filters only under ordinary client calls to the path or servlet.
+The dispatcher has four legal values: FORWARD, REQUEST, INCLUDE,
+and ERROR. A value of FORWARD means the Filter will be applied
+under RequestDispatcher.forward() calls.  A value of REQUEST
+means the Filter will be applied under ordinary client calls to
+the path or servlet. A value of INCLUDE means the Filter will be
+applied under RequestDispatcher.include() calls.  A value of
+ERROR means the Filter will be applied under the error page
+mechanism.  The absence of any dispatcher elements in a
+filter-mapping indicates a default of applying filters only under
+ordinary client calls to the path or servlet.
 
 </xsd:documentation>
 </xsd:annotation>
@@ -351,6 +354,7 @@ filters only under ordinary client calls to the path or servlet.
             <xsd:enumeration value="FORWARD"/>
             <xsd:enumeration value="INCLUDE"/>
             <xsd:enumeration value="REQUEST"/>
+            <xsd:enumeration value="ERROR"/>
         </xsd:restriction>
     </xsd:simpleContent>
 </xsd:complexType>

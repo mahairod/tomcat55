@@ -115,8 +115,7 @@ import javax.servlet.jsp.tagext.BodyContent;
  *
  * <p>
  * The following methods enable the <B>management of nested</B> JspWriter 
- * streams to implement Tag Extensions: <code>pushBody()</code> and 
- * <code>popBody()</code>
+ * streams to implement Tag Extensions: <code>pushBody()</code>
  *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
@@ -300,9 +299,10 @@ abstract public class PageContext
     abstract public HttpSession getSession();
 
     /**
-     * The current value of the page object (a Servlet).
+     * The current value of the page object (In a Servlet environment, 
+     * this is an instance of javax.servlet.Servlet).
      *
-     * @return the Page implementation class instance (Servlet)  associated 
+     * @return the Page implementation class instance associated 
      *     with this PageContext
      */
 
@@ -377,10 +377,8 @@ abstract public class PageContext
      * @param relativeUrlPath specifies the relative URL path to the target 
      *     resource as described above
      *
-     * @throws IllegalArgumentException if target resource URL is unresolvable
      * @throws IllegalStateException if <code> ServletResponse </code> is not 
      *     in a state where a forward can be performed
-     * @throws SecurityException if target resource cannot be accessed by caller
      * @throws ServletException if the page that was forwarded to throws
      *     a ServletException
      * @throws IOException if an I/O error occurred while forwarding
@@ -415,9 +413,6 @@ abstract public class PageContext
      * @param relativeUrlPath specifies the relative URL path to the target 
      *     resource to be included
      *
-     * @throws IllegalArgumentException if the target resource URL is 
-     *     unresolvable
-     * @throws SecurityException if target resource cannot be accessed by caller
      * @throws ServletException if the page that was forwarded to throws
      *     a ServletException
      * @throws IOException if an I/O error occurred while forwarding
@@ -457,9 +452,6 @@ abstract public class PageContext
      * @throws ServletException if the page that was forwarded to throws
      *     a ServletException
      * @throws IOException if an I/O error occurred while forwarding
-     * @throws IllegalArgumentException if the target resource URL is 
-     *     unresolvable
-     * @throws SecurityException if target resource cannot be accessed by caller
      * @since JSP2.0
      */
     abstract public void include(String relativeUrlPath, boolean flush) 
@@ -541,18 +533,6 @@ abstract public class PageContext
         return null; // XXX to implement
     }
          
-
-    /**
-     * Return the previous JspWriter "out" saved by the matching
-     * pushBody(), and update the value of the "out" attribute in
-     * the page scope attribute namespace of the PageConxtext
-     *
-     * @return the saved JspWriter.
-     */
-
-    public JspWriter popBody() {
-        return null; // XXX to implement
-    }
 
     /**
      * Provides convenient access to error information.

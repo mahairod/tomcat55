@@ -69,7 +69,7 @@ public class ELException
   // Member variables
   //-------------------------------------
 
-  Throwable mRootCause;
+  private Throwable mRootCause;
 
   //-------------------------------------
   /**
@@ -99,6 +99,7 @@ public class ELException
    **/
   public ELException (Throwable pRootCause)
   {
+    super( pRootCause.getLocalizedMessage() );
     mRootCause = pRootCause;
   }
 
@@ -126,25 +127,4 @@ public class ELException
   {
     return mRootCause;
   }
-
-  //-------------------------------------
-  /**
-   * String representation
-   *
-   * @return a String representation of this ELException
-   **/
-  public String toString ()
-  {
-    if (getMessage () == null) {
-      return mRootCause.toString ();
-    }
-    else if (mRootCause == null) {
-      return getMessage ();
-    }
-    else {
-      return getMessage () + ": " + mRootCause;
-    }
-  }
-
-  //-------------------------------------
 }
