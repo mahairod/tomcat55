@@ -67,7 +67,7 @@ phase introduced with the support of the XML syntax (see "Made the XML view of a
 First implementation committed 2000/09/18. 
 <a href="ModifsForXJsp.html">Summary of Changes</a>.<p>
 
-<h3>New IteratorTag interface to support iteration without BodyContent</h3>
+<h3>New IterationTag interface to support iteration without BodyContent</h3>
 In JSP 1.1, your custom tag must implement BodyTag if it wants to support
 iteration. In many simple cases where the nested content of a tag is just
 reprocessed by the iteration anyway, it would be nice to allow a custom tag
@@ -78,6 +78,10 @@ should also have performance benefits for this use case.
 This should require fairly minor changes to the generated
 code for a page using custom tags. Updated support classes will already be
 part of the API.
+
+<p>
+First implementation committed 2000/10/17. 
+<a href="ModifsForIterationTag.html">Summary of Changes</a>.<p>
 
 <h3>Added listener classes to the TLD</h3>
 With the advent of application events support in Servlet 2.3, it is
