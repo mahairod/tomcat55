@@ -40,6 +40,9 @@
       <fix>
         <bug>29831</bug>: Added support for Boolean property to BeanFactory. (yoavs)
       </fix>
+      <fix>
+        <bug>28875</bug>: Made ErrorReportValve use UTF-8 encoding by default. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
