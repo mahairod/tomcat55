@@ -144,6 +144,13 @@ public final class StandardContext
 
 
     /**
+     * Should we allow the <code>ServletContext.getContext()</code> method
+     * to access the context of other web applications in this server?
+     */
+    private boolean crossContext = true;
+
+
+    /**
      * The distributable flag for this web application.
      */
     private boolean distributable = false;
@@ -329,6 +336,32 @@ public final class StandardContext
 	support.firePropertyChange("cookies",
 				   new Boolean(oldCookies),
 				   new Boolean(this.cookies));
+
+    }
+
+
+    /**
+     * Return the "allow crossing servlet contexts" flag.
+     */
+    public boolean getCrossContext() {
+
+	return (this.crossContext);
+
+    }
+
+
+    /**
+     * Set the "allow crossing servlet contexts" flag.
+     *
+     * @param crossContext The new cross contexts flag
+     */
+    public void setCrossContext(boolean crossContext) {
+
+	boolean oldCrossContext = this.crossContext;
+	this.crossContext = crossContext;
+	support.firePropertyChange("crossContext",
+				   new Boolean(oldCrossContext),
+				   new Boolean(this.crossContext));
 
     }
 

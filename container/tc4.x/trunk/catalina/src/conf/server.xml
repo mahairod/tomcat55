@@ -75,7 +75,7 @@
       userRoleTable="user_roles" roleNameCol="role_name" />
 -->
 
-    <Host name="localhost" debug="0" root="true" appBase="webapps">
+    <Host name="localhost" debug="0" appBase="webapps">
 
       <!-- Access log processes all requests for this virtual host -->
       <Valve className="org.apache.catalina.valves.AccessLogValve"

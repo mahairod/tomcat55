@@ -150,16 +150,6 @@ public interface Host extends Container {
     public void setName(String name);
 
 
-    /**
-     * Return a specialized ServletContext instance that wraps the
-     * resources of the underlying virtual host; or <code>null</code>
-     * if access to these resources is not supported or not allowed.
-     * In general, this method will be used when a servlet calls
-     * <code>ServletContext.getContext("/")</code>.
-     */
-    public ServletContext getRootContext();
-
-
     // --------------------------------------------------------- Public Methods
 
 

@@ -115,6 +115,20 @@ public interface Context extends Container {
 
 
     /**
+     * Return the "allow crossing servlet contexts" flag.
+     */
+    public boolean getCrossContext();
+
+
+    /**
+     * Set the "allow crossing servlet contexts" flag.
+     *
+     * @param crossContext The new cross contexts flag
+     */
+    public void setCrossContext(boolean crossContext);
+
+
+    /**
      * Return the distributable flag for this web application.
      */
     public boolean getDistributable();

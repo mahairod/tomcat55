@@ -107,7 +107,7 @@ public final class ApplicationContext
      * Construct a new instance of this class, associated with the specified
      * Context instance.
      *
-     * @param context The associated Host instance
+     * @param context The associated Context instance
      */
     public ApplicationContext(StandardContext context) {
 
@@ -198,36 +198,35 @@ public final class ApplicationContext
      * access to the context for various parts of the server, and as needed
      * obtain <code>RequestDispatcher</code> objects or resources from the
      * context.  The given path must be absolute (beginning with a "/"),
-     * and is interpreted based on the server's document root.
-     * <p>
-     * <b>IMPLEMENTATION NOTE</b>:  This implementation is dependent upon
-     * our associated Context having a parent that is a StandardHost.  :-(
+     * and is interpreted based on our virtual host's document root.
      *
      * @param uri Absolute URI of a resource on the server
      */
     public ServletContext getContext(String uri) {
 
-	// Identify the parent Host of our Context, if any
-	StandardHost host = null;
-	try {
-	    host = (StandardHost) context.getParent();
-	} catch (Throwable t) {
-	    host = null;
-	}
-	if (host == null)
-	    return (null);
-	if (!host.getRoot())
+	// Validate the format of the specified argument
+	if ((uri == null) || (!uri.startsWith("/")))
 	    return (null);
 
-	// Return the appropriate Context for the specified URI
-	if (uri.equals("/"))
-	    return (host.getRootContext());
-	else {
-	    Context child = (Context) host.map(uri);
+	// Return the current context if requested
+	String contextPath = context.getPath();
+	if ((contextPath.length() > 0) &&
+	    (uri.startsWith(contextPath))) {
+	    return (this);
+	}
+
+	// Return other contexts only if allowed
+	if (!context.getCrossContext())
+	    return (null);
+	try {
+	    Host host = (Host) context.getParent();
+	    Context child = host.map(uri);
 	    if (child != null)
 		return (child.getServletContext());
 	    else
 		return (null);
+	} catch (Throwable t) {
+	    return (null);
 	}
 
     }

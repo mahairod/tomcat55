@@ -135,18 +135,6 @@ public final class StandardHost
 	"org.apache.catalina.core.StandardHostMapper";
 
 
-    /**
-     * Should we return a root context?
-     */
-    private boolean root = false;
-
-
-    /**
-     * The root context for this virtual host.
-     */
-    private ServletContext rootContext = null;
-
-
     // ------------------------------------------------------------- Properties
 
 
@@ -206,51 +194,6 @@ public final class StandardHost
 	String oldName = this.name;
 	this.name = name;
 	support.firePropertyChange("name", oldName, this.name);
-
-    }
-
-
-    /**
-     * Return the root context flag.
-     */
-    public boolean getRoot() {
-
-	return (this.root);
-
-    }
-
-
-    /**
-     * Set the root context flag.
-     *
-     * @param root The new root context flag
-     */
-    public void setRoot(boolean root) {
-
-	boolean oldRoot = this.root;
-	this.root = root;
-	support.firePropertyChange("root", new Boolean(oldRoot),
-				   new Boolean(this.root));
-
-    }
-
-
-    /**
-     * Return a specialized ServletContext instance that wraps the
-     * resources of the underlying virtual host; or <code>null</code>
-     * if access to these resources is not supported or not allowed.
-     * In general, this method will be used when a servlet calls
-     * <code>ServletContext.getContext("/")</code>.
-     */
-    public ServletContext getRootContext() {
-
-	if (!root)
-	    return (null);
-
-	// Construct a root context object if necessary
-	rootContext = null;	// XXX - create root context object
-
-	return (rootContext);
 
     }
 
