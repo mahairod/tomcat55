@@ -186,9 +186,10 @@ public class McastServiceImpl
      * @throws IllegalStateException if the service is already started
      */
     public synchronized void start(int level) throws IOException {
-        if ( doRun ) throw new IllegalStateException("Service already running.");
+        if ( sender != null && receiver != null ) throw new IllegalStateException("Service already running.");
         if ( level == 1 ) {
             socket.joinGroup(address);
+            doRun = true;
             receiver = new ReceiverThread();
             receiver.setDaemon(true);
             receiver.start();
@@ -198,7 +199,7 @@ public class McastServiceImpl
             sender = new SenderThread(sendFrequency);
             sender.setDaemon(true);
             sender.start();
-            doRun = true;
+            
         }
     }
 
