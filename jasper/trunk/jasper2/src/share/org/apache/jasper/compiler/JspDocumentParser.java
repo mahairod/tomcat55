@@ -116,6 +116,13 @@ class JspDocumentParser
     // Node representing the XML element currently being parsed
     private Node current;
 
+    /*
+     * Outermost (in the nesting hierarchy) node whose body is declared to be
+     * scriptless. If a node's body is declared to be scriptless, all its
+     * nested nodes must be scriptless, too.
+     */ 
+    private Node scriptlessBodyNode;
+
     private Locator locator;
 
     //Mark representing the start of the current element.  Note
@@ -393,6 +400,19 @@ class JspDocumentParser
                         taglibAttrs,
                         startMark,
                         current);
+            } else {
+                // custom action
+                Node.CustomTag custom = (Node.CustomTag) node;
+	        String bodyType;
+	        if (custom.getTagInfo() != null) {
+	            bodyType = custom.getTagInfo().getBodyContent();
+	        } else {
+	            bodyType = custom.getTagFileInfo().getTagInfo().getBodyContent();
+	        }
+                if (scriptlessBodyNode == null
+                        && bodyType.equalsIgnoreCase(TagInfo.BODY_CONTENT_SCRIPTLESS)) {
+                    scriptlessBodyNode = node;
+                }
             }
         }
 
@@ -598,6 +618,10 @@ class JspDocumentParser
 
         if (current.getParent() != null) {
             current = current.getParent();
+            if (scriptlessBodyNode != null
+                    && current.equals(scriptlessBodyNode)) {
+                scriptlessBodyNode = null;
+            }
         }
     }
 
@@ -786,6 +810,15 @@ class JspDocumentParser
                     current);
             processIncludeDirective(nonTaglibAttrs.getValue("file"), node);
         } else if (localName.equals(DECLARATION_ACTION)) {
+            if (scriptlessBodyNode != null) {
+                // We're nested inside a node whose body is
+                // declared to be scriptless
+                throw new SAXParseException(
+                    Localizer.getMessage(
+                        "jsp.error.no.scriptlets",
+                        localName),
+                    locator);
+            }
             node =
                 new Node.Declaration(
                     qName,
@@ -794,6 +827,15 @@ class JspDocumentParser
                     start,
                     current);
         } else if (localName.equals(SCRIPTLET_ACTION)) {
+            if (scriptlessBodyNode != null) {
+                // We're nested inside a node whose body is
+                // declared to be scriptless
+                throw new SAXParseException(
+                    Localizer.getMessage(
+                        "jsp.error.no.scriptlets",
+                        localName),
+                    locator);
+            }
             node =
                 new Node.Scriptlet(
                     qName,
@@ -802,6 +844,15 @@ class JspDocumentParser
                     start,
                     current);
         } else if (localName.equals(EXPRESSION_ACTION)) {
+            if (scriptlessBodyNode != null) {
+                // We're nested inside a node whose body is
+                // declared to be scriptless
+                throw new SAXParseException(
+                    Localizer.getMessage(
+                        "jsp.error.no.scriptlets",
+                        localName),
+                    locator);
+            }
             node =
                 new Node.Expression(
                     qName,
