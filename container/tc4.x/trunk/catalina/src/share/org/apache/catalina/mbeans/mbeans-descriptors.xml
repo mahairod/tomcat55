@@ -10,11 +10,12 @@
  -->
 
 <mbeans-descriptors>
-  <mbean name="AccessLogValve"
-         description="Valve that generates a web server access log"
-         domain="Catalina"
-         group="Valve"
-         type="org.apache.catalina.valves.AccessLogValve">
+  <mbean	 name="AccessLogValve"
+  	    className="org.apache.catalina.mbeans.ClassNameMBean"
+	  description="Valve that generates a web server access log"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.valves.AccessLogValve">
 
     <attribute name="className"
                description="Fully qualified class name of the managed object"
@@ -499,6 +500,7 @@
   </mbean>
 
   <mbean name="ExtendedAccessLogValve"
+         className="org.apache.catalina.mbeans.ClassNameMBean"
          description="Valve that generates a web server access log"
          domain="Catalina"
          group="Valve"
