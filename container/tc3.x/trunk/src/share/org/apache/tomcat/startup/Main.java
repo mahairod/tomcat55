@@ -231,8 +231,8 @@ public class Main{
         if( libBase!=null ){
             return libBase;
         }
-        if( homeDir!=null ){
-            libBase=checkDir( homeDir + "/lib/container");
+        if( installDir!=null ){
+            libBase=checkDir( installDir + "/lib/container");
         }else{
             libBase=checkDir("./lib/container");
         }
@@ -243,8 +243,8 @@ public class Main{
         if( serverBase!=null ){
             return serverBase;
         }
-        if( homeDir!=null ){
-            serverBase=checkDir( homeDir + "/lib/apps");
+        if( installDir!=null ){
+            serverBase=checkDir( installDir + "/lib/apps");
         }else{
             serverBase=checkDir("./lib/apps");
         }
@@ -255,8 +255,8 @@ public class Main{
         if( commonBase!=null ){
             return commonBase;
         }
-        if( homeDir!=null ){
-            commonBase=checkDir( homeDir + "/lib/common");
+        if( installDir!=null ){
+            commonBase=checkDir( installDir + "/lib/common");
         }else{
             commonBase=checkDir("./lib/common");
         }
@@ -269,7 +269,10 @@ public class Main{
     protected void execute( String args[] ) throws Exception {
 
         try {
-            homeDir=IntrospectionUtils.guessHome("tomcat.home", "tomcat.jar");
+            installDir=IntrospectionUtils.guessInstall("tomcat.install",
+                                "tomcat.home", "tomcat.jar");
+
+            homeDir = System.getProperty("tomcat.home");
 
             ClassLoader parentL=this.getClass().getClassLoader();
 
@@ -318,6 +321,7 @@ public class Main{
 
             IntrospectionUtils.setAttribute(proxy,"args", args );
             IntrospectionUtils.setAttribute(proxy,"home", homeDir );
+            IntrospectionUtils.setAttribute(proxy,"install", installDir );
             IntrospectionUtils.setAttribute(proxy,"parentClassLoader",appsCl);
             IntrospectionUtils.execute(  proxy, "execute" );
             return;
