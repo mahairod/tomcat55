@@ -1969,7 +1969,7 @@ public class WebappClassLoader
         } catch (IOException e) {
             // Ignore
         }
-        return realFile.toURL();
+        return new URL("file:" + realFile.getPath());
 
     }
 
