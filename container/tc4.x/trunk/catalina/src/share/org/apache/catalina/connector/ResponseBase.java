@@ -868,6 +868,9 @@ public abstract class ResponseBase
             encoding = RequestUtil.parseCharacterEncoding(type);
             if (encoding == null)
                 encoding = "ISO-8859-1";
+        } else {
+            if (encoding != null)
+                this.contentType = type + ";charset=" + encoding;
         }
 
     }
@@ -891,7 +894,7 @@ public abstract class ResponseBase
         if ((this.encoding == null) && (this.context != null)) {
             CharsetMapper mapper = context.getCharsetMapper();
             this.encoding = mapper.getCharset(locale);
-            if (contentType.indexOf(';') < 0) {
+            if ((contentType != null) && (contentType.indexOf(';') < 0)) {
                 contentType = contentType + ";charset=" + encoding;
             }
         }
