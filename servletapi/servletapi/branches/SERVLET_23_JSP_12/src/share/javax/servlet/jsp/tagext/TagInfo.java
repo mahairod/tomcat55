@@ -209,7 +209,9 @@ public class TagInfo {
      * @return the body content string.
      */
 
-    public String getBodyContent() { return bodyContent; }
+    public String getBodyContent() {
+	return bodyContent;
+    }
 
 
     /**
@@ -218,8 +220,29 @@ public class TagInfo {
      * @return the info string
      */
 
-    public String getInfoString() { return infoString; }
+    public String getInfoString() {
+	return infoString;
+    }
 
+
+    /**
+     * Set the TagLibraryInfo property.
+     *
+     * Note that a TagLibraryInfo element is dependent
+     * not just on the TLD information but also on the
+     * specific taglib instance used.  This means that
+     * a fair amount of work needs to be done to construct
+     * and initialize TagLib objects.
+     *
+     * If used carefully, this setter can be used to avoid having to
+     * create new TagInfo elements for each taglib directive.
+     *
+     * @param tl the TagLibraryInfo to assign
+     */
+
+    public void setTagLibrary(TagLibraryInfo tl) {
+	tagLibrary = tl;
+    }
 
     /**
      * The instance of TabLibraryInfo we belong to.
@@ -227,7 +250,9 @@ public class TagInfo {
      * @return the tab library instance we belong to.
      */
 
-    public TagLibraryInfo getTagLibrary() { return tagLibrary; }
+    public TagLibraryInfo getTagLibrary() {
+	return tagLibrary;
+    }
 
 
     /**
