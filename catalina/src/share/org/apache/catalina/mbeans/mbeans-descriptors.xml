@@ -11,25 +11,6 @@
 
 <mbeans-descriptors>
 
-  <mbean         name="RequestListenerValve"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="Valve that handles request initialization and destroy events"
-               domain="Catalina"
-                group="Valve"
-                 type="org.apache.catalina.valves.RequestListenerValve">
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-  </mbean>
-
-
   <mbean         name="AccessLogValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Valve that generates a web server access log"
@@ -166,7 +147,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="override"
-          description="Does this environment entry allow overrides by the 
+          description="Does this environment entry allow overrides by the
 	  application deployment descriptor"
                  type="boolean"/>
 
@@ -238,7 +219,7 @@
           description="Implementation of a Coyote connector"
                domain="Catalina"
                 group="Connector"
-                 type="org.apache.coyote.tomcat4.CoyoteConnector">
+                 type="org.apache.coyote.tomcat5.CoyoteConnector">
 
     <attribute   name="acceptCount"
           description="The accept count for this Connector"
@@ -280,11 +261,11 @@
 
     <attribute   name="keystoreFile"
           description="Pathname to the key store file to be used"
-                 type="java.lang.String"/>  
+                 type="java.lang.String"/>
 
     <attribute   name="keystorePass"
           description="Password for accessing the key store file"
-                 type="java.lang.String"/>  
+                 type="java.lang.String"/>
 
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
@@ -306,11 +287,11 @@
 
     <attribute   name="proxyName"
           description="Ther Server name to which we should pretend requests to this Connector"
-                 type="java.lang.String"/>             
-  
+                 type="java.lang.String"/>
+
     <attribute   name="proxyPort"
           description="Ther Server port to which we should pretend requests to this Connector"
-                 type="int"/>  
+                 type="int"/>
 
     <attribute   name="redirectPort"
           description="The redirect port for non-SSL to SSL redirects"
@@ -1066,7 +1047,7 @@
                  type="boolean"/>
 
     <attribute   name="userSubtree"
-          description="Should we search the entire subtree for matching 
+          description="Should we search the entire subtree for matching
                        users?"
                  type="boolean"/>
 
@@ -1360,7 +1341,7 @@
           description="MBean Name of the component to be removed"
                  type="java.lang.String"/>
     </operation>
-    
+
     <operation   name="removeHost"
           description="Remove an existing Host"
                impact="ACTION"
@@ -1606,26 +1587,26 @@
 
   <mbean         name="NamingResources"
             className="org.apache.catalina.mbeans.NamingResourcesMBean"
-          description="Holds and manages the naming resources defined in the 
+          description="Holds and manages the naming resources defined in the
 	  J2EE Enterprise Naming Context and their associated JNDI context"
                domain="Catalina"
                 group="Resources"
                  type="org.apache.catalina.deploy.NamingResources">
 
     <attribute   name="environments"
-          description="MBean Names of the set of defined environment entries 
+          description="MBean Names of the set of defined environment entries
 	  for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resources"
-          description="MBean Names of all the defined resource references 
+          description="MBean Names of all the defined resource references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resourceLinks"
-          description="MBean Names of all the defined resource link references 
+          description="MBean Names of all the defined resource link references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
@@ -1701,6 +1682,39 @@
 
   </mbean>
 
+  <mbean         name="NonLoginAuthenticator"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="An Authenticator and Valve implementation that checks
+			only security constraints not involving user authentication"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.authenticator.NonLoginAuthenticator">
+
+    <attribute   name="algorithm"
+          description="The message digest algorithm to be used when generating
+                        session identifiers"
+                 type="java.lang.String"/>
+
+    <attribute   name="cache"
+          description="Should we cache authenticated Principals if the request
+                        is part of an HTTP session?"
+                 type="boolean"/>
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="entropy"
+          description="A String initialization parameter used to increase the
+                        entropy of the initialization of our random number
+                        generator"
+                 type="java.lang.String"/>
+  </mbean>
 
   <mbean         name="RemoteAddrValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
@@ -1759,42 +1773,6 @@
 
   </mbean>
 
-
-  <mbean         name="NonLoginAuthenticator"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="An Authenticator and Valve implementation that checks
-			only security constraints not involving user authentication"
-               domain="Catalina"
-                group="Valve"
-                 type="org.apache.catalina.authenticator.NonLoginAuthenticator">
-
-    <attribute   name="algorithm"
-          description="The message digest algorithm to be used when generating
-                        session identifiers"
-                 type="java.lang.String"/>
-
-    <attribute   name="cache"
-          description="Should we cache authenticated Principals if the request
-                        is part of an HTTP session?"
-                 type="boolean"/>
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="entropy"
-          description="A String initialization parameter used to increase the
-                        entropy of the initialization of our random number
-                        generator"
-                 type="java.lang.String"/>
-  </mbean>
-
-
   <mbean         name="RequestDumperValve"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="Implementation of a Valve that logs interesting contents
@@ -1815,6 +1793,23 @@
 
   </mbean>
 
+  <mbean         name="RequestListenerValve"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Valve that handles request initialization and destroy events"
+               domain="Catalina"
+                group="Valve"
+                 type="org.apache.catalina.valves.RequestListenerValve">
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+  </mbean>
 
   <mbean         name="Role"
             className="org.apache.catalina.mbeans.RoleMBean"
@@ -1921,7 +1916,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="environments"
-          description="MBean Names of the set of defined environment entries 
+          description="MBean Names of the set of defined environment entries
 	  for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
@@ -1944,7 +1939,7 @@
                  type="boolean"/>
 
     <attribute   name="resources"
-          description="MBean Names of all the defined resource references 
+          description="MBean Names of all the defined resource references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
@@ -2062,7 +2057,7 @@
 
   </mbean>
 
-  
+
   <mbean         name="StandardHost"
             className="org.apache.catalina.mbeans.StandardHostMBean"
           description="Standard Host Component"
@@ -2280,7 +2275,7 @@
                  type="int"/>
 
   </mbean>
-  
+
 
   <mbean         name="SystemErrLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
