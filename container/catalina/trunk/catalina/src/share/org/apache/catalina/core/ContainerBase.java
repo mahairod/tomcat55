@@ -157,12 +157,6 @@ public abstract class ContainerBase
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * The processor delay for this component.
      */
     protected int backgroundProcessorDelay = -1;
@@ -273,31 +267,6 @@ public abstract class ContainerBase
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        int oldDebug = this.debug;
-        this.debug = debug;
-        support.firePropertyChange("debug", new Integer(oldDebug),
-                                   new Integer(this.debug));
-
-    }
 
 
     /**
@@ -890,7 +859,7 @@ public abstract class ContainerBase
     public final void invoke(Request request, Response response)
         throws IOException, ServletException {
 
-        pipeline.invoke(request, response);
+        pipeline.getFirst().invoke(request, response);
 
     }
 
@@ -1217,6 +1186,16 @@ public abstract class ContainerBase
     public Valve getBasic() {
 
         return (pipeline.getBasic());
+
+    }
+
+
+    /**
+     * Return the first valve in the pipeline.
+     */
+    public Valve getFirst() {
+
+        return (pipeline.getFirst());
 
     }
 

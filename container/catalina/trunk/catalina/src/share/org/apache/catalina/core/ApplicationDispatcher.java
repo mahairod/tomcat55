@@ -172,12 +172,6 @@ final class ApplicationDispatcher
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
-
-    /**
      * Are we performing an include() instead of a forward()?
      */
     private boolean including = false;

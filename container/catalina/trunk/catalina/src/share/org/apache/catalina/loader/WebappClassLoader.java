@@ -225,12 +225,6 @@ public class WebappClassLoader
 
 
     /**
-     * The debugging detail level of this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * Should this class loader delegate to the parent class loader
      * <strong>before</strong> searching its own repositories (i.e. the
      * usual Java2 delegation model)?  If set to <code>false</code>,
@@ -384,28 +378,6 @@ public class WebappClassLoader
     public void setResources(DirContext resources) {
 
         this.resources = resources;
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
 
     }
 

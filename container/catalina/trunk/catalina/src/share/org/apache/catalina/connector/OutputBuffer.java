@@ -49,7 +49,6 @@ public class OutputBuffer extends Writer
     public static final String DEFAULT_ENCODING = 
         org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING;
     public static final int DEFAULT_BUFFER_SIZE = 8*1024;
-    static final int debug = 0;
 
 
     // The buffer can be used for byte[] and char[] writing
@@ -227,26 +226,23 @@ public class OutputBuffer extends Writer
      * Recycle the output buffer.
      */
     public void recycle() {
-
-	if (debug > 0)
-            log("recycle()");
-
-	state = INITIAL_STATE;
-	bytesWritten = 0;
-	charsWritten = 0;
-
+        
+        state = INITIAL_STATE;
+        bytesWritten = 0;
+        charsWritten = 0;
+        
         cb.recycle();
         bb.recycle(); 
         closed = false;
         suspended = false;
-
+        
         if (conv!= null) {
             conv.recycle();
         }
-
+        
         gotEnc = false;
         enc = null;
-
+        
     }
 
 
@@ -351,9 +347,6 @@ public class OutputBuffer extends Writer
     public void realWriteBytes(byte buf[], int off, int cnt)
 	throws IOException {
 
-        if (debug > 2)
-            log("realWrite(b, " + off + ", " + cnt + ") " + coyoteResponse);
-
         if (closed)
             return;
         if (coyoteResponse == null)
@@ -394,8 +387,6 @@ public class OutputBuffer extends Writer
 
         if (closed)
             return;
-        if (debug > 0)
-            log("write(b,off,len)");
 
         bb.append(b, off, len);
         bytesWritten += len;
@@ -409,7 +400,6 @@ public class OutputBuffer extends Writer
     }
 
 
-    // XXX Char or byte ?
     public void writeByte(int b)
         throws IOException {
 
@@ -419,9 +409,6 @@ public class OutputBuffer extends Writer
         if (state == CHAR_STATE)
             cb.flushBuffer();
         state = BYTE_STATE;
-
-        if (debug > 0)
-            log("write(b)");
 
         bb.append( (byte)b );
         bytesWritten++;
@@ -439,9 +426,6 @@ public class OutputBuffer extends Writer
             return;
 
         state = CHAR_STATE;
-
-        if (debug > 0)
-            log("writeChar(b)");
 
         cb.append((char) c);
         charsWritten++;
@@ -468,9 +452,6 @@ public class OutputBuffer extends Writer
 
         state = CHAR_STATE;
 
-        if (debug > 0)
-            log("write(c,off,len)" + cb.getLength() + " " + cb.getLimit());
-
         cb.append(c, off, len);
         charsWritten += len;
 
@@ -484,9 +465,6 @@ public class OutputBuffer extends Writer
             return;
 
         state = CHAR_STATE;
-
-        if (debug > 1)
-            log("write(s,off,len)");
 
         int len = sb.length();
         charsWritten += len;
@@ -505,9 +483,6 @@ public class OutputBuffer extends Writer
             return;
 
         state=CHAR_STATE;
-
-        if (debug > 1)
-            log("write(s,off,len)");
 
         charsWritten += len;
         if (s==null)
@@ -534,9 +509,6 @@ public class OutputBuffer extends Writer
     public void flushChars()
         throws IOException {
 
-        if (debug > 0)
-            log("flushChars() " + cb.getLength());
-
         cb.flushBuffer();
         state = BYTE_STATE;
 
@@ -556,14 +528,8 @@ public class OutputBuffer extends Writer
     public void realWriteChars(char c[], int off, int len) 
         throws IOException {
 
-        if (debug > 0)
-            log("realWrite(c,o,l) " + cb.getOffset() + " " + len);
-
         if (!gotEnc)
             setConverter();
-
-        if (debug > 0)
-            log("encoder:  " + conv + " " + gotEnc);
 
         conv.convert(c, off, len);
         conv.flushBuffer();	// ???
@@ -586,9 +552,6 @@ public class OutputBuffer extends Writer
         if (coyoteResponse != null)
             enc = coyoteResponse.getCharacterEncoding();
 
-        if (debug > 0)
-            log("Got encoding: " + enc);
-
         gotEnc = true;
         if (enc == null)
             enc = DEFAULT_ENCODING;
@@ -610,9 +573,6 @@ public class OutputBuffer extends Writer
                     Exception e = ex.getException();
                     if (e instanceof IOException)
                         throw (IOException)e; 
-                    
-                    if (debug > 0)
-                        log("setConverter: " + ex.getMessage());
                 }
             } else {
                 conv = new C2BConverter(bb, enc);
@@ -633,8 +593,6 @@ public class OutputBuffer extends Writer
     public void flushBytes()
         throws IOException {
 
-        if (debug > 0)
-            log("flushBytes() " + bb.getLength());
         bb.flushBuffer();
 
     }

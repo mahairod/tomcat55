@@ -123,7 +123,7 @@ final class StandardHostValve
         }
         
         // Ask this Context to process this request
-        context.getPipeline().invoke(request, response);
+        context.getPipeline().getFirst().invoke(request, response);
 
         // Error page processing
         response.setSuspended(false);

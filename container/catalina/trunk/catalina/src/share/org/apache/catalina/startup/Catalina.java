@@ -218,8 +218,6 @@ public class Catalina extends Embedded {
                 isConfig = false;
             } else if (args[i].equals("-config")) {
                 isConfig = true;
-            } else if (args[i].equals("-debug")) {
-                debug = 1;
             } else if (args[i].equals("-nonaming")) {
                 setUseNaming( false );
             } else if (args[i].equals("-help")) {
@@ -620,7 +618,7 @@ public class Catalina extends Embedded {
 
         System.out.println
             ("usage: java org.apache.catalina.startup.Catalina"
-             + " [ -config {pathname} ] [ -debug ]"
+             + " [ -config {pathname} ]"
              + " [ -nonaming ] { start | stop }");
 
     }

@@ -48,8 +48,6 @@ public class InputBuffer extends Reader
     public static final String DEFAULT_ENCODING = 
         org.apache.coyote.Constants.DEFAULT_CHARACTER_ENCODING;
     public static final int DEFAULT_BUFFER_SIZE = 8*1024;
-    static final int debug = 0;
-
 
     // The buffer can be used for byte[] and char[] reading
     // ( this is needed to support ServletInputStream and BufferedReader )
@@ -208,14 +206,11 @@ public class InputBuffer extends Reader
      * Recycle the output buffer.
      */
     public void recycle() {
-
-	if (debug > 0)
-            log("recycle()");
-
-	state = INITIAL_STATE;
-	bytesRead = 0;
-	charsRead = 0;
-
+        
+        state = INITIAL_STATE;
+        bytesRead = 0;
+        charsRead = 0;
+        
         // If usage of mark made the buffer too big, reallocate it
         if (cb.getChars().length > size) {
             cb = new CharChunk(size);
@@ -228,14 +223,14 @@ public class InputBuffer extends Reader
         markPos = -1;
         bb.recycle(); 
         closed = false;
-
+        
         if (conv != null) {
             conv.recycle();
         }
-
+        
         gotEnc = false;
         enc = null;
-
+        
     }
 
 
@@ -276,9 +271,6 @@ public class InputBuffer extends Reader
      */
     public int realReadBytes(byte cbuf[], int off, int len)
 	throws IOException {
-
-        if (debug > 2)
-            log("realRead() " + coyoteRequest);
 
         if (closed)
             return -1;
@@ -329,14 +321,8 @@ public class InputBuffer extends Reader
     public int realReadChars(char cbuf[], int off, int len)
         throws IOException {
 
-        if (debug > 0)
-            log("realRead() " + cb.getOffset() + " " + len);
-
         if (!gotEnc)
             setConverter();
-
-        if (debug > 0)
-            log("encoder:  " + conv + " " + gotEnc);
 
         if (bb.getLength() <= 0) {
             int nRead = realReadBytes(bb.getBytes(), 0, bb.getBytes().length);
@@ -474,9 +460,6 @@ public class InputBuffer extends Reader
         if (coyoteRequest != null)
             enc = coyoteRequest.getCharacterEncoding();
 
-        if (debug > 0)
-            log("Got encoding: " + enc);
-
         gotEnc = true;
         if (enc == null)
             enc = DEFAULT_ENCODING;
@@ -497,9 +480,6 @@ public class InputBuffer extends Reader
                     Exception e = ex.getException();
                     if (e instanceof IOException)
                         throw (IOException)e; 
-                    
-                    if (debug > 0)
-                        log("setConverter: " + ex.getMessage());
                 }
             } else {
                 conv = new B2CConverter(enc);
@@ -507,11 +487,6 @@ public class InputBuffer extends Reader
             encoders.put(enc, conv);
         }
 
-    }
-
-
-    protected void log( String s ) {
-	System.out.println("InputBuffer: " + s);
     }
 
 

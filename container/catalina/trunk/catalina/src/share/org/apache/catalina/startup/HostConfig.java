@@ -91,12 +91,6 @@ public class HostConfig
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * The names of applications that we have auto-deployed (to avoid
      * double deployment attempts).
      */
@@ -209,28 +203,6 @@ public class HostConfig
 
 
     /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-
-
-    /**
      * Return the deploy XML config file flag for this component.
      */
     public boolean isDeployXML() {
@@ -329,10 +301,6 @@ public class HostConfig
         try {
             host = (Host) event.getLifecycle();
             if (host instanceof StandardHost) {
-                int hostDebug = ((StandardHost) host).getDebug();
-                if (hostDebug > this.debug) {
-                    this.debug = hostDebug;
-                }
                 setDeployXML(((StandardHost) host).isDeployXML());
                 setUnpackWARs(((StandardHost) host).isUnpackWARs());
                 setXmlNamespaceAware(((StandardHost) host).getXmlNamespaceAware());

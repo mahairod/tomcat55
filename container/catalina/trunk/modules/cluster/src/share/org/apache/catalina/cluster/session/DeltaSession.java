@@ -99,8 +99,6 @@ public class DeltaSession
 
         super();
         this.manager = manager;
-        if (manager instanceof ManagerBase)
-            this.debug = ((ManagerBase) manager).getDebug();
 
     }
 

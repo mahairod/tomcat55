@@ -93,12 +93,6 @@ public class StandardService
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-
-    /**
      * The property change support for this component.
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
@@ -183,30 +177,6 @@ public class StandardService
             return ((ContainerBase)container).getJmxName();
         }
         return null;
-    }
-
-
-    /**
-     * Return the debugging detail level of this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level of this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        int oldDebug = this.debug;
-        this.debug = debug;
-        support.firePropertyChange("debug", new Integer(oldDebug),
-                                   new Integer(this.debug));
     }
 
 

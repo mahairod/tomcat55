@@ -90,8 +90,6 @@ public class StandardSession
 
         super();
         this.manager = manager;
-        if (manager instanceof ManagerBase)
-            this.debug = ((ManagerBase) manager).getDebug();
 
     }
 
@@ -150,13 +148,6 @@ public class StandardSession
      * January 1, 1970 GMT.
      */
     protected long creationTime = 0L;
-
-
-    /**
-     * The debugging detail level for this component.  NOTE:  This value
-     * is not included in the serialized version of this object.
-     */
-    protected transient int debug = 0;
 
 
     /**
@@ -231,7 +222,7 @@ public class StandardSession
      */
     protected boolean isValid = false;
 
-
+    
     /**
      * Internal notes associated with this session by Catalina components
      * and event listeners.  <b>IMPLEMENTATION NOTE:</b> This object is
@@ -389,7 +380,8 @@ public class StandardSession
                     } catch (Exception e) {
                         ;
                     }
-                    log(sm.getString("standardSession.sessionEvent"), t);
+                    manager.getContainer().getLogger().error
+                        (sm.getString("standardSession.sessionEvent"), t);
                 }
             }
         }
@@ -683,7 +675,8 @@ public class StandardSession
                         } catch (Exception e) {
                             ;
                         }
-                        log(sm.getString("standardSession.sessionEvent"), t);
+                        manager.getContainer().getLogger().error
+                            (sm.getString("standardSession.sessionEvent"), t);
                     }
                 }
             }
@@ -730,7 +723,8 @@ public class StandardSession
                     ((HttpSessionActivationListener)attribute)
                         .sessionWillPassivate(event);
                 } catch (Throwable t) {
-                    log(sm.getString("standardSession.attributeEvent"), t);
+                    manager.getContainer().getLogger().error
+                        (sm.getString("standardSession.attributeEvent"), t);
                 }
             }
         }
@@ -756,7 +750,8 @@ public class StandardSession
                     ((HttpSessionActivationListener)attribute)
                         .sessionDidActivate(event);
                 } catch (Throwable t) {
-                    log(sm.getString("standardSession.attributeEvent"), t);
+                    manager.getContainer().getLogger().error
+                        (sm.getString("standardSession.attributeEvent"), t);
                 }
             }
         }
@@ -1221,7 +1216,8 @@ public class StandardSession
             try {
                 ((HttpSessionBindingListener) value).valueBound(event);
             } catch (Throwable t){
-                log(sm.getString("standardSession.bindingEvent"), t); 
+                manager.getContainer().getLogger().error
+                    (sm.getString("standardSession.bindingEvent"), t); 
             }
         }
 
@@ -1235,7 +1231,8 @@ public class StandardSession
                 ((HttpSessionBindingListener) unbound).valueUnbound
                     (new HttpSessionBindingEvent(getSession(), name));
             } catch (Throwable t) {
-                log(sm.getString("standardSession.bindingEvent"), t);
+                manager.getContainer().getLogger().error
+                    (sm.getString("standardSession.bindingEvent"), t);
             }
         }
 
@@ -1289,7 +1286,8 @@ public class StandardSession
                 } catch (Exception e) {
                     ;
                 }
-                log(sm.getString("standardSession.attributeEvent"), t);
+                manager.getContainer().getLogger().error
+                    (sm.getString("standardSession.attributeEvent"), t);
             }
         }
 
@@ -1325,8 +1323,9 @@ public class StandardSession
         principal = null;        // Transient only
         //        setId((String) stream.readObject());
         id = (String) stream.readObject();
-        if (debug >= 2)
-            log("readObject() loading session " + id);
+        if (manager.getContainer().getLogger().isDebugEnabled())
+            manager.getContainer().getLogger().debug
+                ("readObject() loading session " + id);
 
         // Deserialize the attribute count and attribute values
         if (attributes == null)
@@ -1339,8 +1338,8 @@ public class StandardSession
             Object value = (Object) stream.readObject();
             if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
                 continue;
-            if (debug >= 2)
-                log("  loading attribute '" + name +
+            if (manager.getContainer().getLogger().isDebugEnabled())
+                manager.getContainer().getLogger().debug("  loading attribute '" + name +
                     "' with value '" + value + "'");
             synchronized (attributes) {
                 attributes.put(name, value);
@@ -1380,8 +1379,9 @@ public class StandardSession
         stream.writeObject(new Boolean(isValid));
         stream.writeObject(new Long(thisAccessedTime));
         stream.writeObject(id);
-        if (debug >= 2)
-            log("writeObject() storing session " + id);
+        if (manager.getContainer().getLogger().isDebugEnabled())
+            manager.getContainer().getLogger().debug
+                ("writeObject() storing session " + id);
 
         // Accumulate the names of serializable and non-serializable attributes
         String keys[] = keys();
@@ -1410,15 +1410,18 @@ public class StandardSession
             stream.writeObject((String) saveNames.get(i));
             try {
                 stream.writeObject(saveValues.get(i));
-                if (debug >= 2)
-                    log("  storing attribute '" + saveNames.get(i) +
+                if (manager.getContainer().getLogger().isDebugEnabled())
+                    manager.getContainer().getLogger().debug
+                        ("  storing attribute '" + saveNames.get(i) +
                         "' with value '" + saveValues.get(i) + "'");
             } catch (NotSerializableException e) {
-                log(sm.getString("standardSession.notSerializable",
-                                 saveNames.get(i), id), e);
+                manager.getContainer().getLogger().warn
+                    (sm.getString("standardSession.notSerializable",
+                     saveNames.get(i), id), e);
                 stream.writeObject(NOT_SERIALIZED);
-                if (debug >= 2)
-                    log("  storing attribute '" + saveNames.get(i) +
+                if (manager.getContainer().getLogger().isDebugEnabled())
+                    manager.getContainer().getLogger().debug
+                       ("  storing attribute '" + saveNames.get(i) +
                         "' with value NOT_SERIALIZED");
             }
         }
@@ -1596,42 +1599,9 @@ public class StandardSession
                 } catch (Exception e) {
                     ;
                 }
-                log(sm.getString("standardSession.attributeEvent"), t);
+                manager.getContainer().getLogger().error
+                    (sm.getString("standardSession.attributeEvent"), t);
             }
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Manager (if any).
-     *
-     * @param message Message to be logged
-     */
-    protected void log(String message) {
-
-        if ((manager != null) && (manager instanceof ManagerBase)) {
-            ((ManagerBase) manager).log(message);
-        } else {
-            System.out.println("StandardSession: " + message);
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Manager (if any).
-     *
-     * @param message Message to be logged
-     * @param throwable Associated exception
-     */
-    protected void log(String message, Throwable throwable) {
-
-        if ((manager != null) && (manager instanceof ManagerBase)) {
-            ((ManagerBase) manager).log(message, throwable);
-        } else {
-            System.out.println("StandardSession: " + message);
-            throwable.printStackTrace(System.out);
         }
 
     }

@@ -26,7 +26,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.Context;
+import org.apache.catalina.Container;
 import org.apache.catalina.Globals;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Request;
@@ -36,7 +36,6 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.tomcat.util.buf.MessageBytes;
-import org.apache.tomcat.util.log.SystemLogHandler;
 
 /**
  * Valve that implements the default basic behavior for the
@@ -72,6 +71,9 @@ final class StandardContextValve
 
     private static Log log = LogFactory.getLog(StandardContextValve.class);
 
+    
+    private StandardContext context = null;
+    
 
     // ------------------------------------------------------------- Properties
 
@@ -89,6 +91,17 @@ final class StandardContextValve
     // --------------------------------------------------------- Public Methods
 
 
+    /**
+     * Cast to a StandardContext right away, as it will be needed later.
+     * 
+     * @see org.apache.catalina.Contained#setContainer(org.apache.catalina.Container)
+     */
+    public void setContainer(Container container) {
+        super.setContainer(container);
+        context = (StandardContext) container;
+    }
+
+    
     /**
      * Select the appropriate child Wrapper to process this request,
      * based on the specified request URI.  If no matching Wrapper can
@@ -116,7 +129,7 @@ final class StandardContextValve
         }
 
         // Wait if we are reloading
-        while (((StandardContext) container).getPaused()) {
+        while (context.getPaused()) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -133,35 +146,7 @@ final class StandardContextValve
         }
 
         // Normal request processing
-        if (((StandardContext) container).getSwallowOutput()) {
-            try {
-                SystemLogHandler.startCapture();
-                invokeInternal(wrapper, request, response);
-            } finally {
-                String log = SystemLogHandler.stopCapture();
-                if (log != null && log.length() > 0) {
-                    container.getLogger().info(log);
-                }
-            }
-        } else {
-            invokeInternal(wrapper, request, response);
-        }
-
-    }
-
-
-    // -------------------------------------------------------- Private Methods
-
-
-    /**
-     * Call invoke.
-     */
-    private void invokeInternal(Wrapper wrapper, Request request, 
-                                Response response)
-        throws IOException, ServletException {
-
-        Object instances[] = 
-            ((Context) container).getApplicationEventListeners();
+        Object instances[] = context.getApplicationEventListeners();
 
         ServletRequestEvent event = null;
 
@@ -190,7 +175,7 @@ final class StandardContextValve
             }
         }
 
-        wrapper.getPipeline().invoke(request, response);
+        wrapper.getPipeline().getFirst().invoke(request, response);
 
         if ((instances !=null ) &&
                 (instances.length > 0)) {
@@ -212,8 +197,11 @@ final class StandardContextValve
                 }
             }
         }
-
+                
     }
+
+
+    // -------------------------------------------------------- Private Methods
 
 
     /**

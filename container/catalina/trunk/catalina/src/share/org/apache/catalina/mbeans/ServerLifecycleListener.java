@@ -74,20 +74,6 @@ public class ServerLifecycleListener
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
-    public int getDebug() {
-        return (this.debug);
-    }
-
-    public void setDebug(int debug) {
-        this.debug = debug;
-    }
-
-
-    /**
      * Semicolon separated list of paths containing MBean desciptor resources.
      */
     protected String descriptors = null;

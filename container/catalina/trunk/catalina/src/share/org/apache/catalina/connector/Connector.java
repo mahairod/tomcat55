@@ -110,12 +110,6 @@ public class Connector
 
 
     /**
-     * The debugging detail level for this component.
-     */
-    private int debug = 0;
-
-
-    /**
      * The "enable DNS lookups" flag for this Connector.
      */
     private boolean enableLookups = false;
@@ -632,28 +626,6 @@ public class Connector
     public void setContainer(Container container) {
 
         this.container = container;
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
 
     }
 
