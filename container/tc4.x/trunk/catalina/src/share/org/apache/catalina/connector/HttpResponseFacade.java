@@ -142,7 +142,8 @@ public final class HttpResponseFacade
         throws IOException {
 
         if (isCommitted())
-            return;
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
 
         committed = true;
 
@@ -155,7 +156,8 @@ public final class HttpResponseFacade
         throws IOException {
 
         if (isCommitted())
-            return;
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
 
         committed = true;
 
@@ -168,7 +170,8 @@ public final class HttpResponseFacade
         throws IOException {
 
         if (isCommitted())
-            return;
+            throw new IllegalStateException
+                (/*sm.getString("responseBase.reset.ise")*/);
 
         committed = true;
 
