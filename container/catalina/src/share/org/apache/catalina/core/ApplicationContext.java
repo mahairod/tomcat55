@@ -417,6 +417,9 @@ public class ApplicationContext
              * purposes
              */
             int semicolon = path.indexOf(';');
+            if (pos >= 0 && semicolon > pos) {
+                semicolon = -1;
+            }
             uriCC.append(path, 0, semicolon > 0 ? semicolon : pos);
             context.getMapper().map(uriMB, mappingData);
             if (mappingData.wrapper == null) {
