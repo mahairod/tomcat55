@@ -286,7 +286,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
             else if ("tag-file".equals(tname))
-                tagFileVector.addElement(createTagFileInfo(element));
+                tagFileVector.addElement(createTagFileInfo(element, uri));
             else if ("function".equals(tname))          // JSP2.0
                 functionVector.addElement(createFunctionInfo(element));
             else if ("display-name".equals(tname) ||    // Ignored elements
@@ -438,7 +438,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
      *
      * @return TagInfo correspoding to tag file directives
      */
-    private TagFileInfo createTagFileInfo(TreeNode elem)
+    private TagFileInfo createTagFileInfo(TreeNode elem, String uri)
 	        throws JasperException {
 
 	String name = null;
@@ -460,6 +460,11 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             }
 	}
 
+        path = path.replace('\\', '/');
+	if (!path.startsWith("/")) {
+	    // relative to uri of TLD file
+            path = uri.substring(0, uri.lastIndexOf("/") + 1) + path;
+	}
 	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
 							name, path,
 							this);
