@@ -135,6 +135,84 @@ public interface Manager {
     public void setSessionIdLength(int idLength);
 
 
+    /** 
+     * Returns the total number of sessions created by this manager.
+     *
+     * @return Total number of sessions created by this manager.
+     */
+    public int getSessionCounter();
+
+
+    /** 
+     * Sets the total number of sessions created by this manager.
+     *
+     * @param sessionCounter Total number of sessions created by this manager.
+     */
+    public void setSessionCounter(int sessionCounter);
+
+
+    /**
+     * Gets the maximum number of sessions that may be active at the same time.
+     *
+     * <p>If this number has been reached, any requests for creating new
+     * sessions will be rejected.
+     *
+     * @return Maximum number of sessions that may be active at the same time
+     */
+    public int getMaxActive();
+
+
+    /**
+     * Sets the maximum number of sessions that may be active at the same time.
+     *
+     * @param maxActive Maximum number of sessions that may be active at
+     * the same time.
+     */
+    public void setMaxActive(int maxActive);
+
+
+    /** 
+     * Gets the number of currently active sessions.
+     *
+     * @return Number of currently active sessions
+     */
+    public int getActiveSessions();
+
+
+    /**
+     * Gets the number of sessions that have expired.
+     *
+     * @return Number of sessions that have expired
+     */
+    public int getExpiredSessions();
+
+
+    /**
+     * Sets the number of sessions that have expired.
+     *
+     * @param expiredSessions Number of sessions that have expired
+     */
+    public void setExpiredSessions(int expiredSessions);
+
+
+    /**
+     * Gets the number of sessions that were not created because the maximum
+     * number of active sessions was reached.
+     *
+     * @return Number of rejected sessions
+     */
+    public int getRejectedSessions();
+
+
+    /**
+     * Sets the number of sessions that were not created because the maximum
+     * number of active sessions was reached.
+     *
+     * @param rejectedSessions Number of rejected sessions
+     */
+    public void setRejectedSessions(int rejectedSessions);
+
+
     // --------------------------------------------------------- Public Methods
 
 
