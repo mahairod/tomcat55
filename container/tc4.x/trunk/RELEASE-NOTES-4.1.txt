@@ -79,6 +79,12 @@ General New Features:
 [4.1.31] JAF
          Upgrade to JAF 1.0.2
 
+[4.1.31] JavaMail
+         Upgrade to 1.3.1
+
+[4.1.31] JTA
+         Upgrade to 1.0.1b
+
 
 ---------------------
 Catalina New Features:

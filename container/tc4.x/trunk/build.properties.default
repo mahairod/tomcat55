@@ -201,7 +201,7 @@ jsse.jar=${jsse.lib}/jsse.jar
 
 
 # ----- Java Transaction API (JTA), version 1.0.1 or later -----
-jta.home=${base.path}/jta-1_0_1a
+jta.home=${base.path}/jta-1_0_1b
 jta.lib=${jta.home}
 jta.jar=${jta.lib}/jta.jar
 
@@ -214,7 +214,7 @@ junit.loc=http://download.sourceforge.net/junit/junit3.7.zip
 
 
 # ----- Java Mail, version 1.2 or later -----
-mail.home=${base.path}/javamail-1.2
+mail.home=${base.path}/javamail-1.3.1
 mail.lib=${mail.home}
 mail.jar=${mail.lib}/mail.jar
 
