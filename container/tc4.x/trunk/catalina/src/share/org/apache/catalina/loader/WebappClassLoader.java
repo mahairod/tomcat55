@@ -1552,10 +1552,10 @@ public class WebappClassLoader
         for (int i = 0; i < length; i++) {
             try {
                 jarFiles[i].close();
-                jarFiles[i] = null;
             } catch (IOException e) {
                 // Ignore
             }
+            jarFiles[i] = null;
         }
 
         notFoundResources.clear();
