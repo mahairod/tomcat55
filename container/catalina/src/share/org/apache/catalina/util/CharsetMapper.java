@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * This class is based on a class originally written by Jason Hunter
- * <jhunter@acm.org> as part of the book "Java Servlet Programming"
- * (O'Reilly).  See http://www.servlets.com/book for more information.
- * Used by Sun Microsystems with permission.
- */
-
 package org.apache.catalina.util;
 
 
@@ -38,6 +31,7 @@ import java.util.Properties;
  * it loads, or by subclassing it (to change the algorithm) and then using
  * your own version for a particular web application.
  *
+ * @author Jason Hunter
  * @author Craig R. McClanahan
  * @version $Date$ $Version$
  */
