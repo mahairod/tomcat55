@@ -150,7 +150,7 @@
             <controls:data>
             <%-- input only allowed on create transaction --%>
              <logic:equal name="hostForm" property="adminAction" value="Create">
-              <html:text property="hostName" size="255" maxlength="24" styleId="name"/>
+              <html:text property="hostName" size="50" maxlength="50" styleId="name"/>
              </logic:equal>
              <logic:equal name="hostForm" property="adminAction" value="Edit">
               <bean:write name="hostForm" property="hostName"/>
