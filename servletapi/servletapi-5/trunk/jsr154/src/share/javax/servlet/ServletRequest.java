@@ -351,7 +351,7 @@ public interface ServletRequest {
     /**
      * Returns the host name of the server to which the request was sent.
      * It is the value of the part before ":" in the <code>Host</code>
-     * header, if any, or the resolved server name, or the server IP address.
+     * header value, if any, or the resolved server name, or the server IP address.
      *
      * @return		a <code>String</code> containing the name 
      *			of the server
@@ -365,7 +365,7 @@ public interface ServletRequest {
     /**
      * Returns the port number to which the request was sent.
      * It is the value of the part after ":" in the <code>Host</code>
-     * header, if any, or the server port where the client connection
+     * header value, if any, or the server port where the client connection
      * was accepted on.
      *
      * @return		an integer specifying the port number
