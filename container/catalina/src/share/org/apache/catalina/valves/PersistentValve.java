@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
@@ -149,15 +148,15 @@ public class PersistentValve
 
         // Read the sessionid after the response.
         // HttpSession hsess = hreq.getSession(false);
-        HttpSession hsess;
+        Session hsess;
         try {
-            hsess = request.getSession();
+            hsess = request.getSessionInternal();
         } catch (Exception ex) {
             hsess = null;
         }
         String newsessionId = null;
         if (hsess!=null)
-            newsessionId = hsess.getId();
+            newsessionId = hsess.getIdInternal();
 
         if (container.getLogger().isDebugEnabled())
             container.getLogger().debug("newsessionId: " + newsessionId);

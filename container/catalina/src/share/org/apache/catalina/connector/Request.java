@@ -2210,7 +2210,7 @@ public class Request
         if ((session != null) && (getContext() != null)
                && getContext().getCookies()) {
             Cookie cookie = new Cookie(Globals.SESSION_COOKIE_NAME,
-                                       session.getId());
+                                       session.getIdInternal());
             configureSessionCookie(cookie);
             response.addCookie(cookie);
         }
