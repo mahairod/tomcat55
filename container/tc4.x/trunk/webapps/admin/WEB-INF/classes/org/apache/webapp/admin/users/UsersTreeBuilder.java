@@ -135,7 +135,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              true);
         TreeControlNode groups = new TreeControlNode
             ("Global Administer Groups",
-             "folder_16_pad.gif",
+             "Groups.gif",
              resources.getMessage("users.treeBuilder.groupsNode"),
              "users/listGroups.do?databaseName=" +
              URLEncoder.encode(databaseName) +
@@ -155,7 +155,7 @@ public class UsersTreeBuilder implements TreeBuilder {
              false);
         TreeControlNode users = new TreeControlNode
             ("Global Administer Users",
-             "folder_16_pad.gif",
+             "Users.gif",
              resources.getMessage("users.treeBuilder.usersNode"),
              "users/listUsers.do?databaseName=" +
              URLEncoder.encode(databaseName) +
