@@ -114,6 +114,42 @@ public class Context02 extends HttpServlet {
                     writer.println("Context02 FAILED - context00 value " +
                                    value);
                     ok = false;
+                } else {
+                    String lifecycle = ((ContextBean) bean).getLifecycle();
+                    if (!"/add".equals(lifecycle)) {
+                        writer.println("Context02 FAILED -" +
+                                       " context00 lifecycle " +
+                                       lifecycle);
+                        ok = false;
+                    }
+                }
+            }
+        }
+
+        // Check for the attribute from ContextListener01
+        if (ok) {
+            Object bean = context.getAttribute("contextListener01");
+            if (bean == null) {
+                writer.println("Context02 FAILED - contextListener01 missing");
+                ok = false;
+            } else if (!(bean instanceof ContextBean)) {
+                writer.println("Context02 FAILED - contextListener01 class " +
+                               bean.getClass().getName());
+                ok = false;
+            } else {
+                String value = ((ContextBean) bean).getStringProperty();
+                if (!"ContextListener01".equals(value)) {
+                    writer.println("Context02 FAILED - contextListener01 " +
+                                   "value " + value);
+                    ok = false;
+                } else {
+                    String lifecycle = ((ContextBean) bean).getLifecycle();
+                    if (!"/add".equals(lifecycle)) {
+                        writer.println("Context02 FAILED -" +
+                                       " contextListener01 lifecycle " +
+                                       lifecycle);
+                        ok = false;
+                    }
                 }
             }
         }
