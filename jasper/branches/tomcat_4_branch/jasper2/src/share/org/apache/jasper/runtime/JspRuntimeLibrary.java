@@ -284,7 +284,7 @@ public class JspRuntimeLibrary {
     //-------------------------------------------------------------------
     // __begin toStringMethod
     public static String toString(Object o) {
-        return (o == null) ? "" : o.toString();
+        return String.valueOf(o);
     }
 
     public static String toString(byte b) {
