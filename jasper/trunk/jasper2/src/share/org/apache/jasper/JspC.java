@@ -547,7 +547,10 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                clctxt.setServletPackageName(targetPackage);
+                int baseLen=jspUri.lastIndexOf("/");
+                if( baseLen <0 ) baseLen=0;
+                String packageSubs= jspUri.substring(0, baseLen).replace( '/', '.' );
+                clctxt.setServletPackageName( targetPackage + "." + packageSubs);
             }
             
             setupContext(clctxt);
@@ -593,7 +596,7 @@ public class JspC implements Options {
             } else if (dieLevel != NO_DIE_LEVEL) {
                 dieOnExit = true;
             }
-            throw new JasperException( e );
+            throw new JasperException( "Error compiling " + file, e );
         }
     }
 
