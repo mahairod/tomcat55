@@ -577,13 +577,20 @@ public class Http11Processor implements Processor, ActionHook {
                 break;
             } catch (Exception e) {
                 log.warn("Error parsing HTTP request", e);
-                // 500 - Bad Request
+                // 400 - Bad Request
                 response.setStatus(400);
                 error = true;
             }
 
             // Setting up filters, and parse some request headers
-            prepareRequest();
+            try {
+                prepareRequest();
+            } catch (Throwable t) {
+                log.debug("Error preparing request", t);
+                // 400 - Internal Server Error
+                response.setStatus(400);
+                error = true;
+            }
 
             if (maxKeepAliveRequests > 0 && --keepAliveLeft == 0)
                 keepAlive = false;
