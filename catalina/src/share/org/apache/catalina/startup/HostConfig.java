@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -572,9 +573,6 @@ public class HostConfig
             }
             context.setConfigFile(contextXml.getAbsolutePath());
             context.setPath(contextPath);
-            // Add the context XML to the list of watched files
-            deployedApp.reloadResources.put
-                (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
             // Add the associated docBase to the redeployed list if it's a WAR
             boolean isWar = false;
             if (context.getDocBase() != null) {
@@ -628,7 +626,6 @@ public class HostConfig
                             external = true;
                             deployedApp.redeployResources.put
                                 (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
-                            deployedApp.reloadResources.remove(contextXml.getAbsolutePath());
                         }
                     } catch (IOException e) {
                         // Ignore
@@ -645,8 +642,14 @@ public class HostConfig
                             addWatchedResources(deployedApp, 
                                     expandedDocBase.getAbsolutePath(), context);
                         }
+                        // Add the context XML to the list of files which should trigger a redeployment
+                        deployedApp.redeployResources.put
+                            (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     }
                 } else {
+                    // Add the context XML to the list of files which should trigger a redeployment
+                    deployedApp.redeployResources.put
+                        (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
                     addWatchedResources(deployedApp, null, context);
                 }
             }
@@ -904,13 +907,17 @@ public class HostConfig
             }
             context.setPath(contextPath);
             context.setDocBase(file);
+            File configFile = new File(dir, Constants.ApplicationContextXml);
             if (deployXML) {
-                context.setConfigFile
-                    ((new File(dir, Constants.ApplicationContextXml)).getAbsolutePath());
+                context.setConfigFile(configFile.getAbsolutePath());
             }
             host.addChild(context);
             deployedApp.redeployResources.put(dir.getAbsolutePath(),
                     new Long(dir.lastModified()));
+            if (deployXML) {
+                deployedApp.redeployResources.put(configFile.getAbsolutePath(),
+                        new Long(configFile.lastModified()));
+            }
             addWatchedResources(deployedApp, dir.getAbsolutePath(), context);
         } catch (Throwable t) {
             log.error(sm.getString("hostConfig.deployDir.error", file), t);
@@ -974,7 +981,9 @@ public class HostConfig
             if (resource.exists()) {
                 long lastModified = ((Long) app.redeployResources.get(resources[i])).longValue();
                 if ((!resource.isDirectory()) && resource.lastModified() > lastModified) {
-                    // Redeploy application
+                    // Undeploy application
+                    if (log.isInfoEnabled())
+                        log.info(sm.getString("hostConfig.undeploy", app.name));
                     ContainerBase context = (ContainerBase) host.findChild(app.name);
                     host.removeChild(context);
                     try {
@@ -984,28 +993,32 @@ public class HostConfig
                                  ("hostConfig.context.destroy", app.name), e);
                     }
                     // Delete other redeploy resources
-                    for (int j = 0; j < resources.length; j++) {
-                        if (j != i) {
-                            try {
-                                File current = new File(resources[j]);
-                                current = current.getCanonicalFile();
-                                if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
+                    for (int j = i + 1; j < resources.length; j++) {
+                        try {
+                            File current = new File(resources[j]);
+                            current = current.getCanonicalFile();
+                            if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
                                     || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath()))) {
-                                    if (log.isDebugEnabled())
-                                        log.debug("Delete " + current);
-                                    ExpandWar.delete(current);
-                                }
-                            } catch (IOException e) {
-                                log.warn(sm.getString
-                                        ("hostConfig.canonicalizing", app.name), e);
+                                if (log.isDebugEnabled())
+                                    log.debug("Delete " + current);
+                                ExpandWar.delete(current);
                             }
+                        } catch (IOException e) {
+                            log.warn(sm.getString
+                                    ("hostConfig.canonicalizing", app.name), e);
                         }
                     }
                     deployed.remove(app.name);
                     return;
                 }
             } else {
+                long lastModified = ((Long) app.redeployResources.get(resources[i])).longValue();
+                if (lastModified == 0L) {
+                    continue;
+                }
                 // Undeploy application
+                if (log.isInfoEnabled())
+                    log.info(sm.getString("hostConfig.undeploy", app.name));
                 ContainerBase context = (ContainerBase) host.findChild(app.name);
                 host.removeChild(context);
                 try {
@@ -1015,7 +1028,7 @@ public class HostConfig
                              ("hostConfig.context.destroy", app.name), e);
                 }
                 // Delete all redeploy resources
-                for (int j = 0; j < resources.length; j++) {
+                for (int j = i + 1; j < resources.length; j++) {
                     try {
                         File current = new File(resources[j]);
                         current = current.getCanonicalFile();
@@ -1277,7 +1290,7 @@ public class HostConfig
     	 * contain resources like the context.xml file, a compressed WAR path.
          * The value is the last modification time.
     	 */
-    	public HashMap redeployResources = new HashMap();
+    	public LinkedHashMap redeployResources = new LinkedHashMap();
 
     	/**
     	 * Any modification of the specified (static) resources will cause a 
