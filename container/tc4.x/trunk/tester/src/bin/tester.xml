@@ -8,6 +8,7 @@
 <!--  <property name="protocol"       value="HTTP/1.0"/> -->
   <property name="protocol"       value=""/> <!-- Use HttpURLConnection -->
   <property name="context.path"   value="/tester"/>
+  <property name="manager.path"   value="/manager"/>
   <taskdef  name="tester"     classname="org.apache.tester.TestClient"/>
 
 
@@ -394,6 +395,13 @@
      joinSession="true"
       outContent="Session02 PASSED"/>
 
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
+
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/Session03" debug="${debug}"
      joinSession="true"
@@ -407,6 +415,13 @@
          request="${context.path}/WrappedSession02" debug="${debug}"
      joinSession="true"
       outContent="Session02 PASSED"/>
+
+    <!-- NOTE: Assign role "manager" to user "tomcat" for this to work -->
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+           debug="${debug}"
+       inHeaders="Authorization:Basic dG9tY2F0OnRvbWNhdA=="
+         request="${manager.path}/reload?path=${context.path}"
+      outContent="OK - Reloaded application at context path ${context.path}"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/WrappedSession03" debug="${debug}"
