@@ -201,7 +201,12 @@ public class TagSupport implements IterationTag, Serializable {
      */
 
     public void release() {
-	parent          = null;
+	parent = null;
+	id = null;
+	if( values != null ) {
+	    values.clear();
+	}
+	values = null;
     }
 
     /**
@@ -299,9 +304,10 @@ public class TagSupport implements IterationTag, Serializable {
     }
 
     /**
-     * Enumerate the values kept by this tag handler.
+     * Enumerate the keys for the values kept by this tag handler.
      *
-     * @return An enumeration of all the values set.
+     * @return An enumeration of all the keys for the values set,
+     *     or null or an empty Enumeration if no values have been set.
      */
 
     public Enumeration getValues() {
