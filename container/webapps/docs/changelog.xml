@@ -19,6 +19,9 @@
     <changelog>
       <update>Updated dependencies on commons-dbcp (to 1.2.1), commons-pool (to 1.2), and commons-logging (to 1.0.4). (yoavs)
       </update>
+      <fix>
+        <bug>29368</bug>: Replaced references to xmlParserAPIs.jar with xml-apis.jar, as the former is now deprecated in Xerces.  Users wishing to use old versions of Xerces that don't have xml-apis.jar can still do so without a problem.  Users wishing to build tomcat using xmlParserAPIs.jar instead of xml-apis.jar can also do so with a trivial edit in the build.xml file.
+      </fix>
     </changelog>
   </subsection>
 
