@@ -1013,6 +1013,12 @@
       <param name="destfile" value="${commons-modeler.jar}"/>
     </antcall>
 
+    <antcall target="cvsbuild">
+      <param name="location" value="${commons-el.cvs.loc}"/>
+      <param name="subdir" value="${commons-el.home}"/>
+      <param name="destfile" value="${commons-el.jar}"/>
+    </antcall>
+
     <antcall target="downloadfile">
       <param name="sourcefile" value="${nsis.loc}"/>
       <param name="destfile" value="${nsis.exe}"/>

@@ -59,7 +59,7 @@ for use by web applications (by placing them in "common/lib" or "shared/lib"):
 * jasper-compiler.jar (Jasper 2 Compiler)
 * jasper-runtime.jar (Jasper 2 Runtime)
 * jsp-api.jar (JSP 2.0 API)
-* jsp20el.jar (JSP 2.0 Expression Language)
+* commons-el.jar (JSP 2.0 Expression Language)
 * naming-common.jar (JNDI Context implementation)
 * naming-factory.jar (JNDI object factories)
 * naming-resources.jar (JNDI DirContext implementations)

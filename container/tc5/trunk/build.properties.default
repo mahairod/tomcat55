@@ -74,6 +74,14 @@ commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 commons-digester.loc=jakarta-commons/digester
 
 
+# ----- Commons Expression Language (EL) -----
+commons-el.home=${base.path}/commons-el
+commons-el.lib=${commons-el.home}
+commons-el.jar=${commons-el.lib}/commons-el.jar
+commons-el.loc=jakarta-commons/el
+commons-el.cvs.loc=jakarta-commons/el
+
+
 # ----- Commons Logging, version 1.0.1 or later -----
 commons-logging.home=${base.path}/commons-logging-1.0.2
 commons-logging.lib=${commons-logging.home}
