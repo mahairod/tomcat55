@@ -114,12 +114,12 @@ public class URLUtil {
             } catch (IOException npe) {
             }
 
-	    resolve = new URL("file", null, fName);
+	    resolve = new URL("file", "", fName);
 	} else {
             String path = System.getProperty("user.dir") +
                 File.separator + s;
 
-	    resolve = new URL("file", null, path);
+	    resolve = new URL("file", "", path);
 	}
 
         if (! resolve.getProtocol().equalsIgnoreCase(

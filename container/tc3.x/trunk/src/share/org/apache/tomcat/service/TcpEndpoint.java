@@ -93,7 +93,7 @@ import java.util.*;
  */
 public class TcpEndpoint  { // implements Endpoint {
 
-    private StringManager sm =StringManager.getManager(Constants.Package);
+    private StringManager sm =StringManager.getManager("org.apache.tomcat.service");
 
     private static final int BACKLOG = 50;
     private static final int TIMEOUT = 1000;
@@ -228,7 +228,7 @@ public class TcpEndpoint  { // implements Endpoint {
 	// XXX reuse, pools, etc
 
 	// XXX set socket options
-	s.setSoLinger( true, 100);
+	// 	s.setSoLinger( true, 100);
 	
 	TcpConnection con=new TcpConnection();
 	con.setEndpoint(this);
@@ -258,6 +258,7 @@ public class TcpEndpoint  { // implements Endpoint {
 	    running = false;
 	    String msg = sm.getString("endpoint.err.fatal",
 				      serverSocket, e);
+	    e.printStackTrace(); // something very wrong happened - better know what
 	    System.err.println(msg);
 	}
     }

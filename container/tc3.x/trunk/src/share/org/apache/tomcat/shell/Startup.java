@@ -117,6 +117,7 @@ public class Startup {
 
 	ServerConfig serverConfig = config.getServerConfig();
 	Registry registry =  createRegistry(serverConfig.getAdminPort());
+
 	Enumeration contextManagers = serverConfig.getContextManagers();
 
 	while (contextManagers.hasMoreElements()) {
@@ -173,8 +174,9 @@ public class Startup {
 		// XXX
 		// instead of HTTPServer it should be EndpointManager,
 		//   ContextManager, Handler, etc
-	        registry.bind(Constants.Registry.Service + ":" +
-		    server.getPort(), new AdminImpl(server));
+	        if( registry != null )
+		    registry.bind(Constants.Registry.Service + ":" +
+				  server.getPort(), new AdminImpl(server));
 
 		// XXX
 		// start/stop individual components
@@ -222,6 +224,8 @@ public class Startup {
         Registry registry = null;
 	int numberAttempts = 0;
 
+	if (port==0) return null;
+			 
 	if (port < 0) {
 	    port = newPort();
 	}
