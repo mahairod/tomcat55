@@ -47,6 +47,7 @@
   <property name="build.home"       value="${tomcat.build}"/>
 
   <property name="tomcat.dist"      value="${basedir}/dist"/>
+  <property name="tomcat.embed"     value="${basedir}/embed"/>
   <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
@@ -576,6 +577,12 @@
     <copy file="./CHANGELOG"
         tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
 
+    <!-- Add XML declarations for admin and manager -->
+    <move file="${tomcat.build}/server/webapps/manager/manager.xml"
+         todir="${tomcat.build}/webapps" />
+    <move file="${tomcat.build}/server/webapps/admin/admin.xml"
+         todir="${tomcat.build}/webapps" />
+
   </target>
 
   <!-- ====================== Embeded target =================== -->
@@ -1097,7 +1104,7 @@
 
 
   <!-- ==================== RELEASE: Create Release ======================= -->
-  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
+  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-src-zip,package-src-tgz"
    description="Create a Tomcat 5 packaged distribution">
 
     <filter token="VERSION" value="${version}"/>
@@ -1150,6 +1157,21 @@
        includes="RUNNING.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="BENCHMARKS.txt" />
+    </zip>
+  </target>
+
+  <target name="package-embed-zip">
+    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-embed.zip">
+      <zipfileset dir="${tomcat.embed}" prefix="${final.name}-embed" 
+                  includes="**" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
+       includes="LICENSE" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
+       includes="README.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
+       includes="RELEASE-NOTES" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
+       includes="CHANGELOG" />
     </zip>
   </target>
 
@@ -1213,6 +1235,24 @@
         <exclude name="bin/shutdown.sh" />
         <exclude name="bin/tool-wrapper.sh" />
         <exclude name="src/**" />
+      </tarfileset>
+    </tar>
+  </target>
+
+  <target name="package-embed-tgz">
+    <fixcrlf srcdir="${tomcat.dist}" 
+     includes="*.txt,LICENSE" eol="lf"/>
+    <fixcrlf srcdir="${tomcat.embed}" includes="*.xml" eol="lf"/>
+    <tar longfile="gnu" compression="gzip"
+          tarfile="${tomcat.release}/v${version}/bin/${final.name}-embed.tar.gz">
+      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-embed">
+        <include name="LICENSE" />
+        <include name="README.txt" />
+        <include name="RELEASE-NOTES" />
+        <include name="CHANGELOG" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.embed}" prefix="${final.name}-embed">
+        <include name="**" />
       </tarfileset>
     </tar>
   </target>
