@@ -663,20 +663,25 @@ public class PageContextImpl extends PageContext implements VariableResolver {
             request.removeAttribute("javax.servlet.jsp.jspException");
 
 	} else {
+
             // Otherwise throw the exception wrapped inside a ServletException.
 	    // Set the exception as the root cause in the ServletException
 	    // to get a stack trace for the real problem
 	    if (t instanceof IOException) throw (IOException)t;
 	    if (t instanceof ServletException) throw (ServletException)t;
             if (t instanceof RuntimeException) throw (RuntimeException)t;
+
+	    Throwable rootCause = null;
             if (t instanceof JspException) {
-                Throwable rootCause = ((JspException)t).getRootCause();
-                if (rootCause != null) {
-                    throw new ServletException(t.getMessage(), rootCause);
-                } else {
-                    throw new ServletException(t);
-                }
-            }
+                rootCause = ((JspException) t).getRootCause();
+	    } else if (t instanceof ELException) {
+		rootCause = ((ELException) t).getRootCause();
+	    }
+
+	    if (rootCause != null) {
+		throw new ServletException(t.getMessage(), rootCause);
+	    }
+             
 	    throw new ServletException(t);
 	}
     }
