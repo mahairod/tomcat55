@@ -165,6 +165,7 @@ class Generator {
 
 	    public void visit(Node.Declaration n) throws JasperException {
 		out.printMultiLn(new String(n.getText()));
+		out.println();
 	    }
 	}
 
