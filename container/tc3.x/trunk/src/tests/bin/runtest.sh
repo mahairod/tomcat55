@@ -3,9 +3,14 @@
 # $Id$
 
 # Shell script to run test harness
- 
+
+if [ "$1" = "" ] ; then
+   port=8080
+else 
+   port=$1
+fi
+
 host=localhost
-port=8080
 test=testlist.txt
 
 cp=$CLASSPATH
