@@ -63,6 +63,8 @@
 #ifndef JK_GLOBAL_H
 #define JK_GLOBAL_H
 
+#include "jk_version.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
