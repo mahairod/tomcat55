@@ -181,7 +181,7 @@ public class SSLSocketFactory
 
 	    return;
 	} catch(Exception e) {
-	    e.printStackTrace();
+	    //	    e.printStackTrace();
 	    if( e instanceof IOException )
 		throw (IOException)e;
 	    throw new IOException(e.getMessage());
@@ -214,7 +214,7 @@ public class SSLSocketFactory
 	    kstore.load(istream, keyPass.toCharArray());
 	    return kstore;
 	} catch(Exception ex) {
-	    ex.printStackTrace();
+	    //	    ex.printStackTrace();
 	    throw new IOException( "Can't load server certificate" );
 	}
     }
