@@ -509,10 +509,16 @@ public class HostConfig
                 log.debug(sm.getString("hostConfig.deployDescriptor", files[i]));
                 try {
                     if (host.findChild(contextPath) != null) {
-                        // If this is a newly added context file and 
-                        // it overrides a context with a simple path, 
-                        // undeploy the context
-                        ((Deployer) host).remove(contextPath);
+                        if ((deployed.contains(file))
+                            || (deployed.contains(file + ".war"))) {
+                            // If this is a newly added context file and 
+                            // it overrides a context with a simple path, 
+                            // that was previously deployed by the auto
+                            // deployer, undeploy the context
+                            ((Deployer) host).remove(contextPath);
+                        } else {
+                            continue;
+                        }
                     }
                     URL config =
                         new URL("file", null, dir.getCanonicalPath());
