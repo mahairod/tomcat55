@@ -1040,13 +1040,13 @@ public abstract class RealmBase
     protected boolean initialized=false;
     
     public void init() {
-        if( initialized ) return;
+        if( initialized && container != null ) return;
         
         initialized=true;
         if( container== null ) {
+            ObjectName parent=null;
             // Register with the parent
             try {
-                ObjectName parent=null;
                 if( host == null ) {
                     // global
                     parent=new ObjectName(domain +":type=Engine");
@@ -1055,13 +1055,15 @@ public abstract class RealmBase
                             ":type=Host,host=" + host);
                 } else {
                     parent=new ObjectName(domain +":j2eeType=WebModule,name=//" +
-                            host + "/" + path);
+                            host + path);
                 }
-                log.info("Register with " + parent);
-                mserver.invoke(parent, "setRealm", new Object[] {this},
-                        new String[] {"org.apache.catalina.Realm"});
+                if( mserver.isRegistered(parent ))  {
+                    log.info("Register with " + parent);
+                    mserver.invoke(parent, "setRealm", new Object[] {this},
+                            new String[] {"org.apache.catalina.Realm"});
+                }
             } catch (Exception e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                log.info("Parent not available yet: " + parent);  
             }
         }
         
@@ -1073,7 +1075,7 @@ public abstract class RealmBase
                 Registry.getRegistry().registerComponent(this, oname, null );
                 log.info("Register Realm "+oname);
             } catch (Throwable e) {
-                e.printStackTrace();  //To change body of catch statement use Options | File Templates.
+                log.error( "Can't register " + oname, e);
             }
         }
 
