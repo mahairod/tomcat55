@@ -234,6 +234,12 @@ elif [ "$1" = "start" ] ; then
 elif [ "$1" = "stop" ] ; then
 
   shift
+  FORCE=0
+  if [ "$1" = "-force" ]; then
+    shift
+    FORCE=1
+  fi
+
   "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
     -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
     -Dcatalina.base="$CATALINA_BASE" \
@@ -241,8 +247,7 @@ elif [ "$1" = "stop" ] ; then
     -Djava.io.tmpdir="$CATALINA_TMPDIR" \
     org.apache.catalina.startup.Bootstrap "$@" stop
 
-  if [ "$1" = "-force" ] ; then
-    shift
+  if [ $FORCE -eq 1 ]; then
     if [ ! -z "$CATALINA_PID" ]; then
        echo "Killing: `cat $CATALINA_PID`"
        kill -9 `cat $CATALINA_PID`
@@ -266,6 +271,7 @@ else
   echo "  start             Start Catalina in a separate window"
   echo "  start -security   Start in a separate window with security manager"
   echo "  stop              Stop Catalina"
+  echo "  stop -force       Stop Catalina (followed by kill -KILL)"
   exit 1
 
 fi
