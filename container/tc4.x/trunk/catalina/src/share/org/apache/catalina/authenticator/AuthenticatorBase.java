@@ -965,14 +965,6 @@ public abstract class AuthenticatorBase
         // Cache the authentication information in our request
         request.setAuthType(authType);
         request.setUserPrincipal(principal);
-        if (username != null)
-            request.setNote(Constants.REQ_USERNAME_NOTE, username);
-        else
-            request.removeNote(Constants.REQ_USERNAME_NOTE);
-        if (password != null)
-            request.setNote(Constants.REQ_PASSWORD_NOTE, password);
-        else
-            request.removeNote(Constants.REQ_PASSWORD_NOTE);
 
         // Cache the authentication information in our session, if any
         if (cache) {

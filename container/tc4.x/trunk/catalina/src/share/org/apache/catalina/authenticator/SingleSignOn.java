@@ -381,14 +381,6 @@ public class SingleSignOn
             request.setNote(Constants.REQ_SSOID_NOTE, cookie.getValue());
             ((HttpRequest) request).setAuthType(entry.authType);
             ((HttpRequest) request).setUserPrincipal(entry.principal);
-            if (entry.username != null)
-                request.setNote(Constants.REQ_USERNAME_NOTE, entry.username);
-            else
-                request.removeNote(Constants.REQ_USERNAME_NOTE);
-            if (entry.password != null)
-                request.setNote(Constants.REQ_PASSWORD_NOTE, entry.password);
-            else
-                request.removeNote(Constants.REQ_PASSWORD_NOTE);
         } else {
             if (debug >= 1)
                 log(" No cached principal found, erasing SSO cookie");
