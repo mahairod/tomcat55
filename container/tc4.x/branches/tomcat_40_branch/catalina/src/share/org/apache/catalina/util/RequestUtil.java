@@ -296,8 +296,8 @@ public final class RequestUtil {
             try {
                 int equals = token.indexOf('=');
                 if (equals > 0) {
-                    String name = URLDecode(token.substring(0, equals).trim());
-                    String value = URLDecode(token.substring(equals+1).trim());
+                    String name = token.substring(0, equals).trim();
+                    String value = token.substring(equals+1).trim();
                     cookies.add(new Cookie(name, value));
                 }
             } catch (Throwable e) {
