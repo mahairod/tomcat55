@@ -28,6 +28,8 @@ Bug No.  Description
          Bug fixed in SimpleSessionStore in session attribute reloading during
          context reloads.
 
+8092	 Fixed JSP source exposure proplem.
+
 Jasper:
 
 Bug No.  Description
