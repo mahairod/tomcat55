@@ -97,6 +97,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -515,6 +516,11 @@ public class DefaultServlet
         if (debug > 999)
             showRequestInfo(request);
 
+        // Verify that we were not accessed using the invoker servlet
+        if (request.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                (sm.getString("defaultServlet.cannotInvoke"));
+
         // Serve the requested resource, including the data content
         serveResource(request, response, true);
 
@@ -534,6 +540,11 @@ public class DefaultServlet
                           HttpServletResponse response)
         throws IOException, ServletException {
 
+        // Verify that we were not accessed using the invoker servlet
+        if (request.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                (sm.getString("defaultServlet.cannotInvoke"));
+
         // Serve the requested resource, without the data content
         serveResource(request, response, false);
 
@@ -552,7 +563,14 @@ public class DefaultServlet
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
         throws IOException, ServletException {
+
+        // Verify that we were not accessed using the invoker servlet
+        if (request.getAttribute(Globals.INVOKED_ATTR) != null)
+            throw new UnavailableException
+                (sm.getString("defaultServlet.cannotInvoke"));
+
         doGet(request, response);
+
     }
 
 
