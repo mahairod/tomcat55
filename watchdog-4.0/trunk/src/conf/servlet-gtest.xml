@@ -566,8 +566,7 @@
 
       <gtest request="GET /servlet-tests/SetLocaleTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  expectHeaders="Content-Language:en-US" />
-
-
+ 
   <!-- javax_servlet_UnavailableException tests -->
 
       <gtest request="GET /servlet-tests/GetUnavailableSecondsTest HTTP/1.0"
@@ -943,6 +942,184 @@
            debug="0" host="${host}" port="${port}"  
            returnCode="200" />
 
+<!-- javax_servlet_http_HttpServletResponseWrapper tests -->
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperConstructorTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html"
+        testName="HttpServletResponseWrapperConstructorTest"
+        assertion="Construct a request object wrapping the given request.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who constructs a Wrapper object from the response object"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addCookie|Set-Cookie:BestLanguage=Java"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTest.html"
+        testName="HttpServletResponseWrapperAddCookieTest"
+        assertion="Test for default behavior of this method is to call addCookie(Cookie cookie) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addCookie method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addDateHeader|MyDateHeader:Mon, 12 Jan 1970 10:20:54 GMT"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTest.html"
+        testName="HttpServletResponseWrapperAddDateHeaderTest"
+        assertion="Test for default behavior of this method is to call addDateHeader(String long) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addDateHeader method."
+     />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|MyStrHeader:Java|MyStrHeader:Java2|MyStrHeader2:Java3"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTest.html"
+        testName="HttpServletResponseWrapperAddHeaderTest"
+        assertion="Test for default behavior of this method is to return addHeader(String name, String value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addIntHeader|MyIntHeader:2"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTest.html"
+        testName="HttpServletResponseWrapperAddIntHeaderTest"
+        assertion="Test for default behavior of this method is to call addIntHeader(String name, int value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addIntHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setHeader|GenericResponseWrapper:containsHeader|MyStrHeader:HttpServletResponseWrapperContainsHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTest.html"
+        testName="HttpServletResponseWrapperContainsHeaderTest"
+        assertion="Test for default behavior of this method is to call containsHeader(String name) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses containsHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:encodeURL"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTest.html"
+        testName="HttpServletResponseWrapperEncodeURLTest"
+        assertion="Test for default behavior of this method is to call encodeURL(String url) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeURL method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:encodeRedirectURL"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTest.html"
+        testName="HttpServletResponseWrapperRedirectEncodeURLTest"
+        assertion="Test for default behavior of this method is to return encodeRedirectURL(String url) on the wrapped response object.  Java Servlet Pages Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeRedirectURL method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:sendError"
+        testName="HttpServletResponseWrapperSendErrorTest"
+        assertion="Test for default behavior of this method is to call sendError(int sc) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:sendErrorMsg"
+        testName="HttpServletResponseWrapperSendErrorMsgTest"
+        assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendErrorMsgIgnoreHeader"
+        returnCode="100"
+        testName="HttpServletResponseWrapperSendErrorMsgIngoreHeaderTest"
+        assertion="Headers added after a call to sendError(int,String), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 Sec 5.2"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendErrorIgnoreHeader"
+        returnCode="100"
+        testName="HttpServletResponseWrapperSendErrorIngoreHeaderTest"
+        assertion="Headers added after a call to sendError(int), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="Location: http://${host}:${port}/HttpServletResponseWrapperRedirectedTest"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectTest"
+        assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the server root.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendRedirectIgnoreHeader"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest"
+        assertion="Headers added after a call to sendRedirect(), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2."
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendRedirect() and then add a header.  The header should not be visible to the client"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="Location: http://${host}:${port}/servlet-tests/HttpServletResponseWrapperRedirectedTest"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectForWebAppTest"
+        assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setDateHeader|DateInfo:Sat, 25 Apr 1970 07:29:03 GMT"
+        testName="HttpServletResponseWrapperSetDateHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTest.html"
+        assertion="Test for default behavior of this method is to call setDateHeader(String, long) on the wrapped response object. Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setDateHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:setHeader|MyStrHeader:Java"
+        testName="HttpServletResponseWrapperSetHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTest.html"
+        assertion="Test for default behavior of this method is to return setHeader(String, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addIntHeader|GenericResponseWrapper:setIntHeader|MyIntHeader:2"
+        testName="HttpServletResponseWrapperSetHeaderIntTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTest.html"
+        assertion="Test for default behavior of this method is to call setIntHeader(String, int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setIntHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setStatusMsg"
+        returnCode="200"
+        testName="HttpServletResponseWrapperSetStatusMsgTest"
+        assertion="Test for default behavior of this method is to call setStatus(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setStatus"
+        returnCode="200"
+        testName="HttpServletResponseWrapperSetStatusTest"
+        assertion="Test for default behavior of this method is to call setStatus(int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method."
+    />
 
 <!-- javax_servlet_http_HttpSession tests -->
 
@@ -1436,6 +1613,223 @@
            goldenFile="${wgdir}/javax_servlet/FilterConfig/FilterChainTest.html"
            assertion="The next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked.  Java Servlet Specification v2.3, Sec. 14"
            testStrategy="Access the servlet.  Both configured filters for that servlet should be invoked"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperConstructorTest">
+	    <gtest request="GET /servlet-tests/HttpServletResponseWrapperConstructorTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html"
+            testName="HttpServletResponseWrapperConstructorTest"
+            assertion="Construct a request object wrapping the given request.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who constructs a Wrapper object from the response object"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddCookieTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addCookie|Set-Cookie:BestLanguage=Java"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTest.html"
+            testName="HttpServletResponseWrapperAddCookieTest"
+            assertion="Test for default behavior of this method is to call addCookie(Cookie cookie) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addCookie method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddDateHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addDateHeader|MyDateHeader:Mon, 12 Jan 1970 10:20:54 GMT"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTest.html"
+            testName="HttpServletResponseWrapperAddDateHeaderTest"
+            assertion="Test for default behavior of this method is to call addDateHeader(String long) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addDateHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|MyStrHeader:Java|MyStrHeader:Java2|MyStrHeader2:Java3"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTest.html"
+            testName="HttpServletResponseWrapperAddHeaderTest"
+            assertion="Test for default behavior of this method is to return addHeader(String name, String value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddIntHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addIntHeader|MyIntHeader:2"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTest.html"
+            testName="HttpServletResponseWrapperAddIntHeaderTest"
+            assertion="Test for default behavior of this method is to call addIntHeader(String name, int value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addIntHeader method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperContainsHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setHeader|GenericResponseWrapper:containsHeader|MyStrHeader:HttpServletResponseWrapperContainsHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTest.html"
+            testName="HttpServletResponseWrapperContainsHeaderTest"
+            assertion="Test for default behavior of this method is to call containsHeader(String name) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses containsHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperEncodeURLTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:encodeURL"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTest.html"
+            testName="HttpServletResponseWrapperEncodeURLTest"
+            assertion="Test for default behavior of this method is to call encodeURL(String url) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeURL method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperEncodeRedirectURLTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:encodeRedirectURL"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTest.html"
+            testName="HttpServletResponseWrapperRedirectEncodeURLTest"
+            assertion="Test for default behavior of this method is to return encodeRedirectURL(String url) on the wrapped response object.  Java Servlet Pages Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeRedirectURL method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:sendError"
+            testName="HttpServletResponseWrapperSendErrorTest"
+            assertion="Test for default behavior of this method is to call sendError(int sc) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorMsgTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:sendErrorMsg"
+            testName="HttpServletResponseWrapperSendErrorMsgTest"
+            assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendErrorMsgIgnoreHeader"
+            returnCode="100"
+            testName="HttpServletResponseWrapperSendErrorMsgIngoreHeaderTest"
+            assertion="Headers added after a call to sendError(int,String), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 Sec 5.2"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorIgnoreHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendErrorIgnoreHeader"
+            returnCode="100"
+            testName="HttpServletResponseWrapperSendErrorIngoreHeaderTest"
+            assertion="Headers added after a call to sendError(int), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="Location: http://${host}:${port}/HttpServletResponseWrapperRedirectedTest"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectTest"
+            assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the server root.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectIgnoreHeader">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendRedirectIgnoreHeader"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest"
+            assertion="Headers added after a call to sendRedirect(), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2."
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendRedirect() and then add a header.  The header should not be visible to the client"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectForWebAppTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="Location: http://${host}:${port}/servlet-tests/HttpServletResponseWrapperRedirectedTest"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectForWebAppTest"
+            assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperSetDateHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setDateHeader|DateInfo:Sat, 25 Apr 1970 07:29:03 GMT"
+            testName="HttpServletResponseWrapperSetDateHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTest.html"
+            assertion="Test for default behavior of this method is to call setDateHeader(String, long) on the wrapped response object. Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setDateHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:setHeader|MyStrHeader:Java"
+            testName="HttpServletResponseWrapperSetHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTest.html"
+            assertion="Test for default behavior of this method is to return setHeader(String, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetIntHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addIntHeader|GenericResponseWrapper:setIntHeader|MyIntHeader:2"
+            testName="HttpServletResponseWrapperSetHeaderIntTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTest.html"
+            assertion="Test for default behavior of this method is to call setIntHeader(String, int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setIntHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetStatusMsgTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setStatusMsg"
+            returnCode="200"
+            testName="HttpServletResponseWrapperSetStatusMsgTest"
+            assertion="Test for default behavior of this method is to call setStatus(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetStatusTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setStatus"
+            returnCode="200"
+            testName="HttpServletResponseWrapperSetStatusTest"
+            assertion="Test for default behavior of this method is to call setStatus(int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method."
         />
     </target>
 
