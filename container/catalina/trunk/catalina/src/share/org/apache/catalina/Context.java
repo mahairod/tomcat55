@@ -18,6 +18,8 @@
 package org.apache.catalina;
 
 
+import java.io.File;
+
 import javax.servlet.ServletContext;
 
 import org.apache.tomcat.util.http.mapper.Mapper;

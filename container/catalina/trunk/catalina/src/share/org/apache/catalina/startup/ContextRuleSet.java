@@ -49,6 +49,12 @@ public class ContextRuleSet extends RuleSetBase {
     protected String prefix = null;
 
 
+    /**
+     * Should the context be created.
+     */
+    protected boolean create = true;
+
+
     // ------------------------------------------------------------ Constructor
 
 
@@ -79,6 +85,23 @@ public class ContextRuleSet extends RuleSetBase {
     }
 
 
+    /**
+     * Construct an instance of this <code>RuleSet</code> with the specified
+     * matching pattern prefix.
+     *
+     * @param prefix Prefix for matching pattern rules (including the
+     *  trailing slash character)
+     */
+    public ContextRuleSet(String prefix, boolean create) {
+
+        super();
+        this.namespaceURI = null;
+        this.prefix = prefix;
+        this.create = create;
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -93,27 +116,30 @@ public class ContextRuleSet extends RuleSetBase {
      */
     public void addRuleInstances(Digester digester) {
 
-        if (!isDefaultContext()) {
-            digester.addObjectCreate(prefix + "Context",
-                                     "org.apache.catalina.core.StandardContext",
-                                     "className");
-        } else {
-            digester.addObjectCreate(prefix + "Context",
-                                     "org.apache.catalina.core.StandardDefaultContext",
-                                     "className");
+        if (create) {
+            if (!isDefaultContext()) {
+                digester.addObjectCreate(prefix + "Context",
+                        "org.apache.catalina.core.StandardContext",
+                "className");
+            } else {
+                digester.addObjectCreate(prefix + "Context",
+                        "org.apache.catalina.core.StandardDefaultContext",
+                "className");
+            }
         }
         digester.addSetProperties(prefix + "Context");
         if (!isDefaultContext()) {
             digester.addRule(prefix + "Context",
                              new CopyParentClassLoaderRule());
+            if (create) {
             digester.addRule(prefix + "Context",
                              new LifecycleListenerRule
                                  ("org.apache.catalina.startup.ContextConfig",
                                   "configClass"));
-            digester.addRule(prefix + "Context", new SetDocBaseRule());
             digester.addSetNext(prefix + "Context",
                                 "addChild",
                                 "org.apache.catalina.Container");
+            }
         } else {
             digester.addSetNext(prefix + "Context",
                                 "addDefaultContext",

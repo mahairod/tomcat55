@@ -4064,6 +4064,7 @@ public class StandardContext
         boolean ok = true;
 
         // Set config file name
+        /*
         File configBase = getConfigBase();
         if ((configBase != null) && saveConfig) {
             if (getConfigFile() == null) {
@@ -4103,6 +4104,7 @@ public class StandardContext
                 }
             }
         }
+        */
 
         // Install DefaultContext configuration
         if (!getOverride()) {
@@ -4589,6 +4591,9 @@ public class StandardContext
         } 
         super.destroy();
 
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(DESTROY_EVENT, null);
+
         instanceListeners = new String[0];
         applicationListeners = new String[0];
     }
@@ -4843,7 +4848,7 @@ public class StandardContext
     /**
      * Get config base.
      */
-    private File getConfigBase() {
+    public File getConfigBase() {
         File configBase = 
             new File(System.getProperty("catalina.base"), "conf");
         if (!configBase.exists()) {
@@ -5457,6 +5462,9 @@ public class StandardContext
         }
         super.init();
         
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(INIT_EVENT, null);
+
         // Send j2ee.state.starting notification 
         if (this.getObjectName() != null) {
             Notification notification = new Notification("j2ee.state.starting", 

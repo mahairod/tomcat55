@@ -99,6 +99,22 @@ public interface Host extends Container {
 
 
     /**
+     * Return the Java class name of the context configuration class
+     * for new web applications.
+     */
+    public String getConfigClass();
+
+    
+    /**
+     * Set the Java class name of the context configuration class
+     * for new web applications.
+     *
+     * @param configClass The new context configuration class
+     */
+    public void setConfigClass(String configClass);
+
+        
+        /**
      * Set the DefaultContext
      * for new web applications.
      *

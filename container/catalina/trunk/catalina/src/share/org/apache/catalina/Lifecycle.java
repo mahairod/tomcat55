@@ -35,6 +35,12 @@ public interface Lifecycle {
 
 
     /**
+     * The LifecycleEvent type for the "component init" event.
+     */
+    public static final String INIT_EVENT = "init";
+
+
+    /**
      * The LifecycleEvent type for the "component start" event.
      */
     public static final String START_EVENT = "start";
@@ -68,6 +74,12 @@ public interface Lifecycle {
      * The LifecycleEvent type for the "component after stop" event.
      */
     public static final String AFTER_STOP_EVENT = "after_stop";
+
+
+    /**
+     * The LifecycleEvent type for the "component destroy" event.
+     */
+    public static final String DESTROY_EVENT = "destroy";
 
 
     // --------------------------------------------------------- Public Methods
