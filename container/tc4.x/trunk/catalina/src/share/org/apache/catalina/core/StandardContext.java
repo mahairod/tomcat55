@@ -42,6 +42,7 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Globals;
 import org.apache.catalina.InstanceListener;
@@ -53,6 +54,7 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Mapper;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
@@ -3943,25 +3945,37 @@ public class StandardContext
      * Get naming context full name.
      */
     private String getNamingContextName() {
-	if (namingContextName == null) {
-	    Container parent = getParent();
-	    if (parent == null) {
-		namingContextName = getName();
-	    } else {
-		Stack stk = new Stack();
-		StringBuffer buff = new StringBuffer();
-		while (parent != null) {
-		    stk.push(parent.getName());
-		    parent = parent.getParent();
-		}
-		while (!stk.empty()) {
-		    buff.append("/" + stk.pop());
-		}
-		buff.append(getName());
-		namingContextName = buff.toString();
-	    }
-	}
-	return namingContextName;
+        if (namingContextName == null) {
+            Container parent = getParent();
+            if (parent == null) {
+                namingContextName = getName();
+            } else {
+                Stack stk = new Stack();
+                StringBuffer buff = new StringBuffer();
+                while (parent != null) {
+                    // Use service name rather than engine name to guarantee
+                    // uniqueness - fixes bug 25508
+                    if (parent instanceof Engine) {
+                        Service service = ((Engine) parent).getService(); 
+                        if (service == null) {
+                            // use engine name anyway
+                            stk.push(parent.getName());
+                        } else {
+                            stk.push(service.getName());
+                        }
+                    } else {
+                        stk.push(parent.getName());
+                    }
+                    parent = parent.getParent();
+                }
+                while (!stk.empty()) {
+                    buff.append("/" + stk.pop());
+                }
+                buff.append(getName());
+                namingContextName = buff.toString();
+            }
+        }
+        return namingContextName;
     }
 
 
