@@ -730,11 +730,12 @@ public class StandardClassLoader
                     try {
                         URLConnection classUrlConnection =
                             classUrl.openConnection();
-                        log("    Caching from '" + classUrl.toString() +
-                            "' modified '" +
-                            (new java.sql.Timestamp
-                                (classUrlConnection.getLastModified())) +
-                            "'");
+                        if (debug >= 4)
+                            log("    Caching from '" + classUrl.toString() +
+                                "' modified '" +
+                                (new java.sql.Timestamp
+                                    (classUrlConnection.getLastModified())) +
+                                "'");
                         classCache.put(name, new ClassCacheEntry
                             (clazz, classUrl, 
                              classUrlConnection.getLastModified()));
