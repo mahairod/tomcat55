@@ -287,9 +287,14 @@ public class JspParseEventListener extends BaseJspListener {
         writer.println("}");
         
 	writer.println("_jspxFactory = JspFactory.getDefaultFactory();");
-	writer.println("response.setContentType("
-				+ writer.quoteString(servletContentType)
-				+ ");");
+	if (this.contentTypeDir == true)
+	    writer.println("response.setContentType(" +
+			   writer.quoteString(servletContentType) +
+			   ");");
+	else
+	    writer.println("response.setContentType(\"" + 
+			   servletContentType +
+			   ";charset=8859_1\");");
 	writer.println("pageContext = _jspxFactory.getPageContext(this, request, response,\n"
 					+ "\t\t\t"
 					+ writer.quoteString(error) + ", "
