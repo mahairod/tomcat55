@@ -77,8 +77,6 @@ public class MBeanUtils {
           "Ajp13Connector" },
         { "org.apache.coyote.tomcat4.Ajp13Connector",
           "CoyoteConnector" },
-        { "org.apache.catalina.core.StandardDefaultContext",
-          "DefaultContext" },
         { "org.apache.catalina.users.JDBCGroup",
           "Group" },
         { "org.apache.catalina.users.JDBCRole",
@@ -287,42 +285,7 @@ public class MBeanUtils {
         return (mbean);
 
     }    
-    
-    
-    /**
-     * Create, register, and return an MBean for this
-     * <code>DefaultContext</code> object.
-     *
-     * @param context The DefaultContext to be managed
-     *
-     * @exception Exception if an MBean cannot be created or registered
-     */
-    // FIXME
-    /*
-    static ModelMBean createMBean(DefaultContext context)
-        throws Exception {
-
-        String mname = createManagedName(context);
-        ManagedBean managed = registry.findManagedBean(mname);
-        if (managed == null) {
-            Exception e = new Exception("ManagedBean is not found with "+mname);
-            throw new MBeanException(e);
-        }
-        String domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ModelMBean mbean = managed.createMBean(context);
-        ObjectName oname = createObjectName(domain, context);
-        if( mserver.isRegistered( oname ))  {
-            mserver.unregisterMBean(oname);
-        }
-        mserver.registerMBean(mbean, oname);
-        return (mbean);
-
-    }
-    */
-
-
+ 
     /**
      * Create, register, and return an MBean for this
      * <code>Engine</code> object.
@@ -859,22 +822,7 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",name=" + environment.getName());
-        }/* else if (container instanceof DefaultContext) {
-            container = ((DefaultContext)container).getParent();
-            if (container instanceof Host) {
-                Host host = (Host) container;
-                Service service = ((Engine)host.getParent()).getService();
-                name = new ObjectName(domain + ":type=Environment" + 
-                        ",resourcetype=HostDefaultContext,host=" + host.getName() +
-                        ",name=" + environment.getName());
-            } else if (container instanceof Engine) {
-                Engine engine = (Engine) container;
-                Service service = engine.getService();
-                name = new ObjectName(domain + ":type=Environment" + 
-                        ",resourcetype=ServiceDefaultContext,name=" + environment.getName());
-            }
-        }*/
-        
+        }        
         return (name);
 
     }
@@ -913,23 +861,7 @@ public class MBeanUtils {
                         ",host=" + host.getName() +
                         ",class=" + resource.getType() +
                         ",name=" + quotedResourceName);
-        }/* else if (container instanceof DefaultContext) {            
-            container = ((DefaultContext)container).getParent();
-            if (container instanceof Host) {
-                Host host = (Host) container;
-                Service service = ((Engine)host.getParent()).getService();
-                name = new ObjectName(domain + ":type=Resource" + 
-                        ",resourcetype=HostDefaultContext,host=" + host.getName() +
-                        ",class=" + resource.getType() +
-                        ",name=" + quotedResourceName);
-            } else if (container instanceof Engine) {
-                Engine engine = (Engine) container;
-                Service service = engine.getService();
-                name = new ObjectName(domain + ":type=Resource" + 
-                        ",resourcetype=ServiceDefaultContext,class=" + resource.getType() +
-                        ",name=" + quotedResourceName);
-            }
-        }*/
+        }
         
         return (name);
 
@@ -969,59 +901,14 @@ public class MBeanUtils {
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName() +
                         ",name=" + quotedResourceLinkName);
-        }/* else if (container instanceof DefaultContext) {            
-            container = ((DefaultContext)container).getParent();
-            if (container instanceof Host) {
-                Host host = (Host) container;
-                Service service = ((Engine)host.getParent()).getService();
-                name = new ObjectName(domain + ":type=ResourceLink" + 
-                        ",resourcetype=HostDefaultContext,host=" + host.getName() +
-                        ",name=" + quotedResourceLinkName);
-            } else if (container instanceof Engine) {
-                Engine engine = (Engine) container;
-                Service service = engine.getService();
-                name = new ObjectName(domain + ":type=ResourceLink" + 
-                        ",resourcetype=ServiceDefaultContext,name=" + quotedResourceLinkName);
-            }
-        }*/
+        }
         
         return (name);
 
     }
     
     
-    /**
-     * Create an <code>ObjectName</code> for this
-     * <code>DefaultContext</code> object.
-     *
-     * @param domain Domain in which this name is to be created
-     * @param context The DefaultContext to be named
-     *
-     * @exception MalformedObjectNameException if a name cannot be created
-     */
-    /*
-    static ObjectName createObjectName(String domain,
-                                              DefaultContext context)
-        throws MalformedObjectNameException {
-
-        ObjectName name = null;
-        Container container = context.getParent();
-        if (container instanceof Host) {
-            Host host = (Host) container;
-            Service service = ((Engine)host.getParent()).getService();
-            name = new ObjectName(domain + ":type=DefaultContext,host=" +
-                              host.getName());
-        } else if (container instanceof Engine) {
-            Engine engine = (Engine) container;
-            Service service = engine.getService();
-            name = new ObjectName(domain + ":type=DefaultContext");
-        }
-
-        return (name);
-
-    }
-    */
-
+ 
     /**
      * Create an <code>ObjectName</code> for this
      * <code>Engine</code> object.
@@ -1121,22 +1008,7 @@ public class MBeanUtils {
             Service service = engine.getService();
             name = new ObjectName(domain + ":type=Loader,path=" + path +
                               ",host=" + host.getName());
-        }/* else if (container == null) {
-            // What is that ???
-            DefaultContext defaultContext = loader.getDefaultContext();
-            if (defaultContext != null) {
-                Container parent = defaultContext.getParent();
-                if (parent instanceof Engine) {
-                    Service service = ((Engine)parent).getService();
-                    name = new ObjectName(domain + ":type=DefaultLoader");
-                } else if (parent instanceof Host) {
-                    Engine engine = (Engine) parent.getParent();
-                    Service service = engine.getService();
-                    name = new ObjectName(domain + ":type=DefaultLoader,host=" +
-                            parent.getName());
-                }
-            }
-        }*/
+        }
 
         return (name);
 
@@ -1177,21 +1049,7 @@ public class MBeanUtils {
             Service service = engine.getService();
             name = new ObjectName(domain + ":type=Manager,path=" + path +
                               ",host=" + host.getName());
-        }/* else if (container == null) {
-            DefaultContext defaultContext = manager.getDefaultContext();
-            if (defaultContext != null) {
-                Container parent = defaultContext.getParent();
-                if (parent instanceof Engine) {
-                    Service service = ((Engine)parent).getService();
-                    name = new ObjectName(domain + ":type=DefaultManager");
-                } else if (parent instanceof Host) {
-                    Engine engine = (Engine) parent.getParent();
-                    Service service = engine.getService();
-                    name = new ObjectName(domain + ":type=DefaultManager,host=" +
-                            parent.getName());
-                }
-            }
-        }*/
+        }
 
         return (name);
 
@@ -1226,20 +1084,7 @@ public class MBeanUtils {
             name = new ObjectName(domain + ":type=NamingResources" + 
                         ",resourcetype=Context,path=" + path + 
                         ",host=" + host.getName());
-        }/* else if (container instanceof DefaultContext) {
-            container = ((DefaultContext)container).getParent();
-            if (container instanceof Host) {
-                Host host = (Host) container;
-                Service service = ((Engine)host.getParent()).getService();
-                name = new ObjectName(domain + ":type=NamingResources" + 
-                        ",resourcetype=HostDefaultContext,host=" + host.getName());
-            } else if (container instanceof Engine) {
-                Engine engine = (Engine) container;
-                Service service = engine.getService();
-                name = new ObjectName(domain + ":type=NamingResources" + 
-                        ",resourcetype=ServiceDefaultContext");
-            }
-        }*/
+        }
         
         return (name);
 
@@ -1680,35 +1525,6 @@ public class MBeanUtils {
 
     }   
     
-    
-    /**
-     * Deregister the MBean for this
-     * <code>DefaultContext</code> object.
-     *
-     * @param context The DefaultContext to be managed
-     *
-     * @exception Exception if an MBean cannot be deregistered
-     */
-    /*
-    static void destroyMBean(DefaultContext context)
-        throws Exception {
-
-        String mname = createManagedName(context);
-        ManagedBean managed = registry.findManagedBean(mname);
-        if (managed == null) {
-            return;
-        }
-        String domain = managed.getDomain();
-        if (domain == null)
-            domain = mserver.getDefaultDomain();
-        ObjectName oname = createObjectName(domain, context);
-        if( mserver.isRegistered(oname) )
-            mserver.unregisterMBean(oname);
-
-    }
-    */
-
-
     /**
      * Deregister the MBean for this
      * <code>Engine</code> object.
