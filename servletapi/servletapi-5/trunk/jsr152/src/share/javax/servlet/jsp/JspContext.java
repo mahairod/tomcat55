@@ -120,7 +120,7 @@ public abstract class JspContext {
      * Register the name and value specified with page scope semantics.
      * If the value passed in is <code>null</code>, this has the same 
      * effect as calling 
-     * <code>removeAttribute( name, JspContext.PAGE_SCOPE )</code>.
+     * <code>removeAttribute( name, PageContext.PAGE_SCOPE )</code>.
      *
      * @param name the name of the attribute to set
      * @param value the value to associate with the name, or null if the
@@ -143,7 +143,10 @@ public abstract class JspContext {
      * 
      * @throws NullPointerException if the name is null
      * @throws IllegalArgumentException if the scope is invalid
-     *
+     * @throws IllegalStateException if the scope is 
+     *     PageContext.SESSION_SCOPE but the page that was requested
+     *     does not participate in a session or the session has been
+     *     invalidated.
      */
 
     abstract public void setAttribute(String name, Object value, int scope);
@@ -172,6 +175,10 @@ public abstract class JspContext {
      * 
      * @throws NullPointerException if the name is null
      * @throws IllegalArgumentException if the scope is invalid 
+     * @throws IllegalStateException if the scope is 
+     *     PageContext.SESSION_SCOPE but the page that was requested
+     *     does not participate in a session or the session has been
+     *     invalidated.
      */
 
     abstract public Object getAttribute(String name, int scope);
@@ -203,6 +210,10 @@ public abstract class JspContext {
      * @param name The name of the object to remove.
      * @param scope The scope where to look.
      * @throws IllegalArgumentException if the scope is invalid
+     * @throws IllegalStateException if the scope is 
+     *     PageContext.SESSION_SCOPE but the page that was requested
+     *     does not participate in a session or the session has been
+     *     invalidated.
      */
 
     abstract public void removeAttribute(String name, int scope);
@@ -223,6 +234,10 @@ public abstract class JspContext {
      * @return an enumeration of names (java.lang.String) of all the 
      *     attributes the specified scope
      * @throws IllegalArgumentException if the scope is invalid
+     * @throws IllegalStateException if the scope is 
+     *     PageContext.SESSION_SCOPE but the page that was requested
+     *     does not participate in a session or the session has been
+     *     invalidated.
      */
 
     abstract public Enumeration getAttributeNamesInScope(int scope);
