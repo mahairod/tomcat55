@@ -112,6 +112,9 @@
   <!--                       pages in external data files, to reduce the    -->
   <!--                       size of the generated servlets?  [false]       -->
   <!--                                                                      -->
+  <!--   enablePooling       Determines whether tag handler pooling is      -->
+  <!--                       enabled  [true]                                -->
+  <!--                                                                      -->
   <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
   <!--                       by this servlet.  Increasing levels cause the  -->
   <!--                       generation of more messages.  Valid values are -->
