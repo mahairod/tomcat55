@@ -1,6 +1,11 @@
 <project name="Run Watchdog Test Suite" default="all">
 
 
+  <!-- =============== Default Pass Through Properties ================== -->
+
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
+    
   <!-- ================= Create Execution Classpath ===================== -->
 
   <path id="execute.classpath">
@@ -54,6 +59,8 @@
 
     <java classname="org.apache.tools.ant.Main" fork="true">
       <classpath refid="execute.classpath"/>
+      <arg value="-Dhost=${host}"/>
+      <arg value="-Dport=${port}"/>
       <arg value="-buildfile"/>
       <arg value="${execute.build}"/>
       <arg value="${execute.target}"/>
