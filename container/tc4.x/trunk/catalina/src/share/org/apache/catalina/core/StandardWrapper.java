@@ -249,6 +249,11 @@ public final class StandardWrapper
     private Stack instancePool = null;
 
 
+    /**
+     * Should we swallow System.out
+     */
+    private boolean swallowOutput = false;
+
     // ------------------------------------------------------------- Properties
 
 
@@ -460,6 +465,9 @@ public final class StandardWrapper
             !(container instanceof Context))
             throw new IllegalArgumentException
                 (sm.getString("standardWrapper.notContext"));
+        if (container instanceof StandardContext) {
+            swallowOutput = ((StandardContext)container).getSwallowOutput();
+        }
         super.setParent(container);
 
     }
@@ -827,7 +835,9 @@ public final class StandardWrapper
             return instance;
 
         PrintStream out = System.out;
-        SystemLogHandler.startCapture();
+        if (swallowOutput) {
+            SystemLogHandler.startCapture();
+        }
         Servlet servlet = null;
         try {
             // If this "servlet" is really a JSP file, get the right class.
@@ -961,12 +971,14 @@ public final class StandardWrapper
             }
             fireContainerEvent("load", this);
         } finally {
-            String log = SystemLogHandler.stopCapture();
-            if (log != null && log.length() > 0) {
-                if (getServletContext() != null) {
-                    getServletContext().log(log);
-                } else {
-                    out.println(log);
+            if (swallowOutput) {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    if (getServletContext() != null) {
+                        getServletContext().log(log);
+                    } else {
+                        out.println(log);
+                    }
                 }
             }
         }
