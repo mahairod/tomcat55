@@ -75,6 +75,7 @@ import javax.naming.directory.DirContext;
 import javax.management.ObjectName;
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.catalina.Cluster;
@@ -93,6 +94,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.logger.LoggerBase;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.valves.ValveBase;
@@ -347,7 +349,9 @@ public abstract class ContainerBase
      * the corresponding version number, in the format
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
-    public abstract String getInfo();
+    public String getInfo() {
+        return this.getClass().getName();
+    }
 
 
     /**
@@ -1219,9 +1223,11 @@ public abstract class ContainerBase
                 try {
                     ObjectName vname=((ValveBase)valve).createObjectName(getDomain(),
                             this.getObjectName());
-                    ((ValveBase)valve).setObjectName(vname);
-                    Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
-                    ((ValveBase)valve).setController(oname);
+                    if( vname != null ) {
+                        ((ValveBase)valve).setObjectName(vname);
+                        Registry.getRegistry().registerComponent(valve, vname, valve.getClass().getName());
+                        ((ValveBase)valve).setController(oname);
+                    }
                 } catch( Throwable t ) {
                     log.info( "Can't register valve " + valve , t );
                 }
@@ -1335,11 +1341,77 @@ public abstract class ContainerBase
             ((Lifecycle) loader).stop();
         }
 
+        if( logger instanceof LoggerBase ) {
+            LoggerBase lb=(LoggerBase)logger;
+            if( lb.getObjectName()==null ) {
+                ObjectName lname=lb.createObjectName();
+                try {
+                    Registry.getRegistry().registerComponent(lb, lname, null);
+                } catch( Exception ex ) {
+                    log.error( "Can't register logger " + lname, ex);
+                }
+            }
+        }
+
+        // 
+        Valve valves[]=getValves();
+        for( int i=0; i<valves.length; i++ ) {
+            Valve valve=valves[i];
+            if( valve instanceof ValveBase &&
+                    ((ValveBase)valve).getObjectName()!=null ) {
+                Registry.getRegistry().unregisterComponent(((ValveBase)valve).getObjectName()); 
+            }
+        }
+
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 
     }
 
+    /** Init method, part of the MBean lifecycle.
+     *  If the container was added via JMX, it'll register itself with the 
+     * parent, using the ObjectName conventions to locate the parent.
+     * 
+     *  If the container was added directly and it doesn't have an ObjectName,
+     * it'll create a name and register itself with the JMX console. On destroy(), 
+     * the object will unregister.
+     * 
+     * @throws Exception
+     */ 
+    public void init() throws Exception {
+
+        if( this.getParent() == null ) {
+            // "Life" update
+            ObjectName parentName=getParentName();
+            
+            if( parentName != null && 
+                    ! mserver.isRegistered(parentName)) 
+            {
+                mserver.invoke(parentName, "addChild", new Object[] { this },
+                        new String[] {"org.apache.catalina.Container"});
+            }
+        }            
+    }
+    
+    public ObjectName getParentName() throws MalformedObjectNameException {
+        return null;
+    }
+    
+    public void destroy() throws Exception {
+        if( started ) {
+            stop();
+        }
+        if (parent != null) {
+            parent.removeChild(this);
+        }
+
+        // Stop our child containers, if any
+        Container children[] = findChildren();
+        for (int i = 0; i < children.length; i++) {
+            removeChild(children[i]);
+        }
+                
+    }
 
     // ------------------------------------------------------- Pipeline Methods
 
@@ -1368,8 +1440,8 @@ public abstract class ContainerBase
         fireContainerEvent(ADD_VALVE_EVENT, valve);
     }
 
-    public ObjectName[] getValveNames() {
-        return ((StandardPipeline)pipeline).getValveNames();
+    public ObjectName[] getValveObjectNames() {
+        return ((StandardPipeline)pipeline).getValveObjectNames();
     }
     
     /**

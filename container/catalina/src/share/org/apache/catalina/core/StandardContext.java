@@ -4768,28 +4768,8 @@ public class StandardContext
             log.info( "Already configured" );
             return;
         }
-        // "Life" update
-        String path=oname.getKeyProperty("name");
-        if( path == null ) {
-            log.error( "No name attribute " +name );
-            return;
-        }
-        if( ! path.startsWith( "//")) {
-            log.error("Invalid name " + name);
-        }
-        path=path.substring(2);
-        int delim=path.indexOf( "/" );
-        String hostName="localhost"; // Should be default...
-        if( delim > 0 ) {
-            hostName=path.substring(0, delim);
-            this.setName( path.substring(delim));
-        } else {
-            log.info("Setting path " +  path );
-            this.setName( path );
-        }
-        // XXX The service and domain should be the same.
-        ObjectName parentName=new ObjectName( domain + ":" +
-                "type=Host,host=" + hostName);
+        ObjectName parentName=getParentName();
+
         log.info("Adding to " + parentName );
 
         if( ! mserver.isRegistered(parentName)) {
@@ -4802,20 +4782,37 @@ public class StandardContext
         ContextConfig config = new ContextConfig();
         this.addLifecycleListener(config);
 
-        mserver.invoke(parentName, "addChild", new Object[] { this },
-                new String[] {"org.apache.catalina.Container"});
-
+        super.init();
     }
 
-    public void destroy() throws Exception {
-        if( started ) {
-            stop();
+    String hostName;
+    
+    public ObjectName getParentName() throws MalformedObjectNameException {
+        // "Life" update
+        String path=oname.getKeyProperty("name");
+        if( path == null ) {
+            log.error( "No name attribute " +name );
+            return null;
         }
-        if (parent != null) {
-            parent.removeChild(this);
+        if( ! path.startsWith( "//")) {
+            log.error("Invalid name " + name);
         }
+        path=path.substring(2);
+        int delim=path.indexOf( "/" );
+        hostName="localhost"; // Should be default...
+        if( delim > 0 ) {
+            hostName=path.substring(0, delim);
+            this.setName( path.substring(delim));
+        } else {
+            log.info("Setting path " +  path );
+            this.setName( path );
+        }
+        // XXX The service and domain should be the same.
+        ObjectName parentName=new ObjectName( domain + ":" +
+                "type=Host,host=" + hostName);
+        return parentName;
     }
-
+    
     public void create() throws Exception{
         init();
     }
