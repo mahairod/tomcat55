@@ -59,6 +59,7 @@
 package org.apache.catalina.security;
 
 import java.security.Security;
+import org.apache.catalina.startup.CatalinaProperties;
 
 /**
  * Util class to protect Catalina against package access and insertion.
@@ -68,27 +69,51 @@ import java.security.Security;
  */
 public final class SecurityConfig{
     private static SecurityConfig singleton = null;
+
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( SecurityConfig.class );
+
     
-    private final static String PACKAGE_ACCESS =  "org.apache.catalina." 
-                                                + ",org.apache.jasper."
+    private final static String PACKAGE_ACCESS =  "sun.,"
+                                                + "org.apache.catalina." 
                                                 + ",org.apache.jsp."
-                                                + ",org.apache.jk.";
-    
-    private final static String PACKAGE_DEFINITION= "java."
-                                                + ",org.apache.catalina." 
-                                                + ",org.apache.jasper."
                                                 + ",org.apache.coyote."
-                                                + ",org.apache.jsp."
-                                                + ",org.apache.jk.";
+                                                + ",org.apache.tomcat.";
+    
+    private final static String PACKAGE_DEFINITION= "java.,sun."
+                                                + ",org.apache.catalina." 
+                                                + ",org.apache.coyote."
+                                                + ",org.apache.tomcat."
+                                                + ",org.apache.jsp.";
+    /**
+     * List of protected package from conf/catalina.properties
+     */
+    private String packageDefinition;
+    
+    
+    /**
+     * List of protected package from conf/catalina.properties
+     */
+    private String packageAccess; 
+    
+    
     /**
      * Create a single instance of this class.
      */
-    private SecurityConfig(){   
+    private SecurityConfig(){  
+        try{
+            packageDefinition = CatalinaProperties.getProperty("package.definition");
+            packageAccess = CatalinaProperties.getProperty("package.access");
+        } catch (java.lang.Exception ex){
+            if (log.isDebugEnabled()){
+                log.debug("Unable to load properties using CatalinaProperties", ex); 
+            }            
+        }
     }
     
     
     /**
-     * Retuens the singleton instance of that class.
+     * Returns the singleton instance of that class.
      * @return an instance of that class.
      */
     public static SecurityConfig newInstance(){
@@ -103,7 +128,12 @@ public final class SecurityConfig{
      * Set the security package.access value.
      */
     public void setPackageAccess(){
-        setSecurityProperty("package.access", PACKAGE_ACCESS);        
+        // If catalina.properties is missing, protect all by default.
+        if (packageAccess == null){
+            setSecurityProperty("package.access", PACKAGE_ACCESS);   
+        } else {
+            setSecurityProperty("package.access", packageAccess);   
+        }
     }
     
     
@@ -111,7 +141,12 @@ public final class SecurityConfig{
      * Set the security package.definition value.
      */
      public void setPackageDefinition(){
-        setSecurityProperty("package.definition", PACKAGE_DEFINITION);
+        // If catalina.properties is missing, protect all by default.
+         if (packageDefinition == null){
+            setSecurityProperty("package.definition", PACKAGE_DEFINITION);
+         } else {
+            setSecurityProperty("package.definition", packageDefinition);
+         }
     }
      
      
@@ -122,10 +157,9 @@ public final class SecurityConfig{
     private final void setSecurityProperty(String properties, String packageList){
         if (System.getSecurityManager() != null){
             String definition = Security.getProperty(properties);
-            if( definition != null && definition.length() > 0 )
+            if( definition != null && definition.length() > 0 ){
                 definition += ",";
-            else
-                definition = "sun.,";
+            }
 
             Security.setProperty(properties,
                 // FIX ME package "javax." was removed to prevent HotSpot

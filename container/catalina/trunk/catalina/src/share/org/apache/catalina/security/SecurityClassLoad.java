@@ -70,6 +70,7 @@ package org.apache.catalina.security;
  * RuntimePermission does not trigger an AccessControlException.
  *
  * @author Glenn L. Nielsen
+ * @author Jean-Francois Arcand
  * @version $Revision$ $Date$
  */
 
@@ -78,9 +79,21 @@ public final class SecurityClassLoad {
     public static void securityClassLoad(ClassLoader loader)
         throws Exception {
 
-        if( System.getSecurityManager() == null )
+        if( System.getSecurityManager() == null ){
             return;
-
+        }
+        
+        loadCorePackage(loader);
+        loadLoaderPackage(loader);
+        loadSessionPackage(loader);
+        loadUtilPackage(loader);
+        loadJavaxPackage(loader);
+        loadCoyotePackage(loader);        
+    }
+    
+    
+    private final static void loadCorePackage(ClassLoader loader)
+        throws Exception {
         String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage +
@@ -109,18 +122,86 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "core.ContainerBase$PrivilegedAddChild");
+    }
+    
+    
+    private final static void loadLoaderPackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage +
              "loader.WebappClassLoader$PrivilegedFindResource");
+    }
+    
+    
+    private final static void loadSessionPackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage + "session.StandardSession");
+    }
+    
+    
+    private final static void loadUtilPackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.catalina.";
         loader.loadClass
             (basePackage + "util.CookieTools");
         loader.loadClass
             (basePackage + "util.URL");
         loader.loadClass(basePackage + "util.Enumerator");
-        loader.loadClass("javax.servlet.http.Cookie");
-
     }
+    
+    
+    private final static void loadJavaxPackage(ClassLoader loader)
+        throws Exception {
+        loader.loadClass("javax.servlet.http.Cookie");
+    }
+    
+    
+    private final static void loadCoyotePackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.coyote.tomcat5.";
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetAttributePrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetParameterMapPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetRequestDispatcherPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetParameterPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetParameterNamesPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetParameterValuePrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetCharacterEncodingPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetHeadersPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetHeaderNamesPrivilegedAction");  
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetCookiesPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetLocalePrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteRequestFacade$GetLocalesPrivilegedAction");
+        loader.loadClass
+            (basePackage +
+             "CoyoteResponseFacade$SetContentTypePrivilegedAction");
+    }
+
 }
 
