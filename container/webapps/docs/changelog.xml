@@ -184,7 +184,7 @@
         for modifications. (remm)
       </update>
       <fix>
-        <bug31465</bug>: Ensure that the compiler reads the .java file using the same encoding as that with which it was written. (markt)
+        <bug>31465</bug>: Ensure that the compiler reads the .java file using the same encoding as that with which it was written. (markt)
       </fix>
     </changelog>
   </subsection>
