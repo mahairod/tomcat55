@@ -238,12 +238,12 @@ public final class Bootstrap {
 
         // Add the "common/classes" directory if it exists
         File classes = new File(System.getProperty("catalina.home"),
-                                "common/classes");
+                                "common" + File.separator + "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
@@ -314,12 +314,12 @@ public final class Bootstrap {
 
         // Add the "server/classes" directory if it exists
         File classes = new File(System.getProperty("catalina.home"),
-                                "server/classes");
+                                "server" + File.separator + "classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
@@ -393,7 +393,7 @@ public final class Bootstrap {
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
