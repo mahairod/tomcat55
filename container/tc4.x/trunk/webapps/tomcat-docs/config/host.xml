@@ -71,10 +71,21 @@
       </attribute>
 
       <attribute name="autoDeploy" required="false">
-        <p>This flag value indicates if web applications from this host should
-        be automatically deployed by the host configurator.
-        The flag's value defaults to true.  See
-        <a href="#Automatic Application Deployment">Automatic Application
+        <p>This flag value indicates if web applications from this host
+        should
+ be automatically deployed by the host configurator at
+        startup.
+ The flag's value defaults to true.  <strong>Note</strong>
+        that if this
+ flag is set to false and livedeploy is set
+ to true then
+       
+ the web
+ applications will still be deployed shortly after
+ startup.
+        See
+ <a href="#Automatic Application Deployment">Automatic
+ Application
         Deployment</a> for more information.</p>
       </attribute>
 
@@ -280,7 +291,8 @@
     you can also request that new XML configuration files, WAR files, or
     subdirectories (containing web applications) that are dropped in to the
     <code>appBase</code> directory while Tomcat is running will be
-    automatically deployed, according to the rules described above.</p>
+    automatically deployed, according to the rules described above by
+    setting the livedeploy attribute to true.</p>
 
     <p>When using automatic deployment, the <code>docBase</code> defined by
     an XML <a href="context.html">Context</a> file should be outside of the
