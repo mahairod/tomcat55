@@ -78,10 +78,10 @@ import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.ValidationMessage;
 
+import org.apache.jasper.JasperError;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
-
 import org.apache.jasper.logging.Logger;
 
 import org.xml.sax.Attributes;
@@ -1114,7 +1114,9 @@ public class JspParseEventListener implements ParseEventListener {
      * libraries used by the document.
      */
     public void validate() throws JasperException {
+	StringBuffer errMessage = new StringBuffer();
         Enumeration enum = libraries.getTagLibInfos();
+        boolean hasErrors = false;
         while (enum.hasMoreElements()) {
             TagLibraryInfo tli = (TagLibraryInfo)enum.nextElement();
 	    //@@@ remove cast when TagLibraryInfo is fixed in spec
@@ -1122,14 +1124,23 @@ public class JspParseEventListener implements ParseEventListener {
 	    ValidationMessage[] errors =
 	      ((TagLibraryInfoImpl)tli).validate(xo.getPageData());
             if ((errors != null) && (errors.length != 0)) {
-	        // for now just report the first error!
-	        String msg = errors[0].getMessage();
-                throw new JasperException(
-		    Constants.getString(
-                        "jsp.error.taglibraryvalidator.invalidpage",
-			new Object[]{tli.getShortName(), msg}));
+                hasErrors = true;
+                errMessage.append("<h3>");
+                errMessage.append(Constants.getString(
+                       "jsp.error.taglibraryvalidator.invalidpage",
+                       new Object[]{tli.getShortName()}));
+                errMessage.append("</h3>");
+                for (int i = 0; i < errors.length; i++) {
+                    errMessage.append("<p>");
+                    errMessage.append(errors[i].getId());
+                    errMessage.append(": ");
+                    errMessage.append(errors[i].getMessage());
+                    errMessage.append("</p>");
+                }
             }
         }
+	if (hasErrors)
+            throw new JasperError(errMessage.toString());
     }
 
     /**

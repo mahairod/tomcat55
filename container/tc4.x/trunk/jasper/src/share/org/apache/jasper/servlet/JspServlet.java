@@ -83,6 +83,7 @@ import java.security.PermissionCollection;
 import java.security.Policy;
 import java.security.PrivilegedAction;
 
+import org.apache.jasper.JasperError;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
@@ -473,6 +474,8 @@ public class JspServlet extends HttpServlet {
             serviceJspFile(request, response, jspUri, null, precompile);
 	} catch (RuntimeException e) {
 	    throw e;
+        } catch (JasperError ex) {
+            response.getWriter().print(ex.getMessage());
 	} catch (ServletException e) {
 	    throw e;
 	} catch (IOException e) {
