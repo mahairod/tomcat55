@@ -184,7 +184,15 @@ public class JspConfig {
                          extension = "*";
                      } else if (file.startsWith("*.")) {
                          extension = file.substring(file.indexOf('.')+1);
-                     } else {
+                     }
+
+                     // The url patterns are reconstructed as the follwoing:
+                     // path != null, extension == null:  / or /foo/bar.ext
+                     // path == null, extension != null:  *.ext
+                     // path != null, extension == "*":   /foo/*
+                     boolean isStar = "*".equals(extension);
+                     if ((path == null && (extension == null || isStar)) || 
+                         (path != null && !isStar)) {
                          if (log.isWarnEnabled()) {
 			     log.warn(Localizer.getMessage("jsp.warning.bad.urlpattern.propertygroup",
 							   urlPattern));
@@ -218,6 +226,42 @@ public class JspConfig {
 	    initialized = true;
 	}
     }
+
+    /**
+     * Select the property group that has more restrictive url-pattern.
+     * In case of tie, select the first.
+     */
+    private JspPropertyGroup selectProperty(JspPropertyGroup prev,
+                                            JspPropertyGroup curr) {
+        if (prev == null) {
+            return curr;
+        }
+        if (prev.getExtension() == null) {
+            // exact match
+            return prev;
+        }
+        if (curr.getExtension() == null) {
+            // exact match
+            return curr;
+        }
+        String prevPath = prev.getPath();
+        String currPath = curr.getPath();
+        if (prevPath == null && currPath == null) {
+            // Both specifies a *.ext, keep the first one
+            return prev;
+        }
+        if (prevPath == null && currPath != null) {
+            return curr;
+        }
+        if (prevPath != null && currPath == null) {
+            return prev;
+        }
+        if (prevPath.length() >= currPath.length()) {
+            return prev;
+        }
+        return curr;
+    }
+            
 
     /**
      * Find a property that best matches the supplied resource.
@@ -264,39 +308,15 @@ public class JspConfig {
              String path = jpg.getPath();
  
              if (extension == null) {
- 
                  // exact match pattern: /a/foo.jsp
                  if (!uri.equals(path)) {
                      // not matched;
                      continue;
                  }
- 
-                 // Add include-preludes and include-codas
-                 if (jp.getIncludePrelude() != null) {
-                     includePreludes.addAll(jp.getIncludePrelude());
-                 }
-                 if (jp.getIncludeCoda() != null) {
-                     includeCodas.addAll(jp.getIncludeCoda());
-                 }
- 
-                 // For other attributes, keep the best match.
-                 if (jp.isXml() != null) {
-                     isXmlMatch = jpg;
-                 }
-                 if (jp.isELIgnored() != null) {
-                     elIgnoredMatch = jpg;
-                 }
-                 if (jp.isScriptingInvalid() != null) {
-                     scriptingInvalidMatch = jpg;
-                 }
-                 if (jp.getPageEncoding() != null) {
-                     pageEncodingMatch = jpg;
-                 }
              } else {
- 
-                 // Possible patterns are *, *.ext, /p/*, and /p/*.ext
- 
-                 if (path != null && !path.equals(uriPath)) {
+                 // Matching patterns *.ext or /p/*
+                 if (path != null && uriPath != null &&
+                         ! uriPath.startsWith(path)) {
                      // not matched
                      continue;
                  }
@@ -305,42 +325,30 @@ public class JspConfig {
                      // not matched
                      continue;
                  }
- 
-                 // We have a match
-                 // Add include-preludes and include-codas
-                 if (jp.getIncludePrelude() != null) {
-                     includePreludes.addAll(jp.getIncludePrelude());
-                 }
-                 if (jp.getIncludeCoda() != null) {
-                     includeCodas.addAll(jp.getIncludeCoda());
-                 }
- 
-                 // If there is a previous match, and the current match is
-                 // more restrictive, use the current match.
-                 if (jp.isXml() != null &&
-                         (isXmlMatch == null ||
-                                 (isXmlMatch.getExtension() != null &&
-                                  isXmlMatch.getExtension().equals("*")))) {
-                         isXmlMatch = jpg;
-                 }
-                 if (jp.isELIgnored() != null &&
-                         (elIgnoredMatch == null ||
-                             (elIgnoredMatch.getExtension() != null &&
-                              elIgnoredMatch.getExtension().equals("*")))) {
-                     elIgnoredMatch = jpg;
-                 }
-                 if (jp.isScriptingInvalid() != null &&
-                         (scriptingInvalidMatch == null ||
-                             (scriptingInvalidMatch.getExtension() != null &&
-                              scriptingInvalidMatch.getExtension().equals("*")))) {
-                     scriptingInvalidMatch = jpg;
-                 }
-                 if (jp.getPageEncoding() != null &&
-                         (pageEncodingMatch == null ||
-                             (pageEncodingMatch.getExtension() != null &&
-                              pageEncodingMatch.getExtension().equals("*")))) {
-                     pageEncodingMatch = jpg;
-                 }
+             }
+             // We have a match
+             // Add include-preludes and include-codas
+             if (jp.getIncludePrelude() != null) {
+                 includePreludes.addAll(jp.getIncludePrelude());
+             }
+             if (jp.getIncludeCoda() != null) {
+                 includeCodas.addAll(jp.getIncludeCoda());
+             }
+
+             // If there is a previous match for the same property, remember
+             // the one that is more restrictive.
+             if (jp.isXml() != null) {
+                 isXmlMatch = selectProperty(isXmlMatch, jpg);
+             }
+             if (jp.isELIgnored() != null) {
+                 elIgnoredMatch = selectProperty(elIgnoredMatch, jpg);
+             }
+             if (jp.isScriptingInvalid() != null) {
+                 scriptingInvalidMatch =
+                     selectProperty(scriptingInvalidMatch, jpg);
+             }
+             if (jp.getPageEncoding() != null) {
+                 pageEncodingMatch = selectProperty(pageEncodingMatch, jpg);
              }
 	}
 
