@@ -213,6 +213,10 @@ public class JspC implements Options {
         return true;
     }
 
+    public int getTagPoolSize() {
+	return Constants.MAX_POOL_SIZE;
+    }
+
     /**
      * Are we supporting HTML mapped servlets?
      */

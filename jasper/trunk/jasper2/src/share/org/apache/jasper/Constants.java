@@ -138,6 +138,13 @@ public class Constants {
     public static final int DEFAULT_TAG_BUFFER_SIZE = 512;
 
     /**
+     * Default tag handler pool size.
+     */
+    public static final int MAX_POOL_SIZE = 5;
+    public static final Integer MAX_POOL_SIZE_INTEGER
+	= new Integer(MAX_POOL_SIZE);
+
+    /**
      * The query parameter that causes the JSP engine to just
      * pregenerated the servlet but not invoke it. 
      */

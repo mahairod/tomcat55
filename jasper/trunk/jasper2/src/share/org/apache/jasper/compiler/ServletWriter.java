@@ -186,6 +186,13 @@ public class ServletWriter {
     }
 
     /**
+     * Prints the given int.
+     */
+    public void print(int i) {
+	writer.print(i);
+    }
+
+    /**
      * Prints the given string.
      *
      * The string must not contain any '\n', otherwise the line count will be

@@ -63,6 +63,7 @@ package org.apache.jasper.runtime;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
+import org.apache.jasper.Constants;
 
 /**
  * Pool of tag handlers that can be reused.
@@ -70,8 +71,6 @@ import javax.servlet.jsp.tagext.Tag;
  * @author Jan Luehe
  */
 public class TagHandlerPool {
-    
-    private static final int MAX_POOL_SIZE = 5;
 
     private Tag[] handlers;
 
@@ -82,7 +81,7 @@ public class TagHandlerPool {
      * Constructs a tag handler pool with the default capacity.
      */
     public TagHandlerPool() {
-	this(MAX_POOL_SIZE);
+	this(Constants.MAX_POOL_SIZE);
     }
 
     /**

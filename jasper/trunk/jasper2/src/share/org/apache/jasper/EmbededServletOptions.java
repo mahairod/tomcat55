@@ -105,7 +105,12 @@ public final class EmbededServletOptions implements Options {
     /**
      * Determines whether tag handler pooling is enabled.
      */
-    private boolean poolingEnabled = true;
+    private boolean isPoolingEnabled = true;
+
+     /**
+      * Tag handler pool size.
+      */
+    private int tagPoolSize;
     
     /**
      * Do you want support for "mapped" files? This will generate
@@ -198,7 +203,14 @@ public final class EmbededServletOptions implements Options {
     }
     
     public boolean isPoolingEnabled() {
-	return poolingEnabled;
+	return isPoolingEnabled;
+    }
+
+    /**
+     * Returns the tag handler pool size.
+     */
+    public int getTagPoolSize() {
+	return tagPoolSize;
     }
 
     /**
@@ -293,12 +305,15 @@ public final class EmbededServletOptions implements Options {
      * Create an EmbededServletOptions object using data available from
      * ServletConfig and ServletContext. 
      */
-    public EmbededServletOptions(ServletConfig config, ServletContext context) {
+    public EmbededServletOptions(ServletConfig config,
+				 ServletContext context) {
+
+	this.tagPoolSize = Constants.MAX_POOL_SIZE;
+
         Enumeration enum=config.getInitParameterNames();
         while( enum.hasMoreElements() ) {
             String k=(String)enum.nextElement();
             String v=config.getInitParameter( k );
-
             setProperty( k, v);
         }
 
@@ -325,15 +340,32 @@ public final class EmbededServletOptions implements Options {
             else Constants.message ("jsp.warning.largeFile", Logger.WARNING);
         }
 	
-	poolingEnabled = true;
+	this.isPoolingEnabled = true;
         String poolingEnabledParam
 	    = config.getInitParameter("enablePooling"); 
         if (poolingEnabledParam != null
   	        && !poolingEnabledParam.equalsIgnoreCase("true")) {
             if (poolingEnabledParam.equalsIgnoreCase("false"))
-                this.poolingEnabled = false;
+                this.isPoolingEnabled = false;
             else Constants.message("jsp.warning.enablePooling",
 				   Logger.WARNING);
+        }
+
+        String tagPoolSizeParam = config.getInitParameter("tagPoolSize");
+        if (tagPoolSizeParam != null) {
+            try {
+                this.tagPoolSize = Integer.parseInt(tagPoolSizeParam);
+                if (this.tagPoolSize <= 0) {
+                    this.tagPoolSize = Constants.MAX_POOL_SIZE;
+                    Constants.message("jsp.warning.invalidTagPoolSize",
+				      new Object[] { Constants.MAX_POOL_SIZE_INTEGER },
+                                      Logger.WARNING);
+                }
+            } catch(NumberFormatException ex) {
+                Constants.message("jsp.warning.invalidTagPoolSize",
+				  new Object[] { Constants.MAX_POOL_SIZE_INTEGER },
+				  Logger.WARNING);
+            }
         }
 
         String mapFile = config.getInitParameter("mappedfile"); 
@@ -366,7 +398,7 @@ public final class EmbededServletOptions implements Options {
         String checkInterval = config.getInitParameter("checkInterval");
         if (checkInterval != null) {
             try {
-                this.checkInterval = new Integer(checkInterval).intValue();
+		this.checkInterval = Integer.parseInt(checkInterval);
                 if (this.checkInterval == 0) {
                     this.checkInterval = 300;
                     Constants.message("jsp.warning.checkInterval",

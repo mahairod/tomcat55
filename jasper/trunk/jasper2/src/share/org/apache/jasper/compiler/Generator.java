@@ -659,7 +659,9 @@ class Generator {
 	out.pushIndent();
 	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
 	    out.printin((String) tagHandlerPoolNames.elementAt(i));
-	    out.println(" = new org.apache.jasper.runtime.TagHandlerPool();");
+	    out.print(" = new org.apache.jasper.runtime.TagHandlerPool(");
+            out.print(ctxt.getOptions().getTagPoolSize());
+            out.println(");");
 	}
 	out.popIndent();
 	out.printil("}");
