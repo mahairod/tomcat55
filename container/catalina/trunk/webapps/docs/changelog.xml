@@ -13,6 +13,365 @@
 
 <body>
 
+<section name="Tomcat 5.0.20 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <scode>
+      Update to Apache License 2.0 (billbarker, hgomez, jfarcand, luehe)
+      </scode>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      The defaultHostName may be alias, so we need to also try to find if 
+      the registered hosts' aliases contains the defaultHostName (jfarcand)
+      </fix>
+      <fix>
+      <bug>27108</bug>: Use catalina.home in the docBase for all core webapps
+      (remm)
+      </fix>
+      <fix>
+      <bug>27077</bug>: Port fix for NPE is data source realm (remm)
+      </fix>
+      <fix>
+      Fix some setters and operations in MBeans (remm)
+      </fix>
+      <fix>
+      <bug>27127</bug>: Shutdown doesn't work with custom server port 
+      and non-default config file (remm)
+      </fix>
+      <fix>
+      Fix logging of errors when pausing and resuming connector (remm)
+      </fix>
+      <fix>
+      <bug>27293</bug>: Fix if-unmodified-since check, using 
+      the old-and-simple trick of adding 1000 (remm)
+      </fix>
+      <fix>
+      Provide an implementation for getName() and getPassword() 
+      in UserDatabaseRealm, to add support for client cert (markt)
+      </fix>
+      <fix>
+      <bug>27309</bug>: NPE fix if there's no local session when doing cross
+      context (remm)
+      </fix>
+      <fix>
+      <bug>27276</bug>: Fix NPE when a null password is set, submitted 
+      by Rohan Lenard (remm)
+      </fix>
+      <fix>
+      Reuse already existing util code in deployer (remm)
+      </fix>
+      <fix>
+      Clone arrays returned by getParameterValues() and getCookies() when a
+      security manager is in place (luehe)
+      </fix>
+      <update>
+      Register all classloaders with JMX, so that Tomcat is actually manageable
+      through JMX remote, and move jmx.jar to bin (remm)
+      </update>
+      <fix>
+      <bug>19852</bug>: Don't remove application parameters on stop (makt)
+      </fix>
+      <fix>
+      Avoid serializing Subject/Principal when persisting the session 
+      (jfarcand)
+      </fix>
+      <fix>
+      Make stats counters volatile (remm)
+      </fix>
+      <fix>
+      <bug>27447</bug>; Pos should be reset in case of a long line (of course),
+      and reset/skip is useless (it is allowed to just put another mark) (remm)
+      </fix>
+      <fix>
+      Fix mark/reset functionality (remm)
+      </fix>
+      <fix>
+      <bug>27478</bug>: Fix crossContext flag when dispatching back 
+      to the original context (remm)
+      </fix>
+      <fix>
+      Much less verbose logging when there's a bad cookie (remm)
+      </fix>
+      <fix>
+      Add two MIME types, submitted by Scott Pontillo (remm)
+      </fix>
+      <add>
+      Add error message about the absence of JMX when running standalone (remm)
+      </add>
+      <fix>
+      Initialize accessCount to 0, and call access when creating a session 
+      and in crossContext creations as well (remm, luehe)
+      </fix>
+      <fix>
+      <bug>17690</bug>: Display more helpful error message if docBase 
+      is invalid for a WAR (mart)
+      </fix>
+      <fix>
+      <bug>17859</bug>: Provide cygwin friendly JAVA_ENDORSED_DIRS property
+      (markt)
+      </fix>
+      <fix>
+      Include session cookies in HttpServletRequest.getCookies() (luehe)
+      </fix>
+      <fix>
+      <bug>18369</bug>: Prevent npe in StoreBase if a sql exception occurs
+      (markt)
+      </fix>
+      <fix>
+      <bug>27752</bug>: Due to the use of the '#' special char to replace '/',
+      the URL must be handled in a special way (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      <bug>27050</bug>: keystoreFile parameter, when specified as
+      relative, is not treated relative to $CATALINA_BASE or catalina.base
+      property (luehe)
+      </fix>
+      <fix>
+      Fix JMX Request registration in JK (billbarker)
+      </fix>
+      <fix>
+      <bug>27033</bug>: Encode the address in the protocol name (remm)
+      </fix>
+      <fix>
+      Set minSpareThreads / maxSpareThreads in JK (hgomez)
+      </fix>
+      <fix>
+      <bug>27299</bug>: Make sure HexUtils is accessed before some output 
+      is made (remm)
+      </fix>
+      <fix>
+      <bug>20184</bug>, <bug>24763</bug>: getLen returns the length 
+      excluding the header (truk)
+      </fix>
+      <fix>
+      In makeSpace, we should compare the desiredSpace to the limit, so that
+      we actually allow enough (remm)
+      </fix>
+      <fix>
+      <bug>27513</bug>: Fix off by one when terminating threads, 
+      submitted by Sergei Zhirikov (remm)
+      </fix>
+      <fix>
+      Add flag to disable optimized output (which causes problem when using
+      the buffers for input) (remm)
+      </fix>
+      <fix>
+      Fix problems with finding the Adapter in TC 5 (billbarker)
+      </fix>
+      <fix>
+      <bug>27629</bug>: Call close to release native memory, 
+      submitted by Christian Nester (remm)
+      </fix>
+      <fix>
+      <bug>27704</bug>: Result of request.getServletPath() wrong in case 
+      JSP inside jsp-property-group (luehe)
+      </fix>
+      <fix>
+      If using clientAuth="want", then don't change it to "need" 
+      when requesting the cert for CLIENT-CERT auth (billbarker)
+      </fix>
+      <fix>
+      Fix exception when attempting to pause the channel w/o specifying 
+      an address, and fix problem where requests weren't being unregistered 
+      because of a misformatted Msg (billbarker)
+      </fix>
+      <fix>
+      Fix thread unregistration in JK (billbarker)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      When security is on, propagate potential ClassNotFoundException instead
+      of swallowing it and just dumping its stack trace (luehe)
+      </fix>
+      <fix>
+      Add some intellignece to the compiler for generating code for useBean 
+      action. Generate direct instantiation (use new) when possible, 
+      use bean.instantiate when bean name is specified, and for the case 
+      of invalid bean class, either issue a translation time error (instead 
+      of javac error), or generate codes to throw InstantiationException 
+      at runtime, depending on a new compiler switch, 
+      errorOnUseBeanInvalidClassAttribute(defaulted to true) (kinman)
+      </fix>
+      <fix>
+      According to the spec, it is a fatal error for the taglib directive to
+      appear after actions using the prefix introduced by it (remm)
+      </fix>
+      <fix>
+      Close input stream to web.xml (luehe)
+      </fix>
+      <fix>
+      <bug>27300</bug>: Wrong Smap when jsp comments are present (remm)
+      </fix>
+      <fix>
+      <bug>27330</bug>: pageContext not defined in the body of nest tags
+      (kinman)
+      </fix>
+      <fix>
+      <bug>27338</bug>: Wrong Smap line for CDATA in scriptlets in .jspx pages
+      (kinman)
+      </fix>
+      <fix>
+      <bug>27368</bug>: Annotate several node types with missing Java 
+      line information (kinman)
+      </fix>
+      <fix>
+      hen a.jsp jsp:includes b.jsp that jsp:includes c.jsp, the context
+      relative path for c.jsp is computed incorrectly (kinman)
+      </fix>
+      <add>
+      Added JSP monitoring facility (luehe)
+      </add>
+      <fix>
+      <bug>27517</bug>: The pageEncoding attribute is not used, when charset 
+      value is set (luehe)
+      </fix>
+      <update>
+      Fix SMAP mapping for inner classes (kinman)
+      </update>
+      <fix>
+      <bug>27520</bug>: Avoid NPE when folder is not readable (remm)
+      </fix>
+      <fix>
+      <bug>16113</bug>: Removing then replacing a jsp page continues to give
+      a 404, submitted by Torsten Fohrer (kinman)
+      </fix>
+      <fix>
+      <bug>14359</bug>: Remove last traces of largefile option (markt)
+      </fix>
+      <fix>
+      <bug>27642</bug>: trimSpaces property not settable via command-line 
+      options (luehe)
+      </fix>
+      <fix>
+      <bug>18005</bug>: Provide a better error message if session expires 
+      during login process (markt)
+      </fix>
+      <fix>
+      <bug>27664</bug>: Welcome files not found in combination with
+      jsp-property-group (luehe)
+      </fix>
+      <fix>
+      <bug>14228</bug>: Fix access to environment entries during webapp
+      early startup (remm)
+      </fix>
+      <fix>
+      <bug>13499</bug>: If page output is unbuffered, illegal state exception 
+      is no longer thrown on forward if and only if nothing has been written 
+      to the page (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <docs>
+      <bug>27307</bug>:  Improvements to DataSource HOWTO, 
+      submitted by Felipe Leme (remm)
+      </docs>
+      <fix>
+      Escape '?' in generated XML of status servlet, submitted by Peter Lin 
+      (remm)
+      </fix>
+      <update>
+      <bug>25160</bug>: Improve I18N for admin, submitted by Takashi Okamoto
+      (amyroh)
+      </update>
+      <fix>
+      <bug>20770</bug>: Admin Tool removes "workDir" attribute from "context"
+      (amyroh)
+      </fix>
+      <docs>
+      <bug>16507</bug>: Update valve docs to provide pointer to the Jakarta 
+      Regexp docs (markt)
+      </docs>
+      <update>
+      Add JSP status info to the status servlet (luehe, remm)
+      </update>
+      <fix>
+      <bug>24085</bug>: Display group and role list when validation fails
+      (amyroh)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <fix>
+      <bug>26988</bug>: Remove unnecessary line feeds from stdin stream of
+      the CGI servlet, submitted by Kevin Schantz (markt)
+      </fix>
+      <docs>
+      Fix some docs bugs, including <bug>27183</bug> (remm, markt)
+      </docs>
+      <fix>
+      <bug>27090</bug>: Make parameter encoding configurable (markt)
+      </fix>
+      <fix>
+      <bug>27100</bug>: Remove lock obsfucation functionality as it breaks 
+      a number of webdav clients and does not appear to be covered by 
+      the webdav spec (markt)
+      </fix>
+      <fix>
+      Some minor clustering updates (fhanik)
+      </fix>
+      <fix>
+      Reenabled the doRun flag in the multicast service (fhanik)
+      </fix>
+      <fix>
+      <bug>27190</bug>: Ensure webdav servlet returns correct status 
+      in response to MOVE request (markt)
+      </fix>
+      <fix>
+      The new and valid flags have to be set before the creation listeners 
+      are invoked (fhanik)
+      </fix>
+      <fix>
+      Added in the server ip and port for debug purposes when logging 
+      a ACK timeout (fhanik)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.19 (remm)">
 
   <subsection name="General">
