@@ -883,7 +883,15 @@ public final class StandardServer
             } else if (c == '"') {
                 filtered.append("&quot;");
             } else if (c == '&') {
-                filtered.append("&amp;");
+                char s1 = input.charAt(i+3);
+                char s2 = input.charAt(i+4);
+                char s3 = input.charAt(i+5);
+                if (((s1 == ';') || (s2 == ';')) || (s3 == ';')) {
+                    // do not convert if it's already in converted form
+                    filtered.append(c);
+                } else {
+                    filtered.append("&amp;");
+                }
             } else {
                 filtered.append(c);
             }
@@ -1923,7 +1931,7 @@ public final class StandardServer
                     writer.print(' ');
                 }
                 writer.print("<value>");
-                writer.print(value);
+                writer.print(convertStr(value));
                 writer.println("</value>");
                 for (int j = 0; j < indent + 2; j++) {
                     writer.print(' ');
