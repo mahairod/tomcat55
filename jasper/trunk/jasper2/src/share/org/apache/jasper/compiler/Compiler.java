@@ -340,13 +340,13 @@ public class Compiler {
         // Initializing classpath
         Path path = new Path(project);
         path.setPath(System.getProperty("java.class.path"));
-        info.append("     cp=" + System.getProperty("java.class.path") + "\n");
+        info.append("    cp=" + System.getProperty("java.class.path") + "\n");
         StringTokenizer tokenizer = new StringTokenizer(classpath, sep);
         while (tokenizer.hasMoreElements()) {
             String pathElement = tokenizer.nextToken();
             File repository = new File(pathElement);
             path.setLocation(repository);
-            info.append("     cp=" + repository + "\n");
+            info.append("    cp=" + repository + "\n");
         }
 
         if( log.isDebugEnabled() )
@@ -357,7 +357,16 @@ public class Compiler {
         Path srcPath = new Path(project);
         srcPath.setLocation(options.getScratchDir());
 
-        info.append("     work dir=" + options.getScratchDir() + "\n");
+        info.append("    work dir=" + options.getScratchDir() + "\n");
+
+        // Initialize and set java extensions
+        String exts = System.getProperty("java.ext.dirs");
+        if (exts != null) {
+            Path extdirs = new Path(project);
+            extdirs.setPath(exts);
+            javac.setExtdirs(extdirs);
+            info.append("    extension dir=" + exts + "\n");
+        }
 
         // Configure the compiler object
         javac.setEncoding(javaEncoding);
