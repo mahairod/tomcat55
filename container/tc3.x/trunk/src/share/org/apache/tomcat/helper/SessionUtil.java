@@ -61,12 +61,12 @@
  *
  */ 
 
-
-package org.apache.tomcat.util;
+package org.apache.tomcat.helper;
 
 
 import javax.servlet.http.Cookie;
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.util.*;
 
 
 /**

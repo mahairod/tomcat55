@@ -71,6 +71,7 @@ import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.helper.*;
 import org.apache.tomcat.core.Request;
 
 /**

@@ -65,6 +65,7 @@
 package org.apache.tomcat.service.http;
 
 import org.apache.tomcat.core.*;
+import org.apache.tomcat.helper.*;
 import org.apache.tomcat.util.*;
 import org.apache.tomcat.logging.*;
 import java.io.*;

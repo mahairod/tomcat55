@@ -70,6 +70,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.helper.*;
 import org.apache.tomcat.facade.*;
 import org.apache.tomcat.logging.*;
 

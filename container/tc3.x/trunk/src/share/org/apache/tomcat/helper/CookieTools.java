@@ -61,8 +61,8 @@
  *
  */
 
-
-package org.apache.tomcat.util;
+package org.apache.tomcat.helper;
+import  org.apache.tomcat.util.*;
 import java.text.*;
 import java.util.*;
 
