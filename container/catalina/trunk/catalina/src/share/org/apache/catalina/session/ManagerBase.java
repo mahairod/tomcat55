@@ -706,7 +706,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     public void add(Session session) {
 
         synchronized (sessions) {
-            sessions.put(session.getId(), session);
+            sessions.put(session.getIdInternal(), session);
             if( sessions.size() > maxActive ) {
                 maxActive=sessions.size();
             }
@@ -849,7 +849,7 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
     public void remove(Session session) {
 
         synchronized (sessions) {
-            sessions.remove(session.getId());
+            sessions.remove(session.getIdInternal());
         }
 
     }

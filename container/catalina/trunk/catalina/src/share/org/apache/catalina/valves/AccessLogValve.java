@@ -854,7 +854,7 @@ public class AccessLogValve
         } else if (pattern == 'S') {
             if (request != null)
                 if (request.getSession(false) != null)
-                    value = request.getSession(false).getId();
+                    value = request.getSessionInternal(false).getIdInternal();
                 else value = "-";
             else
                 value = "-";

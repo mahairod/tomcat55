@@ -674,7 +674,7 @@ public abstract class PersistentManagerBase
         super.remove (session);
 
         if (store != null){
-            removeSession(session.getId());
+            removeSession(session.getIdInternal());
         }
     }
 
@@ -851,7 +851,7 @@ public abstract class PersistentManagerBase
             }   
         } catch (IOException e) {
             log.error(sm.getString
-                ("persistentManager.serializeError", session.getId(), e));
+                ("persistentManager.serializeError", session.getIdInternal(), e));
             throw e;
         }
 
@@ -1036,7 +1036,7 @@ public abstract class PersistentManagerBase
                     if (log.isDebugEnabled())
                         log.debug(sm.getString
                             ("persistentManager.swapMaxIdle",
-                             session.getId(), new Integer(timeIdle)));
+                             session.getIdInternal(), new Integer(timeIdle)));
                     try {
                         swapOut(session);
                     } catch (IOException e) {
@@ -1078,7 +1078,7 @@ public abstract class PersistentManagerBase
                 if(log.isDebugEnabled())
                     log.debug(sm.getString
                         ("persistentManager.swapTooManyActive",
-                         sessions[i].getId(), new Integer(timeIdle)));
+                         sessions[i].getIdInternal(), new Integer(timeIdle)));
                 try {
                     swapOut(sessions[i]);
                 } catch (IOException e) {
@@ -1114,7 +1114,7 @@ public abstract class PersistentManagerBase
                     if (log.isDebugEnabled())
                         log.debug(sm.getString
                             ("persistentManager.backupMaxIdle",
-                            session.getId(), new Integer(timeIdle)));
+                            session.getIdInternal(), new Integer(timeIdle)));
 
                     try {
                         writeSession(session);

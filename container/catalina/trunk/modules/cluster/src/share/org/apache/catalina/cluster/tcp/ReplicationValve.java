@@ -148,7 +148,7 @@ public class ReplicationValve
         try
         {
             long start = System.currentTimeMillis();
-            HttpSession session = request.getSession(false);
+            Session session = request.getSessionInternal(false);
             
             if (!( request.getContext().getManager() instanceof ClusterManager) ) return;
             
@@ -175,7 +175,7 @@ public class ReplicationValve
 
             String id = null;
             if ( session != null )
-                id = session.getId();
+                id = session.getIdInternal();
             else
                 return;
 

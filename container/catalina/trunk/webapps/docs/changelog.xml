@@ -38,6 +38,7 @@
       </update>
     </changelog>
   </subsection>
+  
   <subsection name="Catalina">
     <changelog>
       <fix>
@@ -48,12 +49,26 @@
         <bug>34220</bug>: Provide better error message when server.xml can't be located.
           [Modified patch from Ralf Hauser] (yoavs)
       </add>
+      <fix>
+        <bug>33743</bug>: Add additional synchronization in webapp classloader to avoid
+        possible race condition when defining a class (remm)
+      </fix>
+      <fix>
+        <bug>33711</bug>: Add events on passivate and activate to cleanup SSO, and recycle
+        session objects when removing them from a manager (so that anyone keeping references
+        to it would leak a minimal amount of memory) (remm)
+      </fix>
+      <update>
+        Readd patch causing Session.getId to throw an ISE, and make all internal components
+        use a safe getIdInternal method (remm)
+      </update>
     </changelog>
   </subsection>
+  
   <subsection name="Jasper">
     <changelog>
       <fix>
-        <bug>18477</bug>: Allow symbolic links when precompiling JSPs.(markt)
+        <bug>18477</bug>: Allow symbolic links when precompiling JSPs (markt)
       </fix>
     </changelog>
   </subsection>

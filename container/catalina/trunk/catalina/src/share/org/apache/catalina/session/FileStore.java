@@ -343,13 +343,13 @@ public final class FileStore
     public void save(Session session) throws IOException {
 
         // Open an output stream to the specified pathname, if any
-        File file = file(session.getId());
+        File file = file(session.getIdInternal());
         if (file == null) {
             return;
         }
         if (manager.getContainer().getLogger().isDebugEnabled()) {
             manager.getContainer().getLogger().debug(sm.getString(getStoreName()+".saving",
-                             session.getId(), file.getAbsolutePath()));
+                             session.getIdInternal(), file.getAbsolutePath()));
         }
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;

@@ -35,11 +35,10 @@ import java.util.Vector;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.DateTool;
@@ -1043,7 +1042,7 @@ public class Response
     public String encodeRedirectURL(String url) {
 
         if (isEncodeable(toAbsolute(url))) {
-            return (toEncoded(url, request.getSession().getId()));
+            return (toEncoded(url, request.getSessionInternal().getIdInternal()));
         } else {
             return (url);
         }
@@ -1079,7 +1078,7 @@ public class Response
             if (url.equalsIgnoreCase("")){
                 url = absolute;
             }
-            return (toEncoded(url, request.getSession().getId()));
+            return (toEncoded(url, request.getSessionInternal().getIdInternal()));
         } else {
             return (url);
         }
@@ -1343,8 +1342,8 @@ public class Response
             return (false);
 
         // Are we in a valid session that is not using cookies?
-        final HttpServletRequest hreq = request;
-        final HttpSession session = hreq.getSession(false);
+        final Request hreq = request;
+        final Session session = hreq.getSessionInternal(false);
         if (session == null)
             return (false);
         if (hreq.isRequestedSessionIdFromCookie())
@@ -1363,9 +1362,8 @@ public class Response
         }
     }
 
-    private boolean doIsEncodeable(HttpServletRequest hreq, 
-                                   HttpSession session,
-                                   String location){
+    private boolean doIsEncodeable(Request hreq, Session session, 
+                                   String location) {
         // Is this a valid absolute URL?
         URL url = null;
         try {
@@ -1401,7 +1399,7 @@ public class Response
             String file = url.getFile();
             if ((file == null) || !file.startsWith(contextPath))
                 return (false);
-            if( file.indexOf(";jsessionid=" + session.getId()) >= 0 )
+            if( file.indexOf(";jsessionid=" + session.getIdInternal()) >= 0 )
                 return (false);
         }
 

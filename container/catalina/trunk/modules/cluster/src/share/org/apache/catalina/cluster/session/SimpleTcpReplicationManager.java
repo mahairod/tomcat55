@@ -289,8 +289,8 @@ implements org.apache.catalina.cluster.ClusterManager
                     SessionMessage msg = new SessionMessageImpl(name,
                         SessionMessage.EVT_SESSION_CREATED,
                         writeSession(session),
-                        session.getId(),
-                        session.getId());
+                        session.getIdInternal(),
+                        session.getIdInternal());
                     return msg;
                 } //end if
             }//end if
@@ -360,7 +360,7 @@ implements org.apache.catalina.cluster.ClusterManager
 
             if (session==null) {
                 session = createSession(false, false);
-                sessions.remove(session.getId());
+                sessions.remove(session.getIdInternal());
             }
             
             
@@ -523,7 +523,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     oout.writeInt(sessions.length);
                     for (int i=0; i<sessions.length; i++){
                         ReplicatedSession ses = (ReplicatedSession)sessions[i];
-                        oout.writeUTF(ses.getId());
+                        oout.writeUTF(ses.getIdInternal());
                         byte[] data = writeSession(ses);
                         oout.writeObject(data);
                     }//for

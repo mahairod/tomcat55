@@ -330,9 +330,25 @@ public class DeltaSession implements HttpSession, Session, Serializable,
      */
     public String getId() {
 
+        if ( !isValid() ) {
+            throw new IllegalStateException
+            (sm.getString("standardSession.getId.ise"));
+        }
+
         return (this.id);
 
     }
+
+
+    /**
+     * Return the session identifier for this session.
+     */
+    public String getIdInternal() {
+
+        return (this.id);
+
+    }
+
 
     /**
      * Set the session identifier for this session.

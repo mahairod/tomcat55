@@ -208,7 +208,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
      * @param response
      */
     protected void handlePossibleTurnover(Request request, Response response) {
-        HttpSession session = request.getSession(false);
+        Session session = request.getSessionInternal(false);
         if (session != null) {
             long t1 = System.currentTimeMillis();
             String jvmRoute = getLocalJvmRoute();
@@ -221,7 +221,7 @@ public class JvmRouteBinderValve extends ValveBase implements Lifecycle {
                 if (log.isDebugEnabled())
                     log.debug(sm.getString("jvmRoute.skipURLSessionIDs"));
             } else {
-                handleJvmRoute(session.getId(), jvmRoute, request, response);
+                handleJvmRoute(session.getIdInternal(), jvmRoute, request, response);
             }
             if (log.isInfoEnabled()) {
                 long t2 = System.currentTimeMillis();

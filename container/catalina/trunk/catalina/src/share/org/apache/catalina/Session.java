@@ -104,6 +104,12 @@ public interface Session {
 
 
     /**
+     * Return the session identifier for this session.
+     */
+    public String getIdInternal();
+
+
+    /**
      * Set the session identifier for this session.
      *
      * @param id The new session identifier
