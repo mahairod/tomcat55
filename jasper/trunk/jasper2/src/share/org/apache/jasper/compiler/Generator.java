@@ -1071,7 +1071,7 @@ public class Generator {
 		    out.println("ServletContext application = pageContext.getServletContext();");
 		}
 		if (n.isHasUsebean() || n.isHasIncludeAction() || n.isHasSetProperty()) {
-		    out.println("HttpServletRequest request = pageContext.getRequest();");
+		    out.println("HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();");
 		}
 		if (n.isHasIncludeAction()) {
 		    out.println("ServletResponse response = pageContext.getResponse();");
