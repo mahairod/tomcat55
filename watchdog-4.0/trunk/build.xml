@@ -318,7 +318,7 @@
     </copy>
     <mkdir     dir="${watchdog.build}/tmp/META-INF"/>
     <copy    todir="${watchdog.build}/tmp/META-INF">
-      <fileset dir="src/etc" includes="ear-dd.xml"/>
+      <fileset dir="src/etc" includes="application.xml"/>
     </copy>
     <jar   jarfile="${watchdog.dist}/jcheck.ear"
            basedir="${watchdog.build}/tmp"/>
