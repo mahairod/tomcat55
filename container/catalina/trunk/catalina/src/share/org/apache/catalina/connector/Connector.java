@@ -117,7 +117,7 @@ public class Connector
      * Descriptive information about this Connector implementation.
      */
     private static final String info =
-        "org.apache.coyote.tomcat5.CoyoteConnector/2.0";
+        "org.apache.catalina.connector.Connector/2.1";
 
 
     /**
