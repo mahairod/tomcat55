@@ -516,7 +516,15 @@ public class StandardServerMBean extends BaseModelMBean {
         writer.println(">");
 
         // Store nested <InstanceListener> elements
-        ; // FIXME
+        String iListeners[] = context.findInstanceListeners();
+        for (int i = 0; i < iListeners.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<InstanceListener>");
+            writer.print(iListeners[i]);
+            writer.println("</InstanceListener>");
+        }
 
         // Store nested <Listener> elements
         if (context instanceof Lifecycle) {
@@ -663,10 +671,26 @@ public class StandardServerMBean extends BaseModelMBean {
         }
 
         // Store nested <WrapperLifecycle> elements
-        ; // FIXME
+        String wLifecycles[] = context.findWrapperLifecycles();
+        for (int i = 0; i < wLifecycles.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<WrapperLifecycle>");
+            writer.print(wLifecycles[i]);
+            writer.println("</WrapperLifecycle>");
+        }
 
         // Store nested <WrapperListener> elements
-        ; // FIXME
+        String wListeners[] = context.findWrapperListeners();
+        for (int i = 0; i < wListeners.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<WrapperListener>");
+            writer.print(wListeners[i]);
+            writer.println("</WrapperListener>");
+        }
 
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
@@ -910,7 +934,15 @@ public class StandardServerMBean extends BaseModelMBean {
         writer.println(">");
 
         // Store nested <Alias> elements
-        ; // FIXME
+        String aliases[] = host.findAliases();
+        for (int i = 0; i < aliases.length; i++) {
+            for (int j = 0; j < indent; j++) {
+                writer.print(' ');
+            }
+            writer.print("<Alias>");
+            writer.print(aliases[i]);
+            writer.println("</Alias>");
+        }
 
         // Store nested <Cluster> elements
         ; // FIXME
