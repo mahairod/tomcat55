@@ -227,8 +227,29 @@ bool java_init(arg_data *args, home_data *data) {
 }
 
 /* Destroy the Java VM */
-bool java_destroy(void) {
+bool java_destroy(int exit) {
+    jclass system=NULL;
+    jmethodID method;
+
+    system=(*env)->FindClass(env,"java/lang/System");
+    if (system==NULL) {
+        log_error("Cannot find class java/lang/System");
+        return(false);
+    }
+
+    method=(*env)->GetStaticMethodID(env,system,"exit","(I)V");
+    if (method==NULL) {
+        log_error("Cannot found \"System.exit(int)\" entry point");
+        return(false);
+    }
+
+    log_debug("Calling System.exit(%d)",exit);
+    (*env)->CallStaticVoidMethod(env,cls,method,(jint)exit);
+
+    /* We shouldn't get here, but just in case... */
+    log_debug("Destroying the Java VM");
     if ((*jvm)->DestroyJavaVM(jvm)!=0) return(false);
+    log_debug("Java VM destroyed");
     return(true);
 }
 

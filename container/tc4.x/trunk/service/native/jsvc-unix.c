@@ -189,6 +189,7 @@ static void controller(int sig) {
 static int child(arg_data *args, home_data *data, uid_t uid, gid_t gid) {
     FILE *pidf=fopen(args->pidf,"w");
     pid_t pidn=getpid();
+    int ret=0;
 
     if (pidf!=NULL) {
         fprintf(pidf,"%d\n",(int)pidn);
@@ -243,14 +244,13 @@ static int child(arg_data *args, home_data *data, uid_t uid, gid_t gid) {
     /* Start the service */
     if (java_stop()!=true) return(6);
 
+    if (doreload==true) ret=123;
+    else ret=0;
+
     /* Destroy the Java VM */
-    if (java_destroy()!=true) return(7);
+    if (java_destroy(ret)!=true) return(7);
 
-    /* Remove PID file */
-    unlink(args->pidf);
-
-    if (doreload==true) return(123);
-    else return(0);
+    return(ret);
 }
 
 int main(int argc, char *argv[]) {
@@ -330,7 +330,7 @@ int main(int argc, char *argv[]) {
        will be the child */
     while ((pid=fork())!=-1) {
         /* We forked (again), if this is the child, we go on normally */
-        if (pid==0) return(child(args,data,uid,gid));
+        if (pid==0) exit(child(args,data,uid,gid));
 
         /* We are in the controller, we have to forward all interesting signals
            to the child, and wait for it to die */
