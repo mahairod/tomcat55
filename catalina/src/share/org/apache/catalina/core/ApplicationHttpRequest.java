@@ -71,6 +71,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -265,7 +266,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (pos == -1) {
             return getRequest().getAttribute(name);
         } else {
-            if ((specialAttributes[pos] == null) && (pos >= 5)) {
+            if ((specialAttributes[pos] == null) 
+                && (specialAttributes[5] == null) && (pos >= 5)) {
                 // If it's a forward special attribute, and null, it means this
                 // is an include, so we check the wrapped request since 
                 // the request could have been forwarded before the include
@@ -881,30 +883,49 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         protected int pos = -1;
         protected int last = -1;
         protected Enumeration parentEnumeration = null;
+        protected String next = null;
 
         public AttributeNamesEnumerator() {
             parentEnumeration = getRequest().getAttributeNames();
             for (int i = 0; i < specialAttributes.length; i++) {
-                if (specialAttributes[i] != null) {
+                if (getAttribute(specials[i]) != null) {
                     last = i;
                 }
             }
         }
 
         public boolean hasMoreElements() {
-            return ((pos != last) || (parentEnumeration.hasMoreElements()));
+            return ((pos != last) || (next != null) 
+                    || ((next = findNext()) != null));
         }
 
         public Object nextElement() {
             if (pos != last) {
                 for (int i = pos + 1; i <= last; i++) {
-                    if (specialAttributes[i] != null) {
+                    if (getAttribute(specials[i]) != null) {
                         pos = i;
                         return (specials[i]);
                     }
                 }
             }
-            return parentEnumeration.nextElement();
+            String result = next;
+            if (next != null) {
+                next = findNext();
+            } else {
+                throw new NoSuchElementException();
+            }
+            return result;
+        }
+
+        protected String findNext() {
+            String result = null;
+            while ((result == null) && (parentEnumeration.hasMoreElements())) {
+                String current = (String) parentEnumeration.nextElement();
+                if (!isSpecial(current)) {
+                    result = current;
+                }
+            }
+            return result;
         }
 
     }
