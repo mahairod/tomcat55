@@ -380,6 +380,9 @@ public class ErrorDispatcherValve
                 servletContext.getRequestDispatcher(errorPage.getLocation());
             rd.forward(hreq, hres);
 
+            // If we forward, the response is suspended again
+            response.setSuspended(false);
+
             // Indicate that we have successfully processed this custom page
             return (true);
 
