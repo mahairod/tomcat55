@@ -88,7 +88,7 @@
     <pathelement location="${commons-daemon.jar}"/>
     <pathelement location="${commons-dbcp.jar}"/>
     <pathelement location="${commons-digester.jar}"/>
-    <pathelement location="${commons-fileupload.jar}"/>
+    <pathelement location="${commonsf-ileupload.jar}"/>
     <pathelement location="${commons-logging.jar}"/>
     <pathelement location="${commons-modeler.jar}"/>
     <pathelement location="${commons-pool.jar}"/>
@@ -154,16 +154,16 @@
      classpath="${commons-dbcp.jar}"/>
     <available property="digester.present"
      classname="org.apache.commons.digester.Digester"
-     classpath="${commons-digester.jar}"/>
+     classpathref="catalina.classpath"/>
     <available property="fileupload.present"
      classname="org.apache.commons.fileupload.FileUpload"
-     classpath="${commons-fileupload.jar}"/>
+     classpathref="catalina.classpath"/>
     <available property="logging.present"
      classname="org.apache.commons.logging.Log"
      classpath="${commons-logging.jar}"/>
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
-     classpath="${commons-modeler.jar}"/>
+     classpathref="catalina.classpath"/>
     <available property="jaas.present"
      classname="javax.security.auth.Subject"
      classpath="${jaas.jar}" />
@@ -223,8 +223,8 @@
      classname="javax.servlet.Servlet"
      classpath="${servlet.jar}" />
     <available property="tyrex.present"
-     classname="tyrex.tm.Tyrex"
-     classpath="${tyrex.jar}" />
+     classname="tyrex.tm.TyrexTransaction"
+     classpathref="catalina.classpath" />
     <available property="xerces.present"
      classname="org.apache.xerces.parsers.SAXParser"
      classpath="${xerces.jar}:${xercesImpl.jar}" />
@@ -881,6 +881,7 @@
       <property name="tomcat41.home" value="${catalina.deploy}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
+      <property name="servlet-api.jar" value="${servlet.jar}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
