@@ -182,7 +182,7 @@ public class JspParseEventListener implements ParseEventListener {
 
         // FIXME: Is this good enough? (I'm just taking the easy way out - akv)
         if (ctxt.getOptions().getLargeFile())
-            dataFile = ctxt.getOutputDir() + File.separatorChar +
+            dataFile = ctxt.getOutputDir() +
                 ctxt.getServletClassName() + ".dat";
     }
 
