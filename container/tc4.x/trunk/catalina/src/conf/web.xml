@@ -183,12 +183,6 @@
   </servlet>
 
 
-  <!-- Server Side Includes processing servlet, which processes SSI         -->
-  <!-- directives in HTML pages consistent with similar support in web      -->
-  <!-- servers like Apache.  Traditionally, this servlet is mapped to       -->
-  <!-- URL pattern "*.shtml".  This servlet supports the following          -->
-  <!-- initialization parameters (default values are in square brackets):   -->
-  <!--                                                                      -->
   <!-- Common Gateway Includes (CGI) processing servlet, which supports     -->
   <!-- execution of external applications that conform to the CGI spec      -->
   <!-- requirements.  Typically, this servlet is mapped to the URL pattern  -->
