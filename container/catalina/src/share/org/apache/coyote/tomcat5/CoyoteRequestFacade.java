@@ -220,12 +220,7 @@ public class CoyoteRequestFacade
         }
                 
         public Object run() {  
-            HttpSession session =
-                request.getSession(create);
-            if (session == null)
-                return null;
-            else  
-                return (new StandardSessionFacade(session));
+            return request.getSession(create);
         }           
     }      
     // ----------------------------------------------------------- Constructors
@@ -556,12 +551,7 @@ public class CoyoteRequestFacade
             return (HttpSession)AccessController.
                 doPrivileged(new GetSessionPrivilegedAction(create));
         } else {
-            HttpSession session =
-                request.getSession(create);
-            if (session == null)
-                return null;
-            else 
-                return new StandardSessionFacade(session);
+            return request.getSession(create);
         }
     }
 
