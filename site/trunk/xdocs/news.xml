@@ -10,6 +10,23 @@
 
 <section name="News &amp; Status">
 
+<h3>17 July 2001 - Jakarta Tomcat 3.2.3 Released</h3>
+
+<p><strong>Tomcat 3.2.3</strong> is a security release.  A serious security problem
+was found in Tomcat 3.2.2 that could allow unconstrained access to protected areas
+of a web site.  This release closes that security hole and also includes several
+other bug fixes that have been applied since the release of Tomcat 3.2.2.  Please see 
+the RELEASE-NOTES for details on the security problem and other bug fixes available
+in this release.  The release is available for download
+<a href="http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.2.3">here</a>.
+</p>
+
+<p>It is strongly encouraged that all users of Tomcat 3.2.2 or earlier upgrade
+to version 3.2.3 as soon as possible.
+</p>
+
+<hr noshade="" size="1"/>
+                          
 <h3>28 May 2001 - Jakarta Tomcat 3.2.2 Released</h3>
 
 <p><strong>Tomcat 3.2.2</strong> is a maintenance release that fixes

@@ -52,11 +52,13 @@ There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat
 strongly encouraged to migrate to the current production release, Tocmat 
 3.2.1.</p> 
 
-<p><strong>Tomcat 3.2.x</strong>.  Tomcat 3.2.2 is the current production 
+<p><strong>Tomcat 3.2.x</strong>.  Tomcat 3.2.3 is the current production 
 quality release.  Version 3.2 added few new features; the major effort was 
 a refactoring of the internals to improve performance and stability.  The 
-3.2.1 release, like 3.1.1, was a security patch.  Version 3.2.2 fixes a 
-large number of bugs and all known specification compliance issues.  The 
+3.2.1 release, like 3.1.1, was a security patch.  Version 3.2.2 fixed a 
+large number of bugs and all known specification compliance issues.  Version
+3.2.3 is a security update that closes a serious security hole.  All users
+of Tomcat versions prior to 3.2.3 should updgrade as soon as possible.  The 
 3.2.x branch will continue in maintenance mode, but no new feature 
 releases are planned.</p> 
 
