@@ -1031,13 +1031,6 @@
       </fileset>
     </jar>
 
-    <!-- Servlets - Manager Servlet -->
-    <jar jarfile="${catalina.deploy}/server/lib/servlets-manager.jar" index="true">
-      <fileset dir="${classes.dir}">
-        <include name="org/apache/catalina/servlets/*Manager*" />
-      </fileset>
-    </jar>
-
     <!-- Servlets - SSI Servlet -->
     <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.renametojar" index="true">
       <fileset dir="${classes.dir}">
