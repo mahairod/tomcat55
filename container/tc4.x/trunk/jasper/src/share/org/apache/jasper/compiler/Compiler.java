@@ -84,6 +84,7 @@ import org.apache.jasper.logging.Logger;
  *
  * @author Anil K. Vijendran
  * @author Mandar Raje
+ * @author Pierre Delisle
  */
 public class Compiler {
     protected JavaCompiler javac;
@@ -134,8 +135,18 @@ public class Compiler {
                           new Object[] { className },
                           Logger.DEBUG);
 
-        
-        
+        // Setup the ServletWriter
+        String javaEncoding = "UTF8";           // perhaps debatable?
+        ServletWriter writer = 
+            (new ServletWriter
+                (new PrintWriter
+                    (new java.io.OutputStreamWriter(
+                        new FileOutputStream(javaFileName),javaEncoding))));
+        ctxt.setWriter(writer);
+
+	/* NOT COMPILED -- remove eventually -- kept for temp reference
+	   @@@ ParserController still needs to handle jspEncoding
+	       for JSP syntax files
         // Need the encoding specified in the JSP 'page' directive for
         //  - reading the JSP page
         //  - writing the JSP servlet source
@@ -143,7 +154,6 @@ public class Compiler {
         // XXX - There are really three encodings of interest.
 
         String jspEncoding = "8859_1";          // default per JSP spec
-        String javaEncoding = "UTF8";           // perhaps debatable?
 
 	// This seems to be a reasonable point to scan the JSP file
 	// for a 'contentType' directive. If it found then the set
@@ -165,23 +175,31 @@ public class Compiler {
             ctxt,
             jspEncoding
         );
-
-        ServletWriter writer = 
-            (new ServletWriter
-                (new PrintWriter
-                    (new java.io.OutputStreamWriter(
-                        new FileOutputStream(javaFileName),javaEncoding))));
-
         ctxt.setReader(reader);
-        ctxt.setWriter(writer);
-
         ParseEventListener listener = new JspParseEventListener(ctxt);
-        
+	*/
+
+	/* NOT COMPILED
         Parser p = new Parser(reader, listener);
         listener.beginPageProcessing();
         p.parse();
         listener.endPageProcessing();
+	*/
+
+	// Parse the file
+	ParserController parserCtl = new ParserController(ctxt);
+	parserCtl.parse(ctxt.getJspFile());
+
+        // Generate the servlet
+	ParseEventListener listener = parserCtl.getParseEventListener();
+        listener.beginPageProcessing();
+        listener.endPageProcessing();
         writer.close();
+
+	// An XML input stream has been produced and can be validated
+	// by TagLibraryValidator classes 
+	((JspParseEventListener)listener).validate();
+
 
         String classpath = ctxt.getClassPath(); 
 
