@@ -185,6 +185,13 @@ public class JspC implements Options { //, JspCompilationContext {
         return false;
     }
 
+    /**
+     * JSP reloading check ?
+     */
+    public boolean getReloading() {
+        return true;
+    }
+
     public String getIeClassId() {
         return ieClassId;
     }

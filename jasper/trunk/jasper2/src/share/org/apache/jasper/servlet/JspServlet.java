@@ -595,16 +595,19 @@ public class JspServlet extends HttpServlet {
                  req, res);
         }
         JspCompilationContext ctxt = jsw.ctxt;
-	boolean outDated; 
+	boolean outDated = false; 
         Compiler compiler = ctxt.createCompiler();
         
         try {
-	    synchronized(jsw) {
-		// Synchronizing on jsw enables simultaneous compilations of
-		// different pages, but not the same page.
-		outDated = compiler.isOutDated();
-		if (outDated)
-		    compiler.compile();
+            if (options.getReloading()) {
+                synchronized (jsw) {
+                    // Synchronizing on jsw enables simultaneous 
+                    // compilations of different pages, but not the 
+                    // same page.
+                    outDated = compiler.isOutDated();
+                    if (outDated)
+                        compiler.compile();
+                }
             }
         } catch (FileNotFoundException ex) {
             compiler.removeGeneratedFiles();
@@ -612,8 +615,8 @@ public class JspServlet extends HttpServlet {
         } catch (JasperException ex) {
             throw ex;
         } catch (Exception ex) {
-	    throw new JasperException(Constants.getString("jsp.error.unable.compile"),
-                                      ex);
+	    throw new JasperException
+                (Constants.getString("jsp.error.unable.compile"), ex);
 	}
 
         // Reload only if it's outdated

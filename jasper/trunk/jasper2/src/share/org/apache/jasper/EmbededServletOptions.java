@@ -111,6 +111,11 @@ public final class EmbededServletOptions implements Options {
     public boolean classDebugInfo = false;
 
     /**
+     * JSP reloading check ?
+     */
+    public boolean reloading = true;
+
+    /**
      * I want to see my generated servlets. Which directory are they
      * in?
      */
@@ -182,6 +187,13 @@ public final class EmbededServletOptions implements Options {
      */
     public boolean getClassDebugInfo() {
         return classDebugInfo;
+    }
+
+    /**
+     * JSP reloading check ?
+     */
+    public boolean getReloading() {
+        return reloading;
     }
 
     /**
@@ -278,6 +290,15 @@ public final class EmbededServletOptions implements Options {
             else if (debugInfo.equalsIgnoreCase("false"))
                 this.classDebugInfo  = false;
             else Constants.message ("jsp.warning.classDebugInfo", Logger.WARNING);
+        }
+
+        String reloading = config.getInitParameter("reloading");
+        if (reloading != null) {
+            if (reloading.equalsIgnoreCase("true"))
+                this.reloading = true;
+            else if (reloading.equalsIgnoreCase("false"))
+                this.reloading = false;
+            else Constants.message ("jsp.warning.reloading", Logger.WARNING);
         }
 
         String ieClassId = config.getInitParameter("ieClassId");
