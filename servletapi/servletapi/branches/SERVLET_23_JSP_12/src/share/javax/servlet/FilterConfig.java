@@ -58,34 +58,49 @@
  * DO NOT add / change / or delete method signatures!
  */
 
+
 package javax.servlet;
 
-import java.util.Enumeration;
+
+import java.util.Iterator;
+
+	 /** 
+	 *
+	 * A filter configuration object used by a servlet container
+	 * used to pass information to a filter during initialization.<p>
+	 * As well as holding the initialization parameters of a Filter, the FilterConfig provides a view into
+	 * the next Filter and also of the remaining remaining Filters in the Filter stack of a Servlet. The last object in the Filter
+	 * stack is always the Servlet that is being filtered. Containers provide a wrapper implementation
+	 * of the Filter interface to wrap the Servlet so that Filters never know whether the next object
+	 * in the stack is another Filter or the Servlet that it is filtering.
+	 * @see Filter 
+	  * @since	v 2.3
+	 *
+	 */
 
 
+public interface FilterConfig extends Config {
 
-/**
- * 
- * A servlet configuration object used by a servlet container
- * used to pass information to a servlet during initialization. 
- *
- */
- 
-public interface ServletConfig extends Config {
-    
+	/** 
+	* Returns the filter-name of this filter as defined in the deployment descriptor. 
+	*/
+	
+	public String getFilterName();
 
-    /**
-     * Returns the name of this servlet instance.
-     * The name may be provided via server administration, assigned in the 
-     * web application deployment descriptor, or for an unregistered (and thus
-     * unnamed) servlet instance it will be the servlet's class name.
-     *
-     * @return		the name of the servlet instance
-     *
-     *
-     *
-     */
+	/**
+	*  Returns the next Filter object in the filter stack.
+	*/
+    public Filter getNext ();
 
-    public String getServletName();
+	/**
+	* Returns the remaining Filter objects in the Filter stack in the order
+	* that they have been configured. The purpose
+	* of this method it to allow Filters to decide to skip remaining
+	* filters in the stack if they wish. The Iterator returned does not 
+	* support the optional remove() operation. 
+	**/
+    public Iterator getFilters();
+
+
 
 }

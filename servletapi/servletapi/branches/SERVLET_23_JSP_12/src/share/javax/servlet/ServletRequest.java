@@ -65,6 +65,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 
 
 
@@ -153,6 +154,20 @@ public interface ServletRequest {
      */
 
     public String getCharacterEncoding();
+
+ /**
+     * Overrides the name of the character encoding used in the body of this
+     * request. This method must be called prior to reading request parameters
+     * or reading input using getReader().
+     * 
+     *
+     * @param		a <code>String</code> containing the name of 
+     *			the chararacter encoding.
+     *
+     */
+
+    public void setCharacterEncoding(String env);
+
     
     
     
@@ -283,7 +298,16 @@ public interface ServletRequest {
      */
 
     public String[] getParameterValues(String name);
-    
+ 
+    /** Returns a java.util.Map of the parameters of this request.
+    ** Request parameters
+     * are extra information sent with the request.  For HTTP servlets,
+     * parameters are contained in the query string or posted form data.
+     *
+     * @return a java.util.Map container parameter names as keys and parameter values as
+     * map values.
+     */
+    public Map getParameterMap();
     
     
 
