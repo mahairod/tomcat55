@@ -103,6 +103,7 @@ import org.apache.catalina.util.xml.SaxContext;
 import org.apache.catalina.util.xml.XmlAction;
 import org.apache.catalina.util.xml.XmlMapper;
 import org.apache.catalina.valves.ValveBase;
+import org.xml.sax.SAXParseException;
 
 
 /**
@@ -226,6 +227,11 @@ public final class ContextConfig
 	} catch (InvocationTargetException e) {
 	    log(sm.getString("contextConfig.applicationConfig"),
 		e.getTargetException());
+        } catch (SAXParseException e) {
+            log(sm.getString("contextConfig.applicationParse"), e);
+            log(sm.getString("contextConfig.applicationPosition",
+                             "" + e.getLineNumber(),
+                             "" + e.getColumnNumber()));
 	} catch (Exception e) {
 	    log(sm.getString("contextConfig.applicationParse"), e);
 	} finally {
@@ -611,6 +617,11 @@ public final class ContextConfig
 	} catch (InvocationTargetException e) {
 	    log(sm.getString("contextConfig.defaultConfig"),
 		e.getTargetException());
+        } catch (SAXParseException e) {
+            log(sm.getString("contextConfig.defaultParse"), e);
+            log(sm.getString("contextConfig.defaultPosition",
+                             "" + e.getLineNumber(),
+                             "" + e.getColumnNumber()));
 	} catch (Exception e) {
 	    log(sm.getString("contextConfig.defaultParse"), e);
 	} finally {

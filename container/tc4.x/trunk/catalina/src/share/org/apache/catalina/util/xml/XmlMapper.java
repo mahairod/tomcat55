@@ -70,6 +70,13 @@ public class XmlMapper
 	}
     }
 
+
+    public void error(SAXParseException e) throws SAXException
+    {
+        if (validating)
+            fatalError(e);  // Make all parse exceptions fatal if validating
+    }
+
     public void startElement (String tag, AttributeList attributes)
 	throws SAXException
     {
@@ -218,9 +225,17 @@ public class XmlMapper
 	    // or throw an exception is more than one element is on the stack
    	} catch (IOException ioe) {
 	    ioe.printStackTrace();
-	    String msg = "Can't open config file: " + xmlFile +
+	    String msg = "Can't open config file: " +
+                xmlFile.getAbsolutePath() +
 		" due to: " + ioe;
 	    throw new Exception(msg);
+        } catch (SAXParseException spe) {
+            System.out.println("PARSE error at line " +
+                               spe.getLineNumber() + " column " +
+                               spe.getColumnNumber() + " of " +
+                               xmlFile.getAbsolutePath());
+            System.out.println(spe.toString());
+            throw spe;
 	} catch (SAXException se) {
 	    System.out.println("ERROR reading " + xmlFile);
 	    System.out.println("At " + se.getMessage());
@@ -258,6 +273,12 @@ public class XmlMapper
 	    String msg = "Can't open config file: " + xmlFile +
 		" due to: " + ioe;
 	    throw new Exception(msg);
+        } catch (SAXParseException spe) {
+            System.out.println("PARSE error at line " +
+                               spe.getLineNumber() + " column " +
+                               spe.getColumnNumber());
+            System.out.println(spe.toString());
+            throw spe;
 	} catch (SAXException se) {
 	    System.out.println("ERROR reading " + xmlFile);
 	    System.out.println("At " + se.getMessage());
