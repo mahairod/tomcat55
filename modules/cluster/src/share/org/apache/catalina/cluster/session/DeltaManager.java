@@ -327,13 +327,13 @@ public class DeltaManager
         }
       }
 
-      session.setId(sessionId);
-      session.resetDeltaRequest();
-      // Initialize the properties of the new session and return it
       session.setNew(true);
       session.setValid(true);
       session.setCreationTime(System.currentTimeMillis());
       session.setMaxInactiveInterval(this.maxInactiveInterval);
+      session.setId(sessionId);
+      session.resetDeltaRequest();
+      // Initialize the properties of the new session and return it
 
       sessionCounter++;
       
