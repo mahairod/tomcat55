@@ -216,6 +216,13 @@ public class TagPluginManager {
 	    pageInfo.addImport(imp);
 	}
 
+	public void generateDeclaration(String id, String text) {
+	    if (pageInfo.isPluginDeclared(id)) {
+		return;
+	    }
+	    curNodes.add(new Node.Declaration(text, node.getStart(), null));
+	}
+
 	public void generateJavaSource(String sourceCode) {
 	    curNodes.add(new Node.Scriptlet(sourceCode, node.getStart(),
 					    null));

@@ -65,6 +65,8 @@ import org.apache.jasper.compiler.tagplugin.*;
 
 public final class ForEach implements TagPlugin {
 
+    private boolean hasVar, hasBegin, hasEnd, hasStep;
+
     public void doTag(TagPluginContext ctxt) {
 
 	String index = null;
@@ -75,16 +77,16 @@ public final class ForEach implements TagPlugin {
 	    return;
 	}
 
+	hasVar = ctxt.isAttributeSpecified("var");
+	hasBegin = ctxt.isAttributeSpecified("begin");
+	hasEnd = ctxt.isAttributeSpecified("end");
+	hasStep = ctxt.isAttributeSpecified("step");
+
 	boolean hasItems = ctxt.isAttributeSpecified("items");
 	if (hasItems) {
 	    doCollection(ctxt);
 	    return;
 	}
-
-	boolean hasVar = ctxt.isAttributeSpecified("var");
-	boolean hasBegin = ctxt.isAttributeSpecified("begin");
-	boolean hasEnd = ctxt.isAttributeSpecified("end");
-	boolean hasStep = ctxt.isAttributeSpecified("step");
 
 	// We must have a begin and end attributes
 	index = ctxt.getTemporaryVariableName();
@@ -117,12 +119,9 @@ public final class ForEach implements TagPlugin {
      * The pseudo code is:
      */
     private void doCollection(TagPluginContext ctxt) {
-	boolean hasVar = ctxt.isAttributeSpecified("var");
-	boolean hasBegin = ctxt.isAttributeSpecified("begin");
-	boolean hasEnd = ctxt.isAttributeSpecified("end");
-	boolean hasStep = ctxt.isAttributeSpecified("step");
 
 	ctxt.generateImport("java.util.*");
+	generateIterators(ctxt);
 
         String itemsV = ctxt.getTemporaryVariableName();
         ctxt.generateJavaSource("Object " + itemsV + "= ");
@@ -151,10 +150,38 @@ public final class ForEach implements TagPlugin {
 	    ctxt.generateJavaSource(";");
 	}
 
-        ctxt.generateJavaSource("if (" + itemsV + " instanceof Collection) {");
         String iterV = ctxt.getTemporaryVariableName();
-        ctxt.generateJavaSource("Iterator " + iterV + " = ");
-	ctxt.generateJavaSource("((Collection)" + itemsV + ").iterator();");
+        ctxt.generateJavaSource("Iterator " + iterV + " = null;");
+	// Object[]
+	ctxt.generateJavaSource("if (" + itemsV + " instanceof Object[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((Object[])" + itemsV + ");");
+	// boolean[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof boolean[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((boolean[])" + itemsV + ");");
+	// byte[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof byte[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((byte[])" + itemsV + ");");
+	// char[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof char[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((char[])" + itemsV + ");");
+	// short[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof short[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((short[])" + itemsV + ");");
+	// int[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof int[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((int[])" + itemsV + ");");
+	// long[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof long[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((long[])" + itemsV + ");");
+	// float[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof float[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((float[])" + itemsV + ");");
+	// double[]
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof double[])");
+	ctxt.generateJavaSource(iterV + "=toIterator((double[])" + itemsV + ");");
+
+        ctxt.generateJavaSource("else if (" + itemsV + " instanceof Collection)");
+        ctxt.generateJavaSource(iterV + "=((Collection)" + itemsV + ").iterator();");
 
 	if (hasBegin) {
             String tV = ctxt.getTemporaryVariableName();
@@ -165,12 +192,10 @@ public final class ForEach implements TagPlugin {
 	}
 
 	ctxt.generateJavaSource("while (" + iterV + ".hasNext()){");
-        String nextV = ctxt.getTemporaryVariableName();
-	ctxt.generateJavaSource("Object " + nextV + " = " + iterV + ".next();");
 	if (hasVar) {
 	    ctxt.generateJavaSource("pageContext.setAttribute(");
 	    ctxt.generateAttribute("var");
-	    ctxt.generateJavaSource(", " + nextV + ");");
+	    ctxt.generateJavaSource(", " + iterV + ".next());");
 	}
 
 	ctxt.generateBody();
@@ -199,6 +224,137 @@ public final class ForEach implements TagPlugin {
 	    ctxt.generateJavaSource("break;");
 	}
 	ctxt.generateJavaSource("}");	// while
-	ctxt.generateJavaSource("}");	// if
+    }
+
+    /**
+     * Generate iterators for data types supported in items
+     */
+    private void generateIterators(TagPluginContext ctxt) {
+
+	// Object[]
+	ctxt.generateDeclaration("ObjectArrayIterator", 
+	    "private Iterator toIterator(final Object[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return a[index++];}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// boolean[]
+	ctxt.generateDeclaration("booleanArrayIterator", 
+	    "private Iterator toIterator(final boolean[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Boolean(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// byte[]
+	ctxt.generateDeclaration("byteArrayIterator", 
+	    "private Iterator toIterator(final byte[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Byte(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// char[]
+	ctxt.generateDeclaration("charArrayIterator", 
+	    "private Iterator toIterator(final char[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Character(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// short[]
+	ctxt.generateDeclaration("shortArrayIterator", 
+	    "private Iterator toIterator(final short[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Short(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// int[]
+	ctxt.generateDeclaration("intArrayIterator", 
+	    "private Iterator toIterator(final int[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Integer(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// long[]
+	ctxt.generateDeclaration("longArrayIterator", 
+	    "private Iterator toIterator(final long[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Long(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// float[]
+	ctxt.generateDeclaration("floatArrayIterator",
+	    "private Iterator toIterator(final float[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Float(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
+	// double[]
+	ctxt.generateDeclaration("doubleArrayIterator",
+	    "private Iterator toIterator(final double[] a){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    int index=0;\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return index < a.length;}\n" +
+	    "    public Object next() {\n" +
+	    "      return new Double(a[index++]);}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
     }
 }

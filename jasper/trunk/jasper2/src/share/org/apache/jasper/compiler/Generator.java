@@ -167,6 +167,19 @@ class Generator {
 		out.printMultiLn(new String(n.getText()));
 		out.println();
 	    }
+
+	    // Custom Tags may contain declarations from tag plugins.
+            public void visit(Node.CustomTag n) throws JasperException {
+		if (n.useTagPlugin()) {
+		    if (n.getAtSTag() != null) {
+			n.getAtSTag().visit(this);
+		    }
+		    visitBody(n);
+		    if (n.getAtETag() != null) {
+			n.getAtETag().visit(this);
+		    }
+		}
+	    }
 	}
 
 	out.println();
@@ -2896,8 +2909,8 @@ class Generator {
      */
     private void genCommonPostamble() {
 	// Append any methods that were generated
-	out.print(methodsBuffer.toString());
-        
+	out.printMultiLn(methodsBuffer.toString());
+
         // Append the helper class
         if( fragmentHelperClass.isUsed() ) {
             fragmentHelperClass.generatePostamble();

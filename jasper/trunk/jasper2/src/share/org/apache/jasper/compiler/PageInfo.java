@@ -117,6 +117,7 @@ class PageInfo {
     private boolean hasJspRoot = false;
     private Vector includePrelude;
     private Vector includeCoda;
+    private Vector pluginDcls;		// Id's for tagplugin declarations
 
 
     PageInfo(BeanRepository beanRepository) {
@@ -126,10 +127,23 @@ class PageInfo {
         this.dependants = new Vector();
 	this.includePrelude = new Vector();
 	this.includeCoda = new Vector();
+	this.pluginDcls = new Vector();
 
 	// Enter standard imports
 	for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
 	    imports.add(Constants.STANDARD_IMPORTS[i]);
+    }
+
+    /**
+     * Check if the plugin ID has been previously declared.  Make a not
+     * that this Id is now declared.
+     * @return true if Id has been declared.
+    */
+    public boolean isPluginDeclared(String id) {
+	if (pluginDcls.contains(id))
+	    return true;
+	pluginDcls.add(id);
+	return false;
     }
 
     public void addImports(List imports) {

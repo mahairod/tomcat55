@@ -93,6 +93,18 @@ public interface TagPluginContext {
     void generateImport(String s);
 
     /**
+     * Generate a declaration in the of the generated class.  This can be
+     * used to declare an innter class, a method, or a class variable.
+     * @param id An unique ID identifying the declaration.  It is not
+     *           part of the declaration, and is used to ensure that the
+     *           declaration will only appear once.  If this method is
+     *           invoked with the same id more than once in the translation
+     *           unit, only the first declaration will be taken.
+     * @param text The text of the declaration.
+     **/
+    void generateDeclaration(String id, String text);
+
+    /**
      * Generate Java source codes
      */
     void generateJavaSource(String s);
