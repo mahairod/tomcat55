@@ -3313,6 +3313,19 @@ public class StandardContext
                 log("Error initializing resources: " + e.getMessage());
                 ok = false;
             }
+        } else {
+            DirContext dirContext = getResources();
+            if (dirContext instanceof ProxyDirContext) {
+                dirContext = ((ProxyDirContext) dirContext).getDirContext();
+                log("Configuring ProxyDirContext Resources" + dirContext);
+            }
+            if (dirContext instanceof BaseDirContext) {
+                ((BaseDirContext) dirContext).setDocBase(getBasePath());
+                ((BaseDirContext) dirContext).setCached(isCachingAllowed());
+            }
+            if (dirContext instanceof FileDirContext) {
+                filesystemBased = true;
+            }
         }
         if (getLoader() == null) {      // (2) Required by Manager
             // FIXME: All webapps require Jasper, but Jasper isn't available in
