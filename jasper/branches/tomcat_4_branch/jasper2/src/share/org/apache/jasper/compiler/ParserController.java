@@ -250,7 +250,6 @@ public class ParserController {
 	    while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
 		if (jspReader.matches("page")) {
-		    jspReader.advance(4);
 		    jspReader.skipSpaces();
 		    Attributes attrs = Parser.parseAttributes(this, jspReader);
 		    String attribute = "pageEncoding";
