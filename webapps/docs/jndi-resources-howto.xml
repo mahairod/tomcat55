@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="jndi-resources-howto.html">
 
     &project;
 
@@ -578,7 +578,7 @@ conn.close();
   the use of this factory in the <code>conf/server.xml</code> configuration
   file.  In the example below, we will create a factory that only knows how
   to create <code>com.mycompany.MyBean</code> beans, from the
-  <a href="Generic JavaBean Resources">Generic JavaBean Resources</a>
+  <a href="#Generic JavaBean Resources">Generic JavaBean Resources</a>
   example, above.</p>
 
   <h3>1.  Write A Resource Factory Class</h3>

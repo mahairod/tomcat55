@@ -2,7 +2,7 @@
 <!DOCTYPE document [
   <!ENTITY project SYSTEM "project.xml">
 ]>
-<document>
+<document url="manager-howto.html">
 
     &project;
 
@@ -13,6 +13,35 @@
 
 <body>
 
+<section name="Table of Contents">
+
+<p>
+<a href="#Introduction">Introduction</a><br />
+<a href="#Configuring Manager Application Access">
+Configuring Manager Application Access</a><br />
+<a href="#Supported Manager Commands">Supported Manager Commands</a><br />
+<blockquote>
+<a href="#Deploy A New Application">Deploy A New Application</a><br />
+<a href="#Install A New Application">Install A New Application</a><br />
+<a href="#List Currently Deployed and Installed Applications">
+List Currently Deployed and Installed Applications</a><br />
+<a href="#Reload An Existing Application">Reload An Existing Application</a><br />
+<a href="#Remove an Existing Application">Remove an Existing Application</a><br />
+<a href="#List OS and JVM Properties">List OS and JVM Properties</a><br />
+<a href="#List Available Global JNDI Resources">
+List Available Global JNDI Resources</a><br />
+<a href="#List Available Security Roles">List Available Security Roles</a><br />
+<a href="#Session Statistics">Session Statistics</a><br />
+<a href="#Start an Existing Application">Start an Existing Application</a><br />
+<a href="#Stop an Existing Application">Stop an Existing Application</a><br />
+<a href="#Undeploy an Existing Application">
+Undeploy an Existing Application</a><br />
+</blockquote>
+<a href="#Executing Manager Commands With Ant">
+Executing Manager Commands With Ant</a><br />
+</p>
+
+</section>
 
 <section name="Introduction">
 
@@ -20,10 +49,10 @@
 to deploy a new web application, or undeploy an existing one, without having
 to shut down and restart the entire container.  In addition, you can request
 an existing application to reload itself, even if you have not declared it
-to be <code>reloadable</code> in the Tomcat 5 server
+to be <code>reloadable</code> in the Tomcat 4 server
 configuration file.</p>
 
-<p>To support these capabilities, Tomcat 5 includes a web application
+<p>To support these capabilities, Tomcat 4 includes a web application
 (installed by default on context path <code>/manager</code>) that supports
 the following functions:</p>
 <ul>
@@ -36,6 +65,7 @@ the following functions:</p>
 <li>Reload an existing web application, to reflect changes in the
     contents of <code>/WEB-INF/classes</code> or <code>/WEB-INF/lib</code>.
     </li>
+<li>List the OS and JVM property values.</li>
 <li>List the available global JNDI resources, for use in deployment
     tools that are preparing <code>&lt;ResourceLink&gt;</code> elements
     nested in a <code>&lt;Context&gt;</code> deployment description.</li>
@@ -85,7 +115,7 @@ With Ant</a> for more information.</li>
 </ul>
 </p>
 
-<p>Future versions of Tomcat 5 will include administrative functionality that
+<p>Future versions of Tomcat 4 will include administrative functionality that
 is presented in (at least) the following forms:
 <ul>
 <li>As web services, so that Tomcat administration can be easily integrated
@@ -102,9 +132,9 @@ is presented in (at least) the following forms:
 
     <blockquote><em>
     <p>The description below uses the variable name $CATALINA_HOME
-    to refer to the directory into which you have installed Tomcat 5,
+    to refer to the directory into which you have installed Tomcat 4,
     and is the base directory against which most relative paths are
-    resolved.  However, if you have configured Tomcat 5 for multiple
+    resolved.  However, if you have configured Tomcat 4 for multiple
     instances by setting a CATALINA_BASE directory, you should use
     $CATALINA_BASE instead of $CATALINA_HOME for each of these
     references.</p>
@@ -128,7 +158,7 @@ depends on which <code>Realm</code> implementation you are using:</p>
 <ul>
 <li><em>MemoryRealm</em> - If you have not customized your
     <code>$CATALINA_HOME/conf/server.xml</code> to select a different one,
-    Tomcat 5 defaults to an XML-format file stored at
+    Tomcat 4 defaults to an XML-format file stored at
     <code>$CATALINA_HOME/conf/tomcat-users.xml</code>, which can be
     edited with any text editor.  This file contains an XML
     <code>&lt;user&gt;</code> for each individual user, which might
@@ -171,7 +201,6 @@ an example of restricting access to the localhost by IP address:
 &lt;/Context&gt;
 </pre>
 </p>
-
 </section>
 
 
@@ -197,8 +226,9 @@ the host and port appropriately for your installation.</p>
     It is not possible to perform administrative commands on the
     Manager application itself.</li>
 <li><strong>war</strong> - URL of a web application archive (WAR) file,
-    or pathname of a directory, that contains the web application.
-    You can use URLs in any of the following formats:
+    pathname of a directory which contains the web application, or a
+    Context configuration ".xml" file.  You can use URLs in any of the
+    following formats:
     <ul>
     <li><strong>file:/absolute/path/to/a/directory</strong> - The absolute
         path of a directory that contains the unpacked version of a web
@@ -212,10 +242,13 @@ the host and port appropriately for your installation.</p>
         URL to a local web application archive (WAR) file.  You can use any
         syntax that is valid for the <code>JarURLConnection</code> class
         for reference to an entire JAR file.</li>
-    <li><strong>jar:http://hostname:port/path/to/a/warfile.war!/</strong> -
-        You can also deploy web applications from a remote JAR file.  You can
-        use any syntax that is valid for the <code>JarURLConnection</code>
-        class for reference to an entire JAR file.</li>
+    <li><strong>file:/absolute/path/to/a/context.xml</strong> - The
+        absolute path of a web application Context configuration ".xml"
+        file which contains the Context configuration element.</li>
+    <li><strong>directory</strong> - The directory name for the web
+        applciation context in the Host's application base directory.</li>
+    <li><strong>webapp.war</strong> - The name of a web application war file
+        located in the Host's application base directory.</li>
     </ul></li>
 </ul>
 
@@ -241,7 +274,9 @@ http://localhost:8080/manager/deploy?path=/foo
 <p>Upload the web application archive (WAR) file that is specified as the
 request data in this HTTP PUT request, install it into the <code>appBase</code>
 directory of our corresponding virtual host, and start it on the context path
-specified by the <code>path</code> request parameter.  The application can
+specified by the <code>path</code> request parameter.  If no <code>path</code>
+is specified the directory name or the war file name without the .war extension
+is used as the path.  The application can
 later be undeployed (and the corresponding application directory removed)
 by use of the <code>/undeploy</code>.</p>
 
@@ -270,7 +305,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the new web application.
-    Check the Tomcat 5 logs for the details, but likely explanations include
+    Check the Tomcat 4 logs for the details, but likely explanations include
     problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
     classes encountered when initializing application event listeners and
     filters.</p>
@@ -291,20 +326,127 @@ error message.  Possible causes for problems include:</p>
 
 <subsection name="Install A New Application">
 
-<source>
-http://localhost:8080/manager/install?path=/foo&amp;war=file:/path/to/foo
-
-http://localhost:8080/manager/install?path=/bar&amp;war=jar:file:/path/to/bar.war!/
-</source>
-
 <p>Install and start a new web application, attached to the specified context
-path (which must not be in use by any other web application).  The
-<code>war</code> parameter specifies a URL (including the <code>file:</code>
-scheme) for either a directory or a web application archive (WAR) file.
-The supported syntax for a URL referring to a WAR file is described on the
-Javadocs page for the <code>java.net.JarURLConnection</code> class.  Use
-only URLs that refer to the entire WAR file.  This command is the logical
-opposite of the <code>/remove</code> command.</p>
+<code>path</code> (which must not be in use by any other web application).
+This command is the logical opposite of the <code>/remove</code> command.</p>
+
+<p>There are a number of different ways the install command can be used.</p>
+
+<h3>Install a Directory or WAR by URL</h3>
+
+<p>Install a web application directory or ".war" file located on the Tomcat
+server. If no <code>path</code> is specified, the directory name or the war file
+name without the ".war" extension is used as the path. The <code>war</code>
+parameter specifies a URL (including the <code>file:</code> scheme) for either
+a directory or a web application archive (WAR) file. The supported syntax for
+a URL referring to a WAR file is described on the Javadocs page for the
+<code>java.net.JarURLConnection</code> class.  Use only URLs that refer to
+the entire WAR file.</p>
+
+<p>In this example the web application located in the directory
+<code>/path/to/foo</code> on the Tomcat server is installed as the 
+web application context named <code>/footoo</code>.
+<source>
+http://localhost:8080/manager/install?path=/footoo&amp;war=file:/path/to/foo
+</source>
+</p>
+
+<p>In this example the ".war" file <code>/path/to/bar.war</code> on the
+Tomcat server is installed as the web application context named
+<code>/bar</code>. Notice that there is no <code>path</code> parameter
+so the context path defaults to the name of the web application archive
+file without the ".war" extension.
+<source>
+http://localhost:8080/manager/install?war=jar:file:/path/to/bar.war!/
+</source>
+</p>
+
+<h3>Install a Directory or War from the Host appBase</h3>
+
+<p>Install a web application directory or ".war" file located in your Host
+appBase directory. If no <code>path</code> is specified the directory name
+or the war file name without the ".war" extension is used as the path.</p>
+
+<p>In this example the web application located in a sub directory named
+<code>foo</code> in the Host appBase directory of the Tomcat server is
+installed as the web application context named <code>/foo</code>. Notice
+that there is no <code>path</code> parameter so the context path defaults
+to the name of the web application directory.
+<source>
+http://localhost:8080/manager/install?war=foo
+</source>
+</p>
+
+<p>In this example the ".war" file <code>bar.war</code> located in your
+Host appBase directory on the Tomcat server is installed as the web
+application context named <code>/bartoo</code>.
+<source>
+http://localhost:8080/manager/install?path=/bartoo&amp;war=bar.war
+</source>
+</p>
+
+<h3>Install using a Context configuration ".xml" file</h3>
+
+<p>If the Host deployXML flag is set to true you can install a web
+application using a Context configuration ".xml" file and an optional
+".war" file or web application directory. The context <code>path</code>
+is not used when installing a web application using a context ".xml"
+configuration file.</p>
+
+<p>A Context configuration ".xml" file can contain valid XML for a
+web application Context just as if it were configured in your
+Tomcat <code>server.xml</code> configuration file. Here is an
+example:
+<source>
+&lt;Context path="/foobar" docBase="/path/to/application/foobar"
+         debug="0"&gt;
+
+  &lt;!-- Link to the user database we will get roles from --&gt;
+  &lt;ResourceLink name="users" global="UserDatabase"
+                type="org.apache.catalina.UserDatabase"/&gt;
+
+&lt;/Context&gt;
+</source>
+</p>
+
+<p>When the optional <code>war</code> parameter is set to the URL
+for a web application ".war" file or directory it overrides any
+docBase configured in the context configuration ".xml" file.</p>
+
+<p>Here is an example of installing an application using a Context
+configuration ".xml" file.
+<source>
+http://localhost:8080/manager/install?config=file:/path/context.xml
+</source>
+</p>
+
+<p>Here is an example of installing an application using a Context
+configuration ".xml" file and a web application ".war" file located
+on the server.
+<source>
+http://localhost:8080/manager/install?config=file:/path/context.xml&amp;war=jar:file:/path/bar.war!/
+</source>
+</p>
+
+<h3>Installation Notes</h3>
+
+<p>If the Host is configured with unpackWARs=true and you install a war
+file, the war will be unpacked into a directory in your Host appBase
+directory.</p>
+
+<p>If the application war or directory is installed in your Host appBase
+directory and either the Host is configured with autoDeploy=true or
+liveDeploy=true, the Context path must match the directory name or
+war file name without the ".war" extension.</p>
+
+<p>For security when untrusted users can manage web applications, the
+Host deployXML flag can be set to false.  This prevents untrusted users
+from installing web applications using a configuration XML file and
+also prevents them from installing application directories or ".war"
+files located outside of their Host appBase.</p>
+
+
+<h3>Install Response</h3>
 
 <p>If installation and startup is successful, you will receive a response
 like this:</p>
@@ -333,7 +475,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the new web application.
-    Check the Tomcat 5 logs for the details, but likely explanations include
+    Check the Tomcat 4 logs for the details, but likely explanations include
     problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
     classes encountered when initializing application event listeners and
     filters.</p>
@@ -348,12 +490,22 @@ error message.  Possible causes for problems include:</p>
     <blockquote>
     <p>The context path must start with a slash character, unless you are
     referencing the ROOT web application -- in which case the context path
-    must be a zero-length string.</p>
+    must be a "/" string.</p>
     </blockquote></li>
-<li><em>No context path was specified</em>
+<li><em>Context path must match the directory or WAR file name:</em>
     <blockquote>
-    The <code>path</code> parameter is required.
+    If the application war or directory is installed in your Host appBase
+    directory and either the Host is configured with autoDeploy=true or
+    liveDeploy=true, the Context path must match the directory name or
+    war file name without the ".war" extension.
     </blockquote></li>
+<li><em>Only web applications in the Host web application directory can
+     be installed</em>
+     <blockquote>
+     If the Host deployXML flag is set to false this error will happen
+     if an attempt is made to install a web application directory or
+      ".war" file outside of the Host appBase directory.
+     </blockquote></li>
 </ul>
 
 </subsection>
@@ -385,12 +537,16 @@ http://localhost:8080/manager/reload?path=/examples
 </source>
 
 <p>Signal an existing application to shut itself down and reload.  This can
-be useful when you've recompiled classes on an application that is not
-configured with the <code>reloadable="true"</code> attribute in its
-<code>&lt;Context&gt;</code> entry in
-<code>$CATALINA_HOME/conf/server.xml</code>, or when you've made other
-changes (such as to <code>conf/web.xml</code>) that are not automatically
-recognized by Tomcat.</p>
+be useful when the web application context is not reloadable and you have
+updated classes or property files in the <code>/WEB-INF/classes</code>
+directory or when you have added or updated jar files in the
+<code>/WEB-INF/lib</code> directory.
+</p>
+<p><strong>NOTE:</strong> The <code>/WEB-INF/web.xml</code>
+web application configuration file is not reread on a reload.
+If you have made changes to your web.xml file you must stop
+then start the web application.
+</p>
 
 <p>If this command succeeds, you will see a response like this:</p>
 <source>
@@ -403,7 +559,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to restart the web application.
-    Check the Tomcat 5 logs for the details.</p>
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -420,7 +576,7 @@ error message.  Possible causes for problems include:</p>
     <blockquote>
     The <code>path</code> parameter is required.
     </blockquote></li>
-<li><em>Reload note supported on WAR deployed at path /foo</em>
+<li><em>Reload not supported on WAR deployed at path /foo</em>
     <blockquote>
     Currently, application reloading (to pick up changes to the classes or
     <code>web.xml</code> file) is not supported when a web application is
@@ -439,6 +595,13 @@ error message.  Possible causes for problems include:</p>
 http://localhost:8080/manager/remove?path=/examples
 </source>
 
+<p><strong><font color="red">WARNING</font> - This command will delete the
+contents of the web application directory and/or ".war" file if it exists within
+the <code>appBase</code> directory (typically "webapps") for this virtual host
+</strong>.  The web application temporary work directory is also deleted.  If
+you simply want to take an application out of service, you should use the
+<code>/stop</code> command instead.</p>
+
 <p>Signal an existing application to gracefully shut itself down, and then
 remove it from Tomcat (which also makes this context path available for
 reuse later).  This command is the logical opposite of the
@@ -455,7 +618,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to remove the web application.
-    Check the Tomcat 5 logs for the details.</p>
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -471,6 +634,26 @@ error message.  Possible causes for problems include:</p>
 <li><em>No context path was specified</em>
     <blockquote>
     The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="List OS and JVM Properties">
+
+<source>
+http://localhost:8080/manager/serverinfo
+</source>
+
+<p>Lists information about the Tomcat version, OS, and JVM properties.</p>
+
+<p>If an error occurs, the response will start with <code>FAIL</code> and
+include an error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to enumerate the system properties.
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 </ul>
 
@@ -515,7 +698,7 @@ include an error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to enumerate the global JNDI
-    resources.  Check the Tomcat 5 logs for the details.</p>
+    resources.  Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>No global JNDI resources are available</em>
     <blockquote>
@@ -610,7 +793,7 @@ http://localhost:8080/manager/start?path=/examples
 <p>Signal a stopped application to restart, and make itself available again.
 Stopping and starting is useful, for example, if the database required by
 your application becomes temporarily unavailable.  It is usually better to
-stop the web application that relies on this database, rather than letting
+stop the web application that relies on this database rather than letting
 users continuously encounter database exceptions.</p>
 
 <p>If this command succeeds, you will see a response like this:</p>
@@ -624,7 +807,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to start the web application.
-    Check the Tomcat 5 logs for the details.</p>
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -667,7 +850,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to stop the web application.
-    Check the Tomcat 5 logs for the details.</p>
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -699,7 +882,7 @@ http://localhost:8080/manager/undeploy?path=/examples
 delete the contents of the web application directory if it exists within the
 <code>appBase</code> directory (typically "webapps") for this virtual host
 </strong>.  If you simply want to take an application out of service,
-you should use the <code>/remove</code> command instead.</p>
+you should use the <code>/stop</code> command instead.</p>
 
 <p>Signal an existing application to gracefully shut itself down, and
 remove it from Tomcat (which also makes this context path available for
@@ -719,7 +902,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Encountered exception</em>
     <blockquote>
     <p>An exception was encountered trying to undeploy the web application.
-    Check the Tomcat 5 logs for the details.</p>
+    Check the Tomcat 4 logs for the details.</p>
     </blockquote></li>
 <li><em>Invalid context path was specified</em>
     <blockquote>
@@ -746,7 +929,7 @@ error message.  Possible causes for problems include:</p>
 <section name="Executing Manager Commands With Ant">
 
 <p>In addition to the ability to execute Manager commands via HTTP requests,
-as documented above, Tomcat 5 includes a convenient set of Task definitions
+as documented above, Tomcat 4 includes a convenient set of Task definitions
 for the <em>Ant</em> (version 1.4 or later) build tool.  In order to use these
 commands, you must perform the following setup operations:</p>
 <ul>
@@ -755,7 +938,7 @@ commands, you must perform the following setup operations:</p>
     You must use version <strong>1.4</strong> or later.</li>
 <li>Install the Ant distribution in a convenient directory (called
     ANT_HOME in the remainder of these instructions).</li>
-<li>Copy the file <code>server/lib/catalina-ant.jar</code> from your Tomcat 5
+<li>Copy the file <code>server/lib/catalina-ant.jar</code> from your Tomcat 4
     installation into Ant's library directory (<code>$ANT_HOME/lib</code>).
     </li>
 <li>Add the <code>$ANT_HOME/bin</code> directory to your <code>PATH</code>

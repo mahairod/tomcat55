@@ -38,7 +38,47 @@
   <!-- Define the Manager Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>Manager</servlet-name>
-    <url-pattern>/*</url-pattern>
+      <url-pattern>/list</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/sessions</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/start</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/stop</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/install</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/remove</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/undeploy</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/reload</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/serverinfo</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/roles</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+      <url-pattern>/resources</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>HTMLManager</servlet-name>
@@ -62,8 +102,19 @@
   <!-- Define a Security Constraint on this Application -->
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Entire Application</web-resource-name>
-      <url-pattern>/*</url-pattern>
+      <web-resource-name>HTMLManger and Manager command</web-resource-name>
+      <url-pattern>/html/*</url-pattern>
+      <url-pattern>/list</url-pattern>
+      <url-pattern>/sessions</url-pattern>
+      <url-pattern>/start</url-pattern>
+      <url-pattern>/stop</url-pattern>
+      <url-pattern>/install</url-pattern>
+      <url-pattern>/remove</url-pattern>
+      <url-pattern>/undeploy</url-pattern>
+      <url-pattern>/reload</url-pattern>
+      <url-pattern>/serverinfo</url-pattern>
+      <url-pattern>/roles</url-pattern>
+      <url-pattern>/resources</url-pattern>
     </web-resource-collection>
     <auth-constraint>
        <!-- NOTE:  This role is not present in the default users file -->

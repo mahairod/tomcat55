@@ -20,6 +20,8 @@
   <target name="build-prepare">
     <mkdir dir="${webapps.build}"/>
     <mkdir dir="${webapps.build}/${webapp.name}"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/images"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/WEB-INF"/>
   </target>
 
 
@@ -35,6 +37,25 @@
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <target name="build-main" depends="build-static">
+
+    <!-- Top Level Directory -->
+    <style basedir="../docs"
+           destdir="${webapps.build}/${webapp.name}"
+           extension=".html"
+           style="tomcat-docs.xsl"
+           excludes="build.xml project.xml"
+           includes="manager-howto.xml,html-manager-howto.xml">
+      <param name="relative-path" expression="."/>
+      <param name="project-menu" expression="nomenu"/>
+      <param name="standalone" expression="standalone"/>
+    </style>
+
+    <!-- Images Subdirectory -->
+    <copy todir="${webapps.build}/${webapp.name}/images">
+      <fileset dir="../docs/images">
+        <exclude name="printer.gif"/>
+      </fileset>
+    </copy>
 
 <!--
     <javac   srcdir="WEB-INF/classes" 
