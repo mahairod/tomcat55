@@ -1087,9 +1087,13 @@ public class HttpResponseBase
         resetBuffer();
 
         // Generate a temporary redirect to the specified location
-        String absolute = toAbsolute(location);
-        setStatus(SC_MOVED_TEMPORARILY);
-        setHeader("Location", absolute);
+        try {
+            String absolute = toAbsolute(location);
+            setStatus(SC_MOVED_TEMPORARILY);
+            setHeader("Location", absolute);
+        } catch (IllegalArgumentException e) {
+            setStatus(SC_NOT_FOUND);
+        }
 
     }
 
