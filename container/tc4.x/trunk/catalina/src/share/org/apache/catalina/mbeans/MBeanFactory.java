@@ -63,7 +63,6 @@
 
 package org.apache.catalina.mbeans;
 
-
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -273,13 +272,12 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // FIX ME 
         // String tname = findObjectName(type);
         String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -382,11 +380,12 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -423,11 +422,12 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -464,11 +464,12 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        String tname = findObjectName(type);
+        // String tname = findObjectName(type);
+        String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -839,7 +840,8 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        //if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {        
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -876,13 +878,12 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         String type = pname.getKeyProperty("type");
-        // FIX ME
         //String tname = findObjectName(type);
         String tname = type;
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -923,7 +924,7 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        if (tname.equals("StandardContext")) {
+        if (tname.equals("Context")) {
             Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
             Context context =
                     (Context) host.findChild(pname.getKeyProperty("path"));
@@ -1068,7 +1069,7 @@ public class MBeanFactory extends BaseModelMBean {
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
         String serviceName = oname.getKeyProperty("service");
-        String hostName = oname.getKeyProperty("name");
+        String hostName = oname.getKeyProperty("host");
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
         Engine engine = (Engine) service.getContainer();
