@@ -159,7 +159,7 @@ public class JspC implements Options {
 
     String ieClassId = DEFAULT_IE_CLASS_ID;
 
-    String targetPackage;
+    String targetPackage = "org.apache.jsp";
 
     String targetClassName;
 
@@ -548,8 +548,13 @@ public class JspC implements Options {
                 targetClassName = null;
             }
             if (targetPackage != null) {
-                clctxt.setServletPackageName( targetPackage +
-                        toPackageName(jspUri));
+                String jspPackage = toPackageName(jspUri);
+                if (jspPackage.equals("")) {
+                    clctxt.setServletPackageName(targetPackage);
+                } else {
+                    clctxt.setServletPackageName(targetPackage + "." 
+                                                 + jspPackage);
+                }
             } else {
                 clctxt.setServletPackageName( toPackageName(jspUri));
             }
@@ -589,6 +594,7 @@ public class JspC implements Options {
                               new Object[] {fne.getMessage()}, Logger.WARNING);
             throw new JasperException( fne );
         } catch (Exception e) {
+            e.printStackTrace();
             Constants.message("jspc.error.generalException",
                     new Object[] {file, e}, Logger.ERROR);
             if ( listErrors ) {
