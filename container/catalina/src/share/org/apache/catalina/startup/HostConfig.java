@@ -478,13 +478,16 @@ public class HostConfig
                 if (file.equals("ROOT")) {
                     contextPath = "";
                 }
-                if (host.findChild(contextPath) != null) {
-                    continue;
-                }
 
                 // Assume this is a configuration descriptor and deploy it
                 log.debug(sm.getString("hostConfig.deployDescriptor", files[i]));
                 try {
+                    if (host.findChild(contextPath) != null) {
+                        // If this is a newly added context file and 
+                        // it overrides a context with a simple path, 
+                        // undeploy the context
+                        ((Deployer) host).remove(contextPath);
+                    }
                     URL config =
                         new URL("file", null, dir.getCanonicalPath());
                     ((Deployer) host).install(config, null);
@@ -696,7 +699,23 @@ public class HostConfig
                 } else {
                     if (lastModified.longValue() != newLastModified) {
                         contextXmlLastModified.remove(contextName);
-                        restartContext(context);
+                        String fileName = contextName;
+                        if (fileName.equals("")) {
+                            fileName = "ROOT.xml";
+                        } else {
+                            fileName = fileName + ".war";
+                        }
+                        try {
+                            deployed.remove(fileName);
+                            if (host.findChild(contextName) != null) {
+                                ((Deployer) host).remove(contextName);
+                            }
+                        } catch (Throwable t) {
+                            log.error(sm.getString
+                                      ("hostConfig.undeployJar.error",
+                                       fileName), t);
+                        }
+                        deployApps();
                     }
                 }
             }
