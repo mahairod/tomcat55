@@ -82,10 +82,10 @@ import org.apache.commons.logging.LogFactory;
  * @author Hans Bergsten
  * @author Pierre Delisle
  */
-public final class EmbededServletOptions implements Options {
+public final class EmbeddedServletOptions implements Options {
 
     // Logger
-    private static Log log = LogFactory.getLog(EmbededServletOptions.class);
+    private static Log log = LogFactory.getLog(EmbeddedServletOptions.class);
 
     private Properties settings = new Properties();
     
@@ -339,10 +339,10 @@ public final class EmbededServletOptions implements Options {
     }
 
     /**
-     * Create an EmbededServletOptions object using data available from
+     * Create an EmbeddedServletOptions object using data available from
      * ServletConfig and ServletContext. 
      */
-    public EmbededServletOptions(ServletConfig config,
+    public EmbeddedServletOptions(ServletConfig config,
 				 ServletContext context) {
 
 	this.tagPoolSize = Constants.MAX_POOL_SIZE;

@@ -78,7 +78,7 @@ import java.util.Enumeration;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
-import org.apache.jasper.EmbededServletOptions;
+import org.apache.jasper.EmbeddedServletOptions;
 
 import org.apache.jasper.compiler.JspRuntimeContext;
 import org.apache.jasper.compiler.Localizer;
@@ -119,7 +119,7 @@ public class JspServlet extends HttpServlet {
 	this.config = config;
 	this.context = config.getServletContext();
         
-        options = new EmbededServletOptions(config, context);
+        options = new EmbeddedServletOptions(config, context);
 
         // Initialize the JSP Runtime Context
         rctxt = new JspRuntimeContext(context,options);
