@@ -142,6 +142,7 @@ class TagFileProcessor {
         private String smallIcon = null;
         private String largeIcon = null;
         private String dynamicAttrsMapName;
+        private String example = null;
         
         private Vector attributeVector;
         private Vector variableVector;
@@ -176,7 +177,7 @@ class TagFileProcessor {
             JspUtil.checkAttributes("Tag directive", n, tagDirectiveAttrs,
                                     err);
 
-            bodycontent = n.getAttributeValue("body-content");
+            bodycontent = checkConflict(n, bodycontent, "body-content");
             if (bodycontent != null &&
                     !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY) &&
                     !bodycontent.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT) &&
@@ -184,15 +185,33 @@ class TagFileProcessor {
                 err.jspError(n, "jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
-            dynamicAttrsMapName = n.getAttributeValue("dynamic-attributes");
+            dynamicAttrsMapName = checkConflict(n, dynamicAttrsMapName,
+                                                "dynamic-attributes");
             if (dynamicAttrsMapName != null) {
                 checkUniqueName(dynamicAttrsMapName, TAG_DYNAMIC, n);
             }
-            smallIcon = n.getAttributeValue("small-icon");
-            largeIcon = n.getAttributeValue("large-icon");
-            description = n.getAttributeValue("description");
-            displayName = n.getAttributeValue("display-name");
+            smallIcon = checkConflict(n, smallIcon, "small-icon");
+            largeIcon = checkConflict(n, largeIcon, "large-icon");
+            description = checkConflict(n, description, "description");
+            displayName = checkConflict(n, displayName, "display-name");
+            example = checkConflict(n, example, "example");
         }
+
+        private String checkConflict(Node n, String oldAttrValue, String attr)
+                throws JasperException {
+
+            String result = oldAttrValue;
+            String attrValue = n.getAttributeValue(attr);
+            if (attrValue != null) {
+                if (oldAttrValue != null && !oldAttrValue.equals(attrValue)) {
+                    err.jspError(n, "jsp.error.tag.conflict.attr", attr,
+                                 oldAttrValue, attrValue);
+                }
+                result = attrValue;
+            }
+            return result;
+        }
+            
 
         public void visit(Node.AttributeDirective n) throws JasperException {
 
