@@ -87,7 +87,6 @@ import javax.naming.spi.NamingManager;
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
-
 public class NamingContext implements Context {
 
 
@@ -98,6 +97,10 @@ public class NamingContext implements Context {
      * Name parser for this context.
      */
     protected static final NameParser nameParser = new NameParserImpl();
+
+
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog(NamingContext.class);
 
 
     // ----------------------------------------------------------- Constructors
@@ -841,6 +844,8 @@ public class NamingContext implements Context {
                 } catch (NamingException e) {
                     throw e;
                 } catch (Exception e) {
+                    log.warn(sm.getString
+                             ("namingContext.failResolvingReference"), e);
                     throw new NamingException(e.getMessage());
                 }
             } else {
