@@ -247,6 +247,7 @@ public final class DigestAuthenticator
 		request.setUserPrincipal(principal);
 		if (cache && (session != null))
 		    session.setPrincipal(principal);
+                register(request, response, principal);
 		return (true);
 	    }
 	}

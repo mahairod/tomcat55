@@ -173,6 +173,7 @@ public final class BasicAuthenticator
 		request.setUserPrincipal(principal);
 		if (cache && (session != null))
 		    session.setPrincipal(principal);
+                register(request, response, principal);
 		return (true);
 	    }
 	}

@@ -193,6 +193,7 @@ public final class SSLAuthenticator
         request.setUserPrincipal(principal);
         if (cache && (session != null))
             session.setPrincipal(principal);
+        register(request, response, principal);
         return (true);
 
     }

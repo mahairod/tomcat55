@@ -204,6 +204,7 @@ public final class FormAuthenticator
 	request.setUserPrincipal(principal);
 	if (cache && (session != null))
 	    session.setPrincipal(principal);
+        register(request, response, principal);
 	if (restoreRequest(request, session))
 	    return (true);		// Perform the original request
 	else {

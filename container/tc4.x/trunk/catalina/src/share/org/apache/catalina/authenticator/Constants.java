@@ -87,5 +87,8 @@ public class Constants {
     public static final String FORM_PASSWORD = "j_password";
     public static final String FORM_USERNAME = "j_username";
 
+    // Cookie name for single sign on support
+    public static final String SINGLE_SIGN_ON_COOKIE = "JSESSIONIDSSO";
+
 }
 

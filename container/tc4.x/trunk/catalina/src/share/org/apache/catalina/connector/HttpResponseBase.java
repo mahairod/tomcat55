@@ -463,17 +463,17 @@ public class HttpResponseBase
 	    outputWriter.print(message);
 	}
 	outputWriter.print("\r\n");
-//	log(request.getRequest().getProtocol() + " " + status + " " + message);
+        //	log(request.getRequest().getProtocol() + " " + status + " " + message);
 
 	// Send the content-length and content-type headers (if any)
 	if (getContentType() != null) {
 	    outputWriter.print("Content-Type: " + getContentType() + "\r\n");
-//	    log(" Content-Type: " + getContentType());
+            //	    log(" Content-Type: " + getContentType());
 	}
 	if (getContentLength() >= 0) {
 	    outputWriter.print("Content-Length: " + getContentLength() +
 			       "\r\n");
-//	    log("  Content-Length: " + getContentLength());
+            //	    log("  Content-Length: " + getContentLength());
 	}
 
 	// Send all specified headers (if any)
@@ -489,6 +489,7 @@ public class HttpResponseBase
 		    outputWriter.print(": ");
 		    outputWriter.print(value);
 		    outputWriter.print("\r\n");
+                    //                    log(" " + name + ": " + value);
 		}
 	    }
 	}
@@ -523,6 +524,8 @@ public class HttpResponseBase
 		outputWriter.print(": ");
 		outputWriter.print(CookieTools.getCookieHeaderValue(cookie));
 		outputWriter.print("\r\n");
+                //                log(" " + CookieTools.getCookieHeaderName(cookie) + ": " +
+                //                    CookieTools.getCookieHeaderValue(cookie));
 	    }
 	}
 
