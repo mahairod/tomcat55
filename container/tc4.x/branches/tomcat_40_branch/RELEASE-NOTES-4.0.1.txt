@@ -150,6 +150,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Linux and Sun JDK 1.2.x - 1.3.x
 * Jasper and Jikes
 * Tomcat 4.0 and Apache Cocoon 2.0
+* Enabling SSI and CGI Support
 
 
 ---------------------
@@ -339,6 +340,36 @@ Tomcat 4.0 and Apache Cocoon 2.0:
 For optimal performance with Apache Cocoon 2.0, it is recommended to use the
 HTTP/1.0 connector.
 
+
+----------------------------
+Enabling SSI and CGI Support:
+----------------------------
+
+Having CGI and SSI available to web applications created security problems when
+using a security manager (as a malicious web application could use them to 
+sidestep the security manager access control). In Tomcat 4.0.1, they have been
+disabled by default, as our goal is to provide a fully secure default 
+configuration. However, CGI and SSI remain available in Tomcat 4.0.1.
+
+On Windows:
+* rename the file %CATALINA_HOME%\server\lib\servlets-cgi.renametojar to
+  %CATALINA_HOME%\server\lib\servlets-cgi.jar.
+* rename the file %CATALINA_HOME%\server\lib\servlets-ssi.renametojar to
+  %CATALINA_HOME%\server\lib\servlets-ssi.jar.
+* in %CATALINA_HOME%\conf\web.xml, uncomment the servlet declarations starting
+  line 165 and 213, as well as the associated servlet mappings 
+  line 265 and 274. Alternately, these servlet declarations and mappings can
+  be added to your web application deployment descriptor.
+
+On Unix:
+* rename the file $CATALINA_HOME/server/lib/servlets-cgi.renametojar to
+  $CATALINA_HOME/server/lib/servlets-cgi.jar.
+* rename the file $CATALINA_HOME/server/lib/servlets-ssi.renametojar to
+  $CATALINA_HOME/server/lib/servlets-ssi.jar.
+* in $CATALINA_HOME/conf/web.xml, uncomment the servlet declarations starting
+  line 165 and 213, as well as the associated servlet mappings 
+  line 265 and 274. Alternately, these servlet declarations and mappings can
+  be added to your web application deployment descriptor.
 
 
 
