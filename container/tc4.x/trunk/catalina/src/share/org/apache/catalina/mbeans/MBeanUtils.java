@@ -99,6 +99,10 @@ import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardService;
+import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.ManagedBean;
@@ -245,7 +249,63 @@ public class MBeanUtils {
 
     }
 
+    
+    /**
+     * Create, register, and return an MBean for this
+     * <code>ContextEnvironment</code> object.
+     *
+     * @param environment The ContextEnvironment to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(ContextEnvironment environment)
+        throws Exception {
 
+        String mname = createManagedName(environment);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            Exception e = new Exception("ManagedBean is not found with "+mname);
+            throw new MBeanException(e);
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(environment);
+        ObjectName oname = createObjectName(domain, environment);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+
+    /**
+     * Create, register, and return an MBean for this
+     * <code>ContextResource</code> object.
+     *
+     * @param resource The ContextResource to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(ContextResource resource)
+        throws Exception {
+
+        String mname = createManagedName(resource);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            Exception e = new Exception("ManagedBean is not found with "+mname);
+            throw new MBeanException(e);
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(resource);
+        ObjectName oname = createObjectName(domain, resource);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+    
+    
     /**
      * Create, register, and return an MBean for this
      * <code>DefaultContext</code> object.
@@ -469,6 +529,34 @@ public class MBeanUtils {
     }
 
 
+    /**
+     * Create, register, and return an MBean for this
+     * <code>NamingResources</code> object.
+     *
+     * @param resource The NamingResources to be managed
+     *
+     * @exception Exception if an MBean cannot be created or registered
+     */
+    public static ModelMBean createMBean(NamingResources resource)
+        throws Exception {
+
+        String mname = createManagedName(resource);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            Exception e = new Exception("ManagedBean is not found with "+mname);
+            throw new MBeanException(e);
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ModelMBean mbean = managed.createMBean(resource);
+        ObjectName oname = createObjectName(domain, resource);
+        mserver.registerMBean(mbean, oname);
+        return (mbean);
+
+    }
+
+    
     /**
      * Create, register, and return an MBean for this
      * <code>Realm</code> object.
@@ -776,7 +864,50 @@ public class MBeanUtils {
 
     }
 
+    
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Service</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param context The ContextEnvironment to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              ContextEnvironment environment)
+        throws MalformedObjectNameException {
 
+        ObjectName name = null;
+        name = new ObjectName(domain + ":type=Environment,name=" +
+                              environment.getName());
+        return (name);
+
+    }
+    
+    
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Service</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param resource The ContextResource to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              ContextResource resource)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        name = new ObjectName(domain + ":type=Resource,class=" +
+                              resource.getType()+",name=" +
+                              resource.getName());
+        return (name);
+
+    }
+    
+    
     /**
      * Create an <code>ObjectName</code> for this
      * <code>DefaultContext</code> object.
@@ -1003,6 +1134,26 @@ public class MBeanUtils {
                               service.getName());
         }
 
+        return (name);
+
+    }
+    
+    
+    /**
+     * Create an <code>ObjectName</code> for this
+     * <code>Server</code> object.
+     *
+     * @param domain Domain in which this name is to be created
+     * @param resource The NamingResources to be named
+     *
+     * @exception MalformedObjectNameException if a name cannot be created
+     */
+    public static ObjectName createObjectName(String domain,
+                                              NamingResources resource)
+        throws MalformedObjectNameException {
+
+        ObjectName name = null;
+        name = new ObjectName(domain + ":type=NamingResources");
         return (name);
 
     }
@@ -1321,7 +1472,57 @@ public class MBeanUtils {
 
     }
 
+    
+    /**
+     * Deregister the MBean for this
+     * <code>ContextEnvironment</code> object.
+     *
+     * @param environment The ContextEnvironment to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(ContextEnvironment environment)
+        throws Exception {
 
+        String mname = createManagedName(environment);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, environment);
+        mserver.unregisterMBean(oname);
+
+    }
+    
+    
+    /**
+     * Deregister the MBean for this
+     * <code>ContextResource</code> object.
+     *
+     * @param resource The ContextResource to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(ContextResource resource)
+        throws Exception {
+
+        String mname = createManagedName(resource);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, resource);
+        mserver.unregisterMBean(oname);
+
+    }
+    
+    
     /**
      * Deregister the MBean for this
      * <code>DefaultContext</code> object.
@@ -1495,7 +1696,33 @@ public class MBeanUtils {
         mserver.unregisterMBean(oname);
 
     }
+    
+    
+   /**
+     * Deregister the MBean for this
+     * <code>NamingResources</code> object.
+     *
+     * @param resource The NamingResources to be managed
+     *
+     * @exception Exception if an MBean cannot be deregistered
+     */
+    public static void destroyMBean(NamingResources resource)
+        throws Exception {
 
+        String mname = createManagedName(resource);
+        ManagedBean managed = registry.findManagedBean(mname);
+        if (managed == null) {
+            return;
+        }
+        String domain = managed.getDomain();
+        if (domain == null)
+            domain = mserver.getDefaultDomain();
+        ObjectName oname = createObjectName(domain, resource);
+        mserver.unregisterMBean(oname);
+
+    }
+    
+    
     /**
      * Deregister the MBean for this
      * <code>Realm</code> object.
