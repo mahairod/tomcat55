@@ -23,8 +23,8 @@ Configuring Manager Application Access</a><br />
 <blockquote>
 <a href="#Deploy A New Application Remotely">Deploy A New Application Remotely</a><br />
 <a href="#Deploy A New Application from a Local Path">Deploy A New Application from a Local Path</a><br />
-<a href="#List Currently Deployed and Installed Applications">
-List Currently Deployed and Installed Applications</a><br />
+<a href="#List Currently Deployed Applications">
+List Currently Deployed Applications</a><br />
 <a href="#Reload An Existing Application">Reload An Existing Application</a><br />
 <a href="#List OS and JVM Properties">List OS and JVM Properties</a><br />
 <a href="#List Available Global JNDI Resources">
@@ -64,8 +64,8 @@ the following functions:</p>
 <ul>
 <li>Deploy a new web application, on a specified context path, from
     the uploaded contents of a WAR file.</li>
-<li>Install a new web application, which can be anywhere on the
-    server's disks.</li>
+<li>Deploy a new web application, on a specified context path, from the
+    server file system.</li>
 <li>List the currently deployed web applications, as well as the
     sessions that are currently active for those web apps.</li>
 <li>Reload an existing web application, to reflect changes in the
@@ -76,12 +76,11 @@ the following functions:</p>
     tools that are preparing <code>&lt;ResourceLink&gt;</code> elements
     nested in a <code>&lt;Context&gt;</code> deployment description.</li>
 <li>List the available security roles defined in the user database.</li>
-<li>Remove an installed web application.</li>
 <li>Start a stopped application (thus making it available again).</li>
 <li>Stop an existing application (so that it becomes unavailable), but
     do not undeploy it.</li>
 <li>Undeploy a deployed web application and delete its document base
-    directory.</li>
+    directory (unless it was deployed from file system).</li>
 </ul>
 
 <p>There are two ways to configure the Manager web application
@@ -272,6 +271,13 @@ its message strings in resource bundles, so it is possible that the strings
 have been translated for your platform.  The examples below show the English
 version of the messages.</p>
 
+<blockquote><em>
+<p><strong>WARNING:</strong>  the legacy commands <code>/install</code> and 
+<code>/remove</code> are deprecated.
+They are presently equivalent to <code>/deploy</code> and <code>/undeploy</code>,
+but could be removed in a future release.</p>
+</em></blockquote>
+
 <subsection name="Deploy A New Application Remotely">
 
 <source>
@@ -316,7 +322,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Application already exists at path /foo</em>
     <blockquote>
     <p>The context paths for all currently running web applications must be
-    unique.  Therefore, you must either remove or undeploy the existing web
+    unique.  Therefore, you must undeploy the existing web
     application using this context path, or choose a different context path
     for the new one. The <code>update</code> parameter may be specified as
     a parameter on the URL, with a value of <code>true</code> to avoid this
@@ -346,15 +352,15 @@ error message.  Possible causes for problems include:</p>
 
 <subsection name="Deploy A New Application from a Local Path">
 
-<p>Install and start a new web application, attached to the specified context
+<p>Deploy and start a new web application, attached to the specified context
 <code>path</code> (which must not be in use by any other web application).
-This command is the logical opposite of the <code>/remove</code> command.</p>
+This command is the logical opposite of the <code>/undeploy</code> command.</p>
 
-<p>There are a number of different ways the install command can be used.</p>
+<p>There are a number of different ways the deploy command can be used.</p>
 
-<h3>Install a version of a previously deployed webapp</h3>
+<h3>Deploy a version of a previously deployed webapp</h3>
 
-<p>This can be used to deploy a previous version of a web applicaion, which
+<p>This can be used to deploy a previous version of a web application, which
 has been deployed using the <code>tag</code> attribute. Note that the work
 directory for the manager webapp will contain the previously deployed WARs;
 removing it would make the deployment fail.
@@ -363,9 +369,9 @@ http://localhost:8080/manager/deploy?path=/footoo&amp;tag=footag
 </source>
 </p>
 
-<h3>Install a Directory or WAR by URL</h3>
+<h3>Deploy a Directory or WAR by URL</h3>
 
-<p>Install a web application directory or ".war" file located on the Tomcat
+<p>Deploy a web application directory or ".war" file located on the Tomcat
 server. If no <code>path</code> is specified, the directory name or the war file
 name without the ".war" extension is used as the path. The <code>war</code>
 parameter specifies a URL (including the <code>file:</code> scheme) for either
@@ -375,7 +381,7 @@ a URL referring to a WAR file is described on the Javadocs page for the
 the entire WAR file.</p>
 
 <p>In this example the web application located in the directory
-<code>/path/to/foo</code> on the Tomcat server is installed as the
+<code>/path/to/foo</code> on the Tomcat server is deployed as the
 web application context named <code>/footoo</code>.
 <source>
 http://localhost:8080/manager/deploy?path=/footoo&amp;war=file:/path/to/foo
@@ -383,7 +389,7 @@ http://localhost:8080/manager/deploy?path=/footoo&amp;war=file:/path/to/foo
 </p>
 
 <p>In this example the ".war" file <code>/path/to/bar.war</code> on the
-Tomcat server is installed as the web application context named
+Tomcat server is deployed as the web application context named
 <code>/bar</code>. Notice that there is no <code>path</code> parameter
 so the context path defaults to the name of the web application archive
 file without the ".war" extension.
@@ -392,15 +398,15 @@ http://localhost:8080/manager/deploy?war=jar:file:/path/to/bar.war!/
 </source>
 </p>
 
-<h3>Install a Directory or War from the Host appBase</h3>
+<h3>Deploy a Directory or War from the Host appBase</h3>
 
-<p>Install a web application directory or ".war" file located in your Host
+<p>Deploy a web application directory or ".war" file located in your Host
 appBase directory. If no <code>path</code> is specified the directory name
 or the war file name without the ".war" extension is used as the path.</p>
 
 <p>In this example the web application located in a sub directory named
 <code>foo</code> in the Host appBase directory of the Tomcat server is
-installed as the web application context named <code>/foo</code>. Notice
+deployed as the web application context named <code>/foo</code>. Notice
 that there is no <code>path</code> parameter so the context path defaults
 to the name of the web application directory.
 <source>
@@ -409,19 +415,19 @@ http://localhost:8080/manager/deploy?war=foo
 </p>
 
 <p>In this example the ".war" file <code>bar.war</code> located in your
-Host appBase directory on the Tomcat server is installed as the web
+Host appBase directory on the Tomcat server is deployed as the web
 application context named <code>/bartoo</code>.
 <source>
 http://localhost:8080/manager/deploy?path=/bartoo&amp;war=bar.war
 </source>
 </p>
 
-<h3>Install using a Context configuration ".xml" file</h3>
+<h3>Deploy using a Context configuration ".xml" file</h3>
 
-<p>If the Host deployXML flag is set to true you can install a web
+<p>If the Host deployXML flag is set to true you can deploy a web
 application using a Context configuration ".xml" file and an optional
 ".war" file or web application directory. The context <code>path</code>
-is not used when installing a web application using a context ".xml"
+is not used when deploying a web application using a context ".xml"
 configuration file.</p>
 
 <p>A Context configuration ".xml" file can contain valid XML for a
@@ -444,14 +450,14 @@ example:
 for a web application ".war" file or directory it overrides any
 docBase configured in the context configuration ".xml" file.</p>
 
-<p>Here is an example of installing an application using a Context
+<p>Here is an example of deploying an application using a Context
 configuration ".xml" file.
 <source>
 http://localhost:8080/manager/deploy?config=file:/path/context.xml
 </source>
 </p>
 
-<p>Here is an example of installing an application using a Context
+<p>Here is an example of deploying an application using a Context
 configuration ".xml" file and a web application ".war" file located
 on the server.
 <source>
@@ -459,9 +465,9 @@ http://localhost:8080/manager/deploy?config=file:/path/context.xml&amp;war=jar:f
 </source>
 </p>
 
-<h3>Installation Notes</h3>
+<h3>Deployment Notes</h3>
 
-<p>If the Host is configured with unpackWARs=true and you install a war
+<p>If the Host is configured with unpackWARs=true and you deploy a war
 file, the war will be unpacked into a directory in your Host appBase
 directory.</p>
 
@@ -472,12 +478,12 @@ war file name without the ".war" extension.</p>
 
 <p>For security when untrusted users can manage web applications, the
 Host deployXML flag can be set to false.  This prevents untrusted users
-from installing web applications using a configuration XML file and
-also prevents them from installing application directories or ".war"
+from deploying web applications using a configuration XML file and
+also prevents them from deploying application directories or ".war"
 files located outside of their Host appBase.</p>
 
 
-<h3>Install Response</h3>
+<h3>Deploy Response</h3>
 
 <p>If installation and startup is successful, you will receive a response
 like this:</p>
@@ -491,7 +497,7 @@ error message.  Possible causes for problems include:</p>
 <li><em>Application already exists at path /foo</em>
     <blockquote>
     <p>The context paths for all currently running web applications must be
-    unique.  Therefore, you must either remove or undeploy the existing web
+    unique.  Therefore, you must undeploy the existing web
     application using this context path, or choose a different context path
     for the new one. The <code>update</code> parameter may be specified as
     a parameter on the URL, with a value of <code>true</code> to avoid this
@@ -536,14 +542,14 @@ error message.  Possible causes for problems include:</p>
      be installed</em>
      <blockquote>
      If the Host deployXML flag is set to false this error will happen
-     if an attempt is made to install a web application directory or
+     if an attempt is made to deploy a web application directory or
       ".war" file outside of the Host appBase directory.
      </blockquote></li>
 </ul>
 
 </subsection>
 
-<subsection name="List Currently Deployed and Installed Applications">
+<subsection name="List Currently Deployed Applications">
 
 <source>
 http://localhost:8080/manager/list
@@ -551,7 +557,7 @@ http://localhost:8080/manager/list
 
 <p>List the context paths, current status (<code>running</code> or
 <code>stopped</code>), and number of active sessions for all currently
-deployed and installed web applications.  A typical response immediately
+deployed web applications.  A typical response immediately
 after starting Tomcat might look like this:</p>
 <source>
 OK - Listed applications for virtual host localhost
@@ -601,7 +607,7 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
@@ -612,9 +618,10 @@ error message.  Possible causes for problems include:</p>
     <blockquote>
     Currently, application reloading (to pick up changes to the classes or
     <code>web.xml</code> file) is not supported when a web application is
-    installed directly from a WAR file.  It only works when the web application
-    is installed from an unpacked directory.  If you are using a WAR file,
-    you should <code>remove</code> and then <code>install</code> the
+    deployed directly from a WAR file.  It only works when the web application
+    is deployed from an unpacked directory.  If you are using a WAR file,
+    you should <code>undeploy</code> and then <code>deploy</code> or
+    <code>deploy</code> with the <code>update</code> parameter the
     application again to pick up your changes.
     </blockquote></li>
 </ul>
@@ -798,7 +805,7 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
@@ -816,7 +823,7 @@ http://localhost:8080/manager/stop?path=/examples
 </source>
 
 <p>Signal an existing application to make itself unavailable, but leave it
-deployed or installed.  Any request that comes in while an application is
+deployed.  Any request that comes in while an application is
 stopped will see an HTTP error 404, and this application will show as
 "stopped" on a list applications command.</p>
 
@@ -840,7 +847,7 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
@@ -858,11 +865,14 @@ error message.  Possible causes for problems include:</p>
 http://localhost:8080/manager/undeploy?path=/examples
 </source>
 
-<p><strong><font color="red">WARNING</font> - This command will
-delete the contents of the web application directory if it exists within the
-<code>appBase</code> directory (typically "webapps") for this virtual host
-</strong>.  This will also delete the source .WAR if expanding occurred, as
-well as the XML Context definition. If you simply want to take an application
+<p><strong><font color="red">WARNING</font> - This command will delete any web 
+application artifacts that exist within <code>appBase</code> directory 
+(typically "webapps") for this virtual host</strong>.
+This will delete the the application .WAR, if present, 
+the application directory resulting either from a deploy in unpacked form 
+or from .WAR expansion as well as the XML Context definition from
+<code>$CATALINA_HOME/conf/[enginename]/[hostname]/</code> directory. 
+If you simply want to take an application
 out of service, you should use the <code>/stop</code> command instead.</p>
 
 <p>Signal an existing application to gracefully shut itself down, and
@@ -892,7 +902,7 @@ error message.  Possible causes for problems include:</p>
     </blockquote></li>
 <li><em>No context exists for path /foo</em>
     <blockquote>
-    <p>There is no deployed or installed application on the context path
+    <p>There is no deployed application on the context path
     that you specified.</p>
     </blockquote></li>
 <li><em>No context path was specified</em>
@@ -905,7 +915,6 @@ error message.  Possible causes for problems include:</p>
 
 </section>
 
-
 <section name="Executing Manager Commands With Ant">
 
 <p>In addition to the ability to execute Manager commands via HTTP requests,
@@ -914,7 +923,7 @@ for the <em>Ant</em> (version 1.4 or later) build tool.  In order to use these
 commands, you must perform the following setup operations:</p>
 <ul>
 <li>Download the binary distribution of Ant from
-    <a href="http://jakarta.apache.org/ant/">http://jakarta.apache.org/ant</a>.
+    <a href="http://ant.apache.org">http://ant.apache.org</a>.
     You must use version <strong>1.4</strong> or later.</li>
 <li>Install the Ant distribution in a convenient directory (called
     ANT_HOME in the remainder of these instructions).</li>
@@ -984,7 +993,7 @@ file might look something like this:</p>
 </table>
 
 <p>Now, you can execute commands like <code>ant deploy</code> to deploy the
-applcation to a running instance of Tomcat, or <code>ant reload</code> to
+application to a running instance of Tomcat, or <code>ant reload</code> to
 tell Tomcat to reload it.  Note also that most of the interesting values in
 this <code>build.xml</code> file are defined as replaceable properties, so
 you can override their values from the command line.  For example, you might
@@ -994,6 +1003,205 @@ property, and specify it from the command line:</p>
 <pre>
   ant -Dpassword=secret deploy
 </pre>
+
+<subsection name="Tasks output capture">
+
+<p>Using <em>Ant</em> version <strong>1.6.2</strong> or later,
+the Catalina tasks offer the option to capture their output in 
+properties or external files. They support directly the following subset of the 
+<code>&lt;redirector&gt;</code> type attributes:
+</p>
+
+<table border="1" cellpadding="2" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><b>Attribute</b></td>
+<td valign="top"><b>Description</b></td>
+<td align="center" valign="top"><b>Required</b></td>
+</tr>
+<tr>
+<td valign="top">output</td>
+<td valign="top">Name of a file to which to write the output. If
+the error stream is not also redirected to a file or property, it will
+appear in this output.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">error</td>
+<td valign="top">The file to which the standard error of the
+command should be redirected.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">logError</td>
+<td valign="top">This attribute is used when you wish to see
+error output in Ant's log and you are redirecting output to a
+file/property. The error output will not be included in the output
+file/property. If you redirect error with the <i>error</i> or <i>errorProperty</i>
+attributes, this will have no effect.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">append</td>
+<td valign="top">Whether output and error files should be
+appended to or overwritten. Defaults to <code>false</code>.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">createemptyfiles</td>
+<td valign="top">Whether output and error files should be created
+even when empty. Defaults to <code>true</code>.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">outputproperty</td>
+<td valign="top">The name of a property in which the output of
+the command should be stored. Unless the error stream is redirected to
+a separate file or stream, this property will include the error output.</td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">errorproperty</td>
+<td valign="top">The name of a property in which the standard
+error of the command should be stored.</td>
+<td align="center" valign="top">No</td>
+</tr>
+</tbody>
+</table>
+
+<p>A couple of additional attributes can also be specified:
+</p>
+<table border="1" cellpadding="2" cellspacing="0">
+<tbody>
+<tr>
+<td valign="top"><b>Attribute</b></td>
+<td valign="top"><b>Description</b></td>
+<td align="center" valign="top"><b>Required</b></td>
+</tr>
+<tr>
+<td valign="top">alwaysLog</td>
+<td valign="top">This attribute is used when you wish to see the
+output you are capturing, appearing also in the Ant's log. It must not be
+used unless you are capturing task output.
+Defaults to <code>false</code>.
+<em>This attribute will be supported directly by <code>&lt;redirector&gt;</code>
+in Ant 1.6.3</em></td>
+<td align="center" valign="top">No</td>
+</tr>
+<tr>
+<td valign="top">failonerror</td>
+<td valign="top">This attribute is used when you wish to avoid that
+any manager command processing error terminates the ant execution. Defaults to <code>true</code>.
+It must be set to <code>false</code>, if you want to capture error output,
+otherwise execution will terminate before anything can be captured.
+<br></br>
+This attribute acts only on manager command execution,
+any wrong or missing command attribute will still cause Ant execution termination.
+</td>
+<td align="center" valign="top">No</td>
+</tr>
+</tbody>
+</table>
+
+<p>They also support the embedded <code>&lt;redirector&gt;</code> element
+in which you can specify
+its full set of attributes, but <code>input</code>, <code>inputstring</code> and 
+<code>inputencoding</code> that, even if accepted, are not used because they have
+no meaning in this context.
+Refer to <a href="http://ant.apache.org">ant manual</a> for details on 
+<code>&lt;redirector&gt;</code> element attributes.
+</p>
+
+<p>
+Here is a sample build file extract that shows how this output redirection support
+can be used:
+</p>
+
+<table border="1">
+<tr><td><pre>
+	&lt;target name="manager.deploy"
+		depends="context.status"
+		if="context.notInstalled"&gt;
+		&lt;deploy url="${mgr.url}"
+			username="${mgr.username}"
+			password="${mgr.password}"
+			path="${mgr.context.path}"
+			config="${mgr.context.descriptor}"/&gt;
+	&lt;/target&gt;
+
+	&lt;target name="manager.deploy.war"
+		depends="context.status"
+		if="context.deployable"&gt;
+		&lt;deploy url="${mgr.url}"
+			username="${mgr.username}"
+			password="${mgr.password}"
+			update="${mgr.update}"
+			path="${mgr.context.path}"
+			war="${mgr.war.file}"/&gt;
+	&lt;/target&gt;
+	
+	&lt;target name="context.status"&gt;
+		&lt;property name="running" value="${mgr.context.path}:running"/&gt;
+		&lt;property name="stopped" value="${mgr.context.path}:stopped"/&gt;
+	
+		&lt;list url="${mgr.url}"
+			outputproperty="ctx.status"
+			username="${mgr.username}"
+			password="${mgr.password}"&gt;
+		&lt;/list&gt;
+		
+		&lt;condition property="context.running"&gt;
+			&lt;contains string="${ctx.status}" substring="${running}"/&gt;
+		&lt;/condition&gt;
+		&lt;condition property="context.stopped"&gt;
+			&lt;contains string="${ctx.status}" substring="${stopped}"/&gt;
+		&lt;/condition&gt;
+		&lt;condition property="context.notInstalled"&gt;
+			&lt;and&gt;
+				&lt;isfalse value="${context.running}"/&gt;
+				&lt;isfalse value="${context.stopped}"/&gt;
+			&lt;/and&gt;
+		&lt;/condition&gt;
+		&lt;condition property="context.deployable"&gt;
+			&lt;or&gt;
+				&lt;istrue value="${context.notInstalled}"/&gt;
+				&lt;and&gt;
+					&lt;istrue value="${context.running}"/&gt;
+					&lt;istrue value="${mgr.update}"/&gt;
+				&lt;/and&gt;
+				&lt;and&gt;
+					&lt;istrue value="${context.stopped}"/&gt;
+					&lt;istrue value="${mgr.update}"/&gt;
+				&lt;/and&gt;
+			&lt;/or&gt;
+		&lt;/condition&gt;
+		&lt;condition property="context.undeployable"&gt;
+			&lt;or&gt;
+				&lt;istrue value="${context.running}"/&gt;
+				&lt;istrue value="${context.stopped}"/&gt;
+			&lt;/or&gt;
+		&lt;/condition&gt;
+	&lt;/target&gt;
+</pre></td></tr>
+</table>
+
+<p><strong>WARNING:</strong> even if it doesn't make many sense, and is always a bad idea,
+calling a Catalina task more than once,
+badly set Ant tasks depends chains may cause that a task be called
+more than once in the same Ant run, even if not intended to. A bit of caution should be exercised when you are
+capturing output from that task, because this could lead to something unexpected:
+<ul>
+<li>when capturing in a property you will find in it only the output from the <em>first</em> call, because
+Ant properties are immutable and once set they cannot be changed,
+</li>
+<li>when capturing in a file, each run will overwrite it and you will find in it only the <em>last</em> call
+output, unless you are using the <code>append="true"</code> attribute, in which case you will
+see the output of each task call appended to the file.
+</li>
+</ul>
+</p>
+
+</subsection>
 
 </section>
 
