@@ -135,7 +135,8 @@ public class FileUtil {
     public static String safePath( String base, String path ) {
 	// Hack for Jsp ( and other servlets ) that use rel. paths 
 	// if( ! path.startsWith("/") ) path="/"+ path;
-
+	if( path==null || path.equals("") ) return base;
+	
 	String normP=path;
 	if( path.indexOf('\\') >=0 )
 	    normP= path.replace('\\', '/');
