@@ -420,6 +420,8 @@ final class ApplicationDispatcher
 	}
 
 	// Commit and close the response before we return
+        if (debug >= 1)
+            log(" Committing and closing response");
 	response.flushBuffer();
 	try {
 	    PrintWriter writer = response.getWriter();
@@ -609,7 +611,11 @@ final class ApplicationDispatcher
 	// Allocate a servlet instance to process this request
 	try {
 	    if (!unavailable) {
+                //                if (debug >= 2)
+                //                    log("  Allocating servlet instance");
 		servlet = wrapper.allocate();
+                //                if ((debug >= 2) && (servlet == null))
+                //                    log("    No servlet instance returned!");
 	    }
 	} catch (ServletException e) {
 	    log(sm.getString("applicationDispatcher.allocateException",
@@ -633,6 +639,8 @@ final class ApplicationDispatcher
             else
                 request.removeAttribute(Globals.JSP_FILE_ATTR);
 	    if (servlet != null) {
+                //                if (debug >= 2)
+                //                    log("  Calling service(), jspFile=" + jspFile);
                 if ((hrequest != null) && (hresponse != null)) {
                     servlet.service((HttpServletRequest) request,
                                     (HttpServletResponse) response);
@@ -666,8 +674,11 @@ final class ApplicationDispatcher
 
 	// Deallocate the allocated servlet instance
 	try {
-	    if (servlet != null)
+	    if (servlet != null) {
+                //                if (debug >= 2)
+                //                    log("  Deallocating servlet instance");
 		wrapper.deallocate(servlet);
+            }
 	} catch (ServletException e) {
 	    log(sm.getString("applicationDispatcher.deallocateException",
 			     wrapper.getName()), e);
@@ -832,6 +843,9 @@ final class ApplicationDispatcher
         ServletRequest previous = null;
         ServletRequest current = outerRequest;
         while (current != null) {
+            if ("org.apache.catalina.servlets.InvokerHttpRequest".
+                equals(current.getClass().getName()))
+                break; // KLUDGE - Make nested RD.forward() using invoker work
             if (!(current instanceof ServletRequestWrapper))
                 break;
             if (current instanceof ApplicationHttpRequest)

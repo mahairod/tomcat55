@@ -105,9 +105,7 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
     public InvokerHttpRequest(HttpServletRequest request) {
 
 	super(request);
-        this.contextPath = request.getContextPath();
         this.pathInfo = request.getPathInfo();
-        this.queryString = request.getQueryString();
         this.requestURI = request.getRequestURI();
         this.servletPath = request.getServletPath();
 
@@ -115,12 +113,6 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * The context path for this request.
-     */
-    protected String contextPath = null;
 
 
     /**
@@ -134,12 +126,6 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      * The path information for this request.
      */
     protected String pathInfo = null;
-
-
-    /**
-     * The query string for this request.
-     */
-    protected String queryString = null;
 
 
     /**
@@ -165,17 +151,6 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * Override the <code>getContextPath()</code> method of the wrapped
-     * request.
-     */
-    public String getContextPath() {
-
-	return (this.contextPath);
-
-    }
-
-
-    /**
      * Override the <code>getPathInfo()</code> method of the wrapped request.
      */
     public String getPathInfo() {
@@ -186,23 +161,11 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * Override the <code>getQueryString()</code> method of the wrapped
-     * request.
-     */
-    public String getQueryString() {
-
-	return (this.queryString);
-
-    }
-
-
-    /**
-     * Override the <code>getRequestURI()</code> method of the wrapped
-     * request.
+     * Override the <code>getRequestURI()</code> method of the wrapped request.
      */
     public String getRequestURI() {
 
-	return (this.requestURI);
+        return (this.requestURI);
 
     }
 
@@ -233,18 +196,6 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * Set the context path for this request.
-     *
-     * @param contextPath The new context path
-     */
-    void setContextPath(String contextPath) {
-
-	this.contextPath = contextPath;
-
-    }
-
-
-    /**
      * Set the path information for this request.
      *
      * @param pathInfo The new path info
@@ -257,25 +208,13 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
 
 
     /**
-     * Set the query string for this request.
-     *
-     * @param queryString The new query string
-     */
-    void setQueryString(String queryString) {
-
-	this.queryString = queryString;
-
-    }
-
-
-    /**
      * Set the request URI for this request.
      *
      * @param requestURI The new request URI
      */
     void setRequestURI(String requestURI) {
 
-	this.requestURI = requestURI;
+        this.requestURI = requestURI;
 
     }
 
