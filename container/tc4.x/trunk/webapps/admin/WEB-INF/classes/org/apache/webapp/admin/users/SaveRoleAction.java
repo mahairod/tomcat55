@@ -251,7 +251,7 @@ public final class SaveRoleAction extends Action {
 
             getServlet().log
                 (resources.getMessage(locale, "users.error.invoke",
-                                      "save"), t);
+                                      "save"), e);
             response.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  resources.getMessage(locale, "users.error.invoke",
