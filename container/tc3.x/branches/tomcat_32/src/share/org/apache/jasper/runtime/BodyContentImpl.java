@@ -113,7 +113,7 @@ public class BodyContentImpl extends BodyContent {
 
 	if (len <= Constants.DEFAULT_BUFFER_SIZE) {
 	    tmp = new char [bufferSize + Constants.DEFAULT_BUFFER_SIZE];
-	    bufferSize += Constants.DEFAULT_BUFFER_SIZE;
+	    bufferSize = bufferSize * 2;
 	} else {
 	    tmp = new char [bufferSize + len];
 	    bufferSize += len;
