@@ -583,6 +583,31 @@ public class StandardContext
      */
     private boolean cachingAllowed = true;
 
+
+    /**
+     * Case sensitivity.
+     */
+    protected boolean caseSensitive = true;
+
+
+    /**
+     * Allow linking.
+     */
+    protected boolean allowLinking = false;
+
+
+    /**
+     * Cache max size in KB.
+     */
+    protected int cacheMaxSize = 10240; // 10 MB
+
+
+    /**
+     * Cache TTL in ms.
+     */
+    protected int cacheTTL = 5000;
+
+
     private boolean lazy=true;
 
     /**
@@ -607,6 +632,8 @@ public class StandardContext
     public void setName( String name ) {
         super.setName( name );
     }
+
+
     /**
      * Is caching allowed ?
      */
@@ -620,6 +647,70 @@ public class StandardContext
      */
     public void setCachingAllowed(boolean cachingAllowed) {
         this.cachingAllowed = cachingAllowed;
+    }
+
+
+    /**
+     * Set case sensitivity.
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+
+    /**
+     * Is case sensitive ?
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+
+    /**
+     * Set allow linking.
+     */
+    public void setAllowLinking(boolean allowLinking) {
+        this.allowLinking = allowLinking;
+    }
+
+
+    /**
+     * Is linking allowed.
+     */
+    public boolean isAllowLinking() {
+        return allowLinking;
+    }
+
+
+    /**
+     * Set cache TTL.
+     */
+    public void setCacheTTL(int cacheTTL) {
+        this.cacheTTL = cacheTTL;
+    }
+
+
+    /**
+     * Get cache TTL.
+     */
+    public int getCacheTTL() {
+        return cacheTTL;
+    }
+
+
+    /**
+     * Return the maximum size of the cache in KB.
+     */
+    public int getCacheMaxSize() {
+        return cacheMaxSize;
+    }
+
+
+    /**
+     * Set the maximum size of the cache in KB.
+     */
+    public void setCacheMaxSize(int cacheMaxSize) {
+        this.cacheMaxSize = cacheMaxSize;
     }
 
 
@@ -1504,9 +1595,13 @@ public class StandardContext
 
         if (resources instanceof BaseDirContext) {
             ((BaseDirContext) resources).setCached(isCachingAllowed());
+            ((BaseDirContext) resources).setCacheTTL(getCacheTTL());
+            ((BaseDirContext) resources).setCacheMaxSize(getCacheMaxSize());
         }
         if (resources instanceof FileDirContext) {
             filesystemBased = true;
+            ((FileDirContext) resources).setCaseSensitive(isCaseSensitive());
+            ((FileDirContext) resources).setAllowLinking(isAllowLinking());
         }
         this.webappResources = resources;
 
@@ -3945,6 +4040,18 @@ public class StandardContext
             }
         }
 
+        // Install DefaultContext configuration
+        if (!getOverride()) {
+            Container host = getParent();
+            if (host instanceof StandardHost) {
+                ((StandardHost)host).installDefaultContext(this);
+                Container engine = host.getParent();
+                if( engine instanceof StandardEngine ) {
+                    ((StandardEngine)engine).installDefaultContext(this);
+                }
+            }
+        }
+
         // Add missing components as necessary
         if (webappResources == null) {   // (1) Required by Loader
             if (log.isDebugEnabled())
@@ -3963,18 +4070,6 @@ public class StandardContext
             if (!resourcesStart()) {
                 log.error( "Error in resourceStart()");
                 ok = false;
-            }
-        }
-
-        // Install DefaultContext configuration
-        if (!getOverride()) {
-            Container host = getParent();
-            if (host instanceof StandardHost) {
-                ((StandardHost)host).installDefaultContext(this);
-                Container engine = host.getParent();
-                if( engine instanceof StandardEngine ) {
-                    ((StandardEngine)engine).installDefaultContext(this);
-                }
             }
         }
 
