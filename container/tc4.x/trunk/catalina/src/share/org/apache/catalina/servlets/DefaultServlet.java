@@ -1301,6 +1301,9 @@ public class DefaultServlet
                                   ServletOutputStream ostream,
                                   long start, long end) {
         
+        if (debug > 10)
+            System.out.println("Serving bytes:" + start + "-" + end);
+        
         try {
             istream.skip(start);
         } catch (IOException e) {
@@ -1632,6 +1635,7 @@ public class DefaultServlet
                                    + range.start
                                    + "-" + range.end + "/" 
                                    + range.length);
+                response.setContentLength((int) range.length);
                 
                 if (contentType != null) {
                     if (debug > 0)
