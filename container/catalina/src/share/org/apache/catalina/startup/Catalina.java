@@ -97,12 +97,14 @@ import org.xml.sax.InputSource;
  * <li><b>-stop</b> - Stop the currently running instance of Catalina.
  * </u>
  *
+ * Should do the same thing as Embedded, but using a server.xml file.
+ *
  * @author Craig R. McClanahan
  * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
-public class Catalina {
+public class Catalina extends Embedded {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -113,13 +115,7 @@ public class Catalina {
      */
     protected String configFile = "conf/server.xml";
 
-
-    /**
-     * Set the debugging detail level on our Digester.
-     */
-    protected boolean debug = false;
-
-
+    // XXX Should be moved to embedded
     /**
      * The shared extensions class loader for this server.
      */
@@ -145,18 +141,6 @@ public class Catalina {
     protected boolean stopping = false;
 
     /**
-     * Are we using naming ?
-     */
-    protected boolean useNaming = true;
-
-
-    /**
-     * Use await.
-     */
-    protected boolean await = false;
-
-
-    /**
      * Shutdown hook.
      */
     protected Thread shutdownHook = new CatalinaShutdownHook();
@@ -165,23 +149,38 @@ public class Catalina {
     // ------------------------------------------------------------- Properties
 
 
-    public void setUseNaming(boolean b) {
-        useNaming = b;
-    }
-
-
     public void setConfig(String file) {
         configFile = file;
     }
 
+    public String getConfigFile() {
+        return configFile;
+    }
 
-    public void setAwait(boolean b) {
-        await = b;
+    /**
+     * Set the shared extensions class loader.
+     *
+     * @param parentClassLoader The shared extensions class loader.
+     */
+    public void setParentClassLoader(ClassLoader parentClassLoader) {
+
+        this.parentClassLoader = parentClassLoader;
+
     }
 
 
-    // ----------------------------------------------------------- Main Program
+    /**
+     * Set the server instance we are configuring.
+     *
+     * @param server The new server
+     */
+    public void setServer(Server server) {
 
+        this.server = server;
+
+    }
+
+    // ----------------------------------------------------------- Main Program
 
     /**
      * The application main program.
@@ -218,33 +217,6 @@ public class Catalina {
     }
 
 
-    // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Set the shared extensions class loader.
-     *
-     * @param parentClassLoader The shared extensions class loader.
-     */
-    public void setParentClassLoader(ClassLoader parentClassLoader) {
-
-        this.parentClassLoader = parentClassLoader;
-
-    }
-
-
-    /**
-     * Set the server instance we are configuring.
-     *
-     * @param server The new server
-     */
-    public void setServer(Server server) {
-
-        this.server = server;
-
-    }
-
-
     // ------------------------------------------------------ Protected Methods
 
 
@@ -271,9 +243,9 @@ public class Catalina {
             } else if (args[i].equals("-config")) {
                 isConfig = true;
             } else if (args[i].equals("-debug")) {
-                debug = true;
+                debug = 1;
             } else if (args[i].equals("-nonaming")) {
-                useNaming = false;
+                setUseNaming( false );
             } else if (args[i].equals("-help")) {
                 usage();
                 return (false);
@@ -314,8 +286,8 @@ public class Catalina {
         long t1=System.currentTimeMillis();
         // Initialize the digester
         Digester digester = new Digester();
-        if (debug)
-            digester.setDebug(999);
+        if (debug>0)
+            digester.setDebug(debug);
         digester.setValidating(false);
 
         // Configure the actions we will be using
@@ -412,8 +384,8 @@ public class Catalina {
 
         // Initialize the digester
         Digester digester = new Digester();
-        if (debug)
-            digester.setDebug(999);
+        if (debug>0)
+            digester.setDebug(debug);
 
         // Configure the rules we need for shutting down
         digester.addObjectCreate("Server",
@@ -470,60 +442,31 @@ public class Catalina {
     /**
      * Set the <code>catalina.base</code> System property to the current
      * working directory if it has not been set.
+     * @deprecated Use initDirs()
      */
     public void setCatalinaBase() {
-
-        if (System.getProperty("catalina.base") != null)
-            return;
-        System.setProperty("catalina.base",
-                           System.getProperty("catalina.home"));
-
-    }
-
-    public void setCatalinaHome( String s ) {
-        System.out.println("Setting home "+ s);
-        System.setProperty( "catalina.home", s);
-    }
-
-    public void setCatalinaBase( String s ) {
-        System.setProperty( "catalina.base", s);
+        initDirs();
     }
 
     /**
      * Set the <code>catalina.home</code> System property to the current
      * working directory if it has not been set.
+     * @deprecated Use initDirs()
      */
     public void setCatalinaHome() {
-
-        if (System.getProperty("catalina.home") != null)
-            return;
-        System.setProperty("catalina.home",
-                           System.getProperty("user.dir"));
-
-    }
-
-    public String getConfigFile() {
-        return configFile;
-    }
-
-    public boolean isAwait() {
-        return await;
-    }
-
-    public boolean isDebug() {
-        return debug;
-    }
-
-    public boolean isUseNaming() {
-        return useNaming;
+        initDirs();
     }
 
     /**
      * Start a new server instance.
      */
     public void load() {
-        setCatalinaHome();
-        setCatalinaBase();
+        initDirs();
+
+        // Before digester - it may be needed
+
+        initNaming();
+
         // Create and execute our Digester
         Digester digester = createStartDigester();
         long t1 = System.currentTimeMillis();
@@ -544,32 +487,13 @@ public class Catalina {
         long t2 = System.currentTimeMillis();
         log.debug( "Server.xml processed " + (t2 - t1));
 
-        // Setting additional variables
-        if (!useNaming) {
-            System.setProperty("catalina.useNaming", "false");
-        } else {
-            System.setProperty("catalina.useNaming", "true");
-            String value = "org.apache.naming";
-            String oldValue =
-                System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
-            if (oldValue != null) {
-                value = value + ":" + oldValue;
-            }
-            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
-            value = System.getProperty
-                (javax.naming.Context.INITIAL_CONTEXT_FACTORY);
-            if (value == null) {
-                System.setProperty
-                    (javax.naming.Context.INITIAL_CONTEXT_FACTORY,
-                     "org.apache.naming.java.javaURLContextFactory");
-            }
-        }
-
+        // TODO: move to Embedded
         SecurityConfig securityConfig = SecurityConfig.newInstance();
         securityConfig.setPackageDefinition();
         securityConfig.setPackageAccess();
 
         // Replace System.out and System.err with a custom PrintStream
+        // TODO: move to Embedded, make it configurable
         SystemLogHandler systemlog = new SystemLogHandler(System.out);
         System.setOut(systemlog);
         System.setErr(systemlog);
@@ -584,6 +508,7 @@ public class Catalina {
         }
 
     }
+
 
     /* 
      * Load using arguments
@@ -691,7 +616,7 @@ public class Catalina {
 
     // --------------------------------------- CatalinaShutdownHook Inner Class
 
-
+    // XXX Should be moved to embedded !
     /**
      * Shutdown hook which will perform a clean shutdown of Catalina if needed.
      */
