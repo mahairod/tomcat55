@@ -56,6 +56,18 @@
   <target name="build-prepare">
 
     <available classname="junit.framework.TestCase" property="junit.present" />
+    <available property="launcher.present"
+     classname="org.apache.commons.launcher.Launcher"
+     classpath="${commons-daemon-launcher.jar}"/>
+    <available property="launcher.bootstrap.present"
+     file="${commons-daemon-launcher-bootstrap.class}"/>
+
+    <condition property="copy.launcher.jars">
+      <and>
+        <equals arg1="${launcher.present}" arg2="true" />
+        <equals arg1="${launcher.bootstrap.present}" arg2="true" />
+      </and>
+    </condition>
 
     <mkdir dir="${jasper.build}"/>
     <mkdir dir="${jasper.build}/bin"/>
@@ -67,21 +79,27 @@
   </target>
 
 
-  <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
-
-    <!-- Copy the launcher classes -->
+  <!-- =================== BUILD: Copy Launcher Files ===================== -->
+  <target name="copy-launcher.jars" if="copy.launcher.jars">
     <copy todir="${jasper.build}/common/lib" file="${ant.jar}"/>
     <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher.jar}"/>
     <copy todir="${jasper.build}/bin" file="${commons-daemon-launcher-bootstrap.class}"/>
+    <copy todir="${jasper.build}/bin">
+      <fileset dir="src/bin" includes="*-using-launcher.*,launcher.properties,jasper.xml" />
+    </copy>
+  </target>
+
+
+  <!-- =================== BUILD: Copy Static Files ======================= -->
+  <target name="build-static" depends="build-prepare,copy-launcher.jars">
 
     <!-- Executable Commands -->
     <copy todir="${jasper.build}/bin">
-      <fileset dir="src/bin" />
+      <fileset dir="src/bin" excludes="*-using-launcher.*,launcher.properties,jasper.xml" />
     </copy>
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" eol="lf"/>
     <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" eol="crlf"/>
-    <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
+    <chmod perm="+x" dir="${jasper.build}/bin" includes="*.sh"/>
 
   </target>
 

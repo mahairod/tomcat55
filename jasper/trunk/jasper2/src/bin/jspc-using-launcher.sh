@@ -1,14 +1,15 @@
 #!/bin/sh
+
 # -----------------------------------------------------------------------------
-# Script to run the Jasper "offline JSP compiler"
 #
-# $Id$
+# Script for running JSPC compiler using the Launcher
+#
 # -----------------------------------------------------------------------------
 
-# resolve links - $0 may be a softlink
+# Resolve links - $0 may be a softlink
 PRG="$0"
 
-while [ -h "$PRG" ] ; do
+while [ -h "$PRG" ]; do
   ls=`ls -ld "$PRG"`
   link=`expr "$ls" : '.*-> \(.*\)$'`
   if expr "$link" : '.*/.*' > /dev/null; then
@@ -17,15 +18,12 @@ while [ -h "$PRG" ] ; do
     PRG=`dirname "$PRG"`/"$link"
   fi
 done
- 
-PRGDIR=`dirname "$PRG"`
-EXECUTABLE=jasper.sh
 
-# Check that target executable exists
-if [ ! -x "$PRGDIR"/"$EXECUTABLE" ]; then
-  echo "Cannot find $PRGDIR/$EXECUTABLE"
-  echo "This file is needed to run this program"
-  exit 1
+# Get standard environment variables
+PRGDIR=`dirname "$PRG"`
+if [ -r "$PRGDIR"/setenv.sh ]; then
+  . "$PRGDIR"/setenv.sh
 fi
 
-exec "$PRGDIR"/"$EXECUTABLE" jspc "$@"
+# Execute the Launcher using the "jspc" target
+exec "$JAVA_HOME"/bin/java -classpath "$PRGDIR" LauncherBootstrap -launchfile jasper.xml -verbose jspc "$@"

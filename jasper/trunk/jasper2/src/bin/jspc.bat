@@ -1,31 +1,33 @@
 @echo off
 if "%OS%" == "Windows_NT" setlocal
-
 rem ---------------------------------------------------------------------------
+rem Script to run the Jasper "offline JSP compiler"
 rem
-rem Script for running JSPC compiler using the Launcher
-rem
+rem $Id$
 rem ---------------------------------------------------------------------------
 
-rem Get standard environment variables
-set PRG=%0
-if exist %PRG%\..\setenv.bat goto gotCmdPath
-rem %0 must have been found by DOS using the %PATH% so we assume that
-rem setenv.bat will also be found in the %PATH%
-call setenv.bat
-goto doneSetenv
-:gotCmdPath
-call %PRG%\..\setenv.bat
-:doneSetenv
-
-rem Make sure prerequisite environment variables are set
-if not "%JAVA_HOME%" == "" goto gotJavaHome
-echo The JAVA_HOME environment variable is not defined
+rem Guess JASPER_HOME if not defined
+if not "%JASPER_HOME%" == "" goto gotHome
+set JASPER_HOME=.
+if exist "%JASPER_HOME%\bin\jspc.bat" goto okHome
+set JASPER_HOME=..
+:gotHome
+if exist "%JASPER_HOME%\bin\jspc.bat" goto okHome
+echo The JASPER_HOME environment variable is not defined correctly
 echo This environment variable is needed to run this program
 goto end
-:gotJavaHome
+:okHome
 
-rem Get command line arguments and save them with the proper quoting
+set EXECUTABLE=%JASPER_HOME%\bin\jasper.bat
+
+rem Check that target executable exists
+if exist "%EXECUTABLE%" goto okExec
+echo Cannot find %EXECUTABLE%
+echo This file is needed to run this program
+goto end
+:okExec
+
+rem Get remaining unshifted command line arguments and save them in the
 set CMD_LINE_ARGS=
 :setArgs
 if ""%1""=="""" goto doneSetArgs
@@ -34,7 +36,6 @@ shift
 goto setArgs
 :doneSetArgs
 
-rem Execute the Launcher using the "jspc" target
-"%JAVA_HOME%\bin\java.exe" -classpath %PRG%\..;"%PATH%" LauncherBootstrap -launchfile jasper.xml -verbose jspc %CMD_LINE_ARGS%
+call "%EXECUTABLE%" jspc %CMD_LINE_ARGS%
 
 :end
