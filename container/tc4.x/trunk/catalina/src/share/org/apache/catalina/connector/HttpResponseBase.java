@@ -169,7 +169,6 @@ public class HttpResponseBase
     public void finishResponse() throws IOException {
 
         sendHeaders();
-        committed = true;
         super.finishResponse();
 
     }
@@ -533,6 +532,9 @@ public class HttpResponseBase
 	// Send a terminating blank line to mark the end of the headers
 	outputWriter.print("\r\n");
 	outputWriter.flush();
+
+        // The response is now committed
+        committed = true;
 
     }
 
