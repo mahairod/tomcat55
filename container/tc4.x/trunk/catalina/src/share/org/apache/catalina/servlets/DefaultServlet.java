@@ -352,9 +352,22 @@ public class DefaultServlet
      */
     protected DirContext getResources() {
 
-        // First : try JNDI
+        DirContext result = null;
+
+        // Try the servlet context
         try {
-            return 
+            result = (DirContext) getServletContext()
+                .getAttribute(Globals.RESOURCES_ATTR);
+        } catch (ClassCastException e) {
+            // Failed : Not the right type
+        }
+
+        if (result != null)
+            return result;
+
+        // Try JNDI
+        try {
+            result =
                 (DirContext) new InitialContext().lookup(RESOURCES_JNDI_NAME);
         } catch (NamingException e) {
             // Failed
@@ -362,15 +375,7 @@ public class DefaultServlet
             // Failed : Not the right type
         }
 
-        // If it has failed, try the servlet context
-        try {
-            return (DirContext) getServletContext()
-                .getAttribute(Globals.RESOURCES_ATTR);
-        } catch (ClassCastException e) {
-            // Failed : Not the right type
-        }
-
-        return null;
+        return result;
 
     }
 
