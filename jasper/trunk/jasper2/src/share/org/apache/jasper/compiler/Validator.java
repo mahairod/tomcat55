@@ -904,11 +904,49 @@ public class Validator {
 	}
 
 	public void visit(Node.DoBodyAction n) throws JasperException {
+
             JspUtil.checkAttributes("DoBody", n, doBodyAttrs, err);
 	    if (n.getAttributeValue("var") != null
 		    && n.getAttributeValue("varReader") != null) {
 		err.jspError(n, "jsp.error.doBody.varAndVarReader");
 	    }
+
+	    Node.Nodes subelements = n.getBody();
+	    if (subelements != null) {
+		for (int i=0; i<subelements.size(); i++) {
+		    Node subelem = subelements.getNode(i);
+		    if (!(subelem instanceof Node.ParamAction)) {
+			err.jspError(n, "jsp.error.doBody.invalidBodyContent");
+		    }
+		}
+	    }
+
+	    /*
+	     * A translation error must occur if a <jsp:param> is specified
+	     * with the same name as a variable with a scope of AT_BEGIN or
+	     * NESTED.
+	     */
+	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	    if (tagVars != null) {
+		for (int i=0; i<tagVars.length; i++) {
+		    if (tagVars[i].getScope() == VariableInfo.AT_END)
+			continue;
+		    String varName = tagVars[i].getNameGiven();
+		    if (varName == null) {
+			varName = tagData.getAttributeString(
+			                tagVars[i].getNameFromAttribute());
+		    }
+		    for (int j=0; j<subelements.size(); j++) {
+			Node subelem = subelements.getNode(j);
+			String paramName = subelem.getAttributeValue("name");
+			if (varName.equals(paramName)) {
+			    err.jspError(n, "jsp.error.doBody.invalidParam",
+					 varName);
+			}
+		    }
+		}
+	    }	    
+
             visitBody(n);
 	}
     }
