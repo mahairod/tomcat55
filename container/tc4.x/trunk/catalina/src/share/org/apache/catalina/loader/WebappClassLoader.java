@@ -78,7 +78,6 @@ import java.net.URLStreamHandlerFactory;
 import java.net.URLStreamHandler;
 import java.security.AccessControlException;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 import java.security.AccessController;
 import java.security.AccessControlContext;
 import java.security.CodeSource;
@@ -139,6 +138,7 @@ public class WebappClassLoader
 	this.parent = getParent();
 	system = getSystemClassLoader();
 	securityManager = System.getSecurityManager();
+        accessController = AccessController.getContext();
 
     }
 
@@ -154,6 +154,7 @@ public class WebappClassLoader
 	this.parent = getParent();
 	system = getSystemClassLoader();
 	securityManager = System.getSecurityManager();
+        accessController = AccessController.getContext();
 
     }
 
@@ -308,6 +309,12 @@ public class WebappClassLoader
      * The system class loader.
      */
     private ClassLoader system = null;
+
+
+    /**
+     * Access controller.
+     */
+    private AccessControlContext accessController;
 
 
     // ------------------------------------------------------------- Properties
@@ -1260,7 +1267,20 @@ public class WebappClassLoader
         String tempPath = name.replace('.', '/');
         String classPath = tempPath + ".class";
 
-        ResourceEntry entry = findResourceInternal(name, classPath);
+        ResourceEntry entry = null;
+
+        if (securityManager != null) {
+            final String fName = name;
+            final String fClassPath = classPath;
+            entry = (ResourceEntry) AccessController.doPrivileged
+                (new PrivilegedAction() {
+                        public Object run() {
+                            return findResourceInternal(fName, fClassPath);
+                        }
+                    }, accessController);
+        } else {
+            entry = findResourceInternal(name, classPath);
+        }
 
         if (entry == null)
             throw new ClassNotFoundException(name);
@@ -1305,23 +1325,14 @@ public class WebappClassLoader
                 if (pkg.isSealed()) {
                     sealCheck = pkg.isSealed(entry.source);
                 } else {
-                    if (entry.manifest != null)
-                        sealCheck = isPackageSealed
-                            (packageName, entry.manifest);
+                    sealCheck = (entry.manifest == null) 
+                        || !isPackageSealed(packageName, entry.manifest);
                 }
 		if (!sealCheck)
-		    throw new SecurityException("sealing violation");
+		    throw new SecurityException
+                        ("Sealing violation loading " + name + " : Package "
+                         + packageName + " is sealed.");
             }
-
-/*
-            clazz = (Class)
-		AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return defineClass(name, entry.binaryContent, 0, 
-                                    entry.binaryContent.length, codeSource);
-                        }
-                    }, accessController);
-*/
 
         }
 
