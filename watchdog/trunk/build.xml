@@ -20,6 +20,7 @@
       <mkdir dir="${watchdog.build}/conf" />
       <mkdir dir="${watchdog.build}/lib" />
       <mkdir dir="${watchdog.build}/bin" />
+      <mkdir dir="${watchdog.build}/doc" />
       <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
 
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
@@ -46,12 +47,15 @@
       <copydir src="src/bin" dest="${watchdog.build}/bin"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
 
+      <copyfile src="Readme" 
+                dest="${watchdog.build}/doc/Readme"/>
+
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
-      <chmod src="${watchdog.build}/watchdog.sh" perm="+x"/> 
+      <chmod src="${watchdog.build}/bin/watchdog.sh" perm="+x"/> 
    </target>       
 
    <target name="main" depends="prepare">
@@ -91,8 +95,13 @@
       <mkdir dir="${watchdog.dist}"/>
       <mkdir dir="${watchdog.dist}/conf" />
       <mkdir dir="${watchdog.dist}/lib" />
+      <mkdir dir="${watchdog.dist}/bin" />
+      <mkdir dir="${watchdog.dist}/doc" />
       <mkdir dir="${watchdog.dist}/webapps" />
       <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
+
+      <copyfile src="Readme" 
+                dest="${watchdog.dist}/doc/Readme"/>
 
       <copyfile src="../jakarta-tools/moo.jar"
                 dest="${watchdog.dist}/lib/moo.jar"/>
@@ -112,7 +121,7 @@
       <copydir src="src/bin" dest="${watchdog.dist}/bin"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
     
-      <chmod src="${watchdog.dist}/watchdog.sh" perm="+x"/>
+      <chmod src="${watchdog.dist}/bin/watchdog.sh" perm="+x"/>
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
