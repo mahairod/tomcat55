@@ -1906,7 +1906,7 @@ class Generator {
 	    Node.CustomTag tag = n.getTag();
             Node.JspAttribute[] attrs = tag.getJspAttributes();
             for (int i=0; i<attrs.length; i++) {
-		if (attrs[i].getName().equals(n.getQName())) {
+		if (attrs[i].getName().equals(n.getName())) {
 	            out.print(evaluateAttribute(getTagHandlerInfo(tag),
 						attrs[i], tag, null));
 		    break;
