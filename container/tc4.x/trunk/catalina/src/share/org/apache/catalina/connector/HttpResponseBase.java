@@ -485,6 +485,8 @@ public class HttpResponseBase
                 contextPath = context.getPath();
 	    if ((contextPath != null) && (contextPath.length() > 0))
 		cookie.setPath(contextPath);
+	    else
+	        cookie.setPath("/");
 	    if (hreq.isSecure())
 		cookie.setSecure(true);
 	    addCookie(cookie);
