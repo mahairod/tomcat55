@@ -630,6 +630,22 @@
         testStrategy="The target servlet will generage a java.lang.NumberFormatException.  The static HTML error page should be returned to the client."
     />
 
+<!-- javax_servlet_Filter tests -->
+  
+    <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenFile="${wgdir}/javax_servlet/Filter/DoFilterTest.html"
+        assertion="The doFilter method of the Filter is called by the container each time a request/response pair is passed through the stack due to a client request for the Servlet in the stack.  Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Client attempts to access a servlet and the filter configured for that servlet should be invoked."
+    />
+  
+    <gtest request="GET /servlet-tests/InitFilterConfigTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenFile="${wgdir}/javax_servlet/Filter/InitFilterConfigTest.html"
+        assertion="The container calls this method when the Filter is instantiated and passes in a FilterConfig object. Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Client attempts to access a servlet and the filter configured for that servlet."
+    />
+  
   <!-- javax_servlet_http_Cookie tests -->
 
       <gtest request="GET /servlet-tests/Cookie_ConstructorTest HTTP/1.0"
