@@ -75,96 +75,69 @@ import org.apache.jasper.util.SimplePool;
 import org.apache.jasper.logging.Logger;
 
 /**
- * Implementation of JspFactory from the spec. Helps create
- * PageContext and other animals.  
+ * Implementation of JspFactory.
  *
  * @author Anil K. Vijendran
  */
 public class JspFactoryImpl extends JspFactory {
 
-    protected class PrivilegedGetPageContext implements PrivilegedAction {
-	private JspFactoryImpl factory;
-	private Servlet servlet;
-	private ServletRequest request;
-	private ServletResponse response;
-	private String errorPageURL;
-	private boolean needsSession;
-	private int bufferSize;
-	private boolean autoflush;
+    private static final String SPEC_VERSION = "2.0";
+    private static final boolean USE_POOL = true;
 
-	PrivilegedGetPageContext(JspFactoryImpl factory,
-	    Servlet servlet,
-	    ServletRequest request,
-	    ServletResponse response,
-	    String errorPageURL,
-	    boolean needsSession, int bufferSize,
-	    boolean autoflush)
-	{
-	    this.factory = factory;
-	    this.servlet = servlet;
-	    this.request = request;
-	    this.response = response;
-	    this.errorPageURL = errorPageURL;
-	    this.needsSession = needsSession;
-	    this.bufferSize = bufferSize;
-	    this.autoflush = autoflush;
-	}
- 
-	public Object run() {
-	    return factory.internalGetPageContext(servlet,request,
-		response,errorPageURL,
-		needsSession,bufferSize,autoflush);
-	}
-    }
-
-    protected class PrivilegedReleasePageContext implements PrivilegedAction {
-        private JspFactoryImpl factory;
-	private PageContext pageContext;
-
-        PrivilegedReleasePageContext(JspFactoryImpl factory,
-            PageContext pageContext)
-        {
-            this.factory = factory;
-            this.pageContext = pageContext;
-        }
-
-        public Object run() {
-            factory.internalReleasePageContext(pageContext);
-	    return null;
-        }
-    }
-
-    private SimplePool pool=new SimplePool( 100 );
-    private static final boolean usePool=true;
-
-    Logger.Helper loghelper = new Logger.Helper("JASPER_LOG", "JspFactoryImpl");
+    private SimplePool pool = new SimplePool( 100 );
+    private Logger.Helper loghelper = new Logger.Helper("JASPER_LOG",
+							"JspFactoryImpl");
     
-    public PageContext getPageContext(Servlet servlet, ServletRequest request,
+    public PageContext getPageContext(Servlet servlet,
+				      ServletRequest request,
                                       ServletResponse response,
                                       String errorPageURL,                    
-                                      boolean needsSession, int bufferSize,
-                                      boolean autoflush)
-    {
+                                      boolean needsSession,
+				      int bufferSize,
+                                      boolean autoflush) {
+
 	if( System.getSecurityManager() != null ) {
 	    PrivilegedGetPageContext dp = new PrivilegedGetPageContext(
-		(JspFactoryImpl)this,servlet,request,response,errorPageURL,
-                needsSession,bufferSize,autoflush);
+		(JspFactoryImpl)this, servlet, request, response, errorPageURL,
+                needsSession, bufferSize, autoflush);
 	    return (PageContext)AccessController.doPrivileged(dp);
+	} else {
+	    return internalGetPageContext(servlet, request, response,
+					  errorPageURL, needsSession,
+					  bufferSize, autoflush);
 	}
-	return internalGetPageContext(servlet,request,response,errorPageURL,
-				      needsSession,bufferSize,autoflush);
-
     }
 
-    protected PageContext internalGetPageContext(Servlet servlet, ServletRequest request,
-                                      ServletResponse response, 
-				      String errorPageURL, 
-                                      boolean needsSession, int bufferSize, 
-                                      boolean autoflush) 
-    {
+    public void releasePageContext(PageContext pc) {
+	if( pc == null )
+	    return;
+        if( System.getSecurityManager() != null ) {
+            PrivilegedReleasePageContext dp = new PrivilegedReleasePageContext(
+                (JspFactoryImpl)this,pc);
+            AccessController.doPrivileged(dp);
+        } else {
+            internalReleasePageContext(pc);
+	}
+    }
+
+    public JspEngineInfo getEngineInfo() {
+        return new JspEngineInfo() {
+		public String getSpecificationVersion() {
+		    return SPEC_VERSION;
+		}
+	    };
+    }
+
+    private PageContext internalGetPageContext(Servlet servlet,
+					       ServletRequest request,
+					       ServletResponse response, 
+					       String errorPageURL, 
+					       boolean needsSession,
+					       int bufferSize, 
+					       boolean autoflush) {
         try {
 	    PageContext pc;
-	    if( usePool ) {
+	    if( USE_POOL ) {
 		pc=(PageContextImpl)pool.get();
 		if( pc == null ) {
 		    pc= new PageContextImpl(this);
@@ -182,37 +155,67 @@ public class JspFactoryImpl extends JspFactory {
         }
     }
 
-    public void releasePageContext(PageContext pc) {
-	if( pc == null )
-	    return;
-        if( System.getSecurityManager() != null ) {
-            PrivilegedReleasePageContext dp = new PrivilegedReleasePageContext(
-                (JspFactoryImpl)this,pc);
-            AccessController.doPrivileged(dp);
-        } else {
-            internalReleasePageContext(pc);
-	}
-    }
-
     private void internalReleasePageContext(PageContext pc) {
         pc.release();
-	if( usePool) {
+	if( USE_POOL) {
 	    pool.put( pc );
 	}
     }
 
-    static class SunJspEngineInfo extends JspEngineInfo {
+    private class PrivilegedGetPageContext implements PrivilegedAction {
 
-	final static String SpecificationVersion = "1.2";
+	private JspFactoryImpl factory;
+	private Servlet servlet;
+	private ServletRequest request;
+	private ServletResponse response;
+	private String errorPageURL;
+	private boolean needsSession;
+	private int bufferSize;
+	private boolean autoflush;
 
-        public String getSpecificationVersion() {
-            return SpecificationVersion;
-        }
+	PrivilegedGetPageContext(JspFactoryImpl factory,
+				 Servlet servlet,
+				 ServletRequest request,
+				 ServletResponse response,
+				 String errorPageURL,
+				 boolean needsSession,
+				 int bufferSize,
+				 boolean autoflush) {
+	    this.factory = factory;
+	    this.servlet = servlet;
+	    this.request = request;
+	    this.response = response;
+	    this.errorPageURL = errorPageURL;
+	    this.needsSession = needsSession;
+	    this.bufferSize = bufferSize;
+	    this.autoflush = autoflush;
+	}
+ 
+	public Object run() {
+	    return factory.internalGetPageContext(servlet,
+						  request,
+						  response,
+						  errorPageURL,
+						  needsSession,
+						  bufferSize,
+						  autoflush);
+	}
     }
-    
-    static JspEngineInfo info = new SunJspEngineInfo();
 
-    public JspEngineInfo getEngineInfo() {
-        return info;
+    private class PrivilegedReleasePageContext implements PrivilegedAction {
+
+        private JspFactoryImpl factory;
+	private PageContext pageContext;
+
+        PrivilegedReleasePageContext(JspFactoryImpl factory,
+				     PageContext pageContext) {
+            this.factory = factory;
+            this.pageContext = pageContext;
+        }
+
+        public Object run() {
+            factory.internalReleasePageContext(pageContext);
+	    return null;
+        }
     }
 }
