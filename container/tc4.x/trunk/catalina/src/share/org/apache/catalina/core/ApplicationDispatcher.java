@@ -64,10 +64,10 @@
 
 package org.apache.catalina.core;
 
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;

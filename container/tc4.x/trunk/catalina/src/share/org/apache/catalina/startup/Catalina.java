@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.security.Security;
 import java.util.Stack;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
@@ -484,12 +485,6 @@ public class Catalina {
 		       ("addLifecycleListener",
 			"org.apache.catalina.LifecycleListener"));
 
-        /*
-       	mapper.addRule(prefix + "/Loader",
-		       mapper.objectCreate
-		       ("org.apache.catalina.loader.StandardLoader",
-			"className"));
-        */
         mapper.addRule(prefix + "/Loader",
                        new CreateLoaderAction());
 	mapper.addRule(prefix + "/Loader",
@@ -647,6 +642,25 @@ public class Catalina {
             System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY,
                                "org.apache.naming.java.javaURLContextFactory");
         }
+
+	// If a SecurityManager is being used, set properties for
+	// checkPackageAccess() and checkPackageDefinition
+	if( System.getSecurityManager() != null ) {
+	    String access = Security.getProperty("package.access");
+	    if( access != null && access.length() > 0 )
+		access += ",";
+	    else
+		access = "sun.,";
+	    Security.setProperty("package.access",
+		access + "org.apache.catalina.,org.apache.jasper.");
+	    String definition = Security.getProperty("package.definition");
+	    if( definition != null && definition.length() > 0 )
+		definition += ",";
+	    else
+		definition = "sun.,";
+	    Security.setProperty("package.definition",
+		"java.,javax.,org.apache.catalina.,org.apache.jasper.");
+	}
 
 	// Start the new server
 	if (server instanceof Lifecycle) {
