@@ -62,9 +62,9 @@ package org.apache.coyote.tomcat5;
 
 import java.io.IOException;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
 import javax.servlet.ServletInputStream;
 
 

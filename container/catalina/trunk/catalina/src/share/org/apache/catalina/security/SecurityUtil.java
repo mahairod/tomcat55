@@ -60,21 +60,19 @@ package org.apache.catalina.security;
 
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.security.AccessController;
-import java.security.AccessControlContext;
+import java.lang.reflect.Method;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import javax.security.auth.Subject;
+import java.util.HashMap;
 
+import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.UnavailableException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.StringManager;

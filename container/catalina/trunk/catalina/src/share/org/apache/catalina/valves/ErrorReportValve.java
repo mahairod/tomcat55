@@ -66,36 +66,25 @@ package org.apache.catalina.valves;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Locale;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.compat.JdkCompat;
-
-import org.apache.catalina.Container;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
-import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
-
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * <p>Implementation of a Valve that outputs HTML error pages.</p>

@@ -71,15 +71,10 @@ import java.net.URLEncoder;
 import java.util.Hashtable;
 
 import javax.management.Attribute;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MalformedObjectNameException;
 import javax.management.MBeanException;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.NotCompliantMBeanException;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.OperationsException;
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
 
 import org.apache.catalina.Connector;
@@ -90,31 +85,26 @@ import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Group;
 import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Role;
 import org.apache.catalina.Server;
-import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.User;
 import org.apache.catalina.UserDatabase;
 import org.apache.catalina.Valve;
-import org.apache.catalina.valves.ValveBase;
-import org.apache.catalina.core.StandardService;
 import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
-import org.apache.catalina.deploy.ResourceParams;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.modeler.ManagedBean;
-import org.apache.commons.modeler.Registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
 
 
 /**

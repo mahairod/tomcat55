@@ -66,24 +66,22 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.InstanceEvent;
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.security.SecurityUtil;
 
 /**
  * Implementation of <code>javax.servlet.FilterChain</code> used to manage

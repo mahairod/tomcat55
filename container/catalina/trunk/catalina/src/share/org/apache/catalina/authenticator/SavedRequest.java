@@ -65,13 +65,12 @@
 package org.apache.catalina.authenticator;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.ArrayList;
+
 import javax.servlet.http.Cookie;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.Session;
 
 
 /**

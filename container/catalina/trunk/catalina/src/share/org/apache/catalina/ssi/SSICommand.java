@@ -63,7 +63,6 @@
  */
 package org.apache.catalina.ssi;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 /**

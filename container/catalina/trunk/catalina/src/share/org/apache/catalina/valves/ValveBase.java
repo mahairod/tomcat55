@@ -66,23 +66,23 @@ package org.apache.catalina.valves;
 
 
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.management.ObjectName;
+
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.servlet.ServletException;
 
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Host;
+import org.apache.catalina.Pipeline;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
-import org.apache.catalina.Pipeline;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Service;
-import org.apache.catalina.Host;
-import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.util.StringManager;

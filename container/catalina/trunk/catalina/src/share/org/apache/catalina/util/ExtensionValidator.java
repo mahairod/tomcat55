@@ -63,32 +63,26 @@
 
 package org.apache.catalina.util;
 
-import java.util.StringTokenizer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.text.MessageFormat;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import java.util.jar.Attributes;
-import java.util.NoSuchElementException;
 
-import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.Logger;
-import org.apache.naming.resources.BaseDirContext;
-import org.apache.naming.resources.Resource;
-
-// JNDI Imports
+import javax.naming.Binding;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.Binding;
 import javax.naming.directory.DirContext;
+
+import org.apache.catalina.core.StandardContext;
+import org.apache.naming.resources.Resource;
 
 
 /**

@@ -64,9 +64,7 @@
 
 package org.apache.catalina.ssi;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
 
 /**
  * Implements the Server-side #exec command

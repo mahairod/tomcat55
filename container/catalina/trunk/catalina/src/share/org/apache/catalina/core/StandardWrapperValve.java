@@ -62,6 +62,7 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.servlet.Servlet;
@@ -72,12 +73,6 @@ import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.tomcat.util.buf.MessageBytes;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -86,9 +81,12 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.connector.ClientAbortException;
-import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.buf.MessageBytes;
 
 /**
  * Valve that implements the default basic behavior for the

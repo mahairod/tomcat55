@@ -67,69 +67,52 @@ package org.apache.catalina.servlets;
 
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.StringTokenizer;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.Hashtable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
 
-import javax.servlet.RequestDispatcher;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NameClassPair;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.Transformer;
-
-import org.apache.tomcat.util.http.FastHttpDateFormat;
-
-import org.apache.naming.resources.Resource;
-import org.apache.naming.resources.ResourceAttributes;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.MD5Encoder;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.URLEncoder;
+import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.ResourceAttributes;
+import org.apache.tomcat.util.http.FastHttpDateFormat;
 
 
 /**

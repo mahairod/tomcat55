@@ -62,28 +62,26 @@ package org.apache.catalina.valves;
 
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Properties;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
+
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.ValveContext;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
+import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.valves.ValveBase;
-import org.apache.catalina.valves.Constants;
-import java.util.Properties;
-import java.util.Date;
-import java.sql.Timestamp;
-import java.sql.SQLException;
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 
 /**

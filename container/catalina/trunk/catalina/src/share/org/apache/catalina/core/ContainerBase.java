@@ -71,14 +71,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import javax.servlet.ServletException;
-import javax.naming.directory.DirContext;
-import javax.management.ObjectName;
+
 import javax.management.MBeanRegistration;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.naming.directory.DirContext;
+import javax.servlet.ServletException;
 
-import org.apache.naming.resources.ProxyDirContext;
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerEvent;
@@ -94,13 +94,11 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
-import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.logger.LoggerBase;
-import org.apache.catalina.session.StandardManager;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.modeler.Registry;
+import org.apache.naming.resources.ProxyDirContext;
 
 
 /**

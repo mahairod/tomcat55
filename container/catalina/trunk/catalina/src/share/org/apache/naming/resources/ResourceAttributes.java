@@ -63,21 +63,17 @@
 
 package org.apache.naming.resources;
 
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.Locale;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 import java.text.ParseException;
-import javax.naming.NamingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Vector;
+
 import javax.naming.NamingEnumeration;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.BasicAttribute;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
 
 /**
  * Attributes implementation.

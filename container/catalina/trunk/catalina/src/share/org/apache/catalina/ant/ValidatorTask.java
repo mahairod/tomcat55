@@ -67,16 +67,13 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-import org.apache.commons.digester.Digester;
-import org.xml.sax.InputSource;
 
 import org.apache.catalina.startup.Constants;
 import org.apache.catalina.startup.ContextConfig;
+import org.apache.commons.digester.Digester;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.xml.sax.InputSource;
 
 
 /**

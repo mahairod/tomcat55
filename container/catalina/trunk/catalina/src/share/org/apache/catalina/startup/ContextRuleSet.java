@@ -64,12 +64,9 @@ package org.apache.catalina.startup;
 
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+
 import org.apache.catalina.Container;
-import org.apache.catalina.Context;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;

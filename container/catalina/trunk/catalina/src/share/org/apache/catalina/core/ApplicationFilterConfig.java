@@ -65,19 +65,20 @@
 package org.apache.catalina.core;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
-import java.io.Serializable;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.deploy.FilterDef;
-import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.security.SecurityUtil;
+import org.apache.catalina.util.Enumerator;
 import org.apache.tomcat.util.log.SystemLogHandler;
 
 

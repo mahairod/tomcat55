@@ -66,8 +66,8 @@ package org.apache.catalina.ssi;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.apache.catalina.util.DateTool;
 import org.apache.catalina.util.Strftime;
 

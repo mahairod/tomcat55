@@ -60,25 +60,13 @@
 
 package org.apache.coyote.tomcat5;
 
-import java.util.Vector;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.lang.reflect.Method;
 
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
 import javax.management.MBeanRegistration;
+import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
-
-import org.apache.commons.modeler.Registry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.tomcat.util.IntrospectionUtils;
-import org.apache.tomcat.util.http.mapper.Mapper;
-
-import org.apache.coyote.Adapter;
-import org.apache.coyote.ProtocolHandler;
+import javax.management.ObjectName;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -89,13 +77,17 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Service;
-import org.apache.catalina.Engine;
-import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.net.DefaultServerSocketFactory;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
+import org.apache.coyote.Adapter;
+import org.apache.coyote.ProtocolHandler;
+import org.apache.tomcat.util.IntrospectionUtils;
+import org.apache.tomcat.util.http.mapper.Mapper;
 
 
 /**

@@ -65,68 +65,39 @@
 package org.apache.catalina.servlets;
 
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.Locale;
 import java.util.Hashtable;
-import java.util.Calendar;
+import java.util.Locale;
+import java.util.Stack;
 import java.util.TimeZone;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import javax.servlet.RequestDispatcher;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NameClassPair;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-
-import org.apache.tomcat.util.http.FastHttpDateFormat;
-
-import org.apache.naming.resources.Resource;
-import org.apache.naming.resources.ResourceAttributes;
-
-import org.apache.catalina.util.MD5Encoder;
-import org.apache.catalina.util.StringManager;
-import org.apache.catalina.util.XMLWriter;
 import org.apache.catalina.util.DOMWriter;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.XMLWriter;
+import org.apache.naming.resources.Resource;
+import org.apache.tomcat.util.http.FastHttpDateFormat;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 
 /**

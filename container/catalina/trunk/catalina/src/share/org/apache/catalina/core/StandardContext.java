@@ -62,32 +62,30 @@
 package org.apache.catalina.core;
 
 
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Stack;
-import java.net.URLDecoder;
+import java.util.TreeMap;
 
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.management.InstanceNotFoundException;
-import javax.management.MalformedObjectNameException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ObjectName;
-
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeListener;
@@ -99,16 +97,18 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.naming.ContextBindings;
-import org.apache.naming.resources.BaseDirContext;
-import org.apache.naming.resources.FileDirContext;
-import org.apache.naming.resources.ProxyDirContext;
-import org.apache.naming.resources.WARDirContext;
-import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.catalina.*;
-import org.apache.catalina.startup.ContextConfig;
-import org.apache.catalina.startup.TldConfig;
-import org.apache.catalina.mbeans.MBeanUtils;
+import org.apache.catalina.Container;
+import org.apache.catalina.ContainerListener;
+import org.apache.catalina.Context;
+import org.apache.catalina.Engine;
+import org.apache.catalina.Globals;
+import org.apache.catalina.Host;
+import org.apache.catalina.InstanceListener;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Loader;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
@@ -126,17 +126,25 @@ import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.mbeans.MBeanUtils;
 import org.apache.catalina.session.PersistentManagerBase;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.session.StoreBase;
+import org.apache.catalina.startup.ContextConfig;
+import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
-
-import org.apache.commons.modeler.Registry;
-import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
+import org.apache.naming.ContextBindings;
+import org.apache.naming.resources.BaseDirContext;
+import org.apache.naming.resources.DirContextURLStreamHandler;
+import org.apache.naming.resources.FileDirContext;
+import org.apache.naming.resources.ProxyDirContext;
+import org.apache.naming.resources.WARDirContext;
 
 /**
  * Standard implementation of the <b>Context</b> interface.  Each

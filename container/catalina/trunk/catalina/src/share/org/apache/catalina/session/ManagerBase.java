@@ -72,15 +72,14 @@ import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
 import javax.management.MBeanRegistration;
-import javax.management.ObjectName;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.DefaultContext;

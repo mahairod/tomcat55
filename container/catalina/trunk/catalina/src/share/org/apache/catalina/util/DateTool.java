@@ -64,10 +64,10 @@
 
 package org.apache.catalina.util;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  *  Common place for date utils.

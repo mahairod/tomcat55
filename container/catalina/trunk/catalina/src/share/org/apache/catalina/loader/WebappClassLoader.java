@@ -60,19 +60,15 @@
 
 package org.apache.catalina.loader;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilePermission;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.JarURLConnection;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.net.URLStreamHandlerFactory;
-import java.net.URLStreamHandler;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.CodeSource;
@@ -80,35 +76,30 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.security.Policy;
 import java.security.PrivilegedAction;
-import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.jar.Attributes.Name;
 
-import javax.naming.directory.DirContext;
-import javax.naming.NamingException;
-import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
-
-import org.apache.tomcat.util.compat.JdkCompat;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.util.StringManager;
-
 import org.apache.naming.JndiPermission;
-import org.apache.naming.resources.ResourceAttributes;
 import org.apache.naming.resources.Resource;
+import org.apache.naming.resources.ResourceAttributes;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Specialized web application class loader.

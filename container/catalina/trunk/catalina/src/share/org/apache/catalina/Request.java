@@ -65,12 +65,12 @@
 package org.apache.catalina;
 
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.Iterator;
+
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
 

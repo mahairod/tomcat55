@@ -59,20 +59,17 @@
 
 package org.apache.coyote.tomcat5;
 
-import java.io.InputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
+import org.apache.coyote.Request;
 import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.ByteChunk;
 import org.apache.tomcat.util.buf.CharChunk;
-
-import org.apache.coyote.Request;
 
 
 /**

@@ -65,17 +65,16 @@
 package org.apache.catalina.connector;
 
 
-import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Locale;
-import java.net.Socket;
-import javax.servlet.ServletException;
+import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
-import javax.servlet.RequestDispatcher;
+
 import org.apache.catalina.Request;
 
 

@@ -66,10 +66,6 @@ package org.apache.catalina.ssi;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
 
 /**
  * Implements the Server-side #include command

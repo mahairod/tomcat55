@@ -66,13 +66,13 @@ package org.apache.catalina.core;
 
 
 import java.io.IOException;
-import javax.servlet.ServletException;
+
 import javax.management.ObjectName;
-import javax.management.MalformedObjectNameException;
+import javax.servlet.ServletException;
+
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
@@ -80,13 +80,12 @@ import org.apache.catalina.Pipeline;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
-import org.apache.catalina.ValveContext;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.modeler.Registry;
+import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 /**

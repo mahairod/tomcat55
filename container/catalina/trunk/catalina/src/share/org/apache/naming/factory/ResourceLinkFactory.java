@@ -65,14 +65,14 @@
 package org.apache.naming.factory;
 
 import java.util.Hashtable;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import javax.naming.Name;
+
 import javax.naming.Context;
+import javax.naming.Name;
 import javax.naming.NamingException;
-import javax.naming.Reference;
 import javax.naming.RefAddr;
+import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
+
 import org.apache.naming.ResourceLinkRef;
 
 

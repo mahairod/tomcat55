@@ -65,10 +65,10 @@
 package org.apache.naming;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
+
+import javax.naming.Context;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
-import javax.naming.Context;
 import javax.naming.StringRefAddr;
 
 /**

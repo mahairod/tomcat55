@@ -64,36 +64,28 @@
 
 package org.apache.naming.resources;
 
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.Date;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.IOException;
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameParser;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.CompositeName;
-import javax.naming.NameParser;
 import javax.naming.OperationNotSupportedException;
-import javax.naming.NameAlreadyBoundException;
-import javax.naming.directory.DirContext;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.Attribute;
+import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
-import org.apache.naming.StringManager;
-import org.apache.naming.NameParserImpl;
-import org.apache.naming.NamingEntry;
+
 import org.apache.naming.NamingContextBindingsEnumeration;
 import org.apache.naming.NamingContextEnumeration;
+import org.apache.naming.NamingEntry;
 
 /**
  * Filesystem Directory Context implementation helper class.

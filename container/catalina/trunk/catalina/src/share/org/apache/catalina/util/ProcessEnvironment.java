@@ -61,39 +61,12 @@
 
 package org.apache.catalina.util;
 
-import java.lang.Process;
 import java.io.File;
-import java.io.Writer;
-import java.io.Reader;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Hashtable;
-import java.util.Vector;
 import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.Locale;
-import java.util.Date;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
+import java.util.Hashtable;
+
 import javax.servlet.ServletContext;
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Cookie;
-import org.apache.catalina.Context;
-import org.apache.catalina.Wrapper;
-// import org.apache.catalina.util.StringManager;
 
 
 

@@ -70,10 +70,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -83,22 +83,12 @@ import java.security.AccessControlException;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Random;
 
-import javax.naming.directory.DirContext;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.RuntimeOperationsException;
-import javax.management.ObjectName;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.MBeanRegistration;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.modeler.Registry;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.directory.DirContext;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -119,15 +109,13 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Store;
 import org.apache.catalina.Valve;
-import org.apache.catalina.core.StandardEngine;
-import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.deploy.ApplicationParameter;
-import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ContextEjb;
+import org.apache.catalina.deploy.ContextEnvironment;
 import org.apache.catalina.deploy.ContextLocalEjb;
 import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
-import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.net.ServerSocketFactory;
@@ -135,6 +123,10 @@ import org.apache.catalina.session.PersistentManager;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.modeler.Registry;
 
 
 
