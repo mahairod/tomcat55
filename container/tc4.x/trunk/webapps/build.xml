@@ -3,9 +3,9 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
-  <property name="webapps.build"   value="$../../build/webapps"/>
-  <property name="webapps.deploy"  value="$../../build/tomcat-4.0"/>
-  <property name="webapps.dist"    value="$../../dist/webapps"/>
+  <property name="webapps.build"   value="build"/>
+  <property name="webapps.deploy"  value="../build"/>
+  <property name="webapps.dist"    value="dist"/>
 
 
   <!-- ================== Derived Property Values ========================= -->

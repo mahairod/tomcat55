@@ -4,9 +4,9 @@
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
   <property name="servletapi.home" value="../../jakarta-servletapi"/>
-  <property name="tester.build"    value="../../build/tester"/>
-  <property name="tester.deploy"   value="../../build/tomcat-4.0"/>
-  <property name="tester.dist"     value="../../dist/tester"/>
+  <property name="tester.build"    value="build"/>
+  <property name="tester.deploy"   value="../build"/>
+  <property name="tester.dist"     value="dist"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="ant.jar"         value="${ant.home}/lib/ant.jar"/>

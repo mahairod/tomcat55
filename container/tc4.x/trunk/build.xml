@@ -2,10 +2,10 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
-  <property name="catalina.build"  value="${basedir}/../build/catalina"/>
-  <property name="jasper.build"    value="${basedir}/../build/jasper"/>
-  <property name="tomcat.build"    value="${basedir}/../build/tomcat-4.0"/>
-  <property name="tomcat.dist"     value="${basedir}/../dist/tomcat-4.0"/>
+  <property name="catalina.build"  value="${basedir}/catalina/build"/>
+  <property name="jasper.build"    value="${basedir}/jasper/build"/>
+  <property name="tomcat.build"    value="${basedir}/build"/>
+  <property name="tomcat.dist"     value="${basedir}/dist"/>
 
 
   <!-- ===================== DEPLOY: Create Directories =================== -->
@@ -31,6 +31,7 @@
     <delete dir="${tomcat.build}"/>
     <ant dir="./catalina" target="clean"/>
     <ant dir="./jasper"   target="clean"/>
+    <ant dir="./tester"   target="clean"/>
     <ant dir="./webapps"  target="clean"/>
   </target>
 

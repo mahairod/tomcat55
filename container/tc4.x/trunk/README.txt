@@ -17,6 +17,9 @@ combined to create Tomcat.  The components are:
   JavaServer Pages (JSP) Specification, version 1.2 (currently in
   Initial Public Draft).
 
+* Tester - Unit test web application, with tests that are primarily focused
+  on Tomcat features rather than spec compliance.
+
 * Webapps - Example and test web applications, and associated documentation,
   that are packaged with Tomcat.
 
@@ -34,20 +37,17 @@ which you are installing all of the required Jakarta distributions.
   and add "$JAVA_HOME/bin" to your PATH.  Configure the CLASSPATH environment
   variable as well, if required.
 
-* If you are running a JDK earlier than 1.3, download and install the current
-  version of the Java Naming and Directory Interface (JNDI) package from
-  <http://java.sun.com/products/jndi>, and put the jndi.jar file in the
-  "$JAVA_HOME/bin" directory (or copy this file to $JAVA_HOME/jre/lib/ext in a
-  JDK 1.2 environment). None of the JNDI providers are required, unless you
-  need to use them in your own applications.
-
 * Download and install the Java Naming and Directory Interface (JNDI) package,
   version 1.2.1 or later, from <http://java.sun.com/products/jndi>.  Set an
   environment variable "JNDI_HOME" pointing at the directory to which you
-  installed the distribution.
+  installed the distribution.  None of the standard JNDI providers are required
+  unless you need them in your own applications.
+
+* If you are running a JDK earlier than 1.3, you will also need to place the
+  "jndi.jar" file on your CLASSPATH in order to build Tomcat.
 
 * Download and install the Java Secure Sockets Extension (JSSE) implementation
-  (current version number is 1.0.1) from <http://java.sun.com/products/jsse>.
+  (current version number is 1.0.2) from <http://java.sun.com/products/jsse>.
   Set an environment variable "JSSE_HOME" pointing at the directory to which
   you installed this distribution.
 
@@ -88,16 +88,15 @@ which you are installing all of the required Jakarta distributions.
   Servlet 2.3 and JSP 1.2 API classes.  A link is available on the Jakarta
   web site at <http://jakarta.apache.org/downloads/binindex.html>.  When
   unpacked, this distribution will create a directory named
-  "jakarta-servletapi-4.0".  Set an environment variable named
+  "jakarta-servletapi-4".  Set an environment variable named
   SERVLETAPI_HOME that points to where you have placed this directory.
 
   If you wish to create this package from the CVS archives, you will need
   to follow these steps:
 
         cd $JAKARTA_HOME
-        cvs checkout jakarta-servletapi
-        cd jakarta-servletapi
-        cvs update -r SERVLET_23_JSP_12
+        cvs checkout jakarta-servletapi-4
+        cd jakarta-servletapi-4
         ./build.sh dist         <-- Unix
         build dist              <-- Windows
 
@@ -122,7 +121,7 @@ BUILDING TOMCAT 4.0
 	build			<-- Windows
 
   This will create a complete build of Catalina, Jasper, and the example
-  web applications in "$JAKARTA_HOME/build/tomcat-4.0".
+  web applications in "$JAKARTA_HOME/jakarta-tomcat-4.0/build".
 
 * To create a "distribution" build of Tomcat 4.0, with file contents that
   are equivalent to the nightly distributions, do this:
@@ -131,10 +130,14 @@ BUILDING TOMCAT 4.0
 	./build.sh dist		<-- Unix
 	build dist		<-- Windows
 
+  This will create a complete distribution build of Catalina, Jasper, and
+  the example web applications in
+  "$JAKARTA_HOME/jakarta-tomcat-4.0/dist".
+
 * If you are interested in building only the individual components, there
   are separate build scripts for each in the corresponding subdirectories.
   Use the "deploy" task if you want to compile this component into the
-  consolidated "build/tomcat-4.0" directory (this is what the top level
+  consolidated Tomcat 4.0 "build" directory (this is what the top level
   build scripts do for you), or build the individual pieces like this:
 
         cd $JAKARTA_HOME/catalina
@@ -152,9 +155,9 @@ BUILDING TOMCAT 4.0
   These steps create compiled versions of the components in the following
   subdirectories:
 
-        $JAKARTA_HOME/build/catalina
-	$JAKARTA_HOME/build/jasper
-	$JAKARTA_HOME/build/webapps
+        $JAKARTA_HOME/jakarta-tomcat-4.0/catalina/build
+	$JAKARTA_HOME/jakarta-tomcat-4.0/jasper/build
+	$JAKARTA_HOME/jakarta-tomcat-4.0/webapps/build
 
 * If you modify source files in any of the component, be sure that you
   run the "deploy" target for that component (once you are satisfied that
@@ -163,8 +166,8 @@ BUILDING TOMCAT 4.0
   in order to have a runnable build.
 
 * Each of the component build scripts also has a "dist" target, which
-  packages that component under directories "dist/catalina",
-  "dist/jasper", and "dist/webapps", respectively.  These targets are
+  packages that component under directories "catalina/dist",
+  "jasper/dist", and "webapps/dist", respectively.  These targets are
   useful if you wish to package the components of Tomcat in combinations
   with other application bundles.
 
@@ -174,7 +177,7 @@ Running the Build
 
 * You can start the unpacked version of Tomcat 4.0 as follows:
 
-	cd $JAKARTA_HOME/build/tomcat-4.0
+	cd $JAKARTA_HOME/jakarta-tomcat-4.0/build
 	./bin/catalina.sh start	<-- Unix
 	bin\catalina start	<-- Windows
 
@@ -185,14 +188,14 @@ Running the Build
 
 * To shut down the unpacked version of Tomcat 4.0:
 
-	cd $JAKARTA_HOME/build/tomcat-4.0
+	cd $JAKARTA_HOME/jakarta-tomcat-4.0/build
 	./bin/catalina.sh stop	<-- Unix
 	bin\catalina stop	<-- Windows
 
 * You can also set an environment variable CATALINA_HOME so that you
   can start and stop Tomcat 4.0 from any directory.  For example:
 
-        export CATALINA_HOME=$JAKARTA_HOME/build/tomcat-4.0
+        export CATALINA_HOME=$JAKARTA_HOME/jakarta-tomcat-4.0/build
         $CATALINA_HOME/bin/catalina.sh start
 
 

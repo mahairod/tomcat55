@@ -3,9 +3,9 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
-  <property name="jasper.build"    value="../../build/jasper"/>
-  <property name="jasper.deploy"   value="../../build/tomcat-4.0"/>
-  <property name="jasper.dist"     value="../../dist/jasper"/>
+  <property name="jasper.build"    value="build"/>
+  <property name="jasper.deploy"   value="../build"/>
+  <property name="jasper.dist"     value="dist"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${jasper.jaxp.home}/jaxp.jar"/>

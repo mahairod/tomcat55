@@ -3,9 +3,9 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"    value="classic"/>
-  <property name="catalina.build"    value="../../build/catalina"/>
-  <property name="catalina.deploy"   value="../../build/tomcat-4.0"/>
-  <property name="catalina.dist"     value="../../dist/catalina"/>
+  <property name="catalina.build"    value="build"/>
+  <property name="catalina.deploy"   value="../build"/>
+  <property name="catalina.dist"     value="dist"/>
 
   <property name="servletapi.build"  value="../../build/servletapi"/>
   <property name="avalon.dist"       value="../../dist/avalon"/>

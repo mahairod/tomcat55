@@ -3,9 +3,9 @@
 
   <!-- ===================== Initialize Property Values =================== -->
   <property name="build.compiler"  value="classic"/>
-  <property name="build.dir"       value="../../../build/webapps"/>
-  <property name="dist.dir"        value="../../../dist/webapps"/>
-  <property name="servletapi.home" value="../../../jakarta-servletapi"/>
+  <property name="build.dir"       value="../build"/>
+  <property name="dist.dir"        value="../dist"/>
+  <property name="servletapi.home" value="../../../jakarta-servletapi-4"/>
   <property name="webapp.name"    value="examples"/>
 
 

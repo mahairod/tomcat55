@@ -86,7 +86,7 @@ goto cleanup
 :gotJaxpHome
 
 if not "%ANT_HOME%" == "" goto gotAntHome
-set ANT_HOME=../jakarta-ant
+set ANT_HOME=../../jakarta-ant
 :gotAntHome
 
 if not "%SERVLETAPI_HOME%" == "" goto gotServletapiHome
