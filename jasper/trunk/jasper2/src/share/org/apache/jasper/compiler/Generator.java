@@ -361,8 +361,6 @@ public class Generator {
 
 	    out.printil("if (true) {");	// So that javac won't complain about
 	    out.pushIndent();		// codes after "return"
-
-	    out.printil("out.clear();");
 	    out.printin("pageContext.forward(");
 	    out.print  (attributeValue(n.getPage(), false));
 	    printParams(n);

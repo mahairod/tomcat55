@@ -401,6 +401,14 @@ public class PageContextImpl extends PageContext {
     public void forward(String relativeUrlPath)
         throws ServletException, IOException
     {
+	// JSP.4.5 If the buffer was flushed, throw IllegalStateException
+	try {
+	    out.clear();
+	} catch (IOException ex) {
+	    throw new IllegalStateException(Constants.getString(
+			"jsp.error.attempt_to_clear_flushed_buffer"));
+	}
+
 	// Make sure that the response object is not the wrapper for include
 	while (response instanceof HttpServletResponseWrapper)
 	    response = ((HttpServletResponseWrapper)response).getResponse();
