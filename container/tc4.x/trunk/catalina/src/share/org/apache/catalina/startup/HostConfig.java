@@ -537,12 +537,13 @@ public class HostConfig
                 deployed.add(files[i]);
 
                 // Make sure there is an application configuration directory
-                /* Don't be more fussy than the Deployer implementation is
+                // This is needed if the Context appBase is the same as the
+                // web server document root to make sure only web applications
+                // are deployed and not directories for web space.
                 File webInf = new File(dir, "/WEB-INF");
                 if (!webInf.exists() || !webInf.isDirectory() ||
                     !webInf.canRead())
                     continue;
-                */
 
                 // Calculate the context path and make sure it is unique
                 String contextPath = "/" + files[i];
