@@ -1,0 +1,216 @@
+<project name="Build Watchdog Test Suite" default="main" basedir=".">
+
+
+  <!-- =================== Environmental Properties ======================= -->
+
+  <!-- Load user property definition overrides -->
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <!-- Establish property definition defaults -->
+  <property name="compile.debug"       value="true"/>
+  <property name="compile.deprecation" value="false"/>
+  <property name="compile.optimize"    value="true"/>
+  <property name="servlet.jar"
+                              value="../jakarta-servletapi-4/lib/servlet.jar"/>
+  <property name="watchdog.build"      value="build"/>
+  <property name="watchdog.dist"       value="dist"/>
+
+  <!-- Establish compilation classpath -->
+  <path id="compile.classpath">
+    <pathelement location="${servlet.jar}"/>
+  </path>
+
+  <!-- Establish conversion classpath -->
+  <path id="convert.classpath">
+    <pathelement location="${watchdog.build}/classes"/>
+    <pathelement location="${servlet.jar}"/>
+  </path>
+
+
+  <!-- ===================== Prepare Directories ========================= -->
+  <target name="prepare">
+
+    <mkdir dir="${watchdog.build}"/>
+    <mkdir dir="${watchdog.build}/classes"/>
+    <mkdir dir="${watchdog.build}/lib"/>
+    <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
+    <mkdir dir="${watchdog.build}/lib/servlet-golden"/>
+    <mkdir dir="${watchdog.build}/webapps"/>
+    <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
+    <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF"/>
+    <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"/>
+    <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-tests"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
+    <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
+
+  </target>
+
+
+  <!-- ======================= Static Files ============================== -->
+  <target name="static" depends="prepare">
+
+    <!-- Top level files -->
+    <copy    todir="${watchdog.build}">
+      <!-- FIXME - build.xml file to actually run the tests -->
+      <fileset dir="." includes="BUILDING.txt"/>
+      <fileset dir="." includes="LICENSE"/>
+      <fileset dir="." includes="README.txt"/>
+      <fileset dir="." includes="RUNNING.txt"/>
+    </copy>
+
+    <!-- Configuration files -->
+    <copy    todir="${watchdog.build}">
+      <fileset dir="src/conf" includes="build.xml"/>
+    </copy>
+    <copy    todir="${watchdog.build}/conf">
+      <fileset dir="src/conf" excludes="build.xml"/>
+    </copy>
+
+    <!-- Documentation files -->
+    <copy    todir="${watchdog.build}/doc">
+      <fileset dir="doc"/>
+    </copy>
+
+    <!-- Library files -->
+    <copy    todir="${watchdog.build}/lib">
+      <fileset dir="${ant.home}/lib" includes="ant.jar"/>
+      <fileset dir="${ant.home}/lib" includes="crimson.jar"/>
+      <fileset dir="${ant.home}/lib" includes="jaxp.jar"/>
+      <fileset dir="${ant.home}/lib" includes="parser.jar"/>
+    </copy>
+    <copy   tofile="${watchdog.build}/lib/servlet.jar"
+              file="${servlet.jar}" />
+
+    <!-- Client golden files -->
+    <copy    todir="${watchdog.build}/lib/jsp-golden">
+      <fileset dir="src/clients/org/apache/jcheck/jsp/client"/>
+    </copy>
+    <copy    todir="${watchdog.build}/lib/servlet-golden">
+      <fileset dir="src/clients/org/apache/jcheck/servlet/client"/>
+    </copy>
+
+    <!-- Web application static files -->
+    <copy    todir="${watchdog.build}/webapps/jsp-tests">
+      <fileset dir="src/server/jsp-tests"/>
+    </copy>
+    <copy    todir="${watchdog.build}/webapps/servlet-tests">
+      <fileset dir="src/server/servlet-tests"/>
+    </copy>
+
+  </target>
+
+
+  <!-- ======================== Compile Classes ========================== -->
+  <target name="compile" depends="static"
+   description="Compile all classes">
+
+    <!-- Clients -->
+    <javac srcdir="src/clients"
+          destdir="${watchdog.build}/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <copy   todir="${watchdog.build}/classes">
+      <fileset dir="src/clients" includes="**/*.properties"/>
+    </copy>
+
+    <!-- JSP tests -->
+    <javac srcdir="src/server/jsp-tests/WEB-INF/classes"
+          destdir="${watchdog.build}/webapps/jsp-tests/WEB-INF/classes"
+           debug="${compile.debug}"
+     deprecation="${compile.deprecation}"
+        optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+    <!-- Servlet tests -->
+    <javac srcdir="src/server/servlet-tests/WEB-INF/classes"
+          destdir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"
+           debug="${compile.debug}"
+     deprecation="${compile.deprecation}"
+        optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+    <!-- Tools -->
+    <javac srcdir="src/tools"
+          destdir="${watchdog.build}/classes"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+  </target>
+
+
+  <!-- ===================== Compile JSP to XML Syntax ==================== -->
+  <target name="convert" depends="compile"
+   description="Convert JSP syntax to XML syntax">
+
+     <java classname="org.apache.jspxml.GetWorkspaceInXML" fork="true">
+       <classpath refid="convert.classpath"/>
+       <sysproperty key="JSP_ROOT"
+                  value="${watchdog.build}/webapps/jsp-tests/jsp"/>
+       <sysproperty key="WATCHDOG_HOME"
+                  value="${watchdog.build}"/>
+    </java>
+
+  </target>
+
+
+  <!-- ========================= Default Build Target ===================== -->
+  <target name="main" depends="convert"
+   description="Compile classes and convert JSP to XML syntax (default)"/>
+
+
+  <!-- ===================== Create Binary Distribution =================== -->
+  <target name="dist" depends="main"
+   description="Create binary distribution">
+
+    <!-- Copy unmodified files -->
+    <mkdir     dir="${watchdog.dist}"/>
+    <copy    todir="${watchdog.dist}">
+      <fileset dir="${watchdog.build}" excludes="webapps/**"/>
+    </copy>
+
+    <!-- Create web application archives -->
+    <mkdir     dir="${watchdog.dist}/webapps"/>
+    <jar   jarfile="${watchdog.dist}/webapps/jsp-tests.war"
+           basedir="${watchdog.build}/webapps/jsp-tests"/>
+    <jar   jarfile="${watchdog.dist}/webapps/servlet-tests.war"
+           basedir="${watchdog.build}/webapps/servlet-tests"/>
+
+    <!-- Create enterprise application archive -->
+    <mkdir     dir="${watchdog.build}/tmp"/>
+    <copy    todir="${watchdog.build}/tmp">
+      <fileset dir="${watchdog.dist}/webapps" includes="*.war"/>
+    </copy>
+    <mkdir     dir="${watchdog.build}/tmp/META-INF"/>
+    <copy    todir="${watchdog.build}/tmp/META-INF">
+      <fileset dir="src/etc" includes="ear-dd.xml"/>
+    </copy>
+    <jar   jarfile="${watchdog.dist}/jcheck.ear"
+           basedir="${watchdog.build}/tmp"/>
+    <delete    dir="${watchdog.build}/tmp"/>
+
+
+  </target>
+
+
+  <!-- ====================== Clean Generated Files ======================= -->
+  <target name="clean"
+   description="Clean previous build results">
+
+    <delete dir="${watchdog.build}"/>
+    <delete dir="${watchdog.dist}"/>
+
+  </target>
+
+
+</project>

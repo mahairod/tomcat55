@@ -1,0 +1,1520 @@
+<project name="TestRun" default="main">
+
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
+
+   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <property name="wgdir" value="lib/jsp-golden" />
+
+   <target name="main" depends="jsp-test" />
+
+  <!-- ==================== Watchdog JSP tests ==================== -->
+
+
+    <target name="jsp-test">
+
+<!-- Precompilation tests -->
+
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="200" expectResponseBody="false"
+ 	        testName="precompileNoValueTest" 
+	        assertion="If the jsp_precompile request parameter has no value, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2" 
+	        testStrategy="Validate that no response body is returned when jsp_precompile has no value."
+                firstTask="true"
+ 	     />
+
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=false HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+ 	        returnCode="200"  expectResponseBody="false"
+            testName="precompileFalseTest" 
+	        assertion="If the jsp_precompile request parameter is set to false, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2"
+	        testStrategy="Validate that no response body is returned when jsp_precompile is set to false."
+ 	    />
+
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=true HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="200" expectResponseBody="false"
+ 	        testName="precompileTrueTest" 
+	        assertion="If the jsp_precompile request parameter is set to true, the request will not be delivered to the target JSP page.  JavaServer Pages Specification v1.2, Sec. 8.4.2"
+	        testStrategy="Validate that no response body is returned when jsp_precompile is set to true."
+ 	    />
+
+        <gtest request="GET /jsp-tests/jsp/misc/precompilation/precompile.jsp?jsp_precompile=any_invalid_value HTTP/1.0"
+            debug="0" host="${host}" port ="${port}"
+            returncode="500"
+ 	        testName="precompileNegativeTest" 
+	        assertion="Valid parameter values for jsp_precompile are 'true', 'false', and no value.  Any other value will result in an HTTP Error; 500 (Server Error).  JavaServer Pages specification v1.2, Sec. 8.4.2"
+	        testStrategy="Set the jsp_precompile request paramter to a non valid value and validate that a 500 error occurs."
+ 	    />
+
+<!--  End Precompilation Tests -->
+
+<!-- Begin TLD Resource Path tests -->
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_ABS_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_ABS_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/absolute_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is an absolutr URI"
+	   testStrategy="Use an absolute URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_REL_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_REL_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/relative_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a relative URI"
+	   testStrategy="Use a relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_NONREL_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_NONREL_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/non-relative_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive is a non relative URI"
+	   testStrategy="Use a non relative URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+      <gtest request="GET /jsp-tests/jsp/tagext/tld_resource_path/positive_JAR_URI.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+ 	   testName="positive_JAR_URI.jsp" 
+           goldenFile="${wgdir}/tagext/tld_resource_path/jar_uri.html" 
+	   assertion="Test that the proper tld file is located when the URI in tha taglib directive points to a jar file"
+	   testStrategy="Use a jar file in  URI and print a message from the tag handler telling the type of URI that was used.No error should ocurr"
+ 	/>
+
+<!--  End TLD Resource path  Tests -->
+<!-- Commented out to be fixed after Beta
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagLibraryValidator/validate.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/tagext/TagLibraryValidator/validate.html"
+           testName="validate.jsp"
+           assertion="Tests the working of Validator class for a taglib"
+           testStrategy="Tests if the prefix is more than 10 characters"
+        />
+-->
+
+      <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/HelloWorld.html"
+ 	   testName="HelloWorld.jsp" 
+	   assertion="Test if string Hello can be displayed " 
+	   testStrategy="Simple html display when no JSP tags are present"	
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameClass.html"
+ 	   testName="positiveBeanNameClass.jsp" 
+	   assertion="Declaring the bean with beanName as a class file, specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameRes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameRes.html"
+ 	   testName="positiveBeanNameRes.jsp" 
+	   assertion="Declaring the bean with beanName as a resource file, specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyExists.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyExists.html"
+ 	   testName="positiveBodyExists.jsp" 
+	   assertion="Create a valid useBean tag in the JSP page with a non-empty body and with a class name that has already been created., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyNew.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyNew.html"
+ 	   testName="positiveBodyNew.jsp" 
+	   assertion="Create a valid useBean tag in the JSP page with a non-empty body. Ensure that the classname specified does not exist, specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage1.html"
+ 	   testName="positiveDupIDPage1.jsp" 
+	   assertion="Create two useBean tags on different JSP pages with the same ID, and the scope attribute of each being set to 'page'. Access each page one after the other., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest1.html"
+ 	   testName="positiveDupIDRequest1.jsp" 
+	   assertion="Create two useBean tags on different JSP pages with the same ID, and the scope attribute of each being set to 'request'., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveNoBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveNoBody.html"
+ 	   testName="positiveNoBody.jsp" 
+	   assertion="Create a valid useBean tag in the JSP page with no body., and the scope attribute of each being set to 'request'., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 " 
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positivePageScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positivePageScope.html"
+ 	   testName="positivePageScope.jsp" 
+	   assertion="Create the JSP page with useBean scope set to page. Access the page multiple times., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 "
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+<!--
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="200"
+ 	   testName="positiveSessionScope.jsp" 
+	   assertion="Create the JSP page with useBean scope set to page. Access the page multiple times., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 "
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveTypeAssignable.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveTypeAssignable.html"
+ 	   testName="positiveTypeAssignable.jsp" 
+	   assertion="Using 'class' and 'type' together in useBean tag. 'Class' is assignable to 'type'., specified in the Java Server Pages Specification v1.2, Sec 3.2.1 "
+	   testStrategy="Create a bean using useBean tag and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
+           debug="0" host="${host}" port ="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropParam.html"
+ 	   testName="positiveSetPropParam.jsp" 
+	   assertion="Create a valid useBean action in JSP. Set a specific property of that bean from the request using a &lt;jsp:setPropertyparam=paramname> action.  Then access that property., specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropNoParam.html"
+ 	   testName="positiveSetPropNoParam.jsp" 
+	   assertion="Create a valid useBean action in JSP. Set a specific property of that bean from the request using a &lt;jsp:setProperty property='propName'> action. Then access that property with a request that contains a parameter with the same name as the Bean Name., specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropValue.html"
+ 	   testName="positiveSetPropValue.jsp" 
+	   assertion="Create a valid useBean action in JSP. Set a specific property of that bean from the request using a &lt;jsp:setProperty value='propValue'> action.  Then access that property. , specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.html"
+ 	   testName="positiveSetPropSingleQuotes.jsp" 
+	   assertion="Use a scriptlet expression in single quotes as 'value' attribute in setProperty , specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanInit.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanInit.html"
+ 	   testName="positiveUseBeanInit.jsp" 
+	   assertion="Create a valid useBean action. In the body of the action, put setProperty statements to set specific properties of the bean.Ensure that the bean class does not exist before calling this page. Call the page for the first time. , specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanNext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanNext.html"
+ 	   testName="positiveUseBeanNext.jsp" 
+	   assertion="Create a valid useBean action. In the body of the action, put setProperty statements to set specific properties of the bean.Ensure that the bean already exists. Call the page and check the value of the property that you have specified in the useBean body., specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongPrim.html"
+ 	   testName="positiveSetLongPrim.jsp" 
+	   assertion="use a setProperty to set a primitive Long value in a bean and access it, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongObj.html"
+ 	   testName="positiveSetLongObj.jsp" 
+	   assertion="use a setProperty to set a object Long value in a bean and access it, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntPrim.html"
+ 	   testName="positiveSetIntPrim.jsp" 
+	   assertion="use a setProperty to set a Primitive Int value in a bean and access it, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntObj.html"
+ 	   testName="positiveSetIntObj.jsp" 
+	   assertion="use a setProperty to set a Integer value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIndexedProp.html"
+ 	   testName="positiveSetIndexedProp.jsp" 
+	   assertion="use a setProperty to set a Array (declared in the scriptlet) value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatObj.html"
+ 	   testName="positiveSetFloatObj.jsp" 
+	   assertion="use a setProperty to set a Float value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatPrim.html"
+ 	   testName="positiveSetFloatObj.jsp" 
+	   assertion="use a setProperty to set a Float value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoublePrim.html"
+ 	   testName="positiveSetDoublePrim.jsp" 
+	   assertion="use a setProperty to set a double value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoubleObj.html"
+ 	   testName="positiveSetDoubleObj.jsp" 
+	   assertion="use a setProperty to set a Double value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharPrim.html"
+ 	   testName="positiveSetCharPrim.jsp" 
+	   assertion="use a setProperty to set a char value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharObj.html"
+ 	   testName="positiveSetCharObj.jsp" 
+	   assertion="use a setProperty to set a Character value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanObj.html"
+ 	   testName="positiveSetBooleanObj.jsp" 
+	   assertion="use a setProperty to set a Boolean value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanPrim.html"
+ 	   testName="positiveSetBooleanPrim.jsp" 
+	   assertion="use a setProperty to set a boolean value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetByteObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetByteObj.html"
+ 	   testName="positiveSetByteObj.jsp" 
+	   assertion="use a setProperty to set a Byte value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBytePrim.html"
+ 	   testName="positiveSetByteObj.jsp" 
+	   assertion="use a setProperty to set a byte value in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty and access using a scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropAll.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropAll.html"
+ 	   testName="positiveSetPropAll.jsp" 
+	   assertion="Use a setProperty to set and access multiple properties in a bean, specified in the Java Server Pages Specification v1.2, Sec 3.2.2 "
+	   testStrategy="Create a bean using useBean tag, use setProperty to set multiple properties"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/positiveGetProps.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/getProperty/positiveGetProps.html"
+ 	   testName="positiveGetProps.jsp" 
+	   assertion="Create a valid useBean tag in the JSP. Access one of its properties through a getProperty tag, specified in the Java Server Pages Specification v1.2, Sec 3.2.3 "
+	   testStrategy="Create a bean using useBean tag, use getProperty to access property"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkSession.html"
+ 	   testName="checkSession.jsp" 
+	   assertion="checking 'session' is of type javax.servlet.HttpSession and also whether an identifier is assigned to this session or not, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for Session object state"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkConfig.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkConfig.html"
+ 	   testName="checkConfig.jsp" 
+	   assertion="Check if configuration information is being passed to the server page. Also checks whether it returns the initialization parameters as an Enumeration of Strings or as an empty enumeration., specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for config object state"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkException.html"
+ 	   testName="checkException.jsp" 
+	   assertion="Checks whether 'exception' is of type java.lang.Throwable, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for Exception object state"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkOut.html"
+ 	   testName="checkOut.jsp" 
+	   assertion="Checks whether 'out' is of the type javax.servlet.jsp.JspWriter, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for out object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPage.html"
+ 	   testName="checkPage.jsp" 
+	   assertion="checking if this page is of the type java.lang.Object, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for page object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPageContext.html"
+ 	   testName="checkPageContext.jsp" 
+	   assertion="checking 'page' is of type javax.servlet.jsp.PageContext, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for pageContext object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkRequest.html"
+ 	   testName="checkRequest.jsp" 
+	   assertion="checks whether 'request' is an instance of javax.servlet.ServletRequest, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for request object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html"
+ 	   testName="checkResponse.jsp" 
+	   assertion="Checks whether response is an object of type javax.servlet.ServletResponse, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for response object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkApplication.html"
+ 	   testName="checkApplication.jsp" 
+	   assertion="Returns true if application is of type javax.servlet.ServletContext, specified in the Java Server Pages Specification v1.2, Sec 2.9.3 "
+	   testStrategy="checking for application object type"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/declaration/positiveDeclaration.html"
+ 	   testName="positiveDeclaration.jsp" 
+	   assertion="Test a JSP page with a valid Java declaration element., specified in the Java Server Pages Specification v1.2, Sec 2.12.1 "
+	   testStrategy="correct syntax is used in the declaration statement"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExpr.html"
+ 	   testName="positiveExpr.jsp" 
+	   assertion="Test a JSP page with a valid expression element., specified in the Java Server Pages Specification v1.2, Sec 2.12.3 "
+	   testStrategy="correct syntax is used in the expression statement"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprBean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprBean.html"
+ 	   testName="positiveExprBean.jsp" 
+	   assertion="Test a JSP page with a useBean tag and valid expression element., specified in the Java Server Pages Specification v1.2, Sec 2.12.3 "
+	   testStrategy="correct syntax is used in the expression  with useBean tag"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprComment.html"
+ 	   testName="positiveExprComment.jsp" 
+	   assertion="Create a JSP page with a JSP expression inserted into a HTML comment, specified in the Java Server Pages Specification v1.2, Sec 2.12.3 "
+	   testStrategy="correct syntax is used in the expression  with HTML"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprSyntax.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprSyntax.html"
+ 	   testName="positiveExprSyntax.jsp" 
+	   assertion="Create an expression in the page with no space between the start tag and expression. Similarly have no space between the end of the expression and end tag, specified in the Java Server Pages Specification v1.2, Sec 2.12.3 "
+	   testStrategy="correct syntax is used in the expression  with no space between tags"
+ 	/>
+
+ <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html"
+ 	   testName="positiveScriptlet.jsp"
+	   assertion="Create a valid scriplet in the JSP page.Declare a variable and increment it, specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
+	   testStrategy="correct syntax is used in the scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html"
+ 	   testName="positiveScriptletComment.jsp" 
+	   assertion="Create a valid scriplet in the JSP page.Declare a variable and increment it, specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
+	   testStrategy="correct syntax is used in the scriptlet"
+ 	/>
+
+<!-- Test commented out as the JSP file contains invalid Java code in the scriptlet
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletLiteral.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletLiteral.html"
+ 	   testName="positiveScriptletLiteral.jsp" 
+           assertion="Create a valid scriptlet in a JSP page that includes the usual scriptlet end tag in a String literal."
+	   testStrategy="correct syntax is used in the scriptlet"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline.html"
+ 	   testName="positiveScriptletMultiline.jsp" 
+	   assertion="Create a valid scriplet in JSP that spans multiple lines., specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
+	   testStrategy="correct syntax is used in the multiline scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.html"
+ 	   testName="positiveScriptletMultiline2.jsp" 
+	   assertion="Testing with multiple scriptlets, which spans multiple lines in such a way that each starts and ends in the same line, specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
+	   testStrategy="correct syntax is used in the multiline scriptlet"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletUseBean.html"
+ 	   testName="positiveScriptletUseBean.jsp" 
+	   assertion="Create a valid useBean action in the JSP.  After that,use a scriplet to change the value of a specific bean property. Send the new value of the property to outstream., specified in the Java Server Pages Specification v1.2, Sec 2.12.2 "
+	   testStrategy="Use scriptlet to access the property of a bean"
+ 	/>
+
+<!-- Test commented out as the positiveDoubleQuotesXML gives error. jsp2XML tools needs more work; after Beta
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveDoubleQuotes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveDoubleQuotes.html"
+ 	   testName="positiveDoubleQuotes.jsp" 
+	   assertion="Checking request time attributes with a scriptlet expression in doublequotes to do forwarding, specified in the Java Server Pages Specification v1.2, Sec 3.2.5 "
+	   testStrategy="Test forward in a scriptlet expression"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveForwardRelHtml.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveForwardRelHtml.html"
+ 	   testName="positiveForwardRelHtml.jsp" 
+	   assertion="We are testing for forwarding to static pages using &lt;jsp:forward page > tag. here we use relative path from current context  as   url., specified in the Java Server Pages Specification v1.2, Sec 3.2.5 "
+	   testStrategy="testing whether forwarding works using url relative to current context"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/include/positiveIncludeRel.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/include/positiveIncludeRel.html"
+ 	   testName="positiveIncludeRel.jsp" 
+	   assertion="Create a JSP page with the include attribute set for the jsp:request action with a relative URL. The included page should exist in the desired location, specified in the Java Server Pages Specification v1.2, Sec 3.2.4 "
+	   testStrategy="testing if including of files work"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/content/positiveContenttype.html"
+ 	   testName="positiveContenttype.jsp" 
+	   assertion="Create a JSP page with the include attribute set for the jsp:request action with a relative URL. The included page should exist in the desired location, specified in the Java Server Pages Specification v1.2, Sec 3.2.4 "
+	   testStrategy="testing if including of files work"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/errorpage/positiveErrorPage.html"
+ 	   testName="positiveErrorPage.jsp" 
+	   assertion="Test with the errorPage directive and test for exception, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if errorpage directive works"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/extend/positiveExtends.html"
+ 	   testName="positiveExtends.jsp" 
+	   assertion="we use extends directive to point our own defined class as super class to the jsp, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if extends directive works"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/positiveImport.html"
+ 	   testName="positiveImport.jsp" 
+	   assertion="Use a jsp directive with 'language = java' and a valid import attribute. Use the imported package in the page., specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if extends directive works"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/info/positiveInfo.html"
+ 	   testName="positiveInfo.jsp" 
+	   assertion="Set the value of the info attribute to a specific value.Then invoke the getServletInfo method on the current page's Servlet object, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if info directive works"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/language/positiveLang.html"
+ 	   testName="positiveLang.jsp" 
+	   assertion="Use a jsp attribute in a page with the language attribute set to 'java', specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if the language directive set to java cause any problem"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="200"
+           responseMatch="got true"
+ 	   testName="positiveSession.jsp" 
+	   assertion="Test the implicit session object and call one of its methods, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if implicit session object works"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="200"
+           responseMatch="got true"
+ 	   testName="positiveSessionDefault.jsp" 
+	   assertion="Test to invoke a method on the implicit session object., specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing if implicit session object is available by default "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="200"
+           responseMatch="5999"
+ 	   testName="positiveBuffAutoflush.jsp" 
+	   assertion="Set autoflush to true. Use default buffer size of 8kb. Write more than 8kb of data to the out object, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing buffer AutoFlush  "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="200"
+           responseMatch="999"
+ 	   testName="positiveBuffCreate.jsp" 
+	   assertion="Create a buffer  size of say 12kb. Keep autoflush set to false(default).Write characters to the out object. Invoke the flush() method on out to flush the output to the client., specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
+	   testStrategy="testing buffer AutoFlush  "
+ 	/>
+
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetDefaultFactory.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetDefaultFactory.html"
+ 	   testName="positiveGetDefaultFactory.jsp" 
+	   assertion="A test for the static method getDefaultFactory, specified in the Java Server Pages Specification v1.2, Sec 8.1.6"
+	   testStrategy="testing for a non null value for the default factory"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveSetDefaultFactory.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveSetDefaultFactory.html"
+ 	   testName="positiveGetDefaultFactory.jsp" 
+	   assertion="A test for the static method setDefaultFactory, specified in the Java Server Pages Specification v1.2, Sec 8.1.6"
+	   testStrategy="testing for a non null value for the default factory"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetPageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetPageContext.html"
+ 	   testName="positiveGetPageContext.jsp" 
+	   assertion="Use getDefaultFactory to get a valid factory object and call getPageContext and on the obtained object call a pagecontext method , specified in the Java Server Pages Specification v1.2, Sec 8.1.4"
+	   testStrategy="testing PageContext features with no compile time errors"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveReleasePageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveReleasePageContext.html"
+ 	   testName="positiveReleasePageContext.jsp" 
+	   assertion="Create a pageContext object and using the method releasePageContext with the pageContext created , specified in the Java Server Pages Specification v1.2, Sec 8.1.4"
+	   testStrategy="testing for null in PageContext features" 
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitJSP.html"
+ 	   testName="positiveJSPInitJSP.jsp" 
+	   assertion="Override the jspInit in the jsp itself and test how getServletConfig method works, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing HttpJspPage jspInit() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveForward.html"
+ 	   testName="positiveForward.jsp" 
+	   assertion="Test the forward() method from a PageContext object, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext forward() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeAvbl.html"
+ 	   testName="positiveGetAttributeAvbl.jsp" 
+	   assertion="Test the getAttribute() from a PageContext object, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext getAttribute() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNotAvbl.html"
+ 	   testName="positiveGetAttributeNotAvbl.jsp" 
+	   assertion="Test the getAttribute() of a non-existant PageContext object, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext getAttribute() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNamesInScope.html"
+ 	   testName="positiveGetAttributeNamesInScope.jsp" 
+	   assertion="Test for the getAttributeNamesInScope method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext getAttributeNamesInScope() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeScope.html"
+ 	   testName="positiveGetAttributeScope.jsp" 
+	   assertion="Test for the getAttributeScope method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext getAttributeScope() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetSession.html"
+ 	   testName="checkGetSession.jsp" 
+	   assertion="Test for the checkGetSession method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetSession() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetResponse.html"
+ 	   testName="checkGetResponse.jsp" 
+	   assertion="Test for the checkGetResponse method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetResponse() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetRequest.html"
+ 	   testName="checkGetRequest.jsp" 
+	   assertion="Test for the checkGetRequest method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetRequest() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletContext.html"
+ 	   testName="checkGetServletContext.jsp" 
+	   assertion="Test for the checkGetServletContext method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetServletContext() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletConfig.html"
+ 	   testName="checkGetServletConfig.jsp" 
+	   assertion="Test for the checkGetServletConfig method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetServletConfig() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetOut.html"
+ 	   testName="checkGetOut.jsp" 
+	   assertion="Test for the checkGetOut method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext checkGetOut() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveInclude.html"
+ 	   testName="positiveInclude.jsp" 
+	   assertion="Test for the positiveInclude method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positiveInclude() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveRemoveAttribute.html"
+ 	   testName="positiveRemoveAttribute.jsp" 
+	   assertion="Test for the positiveRemoveAttribute method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positiveRemoveAttribute() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttribute.html"
+ 	   testName="positiveSetAttribute.jsp" 
+	   assertion="Test for the positiveSetAttribute method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positiveSetAttribute() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttributeInScope.html"
+ 	   testName="positiveSetAttributeInScope.jsp" 
+	   assertion="Test for the positiveSetAttributeInScope method in a scriptlet., specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positiveSetAttributeInScope() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePopBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePopBody.html"
+ 	   testName="positivePopBody.jsp" 
+	   assertion="Test for popBody() which returns the previous JspWriter 'out' saved by the matching pushBody() and updates the value of the 'out' attribute in the page scope attribute namespace of the PageConxtext, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positivePopBody() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePushBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePushBody.html"
+ 	   testName="positivePushBody.jsp" 
+	   assertion="Test for pushBody() which returns the new BodyJspWriter object and updates the value of the 'out' attribute in the page scope attribute namespace of the PageConxtext, specified in the Java Server Pages Specification v1.2, Sec 8.1.1"
+	   testStrategy="testing PageContext positivePushBody() features "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintBoolean.html"
+ 	   testName="positivePrintBoolean.jsp" 
+	   assertion="Test for print(boolean b) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(boolean b) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintChar.html"
+ 	   testName="positivePrintChar.jsp" 
+	   assertion="Test for print(char c) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(char c) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintCharArray.html"
+ 	   testName="positivePrintCharArray.jsp" 
+	   assertion="Test for print(char[] c) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(char[] c) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDouble.html"
+ 	   testName="positivePrintDouble.jsp" 
+	   assertion="Test for print(double d) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(double d) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloat.html" 
+ 	   testName="positivePrintFloat.jsp" 
+	   assertion="Test for print(float f) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(float f) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintInt.html"
+ 	   testName="positivePrintInt.jsp" 
+	   assertion="Test for print(Int i) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(Int i) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLong.html"
+ 	   testName="positivePrintLong.jsp" 
+	   assertion="Test for print(long l) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(long l) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintObj.html"
+ 	   testName="positivePrintObj.jsp" 
+	   assertion="Test for print(java.lang.Object obj) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(java.lang.Object obj) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintStr.html"
+ 	   testName="positivePrintStr.jsp" 
+	   assertion="Test for print(java.lang.String str) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter print(java.lang.String str) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintln.html"
+ 	   testName="positivePrintln.jsp" 
+	   assertion="Test for println method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnBoolean.html"
+ 	   testName="positivePrintlnBoolean.jsp" 
+	   assertion="Test for println(boolean b) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(boolean b) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnChar.html"
+ 	   testName="positivePrintlnChar.jsp" 
+	   assertion="Test for println(char c) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(char c) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnCharArray.html"
+ 	   testName="positivePrintlnCharArray.jsp" 
+	   assertion="Test for println(char c[]) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(char c[]) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnDouble.html"
+ 	   testName="positivePrintlnDouble.jsp" 
+	   assertion="Test for println(double d) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(double d) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnFloat.html"
+ 	   testName="positivePrintlnFloat.jsp" 
+	   assertion="Test for println(float f) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(float f) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnInt.html"
+ 	   testName="positivePrintlnInt.jsp" 
+	   assertion="Test for println(int i) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(int i) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnLong.html"
+ 	   testName="positivePrintlnLong.jsp" 
+	   assertion="Test for println(long l) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(long l) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnObj.html"
+ 	   testName="positivePrintlnObj.jsp" 
+	   assertion="Test for println(java.lang.Object obj) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(java.lang.Object obj) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnStr.html"
+ 	   testName="positivePrintlnStr.jsp" 
+	   assertion="Test for println(java.lang.String str) method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter println(java.lang.String str) features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveClear.html"
+ 	   testName="positiveClear.jsp" 
+	   assertion="Test for clear() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter clear() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}" exactMatch="true"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html"
+ 	   testName="positiveFlush.jsp" 
+	   assertion="Test for flush() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter flush() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSize.html"
+ 	   testName="positiveGetBufferSize.jsp" 
+	   assertion="Test buffer size with buffer directive using the getBufferSize() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter getBufferSize() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html"
+ 	   testName="positiveGetBufferSizeUnBuffered.jsp" 
+	   assertion="Test buffer size to 'none' with buffer directive using the getBufferSize() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter getBufferSize() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html"
+ 	   testName="positiveGetRemaining.jsp" 
+	   assertion="Test buffer size with buffer directive using the getRemaining() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter getRemaining() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html"
+ 	   testName="positiveGetRemainingBufferUnset.jsp" 
+	   assertion="Test buffer size set to 'none' with buffer directive using the getRemaining() method, specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter getRemaining() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveIsAutoFlush.html"
+ 	   testName="positiveIsAutoFlush.jsp" 
+	   assertion="Test the isAutoFlush() method when autoflush directive is set to 'true', specified in the Java Server Pages Specification v1.2, Sec 8.1.2"
+	   testStrategy="testing JspWriter isAutoFlush() features"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html"
+ 	   testName="implicitImportLang.jsp" 
+	   assertion="Test for implicit import of 'java' by checking for some class in Lang, specified in the Java Server Pages Specification v1.2, Sec 2.11.1.1"
+	   testStrategy="testing page directive implicit import of 'java' as the scripting language "
+ 	/>
+
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html"
+ 	   testName="implicitImportJsp.jsp" 
+	   assertion="Test for implicit import of 'java' by checking for some class in Lang, specified in the Java Server Pages Specification v1.2, Sec 2.11.1.1"
+	   testStrategy="testing page directive implicit import of 'java' as the scripting language "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html"
+ 	   testName="implicitImportJsp.jsp" 
+	   assertion="Test for implicit import of 'javax.servlet' by checking for servlet class, specified in the Java Server Pages Specification v1.2, Sec 2.11.1.1"
+	   testStrategy="testing page directive implicit import of servlet package "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html"
+ 	   testName="implicitImportHttp.jsp" 
+	   assertion="Test for implicit import of 'javax.servlet' by checking for servlet class, specified in the Java Server Pages Specification v1.2, Sec 2.11.1.1"
+	   testStrategy="testing page directive implicit import of servlet package "
+ 	/>
+<!-- ###commented ..has to be debugged
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/taglib/positiveTagLib.html"
+ 	   testName="positiveTagLib.jsp" 
+	   assertion="Test for the taglib directive with a valid uri, specified in the Java Server Pages Specification v1.2, Sec 2.11.2"
+	   testStrategy="testing taglib directive with a valid uri"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValues.html"
+ 	   testName="positiveGetValues.jsp" 
+	   assertion="Test for getValues() method which returns an enumeration and print the contents, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport getValues() method "
+ 	/>
+
+<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/default_return_values.jsp  HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/default_return_values.html"
+           testName="default_return_values.jsp"
+           assertion="Tests if the default values are returned from the methods of TagSupport class"
+           testStrategy="testing TagSupport default return values by calling supe.FunctionName"
+        />
+
+<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoEndTag.jsp
+ HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveDoEndTag.html"
+           testName="positiveDoEndTag.jsp"
+           assertion="Tests that doEndTag metjod is called when the end of the tag is found"
+           testStrategy="testing TagSupport doEndTag method "
+        />
+
+<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetGetId.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveSetGetId.html"
+           testName="positiveSetGetId.jsp"
+           assertion="Test for setId and getId methods of TagSupport"
+           testStrategy="testing TagSupport getId and setId in the same test"
+        />
+
+<gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positivefindAncestorWithClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positivefindAncestorWithClass.html"
+           testName="positivefindAncestorWithClass.jsp"
+           assertion="Test for Nested classes. Tests the findAncestorWithClass method for TagSupport"
+           testStrategy="Testing TagSupport.findAncestorWithClass method"
+        />
+
+<gtest request="GET /jsp-tests/jsp/tagext/misc/persistentValues.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/misc/persistentValues.html"
+           testName="persistentValues.jsp"
+           assertion="Tests if the attribute values are retaines when tags are nested inside a tag"
+           testStrategy="testing persistence of tag attributes"
+        />
+
+<gtest request="GET /jsp-tests/jsp/tagext/misc/request_time_attributes.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/misc/request_time_attributes.html"
+           testName="request_time_attributes.jsp"
+           assertion="Tests the order of evaluation of the expressions if attribute values are runtime expressions"
+           testStrategy="testing associativity of expression evaluation"
+        />
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValue.html"
+ 	   testName="positiveGetValue.jsp" 
+	   assertion="Test for getValue() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport getValue() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveRemoveValue.html"
+ 	   testName="positiveRemoveValue.jsp" 
+	   assertion="Test for removeValue() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport removeValue() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveSetValue.html"
+ 	   testName="positiveSetValue.jsp" 
+	   assertion="Test for setValue() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport setValue() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetParent.html"
+ 	   testName="positiveGetParent.jsp" 
+	   assertion="Test for getParent() method which returns the parent class name, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport getParent() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoStartTag.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveDoStartTag.html"
+ 	   testName="positiveDoStartTag.jsp" 
+	   assertion="Test for checking if doStartTag() is called correctly, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport doStartTag() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetPageContext.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveSetPageContext.html"
+ 	   testName="positiveSetPageContext.jsp" 
+	   assertion="Test if setPageContext() can be used to set the page context.Using this page context obj set an attribute which is passed to the jsp page, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing TagSupport setPageContext() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveDoAfterBody.html"
+ 	   testName="positiveDoAfterBody.html"
+ assertion="testing TagSupport DoAfterBody method"
+	   testStrategy="Test the DoAfterBody method of the TagSupport class.	 Create a Tag handler that outputs a message a given number of times from the DoAFterBody"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetEnclosingWriter.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetEnclosingWriter.html"
+ 	   testName="positiveGetEnclosingWriter.jsp" 
+	   assertion="Test for getParent() method which returns the parent class name, specified in the Java Server Pages Specification v1.2, Sec 6.4.3"
+	   testStrategy="testing BodyContent getParent() method "
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetReader.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetReader.html"
+ 	   testName="positiveGetReader.jsp" 
+	   assertion="Test getReader() method using the BodyContent object, specified in the Java Server Pages Specification v1.2, Sec 6.4.5"
+	   testStrategy="testing BodyContent getReader() method"
+ 	/>
+
+       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"       
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetString.html"
+ 	   testName="positiveGetString.jsp" 
+	   assertion="Test getString() method using the BodyContent object, specified in the Java Server Pages Specification v1.2, Sec 6.4.5"
+	   testStrategy="testing BodyContent getString() method"
+ 	/>
+
+<!-- ##commented...has to be debugged
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoInitBody.html"
+ 	   testName="positiveDoInitBody.jsp" 
+	   assertion="Test doInitBody() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.6"
+	   testStrategy="testing BodyTagSupport doInitBody() method"
+ 	/>
+
+
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoAfterBody.html"
+ 	   testName="positiveDoAfterBody.jsp" 
+	   assertion="Test doAfterBody() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.6"
+	   testStrategy="testing BodyTagSupport doAfterBody() method"
+ 	/>
+
+
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoEndTag.html"
+ 	   testName="positiveDoEndTag.jsp" 
+	   assertion="Test doEndTag() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.6"
+	   testStrategy="testing BodyTagSupport doEndTag() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveRelease.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveRelease.html"
+ 	   testName="positiveRelease.jsp" 
+	   assertion="Test release() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.6"
+	   testStrategy="testing BodyTagSupport release() method"
+ 	/>
+
+##Commented till here  -->
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttribute.html"
+ 	   testName="positiveTagGetAttribute.jsp" 
+	   assertion="Test a TagData object by passing a hashtable and printing the contents of the hashtable using the getAttribute() method of TagData., specified in the Java Server Pages Specification v1.2, Sec 6.4.1"
+	   testStrategy="testing TagData release() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagSetAttribute.html"
+ 	   testName="positiveTagSetAttribute.jsp" 
+	   assertion="Test a TagData object by passing a hashtable created using setAttribute() method of the TagData and print the contents of the hashtable, specified in the Java Server Pages Specification v1.2, Sec 6.4.1"
+	   testStrategy="testing TagData setAttribute() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttributeString.html"
+ 	   testName="positiveTagGetAttributeString.jsp" 
+	   assertion="Test a TagData object by passing a hashtable created using setAttribute() method of the TagData and print the contents of the hashtable using the getAttributeString() method, specified in the Java Server Pages Specification v1.2, Sec 6.4.1"
+	   testStrategy="testing TagData getAttributeString() method"
+ 	/>
+
+<!-- ##Commented ....has to be debugged
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetVarName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetVarName.html"
+ 	   testName="positiveGetVarName.jsp" 
+	   assertion="Test the getVarName() method by creating a VariableInfo object in the TestTagExtraInfo class., specified in the Java Server Pages Specification v1.2, Sec 6.5.1"
+	   testStrategy="testing VariableInfo getVarName() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetScope.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetScope.html"
+ 	   testName="positiveGetScope.jsp" 
+	   assertion="Test the getScope() method by creating a VariableInfo object in the TestTagExtraInfo class., specified in the Java Server Pages Specification v1.2, Sec 6.5.1"
+	   testStrategy="testing VariableInfo getScope() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetDeclare.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetDeclare.html"
+ 	   testName="positiveGetDeclare.jsp" 
+	   assertion="Test the getDeclare() method by creating a VariableInfo object in the TestTagExtraInfo class, specified in the Java Server Pages Specification v1.2, Sec 6.5.1"
+	   testStrategy="testing VariableInfo getDeclare() method"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html"
+ 	   testName="positiveGetClassName.jsp" 
+	   assertion="Test the getClassName() method by creating a VariableInfo object in the TestTagExtraInfo class, specified in the Java Server Pages Specification v1.2, Sec 6.5.1"
+	   testStrategy="testing VariableInfo getClassName() method"
+ 	/>
+
+##commented till here  -->
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_1.html"
+ 	   testName="tag_attr_setting_1.jsp" 
+	   assertion="Test that attribute setting is as wanted, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+<!-- ##Commented ..has to be debugged
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_2.html"
+ 	   testName="tag_attr_setting_2.jsp" 
+	   assertion="Test that attribute setting is as wanted and intermix some different tags, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_attr_setting_3.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_attr_setting_3.html"
+ 	   testName="tag_attr_setting_3.jsp" 
+	   assertion="Another test for attribute setting intermixed with some different tags, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+## Commented till here  -->
+
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_1.html"
+ 	   testName="tag_check_BodyContent_1.jsp" 
+	   assertion="Check that BodyContent provides access to the proper information, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_2.html"
+ 	   testName="tag_check_BodyContent_2.jsp" 
+	   assertion="Check that BodyContent provides access to the proper information, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_3.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_3.html"
+ 	   testName="tag_check_BodyContent_3.jsp" 
+	   assertion="Check that BodyContent provides access to the proper information, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_4.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_4.html"
+ 	   testName="tag_check_BodyContent_4.jsp" 
+	   assertion="Check that BodyContent provides access to the proper information, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_BodyContent_5.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_BodyContent_5.html"
+ 	   testName="tag_check_BodyContent_5.jsp" 
+	   assertion="Check that BodyContent provides access to the proper information, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_comments_1.html"
+ 	   testName="tag_check_comments_1.jsp" 
+	   assertion="Check that comments are processed correctly, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_check_comments_2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_check_comments_2.html"
+ 	   testName="tag_check_comments_2.jsp" 
+	   assertion="Check that comments are processed correctly, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doEndTag_skip_page.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_doEndTag_skip_page.html"
+ 	   testName="tag_doEndTag_skip_page.jsp" 
+	   assertion="Test for doEndTag SKIP_PAGE, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_eval_body_include.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_eval_body_include.html"
+ 	   testName="tag_doStart_eval_body_include.jsp" 
+	   assertion="Test for doStartTag EVAL_BODY_INCLUDE, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_body.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_skip_body.html"
+ 	   testName="tag_doStart_skip_body.jsp" 
+	   assertion="Test for doStartTag SKIP_BODY, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+<!--
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_doStart_skip_page.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_doStart_skip_page.html"
+ 	   testName="tag_doStart_skip_page.jsp" 
+	   assertion="Test for doEndTag SKIP_PAGE, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_ignoreBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_ignoreBody.html"
+ 	   testName="tag_ignoreBody.jsp" 
+	   assertion="Test for translation-time verification.  Test that a tag is passed (at translation time) correct TagInfo data. Body will be ignored, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_int.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_int.html"
+ 	   testName="tag_int.jsp" 
+	   assertion="Test for defining an int variable, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+<!--
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_nonempty_body_1.html"
+ 	   testName="tag_nonempty_body_1.jsp" 
+	   assertion="Test for translation-time verification. Verify that a non-empty body can be passed. The body will be ignored, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_nonempty_body_2.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_nonempty_body_2.html"
+ 	   testName="tag_nonempty_body_2.jsp" 
+	   assertion="Test for translation-time verification. Verify that single and double quotes can be used.  Verify that a non-empty body can be passed The body will be ignored, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_positiveBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_positiveBody.html"
+ 	   testName="tag_positiveBody.jsp" 
+	   assertion="Test for translation-time verification. Test that a tag is passed (at translation time) correct TagInfo data, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+ 	/>
+-->
+
+      <gtest request="GET /jsp-tests/jsp/tagext/LifeCycle/tag_translationtime_verify_1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/LifeCycle/tag_translationtime_verify_1.html"
+ 	   testName="tag_translationtime_verify_1.jsp" 
+	   assertion="Test for translation-time verification, specified in the Java Server Pages Specification v1.2, Sec 6.4.7"
+	   testStrategy="testing LifeCycle process"
+           lastTask="true"
+ 	/>
+
+<!-- All below JSP negative tests have been commented out till they get fixed
+
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           returnCode="500" />
+-->
+   </target>
+
+<!-- sample of all the various test options allowed
+    <gtest description="Content Type Test"
+           request="GET /test/binaries/image1.gif HTTP/1.0"
+           goldenFile="${gdir}/image1.gif"
+           responseMatch="PreInclude"
+           expectHeaders="Content-Type:image/gif" />
+           exactMatch="true"  />
+-->
+
+</project>

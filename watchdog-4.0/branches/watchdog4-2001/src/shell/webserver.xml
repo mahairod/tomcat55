@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+
+This file is the default configuration file for the
+JSWDK server. Following is a brief overview of the
+JSWDK server configuration options.
+
+========================================================
+
+webserver dtd and xml:
+
+Element
+    Attribute(s)
+    Element(s)
+========================================================
+
+WebServer - a collection of web services managed by a
+            single HTTP Web Server instance
+
+    adminPort - the Web Server administration port
+                number
+
+    Service - managed web Services
+
+Service - a distinct web Service resource which is
+          accessed via a unique "host name/ip address/
+          port number" tuple
+
+    id - unique Service id
+    port - the registered Service port number
+    hostName - the registered Service host name
+    inet - the registered Service ip address
+    docBase - the Service document base
+    workDir - the Service work directory
+    isWorkDirPersistent - indicates whether or not the
+                          Web Server should return the
+                          associated work directory to
+                          the host system upon shut
+                          down.
+    isInvokerEnabled -  indicates whether or not this
+                        Service instance will automaticaly
+                        invoke unmapped servlets.
+
+    WebApplication - managed Web Applications
+
+WebApplication - a collection of associated Web Application
+                 resources which are "mapped" to a specific
+                 Service URI prefix.
+
+    path - the URI prefix associated with this Web
+           Application
+    docBase - the Web Application document base
+    defaultSessionTimeOut - the session timeout
+
+========================================================
+
+command line options:
+
+	-help                       This Message
+	-config [file | url]        Read config from URL
+	-noconfig                   Do not read config
+	-adminport [int]            Administration Port
+	-serviceid [int]            Service Id
+	-port[:id | :*] [int]       Listen on int [for Service id]
+	-inet[:id | :*] [inetaddr]  Bind server to inet [for Service id]
+	-hostname[:id | :*] [name]  Use name as hostname [for Service id]
+	-docbase[:id | :*] [name]   Use URL as the content base [for Service id]
+	-workdir[:id | :*] [name]   Use scratch file [for Service id]
+
+========================================================
+
+configuration attribute details:
+
+    all "id" values must be unique with a collection
+    of like elements.
+
+    most configuration values can be declared in one
+    of following three means respectively:
+
+        command line
+        xml declaration
+        default as specified by the dtd and/or
+            application
+
+    many fields have default falues which are either
+    specified in the associated dtd or within JSWDK.
+    these default values can be changed by modifying
+    the included webserver.xml and fully qualifying
+    the appropriate element attributes.
+
+    a JSWDK server can be started on any platform
+    with no changes to the provided default
+    webserver.xml configuration.
+
+    the JSWDK server will create a default
+    configuration file upon initialization if it does
+    not find one either by looking in the JSWDK
+    install directory for the file "webserver.xml or
+    the "-config [file | url]" command line option.
+
+    if an explicit WebServer.adminPort value is not
+    specified then a series of 5 attempts will be
+    made to bind to an available port number randomly
+    chosen between the range of 2048 and 8192.
+
+    the Service.id field is required as the key for
+    the command line arguments. duplicate Server.port
+    entries will cause the subsequent Services to fail
+    initialization.
+
+    the Server.hostName is opional and a value of
+    "localhost" will be used if it remains
+    unspecified.
+
+    a Server.port field must be unique within a
+    collection WebServer configuration. subsequent
+    Service instances specified with duplicate port
+    numbers will fail initialization.
+
+    the Server.docBase is the file system location
+    which is accessed by the Web Server to route
+    inbound http requests to a specific Service instance
+    and not picked up by an associated Web Application.
+    a document base can be specified as relative or
+    absolute and need not reside within the JSWDK install
+    directory. it should be possible to specify URI
+    addresses as well effectively turning this WebServer
+    Service instance into a proxy server although this is
+    experimental with this release.
+
+    the Server.workDir specfies the local file system
+    directory available to the Web Server as needed.
+    the directory can be specified as relative or
+    absolute and need not reside within the JSWDK
+    install directory.
+
+    the Server.isWorkDirPersistent is an indicator to
+    the WebServer to either save or return to the host
+    system the associated work directory.
+
+    the WebApplication.path is used to specify the
+    URI prefix with which this Web Application
+    instance is to be associated with. the specified
+    value of this field must be unique amongst a
+    collection managed by a single Service instance.
+
+    the WebApplication.docBase is the file system
+    location which is accessed by the Web Server to
+    service inbound http requests routed to this
+    specific Web Application instance. this field
+    shares many of the attributes specified in the
+    Server.docBase description above.
+
+    the WebApplication.defaultSessionTimeOut is not
+    utilized at this time and will likely specify
+    the "session time out in minutes" threshold in
+    a future release.
+
+========================================================
+
+miscellany:
+
+    any number of Service and/or Web Application
+    instances can be readily added to an existing Web
+    Server configuration by adding the appropriate and
+    valid (as specified by the dtd and associated rules)
+    xml details.
+
+========================================================
+
+-->
+
+<!DOCTYPE WebServer [
+
+<!ELEMENT WebServer (Service+)>
+<!ATTLIST WebServer
+    adminPort NMTOKEN "">
+
+<!ELEMENT Service (WebApplication*)>
+<!ATTLIST Service
+    id ID #REQUIRED
+    port NMTOKEN "8080"
+    hostName NMTOKEN ""
+    inet NMTOKEN ""
+    docBase CDATA "servlet-tests"
+    workDir CDATA "work"
+    isWorkDirPersistent (false | true) "false"
+    isInvokerEnabled (true | false) "true"
+    defaultConfiguration CDATA "web.xml">
+
+<!ELEMENT WebApplication EMPTY>
+<!ATTLIST WebApplication
+    path CDATA #REQUIRED
+    docBase CDATA #REQUIRED
+    defaultSessionTimeOut NMTOKEN "30"
+    defaultConfiguration CDATA "web.xml">
+]>
+
+<WebServer>
+    <Service id="service0">
+<!--
+    <WebApplication path="/servlet-tests" docBase="servlet-tests"/>
+    <WebApplication path="/servlet-tests" docBase="war:file://localhost/tmp/scheck.war"/>
+-->
+    <WebApplication path="/servlet-tests" docBase="war:file://localhost/home/mandar/check/jakarta-check/build/scheck.war"/>
+    <WebApplication path="/jsp-tests" docBase="jsp-tests"/>
+    </Service>
+</WebServer>

@@ -1,0 +1,236 @@
+Jakarta Watchdog-4.0 Design Document
+====================================
+  
+Overview
+========
+Watchdog-4.0 consists of various JSP and Servlet tests intended to validate JSP1.2 and Servlet2.3 specification and api. 
+
+Watchdog-4.0 itself utilizes various other components namely:
+
+- Ant (ant.jar): Ant is a Java based build tool. In theory it is kind of like "make" without makes wrinkles and with the full portability of pure java code.
+
+- GTest (testdriver.jar): GTest is a Java based single client used by the Watchdog-4.0tests. Based on the rules of Ant, GTest is defined as a task for each request in the jsp-gtest.xml and servlet-gtest.xml files, which are parsed by Ant. Each of the GTest attributes (request="GET /test/binaries/image1.gif HTTP/1.0"; goldenFile="${gdir}/image1.gif"; responseMatch="PreInclude"; expectHeaders="Content-Type:image/gif"; exactMatch="true ) specified as part of the 'GET' request in the XML files, are defined as setter methods in the GTest client. These setter methods must be defined as public void and takes a single argument. The name of the method must begin with "set", followed by the attribute name, with the first character in uppercase, and the rest in lowercase. 
+
+
+Watchdog-4.0 Tests Approach:
+===========================
+
+The Watchdog-4.0 Tests will utilize the Tomcat Reference Implementation to develop JSP and Servlet CTS tests. 
+
+The tests will also use the 'GTest' client, to provide golden-file comparison for result checking, session tracking, sending request headers etc. 
+
+Each JSP or Servlet assertion will have a server-side test associated with it. 
+
+There is one JSP/Servlet test for each method in the api.
+
+Tests exist for positive and negative assertions
+
+The fields 'testName', 'assertion' and 'testStrategy' provided in the jsp-gtest.xml and servlet-gtest.xml reflect the assertion being tested and referenced in the JSP1.2/Servlet2.3 specification.
+
+The JSPs and Servlet server-side code have comments in them that reflect the assertion and purpose of the test.
+
+
+The following steps are taken for executing the Watchdog-4.0 tests: 
+=================================================================
+1 User invokes watchdog.bat or watchdog.sh 
+
+2.The above batch files invoke Ant with an XML file (jsp-gtest.xml / servlet-gtest.xml) and a target in the XML as parameters
+
+3.Ant parses the XML file and executes the specified target
+
+4.Results are validated by the target either in the form of expected-header results, return codes, golden-files or a combinations of them.
+
+
+Watchdog-4.0 Directory Structure
+===============================
+
+              [jakarta-watchdog-4.0]
+                     | 
+		     |
+	----------------------------
+       	|            |             | 
+       	|            |             | 
+      Readme         |             | 
+      build.xml	     |             | 
+      build.bat      |		   | 
+      build.sh       |		   |
+                     |  	   | 
+           	   [doc]          [src]         
+                   design           |           
+                                    |            
+                                    |      
+       ----------------------------------------------------------
+       |	     |		    |		 |		|         
+       |	     |		    |		 |		| 
+       |	     |		    |		 |		| 
+       |           [golden-files]   |            |              | 
+     [bin]	   [clients]     [conf]        [etc]	     [server]
+     watchdog.sh     |        jsp-gtest.xml     ear-dd.xml      |  
+     watchdog.bat   [org]    servlet-gtest.xml  web.dtd         |
+                     |                                     -------------     
+                    [apache]                               |           |
+                     |                                [jsp-tests]   [servlet-tests]   
+                    [jcheck]                               |           | 
+                     |                                ----------       | 
+                ----------                            |        |       |
+                |        |                        [WEB-INF]  [jsp]  [WEB-INF]
+              [jsp]    [servlet]                                       |
+								     -----------	
+							             |         |
+								  web.xml  [classes]
+
+
+Watchdog-4.0 Tests Hierarchy
+============================
+The Watchdog-4.0 test hierarchy is divided into server-side JSP/Servlet tests and on the client-side to have golden-files. These are basically the jsp-tests and the servlet-tests directories.
+The client, GTest, resides as part of the 'lib/testdriver.jar' file. This is a single client used to execute all the JSP and Servlet tests.
+
+jakarta-watchdog-4.0/Readme:This gives info on how to build the Watchdog-4.0workspace and also its dependencies. 
+
+
+Watchdog-4.0 Build:
+==================
+build.xml: This is a rules file that is input to ant for building the Watchdog-4.0workspace
+build.sh, build.bat: These are platform specific scripts for building the workspace
+
+
+Misc Watchdog-4.0 Files:
+=======================
+jakarta-watchdog-4.0/src/conf/jsp-gtest.xml: List of all the JSP assertions tested
+jakarta-watchdog-4.0/src/conf/servlet-gtest.xml: List of all the Servlet assertions tested
+jakarta-watchdog-4.0/src/bin/watchdog.sh,watchdog.bat: Platform dependant script files to execute the Watchdog-4.0tests
+
+Watchdog-4.0 Client Files:
+=========================
+These are the golden-files used by each of the JSP/Servlet server-side tests after the results are processed.
+The hierarchy for these follow the same path as the server-side tests. The parent directory of these are specified by the name value pair in the XML files (jsp-gtest.xml, servlet-gtest.xml). The field 'wgdir' and its value specify the directory location of the golden-files.
+
+jakarta-watchdog-4.0/src/clients/org/apache/jcheck/jsp/client: JSP Clients
+jakarta-watchdog-4.0/src/clients/org/apache/jcheck/servlet/client: Servlet Clients
+
+
+Watchdog-4.0 Server-side Files:
+==============================
+
+JSP server-side tests:
+=====================
+
+jakarta-watchdog-4.0/src/server/jsp-tests/WEB-INF/classes: This contains all the beans used refrenced by the JSP tests
+
+jakarta-watchdog-4.0/src/server/jsp-tests/WEB-INF/tlds: This contains all the tlds refrenced by the JSP tag tests
+
+Core_syntax Tests:
+=================
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax: This directory covers tests for chapter#2-Core Syntax and Semantics and chapter#4 - Standard Actions and Directives of the JSP1.2 specification.
+
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax/beantests: Has tests for useBean,setProperty and getProperty action tags.
+
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax/directives: Has tests for the forward,include,page and taglib directive
+
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax/implicitobjects: Has tests for the implicit objects - request, response, pagecontext, out, session, config, page, application
+
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax/scripting: Has tests for declaration, expressions and scriptlet.
+
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/core_syntax/misc: Has tests for plugin.
+
+JSP Engine Tests:
+================
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/engine: These are tests for the following api classes:
+javax.servlet.jsp.JspEngineInfo 
+javax.servlet.jsp.JspFactory 
+javax.servlet.jsp.JspWriter
+javax.servlet.jsp.PageContext
+
+JSP Tag Ext Tests:
+=================
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/tagext: These are tests for the following api classes:
+javax.servlet.jsp.BodyContent
+javax.servlet.jsp.BodyTagSupport
+javax.servlet.jsp.TagData
+javax.servlet.jsp.TagSupport
+javax.servlet.jsp.VariableInfo
+
+It also has tests for the various options in the tag library descriptor. This is specified in the following:
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/tagext/tld_resource_path
+
+Tests for the Lifecycle of Tag are located in:
+jakarta-watchdog-4.0/src/server/jsp-tests/jsp/tagext/LifeCycle
+
+
+Servlet server-side tests:
+=========================
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/web.xml: Contains the mappings for test servlets
+
+Tests for javax_servlet api:
+===========================
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/GenericServlet: Tests for methods methods destroy(), getServletConfig(), getServletContext() and getServletInfo() are provided. 
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/RequestDispatcher: Tests for methods forward() and include() are provided.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/Servlet: Tests for methods init(), getServletConfig(), getServletInfo() are present here.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletConfig: Tests for methods getServletName(), getInitParameter(), getInitParameterNames, getServletContext()  are present here.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletContext: Tests for methods specified in the javax.servlet.ServletContext interface. All of them are postiive test cases.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletException: Tests for methods specified in the javax.servlet.ServletException class. Tests for the constructors are also provided.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletInputStream: Tests for method javax.servlet.ServletInputStream.readLine().
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletOutputStream: Provides positive tests for methods specified in the javax.servlet.ServletOutputStream class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletRequest: Provides positive tests for methods specified in the javax.servlet.ServletRequest class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletResponse: Provides positive tests for methods specified in the javax.servlet.ServletResponse class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/SingleThreadModel: Provides positive test for javax.servlet.SingleThreadModel interface.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/ServletOutputStream: Provides positive tests for methods specified in the javax.servlet.ServletOutputStream class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet/UnavailableException: Provides constructor tests for javax.servlet.UnavailableException class.
+
+
+Tests for javax_servlet_http api:
+================================
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet_http/Cookie: Provides positive tests for the Cookie class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet_http/HttpServletRequest: Provides positive tests for the HttpServletRequest class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet_http/HttpServletResponse: Provides positive tests for the HttpServletResponse class.
+
+jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/classes/tests/javax_servlet_http/HttpSession: Provides positive tests for the HttpSession class.
+
+
+How to add new Watchdog-4.0 test
+================================
+To add a new test to the Watchdog-4.0directory, do the following:
+
+- Create the server side code (JSP / Servlet) in the respective directory
+  (The new directory should be located in jakarta-watchdog-4.0/src/server/...)
+
+- Add all the related bean classes used by the JSP / Servlet in the respective WEB-INF directory
+  (The new bean classes should be in 
+  (JSP: jakarta-watchdog-4.0/src/server/jsp-tests/WEB-INF) 
+  (Servlet: jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF) 
+
+- Add golden-files if needed by the tests
+  (The new files should be located in 
+  (JSP: jakarta-watchdog-4.0/src/clients/org/apache/jcheck/jsp/client)
+  (Servlet: jakarta-watchdog-4.0/src/clients/org/apache/jcheck/servlet/client)
+
+- If it is a servlet test, an entry is required in the web.xml located at
+  (Servlet: jakarta-watchdog-4.0/src/server/servlet-tests/WEB-INF/web.xml)
+
+- Make an entry for the test in the jsp-gtest.xml / servlet-gtest.xml located at
+  (JSP/Servlet: jakarta-watchdog-4.0/src/conf )
+
+- Clean the existing watchdog build (build.sh clean)
+
+- Build the new workspace (build.sh dist) 
+
+- Test against the latest milestone Tomcat build
+
+- Putback the tests if they pass

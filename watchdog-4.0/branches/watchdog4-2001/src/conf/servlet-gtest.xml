@@ -1,0 +1,1851 @@
+<project name="Servlet Tests" default="main">
+
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
+    
+   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <property name="wgdir" value="lib/servlet-golden" />
+
+   <target name="main" depends="gtestservlet-test" />
+
+  <!-- ==================== Watchdog Servlet tests ==================== -->
+
+  <!-- javax_servlet_GenericServlet tests -->
+
+   <target name="gtestservlet-test">
+      <gtest request="GET /servlet-tests/DestroyTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           returnCode="200"
+	   testName="DestroyTest"
+           assertion="Called by the servlet container to indicate to a servlet that the servlet is being taken out of service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.Destroy() method "
+           testStrategy="Create a GenericServlet and take out of service using destroy method"
+           firstTask="true"
+/>
+
+      <gtest request="GET /servlet-tests/GetServletConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/GenericServlet/GetServletConfigTest.html"
+	   testName="GetServletConfigTest"
+           assertion="Returns this servlet's ServletConfig object, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.ServletConfig() method "
+           testStrategy="Create a GenericServlet and check for its ServletConfig object existence"
+/>
+
+      <gtest request="GET /servlet-tests/GetServletContextTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/GenericServlet/GetServletContextTest.html"
+	   testName="GetServletContextTest"
+           assertion="Returns this servlet's ServletContext object, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.ServletContext() method "
+           testStrategy="Create a GenericServlet and check for its ServletContext object existence"
+/>
+
+      <gtest request="GET /servlet-tests/GetServletInfoTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/GenericServlet/GetServletInfoTest.html"
+	   testName="GetServletInfoTest"
+           assertion="Returns this servlet's ServletInfo object, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.GenericServlet.ServletContext() method "
+           testStrategy="Create a GenericServlet and check for its ServletInfo object values"
+/>
+
+  <!-- javax_servlet_RequestDispatcher tests -->
+
+      <gtest request="GET /servlet-tests/ForwardTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/ForwardTest.html"
+	   testName="ForwardTest"
+           assertion="Forwards a request from a servlet to another resource (servlet, JSP file, or HTML file) on the server, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.RequestDispatcher.ForwardTest() method "
+           testStrategy="Create a servlet, get its RequestDispatcher and use it to forward to a servlet"
+/>
+
+      <gtest request="GET /servlet-tests/Forward_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/Forward_1Test.html"
+	   testName="Forward_1Test"
+           assertion="Forwards a request from a servlet to another resource (servlet, JSP file, or HTML file) on the server,throws an java.lang.IllegalStateException, if the response was already committed, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.RequestDispatcher.ForwardTest() method "
+           testStrategy="A negative test for RequestDispatcher.forward() method. Create a servlet, print a string to the buffer, flush the buffer to commit the string, get its RequestDispatcher and use it to forward to a servlet. Test for java.lang.IllegalStateException to be thrown."
+/>
+
+      <gtest request="GET /servlet-tests/IncludeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/IncludeTest.html"
+	   testName="IncludeTest"
+           assertion="Includes the content of a resource (servlet, JSP page, HTML file) in the response, enabling programmatic server-side includes., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.RequestDispatcher.Include() method "
+           testStrategy="Create a servlet, get its RequestDispatcher and use it to include a servlet"
+/>
+
+      <gtest request="GET /servlet-tests/Include_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="Content-Type:text/plain"
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/Include_1Test.html"
+	   testName="Include_1Test"
+           assertion="Includes the content of a resource (servlet, JSP page, HTML file) in the response, enabling programmatic server-side includes.The included servlet cannot change the response
+      status code or set headers; any attempt to make a change is ignored. The request and response parameters must be the same objects as were passed to the calling servlet's service method., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.RequestDispatcher.Include() method "
+           testStrategy="A negative test for RequestDispatcher.include() test. Create a servlet, set its Content-Type to be 'text/plain', get its RequestDispatcher and use it to include a servlet. The included servlet tries to change the Content-Type to be text/html. Test at the client side for correct Content-Type."
+/>
+
+
+  <!-- javax_servlet_Servlet tests -->
+
+      <gtest request="GET /servlet-tests/DoDestroyedTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoDestroyedTest.html"
+	   testName="DoDestroyedTest"
+           assertion="Called by the servlet container to indicate to a servlet that the servlet is being taken out of service, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.destroy() method "
+           testStrategy="Testing that destroy method is not called during service method execution"
+/>
+
+<!-- Excluded : Bugzilla 4474 
+
+      <gtest request="GET /servlet-tests/DoInit1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           returnCode="503"
+	   testName="DoInit1Test"
+           assertion="CalLed by the servlet container to indicate to a servlet that the servlet is being placed into service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.init() method "
+           testStrategy="A negative test for the init method. We will throw UnavailableException from inside init.The Servlet should not be initialized "
+/>
+
+-->
+
+      <gtest request="GET /servlet-tests/DoInit2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoInit2Test.html"
+	   testName="DoInit2Test"
+           assertion="Called by the servlet container to indicate to a servlet that the servlet is being placed into service., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.init() method "
+           testStrategy="Inside CoreServletTest, which is the parent servlet, we are implementing init() and setting a boolean variable to true. We'll check for the variables here in the DoInit2Test "
+/>
+
+      <gtest request="GET /servlet-tests/DoServiceTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServiceTest.html"
+	   testName="DoServiceTest"
+           assertion="Called by the servlet container to allow the servlet to respond to a request, specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.service() method "
+           testStrategy="Inside CoreServletTest, which is the parent servlet, we will override init method and assign some value to the String. We'll check for that value in the service method"
+/>
+
+      <gtest request="GET /servlet-tests/DoServletConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServletConfigTest.html"
+	   testName="DoServletConfigTest"
+           assertion="Returns a ServletConfig object, which contains initialization and startup parameters for this servlet., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.getServletConfig() method "
+           testStrategy="Create a servlet and test for the getServletConfig() method to be a non-null value"
+/>
+
+
+      <gtest request="GET /servlet-tests/DoServletInfoTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServletInfoTest.html"
+	   testName="DoServletInfoTest"
+           assertion="Returns information about the servlet, such as author, version, and copyright., specified in the Java Servlet Pages Specification v2.3, Sec 16 - javax.servlet.Servlet.getServletInfo() method "
+           testStrategy="Create a servlet and test for the getServletInfo() method to be a non-null value"
+/>
+
+      <gtest request="GET /servlet-tests/PUTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/PUTest.html"
+	   testName="PUTest"
+           assertion="Servlet lifecycle test, check if UnavailableException.isPermanent() is true, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Create a servlet, throw UnavailableException and test if isPermanent() method is true"
+/>
+
+  <!-- javax_servlet_ServletConfig tests -->
+
+      <gtest request="GET /servlet-tests/GetServletConfigInitParameterNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/GetServletConfigInitParameterNamesTest.html"
+	   testName="GetServletConfigInitParameterNamesTest"
+           assertion="Returns a String containing the value of the named initialization parameter, or null if the parameter does not exist, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Set init parameters in the web.xml file and check for the enumerated values in the servlet."
+/>
+
+      <gtest request="GET /servlet-tests/GetServletConfigInitParameterNames_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/GetServletConfigInitParameterNames_1Test.html"
+	   testName="GetServletConfigInitParameterNames_1Test"
+           assertion="If no initialization parameters are set, this method returns a null value, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Do not set init parameters in the web.xml file and check for null value in the servlet."
+/>
+
+      <gtest request="GET /servlet-tests/GetServletConfigInitParameterTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/GetServletConfigInitParameterTest.html"
+	   testName="GetServletConfigInitParameterTest"
+           assertion="Returns a String containing the value of the named initialization parameter, or null if the parameter does not exist, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Set init parameters in the web.xml file and check for the value in the servlet."
+/>
+
+      <gtest request="GET /servlet-tests/GetServletConfigInitParameter_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/GetServletConfigInitParameter_1Test.html"
+	   testName="GetServletConfigInitParameter_1Test"
+           assertion="If no initialization parameter is set, this method returns a null value, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Do not set init parameters in the web.xml file and check for null value after in the servlet."
+/>
+
+
+      <gtest request="GET /servlet-tests/ServletConfigGetServletContextTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/ServletConfigGetServletContextTest.html"
+	   testName="ServletConfigGetServletContextTest"
+           assertion="Returns a reference to the ServletContext in which the servlet is executing, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Try to get the ServletContext for this servlet itself"
+/>
+
+      <gtest request="GET /servlet-tests/GetServletNameTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletConfig/GetServletNameTest.html"
+	   testName="GetServletNameTest"
+           assertion="Returns the name of this servlet instance, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Try to get the ServletName for this servlet itself"
+/>
+
+
+  <!-- javax_servlet_ServletContext tests -->
+
+      <gtest request="GET /servlet-tests/ServletContextGetAttributeNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetAttributeNamesTest.html"
+	   testName="ServletContextGetAttributeNamesTest"
+           assertion="Returns the name of this servlet instance, specified in the Java Servlet Pages Specification v2.3, Sec 3.3.2.1"
+           testStrategy="Try to get the ServletName for this servlet itself"
+/>
+
+
+      <gtest request="GET /servlet-tests/ServletContextGetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetAttributeTest.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletContextGetAttribute_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetAttribute_1Test.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextGetContextTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetContextTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextGetInitParameterTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetInitParameterTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextGetInitParameterNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetInitParameterNamesTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextGetInitParameter_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextGetInitParameter_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetMajorVersionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMajorVersionTest.html" />
+
+      <gtest request="GET /servlet-tests/GetMinorVersionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMinorVersionTest.html" />
+
+      <gtest request="GET /servlet-tests/GetMimeTypeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMimeTypeTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetMimeType_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMimeType_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetRealPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetRealPathTest.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletContextGetRequestDispatcherTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetMinorVersionTest.html" />
+
+      <gtest request="GET /servlet-tests/GetResourceAsStreamTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetResourceAsStreamTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetResourceAsStream_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetResourceAsStream_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetResourceTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetResourceTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetResource_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetResource_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetServerInfoTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/GetServerInfoTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextRemoveAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextRemoveAttributeTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletContextSetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletContext/ServletContextSetAttributeTest.html" />
+
+      <gtest request="GET /servlet-tests/Log_StringTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" /> 
+
+
+      <gtest request="GET /servlet-tests/Log_StringThrowableTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" /> 
+
+  <!-- javax_servlet_ServletException tests -->
+
+      <gtest request="GET /servlet-tests/ServletExceptionConstructor1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletException/ServletExceptionConstructor1Test.html" />
+
+      <gtest request="GET /servlet-tests/ServletExceptionConstructor2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletException/ServletExceptionConstructor2Test.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletExceptionConstructor3Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletException/ServletExceptionConstructor3Test.html" />
+
+      <gtest request="GET /servlet-tests/ServletExceptionConstructor4Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletException/ServletExceptionConstructor4Test.html" />
+
+      <gtest request="GET /servlet-tests/GetRootCauseTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/ServletException/GetRootCauseTest.html" />
+
+
+  <!-- javax_servlet_ServletInputStream tests -->
+
+      <gtest request="GET /servlet-tests/ReadLineTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           content="java"
+           goldenFile="${wgdir}/javax_servlet/ServletInputStream/ReadLineTest.html" />
+
+
+  <!-- javax_servlet_ServletOutputStream tests -->
+
+      <gtest request="GET /servlet-tests/Print_StringTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_StringTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_booleanTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_booleanTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_charTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_charTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_intTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_intTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_longTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_longTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_floatTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_floatTest.html" />
+
+      <gtest request="GET /servlet-tests/Print_doubleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Print_doubleTest.html" />
+
+      <gtest request="GET /servlet-tests/PrintlnTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/PrintlnTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_StringTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_StringTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_booleanTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_booleanTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_charTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_charTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_intTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_intTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_longTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_longTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_floatTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_floatTest.html" />
+
+      <gtest request="GET /servlet-tests/Println_doubleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletOutputStream/Println_doubleTest.html" />
+
+  <!-- javax_servlet_ServletRequest tests -->
+
+      <gtest request="GET /servlet-tests/ServletRequestGetAttributeNamesTest  HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetAttributeNamesTest.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletRequestGetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetAttributeTest.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletRequestGetAttribute_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetAttribute_01Test.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletRequestGetCharacterEncodingTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain;charset=ISO-8859-1" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncodingTest.html" />
+
+
+      <gtest request="GET /servlet-tests/ServletRequestGetCharacterEncoding_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncoding_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetContentLengthTest HTTP/1.0"
+               debug="0" host="${host}" port="${port}"
+      requestHeaders="Content-Type:text/plain"
+             content="ULTRA SPARC"
+          goldenFile="${wgdir}/javax_servlet/ServletRequest/GetContentLengthTest.html" />
+
+      <gtest request="GET /servlet-tests/GetContentTypeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Content-Type:text/plain" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetContentTypeTest.html" />
+
+      <gtest request="GET /servlet-tests/GetInputStreamTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetInputStreamTest.html" />
+
+      <gtest request="GET /servlet-tests/GetInputStream_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetInputStream_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetLocaleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetLocaleTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetLocalesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us,en-gb"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetLocalesTest.html" />
+
+
+<!-- FIXME - Causes OutOfMemoryException in GTest client
+      <gtest request="GET /servlet-tests/GetParameterNamesTest?BestLanguage=Java&amp;BestJSP=Tomcat HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterNamesTest.html" />
+-->
+
+      <gtest request="GET /servlet-tests/GetParameterNames_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterNames_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetParameterTest?BestLanguage=Java HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetParameterValuesTest?Containers=JSP&amp;Containers=Servlet HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterValuesTest.html" />
+
+      <gtest request="GET /servlet-tests/GetParameterValues_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameterValues_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetParameter_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetParameter_1Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetProtocolTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetProtocolTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetReaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetReaderTest.html" />
+
+      <gtest request="GET /servlet-tests/GetReader_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetReader_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetRemoteAddrTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteAddrTest.html" />
+
+      <gtest request="GET /servlet-tests/GetRemoteHostTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetRemoteHostTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletRequestGetRequestDispatcherTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetRequestDispatcherTest.html" />
+
+      <gtest request="GET /servlet-tests/GetSchemeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetSchemeTest.html" />
+
+      <gtest request="GET /servlet-tests/GetServerNameTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetServerNameTest.html" />
+
+      <gtest request="GET /servlet-tests/GetServerPortTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetServerPortTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletRequestSetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestSetAttributeTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletRequestSetCharacterEncoding_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestSetCharacterEncoding_1Test.html" />
+
+
+  <!-- javax_servlet_ServletResponse tests -->
+
+      <gtest request="GET /servlet-tests/GetBufferSizeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/GetBufferSizeTest.html" />
+
+      <gtest request="GET /servlet-tests/ServletResponseGetCharacterEncodingTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/ServletResponseGetCharacterEncodingTest.html" />
+
+      <gtest request="GET /servlet-tests/SetBufferSizeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/SetBufferSizeTest.html" />
+
+      <gtest request="GET /servlet-tests/SetBufferSize_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/SetBufferSize_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetOutputStream_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/GetOutputStream_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetWriter_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/GetWriter_1Test.html" />
+
+      <gtest request="GET /servlet-tests/IsCommittedTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/IsCommittedTest.html" />
+
+<!-- FIXME - GTest mishandles the comparison test for a missing header
+      <gtest request="GET /servlet-tests/ResetTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectHeaders="Content-Type:null" /> 
+-->
+
+      <gtest request="GET /servlet-tests/Reset_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/ServletResponse/Reset_1Test.html" />
+
+      <gtest request="GET /servlet-tests/SetContentLengthTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectHeaders="Content-Length:10" /> 
+
+      <gtest request="GET /servlet-tests/SetContentTypeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="Content-Type:text/html" />
+
+      <gtest request="GET /servlet-tests/SetLocaleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="Content-Language:en-US" />
+ 
+  <!-- javax_servlet_UnavailableException tests -->
+
+      <gtest request="GET /servlet-tests/GetUnavailableSecondsTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/UnavailableException/GetUnavailableSecondsTest.html" />
+
+      <gtest request="GET /servlet-tests/IsPermanentTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/UnavailableException/IsPermanentTest.html" />
+
+      <gtest request="GET /servlet-tests/UnavailableException_Constructor1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/UnavailableException/UnavailableException_Constructor1Test.html" />
+
+      <gtest request="GET /servlet-tests/UnavailableException_Constructor2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenFile="${wgdir}/javax_servlet/UnavailableException/UnavailableException_Constructor2Test.html" />
+
+  <!-- javax_servlet_Error tests -->
+
+    <gtest request="GET /servlet-tests/ServletToServletErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToServletErrorPageTest.html"
+        testName="ServletToServletErrorPageTest"
+        assertion="Servlet error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.ArithmeticException.  The Servlet error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+    />
+
+    <gtest request="GET /servlet-tests/ServletToServletError501PageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToServletError501PageTest.html"
+        testName="ServletToServletError501PageTest"
+        assertion="Servlet error handlers can be installed for specific HTTP status codes."
+        testStrategy="The target servlet will class HttpServletResponse.sendError( int status, String message ).  The Servlet error page should display non-null values for status_code, message, request_uri, and servlet_name"
+    />
+        
+    <gtest request="GET /servlet-tests/ServletToJSPErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPErrorPageTest.html"
+        testName="ServletToJSPErrorPageTest"
+        assertion="JSP error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+    />
+
+
+    <gtest request="GET /servlet-tests/ServletToJSPError502PageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPError502PageTest.html"
+        testName="ServletToJSPError502PageTest"
+        assertion="JSP error handlers can be installed for specific HTTP status codes."
+        testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, message, request_uri, and servlet_name"
+    />
+
+
+    <gtest request="GET /servlet-tests/ServletToHTMLErrorPageTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenfile="${wgdir}/javax_servlet/Error/ServletToHTMLErrorPageTest.html"
+        testName="ServletToHTMLErrorPageTest"
+        assertion="Static HTML page error handlers can be installed for specific Exception types."
+        testStrategy="The target servlet will generage a java.lang.NumberFormatException.  The static HTML error page should be returned to the client."
+    />
+
+<!-- javax_servlet_Filter tests -->
+  
+    <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        testName="DoFilterTest"
+        goldenFile="${wgdir}/javax_servlet/Filter/DoFilterTest.html"
+        assertion="The doFilter method of the Filter is called by the container each time a request/response pair is passed through the stack due to a client request for the Servlet in the stack.  Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Client attempts to access a servlet and the filter configured for that servlet should be invoked."
+    />
+  
+    <gtest request="GET /servlet-tests/InitFilterConfigTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        testName="InitFilterConfigTest"
+        goldenFile="${wgdir}/javax_servlet/Filter/InitFilterConfigTest.html"
+        assertion="The container calls this method when the Filter is instantiated and passes in a FilterConfig object. Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Client attempts to access a servlet and the filter configured for that servlet."
+    />
+
+<!-- javax_servlet_FilterConfig tests -->
+
+    <gtest request="GET /servlet-tests/FilterChainTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        testName="FilterChainTest"
+        goldenFile="${wgdir}/javax_servlet/FilterConfig/FilterChainTest.html"
+        assertion="The next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked.  Java Servlet Specification v2.3, Sec. 14"
+        testStrategy="Access the servlet.  Both configured filters for that servlet should be invoked"
+    />
+  
+  <!-- javax_servlet_http_Cookie tests -->
+
+      <gtest request="GET /servlet-tests/Cookie_ConstructorTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/Cookie_ConstructorTest.html" />
+
+      <gtest request="GET /servlet-tests/Cookie_Constructor_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/Cookie_Constructor_1Test.html" />
+
+      <gtest request="GET /servlet-tests/CookieCloneTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/CookieCloneTest.html" />
+
+      <gtest request="GET /servlet-tests/GetCommentTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetCommentTest.html" />
+
+      <gtest request="GET /servlet-tests/GetComment_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetComment_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetDomainTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetDomainTest.html" />
+
+      <gtest request="GET /servlet-tests/GetMaxAgeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetMaxAgeTest.html" />
+
+      <gtest request="GET /servlet-tests/GetMaxAge_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetMaxAge_1Test.html" />
+
+      <gtest request="GET /servlet-tests/GetNameTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetNameTest.html" />
+
+      <gtest request="GET /servlet-tests/GetPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetPathTest.html" />
+
+      <gtest request="GET /servlet-tests/GetSecureTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetSecureTest.html" />
+
+      <gtest request="GET /servlet-tests/GetValueTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetValueTest.html" />
+
+      <gtest request="GET /servlet-tests/GetVersionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/GetVersionTest.html" />
+
+      <gtest request="GET /servlet-tests/SetCommentTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetCommentTest.html" />
+
+      <gtest request="GET /servlet-tests/SetDomainTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetDomainTest.html" />
+
+      <gtest request="GET /servlet-tests/SetMaxAgeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetMaxAgeTest.html" />
+
+      <gtest request="GET /servlet-tests/SetSecureTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetSecureTest.html" />
+
+      <gtest request="GET /servlet-tests/SetValueTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetValueTest.html" />
+
+      <gtest request="GET /servlet-tests/SetVersionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetVersionTest.html" />
+
+      <gtest request="GET /servlet-tests/SetPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/Cookie/SetPathTest.html" />
+
+
+  <!-- javax_servlet_http_HttpServletRequest tests -->
+
+      <gtest request="GET /servlet-tests/GetAuthTypeWithoutProtectionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetAuthTypeWithoutProtectionTest.html" />
+
+      <gtest request="GET /servlet-tests/GetContextPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetContextPathTest.html" />
+
+      <gtest request="GET /servlet-tests/GetCookiesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Cookie:BestLanguage=Java" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookiesTest.html" />
+
+      <gtest request="GET /servlet-tests/GetCookies_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookies_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetDateHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat, 01 Jan 2000 00:00:01 GMT" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeaderTest.html" />
+
+      <gtest request="GET /servlet-tests/GetDateHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeader_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetDateHeader_02Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:234" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeader_02Test.html" />
+
+      <gtest request="GET /servlet-tests/GetHeaderNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Authorization:Basic achegkliporV8y##Cookie:BestLanguage=java" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderNamesTest.html" />
+
+      <gtest request="GET /servlet-tests/GetHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="User-Agent:Mozilla/4.0" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderTest.html" />
+
+      <gtest request="GET /servlet-tests/GetHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeader_01Test.html" />
+
+<!-- FIXME - GTest mishandles multiple request headers with the same name
+      <gtest request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us##Accept-Language:en-gb"
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeadersTest.html" />
+-->
+
+      <gtest request="GET /servlet-tests/GetHeaders_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaders_01Test.html" />
+      <gtest request="GET /servlet-tests/GetIntHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="MyIntHeader:123" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeaderTest.html" />
+
+      <gtest request="GET /servlet-tests/GetIntHeader_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="MyNonIntHeader:somestring" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeader_1Test.html" />
+      <gtest request="GET /servlet-tests/GetIntHeader_2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeader_2Test.html" />
+
+      <gtest request="GET /servlet-tests/GetMethodTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethodTest.html" />
+
+
+      <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectResponseBody="false"  
+	   returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED" />
+
+      <gtest request="POST /servlet-tests/GetMethod_POSTTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethod_POSTTest.html" />
+
+      <gtest request="GET /servlet-tests/GetPathInfoTest/pathinfostring1/pathinfostring2 HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathInfoTest.html" />
+
+      <gtest request="GET /servlet-tests/GetPathInfo_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathInfo_01Test.html" />
+ 
+      <gtest request="GET /servlet-tests/GetPathTranslatedTest/javax_servlet HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathTranslatedTest.html" />
+
+      <gtest request="GET /servlet-tests/GetPathTranslated_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathTranslated_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetQueryStringTest?language=java HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetQueryStringTest.html" />
+
+      <gtest request="GET /servlet-tests/GetQueryString_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetQueryString_01Test.html" />
+
+
+      <gtest request="GET /servlet-tests/GetRemoteUser_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRemoteUser_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetRequestURITest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestURITest.html" />
+
+      <gtest request="GET /servlet-tests/GetRequestURIWithQSTest?language=java HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestURIWithQSTest.html" />
+
+      <gtest request="GET /servlet-tests/GetRequestedSessionId_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestedSessionId_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetServletPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetServletPathTest.html" />
+
+<!-- FIXME - Test webapp does not have security set up correctly
+      <gtest request="GET /servlet-tests/GetUserPrincipalTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Authorization:Basic d2VibWFzdGVyOnRyeTUndWVTUw=##From:got2be@eng.sun.com" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetUserPrincipalTest.html" />
+-->
+
+<!-- FIXME - Test webapp does not have security set up correctly
+      <gtest request="GET /servlet-tests/GetUserPrincipal_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetUserPrincipal_01Test.html" />
+-->
+
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdFromCookie_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdFromCookie_01Test.html" />
+
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdFromURL_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdFromURL_01Test.html" />
+
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdValid_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdValid_01Test.html" />
+
+<!-- FIXME - Test webapp does not have security set up correctly
+      <gtest request="GET /servlet-tests/IsUserInRoleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsUserInRoleTest.html" />
+-->
+
+<!-- javax_servlet_http_HttpServletResponse tests -->
+
+      <gtest request="GET /servlet-tests/AddCookieTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="Set-Cookie:BestLanguage=java" />
+
+      <gtest request="GET /servlet-tests/AddDateHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
+
+      <gtest request="GET /servlet-tests/AddHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyStrHeader:java" />
+
+      <gtest request="GET /servlet-tests/AddIntHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyIntHeader:2" />
+
+
+      <gtest request="GET /servlet-tests/ContainsHeaderTest HTTP/1.0"
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/ContainsHeaderTest.html"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyIntHeader:20" />
+
+      <gtest request="GET /servlet-tests/ContainsHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/ContainsHeader_01Test.html" />
+
+      <gtest request="GET /servlet-tests/SendErrorTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" /> 
+
+      <gtest request="GET /servlet-tests/SendError_StringTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" /> 
+
+<!-- FIXME - GTest does not properly deal with redirect responses
+      <gtest request="GET /servlet-tests/SendRedirectTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/SendRedirectTest.html" />
+-->
+
+      <gtest request="GET /servlet-tests/SendRedirect_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/SendRedirect_1Test.html" />
+
+      <gtest request="GET /servlet-tests/SetDateHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
+
+      <gtest request="GET /servlet-tests/SetHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyStrHeader:Java" />
+
+      <gtest request="GET /servlet-tests/SetIntHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyIntHeader:2" />
+
+      <gtest request="GET /servlet-tests/SetStatusTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           returnCode="200" />
+
+<!-- javax_servlet_http_HttpServletResponseWrapper tests -->
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperConstructorTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html"
+        testName="HttpServletResponseWrapperConstructorTest"
+        assertion="Construct a request object wrapping the given request.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet who constructs a Wrapper object from the response object"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addCookie|Set-Cookie:BestLanguage=Java"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTest.html"
+        testName="HttpServletResponseWrapperAddCookieTest"
+        assertion="Test for default behavior of this method is to call addCookie(Cookie cookie) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addCookie method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addDateHeader|MyDateHeader:Mon, 12 Jan 1970 10:20:54 GMT"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTest.html"
+        testName="HttpServletResponseWrapperAddDateHeaderTest"
+        assertion="Test for default behavior of this method is to call addDateHeader(String long) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addDateHeader method."
+     />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|MyStrHeader:Java|MyStrHeader:Java2|MyStrHeader2:Java3"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTest.html"
+        testName="HttpServletResponseWrapperAddHeaderTest"
+        assertion="Test for default behavior of this method is to return addHeader(String name, String value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addIntHeader|MyIntHeader:2"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTest.html"
+        testName="HttpServletResponseWrapperAddIntHeaderTest"
+        assertion="Test for default behavior of this method is to call addIntHeader(String name, int value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addIntHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setHeader|GenericResponseWrapper:containsHeader|MyStrHeader:HttpServletResponseWrapperContainsHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTest.html"
+        testName="HttpServletResponseWrapperContainsHeaderTest"
+        assertion="Test for default behavior of this method is to call containsHeader(String name) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses containsHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:encodeURL"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTest.html"
+        testName="HttpServletResponseWrapperEncodeURLTest"
+        assertion="Test for default behavior of this method is to call encodeURL(String url) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeURL method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:encodeRedirectURL"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTest.html"
+        testName="HttpServletResponseWrapperRedirectEncodeURLTest"
+        assertion="Test for default behavior of this method is to return encodeRedirectURL(String url) on the wrapped response object.  Java Servlet Pages Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeRedirectURL method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:sendError"
+        testName="HttpServletResponseWrapperSendErrorTest"
+        assertion="Test for default behavior of this method is to call sendError(int sc) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:sendErrorMsg"
+        testName="HttpServletResponseWrapperSendErrorMsgTest"
+        assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendErrorMsgIgnoreHeader"
+        returnCode="100"
+        testName="HttpServletResponseWrapperSendErrorMsgIngoreHeaderTest"
+        assertion="Headers added after a call to sendError(int,String), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 Sec 5.2"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendErrorIgnoreHeader"
+        returnCode="100"
+        testName="HttpServletResponseWrapperSendErrorIngoreHeaderTest"
+        assertion="Headers added after a call to sendError(int), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="Location: http://${host}:${port}/HttpServletResponseWrapperRedirectedTest"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectTest"
+        assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the server root.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        unexpectedHeaders="GenericResponseWrapper:sendRedirectIgnoreHeader"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest"
+        assertion="Headers added after a call to sendRedirect(), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2."
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendRedirect() and then add a header.  The header should not be visible to the client"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="Location: http://${host}:${port}/servlet-tests/HttpServletResponseWrapperRedirectedTest"  
+        returnCode="302"
+        testName="HttpServletResponseWrapperSendRedirectForWebAppTest"
+        assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setDateHeader|DateInfo:Sat, 25 Apr 1970 07:29:03 GMT"
+        testName="HttpServletResponseWrapperSetDateHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTest.html"
+        assertion="Test for default behavior of this method is to call setDateHeader(String, long) on the wrapped response object. Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setDateHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:setHeader|MyStrHeader:Java"
+        testName="HttpServletResponseWrapperSetHeaderTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTest.html"
+        assertion="Test for default behavior of this method is to return setHeader(String, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:addIntHeader|GenericResponseWrapper:setIntHeader|MyIntHeader:2"
+        testName="HttpServletResponseWrapperSetHeaderIntTest"
+        goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTest.html"
+        assertion="Test for default behavior of this method is to call setIntHeader(String, int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setIntHeader method."
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setStatusMsg"
+        returnCode="200"
+        testName="HttpServletResponseWrapperSetStatusMsgTest"
+        assertion="Test for default behavior of this method is to call setStatus(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method"
+    />
+
+    <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
+        debug="0" host="${host}" port="${port}"
+        expectHeaders="GenericResponseWrapper:setStatus"
+        returnCode="200"
+        testName="HttpServletResponseWrapperSetStatusTest"
+        assertion="Test for default behavior of this method is to call setStatus(int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+        testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method."
+    />
+
+<!-- javax_servlet_http_HttpSession tests -->
+
+      <gtest request="GET /servlet-tests/HttpSessionGetAttributeNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/HttpSessionGetAttributeNamesTest.html" />
+
+      <gtest request="GET /servlet-tests/HttpSessionGetAttributeNames_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/HttpSessionGetAttributeNames_01Test.html" />
+
+      <gtest request="GET /servlet-tests/HttpSessionGetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/HttpSessionGetAttributeTest.html" />
+
+      <gtest request="GET /servlet-tests/HttpSessionGetAttribute_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/HttpSessionGetAttribute_01Test.html" />
+
+      <gtest request="GET /servlet-tests/GetCreationTimeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/GetCreationTimeTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetIdTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/GetIdTest.html" />
+
+
+      <gtest request="GET /servlet-tests/GetLastAccessedTimeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/GetLastAccessedTimeTest.html" />
+
+      <gtest request="GET /servlet-tests/GetMaxInactiveIntervalTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/GetMaxInactiveIntervalTest.html" />
+
+      <gtest request="GET /servlet-tests/IsNewTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/IsNewTest.html" />
+
+
+      <gtest request="GET /servlet-tests/IsNew_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/IsNew_01Test.html" />
+
+
+      <gtest request="GET /servlet-tests/RemoveAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/RemoveAttributeTest.html" />
+
+
+      <gtest request="GET /servlet-tests/RemoveAttribute_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/RemoveAttribute_01Test.html" />
+
+      <gtest request="GET /servlet-tests/SetAttributeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/SetAttributeTest.html" />
+
+      <gtest request="GET /servlet-tests/SetAttribute_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/SetAttribute_01Test.html" />
+
+      <gtest request="GET /servlet-tests/SetMaxInactiveIntervalTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/SetMaxInactiveIntervalTest.html" />
+
+      <gtest request="GET /servlet-tests/InvalidateTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpSession/InvalidateTest.html" 
+           lastTask="true" />
+
+
+</target>
+
+
+     <target name="DestroyTest" >
+      <gtest request="GET /servlet-tests/DestroyTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           returnCode="200" />
+     </target>
+
+     <target name="GetServletConfigTest" >
+      <gtest request="GET /servlet-tests/GetServletConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/GetServletConfigTest.html" />
+     </target>
+
+     <target name="GetServletContextTest" >
+      <gtest request="GET /servlet-tests/GetServletContextTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/GetServletContextTest.html" />
+     </target>
+
+     <target name="GetServletInfoTest" >
+      <gtest request="GET /servlet-tests/GetServletInfoTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/GetServletInfoTest.html" />
+      </target>
+
+     <target name="ForwardTest" >
+      <gtest request="GET /servlet-tests/ForwardTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/ForwardTest.html" />
+      </target>
+
+     <target name="Forward_1Test" >
+      <gtest request="GET /servlet-tests/Forward_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/Forward_1Test.html" />
+      </target>
+
+     <target name="IncludeTest" >
+      <gtest request="GET /servlet-tests/IncludeTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/IncludeTest.html" />
+     </target>
+
+     <target name="Include_1Test" >
+      <gtest request="GET /servlet-tests/Include_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectHeaders="Content-Type:text/plain"  
+           goldenFile="${wgdir}/javax_servlet/RequestDispatcher/Include_1Test.html" />
+     </target>
+
+     <target name="DoDestroyedTest" >
+      <gtest request="GET /servlet-tests/DoDestroyedTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoDestroyedTest.html" />
+     </target>
+
+     <target name="DoInit1Test" >
+      <gtest request="GET /servlet-tests/DoInit1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           returnCode="500" />
+     </target>
+
+     <target name="DoInit2Test" >
+      <gtest request="GET /servlet-tests/DoInit2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoInit2Test.html" />
+     </target>
+
+     <target name="DoServiceTest" >
+      <gtest request="GET /servlet-tests/DoServiceTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServiceTest.html" />
+      </target>
+
+     <target name="DoServletConfigTest" >
+      <gtest request="GET /servlet-tests/DoServletConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServletConfigTest.html" />
+      </target>
+
+     <target name="DoServletInfoTest" >
+      <gtest request="GET /servlet-tests/DoServletInfoTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/DoServletInfoTest.html" />
+      </target>
+
+     <target name="PUTest" >
+      <gtest request="GET /servlet-tests/PUTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet/Servlet/PUTest.html" />
+      </target>
+
+     <target name="GetAuthTypeWithoutProtectionTest" >
+      <gtest request="GET /servlet-tests/GetAuthTypeWithoutProtectionTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetAuthTypeWithoutProtectionTest.html" />
+      </target>
+
+     <target name="GetContextPathTest" >
+      <gtest request="GET /servlet-tests/GetContextPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetContextPathTest.html" />
+	</target>
+
+     <target name="GetCookiesTest" >
+      <gtest request="GET /servlet-tests/GetCookiesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Cookie:BestLanguage=Java" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookiesTest.html" />
+	</target>
+
+     <target name="GetCookies_01Test" >
+      <gtest request="GET /servlet-tests/GetCookies_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookies_01Test.html" />
+	</target>
+
+
+
+     <target name="GetDateHeaderTest" >
+      <gtest request="GET /servlet-tests/GetDateHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:2000-08-04" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeaderTest.html" />
+     </target>
+
+     <target name="GetDateHeader_01Test" >
+      <gtest request="GET /servlet-tests/GetDateHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeader_01Test.html" />
+     </target>
+
+     <target name="GetDateHeader_02Test" >
+      <gtest request="GET /servlet-tests/GetDateHeader_02Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:966465196330" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeader_02Test.html" />
+      </target>
+
+     <target name="GetHeaderNamesTest" >
+      <gtest request="GET /servlet-tests/GetHeaderNamesTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Authorization:Basic achegkliporV8y##Cookie:BestLanguage=java" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderNamesTest.html" />
+      </target>
+
+     <target name="GetHeaderTest" >
+      <gtest request="GET /servlet-tests/GetHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="User-Agent:Mozilla/4.0" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaderTest.html" />
+      </target>
+
+     <target name="GetHeader_01Test" >
+      <gtest request="GET /servlet-tests/GetHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeader_01Test.html" />
+      </target>
+
+     <target name="GetHeadersTest" >
+      <gtest request="GET /servlet-tests/GetHeadersTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us,en-gb"
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeadersTest.html" />
+      </target>
+
+     <target name="GetHeaders_01Test" >
+      <gtest request="GET /servlet-tests/GetHeaders_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetHeaders_01Test.html" />
+      </target>
+
+
+     <target name="GetIntHeaderTest" >
+      <gtest request="GET /servlet-tests/GetIntHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="MyIntHeader:1" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeaderTest.html" />
+     </target>
+
+     <target name="GetIntHeader_1Test" >
+      <gtest request="GET /servlet-tests/GetIntHeader_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="MyNonIntHeader:somestring" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeader_1Test.html" />
+     </target>
+
+
+     <target name="GetIntHeader_2Test" >
+      <gtest request="GET /servlet-tests/GetIntHeader_2Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetIntHeader_2Test.html" />
+     </target>
+
+
+     <target name="GetMethodTest" >
+      <gtest request="GET /servlet-tests/GetMethodTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethodTest.html" />
+     </target>
+
+     <target name="GetMethod_HEADTest" >
+      <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectResponseBody="false" 
+	   returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED" />
+     </target>
+
+     <target name="GetMethod_POSTTest" >
+      <gtest request="POST /servlet-tests/GetMethod_POSTTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetMethod_POSTTest.html" />
+     </target>
+     <target name="GetPathInfoTest" >
+      <gtest request="POST /servlet-tests/GetPathInfoTest/pathinfostring1/pathinfostring2 HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathInfoTest.html" />
+     </target>
+
+     <target name="GetPathInfo_01Test" >
+      <gtest request="GET /servlet-tests/GetPathInfo_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathInfo_01Test.html" />
+     </target>
+
+     <target name="GetPathTranslatedTest" >
+      <gtest request="GET /servlet-tests/GetPathTranslatedTest/javax_servlet HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathTranslatedTest.html" />
+     </target>
+
+     <target name="GetPathTranslated_01Test" >
+      <gtest request="GET /servlet-tests/GetPathTranslated_01Test/javax_servlet HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetPathTranslated_01Test.html" />
+      </target>
+
+     <target name="GetQueryStringTest" >
+      <gtest request="GET /servlet-tests/GetQueryStringTest?language=java HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetQueryStringTest.html" />
+      </target>
+
+
+     <target name="GetQueryString_01Test" >
+      <gtest request="GET /servlet-tests/GetQueryString_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetQueryString_01Test.html" />
+     </target>
+
+     <target name="GetRemoteUser_01Test" >
+      <gtest request="GET /servlet-tests/GetRemoteUser_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRemoteUser_01Test.html" />
+     </target>
+
+     <target name="GetRequestURITest" >
+      <gtest request="GET /servlet-tests/GetRequestURITest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestURITest.html" />
+     </target>
+     <target name="GetRequestURIWithQSTest" >
+      <gtest request="GET /servlet-tests/GetRequestURIWithQSTest?language=java HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestURIWithQSTest.html" />
+     </target>
+
+     <target name="GetRequestedSessionId_01Test" >
+      <gtest request="GET /servlet-tests/GetRequestedSessionId_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetRequestedSessionId_01Test.html" />
+     </target>
+
+
+     <target name="GetServletPathTest" >
+      <gtest request="GET /servlet-tests/GetServletPathTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetServletPathTest.html" />
+     </target>
+
+     <target name="GetUserPrincipalTest" >
+      <gtest request="GET /servlet-tests/GetUserPrincipalTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" requestHeaders="Authorization:Basic d2VibWFzdGVyOnRyeTUndWVTUw=##From:got2be@eng.sun.com" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetUserPrincipalTest.html" />
+     </target>
+     <target name="GetUserPrincipal_01Test" >
+      <gtest request="GET /servlet-tests/GetUserPrincipal_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetUserPrincipal_01Test.html" />
+     </target>
+
+     <target name="IsRequestedSessionIdFromCookie_01Test" >
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdFromCookie_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdFromCookie_01Test.html" />
+     </target>
+	
+	
+     <target name="IsRequestedSessionIdFromURL_01Test" >
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdFromURL_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdFromURL_01Test.html" />
+     </target>
+
+     <target name="IsRequestedSessionIdValid_01Test" >
+      <gtest request="GET /servlet-tests/IsRequestedSessionIdValid_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsRequestedSessionIdValid_01Test.html" />
+     </target>
+
+	
+     <target name="IsUserInRoleTest" >
+      <gtest request="GET /servlet-tests/IsUserInRoleTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/IsUserInRoleTest.html" />
+     </target>
+
+     <target name="AddCookieTest" >
+      <gtest request="GET /servlet-tests/AddCookieTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="Cookie: BestLanguage=java" />
+     </target>
+
+     <target name="AddDateHeaderTest" >
+      <gtest request="GET /servlet-tests/AddDateHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
+     </target>
+
+     <target name="AddHeaderTest" >
+      <gtest request="GET /servlet-tests/AddHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyStrHeader:java" />
+     </target>
+
+
+     <target name="AddIntHeaderTest" >
+      <gtest request="GET /servlet-tests/AddIntHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"  expectHeaders="MyIntHeader:2" />
+     </target>
+
+     <target name="ContainsHeaderTest" >
+      <gtest request="GET /servlet-tests/ContainsHeaderTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}" expectHeaders="MyIntHeader:20"
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/ContainsHeaderTest.html" />
+     </target>
+
+
+     <target name="ContainsHeader_01Test" >
+      <gtest request="GET /servlet-tests/ContainsHeader_01Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/ContainsHeader_01Test.html" />
+     </target>
+
+     <target name="ServletToServletErrorPageTest">
+        <gtest request="GET /servlet-tests/ServletToServletErrorPageTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           goldenfile="${wgdir}/javax_servlet/Error/ServletToServletErrorPageTest.html"
+           testName="ServletToServletErrorPageTest"
+           assertion="Servlet error handlers can be installed for specific Exception types."
+           testStrategy="The target servlet will generage a java.lang.ArithmeticException.  The Servlet error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+        />
+     </target> 
+
+     <target name="ServletToServletError501PageTest"> 
+         <gtest request="GET /servlet-tests/ServletToServletError501PageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToServletError501PageTest.html"
+            testName="ServletToServletError501PageTest"
+            assertion="Servlet error handlers can be installed for specific HTTP status codes."
+            testStrategy="The target servlet will class HttpServletResponse.sendError( int status, String message ).  The Servlet error page should display non-null values for status_code, message, request_uri, and servlet_name"
+         />
+     </target> 
+                                                        
+     <target name="ServletToJSPErrorPageTest">
+         <gtest request="GET /servlet-tests/ServletToJSPErrorPageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPErrorPageTest.html"
+            testName="ServletToJSPErrorPageTest"
+            assertion="JSP error handlers can be installed for specific Exception types."
+            testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, exception_type, message, exception, request_uri, and servlet_name"
+         />
+     </target> 
+
+     <target name="ServletToJSPError502PageTest">
+         <gtest request="GET /servlet-tests/ServletToJSPError502PageTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenfile="${wgdir}/javax_servlet/Error/ServletToJSPError502PageTest.html"
+            testName="ServletToJSPError502PageTest"
+            assertion="JSP error handlers can be installed for specific HTTP status codes."
+            testStrategy="The target servlet will generage a java.lang.ArrayIndexOutOfBoundsException.  The JSP error page should display non-null values for status_code, message, request_uri, and servlet_name"
+         />
+     </target>
+
+    <target name="ServletToHTMLErrorPageTest">
+        <gtest request="GET /servlet-tests/ServletToHTMLErrorPageTest HTTP/1.0" 
+           debug="0" host="${host}" port="${port}" 
+           goldenfile="${wgdir}/javax_servlet/Error/ServletToHTMLErrorPageTest.html"
+           testName="ServletToHTMLErrorPageTest"
+           assertion="Static HTML page error handlers can be installed for specific Exception types."
+           testStrategy="The target servlet will generage a java.lang.NumberFormatException.  The static HTML error page should be returned to the client."
+        />
+    </target>
+
+    <target name="DoFilterTest">
+        <gtest request="GET /servlet-tests/DoFilterTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="DoFilterTest"
+           goldenFile="${wgdir}/javax_servlet/Filter/DoFilterTest.html"
+           assertion="The doFilter method of the Filter is called by the container each time a request/response pair is passed through the stack due to a client request for the Servlet in the stack.  Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Client attempts to access a servlet and the filter configured for that servlet should be invoked."
+        />
+    </target>
+
+    <target name="InitFilterConfigTest">
+        <gtest request="GET /servlet-tests/InitFilterConfigTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="InitFilterConfigTest"
+           goldenFile="${wgdir}/javax_servlet/Filter/InitFilterConfigTest.html"
+           assertion="The container calls this method when the Filter is instantiated and passes in a FilterConfig object. Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Client attempts to access a servlet and the filter configured for that servlet."
+        />
+    </target>
+
+    <target name="FilterChainTest">
+        <gtest request="GET /servlet-tests/FilterChainTest HTTP/1.0"
+           debug="0" host="${host}" port="${port}"
+           testName="FilterChainTest"
+           goldenFile="${wgdir}/javax_servlet/FilterConfig/FilterChainTest.html"
+           assertion="The next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked.  Java Servlet Specification v2.3, Sec. 14"
+           testStrategy="Access the servlet.  Both configured filters for that servlet should be invoked"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperConstructorTest">
+	    <gtest request="GET /servlet-tests/HttpServletResponseWrapperConstructorTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html"
+            testName="HttpServletResponseWrapperConstructorTest"
+            assertion="Construct a request object wrapping the given request.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet who constructs a Wrapper object from the response object"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddCookieTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addCookie|Set-Cookie:BestLanguage=Java"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddCookieTest.html"
+            testName="HttpServletResponseWrapperAddCookieTest"
+            assertion="Test for default behavior of this method is to call addCookie(Cookie cookie) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses addCookie method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddDateHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addDateHeader|MyDateHeader:Mon, 12 Jan 1970 10:20:54 GMT"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddDateHeaderTest.html"
+            testName="HttpServletResponseWrapperAddDateHeaderTest"
+            assertion="Test for default behavior of this method is to call addDateHeader(String long) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addDateHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|MyStrHeader:Java|MyStrHeader:Java2|MyStrHeader2:Java3"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddHeaderTest.html"
+            testName="HttpServletResponseWrapperAddHeaderTest"
+            assertion="Test for default behavior of this method is to return addHeader(String name, String value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperAddIntHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addIntHeader|MyIntHeader:2"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperAddIntHeaderTest.html"
+            testName="HttpServletResponseWrapperAddIntHeaderTest"
+            assertion="Test for default behavior of this method is to call addIntHeader(String name, int value) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses addIntHeader method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperContainsHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setHeader|GenericResponseWrapper:containsHeader|MyStrHeader:HttpServletResponseWrapperContainsHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperContainsHeaderTest.html"
+            testName="HttpServletResponseWrapperContainsHeaderTest"
+            assertion="Test for default behavior of this method is to call containsHeader(String name) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses containsHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperEncodeURLTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:encodeURL"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeURLTest.html"
+            testName="HttpServletResponseWrapperEncodeURLTest"
+            assertion="Test for default behavior of this method is to call encodeURL(String url) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeURL method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperEncodeRedirectURLTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:encodeRedirectURL"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperEncodeRedirectURLTest.html"
+            testName="HttpServletResponseWrapperRedirectEncodeURLTest"
+            assertion="Test for default behavior of this method is to return encodeRedirectURL(String url) on the wrapped response object.  Java Servlet Pages Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses encodeRedirectURL method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:sendError"
+            testName="HttpServletResponseWrapperSendErrorTest"
+            assertion="Test for default behavior of this method is to call sendError(int sc) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorMsgTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:sendErrorMsg"
+            testName="HttpServletResponseWrapperSendErrorMsgTest"
+            assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendError method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendErrorMsgIgnoreHeader"
+            returnCode="100"
+            testName="HttpServletResponseWrapperSendErrorMsgIngoreHeaderTest"
+            assertion="Headers added after a call to sendError(int,String), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 Sec 5.2"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendErrorIgnoreHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendErrorIgnoreHeader"
+            returnCode="100"
+            testName="HttpServletResponseWrapperSendErrorIngoreHeaderTest"
+            assertion="Headers added after a call to sendError(int), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendError() and then add a header.  The header should not be visible to the client."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="Location: http://${host}:${port}/HttpServletResponseWrapperRedirectedTest"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectTest"
+            assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the server root.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectIgnoreHeader">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            unexpectedHeaders="GenericResponseWrapper:sendRedirectIgnoreHeader"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest"
+            assertion="Headers added after a call to sendRedirect(), will be ignored by the container and will not be sent to the client.  Java Servlet Specification 2.3 section 5.2."
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object will call sendRedirect() and then add a header.  The header should not be visible to the client"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSendRedirectForWebAppTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="Location: http://${host}:${port}/servlet-tests/HttpServletResponseWrapperRedirectedTest"  
+            returnCode="302"
+            testName="HttpServletResponseWrapperSendRedirectForWebAppTest"
+            assertion="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses sendRedirect method."
+        />
+    </target>
+        
+    <target name="HttpServletResponseWrapperSetDateHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setDateHeader|DateInfo:Sat, 25 Apr 1970 07:29:03 GMT"
+            testName="HttpServletResponseWrapperSetDateHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetDateHeaderTest.html"
+            assertion="Test for default behavior of this method is to call setDateHeader(String, long) on the wrapped response object. Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setDateHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addHeader|GenericResponseWrapper:setHeader|MyStrHeader:Java"
+            testName="HttpServletResponseWrapperSetHeaderTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetHeaderTest.html"
+            assertion="Test for default behavior of this method is to return setHeader(String, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetIntHeaderTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:addIntHeader|GenericResponseWrapper:setIntHeader|MyIntHeader:2"
+            testName="HttpServletResponseWrapperSetHeaderIntTest"
+            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperSetIntHeaderTest.html"
+            assertion="Test for default behavior of this method is to call setIntHeader(String, int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setIntHeader method."
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetStatusMsgTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setStatusMsg"
+            returnCode="200"
+            testName="HttpServletResponseWrapperSetStatusMsgTest"
+            assertion="Test for default behavior of this method is to call setStatus(int, String) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method"
+        />
+    </target>
+
+    <target name="HttpServletResponseWrapperSetStatusTest">
+        <gtest request="GET /servlet-tests/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
+            debug="0" host="${host}" port="${port}"
+            expectHeaders="GenericResponseWrapper:setStatus"
+            returnCode="200"
+            testName="HttpServletResponseWrapperSetStatusTest"
+            assertion="Test for default behavior of this method is to call setStatus(int) on the wrapped response object.  Java Servlet Specification v2.3, Sec 14"
+            testStrategy="Client calls a servlet whose response has been wrapped.  The wrapper object adds a specific header to the response object and calls the responses setStatus method."
+        />
+    </target>
+
+<!-- sample of all the various test options allowed
+    <gtest description="Content Type Test"
+           request="GET /test/binaries/image1.gif HTTP/1.0"
+           goldenFile="${gdir}/image1.gif"
+           responseMatch="PreInclude"
+           expectHeaders="Content-Type:image/gif" />
+           exactMatch="true"  />
+-->
+
+</project>
+

@@ -1,0 +1,62 @@
+public class DefaultTestResult  
+{
+      	String testName;
+      	String testDescription;
+      	String testResult;
+      	String errorDescription;
+
+   	public String getTestName( )
+   	{
+		return testName;
+   	}
+	
+ 	public String getTestDescription( )
+	{
+		return testDescription;
+	}
+	
+	public String getTestResult( )
+	{
+		return testResult;
+	}
+
+	public String getErrorDescription() 
+	{
+		return errorDescription;
+	}
+
+   	public void setTestName( String testName )
+   	{
+		this.testName=testName;
+   	}
+
+   	public void setTestDescription( String testDescription )
+   	{
+		this.testDescription=testDescription;
+   	}
+   	public void setTestResult( String testResult )
+   	{
+		this.testResult=testResult;
+   	}
+   	public void setErrorDescription( String errorDescription )
+   	{
+		this.errorDescription=errorDescription;
+   	}
+
+	public Result( String testName, String testDescription,String testResult )
+	{
+		this.testName = testName;
+		this.testDescription = testDescription;
+		this.testResult = testResult;
+	}
+
+	public Result( String testName, String testDescription,String testResult,String errorDescription )
+	{
+		this.testName = testName;
+		this.testDescription = testDescription;
+		this.testResult = testResult;
+		this.errorDescription = errorDescription;
+	}
+
+
+}
