@@ -11,943 +11,568 @@
   <!-- ==================== Watchdog JSP tests ==================== -->
    
    <target name="watchdog-JSP">
-      <!--  org.apache.jcheck.jsp.client.HelloWorld=HelloWorld.jsp -->
       <gtest request="GET /jsp-tests/jsp/HelloWorld.jsp HTTP/1.0"
-           goldenFile="${wgdir}/HelloWorld.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameClass=
-              core_syntax/beantests/useBean/positiveBeanNameClass.jsp -->
+           host="${host}" port ="${port}"
+           goldenFile="${wgdir}/HelloWorld.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameClass.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameClass.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBeanNameRes=
-              core_syntax/beantests/useBean/positiveBeanNameRes.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameClass.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBeanNameRes.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameRes.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyExists=
-              core_syntax/beantests/useBean/positiveBodyExists.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBeanNameRes.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyExists.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyExists.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveBodyNew
-              =core_syntax/beantests/useBean/positiveBodyNew.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyExists.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveBodyNew.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyNew.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage1
-              =core_syntax/beantests/useBean/positiveDupIDPage1.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveBodyNew.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage1.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage1.html"
-           />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDPage2
-                =core_syntax/beantests/useBean/positiveDupIDPage2.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage1.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDPage2.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage2.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest1
-            =core_syntax/beantests/useBean/positiveDupIDRequest1.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDPage2.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest1.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest1.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveDupIDRequest2
-            =core_syntax/beantests/useBean/positiveDupIDRequest2.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest1.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveDupIDRequest2.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest2.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveNoBody
-            =core_syntax/beantests/useBean/positiveNoBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveDupIDRequest2.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveNoBody.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveNoBody.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positivePageScope
-            =core_syntax/beantests/useBean/positivePageScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveNoBody.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positivePageScope.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positivePageScope.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveTypeAssignable
-            =core_syntax/beantests/useBean/positiveTypeAssignable.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positivePageScope.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveTypeAssignable.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveTypeAssignable.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.positiveSessionScope
-            =core_syntax/beantests/useBean/positiveSessionScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/useBean/positiveTypeAssignable.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/positiveSessionScope.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 200 OK"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeBody
-            =core_syntax/beantests/useBean/negativeBody.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeDupID
-            =core_syntax/beantests/useBean/negativeDupID.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeDupIDSession1
-            =core_syntax/beantests/useBean/negativeDupIDSession1.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeInvalidClass
-            =core_syntax/beantests/useBean/negativeInvalidClass.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeNoBody
-            =core_syntax/beantests/useBean/negativeNoBody.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropParam
-            =core_syntax/beantests/setProperty/positiveSetPropParam.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropParam.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropNoParam
-            =core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp -->
+           host="${host}" port ="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropParam.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropNoParam.jsp?str=SAPPOTA HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropNoParam.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropValue
-            =core_syntax/beantests/setProperty/positiveSetPropValue.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropNoParam.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropValue.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropValue.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropSingleQuotes
-            =core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropValue.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveUseBeanInit
-            =core_syntax/beantests/setProperty/positiveUseBeanInit.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetPropSingleQuotes.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanInit.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanInit.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveUseBeanNext
-            =core_syntax/beantests/setProperty/positiveUseBeanNext.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanInit.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveUseBeanNext.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanNext.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetLongPrim
-            =core_syntax/beantests/setProperty/positiveSetLongPrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveUseBeanNext.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongPrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongPrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetLongObj
-            =core_syntax/beantests/setProperty/positiveSetLongObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongPrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetLongObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIntPrim
-            =core_syntax/beantests/setProperty/positiveSetIntPrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetLongObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntPrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntPrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIntObj
-            =core_syntax/beantests/setProperty/positiveSetIntObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntPrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIntObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetIndexedProp
-            =core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIntObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetIndexedProp.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIndexedProp.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetFloatObj
-            =core_syntax/beantests/setProperty/positiveSetFloatObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetIndexedProp.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetFloatPrim
-            =core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetFloatPrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatPrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetDoublePrim
-            =core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetFloatPrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoublePrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoublePrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetDoubleObj
-            =core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoublePrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetDoubleObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoubleObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetCharPrim
-            =core_syntax/beantests/setProperty/positiveSetCharPrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetDoubleObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharPrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharPrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetCharObj
-            =core_syntax/beantests/setProperty/positiveSetCharObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharPrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetCharObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBooleanObj
-            =core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetCharObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBooleanPrim
-            =core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBooleanPrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanPrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetByteObj
-            =core_syntax/beantests/setProperty/positiveSetByteObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBooleanPrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetByteObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetByteObj.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetBytePrim
-            =core_syntax/beantests/setProperty/positiveSetBytePrim.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetByteObj.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetBytePrim.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBytePrim.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.positiveGetProps
-            =core_syntax/beantests/getProperty/positiveGetProps.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/setProperty/positiveSetBytePrim.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/positiveGetProps.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/beantests/getProperty/positiveGetProps.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkSession
-            =core_syntax/implicitobjects/checkSession.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/beantests/getProperty/positiveGetProps.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkSession.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkSession.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkConfig
-            =core_syntax/implicitobjects/checkConfig.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkSession.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkConfig.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkConfig.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkException
-            =core_syntax/implicitobjects/checkException.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkConfig.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkException.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkException.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkOut
-            =core_syntax/implicitobjects/checkOut.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkException.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkOut.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkOut.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkPage
-            =core_syntax/implicitobjects/checkPage.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkOut.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPage.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPage.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkPageContext
-            =core_syntax/implicitobjects/checkPageContext.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPage.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkPageContext.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPageContext.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkRequest
-            =core_syntax/implicitobjects/checkRequest.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkPageContext.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkRequest.jsp?Years=2 HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkRequest.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkResponse
-            =core_syntax/implicitobjects/checkResponse.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkRequest.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkResponse.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.implicitobjects.checkApplication
-            =core_syntax/implicitobjects/checkApplication.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkResponse.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/implicitobjects/checkApplication.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/implicitobjects/checkApplication.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.declaration.positiveDeclaration
-            =core_syntax/scripting/declaration/positiveDeclaration.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/implicitobjects/checkApplication.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/positiveDeclaration.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/declaration/positiveDeclaration.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExpr
-            =core_syntax/scripting/expressions/positiveExpr.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/declaration/positiveDeclaration.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExpr.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExpr.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprBean
-            =core_syntax/scripting/expressions/positiveExprBean.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExpr.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprBean.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprBean.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprComment
-            =core_syntax/scripting/expressions/positiveExprComment.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprBean.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprComment.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprComment.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.expressions.positiveExprSyntax
-            =core_syntax/scripting/expressions/positiveExprSyntax.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprComment.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/expressions/positiveExprSyntax.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprSyntax.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptlet
-            =core_syntax/scripting/scriptlet/positiveScriptlet.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/expressions/positiveExprSyntax.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptlet.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletComment
-            =core_syntax/scripting/scriptlet/positiveScriptletComment.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptlet.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletComment.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletMultiline
-            =core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletComment.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletMultiline2
-            =core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.scriptlet.positiveScriptletUseBean
-            =core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletMultiline2.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/scriptlet/positiveScriptletUseBean.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletUseBean.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.forward.positiveDoubleQuotes
-            =core_syntax/directives/forward/positiveDoubleQuotes.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/scripting/scriptlet/positiveScriptletUseBean.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveDoubleQuotes.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/forward/positiveDoubleQuotes.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.forward.positiveForwardRelHtml
-            =core_syntax/directives/forward/positiveForwardRelHtml.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveDoubleQuotes.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/forward/positiveForwardRelHtml.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/forward/positiveForwardRelHtml.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.include.positiveIncludeRel
-            =core_syntax/directives/include/positiveIncludeRel.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/forward/positiveForwardRelHtml.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/include/positiveIncludeRel.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/include/positiveIncludeRel.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.content.positiveContenttype
-            =core_syntax/directives/page/content/positiveContenttype.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/include/positiveIncludeRel.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/content/positiveContenttype.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/content/positiveContenttype.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.errorpage.positiveErrorPage
-            =core_syntax/directives/page/errorpage/positiveErrorPage.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/content/positiveContenttype.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/errorpage/positiveErrorPage.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/errorpage/positiveErrorPage.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.extend.positiveExtends
-            =core_syntax/directives/page/extend/positiveExtends.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/errorpage/positiveErrorPage.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/extend/positiveExtends.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/extend/positiveExtends.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.positiveImport
-            =core_syntax/directives/page/imports/positiveImport.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/extend/positiveExtends.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/positiveImport.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/positiveImport.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.info.positiveInfo
-            =core_syntax/directives/page/info/positiveInfo.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/positiveImport.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/info/positiveInfo.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/info/positiveInfo.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.language.positiveLang
-            =core_syntax/directives/page/language/positiveLang.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/info/positiveInfo.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/language/positiveLang.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/language/positiveLang.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.session.positiveSession
-            =core_syntax/directives/page/session/positiveSession.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/language/positiveLang.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
-         returnCode="HTTP/1.0 200 OK"
-         responseMatch="got true" 
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.session.positiveSessionDefault
-            =core_syntax/directives/page/session/positiveSessionDefault.jsp -->
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
-         returnCode="HTTP/1.0 200 OK"
-         responseMatch="got true" 
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.buffer.positiveBuffAutoflush
-            =core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp -->
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
-         returnCode="HTTP/1.0 200 OK"
-         responseMatch="5999" 
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.buffer.positiveBuffCreate
-            =core_syntax/directives/page/buffer/positiveBuffCreate.jsp -->
-      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+           host="${host}" port="${port}"
            returnCode="HTTP/1.0 200 OK"
-         responseMatch="999" 
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspFactory.positiveGetDefaultFactory
-            =engine/JspFactory/positiveGetDefaultFactory.jsp -->
+           responseMatch="got true" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="got true" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="5999" />
+      <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK"
+           responseMatch="999" />
       <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetDefaultFactory.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspFactory/positiveGetDefaultFactory.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspFactory.positiveSetDefaultFactory
-            =engine/JspFactory/positiveSetDefaultFactory.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetDefaultFactory.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveSetDefaultFactory.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspFactory/positiveSetDefaultFactory.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspFactory.positiveGetPageContext
-            =engine/JspFactory/positiveGetPageContext.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveSetDefaultFactory.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveGetPageContext.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspFactory/positiveGetPageContext.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspFactory.positiveReleasePageContext
-            =engine/JspFactory/positiveReleasePageContext.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveGetPageContext.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspFactory/positiveReleasePageContext.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspFactory/positiveReleasePageContext.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.HttpJspPage.positiveJSPInitJSP
-            =engine/HttpJspPage/positiveJSPInitJSP.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspFactory/positiveReleasePageContext.html" />
       <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitJSP.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitJSP.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.HttpJspPage.positiveJSPInitExtends
-            =engine/HttpJspPage/positiveJSPInitExtends.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitJSP.html" />
       <gtest request="GET /jsp-tests/jsp/engine/HttpJspPage/positiveJSPInitExtends.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitExtends.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveForward
-            =engine/PageContext/positiveForward.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/HttpJspPage/positiveJSPInitExtends.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveForward.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveForward.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeAvbl
-            =engine/PageContext/positiveGetAttributeAvbl.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveForward.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeAvbl.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeAvbl.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeNotAvbl
-            =engine/PageContext/positiveGetAttributeNotAvbl.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeAvbl.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNotAvbl.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNotAvbl.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeNamesInScope
-            =engine/PageContext/positiveGetAttributeNamesInScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNotAvbl.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeNamesInScope.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNamesInScope.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveGetAttributeScope
-            =engine/PageContext/positiveGetAttributeScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeNamesInScope.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveGetAttributeScope.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeScope.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetSession
-            =engine/PageContext/checkGetSession.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveGetAttributeScope.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetSession.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetSession.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetResponse
-            =engine/PageContext/checkGetResponse.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetSession.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetResponse.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetResponse.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetRequest
-            =engine/PageContext/checkGetRequest.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetResponse.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetRequest.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetRequest.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetServletContext
-            =engine/PageContext/checkGetServletContext.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetRequest.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletContext.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetServletContext.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetServletConfig
-            =engine/PageContext/checkGetServletConfig.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletContext.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetServletConfig.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetServletConfig.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.checkGetOut
-            =engine/PageContext/checkGetOut.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetServletConfig.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/checkGetOut.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/checkGetOut.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveInclude
-            =engine/PageContext/positiveInclude.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/checkGetOut.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveInclude.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveInclude.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveRemoveAttribute
-            =engine/PageContext/positiveRemoveAttribute.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveInclude.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveRemoveAttribute.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveRemoveAttribute.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveSetAttribute
-            =engine/PageContext/positiveSetAttribute.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveRemoveAttribute.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttribute.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveSetAttribute.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.PageContext.positiveSetAttributeInScope
-            =engine/PageContext/positiveSetAttributeInScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttribute.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positiveSetAttributeInScope.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positiveSetAttributeInScope.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteCharArray1
-            =engine/JspWriter/write/positiveWriteCharArray1.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positiveSetAttributeInScope.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteCharArray1.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray1.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteCharArray2
-            =engine/JspWriter/write/positiveWriteCharArray2.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray1.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteCharArray2.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray2.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteInt
-            =engine/JspWriter/write/positiveWriteInt.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteCharArray2.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteInt.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteInt.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteStr
-            =engine/JspWriter/write/positiveWriteStr.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteInt.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteStr.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStr.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteStrOffset
-            =engine/JspWriter/write/positiveWriteStrOffset.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStr.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteStrOffset.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStrOffset.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteIntExt
-            =engine/JspWriter/write/positiveWriteIntExt.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteStrOffset.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntExt.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntExt.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteIntMaxValue
-            =engine/JspWriter/write/positiveWriteIntMaxValue.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntExt.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntMaxValue.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntMaxValue.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.write.positiveWriteIntLowBit
-            =engine/JspWriter/write/positiveWriteIntLowBit.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntMaxValue.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/write/positiveWriteIntLowBit.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntLowBit.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintBoolean
-            =engine/JspWriter/print/positivePrintBoolean.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/write/positiveWriteIntLowBit.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintBoolean.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintBoolean.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintChar
-            =engine/JspWriter/print/positivePrintChar.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintBoolean.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintChar.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintChar.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintCharArray
-            =engine/JspWriter/print/positivePrintCharArray.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintChar.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintCharArray.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintCharArray.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDouble
-            =engine/JspWriter/print/positivePrintDouble.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintCharArray.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDouble.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDouble.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloat
-            =engine/JspWriter/print/positivePrintFloat.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDouble.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloat.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloat.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintInt
-            =engine/JspWriter/print/positivePrintInt.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloat.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintInt.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintInt.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLong
-            =engine/JspWriter/print/positivePrintLong.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintInt.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLong.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLong.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintObj
-            =engine/JspWriter/print/positivePrintObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLong.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintObj.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintStr
-            =engine/JspWriter/print/positivePrintStr.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintObj.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintStr.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintStr.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintln
-            =engine/JspWriter/print/positivePrintln.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintStr.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintln.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintln.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnBoolean
-            =engine/JspWriter/print/positivePrintlnBoolean.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintln.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnBoolean.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnBoolean.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnChar
-            =engine/JspWriter/print/positivePrintlnChar.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnBoolean.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnChar.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnChar.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnCharArray
-            =engine/JspWriter/print/positivePrintlnCharArray.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnChar.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnCharArray.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnCharArray.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnDouble
-            =engine/JspWriter/print/positivePrintlnDouble.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnCharArray.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnDouble.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnDouble.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnFloat
-            =engine/JspWriter/print/positivePrintlnFloat.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnDouble.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnFloat.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnFloat.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnInt
-            =engine/JspWriter/print/positivePrintlnInt.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnFloat.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnInt.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnInt.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnLong
-            =engine/JspWriter/print/positivePrintlnLong.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnInt.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnLong.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnLong.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnObj
-            =engine/JspWriter/print/positivePrintlnObj.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnLong.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnObj.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnObj.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintlnStr
-            =engine/JspWriter/print/positivePrintlnStr.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnObj.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintlnStr.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnStr.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDoubleMaxBound
-            =engine/JspWriter/print/positivePrintDoubleMaxBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintlnStr.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDoubleMaxBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMaxBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintDoubleMinBound
-            =engine/JspWriter/print/positivePrintDoubleMinBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMaxBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintDoubleMinBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMinBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloatMaxBound
-            =engine/JspWriter/print/positivePrintFloatMaxBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintDoubleMinBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloatMaxBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMaxBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintFloatMinBound
-            =engine/JspWriter/print/positivePrintFloatMinBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMaxBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintFloatMinBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMinBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintIntMaxBound
-            =engine/JspWriter/print/positivePrintIntMaxBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintFloatMinBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintIntMaxBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMaxBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintIntMinBound
-            =engine/JspWriter/print/positivePrintIntMinBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMaxBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintIntMinBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMinBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLongMaxBound
-            =engine/JspWriter/print/positivePrintLongMaxBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintIntMinBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLongMaxBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMaxBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.print.positivePrintLongMinBound
-            =engine/JspWriter/print/positivePrintLongMinBound.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMaxBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/print/positivePrintLongMinBound.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMinBound.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveClear
-            =engine/JspWriter/misc/positiveClear.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/print/positivePrintLongMinBound.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveClear.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveClear.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveFlush
-            =engine/JspWriter/misc/positiveFlush.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveClear.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveFlush.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize
-            =engine/JspWriter/misc/positiveGetBufferSize.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveFlush.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSize.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSize.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSizeUnBuffered
-            =engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSize.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetRemaining
-            =engine/JspWriter/misc/positiveGetRemaining.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetBufferSizeUnBuffered.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemaining.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetRemainingBufferUnset
-            =engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemaining.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveGetRemainingBufferUnset.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html"
-          />
-      <!--org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveIsAutoFlush
-            =engine/JspWriter/misc/positiveIsAutoFlush.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveGetRemainingBufferUnset.html" />
       <gtest request="GET /jsp-tests/jsp/engine/JspWriter/misc/positiveIsAutoFlush.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/JspWriter/misc/positiveIsAutoFlush.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportLang
-            =core_syntax/directives/page/imports/implicitImportLang.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/JspWriter/misc/positiveIsAutoFlush.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportJsp
-            =core_syntax/directives/page/imports/implicitImportJsp.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportServlet
-            =core_syntax/directives/page/imports/implicitImportServlet.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html"
-          />
-      <!--org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportHttp
-            =core_syntax/directives/page/imports/implicitImportHttp.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeBody
-            =core_syntax/beantests/useBean/negativeBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeBody.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeDupID
-            =core_syntax/beantests/useBean/negativeDupID.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupID.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeDupIDSession1
-            =core_syntax/beantests/useBean/negativeDupIDSession1.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeDupIDSession1.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeInvalidClass
-            =core_syntax/beantests/useBean/negativeInvalidClass.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeInvalidClass.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.useBean.negativeNoBody
-            =core_syntax/beantests/useBean/negativeNoBody.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativeSetPropNotWrite
-            =core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotWrite.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativeSetPropNotProperty
-            =core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativeSetPropNotProperty.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativePropSyntax
-            =core_syntax/beantests/setProperty/negativePropSyntax.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetPropNotRead
-            =core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotRead.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetPropNotProperty
-            =core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetPropNotProperty.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.getProperty.negativeGetProps
-            =core_syntax/beantests/getProperty/negativeGetProps.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/getProperty/negativeGetProps.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.scripting.declaration.negativeDeclarationSyn
-            =core_syntax/scripting/declaration/negativeDeclarationSyn.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/scripting/declaration/negativeDeclarationSyn.jsp HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.taglib.positiveTagLib
-            =core_syntax/directives/taglib/positiveTagLib.jsp -->
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 500" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/taglib/positiveTagLib.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/taglib/positiveTagLib.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportLang
-            =core_syntax/directives/page/imports/implicitImportLang.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/taglib/positiveTagLib.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportLang.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportJsp
-            =core_syntax/directives/page/imports/implicitImportJsp.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportLang.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportJsp.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportServlet
-            =core_syntax/directives/page/imports/implicitImportServlet.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportJsp.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportServlet.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.directives.page.imports.implicitImportHttp
-            =core_syntax/directives/page/imports/implicitImportHttp.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportServlet.html" />
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/imports/implicitImportHttp.jsp HTTP/1.0"
-           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetValues
-            =tagext/TagSupport/positiveGetValues.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/core_syntax/directives/page/imports/implicitImportHttp.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValues.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValues.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetValue
-            =tagext/TagSupport/positiveGetValue.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValues.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetValue.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValue.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagSupport.positiveRemoveValue
-            =tagext/TagSupport/positiveRemoveValue.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetValue.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveRemoveValue.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagSupport/positiveRemoveValue.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagSupport.positiveSetValue
-            =tagext/TagSupport/positiveSetValue.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveRemoveValue.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveSetValue.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagSupport/positiveSetValue.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagSupport.positiveGetParent
-            =tagext/TagSupport/positiveGetParent.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveSetValue.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagSupport/positiveGetParent.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagSupport/positiveGetParent.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetEnclosingWriter
-            =tagext/BodyContent/positiveGetEnclosingWriter.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagSupport/positiveGetParent.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetEnclosingWriter.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyContent/positiveGetEnclosingWriter.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetReader
-            =tagext/BodyContent/positiveGetReader.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetEnclosingWriter.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetReader.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyContent/positiveGetReader.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyContent.positiveGetString
-            =tagext/BodyContent/positiveGetString.jsp -->
-      <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyContent/positiveGetString.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoInitBody
-            =tagext/BodyTagSupport/positiveDoInitBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetReader.html" />
+       <gtest request="GET /jsp-tests/jsp/tagext/BodyContent/positiveGetString.jsp HTTP/1.0"       
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyContent/positiveGetString.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoInitBody.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoInitBody.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoAfterBody
-            =tagext/BodyTagSupport/positiveDoAfterBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoInitBody.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoAfterBody.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoAfterBody.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveDoEndTag
-            =tagext/BodyTagSupport/positiveDoEndTag.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoAfterBody.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveDoEndTag.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoEndTag.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.BodyTagSupport.positiveRelease
-            =tagext/BodyTagSupport/positiveRelease.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveDoEndTag.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/BodyTagSupport/positiveRelease.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveRelease.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagData.positiveTagGetAttribute
-            =tagext/TagData/positiveTagGetAttribute.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/BodyTagSupport/positiveRelease.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttribute.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttribute.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagData.positiveTagSetAttribute
-            =tagext/TagData/positiveTagSetAttribute.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttribute.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagSetAttribute.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagData/positiveTagSetAttribute.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagData.positiveTagGetAttributeString
-            =tagext/TagData/positiveTagGetAttributeString.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagSetAttribute.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagData/positiveTagGetAttributeString.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttributeString.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetAttributesWithNoInfo
-            =tagext/TagInfo/positiveGetAttributesWithNoInfo.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagData/positiveTagGetAttributeString.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetAttributesWithNoInfo.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagInfo/positiveGetAttributesWithNoInfo.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetBodyContent
-            =tagext/TagInfo/positiveGetBodyContent.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetAttributesWithNoInfo.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetBodyContent.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagInfo/positiveGetBodyContent.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetInfoString
-            =tagext/TagInfo/positiveGetInfoString.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetBodyContent.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetInfoString.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagInfo/positiveGetInfoString.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetTagClassName
-            =tagext/TagInfo/positiveGetTagClassName.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetInfoString.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetTagClassName.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagClassName.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.TagInfo.positiveGetTagName
-            =tagext/TagInfo/positiveGetTagName.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagClassName.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/TagInfo/positiveGetTagName.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagName.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.engine.PageContext.positivePopBody
-            =engine/PageContext/positivePopBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/TagInfo/positiveGetTagName.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePopBody.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positivePopBody.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.engine.PageContext.positivePushBody
-            =engine/PageContext/positivePushBody.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePopBody.html" />
       <gtest request="GET /jsp-tests/jsp/engine/PageContext/positivePushBody.jsp HTTP/1.0"
-           goldenFile="${wgdir}/engine/PageContext/positivePushBody.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetVarName
-            =tagext/VariableInfo/positiveGetVarName.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/engine/PageContext/positivePushBody.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetVarName.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetVarName.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetScope
-            =tagext/VariableInfo/positiveGetScope.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetVarName.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetScope.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetScope.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetDeclare
-            =tagext/VariableInfo/positiveGetDeclare.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetScope.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetDeclare.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetDeclare.html"
-          />
-      <!-- org.apache.jcheck.jsp.client.tagext.VariableInfo.positiveGetClassName
-            =tagext/VariableInfo/positiveGetClassName.jsp -->
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetDeclare.html" />
       <gtest request="GET /jsp-tests/jsp/tagext/VariableInfo/positiveGetClassName.jsp HTTP/1.0"
-           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html"
-          />
+           host="${host}" port="${port}"
+           goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html" />
    </target>
 
    <target name="watchdog-Servlet">
       <gtest request="GET /servlet-tests/ResetTest HTTP/1.0"
-             returnCode="HTTP/1.0 200 OK"
-      />
-   </target>
-
-   <target name="startup">
-     <java class="org.apache.tomcat.shell.Startup" args="" />
+           host="${host}" port="${port}"
+           returnCode="HTTP/1.0 200 OK" />
    </target>
 
 
    <target name="jsp-test" depends="watchdog-JSP,watchdog-Servlet">
    </target>
 
-
-   <target name="shutdown">
-     <java class="org.apache.tomcat.shell.Shutdown" args="" />
-   </target>
-
-<!--
-   <target name="main" depends="startup,jsp-test,shutdown" />
--->
    <target name="main" depends="jsp-test" />
 
 

@@ -1,8 +1,8 @@
 <project name="TestRun" default="main" basedir="." init="init">
 
    <target name="init">
-     <property name="test.hostname" value="localhost" />
-     <property name="test.port"     value="8080" />
+     <property name="host" value="localhost" />
+     <property name="port" value="8080" />
    </target>
 
    <target name="startup">
@@ -16,232 +16,234 @@
    <target name="main" depends="servlet-test,jsp-test" />
 
 
-   <target name="jsp-test" >
-<!-- Sample configuration for future moo-based jsp test
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.HelloWorld" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize" />
--->   
-   </target>
 
    <target name="servlet-test">
     <!-- HttpSession -->
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRequestDispatcherTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttribute_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttribute_02Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeNames_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttribute_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttribute_02Test" />
-     <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttribute_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRequestDispatcherTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttribute_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttribute_02Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeNames_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetAttributeNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttribute_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveAttribute_02Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetAttribute_01Test" />
     <!-- HttpServletRequest -->
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaders_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetContextPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaders_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetContextPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddHeader_1Test" />
 " />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddIntHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddIntHeader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddDateHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddDateHeader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetHeader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetIntHeader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetDateHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddIntHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddIntHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddDateHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddDateHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetIntHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetDateHeader_1Test" />
 
 
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_3Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_4Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.IsPermanent_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_3Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_4Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.IsPermanent_1Test" />
         <!-- Cookie" -->
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.CookieCloneTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetCommentTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetVersionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetVersionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetDomainTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.Constructor_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetSecureTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.ConstructorTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetMaxAge_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetCommentTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetSecureTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetNameTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetComment_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetMaxAgeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetValueTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetValueTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetDomainTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetPath_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetDomain_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetAttributeNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetCharacterEncodingTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetCharacterEncoding_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetContentLength_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetContentTypeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRealPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRemoteHostTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetServerNameTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetProtocolTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetInputStreamTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetInputStream_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRemoteAddrTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameter_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetSchemeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterNames_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetServerPortTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterValuesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterValues_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetReaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetReader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.SetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocaleTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocalesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocales_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletContextTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletConfigTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.DestroyTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletInfoTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoDestroyedTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoInit2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServiceTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServletConfigTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServletInfoTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttribute_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.SetAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttributeNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContextTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContext_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMajorVersionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMinorVersionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMimeTypeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMimeType_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetRealPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameterNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameterTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameter_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceAsStreamTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceAsStream_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetRequestDispatcherTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.Log_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.Log_2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletsTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServerInfoTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.RemoveAttributeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetNamedDispatcherTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetNamedDispatcher_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetMaxInactiveIntervalTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetIdTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValue_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValue_02Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNames_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValueTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValue_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValue_02Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.InvalidateTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValueTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_02Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveInterval_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetCreationTimeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveIntervalTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.IsNewTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.IsNew_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParsePostData_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParseQueryStringTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParseQueryString_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.GetRequestURLTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParsePostDataTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetRequestedSessionIdTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetRequestURITest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeader_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeader_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetSession_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetServletPathTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaderNamesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathTranslatedTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathInfoTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathInfo_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeader_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetCookiesTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetCookies_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdFromURLTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeader_2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeader_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetQueryStringTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetQueryString_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdValidTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethodTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethod_POSTTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethod_HEADTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddCookieTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.ContainsHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.ContainsHeader_01Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.EncodeRedirectURLTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetDateHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.EncodeURLTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetIntHeaderTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetStatusTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetStatus_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionContext.GetSessionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionContext.GetIdsTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingEvent.GetNameTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingEvent.GetSessionTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingListener.ValueBoundTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingListener.ValueUnboundTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetCharacterEncodingTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetContentLengthTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetContentTypeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.ResetTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.Reset_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetBufferSizeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.FlushBufferTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetBufferSizeTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetBufferSize_2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetLocaleTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.IsCommittedTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetWriter_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.SingleThreadModel.SingleModelTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor3Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor4Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.GetRootCauseTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletException.GetRootCause_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSecondsTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.Constructor1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.Constructor2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.IsPermanentTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetServletTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletConfig.GetServletContextTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.javax_servlet.ServletConfig.GetServletNameTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.CookieCloneTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetCommentTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetVersionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetVersionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetDomainTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.Constructor_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetSecureTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.ConstructorTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetMaxAge_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetCommentTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetSecureTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetNameTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetComment_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetMaxAgeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetValueTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.SetValueTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetDomainTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetPath_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.Cookie.GetDomain_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetAttributeNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetCharacterEncodingTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetCharacterEncoding_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetContentLength_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetContentTypeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRealPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRemoteHostTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetServerNameTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetProtocolTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetInputStreamTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetInputStream_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetRemoteAddrTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameter_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetSchemeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterNames_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetServerPortTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterValuesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetParameterValues_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetReaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetReader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.SetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocaleTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocalesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletRequest.GetLocales_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletContextTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletConfigTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.DestroyTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.GenericServlet.GetServletInfoTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoDestroyedTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoInit2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServiceTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServletConfigTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.Servlet.DoServletInfoTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttribute_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.SetAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetAttributeNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContextTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetContext_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMajorVersionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMinorVersionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMimeTypeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetMimeType_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetRealPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameterNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameterTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetInitParameter_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceAsStreamTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetResourceAsStream_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetRequestDispatcherTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.Log_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.Log_2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletsTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServerInfoTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetServletTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.RemoveAttributeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetNamedDispatcherTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletContext.GetNamedDispatcher_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.SetMaxInactiveIntervalTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetIdTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValue_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValue_02Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNames_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValueTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValue_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.RemoveValue_02Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.InvalidateTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValueTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.PutValue_02Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveInterval_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetValueNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetCreationTimeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.GetMaxInactiveIntervalTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.IsNewTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSession.IsNew_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParsePostData_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParseQueryStringTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParseQueryString_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.GetRequestURLTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpUtils.ParsePostDataTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetRequestedSessionIdTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetRequestURITest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeader_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeader_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetSession_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetServletPathTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetHeaderNamesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathTranslatedTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathInfoTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetPathInfo_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeader_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetCookiesTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetCookies_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdFromURLTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetIntHeader_2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetDateHeader_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetQueryStringTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetQueryString_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdValidTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethodTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethod_POSTTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletRequest.GetMethod_HEADTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.AddCookieTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.ContainsHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.ContainsHeader_01Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.EncodeRedirectURLTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetDateHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.EncodeURLTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetIntHeaderTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetStatusTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpServletResponse.SetStatus_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionContext.GetSessionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionContext.GetIdsTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingEvent.GetNameTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingEvent.GetSessionTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingListener.ValueBoundTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet_http.HttpSessionBindingListener.ValueUnboundTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetCharacterEncodingTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetContentLengthTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetContentTypeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.ResetTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.Reset_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetBufferSizeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.FlushBufferTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetBufferSizeTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetBufferSize_2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.SetLocaleTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.IsCommittedTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletResponse.GetWriter_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.SingleThreadModel.SingleModelTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor3Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.Constructor4Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.GetRootCauseTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletException.GetRootCause_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSecondsTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetUnavailableSeconds_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.Constructor1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.Constructor2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.IsPermanentTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.UnavailableException.GetServletTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletConfig.GetServletContextTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.javax_servlet.ServletConfig.GetServletNameTest" />
 " />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.ErrorHandlingTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.ErrorHandling_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.SessionTimeOutTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPatternTest" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_1Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_2Test" />
-    <java classname="org.apache.tools.moo.RunTest" args="org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_3Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.ErrorHandlingTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.ErrorHandling_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.SessionTimeOutTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.UrlPatternTest" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_1Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_2Test" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.servlet.client.deployment_descriptor.UrlPattern_3Test" />
 
   </target>
+
+
+  <target name="jsp-test" >
+<!-- Sample configuration for future moo-based jsp test
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.HelloWorld" />
+    <java classname="org.apache.tools.moo.RunTest" args="-h ${host} -p ${port} org.apache.jcheck.jsp.client.engine.JspWriter.misc.positiveGetBufferSize" />
+-->   
+   </target>
 
 </project>
 
