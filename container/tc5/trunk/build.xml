@@ -25,7 +25,7 @@
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jasper.project"        value="jakarta-tomcat-jasper" />
   <property name="ant.jar"               value="${ant.home}/lib/ant.jar"/>
-  <property name="ant-launcher.jar       value="${ant.home}/lib/ant-launcher.jar"/>
+  <property name="ant-launcher.jar"      value="${ant.home}/lib/ant-launcher.jar"/>
   <property name="cvstag"                value="" />
   <property name="cvs.base"
            value="${basedir}/.."/>
