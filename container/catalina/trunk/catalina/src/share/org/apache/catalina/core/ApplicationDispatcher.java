@@ -359,7 +359,18 @@ final class ApplicationDispatcher
             if ( log.isDebugEnabled() )
                 log.debug(" Named Dispatcher Forward");
             
+            ApplicationHttpRequest wrequest =
+                (ApplicationHttpRequest) wrapRequest();
+            wrequest.setRequestURI(hrequest.getRequestURI());
+            wrequest.setContextPath(hrequest.getContextPath());
+            wrequest.setServletPath(hrequest.getServletPath());
+            wrequest.setPathInfo(hrequest.getPathInfo());
+            wrequest.setQueryString(hrequest.getQueryString());
+
             processRequest(request,response);
+
+            wrequest.recycle();
+            unwrapRequest();
 
         }
 
@@ -555,16 +566,6 @@ final class ApplicationDispatcher
             ApplicationHttpRequest wrequest =
                 (ApplicationHttpRequest) wrapRequest();
             String contextPath = context.getPath();
-            /*
-            StringBuffer sb = new StringBuffer();
-            if (contextPath != null)
-                sb.append(contextPath);
-            if (servletPath != null)
-                sb.append(servletPath);
-            if (pathInfo != null)
-                sb.append(pathInfo);
-            if (sb.length() > 0)
-            */
             if (requestURI != null)
                 wrequest.setAttribute(Globals.INCLUDE_REQUEST_URI_ATTR,
                                       requestURI);
