@@ -86,6 +86,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     Hashtable jarEntries;
 
     JspCompilationContext ctxt;
+    ErrorDispatcher err;
 
     private final void print(String name, String value, PrintWriter w) {
         if (value != null) {
@@ -144,6 +145,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         super(prefix, uriIn);
 
 	this.ctxt = ctxt;
+	this.err = err;
         ZipInputStream zin;
         InputStream in = null;
         URL url = null;
@@ -375,6 +377,14 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                                   Logger.WARNING
                                   );
             }
+
+        // JSP.C1: It is a (translation time) error for an action that
+        // has one or more variable subelements to have a TagExtraInfo
+        // class that returns a non-null object.
+
+        if (tei != null && variableVector.size() != 0) {
+            err.jspError("jsp.warning.teiclass.is.nonnull", teiclass);
+        }
 
         TagInfo taginfo = new TagInfo(name, tagclass, bodycontent,
                                       info, this, 
