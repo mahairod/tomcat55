@@ -146,14 +146,15 @@ The default is <code>false</code>.
 <subsection name="MySQL DBCP Example">
 
 <h3>0. Introduction</h3>
-<p>Versions of MySQL and the mm.mysql JDBC driver when have been
-reported to work:
+<p>Versions of <a href="http://www.mysql.com/products/mysql/index.html">MySQL</a> and JDBC drivers that have been reported to work:
 <ul>
-<li>MySQL 3.23.47, MySQL 3.23.47 using InnoDB, MySQL 4.0.1alpha</li>
-<li>mm.mysql 2.0.14 (JDBC Driver)</li>
+<li>MySQL 3.23.47, MySQL 3.23.47 using InnoDB,, MySQL 3.23.58,  MySQL 4.0.1alpha</li>
+<li><a href="http://www.mysql.com/products/connector-j">Connector/J</a> 3.0.11-stable (the official JDBC Driver)</li>
+<li><a href="http://mmmysql.sourceforge.net">mm.mysql</a> 2.0.14 (an old 3rd party JDBC Driver)</li>
 </ul>
-Please let us know if you have tested the new MySQL mm.mysql 3.0 driver.
 </p>
+
+<p>Before you proceed, don't forget to copy the JDBC Driver's jar into <code>$CATALINA_HOME/common/lib</code>.</p>
 
 <h3>1. MySQL configuration</h3>
 <p>
@@ -254,12 +255,20 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
      &lt;value&gt;javadude&lt;/value&gt;
     &lt;/parameter&gt;
 
-    &lt;!-- Class name for mm.mysql JDBC driver --&gt;
+    &lt;!-- Class name for the old mm.mysql JDBC driver - uncomment this entry and comment next
+         if you want to use this driver - we recommend using Connector/J though
     &lt;parameter&gt;
        &lt;name&gt;driverClassName&lt;/name&gt;
        &lt;value&gt;org.gjt.mm.mysql.Driver&lt;/value&gt;
     &lt;/parameter&gt;
-
+     --&gt;
+    
+    &lt;!-- Class name for the official MySQL Connector/J driver --&gt;
+    &lt;parameter&gt;
+       &lt;name&gt;driverClassName&lt;/name&gt;
+       &lt;value&gt;com.mysql.jdbc.Driver&lt;/value&gt;
+    &lt;/parameter&gt;
+    
     &lt;!-- The JDBC connection url for connecting to your MySQL dB.
          The autoReconnect=true argument to the url makes sure that the
          mm.mysql JDBC Driver will automatically reconnect if mysqld closed the
@@ -278,10 +287,11 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
 
 <p>Now create a <code>WEB-INF/web.xml</code> for this test application.
 <source>
-&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
-    &lt;!DOCTYPE web-app PUBLIC
-    "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd"&gt;
+&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4"&gt;
 &lt;web-app&gt;
   &lt;description&gt;MySQL Test App&lt;/description&gt;
   &lt;resource-ref&gt;
@@ -295,78 +305,35 @@ context and the <code>&lt;/Host&gt;</code> tag closing the localhost definition.
 </p>
 
 <h3>4. Test code</h3>
-<p>Now create a simple test.jsp for use later.
+<p>Now create a simple <code>test.jsp</code> page for use later.
 <source>
+&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %&gt;
+&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %&gt;
+
+&lt;sql:query var="rs" dataSource="jdbc/TestDB"&gt;
+select id, foo, bar from testdata
+&lt;/sql:query&gt;
+
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;DB Test&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
 
-  &lt;%
-    foo.DBTest tst = new foo.DBTest();
-    tst.init();
-  %&gt;
-
   &lt;h2&gt;Results&lt;/h2&gt;
-    Foo &lt;%= tst.getFoo() %&gt;&lt;br/&gt;
-    Bar &lt;%= tst.getBar() %&gt;
+  
+&lt;c:forEach var="row" items="${rs.rows}"&gt;
+    Foo ${row.foo}&lt;br/&gt;
+    Bar ${row.bar}&lt;br/&gt;
+&lt;/c:forEach&gt;
 
   &lt;/body&gt;
 &lt;/html&gt;
 </source>
 </p>
 
-<p>And create a Java class to actually use your new Datasource and connection
-pool. Note: this code isn't anywhere near production ready - it's only
-supposed to be used as a simple test :-)
-<source>
-package foo;
+<p>That JSP page makes use of <a href="http://java.sun.com/products/jsp/jstl">JSTL</a>'s SQL and Core taglibs. You can get it from Sun's <a href="http://java.sun.com/webservices/downloads/webservicespack.html">Java Web Services Developer Pack</a> or <a href="http://jakarta.apache.org/taglibs/doc/standard-doc/intro.html">Jakarta Taglib Standard 1.1</a> project - just make sure you get a 1.1.x release. Once you have JSTL, copy <code>jstl.jar</code> and <code>standard.jar</code> to your web app's <code>WEB-INF/lib</code> directory.
 
-import javax.naming.*;
-import javax.sql.*;
-import java.sql.*;
-
-public class DBTest {
-
-  String foo = "Not Connected";
-  int bar = -1;
-    
-  public void init() {
-    try{
-      Context ctx = new InitialContext();
-      if(ctx == null ) 
-          throw new Exception("Boom - No Context");
-
-      DataSource ds = 
-            (DataSource)ctx.lookup(
-               "java:comp/env/jdbc/TestDB");
-
-      if (ds != null) {
-        Connection conn = ds.getConnection();
-              
-        if(conn != null)  {
-            foo = "Got Connection "+conn.toString();
-            Statement stmt = conn.createStatement();
-            ResultSet rst = 
-                stmt.executeQuery(
-                  "select id, foo, bar from testdata");
-            if(rst.next()) {
-               foo=rst.getString(2);
-               bar=rst.getInt(3);
-            }
-            conn.close();
-        }
-      }
-    }catch(Exception e) {
-      e.printStackTrace();
-    }
- }
-
- public String getFoo() { return foo; }
- public int getBar() { return bar;}
-}
-</source>
 </p>
 
 <p>Finally deploy your web app into <code>$CATALINA_HOME/webapps</code> either
