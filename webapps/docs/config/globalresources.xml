@@ -8,6 +8,7 @@
 
   <properties>
     <author email="remm@apache.org">Remy Maucherat</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>The GlobalNamingResources Component</title>
   </properties>
 
@@ -16,9 +17,19 @@
 
 <section name="Introduction">
 
-  <p>The <strong>GlobalNamingResources</strong> element represents the global
-  JNDI resources which are defined 
-  for the <a href="server.html">Server</a>.</p>
+  <p>The <strong>GlobalNamingResources</strong> element defines the global
+  JNDI resources for the <a href="server.html">Server</a>.</p>
+
+  <p>These resources are listed in the server's global JNDI resource context.
+   This context is distinct from the per-web-application JNDI contexts 
+  described in
+  the <a href="../jndi-resources-howto.html">JNDI Resources HOW-TO</a>.
+  With the exception of <code><strong>&lt;Environment&gt;</strong></code> 
+  values,
+  the resources defined in this element are <strong>not</strong> visible in
+  the per-web-application contexts unless you explicitly link them with
+  <a href="context.html#Resource Links">&lt;ResourceLink&gt;</a> elements.
+  </p>
 
 </section>
 
@@ -38,9 +49,9 @@
 
   <subsection name="Environment Entries">
 
-    <p>You can configure named values that will be made visible to
-    web applications as environment entry resources, by nesting
-    <code>&lt;Environment&gt;</code> entries inside this element.  For
+  <p>You can configure named values that will be made visible to all
+    web applications as environment entry resources by nesting
+    <code>&lt;Environment&gt;</code> entries inside this element. For
     example, you can create an environment entry like this:</p>
 <source>
 &lt;GlobalNamingResources ...&gt;
@@ -109,10 +120,16 @@
 
   <subsection name="Resource Definitions">
 
-    <p>You can declare the characteristics of the resource
+    <p>You can declare the characteristics of resources
     to be returned for JNDI lookups of <code>&lt;resource-ref&gt;</code> and
     <code>&lt;resource-env-ref&gt;</code> elements in the web application
-    deployment descriptor.  You <strong>MUST</strong> also define
+    deployment descriptor by defining them in this element and then linking 
+    them with <a href="context.html#Resource Links">&lt;ResourceLink&gt;</a> 
+    elements
+    in the <code><strong>&lt;Context&gt;</strong></code>
+    or <code><strong>&lt;DefaultContext&gt;</strong></code> elements.  
+
+    You <strong>MUST</strong> also define
     <a href="#Resource Parameters">Resource Parameters</a>
     for the same resource name, to configure
     the object factory to be used (if not known to Tomcat already), and
@@ -186,6 +203,29 @@
 
   </subsection>
 
+  <subsection name="Resource Links">
+    <p>Use <a href="context.html#Resource Links">&lt;ResourceLink&gt;</a> 
+    elements to link resources from the global context into 
+    per-web-application contexts. Here is an example of making a custom 
+    factory available to all applications in the server, based on the example 
+    definition in the 
+    <a href="../jndi-resource-howto.html#Generic JavaBean Resources">
+    JNDI Resource HOW-TO</a>:
+    </p>
+
+    <source>
+      <![CDATA[
+        <DefaultContext>
+          <ResourceLink 
+            name="bean/MyBeanFactory"
+            global="bean/MyBeanFactory"
+            type="com.mycompany.MyBean"
+          />
+        </DefaultContext>
+      ]]>
+    </source>
+
+   </subsection>
 
   <subsection name="Resource Parameters">
 
