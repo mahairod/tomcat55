@@ -65,14 +65,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -124,8 +127,17 @@ import org.apache.catalina.util.StringManager;
  *   <code>%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i"</code>
  * </ul>
  *
- * <p><b>FIXME</b> - Improve the parsing so that things like
- * <code>%{xxx}i</code> can be implemented.</p>
+ * <p>
+ * There is also support to write information from the cookie, incoming
+ * header, the Session or something else in the ServletRequest.<br>
+ * It is modeled after the apache syntax:
+ * <ul>
+ * <li><code>%{xxx}i</code> for incoming headers
+ * <li><code>%{xxx}c</code> for a specific cookie
+ * <li><code>%{xxx}r</code> xxx is an attribute in the ServletRequest
+ * <li><code>%{xxx}s</code> xxx is an attribute in the HttpSession
+ * </ul>
+ * </p>
  *
  * @author Craig R. McClanahan
  * @author Jason Brittain
@@ -214,6 +226,12 @@ public final class AccessLogValve
      * The prefix that is added to log file filenames.
      */
     private String prefix = "access_log.";
+
+
+    /**
+     * Should we rotate our log file? Default is true (like old behavior)
+     */
+    private boolean rotatable = true;
 
 
     /**
@@ -400,6 +418,28 @@ public final class AccessLogValve
         this.prefix = prefix;
 
     }
+    
+    
+    /**
+     * Should we rotate the logs
+     */
+    public boolean isRotatable() {
+ 
+        return rotatable;
+ 
+    }
+ 
+ 
+    /**
+     * Set the value is we should we rotate the logs
+     *
+     * @param rotatable true is we should rotate.
+     */
+    public void setRotatable(boolean rotatable) {
+ 
+        this.rotatable = rotatable;
+ 
+    }
 
 
     /**
@@ -557,7 +597,31 @@ public final class AccessLogValve
             for (int i = 0; i < pattern.length(); i++) {
                 char ch = pattern.charAt(i);
                 if (replace) {
-                    result.append(replace(ch, date, request, response));
+                    /* For code that processes {, the behavior will be ... if I
+                     * do not enounter a closing } - then I ignore the {
+                     */
+                    if ('{' == ch){
+                        StringBuffer name = new StringBuffer();
+                        int j = i + 1;
+                        for(;j < pattern.length() && '}' != pattern.charAt(j); j++) {
+                            name.append(pattern.charAt(j));
+                        }
+                        if (j+1 < pattern.length()) {
+                            /* the +1 was to account for } which we increment now */
+                            j++;
+                            result.append(replace(name.toString(),
+                                                pattern.charAt(j),
+                                                request,
+                                                response));
+                            i=j; /*Since we walked more than one character*/
+                        } else {
+                            //D'oh - end of string - pretend we never did this
+                            //and do processing the "old way"
+                            result.append(replace(ch, date, request, response));
+                        }
+                    } else {
+                        result.append(replace(ch, date, request, response));
+                    }
                     replace = false;
                 } else if (ch == '%') {
                     replace = true;
@@ -599,28 +663,30 @@ public final class AccessLogValve
      */
     public void log(String message, Date date) {
 
-        // Only do a logfile switch check once a second, max.
-        long systime = System.currentTimeMillis();
-        if ((systime - rotationLastChecked) > 1000) {
+        if (rotatable){
+            // Only do a logfile switch check once a second, max.
+            long systime = System.currentTimeMillis();
+            if ((systime - rotationLastChecked) > 1000) {
 
-            // We need a new currentDate
-            currentDate = new Date(systime);
-            rotationLastChecked = systime;
+                // We need a new currentDate
+                currentDate = new Date(systime);
+                rotationLastChecked = systime;
 
-            // Check for a change of date
-            String tsDate = dateFormatter.format(currentDate);
+                // Check for a change of date
+                String tsDate = dateFormatter.format(currentDate);
 
-            // If the date has changed, switch log files
-            if (!dateStamp.equals(tsDate)) {
-                synchronized (this) {
-                    if (!dateStamp.equals(tsDate)) {
-                        close();
-                        dateStamp = tsDate;
-                        open();
+                // If the date has changed, switch log files
+                if (!dateStamp.equals(tsDate)) {
+                    synchronized (this) {
+                        if (!dateStamp.equals(tsDate)) {
+                            close();
+                            dateStamp = tsDate;
+                            open();
+                        }                        
                     }
                 }
-            }
 
+            }
         }
 
         // Log this message
@@ -663,8 +729,15 @@ public final class AccessLogValve
 
         // Open the current log file
         try {
-            String pathname = dir.getAbsolutePath() + File.separator +
-                prefix + dateStamp + suffix;
+            String pathname;
+            // If no rotate - no need for dateStamp in fileName
+            if (rotatable){
+                pathname = dir.getAbsolutePath() + File.separator +
+                            prefix + dateStamp + suffix;
+            } else {
+                pathname = dir.getAbsolutePath() + File.separator +
+                            prefix + suffix;
+            }    
             writer = new PrintWriter(new FileWriter(pathname, true), true);
         } catch (IOException e) {
             writer = null;
@@ -699,7 +772,11 @@ public final class AccessLogValve
         if (pattern == 'a') {
             value = req.getRemoteAddr();
         } else if (pattern == 'A') {
-            value = "127.0.0.1";        // FIXME
+            try {
+                value = InetAddress.getLocalHost().getHostAddress();
+            } catch(Throwable e){
+                value = "127.0.0.1";
+            }                        
         } else if (pattern == 'b') {
             int length = response.getContentCount();
             if (length <= 0)
@@ -792,6 +869,77 @@ public final class AccessLogValve
         else
             return (value);
 
+    }
+
+
+    /**
+     * Return the replacement text for the specified "header/parameter".
+     *
+     * @param header The header/parameter to get
+     * @param type Where to get it from i=input,c=cookie,r=ServletRequest,s=Session
+     * @param request Request being processed
+     * @param response Response being processed
+     */
+    private String replace(String header, char type, Request request,
+                           Response response) {
+
+        Object value = null;
+
+        ServletRequest req = request.getRequest();
+        HttpServletRequest hreq = null;
+        if (req instanceof HttpServletRequest)
+            hreq = (HttpServletRequest) req;
+
+        switch (type) {
+            case 'i':
+                if (null != hreq)
+                    value = hreq.getHeader(header);
+                else
+                    value= "??";
+                break;
+/*
+            // Someone please make me work
+            case 'o':
+                break;
+*/
+            case 'c':
+                 Cookie[] c = hreq.getCookies();
+                 for (int i=0; c != null && i < c.length; i++){
+                     if (header.equals(c[i].getName())){
+                         value = c[i].getValue();
+                         break;
+                     }
+                 }
+                break;
+            case 'r':
+                if (null != hreq)
+                    value = hreq.getAttribute(header);
+                else
+                    value= "??";
+                break;
+            case 's':
+                if (null != hreq) {
+                    HttpSession sess = hreq.getSession(false);
+                    if (null != sess)
+                        value = sess.getAttribute(header);
+                }
+               break;
+            default:
+                value = "???";
+        }
+
+        /* try catch in case toString() barfs */
+        try {
+            if (value!=null)
+                if (value instanceof String)
+                    return (String)value;
+                else
+                    return value.toString();
+            else
+               return "-";
+        } catch(Throwable e) {
+            return "-";
+        }
     }
 
 
