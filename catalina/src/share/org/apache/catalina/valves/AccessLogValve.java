@@ -1022,17 +1022,21 @@ public final class AccessLogValve
      * less than 1 second since a new Date was created, this method
      * simply gives out the same Date again so that the system doesn't
      * spend time creating Date objects unnecessarily.
+     *
+     * @return Date
      */
     private Date getDate() {
-
-        // Only create a new Date once per second, max.
-        long systime = System.currentTimeMillis();
-        if ((systime - currentDate.getTime()) > 1000) {
-            currentDate = new Date(systime);
-        }
+        if(currentDate == null) {
+	    currentDate = new Date();
+        } else {
+          // Only create a new Date once per second, max.
+          long systime = System.currentTimeMillis();
+          if ((systime - currentDate.getTime()) > 1000) {
+              currentDate = new Date(systime);
+          }
+	}
 
         return currentDate;
-
     }
 
 
@@ -1160,6 +1164,4 @@ public final class AccessLogValve
         close();
 
     }
-
-
 }
