@@ -249,6 +249,10 @@ public class Compiler {
         String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
 
+        StringBuffer info=new StringBuffer();
+        info.append("Compile: javaFileName=" + javaFileName + "\n" );
+        info.append("    classpath=" + classpath + "\n" );
+        
         String sep = System.getProperty("path.separator");
 
         StringBuffer errorReport = new StringBuffer();
@@ -269,11 +273,14 @@ public class Compiler {
             String pathElement = tokenizer.nextToken();
             File repository = new File(pathElement);
             path.setLocation(repository);
+            info.append("     cp=" + repository + "\n");
         }
 
         // Initializing sourcepath
         Path srcPath = new Path(project);
         srcPath.setLocation(options.getScratchDir());
+
+        info.append("     work dir=" + options.getScratchDir() + "\n");
 
         // Configure the compiler object
         javac.setEncoding(javaEncoding);
@@ -282,21 +289,28 @@ public class Compiler {
         javac.setSrcdir(srcPath);
         javac.setOptimize(! ctxt.getOptions().getClassDebugInfo() );
 
+        info.append("    srcDir=" + srcPath + "\n" );
+
         // Set the Java compiler to use
         if (options.getCompiler() != null) {
             javac.setCompiler(options.getCompiler());
+            info.append("    compiler=" + options.getCompiler() + "\n");
         }
 
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();
         includes.setName(ctxt.getJspPath());
+        info.append("    include="+ ctxt.getJspPath() + "\n" );
 
+        BuildException error=null;
         try {
             synchronized(javacLock) {
                 javac.execute();
             }
         } catch (BuildException e) {
             success = false;
+            error=e;
+            info.append("Exception compiling "  + e.toString() + "\n");
         }
 
         errorReport.append(logger.getReport());
@@ -316,8 +330,16 @@ public class Compiler {
         if (!success) {
             Constants.jasperLog.log( "Error compiling file: " + javaFileName + " " + errorReport,
                                      Logger.ERROR);
+            Constants.jasperLog.log( "Info: " + info.toString(),
+                                     Logger.ERROR);
+            if( error != null ) {
+                Constants.jasperLog.log( "Exception: ", error );
+                error.printStackTrace();
+            }
+            
             errDispatcher.javacError(errorReport.toString(), javaFileName, pageNodes);
         }
+
     }
 
     /** 
