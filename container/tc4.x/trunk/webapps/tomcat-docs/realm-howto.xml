@@ -399,7 +399,7 @@ attributes are supported by this implementation:</p>
   <attribute name="className" required="true">
     <p>The fully qualified Java class name of this Realm implementation.
     You <strong>MUST</strong> specify the value
-    "<code>org.apache.catalina.realm.JDBCRealm</code>" here.</p>
+    "<code>org.apache.catalina.realm.JNDIRealm</code>" here.</p>
   </attribute>
 
   <attribute name="connectionName" required="true">
