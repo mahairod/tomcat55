@@ -747,7 +747,8 @@ public class Parser {
 	// There are 3 body content types: empty, jsp, or tag-dependent.
 	if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
 	    if (!reader.matchesETag(tagName)) {
-		err.jspError(start, "jasper.error.emptybodycontent.nonempty");
+		err.jspError(start, "jasper.error.emptybodycontent.nonempty",
+			     tagName);
 	    }
 	} else if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT)) {
 	    // parse the body as text
