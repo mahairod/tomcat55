@@ -71,32 +71,36 @@ import java.security.Principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.management.MBeanRegistration;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Realm;
+
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.SecurityConstraint;
+
 import org.apache.catalina.util.HexUtils;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.MD5Encoder;
-import org.apache.catalina.util.RequestUtil;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Simple implementation of <b>Realm</b> that reads an XML file to configure
@@ -108,8 +112,8 @@ import org.apache.catalina.util.RequestUtil;
  */
 
 public abstract class RealmBase
-    implements Lifecycle, Realm {
-
+    implements Lifecycle, Realm, MBeanRegistration {
+    private static Log log = LogFactory.getLog(RealmBase.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -731,7 +735,6 @@ public abstract class RealmBase
 
     }
 
-
     /**
      * Prepare for the beginning of active use of the public methods of this
      * component.  This method should be called before any of the public
@@ -744,9 +747,10 @@ public abstract class RealmBase
     public void start() throws LifecycleException {
 
         // Validate and update our current component state
-        if (started)
-            throw new LifecycleException
-                (sm.getString("realmBase.alreadyStarted"));
+        if (started) {
+            log.info(sm.getString("realmBase.alreadyStarted"));
+            return;
+        }
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
@@ -776,9 +780,10 @@ public abstract class RealmBase
         throws LifecycleException {
 
         // Validate and update our current component state
-        if (!started)
-            throw new LifecycleException
-                (sm.getString("realmBase.notStarted"));
+        if (!started) {
+            log.info(sm.getString("realmBase.notStarted"));
+            return;
+        }
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
 
@@ -961,6 +966,75 @@ public abstract class RealmBase
         }
 
     }
-    
+
+    // -------------------- JMX and Registration  --------------------
+    protected String type;
+    protected String domain;
+    protected String host;
+    protected String path;
+    protected ObjectName oname;
+    protected MBeanServer mserver;
+
+    public ObjectName getObjectName() {
+        return oname;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public ObjectName preRegister(MBeanServer server,
+                                  ObjectName name) throws Exception {
+        oname=name;
+        mserver=server;
+        domain=name.getDomain();
+
+        type=name.getKeyProperty("type");
+        host=name.getKeyProperty("host");
+        path=name.getKeyProperty("path");
+
+        return name;
+    }
+
+    public void postRegister(Boolean registrationDone) {
+    }
+
+    public void preDeregister() throws Exception {
+    }
+
+    public void postDeregister() {
+    }
+
+    public void init() throws Exception {
+        if( container!= null ) {
+            return;
+        }
+
+        // Register with the parent
+        Set names=null;
+        if( host == null ) {
+            // global
+            names=mserver.queryNames(new ObjectName(domain +":type=Engine,*"), null);
+        } else if( path==null ) {
+            names=mserver.queryNames(new ObjectName(domain +
+                    ":type=Host,host=" + host +",*"), null);
+        } else {
+            names=mserver.queryNames(new ObjectName(domain +":j2eeType=WebModule,name=//" +
+                    host + "/" + path + ",*"), null);
+        }
+        if( names.size() == 0 ) {
+            log.error("Can't register, no object found " + oname );
+            return;
+        }
+        ObjectName parent=(ObjectName)names.iterator().next();
+        log.info("Register with " + parent);
+        mserver.invoke(parent, "setRealm", new Object[] {this},
+                new String[] {"org.apache.catalina.Realm"});
+    }
+
 
 }
