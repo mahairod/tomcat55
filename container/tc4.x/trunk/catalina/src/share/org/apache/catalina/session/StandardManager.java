@@ -583,6 +583,13 @@ public class StandardManager
         if (debug >= 1)
             log("Force random number initialization completed");
 
+        // Load unloaded sessions, if any
+        try {
+            load();
+        } catch (Throwable t) {
+            log(sm.getString("standardManager.managerLoad"), t);
+        }
+        
         // Start the background reaper thread
         threadStart();
 
@@ -613,6 +620,13 @@ public class StandardManager
         // Stop the background reaper thread
         threadStop();
 
+        // Write out sessions
+        try {
+            unload();
+        } catch (IOException e) {
+            log(sm.getString("standardManager.managerUnload"), e);
+        }
+        
         // Expire all active sessions
         Session sessions[] = findSessions();
         for (int i = 0; i < sessions.length; i++) {
@@ -679,8 +693,8 @@ public class StandardManager
                     file = new File(tempdir, pathname);
             }
         }
-        if (!file.isAbsolute())
-            return (null);
+//        if (!file.isAbsolute())
+//            return (null);
         return (file);
 
     }
