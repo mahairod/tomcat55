@@ -71,6 +71,10 @@ Bug No.  Description
 4948	 Fix DependClassLoader to be a Java2 ClassLoader when running under
 	 a Java2 JVM.  
 
+5005     If requested JSP file doesn't exist, avoid creating work directories
+         and version file.
+
+
 Configuration:
 
 Bug No.  Description
