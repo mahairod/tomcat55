@@ -680,9 +680,8 @@ public final class ExtendedAccessLogValve
             }
 
             /* Make sure date is correct */
-            currentDate = new Date();
-            fileDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-            dateStamp = dateFormatter.format(currentDate);
+            currentDate = new Date(System.currentTimeMillis());
+            dateStamp = fileDateFormatter.format(currentDate);
 
             open();
             return true;
@@ -953,8 +952,7 @@ public final class ExtendedAccessLogValve
 
                     /* Make sure date is correct */
                     currentDate = new Date(System.currentTimeMillis());
-                    fileDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-                    dateStamp = dateFormatter.format(currentDate);
+                    dateStamp = fileDateFormatter.format(currentDate);
 
                     open();
                 }
