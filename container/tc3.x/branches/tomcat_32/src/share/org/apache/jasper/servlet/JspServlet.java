@@ -456,14 +456,16 @@ public class JspServlet extends HttpServlet {
                                                      req, res);
 	boolean outDated = false; 
 
-        Compiler compiler = ctxt.createCompiler();
+	Compiler compiler = null;
+	synchronized(this){
+		compiler = ctxt.createCompiler();
+	}
         
         try {
-            outDated = compiler.compile();
-            if ( (jsw.servletClass == null) || (compiler.isOutDated()) ) {
+            outDated = compiler.isOutDated();
+            if ( (jsw.servletClass == null) || outDated ) {
                 synchronized ( this ) {
-                    if ((jsw.servletClass == null) ||
-			(compiler.isOutDated() ))  {
+                    if ((jsw.servletClass == null) || (compiler.isOutDated() ))  {
                         outDated = compiler.compile();
                     }
 		}
