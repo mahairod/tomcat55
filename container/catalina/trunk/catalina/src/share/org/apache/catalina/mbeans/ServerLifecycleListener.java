@@ -247,7 +247,10 @@ public class ServerLifecycleListener
             // undocumented in MX4J, and reports exist in the MX4J bug DB that
             // this doesn't work
 
-        } else if (Context.RELOAD_EVENT.equals(event.getType())) {
+        }
+
+        if ((Context.RELOAD_EVENT.equals(event.getType()))
+            || (Lifecycle.START_EVENT.equals(event.getType()))) {
 
             // Give context a new handle to the MBean server if the
             // context has been reloaded since reloading causes the
