@@ -113,7 +113,7 @@
   <target name="javadoc" depends="build-main">
     <deltree dir="${catalina.build}/javadoc"/>
     <mkdir dir="${catalina.build}/javadoc"/>
-    <javadoc packagenames="org.apache.catalina.*"
+    <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
              classpath="${parser.jar}:${jaxp.jar}:${jcert.jar}:${jsse.jar}:${jnet.jar}:${regexp.jar}:${jmxri.jar}:${servlet.jar}:${catalina.build}/classes"
                sourcepath="src/share"
                   destdir="${catalina.build}/javadoc"
