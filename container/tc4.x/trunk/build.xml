@@ -2,17 +2,24 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="../jakarta-ant"/>
+  <property name="ant.home"        value="${basedir}/../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
-  <property name="catalina.build"  value="../build/catalina"/>
-  <property name="jasper.build"    value="../build/jasper"/>
-  <property name="jaxp.home"       value="../jaxp"/>
-  <property name="jsse.home"       value="../jsse"/>
-  <property name="regexp.home"     value="../jakarta-regexp"/>
-  <property name="servletapi.dist" value="../dist/servletapi"/>
-  <property name="servletapi.home" value="../jakarta-servletapi"/>
-  <property name="tomcat.build"    value="../build/tomcat-4.0"/>
-  <property name="tomcat.dist"     value="../dist/tomcat-4.0"/>
+  <property name="catalina.build"  value="${basedir}/../build/catalina"/>
+  <property name="catalina.deploy" value="${basedir}/../build/tomcat-4.0"/>
+  <property name="catalina.dist"   value="${basedir}/../dist/catalina"/>
+  <property name="jasper.build"    value="${basedir}/../build/jasper"/>
+  <property name="jasper.deploy"   value="${basedir}/../build/tomcat-4.0"/>
+  <property name="jasper.dist"     value="${basedir}/../dist/jasper"/>
+  <property name="jaxp.home"       value="${basedir}/../jaxp"/>
+  <property name="jsse.home"       value="${basedir}/../jsse"/>
+  <property name="regexp.home"     value="${basedir}/../jakarta-regexp"/>
+  <property name="servletapi.dist" value="${basedir}/../dist/servletapi"/>
+  <property name="servletapi.home" value="${basedir}/../jakarta-servletapi"/>
+  <property name="tomcat.build"    value="${basedir}/../build/tomcat-4.0"/>
+  <property name="tomcat.dist"     value="${basedir}/../dist/tomcat-4.0"/>
+  <property name="webapps.build"   value="${basedir}/../build/webapps"/>
+  <property name="webapps.deploy"  value="${basedir}/../build/tomcat-4.0"/>
+  <property name="webapps.dist"    value="${basedir}/../dist/webapps"/>
 
 
   <!-- ================== Derived Property Values ========================= -->
@@ -23,6 +30,10 @@
   <property name="regexp.jar"      value="${regexp.home}/bin/jakarta-regexp-1.1.jar"/>
   <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
 
+
+  <target name="testit">
+    <echo message="Base Directory is ${basedir}"/>
+  </target>
 
   <!-- ===================== DEPLOY: Create Directories =================== -->
   <target name="deploy-prepare">
