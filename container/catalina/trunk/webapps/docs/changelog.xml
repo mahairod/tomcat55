@@ -13,6 +13,102 @@
 
 <body>
 
+<section name="Tomcat 5.0.21 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <update>
+      Updated procrun binaries (mturk)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <update>
+      Add support for xml validation/namespaceAware at the context level
+      (jfarcand)
+      </update>
+      <fix>
+      <bug>18479</bug>: Non-serializable sessions attributes should be removed
+      (so valueUnbound is called) (markt)
+      </fix>
+      <fix>
+      javax.naming.NamingException after a Stop/Start cycle of a web app
+      (jfarcand)
+      </fix>
+      <fix>
+      <bug>18626</bug>: Make clear which file digester failed to parse (markt)
+      </fix>
+      <fix>
+      When principal caching is disabled, the saved request wasn't used by the
+      FORM authenticator (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      <bug>27917</bug>: Make certain that the endpoint is closed, even 
+      if Apache has already dropped the connection (billbarker)
+      </fix>
+      <fix>
+      Change to the absolute path using %CD% for setting CATALINA_HOME
+      (mturk)
+      </fix>
+      <fix>
+      gzip compression can also be used in HTTP 1.0 (hgomez)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>27830</bug>: undefined EL variable in unterpreted text (XML syntax)
+      causes "null" (instead of) "" to be generated (kinman)
+      </fix>
+      <fix>
+      Return 500 error code if JSP error page mechanism is invoked 
+      (the current impl used to return 200) (luehe)
+      </fix>
+      <fix>
+      <bug>16830</bug>: bodyContent content not reset when a tag is reused
+      (kinman)
+      </fix>
+      <fix>
+      <bug>27948</bug>: NPE with null fragment (luehe)
+      </fix>
+      <fix>
+      <bug>27665</bug>: Nested tags with scripting variables generates
+      invalid code (kinman)
+      </fix>
+      <fix>
+      <bug>28058</bug>: JspRuntimeLibrary.getContextRelativePath() can throw
+      StringIndexOutOfBoundsException (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.20 (remm)">
 
   <subsection name="General">
