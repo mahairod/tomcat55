@@ -130,6 +130,11 @@ public interface Options {
     public boolean getReloading();
 
     /**
+     * Is the generation of SMAP info for JSR45 debuggin suppressed?
+     */
+    public boolean suppressSmap();
+
+    /**
      * Class ID for use in the plugin tag when the browser is IE. 
      */
     public String getIeClassId();

@@ -288,7 +288,9 @@ public class Compiler {
         }
         
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-	SmapUtil.generateSmap(ctxt, pageNodes, true);
+        if (! options.suppressSmap()) {
+            SmapUtil.generateSmap(ctxt, pageNodes, true);
+        }
 
 	// If any proto type .java and .class files was generated,
 	// the prototype .java may have been replaced by the current
@@ -412,7 +414,9 @@ public class Compiler {
 	}
 
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-	SmapUtil.installSmap(ctxt);
+        if (! options.suppressSmap()) {
+            SmapUtil.installSmap(ctxt);
+        }
     }
 
     /** 

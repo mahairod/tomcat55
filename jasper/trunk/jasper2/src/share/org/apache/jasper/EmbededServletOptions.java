@@ -152,6 +152,11 @@ public final class EmbededServletOptions implements Options {
     private boolean reloading = true;
 
     /**
+     * Is the generation of SMAP info for JSR45 debuggin suppressed?
+     */
+    private boolean suppressSmap = false;
+
+    /**
      * I want to see my generated servlets. Which directory are they
      * in?
      */
@@ -268,6 +273,13 @@ public final class EmbededServletOptions implements Options {
      */
     public boolean getReloading() {
         return reloading;
+    }
+
+    /**
+     * Is the generation of SMAP info for JSR45 debuggin suppressed?
+     */
+    public boolean suppressSmap() {
+        return suppressSmap;
     }
 
     /**
@@ -484,6 +496,19 @@ public final class EmbededServletOptions implements Options {
 		    log.warn(Localizer.getMessage("jsp.warning.reloading"));
 		}
 	    }
+        }
+
+        String suppressSmap = config.getInitParameter("suppressSmap");
+        if (suppressSmap != null) {
+            if (suppressSmap.equalsIgnoreCase("true")) {
+                this.suppressSmap = true;
+            } else if (suppressSmap.equalsIgnoreCase("false")) {
+                this.suppressSmap = false;
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn(Localizer.getMessage("jsp.warning.suppressSmap"));
+                }
+            }
         }
 
         String ieClassId = config.getInitParameter("ieClassId");

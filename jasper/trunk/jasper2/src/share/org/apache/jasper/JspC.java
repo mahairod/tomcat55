@@ -273,6 +273,13 @@ public class JspC implements Options {
         return true;
     }
 
+    /**
+     * Is the generation of SMAP info for JSR45 debuggin suppressed?
+     */
+    public boolean suppressSmap() {
+	return true;
+    }
+
     public String getIeClassId() {
         return ieClassId;
     }
