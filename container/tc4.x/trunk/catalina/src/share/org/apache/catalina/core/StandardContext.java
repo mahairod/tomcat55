@@ -3331,6 +3331,14 @@ public class StandardContext
                 log("Error initializing resources: " + e.getMessage());
                 ok = false;
             }
+            if (ok) {
+                DirContext dirContext = 
+                    ((ProxyDirContext) resources).getDirContext();
+                if ((dirContext != null) 
+                    && (dirContext instanceof BaseDirContext)) {
+                    ((BaseDirContext) dirContext).allocate();
+                }
+            }
         }
         if (getLoader() == null) {      // (2) Required by Manager
             if (getPrivileged()) {
@@ -3556,6 +3564,10 @@ public class StandardContext
                         }
                         if (dirContext instanceof BaseDirContext) {
                             ((BaseDirContext) dirContext).release();
+                            if ((dirContext instanceof WARDirContext)
+                                || (dirContext instanceof FileDirContext)) {
+                                resources = null;
+                            }
                         } else {
                             log("Cannot release " + resources);
                         }
