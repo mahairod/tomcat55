@@ -1191,6 +1191,7 @@ public class StandardContext
                     (sm.getString("standardContext.wrapper.error", jspFile));
             }
         }
+
 	super.addChild(child);
 
     }
@@ -3632,7 +3633,14 @@ public class StandardContext
     private String getNamingContextName() {
         Container parent = getParent();
         if (parent != null) {
-            return  "/" + parent.getName() + getName();
+            StringBuffer buf = new StringBuffer();
+            buf.append("/").append(parent.getName()).append(getName());
+            parent = parent.getParent();
+            while (parent != null) {
+                buf.append("/").append(parent.getName());
+                parent = parent.getParent();
+            }
+            return buf.toString();
         } else {
             return getName();
         }
