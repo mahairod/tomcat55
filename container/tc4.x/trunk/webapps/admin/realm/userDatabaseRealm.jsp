@@ -33,7 +33,7 @@
             <bean:message key="actions.realms.create"/>
           </logic:equal>
           <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
-            <bean:message key="actions.realms.edit"/>
+            <bean:write name="userDatabaseRealmForm" property="nodeLabel"/>
           </logic:equal>
         </div>
       </td>

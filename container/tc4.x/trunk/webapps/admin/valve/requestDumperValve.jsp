@@ -35,7 +35,7 @@
             <bean:message key="actions.valves.create"/>
           </logic:equal>
           <logic:equal name="requestDumperValveForm" property="adminAction" value="Edit">
-            <bean:message key="actions.valves.edit"/>
+            <bean:write name="requestDumperValveForm" property="nodeLabel"/>
           </logic:equal>
        </div>
       </td>

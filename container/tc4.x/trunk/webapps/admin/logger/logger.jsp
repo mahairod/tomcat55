@@ -34,7 +34,7 @@
             <bean:message key="actions.loggers.create"/>
           </logic:equal>
           <logic:equal name="loggerForm" property="adminAction" value="Edit">
-            <bean:message key="actions.loggers.edit"/>
+            <bean:write name="loggerForm" property="nodeLabel"/>
           </logic:equal>
        </div>
       </td>

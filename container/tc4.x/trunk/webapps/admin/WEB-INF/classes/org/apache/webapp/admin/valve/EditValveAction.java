@@ -216,9 +216,16 @@ public class EditValveAction extends Action {
         valveFm.setObjectName(vname.toString()); 
         valveFm.setParentObjectName(parent);
         String valveType = "AccessLogValve";
-        StringBuffer sb = new StringBuffer("Valve (");
-        sb.append(valveType);
-        sb.append(")");
+        StringBuffer sb = new StringBuffer("");
+        String host = vname.getKeyProperty("host");
+        String context = vname.getKeyProperty("path");        
+        if (host!=null) {
+            sb.append("Host (" + host + ") > ");
+        }
+        if (context!=null) {
+            sb.append("Context (" + context + ") > ");
+        }
+        sb.append("Valve");
         valveFm.setNodeLabel(sb.toString());
         valveFm.setValveType(valveType);
         valveFm.setDebugLvlVals(Lists.getDebugLevels());

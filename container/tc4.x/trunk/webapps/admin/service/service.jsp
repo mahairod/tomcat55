@@ -39,7 +39,7 @@
             <bean:message key="actions.services.create"/>
           </logic:equal>
           <logic:equal name="serviceForm" property="adminAction" value="Edit">
-            <bean:message key="actions.services.edit"/>
+            <bean:write name="serviceForm" property="nodeLabel"/>
           </logic:equal>
         </div>
       </td>

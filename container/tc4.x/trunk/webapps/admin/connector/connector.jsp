@@ -35,7 +35,7 @@
             <bean:message key="actions.connectors.create"/>
           </logic:equal>
           <logic:equal name="connectorForm" property="adminAction" value="Edit">
-            <bean:message key="actions.connectors.edit"/>
+           <bean:write name="connectorForm" property="nodeLabel"/>
           </logic:equal>
        </div>
       </td>

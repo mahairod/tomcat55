@@ -213,9 +213,16 @@ public class EditRealmAction extends Action {
         realmFm.setAdminAction("Edit");
         realmFm.setObjectName(rname.toString());        
         String realmType = "UserDatabaseRealm";
-        StringBuffer sb = new StringBuffer("Realm (");
-        sb.append(realmType);
-        sb.append(")");
+        StringBuffer sb = new StringBuffer("");
+        String host = rname.getKeyProperty("host");
+        String context = rname.getKeyProperty("path");        
+        if (host!=null) {
+            sb.append("Host (" + host + ") > ");
+        }
+        if (context!=null) {
+            sb.append("Context (" + context + ") > ");
+        }
+        sb.append("Realm");
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
         realmFm.setDebugLvlVals(Lists.getDebugLevels());

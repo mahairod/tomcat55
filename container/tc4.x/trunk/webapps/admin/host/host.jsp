@@ -33,7 +33,7 @@
             <bean:message key="actions.hosts.create"/>
           </logic:equal>
           <logic:equal name="hostForm" property="adminAction" value="Edit">
-            <bean:message key="actions.hosts.edit"/>
+            <bean:write name="hostForm" property="nodeLabel"/>
           </logic:equal>
         </div>
       </td>

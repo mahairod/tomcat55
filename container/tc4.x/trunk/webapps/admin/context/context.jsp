@@ -33,7 +33,7 @@
             <bean:message key="actions.contexts.create"/>
           </logic:equal>
           <logic:equal name="contextForm" property="adminAction" value="Edit">
-            <bean:message key="actions.contexts.edit"/>
+            <bean:write name="contextForm" property="nodeLabel"/>
           </logic:equal>
        </div>
       </td>
