@@ -127,6 +127,8 @@
          basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
     <jar jarfile="${tomcat.dist}/webapps/examples.war"
          basedir="${tomcat.build}/webapps/examples" includes="**"/>
+    <jar jarfile="${tomcat.dist}/webapps/webdav.war"
+         basedir="${tomcat.build}/webapps/webdav" includes="**"/>
   </target>
 
 

@@ -32,10 +32,14 @@
     <ant dir="./examples" target="dist"/>
   </target>
 
+  <target name="webdav">
+    <ant dir="./webdav" target="dist"/>
+  </target>
+
 
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
-  <target name="build" depends="build-prepare,ROOT,examples"/>
+  <target name="build" depends="build-prepare,ROOT,examples,webdav"/>
 
 
   <!-- ======================= BUILD: Clean Directory ===================== -->
