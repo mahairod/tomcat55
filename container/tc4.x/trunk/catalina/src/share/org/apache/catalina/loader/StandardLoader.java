@@ -82,6 +82,7 @@ import javax.naming.NamingException;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
+import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
 import org.apache.catalina.Container;
@@ -603,13 +604,6 @@ public final class StandardLoader
 
 	// Construct a class loader based on our current repositories list
 	try {
-            /*
-            URLStreamHandlerFactory shFactory = null;
-            if ((this.container != null) && 
-                (this.container.getResources() != null)) {
-                shFactory = new DirContextURLStreamHandlerFactory();
-            }
-            */
 	    if (parentClassLoader == null)
 	        classLoader = new StandardClassLoader();
 	    else
@@ -795,8 +789,8 @@ public final class StandardLoader
      */
     private void setJasperEnvironment() {
 	setClassLoader();
-        copyClassesRepository();
 	setClassPath();
+        copyClassesRepository();
     }
 
 
@@ -824,7 +818,12 @@ public final class StandardLoader
 
         // Looking up directory /WEB-INF/classes in the context
         try {
-            resources.lookup(classesName);
+            Object object = resources.lookup(classesName);
+            if (object instanceof DirContext) {
+                resources = (DirContext) object;
+            } else {
+                return;
+            }
         } catch(NamingException e) {
             return;
         }
@@ -836,19 +835,12 @@ public final class StandardLoader
         if (workDir != null) {
 
             if (!(classpath.equals("")))
-                classpath += File.pathSeparator;
+                classpath = File.pathSeparator + classpath;
             File classesDir = new File(workDir, "/classes");
-            classpath += classesDir.getAbsolutePath();
+            classesDir.mkdir();
+            classpath = classesDir.getAbsolutePath() + classpath;
 
-            try {
-                NamingEnumeration enum = resources.list(classesName);
-                while (enum.hasMoreElements()) {
-                    NameClassPair ncPair = 
-                        (NameClassPair) enum.nextElement();
-                    String filename = ncPair.getName();
-                }
-            } catch (NamingException e) {
-            }
+            copyDir(resources, classesDir);
 
         }
 
@@ -860,8 +852,40 @@ public final class StandardLoader
     /**
      * Copy directory.
      */
-    private boolean copyDir(DirContext directory) {
+    private boolean copyDir(DirContext srcDir, File destDir) {
+
+        try {
+
+            NamingEnumeration enum = srcDir.list("");
+            while (enum.hasMoreElements()) {
+                NameClassPair ncPair = 
+                    (NameClassPair) enum.nextElement();
+                String name = ncPair.getName();
+                Object object = srcDir.lookup(name);
+                File currentFile = new File(destDir, name);
+                if (object instanceof Resource) {
+                    InputStream is = ((Resource) object).streamContent();
+                    OutputStream os = new FileOutputStream(currentFile);
+                    if (!copy(is, os))
+                        return false;
+                } else if (object instanceof InputStream) {
+                    OutputStream os = new FileOutputStream(currentFile);
+                    if (!copy((InputStream) object, os))
+                        return false;
+                } else if (object instanceof DirContext) {
+                    currentFile.mkdir();
+                    copyDir((DirContext) object, currentFile);
+                }
+            }
+
+        } catch (NamingException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+
         return true;
+
     }
 
 
@@ -919,8 +943,7 @@ public final class StandardLoader
                 else
                     continue;
                 if (repository.endsWith("/"))
-                    repository =
-                        repository.substring(0, repository.length() - 1);
+                    continue;
                 if (n > 0)
                     classpath.append(File.pathSeparator);
                 classpath.append(repository);
@@ -989,8 +1012,6 @@ public final class StandardLoader
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR,
 				    classpath.toString());
 
-        System.out.println("Classpath: " + classpath);
-        
     }
 
 
