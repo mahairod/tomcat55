@@ -150,20 +150,18 @@
 
             <p>where "$CATALINA_HOME" is the root of the Tomcat installation directory. If you're seeing this page, and you don't think you should be, then either you're either a user who has arrived at new installation of Tomcat, or you're an administrator who hasn't got his/her setup quite right. Providing the latter is the case, please refer to the <a href="tomcat-docs">Tomcat Documentation</a> for more detailed setup and administration information than is found in the INSTALL file.</p>
 
+            <p><b>NOTE: For security reasons, using the administration webapp 
+            is restricted to users with role "admin". The manager webapp 
+            is restricted to users with role "manager".</b>
+            Users are defined in <code>$CATALINA_HOME/conf/tomcat-users.xml</code>.</p>
+
             <p>Included with this release are a host of sample Servlets and JSPs (with associated source code), extensive documentation (including the Servlet 2.3 and JSP 1.2 API JavaDoc), and an introductory guide to developing web applications.</p>
 
-            <p>You can find more information about the JSP and Servlet technologies by subscribing to one or more of the following Servlet and JSP related interest lists:</p>
-
-            <ul>
-                <li><b><a href="mailto:listserv@java.sun.com?subject=subscription request: jsp-interest&body=subscribe jsp-interest [Your Full Name]">jsp-interest@java.sun.com</a></b></li>
-                <li><b><a href="mailto:listserv@java.sun.com?subject=subscription request: servlet-interest&body=subscribe servlet-interest [Your Full Name]">servlet-interest@java.sun.com</a></b></li>
-            </ul>
-
-            <p>In addition, Tomcat-specific mailing lists are available at the Jakarta project web site:</p>
+            <p>Tomcat mailing lists are available at the Jakarta project web site:</p>
 
            <ul>
-               <li><b><a href="mailto:tomcat-dev-subscribe@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a></b> for developers working on Tomcat</li>
                <li><b><a href="mailto:tomcat-user-subscribe@jakarta.apache.org">tomcat-user@jakarta.apache.org</a></b> for general questions related to configuring and using Tomcat</li>
+               <li><b><a href="mailto:tomcat-dev-subscribe@jakarta.apache.org">tomcat-dev@jakarta.apache.org</a></b> for developers working on Tomcat</li>
            </ul>
 
             <p>Thanks for using Tomcat!</p>
