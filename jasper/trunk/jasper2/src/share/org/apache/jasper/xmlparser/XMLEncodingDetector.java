@@ -56,7 +56,8 @@ public class XMLEncodingDetector {
             Class detectorClass=Class.forName("org.apache.jasper.xmlparser.XercesEncodingDetector");
             detector = (XMLEncodingDetector) detectorClass.newInstance();
         } catch (Exception ex) {
-            log.warn("Unable to parse XML prolog: Defaulting encoding to UTF8 ", ex);
+            log.warn("Unable to parse XML prolog: Defaulting encoding to UTF8",
+                     ex);
             detector = new XMLEncodingDetector();
         }
         return detector.getEncodingMethod(fname, jarFile, ctxt, err);
