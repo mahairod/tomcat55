@@ -673,8 +673,8 @@ public abstract class Node {
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
 	private VariableInfo[] varInfos;
+	private VariableInfo[] nestedVarInfos;
 	private int customNestingLevel;
-	private boolean hasUnnestedIdAttribute;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -685,7 +685,6 @@ public abstract class Node {
 	    this.shortName = shortName;
 	    this.tagInfo = tagInfo;
 	    this.customNestingLevel = computeCustomNestingLevel();
-	    this.hasUnnestedIdAttribute = determineHasUnnestedIdAttribute();
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -724,6 +723,7 @@ public abstract class Node {
 	public void setTagData(TagData tagData) {
 	    this.tagData = tagData;
 	    this.varInfos = tagInfo.getVariableInfo(tagData);
+	    determineNestedVarInfos();
 	}
 
 	public TagData getTagData() {
@@ -790,13 +790,8 @@ public abstract class Node {
 	    return varInfos;
 	}
 
-	/*
-	 * Returns true if this custom tag has an "id" attribute that does
-	 * not match the "id" attribute of any of its enclosing parent tags of
-	 * the same custom tag type, and false otherwise. 
-	 */
-	public boolean hasUnnestedIdAttribute() {
-	    return hasUnnestedIdAttribute;
+	public VariableInfo[] getNestedVariableInfos() {
+	    return nestedVarInfos;
 	}
 
 	/*
@@ -844,35 +839,60 @@ public abstract class Node {
 	}
 
 	/*
-	 * Checks to see if this custom tag has an "id" attribute that does
-	 * not match the "id" attribute of any of its enclosing parent tags of
-	 * the same custom tag type.
+	 * Determines all the scripting variables with NESTED scope contained
+	 * in this custom action's VariableInfo[] that are not already
+	 * contained in the VariableInfo[] of a custom action of the same type
+	 * in the parent chain.
 	 */
-	private boolean determineHasUnnestedIdAttribute() {
-	    boolean unnested = false;
+	private void determineNestedVarInfos() {
 
-	    String id = getAttributeValue("id");
-	    if (id != null) {
-		if (customNestingLevel == 0) {
-		    // tag not nested inside itself
-		    unnested = true;
-		} else {
+	    if (varInfos == null) {
+		return;
+	    }
+
+	    Vector vec = new Vector();
+
+	    if (customNestingLevel == 0) {
+		// tag not nested inside itself
+		for (int i=0; i<varInfos.length; i++) {
+		    if (varInfos[i].getScope() == VariableInfo.NESTED
+			    && varInfos[i].getDeclare()) {
+			vec.add(varInfos[i]);
+		    }
+		}
+	    } else {
+		for (int i=0; i<varInfos.length; i++) {
+		    if (varInfos[i].getScope() != VariableInfo.NESTED
+			    || !varInfos[i].getDeclare()) {
+			continue;
+		    }
 		    Node p = parent;
-		    while (p != null) {
+		    boolean found = false;
+		    while ((p != null) && !found) {
 			if ((p instanceof Node.CustomTag)
-			      && name.equals(((Node.CustomTag) p).name)
-			      && id.equals(p.getAttributeValue("id"))) {
-			    break;
+			        && name.equals(((Node.CustomTag) p).name)) {
+			    VariableInfo[] parentVarInfos
+				= ((Node.CustomTag) p).getVariableInfos();
+			    for (int j=0; j<parentVarInfos.length; j++) {
+				if (varInfos[i].getVarName().equals(
+			                    parentVarInfos[j].getVarName())) {
+				    found = true;
+				    break;
+				}
+			    }
 			}
 			p = p.parent;
 		    }
 		    if (p == null) {
-			unnested = true;
+			vec.add(varInfos[i]);
 		    }
-		}
+		}		    
 	    }
 
-	    return unnested;
+	    if (vec.size() > 0) {
+		nestedVarInfos =
+		    (VariableInfo[]) vec.toArray(new VariableInfo[vec.size()]);
+	    }
 	}
     }
 
