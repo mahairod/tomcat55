@@ -63,9 +63,9 @@
 
 package org.apache.catalina.startup;
 
-import org.apache.avalon.ConfigurationException;
-import org.apache.avalon.Configuration;
-import org.apache.avalon.blocks.AbstractBlock;
+import org.apache.avalon.configuration.ConfigurationException;
+import org.apache.avalon.configuration.Configuration;
+import org.apache.phoenix.AbstractBlock;
 
 /**
  * Catalina wrapper for Avalon.
