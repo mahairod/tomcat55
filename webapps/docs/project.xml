@@ -37,7 +37,8 @@
 
     <menu name="Application Developers">
         <item name="App Developer Guide"   href="appdev/index.html"/>
-        <item name="Servlet/JSP Javadocs"  href="servletapi/index.html"/>
+        <item name="Servlet API Javadocs"  href="servletapi/index.html"/>
+        <item name="JSP API Javadocs"      href="jspapi/index.html"/>
     </menu>
 
     <menu name="Catalina Developers">
