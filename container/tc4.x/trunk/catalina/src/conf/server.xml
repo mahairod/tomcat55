@@ -149,6 +149,10 @@
          analyzes the HTTP headers included with the request, and passes them
          on to the appropriate Host (virtual host). -->
 
+    <!-- You should set jvmRoute to support load-balancing via JK/JK2 ie :
+    <Engine name="Standalone" defaultHost="localhost" debug="0" jmvRoute="jvm1">         
+    --> 
+         
     <!-- Define the top level container in our container hierarchy -->
     <Engine name="Standalone" defaultHost="localhost" debug="0">
 
