@@ -2378,10 +2378,14 @@ class Generator {
 		    out.println(");");
 		}
 	    } else {
-		out.printin(tagHandlerVar);
-		out.print(".setParent(");
-		out.print(parent);
-		out.println(");");
+		// The setParent() method need not be called if the value being
+		// passed is null, since SimpleTag instances are not reused
+		if (parent != null) {
+		    out.printin(tagHandlerVar);
+		    out.print(".setParent(");
+		    out.print(parent);
+		    out.println(");");
+		}
 	    }
 
 	    Node.JspAttribute[] attrs = n.getJspAttributes();
