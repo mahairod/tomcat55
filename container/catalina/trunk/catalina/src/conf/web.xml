@@ -146,7 +146,7 @@
   <!--                                                                      -->
   <!--   mappedfile          Should we generate static content with one     -->
   <!--                       print statement per input line, to ease        -->
-  <!--                       debugging?  [false]                            -->
+  <!--                       debugging?  [true]                            -->
   <!--                                                                      -->
   <!--   trimSpaces          Should white spaces in template text between   -->
   <!--                       actions or directives be trimmed?  [false]     -->
