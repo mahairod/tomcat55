@@ -209,7 +209,7 @@ public class ExpandWar {
             result = dest.mkdir();
         } else {
             files = new String[1];
-            files[0] = src.getName();
+            files[0] = "";
         }
         if (files == null) {
             files = new String[0];
@@ -255,7 +255,7 @@ public class ExpandWar {
         
     }
     
-        
+    
     /**
      * Delete the specified directory, including all of its contents and
      * subdirectories recursively.

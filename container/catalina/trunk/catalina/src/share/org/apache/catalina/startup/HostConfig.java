@@ -921,8 +921,6 @@ public class HostConfig
             File resource = new File(resources[i]);
             if (log.isDebugEnabled())
                 log.debug("Checking context[" + app.name + "] redeploy resource " + resource);
-            // FIXME: Limit, as before, resource removal to resources which are inside the
-            //        Host appBase
             if (resource.exists()) {
                 long lastModified = ((Long) app.redeployResources.get(resources[i])).longValue();
                 if ((!resource.isDirectory()) && resource.lastModified() > lastModified) {
@@ -942,8 +940,11 @@ public class HostConfig
                                 File current = new File(resources[j]);
                                 current = current.getCanonicalFile();
                                 if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
-                                    || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                                    || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath()))) {
+                                    if (log.isDebugEnabled())
+                                        log.debug("Delete " + current);
                                     ExpandWar.delete(current);
+                                }
                             } catch (IOException e) {
                                 log.warn(sm.getString
                                         ("hostConfig.canonicalizing", app.name), e);
@@ -969,8 +970,11 @@ public class HostConfig
                         File current = new File(resources[j]);
                         current = current.getCanonicalFile();
                         if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
-                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath()))) {
+                            if (log.isDebugEnabled())
+                                log.debug("Delete " + current);
                             ExpandWar.delete(current);
+                        }
                     } catch (IOException e) {
                         log.warn(sm.getString
                                 ("hostConfig.canonicalizing", app.name), e);
@@ -983,8 +987,11 @@ public class HostConfig
                         File current = new File(resources2[j]);
                         current = current.getCanonicalFile();
                         if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
-                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath()))) {
+                            if (log.isDebugEnabled())
+                                log.debug("Delete " + current);
                             ExpandWar.delete(current);
+                        }
                     } catch (IOException e) {
                         log.warn(sm.getString
                                 ("hostConfig.canonicalizing", app.name), e);
