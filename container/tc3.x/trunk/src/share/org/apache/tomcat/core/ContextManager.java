@@ -85,8 +85,7 @@ import java.util.*;
  * @author James Todd [gonzo@eng.sun.com]
  * @author Harish Prabandham
  */
-
-public class ContextManager  implements Server {
+public class ContextManager {
 
     /**
      * The string constants for this ContextManager.
