@@ -842,18 +842,16 @@ public class Generator {
 		--count;
 		switch(ch) {
 		case '"':
-		    sb.append('\\');
-		    sb.append('\"');
+		    sb.append('\\').append('\"');
 		    break;
 		case '\\':
-		    sb.append('\\');
-		    sb.append('\\');
+		    sb.append('\\').append('\\');
 		    break;
 		case '\r':
+		    sb.append('\\').append('r');
 		    break;
 		case '\n':
-		    sb.append('\\');
-		    sb.append('n');
+		    sb.append('\\').append('n');
 
 		    if (breakAtLF || count < 0) {
 			// Generate an out.write() when see a '\n' in template
@@ -865,8 +863,7 @@ public class Generator {
 		    }
 		    break;
 		case '\t':	// Not sure we need this
-		    sb.append('\\');
-		    sb.append('t');
+		    sb.append('\\').append('t');
 		    break;
 		default:
 		    sb.append(ch);
