@@ -54,6 +54,10 @@
       <fix>
         Add some log.isXXXEnabled to o.a.c.core.StandardHost StandardEngine, StandardService (pero)
       </fix>
+      <add>
+        Feature addition to add Redirector and failOnError support for all Catalina Ant tasks,
+        submitted by Gabriele Garuglieri (remm)
+      </add>
     </changelog>
   </subsection>
 
@@ -61,6 +65,15 @@
     <changelog>
       <fix>
         <bug>32708</bug>: Better handling of bad encoding with the string cache. (remm)
+      </fix>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+      <fix>
+        <bug>32746</bug>: Avoid JAR locking when loading classes and improve loading
+        performance by taking advantage of caching, submitted by Dominik Drzewiecki. (remm)
       </fix>
     </changelog>
   </subsection>
@@ -81,6 +94,20 @@
       <fix>
         Fix the webDAV servlet so it can be used via any arbitrary mapping
         (eg /webdav/*) to edit the contents of a web application. (markt)
+      </fix>
+      <fix>
+        <bug>32729</bug>: Stop is optional and may fail, so it needs to be in a separate try/catch (remm)
+      </fix>
+      <update>
+        Remove the remove method of the manager servlet, and use the undeploy method instead (remm)
+      </update>
+      <fix>
+        <bug>32777</bug>: Fail if application isn't configured properly, submitted by Gabriele Garuglieri
+        (remm)
+      </fix>
+      <fix>
+        <bug>32771</bug>: Cannot undeploy/deploy misconfigured app after tomcat startup, 
+        submitted by Gabriele Garuglieri (remm)
       </fix>
     </changelog>
   </subsection>
