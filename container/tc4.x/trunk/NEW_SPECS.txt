@@ -39,8 +39,8 @@ work fairly well.  There are two listeners in the "examples" web application
 that simply log things with ServletContext.log() to show that they were
 reached.
 
-Servlet Filters [Medium Rare]
------------------------------
+Servlet Filters [Medium]
+------------------------
 You can now register Filters in the web.xml file that are the application
 level analogue to Valves in the Catalina core.  Filters have the following
 general features:
@@ -61,18 +61,17 @@ the "examples" application that is set up as both path mapped and servlet
 mapped to the invoker servlet ("/servlet/*"), which stores a request attribute
 that is passed on to the servlet that is ultimately executed.
 
-Dependencies on Installed Extensions [Medium Rare]
---------------------------------------------------
+Dependencies on Installed Extensions [Medium]
+---------------------------------------------
 Web applications, or the JAR files in the WEB-INF/lib directory, can now
 declare their dependence on particular versions of external libraries that
 may be provided by the container as shared extensions.  No work has been
 done to implement this capability in Catalina yet.
 
-Internationalization Fixes [Medium Rare]
-----------------------------------------
+Internationalization Fixes [Medium]
+-----------------------------------
 Catalina now supports mapping Locales to character sets, and the new
-setCharacterEncoding() method on ServletRequest.  Much more testing and
-enhancement is needed in this area.
+setCharacterEncoding() method on ServletRequest.
 
 Web Application Classloader [Medium Well]
 -----------------------------------------
@@ -80,8 +79,8 @@ Section 9.6.2 of the Servlet Spec draft describes requirements and suggestions
 related to the classloader provided to a web application.  These requirments
 are currently followed in Catalina.
 
-DTD for Servlet 2.3 Application Deployment Descriptor [Medium]
---------------------------------------------------------------
+DTD for Servlet 2.3 Application Deployment Descriptor [Medium Well]
+-------------------------------------------------------------------
 An unofficial version of the DTD for parsing web.xml files is included in
 Catalina (in the source repository it is at "catalina/src/conf/web_23.dtd").
 It will be replaced by the official version when published.
