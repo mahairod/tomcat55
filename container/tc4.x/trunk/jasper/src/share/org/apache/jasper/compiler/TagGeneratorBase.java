@@ -142,7 +142,7 @@ abstract class TagGeneratorBase extends GeneratorBase {
      * Return a tag variable name from the given prefix and shortTagName.
      * Not all NMTOKEN's are legal Java identifiers, since they may contain
      * '-', '.', or ':'.  We use the following mapping: substitute '-' with
-     * "#1", '.' with "$2", and ':' with "$3".
+     * "$1", '.' with "$2", and ':' with "$3".
      */
     protected String getTagVarName(String prefix, String shortTagName) {
         if (shortTagName.indexOf('-') >= 0)
