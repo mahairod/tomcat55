@@ -167,7 +167,7 @@ final class StandardSession
     /**
      * Flag indicating whether this session is new or not.
      */
-    private boolean isNew = false;
+    private boolean isNew = true;
 
 
     /**
@@ -345,7 +345,7 @@ final class StandardSession
 
 	this.lastAccessedTime = this.thisAccessedTime;
 	this.thisAccessedTime = System.currentTimeMillis();
-
+	this.isNew=false;
     }
 
 
@@ -391,7 +391,7 @@ final class StandardSession
 	lastAccessedTime = 0L;
 	manager = null;
 	maxInactiveInterval = -1;
-	isNew = false;
+	isNew = true;
 	isValid = false;
 
 	// Tell our Manager that this Session has been recycled
