@@ -116,7 +116,7 @@ public final class StandardService
     /**
      * The name of this service.
      */
-    private String name = this.toString();
+    private String name = null;
 
 
     /**
@@ -315,6 +315,19 @@ public final class StandardService
             }
             connectors = results;
         }
+
+    }
+
+
+    /**
+     * Return a String representation of this component.
+     */
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer("StandardService[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
 
     }
 
