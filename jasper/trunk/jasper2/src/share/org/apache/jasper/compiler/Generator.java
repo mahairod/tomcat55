@@ -1731,11 +1731,18 @@ public class Generator {
 		out.printin(getterMethodName);
 		out.println("().invoke(null, params);");
 	    }
+
+	    // Store varReader in appropriate scope
 	    if (varReader != null) {
+		String scopeName = n.getAttributeValue("scope");
 		out.printin("jspContext.setAttribute(\"");
 		out.print(varReader);
-		out.print("\", new java.io.StringReader(sout.toString()));");
-		// XXX evaluate scope
+		out.print("\", new java.io.StringReader(sout.toString())");
+		if (scopeName != null) {
+		    out.print(", ");
+		    out.print(getScopeConstant(scopeName));
+		}
+		out.println(");");
 	    }
 	}
 
@@ -1772,6 +1779,19 @@ public class Generator {
 		out.printil("getJspBody().invoke(sout, params);");
 	    } else {
 		out.printil("getJspBody().invoke(null, params);");
+	    }
+
+	    // Store varReader in appropriate scope
+	    if (varReader != null) {
+		String scopeName = n.getAttributeValue("scope");
+		out.printin("jspContext.setAttribute(\"");
+		out.print(varReader);
+		out.print("\", new java.io.StringReader(sout.toString())");
+		if (scopeName != null) {
+		    out.print(", ");
+		    out.print(getScopeConstant(scopeName));
+		}
+		out.println(");");
 	    }
 	}
 
@@ -2425,6 +2445,25 @@ public class Generator {
 		    + quote(s) + ")";
 	    }
 	}   
+
+	/*
+	 * Converts the scope string representation, whose possible values
+	 * are "page", "request", "session", and "application", to the
+	 * corresponding scope constant.
+	 */
+	private String getScopeConstant(String scope) {
+	    String scopeName = "PageContext.PAGE_SCOPE"; // Default to page
+
+	    if ("request".equals(scope)) {
+		scopeName = "PageContext.REQUEST_SCOPE";
+	    } else if ("session".equals(scope)) {
+		scopeName = "PageContext.SESSION_SCOPE";
+	    } else if ("application".equals(scope)) {
+		scopeName = "PageContext.APPLICATION_SCOPE";
+	    }
+
+	    return scopeName;
+	}
 
 	/**
 	 * Generates anonymous JspFragment inner class which is passed as an
