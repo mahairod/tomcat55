@@ -583,13 +583,19 @@ public class Validator {
 	// Determine the default output content type, per errata_a
 	// http://jcp.org/aboutJava/communityprocess/maintenance/jsr053/errata_1_2_a_20020321.html
 	PageInfo pageInfo = compiler.getPageInfo();
-	if (pageInfo.getContentType() == null) {
+	String contentType = pageInfo.getContentType();
+	if (contentType == null || contentType.indexOf("charset=") < 0) {
 	    boolean isXml = page.getRoot().isXmlSyntax();
-	    String defaultType = isXml? "text/xml;": "text/html;";
+	    String defaultType;
+	    if (contentType == null) {
+		defaultType = isXml? "text/xml": "text/html";
+	    } else {
+		defaultType = contentType;
+	    }
 	    String charset = pageInfo.getPageEncoding();
 	    if (charset == null)
 		charset = isXml? "UTF-8": "ISO-8859-1";
-	    pageInfo.setContentType(defaultType + charset);
+	    pageInfo.setContentType(defaultType + ";" + charset);
 	}
 
 	/*
