@@ -546,8 +546,6 @@ public final class StandardLoader
 	    for (int i = 0; i < repositories.length; i++)
 		classLoader.addRepository(repositories[i]);
 	    classLoader.addRestricted("org.apache.catalina.");
-	    classLoader.addAllowed
-		("org.apache.catalina.session.StandardSession");
 	    classLoader.addSystem("javax.servlet.");
 	    if (classLoader instanceof Lifecycle)
 		((Lifecycle) classLoader).start();

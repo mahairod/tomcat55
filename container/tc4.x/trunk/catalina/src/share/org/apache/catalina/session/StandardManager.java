@@ -147,8 +147,7 @@ public final class StandardManager
      * temporary working directory provided by our context, available via
      * the <code>javax.servlet.context.tempdir</code> context attribute.
      */
-    //    private String pathname = "sessions.ser";
-    private String pathname = null;
+    private String pathname = "SESSIONS.ser";
 
 
     /**
@@ -525,7 +524,8 @@ public final class StandardManager
 		Integer count = (Integer) ois.readObject();
 		int n = count.intValue();
 		for (int i = 0; i < n; i++) {
-		    Session session = (Session) ois.readObject();
+		    StandardSession session = new StandardSession(this);
+                    session.readObjectData(ois);
 		    session.setManager(this);
 		    sessions.put(session.getId(), session);
 		}
@@ -623,8 +623,9 @@ public final class StandardManager
 		oos.writeObject(new Integer(sessions.size()));
 		Iterator elements = sessions.values().iterator();
 		while (elements.hasNext()) {
-		    Session session = (Session) elements.next();
-		    oos.writeObject(session);
+		    StandardSession session =
+                        (StandardSession) elements.next();
+                    session.writeObjectData(oos);
 		}
 	    } catch (IOException e) {
 		if (oos != null) {

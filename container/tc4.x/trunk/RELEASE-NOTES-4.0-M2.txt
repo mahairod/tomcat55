@@ -64,7 +64,8 @@ Catalina:  JMX Management Capability
 Catalina now includes a JMX compatible MBean
 (org.apache.catalina.startup.CatalinaManager) that wraps the standard startup
 class (org.apache.catalina.startup.Catalina), making Catalina manageable in a
-JMX agent.
+JMX agent.  You can also use JMX to manage an integrated instance of the
+org.apache.catalina.startup.Embedded class.
 
 Jasper:  Expanded Acceptance of XML Syntax
 ------------------------------------------
@@ -155,6 +156,16 @@ has already called response.getWriter() so that binary output cannot be used.
 Catalina:  If a servlet threw an exception after it had grabbed the writer
 with response.getWriter(), the exception report would silently be suppressed.
 This has been corrected.
+
+Catalina:  Sending HTTP headers now forces the response to be considered
+as committed.
+
+Catalina:  Restore the ability to persist sessions and their attributes across
+a context reload or a server restart, the same way that Tomcat 3.x can do it.
+This ability was disrupted when Catalina changed to a multi-classloader scheme
+because the org.apache.catalina.session.StandardSession class was not visible
+to the web app class loader.  Sessions can now be saved and restored without
+requiring this capability.
 
 
 ==============================

@@ -541,6 +541,24 @@ final class StandardSession
 
 
     /**
+     * Read a serialized version of the contents of this session object from
+     * the specified object input stream, without requiring that the
+     * StandardSession itself have been serialized.
+     *
+     * @param stream The object input stream to read from
+     *
+     * @exception ClassNotFoundException if an unknown class is specified
+     * @exception IOException if an input/output error occurs
+     */
+    void readObjectData(ObjectInputStream stream)
+        throws ClassNotFoundException, IOException {
+
+        readObject(stream);
+
+    }
+
+
+    /**
      * Set the <code>isNew</code> flag for this session.
      *
      * @param isNew The new value for the <code>isNew</code> flag
@@ -560,6 +578,23 @@ final class StandardSession
     void setValid(boolean isValid) {
 
 	this.isValid = isValid;
+    }
+
+
+    /**
+     * Write a serialized version of the contents of this session object to
+     * the specified object output stream, without requiring that the
+     * StandardSession itself have been serialized.
+     *
+     * @param stream The object output stream to write to
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    void writeObjectData(ObjectOutputStream stream)
+        throws IOException {
+
+        writeObject(stream);
+
     }
 
 
