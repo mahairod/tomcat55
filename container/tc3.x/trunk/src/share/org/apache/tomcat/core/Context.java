@@ -521,7 +521,7 @@ public class Context {
     }
 
     public Object getAttribute(String name) {
-        if (name.equals("servlet.classpath"))
+        if (name.equals("org.apache.tomcat.jsp_classpath"))
             return getClassPath();
         else {
             Object o = attributes.get(name);
