@@ -1294,6 +1294,8 @@ public final class CoyoteConnector
             IntrospectionUtils.setProperty(protocolHandler,
                                            "sSLImplementation",
                                            ssf.getSSLImplementation());
+            IntrospectionUtils.setProperty(protocolHandler, "ciphers",
+                                           ssf.getCiphers());
         } else {
             IntrospectionUtils.setProperty(protocolHandler, "secure",
                                            "" + false);
@@ -1461,7 +1463,6 @@ public final class CoyoteConnector
         return null;
     }
 
-
     /**
      * Set keystorePass
      */
@@ -1472,6 +1473,38 @@ public final class CoyoteConnector
             ((CoyoteServerSocketFactory)factory).setKeystorePass(keystorePass);
         }
     }
+
+    /**
+     * Gets the list of SSL cipher suites that are to be enabled
+     *
+     * @return Comma-separated list of SSL cipher suites, or null if all
+     * cipher suites supported by the underlying SSL implementation are being
+     * enabled
+     */
+    public String getCiphers() {
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            return ((CoyoteServerSocketFactory)factory).getCiphers();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the SSL cipher suites that are to be enabled.
+     *
+     * Only those SSL cipher suites that are actually supported by
+     * the underlying SSL implementation will be enabled.
+     *
+     * @param ciphers Comma-separated list of SSL cipher suites
+     */
+    public void setCiphers(String ciphers) {
+        setProperty("ciphers", ciphers);
+        ServerSocketFactory factory = getFactory();
+        if (factory instanceof CoyoteServerSocketFactory) {
+            ((CoyoteServerSocketFactory)factory).setCiphers(ciphers);
+        }
+    }
+
 
     // -------------------- JMX registration  --------------------
     protected String domain;
