@@ -917,7 +917,6 @@ public class DeltaManager
     // -------------------------------------------------------- Private Methods
 
     public void backgroundProcess() {
-        log.debug("DeltaManager.backgroundProcess invoked at "+System.currentTimeMillis());
         processExpires();
     }
     /**
