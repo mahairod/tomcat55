@@ -705,6 +705,16 @@ public class CoyoteResponse
         if (included)
             return;
 
+        // Ignore charset if getWriter() has already been called
+        if (usingWriter) {
+            if (type != null) {
+                int index = type.indexOf(";");
+                if (index != -1) {
+                    type = type.substring(0, index);
+                }
+            }
+        }
+
         coyoteResponse.setContentType(type);
 
         // Check to see if content type contains charset
