@@ -1131,10 +1131,8 @@ public final class StandardWrapper
             if (((Context) getParent()).getPrivileged() 
                 || (servlet.getClass().getName().equals
                     ("org.apache.catalina.servlets.InvokerServlet"))) {
-                System.out.println("Allow:" + servlet);
                 return (true);
             } else {
-                System.out.println("Not allowed:" + servlet);
                 return (false);
             }
         }
