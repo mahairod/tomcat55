@@ -436,18 +436,11 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
             }
 	}
 
-        path = path.replace('\\', '/');
-	if (!path.startsWith("/")) {
-	    // Tag file path is relative to uri of TLD file
-            path = uri.substring(0, uri.lastIndexOf("/") + 1) + path;
-	    try {
-		path = new File(path).getCanonicalPath();
-	    } catch (IOException ioe) {
-		throw new JasperException(ioe);
-	    }
-	} else if (path.startsWith("/META-INF/tags")) {
+	if (path.startsWith("/META-INF/tags")) {
 	    // Tag file packaged in JAR
 	    ctxt.getTagFileJars().put(path, jarFile);
+	} else if (!path.startsWith("/WEB-INF/tags")) {
+	    err.jspError("jsp.error.tagfile.illegalPath", path);
 	}
 
 	TagInfo tagInfo = TagFileProcessor.parseTagFile(parserController,
