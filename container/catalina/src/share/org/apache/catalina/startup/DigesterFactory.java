@@ -32,6 +32,11 @@ import org.xml.sax.SAXNotSupportedException;
  * @author Jean-Francois Arcand
  */
 public class DigesterFactory {
+    /**
+     * The log.
+     */
+   protected static org.apache.commons.logging.Log log = 
+       org.apache.commons.logging.LogFactory.getLog(DigesterFactory.class);
 
     /**
      * The XML entiry resolver used by the Digester.
@@ -50,7 +55,7 @@ public class DigesterFactory {
     
     /**
      * Create a <code>Digester</code> parser with XML validation turned off.
-    * @param rule an instance of <code>Rule</code↔ used for parsing the xml.
+     * @param rule an instance of <code>RuleSet</code> used for parsing the xml.
      */
     public static Digester newDigester(RuleSet rule){
         return newDigester(false,false,rule);
@@ -61,13 +66,11 @@ public class DigesterFactory {
      * Create a <code>Digester</code> parser.
      * @param xmlValidation turn on/off xml validation
      * @param xmlNamespaceAware turn on/off namespace validation
-     * @param rule an instance of <code>Rule</code↔ used for parsing the xml.
+     * @param rule an instance of <code>RuleSet</code> used for parsing the xml.
      */
     public static Digester newDigester(boolean xmlValidation,
                                        boolean xmlNamespaceAware,
                                        RuleSet rule) {
-
-        URL url = null;
         Digester digester = new Digester();
         digester.setNamespaceAware(xmlNamespaceAware);
         digester.setValidating(xmlValidation);
@@ -92,8 +95,9 @@ public class DigesterFactory {
         registerLocalSchema();
         
         digester.setEntityResolver(schemaResolver);
-        if ( rule != null )
+        if ( rule != null ) {
             digester.addRuleSet(rule);
+        }
 
         return (digester);
     }
@@ -166,13 +170,16 @@ public class DigesterFactory {
 
 
     /**
-     * Load the resource and add it to the 
+     * Load the resource and add it to the resolver.
      */
     protected static void register(String resourceURL, String resourcePublicId){
-
         URL url = DigesterFactory.class.getResource(resourceURL);
-        schemaResolver.register(resourcePublicId , url.toString() );
-
+   
+        if(url == null) {
+            log.warn("Could not get url for " + resourceURL);
+        } else {
+            schemaResolver.register(resourcePublicId , url.toString() );
+        }
     }
 
 
@@ -182,7 +189,12 @@ public class DigesterFactory {
     protected static void turnOnValidation(Digester digester){
         URL url = DigesterFactory.class
                         .getResource(Constants.WebSchemaResourcePath_24);
-        digester.setSchema(url.toString());     
+  
+        if(url == null) {
+            log.error("Could not get url for " + Constants.WebSchemaResourcePath_24);
+        } else {
+            digester.setSchema(url.toString());     
+        }
     }
 
 
