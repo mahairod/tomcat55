@@ -52,7 +52,7 @@ if [ "$WATCHDOG_HOME" = "" ] ; then
 fi
 
 if [ "$JAKARTA_HOME" != "" ] ; then
-   TOMCAT_HOME=${JAKARTA_HOME}/jakarta-tomcat-4.0
+   TOMCAT_HOME=${JAKARTA_HOME}/tomcat-4.0
 fi
 
 
@@ -73,6 +73,17 @@ export CLASSPATH
 
 echo Using classpath: ${CLASSPATH}
 echo
+
+echo Using Tomcat_HOME: ${TOMCAT_HOME}
+echo
+
+echo Using Watchdog_HOME: ${WATCHDOG_HOME}
+echo
+
+if [ "$1" = "jsp-xml" ] ; then
+	java -DJSP_ROOT=${TOMCAT_HOME}/webapps/jsp-tests/jsp -DWATCHDOG_HOME=${WATCHDOG_HOME} org.apache.jspxml.GetWorkspaceInXML
+fi
+
 
 java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
   -Dwatchdog.home=${WATCHDOG_HOME} \
