@@ -854,6 +854,16 @@ class Parser {
         parseEmptyBody(doBodyNode, "jsp:doBody");
     }
 
+    private void parseElement(Node parent) throws JasperException {
+	Attributes attrs = parseAttributes();
+	reader.skipSpaces();
+
+        Node elementNode = new Node.JspElement(attrs, start, parent);
+        
+        parseOptionalBody( elementNode, "jsp:element", 
+            TagInfo.BODY_CONTENT_JSP );
+    }
+
     /*
      * For GetProperty:
      * StdActionContent ::= Attributes EmptyBody
@@ -1132,6 +1142,7 @@ class Parser {
      *                    | 'setProperty'   StdActionContent
      *                    | 'useBean'       StdActionContent
      *                    | 'plugin'        StdActionContent
+     *                    | 'element'       StdActionContent
      */
     private void parseAction(Node parent) throws JasperException {
 	Mark start = reader.mark();
@@ -1162,6 +1173,8 @@ class Parser {
 	    parseUseBean(parent);
 	} else if (reader.matches("plugin")) {
 	    parsePlugin(parent);
+	} else if (reader.matches("element")) {
+	    parseElement(parent);
 	} else {
 	    err.jspError(start, "jsp.error.badaction");
 	}
