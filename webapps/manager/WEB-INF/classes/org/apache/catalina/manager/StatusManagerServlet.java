@@ -607,8 +607,21 @@ public class StatusManagerServlet
 
         String servletName = objectName.getKeyProperty("name");
 
+        String[] mappings = (String[]) 
+            mBeanServer.invoke(objectName, "findMappings", null, null);
+
         writer.print("<h2>");
         writer.print(servletName);
+        if ((mappings != null) && (mappings.length > 0)) {
+            writer.print(" [ ");
+            for (int i = 0; i < mappings.length; i++) {
+                writer.print(mappings[i]);
+                if (i < mappings.length - 1) {
+                    writer.print(" , ");
+                }
+            }
+            writer.print(" ] ");
+        }
         writer.print("</h2>");
 
         writer.print("<p>");
