@@ -803,7 +803,8 @@ public class WebappLoader
      */
     private void notifyContext() {
 
-	ContextNotifier notifier = new ContextNotifier((Context) container);
+	WebappContextNotifier notifier = 
+            new WebappContextNotifier((Context) container);
 	(new Thread(notifier)).start();
 
     }
