@@ -173,7 +173,7 @@
 
 
   <!-- ================ BUILD: Create Jasper Javadocs ===================== -->
-  <target name="javadoc" depends="build-main">
+  <target name="javadoc">
     <delete dir="${jasper.build}/javadoc"/>
     <mkdir dir="${jasper.build}/javadoc"/>
     <javadoc packagenames="org.apache.jasper.*"
