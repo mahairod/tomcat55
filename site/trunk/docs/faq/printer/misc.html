@@ -108,6 +108,16 @@ Questions that were not categorized.
         Why do I get <code>java.lang.IllegalStateException</code>?
       </a>
     </li>
+    <li>
+      <a href="#schedule">
+        How do I make a scheduled event on Tomcat?
+      </a>
+    </li>
+    <li>
+      <a href="#baddtd">
+        What is <code>Element "web-app" does not allow "servlet" here</code>?
+      </a>
+    </li>
   </ul>
 </p>
 
@@ -523,17 +533,49 @@ Questions that were not categorized.
     <code>sendRedirect()</code>, any following lines of code will still execute.
     For example:
     <div align="left"><table border="0" cellpadding="0" cellspacing="4"><tr><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td><td height="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr><tr><td width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td><td height="1" bgcolor="#ffffff"><pre>
-        {
-            ...
-            response.sendRedirect("foo.jsp");
-            // At this point, you should probably have a return statement otherwise
-            // the following code will run
-            System.out.println("After redirect - alway should use log() not System.out");
-            response.sendRedirect("bar.jsp"); /* This will throw an error! */
+{
+  ...
+  response.sendRedirect("foo.jsp");
+  // At this point, you should probably have a return statement otherwise
+  // the following code will run
+  System.out.println("After redirect! By the way ...");
+  System.out.println("Use commons-logging or log4j, not System.out");
+  System.out.println("System.out is a bad practice!");
 
-        }
+  response.sendRedirect("bar.jsp"); /* This will throw an error! */
+
+}
     </pre></td><td width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr><tr><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td><td height="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td><td height="1" width="1" bgcolor="#023264"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table></div>
 
+  </div><br>
+
+
+  <b style="font-size: larger">
+      <a name="schedule">
+        How do I make a scheduled event on Tomcat?
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Tomcat does not support this directly. Its not part of the Servlet or
+    JSP Specification. <br>
+    If you do need this functionality see
+    <a href="http://marc.theaimsgroup.com/?t=106192918700004&r=1&w=2">
+        this thread
+    </a> or
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=106157051231075&w=2">
+    this link</a>.
+  </div><br>
+
+
+  <b style="font-size: larger">
+      <a name="baddtd">
+        What is <code>Element "web-app" does not allow "servlet" here</code>?
+      </a>
+  </b>
+  <div style="padding-left : 20px;">
+    Your web.xml is not well formed or it is not conforming to the DTD as
+    defined by the servlet spec. Use an XML validator to ensure
+    your web.xml file is ok.
   </div><br>
 
 

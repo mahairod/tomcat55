@@ -54,10 +54,27 @@
 </p>
 </section>
 <section name="Questions">
-Coming
+     <li>
+       <a href="#faster">
+          Is Tomcat faster than serving static HTML pages than apache?
+       </a>
+     </li>
 </section>
 <section name="Answers">
-Coming
+
+  <question>
+    <a name="faster">
+      Is Tomcat faster than serving static HTML pages than apache?
+    </a>
+  </question>
+  <answer>
+    Yes depending on how you tune it. And NO depending on how you tune it.
+    Anything less starts a religious war. We recommend performing your own
+    benchmarks and
+    <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=106036177509367&amp;w=2">
+    see for yourself</a>.
+  </answer>
+
 </section>
 
 

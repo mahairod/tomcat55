@@ -16,7 +16,7 @@
 
 <section name="Preface">
 <p>
-    Security issues. Here they are. Not much more to say.
+    Security issues. Here they are.
 </p>
 </section>
 
@@ -40,6 +40,12 @@
      <li>
        <a href="#https">
          How to I force all my pages to run under HTTPS?
+       </a>
+     </li>
+
+     <li>
+       <a href="#login">
+          What is the default login for the manager and admin app?
        </a>
      </li>
 
@@ -99,6 +105,22 @@
       <a href="http://marc.theaimsgroup.com/?l=tomcat-user&amp;m=104951559722619&amp;w=2">
         Use security-constraint in web.xml.
       </a>
+  </answer>
+
+
+
+  <question>
+    <a name="login">
+      What is the default login for the manager and admin app?
+    </a>
+  </question>
+  <answer>
+    The admin and manager application do not provide a default
+    login. Doing so is a security flaw. You need to edit
+    <code>$CATALINA_HOME/conf/tomcat-users.xml</code>
+    if you are using the default install.
+    <a href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/manager-howto.html#Configuring%20Manager%20Application%20Access">
+        Configuring Manager Application Access</a>
   </answer>
 
 
