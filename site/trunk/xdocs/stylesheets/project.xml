@@ -14,9 +14,7 @@
     <menu name="Documentation">
         <item name="Tomcat 3.2"           href="/tomcat-3.2-doc/index.html"/> 
         <item name="Tomcat 3.3"           href="/tomcat-3.3-doc/index.html"/> 
-        <item name="Tomcat 4.0 (current)" href="/tomcat-4.0-doc/index.html"/> 
-        <item name="Tomcat 4.0 (experimental)"
-                                        href="/tomcat-4.0-doc-exp/index.html"/>
+        <item name="Tomcat 4.0"           href="/tomcat-4.0-doc/index.html"/> 
     </menu>
 
     <menu name="Download">
