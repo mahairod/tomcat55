@@ -92,6 +92,7 @@ import javax.management.MBeanInfo;
 import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 
+import org.apache.struts.util.MessageResources;
 
 /**
  * Test <code>Action</code> that handles events from the tree control test
@@ -151,6 +152,8 @@ public class SetUpServiceAction extends Action {
             
         }
         
+        // The message resources for this package.
+        MessageResources messages = getResources();
         
         String selectedName = request.getParameter("select");
         
@@ -175,39 +178,70 @@ public class SetUpServiceAction extends Action {
             
             actionList = new ArrayList();
             // You can get this from the Mbean
-            actionList.add(new LabelValueBean("Available Actions",
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.avaliable.actions"),
             "Available Actions"));
-            actionList.add(new LabelValueBean("Create New Access Logger...",
-            "Create New Access Logger..."));
-            actionList.add(new LabelValueBean("Delete Access Logger...",
-            "Delete Access Logger..."));
-            actionList.add(new LabelValueBean("Create New Connector...",
-            "Create New Connector..."));
-            actionList.add(new LabelValueBean("Delete Connectors...",
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.accesslogger.create"),
+            "Create New Access Logger"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.accesslogger.delete"),
+            "Delete Access Logger"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.connector.create"),
+            "Create New Connector"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.connector.delete"),
             "Delete Connectors..."));
-            actionList.add(new LabelValueBean("Create New Host...",
-            "Create New Host..."));
-            actionList.add(new LabelValueBean("Delete Hosts... ",
-            "Delete Hosts... "));
-            actionList.add(new LabelValueBean("Create New Logger...",
-            "Create New Logger..."));
-            actionList.add(new LabelValueBean("Delete Logger...",
-            "Delete Logger..."));
-            actionList.add(new LabelValueBean("Create New Request Filter...",
-            "Create New Request Filter..."));
-            actionList.add(new LabelValueBean("Delete Request Filters...",
-            "Delete Request Filters..."));
-            actionList.add(new LabelValueBean("Create New User Realm...",
-            "Create New User Realm..."));
-            actionList.add(new LabelValueBean("Delete User Realm...",
-            "Delete User Realm..."));
-            actionList.add(new LabelValueBean("Create New Valve...",
-            "Create New Valve..."));
-            actionList.add(new LabelValueBean("Delete Valves...",
-            "Delete Valves..."));
-            actionList.add(new LabelValueBean("Delete This Service...",
-            "Delete This Service..."));
-            // I18N these.
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.host.create"),
+            "Create New Host"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.host.delete"),
+            "Delete Hosts"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.logger.create"),
+            "Create New Logger"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.logger.delete"),
+            "Delete Logger"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.requestfilter.create"),
+            "Create New Request Filter"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.requestfilter.delete"),
+            "Delete Request Filters"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.userrealm.create"),
+            "Create New User Realm"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.userrealm.delete"),
+            "Delete User Realm"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.valve.create"),
+            "Create New Valve"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.valve.delete"),
+            "Delete Valves"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.service.delete"),
+            "Delete This Service"));
+            
         }
         
         String serviceName = null;
@@ -286,7 +320,7 @@ public class SetUpServiceAction extends Action {
                 // the pulldown menu..
                 hostNameList.add(new LabelValueBean(hostName, hostName));
             }
-
+            
             
         }catch(Throwable t){
             t.printStackTrace(System.out);

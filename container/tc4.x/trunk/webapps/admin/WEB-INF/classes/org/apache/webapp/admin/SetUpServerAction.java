@@ -90,11 +90,14 @@ import javax.management.MBeanInfo;
 
 import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
+
+import org.apache.struts.util.MessageResources;
 /**
  * Test <code>Action</code> that handles events from the tree control test
  * page.
  *
  * @author Jazmin Jonson
+ * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
@@ -145,7 +148,9 @@ public class SetUpServerAction extends Action {
                 request.getSession().setAttribute(mapping.getAttribute(), form);
 	       
 	}
-
+            
+        MessageResources messages = getResources();
+            
 	// Do transaction stuff before this
 
 	ServerForm serverFm = (ServerForm) form;
@@ -169,10 +174,18 @@ public class SetUpServerAction extends Action {
 
             actionList = new ArrayList();
 	  // You can get this from the Mbean
-            actionList.add(new LabelValueBean("Available Actions","Available Actions"));
-            actionList.add(new LabelValueBean("Create New Service","Create New Service"));
-            actionList.add(new LabelValueBean("Delete Services","Delete Services"));
-	}
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.avaliable.actions"),
+            "Available Actions"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.services.create"),
+            "Create New Service"));
+            
+            actionList.add(new LabelValueBean(
+            messages.getMessage("actions.services.delete"),
+            "Delete Services"));
+        }
 
 	Integer portNumb = null;
 	Integer debug = null;
