@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.AccessControlException;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
@@ -251,6 +252,9 @@ public final class StandardServer
 	        socket = serverSocket.accept();
 		socket.setSoTimeout(10 * 1000);  // Ten seconds
 		stream = socket.getInputStream();
+            } catch (AccessControlException ace) {
+                log("socket accept security exception: " + ace.getMessage());
+                continue;
 	    } catch (IOException e) {
 	        System.err.println("StandardServer.await: accept: " + e);
 		e.printStackTrace();

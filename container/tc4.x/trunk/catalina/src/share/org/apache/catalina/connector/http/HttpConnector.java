@@ -69,6 +69,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.AccessControlException;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -764,6 +765,9 @@ public final class HttpConnector
 		socket = serverSocket.accept();
                 if (connectionTimeout > 0)
                     socket.setSoTimeout(connectionTimeout);
+            } catch (AccessControlException ace) {
+                log("socket accept security exception: " + ace.getMessage());
+                continue;
 	    } catch (IOException e) {
 		if (started && !stopped)
 		    log("accept: ", e);
