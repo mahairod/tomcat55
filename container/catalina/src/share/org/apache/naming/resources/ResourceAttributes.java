@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.naming.NamingEnumeration;
@@ -138,12 +139,28 @@ public class ResourceAttributes implements Attributes {
      */
     protected static final SimpleDateFormat formats[] = {
         new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US),
-        new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US),
         new SimpleDateFormat("EEEEEE, dd-MMM-yy HH:mm:ss zzz", Locale.US),
         new SimpleDateFormat("EEE MMMM d HH:mm:ss yyyy", Locale.US)
     };
     
     
+    protected final static TimeZone gmtZone = TimeZone.getTimeZone("GMT");
+
+
+    /**
+     * GMT timezone - all HTTP dates are on GMT
+     */
+    static {
+
+        format.setTimeZone(gmtZone);
+
+        formats[0].setTimeZone(gmtZone);
+        formats[1].setTimeZone(gmtZone);
+        formats[2].setTimeZone(gmtZone);
+
+    }
+
+
     // ----------------------------------------------------------- Constructors
     
     
@@ -200,6 +217,18 @@ public class ResourceAttributes implements Attributes {
      */
     protected Date lastModifiedDate = null;
 
+    
+    /**
+     * Last modified date in HTTP format.
+     */
+    protected String lastModifiedHttp = null;
+    
+
+    /**
+     * MIME type.
+     */
+    protected String mimeType = null;
+    
 
     /**
      * Name.
@@ -553,6 +582,50 @@ public class ResourceAttributes implements Attributes {
             attributes.put(LAST_MODIFIED, lastModifiedDate);
     }
     
+    
+    /**
+     * @return Returns the lastModifiedHttp.
+     */
+    public String getLastModifiedHttp() {
+        if (lastModifiedHttp != null)
+            return lastModifiedHttp;
+        Date modifiedDate = getLastModifiedDate();
+        if (modifiedDate == null) {
+            modifiedDate = getCreationDate();
+        }
+        if (modifiedDate == null) {
+            modifiedDate = new Date();
+        }
+        synchronized (format) {
+            lastModifiedHttp = format.format(modifiedDate);
+        }
+        return lastModifiedHttp;
+    }
+    
+    
+    /**
+     * @param lastModifiedHttp The lastModifiedHttp to set.
+     */
+    public void setLastModifiedHttp(String lastModifiedHttp) {
+        this.lastModifiedHttp = lastModifiedHttp;
+    }
+    
+    
+    /**
+     * @return Returns the mimeType.
+     */
+    public String getMimeType() {
+        return mimeType;
+    }
+    
+    
+    /**
+     * @param mimeType The mimeType to set.
+     */
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
     
     /**
      * Get name.

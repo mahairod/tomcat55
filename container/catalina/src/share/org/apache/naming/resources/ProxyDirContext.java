@@ -252,6 +252,9 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         CacheEntry entry = cacheLookup(name.toString());
         if (entry != null) {
+            if (!entry.exists) {
+                throw notFoundException;
+            }
             if (entry.resource != null) {
                 // Check content caching.
                 return entry.resource;
@@ -278,6 +281,9 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         CacheEntry entry = cacheLookup(name);
         if (entry != null) {
+            if (!entry.exists) {
+                throw notFoundException;
+            }
             if (entry.resource != null) {
                 return entry.resource;
             } else {
@@ -796,6 +802,9 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         CacheEntry entry = cacheLookup(name.toString());
         if (entry != null) {
+            if (!entry.exists) {
+                throw notFoundException;
+            }
             return entry.attributes;
         }
         Attributes attributes = dirContext.getAttributes(parseName(name));
@@ -817,6 +826,9 @@ public class ProxyDirContext implements DirContext {
         throws NamingException {
         CacheEntry entry = cacheLookup(name);
         if (entry != null) {
+            if (!entry.exists) {
+                throw notFoundException;
+            }
             return entry.attributes;
         }
         Attributes attributes = dirContext.getAttributes(parseName(name));
@@ -1351,6 +1363,45 @@ public class ProxyDirContext implements DirContext {
     }
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Retrieves the named object as a cache entry, without any exception.
+     * 
+     * @param name the name of the object to look up
+     * @return the cache entry bound to name
+     */
+    public CacheEntry lookupCache(String name) {
+        CacheEntry entry = cacheLookup(name);
+        if (entry == null) {
+            entry = new CacheEntry();
+            entry.name = name;
+            try {
+                Object object = dirContext.lookup(parseName(name));
+                if (object instanceof InputStream) {
+                    entry.resource = new Resource((InputStream) object);
+                } else if (object instanceof DirContext) {
+                    entry.context = (DirContext) object;
+                } else if (object instanceof Resource) {
+                    entry.resource = (Resource) object;
+                } else {
+                    entry.resource = new Resource(new ByteArrayInputStream
+                        (object.toString().getBytes()));
+                }
+                Attributes attributes = dirContext.getAttributes(parseName(name));
+                if (!(attributes instanceof ResourceAttributes)) {
+                    attributes = new ResourceAttributes(attributes);
+                }
+                entry.attributes = (ResourceAttributes) attributes;
+            } catch (NamingException e) {
+                entry.exists = false;
+            }
+        }
+        return entry;
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 
@@ -1379,8 +1430,7 @@ public class ProxyDirContext implements DirContext {
     /**
      * Lookup in cache.
      */
-    protected CacheEntry cacheLookup(String name)
-        throws NamingException {
+    protected CacheEntry cacheLookup(String name) {
         if (cache == null)
             return (null);
         if (name == null)
@@ -1407,9 +1457,6 @@ public class ProxyDirContext implements DirContext {
                 }
             }
             cacheEntry.accessCount++;
-        }
-        if (!cacheEntry.exists) {
-            throw notFoundException;
         }
         return (cacheEntry);
     }
