@@ -58,6 +58,7 @@ import org.apache.tools.ant.*;
 
 import java.io.*;
 import java.util.*;
+import java.lang.SecurityManager;
 
 /**
  * This Task makes it easy to generate javadoc 1.2 for a collection of source code.
@@ -301,9 +302,11 @@ public class Javadoc2 extends Task {
             argList.addElement("-doclet");
             argList.addElement(doclet);
         }
+        argList.addElement("-classpath");
         if (classpath != null) {
-            argList.addElement("-classpath");
             argList.addElement(classpath);
+        } else {
+            argList.addElement(System.getProperty("java.class.path"));
         }
         if (bootclasspath != null) {
             argList.addElement("-bootclasspath");
@@ -418,8 +421,18 @@ public class Javadoc2 extends Task {
         // also have to pass in a classpath specific for the project. Arg.
         // Why can't Sun make our life easy and allow us to distribute 
         // javac.jar with javadoc utility in it?
-        com.sun.tools.javadoc.Main compiler =
-            new com.sun.tools.javadoc.Main();
-        compiler.main(args);
+        
+/*        SecurityManager saveSecurityManager = System.getSecurityManager();
+        try {
+
+            System.setSecurityManager(new NoExitSecurityManager());
+*/
+            com.sun.tools.javadoc.Main compiler =
+                new com.sun.tools.javadoc.Main();
+            compiler.main(args);
+//        } finally {
+//            System.setSecurityManager(saveSecurityManager);
+//        }
+
     }
 }
