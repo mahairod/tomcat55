@@ -50,7 +50,7 @@
   <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
-
+  
   <!-- Some compilers will disable debugging if true. And it doesn't do anything 
        in most cases -->
   <property name="compile.optimize"     value="false"/>
@@ -151,10 +151,11 @@
   <target name="build-tomcatjk" unless="tomcatjk.build.notrequired" >
     <echo>========== Building: tomcat-jk </echo>
 
-    <ant dir="${jtc.home}/jk" target="build-main">
+    <ant dir="${jtc.home}/jk" target="jkjava">
       <property name="tomcat5.home" value="${catalina.build}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
+      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
 
       <property name="jk.build" value="${tomcat.build}"/>
 
@@ -172,9 +173,10 @@
           depends="init">
     <echo>========== Building: tomcat-coyote </echo>
 
-    <ant dir="${jtc.home}/coyote" target="compile.tomcat5">
+    <ant dir="${jtc.home}/coyote" target="jar.tomcat5">
       <property name="catalina.home" value="${tomcat.build}"/>
       <property name="tomcat5.detect" value="true"/>
+      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
       <property name="servlet.jar"   value="${tomcat.build}/common/lib/servlet-api.jar"/>
     </ant>
   </target>
@@ -187,6 +189,7 @@
     <ant dir="${jtc.home}/http11" target="compile">
       <property name="build.home" value="${tomcat.build}"/>
       <property name="tomcat-http11.jar" value="${tomcat.build}/server/lib/tomcat-http11.jar"/>
+      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
     </ant>
   </target>
@@ -251,7 +254,7 @@
   <target name="build-commons-modeler" unless="commons-modeler.build.notrequired" >
     <echo>========== Building: commons-modeler </echo>
 
-    <ant dir="${cvs.base}/jakarta-commons/modeler" target="compile-only" >
+    <ant dir="${cvs.base}/jakarta-commons/modeler" target="jar" >
         <property name="commons-logging.jar" location="${tomcat.build}/server/lib/commons-logging.jar" />
         <property name="commons-modeler.jar" location="${tomcat.build}/server/lib/commons-modeler.jar" />
         <property name="build.home" value="${tomcat.build}" />
