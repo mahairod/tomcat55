@@ -94,6 +94,10 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
+// FIXME : Define a new "servlet context" interface to void directly referncing
+// the ApplicationContext
+import org.apache.catalina.core.ApplicationContext;
+// End FIXME
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -856,6 +860,9 @@ public final class StandardLoader
         }
 
         servletContext.setAttribute(Globals.CLASS_PATH_ATTR, classpath);
+        if (servletContext instanceof ApplicationContext)
+            ((ApplicationContext) servletContext).setAttributeReadOnly
+                (Globals.CLASS_PATH_ATTR);
 
     }
 
@@ -913,7 +920,10 @@ public final class StandardLoader
 	if (servletContext == null)
 	    return;
 	servletContext.setAttribute(Globals.CLASS_LOADER_ATTR,
-				    getClassLoader());
+                                    getClassLoader());
+        if (servletContext instanceof ApplicationContext)
+            ((ApplicationContext) servletContext).setAttributeReadOnly
+                (Globals.CLASS_LOADER_ATTR);
 
     }
 
