@@ -212,6 +212,24 @@ public class SerializablePrincipal  implements java.io.Serializable {
     {
         return new GenericPrincipal(realm,name,password,getRoles()!=null?Arrays.asList(getRoles()):null);
     }
+    
+    public static GenericPrincipal readPrincipal(java.io.ObjectInputStream in, Realm realm) throws java.io.IOException{
+        String name = in.readUTF();
+        String pwd = in.readUTF();
+        int size = in.readInt();
+        String[] roles = new String[size];
+        for ( int i=0; i<size; i++ ) roles[i] = in.readUTF();
+        return new GenericPrincipal(realm,name,pwd,Arrays.asList(roles));
+    }
+    
+    public static void writePrincipal(GenericPrincipal p, java.io.ObjectOutputStream out) throws java.io.IOException {
+        out.writeUTF(p.getName());
+        out.writeUTF(p.getPassword());
+        String[] roles = p.getRoles();
+        if ( roles == null ) roles = new String[0];
+        out.writeInt(roles.length);
+        for ( int i=0; i<roles.length; i++ ) out.writeUTF(roles[i]);
+    }
 
 
 }
