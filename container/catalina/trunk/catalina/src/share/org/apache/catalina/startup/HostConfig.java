@@ -553,7 +553,8 @@ public class HostConfig
             return;
 
         // Assume this is a configuration descriptor and deploy it
-        log.debug(sm.getString("hostConfig.deployDescriptor", file));
+        if(log.isDebugEnabled())
+            log.debug(sm.getString("hostConfig.deployDescriptor", file));
         Context context = null;
         try {
             synchronized (digester) {
@@ -781,7 +782,8 @@ public class HostConfig
         DeployedApplication deployedApp = new DeployedApplication(contextPath);
         
         // Deploy the application in this WAR file
-        log.info(sm.getString("hostConfig.deployJar", file));
+        if(log.isInfoEnabled()) 
+            log.info(sm.getString("hostConfig.deployJar", file));
         try {
             Context context = (Context) Class.forName(contextClass).newInstance();
             if (context instanceof Lifecycle) {
