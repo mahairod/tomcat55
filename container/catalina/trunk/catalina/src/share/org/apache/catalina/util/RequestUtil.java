@@ -331,9 +331,20 @@ public final class RequestUtil {
         throws UnsupportedEncodingException {
 
         if ((data != null) && (data.length() > 0)) {
-            int len = data.length();
-            byte[] bytes = new byte[len];
-            data.getBytes(0, len, bytes, 0);
+
+            // use the specified encoding to extract bytes out of the
+            // given string so that the encoding is not lost. If an
+            // encoding is not specified, let it use platform default
+            byte[] bytes = null;
+            try {
+                if (encoding == null) {
+                    bytes = data.getBytes();
+                } else {
+                    bytes = data.getBytes(encoding);
+                }
+            } catch (UnsupportedEncodingException uee) {
+            }
+
             parseParameters(map, bytes, encoding);
         }
 
@@ -371,9 +382,17 @@ public final class RequestUtil {
         if (str == null)
             return (null);
 
-        int len = str.length();
-        byte[] bytes = new byte[len];
-        str.getBytes(0, len, bytes, 0);
+        // use the specified encoding to extract bytes out of the
+        // given string so that the encoding is not lost. If an
+        // encoding is not specified, let it use platform default
+        byte[] bytes = null;
+        try {
+            if (enc == null) {
+                bytes = str.getBytes();
+            } else {
+                bytes = str.getBytes(enc);
+            }
+        } catch (UnsupportedEncodingException uee) {}
 
         return URLDecode(bytes, enc);
 
