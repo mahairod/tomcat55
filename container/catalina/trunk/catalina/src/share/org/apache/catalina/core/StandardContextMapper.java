@@ -199,6 +199,16 @@ public final class StandardContextMapper
             ((HttpServletRequest) request.getRequest()).getContextPath();
         String requestURI = ((HttpRequest) request).getDecodedRequestURI();
         String relativeURI = requestURI.substring(contextPath.length());
+       
+	/*
+	 * Remove any URI params from the relativeURI, so they won't be 
+	 * considered by the mapping algorithm.
+	 */
+        int uriParamsIndex = relativeURI.indexOf(';');
+        if (uriParamsIndex >= 0) {
+            relativeURI = relativeURI.substring(0, uriParamsIndex);
+	}
+
         if (debug >= 1)
             context.log("Mapping contextPath='" + contextPath +
                         "' with requestURI='" + requestURI +
