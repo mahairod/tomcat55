@@ -166,7 +166,7 @@ public class Ajp13ConnectorRequest extends Request
             }
 
             String hValue = msg.getString();
-            headers.addHeader( hName , hValue );
+            headers.addValue( hName ).setString( hValue );
             //log( "Head: " + hName + "=" + hValue);
         }
 
@@ -230,9 +230,8 @@ public class Ajp13ConnectorRequest extends Request
             setScheme("https");
         }
 
-        contentLength = headers.getIntHeader("content-length");
-        contentType = headers.getHeader("content-type");
-	//    	((BufferedServletInputStream)this.in).setLimit(contentLength);
+	MessageBytes clB=headers.getValue("content-length");
+        contentLength = (clB==null) ? -1 : clB.getInt();
     	if(contentLength > 0) {
     		/* Read present data */
     		int err = con.receive(msg);

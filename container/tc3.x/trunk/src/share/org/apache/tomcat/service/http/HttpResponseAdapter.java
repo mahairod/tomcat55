@@ -154,7 +154,7 @@ public class HttpResponseAdapter extends  Response {
 	// This avoids redundant setting of date ( very expensive ).
 	// XXX XXX Check if IIS, NES do generate the date
 	if( false ) {
-	    headers.setDateHeader(  "Date", System.currentTimeMillis());
+	    headers.setValue(  "Date" ).setTime( System.currentTimeMillis());
 	}
 	
 	// Servlet Engine header will be set per/adapter - smarter adapters will
