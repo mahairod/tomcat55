@@ -63,14 +63,14 @@ public interface CatalinaCluster
      * Sends a message to all the members in the cluster
      * @param msg SessionMessage
      */
-    public void send(SessionMessage msg);
+    public void send(ClusterMessage msg);
     
     /**
      * Sends a message to a specific member in the cluster
      * @param msg SessionMessage
      * @param dest Member
      */
-    public void send(SessionMessage msg, Member dest);
+    public void send(ClusterMessage msg, Member dest);
     
     /**
      * returns all the members currently participating in the cluster
@@ -91,5 +91,9 @@ public interface CatalinaCluster
     public MembershipService getMembershipService();
     
     public void addValve(Valve valve);
+    
+    public void addClusterListener(MessageListener listener);
+    
+    public void removeClusterListener(MessageListener listener);
     
 }
