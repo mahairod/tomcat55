@@ -402,7 +402,7 @@ public class ServerLifecycleListener
         if (debug >= 3) {
             log("Creating MBean for ContextEnvironment " + environment);
         }
-        // FIXME - MBeanUtils.createMBean(environment);
+        MBeanUtils.createMBean(environment);
 
     }
 
@@ -421,7 +421,7 @@ public class ServerLifecycleListener
         if (debug >= 3) {
             log("Creating MBean for ContextResource " + resource);
         }
-        // FIXME - MBeanUtils.createMBean(resource);
+        MBeanUtils.createMBean(resource);
 
     }
 
@@ -561,7 +561,7 @@ public class ServerLifecycleListener
         if (debug >= 2) {
             log("Creating MBean for NamingResources " + resources);
         }
-        // FIXME - MBeanUtils.createMBean(resources);
+        MBeanUtils.createMBean(resources);
         resources.addPropertyChangeListener(this);
 
         // Create the MBeans for each child environment entry
@@ -776,7 +776,7 @@ public class ServerLifecycleListener
         if (debug >= 3) {
             log("Destroying MBean for ContextEnvironment " + environment);
         }
-        // FIXME - MBeanUtils.destroyMBean(environment);
+        MBeanUtils.destroyMBean(environment);
 
     }
 
@@ -795,7 +795,7 @@ public class ServerLifecycleListener
         if (debug >= 3) {
             log("Destroying MBean for ContextResource " + resource);
         }
-        // FIXME - MBeanUtils.destroyMBean(resource);
+        MBeanUtils.destroyMBean(resource);
 
     }
 
@@ -933,7 +933,7 @@ public class ServerLifecycleListener
         if (debug >= 2) {
             log("Destroying MBean for NamingResources " + resources);
         }
-        // FIXME - MBeanUtils.destroyMBean(resources);
+        MBeanUtils.destroyMBean(resources);
         resources.removePropertyChangeListener(this);
 
     }
