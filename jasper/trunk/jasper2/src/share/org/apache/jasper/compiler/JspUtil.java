@@ -770,7 +770,7 @@ public class JspUtil {
 	if (index != -1) {
 	    path = path.substring(0, index);
 	} else {
-	    err.jspError("XXX", path);
+	    err.jspError("jsp.error.tagfile.badSuffix", path);
 	}
 
 	index = path.indexOf(WEB_INF_TAGS);
@@ -783,7 +783,7 @@ public class JspUtil {
 		className = "org.apache.jsp.tag.meta.";
 		begin = index + META_INF_TAGS.length();
 	    } else {
-		err.jspError("jsp.error.tagfile.wrong.path", path);
+		err.jspError("jsp.error.tagfile.illegalPath", path);
 	    }
 	}
 
