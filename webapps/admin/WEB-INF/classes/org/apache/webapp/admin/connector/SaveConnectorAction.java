@@ -425,6 +425,22 @@ public final class SaveConnectorAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("xpoweredBy", new Boolean(cform.getXpoweredBy())));                        
 
+            attribute = "URIEncoding";
+            String uriEnc = cform.getURIEncodingText();
+            if ((uriEnc != null) && (uriEnc.length()==0)) {
+                uriEnc = null;
+            }
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, uriEnc));            
+
+            attribute = "useBodyEncodingForURI";
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, new Boolean(cform.getUseBodyEncodingForURIText())));
+
+            attribute = "allowTrace";
+            mBServer.setAttribute(coname,
+                                  new Attribute(attribute, new Boolean(cform.getAllowTraceText())));
+
             // proxy name and port do not exist for AJP connector
             if (!("AJP".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";  
