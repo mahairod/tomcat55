@@ -75,6 +75,9 @@
      <fix>
        <bug>30949</bug>: Make sure ApplicationDispatcher unwraps request/response even if include error occurs. (yoavs)
      </fix>
+      <fix>
+        Fixed StandardContext.getStartTime() to return actual start time/date instead of time (startupTime) it took to start context. (luehe)
+      </fix>
     </changelog>
   </subsection>
 
@@ -119,6 +122,9 @@
       <fix>
         <bug>31058</bug>: Ensure StatusTransformer escapes query string for XML. (yoavs)
       </fix>
+      <update>
+        Added contexts' start time (available from 'startTime' MBean attribute of StandardContext) to status page (luehe)
+      </update>
     </changelog>
   </subsection>
 </section>
