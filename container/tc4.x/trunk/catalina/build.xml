@@ -759,6 +759,10 @@
       </fileset>
     </copy>
 
+    <!-- JVM Temporary Directory README -->
+    <copy todir="${catalina.build}/temp"
+          file="src/temp/README.txt"/>
+
     <!-- Catalina Server Libraries -->
     <copy todir="${catalina.build}/server/lib"
            file="${commons-beanutils.jar}"/>
