@@ -67,8 +67,22 @@ package org.apache.jasper.compiler;
  * @author Anil K. Vijendran
  */
 public interface Mangler {
+    /** The class name ( without package ) of the
+     *  generated servlet, including the version number
+     */
     String getClassName();
+
+    /** The package name. It is based on the .jsp path, with
+     *  all unsafe components escaped.
+     */
     String getPackageName();
+
+    /** The full name of the .java file, including
+     *  version number ( based on className and outputDir )
+     */
     String getJavaFileName();
+
+    /** The full name of the .class file ( without version number)
+     */
     String getClassFileName();
 }
