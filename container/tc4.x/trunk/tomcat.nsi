@@ -97,7 +97,7 @@ Section "Tomcat 4.0 Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
+                 '-jar -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" stop' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWMINIMIZED
 
   SetOutPath "$SMPROGRAMS\Jakarta Tomcat 4.0\Configuration"
