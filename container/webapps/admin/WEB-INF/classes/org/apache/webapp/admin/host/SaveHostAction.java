@@ -68,8 +68,8 @@ public final class SaveHostAction extends Action {
       "java.lang.String",     // name
       "java.lang.String",     // appBase
       "boolean",              // autoDeploy
-      "boolean",              // deployXML
       "boolean",              // deployOnStartup
+      "boolean",              // deployXML
       "boolean",              // unpackWARs
       "boolean",              // xmlNamespaceAware
       "boolean",              // xmlValidation
@@ -156,8 +156,8 @@ public final class SaveHostAction extends Action {
                 values[1] = hform.getHostName();
                 values[2] = hform.getAppBase();
                 values[3] = new Boolean(hform.getAutoDeploy());
-                values[4] = new Boolean(hform.getDeployXML());
-                values[5] = new Boolean(hform.getDeployOnStartup());
+                values[4] = new Boolean(hform.getDeployOnStartup());
+                values[5] = new Boolean(hform.getDeployXML());
                 values[6] = new Boolean(hform.getUnpackWARs());
                 values[7] = new Boolean(hform.getXmlNamespaceAware());
                 values[8] = new Boolean(hform.getXmlValidation());
