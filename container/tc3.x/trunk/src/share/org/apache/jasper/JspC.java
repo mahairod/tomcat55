@@ -321,7 +321,7 @@ public class JspC implements Options { //, JspCompilationContext {
     {
         try {
             JspLoader loader =
-                    new JspLoader();
+                    new org.apache.jasper.servlet.JasperLoader();
 	    loader.setParentClassLoader(getClass().getClassLoader());
 	    loader.setOptions( this);
             CommandLineContext clctxt = new CommandLineContext(

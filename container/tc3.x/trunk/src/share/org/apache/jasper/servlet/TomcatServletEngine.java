@@ -58,7 +58,7 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.apache.jasper.runtime;
+package org.apache.jasper.servlet;
 
 import java.io.File;
 import javax.servlet.ServletContext;
