@@ -78,6 +78,7 @@ import java.util.jar.JarFile;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -229,7 +230,9 @@ public class StandardHostDeployer implements Deployer {
         host.log(sm.getString("standardHost.installing", contextPath, url));
 
         // Expand a WAR archive into an unpacked directory if needed
-        if (host.isUnpackWARs()) {
+        // NOTE:  If the user supplies a "jar:file:" URL, assume that
+        // they do not want WAR expansion even if unpackWARs is set
+        if (host.isUnpackWARs() && !url.startsWith("jar:file:")) {
 
             if (url.startsWith("jar:"))
                 docBase = expand(war);
@@ -450,10 +453,14 @@ public class StandardHostDeployer implements Deployer {
         if (!contextPath.equals("") && !contextPath.startsWith("/"))
             throw new IllegalArgumentException
                 (sm.getString("standardHost.pathFormat", contextPath));
+
+        // Locate the context and associated work directory
         Context context = findDeployedApp(contextPath);
         if (context == null)
             throw new IllegalArgumentException
                 (sm.getString("standardHost.pathMissing", contextPath));
+        File workDir = (File) context.getServletContext().getAttribute
+            (Globals.WORK_DIR_ATTR);
 
         // Remove this web application
         host.log(sm.getString("standardHost.removing", contextPath));
@@ -726,7 +733,6 @@ public class StandardHostDeployer implements Deployer {
      *
      * @exception IOException if an input/output error occurs
      */
-    /*
     protected void remove(File dir) throws IOException {
 
         String list[] = dir.list();
@@ -745,7 +751,6 @@ public class StandardHostDeployer implements Deployer {
                                   dir.getAbsolutePath());
 
     }
-    */
 
 
 }

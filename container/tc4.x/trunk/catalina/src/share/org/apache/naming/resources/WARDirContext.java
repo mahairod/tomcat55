@@ -192,6 +192,30 @@ public class WARDirContext extends BaseDirContext {
     }
 
 
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Release any resources allocated for this directory context.
+     */
+    public void release() {
+
+        entries = null;
+        if (base != null) {
+            try {
+                base.close();
+            } catch (IOException e) {
+                System.out.println
+                    ("Exception closing WAR File " + base.getName());
+                e.printStackTrace(System.out);
+            }
+        }
+        base = null;
+        super.release();
+
+    }
+
+
     // -------------------------------------------------------- Context Methods
 
 

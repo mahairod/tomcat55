@@ -98,9 +98,10 @@ import org.apache.naming.EjbRef;
 import org.apache.naming.ResourceRef;
 import org.apache.naming.ResourceEnvRef;
 import org.apache.naming.TransactionRef;
-import org.apache.naming.resources.FileDirContext;
-import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.BaseDirContext;
+import org.apache.naming.resources.FileDirContext;
+import org.apache.naming.resources.ProxyDirContext;
+import org.apache.naming.resources.WARDirContext;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
@@ -3565,6 +3566,24 @@ public class StandardContext
             if ((loader != null) && (loader instanceof Lifecycle)) {
                 ((Lifecycle) loader).stop();
             }
+
+            // Release our resources DirContext
+            DirContext dirContext = resources;
+            if ((dirContext != null) &&
+                (dirContext instanceof ProxyDirContext)) {
+                dirContext = ((ProxyDirContext) dirContext).getDirContext();
+            }
+            if (dirContext != null) {
+                if (debug >= 1) {
+                    log("Releasing document base " + docBase);
+                }
+                if (dirContext instanceof BaseDirContext) {
+                    ((BaseDirContext) dirContext).release();
+                } else {
+                    log("Cannot release " + resources);
+                }
+            }
+
 
         } finally {
 

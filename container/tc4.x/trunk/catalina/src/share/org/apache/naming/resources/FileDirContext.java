@@ -211,6 +211,19 @@ public class FileDirContext extends BaseDirContext {
     // --------------------------------------------------------- Public Methods
 
 
+    /**
+     * Release any resources allocated for this directory context.
+     */
+    public void release() {
+
+        caseSensitive = true;
+        absoluteBase = null;
+        base = null;
+        super.release();
+
+    }
+
+
     // -------------------------------------------------------- Context Methods
 
 

@@ -201,6 +201,14 @@ public class ProxyDirContext implements DirContext {
 
 
     /**
+     * Return the actual directory context we are wrapping.
+     */
+    public DirContext getDirContext() {
+        return this.dirContext;
+    }
+
+
+    /**
      * Return the document root for this component.
      */
     public String getDocBase() {
