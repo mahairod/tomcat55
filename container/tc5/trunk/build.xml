@@ -132,7 +132,7 @@
     <copy file="${commons-el.jar}" 
           todir="${tomcat.build}/common/lib"/>
 
-    <copy todir="${tomcat.build}/common/lib" 
+    <copy todir="${tomcat.build}/bin" 
            file="${commons-logging-api.jar}" />
     <copy tofile="${tomcat.build}/common/lib/jmx.jar" file="${jmx.jar}" />
     <copy tofile="${tomcat.build}/common/lib/jmx-tools.jar" 
@@ -142,11 +142,10 @@
     <copy tofile="${tomcat.build}/common/lib/jmx-remote-tools.jar" 
             file="${jmx-remote-tools.jar}" failonerror="false" />
 
-    <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
 
-    <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" />
     <copy todir="${tomcat.build}/bin" file="${commons-daemon.jar}" />
+    <copy todir="${tomcat.build}/bin" file="${commons-daemon.jsvc.tar.gz}" />
 
     <copy todir="${tomcat.build}/common/lib" file="${ant.jar}"/>
   </target>
@@ -280,6 +279,7 @@
 
     <path id="jspc.classpath">
       <pathelement location="${java.home}/../lib/tools.jar"/>
+      <pathelement location="${commons-logging.jar}"/>
       <pathelement location="${tomcat.build}/server/classes"/>
       <fileset dir="${tomcat.build}/server/lib">
         <include name="*.jar"/>
@@ -724,7 +724,6 @@
       <fileset dir="${tomcat.build}/server/lib">
         <include name="commons-digester.jar"/>
         <include name="commons-beanutils.jar"/>
-        <include name="commons-logging.jar"/>
       </fileset>
     </copy>
     <copy todir="${tomcat.deployer}/lib">
@@ -735,6 +734,7 @@
 
     <copy todir="${tomcat.deployer}/lib" 
            file="${tomcat.build}/server/lib/catalina-ant.jar"/>
+    <copy todir="${tomcat.deployer}/lib" file="${commons-logging.jar}"/>
 
     <jar jarfile="${tomcat.deployer}/lib/catalina-deployer.jar"
          index="true">
