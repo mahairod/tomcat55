@@ -66,8 +66,6 @@ package org.apache.catalina;
 
 
 import javax.servlet.ServletContext;
-import org.apache.catalina.Context;
-import org.apache.catalina.core.DefaultContext;
 
 /**
  * A <b>Host</b> is a Container that represents a virtual host in the

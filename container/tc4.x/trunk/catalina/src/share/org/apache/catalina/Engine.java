@@ -64,9 +64,6 @@
 
 package org.apache.catalina;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.core.DefaultContext;
-
 /**
  * An <b>Engine</b> is a Container that represents the entire Catalina servlet
  * engine.  It is useful in the following types of scenarios:
