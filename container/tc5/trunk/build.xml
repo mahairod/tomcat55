@@ -307,6 +307,9 @@
 	      </fileset>
 	    </jar>
 
+	  	<copy file="${basedir}/resources/logging.properties"
+	  	     todir="${tomcat.build}/common/classes" /> 
+	  	
 	  </target>
 
   <target name="build-jasper" 
