@@ -78,7 +78,7 @@ import org.apache.tomcat.logging.*;
  *
  * @author Gal Shachor <shachor@il.ibm.com>
  */
-public class JNIEndpointConnector  implements ServerConnector {
+public class JNIEndpointConnector  extends BaseInterceptor implements ServerConnector {
     // XXX define ConnectorException
     // XXX replace strings with sm.get...
     // XXX replace static strings with constants
@@ -98,6 +98,26 @@ public class JNIEndpointConnector  implements ServerConnector {
 
     public JNIEndpointConnector() {
     }
+
+    /** Called when the ContextManger is started
+     */
+    public void engineInit(ContextManager cm) throws TomcatException {
+	this.cm=cm;
+	try {
+	    start();
+	} catch( Exception ex ) {
+	    throw new TomcatException( ex );
+	}
+    }
+
+    public void engineShutdown(ContextManager cm) throws TomcatException {
+	try {
+	    stop();
+	} catch( Exception ex ) {
+	    throw new TomcatException( ex );
+	}
+    }
+
 
     public void start() throws Exception
     {
