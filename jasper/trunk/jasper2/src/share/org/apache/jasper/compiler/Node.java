@@ -445,6 +445,34 @@ public abstract class Node {
     }
 
     /**
+     * Represents a <jsp:invoke> tag file action
+     */
+    public static class InvokeAction extends Node {
+
+	public InvokeAction(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
+     * Represents a <jsp:doBody> tag file action
+     */
+    public static class DoBodyAction extends Node {
+
+	public DoBodyAction(Attributes attrs, Mark start, Node parent) {
+	    super(attrs, start, parent);
+	}
+
+	public void accept(Visitor v) throws JasperException {
+	    v.visit(this);
+	}
+    }
+
+    /**
      * Represents a Jsp comment
      * Comments are kept for completeness.
      */
@@ -1592,6 +1620,16 @@ public abstract class Node {
         }
 
         public void visit(JspBody n) throws JasperException {
+            doVisit(n);
+            visitBody(n);
+        }
+
+        public void visit(InvokeAction n) throws JasperException {
+            doVisit(n);
+            visitBody(n);
+        }
+
+        public void visit(DoBodyAction n) throws JasperException {
             doVisit(n);
             visitBody(n);
         }
