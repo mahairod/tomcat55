@@ -155,6 +155,15 @@ public class DummyRequest
 
     protected FilterChain filterChain = null;
     protected ValveContext valveContext = null;
+    
+    protected Enumeration dummyEnum = new Enumeration(){
+        public boolean hasMoreElements(){
+            return false;
+        }
+        public Object nextElement(){
+            return null;
+        }
+    };
 
     public String getContextPath() {
         return (contextPath);
@@ -310,7 +319,7 @@ public class DummyRequest
     public void setUserPrincipal(Principal principal) {}
     public String getParameter(String name) { return null; }
     public Map getParameterMap() { return null; }
-    public Enumeration getParameterNames() { return null; }
+    public Enumeration getParameterNames() { return dummyEnum; }
     public String[] getParameterValues(String name) { return null; }
     public RequestDispatcher getRequestDispatcher(String path) {
         return null;
