@@ -166,7 +166,7 @@
   <target name="installer" depends="dist">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="The target requires Nullsoft Installer to be in your PATH"/>
-    <copy file="tomcat.ico" tofile="${tomcat.dist}/tomcat.ico"/>
+    <copy file="resources/tomcat.ico" tofile="${tomcat.dist}/tomcat.ico"/>
     <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi"/>
     <copy file="README.txt" tofile="${tomcat.dist}/README.txt"/>
     <exec dir="${tomcat.dist}" executable="makensis.exe">
