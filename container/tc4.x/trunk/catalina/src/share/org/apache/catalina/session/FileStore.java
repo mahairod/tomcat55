@@ -65,8 +65,6 @@
 package org.apache.catalina.session;
 
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -85,18 +83,11 @@ import java.util.Vector;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.Store;
 import org.apache.catalina.Container;
-import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.util.StringManager;
+import org.apache.catalina.util.CustomObjectInputStream;
 
 
 /**
@@ -109,7 +100,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public final class FileStore
-    implements Store {
+    extends StoreBase implements Store {
 
 
     // ----------------------------------------------------- Constants
@@ -142,30 +133,15 @@ public final class FileStore
      */
     private static final String info = "FileStore/1.0";
 
+    /**
+     * Name to register for this Store, used for logging.
+     */
+    private static final String storeName = "fileStore";
 
     /**
-     * The string manager for this package.
+     * Name to register for the background thread.
      */
-    private StringManager sm =
-        StringManager.getManager(Constants.Package);
-
-
-    /**
-     * The property change support for this component.
-     */
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
-
-
-    /**
-     * The Manager with which this FileStore is associated.
-     */
-    protected Manager manager;
-
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
+    private static final String threadName = "FileStore";
 
 
     // ------------------------------------------------------------- Properties
@@ -208,6 +184,20 @@ public final class FileStore
 
     }
 
+    /**
+     * Return the thread name for this Store.
+     */
+    public String getThreadName() {
+	return(threadName);
+    }
+
+    /**
+     * Return the name for this Store, used for logging.
+     */
+    public String getStoreName() {
+	return(storeName);
+    }
+
 
     /**
      * Return the number of Sessions present in this Store.
@@ -230,66 +220,7 @@ public final class FileStore
     }
 
 
-    /**
-     * Return the Manager with which the FileStore is associated.
-     */
-    public Manager getManager() {
-    
-        return (this.manager);
-            
-    }
-
-
-    /**
-     * Set the Manager with which this FileStore is associated.
-     *
-     * @param manager The newly associated Manager
-     */
-    public void setManager(Manager manager) {
-
-        Manager oldManager = this.manager;
-        this.manager = manager;
-        support.firePropertyChange("manager", oldManager, this.manager);
-
-    }
-
-
-    /**
-     * Return the debugging detail level for this component.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level for this component.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-
-
     // --------------------------------------------------------- Public Methods
-
-
-    /**
-     * Add a property change listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-
-        support.addPropertyChangeListener(listener);
-
-    }
-
 
     /**
      * Return an array containing the session identifiers of all Sessions
@@ -346,7 +277,8 @@ public final class FileStore
         if (file == null)
             return (null);
         if (debug >= 1)
-            log(sm.getString("fileStore.loading", id, file.getAbsolutePath()));
+            log(sm.getString(getStoreName()+".loading",
+			     id, file.getAbsolutePath()));
 
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -414,7 +346,8 @@ public final class FileStore
         if (file == null)
             return;
         if (debug >= 1)
-            log(sm.getString("fileStore.removing", id, file.getAbsolutePath()));
+            log(sm.getString(getStoreName()+".removing",
+			     id, file.getAbsolutePath()));
         file.delete();
     }
 
@@ -436,18 +369,6 @@ public final class FileStore
     
 
     /**
-     * Remove a property change listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-
-        support.removePropertyChangeListener(listener);
-
-    }
-
-
-    /**
      * Save the specified Session into this Store.  Any previously saved
      * information for the associated session identifier is replaced.
      *
@@ -462,7 +383,8 @@ public final class FileStore
         if (file == null)
             return;
         if (debug >= 1)
-            log(sm.getString("fileStore.saving", session.getId(), file.getAbsolutePath()));
+            log(sm.getString(getStoreName()+".saving",
+			     session.getId(), file.getAbsolutePath()));
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -483,31 +405,6 @@ public final class FileStore
             ((StandardSession)session).writeObjectData(oos);
         } finally {
             oos.close();
-        }
-
-    }
-
-
-    /**
-     * Log a message on the Logger associated with our Container (if any).
-     *
-     * @param message Message to be logged
-     */
-    void log(String message) {
-
-        Logger logger = null;
-        Container container = manager.getContainer();
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("FileStore[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("FileStore[" + containerName
-                               + "]: " + message);
         }
 
     }
@@ -558,60 +455,4 @@ public final class FileStore
         return directoryFile;
 
     }
-                
-    // -------------------------------------------------------- Private Classes
-
-
-    /**
-     * Custom subclass of <code>ObjectInputStream</code> that loads from the
-     * class loader for this web application.  This allows classes defined only
-     * with the web application to be found correctly.
-     */
-    private static final class CustomObjectInputStream
-        extends ObjectInputStream {
-
-
-        /**
-         * The class loader we will use to resolve classes.
-         */
-        private ClassLoader classLoader = null;
-
-
-        /**
-         * Construct a new instance of CustomObjectInputStream
-         *
-         * @param stream The input stream we will read from
-         * @param classLoader The class loader used to instantiate objects
-         *
-         * @exception IOException if an input/output error occurs
-         */
-        public CustomObjectInputStream(InputStream stream,
-                                       ClassLoader classLoader)
-            throws IOException {
-
-            super(stream);
-            this.classLoader = classLoader;
-
-        }
-
-
-        /**
-         * Load the local class equivalent of the specified stream class
-         * description, by using the class loader assigned to this Context.
-         *
-         * @param classDesc Class description from the input stream
-         *
-         * @exception ClassNotFoundException if this class cannot be found
-         * @exception IOException if an input/output error occurs
-         */
-        protected Class resolveClass(ObjectStreamClass classDesc)
-            throws ClassNotFoundException, IOException {
-
-            return (classLoader.loadClass(classDesc.getName()));
-
-        }
-
-
-    }
-
 }
