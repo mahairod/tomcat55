@@ -289,7 +289,7 @@ public class StandardHostDeployer implements Deployer {
 
         // Expand war file if host wants wars unpacked
         if (isWAR && host.isUnpackWARs()) {
-            docBase = ExpandWar.expand(host,war,contextPath);
+            docBase = ExpandWar.expand(host, war, contextPath);
         }
 
         // Install the new web application

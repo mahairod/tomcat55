@@ -206,7 +206,6 @@ public class StandardHost
      */
     private DefaultContext defaultContext;
 
-    
 
     /**
      * Attribute value used to turn on/off XML validation
@@ -218,8 +217,6 @@ public class StandardHost
      * Attribute value used to turn on/off XML namespace awarenes.
      */
      private boolean xmlNamespaceAware = false;
-
-
 
 
     // ------------------------------------------------------------- Properties
