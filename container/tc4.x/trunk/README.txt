@@ -84,6 +84,15 @@ which you are installing all of the required Jakarta distributions.
         build-regexp            <-- Windows
     Set the REGEXP_HOME env variable to point to <install-dir>/bin
 
+* If you want to build in support for JNDI JDBC DataSources you need to
+  download the following packages and put their jar files in your classpath.
+
+  Tyrex http://tyrex.exolab.org/
+
+  Java Transaction API (JTA) http://java.sun.com/products/jta
+
+  Java JDBC 2.0 Optional Extensions http://java.sun.com/products/jdbc/
+
 * Download and install the Servletapi distribution that includes the
   Servlet 2.3 and JSP 1.2 API classes.  A link is available on the Jakarta
   web site at <http://jakarta.apache.org/downloads/binindex.html>.  When
