@@ -93,6 +93,13 @@ import org.apache.naming.ResourceRef;
  * <li><strong>driverName</strong> - Connection URL to be passed to our JDBC
  *     driver.  <em>DEPRECATED - use the <strong>url</strong> property to
  *     initialize the connection URL.</li>
+ * <li><strong>maxActive</strong> - The maximum number of active instances
+ *     that can be allocated from this pool at the same time.</li>
+ * <li><strong>maxIdle</strong> - The maximum number of connections that can
+ *     sit idle in this pool at the same time.</li>
+ * <li><strong>maxWait</strong> - The maximum number of milliseconds that the
+ *     pool will wait (when there are no available connections) for a
+ *     connection to be returned before throwing an exception.</li>
  * <li><strong>password</strong> - Database password to be passed to our
  *     JDBC driver.</li>
  * <li><strong>url</strong> - Connection URL to be passed to our
@@ -144,6 +151,21 @@ public class DbcpDataSourceFactory
         currentRefAddr = ref.get("driverClassName");
         if (currentRefAddr != null)
             driverClassName = currentRefAddr.getContent().toString();
+
+        String maxActive = null;
+        currentRefAddr = ref.get("maxActive");
+        if (currentRefAddr != null)
+            maxActive = currentRefAddr.getContent().toString();
+
+        String maxIdle = null;
+        currentRefAddr = ref.get("maxIdle");
+        if (currentRefAddr != null)
+            maxIdle = currentRefAddr.getContent().toString();
+
+        String maxWait = null;
+        currentRefAddr = ref.get("maxWait");
+        if (currentRefAddr != null)
+            maxWait = currentRefAddr.getContent().toString();
 
         String password = null;
         currentRefAddr = ref.get("password");
@@ -208,6 +230,24 @@ public class DbcpDataSourceFactory
         // Create a new data source instance
         // FIXME - Cache this for later reuse???
         GenericObjectPool connectionPool = new GenericObjectPool(null);
+        try {
+            if (maxActive != null)
+                connectionPool.setMaxActive(Integer.parseInt(maxActive));
+        } catch (Throwable t) {
+            log("Error setting maxActive", t);
+        }
+        try {
+            if (maxIdle != null)
+                connectionPool.setMaxActive(Integer.parseInt(maxIdle));
+        } catch (Throwable t) {
+            log("Error setting maxIdle", t);
+        }
+        try {
+            if (maxWait != null)
+                connectionPool.setMaxWait(Long.parseLong(maxWait));
+        } catch (Throwable t) {
+            log("Error setting maxWait", t);
+        }
         DriverManagerConnectionFactory connectionFactory =
             new DriverManagerConnectionFactory(url, user, password);
         PoolableConnectionFactory poolableConnectionFactory =
