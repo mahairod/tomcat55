@@ -93,6 +93,7 @@ import org.apache.catalina.logger.FileLogger;
 import org.apache.catalina.logger.SystemOutLogger;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.realm.MemoryRealm;
+import org.apache.catalina.security.SecurityConfig;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.LogFactory;
@@ -185,7 +186,8 @@ public class Embedded implements Lifecycle {
         super();
         setLogger(logger);
         setRealm(realm);
-
+        setSecurityProtection();
+        
     }
 
 
@@ -1238,5 +1240,13 @@ public class Embedded implements Lifecycle {
 
     }
 
+    /**
+     * Set the security package access/protection.
+     */
+    protected void setSecurityProtection(){
+        SecurityConfig securityConfig = SecurityConfig.newInstance();
+        securityConfig.setPackageDefinition();
+        securityConfig.setPackageAccess();
+    }
 
 }

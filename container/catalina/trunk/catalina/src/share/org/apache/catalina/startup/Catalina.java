@@ -75,7 +75,6 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Server;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.security.SecurityConfig;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.digester.Rule;
 import org.apache.tomcat.util.log.SystemLogHandler;
@@ -486,10 +485,6 @@ public class Catalina extends Embedded {
         long t2 = System.currentTimeMillis();
         log.debug( "Server.xml processed " + (t2 - t1));
 
-        // TODO: move to Embedded
-        SecurityConfig securityConfig = SecurityConfig.newInstance();
-        securityConfig.setPackageDefinition();
-        securityConfig.setPackageAccess();
 
         // Replace System.out and System.err with a custom PrintStream
         // TODO: move to Embedded, make it configurable
