@@ -97,11 +97,13 @@ import java.security.Principal;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class ReplicatedSession extends org.apache.catalina.session.StandardSession {
+public class ReplicatedSession extends org.apache.catalina.session.StandardSession
+implements org.apache.catalina.cluster.ClusterSession{
 
     private transient Manager mManager = null;
     protected boolean isDirty = false;
     private transient long lastAccessWasDistributed = System.currentTimeMillis();
+    private boolean isPrimarySession=true;
 
     public ReplicatedSession(Manager manager) {
         super(manager);
@@ -237,6 +239,27 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
 
         super.writeObjectData(stream);
 
+    }
+
+
+
+
+
+    /**
+     * returns true if this session is the primary session, if that is the
+     * case, the manager can expire it upon timeout.
+     * @return
+     */
+    public boolean isPrimarySession() {
+        return isPrimarySession;
+    }
+
+    /**
+     * Sets whether this is the primary session or not.
+     * @param primarySession
+     */
+    public void setPrimarySession(boolean primarySession) {
+        this.isPrimarySession=primarySession;
     }
 
 

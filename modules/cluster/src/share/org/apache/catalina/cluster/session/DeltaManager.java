@@ -68,10 +68,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -93,6 +91,11 @@ import org.apache.catalina.util.CustomObjectInputStream;
 import org.apache.catalina.util.LifecycleSupport;
 
 import org.apache.catalina.session.ManagerBase;
+import org.apache.catalina.cluster.ClusterManager;
+import org.apache.catalina.cluster.SessionMessage;
+import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+
 /**
  * The DeltaManager manages replicated sessions by only
  * replicating the deltas in data. For applications written
@@ -113,34 +116,13 @@ import org.apache.catalina.session.ManagerBase;
 
 public class DeltaManager
     extends ManagerBase
-    implements Lifecycle, PropertyChangeListener {
+    implements Lifecycle, PropertyChangeListener, ClusterManager {
 
     // ---------------------------------------------------- Security Classes
-    private class PrivilegedDoLoad
-        implements PrivilegedExceptionAction {
 
-        PrivilegedDoLoad() {
-        }
 
-        public Object run() throws Exception{
-           doLoad();
-           return null;
-        }
-    }
-
-    private class PrivilegedDoUnload
-        implements PrivilegedExceptionAction {
-
-        PrivilegedDoUnload() {
-        }
-
-        public Object run() throws Exception{
-            doUnload();
-            return null;
-        }
-
-    }
-
+    public static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( DeltaManager.class );
 
     // ----------------------------------------------------- Instance Variables
 
@@ -148,7 +130,7 @@ public class DeltaManager
     /**
      * The descriptive information about this implementation.
      */
-    private static final String info = "StandardManager/1.0";
+    private static final String info = "DeltaManager/1.0";
 
 
     /**
@@ -166,7 +148,7 @@ public class DeltaManager
     /**
      * The descriptive name of this Manager implementation (for logging).
      */
-    protected static String name = "StandardManager";
+    protected static String name = "DeltaManager";
 
 
     /**
@@ -190,6 +172,13 @@ public class DeltaManager
     int expiredSessions=0;
     long processingTime=0;
 
+    private SimpleTcpCluster cluster = null;
+    private boolean stateTransferred;
+    // ------------------------------------------------------------- Constructor
+    public DeltaManager(SimpleTcpCluster cluster) {
+        super();
+        this.cluster = cluster;
+    }
 
     // ------------------------------------------------------------- Properties
 
@@ -348,6 +337,10 @@ public class DeltaManager
      *  instantiated for any reason
      */
     public Session createSession() {
+        return createSession(true);
+    }
+
+    public Session createSession(boolean distribute) {
 
       if ((maxActiveSessions >= 0) &&
           (sessions.size() >= maxActiveSessions)) {
@@ -384,6 +377,14 @@ public class DeltaManager
 
       session.setId(sessionId);
       sessionCounter++;
+      if ( distribute ) {
+          SessionMessage msg = new SessionMessage(
+              getName(),
+              SessionMessage.EVT_SESSION_CREATED,
+              null,
+              sessionId);
+          cluster.send(msg);
+      }
 
       return (session);
 
@@ -399,35 +400,6 @@ public class DeltaManager
     }
 
 
-    /**
-     * Load any currently active sessions that were previously unloaded
-     * to the appropriate persistence mechanism, if any.  If persistence is not
-     * supported, this method returns without doing anything.
-     *
-     * @exception ClassNotFoundException if a serialized class cannot be
-     *  found during the reload
-     * @exception IOException if an input/output error occurs
-     */
-    public void load() throws ClassNotFoundException, IOException {
-        if (System.getSecurityManager() != null){
-            try{
-                AccessController.doPrivileged( new PrivilegedDoLoad() );
-            } catch (PrivilegedActionException ex){
-                Exception exception = ex.getException();
-                if (exception instanceof ClassNotFoundException){
-                    throw (ClassNotFoundException)exception;
-                } else if (exception instanceof IOException){
-                    throw (IOException)exception;
-                }
-                if (log.isDebugEnabled())
-                    log.debug("Unreported exception in load() "
-                        + exception);
-            }
-        } else {
-            doLoad();
-        }
-    }
-
 
     /**
      * Load any currently active sessions that were previously unloaded
@@ -438,43 +410,28 @@ public class DeltaManager
      *  found during the reload
      * @exception IOException if an input/output error occurs
      */
-    private void doLoad() throws ClassNotFoundException, IOException {
-        if (log.isDebugEnabled())
-            log.debug("Start: Loading persisted sessions");
+    private void doLoad(byte[] data) throws ClassNotFoundException, IOException {
 
         // Initialize our internal data structures
-        sessions.clear();
+        //sessions.clear(); //should not do this
 
         // Open an input stream to the specified pathname, if any
-        File file = file();
-        if (file == null)
-            return;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("standardManager.loading", pathname));
-        FileInputStream fis = null;
+        ByteArrayInputStream fis = null;
         ObjectInputStream ois = null;
         Loader loader = null;
         ClassLoader classLoader = null;
         try {
-            fis = new FileInputStream(file.getAbsolutePath());
+            fis = new ByteArrayInputStream(data);
             BufferedInputStream bis = new BufferedInputStream(fis);
             if (container != null)
                 loader = container.getLoader();
             if (loader != null)
                 classLoader = loader.getClassLoader();
             if (classLoader != null) {
-                if (log.isDebugEnabled())
-                    log.debug("Creating custom object input stream for class loader ");
                 ois = new CustomObjectInputStream(bis, classLoader);
             } else {
-                if (log.isDebugEnabled())
-                    log.debug("Creating standard object input stream");
                 ois = new ObjectInputStream(bis);
             }
-        } catch (FileNotFoundException e) {
-            if (log.isDebugEnabled())
-                log.debug("No persisted data file found");
-            return;
         } catch (IOException e) {
             log.error(sm.getString("standardManager.loading.ioe", e), e);
             if (ois != null) {
@@ -493,14 +450,11 @@ public class DeltaManager
             try {
                 Integer count = (Integer) ois.readObject();
                 int n = count.intValue();
-                if (log.isDebugEnabled())
-                    log.debug("Loading " + n + " persisted sessions");
                 for (int i = 0; i < n; i++) {
                     DeltaSession session = getNewDeltaSession();
                     session.readObjectData(ois);
                     session.setManager(this);
                     sessions.put(session.getId(), session);
-                    session.activate();
                 }
             } catch (ClassNotFoundException e) {
               log.error(sm.getString("standardManager.loading.cnfe", e), e);
@@ -533,15 +487,13 @@ public class DeltaManager
                     // ignored
                 }
 
-                // Delete the persistent storage file
-                if (file != null && file.exists() )
-                    file.delete();
             }
         }
 
-        if (log.isDebugEnabled())
-            log.debug("Finish: Loading persisted sessions");
     }
+
+
+
 
 
     /**
@@ -551,47 +503,14 @@ public class DeltaManager
      *
      * @exception IOException if an input/output error occurs
      */
-    public void unload() throws IOException {
-        if (System.getSecurityManager() != null){
-            try{
-                AccessController.doPrivileged( new PrivilegedDoUnload() );
-            } catch (PrivilegedActionException ex){
-                Exception exception = ex.getException();
-                if (exception instanceof IOException){
-                    throw (IOException)exception;
-                }
-                if (log.isDebugEnabled())
-                    log.debug("Unreported exception in unLoad() "
-                        + exception);
-            }
-        } else {
-            doUnload();
-        }
-    }
+    private byte[] doUnload() throws IOException {
 
-
-    /**
-     * Save any currently active sessions in the appropriate persistence
-     * mechanism, if any.  If persistence is not supported, this method
-     * returns without doing anything.
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    private void doUnload() throws IOException {
-
-        if (log.isDebugEnabled())
-            log.debug("Unloading persisted sessions");
 
         // Open an output stream to the specified pathname, if any
-        File file = file();
-        if (file == null)
-            return;
-        if (log.isDebugEnabled())
-            log.debug(sm.getString("standardManager.unloading", pathname));
-        FileOutputStream fos = null;
+        ByteArrayOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-            fos = new FileOutputStream(file.getAbsolutePath());
+            fos = new ByteArrayOutputStream();
             oos = new ObjectOutputStream(new BufferedOutputStream(fos));
         } catch (IOException e) {
             log.error(sm.getString("standardManager.unloading.ioe", e), e);
@@ -609,8 +528,6 @@ public class DeltaManager
         // Write the number of active sessions, followed by the details
         ArrayList list = new ArrayList();
         synchronized (sessions) {
-            if (log.isDebugEnabled())
-                log.debug("Unloading " + sessions.size() + " sessions");
             try {
                 oos.writeObject(new Integer(sessions.size()));
                 Iterator elements = sessions.values().iterator();
@@ -618,9 +535,11 @@ public class DeltaManager
                     DeltaSession session =
                         (DeltaSession) elements.next();
                     list.add(session);
-                    ((DeltaSession) session).passivate();
                     session.writeObjectData(oos);
                 }
+                oos.flush();
+                oos.close();
+                oos = null;
             } catch (IOException e) {
                 log.error(sm.getString("standardManager.unloading.ioe", e), e);
                 if (oos != null) {
@@ -636,38 +555,7 @@ public class DeltaManager
         }
 
         // Flush and close the output stream
-        try {
-            oos.flush();
-            oos.close();
-            oos = null;
-        } catch (IOException e) {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException f) {
-                    ;
-                }
-                oos = null;
-            }
-            throw e;
-        }
-
-        // Expire all the sessions we just wrote
-        if (log.isDebugEnabled())
-            log.debug("Expiring " + list.size() + " persisted sessions");
-        Iterator expires = list.iterator();
-        while (expires.hasNext()) {
-            DeltaSession session = (DeltaSession) expires.next();
-            try {
-                session.expire(false);
-            } catch (Throwable t) {
-                ;
-            }
-        }
-
-        if (log.isDebugEnabled())
-            log.debug("Unloading complete");
-
+        return fos.toByteArray();
     }
 
 
@@ -737,7 +625,43 @@ public class DeltaManager
 
         // Load unloaded sessions, if any
         try {
-            load();
+            //the channel is already running
+            log.info("Starting clustering manager...:"+getName());
+            if ( cluster == null ) {
+                log.info("Starting... no cluster associated with this context:"+getName());
+                return;
+            }
+
+            if (cluster.getMembers().length > 0) {
+                Member mbr = cluster.getMembers()[0];
+                SessionMessage msg =
+                    new SessionMessage(this.getName(),
+                                       SessionMessage.EVT_GET_ALL_SESSIONS,
+                                       null,
+                                       "GET-ALL");
+                cluster.send(msg, mbr);
+                log.warn("Manager["+getName()+"], requesting session state from "+mbr+
+                         ". This operation will timeout if no session state has been received within "+
+                         "60 seconds");
+                long reqStart = System.currentTimeMillis();
+                long reqNow = 0;
+                boolean isTimeout=false;
+                do {
+                    try {
+                        Thread.currentThread().sleep(100);
+                    }catch ( Exception sleep) {}
+                    reqNow = System.currentTimeMillis();
+                    isTimeout=((reqNow-reqStart)>(1000*60));
+                } while ( (!getStateTransferred()) && (!isTimeout));
+                if ( isTimeout || (!getStateTransferred()) ) {
+                    log.error("Manager["+getName()+"], No session state received, timing out.");
+                }else {
+                    log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
+                }
+            } else {
+                log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
+            }//end if
+
         } catch (Throwable t) {
             log.error(sm.getString("standardManager.managerLoad"), t);
         }
@@ -764,13 +688,6 @@ public class DeltaManager
                 (sm.getString("standardManager.notStarted"));
         lifecycle.fireLifecycleEvent(STOP_EVENT, null);
         started = false;
-
-        // Write out sessions
-        try {
-            unload();
-        } catch (IOException e) {
-            log.error(sm.getString("standardManager.managerUnload"), e);
-        }
 
         // Expire all active sessions
         Session sessions[] = findSessions();
@@ -822,36 +739,135 @@ public class DeltaManager
 
     }
 
+    // -------------------------------------------------------- Replication Methods
+
+    /**
+        * A message was received from another node, this
+        * is the callback method to implement if you are interested in
+        * receiving replication messages.
+        * @param msg - the message received.
+        */
+       public void messageDataReceived(SessionMessage msg) {
+
+       }
+
+       /**
+        * When the request has been completed, the replication valve
+        * will notify the manager, and the manager will decide whether
+        * any replication is needed or not.
+        * If there is a need for replication, the manager will
+        * create a session message and that will be replicated.
+        * The cluster determines where it gets sent.
+        * @param sessionId - the sessionId that just completed.
+        * @return a SessionMessage to be sent,
+        */
+       public SessionMessage requestCompleted(String sessionId) {
+           return null;
+       }
+
+       /**
+        * When the manager expires session not tied to a request.
+        * The cluster will periodically ask for a list of sessions
+        * that should expire and that should be sent across the wire.
+        * @return
+        */
+       public String[] getInvalidatedSessions() {
+           return null;
+       }
+
+
+       /**
+        * This method is called by the received thread when a SessionMessage has
+        * been received from one of the other nodes in the cluster.
+        * @param msg - the message received
+        * @param sender - the sender of the message, this is used if we receive a
+        *                 EVT_GET_ALL_SESSION message, so that we only reply to
+        *                 the requesting node
+        */
+       protected void messageReceived(SessionMessage msg, Member sender) {
+           try {
+               log.debug("Received SessionMessage of type=" + msg.getEventTypeString()+" from "+sender);
+               switch (msg.getEventType()) {
+                   case SessionMessage.EVT_GET_ALL_SESSIONS: {
+                       //get a list of all the session from this manager
+                       Object[] sessions = findSessions();
+                       java.io.ByteArrayOutputStream bout = new java.io.
+                           ByteArrayOutputStream();
+                       java.io.ObjectOutputStream oout = new java.io.
+                           ObjectOutputStream(bout);
+                       oout.writeInt(sessions.length);
+                       for (int i = 0; i < sessions.length; i++) {
+                           ReplicatedSession ses = (ReplicatedSession) sessions[i];
+                           oout.writeUTF(ses.getId());
+                           byte[] data = null;//todo writeSession(ses);
+                           oout.writeObject(data);
+                       } //for
+                       //don't send a message if we don't have to
+                       oout.flush();
+                       oout.close();
+                       byte[] data = bout.toByteArray();
+                       SessionMessage newmsg = new SessionMessage(name,
+                           SessionMessage.EVT_ALL_SESSION_DATA,
+                           data, "");
+                       cluster.send(newmsg, sender);
+                       break;
+                   }
+                   case SessionMessage.EVT_ALL_SESSION_DATA: {
+                       java.io.ByteArrayInputStream bin =
+                           new java.io.ByteArrayInputStream(msg.getSession());
+                       java.io.ObjectInputStream oin = new java.io.
+                           ObjectInputStream(bin);
+                       int size = oin.readInt();
+                       for (int i = 0; i < size; i++) {
+                           String id = oin.readUTF();
+                           byte[] data = (byte[]) oin.readObject();
+                           Session session = null; //todo readSession(data, id);
+                           session.setManager(this);
+                           add(session);
+                       } //for
+                       stateTransferred = true;
+                       break;
+                   }
+                   case SessionMessage.EVT_SESSION_CREATED: {
+                       Session session = createSession(false);
+                       session.setManager(this);
+                       session.setId(msg.getSessionID());
+                       session.setNew(false);
+                       break;
+                   }
+                   case SessionMessage.EVT_SESSION_EXPIRED: {
+                       Session session = findSession(msg.getSessionID());
+                       if (session != null) {
+                           session.expire();
+                           this.remove(session);
+                       } //end if
+                       break;
+                   }
+                   case SessionMessage.EVT_SESSION_ACCESSED: {
+                       Session session = findSession(msg.getSessionID());
+                       if (session != null) {
+                           session.access();
+                       }
+                       break;
+                   }
+                   default: {
+                       //we didn't recognize the message type, do nothing
+                       break;
+                   }
+               } //switch
+           }
+           catch (Exception x) {
+               log.error("Unable to receive message through TCP channel", x);
+           }
+       }
+
+
 
     // -------------------------------------------------------- Private Methods
 
-
-    /**
-     * Return a File object representing the pathname to our
-     * persistence file, if any.
-     */
-    private File file() {
-
-        if ((pathname == null) || (pathname.length() == 0))
-            return (null);
-        File file = new File(pathname);
-        if (!file.isAbsolute()) {
-            if (container instanceof Context) {
-                ServletContext servletContext =
-                    ((Context) container).getServletContext();
-                File tempdir = (File)
-                    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-                if (tempdir != null)
-                    file = new File(tempdir, pathname);
-            }
-        }
-//        if (!file.isAbsolute())
-//            return (null);
-        return (file);
-
+    public void backgroundProcess() {
+        processExpires();
     }
-
-
     /**
      * Invalidate all sessions that have expired.
      */
@@ -874,6 +890,26 @@ public class DeltaManager
         }
         long timeEnd = System.currentTimeMillis();
         processingTime += ( timeEnd - timeNow );
+
+    }
+    public boolean getStateTransferred() {
+        return stateTransferred;
+    }
+    public void setStateTransferred(boolean stateTransferred) {
+        this.stateTransferred = stateTransferred;
+    }
+    public SimpleTcpCluster getCluster() {
+        return cluster;
+    }
+    public void setCluster(SimpleTcpCluster cluster) {
+        this.cluster = cluster;
+    }
+
+    public void load() {
+
+    }
+
+    public void unload() {
 
     }
 
