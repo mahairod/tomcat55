@@ -134,9 +134,14 @@ public class CookieTools {
 	if (cookie.getMaxAge() >= 0) {
 	    if (version == 0) {
 		buf.append (";Expires=");
-		DateTool.oldCookieFormat.format(new Date( System.currentTimeMillis() + cookie.getMaxAge() *1000L) ,buf,
-						new FieldPosition(0));
-
+                if (cookie.getMaxAge() == 0)
+                    DateTool.oldCookieFormat.format(new Date(10000), buf,
+                                                    new FieldPosition(0));
+                else
+                    DateTool.oldCookieFormat.format
+                        (new Date( System.currentTimeMillis() +
+                                   cookie.getMaxAge() *1000L), buf,
+                         new FieldPosition(0));
 	    } else {
 		buf.append (";Max-Age=");
 		buf.append (cookie.getMaxAge());
