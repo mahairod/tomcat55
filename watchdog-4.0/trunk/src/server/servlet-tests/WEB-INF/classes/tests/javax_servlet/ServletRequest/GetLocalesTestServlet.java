@@ -92,11 +92,11 @@ public class GetLocalesTestServlet extends GenericServlet {
 		while(e.hasMoreElements()) {
                         count++;
                         Locale gotLocale = (Locale)e.nextElement();
-                        if ( gotLocale.equals("en_US") )
+                        if ( gotLocale.toString().equals("en_US") )
                         locale1="us" ;
 
-                        if ( gotLocale.equals("en_GB") )
-                        locale1="gb" ;
+                        if ( gotLocale.toString().equals("en_GB") )
+                        locale2="gb" ;
 
                         }
  String final_string = locale1 + locale2;
