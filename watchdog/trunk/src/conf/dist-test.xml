@@ -32,11 +32,11 @@ file for complete configuration information:
             isWARValidated="false" isInvokerEnabled="true"
             isWorkDirPersistent="false"/>
 
-        <Context path="/servlet-tests" docBase="../watchdog/webapps/servlet-tests.war"
+        <Context path="/servlet-tests" docBase="webapps/servlet-tests.war"
             defaultSessionTimeOut="30" isWARExpanded="true"
             isWARValidated="false" isInvokerEnabled="true"
             isWorkDirPersistent="false"/>
-        <Context path="/jsp-tests" docBase="../watchdog/webapps/jsp-tests.war"
+        <Context path="/jsp-tests" docBase="webapps/jsp-tests.war"
             defaultSessionTimeOut="30" isWARExpanded="true"
             isWARValidated="false" isInvokerEnabled="true"
             isWorkDirPersistent="false"/>
