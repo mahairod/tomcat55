@@ -614,7 +614,7 @@ class Generator {
             out.pushIndent();
             out.printil( "throw new RuntimeException( \"" +
                 "Invalid function mapping - no such method: \" + " +
-                "e.getMessage(), e );" );
+                "e.getMessage());" );
             out.popIndent();
             out.printil( "}" );
             out.popIndent();
