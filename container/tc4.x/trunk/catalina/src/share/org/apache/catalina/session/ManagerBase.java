@@ -474,6 +474,20 @@ public abstract class ManagerBase implements Manager {
 
 
     /**
+     * Add this Session to the set of active Sessions for this Manager.
+     *
+     * @param session Session to be added
+     */
+    public void add(Session session) {
+
+	synchronized (sessions) {
+	    sessions.put(session.getId(), session);
+	}
+
+    }
+
+
+    /**
      * Add a property change listener to this component.
      *
      * @param listener The listener to add
@@ -498,11 +512,11 @@ public abstract class ManagerBase implements Manager {
     public Session createSession() {
 
 	// Recycle or create a Session instance
-	StandardSession session = null;
+	Session session = null;
 	synchronized (recycled) {
 	    int size = recycled.size();
 	    if (size > 0) {
-		session = (StandardSession) recycled.get(size - 1);
+		session = (Session) recycled.get(size - 1);
 		recycled.remove(size - 1);
 	    }
 	}
@@ -570,6 +584,20 @@ public abstract class ManagerBase implements Manager {
 
 
     /**
+     * Remove this Session from the active Sessions for this Manager.
+     *
+     * @param session Session to be removed
+     */
+    public void remove(Session session) {
+
+	synchronized (sessions) {
+	    sessions.remove(session.getId());
+	}
+
+    }
+
+
+    /**
      * Remove a property change listener from this component.
      *
      * @param listener The listener to remove
@@ -615,20 +643,6 @@ public abstract class ManagerBase implements Manager {
 
 
     // -------------------------------------------------------- Package Methods
-
-
-    /**
-     * Add this Session to the set of active Sessions for this Manager.
-     *
-     * @param session Session to be added
-     */
-    void add(StandardSession session) {
-
-	synchronized (sessions) {
-	    sessions.put(session.getId(), session);
-	}
-
-    }
 
 
     /**
@@ -686,24 +700,10 @@ public abstract class ManagerBase implements Manager {
      *
      * @param session Session to be recycled
      */
-    void recycle(StandardSession session) {
+    void recycle(Session session) {
 
 	synchronized (recycled) {
 	    recycled.add(session);
-	}
-
-    }
-
-
-    /**
-     * Remove this Session from the active Sessions for this Manager.
-     *
-     * @param session Session to be removed
-     */
-    void remove(StandardSession session) {
-
-	synchronized (sessions) {
-	    sessions.remove(session.getId());
 	}
 
     }
