@@ -82,7 +82,8 @@ import javax.servlet.http.*;
  */
 final class HttpServletRequestFacade implements HttpServletRequest {
     // Use the strings from core
-    private static StringManager sm = StringManager.getManager("org.apache.tomcat.core");
+    private static StringManager smCore = StringManager.getManager("org.apache.tomcat.core");
+    private static StringManager smUtil = StringManager.getManager("org.apache.tomcat.util");
 
     private Request request;
 
@@ -163,7 +164,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
 	
 	long date=RequestUtil.toDate(value);
 	if( date==-1) {
-	    String msg = sm.getString("httpDate.pe", value);
+	    String msg = smUtil.getString("httpDate.pe", value);
 	    throw new IllegalArgumentException(msg);
 	}
 	return date;
@@ -185,7 +186,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
      */
     public ServletInputStream getInputStream() throws IOException {
 	if (usingReader) {
-	    String msg = sm.getString("reqfac.getinstream.ise");
+	    String msg = smCore.getString("reqfac.getinstream.ise");
 	    throw new IllegalStateException(msg);
 	}
 	usingStream = true;
@@ -266,7 +267,7 @@ final class HttpServletRequestFacade implements HttpServletRequest {
      */
     public BufferedReader getReader() throws IOException {
 	if (usingStream) {
-	    String msg = sm.getString("reqfac.getreader.ise");
+	    String msg = smCore.getString("reqfac.getreader.ise");
 	    throw new IllegalStateException(msg);
 	}
 	usingReader = true;
