@@ -43,7 +43,7 @@
         <item name="Release Notes"         href="RELEASE-NOTES.txt"/>
         <item name="Tomcat Configuration"  href="config/index.html"/>
         <item name="JK Documentation"      
-              href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/jk2/doc/"/>
+              href="http://jakarta.apache.org/tomcat/tomcat-4.1-doc/jk2/index.html"/>
         <item name="Servlet API Javadocs"  href="servletapi/index.html"/>
         <item name="JSP API Javadocs"      href="jspapi/index.html"/>
     </menu>
