@@ -65,6 +65,9 @@
 package org.apache.catalina;
 
 
+import org.apache.catalina.net.ServerSocketFactory;
+
+
 /**
  * A <b>Connector</b> is a component responsible receiving requests from,
  * and returning responses to, a client application.  A Connector performs
@@ -137,6 +140,20 @@ public interface Connector {
      * @param container The new Container to use
      */
     public void setContainer(Container container);
+
+
+    /**
+     * Return the server socket factory used by this Container.
+     */
+    public ServerSocketFactory getFactory();
+
+
+    /**
+     * Set the server socket factory used by this Container.
+     *
+     * @param factory The new server socket factory
+     */
+    public void setFactory(ServerSocketFactory factory);
 
 
     /**

@@ -23,20 +23,22 @@
                in the appropriate place in this file.
             3. Do: keytool -genkey -alias tomcat -keyalg RSA
                RSA is essential to work with Netscape and IIS.
-               Use "changeit" as password. ( or add keypass attribute )
+               Use "changeit" as password, or include a "keystorePass"
+               attribute in the <Factory> element.  See class
+               org.apache.catalina.net.SSLServerSocketFactory Javadocs
+               for other options you can set here.
                You don't need to sign the certificate.
             4. Adjust the port number and other parameters as needed.
                On Unix, you will not be able to listen on port 443 unless
                you run as root.  
-
-            You can set parameter keystore and keypass if you want 
-            to change the default ( user.home/.keystore with changeit )
   -->
   <!--
   <Connector className="org.apache.catalina.connector.http.HttpConnector"
              port="8443" minProcessors="5" maxProcessors="75"
-	     acceptCount="10" debug="0" scheme="https" secure="true"
-             socketFactory="org.apache.catalina.net.SSLSocketFactory" />
+	     acceptCount="10" debug="0" scheme="https" secure="true">
+    <Factory className="org.apache.catalina.net.SSLServerSocketFactory"
+             clientAuth="false" protocol="TLS"/>
+  </Connector>
   -->
 
   <!--

@@ -259,13 +259,14 @@ public final class Catalina {
 	mapper.addRule("Server/Connector", mapper.addChild
 		       ("addConnector", "org.apache.catalina.Connector"));
 
-	mapper.addRule("Server/Connector/Parameter",
-                       mapper.methodSetter("setParameter", 2));
-	mapper.addRule("Server/Connector/Parameter", 
-                       mapper.methodParam(0, "name"));
-	mapper.addRule("Server/Connector/Parameter",
-                       mapper.methodParam(1, "value") );
-        
+        mapper.addRule("Server/Connector/Factory", mapper.objectCreate
+                       ("org.apache.catalina.net.DefaultServerSocketFactory",
+                        "className"));
+        mapper.addRule("Server/Connector/Factory", mapper.setProperties());
+        mapper.addRule("Server/Connector/Factory", mapper.addChild
+                       ("setFactory",
+                        "org.apache.catalina.net.ServerSocketFactory"));
+
 	mapper.addRule("Server/Connector/Listener", mapper.objectCreate
 		       (null, "className"));
 	mapper.addRule("Server/Connector/Listener", mapper.setProperties());

@@ -64,42 +64,81 @@
 
 package org.apache.catalina.net;
 
-import java.io.*;
-import java.net.*;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+
 
 /**
- * Default server socket factory. Doesn't do much except give us
- * plain ol' server sockets.
+ * Default server socket factory, which returns unadorned server sockts.
  *
  * @author db@eng.sun.com
  * @author Harish Prabandham
+ * @author Craig R. McClanahan
  */
 
-// Default implementation of server sockets.
+public final class DefaultServerSocketFactory implements ServerSocketFactory {
 
-//
-// WARNING: Some of the APIs in this class are used by J2EE. 
-// Please talk to harishp@eng.sun.com before making any changes.
-//
-class DefaultServerSocketFactory extends ServerSocketFactory {
 
-    DefaultServerSocketFactory () {
-        /* NOTHING */
+    // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Returns a server socket which uses all network interfaces on
+     * the host, and is bound to a the specified port.  The socket is
+     * configured with the socket options (such as accept timeout)
+     * given to this factory.
+     *
+     * @param port the port to listen to
+     *
+     * @exception IOException for networking errors
+     */
+    public ServerSocket createSocket (int port) throws IOException {
+
+        return (new ServerSocket(port));
+
     }
 
-    public ServerSocket createSocket (int port)
-    throws IOException {
-        return  new ServerSocket (port);
-    }
 
+    /**
+     * Returns a server socket which uses all network interfaces on
+     * the host, is bound to a the specified port, and uses the 
+     * specified connection backlog.  The socket is configured with
+     * the socket options (such as accept timeout) given to this factory.
+     *
+     * @param port the port to listen to
+     * @param backlog how many connections are queued
+     *
+     * @exception IOException for networking errors
+     */
     public ServerSocket createSocket (int port, int backlog)
-    throws IOException {
-        return new ServerSocket (port, backlog);
+        throws IOException {
+
+        return (new ServerSocket(port, backlog));
+
     }
 
+
+    /**
+     * Returns a server socket which uses only the specified network
+     * interface on the local host, is bound to a the specified port,
+     * and uses the specified connection backlog.  The socket is configured
+     * with the socket options (such as accept timeout) given to this factory.
+     *
+     * @param port the port to listen to
+     * @param backlog how many connections are queued
+     * @param ifAddress the network interface address to use
+     *
+     * @exception IOException for networking errors
+     */
     public ServerSocket createSocket (int port, int backlog,
-        InetAddress ifAddress)
-    throws IOException {
-        return new ServerSocket (port, backlog, ifAddress);
+                                      InetAddress ifAddress)
+        throws IOException {
+
+        return (new ServerSocket(port, backlog, ifAddress));
+
     }
+
+
 }

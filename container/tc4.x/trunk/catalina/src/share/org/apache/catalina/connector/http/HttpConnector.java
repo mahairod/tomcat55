@@ -71,7 +71,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.Hashtable;
 import java.util.Enumeration;
 import org.apache.catalina.Connector;
 import org.apache.catalina.Container;
@@ -84,9 +83,10 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.net.DefaultServerSocketFactory;
+import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.catalina.net.ServerSocketFactory;
 
 
 /**
@@ -103,18 +103,6 @@ public final class HttpConnector
 
 
     // ----------------------------------------------------- Instance Variables
-
-
-    /**
-     * Server socket factory class name.
-     */
-    private String socketFactoryClassName;
-
-
-    /**
-     * Server socket factory parameter.
-     */
-    private Hashtable parameters = new Hashtable();
 
 
     /**
@@ -158,6 +146,12 @@ public final class HttpConnector
      * The debugging detail level for this component.
      */
     private int debug = 0;
+
+
+    /**
+     * The server socket factory for this component.
+     */
+    private ServerSocketFactory factory = null;
 
 
     /**
@@ -391,6 +385,33 @@ public final class HttpConnector
 
 
     /**
+     * Return the server socket factory used by this Container.
+     */
+    public ServerSocketFactory getFactory() {
+
+        if (this.factory == null) {
+            synchronized (this) {
+                this.factory = new DefaultServerSocketFactory();
+            }
+        }
+        return (this.factory);
+
+    }
+
+
+    /**
+     * Set the server socket factory used by this Container.
+     *
+     * @param factory The new server socket factory
+     */
+    public void setFactory(ServerSocketFactory factory) {
+
+        this.factory = factory;
+
+    }
+
+
+    /**
      * Return descriptive information about this Connector implementation.
      */
     public String getInfo() {
@@ -467,19 +488,6 @@ public final class HttpConnector
 
 
     /**
-     * Set a server factory parameter.
-     * 
-     * @param name Name of the parameter
-     * @param value Value of the parameter
-     */
-    public void setParameter(String name, String value) {
-        
-        parameters.put(name, value);
-        
-    }
-
-
-    /**
      * Return the scheme that will be assigned to requests received
      * through this connector.  Default value is "http".
      */
@@ -524,26 +532,6 @@ public final class HttpConnector
 
 	this.secure = secure;
 
-    }
-
-
-    /**
-     * Return the server socket factory class name.
-     */
-    public String getSocketFactory() {
-
-	return (this.socketFactoryClassName);
-
-    }
-
-
-    /**
-     * Set the server socket factory class name.
-     */
-    public void setSocketFactory(String className) {
-        
-        socketFactoryClassName = className;
-        
     }
 
 
@@ -679,39 +667,13 @@ public final class HttpConnector
      */
     private ServerSocket open() throws IOException {
 
-        // First, load the server socket factory
-        Class socketFactoryClass = null;
-        ServerSocketFactory socketFactory = null;
-
-        if (socketFactoryClassName == null) {
-            socketFactory = ServerSocketFactory.getDefault();
-        } else {
-            try {
-                socketFactoryClass = Class.forName(socketFactoryClassName);
-                socketFactory = 
-                    (ServerSocketFactory) socketFactoryClass.newInstance();
-                // Set the factory attributes
-                Enumeration parametersNames = parameters.keys();
-                while (parametersNames.hasMoreElements()) {
-                    String key = (String) parametersNames.nextElement();
-                    Object value = parameters.get(key);
-                    socketFactory.setAttribute(key, value);
-                }
-            } catch (Exception e) {
-                log(sm.getString("httpConnector.failedSocketFactoryLoading"));
-                return new ServerSocket(port, acceptCount);
-            }
-        }
+        // Acquire the server socket factory for this Connector
+        ServerSocketFactory factory = getFactory();
 
 	// If no address is specified, open a connection on all addresses
         if (address == null) {
 	    log(sm.getString("httpConnector.allAddresses"));
-            try {
-                return socketFactory.createSocket(port, acceptCount);
-            } catch(InstantiationException e) {
-                log(sm.getString("httpConnector.failedToCreateSocket"));
-                return new ServerSocket(port, acceptCount);
-            }
+            return (factory.createSocket(port, acceptCount));
 	}
 
 	// Open a server socket on the specified address
@@ -724,21 +686,10 @@ public final class HttpConnector
 	}
 	if (i < addresses.length) {
 	    log(sm.getString("httpConnector.anAddress", address));
-            try {
-                return socketFactory.createSocket(port, acceptCount, 
-                                                  addresses[i]);
-            } catch(InstantiationException e) {
-                log(sm.getString("httpConnector.failedToCreateSocket"));
-                return new ServerSocket(port, acceptCount, addresses[i]);
-            }
+            return (factory.createSocket(port, acceptCount, addresses[i]));
 	} else {
 	    log(sm.getString("httpConnector.noAddress", address));
-            try {
-                return socketFactory.createSocket(port, acceptCount);
-            } catch (InstantiationException e) {
-                log(sm.getString("httpConnector.failedToCreateSocket"));
-                return new ServerSocket(port, acceptCount);
-            }
+            return (factory.createSocket(port, acceptCount));
 	}
 
     }

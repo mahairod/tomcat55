@@ -70,7 +70,6 @@ import java.security.cert.CertificateException;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.HandshakeCompletedEvent;
 
@@ -105,24 +104,17 @@ import com.sun.net.ssl.TrustManagerFactory;
  * @author Craig McClanahan
  */
 
-public class SSLSocketFactory
-    extends org.apache.catalina.net.ServerSocketFactory {
+public class SSLServerSocketFactory
+    implements org.apache.catalina.net.ServerSocketFactory {
 
 
     // ----------------------------------------------------- Instance Variables
 
 
     /**
-     * The internal represenation of the key store file that contains
-     * our server certificate.
-     */
-    private KeyStore keyStore = null;
-
-
-    /**
      * The configured socket factory.
      */
-    private SSLServerSocketFactory sslProxy = null;
+    private javax.net.ssl.SSLServerSocketFactory sslProxy = null;
 
 
     /**
@@ -159,6 +151,19 @@ public class SSLSocketFactory
 
     public void setClientAuth(boolean clientAuth) {
         this.clientAuth = clientAuth;
+    }
+
+
+    /**
+     * The internal represenation of the key store file that contains
+     * our server certificate.
+     */
+    private KeyStore keyStore = null;
+
+    public KeyStore getKeyStore() throws IOException {
+        if (sslProxy == null)
+            initialize();
+        return (this.keyStore);
     }
 
 
@@ -230,10 +235,8 @@ public class SSLSocketFactory
      * @param port Port to listen to
      *
      * @exception IOException if an input/output or network error occurs
-     * @exception InstantiationException if a construction error occurs
      */
-    public ServerSocket createSocket(int port)
-        throws IOException, InstantiationException {
+    public ServerSocket createSocket(int port) throws IOException {
 
         if (sslProxy == null)
             initialize();
@@ -255,10 +258,9 @@ public class SSLSocketFactory
      * @param backlog Maximum number of connections to be queued
      *
      * @exception IOException if an input/output or network error occurs
-     * @exception InstantiationException if a construction error occurs
      */
     public ServerSocket createSocket(int port, int backlog)
-        throws IOException, InstantiationException {
+        throws IOException {
 
         if (sslProxy == null)
             initialize();
@@ -281,11 +283,10 @@ public class SSLSocketFactory
      * @param ifAddress Address of the interface to be used
      *
      * @exception IOException if an input/output or network error occurs
-     * @exception InstantiationException if a construction error occurs
      */
     public ServerSocket createSocket(int port, int backlog,
                                      InetAddress ifAddress)
-        throws IOException, InstantiationException {
+        throws IOException {
 
         if (sslProxy == null)
             initialize();
@@ -307,7 +308,6 @@ public class SSLSocketFactory
      */
     private synchronized void initialize() throws IOException {
 
-        initProperties();
         initKeyStore();
         initProxy();
 
@@ -332,37 +332,6 @@ public class SSLSocketFactory
             e.printStackTrace(System.out);
             throw new IOException(e.toString());
         }
-
-    }
-
-
-    /**
-     * Initialize our configuration properties from the specified attributes
-     * (if any).
-     */
-    private void initProperties() {
-
-        String value = null;
-
-        value = (String) attributes.get("algorithm");
-        if (value != null)
-            setAlgorithm(value);
-
-        value = (String) attributes.get("keystoreFile");
-        if (value != null)
-            setKeystoreFile(value);
-
-        value = (String) attributes.get("keystorePass");
-        if (value != null)
-            setKeystorePass(value);
-
-        value = (String) attributes.get("keystoreType");
-        if (value != null)
-            setKeystoreType(value);
-
-        value = (String) attributes.get("protocol");
-        if (value != null)
-            setProtocol(value);
 
     }
 

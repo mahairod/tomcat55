@@ -82,6 +82,8 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.net.DefaultServerSocketFactory;
+import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
@@ -143,6 +145,12 @@ public final class HttpConnector
      * The debugging detail level for this component.
      */
     private int debug = 0;
+
+
+    /**
+     * The server socket factory for this component.
+     */
+    private ServerSocketFactory factory = null;
 
 
     /**
@@ -371,6 +379,33 @@ public final class HttpConnector
     public void setDebug(int debug) {
 
         this.debug = debug;
+
+    }
+
+
+    /**
+     * Return the server socket factory used by this Container.
+     */
+    public ServerSocketFactory getFactory() {
+
+        if (this.factory == null) {
+            synchronized (this) {
+                this.factory = new DefaultServerSocketFactory();
+            }
+        }
+        return (this.factory);
+
+    }
+
+
+    /**
+     * Set the server socket factory used by this Container.
+     *
+     * @param factory The new server socket factory
+     */
+    public void setFactory(ServerSocketFactory factory) {
+
+        this.factory = factory;
 
     }
 
@@ -631,10 +666,13 @@ public final class HttpConnector
      */
     private ServerSocket open() throws IOException {
 
+        // Acquire the server socket factory for this Connector
+        ServerSocketFactory factory = getFactory();
+
 	// If no address is specified, open a connection on all addresses
         if (address == null) {
 	    log(sm.getString("httpConnector.allAddresses"));
-	    return new ServerSocket(port, acceptCount);
+            return (factory.createSocket(port, acceptCount));
 	}
 
 	// Open a server socket on the specified address
@@ -647,10 +685,10 @@ public final class HttpConnector
 	}
 	if (i < addresses.length) {
 	    log(sm.getString("httpConnector.anAddress", address));
-	    return new ServerSocket(port, acceptCount, addresses[i]);
+            return (factory.createSocket(port, acceptCount, addresses[i]));
 	} else {
 	    log(sm.getString("httpConnector.noAddress", address));
-	    return new ServerSocket(port, acceptCount);
+            return (factory.createSocket(port, acceptCount));
 	}
 
     }
