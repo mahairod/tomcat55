@@ -17,7 +17,7 @@
 
 <html:errors/>
 
-<html:form method="POST" action="/users/saveRole" focus="rolename">
+<html:form method="POST" action="/users/saveRole"> <!--focus="rolename"-->
 
   <html:hidden property="databaseName"/>
   <html:hidden property="objectName"/>
