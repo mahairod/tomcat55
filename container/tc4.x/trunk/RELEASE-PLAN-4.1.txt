@@ -23,6 +23,9 @@ Apache Tomcat 4.0:
 * New Coyote JK2 AJP 1.4 connector
 * Rewritten Jasper JSP page compiler
 * Performance and memory efficiency improvements
+* Enhanced manager application support for integration with development tools.
+* Custom Ant tasks to interact with the manager application directly 
+  from build.xml scripts.
 * Many other miscanellous improvements
 
 This Release Plan proposes the following schedule:
