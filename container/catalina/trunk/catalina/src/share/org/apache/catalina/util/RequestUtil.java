@@ -536,13 +536,8 @@ public final class RequestUtil {
                     data[ox++] = (byte)' ';
                     break;
                 case '%':
-                    if ((ix <= (data.length - 2)) &&
-                        ((char)data[ix] != '&') && ((char)data[ix+1] != '&')) {
-                        data[ox++] = (byte)((convertHexDigit(data[ix++]) << 4)
-                                           + convertHexDigit(data[ix++]));
-                    } else {
-                        data[ox++] = c;
-                    }
+                    data[ox++] = (byte)((convertHexDigit(data[ix++]) << 4)
+                                    + convertHexDigit(data[ix++]));
                     break;
                 default:
                     data[ox++] = c;
