@@ -118,7 +118,8 @@ import org.apache.catalina.util.StringManager;
  * <li><b>%u</b> - Remote user that was authenticated
  * <li><b>%U</b> - Requested URL path
  * <li><b>%v</b> - Local server name
- * </ul>
+ * <li><b>%D</b> - Time taken to process the request, in millis
+  * </ul>
  * <p>In addition, the caller can specify one of the following aliases for
  * commonly utilized patterns:</p>
  * <ul>
@@ -506,7 +507,12 @@ public final class AccessLogValve
         throws IOException, ServletException {
 
         // Pass this request on to the next valve in our pipeline
+        long t1=System.currentTimeMillis();
+
         context.invokeNext(request, response);
+
+        long t2=System.currentTimeMillis();
+        long time=t2-t1;
 
         Date date = getDate();
         StringBuffer result = new StringBuffer();
@@ -617,10 +623,10 @@ public final class AccessLogValve
                         } else {
                             //D'oh - end of string - pretend we never did this
                             //and do processing the "old way"
-                            result.append(replace(ch, date, request, response));
+                            result.append(replace(ch, date, request, response, time));
                         }
                     } else {
-                        result.append(replace(ch, date, request, response));
+                        result.append(replace(ch, date, request, response,time ));
                     }
                     replace = false;
                 } else if (ch == '%') {
@@ -756,7 +762,7 @@ public final class AccessLogValve
      * @param response Response being processed
      */
     private String replace(char pattern, Date date, Request request,
-                           Response response) {
+                           Response response, long time) {
 
         String value = null;
 
@@ -798,6 +804,8 @@ public final class AccessLogValve
                 value = "";
         } else if (pattern == 'p') {
             value = "" + req.getServerPort();
+        } else if (pattern == 'D') {
+                    value = "" + time;
         } else if (pattern == 'q') {
             String query = null;
             if (hreq != null)
