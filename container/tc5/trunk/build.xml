@@ -491,9 +491,6 @@
     <copy todir="${tomcat.dist}/conf">
       <fileset dir="${tomcat.build}/conf" />
     </copy>
-    <copy todir="${tomcat.dist}/server/classes">
-      <fileset dir="${tomcat.build}/server/classes" />
-    </copy>
     <copy todir="${tomcat.dist}/server/lib">
       <fileset dir="${tomcat.build}/server/lib" />
     </copy>
