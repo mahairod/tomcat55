@@ -64,7 +64,6 @@
 
 package org.apache.tomcat.core;
 
-import org.apache.tomcat.server.*;
 import org.apache.tomcat.util.*;
 import java.io.*;
 import java.net.*;

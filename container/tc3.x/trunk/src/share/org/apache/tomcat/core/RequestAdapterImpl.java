@@ -151,8 +151,7 @@ public class RequestAdapterImpl implements  RequestAdapter {
         return headers.names();
     }
     
-    public ServletInputStream getInputStream()
-    throws IOException {
+    public ServletInputStream getInputStream() throws IOException {
     	return in;    
     }
 
@@ -266,6 +265,7 @@ public class RequestAdapterImpl implements  RequestAdapter {
 	scheme = "http";// no need to use Constants
 	method = "GET";
 	requestURI="/";
+	queryString=null;
 	protocol="HTTP/1.0";
 	headers.clear(); // XXX use recycle pattern
 	serverName="localhost";
@@ -280,6 +280,48 @@ public class RequestAdapterImpl implements  RequestAdapter {
 
     // -------------------- Setters - not part of RequestAdapter interface
 
-    
+    public void setScheme( String scheme ) {
+	this.scheme=scheme;
+    }
+
+    public void setMethod( String method ) {
+	this.method=method;
+    }
+
+    public void setRequestURI( String requestURI ) {
+	this.requestURI=requestURI;
+    }
+
+    public void setQueryString( String queryString ) {
+	this.queryString=queryString;
+    }
+
+    public void setProtocol( String protocol ) {
+	this.protocol=protocol;
+    }
+
+    public void setMimeHeaders( MimeHeaders headers ) {
+	this.headers=headers;
+    }
+
+    public void setBody( StringBuffer body ) {
+	// ??? 
+    }
+
+    public void setServerName( String serverName ) {
+	this.serverName=serverName;
+    }
+
+    public void setServerPort(int serverPort ) {
+	this.serverPort=serverPort;
+    }
+
+    public void setRemoteAddr( String remoteAddr ) {
+	this.remoteAddr=remoteAddr;
+    }
+
+    public void setRemoteHost(String remoteHost) {
+	this.remoteHost=remoteHost;
+    }
     
 }

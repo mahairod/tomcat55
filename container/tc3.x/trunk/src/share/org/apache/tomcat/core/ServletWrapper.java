@@ -65,8 +65,6 @@
 package org.apache.tomcat.core;
 
 import org.apache.tomcat.util.*;
-import org.apache.tomcat.server.ServerRequest;
-import org.apache.tomcat.server.ServerResponse;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -212,11 +210,16 @@ class ServletWrapper {
 	    // XXX XXX XXX
 	    // core shouldn't depend on a particular connector!
 	    // need to find out what this code does!
-	    Request request = new ServerRequest();
-            Response response = new ServerResponse();
-
+	    RequestAdapterImpl reqA=new RequestAdapterImpl();
+	    ResponseAdapterImpl resA=new ResponseAdapterImpl();
+	    
+	    Request request = new Request();
+            Response response = new Response();
             request.recycle();
             response.recycle();
+
+	    request.setRequestAdapter( reqA );
+	    response.setResponseAdapter( resA );
 
             request.setResponse(response);
             response.setRequest(request);
@@ -225,13 +228,12 @@ class ServletWrapper {
                 Constants.JSP.Directive.Compile.Name + "=" +
                 Constants.JSP.Directive.Compile.Value;
 
-            request.setRequestURI(getContext().getPath() + requestURI);
+            reqA.setRequestURI(getContext().getPath() + path);
+	    reqA.setQueryString( Constants.JSP.Directive.Compile.Name + "=" +
+				 Constants.JSP.Directive.Compile.Value );
+
             request.setContext(getContext());
             request.getSession(true);
-
-            OutputStream devNull = new DevNullOutputStream();
-
-            ((ServerResponse)response).setOutputStream(devNull);
 
             RequestDispatcher rd =
                 config.getServletContext().getRequestDispatcher(requestURI);
