@@ -394,7 +394,7 @@ public final class BootstrapService
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
@@ -462,7 +462,7 @@ public final class BootstrapService
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
@@ -527,7 +527,7 @@ public final class BootstrapService
             classes.isDirectory()) {
             try {
                 URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + "/");
+                                  classes.getCanonicalPath() + File.separator);
                 if (debug >= 1)
                     log("  Adding " + url.toString());
                 list.add(url.toString());
