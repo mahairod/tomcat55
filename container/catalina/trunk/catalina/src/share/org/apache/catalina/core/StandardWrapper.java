@@ -1424,6 +1424,13 @@ public class StandardWrapper
            swValve.setErrorCount(errorCount);
     }
 
+    /**
+     * Increment the error count used for monitoring.
+     */
+    public void incrementErrorCount(){
+        swValve.setErrorCount(swValve.getErrorCount() + 1);
+    }
+
     public long getLoadTime() {
         return loadTime;
     }
