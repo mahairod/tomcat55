@@ -62,6 +62,7 @@
 
 package org.apache.catalina.servlets;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.BufferedWriter;
@@ -1689,26 +1690,23 @@ public class CGIServlet extends HttpServlet {
             command.append(cmdAndArgs.toString());
             cmdAndArgs = command;
 
-            rt = Runtime.getRuntime();
-            proc = rt.exec(cmdAndArgs.toString(), hashToStringArray(env), wd);
-
             String sContentLength = (String) env.get("CONTENT_LENGTH");
+            ByteArrayOutputStream contentStream = null;
             if(!"".equals(sContentLength)) {
-                commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
                 byte[] content = new byte[Integer.parseInt(sContentLength)];
-
                 int lenRead = stdin.read(content);
-
+                contentStream = new ByteArrayOutputStream(
+                        Integer.parseInt(sContentLength));
                 if ("POST".equals(env.get("REQUEST_METHOD"))) {
                     String paramStr = getPostInput(params);
                     if (paramStr != null) {
                         byte[] paramBytes = paramStr.getBytes();
-                        commandsStdIn.write(paramBytes);
+                        contentStream.write(paramBytes);
 
                         int contentLength = paramBytes.length;
                         if (lenRead > 0) {
                             String lineSep = System.getProperty("line.separator");
-                            commandsStdIn.write(lineSep.getBytes());
+                            contentStream.write(lineSep.getBytes());
                             contentLength = lineSep.length() + lenRead;
                         }
                         env.put("CONTENT_LENGTH", new Integer(contentLength));
@@ -1716,9 +1714,17 @@ public class CGIServlet extends HttpServlet {
                 }
 
                 if (lenRead > 0) {
-                    commandsStdIn.write(content, 0, lenRead);
+                    contentStream.write(content, 0, lenRead);
                 }
+                contentStream.close();
+            }
 
+            rt = Runtime.getRuntime();
+            proc = rt.exec(cmdAndArgs.toString(), hashToStringArray(env), wd);
+
+            if(contentStream != null) {
+                commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
+                proc.getOutputStream().write(contentStream.toByteArray());
                 commandsStdIn.flush();
                 commandsStdIn.close();
             }
@@ -1842,37 +1848,27 @@ public class CGIServlet extends HttpServlet {
         protected String getPostInput(Hashtable params) {
             String lineSeparator = System.getProperty("line.separator");
             Enumeration paramNames = params.keys();
-            StringBuffer postInput = new StringBuffer("");
             StringBuffer qs = new StringBuffer("");
             if (paramNames != null && paramNames.hasMoreElements()) {
                 while (paramNames.hasMoreElements()) {
                     String k = (String) paramNames.nextElement();
                     String v = params.get(k).toString();
                     if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
-                        postInput.append(k);
                         qs.append(k);
-                        postInput.append("=");
                         qs.append("=");
-                        postInput.append(v);
                         qs.append(v);
-                        postInput.append(lineSeparator);
                         qs.append("&");
                     }
                 }
             }
             if (qs.length() > 0) {
-                qs.append(lineSeparator);
-                return qs.append(postInput.toString()).toString();
+                // Remove last "&"
+                qs.setLength(qs.length() - 1);
+                return qs.toString();
             } else {
                 return null;
             }
         }
-
-
-
     } //class CGIRunner
-
-
-
 
 } //class CGIServlet
