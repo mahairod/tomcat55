@@ -37,7 +37,7 @@
   <!-- ======================== Build JavaDoc =========================== -->
   <target name="javadoc" depends="prepare">
     <javadoc packagenames="javax.servlet.*"
-             sourcepath="src/share"
+             sourcepath="${basedir}/src/share"
              destdir="${servletapi.build}/docs/api"
              use="true"
              windowtitle="Servlet and JavaServer Pages API Documentation"
