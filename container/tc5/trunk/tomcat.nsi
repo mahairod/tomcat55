@@ -82,13 +82,13 @@ ${StrRep}
     LangString DESC_SecTomcat ${LANG_ENGLISH} "Install the Tomcat Servlet container."
     LangString DESC_SecTomcatCore ${LANG_ENGLISH} "Install the Tomcat Servlet container core."
     LangString DESC_SecTomcatService ${LANG_ENGLISH} "Automatically start Tomcat when the computer is started. This requires Windows NT 4.0, Windows 2000 or Windows XP."
-    LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
+;    LangString DESC_SecTomcatSource ${LANG_ENGLISH} "Install the Tomcat source code."
     LangString DESC_SecMenu ${LANG_ENGLISH} "Create a Start Menu program group for Tomcat."
     LangString DESC_SecDocs ${LANG_ENGLISH} "Install the Tomcat documentation bundle. This include documentation on the servlet container and its configuration options, on the Jasper JSP page compiler, as well as on the native webserver connectors."
     LangString DESC_SecExamples ${LANG_ENGLISH} "Installs some examples web applications."
-    LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application."
-    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
-    LangString DESC_SecCompat ${LANG_ENGLISH} "Installs Java2™ compatibility package. This release of Apache Tomcat was packaged to run on J2SE 5.0 or later. It can be run on earlier JVMs by installng this package."
+    LangString DESC_SecAdmin ${LANG_ENGLISH} "Installs the administration web application.";    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
+;    LangString DESC_SecWebapps ${LANG_ENGLISH} "Installs other utility web applications (WebDAV, balancer, etc)."
+;    LangString DESC_SecCompat ${LANG_ENGLISH} "Installs Java2™ compatibility package. This release of Apache Tomcat was packaged to run on J2SE 5.0 or later. It can be run on earlier JVMs by installng this package."
 
   ;Language
   !insertmacro MUI_LANGUAGE English
@@ -192,13 +192,13 @@ Section "Service" SecTomcatService
 
 SectionEnd
 
-Section "Source Code" SecTomcatSource
-
-  SectionIn 3
-  SetOutPath $INSTDIR
-  File /r src
-
-SectionEnd
+;Section "Source Code" SecTomcatSource
+;
+;  SectionIn 3
+;  SetOutPath $INSTDIR
+;  File /r src
+;
+;SectionEnd
 
 SubSectionEnd
 
@@ -216,11 +216,11 @@ Section "Start Menu Items" SecMenu
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Welcome.lnk" \
                  "http://127.0.0.1:$R0/"
 
-  IfFileExists "$INSTDIR\server\webapps\admin" 0 NoAdminApp
-
-  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Administration.lnk" \
-                 "http://127.0.0.1:$R0/admin/"
-NoAdminApp:
+;  IfFileExists "$INSTDIR\server\webapps\admin" 0 NoAdminApp
+;
+;  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.5\Tomcat Administration.lnk" \
+;                 "http://127.0.0.1:$R0/admin/"
+;NoAdminApp:
 
   IfFileExists "$INSTDIR\server\webapps\manager" 0 NoManagerApp
 
@@ -273,16 +273,16 @@ Section "Examples" SecExamples
 
 SectionEnd
 
-Section "Administration" SecAdmin
-
-  SectionIn 3
-
-  SetOutPath $INSTDIR\server\webapps
-  File /r server\webapps\admin
-  SetOutPath $INSTDIR\conf\Catalina\localhost
-  File conf\Catalina\localhost\admin.xml
-
-SectionEnd
+;Section "Administration" SecAdmin
+;
+;  SectionIn 3
+;
+;  SetOutPath $INSTDIR\server\webapps
+;  File /r server\webapps\admin
+;  SetOutPath $INSTDIR\conf\Catalina\localhost
+;  File conf\Catalina\localhost\admin.xml
+;
+;SectionEnd
 
 Section "Webapps" SecWebapps
 
@@ -294,14 +294,14 @@ Section "Webapps" SecWebapps
 
 SectionEnd
 
-Section "Compatibility" SecCompat
-
-  SetOutPath $INSTDIR
-  File /oname=bin\jmx.jar ..\compat\bin\jmx.jar
-  File /oname=common\endorsed\xercesImpl.jar ..\compat\common\endorsed\xercesImpl.jar
-  File /oname=common\endorsed\xml-apis.jar  ..\compat\common\endorsed\xml-apis.jar
-
-SectionEnd
+;Section "Compatibility" SecCompat
+;
+;  SetOutPath $INSTDIR
+;  File /oname=bin\jmx.jar ..\compat\bin\jmx.jar
+;  File /oname=common\endorsed\xercesImpl.jar ..\compat\common\endorsed\xercesImpl.jar
+;  File /oname=common\endorsed\xml-apis.jar  ..\compat\common\endorsed\xml-apis.jar
+;
+;SectionEnd
 
 Section -post
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
@@ -349,12 +349,12 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcat} $(DESC_SecTomcat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCompat} $(DESC_SecCompat)
+;  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
+;  !insertmacro MUI_DESCRIPTION_TEXT ${SecCompat} $(DESC_SecCompat)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDocs} $(DESC_SecDocs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAdmin} $(DESC_SecAdmin)
+;  !insertmacro MUI_DESCRIPTION_TEXT ${SecAdmin} $(DESC_SecAdmin)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecWebapps} $(DESC_SecWebapps)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
