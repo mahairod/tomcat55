@@ -143,35 +143,8 @@ public class MBeanFactory extends BaseModelMBean {
         }
         return t;
     }
-
     
    /**
-     * Get Parent DefaultContext to add its child component 
-     * from parent's ObjectName
-     */
-    /*
-    private DefaultContext getDefaultContext(ObjectName pname) 
-        throws Exception {
-        
-        String type = pname.getKeyProperty("type");
-        if (type.equals("DefaultContext")) {
-            Service service = getService(pname);
-            StandardEngine engine = (StandardEngine) service.getContainer();
-            String hostName = pname.getKeyProperty("host");
-            if (hostName!=null) {
-                StandardHost host = 
-                    (StandardHost) engine.findChild(hostName);
-                return host.getDefaultContext();
-            } else {
-                return engine.getDefaultContext();
-            }
-        }
-        return null;
-    }
-    */
-    
-
-    /**
      * Get Parent ContainerBase to add its child component 
      * from parent's ObjectName
      */
