@@ -681,6 +681,7 @@ public class JspC implements Options {
         if (extensions == null) {
             extensions = new Vector();
             extensions.addElement("jsp");
+            extensions.addElement("jspx");
         }
         while (!dirs.isEmpty()) {
             String s = dirs.pop().toString();
