@@ -391,9 +391,9 @@ final class CoyoteAdapter
                     cookie.setDomain(scookie.getDomain().toString());
                 }
                 cookies[idx++] = cookie;
-            } catch(Exception ex) {
-                log.error("Bad Cookie Name: " + scookie.getName() + 
-                    " /Value: " + scookie.getValue(),ex);
+            } catch(IllegalArgumentException e) {
+                log.info("Bad Cookie: Name: " + scookie.getName() 
+                         + " Value: " + scookie.getValue());
             }
         }
         if( idx < count ) {
