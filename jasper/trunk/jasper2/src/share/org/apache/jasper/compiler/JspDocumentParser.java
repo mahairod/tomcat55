@@ -230,13 +230,12 @@ class JspDocumentParser
 
         } catch (IOException ioe) {
             jspDocParser.err.jspError("jsp.error.data.file.read", path, ioe);
+        } catch (SAXParseException e) {
+            jspDocParser.err.jspError
+                (new Mark(path, e.getLineNumber(), e.getColumnNumber()),
+                 e.getMessage());
         } catch (Exception e) {
-            jspDocParser.err.jspError(
-                new Mark(
-                    path,
-                    ((SAXParseException)e).getLineNumber(),
-                    ((SAXParseException)e).getColumnNumber()),
-                e.getMessage());
+            jspDocParser.err.jspError(e);
         }
 
         return pageNodes;
