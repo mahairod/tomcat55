@@ -263,7 +263,7 @@ final class HttpResponseImpl
      */
     public void finishResponse() throws IOException {
 
-        if (!isStreamInitialized())
+        if ((!isStreamInitialized()) && (getContentLength() == -1))
             setContentLength(0);
         super.finishResponse();
 
