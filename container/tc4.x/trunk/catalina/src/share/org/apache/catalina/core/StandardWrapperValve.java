@@ -514,6 +514,8 @@ final class StandardWrapperValve
             //            if (debug >= 1)
             //                log(" Sending to custom error page " + errorPage);
             ServletRequest sreq = request.getRequest();
+            sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
+                              realError.getMessage());
             sreq.setAttribute(Globals.EXCEPTION_ATTR,
                               realError);
             if (sreq instanceof HttpServletRequest)
@@ -783,10 +785,14 @@ final class StandardWrapperValve
 	Context context = (Context) container.getParent();
 	ErrorPage errorPage = context.findErrorPage(statusCode);
 	if (errorPage != null) {
-	    request.getRequest().setAttribute(Globals.STATUS_CODE_ATTR,
-					      new Integer(statusCode));
-	    request.getRequest().setAttribute(Globals.ERROR_MESSAGE_ATTR,
-					      message);
+            ServletRequest sreq = request.getRequest();
+	    sreq.setAttribute(Globals.STATUS_CODE_ATTR,
+                              new Integer(statusCode));
+	    sreq.setAttribute(Globals.ERROR_MESSAGE_ATTR,
+                              message);
+            if (sreq instanceof HttpServletRequest)
+                sreq.setAttribute(Globals.EXCEPTION_PAGE_ATTR,
+                                  ((HttpServletRequest) sreq).getRequestURI());
 	    if (custom(request, response, errorPage))
 		return;
 	}
