@@ -511,7 +511,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             // Return the current session if it exists and is valid
             if (session != null && session.isValid()) {
                 return (session.getSession());
-	    }
+            }
 
             HttpSession other = super.getSession(false);
             if (create && (other == null)) {
