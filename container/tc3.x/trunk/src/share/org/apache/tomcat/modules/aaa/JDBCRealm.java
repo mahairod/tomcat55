@@ -152,11 +152,25 @@ public class JDBCRealm extends RealmBase {
     }
 
     /**
+     * Return status of connectionName
+     */
+    public boolean isConnectionNameSet() {
+        return (connectionName != null);
+    }
+
+    /**
      * Set the password to use to connect to the database.
      * @param connectionPassword User password
      */
     public void setConnectionPassword(String connectionPassword) {
         this.connectionPassword = connectionPassword;
+    }
+
+    /**
+     * Return status of connectionPassword
+     */
+    public boolean isConnectionPasswordSet() {
+        return (connectionPassword != null);
     }
 
     /**
