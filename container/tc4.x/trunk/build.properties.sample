@@ -57,24 +57,31 @@ base.path=/usr/share/java
 
 
 # ----- Commons Beanutils, version 1.1 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.4.1
+commons-beanutils.home=${base.path}/commons-beanutils-1.6.1
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
-commons-beanutils.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-beanutils/v1.4.1/commons-beanutils-1.4.1.tar.gz
+commons-beanutils.loc=http://www.apache.org/dist/jakarta/commons/beanutils/binaries/commons-beanutils-1.6.1.tar.gz
 
 
 # ----- Commons Collections, version 1.0 or later -----
-commons-collections.home=${base.path}/commons-collections-2.0
+commons-collections.home=${base.path}/commons-collections-2.1
 commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
-commons-collections.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-collections/v2.0/commons-collections-2.0.tar.gz
+commons-collections.loc=http://www.apache.org/dist/jakarta/commons/collections/binaries/collections-2.1.tar.gz
 
 
 # ----- Commons Digester, version 1.1.1 or later -----
-commons-digester.home=${base.path}/commons-digester-1.3
+commons-digester.home=${base.path}/commons-digester-1.4.1
 commons-digester.lib=${commons-digester.home}
 commons-digester.jar=${commons-digester.lib}/commons-digester.jar
-commons-digester.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-digester/v1.3/commons-digester-1.3.tar.gz
+commons-digester.loc=http://www.apache.org/dist/jakarta/commons/digester/binaries/commons-digester-1.4.1.tar.gz
+
+
+# ----- Commons FileUpload, nightly build -----
+commons-fileupload.home=${base.path}/commons-fileupload-1.0-beta-1
+commons-fileupload.lib=${commons-fileupload.home}
+commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-beta-1.jar
+commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0-beta-1.tar.gz 
 
 
 # ----- Commons Logging, version 1.0.1 or later -----
@@ -162,11 +169,6 @@ commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 commons-pool.loc=http://jakarta.apache.org/builds/jakarta-commons/release/commons-pool/v1.0.1/commons-pool-1.0.1.tar.gz
 
-# ----- Commons FileUpload, nightly build -----
-commons-fileupload.home=${base.path}/commons-fileupload-1.0-beta-1
-commons-fileupload.lib=${commons-fileupload.home}
-commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-beta-1.jar
-commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/commons-fileupload-1.0-beta-1.tar.gz 
 
 # ----- JavaService, version 1.2.0 or later -----
 javaservice.home=${base.path}/javaservice
@@ -179,11 +181,11 @@ jdbc20ext.lib=${jdbc20ext.home}
 jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
-# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.1 or later -----
-jmx.home=${base.path}/mx4j-1.1
+# ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.0 or later -----
+jmx.home=${base.path}/mx4j-1.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j-jmx.jar
-jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.tar.gz
+jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
@@ -195,9 +197,9 @@ jsse.jar=${jsse.lib}/jsse.jar
 
 
 # ----- Java Transaction API (JTA), version 1.0.1 or later -----
-jta.home=${base.path}/jta-spec1_0_1
+jta.home=${base.path}/jta-1_0_1a
 jta.lib=${jta.home}
-jta.jar=${jta.lib}/jta-spec1_0_1.jar
+jta.jar=${jta.lib}/jta.jar
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
