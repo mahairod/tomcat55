@@ -104,7 +104,10 @@
       </fix>
       <fix> 
         <bug>31171</bug>: Wrap to avoid ClassCastException in PageContextImpl. (yoavs) 
-      </fix> 
+      </fix>
+      <fix>
+        <bug>31257</bug>: Added specification of endorsed dirs if forking. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Coyote">
