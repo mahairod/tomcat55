@@ -1508,7 +1508,7 @@ public class StandardWrapper
             // it should be full name
             String parentName=ctx.getName();
             String hostName=ctx.getParent().getName();
-            String webMod=((hostName==null)? "DEFAULT" :hostName ) +
+            String webMod= "//" + ((hostName==null)? "DEFAULT" :hostName ) +
                     (("".equals(parentName) ) ? "/" : parentName );
             String oname="j2eeType=Servlet,name=" + name + ",WebModule=" +
                     webMod + ctx.getJSR77Suffix();
