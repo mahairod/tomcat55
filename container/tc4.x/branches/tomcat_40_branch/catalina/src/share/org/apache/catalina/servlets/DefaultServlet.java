@@ -1089,18 +1089,23 @@ public class DefaultServlet
                 return;
             }
 
-        }
+        } else {
 
-        // Checking If headers
-        if ( !checkIfHeaders(request, response, resourceInfo) ) {
-            return;
+            // Checking If headers
+            if ( !checkIfHeaders(request, response, resourceInfo) ) {
+                return;
+            }
+
         }
 
         // Find content type.
         String contentType =
             getServletContext().getMimeType(resourceInfo.path);
 
+        Vector ranges = null;
+
         if (resourceInfo.collection) {
+
             // Skip directory listings if we have been configured to
             // suppress them
             if (!listings) {
@@ -1109,25 +1114,23 @@ public class DefaultServlet
                 return;
             }
             contentType = "text/html;charset=UTF-8";
-        }
 
+        } else {
 
-        // Parse range specifier
-        Vector ranges = null;
-        if (!resourceInfo.collection) {
+            // Parse range specifier
 
             ranges = parseRange(request, response, resourceInfo);
 
             // ETag header
             response.setHeader("ETag", getETag(resourceInfo, true));
 
-        }
+            // Last-Modified header
+            if (debug > 0)
+                log("DefaultServlet.serveFile:  lastModified='" +
+                    (new Timestamp(resourceInfo.date)).toString() + "'");
+            response.setDateHeader("Last-Modified", resourceInfo.date);
 
-        // Last-Modified header
-        if (debug > 0)
-            log("DefaultServlet.serveFile:  lastModified='" +
-                (new Timestamp(resourceInfo.date)).toString() + "'");
-        response.setDateHeader("Last-Modified", resourceInfo.date);
+        }
 
         ServletOutputStream ostream = null;
         PrintWriter writer = null;
