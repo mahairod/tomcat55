@@ -390,7 +390,7 @@ public final class StandardServer
 	    return (true);
 
 	// Compare the reversed form of the two addresses
-	for (int i = 0; serverAddr.length < 4; i++) {
+	for (int i = 0; i < serverAddr.length; i++) {
 	    if (serverAddr[i] != clientAddr[(serverAddr.length-1)-i])
 		return (false);
 	}
