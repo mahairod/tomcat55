@@ -132,6 +132,16 @@
       to a particular port number on a particular IP address.</p>
     </attribute>
 
+    <attribute name="tomcatAuthentication" required="false">
+      <p>This flag, which value defaults to <code>true</code>, indicates
+      whether or not authentication will be handled by Tomcat or the native 
+      web server. If the attribute value is <code>true</code>, any pricipal 
+      authenticated by the native web server will be ignored, and Tomcat will 
+      take care of the authentication. If the attribute value 
+      is <code>false</code>, Tomcat will not attempt to authenticate 
+      a principal if the native web server has already authenticated one.</p>
+    </attribute>
+
   </attributes>
 
   </subsection>
