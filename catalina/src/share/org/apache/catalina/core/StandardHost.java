@@ -756,7 +756,21 @@ public class StandardHost
      *  that prevents it from being started
      */
     public synchronized void start() throws LifecycleException {
-
+        if( started ) {
+            return;
+        }
+        if( oname==null ) {
+            // not registered in JMX yet - standalone mode
+            try {
+                StandardEngine engine=(StandardEngine)parent;
+                domain=engine.getName();
+                log.info( "Register " + domain );
+                oname=new ObjectName(domain + ":type=Host,host=" +
+                        this.getName());
+            } catch( Throwable t ) {
+                log.info("Error registering ", t );
+            }
+        }
         // Set error report valve
         if ((errorReportValveClass != null)
             && (!errorReportValveClass.equals(""))) {
@@ -1018,10 +1032,12 @@ public class StandardHost
     }
 
     public void init() throws Exception {
+        // already registered.
         if( getParent() != null ) return;
 
-        ObjectName serviceName=new ObjectName(domain +
-                ":type=Engine,name=Tomcat-Standalone");
+        // Register with the Engine
+        ObjectName serviceName=new ObjectName(domain + ":type=Engine");
+
         if( mserver.isRegistered( serviceName )) {
             log.info("Registering with the Engine");
             try {
@@ -1033,4 +1049,13 @@ public class StandardHost
             }
         }
     }
+
+    public ObjectName createObjectName(String domain, ObjectName parent)
+        throws Exception
+    {
+        if( log.isDebugEnabled())
+            log.debug("Create ObjectName " + domain + " " + parent );
+        return new ObjectName( domain + ":type=Host,name=" + getName());
+    }
+
 }
