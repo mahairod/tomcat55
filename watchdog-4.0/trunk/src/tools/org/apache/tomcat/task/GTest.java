@@ -584,8 +584,29 @@ public class GTest extends Task {
              
                             for ( int i = 0; i < eSize; i++ ) {
                                 currentHeaderValue = (String) expectValues.get( i );
-
-                                if ( headerValues.contains( currentHeaderValue ) ) {
+				                
+                                /*
+                                 * Handle the Content-Type header appropriately
+                                 * based on the the test is configured to look for.
+                                 */
+                                if ( currentHeaderField.equalsIgnoreCase( "content-type" ) ) {
+                                    String resVal = (String) headerValues.get( 0 );
+                                    if ( currentHeaderValue.indexOf( ';' ) > -1 ) {
+                                        if ( debug > 0 ) {
+                                            System.out.println( " Exact match for Content-Type header required." );
+                                        }
+                                        if ( currentHeaderValue.equals( resVal ) ) {
+                                            numberFound++;
+                                            headerValues.remove( 0 );
+                                        }
+                                    } else if ( resVal.indexOf( currentHeaderValue ) > -1 ) {
+                                        if ( debug > 0 ) {
+                                            System.out.println( " Approximate match for Content-Type header required." );
+                                        }
+                                        numberFound++;
+                                        headerValues.remove( 0 );
+                                    }
+                                } else if ( headerValues.contains( currentHeaderValue ) ) {
                                     numberFound++;
                                     headerValues.remove( headerValues.indexOf( currentHeaderValue ) );
                                 }
