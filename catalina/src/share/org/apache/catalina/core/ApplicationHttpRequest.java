@@ -106,9 +106,11 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
      * The set of attribute names that are special for request dispatchers.
      */
     protected static final String specials[] =
-    { Globals.REQUEST_URI_ATTR, Globals.CONTEXT_PATH_ATTR,
-      Globals.SERVLET_PATH_ATTR, Globals.PATH_INFO_ATTR,
-      Globals.QUERY_STRING_ATTR };
+    { Globals.INCLUDE_REQUEST_URI_ATTR, Globals.INCLUDE_CONTEXT_PATH_ATTR,
+      Globals.INCLUDE_SERVLET_PATH_ATTR, Globals.INCLUDE_PATH_INFO_ATTR,
+      Globals.INCLUDE_QUERY_STRING_ATTR, Globals.FORWARD_REQUEST_URI_ATTR, 
+      Globals.FORWARD_CONTEXT_PATH_ATTR, Globals.FORWARD_SERVLET_PATH_ATTR, 
+      Globals.FORWARD_PATH_INFO_ATTR, Globals.FORWARD_QUERY_STRING_ATTR };
 
 
     // ----------------------------------------------------------- Constructors
@@ -512,8 +514,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
             Enumeration names = request.getAttributeNames();
             while (names.hasMoreElements()) {
                 String name = (String) names.nextElement();
-                if( ! ( Globals.REQUEST_URI_ATTR.equals(name) ||
-                        Globals.SERVLET_PATH_ATTR.equals(name) ) ) {
+                if( ! ( Globals.INCLUDE_REQUEST_URI_ATTR.equals(name) ||
+                        Globals.INCLUDE_SERVLET_PATH_ATTR.equals(name) ) ) {
                     Object value = request.getAttribute(name);
                     attributes.put(name, value);
                 }
