@@ -81,6 +81,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.servlet.JspServletWrapper;
+import org.apache.jasper.runtime.JspSourceDependent;
 
 /**
  * 1. Processes and extracts the directive info in a tag file.
@@ -556,14 +557,19 @@ class TagFileProcessor {
             }
         
             // Add the dependants for this tag file to its parent's
-            // dependant list.
-            PageInfo pageInfo = wrapper.getJspEngineContext().getCompiler().
-                getPageInfo();
-            if (pageInfo != null) {
-                Iterator iter = pageInfo.getDependants().iterator();
-                if (iter.hasNext()) {
-                    parentPageInfo.addDependant((String)iter.next());
+            // dependant list.  The only reliable dependency information
+            // can only be obtained from the tag instance.
+            try {
+                Object tagIns = tagClazz.newInstance();
+                if (tagIns instanceof JspSourceDependent) {
+                    Iterator iter = 
+                        ((JspSourceDependent)tagIns).getDependants().iterator();
+                    while (iter.hasNext()) {
+                        parentPageInfo.addDependant((String)iter.next());
+                    }
                 }
+            } catch (Exception e) {
+                // ignore errors
             }
         
             return tagClazz;

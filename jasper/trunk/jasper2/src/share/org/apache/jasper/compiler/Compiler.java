@@ -561,8 +561,10 @@ public class Compiler {
                     //System.out.println("Compiler: outdated, include old " + include );
                     outDated = true;
                 }
-                // Remove any potential Wrappers for tag files
-                ctxt.getRuntimeContext().removeWrapper(include);
+                if (outDated) {
+                    // Remove any potential Wrappers for tag files
+                    ctxt.getRuntimeContext().removeWrapper(include);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 outDated = true;
