@@ -55,11 +55,6 @@ public final class SaveServerAction extends Action {
      */
     private MBeanServer mBServer = null;
     
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
     // --------------------------------------------------------- Public Methods
     
     
@@ -86,10 +81,8 @@ public final class SaveServerAction extends Action {
         
        // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -102,7 +95,7 @@ public final class SaveServerAction extends Action {
         ActionErrors errors = new ActionErrors();
         
         // Report any errors we have discovered back to the original form
-        if (!errors.empty()) {
+        if (!errors.isEmpty()) {
             saveErrors(request, errors);
             return (new ActionForward(mapping.getInput()));
         }

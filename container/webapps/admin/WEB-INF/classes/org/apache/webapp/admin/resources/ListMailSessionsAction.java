@@ -59,12 +59,6 @@ public class ListMailSessionsAction extends Action {
     private MBeanServer mserver = null;
 
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
     // --------------------------------------------------------- Public Methods
 
 
@@ -94,11 +88,9 @@ public class ListMailSessionsAction extends Action {
         if (mserver == null) {
             mserver = ((ApplicationServlet) getServlet()).getServer();
         }
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        MessageResources resources = getResources(request);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = getLocale(request);
         
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");

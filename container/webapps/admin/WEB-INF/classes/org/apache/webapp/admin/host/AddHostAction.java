@@ -41,12 +41,6 @@ import org.apache.webapp.admin.Lists;
 
 public class AddHostAction extends Action {
 
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-
-
     // --------------------------------------------------------- Public Methods
 
     /**
@@ -72,10 +66,8 @@ public class AddHostAction extends Action {
 
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
 
         // the service Name is needed to retrieve the engine mBean to
         // which the new host mBean will be added.
