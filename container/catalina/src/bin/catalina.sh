@@ -231,6 +231,15 @@ elif [ "$1" = "stop" ] ; then
     -Djava.io.tmpdir="$CATALINA_TMPDIR" \
     org.apache.catalina.startup.Bootstrap "$@" stop
 
+  if [ "$1" = "-force" ] ; then
+    shift
+    if [ ! -z "$CATALINA_PID" ]; then
+       echo "Killing: `cat $CATALINA_PID`"
+       kill -9 `cat $CATALINA_PID`
+    fi
+  fi
+
+
 else
 
   echo "Usage: catalina.sh ( commands ... )"
