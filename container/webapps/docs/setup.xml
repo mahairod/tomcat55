@@ -51,6 +51,10 @@
             will not be any tray icon present when Tomcat is running. Note that
             when choosing to run Tomcat at the end of installation, the tray
             icon will be used even if Tomcat was installed as a service.</li>
+        <li>Refer to the
+            <a href="windows-service-howto.html">Windows Service HOW-TO</a>
+            for information on how to manage Tomcat as Windows NT service.
+            </li>            
       </ul>
     </p>
 
