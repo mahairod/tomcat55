@@ -75,6 +75,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 
 /**
@@ -127,10 +128,12 @@ public class SetDocBaseRule extends Rule {
         }
         String appBase = host.getAppBase();
 
-        if (!(host instanceof StandardHost)) {
-            return;
+        boolean unpackWARs = true;
+        if (host instanceof StandardHost) {
+            unpackWARs = ((StandardHost) host).isUnpackWARs();
         }
-        if (!((StandardHost) host).isUnpackWARs()) {
+        if (!unpackWARs 
+            && !("true".equals(attributes.getValue("unpackWAR")))) {
             return;
         }
         if ("false".equals(attributes.getValue("unpackWAR"))) {
