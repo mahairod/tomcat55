@@ -3073,7 +3073,7 @@ class Generator {
         // to mask the page context from the tag file and simulate a 
         // fresh page context.  We need the original to do things like
         // sync AT_BEGIN and AT_END scripting variables.
-        out.printil( "protected JspContext jspContext;" );
+        out.printil( "private JspContext jspContext;" );
         out.println();
         out.printil( "public void setJspContext( JspContext ctx ) {" );
         out.pushIndent();
