@@ -10,7 +10,6 @@
   <property file="${user.home}/build.properties"/>
 
   <!-- Build Defaults -->
-  <property name="build.compiler"    value="classic"/>
   <property name="jasper.build"      value="${basedir}/build"/>
   <property name="catalina.home"     value="../../jakarta-tomcat-4.1/build"/>
   <property name="jasper.deploy"     value="${catalina.home}"/>
