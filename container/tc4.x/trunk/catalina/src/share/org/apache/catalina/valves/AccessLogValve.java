@@ -488,6 +488,10 @@ public final class AccessLogValve
             result.append(hreq.getMethod());
             result.append(space);
             result.append(hreq.getRequestURI());
+            if (hreq.getQueryString() != null) {
+                result.append('?');
+                result.append(hreq.getQueryString());
+            }
             result.append(space);
             result.append(hreq.getProtocol());
             result.append("\" ");
@@ -677,11 +681,22 @@ public final class AccessLogValve
             else
                 value = "";
         } else if (pattern == 'r') {
-            if (hreq != null)
-                value = hreq.getMethod() + space + hreq.getRequestURI()
-                    + space + hreq.getProtocol();
-            else
-                value = "- - " + req.getProtocol();
+            StringBuffer sb = new StringBuffer();
+            if (hreq != null) {
+                sb.append(hreq.getMethod());
+                sb.append(space);
+                sb.append(hreq.getRequestURI());
+                if (hreq.getQueryString() != null) {
+                    sb.append('?');
+                    sb.append(hreq.getQueryString());
+                }
+                sb.append(space);
+                sb.append(hreq.getProtocol());
+            } else {
+                sb.append("- - ");
+                sb.append(req.getProtocol());
+            }
+            value = sb.toString();
         } else if (pattern == 's') {
             if (hres != null)
                 value = "" + ((HttpResponse) response).getStatus();
