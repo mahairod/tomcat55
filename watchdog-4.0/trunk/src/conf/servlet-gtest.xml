@@ -779,7 +779,7 @@
         <watchdog request="GET /servlet-tests/ServletRequestGetCharacterEncodingTest HTTP/1.0"
             testName="ServletRequestGetCharacterEncodingTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            requestHeaders="Content-Type:text/plain; charset=UTF-8"
+            requestHeaders="Content-Type:text/plain; charset=ISO-8859-1"
             goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncodingTest.html"
             assertion="Returns the name of the character encoding used in the body of this request encoding, specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="Servlet verifies is receives the default encoding of IS0-8858-1 method"
