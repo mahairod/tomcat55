@@ -12,13 +12,27 @@ package org.apache.catalina.ssi;
 
 
 /**
- * Exception used to tell SSIProcessor that it should stop processing SSI
- * commands. This is used to mimick the Apache behavior in #set with invalid
- * attributes.
+ * This class is used by SSIMediator and SSIConditional to keep track of state
+ * information necessary to process the nested conditional commands ( if, elif,
+ * else, endif ).
  * 
- * @author Paul Speed
+ * @version $Revision$
  * @author Dan Sandberg
- * @version $Revision$, $Date$
+ * @author Paul Speed
  */
-public class SSIStopProcessingException extends Exception {
+class SSIConditionalState {
+    /**
+     * Set to true if the current conditional has already been completed, i.e.:
+     * a branch was taken.
+     */
+    boolean branchTaken = false;
+    /**
+     * Counts the number of nested false branches.
+     */
+    int nestingCount = 0;
+    /**
+     * Set to true if only conditional commands ( if, elif, else, endif )
+     * should be processed.
+     */
+    boolean processConditionalCommandsOnly = false;
 }
