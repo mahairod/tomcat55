@@ -186,6 +186,9 @@ public class BeanFactory
                             } else if (propType.equals(Double.class) 
                                        || propType.equals(double.class)) {
                                 valueArray[0] = new Double(value);
+                            } else if (propType.equals(Boolean.class)
+                                       || propType.equals(boolean.class)) {
+                                valueArray[0] = new Boolean(value);
                             } else {
                                 throw new NamingException
                                     ("String conversion for property type '"
