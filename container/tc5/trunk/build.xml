@@ -130,8 +130,6 @@
 
     <delete dir="${tomcat.dist}"/>
 
-    <delete dir="${tomcat.release}"/>
-
   </target>
 
 
