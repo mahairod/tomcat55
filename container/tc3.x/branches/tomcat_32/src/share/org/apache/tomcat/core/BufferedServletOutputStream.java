@@ -216,7 +216,7 @@ public class BufferedServletOutputStream extends ServletOutputStream {
 	    //
 	    if ((c & 0xff00) != 0) {	// high order byte must be zero
 		String errMsg = sm.getString(
-                    "servletOutputStream.fmt.not_iso8859_1", 
+                    "servletOutputStreamImpl.fmt.not_iso8859_1", 
                      new Object[] {new Character(c)});
 		throw new IOException(errMsg);
 	    }
