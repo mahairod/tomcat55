@@ -1198,7 +1198,7 @@ public class StandardClassLoader
 
         // Validate the manifest of a JAR file repository
         if (!repository.endsWith(File.separator) &&
-            !repository.endsWith(File.separator)) {
+            !repository.endsWith("/")) {
             try {
                 JarFile jarFile = null;
                 Manifest manifest = null;
