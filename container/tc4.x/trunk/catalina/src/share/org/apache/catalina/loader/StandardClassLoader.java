@@ -730,6 +730,9 @@ public class StandardClassLoader
                     try {
                         URLConnection classUrlConnection =
                             classUrl.openConnection();
+                        // Check for existence
+                        InputStream is = classUrlConnection.getInputStream();
+                        is.close();
                         if (debug >= 4)
                             log("    Caching from '" + classUrl.toString() +
                                 "' modified '" +
@@ -740,8 +743,6 @@ public class StandardClassLoader
                             (clazz, classUrl, 
                              classUrlConnection.getLastModified()));
                     } catch (IOException e) {
-                        log("    Failed tracking modifications of '" 
-                            + classUrl.toString() + "'");
                     }
                     
                 } catch(MalformedURLException ex) {
