@@ -486,15 +486,22 @@ public final class SsiInvokerServlet extends HttpServlet {
     private String normalize(String path) {
         if (path == null)
             return null;
-        // Resolve encoded characters in the normalized path,
-        // which also handles encoded spaces so we can skip that later.
-        // Placed at the beginning of the chain so that encoded
-        // bad stuff(tm) can be caught by the later checks
+
+        // Create a place for the normalized path
         String normalized = path;
-        if (normalized.indexOf('%') >= 0)
-            normalized = RequestUtil.URLDecode(normalized, "UTF8");
+
+        /*
+         * Commented out -- already URL-decoded in StandardContextMapper
+         * Decoding twice leaves the container vulnerable to %25 --> '%'
+         * attacks.
+         *
+         * if (normalized.indexOf('%') >= 0)
+         *     normalized = RequestUtil.URLDecode(normalized, "UTF8");
+         */
+
         if (normalized == null)
             return (null);
+
         // Normalize the slashes and add leading slash if necessary
         if (normalized.indexOf('\\') >= 0)
             normalized = normalized.replace('\\', '/');
