@@ -219,7 +219,7 @@ public final class FileRealmTool {
 	}
 
 	if (!user.hasGroup(group)) {
-	    user.add(group);
+	    user.addGroup(group);
 	    modified = true;
 	}
 
@@ -252,14 +252,14 @@ public final class FileRealmTool {
 
 	if (group != null) {
 	    if (!group.hasRole(role)) {
-		group.add(role);
+		group.addRole(role);
 		modified = true;
 	    }
 	}
 
 	if (user != null) {
 	    if (!user.hasRole(role)) {
-		user.add(role);
+		user.addRole(role);
 		modified = true;
 	    }
 	}

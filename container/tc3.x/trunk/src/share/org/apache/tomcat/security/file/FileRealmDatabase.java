@@ -148,7 +148,7 @@ public final class FileRealmDatabase {
     /**
      * [Package Private] Add this group to the set of defined groups.
      */
-    void add(FileRealmGroup group) {
+    void addGroup(FileRealmGroup group) {
 
 	groups.put(group.getName(), group);
 
@@ -158,7 +158,7 @@ public final class FileRealmDatabase {
     /**
      * [Package Private] Add this role to the set of defined roles.
      */
-    void add(String role) {
+    void addRole(String role) {
 
 	roles.put(role, role);
 
@@ -168,7 +168,7 @@ public final class FileRealmDatabase {
     /**
      * [Package Private] Add this user to the set of defined users.
      */
-    void add(FileRealmUser user) {
+    void addUser(FileRealmUser user) {
 
 	users.put(user.getName(), user);
 
@@ -360,7 +360,7 @@ public final class FileRealmDatabase {
 		(String) um.getAttribute(Constants.Attribute.NAME);
 	    FileRealmUser user = getUser(username);
 	    if (user != null)
-		user.add(group);
+		user.addGroup(group);
 	}
 
 	// XXX: Does not support the "anyone" sub-element
@@ -388,7 +388,7 @@ public final class FileRealmDatabase {
 		(String) gm.getAttribute(Constants.Attribute.NAME);
 	    FileRealmGroup group = getGroup(groupname);
 	    if (group != null)
-		group.add(role);
+		group.addRole(role);
 	}
 
 	// Process the associated user memberships
@@ -399,7 +399,7 @@ public final class FileRealmDatabase {
 		(String) um.getAttribute(Constants.Attribute.NAME);
 	    FileRealmUser user = getUser(username);
 	    if (user != null)
-		user.add(role);
+		user.addRole(role);
 	}
 
 	// XXX: Does not support the "anyone" sub-element

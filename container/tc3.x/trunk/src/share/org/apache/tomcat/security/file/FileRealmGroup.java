@@ -125,7 +125,7 @@ final class FileRealmGroup {
 	super();
 	this.database = database;
 	this.name = name;
-	database.add(this);
+	database.addGroup(this);
 
     }
 
@@ -135,9 +135,9 @@ final class FileRealmGroup {
      *
      * @param role The role being assigned to this group
      */
-    public void add(String role) {
+    public void addRole(String role) {
 
-	database.add(role);
+	database.addRole(role);
 	roles.put(role, role);
 
     }
@@ -149,7 +149,7 @@ final class FileRealmGroup {
      *
      * @param user User to be added
      */
-    void add(FileRealmUser user) {
+    void addUser(FileRealmUser user) {
 
 	users.put(user.getName(), user);
 

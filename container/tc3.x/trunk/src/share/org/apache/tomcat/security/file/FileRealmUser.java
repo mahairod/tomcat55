@@ -141,7 +141,7 @@ final class FileRealmUser
 	this.database = database;
 	this.name = name;
 	setPassword(password);
-	database.add(this);
+	database.addUser(this);
 
     }
 
@@ -161,7 +161,7 @@ final class FileRealmUser
 	this.database = database;
 	this.name = name;
 	setPassword(password);
-	database.add(this);
+	database.addUser(this);
 
     }
 
@@ -171,9 +171,9 @@ final class FileRealmUser
      *
      * @param group Group this user is now a member of
      */
-    public void add(FileRealmGroup group) {
+    public void addGroup(FileRealmGroup group) {
 
-	group.add(this);
+	group.addUser(this);
 	groups.put(group.getName(), group);
 
     }
@@ -184,9 +184,9 @@ final class FileRealmUser
      *
      * @param role The role being assigned to this group
      */
-    public void add(String role) {
+    public void addRole(String role) {
 
-	database.add(role);
+	database.addRole(role);
 	roles.put(role, role);
 
     }
