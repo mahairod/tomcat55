@@ -193,10 +193,10 @@ junit.loc=${base-sf.loc}/junit/junit3.7.zip
 
 
 # ----- NSIS, version 2.0 or later -----
-nsis.home=${base.path}/nsis-2.0-rc1
+nsis.home=${base.path}/nsis-2.0-rc2
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
-nsis.loc=${base-sf.loc}/nsis/nsis20rc1.exe
+nsis.loc=${base-sf.loc}/nsis/nsis20rc2.exe
 
 
 # ----- Struts, version 1.1 or later -----
