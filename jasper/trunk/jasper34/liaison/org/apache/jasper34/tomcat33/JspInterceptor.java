@@ -424,8 +424,10 @@ public class JspInterceptor extends BaseInterceptor {
 	
 	// Each .jsp file is compiled to a servlet, and will
 	// have a dependency to check if it's expired
-	Dependency dep= handler.getServletInfo().getDependency();
-	if( dep!=null && ! dep.isExpired() ) {
+	DependManager dep= handler.getServletInfo().getDependManager();
+	if( dep!=null && ! dep.shouldReload()  ) {
+	    if( debug > 0  )
+		log( "ShouldReload = " + dep.shouldReload());
 	    // if the jspfile is older than the class - we're ok
 	    // this happens if the .jsp file was compiled in a previous
 	    // run of tomcat.
@@ -557,8 +559,8 @@ final class JasperLiaison {
 	synchronized( handler ) {
 	    
 	    // double check - maybe another thread did that for us
-	    Dependency dep= handler.getServletInfo().getDependency();
-	    if( dep!=null && ! dep.isExpired() ) {
+	    DependManager depM= handler.getServletInfo().getDependManager();
+	    if( depM!=null && ! depM.shouldReload() ) {
 		// if the jspfile is older than the class - we're ok
 		return 0;
 	    }
@@ -573,15 +575,20 @@ final class JasperLiaison {
 			       jspFile );
 
 	    // register the handler as dependend of the jspfile 
-	    if( dep==null ) {
-		dep=setDependency( ctx, mangler, handler );
+	    if( depM==null ) {
+		depM=setDependency( ctx, mangler, handler );
 		// update the servlet class name
 		handler.setServletClassName( mangler.getServletClassName() );
 
 		// check again - maybe we just found a compiled class from
 		// a previous run
-		if( ! dep.isExpired() )
-		    return 0;
+		if( ! depM.shouldReload() ) {
+		    addExtraDeps( depM, handler );		    
+		    if( debug > 0 )
+			log.log( "Loaded dependency, shouldReload = " +
+				 depM.shouldReload() );
+ 		    return 0;
+		}
 	    }
 
 	    //	    if( debug > 3) 
@@ -601,7 +608,7 @@ final class JasperLiaison {
 	    // record time of attempted translate-and-compile
 	    // if the compilation fails, we'll not try again
 	    // until the jsp file changes
-	    dep.setLastModified( System.currentTimeMillis() );
+	    depM.setLastModified( System.currentTimeMillis() );
 
 	    // Update the class name in wrapper
 	    if( debug> 1 )
@@ -621,6 +628,8 @@ final class JasperLiaison {
 	    
 		if(debug>0)log.log( "Generated " +
 				    mangler.getClassFileName() );
+
+		addExtraDeps( depM, handler );
 	    } catch( Exception ex ) {
 		if( ctx!=null )
 		    ctx.log("compile error: req="+req, ex);
@@ -632,7 +641,7 @@ final class JasperLiaison {
 		return 500;
 	    }
 
-	    dep.setExpired( false );
+	    depM.setExpired( false );
 	    
 	}
 
@@ -829,17 +838,48 @@ final class JasperLiaison {
 	return ctxt;
     }
 
+    private void addExtraDeps( DependManager depM, ServletHandler handler )
+    {
+	try {
+	    Servlet theServlet = handler.getServlet();
+	    if (theServlet instanceof HttpJspBase)  {
+		HttpJspBase httpJsp = (HttpJspBase) theServlet;
+		String deps[]=httpJsp._getDepends();
+		if( deps==null ) return;
+		
+		for( int i=0; i < deps.length ; i++ ) {
+		    if( deps[i]==null ) continue;
+		    Dependency d=new Dependency();
+		    File f=new File( deps[i] );
+		    d.setOrigin( f );
+		    d.setTarget( handler );
+		    d.setLastModified( f.lastModified() );
+		    d.checkExpiry();
+		    depM.addDependency( d );
+		    log.log( "Adding dependency " + d  +
+			     " " + depM.shouldReload() );
+		}
+	    }
+	} catch( Exception ex ) {
+	    ex.printStackTrace();
+	}
+
+    }
+
+    
     // Add an "expire check" to the generated servlet.
-    private Dependency setDependency( Context ctx, JasperMangler mangler,
-				      ServletHandler handler )
+    private DependManager setDependency( Context ctx, JasperMangler mangler,
+					 ServletHandler handler )
     {
 	ServletInfo info=handler.getServletInfo();
 	// create a lastModified checker.
 	if( debug>0) log.log("Registering dependency for " + handler );
+	DependManager depM=new DependManager(4); // jsps have fewer deps
+	
 	Dependency dep=new Dependency();
 	dep.setOrigin( new File(mangler.getJspFilePath()) );
 	dep.setTarget( handler );
-	dep.setLocal( true );
+	//dep.setLocal( true );
 	File f=new File( mangler.getClassFileName() );
 	if( mangler.getVersion() > 0 ) {
 	    // it has a previous version
@@ -850,12 +890,18 @@ final class JasperLiaison {
 	    dep.setLastModified( -1 );
 	    dep.setExpired( true );
 	}
+	depM.addDependency( dep );
+	
 	if( debug>0 )
 	    log.log( "file = " + mangler.getClassFileName() + " " +
 		     f.lastModified() );
 	if( debug>0 )
 	    log.log("origin = " + dep.getOrigin() + " " +
 		    dep.getOrigin().lastModified());
+	/* This would add a dependency on the whole application,
+	   causing a reload of the context when a jsp changes.
+	*/
+	/*
 	try {
 	    DependManager dm=(DependManager)ctx.getContainer().
 		getNote("DependManager");
@@ -865,8 +911,9 @@ final class JasperLiaison {
 	} catch( TomcatException ex ) {
 	    ex.printStackTrace();
 	}
-	info.setDependency( dep );
-	return dep;
+	*/
+	info.setDependManager( depM );
+	return depM;
     }
 
 
