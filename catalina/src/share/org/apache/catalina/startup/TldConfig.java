@@ -511,8 +511,7 @@ public final class TldConfig  {
                 tldDigester.push(this);
                 tldDigester.parse(resourceStream);
             } finally {
-                tldDigester.push(null);
-                tldDigester.clear();
+                tldDigester.reset();
             }
         }
 
