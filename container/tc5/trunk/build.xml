@@ -239,13 +239,10 @@
           depends="init" description="Build j-t-c/coyote">
     <echo>========== Building: tomcat-coyote </echo>
 
-    <ant dir="${jtc.home}/coyote" target="jar.tomcat5">
+    <ant dir="${jtc.home}/coyote" target="compile.tomcat5">
       <property name="catalina.home" value="${tomcat.build}"/>
       <property name="build.home" value="${tomcat.build}"/>
       <property name="tomcat5.detect" value="true"/>
-      <!--
-      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
-      -->
       <property name="tomcat-util.jar"
                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
       <property name="servlet.jar"   value="${servlet-api.jar}"/>
