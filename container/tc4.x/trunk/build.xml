@@ -18,6 +18,9 @@
   <property name="webapps.build"    value="${basedir}/webapps/build"/>
   <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
 
+  <!-- Default AJP and UTIL components for the usual case -->
+  <property name="tomcat-ajp.jar"   value="${basedir}/lib/tomcat-ajp.jar"/>
+  <property name="tomcat-util.jar"  value="${basedir}/lib/tomcat-util.jar"/>
 
 
   <!-- =================== DETECT: Display configuration ================== -->
