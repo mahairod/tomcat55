@@ -28,6 +28,7 @@
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${jasper.build}/shared/classes"/>
+    <pathelement location="${jsp20el.jar}"/>
   </path>
 
   <!-- Construct unit tests classpath -->
@@ -116,6 +117,8 @@
       </fileset>
     </jar>
 
+    <!-- Supporting JAR Files -->
+    <copy todir="${jasper.deploy}/common/lib" file="${jsp20el.jar}"/>
 
   </target>
 

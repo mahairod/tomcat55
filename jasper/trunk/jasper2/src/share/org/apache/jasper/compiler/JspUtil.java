@@ -86,6 +86,10 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
+// EL interpreter (subject to change)
+import javax.servlet.jsp.el.ExpressionEvaluator;
+import org.apache.jasper.runtime.ExpressionEvaluatorManager;
+
 /** 
  * This class has all the utility method(s).
  * Ideally should move all the bean containers here.
@@ -94,6 +98,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Rajiv Mordani.
  * @author Danno Ferrin
  * @author Pierre Delisle
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 public class JspUtil {
 
@@ -105,6 +111,7 @@ public class JspUtil {
 
     private static ErrorHandler errorHandler = new MyErrorHandler();
     private static EntityResolver entityResolver = new MyEntityResolver();
+    private static int tempSequenceNumber = 0;
 
     public static char[] removeQuotes(char []chars) {
 	CharArrayWriter caw = new CharArrayWriter();
@@ -273,20 +280,63 @@ public class JspUtil {
 	}
     }
 
+    /**
+     * Checks if all mandatory attributes are present and if all attributes
+     * present have valid names.  Checks attributes specified as XML-style
+     * attributes as well as attributes specified using the jsp:attribute
+     * standard action.  Also verifies that any attributes specified
+     * via jsp:attribute are rtexprvalue attributes.
+     */
     public static void checkAttributes(String typeOfTag,
-				       Attributes attrs,
+				       Node n,
 				       ValidAttribute[] validAttributes,
-				       Mark start,
 				       ErrorDispatcher err)
 	                        throws JasperException {
+        Attributes attrs = n.getAttributes();
+        Mark start = n.getStart();
 	boolean valid = true;
+
         // AttributesImpl.removeAttribute is broken, so we do this...
-        int tempLength = attrs.getLength();
+        int tempLength = (attrs == null) ? 0 : attrs.getLength();
 	Vector temp = new Vector(tempLength, 1);
         for (int i = 0; i < tempLength; i++) {
             String qName = attrs.getQName(i);
             if ((!qName.equals("xmlns")) && (!qName.startsWith("xmlns:")))
                 temp.addElement(qName);
+        }
+
+        // Add names of attributes specified using jsp:attribute and
+        // check that they are rtexprvalues while we're at it.
+        Node.Nodes tagBody = n.getBody();
+        if( tagBody != null ) {
+            int numSubElements = tagBody.size();
+            for( int i = 0; i < numSubElements; i++ ) {
+                Node node = tagBody.getNode( i );
+                if( node instanceof Node.NamedAttribute ) {
+                    String attrName = node.getAttributeValue( "name" );
+                    // Verify that this node is an rtexprvalue.
+                    for( int j = 0; j < validAttributes.length; j++ ) {
+                        if( validAttributes[j].name.equals( attrName ) &&
+                            !validAttributes[j].rtexprvalue )
+                        {
+                            valid = false;
+                            err.jspError(start,
+                                         "jsp.error.named.attribute.not.rt",
+                                         attrName );
+                            break;
+                        }
+                    }
+                    if( valid ) {
+                        temp.addElement( attrName );
+                    }
+                    valid = true;
+                }
+                else {
+                    // Nothing can come before jsp:attribute, and only
+                    // jsp:body can come after it.
+                    break;
+                }
+            }
         }
 
 	/*
@@ -337,6 +387,7 @@ public class JspUtil {
 	        err.jspError(start, "jsp.error.invalid.attribute", typeOfTag,
 			     attribute);
 	}
+	// XXX *could* move EL-syntax validation here... (sb)
     }
     
     public static String escapeQueryString(String unescString) {
@@ -411,10 +462,18 @@ public class JspUtil {
     public static class ValidAttribute {
    	String name;
 	boolean mandatory;
+	boolean rtexprvalue;
 
-	public ValidAttribute (String name, boolean mandatory) {
+	public ValidAttribute (String name, boolean mandatory,
+            boolean rtexprvalue )
+        {
 	    this.name = name;
 	    this.mandatory = mandatory;
+            this.rtexprvalue = rtexprvalue;
+        }
+
+       public ValidAttribute (String name, boolean mandatory) {
+            this( name, mandatory, false );
 	}
 
 	public ValidAttribute (String name) {
@@ -473,7 +532,75 @@ public class JspUtil {
 	}
 	return b;
     }
+
+    /**
+     * Produces a String representing a call to the EL interpreter.
+     * @param expression a String containing zero or more "${}" expressions
+     * @param expectedType the expected type of the interpreted result
+     * @param fnMap Variable name containing function map, or literal "null"
+     * @param defaultPrefix Default prefix, or literal "null"
+     * @return a String representing a call to the EL interpreter.
+     */
+    public static String interpreterCall(String expression,
+                                         Class expectedType,
+                                         String fnMap,
+                                         String defaultPrefix) 
+    {
+        return "(" + expectedType.getName() + ") "
+               + Constants.EL_INTERPRETER_CONDUIT_CLASS + "."
+               + Constants.EL_INTERPRETER_CONDUIT_METHOD
+               + "(" + Generator.quote(expression) + ", "
+               +       expectedType.getName() + ".class, "
+               +       "pageContext,"
+               +       fnMap + ", "
+               +       Generator.quote( defaultPrefix ) + ")";
+    }
+
+    /**
+     * Validates the syntax of all ${} expressions within the given string.
+     * @param where the approximate location of the expressions in the JSP page
+     * @param expressions a string containing zero or more "${}" expressions
+     * @param err an error dispatcher to use
+     * @param extraInfo info (such as the name of the current attribute)
+     *        to be included in any error messages
+     */
+    public static void validateExpressions(Mark where,
+                                           String expressions,
+                                           ErrorDispatcher err)
+            throws JasperException {
+        ExpressionEvaluator el = null;
+        try {
+            // XXX when the EL moves to Jakarta Commons, this can
+            //     be replaced with a *much* cleaner interface.  I apologize
+            //     for it for the moment! (SB)
+            el = ExpressionEvaluatorManager.getEvaluatorByName(
+                    ExpressionEvaluatorManager.EVALUATOR_CLASS);
+        } catch (javax.servlet.jsp.JspException uglyEx) {
+            err.jspError(where, "jsp.error.internal.evaluator_not_found");
+        }
+        String errMsg = el.validate(expressions);
+        if (errMsg != null)
+            err.jspError(where, "jsp.error.invalid.expression", expressions,
+                errMsg);
+    }
+
+    /**
+     * Resets the temporary variable name.
+     * (not thread-safe)
+     */
+    public static void resetTemporaryVariableName() {
+        tempSequenceNumber = 0;
+    }
+
+    /**
+     * Generates a new temporary variable name.
+     * (not thread-safe)
+     */
+    public static String nextTemporaryVariableName() {
+        return Constants.TEMP_VARIABLE_NAME_PREFIX + (tempSequenceNumber++);
+    }
 }
+
 
 class MyEntityResolver implements EntityResolver {
     public InputSource resolveEntity(String publicId, String systemId)

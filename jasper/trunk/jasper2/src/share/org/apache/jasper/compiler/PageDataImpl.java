@@ -325,6 +325,14 @@ public class PageDataImpl extends PageData implements TagConstants {
 	    appendTag(JSP_PLUGIN_TAG, n.getAttributes(), n.getBody());
 	}
 
+        public void visit(Node.NamedAttribute n) throws JasperException {
+            appendTag(JSP_ATTRIBUTE_TAG, n.getAttributes(), n.getBody());
+        }
+        
+        public void visit(Node.JspBody n) throws JasperException {
+            appendTag(JSP_BODY_TAG, n.getAttributes(), n.getBody());
+        }
+
 	public void visit(Node.CustomTag n) throws JasperException {
 	    appendTag(n.getName(), n.getAttributes(), n.getBody());
 	}
@@ -337,7 +345,7 @@ public class PageDataImpl extends PageData implements TagConstants {
 	    // jsp:text has no attributes, except for jsp:id
 	    appendTag(JSP_TEXT_TAG, n.getAttributes(), n.getBody());
 	}
-
+        
 	public void visit(Node.TemplateText n) throws JasperException {
 	    /*
 	     * If the template text came from a JSP page written in JSP syntax,

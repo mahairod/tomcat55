@@ -75,6 +75,9 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Rajiv Mordani
  * @author Mandar Raje
  * @author Danno Ferrin
+ * @author Kin-man Chung
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 
 public class JspReader {
@@ -254,7 +257,13 @@ public class JspReader {
         while ((++current.cursor < len) && 
 	    ((ch = current.stream[current.cursor]) != '<')) {
 
-	    if (ch == '\n') {
+	    if (ch == '$') {
+		// XXX Make this backward compatible with JSP1.2.
+		if ((current.cursor+1 < len) &&
+			current.stream[current.cursor+1] == '{') {
+		    break;
+		}
+	    } else if (ch == '\n') {
 		current.line++;
 		current.col = 0;
 	    } else {
@@ -340,7 +349,27 @@ public class JspReader {
 	reset(mark);
 	return false;
     }
-    
+
+    /**
+     * Looks ahead to see if there are optional spaces followed by
+     * the given String.  If so, true is returned and those spaces and
+     * characters are skipped.  If not, false is returned and the
+     * position is restored to where we were before.
+     */
+    public boolean matchesOptionalSpacesFollowedBy( String s )
+        throws JasperException
+    {
+        Mark mark = mark();
+
+        skipSpaces();
+        boolean result = matches( s );
+        if( !result ) {
+            reset( mark );
+        }
+
+        return result;
+    }
+
     public void advance(int n) throws JasperException {
 	while (--n >= 0)
 	    nextChar();
@@ -402,6 +431,7 @@ public class JspReader {
     }
 
     final boolean isSpace() {
+        // Note: If this logic changes, also update Node.TemplateText.rtrim()
 	return peekChar() <= ' ';
     }
 

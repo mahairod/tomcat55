@@ -1,10 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
- * ====================================================================
- * 
  * The Apache Software License, Version 1.1
  *
  * Copyright (c) 1999 The Apache Software Foundation.  All rights 
@@ -58,35 +52,58 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.apache.jasper.compiler;
 
-public interface TagConstants {
-    public static final String JSP_ROOT_TAG = "jsp:root";
-    public static final String JSP_ROOT_TAG_END = "</jsp:root>";
-    public static final String JSP_PAGE_DIRECTIVE_TAG = "jsp:directive.page";
-    public static final String JSP_INCLUDE_DIRECTIVE_TAG
-	= "jsp:directive.include";
-    public static final String JSP_DECLARATION_TAG = "jsp:declaration";
-    public static final String JSP_DECLARATION_TAG_START = "<jsp:declaration>";
-    public static final String JSP_DECLARATION_TAG_END = "</jsp:declaration>";
-    public static final String JSP_SCRIPTLET_TAG = "jsp:scriptlet";
-    public static final String JSP_SCRIPTLET_TAG_START = "<jsp:scriptlet>";
-    public static final String JSP_SCRIPTLET_TAG_END = "</jsp:scriptlet>";
-    public static final String JSP_EXPRESSION_TAG = "jsp:expression";
-    public static final String JSP_EXPRESSION_TAG_START = "<jsp:expression>";
-    public static final String JSP_EXPRESSION_TAG_END = "</jsp:expression>";
-    public static final String JSP_USE_BEAN_TAG = "jsp:useBean";
-    public static final String JSP_SET_PROPERTY_TAG = "jsp:setProperty";
-    public static final String JSP_GET_PROPERTY_TAG = "jsp:getProperty";
-    public static final String JSP_INCLUDE_TAG = "jsp:include";
-    public static final String JSP_FORWARD_TAG = "jsp:forward";
-    public static final String JSP_PARAM_TAG = "jsp:param";
-    public static final String JSP_PARAMS_TAG = "jsp:params";
-    public static final String JSP_PLUGIN_TAG = "jsp:plugin";
-    public static final String JSP_FALLBACK_TAG = "jsp:fallback";
-    public static final String JSP_TEXT_TAG = "jsp:text";
-    public static final String JSP_TEXT_TAG_START = "<jsp:text>";
-    public static final String JSP_TEXT_TAG_END = "</jsp:text>";
-    public static final String JSP_ATTRIBUTE_TAG = "jsp:attribute";
-    public static final String JSP_BODY_TAG = "jsp:body";
+package org.apache.jasper.runtime;
+
+import java.util.Map;
+import javax.servlet.jsp.JspContext;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.el.ExpressionEvaluator;
+import org.apache.taglibs.standard.lang.jstl.Evaluator;
+
+/**
+ * <p>An adapter for the JSTL Expression Evaluator.</p>
+ * 
+ * <p>Encapsulates and delegates to the JSTL evaluator, until the
+ * JSTL evaluator APIs are up to date with JSP 2.0.</p>
+ *
+ * @author Mark Roth
+ */
+
+public class ExpressionEvaluatorImpl 
+    implements ExpressionEvaluator
+{
+    private Evaluator delegate;
+
+    /**
+     * Create a new expression evaluator that delegates to the 
+     * given evaluator.
+     */
+    public ExpressionEvaluatorImpl() {
+        this.delegate = new Evaluator();
+    }
+
+    /**
+     * @see javax.servlet.jsp.el.ExpressionEvaluator#validate
+     */
+    public String validate( String expression ) {
+        return delegate.validate( "", expression );
+    }
+    
+    /**
+     * @see javax.servlet.jsp.el.ExpressionEvaluator#evaluate
+     */
+    public Object evaluate( String expression, 
+                            Class expectedType, 
+                            JspContext jspContext,
+                            Map elFunctions,
+                            String defaultPrefix ) 
+       throws JspException
+    {
+        // XXX - Assume PageContext for now, until JSTL APIs are updated.
+        // change back to JspContext later.
+        return delegate.evaluate( "", expression, expectedType, null,
+            (PageContext)jspContext, elFunctions, defaultPrefix );
+    }
 }

@@ -67,6 +67,8 @@ import org.apache.jasper.logging.Logger;
  *
  * @author Anil K. Vijendran
  * @author Harish Prabandham
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 public class Constants {
     /**
@@ -209,6 +211,22 @@ public class Constants {
 
     public static final String IE_PLUGIN_URL = 
         "http://java.sun.com/products/plugin/1.2.2/jinstall-1_2_2-win.cab#Version=1,2,2,0";
+
+    /**
+     * Information about conduit to EL interpreter.
+     *  EL_INTERPRETER_CONDUIT_CLASS: name of class
+     *  EL_INTERPRETER_CONDUIT_METHOD: name of static method within class
+     */
+    public static final String EL_INTERPRETER_CONDUIT_CLASS =
+        "org.apache.jasper.runtime.ExpressionEvaluatorManager";
+    public static final String EL_INTERPRETER_CONDUIT_METHOD =
+        "evaluate";
+
+    /**
+     * Prefix to use for generated temporary variable names
+     */
+    public static final String TEMP_VARIABLE_NAME_PREFIX =
+        "_jspx_temp";
 
     /**
      * This is where all our error messages and such are stored. 

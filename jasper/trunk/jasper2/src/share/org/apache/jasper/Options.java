@@ -77,12 +77,10 @@ import org.apache.jasper.compiler.TldLocationsCache;
  */
 public interface Options {
 
-
     /**
      * Are we keeping generated code around?
      */
     public boolean getKeepGenerated();
-
 
     /**
      * Are we supporting large files?
@@ -99,48 +97,40 @@ public interface Options {
      */
     public boolean getMappedFile();
 
-
     /**
      * Should errors be sent to client or thrown into stderr?
      */
     public boolean getSendErrorToClient();
  
-
     /**
      * Should we include debug information in compiled class?
      */
     public boolean getClassDebugInfo();
-
 
     /**
      * Background compile thread check interval in seconds
      */
     public int getCheckInterval();
 
-
     /**
      * Is Jasper being used in development mode?
      */
     public boolean getDevelopment();
-
 
     /**
      * JSP reloading check ?
      */
     public boolean getReloading();
 
-
     /**
      * Class ID for use in the plugin tag when the browser is IE. 
      */
     public String getIeClassId();
 
-
     /**
      * What is my scratch dir?
      */
     public File getScratchDir();
-
 
     /**
      * What classpath should I use while compiling the servlets
@@ -148,12 +138,10 @@ public interface Options {
      */
     public String getClassPath();
 
-
     /**
      * Compiler to use.
      */
     public String getCompiler();
-
 
     /**
      * The cache for the location of the TLD's
@@ -168,12 +156,9 @@ public interface Options {
      */
     public TldLocationsCache getTldLocationsCache();
 
-
     /**
      * Java platform encoding to generate the JSP
      * page servlet.
      */
     public String getJavaEncoding();
-
-
 }

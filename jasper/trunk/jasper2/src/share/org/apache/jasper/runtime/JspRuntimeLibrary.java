@@ -94,6 +94,8 @@ import javax.servlet.jsp.tagext.BodyContent;
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
+// for JSTL expression interpreter
+import javax.servlet.jsp.PageContext;
 
 /**
  * Bunch of util methods that are used by code generated for useBean,
@@ -105,6 +107,7 @@ import org.apache.jasper.Constants;
  * works so well right now. It got forgotten at some point. -akv
  *
  * @author Mandar Raje
+ * @author Shawn Bayern
  */
 public class JspRuntimeLibrary {
 
@@ -522,6 +525,29 @@ public class JspRuntimeLibrary {
         return value;
     }
     // __end lookupReadMethodMethod
+
+    // handles <jsp:setProperty> with EL expression for 'value' attribute
+    public static void handleSetPropertyExpression(Object bean,
+						   String prop,
+						   String expression,
+						   PageContext pageContext,
+                                                   java.util.Map fnMap )
+	throws JasperException
+    {
+	try {
+            Method method = getWriteMethod(bean.getClass(), prop);
+	    method.invoke(bean, new Object[] { 
+		ExpressionEvaluatorManager.evaluate(
+		    expression,
+		    method.getParameterTypes()[0],
+		    pageContext,
+                    fnMap,
+                    "null" )
+	    });
+	} catch (Exception ex) {
+	    throw new JasperException(ex);
+	}
+    }
 
     public static void handleSetProperty(Object bean, String prop,
 					 Object value)

@@ -147,8 +147,9 @@ public class Dumper {
         }
 
         public void visit(Node.IncludeAction n) throws JasperException {
-	    printAttributes("<jsp:include", n.getAttributes(), "/>");
+	    printAttributes("<jsp:include", n.getAttributes(), ">");
 	    dumpBody(n);
+            printString("</jsp:include>");
         }
 
         public void visit(Node.ForwardAction n) throws JasperException {
@@ -162,7 +163,9 @@ public class Dumper {
         }
 
         public void visit(Node.SetProperty n) throws JasperException {
-	    printAttributes("<jsp:setProperty", n.getAttributes(), "/>");
+	    printAttributes("<jsp:setProperty", n.getAttributes(), ">");
+            dumpBody(n);
+            printString("</jsp:setProperty>");
         }
 
         public void visit(Node.UseBean n) throws JasperException {
@@ -176,6 +179,34 @@ public class Dumper {
 	    dumpBody(n);
 	    printString("</jsp:plugin>");
 	}
+        
+        public void visit(Node.ParamsAction n) throws JasperException {
+	    printAttributes("<jsp:params", n.getAttributes(), ">");
+	    dumpBody(n);
+	    printString("</jsp:params>");
+        }
+        
+        public void visit(Node.ParamAction n) throws JasperException {
+	    printAttributes("<jsp:param", n.getAttributes(), ">");
+	    dumpBody(n);
+	    printString("</jsp:param>");
+        }
+        
+        public void visit(Node.NamedAttribute n) throws JasperException {
+	    printAttributes("<jsp:attribute", n.getAttributes(), ">");
+	    dumpBody(n);
+	    printString("</jsp:attribute>");
+        }
+
+        public void visit(Node.JspBody n) throws JasperException {
+	    printAttributes("<jsp:body", n.getAttributes(), ">");
+	    dumpBody(n);
+	    printString("</jsp:body>");
+        }
+        
+        public void visit(Node.ELExpression n) throws JasperException {
+	    printString( "${" + new String( n.getText() ) + "}" );
+        }
 
         public void visit(Node.CustomTag n) throws JasperException {
 	    printAttributes("<" + n.getName(), n.getAttributes(), ">");

@@ -90,6 +90,7 @@ class PageInfo {
     private String pageEncoding = null;
     private int maxTagNesting = 0;
     private boolean scriptless = false;
+    private boolean scriptingEnabled = true;
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
@@ -222,4 +223,11 @@ class PageInfo {
 	return scriptless;
     }
 
+    public void setScriptingEnabled(boolean s) {
+	scriptingEnabled = s;
+    }
+
+    public boolean isScriptingEnabled() {
+	return scriptingEnabled;
+    }
 }

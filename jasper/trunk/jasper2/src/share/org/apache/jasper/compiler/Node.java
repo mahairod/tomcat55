@@ -72,6 +72,8 @@ import org.apache.jasper.JasperException;
  *
  * @author Kin-man Chung
  * @author Jan Luehe
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 
 public abstract class Node {
@@ -130,6 +132,58 @@ public abstract class Node {
 	return (attrs == null) ? null : attrs.getValue(name);
     }
 
+    /**
+     * Searches all subnodes of this node for jsp:attribute standard
+     * actions with the given name, and returns the NamedAttribute node
+     * of the matching named attribute, nor null if no such node is found.
+     * <p>
+     * This should always be called and only be called for nodes that
+     * accept dynamic runtime attribute expressions.
+     */
+    public NamedAttribute getNamedAttributeNode( String name ) {
+        NamedAttribute result = null;
+        
+        // Look for the attribute in NamedAttribute children
+        Nodes nodes = getNamedAttributeNodes();
+        int numChildNodes = nodes.size();
+        for( int i = 0; i < numChildNodes; i++ ) {
+            NamedAttribute na = (NamedAttribute)nodes.getNode( i );
+            if( na.getName().equals( name ) ) {
+                result = na;
+                break;
+            }
+        }
+        
+        return result;
+    }
+
+    /**
+     * Searches all subnodes of this node for jsp:attribute standard
+     * actions, and returns that set of nodes as a Node.Nodes object.
+     */
+    public Node.Nodes getNamedAttributeNodes() {
+        Node.Nodes result = new Node.Nodes();
+        
+        // Look for the attribute in NamedAttribute children
+        Nodes nodes = getBody();
+        if( nodes != null ) {
+            int numChildNodes = nodes.size();
+            for( int i = 0; i < numChildNodes; i++ ) {
+                Node n = nodes.getNode( i );
+                if( n instanceof NamedAttribute ) {
+                    result.add( n );
+                }
+                else {
+                    // Nothing can come before jsp:attribute, and only
+                    // jsp:body can come after it.
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+    
     public Nodes getBody() {
 	return body;
     }
@@ -440,6 +494,21 @@ public abstract class Node {
     }
 
     /**
+     * Represents an EL expression.  Expressions in attributes are embedded
+     * in the attribute string and not here.
+     */
+    public static class ELExpression extends Node {
+
+        public ELExpression(char[] text, Mark start, Node parent) {
+            super(text, start, parent);
+        }
+
+        public void accept(Visitor v) throws JasperException {
+            v.visit(this);
+        }
+    }
+
+    /**
      * Represents a param action
      */
     public static class ParamAction extends Node {
@@ -606,9 +675,9 @@ public abstract class Node {
      */
     public static class PlugIn extends Node {
 
-	JspAttribute height;
-	JspAttribute width;
-
+        private JspAttribute width;
+        private JspAttribute height;
+        
 	public PlugIn(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
 	}
@@ -654,6 +723,60 @@ public abstract class Node {
 	    return tagName;
 	}
     }
+    
+    /**
+     * Collected information about child elements.  Used by nodes like
+     * CustomTag, JspBody, and NamedAttribute.  The information is 
+     * set in the Collector.
+     */
+    public static class ChildInfo {
+	private boolean scriptless;	// true if the tag and its body
+					// contians no scripting elements.
+	private boolean hasUsebean;
+	private boolean hasIncludeAction;
+	private boolean hasSetProperty;
+	private boolean hasScriptingVars;
+
+	public void setScriptless(boolean s) {
+	    scriptless = s;
+	}
+
+	public boolean isScriptless() {
+	    return scriptless;
+	}
+
+	public void setHasUsebean(boolean u) {
+	    hasUsebean = u;
+	}
+
+	public boolean isHasUsebean() {
+	    return hasUsebean;
+	}
+
+	public void setHasIncludeAction(boolean i) {
+	    hasIncludeAction = i;
+	}
+
+	public boolean isHasIncludeAction() {
+	    return hasIncludeAction;
+	}
+
+	public void setHasSetProperty(boolean s) {
+	    hasSetProperty = s;
+	}
+
+	public boolean isHasSetProperty() {
+	    return hasSetProperty;
+	}
+        
+	public void setHasScriptingVars(boolean s) {
+	    hasScriptingVars = s;
+	}
+
+	public boolean hasScriptingVars() {
+	    return hasScriptingVars;
+	}
+    }
 
     /**
      * Represents a custom tag
@@ -664,17 +787,12 @@ public abstract class Node {
 	private String shortName;
 	private JspAttribute[] jspAttrs;
 	private TagData tagData;
-	private boolean scriptless;	// true if the tag and its body
-					// contians no scripting elements.
-	private boolean hasUsebean;
-	private boolean hasIncludeAction;
-	private boolean hasSetProperty;
-	private boolean hasScriptingVars;
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
 	private VariableInfo[] varInfos;
 	private int customNestingLevel;
 	private boolean hasUnnestedIdAttribute;
+        private ChildInfo childInfo;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
@@ -686,6 +804,7 @@ public abstract class Node {
 	    this.tagInfo = tagInfo;
 	    this.customNestingLevel = computeCustomNestingLevel();
 	    this.hasUnnestedIdAttribute = determineHasUnnestedIdAttribute();
+            this.childInfo = new ChildInfo();
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -720,6 +839,10 @@ public abstract class Node {
 	public JspAttribute[] getJspAttributes() {
 	    return jspAttrs;
 	}
+        
+        public ChildInfo getChildInfo() {
+            return childInfo;
+        }
 	
 	public void setTagData(TagData tagData) {
 	    this.tagData = tagData;
@@ -728,46 +851,6 @@ public abstract class Node {
 
 	public TagData getTagData() {
 	    return tagData;
-	}
-
-	public void setScriptless(boolean s) {
-	    scriptless = s;
-	}
-
-	public boolean isScriptless() {
-	    return scriptless;
-	}
-
-	public void setHasUsebean(boolean u) {
-	    hasUsebean = u;
-	}
-
-	public boolean isHasUsebean() {
-	    return hasUsebean;
-	}
-
-	public void setHasIncludeAction(boolean i) {
-	    hasIncludeAction = i;
-	}
-
-	public boolean isHasIncludeAction() {
-	    return hasIncludeAction;
-	}
-
-	public void setHasSetProperty(boolean s) {
-	    hasSetProperty = s;
-	}
-
-	public boolean isHasSetProperty() {
-	    return hasSetProperty;
-	}
-
-	public void setHasScriptingVars(boolean s) {
-	    hasScriptingVars = s;
-	}
-
-	public boolean hasScriptingVars() {
-	    return hasScriptingVars;
 	}
 
 	public void setTagHandlerPoolName(String s) {
@@ -807,6 +890,42 @@ public abstract class Node {
 	    return customNestingLevel;
 	}
 
+        /**
+         * Checks to see if the attribute or fragment attribute of the
+         * given name is of type JspFragment.
+         */
+        public boolean checkIfAttributeIsJspFragment( String name ) {
+            boolean result = false;
+
+            // The attribute is of type JspFragment if it appears in
+            // the TagInfo Fragment Attributes list, or if it appears in the
+            // Attributes list and is of the right type.
+            
+            TagFragmentAttributeInfo[] fragmentAttributes = 
+                tagInfo.getFragmentAttributes();
+            for( int i = 0; i < fragmentAttributes.length; i++ ) {
+                if( fragmentAttributes[i].getName().equals( name ) ) {
+                    result = true;
+                    break;
+                }
+            }
+            
+            if( !result ) {
+                TagAttributeInfo[] attributes = tagInfo.getAttributes();
+                for( int i = 0; i < attributes.length; i++ ) {
+                    if( attributes[i].getName().equals( name ) &&
+                        "javax.servlet.jsp.tagext.JspFragment".equals(
+                        attributes[i].getTypeName() ) )
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
 	/*
 	 * Computes this custom tag's custom nesting level, which corresponds
 	 * to the number of times this custom tag is nested inside itself.
@@ -877,7 +996,7 @@ public abstract class Node {
     }
 
     /**
-     * Represents the body of a <jsp:text> element
+     * Represents the body of a &lt;jsp:text&gt; element
      */
     public static class JspText extends Node {
 
@@ -888,6 +1007,84 @@ public abstract class Node {
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
+    }
+
+    /**
+     * Represents a Named Attribute (&lt;jsp:attribute&gt;)
+     */
+    public static class NamedAttribute extends Node {
+
+        // A unique temporary variable name suitable for code generation
+        private String temporaryVariableName;
+
+        // True if this node is to be trimmed, or false otherwise
+        private boolean trim = true;
+        
+        private ChildInfo childInfo;
+
+        public NamedAttribute( Attributes attrs, Mark start, Node parent) {
+            super( attrs, start, parent );
+            this.temporaryVariableName = JspUtil.nextTemporaryVariableName();
+            if( "false".equals( this.getAttributeValue( "trim" ) ) ) {
+                // (if null or true, leave default of true)
+                trim = false;
+            }
+            this.childInfo = new ChildInfo();
+        }
+
+        public void accept(Visitor v) throws JasperException {
+            v.visit(this);
+        }
+
+        public String getName() {
+            return this.getAttributeValue( "name" );
+        }
+        
+        public ChildInfo getChildInfo() {
+            return this.childInfo;
+        }
+
+        public boolean isTrim() {
+            return trim;
+        }
+
+        /**
+         * @return A unique temporary variable name to store the result in.
+         *      (this probably could go elsewhere, but it's convenient here)
+         */
+        public String getTemporaryVariableName() {
+            return temporaryVariableName;
+        }
+    }
+
+    /**
+     * Represents a JspBody node (&lt;jsp:body&gt;)
+     */
+    public static class JspBody extends Node {
+
+	private JspAttribute value;
+        private ChildInfo childInfo;
+
+        public JspBody( Attributes attrs, Mark start, Node parent) {
+            super( attrs, start, parent );
+            this.childInfo = new ChildInfo();
+        }
+
+        public void accept(Visitor v) throws JasperException {
+            v.visit(this);
+        }
+
+	public void setValue(JspAttribute value) {
+	    this.value = value;
+	}
+
+	public JspAttribute getValue() {
+	    return value;
+	}
+        
+        public ChildInfo getChildInfo() {
+            return childInfo;
+        }
     }
 
     /**
@@ -902,6 +1099,35 @@ public abstract class Node {
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
 	}
+
+        /**
+         * Trim all whitespace from the left of the template text
+         */
+        public void ltrim() {
+            // Whitespace logic borrowed from JspReader.isSpace
+	    int index = 0;
+            while ((index < text.length) && (text[index] <= ' ')) {
+		index++;
+            }
+	    int size = text.length - index;
+            char[] newText = new char[size];
+            System.arraycopy(text, index, newText, 0, size);
+            text = newText;
+        }
+
+        /**
+         * Trim all whitespace from the right of the template text
+         */
+        public void rtrim() {
+            // Whitespace logic borrowed from JspReader.isSpace
+            int size = text.length;
+            while( (size > 0) && (text[size-1] <= ' ') ) {
+                size--;
+            }
+            char[] newText = new char[size];
+            System.arraycopy( text, 0, newText, 0, size );
+            text = newText;
+        }
     }
 
     /*********************************************************************
@@ -910,6 +1136,10 @@ public abstract class Node {
 
     /**
      * Represents attributes that can be request time expressions.
+     *
+     * Can either be a plain attribute, an attribute that represents a
+     * request time expression value, or a named attribute (specified using
+     * the jsp:attribute standard action).
      */
 
     public static class JspAttribute {
@@ -917,12 +1147,35 @@ public abstract class Node {
 	private String name;
 	private String value;
 	private boolean expression;
+        private boolean el;
 
-	JspAttribute(String name, String value, boolean expr) {
+        // If true, this JapAttribute represents a <jsp:attribute>
+        private boolean namedAttribute;
+        // The node in the parse tree for the NamedAttribute
+        private NamedAttribute namedAttributeNode;
+
+        JspAttribute(String name, String value, boolean expr, boolean el ) {
 	    this.name = name;
 	    this.value = value;
+            this.namedAttributeNode = null;
 	    this.expression = expr;
+            this.el = el;
+            this.namedAttribute = false;
 	}
+
+        /**
+         * Use this constructor if the JspAttribute represents a
+         * named attribute.  In this case, we have to store the nodes of
+         * the body of the attribute.
+         */
+        JspAttribute( String name, NamedAttribute namedAttributeNode ) {
+            this.name = name;
+            this.value = null;
+            this.namedAttributeNode = namedAttributeNode;
+            this.expression = false;
+            this.el = false;
+            this.namedAttribute = true;
+        }
 
 	/**
  	 * @return The name of the attribute
@@ -932,18 +1185,55 @@ public abstract class Node {
 	}
 
 	/**
-	 * @return the value for the attribute, or the expression string
-	 *	   (stripped of "<%=", "%>", "%=", or "%")
+         * Only makes sense if namedAttribute is false.
+         *
+         * @return the value for the attribute, or the expression string
+         *         (stripped of "<%=", "%>", "%=", or "%"
+         *          but containing "${" and "}" for EL expressions)
 	 */
 	public String getValue() {
 	    return value;
 	}
 
+        /**
+         * Only makes sense if namedAttribute is true.
+         *
+         * @return the nodes that evaluate to the body of this attribute.
+         */
+        public NamedAttribute getNamedAttributeNode() {
+            return namedAttributeNode;
+        }
+
 	/**
-	 * @return true is the value represents an expression
+         * @return true if the value represents a traditional rtexprvalue
 	 */
 	public boolean isExpression() {
 	    return expression;
+	}
+
+        /**
+         * @return true if the value represents a NamedAttribute value.
+         */
+        public boolean isNamedAttribute() {
+            return namedAttribute;
+        }
+
+        /**
+         * @return true if the value represents an expression that should
+         * be fed to the expression interpreter
+         * @return false for string literals or rtexprvalues that should
+         * not be interpreter or reevaluated
+         */
+        public boolean isELInterpreterInput() {
+            return el;
+        }
+
+	/**
+	 * @return true if the value is a string literal know at translation
+	 * time.
+	 */
+	public boolean isLiteral() {
+	    return !expression && !el && !namedAttribute;
 	}
     }
 
@@ -1068,6 +1358,10 @@ public abstract class Node {
 	    doVisit(n);
 	}
 
+        public void visit(ELExpression n) throws JasperException {
+            doVisit(n);
+        }
+
 	public void visit(IncludeAction n) throws JasperException {
 	    doVisit(n);
 	    visitBody(n);
@@ -1084,10 +1378,12 @@ public abstract class Node {
 
 	public void visit(SetProperty n) throws JasperException {
 	    doVisit(n);
+	    visitBody(n);
 	}
 
 	public void visit(ParamAction n) throws JasperException {
 	    doVisit(n);
+	    visitBody(n);
 	}
 
 	public void visit(ParamsAction n) throws JasperException {
@@ -1124,6 +1420,16 @@ public abstract class Node {
 	    doVisit(n);
 	    visitBody(n);
 	}
+
+        public void visit(NamedAttribute n) throws JasperException {
+            doVisit(n);
+            visitBody(n);
+        }
+
+        public void visit(JspBody n) throws JasperException {
+            doVisit(n);
+            visitBody(n);
+        }
 
 	public void visit(TemplateText n) throws JasperException {
 	    doVisit(n);

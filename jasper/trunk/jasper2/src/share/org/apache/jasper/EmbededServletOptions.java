@@ -105,7 +105,7 @@ public final class EmbededServletOptions implements Options {
      * Determines whether tag handler pooling is enabled.
      */
     public boolean poolingEnabled = true;
-
+    
     /**
      * Do you want support for "mapped" files? This will generate
      * servlet that has a print statement per line of the JSP file.
@@ -190,11 +190,11 @@ public final class EmbededServletOptions implements Options {
     public boolean getLargeFile() {
         return largeFile;
     }
-
+    
     public boolean isPoolingEnabled() {
 	return poolingEnabled;
     }
-    
+
     /**
      * Are we supporting HTML mapped servlets?
      */
@@ -283,9 +283,7 @@ public final class EmbededServletOptions implements Options {
      * Create an EmbededServletOptions object using data available from
      * ServletConfig and ServletContext. 
      */
-    public EmbededServletOptions(ServletConfig config,
-				 ServletContext context) {
-
+    public EmbededServletOptions(ServletConfig config, ServletContext context) {
         Enumeration enum=config.getInitParameterNames();
         while( enum.hasMoreElements() ) {
             String k=(String)enum.nextElement();
@@ -317,15 +315,6 @@ public final class EmbededServletOptions implements Options {
             else Constants.message ("jsp.warning.largeFile", Logger.WARNING);
         }
 	
-        String mapFile = config.getInitParameter("mappedfile"); 
-        if (mapFile != null) {
-            if (mapFile.equalsIgnoreCase("true"))
-                this.mappedFile = true;
-            else if (mapFile.equalsIgnoreCase("false"))
-                this.mappedFile = false;
-            else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
-        }
-
 	poolingEnabled = true;
         String poolingEnabledParam
 	    = config.getInitParameter("enablePooling"); 
@@ -335,6 +324,15 @@ public final class EmbededServletOptions implements Options {
                 this.poolingEnabled = false;
             else Constants.message("jsp.warning.enablePooling",
 				   Logger.WARNING);
+        }
+
+        String mapFile = config.getInitParameter("mappedfile"); 
+        if (mapFile != null) {
+            if (mapFile.equalsIgnoreCase("true"))
+                this.mappedFile = true;
+            else if (mapFile.equalsIgnoreCase("false"))
+                this.mappedFile = false;
+            else Constants.message ("jsp.warning.mappedFile", Logger.WARNING);
         }
 	
         String senderr = config.getInitParameter("sendErrToClient");

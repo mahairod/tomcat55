@@ -62,14 +62,19 @@ package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
 import java.util.Enumeration;
+
 import javax.servlet.jsp.tagext.PageData;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
+import javax.servlet.jsp.tagext.TagFragmentAttributeInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.ValidationMessage;
+
+import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -80,6 +85,8 @@ import org.xml.sax.Attributes;
  *
  * @author Kin-man Chung
  * @author Jan Luehe
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 public class Validator {
 
@@ -103,7 +110,8 @@ public class Validator {
 	    new JspUtil.ValidAttribute("errorPage"),
 	    new JspUtil.ValidAttribute("isErrorPage"),
 	    new JspUtil.ValidAttribute("contentType"),
-	    new JspUtil.ValidAttribute("pageEncoding") };
+	    new JspUtil.ValidAttribute("pageEncoding"),
+	    new JspUtil.ValidAttribute("isScriptingEnabled") };
 
 	private boolean languageSeen = false;
 	private boolean extendsSeen = false;
@@ -127,8 +135,8 @@ public class Validator {
 
 	public void visit(Node.PageDirective n) throws JasperException {    
 
-	    JspUtil.checkAttributes("Page directive", n.getAttributes(),
-				    pageDirectiveAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("Page directive", n,
+                                    pageDirectiveAttrs, err);
 
 	    // JSP.2.10.1
 	    Attributes attrs = n.getAttributes();
@@ -210,6 +218,14 @@ public class Validator {
 			pageInfo.setThreadSafe(false);
 		    else
 			err.jspError(n, "jsp.error.isThreadSafe.invalid");
+		} else if ("isScriptingEnabled".equals(attr)) {
+		    // XXX Test for multiple occurrence?
+		    if ("true".equalsIgnoreCase(value))
+			pageInfo.setScriptingEnabled(true);
+		    else if ("false".equalsIgnoreCase(value))
+			pageInfo.setScriptingEnabled(false);
+		    else
+			err.jspError(n, "jsp.error.isScriptingEnabled.invalid");
 		} else if ("isErrorPage".equals(attr)) {
 		    if (isErrorPageSeen)
 			err.jspError(n, "jsp.error.page.multiple.iserrorpage");
@@ -266,15 +282,15 @@ public class Validator {
 	    new JspUtil.ValidAttribute("prefix", true) };
 
 	private static final JspUtil.ValidAttribute[] includeActionAttrs = {
-	    new JspUtil.ValidAttribute("page", true),
+	    new JspUtil.ValidAttribute("page", true, true),
 	    new JspUtil.ValidAttribute("flush") };
 
 	private static final JspUtil.ValidAttribute[] paramActionAttrs = {
 	    new JspUtil.ValidAttribute("name", true),
-	    new JspUtil.ValidAttribute("value", true) };
+	    new JspUtil.ValidAttribute("value", true, true) };
 
 	private static final JspUtil.ValidAttribute[] forwardActionAttrs = {
-	    new JspUtil.ValidAttribute("page", true) };
+	    new JspUtil.ValidAttribute("page", true, true) };
 
 	private static final JspUtil.ValidAttribute[] getPropertyAttrs = {
 	    new JspUtil.ValidAttribute("name", true),
@@ -283,7 +299,7 @@ public class Validator {
 	private static final JspUtil.ValidAttribute[] setPropertyAttrs = {
 	    new JspUtil.ValidAttribute("name", true),
 	    new JspUtil.ValidAttribute("property", true),
-	    new JspUtil.ValidAttribute("value"),
+	    new JspUtil.ValidAttribute("value", false, true),
 	    new JspUtil.ValidAttribute("param") };
 
 	private static final JspUtil.ValidAttribute[] useBeanAttrs = {
@@ -291,7 +307,7 @@ public class Validator {
 	    new JspUtil.ValidAttribute("scope"),
 	    new JspUtil.ValidAttribute("class"),
 	    new JspUtil.ValidAttribute("type"),
-	    new JspUtil.ValidAttribute("beanName") };
+	    new JspUtil.ValidAttribute("beanName", false, true) };
 
 	private static final JspUtil.ValidAttribute[] plugInAttrs = {
 	    new JspUtil.ValidAttribute("type",true),
@@ -299,14 +315,21 @@ public class Validator {
 	    new JspUtil.ValidAttribute("codebase"),
 	    new JspUtil.ValidAttribute("align"),
 	    new JspUtil.ValidAttribute("archive"),
-	    new JspUtil.ValidAttribute("height"),
+	    new JspUtil.ValidAttribute("height", false, true),
 	    new JspUtil.ValidAttribute("hspace"),
 	    new JspUtil.ValidAttribute("jreversion"),
 	    new JspUtil.ValidAttribute("name"),
 	    new JspUtil.ValidAttribute("vspace"),
-	    new JspUtil.ValidAttribute("width"),
+	    new JspUtil.ValidAttribute("width", false, true),
 	    new JspUtil.ValidAttribute("nspluginurl"),
 	    new JspUtil.ValidAttribute("iepluginurl") };
+            
+        private static final JspUtil.ValidAttribute[] attributeAttrs = {
+            new JspUtil.ValidAttribute("name", true),
+            new JspUtil.ValidAttribute("trim") };
+            
+        private static final JspUtil.ValidAttribute[] bodyAttrs = {
+            new JspUtil.ValidAttribute("value") };
 
 	/*
 	 * Constructor
@@ -317,71 +340,75 @@ public class Validator {
 	}
 
 	public void visit(Node.JspRoot n) throws JasperException {
-	    JspUtil.checkAttributes("Jsp:root", n.getAttributes(),
-				    jspRootAttrs, n.getStart(), err);
+	    JspUtil.checkAttributes("Jsp:root", n,
+				    jspRootAttrs, err);
 	    visitBody(n);
 	}
 
 	public void visit(Node.IncludeDirective n) throws JasperException {
-	    JspUtil.checkAttributes("Include directive", n.getAttributes(),
-				    includeDirectiveAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("Include directive", n,
+                                    includeDirectiveAttrs, err);
 	    visitBody(n);
 	}
 
 	public void visit(Node.TaglibDirective n) throws JasperException {
-	    JspUtil.checkAttributes("Taglib directive", n.getAttributes(),
-				    taglibDirectiveAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("Taglib directive", n,
+                                    taglibDirectiveAttrs, err);
 	}
 
 	public void visit(Node.ParamAction n) throws JasperException {
-	    JspUtil.checkAttributes("Param action", n.getAttributes(),
-				    paramActionAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("Param action", n,
+                                    paramActionAttrs, err);
 	    n.setValue(getJspAttribute("value", n.getAttributeValue("value"),
-				       n.isXmlSyntax()));
+				       n));
+            visitBody(n);
 	}
 
 	public void visit(Node.IncludeAction n) throws JasperException {
-	    JspUtil.checkAttributes("Include action", n.getAttributes(),
-				    includeActionAttrs, n.getStart(), err);
-	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
-				      n.isXmlSyntax()));
+            JspUtil.checkAttributes("Include action", n,
+                                    includeActionAttrs, err);
+	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"), n));
 	    visitBody(n);
         };
 
 	public void visit(Node.ForwardAction n) throws JasperException {
-            JspUtil.checkAttributes("Forward", n.getAttributes(),
-				    forwardActionAttrs, n.getStart(), err);
-	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
-				      n.isXmlSyntax()));
+            JspUtil.checkAttributes("Forward", n,
+                                    forwardActionAttrs, err);
+	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"), n));
 	    visitBody(n);
 	}
 
 	public void visit(Node.GetProperty n) throws JasperException {
-	    JspUtil.checkAttributes("GetProperty", n.getAttributes(),
-				    getPropertyAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("GetProperty", n,
+                                    getPropertyAttrs, err);
 	}
 
 	public void visit(Node.SetProperty n) throws JasperException {
-	    JspUtil.checkAttributes("SetProperty", n.getAttributes(),
-				    setPropertyAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("SetProperty", n,
+                                    setPropertyAttrs, err);
 	    String name = n.getAttributeValue("name");
 	    String property = n.getAttributeValue("property");
 	    String param = n.getAttributeValue("param");
 	    String value = n.getAttributeValue("value");
 
+            n.setValue(getJspAttribute("value", value, n));
+
+            boolean valueSpecified = n.getValue() != null;
+
 	    if ("*".equals(property)) { 
-		if (param != null || value != null)
+                if (param != null || valueSpecified)
 		    err.jspError(n, "jsp.error.setProperty.invalid");
 		
-	    } else if (param != null && value != null) {
+            } else if (param != null && valueSpecified) {
 		err.jspError(n, "jsp.error.setProperty.invalid");
 	    }
-	    n.setValue(getJspAttribute("value", value, n.isXmlSyntax()));
+            
+            visitBody(n);
 	}
 
 	public void visit(Node.UseBean n) throws JasperException {
-	    JspUtil.checkAttributes("UseBean", n.getAttributes(),
-				    useBeanAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("UseBean", n,
+                                    useBeanAttrs, err);
 
 	    String name = n.getAttributeValue ("id");
 	    String scope = n.getAttributeValue ("scope");
@@ -400,7 +427,7 @@ public class Validator {
 
 	    Node.JspAttribute jattr
 		= getJspAttribute("beanName", n.getAttributeValue("beanName"),
-				  n.isXmlSyntax());
+				  n);
 	    n.setBeanName(jattr);
 	    if (className != null && jattr != null)
 		err.jspError(n, "jsp.error.useBean.notBoth");
@@ -423,8 +450,7 @@ public class Validator {
 	}
 
 	public void visit(Node.PlugIn n) throws JasperException {
-	    JspUtil.checkAttributes("Plugin", n.getAttributes(),
-				    plugInAttrs, n.getStart(), err);
+            JspUtil.checkAttributes("Plugin", n, plugInAttrs, err);
 
 	    String type = n.getAttributeValue("type");
 	    if (type == null)
@@ -433,13 +459,60 @@ public class Validator {
 		err.jspError(n, "jsp.error.plugin.badtype");
 	    if (n.getAttributeValue("code") == null)
 		err.jspError(n, "jsp.error.plugin.nocode");
+            
+	    Node.JspAttribute width = getJspAttribute("width", 
+                n.getAttributeValue("width"), n);
+	    n.setWidth( width );
+            
+	    Node.JspAttribute height = getJspAttribute("height", 
+                n.getAttributeValue("height"), n);
+	    n.setHeight( height );
 
 	    n.setHeight(getJspAttribute("height", n.getAttributeValue("height"),
-				      n.isXmlSyntax()));
+					n));
 	    n.setWidth(getJspAttribute("width", n.getAttributeValue("width"),
-				      n.isXmlSyntax()));
+					n));
 	    visitBody(n);
 	}
+
+	public void visit(Node.NamedAttribute n) throws JasperException {
+	    JspUtil.checkAttributes("Attribute", n,
+				    attributeAttrs, err);
+            visitBody(n);
+	}
+        
+	public void visit(Node.JspBody n) throws JasperException {
+	    JspUtil.checkAttributes("Body", n,
+				    bodyAttrs, err);
+	    n.setValue(getJspAttribute("value", n.getAttributeValue("value"),
+				       n));
+            visitBody(n);
+	}
+        
+	public void visit(Node.Declaration n) throws JasperException {
+	    if (! pageInfo.isScriptingEnabled()) {
+		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
+	    }
+	}
+
+        public void visit(Node.Expression n) throws JasperException {
+	    if (! pageInfo.isScriptingEnabled()) {
+		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
+	    }
+	}
+
+        public void visit(Node.Scriptlet n) throws JasperException {
+	    if (! pageInfo.isScriptingEnabled()) {
+		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
+	    }
+	}
+
+	public void visit(Node.ELExpression n) throws JasperException {
+            if ( true /*isELEnabled*/ ) {
+                JspUtil.validateExpressions(n.getStart(),
+                    "${" + new String(n.getText()) + "}", err);
+            }
+        }
 
 	public void visit(Node.CustomTag n) throws JasperException {
 	    TagLibraryInfo tagLibInfo = (TagLibraryInfo)
@@ -450,13 +523,16 @@ public class Validator {
 	    }
 
 	    /*
-	     * Make sure all required attributes are present
+	     * Make sure all required attributes are present, either as
+             * attributes or named attributes (<jsp:attribute>).
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
 	    Attributes attrs = n.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
-		if (tldAttrs[i].isRequired()
-		    && attrs.getValue(tldAttrs[i].getName()) == null) {
+		if (tldAttrs[i].isRequired() &&
+		    (attrs.getValue(tldAttrs[i].getName()) == null) &&
+                    (n.getNamedAttributeNode(tldAttrs[i].getName()) == null) )
+                {
 		    err.jspError(n, "jsp.error.missing_attribute",
 				 tldAttrs[i].getName(), n.getShortName());
 		}
@@ -465,9 +541,11 @@ public class Validator {
 	    /*
 	     * Make sure there are no invalid attributes
 	     */
+            Node.Nodes namedAttributeNodes = n.getNamedAttributeNodes();
 	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
 	    Node.JspAttribute[] jspAttrs
-		= new Node.JspAttribute[attrs.getLength()];
+		= new Node.JspAttribute[attrs.getLength() + 
+                namedAttributeNodes.size()];
 	    for (int i=0; i<attrs.getLength(); i++) {
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
@@ -476,12 +554,12 @@ public class Validator {
 			    jspAttrs[i]
 				= getJspAttribute(attrs.getQName(i),
 						  attrs.getValue(i),
-						  n.isXmlSyntax());
+						  n);
 			} else {
 			    jspAttrs[i]
 				= new Node.JspAttribute(attrs.getQName(i),
 							attrs.getValue(i),
-							false);
+							false, false);
 			}
 			if (jspAttrs[i].isExpression()) {
 			    tagDataAttrs.put(attrs.getQName(i),
@@ -499,6 +577,50 @@ public class Validator {
 				 attrs.getQName(i));
 		}
 	    }
+            
+	    /*
+	     * Make sure there are no invalid named attributes
+	     */
+	    TagFragmentAttributeInfo[] tfais = tagInfo.getFragmentAttributes();
+	    for (int i=0; i<namedAttributeNodes.size(); i++) {
+                Node.NamedAttribute na = 
+                    (Node.NamedAttribute)namedAttributeNodes.getNode( i );
+		boolean found = false;
+		for (int j=0; j<tldAttrs.length; j++) {
+		    if (na.getName().equals(tldAttrs[j].getName())) {
+			if (tldAttrs[j].canBeRequestTime()) {
+			    jspAttrs[attrs.getLength() + i]
+				= getJspAttribute(na.getName(), null, n);
+			} else {
+                            err.jspError( n, 
+                                "jsp.error.named.attribute.not.rt",
+                                na.getName() );
+			}
+                        tagDataAttrs.put(na.getName(),
+                                         TagData.REQUEST_TIME_VALUE);
+			found = true;
+			break;
+		    }
+		}
+		if (!found && (tfais != null)) {
+		    // check given named attribute against attributes of type
+		    // JspFragment
+		    for (int j=0; j<tfais.length; j++) {
+			if (na.getName().equals(tfais[j].getName())) {
+			    jspAttrs[attrs.getLength() + i]
+				= getJspAttribute(na.getName(), null, n);
+			    tagDataAttrs.put(na.getName(),
+					     TagData.REQUEST_TIME_VALUE);
+			    found = true;
+			    break;
+			}
+		    }
+		}
+		if (!found) {
+		    err.jspError(n, "jsp.error.bad_attribute",
+				 na.getName());
+		}
+	    }
 
 	    TagData tagData = new TagData(tagDataAttrs);
 	    n.setTagData(tagData);
@@ -510,33 +632,71 @@ public class Validator {
 	/**
 	 * Preprocess attributes that can be expressions.  Expression
 	 * delimiters are stripped.
+         * <p>
+         * If value is null, checks if there are any
+         * NamedAttribute subelements in the tree node, and if so,
+         * constructs a JspAttribute out of a child NamedAttribute node.
 	 */
 	private Node.JspAttribute getJspAttribute(String name,
 						  String value,
-						  boolean isXml) {
+                                                  Node n)
+                throws JasperException {
+
+            Node.JspAttribute result = null;
+
 	    // XXX Is it an error to see "%=foo%" in non-Xml page?
 	    // (We won't see "<%=foo%> in xml page because '<' is not a
 	    // valid attribute value in xml).
 
-	    if (value == null)
-		return null;
+            if (value != null) {
+                if (n.isXmlSyntax() && value.startsWith("%=")) {
+                    result = new Node.JspAttribute(
+                                             name,
+                                             value.substring(2,
+                                                             value.length()-1),
+                                             true, false);
+                }
+                else if(!n.isXmlSyntax() && value.startsWith("<%=")) {
+                    result = new Node.JspAttribute(
+                                             name,
+                                             value.substring(3,
+                                                             value.length()-2),
+                                             true, false);
+                }
+                else {
+                    // The attribute can contain expressions but is not an
+                    // rtexprvalue; thus, we want to run it through the
+                    // expression interpreter (final argument "true" in
+                    // Node.JspAttribute constructor).
+                    // XXX Optimize by directing generator to pass expressions
+                    //     through interpreter only if they contain at least
+                    //     one "${"?  (But ensure consistent type conversions
+                    //     in JSP 1.3!)
 
-	    if (isXml && value.startsWith("%=")) {
-		return new Node.JspAttribute(name,
-					     value.substring(2,
-							     value.length()-1),
-					     true);
-	    }
+                    // validate expression syntax if string contains
+                    // expression(s)
+                    if (value.indexOf("${") != -1 /* && isELEnabled */) {
+                        JspUtil.validateExpressions(n.getStart(), value, err);
+                        result = new Node.JspAttribute(name, value, false, true);
+                    } else {
+                        result = new Node.JspAttribute(name, value, false, false);
+                    }
+                }
+            }
+            else {
+                // Value is null.  Check for any NamedAttribute subnodes
+                // that might contain the value for this attribute.
+                // Otherwise, the attribute wasn't found so we return null.
 
-	    if (!isXml && value.startsWith("<%=")) {
-		return new Node.JspAttribute(name,
-					     value.substring(3,
-							     value.length()-2),
-					     true);
-	    }
+                Node.NamedAttribute namedAttributeNode =
+                    n.getNamedAttributeNode( name );
+                if( namedAttributeNode != null ) {
+                    result = new Node.JspAttribute(name, namedAttributeNode);
+                }
+            }
 
-	    return new Node.JspAttribute(name, value, false);
-	}
+            return result;
+        }
     }
 
     /**

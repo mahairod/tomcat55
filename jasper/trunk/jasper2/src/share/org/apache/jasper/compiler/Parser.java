@@ -67,6 +67,7 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+import org.apache.jasper.Constants;
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.JasperException;
 
@@ -77,6 +78,8 @@ import org.apache.jasper.JasperException;
  * location in the production.
  * 
  * @author Kin-man Chung
+ * @author Shawn Bayern
+ * @author Mark Roth
  */
 
 public class Parser {
@@ -88,6 +91,14 @@ public class Parser {
     private Mark start;
     private Hashtable taglibs;
     private ErrorDispatcher err;
+    private int scriptlessCount;
+    
+    // Virtual body content types, to make parsing a little easier.
+    // These are not accessible from outside the parser.
+    private static final String JAVAX_BODY_CONTENT_PARAM = 
+        "JAVAX_BODY_CONTENT_PARAM";
+    private static final String JAVAX_BODY_CONTENT_PLUGIN = 
+        "JAVAX_BODY_CONTENT_PLUGIN";
 
     /**
      * The constructor
@@ -99,6 +110,7 @@ public class Parser {
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.reader = reader;
 	this.currentFile = reader.mark().getFile();
+        this.scriptlessCount = 0;
         start = reader.mark();
     }
 
@@ -151,9 +163,9 @@ public class Parser {
 
     /**
      * Attribute ::= Name S? Eq S?
-     *               (   '"<%= RTAttributeValueDouble
+     *               (   '"<%=' RTAttributeValueDouble
      *                 | '"' AttributeValueDouble
-     *                 | "'<%= RTAttributeValueSingle
+     *                 | "'<%=" RTAttributeValueSingle
      *                 | "'" AttributeValueSingle
      *               }
      * Note: JSP and XML spec does not allow while spaces around Eq.  It is
@@ -352,7 +364,7 @@ public class Parser {
 	    // Errors to be checked in Validator
 	    String[] location = ctxt.getTldLocation(uri);
 	    TagLibraryInfo tl = new TagLibraryInfoImpl(ctxt, prefix, uri,
-						       location, err);
+						   location, err);
 	    taglibs.put(prefix, tl);
 	}
 
@@ -429,7 +441,38 @@ public class Parser {
 	new Node.Expression(parseScriptText(reader.getText(start, stop)),
 				start, parent);
     }
-	
+
+    /*
+     * ELExpressionBody
+     * (following "${" to first unquoted "}")
+     * // XXX add formal production and confirm implementation against it,
+     * //     once it's decided
+     */
+    private void parseELExpression(Node parent) throws JasperException {
+        start = reader.mark();
+        Mark last = null;
+        boolean singleQuoted = false, doubleQuoted = false;
+        int currentChar;
+        do {
+            // XXX could move this logic to JspReader
+            last = reader.mark();               // XXX somewhat wasteful
+            currentChar = reader.nextChar();
+            if (currentChar == '\\' && (singleQuoted || doubleQuoted)) {
+                // skip character following '\' within quotes
+                reader.nextChar();
+                currentChar = reader.nextChar();
+            }
+            if (currentChar == -1)
+                err.jspError(start, "jsp.error.unterminated", "${");
+            if (currentChar == '"')
+                doubleQuoted = !doubleQuoted;
+            if (currentChar == '\'')
+                singleQuoted = !singleQuoted;
+        } while (currentChar != '}' || (singleQuoted || doubleQuoted));
+
+        new Node.ELExpression(reader.getText(start, last), start, parent);
+    }
+
     /*
      * Scriptlet ::= (Char* - (char* '%>')) '%>'
      */
@@ -445,217 +488,338 @@ public class Parser {
     }
 	
     /**
-     *  Param ::= '<jsp:param' Attributes* '/>'
+     * Param ::= '<jsp:param' S Attributes S? EmptyBody S?
      */
     private void parseParam(Node parent) throws JasperException {
-
 	if (!reader.matches("<jsp:param")) {
 	    err.jspError(reader.mark(), "jsp.error.paramexpectedonly");
 	}
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
-
-	if (!reader.matches("/>")) {
-	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:param");
-	}
-
-	new Node.ParamAction(attrs, start, parent);
-    }
-
-    /**
-     *  Params ::= (Param S?)*
-     */
-    private void parseParams(Node parent, String tag) throws JasperException {
-
-	Mark start = reader.mark();
-
-	while (reader.hasMoreInput()) {
-	    if (reader.matchesETag(tag)) {
-		break;
-	    }
-
-	    parseParam(parent);
-	    reader.skipSpaces();
-	}
+        
+        Node paramActionNode = new Node.ParamAction( attrs, start, parent );
+        
+        parseEmptyBody( paramActionNode, "jsp:param" );
+        
+        reader.skipSpaces();
     }
 
     /*
-     * IncludeAction ::= Attributes
-     *			 (   '/>'
-     *			   | '>' S? Params '</jsp:include' S? '>'
-     *			 )
+     * For Include:
+     * StdActionContent ::= Attributes ParamBody
+     *
+     * ParamBody ::=   EmptyBody
+     *               | ( '>' S? ( '<jsp:attribute' NamedAttributes )?
+     *                   '<jsp:body'
+     *                   (JspBodyParam | <TRANSLATION_ERROR> )
+     *                   S? ETag
+     *                 )
+     *               | ( '>' S? Param* ETag )
+     *
+     * EmptyBody ::=   '/>'
+     *               | ( '>' ETag )
+     *               | ( '>' S? '<jsp:attribute' NamedAttributes ETag )
+     *
+     * JspBodyParam ::= S? '>' Param* '</jsp:body>'
      */
     private void parseInclude(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
-	if (reader.matches("/>")) {
-	    // No body
-	    new Node.IncludeAction(attrs, start, parent);
-	    return;
-	}
-	    
-	if (!reader.matches(">")) {
-	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:include");
-	}
-
-	reader.skipSpaces();
-	Node includeNode = new Node.IncludeAction(attrs, start, parent);
-	parseParams(includeNode, "jsp:include");
+        Node includeNode = new Node.IncludeAction( attrs, start, parent );
+        
+        parseOptionalBody( includeNode, "jsp:include", 
+            JAVAX_BODY_CONTENT_PARAM );
     }
-   
+
     /*
-     * ForwardAction ::= Attributes
-     *			 (  '/>'
-     *			  | '>' S? Params '<jsp:forward' S? '>'
-     *			 )
+     * For Forward:
+     * StdActionContent ::= Attributes ParamBody
      */
     private void parseForward(Node parent) throws JasperException {
-
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
-	if (reader.matches("/>")) {
-	    // No body
-	    new Node.ForwardAction(attrs, start, parent);
-	    return;
-	}
-
-	if (!reader.matches(">")) {
-	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:forward");
-	}
-
-	reader.skipSpaces();
-	Node forwardNode = new Node.ForwardAction(attrs, start, parent);
-	parseParams(forwardNode, "jsp:forward");
+        Node forwardNode = new Node.ForwardAction( attrs, start, parent );
+        
+        parseOptionalBody( forwardNode, "jsp:forward", 
+            JAVAX_BODY_CONTENT_PARAM );
     }
 
     /*
-     * GetProperty ::= (S? Attribute)* S? '/>/
+     * For GetProperty:
+     * StdActionContent ::= Attributes EmptyBody
      */
     private void parseGetProperty(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
-	if (!reader.matches("/>")) {
-	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:getProperty");
-	}
-
-	new Node.GetProperty(attrs, start, parent);
+        Node getPropertyNode = new Node.GetProperty( attrs, start, parent );
+        
+        parseEmptyBody( getPropertyNode, "jsp:getProperty" );
     }
 
     /*
-     * SetProperty ::= (S Attribute)* S? '/>'
+     * For SetProperty:
+     * StdActionContent ::= Attributes EmptyBody
      */
     private void parseSetProperty(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 
-	if (!reader.matches("/>")) {
-	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:setProperty");
-	}
-
-	new Node.SetProperty(attrs, start, parent);
+        Node setPropertyNode = new Node.SetProperty( attrs, start, parent );
+        
+        parseEmptyBody( setPropertyNode, "jsp:setProperty" );
     }
 
     /*
-     * UseBean ::= (S Attribute)* S?
-     *		   ('/>' | ( '>' Body '</jsp:useBean' S? '>' ))
+     * EmptyBody ::=   '/>'
+     *               | ( '>' ETag )
+     *               | ( '>' S? '<jsp:attribute' NamedAttributes ETag )
+     */
+    private void parseEmptyBody( Node parent, String tag ) 
+        throws JasperException
+    {
+	if( reader.matches("/>") ) {
+            // Done
+        }
+        else if( reader.matches( ">" ) ) {
+            if( reader.matchesETag( tag ) ) {
+                // Done
+            }
+            else if( reader.matchesOptionalSpacesFollowedBy(
+                "<jsp:attribute" ) )
+            {
+                // Parse the one or more named attribute nodes
+                parseNamedAttributes( parent );
+                if( !reader.matchesETag( tag ) ) {
+                    // Body not allowed
+                    err.jspError(reader.mark(),
+                        "jsp.error.jspbody.emptybody.only",
+                        "<" + tag );
+                }
+            }
+            else {
+                err.jspError(reader.mark(), "jsp.error.jspbody.emptybody.only",
+                    "<" + tag );
+            }
+        }
+        else {
+	    err.jspError(reader.mark(), "jsp.error.unterminated",
+                "<" + tag );
+        }
+    }
+
+    /*
+     * For UseBean:
+     * StdActionContent ::= Attributes OptionalBody
      */
     private void parseUseBean(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
+        
+        Node useBeanNode = new Node.UseBean( attrs, start, parent );
+        
+        parseOptionalBody( useBeanNode, "jsp:useBean", 
+            TagInfo.BODY_CONTENT_JSP );
+    }
 
+    /*
+     * Parses OptionalBody, but also reused to parse bodies for plugin
+     * and param since the syntax is identical (the only thing that
+     * differs substantially is how to process the body, and thus
+     * we accept the body type as a parameter).
+     *
+     * OptionalBody ::= EmptyBody | ActionBody
+     *
+     * ScriptlessOptionalBody ::= EmptyBody | ScriptlessActionBody
+     *
+     * TagDependentOptionalBody ::= EmptyBody | TagDependentActionBody
+     *
+     * EmptyBody ::=   '/>'
+     *               | ( '>' ETag )
+     *               | ( '>' S? '<jsp:attribute' NamedAttributes ETag )
+     *
+     * ActionBody ::=   JspAttributeAndBody
+     *                | ( '>' Body ETag )
+     *
+     * ScriptlessActionBody ::=   JspAttributeAndBody 
+     *                          | ( '>' ScriptlessBody ETag )
+     * 
+     * TagDependentActionBody ::=   JspAttributeAndBody
+     *                            | ( '>' TagDependentBody ETag )
+     *
+     */
+    private void parseOptionalBody( Node parent, String tag, String bodyType ) 
+        throws JasperException 
+    {
 	if (reader.matches("/>")) {
-	    new Node.UseBean(attrs, start, parent);
+	    // EmptyBody
 	    return;
 	}
 
 	if (!reader.matches(">")) {
 	    err.jspError(reader.mark(), "jsp.error.unterminated",
-			 "<jsp:useBean");
+			 "<" + tag );
 	}
-
-	Node beanNode = new Node.UseBean(attrs, start, parent);
-	parseBody(beanNode, "jsp:useBean");
+        
+        if( reader.matchesETag( tag ) ) {
+            // EmptyBody
+            return;
+        }
+        
+        if( !parseJspAttributeAndBody( parent, tag, bodyType ) ) {
+            // Must be ( '>' # Body ETag )
+            parseBody(parent, tag, bodyType );
+        }
+    }
+    
+    /**
+     * Attempts to parse 'JspAttributeAndBody' production.  Returns true if
+     * it matched, or false if not.  Assumes EmptyBody is okay as well.
+     *
+     * JspAttributeAndBody ::=
+     *                  ( '>' # S? ( '<jsp:attribute' NamedAttributes )?
+     *                    '<jsp:body'
+     *                    ( JspBodyBody | <TRANSLATION_ERROR> )
+     *                    S? ETag
+     *                  )
+     */
+    private boolean parseJspAttributeAndBody( Node parent, String tag, 
+        String bodyType ) 
+        throws JasperException
+    {
+        boolean result = false;
+        
+        if( reader.matchesOptionalSpacesFollowedBy( "<jsp:attribute" ) ) {
+            // May be an EmptyBody, depending on whether
+            // There's a "<jsp:body" before the ETag
+            
+            // First, parse <jsp:attribute> elements:
+            parseNamedAttributes( parent );
+            
+            result = true;
+        }
+        
+        if( reader.matchesOptionalSpacesFollowedBy( "<jsp:body" ) ) {
+            // ActionBody
+            parseJspBody( parent, bodyType );
+            reader.skipSpaces();
+            if( !reader.matchesETag( tag ) ) {
+                err.jspError(reader.mark(), "jsp.error.unterminated", 
+                    "<" + tag );
+            }
+            
+            result = true;
+        }
+        else if( result && !reader.matchesETag( tag ) ) {
+            // If we have <jsp:attribute> but something other than
+            // <jsp:body> or the end tag, translation error.
+            err.jspError(reader.mark(), "jsp.error.jspbody.required", 
+                "<" + tag );
+        }
+        
+        return result;
     }
 
     /*
-     * JspParams ::=  S? '>' S? Params+ </jsp:params' S? '>'
+     * Params ::=   '/>'
+     *            | ( '>' S? Param* '</jsp:params>' )
      */
     private void parseJspParams(Node parent) throws JasperException {
-
-	reader.skipSpaces();
-	if (!reader.matches(">")) {
-	    err.jspError(reader.mark(), "jsp.error.params.notclosed");
-	}
-
-	reader.skipSpaces();
-	Node jspParamsNode = new Node.ParamsAction(start, parent);
-	parseParams(jspParamsNode, "jsp:params");
+        if( reader.matches( "/>" ) ) {
+            // No elements, don't create node.
+        }
+        else if( reader.matches( ">" ) ) {
+            reader.skipSpaces();
+            Node jspParamsNode = new Node.ParamsAction(start, parent);
+            parseBody(jspParamsNode, "jsp:params", JAVAX_BODY_CONTENT_PARAM );
+        }
+        else {
+            err.jspError(reader.mark(), "jsp.error.unterminated",
+                "<jsp:params" );
+        }
     }
 
     /*
-     * FallBack ::=  S? '>' Char* '</jsp:fallback' S? '>'
+     * Fallback ::=   '/>'
+     *              | ( '>'
+     *                  ( Char* - ( Char* '</jsp:fallback>' ) )
+     *                  '</jsp:fallback>'
+     *                )
      */
     private void parseFallBack(Node parent) throws JasperException {
-
-	reader.skipSpaces();
-	if (!reader.matches(">")) {
-	    err.jspError(reader.mark(), "jsp.error.fallback.notclosed");
-	}
-
-	Mark bodyStart = reader.mark();
-        Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
-        if (bodyEnd == null) {
-            err.jspError(start, "jsp.error.unterminated", "<jsp:fallback>");
-	}
-	char[] text = reader.getText(bodyStart, bodyEnd);
-        new Node.FallBackAction(start, text, parent);
+        if( reader.matches( "/>" ) ) {
+            // No elements, don't create node.
+        }
+        else if( reader.matches( ">" ) ) {
+            Mark bodyStart = reader.mark();
+            Mark bodyEnd = reader.skipUntilETag("jsp:fallback");
+            if (bodyEnd == null) {
+                err.jspError(start, "jsp.error.unterminated", 
+                    "<jsp:fallback");
+            }
+            char[] text = reader.getText(bodyStart, bodyEnd);
+            new Node.FallBackAction(start, text, parent);
+        }
+        else {
+            err.jspError( reader.mark(), "jsp.error.unterminated",
+                "<jsp:fallback" );
+        }
     }
 
     /*
-     * PlugIn ::= Attributes '>' PlugInBody '</jsp:plugin' S? '>'
-     * PlugBody ::= S? ('<jsp:params' JspParams S?)?
-     *			('<jsp:fallback' JspFallack S?)?
+     * For Plugin:
+     * StdActionContent ::= Attributes PluginBody
+     *
+     * PluginBody ::=   EmptyBody 
+     *                | ( '>' S? ( '<jsp:attribute' NamedAttributes )?
+     *                    '<jsp:body'
+     *                    ( JspBodyPluginTags | <TRANSLATION_ERROR> )
+     *                    S? ETag
+     *                  )
+     *                | ( '>' S? PluginTags ETag )
+     *
+     * EmptyBody ::=   '/>'
+     *               | ( '>' ETag )
+     *               | ( '>' S? '<jsp:attribute' NamedAttributes ETag )
+     *
      */
     private void parsePlugin(Node parent) throws JasperException {
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
-
-	if (!reader.matches(">")) {
-	    err.jspError(reader.mark(), "jsp.error.plugin.notclosed");
-	}
-
-	reader.skipSpaces();
+        
 	Node pluginNode = new Node.PlugIn(attrs, start, parent);
-	if (reader.matches("<jsp:params")) {
-	    parseJspParams(pluginNode);
-	    reader.skipSpaces();
-	}
-
-	if (reader.matches("<jsp:fallback")) {
-	    parseFallBack(pluginNode);
-	    reader.skipSpaces();
-	}
-
-	if (!reader.matchesETag("jsp:plugin")) {
-	    err.jspError(reader.mark(), "jsp.error.plugin.notclosed");
-	}
+        
+        parseOptionalBody( pluginNode, "jsp:plugin", 
+            JAVAX_BODY_CONTENT_PLUGIN );
     }
 
     /*
-     * StandardAction ::=   'include' IncludeAction
-     *			  | 'forward' ForwardAction
-     *			  | 'getProperty' GetPropertyAction
-     *			  | 'setProperty' SetPropertyAction
-     *			  | 'useBean' UseBeanAction
-     *			  | 'plugin' PlugInAction
+     * PluginTags ::= ( '<jsp:params' Params S? )?
+     *                ( '<jsp:fallback' Fallback? S? )?
+     */
+    private void parsePluginTags( Node parent ) throws JasperException {
+        reader.skipSpaces();
+        
+        if( reader.matches( "<jsp:params" ) ) {
+            parseJspParams( parent );
+            reader.skipSpaces();
+        }
+        
+        if( reader.matches( "<jsp:fallback" ) ) {
+            parseFallBack( parent );
+            reader.skipSpaces();
+        }
+    }
+        
+    /*
+     * StandardAction ::=   'include'       StdActionContent
+     *                    | 'forward'       StdActionContent
+     *                    | 'getProperty'   StdActionContent
+     *                    | 'setProperty'   StdActionContent
+     *                    | 'useBean'       StdActionContent
+     *                    | 'plugin'        StdActionContent
      */
     private void parseAction(Node parent) throws JasperException {
 	Mark start = reader.mark();
@@ -678,16 +842,35 @@ public class Parser {
     }
 
     /*
-     * ActionElement ::= EmptyElemTag | Stag Body Etag
-     * EmptyElemTag ::= '<' Name ( S Attribute )* S? '/>'
-     * Stag ::= '<' Name ( S Attribute)* S? '>'
-     * Etag ::= '</' Name S? '>'
+     * # '<' CustomAction CustomActionBody
+     *
+     * CustomAction ::= TagPrefix ':' CustomActionName
+     *
+     * TagPrefix ::= Name
+     *
+     * CustomActionName ::= Name
+     *
+     * CustomActionBody ::=   ( Attributes CustomActionEnd )
+     *                      | <TRANSLATION_ERROR>
+     *
+     * Attributes ::= ( S Attribute )* S?
+     *
+     * CustomActionEnd ::=   CustomActionTagDependent
+     *                     | CustomActionJSPContent
+     *                     | CustomActionScriptlessContent
+     *
+     * CustomActionTagDependent ::= TagDependentOptionalBody
+     *
+     * CustomActionJSPContent ::= OptionalBody
+     *
+     * CustomActionScriptlessContent ::= ScriptlessOptionalBody
      */
     private boolean parseCustomTag(Node parent) throws JasperException {
 	if (reader.peekChar() != '<') {
 	    return false;
 	}
 
+        // Parse 'CustomAction' production (tag prefix and custom action name)
 	reader.nextChar();	// skip '<'
 	String tagName = reader.parseToken(false);
 	int i = tagName.indexOf(':');
@@ -709,46 +892,35 @@ public class Parser {
 	if (tagInfo == null) {
 	    err.jspError(start, "jsp.error.bad_tag", shortTagName, prefix);
 	}
+        
+        // Parse 'CustomActionBody' production:
+        // At this point we are committed - if anything fails, we produce
+        // a translation error.
 
-	// EmptyElemTag ::= '<' Name ( #S Attribute )* S? '/>'
-	// or Stag ::= '<' Name ( #S Attribute)* S? '>'
+        // Parse 'Attributes' production:
 	Attributes attrs = parseAttributes();
 	reader.skipSpaces();
 	
+        // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
-	    // EmptyElemTag ::= '<' Name ( S Attribute )* S? '/>'#
 	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
 			       tagInfo, parent);
 	    return true;
 	}
 	
-	if (!reader.matches(">")) {
-	    err.jspError(start, "jsp.error.unterminated.tag");
-	}
+        // Now we parse one of 'CustomActionTagDependent', 
+        // 'CustomActionJSPContent', or 'CustomActionScriptlessContent'.
+        // depending on body-content in TLD.
 
-	// ActionElement ::= Stag #Body Etag
-	
 	// Looking for a body, it still can be empty; but if there is a
 	// a tag body, its syntax would be dependent on the type of
 	// body content declared in TLD.
-	String bc = tagInfo.getBodyContent();
+	String bc = ((TagLibraryInfo)taglibs.get(prefix)).getTag(
+            shortTagName).getBodyContent();
 
 	Node tagNode = new Node.CustomTag(attrs, start, tagName, prefix,
 					  shortTagName, tagInfo, parent);
-	// There are 3 body content types: empty, jsp, or tag-dependent.
-	if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
-	    if (!reader.matchesETag(tagName)) {
-		err.jspError(start, "jasper.error.emptybodycontent.nonempty");
-	    }
-	} else if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT)) {
-	    // parse the body as text
-	    parseBodyText(tagNode, tagName);
-	} else if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_JSP)) {
-	    // parse body as JSP page
-	    parseBody(tagNode, tagName);
-	} else {
-	    err.jspError(start, "jasper.error.bad.bodycontent.type");
-	}
+	parseOptionalBody( tagNode, tagName, bc );
 
 	return true;
     }
@@ -771,18 +943,29 @@ public class Parser {
 	    new Node.TemplateText(reader.nextContent(), start, parent);
 	}
     }
-	
+    
     /*
-     * BodyElement ::=	  '<%--' JSPCommentBody
-     *			| '<%@' DirectiveBody
-     *			| '<%!' DeclarationBody
-     *			| '<%=' ExpressionBody
-     *			| '<%' ScriptletBody
-     *			| '<jsp:' StandardAction
-     *			| '<' CustomAction
+     * AllBody ::=	  ( '<%--' JSPCommentBody )
+     *			| ( '<%@' DirectiveBody )
+     *			| ( '<%!' DeclarationBody )
+     *			| ( '<%=' ExpressionBody )
+     *                  | ( '${' ELExpressionBody )
+     *			| ( '<%' ScriptletBody )
+     *			| ( '<jsp:' StandardAction )
+     *			| ( '<' CustomAction CustomActionBody )
      *			| TemplateText
      */
-    private void parseElements(Node parent) throws JasperException {
+    private void parseElements(Node parent) 
+        throws JasperException 
+    {
+        if( scriptlessCount > 0 ) {
+            // vc: ScriptlessBody
+            // We must follow the ScriptlessBody production if one of
+            // our parents is ScriptlessBody.
+            parseElementsScriptless( parent );
+            return;
+        }
+        
 	start = reader.mark();
 	if (reader.matches("<%--")) {
 	    parseComment(parent);
@@ -794,6 +977,8 @@ public class Parser {
 	    parseExpression(parent);
 	} else if (reader.matches("<%")) {
 	    parseScriptlet(parent);
+        } else if (reader.matches("${")) {
+            parseELExpression(parent);
 	} else if (reader.matches("<jsp:")) {
 	    parseAction(parent);
 	} else if (!parseCustomTag(parent)) {
@@ -802,33 +987,212 @@ public class Parser {
     }
 
     /*
+     * ScriptlessBody ::=   ( '<%--' JSPCommentBody )
+     *			  | ( '<%@' <TRANSLATION_ERROR> )
+     *			  | ( '<%!' <TRANSLATION_ERROR> )
+     *			  | ( '<%=' <TRANSLATION_ERROR> )
+     *			  | ( '<%' <TRANSLATION_ERROR> )
+     *                    | ( '${' ELExpressionBody )
+     *	  		  | ( '<jsp:' StandardAction )
+     *			  | ( '<' CustomAction CustomActionBody )
+     *			  | TemplateText
+     */
+    private void parseElementsScriptless(Node parent) 
+        throws JasperException 
+    {
+        // Keep track of how many scriptless nodes we've encountered
+        // so we know whether our child nodes are forced scriptless
+        scriptlessCount++;
+        
+	start = reader.mark();
+	if (reader.matches("<%--")) {
+	    parseComment(parent);
+	} else if (reader.matches("<%@")) {
+	    parseDirective(parent);
+	} else if (reader.matches("<%!")) {
+	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+	} else if (reader.matches("<%=")) {
+	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+	} else if (reader.matches("<%")) {
+	    err.jspError( reader.mark(), "jsp.error.no.scriptlets" );
+	} else if (reader.matches("${")) {
+	    parseELExpression(parent);
+	} else if (reader.matches("<jsp:")) {
+	    parseAction(parent);
+	} else if (!parseCustomTag(parent)) {
+	    parseTemplateText(parent);
+	}
+        
+        scriptlessCount--;
+    }
+    
+    /*
      *
      */
     private void parseBodyText(Node parent, String tag) throws JasperException{
 	Mark bodyStart = reader.mark();
 	Mark bodyEnd = reader.skipUntilETag(tag);
 	if (bodyEnd == null) {
-	    err.jspError(start, "jsp.error.unterminated", "<"+tag+">");
+	    err.jspError(start, "jsp.error.unterminated", "<"+tag );
 	}
 	new Node.TemplateText(reader.getText(bodyStart, bodyEnd), bodyStart,
 			      parent);
     }
 
     /*
-     * Parse the body as JSP content.
-     * @param tag The name of the tag whose end tag would terminate the body
+     * JspBodyBody ::=      ( S? '>' 
+     *                        ( (   ScriptlessBody 
+     *                            | Body
+     *                            | TagDependentBody
+     *                          ) - ''
+     *                        ) '</jsp:body>' 
+     *                      )
+     *                  |   ( ATTR[ !value ] S? JspBodyEmptyBody )
+     *
+     * JspBodyEmptyBody ::=     '/>'
+     *                      |   '></jsp:body>'
+     *                      |   <TRANSLATION_ERROR>
+     *
      */
-    private void parseBody(Node parent, String tag) throws JasperException {
+    private void parseJspBody(Node parent, String bodyType) 
+        throws JasperException 
+    {
+        Mark start = reader.mark();
+        reader.skipSpaces();
 
-	while (reader.hasMoreInput()) {
-	    if (reader.matchesETag(tag)) {
-		return;
-	    }
-	    parseElements(parent);
-	}
-	err.jspError(start, "jsp.error.unterminated", "<"+tag+">");
+        if( reader.matches( ">" ) ) {
+            Node bodyNode = new Node.JspBody( null, start, parent );
+            if( reader.matches( "</jsp:body>" ) ) {
+                // Body was empty.  This is illegal, according to the grammar.
+                err.jspError(reader.mark(),
+                    "jsp.error.empty.body.not.allowed",
+                    "<jsp:body>" );
+            }
+            else {
+                parseBody( bodyNode, "jsp:body", bodyType );
+            }
+        }
+        else {
+            Attributes attrs = parseAttributes();
+            reader.skipSpaces();
+            new Node.JspBody( attrs, start, parent );
+
+            if( !reader.matches( "/>" ) &&
+                !reader.matches( "></jsp:body>" ) )
+            {
+                err.jspError(reader.mark(), 
+                    "jsp.error.jspbody.body.not.allowed.with.value",
+                    "<jsp:body>" );
+            }
+        }
     }
 
-    
+    /*
+     * Parse the body as JSP content.
+     * @param tag The name of the tag whose end tag would terminate the body
+     * @param bodyType One of the TagInfo body types
+     */
+    private void parseBody(Node parent, String tag, String bodyType) 
+        throws JasperException 
+    {
+        if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_TAG_DEPENDENT ) ) {
+            parseBodyText( parent, tag );
+        }
+        else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_EMPTY ) ) {
+            if( !reader.matchesETag( tag ) ) {
+		err.jspError(start, "jasper.error.emptybodycontent.nonempty");
+            }
+        }
+        else if( bodyType == JAVAX_BODY_CONTENT_PLUGIN ) {
+            // (note the == since we won't recognize JAVAX_* 
+            // from outside this module).
+            parsePluginTags(parent);
+            if( !reader.matchesETag( tag ) ) {
+                err.jspError( reader.mark(), "jsp.error.unterminated",
+                    "<" + tag  );
+            }
+        }
+        else if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_JSP ) ||
+            bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_SCRIPTLESS ) ||
+            (bodyType == JAVAX_BODY_CONTENT_PARAM) )
+        {
+            while (reader.hasMoreInput()) {
+                if (reader.matchesETag(tag)) {
+                    return;
+                }
+                
+                if( bodyType.equalsIgnoreCase( TagInfo.BODY_CONTENT_JSP ) ) {
+                    parseElements( parent );
+                }
+                else if( bodyType.equalsIgnoreCase( 
+                    TagInfo.BODY_CONTENT_SCRIPTLESS ) ) 
+                {
+                    parseElementsScriptless( parent );
+                }
+                else if( bodyType == JAVAX_BODY_CONTENT_PARAM ) {
+                    // (note the == since we won't recognize JAVAX_* 
+                    // from outside this module).
+                    reader.skipSpaces();
+                    parseParam( parent );
+                }
+            }
+            err.jspError(start, "jsp.error.unterminated", "<"+tag );
+        }
+        else {
+	    err.jspError(start, "jasper.error.bad.bodycontent.type");
+        }
+    }
+
+    /*
+     * NamedAttributes ::= AttributeBody S?
+     *                     ( '<jsp:attribute' AttributeBody S? )*
+     *
+     * AttributeBody   ::= ATTR[ !name, trim ] S? AttributeBodyRequired
+     *
+     * AttributeBodyRequired ::= '>' ( ScriptlessBody - '' ) '</jsp:attribute>'
+     */
+    private void parseNamedAttributes(Node parent) throws JasperException {
+        do {
+            Mark start = reader.mark();
+            Attributes attrs = parseAttributes();
+            reader.skipSpaces();
+
+            Node.NamedAttribute namedAttributeNode =
+                new Node.NamedAttribute( attrs, start, parent );
+
+            if( reader.matches( "/>" ) ) {
+                // Body was empty.  This is illegal, according to the grammar.
+                err.jspError(reader.mark(), "jsp.error.empty.body.not.allowed", 
+                    "<jsp:attribute" );
+            }
+            else if( !reader.matches( ">" ) ) {
+                err.jspError(reader.mark(), "jsp.error.unterminated",
+                    "<jsp:attribute");
+            }
+
+            if( reader.matches( "</jsp:attribute" ) ) {
+                // Body was empty.  This is illegal, according to the grammar.
+                err.jspError(reader.mark(), "jsp.error.empty.body.not.allowed", 
+                    "<jsp:attribute" );
+            }
+            else {
+                if( namedAttributeNode.isTrim() ) {
+                    reader.skipSpaces();
+                }
+                parseBody( namedAttributeNode, "jsp:attribute", 
+                    TagInfo.BODY_CONTENT_SCRIPTLESS );
+                if( namedAttributeNode.isTrim() ) {
+                    Node.Nodes subelements = namedAttributeNode.getBody();
+                    Node lastNode = subelements.getNode(
+                        subelements.size() - 1 );
+                    if( lastNode instanceof Node.TemplateText ) {
+                        ((Node.TemplateText)lastNode).rtrim();
+                    }
+                }
+            }
+            reader.skipSpaces();
+        } while( reader.matches( "<jsp:attribute" ) );
+    }
+
 }
 

@@ -64,9 +64,11 @@ package org.apache.jasper.runtime;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.util.EmptyStackException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
+import java.util.Stack;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -85,6 +87,7 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.el.ExpressionEvaluator;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.logging.Logger;
@@ -96,6 +99,7 @@ import org.apache.jasper.logging.Logger;
  * @author Larry Cable
  * @author Hans Bergsten
  * @author Pierre Delisle
+ * @author Mark Roth
  */
 public class PageContextImpl extends PageContext {
 
@@ -444,6 +448,7 @@ public class PageContextImpl extends PageContext {
             outs = newOuts;
         }
         out = outs[depth];
+	outs[depth].clearBody();
         return outs[depth];
     }
 
@@ -455,6 +460,82 @@ public class PageContextImpl extends PageContext {
             out = baseOut;
         }
         return out;
+    }
+
+    /**
+     * Pops the page scope from the stack. After calling this method, the
+     * PageScope will appear the same as it was before the last call to
+     * pushPageScope.
+     *
+     * @return A Map representing the state of the page scope just before
+     *     it was popped.  This object can be passed to pushPageScope to
+     *     restore this state.  The keys of the returned Map are Strings
+     *     representing attribute names.  The values are the values of
+     *     those attributes.
+     */
+    public java.util.Map popPageScope()
+        throws EmptyStackException
+    {
+        if( this.attributesStack == null ) {
+            throw new EmptyStackException();
+        }
+        // Remember pop() may throw EmptyStackException.
+        this.attributes = (Hashtable)this.attributesStack.pop();
+        return this.attributes;
+    }
+
+    /**
+     * Pushes a new page scope on the stack.
+     *
+     * @param scopeState If null, a new, empty, page scope is pushed.
+     *     Otherwise, the state of the page scope is restored to the
+     *     contents of the provided Map.
+     */
+    public void pushPageScope( java.util.Map scopeState ) {
+        // Lazily create page scope stack
+        if( this.attributesStack == null ) {
+            this.attributesStack = new Stack();
+        }
+
+        // Push the old page scope on the stack:
+        this.attributesStack.push( this.attributes );
+
+        // Set the new page scope, depending on the input.
+        if( scopeState == null ) {
+            // Create a fresh page scope:
+            this.attributes = new Hashtable( 16 );
+        }
+        else if( scopeState instanceof Hashtable ) {
+            // Compatible Map.
+            this.attributes = (Hashtable)scopeState;
+        }
+        else {
+            // Incompatible Map.  Only Maps returned by popPageScope()
+            // or peekPageScope() can be passed in to this method.
+            // Therefore, the scopeState MUST be an instance of Hashtable.
+            throw new IllegalArgumentException(
+                "Attempt to pass PageContext.pushPageScope() a Map " +
+                "that was not created by this container." );
+        }
+    }
+
+    public java.util.Map peekPageScope() {
+        return this.attributes;
+    }
+
+    /**
+     * Provides programmatic access to the ExpressionEvaluator.
+     * The JSP Container must return a valid instance of an
+     * ExpressionEvaluator that can parse EL expressions.
+     */
+    public ExpressionEvaluator getExpressionEvaluator() {
+        try {
+            return ExpressionEvaluatorManager.getEvaluatorByName( 
+                ExpressionEvaluatorManager.EVALUATOR_CLASS );
+        }
+        catch( JspException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     public void handlePageException(Exception ex)
@@ -529,6 +610,9 @@ public class PageContextImpl extends PageContext {
 
     protected transient Hashtable	attributes = new Hashtable(16);
 
+    // Page scope attribute stack, to implement {push|pop|peek}PageScope:
+    // Lazily initialized.
+    protected transient Stack           attributesStack = null;
     // per request state
 
     protected transient ServletRequest	request;

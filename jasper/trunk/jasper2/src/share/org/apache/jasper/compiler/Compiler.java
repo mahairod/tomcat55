@@ -94,6 +94,7 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * @author Pierre Delisle
  * @author Kin-man Chung
  * @author Remy Maucherat
+ * @author Mark Roth
  */
 public class Compiler {
 
@@ -223,6 +224,9 @@ public class Compiler {
 	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
         ctxt.setWriter(writer);
 
+        // Reset the temporary variable counter for the generator.
+        JspUtil.resetTemporaryVariableName();
+
 	// Parse the file
 	ParserController parserCtl = new ParserController(ctxt, this);
 	pageNodes = parserCtl.parse(ctxt.getJspFile());
@@ -239,6 +243,9 @@ public class Compiler {
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
         writer.close();
+
+        //JSR45 Support - note this needs to be checked by a JSR45 guru
+	SmapUtil.generateSmap(ctxt, pageNodes, true);
     }
 
     /** 
@@ -310,6 +317,9 @@ public class Compiler {
             if(errorReport!=null ) 
                 errDispatcher.javacError(errorReport, javaFileName, pageNodes);
         }
+
+        //JSR45 Support - note this needs to be checked by a JSR45 guru
+	SmapUtil.installSmap(ctxt);
     }
 
     /** 

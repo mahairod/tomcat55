@@ -119,7 +119,8 @@ public class ParserUtils {
      */
     static EntityResolver entityResolver = new MyEntityResolver();
 
-    public static boolean validating=true;
+    // Turn off for JSP 2.0 until switch over to using xschema.
+    public static boolean validating=false;
 
     // --------------------------------------------------------- Public Methods
 

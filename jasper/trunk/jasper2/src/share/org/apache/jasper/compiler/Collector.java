@@ -69,6 +69,7 @@ import org.apache.jasper.JasperException;
  * the PageInfo object.
  *
  * @author Kin-man Chung
+ * @author Mark Roth
  */
 
 public class Collector {
@@ -137,12 +138,24 @@ public class Collector {
 	}
 
         public void visit(Node.CustomTag n) throws JasperException {
-
             curTagNesting++;
             if (curTagNesting > maxTagNesting) {
                 maxTagNesting = curTagNesting;
             }
+            
+            // Check to see what kinds of element we see as child elements
+            checkSeen( n.getChildInfo(), n );
 
+            curTagNesting--;
+        }
+
+        /**
+         * Check all child nodes for various elements and update the given
+         * ChildInfo object accordingly.  Visits body in the process.
+         */
+        private void checkSeen( Node.ChildInfo ci, Node n ) 
+            throws JasperException
+        {
 	    // save values collected so far
 	    boolean scriptingElementSeenSave = scriptingElementSeen;
 	    scriptingElementSeen = false;
@@ -156,31 +169,35 @@ public class Collector {
 	    hasScriptingVars = false;
 
 	    // Scan attribute list for expressions
-	    Node.JspAttribute[] attrs = n.getJspAttributes();
-	    for (int i = 0; i < attrs.length; i++) {
-		if (attrs[i].isExpression()) {
-		    scriptingElementSeen = true;
-		    break;
-		}
-	    }
+            if( n instanceof Node.CustomTag ) {
+                Node.CustomTag ct = (Node.CustomTag)n;
+                Node.JspAttribute[] attrs = ct.getJspAttributes();
+                for (int i = 0; i < attrs.length; i++) {
+                    if (attrs[i].isExpression()) {
+                        scriptingElementSeen = true;
+                        break;
+                    }
+                }
+            }
 
             visitBody(n);
 
-	    if (!hasScriptingVars) {
+            if( (n instanceof Node.CustomTag) && !hasScriptingVars) {
+                Node.CustomTag ct = (Node.CustomTag)n;
 		// For some reason, varInfos is null when var is not defined
 		// in TEI, but tagVarInfos is empty array when var is not
 		// defined in tld.
-		hasScriptingVars = n.getVariableInfos() != null || 
-			(n.getTagVariableInfos() != null
-			 && n.getTagVariableInfos().length > 0);
+		hasScriptingVars = ct.getVariableInfos() != null || 
+			(ct.getTagVariableInfos() != null
+			 && ct.getTagVariableInfos().length > 0);
 	    }
 
 	    // Record if the tag element and its body contains any scriptlet.
-	    n.setScriptless(! scriptingElementSeen);
-	    n.setHasUsebean(usebeanSeen);
-	    n.setHasIncludeAction(includeActionSeen);
-	    n.setHasSetProperty(setPropertySeen);
-	    n.setHasScriptingVars(hasScriptingVars);
+	    ci.setScriptless(! scriptingElementSeen);
+	    ci.setHasUsebean(usebeanSeen);
+	    ci.setHasIncludeAction(includeActionSeen);
+	    ci.setHasSetProperty(setPropertySeen);
+	    ci.setHasScriptingVars(hasScriptingVars);
 
 	    // Propagate value of scriptingElementSeen up.
 	    scriptingElementSeen = scriptingElementSeen || scriptingElementSeenSave;
@@ -188,10 +205,16 @@ public class Collector {
 	    setPropertySeen = setPropertySeen || setPropertySeenSave;
 	    includeActionSeen = includeActionSeen || includeActionSeenSave;
 	    hasScriptingVars = hasScriptingVars || hasScriptingVarsSave;
-
-            curTagNesting--;
         }
 
+        public void visit(Node.JspBody n) throws JasperException {
+            checkSeen( n.getChildInfo(), n );
+        }
+        
+        public void visit(Node.NamedAttribute n) throws JasperException {
+            checkSeen( n.getChildInfo(), n );
+        }
+        
 	public void visit(Node.Declaration n) throws JasperException {
 	    scriptingElementSeen = true;
 	}

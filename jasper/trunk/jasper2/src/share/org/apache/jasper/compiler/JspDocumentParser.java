@@ -233,6 +233,10 @@ public class JspDocumentParser extends DefaultHandler
 	    node = new Node.PlugIn(attrsCopy, start, current);
 	} else if (qName.equals(JSP_TEXT_TAG)) {
 	    node = new Node.JspText(start, current);
+	} else if (qName.equals(JSP_BODY_TAG)) {
+	    node = new Node.JspBody(attrsCopy, start, current);
+	} else if (qName.equals(JSP_ATTRIBUTE_TAG)) {
+	    node = new Node.NamedAttribute(attrsCopy, start, current);
 	} else {
 	    node = getCustomTag(qName, attrsCopy, start, current);
 	    if (node == null) {
@@ -285,9 +289,26 @@ public class JspDocumentParser extends DefaultHandler
     public void endElement(String uri,
 			   String localName,
 			   String qName) throws SAXException {
+	if (current instanceof Node.NamedAttribute
+	        && ((Node.NamedAttribute) current).isTrim()) {
+	    // Ignore any whitespace (including spaces, carriage returns,
+	    // line feeds, and tabs, that appear at the beginning and at the
+	    // end of the body of the <jsp:attribute> action.
+	    Node.Nodes subelems = ((Node.NamedAttribute) current).getBody();
+	    Node firstNode = subelems.getNode(0);
+	    if (firstNode instanceof Node.TemplateText) {
+		((Node.TemplateText) firstNode).ltrim();
+	    }
+	    Node lastNode = subelems.getNode(subelems.size() - 1);
+	    if (lastNode instanceof Node.TemplateText) {
+		((Node.TemplateText) lastNode).rtrim();
+	    }
+	}
+
 	if (current instanceof Node.ScriptingElement) {
 	    checkScriptingBody(current.getBody());
 	}
+
 	if (current.getParent() != null) {
 	    current = current.getParent();
 	}
@@ -434,15 +455,6 @@ public class JspDocumentParser extends DefaultHandler
 
 		// get the uri
 		String uri = attrs.getValue(i);
-		/*
-		 * make sure that a relative path is prefixed with
-		 * urn:jsptld:path
-		 */
-		if (uri.charAt(0) == '/') {
-		    throw new JasperException(
-	                err.getString("jsp.error.xml.taglib.uri.not_prefixed",
-				      uri));
-		}
 		if (uri.startsWith(URN_JSPTLD)) {
 		    // uri value is of the form "urn:jsptld:path"
 		    uri = uri.substring(URN_JSPTLD.length());

@@ -78,6 +78,7 @@ import org.apache.jasper.xmlparser.TreeNode;
  * @author Anil K. Vijendran
  * @author Mandar Raje
  * @author Pierre Delisle
+ * @author Kin-man Chung
  */
 public class TagLibraryInfoImpl extends TagLibraryInfo {
     static private final String TAGLIB_TLD = "META-INF/taglib.tld";
@@ -109,6 +110,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
         for(int i = 0; i < tags.length; i++)
             out.println(tags[i].toString());
+        
+        for(int i = 0; i < functions.length; i++)
+            out.println(functions[i].toString());
         
         return sw.toString();
     }
@@ -240,6 +244,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         throws JasperException
     {
         Vector tagVector = new Vector();
+        Vector functionVector = new Vector();
 
         // Create an iterator over the child elements of our <taglib> element
         ClassLoader cl = ctxt.getClassLoader();
@@ -271,6 +276,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 this.tagLibraryValidator = createValidator(element);
             else if ("tag".equals(tname))
                 tagVector.addElement(createTagInfo(element));
+            else if ("function".equals(tname))          // JSP2.0
+                functionVector.addElement(createFunctionInfo(element));
             else if ("display-name".equals(tname) ||    // Ignored elements
                      "small-icon".equals(tname) ||
                      "large-icon".equals(tname) ||
@@ -287,6 +294,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
         this.tags = new TagInfo[tagVector.size()];
         tagVector.copyInto (this.tags);
+
+        this.functions = new FunctionInfo[functionVector.size()];
+        functionVector.copyInto (this.functions);
     }
 
     private TagInfo createTagInfo(TreeNode elem) throws JasperException {
@@ -298,42 +308,48 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	String displayName = null;
 	String smallIcon = null;
 	String largeIcon = null;
+        boolean dynamicAttributes = false;
         
         Vector attributeVector = new Vector();
         Vector variableVector = new Vector();
+        Vector fragmentAttributeVector = new Vector();
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
             TreeNode element = (TreeNode) list.next();
             String tname = element.getName();
 
-            if ("name".equals(tname))
+            if ("name".equals(tname)) {
                 name = element.getBody();
-            else if ("tagclass".equals(tname) ||
-                     "tag-class".equals(tname))
+            } else if ("tagclass".equals(tname) ||
+                     "tag-class".equals(tname)) {
                 tagclass = element.getBody();
-            else if ("teiclass".equals(tname) ||
-                     "tei-class".equals(tname))
+            } else if ("teiclass".equals(tname) ||
+                     "tei-class".equals(tname)) {
                 teiclass = element.getBody();
-            else if ("bodycontent".equals(tname) ||
-                     "body-content".equals(tname))
+            } else if ("bodycontent".equals(tname) ||
+                     "body-content".equals(tname)) {
                 bodycontent = element.getBody();
-            else if ("display-name".equals(tname))
+            } else if ("display-name".equals(tname)) {
                 displayName = element.getBody();
-            else if ("small-icon".equals(tname))
+            } else if ("small-icon".equals(tname)) {
                 smallIcon = element.getBody();
-            else if ("large-icon".equals(tname))
+            } else if ("large-icon".equals(tname)) {
                 largeIcon = element.getBody();
-            else if ("info".equals(tname) ||
-                     "description".equals(tname))
+            } else if ("info".equals(tname) ||
+                     "description".equals(tname)) {
                 info = element.getBody();
-            else if ("variable".equals(tname)) {
+            } else if ("variable".equals(tname)) {
                 variableVector.addElement(createVariable(element));
-            } else if ("attribute".equals(tname))
+            } else if ("attribute".equals(tname)) {
                 attributeVector.addElement(createAttribute(element));
-            else if ("example".equals(tname) ||   // Ignored elements
-		     false)
-                ;
-            else {
+            } else if ("fragment-attribute".equals(tname)) {
+                fragmentAttributeVector.addElement(
+                                        createFragmentAttribute(element));
+            } else if ("dynamic-attributes".equals(tname)) {
+                dynamicAttributes = JspUtil.booleanValue(element.getBody());
+            } else if ("example".equals(tname)) {
+                // Ignored elements
+            } else {
                 Constants.message("jsp.warning.unknown.element.in.tag", 
                                   new Object[] {tname},
                                   Logger.WARNING
@@ -342,12 +358,15 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	}
 	TagAttributeInfo[] tagAttributeInfo 
             = new TagAttributeInfo[attributeVector.size()];
-	attributeVector.copyInto (tagAttributeInfo);
+	attributeVector.copyInto(tagAttributeInfo);
 
 	TagVariableInfo[] tagVariableInfos
             = new TagVariableInfo[variableVector.size()];
 	variableVector.copyInto(tagVariableInfos);
 
+        TagFragmentAttributeInfo [] fragmentAttributes
+            = new TagFragmentAttributeInfo[fragmentAttributeVector.size()];
+        fragmentAttributeVector.copyInto(fragmentAttributes);
 
         TagExtraInfo tei = null;
 
@@ -393,7 +412,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 				      displayName,
 				      smallIcon,
 				      largeIcon,
-				      tagVariableInfos);
+				      tagVariableInfos,
+                                      fragmentAttributes,
+                                      dynamicAttributes);
         return taginfo;
     }
 
@@ -434,6 +455,70 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         // p("name=" + name + ", required=" + required + ", type=" + type +
         //   ", rtexprvalue=" + rtexprvalue);
         return new TagAttributeInfo(name, required, type, rtexprvalue);
+    }
+
+    TagFragmentAttributeInfo createFragmentAttribute(TreeNode elem) {
+
+        Vector fragmentInputVector = new Vector();
+        String name = null;
+        String description = null;
+        boolean required = false;
+
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+
+            if ("name".equals(tname)) {
+                name = element.getBody();
+            } else if ("required".equals(tname)) {
+                required = JspUtil.booleanValue(element.getBody());
+            } else if ("fragment-input".equals(tname)) {
+                fragmentInputVector.addElement(createFragmentInput(element));
+            } else if ("description".equals(tname)) {
+                description = element.getBody();
+            } else {
+                Constants.message("jsp.warning.unknown.element.in.attribute",
+                                  new Object[] {tname},
+                                  Logger.WARNING
+                                  );
+            }
+        }
+
+        TagFragmentAttributeInfo.FragmentInput[] fragmentInputs =
+            new TagFragmentAttributeInfo.FragmentInput[fragmentInputVector.size()];
+        fragmentInputVector.copyInto(fragmentInputs);
+
+        return new TagFragmentAttributeInfo(name, required, description,
+                                            fragmentInputs);
+    }
+
+    TagFragmentAttributeInfo.FragmentInput createFragmentInput(TreeNode elem) {
+
+        String name = null;
+        String type = null;
+        String description = null;
+
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+
+            if ("name".equals(tname)) {
+                name = element.getBody();
+            } else if ("type".equals(tname)) {
+                type = element.getBody();
+            } else if ("description".equals(tname)) {
+                description = element.getBody();
+            } else {
+                Constants.message("jsp.warning.unknown.element.in.attribute", 
+                                  new Object[] {tname},
+                                  Logger.WARNING
+                                  );
+            }
+        }
+        return new TagFragmentAttributeInfo.FragmentInput(name, type,
+                                                          description);
     }
 
     TagVariableInfo createVariable(TreeNode elem) {
@@ -547,6 +632,39 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	return initParam;
     }
 
+    FunctionInfo createFunctionInfo(TreeNode elem) {
+
+        String name = null;
+        String klass = null;
+        String signature = null;
+
+        Iterator list = elem.findChildren();
+        while (list.hasNext()) {
+            TreeNode element = (TreeNode) list.next();
+            String tname = element.getName();
+
+            if ("name".equals(tname)) {
+                name = element.getBody();
+            } else if ("function-class".equals(tname)) {
+                klass = element.getBody();
+            } else if ("function-signature".equals(tname)) {
+                signature = element.getBody();
+            } else if ("display-name".equals(tname) ||    // Ignored elements
+                     "small-icon".equals(tname) ||
+                     "large-icon".equals(tname) ||
+                     "description".equals(tname) || 
+                     "example".equals(tname)) {
+            } else {
+                Constants.message("jsp.warning.unknown.element.in.function",
+                                  new Object[] {tname},
+                                  Logger.WARNING);
+	    }
+        }
+
+        return new FunctionInfo(name, klass, signature);
+    }
+
+/*
     static void copy(InputStream in, String fileName) 
         throws IOException, FileNotFoundException 
     {
@@ -557,6 +675,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         while ((nRead = in.read(buf, 0, buf.length)) != -1)
             out.write(buf, 0, nRead);
     }
+*/
 
     //*********************************************************************
     // Until javax.servlet.jsp.tagext.TagLibraryInfo is fixed
