@@ -184,13 +184,11 @@ public final class SaveEnvEntryAction extends Action {
             String resourcetype = envEntryForm.getResourcetype();
             String path = envEntryForm.getPath();
             String host = envEntryForm.getHost();
-            String service = envEntryForm.getService();
+            String domain = envEntryForm.getDomain();
             
             ObjectName oname = null;
 
             try {
-
-                String domain = (new ObjectName(objectName)).getDomain();
                 oname = ResourceUtils.getNamingResourceObjectName(domain,
                             resourcetype, path, host);
                 // Create the new object and associated MBean

@@ -193,6 +193,11 @@ public class ResourceUtils {
         } else {
             envEntriesForm.setHost("");
         }          
+        if (domain != null) {
+            envEntriesForm.setDomain(domain);
+        } else {
+            envEntriesForm.setDomain("");
+        }          
         
         return (envEntriesForm);
 
@@ -231,7 +236,6 @@ public class ResourceUtils {
                 }
             }
         }
-        System.out.println("get datasource "+rname.toString());
         Iterator iterator = (mserver.queryMBeans(rname, null).iterator());
         
         ArrayList results = new ArrayList();        
@@ -261,7 +265,11 @@ public class ResourceUtils {
         } else {
             dataSourcesForm.setHost("");
         }        
-        
+        if (domain != null) {
+            dataSourcesForm.setDomain(domain);
+        } else {
+            dataSourcesForm.setDomain("");
+        }          
         return (dataSourcesForm);
 
     }
@@ -329,6 +337,11 @@ public class ResourceUtils {
         } else {
             mailSessionsForm.setHost("");
         }        
+        if (domain != null) {
+            mailSessionsForm.setDomain(domain);
+        } else {
+            mailSessionsForm.setDomain("");
+        }          
         
         return (mailSessionsForm);
 
@@ -395,6 +408,11 @@ public class ResourceUtils {
         } else {
             resourceLinksForm.setHost("");
         }        
+        if (domain != null) {
+            resourceLinksForm.setDomain(domain);
+        } else {
+            resourceLinksForm.setDomain("");
+        }          
         
         return (resourceLinksForm);
         

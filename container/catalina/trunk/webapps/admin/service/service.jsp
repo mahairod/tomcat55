@@ -75,11 +75,11 @@
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
-              <controls:action url='<%= "/AddHost.do?serviceName=" +
+              <controls:action url='<%= "/AddHost.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.hosts.create"/>
               </controls:action>
-              <controls:action url='<%= "/DeleteHost.do?serviceName=" +
+              <controls:action url='<%= "/DeleteHost.do?select=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.hosts.deletes"/>
               </controls:action>

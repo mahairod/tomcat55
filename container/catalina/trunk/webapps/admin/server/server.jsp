@@ -38,11 +38,11 @@
           <controls:action>
             ---------------------------------
           </controls:action>
-          <controls:action url='<%= "/AddService.do?serverName=" +
+          <controls:action url='<%= "/AddService.do?select=" +
                                       URLEncoder.encode(thisObjectName) %>'>
             <bean:message key="actions.services.create"/>
           </controls:action>
-          <controls:action url='<%= "/DeleteService.do?serverName=" +
+          <controls:action url='<%= "/DeleteService.do?select=" +
                                       URLEncoder.encode(thisObjectName) %>'>
             <bean:message key="actions.services.deletes"/>
           </controls:action>

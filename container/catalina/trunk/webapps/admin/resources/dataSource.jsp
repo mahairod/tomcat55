@@ -33,9 +33,9 @@
                name="dataSourceForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="dataSourceForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="dataSourceForm" property="domain"/>
+  <html:hidden property="domain"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -57,15 +57,15 @@
         <controls:action url='<%= "/resources/setUpDataSource.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) %>'>
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) %>'>
                 <bean:message key="resources.actions.datasrc.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listDataSources.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" +
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) + "&forward=" +
                             URLEncoder.encode("DataSources Delete List") %>'>
                 <bean:message key="resources.actions.datasrc.delete"/>
             </controls:action>

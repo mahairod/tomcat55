@@ -181,12 +181,11 @@ public final class SaveMailSessionAction extends Action {
             String resourcetype = mailSessionForm.getResourcetype();
             String path = mailSessionForm.getPath();
             String host = mailSessionForm.getHost();
-            String service = mailSessionForm.getService();
+            String domain = mailSessionForm.getDomain();
             
             ObjectName oname = null;
 
             try {
-                String domain = (new ObjectName(objectName)).getDomain();
                 oname = ResourceUtils.getNamingResourceObjectName(domain,
                             resourcetype, path, host);
 

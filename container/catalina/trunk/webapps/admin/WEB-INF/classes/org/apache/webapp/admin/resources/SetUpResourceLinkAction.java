@@ -155,13 +155,13 @@ public final class SetUpResourceLinkAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
         
         ResourceLinkForm resourceLinkForm = new ResourceLinkForm();       
         resourceLinkForm.setResourcetype(resourcetype);
         resourceLinkForm.setPath(path);
         resourceLinkForm.setHost(host);
-        resourceLinkForm.setService(service);
+        resourceLinkForm.setDomain(domain);
             
         if (objectName == null) {
             resourceLinkForm.setNodeLabel

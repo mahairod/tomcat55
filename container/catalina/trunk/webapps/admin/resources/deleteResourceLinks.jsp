@@ -30,9 +30,9 @@
                name="resourceLinksForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="resourceLinksForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="resourceLinksForm" property="domain"/>
+  <html:hidden property="domain"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
@@ -67,9 +67,9 @@
                name="resourceLinksForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="resourceLinksForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="resourceLinksForm" property="domain"/>
+  <html:hidden property="domain"/>
 
   <%@ include file="../buttons.jsp" %>
   <br>

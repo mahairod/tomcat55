@@ -188,7 +188,7 @@ public class DeleteServiceAction extends Action {
         // Accumulate a list of all available services
         ArrayList list = new ArrayList();
         try {
-            String pattern = domain + TomcatTreeBuilder.SERVICE_TYPE +
+            String pattern = "*" + TomcatTreeBuilder.SERVICE_TYPE +
                 TomcatTreeBuilder.WILDCARD;
             Iterator items =
                 mBServer.queryNames(new ObjectName(pattern), null).iterator();

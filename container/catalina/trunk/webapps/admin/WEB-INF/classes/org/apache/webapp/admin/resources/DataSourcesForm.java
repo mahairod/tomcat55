@@ -157,22 +157,22 @@ public final class DataSourcesForm extends BaseForm {
     
        
     /**
-     * The service of this data source.
+     * The domain of this data source.
      */
-    private String service = null;
+    private String domain = null;
     
     /**
-     * Return the service of the data source this bean refers to.
+     * Return the domain of the data source this bean refers to.
      */
-    public String getService() {
-        return this.service;
+    public String getDomain() {
+        return this.domain;
     }
 
     /**
-     * Set the service of the data source this bean refers to.
+     * Set the domain of the data source this bean refers to.
      */
-    public void setService(String service) {
-        this.service = service;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     // --------------------------------------------------------- Public Methods

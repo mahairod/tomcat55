@@ -33,9 +33,9 @@
                name="mailSessionForm" property="host"/>
   <html:hidden property="host"/>
 
-  <bean:define id="serviceInfo" type="java.lang.String"
-               name="mailSessionForm" property="service"/>
-  <html:hidden property="service"/>
+  <bean:define id="domainInfo" type="java.lang.String"
+               name="mailSessionForm" property="domain"/>
+  <html:hidden property="domain"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -57,15 +57,15 @@
         <controls:action url='<%= "/resources/setUpMailSession.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) %>'>
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) %>'>
                 <bean:message key="resources.actions.mailsession.create"/>
             </controls:action>
             <controls:action url='<%= "/resources/listMailSessions.do?resourcetype=" +
                             URLEncoder.encode(resourcetypeInfo) + "&path="+
                             URLEncoder.encode(pathInfo) + "&host="+
-                            URLEncoder.encode(hostInfo) + "&service="+
-                            URLEncoder.encode(serviceInfo) + "&forward=" +
+                            URLEncoder.encode(hostInfo) + "&domain="+
+                            URLEncoder.encode(domainInfo) + "&forward=" +
                             URLEncoder.encode("MailSessions Delete List") %>'>
                 <bean:message key="resources.actions.mailsession.delete"/>
             </controls:action>

@@ -164,7 +164,6 @@ public class ListDataSourcesAction extends Action {
             domain = URLDecoder.decode(domain);
         }
         
-        System.out.println("list datasource "+resourcetype+path+host+domain);
         // Create a form bean containing the requested MBean Names
         DataSourcesForm dataSourcesForm = null;
         try {

@@ -155,13 +155,13 @@ public final class SetUpMailSessionAction extends Action {
         String resourcetype = request.getParameter("resourcetype");
         String path = request.getParameter("path");
         String host = request.getParameter("host");
-        String service = request.getParameter("service");
+        String domain = request.getParameter("domain");
         
         MailSessionForm mailSessionForm = new MailSessionForm();       
         mailSessionForm.setResourcetype(resourcetype);
         mailSessionForm.setPath(path);
         mailSessionForm.setHost(host);
-        mailSessionForm.setService(service);
+        mailSessionForm.setDomain(domain);
         mailSessionForm.setType(ResourceUtils.MAILSESSION_CLASS);
 
         if (objectName == null) {

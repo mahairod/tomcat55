@@ -171,7 +171,6 @@ public final class DeleteEnvEntriesAction extends Action {
         String resourcetype = envEntriesForm.getResourcetype();
         String path = envEntriesForm.getPath();
         String host = envEntriesForm.getHost();
-        String service = envEntriesForm.getService();
         
         if (envEntries == null) {
             envEntries = new String[0];

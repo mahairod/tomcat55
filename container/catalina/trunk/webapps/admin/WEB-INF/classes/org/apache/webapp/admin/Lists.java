@@ -628,8 +628,9 @@ public class Lists {
         (MBeanServer mbserver, String domain, HttpServletRequest request)
         throws Exception {
 
+        String adminDomain = TomcatTreeBuilder.DEFAULT_DOMAIN;
         // Get the admin app's service name
-        StringBuffer sb = new StringBuffer(domain);
+        StringBuffer sb = new StringBuffer(adminDomain);
         sb.append(":type=Service,*");
         ObjectName search = new ObjectName(sb.toString());
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -656,7 +657,8 @@ public class Lists {
         throws Exception {
         
         // Get the admin app's host name
-        StringBuffer sb = new StringBuffer(domain);
+        String adminDomain = TomcatTreeBuilder.DEFAULT_DOMAIN;
+        StringBuffer sb = new StringBuffer(adminDomain);
         sb.append(":j2eeType=WebModule,*"); 
         ObjectName search = new ObjectName(sb.toString());
         Iterator names = mbserver.queryNames(search, null).iterator();
@@ -675,7 +677,7 @@ public class Lists {
                 return host;
             }
         }
-        return "";
+        return host;
 
     }
 

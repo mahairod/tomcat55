@@ -158,22 +158,22 @@ public final class EnvEntriesForm extends BaseForm {
     
        
     /**
-     * The service of this environment entry.
+     * The domain of this environment entry.
      */
-    private String service = null;
+    private String domain = null;
     
     /**
-     * Return the service of the environment entry this bean refers to.
+     * Return the domain of the environment entry this bean refers to.
      */
-    public String getService() {
-        return this.service;
+    public String getDomain() {
+        return this.domain;
     }
 
     /**
-     * Set the service of the environment entry this bean refers to.
+     * Set the domain of the environment entry this bean refers to.
      */
-    public void setService(String service) {
-        this.service = service;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
     
     // --------------------------------------------------------- Public Methods

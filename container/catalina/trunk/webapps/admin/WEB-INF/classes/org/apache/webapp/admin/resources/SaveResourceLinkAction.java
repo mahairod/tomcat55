@@ -181,12 +181,11 @@ public final class SaveResourceLinkAction extends Action {
             String resourcetype = resourceLinkForm.getResourcetype();
             String path = resourceLinkForm.getPath();
             String host = resourceLinkForm.getHost();
-            String service = resourceLinkForm.getService();
+            String domain = resourceLinkForm.getDomain();
                        
             ObjectName oname = null;
 
             try {
-                String domain = (new ObjectName(objectName)).getDomain();
                 oname = ResourceUtils.getNamingResourceObjectName(domain,
                             resourcetype, path, host);
                 // Create the new object and associated MBean
