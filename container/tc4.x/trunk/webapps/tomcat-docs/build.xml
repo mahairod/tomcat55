@@ -1,0 +1,125 @@
+<project name="tomcat-docs" default="build-main" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="../../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <property name="build.compiler"  value="classic"/>
+  <property name="webapps.build"   value="../build"/>
+  <property name="webapps.dist"    value="../dist"/>
+  <property name="webapp.name"     value="tomcat-docs"/>
+
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="site.xsl"        value="../../../jakarta-site2/xdocs/stylesheets/site.xsl"/>
+
+
+  <!-- =================== BUILD: Initialization ========================== -->
+  <target name="build-init">
+    <!-- Required only for the Ant Bugzilla #603 workaround -->
+    <tstamp/>
+    <property name="webapp.work" value="${java.io.tmpdir}/${webapp.name}${DSTAMP}${TSTAMP}"/>
+  </target>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare" depends="build-init">
+    <mkdir dir="${webapps.build}"/>
+    <mkdir dir="${webapps.build}/${webapp.name}"/>
+  </target>
+
+
+  <!-- ================ BUILD: Copy Static Files ========================== -->
+  <target name="build-static" depends="build-prepare">
+
+    <!-- Top Level Static Files -->
+    <copy    todir="${webapps.build}/${webapp.name}">
+      <fileset dir="../..">
+        <include name="BUILDING.txt"/>
+        <include name="README.txt"/>
+        <include name="RUNNING.txt"/>
+      </fileset>
+    </copy>
+
+    <!-- Images Subdirectory -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/images"/>
+    <copy    todir="${webapps.build}/${webapp.name}/images">
+      <fileset dir="images"/>
+    </copy>
+
+    <!-- WEB-INF Subdirectory -->
+    <mkdir     dir="${webapps.build}/${webapp.name}/WEB-INF"/>
+    <copy    todir="${webapps.build}/${webapp.name}/WEB-INF">
+      <fileset dir="WEB-INF"/>
+    </copy>
+
+  </target>
+
+
+  <!-- ================= BUILD: XML-HTML Generation ======================= -->
+  <target name="build-main" depends="build-static">
+
+    <!-- Workaround for Ant 1.3 bug (Bugzilla #603) where the "style"
+         attribute is resolved relatively even if it is absolute!  Copy
+         the source tree to a temporary directory, and interpolate the
+         XSLT stylesheet appropriately -->
+    <mkdir dir="${webapp.work}"/>
+    <copy    todir="${webapp.work}">
+      <fileset dir="."/>
+      <fileset dir="${site2.home}/xdocs/stylesheets" includes="site.xsl"/>
+    </copy>
+
+    <!-- Top Level Directory -->
+    <style basedir="${webapp.work}"
+           destdir="${webapps.build}/${webapp.name}"
+         extension=".html"
+             style="site.xsl"
+          excludes="build.xml project.xml"
+          includes="*.xml">
+      <param name="relative-path" expression="."/>
+    </style>
+
+    <!-- Remove the temporary directory for the Ant bug workaround -->
+    <delete dir="${webapp.work}" />
+
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"/>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${webapps.build}/${webapp.name}"/>
+  </target>
+
+
+  <!-- ======================= DIST: Create Directories =================== -->
+  <target name="dist-prepare">
+    <mkdir dir="${webapps.dist}"/>
+  </target>
+
+
+  <!-- ======================= DIST: Create Distribution Files ============ -->
+  <target name="dist" depends="build-main,dist-prepare">
+      <jar   jarfile="${webapps.dist}/${webapp.name}.war"
+             basedir="${webapps.build}/${webapp.name}" includes="**"/>
+  </target>
+
+
+  <!-- ======================= DIST: Clean Directory ====================== -->
+  <target name="dist-clean">
+    <delete dir="${webapps.dist}/${webapp.name}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean,dist-clean"/>
+
+
+</project>

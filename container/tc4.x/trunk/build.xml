@@ -61,6 +61,18 @@
   </target>
 
 
+  <!-- ======================= SPECIAL:  Tomcat Documentation ============= -->
+  <target name="tomcat-docs" depends="deploy-main">
+    <!-- The "tomcat-docs" webapp is not built by default, because the
+         workaround to an Ant bug causes the XSLT transformations to be
+         run every time.  Run "ant tomcat-docs" or "ant dist" to execute
+         this target -->
+    <ant dir="./webapps"  target="tomcat-docs"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs">
+      <fileset dir="webapps/build/tomcat-docs"/>
+    </copy>
+  </target>
+
   <!-- ======================= COMBO: Test All Components ================= -->
   <target name="test">
     <ant dir="./catalina" target="test"/>
@@ -154,7 +166,7 @@
 
 
   <!-- ====================== DIST: Create Archives ======================= -->
-  <target name="dist" depends="deploy-main,dist-static,dist-javadoc,dist-source">
+  <target name="dist" depends="deploy-main,dist-static,dist-javadoc,dist-source,tomcat-docs">
 <!-- Comment out until startup timing issues are resolved
     <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
          basedir="${tomcat.build}/webapps/ROOT" includes="**"/>

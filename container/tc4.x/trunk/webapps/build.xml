@@ -42,6 +42,10 @@
     <ant dir="${basedir}/manager" target="dist"/>
   </target>
 
+  <target name="tomcat-docs">
+    <ant dir="${basedir}/tomcat-docs" target="dist"/>
+  </target>
+
   <target name="webdav">
     <ant dir="${basedir}/webdav" target="dist"/>
   </target>
@@ -50,7 +54,13 @@
   <!-- ================= BUILD: Compile Server Components ================= -->
   <!-- Update the depends list for each subproject -->
   <target name="build" depends="build-prepare,ROOT,examples,manager,webdav"/>
-
+<!-- NOTE:  tomcat-docs is excluded because the workaround for the Ant
+     bug causes a rebuild every single time.  Execute "ant tomcat-docs"
+     directly if you want to create it.
+-->
+<!--
+  <target name="build" depends="build-prepare,ROOT,examples,manager,tomcat-docs,webdav"/>
+-->
 
   <!-- ==================== BUILD: Execute Unit Tests ===================== -->
   <target name="test" if="junit.present"
