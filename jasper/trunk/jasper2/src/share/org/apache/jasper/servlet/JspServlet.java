@@ -186,18 +186,34 @@ public class JspServlet extends HttpServlet {
     			 HttpServletResponse response)
 	throws ServletException, IOException {
 
-	try {
+        try {
             String includeUri 
                 = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
-
+            String requestUri 
+                = (String) request.getAttribute(Constants.INC_REQUEST_URI);
+            
             String jspUri;
+            
+            // When jsp-property-group/url-matching is used, and when the 
+            // jsp is not defined with <servlet-name>, the url
+            // as to be passed as it is to the JSP container (since 
+            // Catalina doesn't know anything about the requested JSP 
+            
+            // The first scenario occurs when the jsp is not directly under /
+            // example: /utf16/foo.jsp
+            if (requestUri != null){
+                String currentIncludedUri 
+                    = requestUri.substring(requestUri.indexOf(includeUri));
 
+                if ( !includeUri.equals(currentIncludedUri) ) {
+                    includeUri = currentIncludedUri;
+                }
+            }
+
+            // The second scenario is when the includeUri is null but it 
+            // is still possible to recreate the request.
             if (includeUri == null) {
-		jspUri = request.getServletPath();
-                // When jsp-property-group/url-matching is used, and when the 
-                // jsp is not defined with <servlet-name>, the url
-                // as to be passed as it is to the JSP container (since 
-                // Catalina doesn't know anything about the requested JSP 
+                jspUri = request.getServletPath();
                 if (request.getPathInfo() != null) {
                     jspUri = request.getServletPath() + request.getPathInfo();
                 }
@@ -212,40 +228,40 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-	    if (log.isDebugEnabled()) {	    
-		log.debug("JspEngine --> " + jspUri);
-		log.debug("\t     ServletPath: " + request.getServletPath());
-		log.debug("\t        PathInfo: " + request.getPathInfo());
-		log.debug("\t        RealPath: " + context.getRealPath(jspUri));
-		log.debug("\t      RequestURI: " + request.getRequestURI());
-		log.debug("\t     QueryString: " + request.getQueryString());
-		log.debug("\t  Request Params: ");
-		Enumeration e = request.getParameterNames();
+            if (log.isDebugEnabled()) {	    
+                log.debug("JspEngine --> " + jspUri);
+                log.debug("\t     ServletPath: " + request.getServletPath());
+                log.debug("\t        PathInfo: " + request.getPathInfo());
+                log.debug("\t        RealPath: " + context.getRealPath(jspUri));
+                log.debug("\t      RequestURI: " + request.getRequestURI());
+                log.debug("\t     QueryString: " + request.getQueryString());
+                log.debug("\t  Request Params: ");
+                Enumeration e = request.getParameterNames();
 
-               while (e.hasMoreElements()) {
+                while (e.hasMoreElements()) {
                     String name = (String) e.nextElement();
                     log.info("\t\t " + name + " = " +
                              request.getParameter(name));
                 }
-	    }
+            }
 
             serviceJspFile(request, response, jspUri, null, precompile);
-	} catch (RuntimeException e) {
-	    throw e;
-	} catch (ServletException e) {
-	    throw e;
-	} catch (IOException e) {
-	    throw e;
-	} catch (Throwable e) {
-	    throw new ServletException(e);
-	}
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (ServletException e) {
+            throw e;
+        } catch (IOException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ServletException(e);
+        }
 
     }
 
     public void destroy() {
-	if (log.isDebugEnabled()) {
-	    log.debug("JspServlet.destroy()");
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("JspServlet.destroy()");
+        }
         rctxt.destroy();
     }
 
