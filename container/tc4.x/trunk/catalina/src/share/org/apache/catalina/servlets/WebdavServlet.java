@@ -84,6 +84,7 @@ import java.util.StringTokenizer;
 import java.util.Locale;
 import java.util.Hashtable;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
@@ -202,7 +203,12 @@ public class WebdavServlet
      * Simple date format for the creation date ISO representation (partial).
      */
     protected static final SimpleDateFormat creationDateFormat = 
-        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+
+    static {
+        creationDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
 
     // ----------------------------------------------------- Instance Variables
@@ -590,12 +596,6 @@ public class WebdavServlet
                                   XMLWriter.CLOSING);
         
         generatedXML.sendData();
-        
-        /*
-        Writer writer = resp.getWriter();
-        writer.write(generatedXML.toString());
-        writer.flush();
-        */
         
     }
 
@@ -1948,12 +1948,18 @@ public class WebdavServlet
                 + "<lockscope><shared/></lockscope>"
                 + "<locktype><write/></locktype>"
                 + "</lockentry>";
-            generatedXML.writeProperty(null, "supportedlock", supportedLocks);
+            generatedXML.writeElement(null, "supportedlock", 
+                                      XMLWriter.OPENING);
+            generatedXML.writeText(supportedLocks);
+            generatedXML.writeElement(null, "supportedlock", 
+                                      XMLWriter.CLOSING);
             
             generateLockDiscovery(path, generatedXML);
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             break;
@@ -1986,7 +1992,9 @@ public class WebdavServlet
                                       XMLWriter.NO_CONTENT);
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             break;
@@ -2076,8 +2084,11 @@ public class WebdavServlet
                         + "<lockscope><shared/></lockscope>"
                         + "<locktype><write/></locktype>"
                         + "</lockentry>";
-                    generatedXML.writeProperty(null, "supportedlock",
-                                               supportedLocks);
+                    generatedXML.writeElement(null, "supportedlock", 
+                                              XMLWriter.OPENING);
+                    generatedXML.writeText(supportedLocks);
+                    generatedXML.writeElement(null, "supportedlock", 
+                                              XMLWriter.CLOSING);
                 } else if (property.equals("lockdiscovery")) {
                     if (!generateLockDiscovery(path, generatedXML))
                         propertiesNotFound.addElement(property);
@@ -2088,7 +2099,9 @@ public class WebdavServlet
             }
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             Enumeration propertiesNotFoundList = propertiesNotFound.elements();
@@ -2109,7 +2122,9 @@ public class WebdavServlet
                 }
                 
                 generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-                generatedXML.writeProperty(null, "status", status);
+                generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+                generatedXML.writeText(status);
+                generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
                 generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
                 
             }
@@ -2204,13 +2219,18 @@ public class WebdavServlet
                 + "<lockscope><shared/></lockscope>"
                 + "<locktype><write/></locktype>"
                 + "</lockentry>";
-            generatedXML.writeProperty(null, "supportedlock", 
-                                       supportedLocks);
+            generatedXML.writeElement(null, "supportedlock", 
+                                      XMLWriter.OPENING);
+            generatedXML.writeText(supportedLocks);
+            generatedXML.writeElement(null, "supportedlock", 
+                                      XMLWriter.CLOSING);
             
             generateLockDiscovery(path, generatedXML);
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             break;
@@ -2242,7 +2262,9 @@ public class WebdavServlet
                                       XMLWriter.NO_CONTENT);
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             break;
@@ -2303,8 +2325,11 @@ public class WebdavServlet
                         + "<lockscope><shared/></lockscope>"
                         + "<locktype><write/></locktype>"
                         + "</lockentry>";
-                    generatedXML.writeProperty(null, "supportedlock",
-                                               supportedLocks);
+                    generatedXML.writeElement(null, "supportedlock", 
+                                              XMLWriter.OPENING);
+                    generatedXML.writeText(supportedLocks);
+                    generatedXML.writeElement(null, "supportedlock", 
+                                              XMLWriter.CLOSING);
                 } else if (property.equals("lockdiscovery")) {
                     if (!generateLockDiscovery(path, generatedXML))
                         propertiesNotFound.addElement(property);
@@ -2315,7 +2340,9 @@ public class WebdavServlet
             }
             
             generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-            generatedXML.writeProperty(null, "status", status);
+            generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+            generatedXML.writeText(status);
+            generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
             generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
             
             Enumeration propertiesNotFoundList = propertiesNotFound.elements();
@@ -2336,7 +2363,9 @@ public class WebdavServlet
                 }
                 
                 generatedXML.writeElement(null, "prop", XMLWriter.CLOSING);
-                generatedXML.writeProperty(null, "status", status);
+                generatedXML.writeElement(null, "status", XMLWriter.OPENING);
+                generatedXML.writeText(status);
+                generatedXML.writeElement(null, "status", XMLWriter.CLOSING);
                 generatedXML.writeElement(null, "propstat", XMLWriter.CLOSING);
                 
             }
@@ -2404,6 +2433,7 @@ public class WebdavServlet
         StringBuffer creationDateValue = new StringBuffer
             (creationDateFormat.format
              (new Date(creationDate)));
+        /*
         int offset = Calendar.getInstance().getTimeZone().getRawOffset()
             / 3600000; // FIXME ?
         if (offset < 0) {
@@ -2419,6 +2449,7 @@ public class WebdavServlet
         } else {
             creationDateValue.append("Z");
         }
+        */
         return creationDateValue.toString();
     }
 
