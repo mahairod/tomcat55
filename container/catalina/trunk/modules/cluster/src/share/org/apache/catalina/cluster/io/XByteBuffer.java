@@ -180,24 +180,35 @@ public class XByteBuffer
      * within the buffer
      * @return - true if a complete package (header,size,data,footer) exists within the buffer
      */
-    protected int packageExists()
+    public int countPackages()
     {
+        int cnt = 0;
         int pos = START_DATA.length;
-        //first check start header
-        int index = this.firstIndexOf(buf,0,START_DATA);
-        //if the header (START_DATA) isn't the first thing or
-        //the buffer isn't even 10 bytes
-        if ( index != 0 || (bufSize<10) ) return 0;
-        //then get the size 4 bytes
-        int size = toInt(buf,pos);
-        //now the total buffer has to be long enough to hold
-        //START_DATA.length+4+size+END_DATA.length
-        pos = START_DATA.length+4+size;
-        if ( (pos+END_DATA.length) > bufSize ) return 0;
-        //and finally check the footer of the package END_DATA
-        int newpos = firstIndexOf(buf,pos,END_DATA);
-        if ( newpos != pos ) return 0;
-        return size;
+        int start = 0;
+
+        while ( start < bufSize ) {
+            //first check start header
+            int index = this.firstIndexOf(buf,start,START_DATA);
+            //if the header (START_DATA) isn't the first thing or
+            //the buffer isn't even 10 bytes
+            if ( index != start || ((bufSize-start)<10) ) break;
+            //then get the size 4 bytes
+            int size = toInt(buf, pos);
+            //now the total buffer has to be long enough to hold
+            //START_DATA.length+4+size+END_DATA.length
+            pos = start + START_DATA.length + 4 + size;
+            if ( (pos + END_DATA.length) > bufSize) break;
+            //and finally check the footer of the package END_DATA
+            int newpos = firstIndexOf(buf, pos, END_DATA);
+            //mismatch, there is no package
+            if (newpos != pos) break;
+            //increase the packet count
+            cnt++;
+            //reset the values
+            start = pos + END_DATA.length;
+            pos = start + START_DATA.length;
+        }//while
+        return cnt;
     }//getSize
 
     /**
@@ -205,7 +216,7 @@ public class XByteBuffer
      * @return - true if a complete package (header,size,data,footer) exists within the buffer
      */
     public boolean doesPackageExist()  {
-        return (packageExists()>0);
+        return (countPackages()>0);
     }//doesPackageExist
 
     /**
@@ -215,8 +226,9 @@ public class XByteBuffer
      * @return - returns the actual message bytes (header, size and footer not included).
      */
     public byte[] extractPackage(boolean clearFromBuffer) throws java.io.IOException {
-        int size = packageExists();
-        if ( size == 0 ) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
+        int psize = countPackages();
+        if ( psize == 0 ) throw new java.lang.IllegalStateException("No package exists in XByteBuffer");
+        int size = toInt(buf, START_DATA.length);
         byte[] data = new byte[size];
         System.arraycopy(buf,START_DATA.length+4,data,0,size);
         if ( clearFromBuffer ) {
@@ -382,7 +394,7 @@ public class XByteBuffer
         return result;
     }//createDataPackage
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
        System.out.println("Before="+Integer.MAX_VALUE);
        byte[] d = toBytes(Integer.MAX_VALUE);
        System.out.println("After="+toInt(d,0));
@@ -395,6 +407,36 @@ public class XByteBuffer
        System.out.println("Before=" + 4564564);
        d = toBytes((long)4564564);
        System.out.println("After=" + toLong(d, 0));
+
+       byte[] d1 = createDataPackage(new byte[] {1});
+       byte[] d2 = createDataPackage(new byte[] {2});
+       byte[] d3 = createDataPackage(new byte[] {3});
+       byte[] test = new byte[d1.length+d2.length+d3.length+5];
+       System.arraycopy(d1,0,test,0,d1.length);
+       System.arraycopy(d2,0,test,d1.length,d2.length);
+       System.arraycopy(d3,0,test,d2.length+d1.length,d3.length);
+       printBuf(d1);
+       printBuf(d2);
+       printBuf(d3);
+       printBuf(test);
+       XByteBuffer b = new XByteBuffer();
+       b.append(test,0,test.length);
+       int s = b.countPackages();
+       System.out.println("Nr of packages="+s);
+       while ( s > 0 ) {
+           d = b.extractPackage(true);
+           System.out.print("Package d1=");
+           printBuf(d);
+           s--;
+       }//while
+
+    }
+
+    public static void printBuf(byte[] b) {
+        for ( int i=0; i<b.length; i++ ) {
+            System.out.print(b[i] + " ");
+        }
+        System.out.println();
     }
 
 }//class

@@ -107,11 +107,11 @@ public class ThreadPool
     {
         WorkerThread worker = null;
 
-        //synchronized (idle) {
+        synchronized (idle) {
             if (idle.size() > 0) {
                 worker = (WorkerThread) idle.remove (0);
             }
-        //}
+        }
 
         return (worker);
     }
@@ -122,8 +122,8 @@ public class ThreadPool
      */
     void returnWorker (WorkerThread worker)
     {
-        //synchronized (idle) {
+        synchronized (idle) {
             idle.add (worker);
-        //}
+        }
     }
 }

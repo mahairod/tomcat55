@@ -169,12 +169,6 @@ public class TcpReplicationThread extends WorkerThread
         while ((count = channel.read (buffer)) > 0) {
             buffer.flip();		// make buffer readable
             int pkgcnt = reader.append(buffer.array(),0,count);
-            while ( pkgcnt > 0 ) {
-                if (synchronous) {
-                    sendAck(key,channel);
-                } //end if
-                pkgcnt--;
-            }
             buffer.clear();		// make buffer empty
         }
         //check to see if any data is available
@@ -196,8 +190,12 @@ public class TcpReplicationThread extends WorkerThread
         key.selector().wakeup();
     }
 
-    private void sendAck(SelectionKey key, SocketChannel channel) throws java.io.IOException {
+    private void sendAck(SelectionKey key, SocketChannel channel) {
         //send a reply-acknowledgement
-        channel.write(ByteBuffer.wrap(new byte[] {6,2,3}));
+        try {
+            channel.write(ByteBuffer.wrap(new byte[] {6, 2, 3}));
+        } catch ( java.io.IOException x ) {
+            log.warn("Unable to send ACK back through channel, channel disconnected?: "+x.getMessage());
+        }
     }
 }

@@ -64,6 +64,9 @@
 package org.apache.catalina.cluster.tcp;
 import java.net.InetAddress ;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Collections;
 
 /**
  * <p>Title: </p>
@@ -74,7 +77,7 @@ import java.net.Socket;
  * @version 1.0
  */
 
-public class SocketSender implements IDataSender
+public class PooledSocketSender implements IDataSender
 {
 
     private static org.apache.commons.logging.Log log =
@@ -90,12 +93,15 @@ public class SocketSender implements IDataSender
     private int keepAliveMaxRequestCount = 100; //max 100 requests before reconnecting
     private long keepAliveConnectTime = 0;
     private int keepAliveCount = 0;
+    private int maxPoolSocketLimit = 25;
 
+    private SenderQueue senderQueue = null;
 
-    public SocketSender(InetAddress host, int port)
+    public PooledSocketSender(InetAddress host, int port)
     {
         this.address = host;
         this.port = port;
+        senderQueue = new SenderQueue(this,maxPoolSocketLimit);
     }
 
     public InetAddress getAddress()
@@ -110,34 +116,17 @@ public class SocketSender implements IDataSender
 
     public void connect() throws java.io.IOException
     {
-        sc = new Socket(getAddress(),getPort());
-        sc.setSoTimeout((int)ackTimeout);
-        isSocketConnected = true;
-        this.keepAliveCount = 0;
-        this.keepAliveConnectTime = System.currentTimeMillis();
+        //do nothing, happens in the socket sender itself
     }
 
     public void disconnect()
     {
-        try
-        {
-            sc.close();
-        }catch ( Exception x)
-        {}
-        isSocketConnected = false;
+        senderQueue.close();
     }
 
     public boolean isConnected()
     {
         return isSocketConnected;
-    }
-
-    public void checkIfDisconnect() {
-        long ctime = System.currentTimeMillis() - this.keepAliveConnectTime;
-        if ( (ctime > this.keepAliveTimeout) ||
-             (this.keepAliveCount >= this.keepAliveMaxRequestCount) ) {
-            disconnect();
-        }
     }
 
     public void setAckTimeout(long timeout) {
@@ -148,54 +137,34 @@ public class SocketSender implements IDataSender
         return ackTimeout;
     }
 
+    public void setMaxPoolSocketLimit(int limit) {
+        maxPoolSocketLimit = limit;
+    }
+
+    public int getMaxPoolSocketLimit() {
+        return maxPoolSocketLimit;
+    }
+
+
     /**
      * Blocking send
      * @param data
      * @throws java.io.IOException
      */
-    public synchronized void sendMessage(String sessionId, byte[] data) throws java.io.IOException
+    public void sendMessage(String sessionId, byte[] data) throws java.io.IOException
     {
-        checkIfDisconnect();
-        if ( !isConnected() ) connect();
-        try
-        {
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-            waitForAck(ackTimeout);
-        }
-        catch ( java.io.IOException x )
-        {
-            disconnect();
-            connect();
-            sc.getOutputStream().write(data);
-            sc.getOutputStream().flush();
-            waitForAck(ackTimeout);
-        }
-        this.keepAliveCount++;
-        checkIfDisconnect();
-
-    }
-
-    private void waitForAck(long timeout)  throws java.io.IOException {
-        try {
-            int i = sc.getInputStream().read();
-            while ( (i != -1) && (i != 3)) {
-                i = sc.getInputStream().read();
-            }
-        } catch (java.net.SocketTimeoutException x ) {
-            log.warn("Wasn't able to read acknowledgement from server in "+this.ackTimeout+" ms."+
-                     " Disconnecting socket, and trying again.");
-            throw x;
-        }
+        //get a socket sender from the pool
+        SocketSender sender = senderQueue.getSender(0);
+        //send the message
+        sender.sendMessage(sessionId,data);
+        //return the connection to the pool
+        senderQueue.returnSender(sender);
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer("SocketSender[");
+        StringBuffer buf = new StringBuffer("PooledSocketSender[");
         buf.append(getAddress()).append(":").append(getPort()).append("]");
         return buf.toString();
-    }
-    public boolean isSuspect() {
-        return suspect;
     }
 
     public boolean getSuspect() {
@@ -205,6 +174,7 @@ public class SocketSender implements IDataSender
     public void setSuspect(boolean suspect) {
         this.suspect = suspect;
     }
+
     public long getKeepAliveTimeout() {
         return keepAliveTimeout;
     }
@@ -218,5 +188,78 @@ public class SocketSender implements IDataSender
         this.keepAliveMaxRequestCount = keepAliveMaxRequestCount;
     }
 
+    private class SenderQueue {
+        private int limit = 25;
+        PooledSocketSender parent = null;
+        private LinkedList queue = new LinkedList();
+        private LinkedList inuse = new LinkedList();
+        private Object mutex = new Object();
 
+        public SenderQueue(PooledSocketSender parent, int limit) {
+            this.limit = limit;
+            this.parent = parent;
+        }
+
+        public SocketSender getSender(long timeout) {
+            SocketSender sender = null;
+            long start = System.currentTimeMillis();
+            long delta = 0;
+            do {
+                synchronized (mutex) {
+
+                    if ( queue.size() > 0 ) {
+                        sender = (SocketSender) queue.removeFirst();
+                    } else if ( inuse.size() < limit ) {
+                        sender = getNewSocketSender();
+                    } else {
+                        try {
+                            mutex.wait(timeout);
+                        }catch ( Exception x ) {
+                            parent.log.warn("PoolSocketSender.senderQueue.getSender failed",x);
+                        }//catch
+                    }//end if
+                    if ( sender != null ) {
+                        inuse.add(sender);
+                    }
+                }//synchronized
+                delta = System.currentTimeMillis() - start;
+            } while ( (sender == null) && (timeout==0?true:(delta<timeout)) );
+            //to do
+            return sender;
+        }
+
+        public void returnSender(SocketSender sender) {
+            //to do
+            synchronized (mutex) {
+                queue.add(sender);
+                inuse.remove(sender);
+                mutex.notify();
+            }
+        }
+
+        private SocketSender getNewSocketSender() {
+            //new SocketSender(
+            SocketSender sender = new SocketSender(parent.getAddress(),parent.getPort());
+            sender.setKeepAliveMaxRequestCount(parent.getKeepAliveMaxRequestCount());
+            sender.setKeepAliveTimeout(parent.getKeepAliveTimeout());
+            sender.setAckTimeout(parent.getAckTimeout());
+            return sender;
+
+        }
+
+        public void close() {
+            synchronized (mutex) {
+                for ( int i=0; i<queue.size(); i++ ) {
+                    SocketSender sender = (SocketSender)queue.get(i);
+                    sender.disconnect();
+                }//for
+                for ( int i=0; i<inuse.size(); i++ ) {
+                    SocketSender sender = (SocketSender) inuse.get(i);
+                    sender.disconnect();
+                }//for
+                queue.clear();
+                inuse.clear();
+            }
+        }
+    }
 }
