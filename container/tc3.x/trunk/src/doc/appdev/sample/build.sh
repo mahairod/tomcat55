@@ -1,11 +1,10 @@
 #!/bin/sh
-# build -- Build Script for the "Hello, World" Application
+# build.sh -- Build Script for the "Hello, World" Application
 # $Id$
 
 # Identify the custom class path components we need
-CP=$TOMCAT_HOME/classes:$TOMCAT_HOME/lib/ant.jar:$TOMCAT_HOME/lib/xml.jar
-CP=$CP:$TOMCAT_HOME/lib/jasper.jar:$TOMCAT_HOME/lib/servlet.jar
-CP=$CP:$TOMCAT_HOME/lib/webserver.jar
+CP=$TOMCAT_HOME/webapps/admin/WEB-INF/lib/ant.jar:$TOMCAT_HOME/lib/common/servlet.jar
+CP=$CP:$TOMCAT_HOME/lib/container/crimson.jar
 CP=$CP:$JAVA_HOME/lib/tools.jar
 
 # Execute ANT to perform the requested build target
