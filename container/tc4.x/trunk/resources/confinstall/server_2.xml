@@ -96,7 +96,7 @@
            that are performed against this UserDatabase are immediately
            available for use by the Realm.  -->
       <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
-                 debug="0" resourceName="java:UserDatabase"/>
+                 debug="0" resourceName="UserDatabase"/>
 
       <!-- Comment out the old realm but leave here for now in case we
            need to go back quickly -->
