@@ -25,7 +25,6 @@ import javax.management.RuntimeOperationsException;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import org.apache.catalina.connector.Connector;
-import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.IntrospectionUtils;
 
 
@@ -88,10 +87,6 @@ public class ConnectorMBean extends ClassNameMBean {
         try {
             Connector connector = (Connector) getManagedResource();
             result = IntrospectionUtils.getProperty(connector, name);
-            // FIXME: I don't understand why this is needed
-            if (result == null) {
-                result = IntrospectionUtils.getProperty(connector.getProtocolHandler(), name);
-            }
         } catch (InstanceNotFoundException e) {
             throw new MBeanException(e);
         } catch (InvalidTargetObjectTypeException e) {
