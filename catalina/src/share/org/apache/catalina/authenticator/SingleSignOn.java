@@ -303,19 +303,11 @@ public class SingleSignOn
 
         if ( event.getData() != null 
              && "logout".equals( event.getData().toString() )) {
-
-            log("XXXXX logout event on " + ssoId);
-
             // logout of all applications
             deregister(ssoId);
-
         } else {
-
-            log("XXXXX invalidate of just one session " + ssoId + " " + session);
-
             // invalidate just one session
             deregister(ssoId, session);
-
         }
 
     }
@@ -426,7 +418,10 @@ public class SingleSignOn
     public String toString() {
 
         StringBuffer sb = new StringBuffer("SingleSignOn[");
-        sb.append(container.getName());
+	if (container == null )
+	    sb.append(container.getName());
+	else
+	    sb.append("Container is null");
         sb.append("]");
         return (sb.toString());
 
