@@ -265,7 +265,17 @@ public class ServerLifecycleListener
             } catch (Exception e) {
                 log("Exception handling Container property change", e);
             }
-        }  else if (event.getSource() instanceof NamingResources) {
+        } else if (event.getSource() instanceof DefaultContext) {
+            try {
+                processDefaultContextPropertyChange
+                    ((DefaultContext) event.getSource(),
+                     event.getPropertyName(),
+                     event.getOldValue(),
+                     event.getNewValue());
+            } catch (Exception e) {
+                log("Exception handling DefaultContext property change", e);
+            }            
+        } else if (event.getSource() instanceof NamingResources) {
             try {
                 processNamingResourcesPropertyChange
                     ((NamingResources) event.getSource(),

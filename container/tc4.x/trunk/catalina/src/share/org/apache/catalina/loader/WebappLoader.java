@@ -184,7 +184,7 @@ public class WebappLoader
 
 
     /**
-     * The DefaultContext with which this Manager is associated.
+     * The DefaultContext with which this Loader is associated.
      */
     protected DefaultContext defaultContext = null;
     
@@ -348,7 +348,7 @@ public class WebappLoader
 
 
     /**
-     * Return the DefaultContext with which this Manager is associated.
+     * Return the DefaultContext with which this Loader is associated.
      */
     public DefaultContext getDefaultContext() {
 
@@ -358,7 +358,7 @@ public class WebappLoader
 
 
     /**
-     * Set the DefaultContext with which this Manager is associated.
+     * Set the DefaultContext with which this Loader is associated.
      *
      * @param defaultContext The newly associated DefaultContext
      */
