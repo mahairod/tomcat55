@@ -180,26 +180,35 @@ public class TagBeginGenerator
                 String attrValue = (String) attrs.get(attributes[i].getName());
                 if (attrValue != null) {
 		    
-		    if (attributes[i].canBeRequestTime()) {
-			if (JspUtil.isExpression(attrValue))
-			    attrValue = JspUtil.getExpr(attrValue);
-			else
-			    attrValue = writer.quoteString(attrValue);
-		    } else
-			attrValue = writer.quoteString(attrValue);
-		    
 		    String attrName = attributes[i].getName();
-		    Method m = tc.getSetterMethod(attrName);
 		    
-		    if (m == null)
-			throw new JasperException
-			    (Constants.getString
-			     ("jsp.error.unable.to_find_method",
-			      new Object[] { attrName }));
-		    
-		    writer.println(thVarName+"."+m.getName()+"("+attrValue+");");
-                }
-            }
+		    if (attributes[i].canBeRequestTime() &&
+			JspUtil.isExpression(attrValue)) {
+			
+			// Find the setter method using PropertyDescriptor.
+			Method m = tc.getSetterMethod(attrName);
+			
+			if (m == null)
+			    throw new JasperException
+				(Constants.getString
+				 ("jsp.error.unable.to_find_method",
+				  new Object[] { attrName }));
+			
+			// Invoke the setter method with the attrValue.
+			attrValue = JspUtil.getExpr(attrValue);
+			writer.println
+			    (thVarName+"."+m.getName()+"("+attrValue+");");
+			
+		    } else {
+			
+			// Conversion is needed.
+			writer.println("JspRuntimeLibrary.introspecthelper(" +
+				       thVarName + ", \"" + attrName +
+				       "\",\"" + JspUtil.escapeQueryString(attrValue) +
+				       "\",null,null, false);");
+		    }
+		}
+	    }
     }
     
     public void generateServiceMethodStatements(ServletWriter writer) 
