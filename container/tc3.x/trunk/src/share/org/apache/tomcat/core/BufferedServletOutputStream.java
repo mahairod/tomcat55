@@ -231,10 +231,8 @@ public class BufferedServletOutputStream extends ServletOutputStream {
     }
 
     public void reallyFlush() throws IOException {
-	// 	System.out.println("x " + bufferCount+ " " + closed);
 	try {
 	    if (!resA.isBufferCommitted()) {
-		//	        response.writeHeaders(out);
 		sendHeaders();
 	        resA.setBufferCommitted(true);
 	    }
