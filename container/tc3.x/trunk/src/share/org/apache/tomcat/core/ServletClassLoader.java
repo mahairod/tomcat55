@@ -83,16 +83,16 @@ import java.util.*;
 // Please talk to harishp@eng.sun.com before making any changes.
 //
 class ServletClassLoader extends NetworkClassLoader {
-    private Container container;
+    private Context  context;
     
-    ServletClassLoader(Container container) {
-        super(container.getContext().getClassLoader());
-	this.container = container;
+    ServletClassLoader(Context context) {
+        super(context.getClassLoader());
+	this.context = context;
         initURLs(); 
     }
 
     private void initURLs() {
-        URL baseURL = container.getServletBase();
+        URL baseURL = context.getServletBase();
         String protocol = baseURL.getProtocol();
         int port = baseURL.getPort();
         String hostname = baseURL.getHost();
@@ -100,7 +100,7 @@ class ServletClassLoader extends NetworkClassLoader {
         String basepath = baseURL.getFile();
 
         // The classes directory...
-        for(Enumeration e = container.getClassPaths();
+        for(Enumeration e = context.getClassPaths();
             e.hasMoreElements(); ) {
             String cpath = (String) e.nextElement();
             try {
@@ -116,7 +116,7 @@ class ServletClassLoader extends NetworkClassLoader {
         // An alternate way of figuring out the jar files should
         // be specified in the spec. Probably in the deployment
         // descriptor's web.xml ???
-        for(Enumeration e = container.getLibPaths();
+        for(Enumeration e = context.getLibPaths();
             e.hasMoreElements(); ) {
             String libpath = (String) e.nextElement();
             File f =  new File(basepath + libpath + "/");
@@ -146,7 +146,7 @@ class ServletClassLoader extends NetworkClassLoader {
         throws ClassNotFoundException {
         // This is a bad idea. Unfortunately the class loader may
         // be set on the context at any point.
-        setParent(container.getContext().getClassLoader());
+        setParent(context.getClassLoader());
         return super.loadClass(name, resolve);
     }
 
