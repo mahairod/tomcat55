@@ -169,6 +169,14 @@
 
     <attributes>
 
+      <attribute name="cachingAllowed" required="false">
+        <p>This boolean flag indicates if the resources may be cached. It
+        defaults to <code>true</code>. If set to <code>false</code>, this
+        flag overrides the <em>cached</em> attribute of any contained
+        <a href="resources.html">Resources</a>
+ element.</p>
+      </attribute>
+
       <attribute name="debug" required="false">
         <p>The level of debugging detail logged by this <strong>Engine</strong>
         to the associated <a href="logger.html">Logger</a>.  Higher numbers

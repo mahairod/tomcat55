@@ -78,7 +78,10 @@
 
       <attribute name="cached" required="false">
         <p>This boolean flag indicates if the resources should be cached. It
-        defaults to <code>true</code>.</p>
+        defaults to <code>true</code>. This flag only has an effect if the
+        <em>cachingAllowed</em> attribute of the containing
+        <a href="context.html">
+Context</a> is set to <code>true</code>.</p>
       </attribute>
 
       <attribute name="caseSensitive" required="false">

@@ -69,35 +69,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Hashtable;
 import java.util.Stack;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
-import javax.naming.InitialContext;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
-import javax.naming.NamingEnumeration;
-import javax.naming.Binding;
-import javax.naming.StringRefAddr;
 import javax.naming.directory.DirContext;
-import org.apache.naming.NamingContext;
 import org.apache.naming.ContextBindings;
-import org.apache.naming.ContextAccessController;
-import org.apache.naming.EjbRef;
-import org.apache.naming.ResourceRef;
-import org.apache.naming.ResourceEnvRef;
-import org.apache.naming.TransactionRef;
 import org.apache.naming.resources.BaseDirContext;
 import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
@@ -106,10 +89,8 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
 import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
 import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -134,7 +115,6 @@ import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
@@ -1168,7 +1148,10 @@ public class StandardContext
             return;
 
         if (resources instanceof BaseDirContext) {
-            ((BaseDirContext) resources).setCached(isCachingAllowed());
+            ((BaseDirContext) resources).setCached(
+                    isCachingAllowed() &&
+                    ((BaseDirContext) resources).isCached()
+                    );
         }
         if (resources instanceof FileDirContext) {
             filesystemBased = true;
