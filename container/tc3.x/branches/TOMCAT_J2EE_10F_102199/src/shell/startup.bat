@@ -7,9 +7,8 @@ rem Improvements to this file are welcome
 
 set jsdkJars=.\webserver.jar;.\lib\servlet.jar
 set jspJars=.\lib\jasper.jar
-set beanJars=.\webpages\WEB-INF\classes\jsp\beans;
 set miscJars=.\lib\xml.jar
-set appJars=%jsdkJars%;%jspJars%;%beanJars%;%miscJars%
+set appJars=%jsdkJars%;%jspJars%;%miscJars%
 set sysJars=%JAVA_HOME%\lib\tools.jar
 
 set appClassPath=.\classes;%appJars%
@@ -36,7 +35,6 @@ set host=
 set test=
 set jsdkJars=
 set jspJars=
-set beanJars=
 set miscJars=
 set appJars=
 set appClassPath=

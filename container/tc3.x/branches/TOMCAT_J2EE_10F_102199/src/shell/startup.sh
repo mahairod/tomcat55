@@ -16,9 +16,8 @@ baseDir=`dirname $0`
 
 jsdkJars=${baseDir}/webserver.jar:${baseDir}/lib/servlet.jar
 jspJars=${baseDir}/lib/jasper.jar
-beanJars=${baseDir}/webpages/WEB-INF/classes/jsp/beans
 miscJars=${baseDir}/lib/xml.jar
-appJars=${jsdkJars}:${jspJars}:${beanJars}:${miscJars}
+appJars=${jsdkJars}:${jspJars}:${miscJars}
 sysJars=${JAVA_HOME}/lib/tools.jar
 
 appClassPath=${appJars}
