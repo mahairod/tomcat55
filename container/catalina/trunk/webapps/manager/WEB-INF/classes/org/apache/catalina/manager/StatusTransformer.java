@@ -664,6 +664,10 @@ public class StatusTransformer {
             writer.print(formatSeconds(mBeanServer.getAttribute(
                                                     objectName,
                                                     "sessionMaxAliveTime")));
+            writer.print(" Average session alive time: ");
+            writer.print(formatSeconds(mBeanServer.getAttribute(
+                                                    objectName,
+                                                    "sessionAverageAliveTime")));
             writer.print(" Processing time: ");
             writer.print(formatTime(mBeanServer.getAttribute
                                     (objectName, "processingTime"), false));

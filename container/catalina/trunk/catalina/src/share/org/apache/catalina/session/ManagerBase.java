@@ -154,6 +154,12 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     /**
+     * Average time (in seconds) that expired sessions had been alive.
+     */
+    protected int sessionAverageAliveTime;
+
+
+    /**
      * The set of currently active Sessions for this Manager, keyed by
      * session identifier.
      */
@@ -907,6 +913,30 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
      */
     public void setSessionMaxAliveTime(int sessionMaxAliveTime) {
         this.sessionMaxAliveTime = sessionMaxAliveTime;
+    }
+
+
+    /**
+     * Gets the average time (in seconds) that expired sessions had been
+     * alive.
+     *
+     * @return Average time (in seconds) that expired sessions had been
+     * alive.
+     */
+    public int getSessionAverageAliveTime() {
+        return sessionAverageAliveTime;
+    }
+
+
+    /**
+     * Sets the average time (in seconds) that expired sessions had been
+     * alive.
+     *
+     * @param sessionAverageAliveTime Average time (in seconds) that expired
+     * sessions had been alive.
+     */
+    public void setSessionAverageAliveTime(int sessionAverageAliveTime) {
+        this.sessionAverageAliveTime = sessionAverageAliveTime;
     }
 
 
