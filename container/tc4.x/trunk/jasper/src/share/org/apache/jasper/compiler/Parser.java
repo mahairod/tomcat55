@@ -59,6 +59,9 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 
 import java.io.CharArrayWriter;
+import java.io.InputStreamReader;
+import java.io.File;
+
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 
@@ -66,6 +69,7 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 
 import org.apache.jasper.logging.Logger;
+import org.apache.jasper.JspCompilationContext;
 
 /**
  * The class that parses the JSP input and calls the right methods on
@@ -118,6 +122,26 @@ public class Parser {
                                                        }
                                                    });
 	this.caw = new CharArrayWriter();
+	this.currentFile = reader.mark().getFile();
+    }
+
+    // new constructor for JSP1.2
+    public Parser(JspCompilationContext ctxt, File file, 
+		  String encoding, InputStreamReader inReader, 
+		  final ParseEventListener lnr) 
+	throws ParseException, java.io.FileNotFoundException
+    {
+	this.reader = new JspReader(ctxt, file, encoding, inReader);
+        lnr.setReader(this.reader);
+        this.listener = new DelegatingListener(lnr,
+        new Action() {
+            public void execute(Mark start, Mark stop)
+            throws JasperException
+            {
+                Parser.this.flushCharData(start, stop);
+            }
+        });
+        this.caw = new CharArrayWriter();
 	this.currentFile = reader.mark().getFile();
     }
 
@@ -471,7 +495,7 @@ public class Parser {
                                                              new Object[] { open }));
 
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
-	    listener.handleDeclaration(start, stop, attrs);
+	    listener.handleDeclaration(start, stop, attrs, reader.getChars(start, stop));
 	    return true;
 	}
     }
@@ -525,7 +549,7 @@ public class Parser {
                                          Constants.getString("jsp.error.unterminated", 
                                                                  new Object[] { open }));
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
-	    listener.handleExpression(start, stop, attrs);
+	    listener.handleExpression(start, stop, attrs, reader.getChars(start, stop));
 	    return true;
 	}
     }
@@ -578,7 +602,7 @@ public class Parser {
                                          Constants.getString("jsp.error.unterminated", 
                                                                  new Object[] { open }));
 	    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);	    
-	    listener.handleScriptlet(start, stop, attrs);
+	    listener.handleScriptlet(start, stop, attrs, reader.getChars(start, stop));
 	    return true;
 	}
     }
