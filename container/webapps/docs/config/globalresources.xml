@@ -24,9 +24,7 @@
    This context is distinct from the per-web-application JNDI contexts 
   described in
   the <a href="../jndi-resources-howto.html">JNDI Resources HOW-TO</a>.
-  With the exception of <code><strong>&lt;Environment&gt;</strong></code> 
-  values,
-  the resources defined in this element are <strong>not</strong> visible in
+  The resources defined in this element are <strong>not</strong> visible in
   the per-web-application contexts unless you explicitly link them with
   <a href="context.html#Resource Links">&lt;ResourceLink&gt;</a> elements.
   </p>
