@@ -101,12 +101,16 @@ public class GetPropertyGenerator
                 java.lang.reflect.Method meth = JspRuntimeLibrary.getReadMethod(cls, property);
                 
                 String methodName = meth.getName();
-		writer.println("out.print(org.apache.jasper.runtime.JspRuntimeLibrary.toString(" +
+		writer.println("out.print(" +
+			       Constants.JSP_RUNTIME_PACKAGE +
+			       ".JspRuntimeLibrary.toString(" +
 			       "(((" + clsName + ")pageContext.findAttribute(" +
                                "\"" + name + "\"))." + methodName + "())));");
 	    } else {
                 // Get the class name and then introspect at runtime.
-		writer.println("out.print(org.apache.jasper.runtime.JspRuntimeLibrary.toString(JspRuntimeLibrary." +
+		writer.println("out.print(" +
+			       Constants.JSP_RUNTIME_PACKAGE +
+			       ".JspRuntimeLibrary.toString(JspRuntimeLibrary." +
 			       "handleGetProperty(pageContext.findAttribute(" +
 			       "\"" + name + "\"), \"" + property + "\")));");
 	    }
