@@ -699,6 +699,16 @@ public class JspC implements Options { //, JspCompilationContext {
             } else {
                 try {
                     if (ubase != null) {
+                        try {
+                            JspCServletContext context =
+                                new JspCServletContext
+                                (new PrintWriter(System.out),
+                                 new URL("file:" + ubase.replace('\\','/') + '/'));
+                            tldLocationsCache = new
+                                TldLocationsCache(context);
+                        } catch (MalformedURLException me) {
+                            System.out.println("**" + me);
+                        }
                         File fjsp = new File(file);
                         String s = fjsp.getCanonicalPath();
                         if (s.startsWith(ubase)) {
