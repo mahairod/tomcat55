@@ -44,8 +44,11 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-           <%--
-            <controls:action url="">  <bean:message key="actions.thisconnector.delete"/> </controls:action>
+            <%--
+            <controls:action url='<%= "/DeleteConnector.do?select=" + 
+                                        URLEncoder.encode(thisObjectName) %>'>  
+            <bean:message key="actions.connectors.delete"/> 
+            </controls:action>
             --%>
        </controls:actions>   
          </div>
@@ -68,8 +71,22 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
-              <bean:write name="connectorForm" property="scheme" 
-                    scope="session"/>
+                 <logic:equal name="connectorForm" property="adminAction" value="Create">
+                    <html:select property="connectorType" onchange="IA_jumpMenu('self',this)">
+                     <bean:define id="connectorTypeVals" name="connectorForm" property="connectorTypeVals"/>
+                     <html:options collection="connectorTypeVals" property="value" labelProperty="label"/>
+                    </html:select>
+                </logic:equal>
+                <logic:equal name="connectorForm" property="adminAction" value="Edit">
+                  <bean:write name="connectorForm" property="connectorType" scope="session"/>
+                </logic:equal>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="connector.scheme"/>:</controls:label>
+            <controls:data>
+              <bean:write name="connectorForm" property="scheme" scope="session"/>
             </controls:data>
         </controls:row>
 
