@@ -32,6 +32,9 @@
 #                   (JSSE) installation, whose JAR files will be added to the
 #                   system class path used to start Tomcat.
 #
+#   CATALINA_PID    (Optional) Path of the file which should contains the pid
+#                   of catalina startup java process, when start (fork) is used
+#
 # $Id$
 # -----------------------------------------------------------------------------
 
@@ -200,6 +203,10 @@ elif [ "$1" = "start" ] ; then
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+
+      if [ ! -z "$CATALINA_PID" ]; then
+        echo $! > $CATALINA_PID
+      fi      
   else
     "$_RUNJAVA" $JAVA_OPTS $CATALINA_OPTS \
       -Djava.endorsed.dirs="$JAVA_ENDORSED_DIRS" -classpath "$CLASSPATH" \
@@ -208,6 +215,10 @@ elif [ "$1" = "start" ] ; then
       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
       org.apache.catalina.startup.Bootstrap "$@" start \
       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+
+      if [ ! -z "$CATALINA_PID" ]; then
+        echo $! > $CATALINA_PID
+      fi      
   fi
 
 elif [ "$1" = "stop" ] ; then
