@@ -8,12 +8,12 @@
     ---------------------------------
   </controls:action>
 
-  <%-- FIX ME-- add these operations once they are implemented --%>
-  <controls:action url="">
+  <controls:action url="/resources/setUpEnvEntry.do">
     <bean:message key="resources.actions.env.create"/>
   </controls:action>
 
-  <controls:action url="">
+  <controls:action url='<%= "/resources/listEnvEntries.do?forward=" 
+                        + URLEncoder.encode("EnvEntries Delete List") %>'>
     <bean:message key="resources.actions.env.delete"/>
   </controls:action>
 

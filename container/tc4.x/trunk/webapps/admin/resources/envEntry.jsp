@@ -41,12 +41,10 @@
             <controls:action url="/resources/setUpEnvEntry.do">
                 <bean:message key="resources.actions.env.create"/>
             </controls:action>
-<%--
             <controls:action url='<%= "/resources/listEnvEntries.do?forward=" 
-                        + URLEncoder.encode("Users Delete List") %>'>
+                        + URLEncoder.encode("EnvEntries Delete List") %>'>
                 <bean:message key="resources.actions.env.delete"/>
             </controls:action>
---%>
          </controls:actions>
         </div>
       </td>
