@@ -305,6 +305,12 @@ public class StandardDefaultContext
 
 
     /**
+     * Frequency of manager checks.
+     */
+    protected int managerChecksFrequency = 6;
+
+
+    /**
      * The string manager for this package.
      */
     protected static StringManager sm =
@@ -397,6 +403,22 @@ public class StandardDefaultContext
      */
     public boolean isCachingAllowed() {
         return cachingAllowed;
+    }
+
+
+    /**
+     * Set the manager checks frequency.
+     */
+    public void setManagerChecksFrequency(int managerChecksFrequency) {
+        this.managerChecksFrequency = managerChecksFrequency;
+    }
+
+
+    /**
+     * Get manager checks frquency.
+     */
+    public int getManagerChecksFrequency() {
+        return managerChecksFrequency;
     }
 
 
@@ -1527,6 +1549,8 @@ public class StandardDefaultContext
             ((StandardContext)context).setCacheMaxSize(getCacheMaxSize());
             ((StandardContext)context).setAllowLinking(isAllowLinking());
             ((StandardContext)context).setCaseSensitive(isCaseSensitive());
+            ((StandardContext)context).setManagerChecksFrequency
+                (getManagerChecksFrequency());
             if (!contexts.containsKey(context)) {
                 ((StandardContext) context).addLifecycleListener(this);
             }

@@ -38,6 +38,10 @@
                description="Should we allow the ServletContext.getContext() method to access the context of other web applications in this server?"
                type="boolean"/>
       
+    <attribute name="managerChecksFrequency"
+               description="The frequency of the manager checks (expiration and passivation)"
+               type="int"/>
+               
     <attribute name="reloadable"
                description="The reloadable flag for this web application"
                type="boolean"/>
@@ -211,6 +215,10 @@
                description="Associated manager."
                type="org.apache.catalina.Manager" />
       
+    <attribute name="managerChecksFrequency"
+               description="The frequency of the manager checks (expiration and passivation)"
+               type="int"/>
+               
     <attribute name="mappingObject"
                description="The object used for mapping"
                type="java.lang.Object"/>
