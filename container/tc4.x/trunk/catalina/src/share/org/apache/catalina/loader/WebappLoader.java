@@ -72,11 +72,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileOutputStream;
+import java.io.FilePermission;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
+import java.security.Permission;
 import java.util.jar.JarFile;
 import javax.servlet.ServletContext;
 import javax.naming.NamingException;
@@ -644,6 +646,8 @@ public class WebappLoader
             DirContextURLStreamHandler.bind
                 ((ClassLoader) classLoader, this.container.getResources());
 
+            Thread.currentThread().setContextClassLoader(classLoader);
+
         } catch (Throwable t) {
             throw new LifecycleException("start: ", t);
         }
@@ -808,6 +812,24 @@ public class WebappLoader
         ServletContext servletContext =
             ((Context) container).getServletContext();
 
+        // Assigning permissions for the work directory
+        File workDir =
+            (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+        if (workDir != null) {
+            /*
+            try {
+                String workDirPath = workDir.getCanonicalPath();
+                classLoader.addPermission
+                    (new FilePermission(workDirPath, "read,write"));
+                classLoader.addPermission
+                    (new FilePermission(workDirPath + File.separator + "-", 
+                                        "read,write,delete"));
+            } catch (IOException e) {
+                // Ignore
+            }
+            */
+        }
+
         try {
 
             URL rootURL = servletContext.getResource("/");
@@ -851,9 +873,6 @@ public class WebappLoader
 
             } else {
 
-                File workDir =
-                    (File) servletContext.getAttribute
-                    (Globals.WORK_DIR_ATTR);
                 if (workDir != null) {
                     if (libURL != null) {
                         File libDir = new File(workDir, "WEB-INF/lib/");
