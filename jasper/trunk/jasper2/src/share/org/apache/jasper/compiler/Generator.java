@@ -437,7 +437,7 @@ public class Generator {
     }
     
     /**
-     * Generates the beginning of the static portion of the servelet.
+     * Generates the beginning of the static portion of the servlet.
      */
     private void generatePreamble(Node.Nodes page) throws JasperException {
 
@@ -2878,8 +2878,10 @@ public class Generator {
 	if (gen.ctxt.isTagFile()) {
 	    TagInfo tagInfo = gen.ctxt.getTagInfo();
 	    gen.generateTagHandlerPreamble(tagInfo, page);
+	    gen.fragmentHelperClass.generatePreamble();
 	    page.visit(gen.new GenerateVisitor(gen.ctxt.isTagFile(), out,
-					       gen.methodsBuffer, null,
+					       gen.methodsBuffer,
+					       gen.fragmentHelperClass,
 					       tagInfo));
 	    gen.generateTagHandlerPostamble(  tagInfo );
 	} else {
@@ -3169,12 +3171,14 @@ public class Generator {
 	if (attrInfos != null) {
 	    for (int i=0; i<attrInfos.length; i++) {
 		String attrName = attrInfos[i].getName();
-                out.println("if( " + toGetterMethod(attrName) + " != null ) " );
-                out.print("pageContext.setAttribute(");
+                out.printil("if( " + toGetterMethod(attrName) + " != null ) " );
+		out.pushIndent();
+                out.printin("pageContext.setAttribute(");
 		out.print(quote(attrName));
 		out.print(", ");
 		out.print(toGetterMethod(attrName));
 		out.println(");");
+		out.popIndent();
 	    }
 	}
 
