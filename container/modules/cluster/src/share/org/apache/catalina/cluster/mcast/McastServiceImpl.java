@@ -138,6 +138,11 @@ public class McastServiceImpl
     protected SenderThread sender;
 
     /**
+     * When was the service started
+     */
+    protected long serviceStartTime = 0;
+
+    /**
      * Create a new mcast service impl
      * @param member - the local member
      * @param sendFrequency - the time (ms) in between pings sent out
@@ -189,6 +194,7 @@ public class McastServiceImpl
         receiver.setDaemon(true);
         receiver.start();
         sender.start();
+        serviceStartTime = System.currentTimeMillis();
     }
 
     /**
@@ -200,6 +206,7 @@ public class McastServiceImpl
         doRun = false;
         sender = null;
         receiver = null;
+        serviceStartTime = Long.MAX_VALUE;
     }
 
     /**
@@ -225,11 +232,15 @@ public class McastServiceImpl
      */
     public void send() throws Exception{
         member.inc();
-        byte[] data = member.getData();
+        byte[] data = member.getData(this.serviceStartTime);
         DatagramPacket p = new DatagramPacket(data,data.length);
         p.setAddress(address);
         p.setPort(port);
         socket.send(p);
+    }
+
+    public long getServiceStartTime() {
+       return this.serviceStartTime;
     }
 
 

@@ -145,10 +145,6 @@ public class SimpleTcpCluster
      * The properties for the
      */
     protected java.util.Properties svcproperties = new java.util.Properties();
-    /**
-     * Our current local address
-     */
-    protected Member localMember;
 
     /**
      * Tcp address to listen for incoming changes
@@ -495,7 +491,6 @@ public class SimpleTcpCluster
             service = MembershipFactory.getMembershipService(serviceclass,svcproperties);
             service.addMembershipListener(this);
             service.start();
-            localMember = service.getLocalMember();
             Thread.currentThread().sleep((msgFrequency*4));
             this.started = true;
         } catch ( Exception x ) {
@@ -509,7 +504,7 @@ public class SimpleTcpCluster
     public void send(SessionMessage msg, Member dest) {
         try
         {
-            msg.setAddress(localMember);
+            msg.setAddress(service.getLocalMember());
             Member destination = dest;
             if ( (destination == null) && (msg.getEventType() == SessionMessage.EVT_GET_ALL_SESSIONS) ) {
                 if (service.getMembers().length > 0)
@@ -522,7 +517,7 @@ public class SimpleTcpCluster
             byte[] data = outs.toByteArray();
             if(destination != null) {
                   Member tcpdest = dest;
-                  if ( (tcpdest != null) && (!localMember.equals(tcpdest)))  {
+                  if ( (tcpdest != null) && (!service.getLocalMember().equals(tcpdest)))  {
                        mReplicationTransmitter.sendMessage(msg.getSessionID(),
                                                            data,
                                                            InetAddress.getByName(tcpdest.getHost()),

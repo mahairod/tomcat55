@@ -99,7 +99,7 @@ public class McastService implements MembershipService,MembershipListener {
     /**
      * The local member
      */
-    protected Member localMember;
+    protected McastMember localMember;
 
     /**
      * Create a membership service.
@@ -142,6 +142,7 @@ public class McastService implements MembershipService,MembershipListener {
      * Return the local member
      */
     public Member getLocalMember() {
+        localMember.setMemberAliveTime(System.currentTimeMillis()-impl.getServiceStartTime());
         return localMember;
     }
 
@@ -164,7 +165,7 @@ public class McastService implements MembershipService,MembershipListener {
         String host = getProperties().getProperty("tcpListenHost");
         int port = Integer.parseInt(getProperties().getProperty("tcpListenPort"));
         String name = "tcp://"+host+":"+port;
-        localMember = new McastMember(name,host,port);
+        localMember = new McastMember(name,host,port,0);
         impl = new McastServiceImpl((McastMember)localMember,Long.parseLong(properties.getProperty("msgFrequency")),
                                     Long.parseLong(properties.getProperty("memberDropTime")),
                                     Integer.parseInt(properties.getProperty("mcastPort")),

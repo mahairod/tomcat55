@@ -98,4 +98,12 @@ public interface Member {
      * @return
      */
     public int getPort();
+
+    /**
+     * Contains information on how long this member has been online.
+     * The result is the number of milli seconds this member has been
+     * broadcasting its membership to the cluster.
+     * @return nr of milliseconds since this member started.
+     */
+    public long getMemberAliveTime();
 }
