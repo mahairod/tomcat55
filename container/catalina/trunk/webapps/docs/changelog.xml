@@ -96,6 +96,9 @@
         Prevent silent NPEs during StandardContext.start dealing with JMX registration of realm, submitted
         by Keith Wannamaker. (remm)
       </fix>
+      <fix>
+        <bug>31592</bug>: Support other encodings for digests. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

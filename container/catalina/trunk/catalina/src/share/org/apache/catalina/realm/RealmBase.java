@@ -84,6 +84,11 @@ public abstract class RealmBase
      */
     protected String digest = null;
 
+    /**
+     * The encoding charset for the digest.
+     */
+    protected String digestEncoding = null;
+
 
     /**
      * Descriptive information about this Realm implementation.
@@ -188,6 +193,23 @@ public abstract class RealmBase
 
     }
 
+    /**
+     * Returns the digest encoding charset.
+     *
+     * @return The charset (may be null) for platform default
+     */
+    public String getDigestEncoding() {
+        return digestEncoding;
+    }
+
+    /**
+     * Sets the digest encoding charset.
+     *
+     * @param charset The charset (null for platform default)
+     */
+    public void setDigestEncoding(String charset) {
+        digestEncoding = charset;
+    }
 
     /**
      * Return descriptive information about this Realm implementation and
@@ -982,10 +1004,6 @@ public abstract class RealmBase
      * convert the result to a corresponding hexadecimal string.
      * If exception, the plain credentials string is returned.
      *
-     * <strong>IMPLEMENTATION NOTE</strong> - This implementation is
-     * synchronized because it reuses the MessageDigest instance.
-     * This should be faster than cloning the instance on every request.
-     *
      * @param credentials Password or other credentials to use in
      *  authenticating this username
      */
@@ -999,7 +1017,15 @@ public abstract class RealmBase
         synchronized (this) {
             try {
                 md.reset();
-                md.update(credentials.getBytes());
+    
+                byte[] bytes = null;
+                if(getDigestEncoding() == null) {
+                    bytes = credentials.getBytes();
+                } else {
+                    bytes = credentials.getBytes(getDigestEncoding());
+                }
+                md.update(bytes);
+
                 return (HexUtils.convert(md.digest()));
             } catch (Exception e) {
                 log.error(sm.getString("realmBase.digest"), e);
@@ -1068,7 +1094,7 @@ public abstract class RealmBase
      *
      * @param credentials Password or other credentials to use in
      *  authenticating this username
-     * @param algorithm Algorithm used to do th digest
+     * @param algorithm Algorithm used to do the digest
      */
     public final static String Digest(String credentials, String algorithm) {
 
@@ -1076,8 +1102,11 @@ public abstract class RealmBase
             // Obtain a new message digest with "digest" encryption
             MessageDigest md =
                 (MessageDigest) MessageDigest.getInstance(algorithm).clone();
+
             // encode the credentials
+            // Should use the digestEncoding, but that's not a static field
             md.update(credentials.getBytes());
+
             // Digest the credentials and return as hexadecimal
             return (HexUtils.convert(md.digest()));
         } catch(Exception ex) {
