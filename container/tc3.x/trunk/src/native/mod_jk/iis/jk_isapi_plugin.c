@@ -594,22 +594,30 @@ DWORD WINAPI HttpFilterProc(PHTTP_FILTER_CONTEXT pfc,
             }
             getparents(uri);
 
-			if(p->GetHeader(pfc, "Host:", (LPVOID)Host, (LPDWORD)&szHost)) {
-				strcat(snuri,Host);
-				strcat(snuri,uri);
-				jk_log(logger, JK_LOG_DEBUG, 
-					   "In HttpFilterProc Virtual Host redirection of %s\n", 
-					   snuri);
-				worker = map_uri_to_worker(uw_map, snuri, logger);                
-			}
-			if (!worker) {
-				jk_log(logger, JK_LOG_DEBUG, 
-					   "In HttpFilterProc test Default redirection of %s\n", 
-					   uri);
-				worker = map_uri_to_worker(uw_map, uri, logger);
-			}
+            if(p->GetHeader(pfc, "Host:", (LPVOID)Host, (LPDWORD)&szHost)) {
+                strcat(snuri,Host);
+                strcat(snuri,uri);
+                jk_log(logger, JK_LOG_DEBUG, 
+                       "In HttpFilterProc Virtual Host redirection of %s\n", 
+                       snuri);
+                worker = map_uri_to_worker(uw_map, snuri, logger);                
+            }
+            if (!worker) {
+                jk_log(logger, JK_LOG_DEBUG, 
+                       "In HttpFilterProc test Default redirection of %s\n", 
+                       uri);
+                worker = map_uri_to_worker(uw_map, uri, logger);
+            }
             if(query) {
-                *query = '?';
+                char *querytmp = uri + strlen(uri);
+                *querytmp++ = '?';
+                query++;
+                /* if uri was shortened, move the query characters */
+                if (querytmp != query) {
+                    while (*query != '\0')
+                        *querytmp++ = *query++;
+                    *querytmp = '\0';
+                }
             }
 
             if(worker) {
