@@ -13,6 +13,291 @@
 
 <body>
 
+<section name="Tomcat 5.0.23 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <update>
+      New procrun binaries (mturk)
+      </update>
+      <fix>
+      Fix the problems with paths having spaces in service.bat (mturk)
+      </fix>
+      <fix>
+      <bug>28333</bug>: Add a message about cvs login in the case where 
+      checkout fails in the Ant netbuild (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      When the webapp specific JspServlet inherits the mappings from the
+      global JspServlet, we need to wipe out the wrapper corresponding to
+      the global JspServlet from the mapper (luehe)
+      </fix>
+      <update>
+      If there's a non fatal exception (with validation), no exception will be
+      rethrown by the digester. This will make the webapp startup fail if
+      the XML is invalid and XML validation is enabled, even if the error
+      isn't fatal (= the webapp would run without errors if validation was
+      disabled) (remm)
+      </update>
+      <fix>
+      <bug>28262</bug>: Fix redeployment after removal of a war, submitted by
+      Peter Rossbach (remm)
+      </fix>
+      <fix>
+      <bug>28107</bug>: Simplify Ant tasks declarations, submitted 
+      by Matt Raible (remm)
+      </fix>
+      <update>
+      Remove the hadcoding of the extension validator (remm)
+      </update>
+      <fix>
+      <bug>13924</bug>: The spec states if an error page declaration doesn't
+      match the original exception and the exception is an instance 
+      of ServletException then the exception should be unwrapped
+      and a second pass made of the error page declarations (markt, luehe)
+      </fix>
+      <update>
+      <bug>28272</bug>: Deploy manager command should use context.xml
+      from war file (luehe)
+      </update>
+      <update>
+      Added support for exception chaining if JDK 1.4 is present (luehe)
+      </update>
+      <fix>
+      Optimization: delay parsing of the cookies (remm)
+      </fix>
+      <fix>
+      <bug>19521</bug>: Add warning to RequestDumperValve docs to make users
+      aware of possible side effects (markt)
+      </fix>
+      <fix>
+      java.lang.NoClassDefFoundError: org/apache/tomcat/util/compat/JdkCompat
+      during startup on some systems (luehe)
+      </fix>
+      <fix>
+      Avoid NPE if there are no extensions, and validating extensions is
+      attempted (remm)
+      </fix>
+      <fix>
+      <bug>19545</bug>: CGI issues with CONTENT_LENGTH (markt)
+      </fix>
+      <update>
+      Expose more of the session management methods at the top-level Manager 
+      interface (luehe)
+      </update>
+      <fix>
+      <bug>18141</bug>: Support parameters with multiple values in CGI servlet
+      (markt)
+      </fix>
+      <fix>
+      <bug>9851</bug>: Digest authentication failed with Mozilla and other 
+      issues re RFC2617 (markt)
+      </fix>
+      <fix>
+      Always introspect for protocol hadlers, so that the attributes 
+      are meaningful (remm)
+      </fix>
+      <update>
+      Remove static reference in the memory protocol handler, since the JMX
+      registration is functional (remm)
+      </update>
+      <fix>
+      Stop the manager earlier, so that listeners are still present (remm)
+      </fix>
+      <update>
+      Allow extending SSO functionality, submitted by Brian Stansberry (remm)
+      </update>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Set the RMI port to the one provided in parameter in JK (hgomez)
+      </fix>
+      <fix>
+      Small memory usage optimization in the adapter (remm)
+      </fix>
+      <update>
+      Treat the IS, OS, reader and writer as facades, which will be cleared
+      after each request if the security manager is enabled (remm)
+      </update>
+      <fix>
+      <bug>19254</bug>: Provide a basic implementation for the clean-native 
+      target, submitted by marcs (markt)
+      </fix>
+      <update>
+      Test and related updates for the in memory protocol handler, allowing
+      to specify the URI as a String, or (better) a char array (remm)
+      </update>
+      <fix>
+      <bug>28674</bug>: Make duplicate more friendly to a subsequent
+      reallocation (remm)
+      </fix>
+      <fix>
+      Fix URI normalization where the URI is "/." (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>28244</bug>: XML Comment between jsp:attribute causes attributes 
+      after the comment to be ignored (kinman)
+      </fix>
+      <fix>
+      <bug>19049</bug>: Clarify error message when nesting exceptions,
+      submitted by Joseph Shraibman (markt)
+      </fix>
+      <fix>
+      <bug>28361</bug>: foreach no longer works in tag file (luehe)
+      </fix>
+      <update>
+      Added support for exception chaining if JDK 1.4 is present (luehe)
+      </update>
+      <fix>
+      Moved check for JSP resource existence into synchronized block 
+      (if JspServletWrapper==null), to avoid having multiple threads check 
+      for it simultaneously (luehe)
+      </fix>
+      <update>
+      Added number of JSPs that have been *re*loaded to set of monitorable 
+      attributes (luehe)
+      </update>
+      <fix>
+      Fix a bug where a custom tag with tagdependent body type is not
+      handled correctly in XML syntax (kinman)
+      </fix>
+      <fix>
+      <bug>28380</bug>: Javac error with ':' and '.' in attribute names 
+      (kinman)
+      </fix>
+      <fix>
+      When in deployment (ie., !development) mode, save any compilation 
+      exceptions and rethrow them (instead of recompiling and getting the 
+      same exception over and over again) until the next scheduled 
+      recompilation (luehe)
+      </fix>
+      <fix>
+      Close URLConnection's InputStream after getting lastModified date,  
+      submitted by martin (luehe)
+      </fix>
+      <fix>
+      <bug>28147</bug>: Remove canonicalization, which is not very useful 
+      here, and can cause trouble with symlinks, submitted by Rick Wong (remm)
+      </fix>
+      <fix>
+      <bug>28603</bug>: JspC Ant task does not detect errors on a second 
+      compile (luehe)
+      </fix>
+      <fix>
+      <bug>28604</bug>: JspC should not display the whole stack trace of errors
+      (luehe)
+      </fix>
+      <fix>
+      Fixed another incidence where URLConnection was not closed when 
+      checking for lastModified date of included resources (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Cluster">
+
+    <changelog>
+
+      <fix>
+      <bug>28161</bug>: The "smart" queue will now use the session message 
+      getUniqueId instead of sessionId, this makes sure that no messages are 
+      overridden when the queue fills up (fhanik)
+      </fix>
+      <fix>
+      The async replication thread will now properly exit when members join 
+      or leave the cluster (fhanik)
+      </fix>
+      <fix>
+      Make sure to close the channel upon server stop (fhanik)
+      </fix>
+      <fix> 
+      Membership alive time gets updated with each new broad cast, this will 
+      keep the membership updated with the exact lifetime of each node, the
+      cluster sorts its members by desc alive time, and change the started 
+      flag to be set earlier in the DeltaManager (fhanik)
+      </fix>
+      <fix>
+      Added all the interestOps to the synchronized blocks to guarantee 
+      non blocking behaviour at all times, submitted by Rainer Jung (fhanik)
+      </fix>
+      <update>
+      Added in the ability to run the DeltaManager/DeltaSession without 
+      a container, so that a different clustering plug in can be used 
+      to backup sessions in a primary/secondary store (fhanik)
+      </update>
+      <fix>
+      Setting the interface on the multicast service if there is a bind address
+      (fhanik)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <fix>
+      Add missing keys - connector.useBodyEncodingForURI allowTrace (amyroh)
+      </fix>
+      <update>
+      Add DataSourceRealm support in admin webapp (amyroh)
+      </update>
+      <fix>
+      <bug>20786</bug>: Manger webapp session output not formatted correctly
+      for session inactive for less than 10 minutes (markt)
+      </fix>
+      <fix>
+      <bug>28524</bug>: Exception throw when creating new JNDI data source
+      (amyroh)
+      </fix>
+      <fix>
+      Display GlobalNamingResource config if web.xml has resource-ref 
+      definition without Context Resource config (amyroh)
+      </fix>
+      <fix>
+      Change to list any additionally JNDI data-sources that are present
+      in the web.xml file, but not defined either globally or at the context
+      level, on the context level maintenance page to make it possible 
+      to click on the data-source and edit it (amyroh)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.22 (remm)">
 
   <subsection name="General">
