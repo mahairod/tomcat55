@@ -473,7 +473,6 @@ public class SimpleTcpCluster
      */
     public void start()
         throws LifecycleException {
-
         if (started)
             throw new LifecycleException
                 (sm.getString("cluster.alreadyStarted"));

@@ -147,6 +147,13 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     protected org.apache.catalina.cluster.tcp.SimpleTcpCluster cluster;
     
     protected java.util.HashMap invalidatedSessions = new java.util.HashMap();
+    
+    /**
+     * Flag to keep track if the state has been transferred or not
+     * Assumes false.
+     */
+    protected boolean stateTransferred = false;
+    
     /**
      * Constructor, just calls super()
      *
@@ -341,7 +348,6 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                         long interval = session.getMaxInactiveInterval();
                         long lastaccdist = System.currentTimeMillis() - 
                             session.getLastAccessWasDistributed();
-                        System.out.println("\nFH\ninterval="+interval+" lastaccdist="+lastaccdist);    
                         if ( ((interval*1000) / lastaccdist)< 3 ) {
                             SessionMessage accmsg = new SessionMessage(name,
                                 SessionMessage.EVT_SESSION_ACCESSED,
@@ -474,13 +480,35 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 log("Starting... no cluster associated with this context:"+getName(),1);
                 return;
             }
+            
             if (cluster.getMembers().length > 0) {
+                Member mbr = cluster.getMembers()[0];
                 SessionMessage msg =
                     new SessionMessage(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
                                        null);
-                cluster.send(msg, cluster.getMembers()[0]);
+                cluster.send(msg, mbr);
+                log.warn("Manager["+getName()+"], requesting session state from "+mbr+
+                         ". This operation will timeout if no session state has been received within "+
+                         "60 seconds");
+                long reqStart = System.currentTimeMillis();
+                long reqNow = 0;
+                boolean isTimeout=false;
+                do {
+                    try {
+                        Thread.currentThread().sleep(100);
+                    }catch ( Exception sleep) {}
+                    reqNow = System.currentTimeMillis();
+                    isTimeout=((reqNow-reqStart)>(1000*60));
+                } while ( (!isStateTransferred()) && (!isTimeout));
+                if ( isTimeout ) {
+                    log.error("Manager["+getName()+"], No session state received, timing out.");
+                }else {
+                    log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");
+                }
+            } else {
+                log.info("Manager["+getName()+"], skipping state transfer. No members active in cluster group.");
             }//end if
             mChannelStarted = true;
         }  catch ( Exception x ) {
@@ -555,13 +583,13 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                         oout.writeObject(data);
                     }//for
                     //don't send a message if we don't have to
-                    if ( sessions.length > 0) {
-                        byte[] data = bout.toByteArray();
-                        SessionMessage newmsg = new SessionMessage(name,
-                            SessionMessage.EVT_ALL_SESSION_DATA,
-                            data, "");
-                        cluster.send(newmsg, sender);
-                    }//end if
+                    oout.flush();
+                    oout.close();
+                    byte[] data = bout.toByteArray();
+                    SessionMessage newmsg = new SessionMessage(name,
+                        SessionMessage.EVT_ALL_SESSION_DATA,
+                        data, "");
+                    cluster.send(newmsg, sender);
                     break;
                 }
                 case SessionMessage.EVT_ALL_SESSION_DATA: {
@@ -576,6 +604,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                         session.setManager(this);
                         add(session);
                     }//for
+                    stateTransferred=true;
                     break;
                 }
                 case SessionMessage.EVT_SESSION_CREATED: {
@@ -622,6 +651,10 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
             log("InMemoryReplicationManager.messageDataReceived()", ex);
         }//catch
     }
+    
+    public boolean isStateTransferred() {
+        return stateTransferred;
+    }
 
     public void log(String msg)  {
         log(msg,3);
@@ -632,7 +665,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
     }
     public void log(String msg, int level) {
         if ( getDebug() >= level ) {
-            String lmsg = "[InMemoryReplicationManager] "+msg;
+            String lmsg = msg;
             if ( mPrintToScreen ) System.out.println(lmsg);
             SimpleTcpCluster.log.info(lmsg);
         }
@@ -640,12 +673,12 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
 
     public void log(String msg, Throwable x, int level)  {
         if ( getDebug() >= level )  {
-            String lmsg = "[InMemoryReplicationManager] "+msg;
+            String lmsg = msg;
             if ( mPrintToScreen ) {
                 System.out.println(lmsg);
                 x.printStackTrace();
             }
-            SimpleTcpCluster.log.info(lmsg,x);
+            SimpleTcpCluster.log.error(lmsg,x);
         }//end if
     }
 }
