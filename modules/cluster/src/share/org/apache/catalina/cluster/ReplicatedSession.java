@@ -167,7 +167,7 @@ public class ReplicatedSession
     public void expire(boolean notify, boolean jgnotify) {
         
         String id = getId();
-        super.expire();
+        super.expire(notify);
         // Notify javagroups about the expiration
         if (jgnotify) {
             int event = notify ? SessionMessage.EVT_SESSION_EXPIRED_WNOTIFY 
@@ -186,7 +186,7 @@ public class ReplicatedSession
      * without triggering an exception if the session has already expired.
      */
     public void expire() {
-        expire(true,true);
+        expire(true, true);
     }
 
 
