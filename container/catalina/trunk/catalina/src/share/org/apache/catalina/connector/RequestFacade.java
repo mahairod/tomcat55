@@ -34,6 +34,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.util.StringManager;
 
 
+import org.apache.catalina.security.SecurityUtil;
+
 /**
  * Facade class that wraps a Coyote request object.  
  * All methods are delegated to the wrapped request.
@@ -372,7 +374,7 @@ public class RequestFacade implements HttpServletRequest {
          * Clone the returned array only if there is a security manager
          * in place, so that performance won't suffer in the nonsecure case
          */
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             ret = (String[]) AccessController.doPrivileged(
                 new GetParameterValuePrivilegedAction(name));
             if (ret != null) {
@@ -595,7 +597,7 @@ public class RequestFacade implements HttpServletRequest {
          * Clone the returned array only if there is a security manager
          * in place, so that performance won't suffer in the nonsecure case
          */
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             ret = (Cookie[])AccessController.doPrivileged(
                 new GetCookiesPrivilegedAction());
             if (ret != null) {
@@ -813,7 +815,7 @@ public class RequestFacade implements HttpServletRequest {
                             sm.getString("requestFacade.nullRequest"));
         }
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             return (HttpSession)AccessController.
                 doPrivileged(new GetSessionPrivilegedAction(create));
         } else {

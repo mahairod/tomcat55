@@ -24,6 +24,7 @@ import java.security.PrivilegedExceptionAction;
 
 import javax.servlet.ServletInputStream;
 
+import org.apache.catalina.security.SecurityUtil;
 
 /**
  * This class handles reading bytes.
@@ -65,7 +66,7 @@ public class CoyoteInputStream
 
     public int read()
         throws IOException {    
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             
             try{
                 Integer result = 
@@ -94,7 +95,7 @@ public class CoyoteInputStream
 
     public int available() throws IOException {
         
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 Integer result = 
                     (Integer)AccessController.doPrivileged(
@@ -122,7 +123,7 @@ public class CoyoteInputStream
 
     public int read(final byte[] b) throws IOException {
         
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 Integer result = 
                     (Integer)AccessController.doPrivileged(
@@ -153,7 +154,7 @@ public class CoyoteInputStream
     public int read(final byte[] b, final int off, final int len)
         throws IOException {
             
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 Integer result = 
                     (Integer)AccessController.doPrivileged(
@@ -193,7 +194,7 @@ public class CoyoteInputStream
      */
     public void close() throws IOException {
         
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(
                     new PrivilegedExceptionAction(){

@@ -30,6 +30,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.util.StringManager;
+import org.apache.catalina.security.SecurityUtil;
 
 /**
  * Facade class that wraps a Coyote response object. 
@@ -205,7 +206,7 @@ public class ResponseFacade
         if (isCommitted())
             return;
         
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             AccessController.doPrivileged(new SetContentTypePrivilegedAction(type));
         } else {
             response.setContentType(type);            
@@ -243,7 +244,7 @@ public class ResponseFacade
             //                (/*sm.getString("responseFacade.finished")*/);
             return;
 
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
             try{
                 AccessController.doPrivileged(new PrivilegedExceptionAction(){
 

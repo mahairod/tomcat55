@@ -52,7 +52,7 @@ import org.apache.catalina.SessionListener;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.StringManager;
 
-
+import org.apache.catalina.security.SecurityUtil;
 /**
  * Standard implementation of the <b>Session</b> interface.  This object is
  * serializable, so that it can be stored in persistent storage or transferred
@@ -518,7 +518,7 @@ public class StandardSession
     public HttpSession getSession() {
 
         if (facade == null){
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 final StandardSession fsession = this;
                 facade = (StandardSessionFacade)AccessController.doPrivileged(new PrivilegedAction(){
                     public Object run(){
