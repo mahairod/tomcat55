@@ -481,6 +481,18 @@ public interface Context extends Container {
 
 
     /**
+     * Add the given URL pattern as a jsp-property-group.  This maps
+     * resources that match the given pattern so they will be passed
+     * to the JSP container.  Though there are other elements in the
+     * property group, we only care about the URL pattern here.  The
+     * JSP container will parse the rest.
+     *
+     * @param pattern URL pattern to be mapped 
+     */
+    public void addJspMapping(String pattern);
+
+
+    /**
      * Add a Locale Encoding Mapping (see Sec 5.4 of Servlet spec 2.4)
      *
      * @param locale locale to map an encoding for
