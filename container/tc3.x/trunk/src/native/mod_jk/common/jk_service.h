@@ -104,6 +104,7 @@ struct jk_ws_service {
     char    *server_software;
     unsigned content_length;    /* integer that represents the content  */
                                 /* length should be 0 if unknown.        */
+    unsigned content_read;
 
     /*
      * SSL information
