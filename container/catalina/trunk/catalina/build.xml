@@ -882,7 +882,7 @@
         <include name="org/apache/catalina/security/SecurityClassLoad.class" />
         <include name="org/apache/catalina/launcher/CatalinaLaunchFilter.class" />
         <include name="org/apache/naming/JndiPermission.class" />
-        <include name="org/apache/tomcat/util/compat/JdkCompat.class" />
+        <include name="org/apache/tomcat/util/compat/*" />
       </fileset>
     </jar>
 
