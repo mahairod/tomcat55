@@ -246,12 +246,35 @@
         </p>
       </attribute>
 
+      <attribute name="processTlds" required="false">
+        <p>Whether the context should process TLDs on startup.  The default
+        is true.  The false setting is intended for special cases
+        that know in advance TLDs are not part of the webapp.</p>
+      </attribute>
+
       <attribute name="swallowOutput" required="false">
         <p>If the value of this flag is <code>true</code>, the bytes output to
         System.out and System.err by the web application will be redirected to
         the web application logger. If not specified, the default value
         of the flag is <code>false</code>.</p>
       </attribute>
+
+      <attribute value="tldNamespaceAware" required="false">
+        <p>If the value of this flag is <code>true</code>, the TLD files
+        XML validation will be namespace-aware.  If you turn this flag on,
+        you should probably also turn <code>tldValidation</code> on.  The
+        default value for this flag is <code>false</code>, and setting it
+        to true will incur a performance penalty.
+        </p>
+      </attribute>
+
+      <attribute value="tldValidation" required="false">
+        <p>If the value of this flag is <code>true</code>, the TLD files
+        will be XML validated on context startup.  The default value for
+        this flag is <code>false</code>, and setting it to true will incur
+        a performance penalty.</p>
+      </attribute>
+
 
       <attribute name="useNaming" required="false">
         <p>Set to <code>true</code> (the default) to have Catalina enable a

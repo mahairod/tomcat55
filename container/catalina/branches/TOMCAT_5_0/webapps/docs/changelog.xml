@@ -42,6 +42,9 @@
       <fix>
         Added explicit close of randomIS DataInputStream to ManagerBase for better resource handling. (yoavs)
       </fix>
+      <update>
+        Added processTlds context attribute to allow disabling TLD processing. (yoavs)
+      </update>
     </changelog>
   </subsection>
   <subsection name="Webapps">
