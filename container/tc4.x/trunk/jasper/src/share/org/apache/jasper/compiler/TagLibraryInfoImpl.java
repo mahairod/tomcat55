@@ -79,6 +79,8 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagExtraInfo;
+import javax.servlet.jsp.tagext.TagLibraryValidator;
+import javax.servlet.jsp.tagext.PageInfo;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -95,6 +97,7 @@ import org.apache.jasper.logging.Logger;
  *
  * @author Anil K. Vijendran
  * @author Mandar Raje
+ * @author Pierre Delisle
  */
 public class TagLibraryInfoImpl extends TagLibraryInfo {
     static private final String TLD = "META-INF/taglib.tld";
@@ -124,6 +127,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         print("shortname", shortname, out);
         print("urn", urn, out);
         print("info", info, out);
+        print("tagLibraryValidator", tagLibraryValidator.toString(), out);
 
         for(int i = 0; i < tags.length; i++)
             out.println(tags[i].toString());
@@ -340,6 +344,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     private void parseTLD(InputStream in) 
         throws JasperException
     {
+        String validatorclass = null;
 	tld = JspUtil.parseXMLDoc(in,
 				  Constants.TAGLIB_DTD_RESOURCE,
 				  Constants.TAGLIB_DTD_PUBLIC_ID);
@@ -378,15 +383,41 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
                     this.info = t.getData();
+            } else if (tname.equals("validatorclass")) {
+                Text t = (Text) e.getFirstChild();
+                if (t != null)
+                    validatorclass = t.getData().trim();
             } else if (tname.equals("tag"))
                 tagVector.addElement(createTagInfo(e));
-            else
+            else {
                 Constants.message("jsp.warning.unknown.element.in.TLD", 
                                   new Object[] {
                                       e.getTagName()
                                   },
                                   Logger.WARNING
                                   );
+	    }
+        }
+
+        // Setup the TagLibraryValidator object if the validatorclass tag
+        // has been set for the library.
+        
+        TagLibraryValidator tlv = null;
+        if (validatorclass != null && !validatorclass.equals("")) {
+            try {
+                Class tlvClass = 
+		    ctxt.getClassLoader().loadClass(validatorclass);
+                tlv = (TagLibraryValidator) tlvClass.newInstance();
+                tlv.setTagLibraryInfo(this);
+                this.tagLibraryValidator = tlv;
+            } catch (Exception ex) {
+                Constants.message("jsp.warning.tlvclass.is.null",
+				  new Object[] {
+				      validatorclass, 
+				      "EXCEPTION: " + ex.getMessage()
+				  },
+				  Logger.ERROR);
+            }
         }
 
         this.tags = new TagInfo[tagVector.size()];
@@ -532,4 +563,32 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             out.write(buf, 0, nRead);
     }
 
+    //*********************************************************************
+    // Until javax.servlet.jsp.tagext.TagLibraryInfo is fixed
+
+    /**
+     * The instance (if any) for the TagLibraryValidator class.
+     * 
+     * @return The TagLibraryValidator instance, if any.
+     */
+    public TagLibraryValidator getTagLibraryValidator() {
+	return tagLibraryValidator;
+    }
+
+    /**
+     * Translation-time validation of the XML docu-ment
+     * associated with the JSP page.
+     * This is a convenience method on the associated 
+     * TagLibraryValidator class.
+     *
+     * @param thePage The JSP page object
+     * @return A string indicating whether the page is valid or not.
+     */
+    public String validate(PageInfo thePage) {
+	TagLibraryValidator tlv = getTagLibraryValidator();
+	if (tlv == null) return null;
+	return tlv.validate(thePage);
+    }
+
+    protected TagLibraryValidator tagLibraryValidator; 
 }
