@@ -51,6 +51,9 @@
         <bug>31201</bug>: Improve i18n support in DefaultServlet. This was causing
         problems with JSP include actions and static files. (markt)
       </fix>
+      <fix>
+        Add some log.isXXXEnabled to o.a.c.core.StandardHost StandardEngine, StandardService (pero)
+      </fix>
     </changelog>
   </subsection>
 
