@@ -188,6 +188,15 @@ public class ResponseFacade implements ServletResponse {
 
     }
 
+    public void setCharacterEncoding(String charset) {
+
+        if (isCommitted())
+            return;
+
+        response.setCharacterEncoding(charset);
+
+    }
+
 
     public void setContentType(String type) {
 
@@ -198,6 +207,11 @@ public class ResponseFacade implements ServletResponse {
 
     }
 
+    public String getContentType() {
+
+        return response.getContentType();
+
+    }
 
     public void setBufferSize(int size) {
 
