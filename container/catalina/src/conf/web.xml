@@ -170,7 +170,7 @@
   <!--   tagpoolMaxSize      The maximum tag handler pool size  [5]         -->
   <!--                                                                      -->
   <!--   xpoweredBy          Determines whether X-Powered-By response       -->
-  <!--                       header is added by generated servlet           -->
+  <!--                       header is added by generated servlet  [false]  -->
   <!--                                                                      -->
   <!-- If you wish to use Jikes to compile JSP pages:                       -->
   <!--   Set the init parameter "compiler" to "jikes".  Define              -->
