@@ -406,7 +406,7 @@ public class Compiler {
             String errorReportString = errorReport.toString();
             log.error("Error compiling file: " + javaFileName + " "
                       + errorReportString);
-            JavacErrorDetail[] javacErrors = errDispatcher.parseJavacErrors(
+            JavacErrorDetail[] javacErrors = ErrorDispatcher.parseJavacErrors(
                         errorReportString, javaFileName, pageNodes);
             if (javacErrors != null) {
                 errDispatcher.javacError(javacErrors);
