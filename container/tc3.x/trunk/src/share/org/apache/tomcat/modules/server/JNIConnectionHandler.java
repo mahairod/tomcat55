@@ -381,7 +381,7 @@ class JNIResponseAdapter extends Response {
 
     public void endHeaders() throws IOException {
 
-    	if(request.getProtocol()==null) // HTTP/0.9 
+    	if(request.protocol().isNull()) // HTTP/0.9 
 	        return;
 
         super.endHeaders();

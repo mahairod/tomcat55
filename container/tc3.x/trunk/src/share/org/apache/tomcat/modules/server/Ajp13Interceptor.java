@@ -254,7 +254,7 @@ class Ajp13Response extends Response
     {
         super.endHeaders();
     
-        if (request.getProtocol() == null) {
+        if (request.protocol().isNull()) {
             return;
         }
 
