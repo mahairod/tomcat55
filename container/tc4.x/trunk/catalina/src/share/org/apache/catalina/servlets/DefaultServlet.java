@@ -868,8 +868,6 @@ public class DefaultServlet
 	// Placed at the beginning of the chain so that encoded 
 	// bad stuff(tm) can be caught by the later checks
         String normalized = path;
-        if (normalized.indexOf('%') >= 0)
-            normalized = RequestUtil.URLDecode(normalized, "UTF8");
         if (normalized == null)
             return (null);
         
