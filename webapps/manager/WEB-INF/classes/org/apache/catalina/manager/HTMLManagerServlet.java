@@ -74,7 +74,6 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.servlet.ServletException;
@@ -136,10 +135,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         String deployWar = request.getParameter("deployWar");
 
         // Prepare our output writer to generate the response message
-        Locale locale = Locale.getDefault();
-        String charset = context.getCharsetMapper().getCharset(locale);
-        response.setLocale(locale);
-        response.setContentType("text/html; charset=" + charset);
+        response.setContentType("text/html; charset=" + Constants.CHARSET);
 
         String message = "";
         // Process the requested command
@@ -187,10 +183,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         }
 
         // Prepare our output writer to generate the response message
-        Locale locale = Locale.getDefault();
-        String charset = context.getCharsetMapper().getCharset(locale);
-        response.setLocale(locale);
-        response.setContentType("text/html; charset=" + charset);
+        response.setContentType("text/html; charset=" + Constants.CHARSET);
 
         String message = "";
 
