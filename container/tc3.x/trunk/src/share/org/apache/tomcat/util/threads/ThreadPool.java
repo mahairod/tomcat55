@@ -383,6 +383,7 @@ public class ThreadPool  {
 
     void log( String s ) {
 	loghelper.log(s);
+	loghelper.flush();
     }
     
     /** 
@@ -419,7 +420,8 @@ public class ThreadPool  {
                     p.checkSpareControllers();
 
                 } catch(Throwable t) {
-		    loghelper.log("Unexpected exception", t, Log.ERROR);
+		    loghelper.log("Unexpected exception", t);
+		    loghelper.flush();
                 }
             }
         }
@@ -514,17 +516,18 @@ public class ThreadPool  {
                         }
 
                         if(shouldRun) {
-                            toRun.runIt(thData);
+			    toRun.runIt(thData);
                         }
                     } catch(Throwable t) {
 			loghelper.log("Caught exception executing " + toRun.toString() + ", terminating thread", t);
+			loghelper.flush();
                         /*
                         * The runnable throw an exception (can be even a ThreadDeath),
                         * signalling that the thread die.
                         *
-		                * The meaning is that we should release the thread from
-		                * the pool.
-		                */
+			* The meaning is that we should release the thread from
+			* the pool.
+			*/
                         shouldTerminate = true;
                         shouldRun = false;
                         p.notifyThreadEnd(this);
@@ -548,6 +551,7 @@ public class ThreadPool  {
                 } catch(InterruptedException ie) { /* for the wait operation */
 		    // can never happen, since we don't call interrupt
 		    loghelper.log("Unexpected exception", ie);
+		    loghelper.flush();
                 }
             }
         }
@@ -557,7 +561,10 @@ public class ThreadPool  {
 		throw new NullPointerException("No Runnable");
 	    }
             this.toRun = toRun;
-            noThData = true;
+	    // Do not re-init, the whole idea is to run init only once per
+	    // thread - the pool is supposed to run a single task, that is
+	    // initialized once.
+            // noThData = true;
             shouldRun = true;
             this.notify();
         }
