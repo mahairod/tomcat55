@@ -2419,7 +2419,7 @@ class Generator {
 		    attrValue = convertString(
                                 c[0], attrValue, attrName,
 				handlerInfo.getPropertyEditorClass(attrName),
-				false);
+				true);
 		}
 	    } else if (attr.isELInterpreterInput()) {
                 // run attrValue through the expression interpreter
@@ -2429,7 +2429,7 @@ class Generator {
 		attrValue = convertString(
                                 c[0], attrValue, attrName,
 				handlerInfo.getPropertyEditorClass(attrName),
-				true);
+				false);
 	    }
 	    return attrValue;
 	}
@@ -2519,11 +2519,12 @@ class Generator {
 	}
 
 	private String convertString(Class c, String s, String attrName,
-				     Class propEditorClass, boolean quote)
+				     Class propEditorClass,
+				     boolean isNamedAttribute)
 	            throws JasperException {
 
 	    String quoted = s;
-	    if (quote) {
+	    if (!isNamedAttribute) {
 		quoted = quote(s);
 	    }
 
@@ -2538,11 +2539,19 @@ class Generator {
 	    } else if (c == boolean.class) {
 		return Boolean.valueOf(s).toString();
 	    } else if (c == Boolean.class) {
-		return "new Boolean(" + Boolean.valueOf(s).toString() + ")";
+		if (isNamedAttribute)
+		    return "new Boolean(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Boolean(" + Boolean.valueOf(s).toString() + ")";
 	    } else if (c == byte.class) {
 		return "((byte)" + Byte.valueOf(s).toString() + ")";
 	    } else if (c == Byte.class) {
-		return "new Byte((byte)" + Byte.valueOf(s).toString() + ")";
+		if (isNamedAttribute)
+		    return "new Byte(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Byte((byte)" + Byte.valueOf(s).toString() + ")";
 	    } else if (c == char.class) {
 		// non-normative (normative method would fail to compile)
 		if (s.length() > 0) {
@@ -2554,35 +2563,59 @@ class Generator {
                         err.getString("jsp.error.bad_string_char"));
 		}
 	    } else if (c == Character.class) {
-		// non-normative (normative method would fail to compile)
-		if (s.length() > 0) {
-		    char ch = s.charAt(0);
-		    // this trick avoids escaping issues
-		    return "new Character((char) " + (int) ch + ")";
+		if (isNamedAttribute) {
+		    return "org.apache.jasper.runtime.JspRuntimeLibrary.getCharacter(" + s + ")";
 		} else {
-		    throw new NumberFormatException(
-                        err.getString("jsp.error.bad_string_Character"));
+		    // non-normative (normative method would fail to compile)
+		    if (s.length() > 0) {
+			char ch = s.charAt(0);
+			// this trick avoids escaping issues
+			return "new Character((char) " + (int) ch + ")";
+		    } else {
+			throw new NumberFormatException(
+			    err.getString("jsp.error.bad_string_Character"));
+		    }
 		}
 	    } else if (c == double.class) {
 		return Double.valueOf(s).toString();
 	    } else if (c == Double.class) {
-		return "new Double(" + Double.valueOf(s).toString() + ")";
+		if (isNamedAttribute)
+		    return "new Double(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Double(" + Double.valueOf(s).toString() + ")";
 	    } else if (c == float.class) {
 		return Float.valueOf(s).toString() + "f";
 	    } else if (c == Float.class) {
-		return "new Float(" + Float.valueOf(s).toString() + "f)";
+		if (isNamedAttribute)
+		    return "new Float(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Float(" + Float.valueOf(s).toString() + "f)";
 	    } else if (c == int.class) {
 		return Integer.valueOf(s).toString();
 	    } else if (c == Integer.class) {
-		return "new Integer(" + Integer.valueOf(s).toString() + ")";
+		if (isNamedAttribute)
+		    return "new Integer(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Integer(" + Integer.valueOf(s).toString() + ")";
 	    } else if (c == short.class) {
 		return "((short) " + Short.valueOf(s).toString() + ")";
 	    } else if (c == Short.class) {
-		return "new Short(" + Short.valueOf(s).toString() + ")";
+		if (isNamedAttribute)
+		    return "new Short(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Short(\"" + Short.valueOf(s).toString() + "\")";
 	    } else if (c == long.class) {
 		return Long.valueOf(s).toString() + "l";
 	    } else if (c == Long.class) {
-		return "new Long(" + Long.valueOf(s).toString() + "l)";
+		if (isNamedAttribute)
+		    return "new Long(" + s + ")";
+		else
+		    // Detect format error at translation time
+		    return "new Long(" + Long.valueOf(s).toString() + "l)";
 	    } else if (c == Object.class) {
 		return "new String(" + quoted + ")";
 	    } else {

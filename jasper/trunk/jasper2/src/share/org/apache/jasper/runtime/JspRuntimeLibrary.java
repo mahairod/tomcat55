@@ -128,7 +128,15 @@ public class JspRuntimeLibrary {
             return null;
         }
     }
- 
+
+    public static Character getCharacter(String s) throws JasperException {
+	if (s.length() > 0) {
+	    return new Character(s.charAt(0));
+	} else {
+	    throw new JasperException(Constants.getString("jsp.error.bad_string_Character"));
+	}
+    }
+
    // __begin convertMethod
     public static Object convert(String propertyName, String s, Class t, Class propertyEditorClass) 
        throws JasperException 
