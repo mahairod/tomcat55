@@ -759,6 +759,9 @@ public final class StandardWrapper
 	    throw new ServletException
 		(sm.getString("standardWrapper.missingLoader", getName()));
 	}
+
+        ClassLoader oldCtxClassLoader = 
+            Thread.currentThread().getContextClassLoader();
 	ClassLoader classLoader = loader.getClassLoader();
 
         // Special case class loader for a Catalina internal servlet
@@ -811,6 +814,7 @@ public final class StandardWrapper
 	try {
 	    instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
 					      servlet);
+            Thread.currentThread().setContextClassLoader(classLoader);
 	    servlet.init((ServletConfig) this);
 	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
 					      servlet);
@@ -832,7 +836,10 @@ public final class StandardWrapper
 	    // said so, so do not call unavailable(null).
 	    throw new ServletException
 		(sm.getString("standardWrapper.initException", getName()), f);
-	}
+	} finally {
+            // restore the context ClassLoader
+            Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+        }
 
 	// Register our newly initialized instance
 	instance = servlet;
@@ -959,12 +966,16 @@ public final class StandardWrapper
                 }
             }
         }
-              
+        
+        ClassLoader oldCtxClassLoader = 
+            Thread.currentThread().getContextClassLoader();
+        ClassLoader classLoader = loader.getClassLoader();
 
 	// Call the servlet destroy() method
 	try {
 	    instanceSupport.fireInstanceEvent
 	      (InstanceEvent.BEFORE_DESTROY_EVENT, instance);
+            Thread.currentThread().setContextClassLoader(classLoader);
 	    instance.destroy();
 	    instanceSupport.fireInstanceEvent
 	      (InstanceEvent.AFTER_DESTROY_EVENT, instance);
@@ -977,7 +988,10 @@ public final class StandardWrapper
 	    throw new ServletException
 		(sm.getString("standardWrapper.destroyException", getName()),
 		 t);
-	}
+	} finally {
+            // restore the context ClassLoader
+            Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+        }
 
 	// Deregister the destroyed instance
 	instance = null;
