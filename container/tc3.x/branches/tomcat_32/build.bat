@@ -1,6 +1,11 @@
 @echo off
 REM convience bat file to build with
 
+if not "%JAVA_HOME%" == "" goto gotJavaHome
+echo You must set the JAVA_HOME environment variable to point at your JDK
+goto finish
+:gotJavaHome
+
 set _ANTHOME=%ANT_HOME%
 if "%ANT_HOME%" == "" set ANT_HOME=..\jakarta-ant
 
@@ -11,7 +16,7 @@ if "%CLASSPATH%" == "" goto noclasspath
 
 rem else
 set _CLASSPATH=%CLASSPATH%
-set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%SERVLETAPI_HOME%\lib\servlet.jar;..\jakarta-tools\moo.jar
+set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%SERVLETAPI_HOME%\lib\servlet.jar;..\jakarta-tools\moo.jar;%JAVA_HOME%\lib\tools.jar
 goto next
 
 :noclasspath
