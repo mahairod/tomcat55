@@ -228,8 +228,9 @@ public class EditServiceAction extends Action {
             Iterator items = Lists.getHosts(mBServer, sname).iterator();
             while (items.hasNext()) {
                 ObjectName hname = new ObjectName((String) items.next());
-                String name = hname.getKeyProperty("name");
-                hosts.add(new LabelValueBean(name, name));
+                String name = hname.getKeyProperty("host");
+                if (name!=null)
+                    hosts.add(new LabelValueBean(name, name));
             }
             serviceFm.setHostNameVals(hosts);
 

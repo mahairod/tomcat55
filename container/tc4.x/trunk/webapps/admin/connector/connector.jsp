@@ -249,7 +249,7 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.keystore.filename"/>:</controls:label>
             <controls:data>
-                <html:text property="keyStoreFileName" size="15"/> 
+                <html:text property="keyStoreFileName" size="30"/> 
             </controls:data>
         </controls:row>
 
@@ -257,7 +257,7 @@
             <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
             <controls:data>
                 <%-- should the password be of type html:password or is cleartext ok? --%>
-                <html:text property="keyStorePassword" size="15"/> 
+                <html:text property="keyStorePassword" size="30"/> 
             </controls:data>
         </controls:row>
 
