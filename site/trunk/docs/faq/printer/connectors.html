@@ -65,6 +65,12 @@
       </a>
     </li>
 
+    <li>
+      <a href="#utf8">
+      I'm having strange UTF-8 issues with my request parameters.
+      </a>
+    </li>
+
   </ul>
 </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Answers"><strong>Answers</strong></a></font></td></tr><tr><td><blockquote>
@@ -93,25 +99,28 @@
         as jk and jk2. It WILL NOT run on windows.
       </li>
       <li>
-        mod_jserv at this point is unsupported and will not be supported
+        mod_jserv is unsupported and will not be supported
         in Tomcat 5. mod_jserv was the original connector which supported
         the ajp protocol.
+      </li>
+      <li>
+        jk2 is a refactoring of mod_jk and uses the Apache Portable
+        Runtime (apr). But due to lack of developer interest, it is unsupported.
+        The alternative is mod_jk or mod_ajp.
       </li>
       <li>
         <b>mod_jk is great and should be used for production. It is getting
         fixes as needed (which is now rare). </b>
       </li>
-      <li>
-        jk2 is a refactoring of mod_jk and uses the Apache Portable
-        Runtime (apr). If you are using Apache 2.0,
-        you'll might want to use jk2. But this may not be production
-        worthy for everyone. (YMMV) jk2 has quirks which may not be acceptable
-        to all.
-      </li>
       <li>mod_proxy. A cheap way to proxy without the hassles of configuring JK.
         This solution lacks sticky session load balancing. If you don't
         need some of the features of jk, jk2 - this is a very simple
         alternative.
+      </li>
+      <li>mod_ajp. With apache 2.2, mod_proxy was rewritten to support
+          load balancing as well as a new transport called mod_ajp.
+          This module is distributed with the Apache http server, not
+          the Tomcat server.
       </li>
     </ul>
   </div><br>
@@ -228,7 +237,8 @@
     <br><br>
     <a href="http://marc.theaimsgroup.com/?t=105784893200003&r=1&w=2">
         Thread which spawned this question.
-    </a>
+    </a> <br>
+    <b>Please note the JK2 is unsupported.</b>
   </div><br>
 
 
@@ -284,6 +294,23 @@
     Note that JPackage.org has RPM distributions for the connectors
     as well as tomcat itself: <a href="http://www.jpackage.org">JPackage.org</a>
   </div><br>
+
+  <b style="font-size: larger">
+    <a name="utf8">
+    I'm having strange UTF-8 issues with my request parameters.
+    </a>
+  </b>
+  <div style="padding-left : 20px;">
+    In tomcat 5 - does your connector have Connector declaration have
+    <tt>URIEncoding="UTF-8"</tt>. For example:
+    <pre>
+&lt;Connector port="80"
+           maxThreads="50" minSpareThreads="5" maxSpareThreads="15"
+           disableUploadTimeout="true"
+           URIEncoding="UTF-8"/&gt;
+    </pre>
+  </div><br>
+
 
 
 </blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
