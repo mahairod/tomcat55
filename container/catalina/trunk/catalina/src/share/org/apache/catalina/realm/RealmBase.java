@@ -113,6 +113,7 @@ import org.apache.commons.logging.LogFactory;
 
 public abstract class RealmBase
     implements Lifecycle, Realm, MBeanRegistration {
+
     private static Log log = LogFactory.getLog(RealmBase.class);
 
     // ----------------------------------------------------- Instance Variables
@@ -414,18 +415,18 @@ public abstract class RealmBase
             return (null);
 
         // Check the validity of each certificate in the chain
-        if (debug >= 1)
-            log("Authenticating client certificate chain");
+        if (log.isDebugEnabled())
+            log.debug("Authenticating client certificate chain");
         if (validate) {
             for (int i = 0; i < certs.length; i++) {
-                if (debug >= 2)
-                    log(" Checking validity for '" +
+                if (log.isDebugEnabled())
+                    log.debug(" Checking validity for '" +
                         certs[i].getSubjectDN().getName() + "'");
                 try {
                     certs[i].checkValidity();
                 } catch (Exception e) {
-                    if (debug >= 2)
-                        log("  Validity exception", e);
+                    if (log.isDebugEnabled())
+                        log.debug("  Validity exception", e);
                     return (null);
                 }
             }
@@ -448,8 +449,8 @@ public abstract class RealmBase
         // Are there any defined security constraints?
         SecurityConstraint constraints[] = context.findConstraints();
         if ((constraints == null) || (constraints.length == 0)) {
-            if (debug >= 2)
-                log("  No applicable constraints defined");
+            if (log.isDebugEnabled())
+                log.debug("  No applicable constraints defined");
             return (null);
         }
 
@@ -461,8 +462,8 @@ public abstract class RealmBase
             uri = uri.substring(contextPath.length());
         String method = hreq.getMethod();
         for (int i = 0; i < constraints.length; i++) {
-            if (debug >= 2)
-                log("  Checking constraint '" + constraints[i] +
+            if (log.isDebugEnabled())
+                log.debug("  Checking constraint '" + constraints[i] +
                     "' against " + method + " " + uri + " --> " +
                     constraints[i].included(uri, method));
             if (constraints[i].included(uri, method))
@@ -470,8 +471,8 @@ public abstract class RealmBase
         }
 
         // No applicable security constraint was found
-        if (debug >= 2)
-            log("  No applicable constraint located");
+        if (log.isDebugEnabled())
+            log.debug("  No applicable constraint located");
         return (null);
 
     }
@@ -506,19 +507,19 @@ public abstract class RealmBase
             String requestURI = request.getDecodedRequestURI();
             String loginPage = context.getPath() + config.getLoginPage();
             if (loginPage.equals(requestURI)) {
-                if (debug >= 1)
-                    log(" Allow access to login page " + loginPage);
+                if (log.isDebugEnabled())
+                    log.debug(" Allow access to login page " + loginPage);
                 return (true);
             }
             String errorPage = context.getPath() + config.getErrorPage();
             if (errorPage.equals(requestURI)) {
-                if (debug >= 1)
-                    log(" Allow access to error page " + errorPage);
+                if (log.isDebugEnabled())
+                    log.debug(" Allow access to error page " + errorPage);
                 return (true);
             }
             if (requestURI.endsWith(Constants.FORM_ACTION)) {
-                if (debug >= 1)
-                    log(" Allow access to username/password submission");
+                if (log.isDebugEnabled())
+                    log.debug(" Allow access to username/password submission");
                 return (true);
             }
         }
@@ -527,8 +528,8 @@ public abstract class RealmBase
         Principal principal =
             ((HttpServletRequest) request.getRequest()).getUserPrincipal();
         if (principal == null) {
-            if (debug >= 2)
-                log("  No user authenticated, cannot grant access");
+            if (log.isDebugEnabled())
+                log.debug("  No user authenticated, cannot grant access");
             ((HttpServletResponse) response.getResponse()).sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  sm.getString("realmBase.notAuthenticated"));
@@ -541,17 +542,24 @@ public abstract class RealmBase
 
         if (constraint.getAllRoles())
             return (true);
+
+        if (log.isDebugEnabled())
+            log.debug("  Checking roles " + principal);
+
         if ((roles.length == 0) && (constraint.getAuthConstraint())) {
             ((HttpServletResponse) response.getResponse()).sendError
                 (HttpServletResponse.SC_FORBIDDEN,
                  sm.getString("realmBase.forbidden"));
+            if( log.isDebugEnabled() ) log.debug("No roles ");
             return (false); // No listed roles means no access at all
         }
+
         for (int i = 0; i < roles.length; i++) {
             if (hasRole(principal, roles[i]))
                 return (true);
+            if( log.isDebugEnabled() )
+                log.debug( "No role found:  " + roles[i]);
         }
-
         // Return a "Forbidden" message denying access to this resource
         ((HttpServletResponse) response.getResponse()).sendError
             (HttpServletResponse.SC_FORBIDDEN,
@@ -574,19 +582,22 @@ public abstract class RealmBase
      */
     public boolean hasRole(Principal principal, String role) {
 
+        // Should be overriten in JAASRealm - to avoid pretty inefficient conversions
         if ((principal == null) || (role == null) ||
             !(principal instanceof GenericPrincipal))
             return (false);
+
         GenericPrincipal gp = (GenericPrincipal) principal;
-        if (!(gp.getRealm() == this))
-            return (false);
+        if (!(gp.getRealm() == this)) {
+            log.debug("Different realm " + this + " " + gp.getRealm());//    return (false);
+        }
         boolean result = gp.hasRole(role);
-        if (debug >= 2) {
+        if (log.isDebugEnabled()) {
             String name = principal.getName();
             if (result)
-                log(sm.getString("realmBase.hasRoleSuccess", name, role));
+                log.debug(sm.getString("realmBase.hasRoleSuccess", name, role));
             else
-                log(sm.getString("realmBase.hasRoleFailure", name, role));
+                log.debug(sm.getString("realmBase.hasRoleFailure", name, role));
         }
         return (result);
 
@@ -612,26 +623,26 @@ public abstract class RealmBase
 
         // Is there a relevant user data constraint?
         if (constraint == null) {
-            if (debug >= 2)
-                log("  No applicable security constraint defined");
+            if (log.isDebugEnabled())
+                log.debug("  No applicable security constraint defined");
             return (true);
         }
         String userConstraint = constraint.getUserConstraint();
         if (userConstraint == null) {
-            if (debug >= 2)
-                log("  No applicable user data constraint defined");
+            if (log.isDebugEnabled())
+                log.debug("  No applicable user data constraint defined");
             return (true);
         }
         if (userConstraint.equals(Constants.NONE_TRANSPORT)) {
-            if (debug >= 2)
-                log("  User data constraint has no restrictions");
+            if (log.isDebugEnabled())
+                log.debug("  User data constraint has no restrictions");
             return (true);
         }
 
         // Validate the request against the user data constraint
         if (request.getRequest().isSecure()) {
-            if (debug >= 2)
-                log("  User data constraint already satisfied");
+            if (log.isDebugEnabled())
+                log.debug("  User data constraint already satisfied");
             return (true);
         }
 
@@ -644,8 +655,8 @@ public abstract class RealmBase
 
         // Is redirecting disabled?
         if (redirectPort <= 0) {
-            if (debug >= 2)
-                log("  SSL redirect is disabled");
+            if (log.isDebugEnabled())
+                log.debug("  SSL redirect is disabled");
             hresponse.sendError
                 (HttpServletResponse.SC_FORBIDDEN,
                  hrequest.getRequestURI());
@@ -670,13 +681,13 @@ public abstract class RealmBase
         URL url = null;
         try {
             url = new URL(protocol, host, redirectPort, file.toString());
-            if (debug >= 2)
-                log("  Redirecting to " + url.toString());
+            if (log.isDebugEnabled())
+                log.debug("  Redirecting to " + url.toString());
             hresponse.sendRedirect(url.toString());
             return (false);
         } catch (MalformedURLException e) {
-            if (debug >= 2)
-                log("  Cannot create new URL", e);
+            if (log.isDebugEnabled())
+                log.debug("  Cannot create new URL", e);
             hresponse.sendError
                 (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                  hrequest.getRequestURI());
@@ -821,7 +832,7 @@ public abstract class RealmBase
                 md.update(credentials.getBytes());
                 return (HexUtils.convert(md.digest()));
             } catch (Exception e) {
-                log(sm.getString("realmBase.digest"), e);
+                log.error(sm.getString("realmBase.digest"), e);
                 return (credentials);
             }
         }
