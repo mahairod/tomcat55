@@ -219,6 +219,26 @@ public interface Manager {
     public void setSessionMaxAliveTime(int sessionMaxAliveTime);
 
 
+    /**
+     * Gets the average time (in seconds) that expired sessions had been
+     * alive.
+     *
+     * @return Average time (in seconds) that expired sessions had been
+     * alive.
+     */
+    public int getSessionAverageAliveTime();
+
+
+    /**
+     * Sets the average time (in seconds) that expired sessions had been
+     * alive.
+     *
+     * @param sessionAverageAliveTime Average time (in seconds) that expired
+     * sessions had been alive.
+     */
+    public void setSessionAverageAliveTime(int sessionAverageAliveTime);
+
+
     // --------------------------------------------------------- Public Methods
 
 

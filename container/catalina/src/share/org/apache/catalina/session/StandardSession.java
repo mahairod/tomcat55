@@ -685,14 +685,21 @@ public class StandardSession
 
             /*
              * Compute how long this session has been alive, and update
-             * manager's sessionMaxAliveTime property if necessary
+             * session manager's related properties accordingly
              */
             long timeNow = System.currentTimeMillis();
             int timeAlive = (int) ((timeNow - creationTime)/1000);
-            if (timeAlive > manager.getSessionMaxAliveTime()) {
-                manager.setSessionMaxAliveTime(timeAlive);
+            synchronized (manager) {
+                if (timeAlive > manager.getSessionMaxAliveTime()) {
+                    manager.setSessionMaxAliveTime(timeAlive);
+                }
+                int numExpired = manager.getExpiredSessions();
+                numExpired++;
+                manager.setExpiredSessions(numExpired);
+                int average = manager.getSessionAverageAliveTime();
+                average = ((average * (numExpired-1)) + timeAlive)/numExpired;
+                manager.setSessionAverageAliveTime(average);
             }
-
 
             // Remove this session from our manager's active sessions
             manager.remove(this);
