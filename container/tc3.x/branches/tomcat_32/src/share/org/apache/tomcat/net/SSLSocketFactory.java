@@ -236,11 +236,11 @@ public class SSLSocketFactory
 	request. This will be replaced with a clean, interceptor
 	based mechanism in 3.3
     */
-    public void preProcessRequest( Socket sslSocket,
+    public void preProcessRequest( Socket socket,
 				   org.apache.tomcat.core.Request reqA )
     {
-	//Set the client certificate attribute if appropriate
-	if( socket instanceof javax.net.ssl.SSLSocket ) {
+	try {
+	    //Set the client certificate attribute if appropriate
 	    javax.net.ssl.SSLSocket sslSocket = (javax.net.ssl.SSLSocket)socket;
 	    javax.security.cert.X509Certificate[] certChain = sslSocket.
 		getSession().getPeerCertificateChain();
@@ -251,8 +251,9 @@ public class SSLSocketFactory
 		reqA.setAttribute("javax.servlet.request.X509Certificate",
 				  certChain[0]);
 	    }
-	    // this is a  ssl socket
-	    reqA.setScheme( "https" );
+	} catch( Exception ex ) {
 	}
+	// this is a  ssl socket
+	reqA.setScheme( "https" );
     }
 }
