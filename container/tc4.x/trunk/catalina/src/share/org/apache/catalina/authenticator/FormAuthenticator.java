@@ -164,10 +164,12 @@ public class FormAuthenticator
                     context.getRealm().authenticate(username, password);
                 if (principal != null) {
                     session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
-                    register(request, response, principal,
-                             Constants.FORM_METHOD,
-                             username, password);
-                    return (true);
+                    if (!matchRequest(request)) {
+                        register(request, response, principal,
+                                 Constants.FORM_METHOD,
+                                 username, password);
+                        return (true);
+                    }
                 }
                 if (debug >= 1)
                     log("Reauthentication failed, proceed normally");
@@ -185,6 +187,12 @@ public class FormAuthenticator
             register(request, response, principal, Constants.FORM_METHOD,
                      (String) session.getNote(Constants.SESS_USERNAME_NOTE),
                      (String) session.getNote(Constants.SESS_PASSWORD_NOTE));
+            // If we're caching principals we no longer need the username
+            // and password in the session, so remove them
+            if (cache) {
+                session.removeNote(Constants.SESS_USERNAME_NOTE);
+                session.removeNote(Constants.SESS_PASSWORD_NOTE);
+            }
             if (restoreRequest(request, session)) {
                 if (debug >= 1)
                     log("Proceed to restored request");
@@ -274,11 +282,9 @@ public class FormAuthenticator
         // Save the authenticated Principal in our session
         session.setNote(Constants.FORM_PRINCIPAL_NOTE, principal);
 
-        // If we are not caching, save the username and password as well
-        if (!cache) {
-            session.setNote(Constants.SESS_USERNAME_NOTE, username);
-            session.setNote(Constants.SESS_PASSWORD_NOTE, password);
-        }
+        // Save the username and password as well
+        session.setNote(Constants.SESS_USERNAME_NOTE, username);
+        session.setNote(Constants.SESS_PASSWORD_NOTE, password);
 
         // Redirect the user to the original request URI (which will cause
         // the original request to be restored)
