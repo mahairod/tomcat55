@@ -41,6 +41,8 @@ Bug No.  Description
 	 Moved the setting of the default "*.jsp" mapping so that it is now 
 	 possible to entirely disable support for jsp files.
 
+	 Fixed problem with jsp_precompile parameter to JSP files.
+
 Server:
 
 Bug No.  Description
