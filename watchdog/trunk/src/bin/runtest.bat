@@ -60,7 +60,7 @@ rem -------------------------- end tomcatEnv.bat -------------------------------
 rem Only start Tomcat if no host and port parameters have been specified
 if not "%port%"=="8080" goto otherserver
 
-start java org.apache.tomcat.shell.Startup -config .\conf\server-test.xml %1 %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.tomcat.startup.Tomcat -config .\conf\server-test.xml %4 %5 %6 %7 %8 %9
 
 sleep 25
 
@@ -80,7 +80,7 @@ java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfi
 rem Only shutdown Tomcat if no host and port parameters have been specified
 if not "%port%"=="8080" goto cleanup
 
-java org.apache.tomcat.shell.Shutdown %1 %2 %3 %4 %5 %6 %7 %8 %9
+java org.apache.tomcat.startup.Tomcat -stop -config .\conf\server-test.xml %4 %5 %6 %7 %8 %9
 
 :cleanup
 rem clean up

@@ -60,6 +60,7 @@
 
       <copydir src="src/bin" dest="${watchdog.build}"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
+      <copyfile src="${tomcat.build}/conf/web.xml" dest="${watchdog.build}/conf/web.xml" />
 
       <copyfile src="../jakarta-tools/moo.jar" 
                 dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
@@ -115,6 +116,7 @@
       <copydir src="src/bin" dest="${watchdog.dist}"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
       <copyfile src="src/conf/dist-test.xml" dest="${watchdog.dist}/conf/server-test.xml" />
+      <copyfile src="${tomcat.build}/conf/web.xml" dest="${watchdog.dist}/conf/web.xml" />
     
       <chmod src="${watchdog.dist}/runClient.sh" perm="+x"/>
       <chmod src="${watchdog.dist}/runTest.sh" perm="+x"/> 
