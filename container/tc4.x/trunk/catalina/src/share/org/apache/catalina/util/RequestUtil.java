@@ -64,8 +64,7 @@
 
 package org.apache.catalina.util;
 
-
-import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,6 +77,7 @@ import javax.servlet.http.Cookie;
  * General purpose request parsing and encoding utility methods.
  *
  * @author Craig R. McClanahan
+ * @author Tim Tye
  * @version $Revision$ $Date$
  */
 
@@ -230,144 +230,156 @@ public final class RequestUtil {
      *
      * @exception IllegalArgumentException if the data is malformed
      */
-    public static void parseParameters(Map map, String data, 
-                                       boolean urlParameters) {
-
-        if ((data == null) || (data.length() < 1))
-	    return;
-
-	// Initialize the variables we will require
-	StringParser parser = new StringParser(data);
-	boolean first = true;
-	int nameStart = 0;
-	int nameEnd = 0;
-	int valueStart = 0;
-	int valueEnd = 0;
-	String name = null;
-	String value = null;
-	String oldValues[] = null;
-	String newValues[] = null;
-
-	// Loop through the "name=value" entries in the input data
-	while (true) {
-
-	    // Extract the name and value components
-	    if (first)
-	        first = false;
-	    else
-	        parser.advance();
-	    nameStart = parser.getIndex();
-	    nameEnd = parser.findChar('=');
-	    parser.advance();
-	    valueStart = parser.getIndex();
-	    valueEnd = parser.findChar('&');
-	    name = parser.extract(nameStart, nameEnd);
-	    value = parser.extract(valueStart, valueEnd);
-
-	    // A zero-length name means we are done
-	    if (name.length() < 1)
-	        break;
-
-            // Decode the name and value if required
-            if ((name.indexOf('%') >= 0) || (name.indexOf('+') >= 0)) {
-                try {
-                    if (urlParameters) {
-                        name = URLDecode(name);
-                    } else {
-                        name = URLDecoder.decode(name);
-                    }
-                } catch (Throwable t) {
-                    ;
-                }
-            }
-            if ((value.indexOf('%') >= 0) || (value.indexOf('+') >= 0)) {
-                try {
-                    if (urlParameters) {
-                        value = URLDecode(value);
-                    } else {
-                        value = URLDecoder.decode(value);
-                    }
-                } catch (Throwable t) {
-                    ;
-                }
-            }
-
-	    // Create or update the array of values for this name
-	    oldValues = (String[]) map.get(name);
-	    if (oldValues == null)
-	        oldValues = new String[0];
-	    newValues = new String[oldValues.length + 1];
-	    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-	    newValues[oldValues.length] = value;
-	    map.put(name, newValues);
-
-	}
-
+    public static void parseParameters(Map map, String data, String encoding) 
+        throws UnsupportedEncodingException {
+        
+        if ((data != null) && (data.length() > 0)) {
+            int len = data.length();
+            byte[] bytes = new byte[len];
+            data.getBytes(0, len, bytes, 0);
+            parseParameters(map, bytes, encoding);
+        }
+        
     }
 
 
     /**
      * Decode and return the specified URL-encoded String.
+     * When the byte array is converted to a string, the system default 
+     * character encoding is used...  This may be different than some other
+     * servers.
      *
      * @param str The url-encoded string
      *
      * @exception IllegalArgumentException if a '%' character is not followed
      * by a valid 2-digit hexadecimal number
      */
-    public static String URLDecode(String str)
-	throws IllegalArgumentException {
+    public static String URLDecode(String str) {
+        
+ 	if (str != null) {
+            int len = str.length();
+            byte[] bytes = new byte[len];
+            str.getBytes(0, len, bytes, 0);
+            int ix = 0;
+            int ox = 0;
+            
+            while (ix < len) {
+                byte b = bytes[ix++];     // Get byte to test
+                if (b == '+') {
+                    b = (byte)' ';
+                } else if (b == '%') {
+                    b = (byte) ((convertHexDigit(bytes[ix++]) << 4)
+                                + convertHexDigit(bytes[ix++]));
+                } 
+                bytes[ox++] = b;
+            }
+            return new String(bytes, 0, ox);
+        }
+        return null;
+        
+    }
 
-	if (str == null)
-	    return (null);
 
-	StringBuffer dec = new StringBuffer();
-	int pos = 0;
-	int len = str.length();
-	dec.ensureCapacity(str.length());
+    /**
+     * Convert a byte character value to hexidecimal digit value.
+     *
+     * @param b the character value byte
+     */
+    private static byte convertHexDigit( byte b ) {
+        if ((b >= '0') && (b <= '9')) return (byte)(b - '0');
+        if ((b >= 'a') && (b <= 'f')) return (byte)(b - 'a' + 10);
+        if ((b >= 'A') && (b <= 'F')) return (byte)(b - 'A' + 10);
+        return 0;
+    }
 
-	while (pos < len) {
-	    int lookahead;	// Look-ahead position
 
-	    // Look ahead to the next URLencoded metacharacter, if any
-	    for (lookahead = pos; lookahead < len; lookahead++) {
-		char ch = str.charAt(lookahead);
-		if ((ch == '+') || (ch == '%'))
-		    break;
-	    }
+    /**
+     * Put name value pair in map.
+     *
+     * @param b the character value byte
+     *
+     * Put name and value pair in map.  When name already exist, add value 
+     * to array of values.
+     */
+    private static void putMapEntry( Map map, String name, String value) {
+        String[] newValues = null;
+        String[] oldValues = (String[]) map.get(name);
+        if (oldValues == null) {
+            newValues = new String[1];
+            newValues[0] = value;
+        } else {
+            newValues = new String[oldValues.length + 1];
+            System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+            newValues[oldValues.length] = value;
+        }
+        map.put(name, newValues);
+    }
 
-	    // If there were non-metacharacters, copy them as a block
-	    if (lookahead > pos) {
-		dec.append(str.substring(pos, lookahead));
-		pos = lookahead;
-	    }
 
-	    // Shortcut out if we are at the end of the string
-	    if (pos >= len)
-		break;
+    /**
+     * Append request parameters from the specified String to the specified
+     * Map.  It is presumed that the specified Map is not accessed from any
+     * other thread, so no synchronization is performed.
+     * <p>
+     * <strong>IMPLEMENTATION NOTE</strong>:  URL decoding is performed
+     * individually on the parsed name and value elements, rather than on
+     * the entire query string ahead of time, to properly deal with the case
+     * where the name or value includes an encoded "=" or "&" character
+     * that would otherwise be interpreted as a delimiter.
+     *
+     * NOTE: byte array data is modified by this method.  Caller beware.
+     *
+     * @param map Map that accumulates the resulting parameters
+     * @param data Input string containing request parameters
+     * @param urlParameters true if we're parsing parameters on the URL
+     *
+     * @exception UnsupportedEncodingException if the data is malformed
+     */
+    public static void parseParameters(Map map, byte[] data, String encoding) 
+        throws UnsupportedEncodingException {
 
-	    // Process the next metacharacter
-	    char meta = str.charAt(pos);
-	    if (meta == '+') {
-		dec.append(' ');
-		pos++;
-	    } else if (meta == '%') {
-		try {
-		    dec.append((char) Integer.parseInt
-			       (str.substring(pos+1, pos+3), 16));
-		} catch (NumberFormatException e) {
-		    throw new IllegalArgumentException
-			("Invalid hexadecimal '" + str.substring(pos+1, pos+3)
-			 + " in URLencoded string");
-		} catch (StringIndexOutOfBoundsException e) {
-		    throw new IllegalArgumentException
-			("Invalid unescaped '%' in URLcoded string");
-		}
-		pos += 3;
-	    }
-	}
-	return (dec.toString());
+        if (data != null && data.length > 0) {
+            int    pos = 0;
+            int    ix = 0;
+            int    ox = 0;
+            String key = null;
+            String value = null;
+            while (ix < data.length) {
+                byte c = data[ix++];
+                switch (c) {
+                case '&':
+                    value = new String(data, 0, ox, encoding);
+                    if (key != null) {
+                        putMapEntry(map, key, value);
+                        key = null;
+                    }
+                    ox = 0;
+                    break;
+                case '=':
+                    key = new String(data, 0, ox, encoding);
+                    ox = 0;
+                    break;
+                case '+':
+                    data[ox++] = (byte)' ';
+                    break;
+                case '%':
+                    data[ox++] = (byte)((convertHexDigit(data[ix++]) << 4)
+                                    + convertHexDigit(data[ix++]));
+                    break;
+                default:
+                    data[ox++] = c;
+                }
+            }
+            //The last value does not end in '&'.  So save it now.
+            if (key != null) {
+                value = new String(data, 0, ox, encoding);
+                putMapEntry(map, key, value);
+            }
+        }
 
     }
+
+
 
 }
 

@@ -577,15 +577,14 @@ public class HttpRequestBase
             results = new ParameterMap();
         results.setLocked(false);
 
+        String encoding = getCharacterEncoding();
+
 	// Parse any parameters specified in the query string
 	String queryString = getQueryString();
-	if ((queryString != null) && (queryString.length() > 0)) {
-	    try {
-	        RequestUtil.parseParameters(results, queryString, true);
-	    } catch (Throwable t) {
-	        ;
-	    }
-	}
+        try {
+            RequestUtil.parseParameters(results, queryString, encoding);
+        } catch (Throwable t) {
+        }
 
 	// Parse any parameters specified in the input stream
         String contentType = getContentType();
@@ -607,14 +606,7 @@ public class HttpRequestBase
                     len += next;
                 }
 		is.close();
-		String data = null;
-		String encoding = getCharacterEncoding();
-		if (encoding == null)
-		    RequestUtil.parseParameters
-                        (results, new String(buf), false);
-		else
-		    RequestUtil.parseParameters
-                        (results, new String(buf, encoding), false);
+                RequestUtil.parseParameters(results, buf, encoding);
 	    } catch (Throwable t) {
 	        ;
 	    }
