@@ -315,6 +315,100 @@ public class HostConfig
             return;
         String files[] = appBase.list();
 
+        deployDescriptors(appBase, files);
+        deployWARs(appBase, files);
+        deployDirectories(appBase, files);
+
+    }
+
+
+    /**
+     * Deploy XML context descriptors.
+     */
+    protected void deployDescriptors(File appBase, String[] files) {
+
+        for (int i = 0; i < files.length; i++) {
+
+            if (files[i].equalsIgnoreCase("META-INF"))
+                continue;
+            if (files[i].equalsIgnoreCase("WEB-INF"))
+                continue;
+            if (deployed.contains(files[i]))
+                continue;
+            File dir = new File(appBase, files[i]);
+            if (files[i].toLowerCase().endsWith(".xml")) {
+
+                deployed.add(files[i]);
+
+                // Assume this is a configuration descriptor and deploy it
+                log(sm.getString("hostConfig.deployDescriptor", files[i]));
+                try {
+                    URL config =
+                        new URL("file", null, dir.getCanonicalPath());
+                    ((Deployer) host).install(config, null);
+                } catch (Throwable t) {
+                    log(sm.getString("hostConfig.deployDescriptor.error",
+                                     files[i]), t);
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Deploy WAR files.
+     */
+    protected void deployWARs(File appBase, String[] files) {
+
+        for (int i = 0; i < files.length; i++) {
+
+            if (files[i].equalsIgnoreCase("META-INF"))
+                continue;
+            if (files[i].equalsIgnoreCase("WEB-INF"))
+                continue;
+            if (deployed.contains(files[i]))
+                continue;
+            File dir = new File(appBase, files[i]);
+            if (files[i].toLowerCase().endsWith(".war")) {
+
+                deployed.add(files[i]);
+
+                // Calculate the context path and make sure it is unique
+                String contextPath = "/" + files[i];
+                int period = contextPath.lastIndexOf(".");
+                if (period >= 0)
+                    contextPath = contextPath.substring(0, period);
+                if (contextPath.equals("/ROOT"))
+                    contextPath = "";
+                if (host.findChild(contextPath) != null)
+                    continue;
+
+                // Deploy the application in this WAR file
+                log(sm.getString("hostConfig.deployJar", files[i]));
+                try {
+                    URL url = new URL("file", null, dir.getCanonicalPath());
+                    url = new URL("jar:" + url.toString() + "!/");
+                    ((Deployer) host).install(contextPath, url);
+                } catch (Throwable t) {
+                    log(sm.getString("hostConfig.deployJar.error", files[i]),
+                        t);
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Deploy directories.
+     */
+    protected void deployDirectories(File appBase, String[] files) {
+
         for (int i = 0; i < files.length; i++) {
 
             if (files[i].equalsIgnoreCase("META-INF"))
@@ -350,46 +444,6 @@ public class HostConfig
                     ((Deployer) host).install(contextPath, url);
                 } catch (Throwable t) {
                     log(sm.getString("hostConfig.deployDir.error", files[i]),
-                        t);
-                }
-
-            } else if (files[i].toLowerCase().endsWith(".xml")) {
-
-                deployed.add(files[i]);
-
-                // Assume this is a configuration descriptor and deploy it
-                log(sm.getString("hostConfig.deployDescriptor", files[i]));
-                try {
-                    URL config =
-                        new URL("file", null, dir.getCanonicalPath());
-                    ((Deployer) host).install(config, null);
-                } catch (Throwable t) {
-                    log(sm.getString("hostConfig.deployDescriptor.error",
-                                     files[i]), t);
-                }
-
-            } else if (files[i].toLowerCase().endsWith(".war")) {
-
-                deployed.add(files[i]);
-
-                // Calculate the context path and make sure it is unique
-                String contextPath = "/" + files[i];
-                int period = contextPath.lastIndexOf(".");
-                if (period >= 0)
-                    contextPath = contextPath.substring(0, period);
-                if (contextPath.equals("/ROOT"))
-                    contextPath = "";
-                if (host.findChild(contextPath) != null)
-                    continue;
-
-                // Deploy the application in this WAR file
-                log(sm.getString("hostConfig.deployJar", files[i]));
-                try {
-                    URL url = new URL("file", null, dir.getCanonicalPath());
-                    url = new URL("jar:" + url.toString() + "!/");
-                    ((Deployer) host).install(contextPath, url);
-                } catch (Throwable t) {
-                    log(sm.getString("hostConfig.deployJar.error", files[i]),
                         t);
                 }
 
