@@ -7,11 +7,11 @@ released. None of these bugs are regression problems, so it should be
 acceptable to delay their resolution.
 
 
+3515    catalina   Processes hanging after stopping Tomcat
 4964    jasper     popBody() is called before doEndTag() is called in a BodyTag
 5507    catalina   Swapping sessions causes exceptions and it doesn't work 
                    with FileStore
 5741    jasper     Jspc -webapp option is broken due to namespace collisions
-5827    catalina   DataInputStream.readInt returns wrong values
 5853    catalina   Unable to get request parameters in the Error page 
                    for form based login
 5998    jasper     Exception hiding when a JspExceptioin is thrown by a tag
@@ -21,5 +21,6 @@ acceptable to delay their resolution.
 6420    jk         Loadbalancer mod_jk from 4.02 not working with TC 3.3
 6457    jk         mod_jk causes segmentation fault with JkLogLevel != debug
 6617    catalina   Iterating over session attribute name enumeration fails
-
+6662    catalina   Servlet context fails if webapp name smaller version 
+                   of another webapp
 

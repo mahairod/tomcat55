@@ -92,6 +92,8 @@ Bugzilla Bugs Resolved:
 ----------------------
 
 7061  Servlet loaded TWICE on application startup?
+7102  response.encodeURL() doesn't encode
+7171  FileStore directory must exists
 
 
 ============================
