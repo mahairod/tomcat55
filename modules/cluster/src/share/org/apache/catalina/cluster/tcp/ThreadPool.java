@@ -93,6 +93,7 @@ public class ThreadPool
             // set thread name for debugging, start it
             thread.setName (threadClass.getName()+"[" + (i + 1)+"]");
             thread.setDaemon(true);
+            thread.setPriority(Thread.MAX_PRIORITY);
             thread.start();
 
             idle.add (thread);
@@ -106,11 +107,11 @@ public class ThreadPool
     {
         WorkerThread worker = null;
 
-        synchronized (idle) {
+        //synchronized (idle) {
             if (idle.size() > 0) {
                 worker = (WorkerThread) idle.remove (0);
             }
-        }
+        //}
 
         return (worker);
     }
@@ -121,8 +122,8 @@ public class ThreadPool
      */
     void returnWorker (WorkerThread worker)
     {
-        synchronized (idle) {
+        //synchronized (idle) {
             idle.add (worker);
-        }
+        //}
     }
 }

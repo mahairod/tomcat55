@@ -156,7 +156,7 @@ public class TcpReplicationThread extends WorkerThread
      * re-enables OP_READ and calls wakeup() on the selector
      * so the selector will resume watching this channel.
      */
-    void drainChannel (SelectionKey key)
+    private void drainChannel (SelectionKey key)
         throws Exception
     {
         boolean packetReceived=false;
