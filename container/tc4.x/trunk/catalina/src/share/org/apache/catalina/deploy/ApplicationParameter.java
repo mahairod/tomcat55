@@ -83,6 +83,20 @@ public final class ApplicationParameter {
 
 
     /**
+     * The description of this environment entry.
+     */
+    private String description = null;
+
+    public String getDescription() {
+        return (this.description);
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    /**
      * The name of this application parameter.
      */
     private String name = null;
@@ -135,6 +149,10 @@ public final class ApplicationParameter {
         StringBuffer sb = new StringBuffer("ApplicationParameter[");
         sb.append("name=");
         sb.append(name);
+        if (description != null) {
+            sb.append(", description=");
+            sb.append(description);
+        }
         sb.append(", value=");
         sb.append(value);
         sb.append(", override=");

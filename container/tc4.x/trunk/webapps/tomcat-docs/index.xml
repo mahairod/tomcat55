@@ -65,6 +65,9 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
 <li><a href="class-loader-howto.html"><strong>Class Loader HOW-TO</strong></a>
     - Information about class loading in Tomcat 4, including where to place
     your application classes so that they are visible.</li>
+<li><a href="jndi-resources-howto.html"><strong>JNDI Resources HOW-TO</strong></a>
+    - Configuring standard and custom resources in the JNDI naming context
+    that is provided to each web application.</li>
 <li><a href="manager-howto.html"><strong>Manager App HOW-TO</strong></a> -
     Operating the <code>Manager</code> web app to deploy, undeploy, and
     redeploy applications while Tomcat is running.</li>

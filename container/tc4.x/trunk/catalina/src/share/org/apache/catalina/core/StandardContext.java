@@ -1251,6 +1251,12 @@ public class StandardContext
     public void addApplicationParameter(ApplicationParameter parameter) {
 
         synchronized (applicationParameters) {
+            String newName = parameter.getName();
+            for (int i = 0; i < applicationParameters.length; i++) {
+                if (name.equals(applicationParameters[i].getName()) &&
+                    !applicationParameters[i].getOverride())
+                    return;
+            }
             ApplicationParameter results[] =
                 new ApplicationParameter[applicationParameters.length + 1];
             System.arraycopy(applicationParameters, 0, results, 0,
@@ -1350,6 +1356,10 @@ public class StandardContext
     public void addEnvironment(ContextEnvironment environment) {
 
         synchronized (envs) {
+            ContextEnvironment env = (ContextEnvironment)
+                envs.get(environment.getName());
+            if ((env != null) && !env.getOverride())
+                return;
             envs.put(environment.getName(), environment);
         }
         fireContainerEvent("addEnvironment", environment.getName());

@@ -108,6 +108,21 @@ public final class ContextEnvironment {
 
 
     /**
+     * Does this environment entry allow overrides by the application
+     * deployment descriptor?
+     */
+    private boolean override = true;
+
+    public boolean getOverride() {
+        return (this.override);
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
+    }
+
+
+    /**
      * The type of this environment entry.
      */
     private String type = null;
@@ -157,6 +172,8 @@ public final class ContextEnvironment {
             sb.append(", value=");
             sb.append(value);
         }
+        sb.append(", override=");
+        sb.append(override);
         sb.append("]");
         return (sb.toString());
 

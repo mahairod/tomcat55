@@ -21,11 +21,11 @@ adding functionality.
 
 This Release Plan proposes the following schedule:
 
-  Monday, September 9, 2001      Tomcat 4.0 Release Candidate 1
+  Sunday, September 9, 2001       Tomcat 4.0 Release Candidate 1
 
-  Thursday, September 12, 2001   Tomcat 4.0 Release Candidate 2
+  Wednesday, September 12, 2001   Tomcat 4.0 Release Candidate 2
 
-  Monday, September 17, 2001     Tomcat 4.0 Final Release
+  Monday, September 17, 2001      Tomcat 4.0 Final Release
 
 In order to complete final release, all outstanding Bugzilla bug reports
 against Tomcat 4.0 need to be fixed or deferred for later releases.  This
@@ -46,10 +46,6 @@ release, please submit a bug report as quickly as possible.
 Bugs That Must Be Addressed Before Final Release:
 ------------------------------------------------
 
-Catalina    2883    Error page for 401 error code is not populated
-                    (Not a spec issue, so likely to be downgraded to
-                    "enhancement request")
-
 Catalina    3009    Manager cannot install web app
 
 Catalina    3292    Class reloading fails (awaiting test case)
@@ -61,11 +57,9 @@ Connectors  1788    mod_webapp errors on Win2k
 
 Connectors  2997    Webapp connector should recover when Tomcat is restarted
 
-Jasper      2693    Syntax errors in JSP source generate NumberFormatException
+Connectors  3476    Cannot use other than default context when using mod_webapp
 
-Jasper      2917    JSP compiled file name is not correct
-
-Jasper      3019    Jasper generates bad custom tag variable names
+Connectors  3481    Webapp socket leak when Apache process shuts down
 
 Jasper      3079    NullPointerException in JakartaCommentGenerator.generateEnd
 
@@ -96,24 +90,4 @@ Jasper      3433    Bad performance on JspWriterImpl.java
 Servletapi  3196    Javadoc errors during build
 
 Servletapi  3344    Typo in javadocs
-
-
-Enhancement Requests To Be Addressed Later:
-------------------------------------------
-
-Catalina    1400    SSLServerSocketFactory.java does not support multiple
-                    keys in a keystore file
-
-Catalina    1575    Slow server start due to SAX parsing
-
-Catalina    2570    Add ability to configure a default error handler
-
-Catalina    2823    Allow a <Manager> inside <DefaultContext>
-
-Catalina    3293    Allow content lengths > 2^31
-
-Jasper      2500    FileNotFoundException unintentionally caught
-
-Jasper      2622    Jasper is not taking advantage of empty body content
-                    optimization opportunity
 

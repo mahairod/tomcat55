@@ -128,6 +128,10 @@ in Tomcat 4.0 and your web applications:
   directory of your web application, this should now be possible, because
   of the modified JAXP 1.1 parser mentioned below.
 
+* Make sure you do *not* place an XML parser in your Java system extensions
+  directory ($JAVA_HOME/jre/lib/ext), or modify the startup scripts to include
+  such a parser in the CLASSPATH under which Tomcat executes.
+
 WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
 (Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
 The "sealed" attribute has been removed from the manifest file for these
@@ -177,3 +181,27 @@ inside Apache 1.3.  The current state of this support is summarized as follows:
 * There are several test failures in the "tester" unit test suite that will
   be corrected before final release.  (Most of these issues related to the
   bug that prevents BASIC authentication form operating.)
+
+
+-------------------------------------
+Tomcat 4.0 and JNI Based Applications:
+-------------------------------------
+
+Applications that require native libraries must ensure that the libraries have
+been loaded prior to use.  Typically, this is done with a call like:
+
+  static {
+    System.loadLibrary("path-to-library-file");
+  }
+
+in some class.  However, the application must also ensure that the library is
+not loaded more than once.  If the above code were placed in a class inside
+the web application (i.e. under /WEB-INF/classes or /WEB-INF/lib), and the
+application were reloaded, the loadLibrary() call would be attempted a second
+time.
+
+To avoid this problem, place classes that load native libraries outside of the
+web application, and ensure that the loadLibrary() call is executed only once
+during the lifetime of a particular JVM.
+
+

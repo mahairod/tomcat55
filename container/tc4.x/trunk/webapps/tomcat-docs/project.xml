@@ -25,6 +25,7 @@
     <menu name="Administrators">
         <item name="Config. Reference"     href="config/index.html"/>
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
+        <item name="JNDI Resources HOW-TO" href="jndi-resources-howto.html"/>
         <item name="Manager App HOW-TO"    href="manager-howto.html"/>
         <item name="Proxy Support HOW-TO"  href="proxy-howto.html"/>
         <item name="Realm HOW-TO"          href="realm-howto.html"/>
