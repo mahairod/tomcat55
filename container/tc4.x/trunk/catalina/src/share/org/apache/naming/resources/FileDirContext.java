@@ -854,15 +854,6 @@ public class FileDirContext extends BaseDirContext {
      */
     protected File file(String name) {
 
-/*
-        name = normalize(name);
-        if (name == null)
-            return (null);
-
-	if (File.separatorChar == '\\')
-            name = name.replace('/', File.separatorChar);
-*/
-
         File file = new File(base, name);
         if (file.exists() && file.canRead()) {
 
@@ -875,8 +866,9 @@ public class FileDirContext extends BaseDirContext {
             if (canPath == null)
                 return null;
 
-            if (!canPath.startsWith(absoluteBase))
+            if (!canPath.startsWith(absoluteBase)) {
                 return null;
+            }
 
             // Windows only check
             if ((caseSensitive) && (File.separatorChar  == '\\')) {
@@ -888,12 +880,12 @@ public class FileDirContext extends BaseDirContext {
                     canPath = normalize(canPath);
                 if ((absoluteBase.length() < absPath.length()) 
                     && (absoluteBase.length() < canPath.length())) {
-                    absPath = absPath.substring(absoluteBase.length());
+                    absPath = absPath.substring(absoluteBase.length() + 1);
                     if ((canPath == null) || (absPath == null))
                         return null;
                     if (absPath.equals(""))
                         absPath = "/";
-                    canPath = canPath.substring(absoluteBase.length());
+                    canPath = canPath.substring(absoluteBase.length() + 1);
                     if (canPath.equals(""))
                         canPath = "/";
                     if (!canPath.equals(absPath))
