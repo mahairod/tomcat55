@@ -92,7 +92,7 @@ public class Container {
 	return context;
     }
 
-    ServletClassLoader getLoader() {
+    public ServletClassLoader getLoader() {
 	if(servletLoader == null) {
 	    servletLoader = new ServletClassLoader(this);
 	}

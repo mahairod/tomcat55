@@ -265,8 +265,8 @@ public class TcpEndpoint  { // implements Endpoint {
 	    running = false;
 	    String msg = sm.getString("endpoint.err.fatal",
 				      serverSocket, e);
-	    e.printStackTrace(); // something very wrong happened - better know what
-	    System.err.println(msg);
+	    //e.printStackTrace(); 
+	    //System.err.println(msg);
 	}
     }
 
