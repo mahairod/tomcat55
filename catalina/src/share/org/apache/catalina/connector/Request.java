@@ -240,7 +240,7 @@ public class Request
     /**
      * Request parameters parsed flag.
      */
-    protected boolean requestParametersParsed = false;
+    protected boolean parametersParsed = false;
 
 
     /**
@@ -375,7 +375,7 @@ public class Request
         userPrincipal = null;
         subject = null;
         sessionParsed = false;
-        requestParametersParsed = false;
+        parametersParsed = false;
         cookiesParsed = false;
         locales.clear();
         localesParsed = false;
@@ -987,8 +987,8 @@ public class Request
      */
     public String getParameter(String name) {
 
-        if (!requestParametersParsed)
-            parseRequestParameters();
+        if (!parametersParsed)
+            parseParameters();
 
         return coyoteRequest.getParameters().getParameter(name);
 
@@ -1029,8 +1029,8 @@ public class Request
      */
     public Enumeration getParameterNames() {
 
-        if (!requestParametersParsed)
-            parseRequestParameters();
+        if (!parametersParsed)
+            parseParameters();
 
         return coyoteRequest.getParameters().getParameterNames();
 
@@ -1045,8 +1045,8 @@ public class Request
      */
     public String[] getParameterValues(String name) {
 
-        if (!requestParametersParsed)
-            parseRequestParameters();
+        if (!parametersParsed)
+            parseParameters();
 
         return coyoteRequest.getParameters().getParameterValues(name);
 
@@ -2274,9 +2274,9 @@ public class Request
     /**
      * Parse request parameters.
      */
-    protected void parseRequestParameters() {
+    protected void parseParameters() {
 
-        requestParametersParsed = true;
+        parametersParsed = true;
 
         Parameters parameters = coyoteRequest.getParameters();
 
