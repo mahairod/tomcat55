@@ -601,10 +601,11 @@ class Generator {
      * - JSP document without a <jsp:root>
      */
     private void generateXmlDeclaration(Node.Nodes page) {
-	if (pageInfo.getOmitXmlDecl() != null
-	            && !JspUtil.booleanValue(pageInfo.getOmitXmlDecl())
-	    || (page.getRoot().isXmlSyntax() && !pageInfo.hasJspRoot()
-		&& !ctxt.isTagFile())) {
+
+	String omitXmlDecl = pageInfo.getOmitXmlDecl();
+	if ((omitXmlDecl != null && !JspUtil.booleanValue(omitXmlDecl))
+	    || (omitXmlDecl == null && page.getRoot().isXmlSyntax()
+		&& !pageInfo.hasJspRoot() && !ctxt.isTagFile())) {
 	    String cType = pageInfo.getContentType();
 	    String charSet = cType.substring(cType.indexOf("charset=")+8);
 	    out.printil("out.write(\"<?xml version=\\\"1.0\\\" encoding=\\\"" +
