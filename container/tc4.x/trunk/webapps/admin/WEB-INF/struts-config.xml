@@ -15,14 +15,15 @@
 
   <form-beans>
 
-    <!-- Server form bean -->
-    <form-bean      name="serverForm"
-                    type="org.apache.webapp.admin.ServerForm"/>
-                    
     <!-- Set Locale form bean -->
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
 
+    <!-- ============= Server Module ============= -->
+
+    <form-bean      name="serverForm"
+                    type="org.apache.webapp.admin.server.ServerForm"/>
+                    
     <!-- ============= Service Module ============= -->
 
     <form-bean      name="serviceForm"
@@ -78,7 +79,7 @@
                     type="org.apache.webapp.admin.connector.ConnectorForm"/>
                     
     <form-bean      name="connectorsForm"
-                    type="org.apache.webapp.admin.host.ConnectorsForm"/>
+                    type="org.apache.webapp.admin.connector.ConnectorsForm"/>
 
     <!-- ========== User Database Module ========== -->
 
@@ -128,11 +129,7 @@
     <forward        name="Tree Control Test"
                     path="/tree-control-test.jsp"
                 redirect="false"/>
-
-    <forward        name="Server"
-                    path="/server.jsp"
-                redirect="false"/>
-                   
+                  
     <forward        name="Save Successful"
                     path="/saved.jsp"
                 redirect="false"/>
@@ -145,6 +142,12 @@
                     path="/user.jsp"
                 redirect="false"/>
 
+    <!-- ============ Server Module ============== -->
+
+    <forward        name="Server"
+                    path="/server/server.jsp"
+                redirect="false"/>
+    
     <!-- ============ Service Module ============== -->
 
     <forward        name="Service"
@@ -303,13 +306,6 @@
                   redirect="true"/>
     </action>
 
-    <!-- Set up Edit Server transaction -->
-    <action    path="/setUpServer"
-               type="org.apache.webapp.admin.SetUpServerAction"
-               name="serverForm"
-               scope="session">
-    </action>
-
     <!-- Log out of the application -->
     <action    path="/logOut"
                type="org.apache.webapp.admin.LogOutAction">
@@ -318,14 +314,6 @@
                   redirect="true"/>
     </action>
 
-    <!-- Process a user server change -->
-    <action    path="/server"
-               type="org.apache.webapp.admin.ServerAction"
-               name="serverForm"
-              scope="session"
-              input="/server.jsp">
-    </action>
-    
     <!-- Process a set-locale action -->
     <action    path="/setLocale"
                type="org.apache.webapp.admin.SetLocaleAction"
@@ -336,6 +324,20 @@
     <!-- Tree control test action -->
     <action    path="/treeControlTest"
                type="org.apache.webapp.admin.TreeControlTestAction"/>
+
+   <!-- ============= Server Module ============== -->
+
+    <!-- Set up Edit Server transaction -->
+    <action    path="/EditServer"
+               type="org.apache.webapp.admin.server.EditServerAction">
+    </action>
+
+    <!-- Perform Save Server transaction -->
+    <action    path="/SaveServer"
+               type="org.apache.webapp.admin.server.SaveServerAction"
+               name="serverForm"
+              input="/server/server.jsp"
+               scope="session"/>
 
     <!-- ============= Service Module ============== -->
 

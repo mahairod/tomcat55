@@ -58,11 +58,13 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.connector.create"/>
-              </controls:action>
-              <controls:action url="">
-                <bean:message key="actions.connector.delete"/>
+              <controls:action url='<%= "/AddConnector.do?serviceName=" +
+                                        serviceName %>'>  
+                <bean:message key="actions.connectors.create"/>
+              </controls:action>              
+              <controls:action url='<%= "/DeleteConnector.do?serviceName=" +
+                        serviceName %>'> 
+                <bean:message key="actions.connectors.deletes"/>
               </controls:action>
               <controls:action>
                 -------------------------------------

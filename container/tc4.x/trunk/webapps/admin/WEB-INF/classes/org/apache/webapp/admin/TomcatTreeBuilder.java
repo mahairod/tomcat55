@@ -164,7 +164,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                 new TreeControlNode(serverName,
                                     "folder_16_pad.gif",
                                     nodeLabel,
-                                    "setUpServer.do?select=" +
+                                    "EditServer.do?select=" +
                                     URLEncoder.encode(serverName) +
                                     "&nodeLabel=" +
                                     URLEncoder.encode(nodeLabel),
