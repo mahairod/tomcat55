@@ -293,7 +293,7 @@ public class DigestAuthenticator
             if ("nonce".equals(currentTokenName))
                 nOnce = removeQuotes(currentTokenValue);
             if ("nc".equals(currentTokenName))
-                nc = currentTokenValue;
+                nc = removeQuotes(currentTokenValue);
             if ("cnonce".equals(currentTokenName))
                 cnonce = removeQuotes(currentTokenValue);
             if ("qop".equals(currentTokenName))
