@@ -85,6 +85,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
+import javax.security.auth.Subject;
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -303,6 +304,12 @@ public class CoyoteRequest
      */
     protected boolean secure = false;
 
+    
+    /**
+     * The Subject associated with the current AccessControllerContext
+     */
+    protected Subject subject = null;
+
 
     /**
      * Post data buffer.
@@ -411,6 +418,7 @@ public class CoyoteRequest
         usingInputStream = false;
         usingReader = false;
         userPrincipal = null;
+        subject = null;
         sessionParsed = false;
         requestParametersParsed = false;
         locales.clear();
@@ -1754,6 +1762,19 @@ public class CoyoteRequest
      * @param principal The user Principal
      */
     public void setUserPrincipal(Principal principal) {
+
+        if (System.getSecurityManager() != null){
+            if ( (subject != null) && 
+                 (!subject.getPrincipals().contains(principal)) ){
+                subject.getPrincipals().add(principal);         
+            } else if (getSession()
+                            .getAttribute(Globals.SUBJECT_ATTR) == null) {
+                subject = new Subject();
+                subject.getPrincipals().add(principal);         
+            }
+            getSession().setAttribute(Globals.SUBJECT_ATTR, subject);
+        } 
+
         this.userPrincipal = principal;
     }
 

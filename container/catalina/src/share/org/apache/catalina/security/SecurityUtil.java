@@ -64,6 +64,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.security.AccessController;
+import java.security.AccessControlContext;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -72,17 +73,17 @@ import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.UnavailableException;
 
-import org.apache.tomcat.util.buf.MessageBytes;
-
+import org.apache.catalina.Globals;
 import org.apache.catalina.util.StringManager;
-
 /**
  * This utility class associates a <code>Subject</code> to the current 
- * <code>AccessControlContext</code>. When a <code>SecurityManager</code> is used, 
- * the container will always associate the called thread with an AccessControlContext
- * containing only the principal of the requested Servlet/Filter.
+ * <code>AccessControlContext</code>. When a <code>SecurityManager</code> is
+ * used, * the container will always associate the called thread with an 
+ * AccessControlContext * containing only the principal of the requested
+ * Servlet/Filter.
  *
  * This class uses reflection to invoke the invoke methods.
  *
@@ -123,7 +124,8 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Servlet</code> on which the method will be called.
+     * @param targetObject the <code>Servlet</code> on which the method will
+     * be called.
      */
     public static void doAsPrivilege(final String methodName, 
                                      final Servlet targetObject) throws java.lang.Exception{
@@ -136,15 +138,24 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Servlet</code> on which the method will be called.
-     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetObject <code>Object</code> array contains the runtime parameters instance.
+     * @param targetObject the <code>Servlet</code> on which the method will
+     * be called.
+     * @param targetType <code>Class</code> array used to instanciate a i
+     * <code>Method</code> object.
+     * @param targetObject <code>Object</code> array contains the runtime 
+     * parameters instance.
      */
     public static void doAsPrivilege(final String methodName, 
                                      final Servlet targetObject, 
                                      final Class[] targetType,
-                                     final Object[] targetArguments) throws java.lang.Exception{    
-         doAsPrivilege(methodName, targetObject, targetType, targetArguments, null);                                
+                                     final Object[] targetArguments) 
+        throws java.lang.Exception{    
+
+         doAsPrivilege(methodName, 
+                       targetObject, 
+                       targetType, 
+                       targetArguments, 
+                       null);                                
     }
     
     
@@ -153,16 +164,22 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Servlet</code> on which the method will be called.
-     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
-     * @param principal the <code>Principal</code> to which the security privilege apply..
+     * @param targetObject the <code>Servlet</code> on which the method will
+     * be called.
+     * @param targetType <code>Class</code> array used to instanciate a 
+     * <code>Method</code> object.
+     * @param targetArgumentst <code>Object</code> array contains the 
+     * runtime parameters instance.
+     * @param principal the <code>Principal</code> to which the security 
+     * privilege apply..
      */    
     public static void doAsPrivilege(final String methodName, 
                                      final Servlet targetObject, 
                                      final Class[] targetType,
                                      final Object[] targetArguments,
-                                     Principal principal) throws java.lang.Exception{
+                                     Principal principal) 
+        throws java.lang.Exception{
+
         Method method = null;
         Method[] methodsCache = null;
         if(objectCache.containsKey(targetObject)){
@@ -190,10 +207,13 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Filter</code> on which the method will be called.
+     * @param targetObject the <code>Filter</code> on which the method will 
+     * be called.
      */    
     public static void doAsPrivilege(final String methodName, 
-                                     final Filter targetObject) throws java.lang.Exception{
+                                     final Filter targetObject) 
+        throws java.lang.Exception{
+
          doAsPrivilege(methodName, targetObject, null, null);                                
     }
  
@@ -203,15 +223,20 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Filter</code> on which the method will be called.
-     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
+     * @param targetObject the <code>Filter</code> on which the method will 
+     * be called.
+     * @param targetType <code>Class</code> array used to instanciate a
+     * <code>Method</code> object.
+     * @param targetArgumentst <code>Object</code> array contains the 
+     * runtime parameters instance.
      */    
     public static void doAsPrivilege(final String methodName, 
                                      final Filter targetObject, 
                                      final Class[] targetType,
-                                     final Object[] targetArguments) throws java.lang.Exception{
+                                     final Object[] targetArguments) 
+        throws java.lang.Exception{
         Method method = null;
+
         Method[] methodsCache = null;
         if(objectCache.containsKey(targetObject)){
             methodsCache = (Method[])objectCache.get(targetObject);
@@ -238,16 +263,22 @@ public final class SecurityUtil{
      * will be granted to a <code>null</code> subject. 
      *
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Servlet</code> on which the method will be called.
-     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
-     * @param targetArgumentst <code>Object</code> array contains the runtime parameters instance.
-     * @param principal the <code>Principal</code> to which the security privilege apply..
+     * @param targetObject the <code>Servlet</code> on which the method will
+     * be called.
+     * @param targetType <code>Class</code> array used to instanciate a 
+     * <code>Method</code> object.
+     * @param targetArgumentst <code>Object</code> array contains the 
+     * runtime parameters instance.
+     * @param principal the <code>Principal</code> to which the security 
+     * privilege apply..
      */    
     private static void execute(final Method method,
                                 final Object targetObject, 
                                 final Object[] targetArguments,
-                                Principal principal) throws java.lang.Exception{
-       try{   
+                                Principal principal) 
+        throws java.lang.Exception{
+       
+        try{   
             Subject subject = null;
             PrivilegedExceptionAction pea = new PrivilegedExceptionAction(){
                     public Object run() throws Exception{
@@ -255,16 +286,20 @@ public final class SecurityUtil{
                        return null;
                     }
             };
-            
-            // FIX ME: should use a Subject pool instead or recycle the object
-            if (principal != null){
-                subject = new Subject();
-                subject.getPrincipals().add(principal);         
-            }  
+
+            // The first argument is always the request object
+            if (targetArguments != null 
+                    && targetArguments[0] instanceof HttpServletRequest){
+                HttpServletRequest request = 
+                    (HttpServletRequest)targetArguments[0];
+                subject = (Subject)request.getSession()
+                                        .getAttribute(Globals.SUBJECT_ATTR);
+            }
 
             Subject.doAsPrivileged(subject, pea, null);       
        } catch( PrivilegedActionException pe) {
-            Throwable e = ((InvocationTargetException)pe.getException()).getTargetException();
+            Throwable e = ((InvocationTargetException)pe.getException())
+                                .getTargetException();
             
             if (log.isDebugEnabled()){
                 log.debug(sm.getString("SecurityUtil.doAsPrivilege"), e); 
@@ -313,8 +348,10 @@ public final class SecurityUtil{
      * Create the method and cache it for further re-use.
      * @param methodsCache the cache used to store method instance
      * @param methodName the method to apply the security restriction
-     * @param targetObject the <code>Servlet</code> on which the method will be called.
-     * @param targetType <code>Class</code> array used to instanciate a <code>Method</code> object.
+     * @param targetObject the <code>Servlet</code> on which the method will
+     * be called.
+     * @param targetType <code>Class</code> array used to instanciate a 
+     * <code>Method</code> object.
      * @return the method instance.
      */
     private static Method createMethodAndCacheIt(Method[] methodsCache,
@@ -327,7 +364,9 @@ public final class SecurityUtil{
             methodsCache = new Method[3];
         }               
                 
-        Method method = targetObject.getClass().getMethod(methodName, targetType); 
+        Method method = 
+            targetObject.getClass().getMethod(methodName, targetType); 
+
         if (methodName.equalsIgnoreCase(INIT_METHOD)){
             methodsCache[INIT] = method;
         } else if (methodName.equalsIgnoreCase(DESTROY_METHOD)){
