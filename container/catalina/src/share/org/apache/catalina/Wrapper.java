@@ -205,6 +205,14 @@ public interface Wrapper extends Container {
 
 
     /**
+     * Add a mapping associated with the Wrapper.
+     * 
+     * @param pattern The new wrapper mapping
+     */
+    public void addMapping(String mapping);
+
+
+    /**
      * Add a new security role reference record to the set of records for
      * this servlet.
      *
@@ -260,6 +268,12 @@ public interface Wrapper extends Container {
 
 
     /**
+     * Return the mappings associated with this wrapper.
+     */
+    public String[] findMappings();
+
+
+    /**
      * Return the security role link for the specified security role
      * reference name, if any; otherwise return <code>null</code>.
      *
@@ -302,6 +316,14 @@ public interface Wrapper extends Container {
      * @param listener The listener to remove
      */
     public void removeInstanceListener(InstanceListener listener);
+
+
+    /**
+     * Remove a mapping associated with the wrapper.
+     *
+     * @param mapping The pattern to remove
+     */
+    public void removeMapping(String mapping);
 
 
     /**
