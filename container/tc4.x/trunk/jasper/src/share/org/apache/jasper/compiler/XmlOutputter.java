@@ -159,7 +159,7 @@ public class XmlOutputter {
      */
     void append(char[] text) {
         sb.append("<![CDATA[\n");
-        sb.append(text);
+        sb.append(filter(text));
         sb.append("]]>\n");
     }
     
@@ -234,6 +234,27 @@ public class XmlOutputter {
     void append(String tag) {
         sb.append("</").append(tag).append(">\n");
     }
+
+    /**
+     * Filter text that is destined for a CDATA section so that occurrences
+     * of ']]>' within the text are properly escaped.
+     *
+     * @param text Text to be filtered
+     */
+    char[] filter(char[] text) {
+        String s = new String(text);
+        while (true) {
+            int n = s.indexOf("]]>");
+            if (n < 0)
+                break;
+            StringBuffer sb = new StringBuffer(s.substring(0, n));
+            sb.append("]]&gt;");
+            sb.append(s.substring(n + 3));
+            s = sb.toString();
+        }
+        return (s.toCharArray());
+    }
+
 
     //*********************************************************************
     // Outputting the XML stream
