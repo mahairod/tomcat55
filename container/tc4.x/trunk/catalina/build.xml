@@ -146,6 +146,10 @@
        unless="javamail.present" />
       <exclude name="**/startup/CatalinaBlock.java" 
        unless="avalon.present" />
+      <exclude name="**/util/ProcessHelper.java"
+       unless="using.jdk.1.3"/>
+      <exclude name="**/servlets/CGIServlet.java"
+       unless="using.jdk.1.3"/>
     </javac>
 
     <!-- Copy static resource files -->
