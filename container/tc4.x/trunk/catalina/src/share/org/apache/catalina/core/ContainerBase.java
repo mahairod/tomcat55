@@ -768,16 +768,23 @@ public abstract class ContainerBase
                                                    child.getName() +
                                                    "' is not unique");
             child.setParent((Container) this);  // May throw IAE
+            children.put(child.getName(), child);
+
             if (started && (child instanceof Lifecycle)) {
+                boolean success = false;
                 try {
                     ((Lifecycle) child).start();
+                    success = true;
                 } catch (LifecycleException e) {
                     log("ContainerBase.addChild: start: ", e);
                     throw new IllegalStateException
                         ("ContainerBase.addChild: start: " + e);
+                } finally {
+                    if (!success) {
+                        children.remove(child.getName());
+                    }
                 }
             }
-            children.put(child.getName(), child);
             fireContainerEvent(ADD_CHILD_EVENT, child);
         }
 
