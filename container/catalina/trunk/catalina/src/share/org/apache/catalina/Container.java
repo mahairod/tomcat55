@@ -184,6 +184,11 @@ public interface Container {
      */
     public Object getMappingObject();
 
+    
+    /**
+     * Return the JMX name associated with this container.
+     */
+    public String getObjectName();    
 
     /**
      * Return the Pipeline object that manages the Valves associated with
