@@ -21,8 +21,6 @@ package org.apache.catalina.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.catalina.util.StringManager;
-
 
 /**
  * Wrapper around a <code>javax.servlet.http.HttpServletRequest</code>
@@ -88,13 +86,6 @@ class InvokerHttpRequest extends HttpServletRequestWrapper {
      * The servlet path for this request.
      */
     protected String servletPath = null;
-
-
-    /**
-     * The string manager for this package.
-     */
-    protected static StringManager sm =
-        StringManager.getManager(Constants.Package);
 
 
     // --------------------------------------------- HttpServletRequest Methods
