@@ -321,6 +321,16 @@ public final class ContextConfig
      */
     private void certificatesConfig() {
 
+        // Validate that the JSSE classes are present
+        try {
+            Class clazz = this.getClass().getClassLoader().loadClass
+                ("javax.net.ssl.SSLSocket");
+            if (clazz == null)
+                return;
+        } catch (Throwable t) {
+            return;
+        }
+
         // Instantiate a new CertificatesValve if possible
         Valve certificates = null;
         try {
