@@ -549,18 +549,22 @@ final class HttpProcessor
 		for (int i = 0; i < cookies.length; i++) {
 		    if (cookies[i].getName().equals
 			(Globals.SESSION_COOKIE_NAME)) {
-
 			// Override anything requested in the URL
-			request.setRequestedSessionId(cookies[i].getValue());
-			request.setRequestedSessionCookie(true);
-			request.setRequestedSessionURL(false);
-			if (debug >= 1)
-			  log(" Requested cookie session id is " +
-			      ((HttpServletRequest) request.getRequest())
-                              .getRequestedSessionId());
-                        break;  // Accept only the first session id value
-
+                        if (!request.isRequestedSessionIdFromCookie()) {
+                            // Accept only the first session id cookie
+                            request.setRequestedSessionId
+                                (cookies[i].getValue());
+                            request.setRequestedSessionCookie(true);
+                            request.setRequestedSessionURL(false);
+                            if (debug >= 1)
+                                log(" Requested cookie session id is " +
+                                    ((HttpServletRequest) request.getRequest())
+                                    .getRequestedSessionId());
+                        }
 		    }
+                    if (debug >= 1)
+                        log(" Adding cookie " + cookies[i].getName() + "=" +
+                            cookies[i].getValue());
                     request.addCookie(cookies[i]);
 		}
 	    } else if (header.equals(DefaultHeaders.CONTENT_LENGTH_NAME)) {

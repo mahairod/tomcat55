@@ -136,6 +136,31 @@ public class SingleSignOn
 	StringManager.getManager(Constants.Package);
 
 
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the debugging detail level.
+     */
+    public int getDebug() {
+
+        return (this.debug);
+
+    }
+
+
+    /**
+     * Set the debugging detail level.
+     *
+     * @param debug The new debugging detail level
+     */
+    public void setDebug(int debug) {
+
+        this.debug = debug;
+
+    }
+
+
     // ---------------------------------------------------------- Valve Methods
 
 
@@ -171,14 +196,19 @@ public class SingleSignOn
         // Has a valid user already been authenticated?
         HttpServletRequest hreq =
             (HttpServletRequest) request.getRequest();
+        if (debug >= 1)
+            log("Process request for '" + hreq.getRequestURI() + "'");
         if (hreq.getUserPrincipal() != null) {
+            if (debug >= 1)
+                log(" Principal '" + hreq.getUserPrincipal().getName() +
+                    "' has already been authenticated");
             invokeNext(request, response);
             return;
         }
 
         // Check for the single sign on cookie
         if (debug >= 1)
-            log("Checking for SSO cookie");
+            log(" Checking for SSO cookie");
         Cookie cookie = null;
         Cookie cookies[] = hreq.getCookies();
         if (cookies == null)
@@ -190,20 +220,26 @@ public class SingleSignOn
             }
         }
         if (cookie == null) {
+            if (debug >= 1)
+                log(" SSO cookie is not present");
             invokeNext(request, response);
             return;
         }
 
         // Look up the cached Principal associated with this cookie value
         if (debug >= 1)
-            log("Checking for cached principal");
+            log(" Checking for cached principal");
         SingleSignOnEntry entry = lookup(cookie.getValue());
         if (entry != null) {
             if (debug >= 1)
-                log("Found cached principal '" +
-                    entry.principal.getName() + "'");
+                log(" Found cached principal '" +
+                    entry.principal.getName() + "' with auth type '" +
+                    entry.authType + "'");
             ((HttpRequest) request).setAuthType(entry.authType);
             ((HttpRequest) request).setUserPrincipal(entry.principal);
+        } else {
+            if (debug >= 1)
+                log(" No cached principal found");
         }
 
         // Invoke the next Valve in our pipeline

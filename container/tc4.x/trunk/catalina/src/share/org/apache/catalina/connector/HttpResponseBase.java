@@ -207,6 +207,19 @@ public class HttpResponseBase
 
 
     /**
+     * Return an array of all cookies set for this response, or
+     * a zero-length array if no cookies have been set.
+     */
+    public Cookie[] getCookies() {
+
+        synchronized (cookies) {
+            return ((Cookie[]) cookies.toArray(new Cookie[cookies.size()]));
+        }
+
+    }
+
+
+    /**
      * Return the value for the specified header, or <code>null</code> if this
      * header has not been set.  If more than one value was added for this
      * name, only the first is returned; use getHeaderValues() to retrieve all

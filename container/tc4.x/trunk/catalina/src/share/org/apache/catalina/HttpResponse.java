@@ -65,6 +65,9 @@
 package org.apache.catalina;
 
 
+import javax.servlet.http.Cookie;
+
+
 /**
  * An <b>HttpResponse</b> is the Catalina-internal facade for an
  * <code>HttpServletResponse</code> that is to be produced,
@@ -79,6 +82,13 @@ public interface HttpResponse
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Return an array of all cookies set for this response, or
+     * a zero-length array if no cookies have been set.
+     */
+    public Cookie[] getCookies();
 
 
     /**

@@ -162,4 +162,18 @@ public abstract class HttpResponseWrapper
     }
 
 
+    /**
+     * Reset this response, and specify the values for the HTTP status code
+     * and corresponding message.
+     *
+     * @exception IllegalStateException if this response has already been
+     *  committed
+     */
+    public void reset(int status, String message) {
+
+        ((HttpResponse) response).reset(status, message);
+
+    }
+
+
 }
