@@ -88,7 +88,15 @@ public interface Deployer  {
 
     /**
      * The ContainerEvent event type sent when a new application is
-     * installed by <code>install()</code>.
+     * being installed by <code>install()</code>, before it has been
+     * started.
+     */
+    public static final String PRE_INSTALL_EVENT = "pre-install";
+
+
+    /**
+     * The ContainerEvent event type sent when a new application is
+     * installed by <code>install()</code>, after it has been started.
      */
     public static final String INSTALL_EVENT = "install";
 

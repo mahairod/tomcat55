@@ -189,8 +189,11 @@ public class StandardHostDeployer implements Deployer {
      * start with a slash.
      * <p>
      * If this application is successfully installed, a ContainerEvent of type
-     * <code>INSTALL_EVENT</code> will be sent to all registered listeners,
-     * with the newly created <code>Context</code> as an argument.
+     * <code>PRE_INSTALL_EVENT</code> will be sent to registered listeners
+     * before the associated Context is started, and a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> will be sent to all registered listeners
+     * after the associated Context is started, with the newly created
+     * <code>Context</code> as an argument.
      *
      * @param contextPath The context path to which this application should
      *  be installed (must be unique)
@@ -250,6 +253,7 @@ public class StandardHostDeployer implements Deployer {
                     (LifecycleListener) clazz.newInstance();
                 ((Lifecycle) context).addLifecycleListener(listener);
             }
+            host.fireContainerEvent(PRE_INSTALL_EVENT, context);
             host.addChild(context);
             host.fireContainerEvent(INSTALL_EVENT, context);
         } catch (Exception e) {
@@ -266,10 +270,12 @@ public class StandardHostDeployer implements Deployer {
      * (consisting of a <code>&lt;Context&gt;</code> element) and (optional)
      * web application archive are at the specified URLs.</p>
      *
-     * <p>If this application is successfully installed, a ContainerEvent
-     * of type <code>INSTALL_EVENT</code> will be sent to all registered
-     * listeners, with the newly created <code>Context</code> as an argument.
-     * </p>
+     * If this application is successfully installed, a ContainerEvent of type
+     * <code>PRE_INSTALL_EVENT</code> will be sent to registered listeners
+     * before the associated Context is started, and a ContainerEvent of type
+     * <code>INSTALL_EVENT</code> will be sent to all registered listeners
+     * after the associated Context is started, with the newly created
+     * <code>Context</code> as an argument.
      *
      * @param config A URL that points to the context configuration descriptor
      *  to be used for configuring the new Context
@@ -518,6 +524,7 @@ public class StandardHostDeployer implements Deployer {
                 (sm.getString("standardHost.pathUsed", contextPath));
         if (this.overrideDocBase != null)
             context.setDocBase(this.overrideDocBase);
+        host.fireContainerEvent(PRE_INSTALL_EVENT, context);
         host.addChild(child);
         host.fireContainerEvent(INSTALL_EVENT, context);
 
