@@ -79,6 +79,9 @@
       <update>
         Add DIGEST authentication support to the JDBC and DataSource realms. Supports both digested and cleartext passwords. (markt)
       </update>
+      <fix>
+        <bug>32429</bug>: CGIServlet calculates number of lines received on stderr incorrectly. (markt)
+      </fix>
     </changelog>
   </subsection>
 
