@@ -104,16 +104,17 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.deploy.LoginConfig;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
 import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.ContextLocalEjb;
+import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
-import org.apache.catalina.deploy.ContextLocalEjb;
-import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.loader.Extension;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
@@ -726,6 +727,13 @@ public final class ContextConfig
         String[] resourceEnvRefs = context.findResourceEnvRefs();
         for (i = 0; i < resourceEnvRefs.length; i++) {
             context.removeResourceEnvRef(resourceEnvRefs[i]);
+        }
+
+        // Removing resource links
+        ContextResourceLink[] contextResourceLinks = 
+            context.findResourceLinks();
+        for (i = 0; i < contextResourceLinks.length; i++) {
+            context.removeResourceLink(contextResourceLinks[i].getName());
         }
 
         // Removing resources
