@@ -337,7 +337,6 @@ final class ApplicationDispatcher
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet exception occurs
      */
-
     public void forward(ServletRequest request, ServletResponse response)
         throws ServletException, IOException
     {
@@ -591,6 +590,18 @@ final class ApplicationDispatcher
     private void invoke(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
+        // Checking to see if the context classloader is the current context
+        // classloader. If it's not, we're saving it, and setting the context
+        // classloader to the Context classloader
+        ClassLoader oldCCL = Thread.currentThread().getContextClassLoader();
+        ClassLoader contextClassLoader = context.getLoader().getClassLoader();
+
+        if (oldCCL != contextClassLoader) {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        } else {
+            oldCCL = null;
+        }
+
         // Initialize local variables we may need
         HttpServletRequest hrequest = null;
         if (request instanceof HttpServletRequest)
@@ -716,6 +727,10 @@ final class ApplicationDispatcher
                 (sm.getString("applicationDispatcher.deallocateException",
                               wrapper.getName()), e);
         }
+
+        // Reset the old context class loader
+        if (oldCCL != null)
+            Thread.currentThread().setContextClassLoader(oldCCL);
 
         // Rethrow an exception if one was thrown by the invoked servlet
         if (ioException != null)
