@@ -870,9 +870,14 @@ public class MBeanFactory extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         server.addService(service);
         Vector onames = new Vector();
-        ObjectName oname = engine.getObjectName();
+        // FIXME service & engine.getObjectName
+        //ObjectName oname = engine.getObjectName();
+        ObjectName oname = 
+            MBeanUtils.createObjectName(engineName, engine);
         onames.add(0, oname);
-        oname = service.getObjectName();
+        //oname = service.getObjectName();
+        oname = 
+            MBeanUtils.createObjectName(engineName, service);
         onames.add(1, oname);
         return (onames);
 
