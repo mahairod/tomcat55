@@ -66,10 +66,9 @@
 
 <section name="Nested Components">
 
-  <p>No nested components may be embedded inside a <strong>Server</strong>,
-  element, except for one or more <strong>Connector</strong> elements
-  followed by a single <a href="engine.html">Engine</a> element.
-  </p>
+  <p>The only components that may be nested inside a <strong>Service</strong>
+  element are one or more <strong>Connector</strong> elements,
+  followed by exactly one <a href="engine.html">Engine</a> element.</p>
 
 </section>
 

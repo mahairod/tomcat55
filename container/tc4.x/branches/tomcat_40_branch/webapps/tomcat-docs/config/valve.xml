@@ -61,7 +61,7 @@
 
       <attribute name="className" required="true">
         <p>Java class name of the implementation to use.  This MUST be set to
-        <strong>org.apache.catalina.valve.AccessLogValve</strong>.</p>
+        <strong>org.apache.catalina.valves.AccessLogValve</strong>.</p>
       </attribute>
 
       <attribute name="directory" required="false">
@@ -164,7 +164,7 @@
 
       <attribute name="className" required="true">
         <p>Java class name of the implementation to use.  This MUST be set to
-        <strong>org.apache.catalina.valve.RemoteAddrValve</strong>.</p>
+        <strong>org.apache.catalina.valves.RemoteAddrValve</strong>.</p>
       </attribute>
 
       <attribute name="accept" required="false">
@@ -215,7 +215,7 @@
 
       <attribute name="className" required="true">
         <p>Java class name of the implementation to use.  This MUST be set to
-        <strong>org.apache.catalina.valve.RemoteHostValve</strong>.</p>
+        <strong>org.apache.catalina.valves.RemoteHostValve</strong>.</p>
       </attribute>
 
       <attribute name="accept" required="false">
@@ -238,6 +238,81 @@
     </attributes>
 
   </subsection>
+
+</section>
+
+
+<section name="Request Dumper Valve">
+
+
+  <subsection name="Introduction">
+
+    <p>The <em>Request Dumper Valve</em> is a useful tool in debugging
+    interactions with a client application (or browser) that is sending
+    HTTP requests to your Tomcat-based server.  When configured, it causes
+    details about each request processed by its associated Engine, Host,
+    or Context to be logged to the <a href="logger.html">Logger</a> that
+    corresponds to that container.</p>
+
+  </subsection>
+
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Request Dumper Valve</strong> supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.valves.RequestDumperValve</strong>.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Single Sign On Valve">
+
+  <subsection name="Introduction">
+
+    <p>The <em>Single Sign On Vale</em> is utilized when you wish to give users
+    the ability to sign on to any one of the web applications associated with
+    your virtual host, and then have their identity recognized by all other
+    web applications on the same virtual host.</p>
+
+    <p>See the <a href="host.html#Single Sign On">Single Sign On</a> special
+    feature on the <strong>Host</strong> element for more information.</p>
+
+  </subsection>
+
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Single Sign On</strong> Valve supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.authenticator.SingleSignOn</strong>.</p>
+      </attribute>
+
+      <attribute name="debug" required="false">
+        <p>Detail level of debugging messages created by this component.  By
+        default, this is set to zero (0), which means no debug output.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
 
 </section>
 
