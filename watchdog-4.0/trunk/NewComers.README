@@ -1,0 +1,14 @@
+The purpose of this document is to help the new comers to watchdog, get to speed quickly.Following are the things you need to know for working on watchdog.
+--------------------------------------------------------------------------
+
+1)Using CVS..how to use CVS to get the workspace from the main server and putback the new files.
+2)How Ant works i.e how to write XML files for Ant Targets.
+3)Gtest...How to write targets for running the watchdog tests.
+ There is a README file in watcdog main directory that explains how to build and run the watchdog tests.Here are some important points about how to add a jsp test to the watchdog
+1)put all the jsp files in the jsp directory of under jsp-tests. You can create your own subdirectories if you want.
+2)Put all the java files (.java)  WEB-INF/classes directory of jsp-tests.Here again you can create your own subdirectories but then you have to keep these files in apropriate packages.For ex. if yoiu create a directory MyJSP and create a java file say Hello.java then Hello.java should be in package MyJsp .
+3)put all the TLD (tag library descriptor files) in WEB-INF/tlds though you are not required to do so.It's a good idea to follow this convention
+4)Golden files are expected results from these tests. Gtest compares the output of the tests with the golden files and if they don't match it says "test failed". The golden files are kept in src/clients/org/apache/jcheck/jsp for jsps and src/clients/org/apache/jcheck/servlet for servlets of the main watchdog workspace.
+
+
+
