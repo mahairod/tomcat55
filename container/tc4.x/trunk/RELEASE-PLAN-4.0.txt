@@ -47,18 +47,14 @@ Bugs That Must Be Addressed Before Final Release:
 ------------------------------------------------
 
 Catalina    2883    Error page for 401 error code is not populated
+                    (Not a spec issue, so likely to be downgraded to
+                    "enhancement request")
 
-Catalina    3292    Class reloading fails
+Catalina    3292    Class reloading fails (awaiting test case)
 
 Connectors  1788    mod_webapp errors on Win2k
 
-Connectors  2334    Tomcat 4.0-b5 + Apache 1.3.12?
-
 Connectors  2997    Webapp connector should recover when Tomcat is restarted
-
-Connectors  2999    Linking trouble: webapp connectors and Apache 1.3 apxs
-
-Connectors  3160    mod_webapp performance issues
 
 Jasper      2693    Syntax errors in JSP source generate NumberFormatException
 
@@ -94,8 +90,6 @@ Webapps     3383    CompressionFilter problem in Catalina
 
 Nice To Have Fixes Before Final Release:
 ---------------------------------------
-
-Catalina    2949    Tomcat 4.0/Solaris follow soft links for public_html
 
 Catalina    3114    Spanish translations of LocalString.properties files
 
