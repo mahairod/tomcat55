@@ -134,6 +134,9 @@
       <update>
           Fix some RealmBase/JNDIRealm log.isXXXEnabled (pero)
       </update>
+      <fix>
+          <bug>34161</bug>: Harmonize StandardContext.stop with ContainerBase.stop (remm)
+      </fix>
     </changelog>
    </subsection>
    
