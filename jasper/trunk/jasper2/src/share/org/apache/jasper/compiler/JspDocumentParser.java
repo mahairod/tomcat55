@@ -637,14 +637,8 @@ class JspDocumentParser extends DefaultHandler
 				   Mark start,
 				   Node parent) throws SAXException {
 
-	String prefix = "";
-	int colon = qName.indexOf(':');
-	if (colon != -1) {
-	    prefix = qName.substring(0, colon);
-	}
-
 	// Check if this is a user-defined (custom) tag
-        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(prefix);
+        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(uri);
         if (tagLibInfo == null) {
             return null;
 	}
@@ -668,10 +662,16 @@ class JspDocumentParser extends DefaultHandler
 	} else {
             tagInfo = tagFileInfo.getTagInfo();
         }
+
+	String prefix = "";
+	int colon = qName.indexOf(':');
+	if (colon != -1) {
+	    prefix = qName.substring(0, colon);
+	}
        
-	return new Node.CustomTag(qName, prefix, localName, attrs, xmlnsAttrs,
-				  start, parent, tagInfo, tagFileInfo,
-				  tagHandlerClass);
+	return new Node.CustomTag(qName, prefix, localName, uri, attrs,
+				  xmlnsAttrs, start, parent, tagInfo,
+				  tagFileInfo, tagHandlerClass);
     }
 
     /*
@@ -726,39 +726,35 @@ class JspDocumentParser extends DefaultHandler
 		continue;
 	    }
 
-	    // Get the prefix
-	    String prefix = "";
-	    int colon = qName.indexOf(':');
-	    if (colon != -1) {
-		prefix = qName.substring(colon + 1);
+	    String uri = xmlnsAttrs.getValue(i);
+	    if (!taglibs.containsKey(uri)) {
+		TagLibraryInfo tagLibInfo = getTaglibInfo(qName, uri);
+		taglibs.put(uri, tagLibInfo);
 	    }
-	    if (taglibs.containsKey(prefix)) {
-		// Prefix already in taglib map.
-		throw new JasperException(
-		        Localizer.getMessage(
-                                "jsp.error.xmlns.redefinition.notimplemented",
-				prefix));
-	    }
-
-	    TagLibraryInfo tagLibInfo = getTaglibInfo(xmlnsAttrs.getValue(i),
-						      prefix);
-	    taglibs.put(prefix, tagLibInfo);
 	}
     }
 
     /*
-     * Gets the tag library associated with the given uri namespace to which
-     * the given prefix is bound.
+     * Creates the tag library associated with the given uri namespace, and
+     * returns it.
      *
-     * @param uri The uri namespace 
-     * @param prefix The prefix that is bound to the uri namespace
+     * @param qName The qualified name of the xmlns attribute
+     * (of the form 'xmlns:<prefix>')
+     * @param uri The uri namespace (value of the xmlns attribute)
      *
      * @return The tag library associated with the given uri namespace
      */
-    private TagLibraryInfo getTaglibInfo(String uri, String prefix)
+    private TagLibraryInfo getTaglibInfo(String qName, String uri)
                 throws JasperException {
 
 	TagLibraryInfo result = null;
+
+	// Get the prefix
+	String prefix = "";
+	int colon = qName.indexOf(':');
+	if (colon != -1) {
+	    prefix = qName.substring(colon + 1);
+	}
 
 	if (uri.startsWith(URN_JSPTAGDIR)) {
 	    // uri (of the form "urn:jsptagdir:path") references tag file dir

@@ -98,8 +98,8 @@ class FunctionMapperImpl implements FunctionMapper {
 	Iterator iter = taglibs.keySet().iterator();
 	ClassLoader loader = compiler.getCompilationContext().getClassLoader();
 	while (iter.hasNext()) {
-	    String prefix = (String) iter.next();
-	    TagLibraryInfo tli = (TagLibraryInfo) taglibs.get(prefix);
+	    String uri = (String) iter.next();
+	    TagLibraryInfo tli = (TagLibraryInfo) taglibs.get(uri);
 	    FunctionInfo[] fnInfos = tli.getFunctions();
 	    for (int i = 0; fnInfos != null && i < fnInfos.length; i++) {
 		FunctionSignature fnSig = 
@@ -114,7 +114,8 @@ class FunctionMapperImpl implements FunctionMapper {
 		    err.jspError(e);
 		}
 
-		String key = prefix + ":" + fnInfos[i].getName();
+		String key = tli.getPrefixString() + ":"
+		    + fnInfos[i].getName();
 		this.fnMap.put(key, method);
 		this.fnSigMap.put(key, fnSig);
 		this.fnInfoMap.put(key, fnInfos[i]);

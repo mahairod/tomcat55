@@ -77,6 +77,7 @@ class PageInfo {
 
     private BeanRepository beanRepository;
     private Hashtable tagLibraries;
+    private Hashtable prefixMapper;
     private FunctionMapperImpl funcMap;
 
     private String language = "java";
@@ -126,6 +127,7 @@ class PageInfo {
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
 	this.tagLibraries = new Hashtable();
+	this.prefixMapper = new Hashtable();
 	this.imports = new Vector();
         this.dependants = new Vector();
 	this.includePrelude = new Vector();
@@ -176,6 +178,13 @@ class PageInfo {
 
     public Hashtable getTagLibraries() {
 	return tagLibraries;
+    }
+
+    /*
+     * Returns the prefix-to-URI mapper.
+     */
+    public Hashtable getPrefixMapper() {
+	return prefixMapper;
     }
 
     public String getLanguage() {

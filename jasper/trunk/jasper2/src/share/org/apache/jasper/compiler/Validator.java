@@ -686,11 +686,6 @@ class Validator {
 			     n.getQName());
 	    }
 
-	    // Get custom actions's namespace, which is used to validate the
-	    // namespaces of any custom action attributes with qualified names
-	    String customActionUri =
-		((TagLibraryInfo) taglibs.get(n.getPrefix())).getURI();
-		
 	    /*
 	     * Make sure all required attributes are present, either as
              * attributes or named attributes (<jsp:attribute>).
@@ -698,6 +693,7 @@ class Validator {
 	     * both attributes or named attributes.
 	     */
 	    TagAttributeInfo[] tldAttrs = tagInfo.getAttributes();
+	    String customActionUri = n.getURI();
 	    Attributes attrs = n.getAttributes();
 	    for (int i=0; i<tldAttrs.length; i++) {
 		String attr = attrs.getValue(tldAttrs[i].getName());
@@ -828,22 +824,21 @@ class Validator {
 	    for (int i=0; i<namedAttributeNodes.size(); i++) {
                 Node.NamedAttribute na = 
                     (Node.NamedAttribute)namedAttributeNodes.getNode( i );
-		String uri = "";
-		if (na.getPrefix() != null) {
-		    TagLibraryInfo tagLibInfo =
-			(TagLibraryInfo) taglibs.get(na.getPrefix());
-		    if (tagLibInfo == null) {
-			err.jspError(n, "jsp.error.attribute.invalidPrefix",
-				     na.getPrefix());
-		    }
-		    uri = tagLibInfo.getURI();
-		}
 		boolean found = false;
 		for (int j=0; j<tldAttrs.length; j++) {
-		    // See above comment about namespace matches
+		    /*
+		     * See above comment about namespace matches. For named
+		     * attributes, we use the prefix instead of URI as the
+		     * match criterion, because in the case of a JSP document,
+		     * we'd have to keep track of which namespaces are in scope
+		     * when parsing a named attribute, in order to determine
+		     * the URI that the prefix of the named attribute's name
+		     * matches to.
+		     */
+		    String attrPrefix = na.getPrefix();
 		    if (na.getLocalName().equals(tldAttrs[j].getName())
-			    && (uri == null || uri.length() == 0
-				|| uri == customActionUri)) {
+			    && (attrPrefix == null || attrPrefix.length() == 0
+				|| attrPrefix == n.getPrefix())) {
 			jspAttrs[attrs.getLength() + i]
 			    = new Node.JspAttribute(na, false);
 			NamedAttributeVisitor nav = null;

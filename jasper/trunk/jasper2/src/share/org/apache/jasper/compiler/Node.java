@@ -1168,6 +1168,7 @@ abstract class Node implements TagConstants {
      */
     public static class CustomTag extends Node {
 
+	private String uri;
 	private String prefix;
 	private JspAttribute[] jspAttrs;
 	private TagData tagData;
@@ -1202,19 +1203,21 @@ abstract class Node implements TagConstants {
 	private Nodes atETag;
 
 	public CustomTag(String qName, String prefix, String localName,
-			 Attributes attrs, Mark start, Node parent,
+			 String uri, Attributes attrs, Mark start, Node parent,
 			 TagInfo tagInfo, TagFileInfo tagFileInfo,
 			 Class tagHandlerClass) {
-	    this(qName, prefix, localName, attrs, null, start, parent, tagInfo,
-		 tagFileInfo, tagHandlerClass);
+
+	    this(qName, prefix, localName, uri, attrs, null, start, parent,
+		 tagInfo, tagFileInfo, tagHandlerClass);
 	}
 
 	public CustomTag(String qName, String prefix, String localName,
-			 Attributes attrs, Attributes xmlnsAttrs, Mark start,
-			 Node parent, TagInfo tagInfo, TagFileInfo tagFileInfo,
-			 Class tagHandlerClass) {
+			 String uri, Attributes attrs, Attributes xmlnsAttrs,
+			 Mark start, Node parent, TagInfo tagInfo,
+			 TagFileInfo tagFileInfo, Class tagHandlerClass) {
 
 	    super(qName, localName, attrs, xmlnsAttrs, start, parent);
+	    this.uri = uri;
 	    this.prefix = prefix;
 	    this.tagInfo = tagInfo;
 	    this.tagFileInfo = tagFileInfo;
@@ -1246,6 +1249,13 @@ abstract class Node implements TagConstants {
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
+	}
+
+	/**
+	 * @return The URI namespace that this custom action belongs to
+	 */
+	public String getURI() {
+	    return this.uri;
 	}
 
 	/**

@@ -95,6 +95,7 @@ class Parser implements TagConstants {
     private String currentFile;
     private Mark start;
     private Hashtable taglibs;
+    private Hashtable prefixMapper;
     private ErrorDispatcher err;
     private int scriptlessCount;
     private boolean isTagFile;
@@ -118,6 +119,7 @@ class Parser implements TagConstants {
 	this.parserController = pc;
 	this.ctxt = pc.getJspCompilationContext();
 	this.taglibs = pc.getCompiler().getPageInfo().getTagLibraries();
+	this.prefixMapper = pc.getCompiler().getPageInfo().getPrefixMapper();
 	this.err = pc.getCompiler().getErrorDispatcher();
 	this.reader = reader;
 	this.currentFile = reader.mark().getFile();
@@ -218,12 +220,11 @@ class Parser implements TagConstants {
 	int index = qName.indexOf(':');
 	if (index != -1) {
 	    String prefix = qName.substring(0, index);
-	    TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(prefix);
-	    if (tagLibInfo == null) {
+	    uri = (String) prefixMapper.get(prefix);
+	    if (uri == null) {
 		err.jspError(reader.mark(),
 			     "jsp.error.attribute.invalidPrefix", prefix);
 	    }
-	    uri = tagLibInfo.getURI();
 	    localName = qName.substring(index+1);
 	}
 
@@ -441,25 +442,26 @@ class Parser implements TagConstants {
 	String uri = attrs.getValue("uri");
 	String prefix = attrs.getValue("prefix");
 	if (prefix != null) {
-	    TagLibraryInfo tagLibInfo = null;
 	    if (uri != null) {
 		// Errors to be checked in Validator
 		String[] location = ctxt.getTldLocation(uri);
-		tagLibInfo = new TagLibraryInfoImpl(ctxt, parserController,
-						    prefix, uri, location,
-						    err);
+		taglibs.put(uri,
+			    new TagLibraryInfoImpl(ctxt, parserController,
+						   prefix, uri, location,
+						   err));
+		prefixMapper.put(prefix, uri);
 	    } else {
 		String tagdir = attrs.getValue("tagdir");
 		if (tagdir != null) {
-		    tagLibInfo = new ImplicitTagLibraryInfo(ctxt,
-							    parserController,
-							    prefix, 
-							    tagdir,
-							    err);
+		    String urnTagdir = URN_JSPTAGDIR + tagdir;
+		    taglibs.put(urnTagdir,
+				new ImplicitTagLibraryInfo(ctxt,
+							   parserController,
+							   prefix, 
+							   tagdir,
+							   err));
+		    prefixMapper.put(prefix, urnTagdir);
 		}
-	    }
-	    if (tagLibInfo != null) {
-		taglibs.put(prefix, tagLibInfo);
 	    }
 	}
 
@@ -1314,11 +1316,13 @@ class Parser implements TagConstants {
 	String shortTagName = tagName.substring(i+1);
 
 	// Check if this is a user-defined tag.
-        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(prefix);
-        if (tagLibInfo == null) {
+	String uri = (String) prefixMapper.get(prefix);
+        if (uri == null) {
 	    reader.reset(start);
 	    return false;
 	}
+
+        TagLibraryInfo tagLibInfo = (TagLibraryInfo) taglibs.get(uri);
 	TagInfo tagInfo = tagLibInfo.getTag(shortTagName);
 	TagFileInfo tagFileInfo = tagLibInfo.getTagFile(shortTagName);
 	if (tagInfo == null && tagFileInfo == null) {
@@ -1349,8 +1353,9 @@ class Parser implements TagConstants {
 	
         // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
-	    new Node.CustomTag(tagName, prefix, shortTagName, attrs, start,
-			       parent, tagInfo, tagFileInfo, tagHandlerClass);
+	    new Node.CustomTag(tagName, prefix, shortTagName, uri, attrs,
+			       start, parent, tagInfo, tagFileInfo,
+			       tagHandlerClass);
 	    return true;
 	}
 	
@@ -1361,17 +1366,16 @@ class Parser implements TagConstants {
 	// Looking for a body, it still can be empty; but if there is a
 	// a tag body, its syntax would be dependent on the type of
 	// body content declared in TLD.
-	TagLibraryInfo taglib = (TagLibraryInfo)taglibs.get(prefix);
 	String bc;
-	if (taglib.getTag(shortTagName) != null) {
-	    bc = taglib.getTag(shortTagName).getBodyContent();
-	} else if (taglib.getTagFile(shortTagName) != null) {
+	if (tagInfo != null) {
+	    bc = tagInfo.getBodyContent();
+	} else if (tagFileInfo != null) {
 	    bc = TagInfo.BODY_CONTENT_SCRIPTLESS;
 	} else {
 	    bc = TagInfo.BODY_CONTENT_EMPTY;
 	}
 
-	Node tagNode = new Node.CustomTag(tagName, prefix, shortTagName,
+	Node tagNode = new Node.CustomTag(tagName, prefix, shortTagName, uri,
 					  attrs, start, parent, tagInfo,
 					  tagFileInfo, tagHandlerClass);
 	parseOptionalBody( tagNode, tagName, bc );
