@@ -1482,11 +1482,17 @@ public class WebappClassLoader
         }
 
         synchronized(this) {
-            clazz = defineClass(name, entry.binaryContent, 0,
-                                entry.binaryContent.length, codeSource);
+            // Since all threads use the same ResourceEntry instance, it is
+            // the one which will contain the class
+            if (entry.loadedClass == null) {
+                clazz = defineClass(name, entry.binaryContent, 0,
+                                    entry.binaryContent.length, codeSource);
+                entry.loadedClass = clazz;
+            } else {
+                clazz = entry.loadedClass;
+            }
         }
 
-        entry.loadedClass = clazz;
 
         return clazz;
 
@@ -1635,8 +1641,16 @@ public class WebappClassLoader
         entry.binaryContent = binaryContent;
 
         // Add the entry in the local resource repository
-        synchronized (resourceEntries) {
-            resourceEntries.put(name, entry);
+        synchronized (this) {
+            // Ensures that all the threads which may be in a race to load
+            // a particular class all end up with the same ResourceEntry
+            // instance
+            ResourceEntry entry2 = (ResourceEntry) resourceEntries.get(name);
+            if (entry2 == null) {
+                resourceEntries.put(name, entry);
+            } else {
+                entry = entry2;
+            }
         }
 
         return entry;
