@@ -82,9 +82,7 @@ public class HttpUtils {
 	"javax.servlet.http.LocalStrings";
     private static ResourceBundle lStrings =
 	ResourceBundle.getBundle(LSTRING_FILE);
-    
-    static Hashtable nullHashtable = new Hashtable();
-    
+        
     
     
     /**
