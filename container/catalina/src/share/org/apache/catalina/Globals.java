@@ -287,7 +287,7 @@ public final class Globals {
     /**
      * The subject under which the AccessControlContext is running.
      */
-    public static transient final String SUBJECT_ATTR =
+    public static final String SUBJECT_ATTR =
         "javax.security.auth.subject";
 
     
