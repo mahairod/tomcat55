@@ -1629,8 +1629,13 @@ class Generator {
 
                 // Set up new buffer for the method
                 outSave = out;
+                /* For fragments, their bodies will be generated in fragment
+                   helper classes, and the Java line adjustments will be done
+                   there, hence they are set to null here to avoid double
+                   adjustments.
+                */
                 GenBuffer genBuffer =
-                    new GenBuffer(n.implementsSimpleTag() ? null : n);
+                    new GenBuffer(n, n.implementsSimpleTag()? null: n.getBody());
                 methodsBuffered.add(genBuffer);
                 out = genBuffer.getOut();
 
@@ -1883,7 +1888,7 @@ class Generator {
                // Generate Strings as char arrays, for performance
                 ServletWriter caOut;
                 if (charArrayBuffer == null) {
-                    charArrayBuffer = new GenBuffer(null);
+                    charArrayBuffer = new GenBuffer();
                     caOut = charArrayBuffer.getOut();
                     caOut.pushIndent();
                     textMap = new HashMap();
@@ -3694,21 +3699,31 @@ class Generator {
     }
 
     /**
-     * A class for generating codes to a buffer.
+     * A class for generating codes to a buffer.  Included here are some
+     * support for tracking source to Java lines mapping.
      */
     private static class GenBuffer {
 
+        /*
+         * For a CustomTag, the codes that are generated at the beginning of
+         * the tag may not be in the same buffer as those for the body of the
+         * tag.  Two fields are used here to keep this straight.  For codes
+         * that do not corresponds to any JSP lines, they should be null.  
+         */
         private Node node;
+        private Node.Nodes body;
         private java.io.CharArrayWriter charWriter;
         protected ServletWriter out;
 
-        GenBuffer(Node n) {
+        GenBuffer() {
+            this(null, null);
+        }
+
+        GenBuffer(Node n, Node.Nodes b) {
             node = n;
-            if (n != null) {
-                Node.Nodes body = n.getBody();
-                if (body != null) {
-                    body.setGeneratedInBuffer(true);
-                }
+            body = b;
+            if (body != null) {
+                body.setGeneratedInBuffer(true);
             }
             charWriter = new java.io.CharArrayWriter();
             out = new ServletWriter(new java.io.PrintWriter(charWriter));
@@ -3731,32 +3746,37 @@ class Generator {
         public void adjustJavaLines(final int offset) {
 
             if (node != null) {
+                adjustJavaLine(node, offset);
+            }
+
+            if (body != null) {
                 try {
-                    node.accept(new Node.Visitor() {
+                    body.visit(new Node.Visitor() {
 
                         public void doVisit(Node n) {
-                            if (n.getBeginJavaLine() > 0) {
-                                n.setBeginJavaLine(
-                                    n.getBeginJavaLine() + offset);
-                                n.setEndJavaLine(n.getEndJavaLine() + offset);
-                            }
+                            adjustJavaLine(n, offset);
                         }
 
                         public void visit(Node.CustomTag n)
                             throws JasperException {
-                            doVisit(n);
-                            Node.Nodes body = n.getBody();
-                            if (body != null &&
-                                ((node == n) || !body.isGeneratedInBuffer())) {
-                                // We want to adjust the Java lines only for
-                                // top level Custom tags, unless its body is
-                                // not generated in a buffer.
-                                body.visit(this);
+                            Node.Nodes b = n.getBody();
+                            if (b != null && !b.isGeneratedInBuffer()) {
+                                // Don't adjust lines for the nested tags that
+                                // are also generated in buffers, because the
+                                // adjustments will be done elsewhere.
+                                b.visit(this);
                             }
                         }
                     });
                 } catch (JasperException ex) {
                 }
+            }
+        }
+
+        private static void adjustJavaLine(Node n, int offset) {
+            if (n.getBeginJavaLine() > 0) {
+                n.setBeginJavaLine(n.getBeginJavaLine() + offset);
+                n.setEndJavaLine(n.getEndJavaLine() + offset);
             }
         }
     }
@@ -3772,7 +3792,7 @@ class Generator {
 
             public Fragment(int id, Node node) {
                 this.id = id;
-                genBuffer = new GenBuffer(node);
+                genBuffer = new GenBuffer(null, node.getBody());
             }
 
             public GenBuffer getGenBuffer() {
@@ -3792,7 +3812,7 @@ class Generator {
         private String className;
 
         // Buffer for entire helper class
-        private GenBuffer classBuffer = new GenBuffer(null);
+        private GenBuffer classBuffer = new GenBuffer();
 
         public FragmentHelperClass(String className) {
             this.className = className;
