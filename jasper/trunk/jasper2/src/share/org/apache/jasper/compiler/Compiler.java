@@ -245,7 +245,7 @@ public class Compiler {
         writer.close();
 
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-	SmapUtil.generateSmap(ctxt, pageNodes, true);
+	//XXX SmapUtil.generateSmap(ctxt, pageNodes, true);
     }
 
     /** 
@@ -319,7 +319,7 @@ public class Compiler {
         }
 
         //JSR45 Support - note this needs to be checked by a JSR45 guru
-	SmapUtil.installSmap(ctxt);
+	//XXX SmapUtil.installSmap(ctxt);
     }
 
     /** 
