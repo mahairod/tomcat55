@@ -545,7 +545,10 @@ public class WebappClassLoader
             hasExternalRepositories = true;
             repositoryURLs = null;
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e.toString());
+            IllegalArgumentException iae = new IllegalArgumentException
+                ("Invalid repository: " + repository);
+            iae.initCause(e);
+            throw iae;
         }
 
     }
@@ -842,7 +845,7 @@ public class WebappClassLoader
                 } catch (Exception se) {
                     if (log.isTraceEnabled())
                         log.trace("      -->Exception-->ClassNotFoundException", se);
-                    throw new ClassNotFoundException(name);
+                    throw new ClassNotFoundException(name, se);
                 }
             }
         }
@@ -860,8 +863,7 @@ public class WebappClassLoader
                     throw cnfe;
                 }
             } catch(AccessControlException ace) {
-                ace.printStackTrace();
-                throw new ClassNotFoundException(name);
+                throw new ClassNotFoundException(name, ace);
             } catch (RuntimeException e) {
                 if (log.isTraceEnabled())
                     log.trace("      -->RuntimeException Rethrown", e);
@@ -871,7 +873,7 @@ public class WebappClassLoader
                 try {
                     clazz = super.findClass(name);
                 } catch(AccessControlException ace) {
-                    throw new ClassNotFoundException(name);
+                    throw new ClassNotFoundException(name, ace);
                 } catch (RuntimeException e) {
                     if (log.isTraceEnabled())
                         log.trace("      -->RuntimeException Rethrown", e);
@@ -1269,10 +1271,8 @@ public class WebappClassLoader
                 } catch (SecurityException se) {
                     String error = "Security Violation, attempt to use " +
                         "Restricted Class: " + name;
-                    System.out.println(error);
-                    //se.printStackTrace();
                     log.info(error, se);
-                    throw new ClassNotFoundException(error);
+                    throw new ClassNotFoundException(error, se);
                 }
             }
         }
