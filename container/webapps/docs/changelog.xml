@@ -44,6 +44,9 @@
       <update>
         <bug>32249</bug>: Updated logging documentation. (yoavs)
       </update>
+      <update>
+        <bug>32282</bug>: Modify Windows Uninstaller to only remove webapps/ROOT and webapps if user asks to remove everything. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
