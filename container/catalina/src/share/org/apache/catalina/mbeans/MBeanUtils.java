@@ -1138,7 +1138,7 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        name = new ObjectName(domain + ":type=Engine,name="+engine.getName());
+        name = new ObjectName(domain + ":type=Engine");
         return (name);
 
     }
