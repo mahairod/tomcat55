@@ -139,8 +139,8 @@ junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
 
 
-# ----- Struts, version 1.0 or later -----
-struts.home=${base.path}/jakarta-struts-1.0
+# ----- Struts, version 1.0.1 or later -----
+struts.home=${base.path}/jakarta-struts-1.0.1
 struts.lib=${struts.home}/lib
 struts.jar=${struts.lib}/struts.jar
 

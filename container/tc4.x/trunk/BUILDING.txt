@@ -284,15 +284,15 @@ web application.
 
 (18) Download and Install the Struts Binary Distribution
 
-* Download a binary distribution of Struts 1.0 from:
+* Download a binary distribution of Struts 1.0.1 from:
 
-    http://jakarta.apache.org/builds/jakarta-struts/release/v1.0/
+    http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.1/
 
   On a Windows platform, you will need:
-    jakarta-struts-1.0.zip
+    jakarta-struts-1.0.1.zip
 
   On a Unix platform, you will need:
-    jakarta-struts-1.0.tar.gz
+    jakarta-struts-1.0.1.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory.
