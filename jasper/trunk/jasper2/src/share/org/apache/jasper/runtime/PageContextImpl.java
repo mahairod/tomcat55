@@ -412,8 +412,9 @@ public class PageContextImpl extends PageContext {
 	}
 
 	// Make sure that the response object is not the wrapper for include
-	while (response instanceof HttpServletResponseWrapper)
-	    response = ((HttpServletResponseWrapper)response).getResponse();
+	while (response instanceof ServletResponseWrapperInclude) {
+	    response = ((ServletResponseWrapperInclude)response).getResponse();
+        }
 
         String path = getAbsolutePathRelativeToContext(relativeUrlPath);
         String includeUri 
