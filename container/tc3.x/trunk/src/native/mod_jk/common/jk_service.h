@@ -143,7 +143,9 @@ struct jk_ws_service {
     char    *server_software;
     unsigned content_length;    /* integer that represents the content  */
                                 /* length should be 0 if unknown.        */
+
     unsigned is_chunked;        /* 1 if content length is unknown (chunked rq) */
+
     unsigned no_more_chunks;    /* 1 if last chunk has been read */
     unsigned content_read;      /* number of bytes read */
 
