@@ -618,10 +618,12 @@
        </fileset>
     </jar>
 
-    <!-- Add XML declarations for admin and manager -->
-    <copy file="${tomcat.build}/server/webapps/manager/manager.xml"
+    <!-- Add XML declarations for admin, manager and balancer -->
+    <move file="${tomcat.build}/server/webapps/manager/manager.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
-    <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
+    <move file="${tomcat.build}/server/webapps/admin/admin.xml"
+         todir="${tomcat.build}/conf/Catalina/localhost" />
+    <move file="${tomcat.build}/webapps/balancer/balancer.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
 
   </target>
