@@ -62,7 +62,6 @@ package org.apache.jasper.compiler;
 
 import java.util.*;
 import java.beans.*;
-import java.net.URLEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -720,14 +719,14 @@ class Generator {
 		    }
 		}
 		if (encode) {
-		    return "java.net.URLEncoder.encode(\"\" + " + v + ")";
+		    return "org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(" + v + ", request.getCharacterEncoding())";
 		}
 		return v;
             } else if( attr.isNamedAttribute() ) {
                 return attr.getNamedAttributeNode().getTemporaryVariableName();
 	    } else {
 		if (encode) {
-		    v = URLEncoder.encode(v);
+		    return "org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(" + quote(v) + ", request.getCharacterEncoding())";
 		}
 		return quote(v);
 	    }
@@ -753,9 +752,11 @@ class Generator {
 
 		    out.print(" + ");
 		    out.print(separator);
-		    out.print(" + \"");
-		    out.print(URLEncoder.encode(n.getTextAttribute("name")));
-		    out.print("=\" + ");
+		    out.print(" + ");
+		    out.print("org.apache.jasper.runtime.JspRuntimeLibrary." +
+			      "URLEncode(" + quote(n.getTextAttribute("name")) +
+				         ", request.getCharacterEncoding())");
+		    out.print("+ \"=\" + ");
 		    out.print(attributeValue(n.getValue(), true, String.class));
 
 		    // The separator is '&' after the second use
