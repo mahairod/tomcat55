@@ -2073,7 +2073,7 @@ public class Request
      * if necessary.
      */
     public HttpSession getSession() {
-        return (getSession(true));
+        return doGetSession(true);
     }
 
 
@@ -2084,9 +2084,7 @@ public class Request
      * @param create Create a new session if one does not exist
      */
     public HttpSession getSession(boolean create) {
-        
         return doGetSession(create);
-
     }
 
 
