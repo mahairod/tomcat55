@@ -134,12 +134,14 @@ public class JikesJavaCompiler implements JavaCompiler {
     public boolean compile(String source) {
 	Process p;
 	int exitValue = -1;
+	String quote = "";
 
         // Used to dynamically load classpath if using Microsoft 
         // virtual machine
         if (MicrosoftClasspath==null) {
             MicrosoftClasspath = new StringBuffer(200);
             if (System.getProperty("java.vendor").startsWith("Microsoft")) {
+                quote = "\"";
                 //Get Microsoft classpath
                 String javaHome = System.getProperty("java.home") + 
                                   "\\Packages";
@@ -152,12 +154,12 @@ public class JikesJavaCompiler implements JavaCompiler {
         }
 
         String[] compilerCmd = new String[] {
-          "\"" + compilerPath + "\"",
+          quote + compilerPath + quote,
           //XXX - add encoding once Jikes supports it
-          "-classpath", "\"" + classpath + MicrosoftClasspath + "\"",
-          "-d", "\"" + outdir + "\"",
+          "-classpath", quote + classpath + MicrosoftClasspath + quote,
+          "-d", quote + outdir + quote,
           "-nowarn",
-          "\"" + source + "\""
+          quote + source + quote
         };
 
         ByteArrayOutputStream tmpErr = new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
