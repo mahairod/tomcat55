@@ -2,12 +2,12 @@
 
 
   <!-- ===================== Initialize Property Values =================== -->
-  <property name="ant.home"        value="../../jakarta-ant"/>
+  <property name="ant.home"        value="${basedir}/../../jakarta-ant"/>
   <property name="build.compiler"  value="classic"/>
-  <property name="servletapi.home" value="../../jakarta-servletapi"/>
-  <property name="webapps.build"   value="../../build/webapps"/>
-  <property name="webapps.deploy"  value="../../build/tomcat-4.0"/>
-  <property name="webapps.dist"    value="../../dist/webapps"/>
+  <property name="servletapi.home" value="${basedir}/../../jakarta-servletapi"/>
+  <property name="webapps.build"   value="${basedir}/../../build/webapps"/>
+  <property name="webapps.deploy"  value="${basedir}/../../build/tomcat-4.0"/>
+  <property name="webapps.dist"    value="${basedir}/../../dist/webapps"/>
 
 
   <!-- ================== Derived Property Values ========================= -->
@@ -25,15 +25,15 @@
   <!-- Add a new target for each webapp subproject -->
 
   <target name="ROOT">
-    <ant dir="./ROOT" target="dist"/>
+    <ant dir="${basedir}/ROOT" target="dist"/>
   </target>
 
   <target name="examples">
-    <ant dir="./examples" target="dist"/>
+    <ant dir="${basedir}/examples" target="dist"/>
   </target>
 
   <target name="webdav">
-    <ant dir="./webdav" target="dist"/>
+    <ant dir="${basedir}/webdav" target="dist"/>
   </target>
 
 
