@@ -16,10 +16,13 @@ successfully, you must take note of the following:</p>
     SMTP service for your network.</li>
 <li>The application logic assumes that no user authentication is required
     by your SMTP server before accepting mail messages to be sent.</li>
+<li>You will need to have the <a href="http://java.sun.com/products/javamail">
+    JavaMail Implementation</a> classes available to your container
+    in order for this example to work.</li>
 <li>All of the fields below are required.</li>
 </ul>
 
-<form method="POST" action="../../SendMailServlet">
+<form method="POST" action="../SendMailServlet">
 <table>
 
   <tr>
