@@ -406,7 +406,6 @@ public class LoggerBase
         domain=name.getDomain();
         host=name.getKeyProperty("host");
         path=name.getKeyProperty("path");
-        log("preRegister with "+name);
         if( container== null ) {
             // Register with the parent
             try {
@@ -450,7 +449,6 @@ public class LoggerBase
     }
     
     public ObjectName createObjectName() {
-        log("createObjectName with "+container);
         // register
         try {
             StandardEngine engine=null;            
