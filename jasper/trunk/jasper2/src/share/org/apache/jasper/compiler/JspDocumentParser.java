@@ -221,9 +221,6 @@ class JspDocumentParser extends DefaultHandler
 
 	Mark start = new Mark(path, locator.getLineNumber(),
 			      locator.getColumnNumber());
-	Attributes attrsCopy = null;
-
-	Node node = null;
 
 	// XXX - As of JSP 2.0, xmlns: can appear in any node (not just
 	// <jsp:root>).  The spec still needs clarification here.
@@ -231,6 +228,7 @@ class JspDocumentParser extends DefaultHandler
 	// is valid from that point forward.  Redefinitions cause an
 	// error.  This isn't quite consistent with how xmlns: normally
 	// works.
+	Attributes attrsCopy = null;
 	try {
 	    attrsCopy = addCustomTagLibraries(attrs);
 	} catch (JasperException je) {
@@ -239,108 +237,12 @@ class JspDocumentParser extends DefaultHandler
 		    locator, je );
 	}
 
-	if (qName.equals(JSP_ROOT)) {
-            // give the <jsp:root> element the original attributes set
-            // (attrs) instead of the copy without the xmlns: elements 
-            // (attrsCopy)
-	    node = new Node.JspRoot(new AttributesImpl(attrs), start, current);
-	    if (isTop) {
-		pageInfo.setHasJspRoot(true);
-	    }
-	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
-	    if (isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.istagfile", qName),
-		    locator);
-	    }
-	    node = new Node.PageDirective(attrsCopy, start, current);
-	    String imports = attrs.getValue("import");
-	    // There can only be one 'import' attribute per page directive
-	    if (imports != null) {
-		((Node.PageDirective) node).addImport(imports);
-	    }
-	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
-	    node = new Node.IncludeDirective(attrsCopy, start, current);
-	    processIncludeDirective(attrsCopy.getValue("file"), node);
-	} else if (qName.equals(JSP_DECLARATION)) {
-	    node = new Node.Declaration(start, current);
-	} else if (qName.equals(JSP_SCRIPTLET)) {
-	    node = new Node.Scriptlet(start, current);
-	} else if (qName.equals(JSP_EXPRESSION)) {
-	    node = new Node.Expression(start, current);
-	} else if (qName.equals(JSP_USE_BEAN)) {
-	    node = new Node.UseBean(attrsCopy, start, current);
-	} else if (qName.equals(JSP_SET_PROPERTY)) {
-	    node = new Node.SetProperty(attrsCopy, start, current);
-	} else if (qName.equals(JSP_GET_PROPERTY)) {
-	    node = new Node.GetProperty(attrsCopy, start, current);
-	} else if (qName.equals(JSP_INCLUDE)) {
-	    node = new Node.IncludeAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_FORWARD)) {
-	    node = new Node.ForwardAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_PARAM)) {
-	    node = new Node.ParamAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_PARAMS)) {
-	    node = new Node.ParamsAction(start, current);
-	} else if (qName.equals(JSP_PLUGIN)) {
-	    node = new Node.PlugIn(attrsCopy, start, current);
-	} else if (qName.equals(JSP_TEXT)) {
-	    node = new Node.JspText(start, current);
-	} else if (qName.equals(JSP_BODY)) {
-	    node = new Node.JspBody(start, current);
-	} else if (qName.equals(JSP_ATTRIBUTE)) {
-	    node = new Node.NamedAttribute(attrsCopy, start, current);
-	} else if (qName.equals(JSP_OUTPUT)) {
-	    node = new Node.JspOutput(attrsCopy, start, current);
-	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
-		    locator);
-	    }
-	    node = new Node.TagDirective(attrsCopy, start, current);
-	    String imports = attrs.getValue("import");
-	    // There can only be one 'import' attribute per tag directive
-	    if (imports != null) {
-		((Node.TagDirective) node).addImport(imports);
-	    }
-	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
-		    locator);
-	    }
-	    node = new Node.AttributeDirective(attrsCopy, start, current);
-	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
-		    locator);
-	    }
-	    node = new Node.VariableDirective(attrsCopy, start, current);
-	} else if (qName.equals(JSP_INVOKE)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
-		    locator);
-	    }
-	    node = new Node.InvokeAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_DO_BODY)) {
-	    if (!isTagFile) {
-		throw new SAXParseException(
-		    Localizer.getMessage("jsp.error.action.isnottagfile",
-					 qName),
-		    locator);
-	    }
-	    node = new Node.DoBodyAction(attrsCopy, start, current);
-	} else if (qName.equals(JSP_ELEMENT)) {
-	    node = new Node.JspElement(attrsCopy, start, current);
+	Node node = null;
+	if (qName.startsWith("jsp:")) {
+	    node = parseStandardAction(qName, attrs, attrsCopy, start,
+				       current);
 	} else {
-	    node = getCustomTag(qName, attrsCopy, start, current);
+	    node = parseCustomAction(qName, attrsCopy, start, current);
 	    if (node == null) {
 		node = new Node.UninterpretedTag(attrsCopy, start, qName,
 						 current);
@@ -580,14 +482,130 @@ class JspDocumentParser extends DefaultHandler
     //*********************************************************************
     // Private utility methods
 
+    private Node parseStandardAction(String qName, Attributes attrs,
+				     Attributes attrsCopy, Mark start,
+				     Node parent)
+	        throws SAXException {
+
+	Node node = null;
+
+	if (qName.equals(JSP_ROOT)) {
+            // give the <jsp:root> element the original attributes set
+            // (attrs) instead of the copy without the xmlns: elements 
+            // (attrsCopy)
+	    node = new Node.JspRoot(new AttributesImpl(attrs), start, current);
+	    if (isTop) {
+		pageInfo.setHasJspRoot(true);
+	    }
+	} else if (qName.equals(JSP_PAGE_DIRECTIVE)) {
+	    if (isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.istagfile", qName),
+		    locator);
+	    }
+	    node = new Node.PageDirective(attrsCopy, start, current);
+	    String imports = attrs.getValue("import");
+	    // There can only be one 'import' attribute per page directive
+	    if (imports != null) {
+		((Node.PageDirective) node).addImport(imports);
+	    }
+	} else if (qName.equals(JSP_INCLUDE_DIRECTIVE)) {
+	    node = new Node.IncludeDirective(attrsCopy, start, current);
+	    processIncludeDirective(attrsCopy.getValue("file"), node);
+	} else if (qName.equals(JSP_DECLARATION)) {
+	    node = new Node.Declaration(start, current);
+	} else if (qName.equals(JSP_SCRIPTLET)) {
+	    node = new Node.Scriptlet(start, current);
+	} else if (qName.equals(JSP_EXPRESSION)) {
+	    node = new Node.Expression(start, current);
+	} else if (qName.equals(JSP_USE_BEAN)) {
+	    node = new Node.UseBean(attrsCopy, start, current);
+	} else if (qName.equals(JSP_SET_PROPERTY)) {
+	    node = new Node.SetProperty(attrsCopy, start, current);
+	} else if (qName.equals(JSP_GET_PROPERTY)) {
+	    node = new Node.GetProperty(attrsCopy, start, current);
+	} else if (qName.equals(JSP_INCLUDE)) {
+	    node = new Node.IncludeAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_FORWARD)) {
+	    node = new Node.ForwardAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_PARAM)) {
+	    node = new Node.ParamAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_PARAMS)) {
+	    node = new Node.ParamsAction(start, current);
+	} else if (qName.equals(JSP_PLUGIN)) {
+	    node = new Node.PlugIn(attrsCopy, start, current);
+	} else if (qName.equals(JSP_TEXT)) {
+	    node = new Node.JspText(start, current);
+	} else if (qName.equals(JSP_BODY)) {
+	    node = new Node.JspBody(start, current);
+	} else if (qName.equals(JSP_ATTRIBUTE)) {
+	    node = new Node.NamedAttribute(attrsCopy, start, current);
+	} else if (qName.equals(JSP_OUTPUT)) {
+	    node = new Node.JspOutput(attrsCopy, start, current);
+	} else if (qName.equals(JSP_TAG_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
+		    locator);
+	    }
+	    node = new Node.TagDirective(attrsCopy, start, current);
+	    String imports = attrs.getValue("import");
+	    // There can only be one 'import' attribute per tag directive
+	    if (imports != null) {
+		((Node.TagDirective) node).addImport(imports);
+	    }
+	} else if (qName.equals(JSP_ATTRIBUTE_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
+		    locator);
+	    }
+	    node = new Node.AttributeDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_VARIABLE_DIRECTIVE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
+		    locator);
+	    }
+	    node = new Node.VariableDirective(attrsCopy, start, current);
+	} else if (qName.equals(JSP_INVOKE)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
+		    locator);
+	    }
+	    node = new Node.InvokeAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_DO_BODY)) {
+	    if (!isTagFile) {
+		throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.action.isnottagfile",
+					 qName),
+		    locator);
+	    }
+	    node = new Node.DoBodyAction(attrsCopy, start, current);
+	} else if (qName.equals(JSP_ELEMENT)) {
+	    node = new Node.JspElement(attrsCopy, start, current);
+	} else {
+	    throw new SAXParseException(
+		    Localizer.getMessage("jsp.error.badStandardAction"),
+		    locator);
+	}
+
+	return node;
+    }
+
     /*
      * Checks if the XML element with the given tag name is a custom action,
      * and returns the corresponding Node object.
      */
-    private Node getCustomTag(String qName,
-			      Attributes attrs,
-			      Mark start,
-			      Node parent) throws SAXException {
+    private Node parseCustomAction(String qName,
+				   Attributes attrs,
+				   Mark start,
+				   Node parent) throws SAXException {
 	int colon = qName.indexOf(':');
 	if (colon == -1) {
 	    return null;
