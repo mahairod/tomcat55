@@ -66,6 +66,7 @@ package org.apache.tomcat.modules.server;
 import java.io.IOException;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.*;
+import org.apache.tomcat.util.http.*;
 import org.apache.tomcat.helper.*;
 import java.util.Vector;
 import java.io.File;
@@ -408,7 +409,7 @@ class JNIResponseAdapter extends Response {
         }
 
         if(h.startReasponse(s, l, status,
-			    RequestUtil.getMessage(status),
+			    HttpMessages.getMessage(status),
 			    headerNames, headerValues, hcnt) <= 0) {
             throw new IOException("JNI startReasponse implementation error");
         }
