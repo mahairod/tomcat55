@@ -64,10 +64,11 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
-              <controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
+              <!-- FIXME add/remove defaultcontext-->
+              <!--controls:action url='<%= "/AddDefaultContext.do?serviceName=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.create"/>
-              </controls:action>
+              </controls:action-->
               <!--controls:action url='<%= "/DeleteDefaultContext.do?serviceName=" +
                                         URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.defaultcontexts.deletes"/>

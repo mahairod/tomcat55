@@ -206,7 +206,7 @@ public final class RemoteAddrValveForm extends ValveForm {
         String submit = request.getParameter("submit");
         
         // front end validation when save is clicked.        
-        if (submit != null) {
+        //if (submit != null) {
             // validate allow/deny patterns
             if ((allow == null) || (allow.length() < 1)) {
                 if ((deny == null) || (deny.length() < 1)) {
@@ -214,7 +214,7 @@ public final class RemoteAddrValveForm extends ValveForm {
                     new ActionError("error.allow.deny.required"));
                 }
             }                
-        }
+        //}
         
         try {
             allows = ValveUtil.precalculate(allow);            

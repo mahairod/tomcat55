@@ -239,7 +239,7 @@ public final class ResourceLinkForm extends BaseForm {
 
         String submit = request.getParameter("submit");
 
-        if (submit != null) {
+        //if (submit != null) {
 
             // name is a required field
             if ((name == null) || (name.length() < 1)) {
@@ -259,7 +259,7 @@ public final class ResourceLinkForm extends BaseForm {
                            new ActionError("resources.error.type.required"));
             }
             
-         }
+         //}
 
         return (errors);
 

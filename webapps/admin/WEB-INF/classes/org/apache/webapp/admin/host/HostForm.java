@@ -540,7 +540,7 @@ public final class HostForm extends ActionForm {
         String submit = request.getParameter("submit");
 
         // front end validation when save is clicked.
-        if (submit != null) {
+        //if (submit != null) {
 
             // hostName cannot be null
             if ((hostName== null) || (hostName.length() < 1)) {
@@ -552,7 +552,7 @@ public final class HostForm extends ActionForm {
                 errors.add("appBase", new ActionError("error.appBase.required"));
             }
 
-        }
+        //}
         return errors;
 
     }

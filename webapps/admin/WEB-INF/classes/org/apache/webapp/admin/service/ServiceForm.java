@@ -435,7 +435,7 @@ public final class ServiceForm extends ActionForm {
         ActionErrors errors = new ActionErrors();
         String submit = request.getParameter("submit");
         
-        if (submit != null) {
+        //if (submit != null) {
 
             if ((serviceName == null) || (serviceName.length() < 1)) {
                 errors.add("serviceName",
@@ -447,7 +447,7 @@ public final class ServiceForm extends ActionForm {
                            new ActionError("error.engineName.required"));
             }
 
-        }
+        //}
         
         return errors;
     }
