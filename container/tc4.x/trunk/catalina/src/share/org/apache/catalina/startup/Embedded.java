@@ -431,9 +431,12 @@ public class Embedded implements Lifecycle {
         connectors = results;
 
         // Start this Connector if necessary
-        if (started && (connector instanceof Lifecycle)) {
+        if (started) {
             try {
-                ((Lifecycle) connector).start();
+                connector.initialize();
+                if (connector instanceof Lifecycle) {
+                    ((Lifecycle) connector).start();
+                }
             } catch (LifecycleException e) {
                 logger.log("Connector.start", e);
             }
@@ -939,6 +942,7 @@ public class Embedded implements Lifecycle {
 
         // Start our defined Connectors second
         for (int i = 0; i < connectors.length; i++) {
+            connectors[i].initialize();
             if (connectors[i] instanceof Lifecycle)
                 ((Lifecycle) connectors[i]).start();
         }
