@@ -71,7 +71,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -85,7 +84,6 @@ import org.apache.catalina.Host;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.DiskFileUpload;
-import org.apache.commons.fileupload.FileUploadException;
 
 /**
 * Servlet that enables remote management of the web applications installed
@@ -659,7 +657,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "  </td>\n" +
         " </tr>\n" +
         "</table>\n" +
-        "<hr size=\"1\" noshade\"\">\n" +
+        "<hr size=\"1\" noshade=\"noshade\">\n" +
         "<table cellspacing=\"4\" width=\"100%\" border=\"0\">\n" +
         " <tr>\n" +
         "  <td class=\"page-title\" bordercolor=\"#000000\" " +
@@ -861,7 +859,7 @@ public final class HTMLManagerServlet extends ManagerServlet {
         "\n";
 
     private static final String HTML_TAIL_SECTION =
-        "<hr size=\"1\" noshade\"\">\n" +
+        "<hr size=\"1\" noshade=\"noshade\">\n" +
         "<center><font size=\"-1\" color=\"#525D76\">\n" +
         " <em>Copyright &copy; 1999-2002, Apache Software Foundation</em>" +
         "</font></center>\n" +

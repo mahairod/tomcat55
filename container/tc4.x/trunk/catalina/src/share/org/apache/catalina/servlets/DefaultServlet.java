@@ -76,10 +76,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
@@ -87,32 +84,26 @@ import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.Hashtable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
 import javax.naming.InitialContext;
-import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NameClassPair;
 import javax.naming.directory.DirContext;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.ResourceAttributes;
 import org.apache.catalina.Globals;
 import org.apache.catalina.util.FastHttpDateFormat;
 import org.apache.catalina.util.MD5Encoder;
-import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.URLEncoder;
@@ -1455,7 +1446,7 @@ public class DefaultServlet
         }
 
         sb.append("</h1>");
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
 
         sb.append("<table width=\"100%\" cellspacing=\"0\"" +
                      " cellpadding=\"5\" align=\"center\">\r\n");
@@ -1533,7 +1524,7 @@ public class DefaultServlet
         // Render the page footer
         sb.append("</table>\r\n");
 
-        sb.append("<HR size=\"1\" noshade>");
+        sb.append("<HR size=\"1\" noshade=\"noshade\">");
         sb.append("<h3>").append(ServerInfo.getServerInfo()).append("</h3>");
         sb.append("</body>\r\n");
         sb.append("</html>\r\n");
