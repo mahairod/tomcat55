@@ -291,6 +291,10 @@ class Generator {
 				varName = n.getTagData().getAttributeString(
 			                tagVarInfos[i].getNameFromAttribute());
 			    }
+			    else if (tagVarInfos[i].getNameFromAttribute() != null) {
+				// alias
+				continue;
+			    }
 			    String tmpVarName = "_jspx_" + varName + "_"
 				+ n.getCustomNestingLevel();
 			    if (!vars.contains(tmpVarName)) {
@@ -1793,8 +1797,7 @@ class Generator {
 
 	    // Copy virtual page scope of tag file to page scope of invoking
 	    // page
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncBeforeInvoke();");
 
 	    // Invoke fragment
 	    String varReaderAttr = n.getTextAttribute("varReader");
@@ -1813,8 +1816,7 @@ class Generator {
 	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncAfterInvoke();");
 	    out.popIndent();
 	    out.printil("}");
 
@@ -1841,8 +1843,7 @@ class Generator {
 
 	    // Copy virtual page scope of tag file to page scope of invoking
 	    // page
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncBeforeInvoke();");
 
 	    // Invoke body
 	    String varReaderAttr = n.getTextAttribute("varReader");
@@ -1863,8 +1864,7 @@ class Generator {
 	    out.pushIndent();
 	    // Copy page scope of invoking page back to virtual page scope of
 	    // tag file
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.NESTED);");
-	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).copyPageToTagScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
+	    out.printil("((org.apache.jasper.runtime.JspContextWrapper) this.jspContext).syncAfterInvoke();");
 	    out.popIndent();
 	    out.printil("}");
 
@@ -2229,6 +2229,10 @@ class Generator {
     			    varName = n.getTagData().getAttributeString(
                                             tagVarInfo.getNameFromAttribute());
                             }
+			    else if (tagVarInfo.getNameFromAttribute() != null) {
+				// alias
+				continue;
+			    }
                             out.printin(tagVarInfo.getClassName());
                             out.print(" ");
                             out.print(varName);
@@ -2280,6 +2284,10 @@ class Generator {
 			varName = n.getTagData().getAttributeString(
 			                tagVarInfos[i].getNameFromAttribute());
 		    }
+		    else if (tagVarInfos[i].getNameFromAttribute() != null) {
+			// alias
+			continue;
+		    }
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
 		    out.printin(tmpVarName);
@@ -2329,6 +2337,10 @@ class Generator {
 			varName = n.getTagData().getAttributeString(
                                 tagVarInfos[i].getNameFromAttribute());
 		    }
+		    else if (tagVarInfos[i].getNameFromAttribute() != null) {
+			// alias
+			continue;
+		    }
 		    String tmpVarName = "_jspx_" + varName + "_"
 			+ n.getCustomNestingLevel();
 		    out.printin(varName);
@@ -2369,6 +2381,10 @@ class Generator {
 			if (name == null) {
 			    name = n.getTagData().getAttributeString(
                                         tagVarInfos[i].getNameFromAttribute());
+			}
+			else if (tagVarInfos[i].getNameFromAttribute() != null) {
+			    // alias
+			    continue;
 			}
 			out.printin(name);
 			out.print(" = (");
@@ -2485,8 +2501,7 @@ class Generator {
 	private String generateAliasMap(Node.CustomTag n, String tagHandlerVar)
 		throws JasperException {
 
-	    TagInfo tagInfo = n.getTagInfo();
-	    TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
+	    TagVariableInfo[] tagVars = n.getTagVariableInfos();
 	    String aliasMapVar = null;
 
 	    boolean aliasSeen = false;
@@ -2527,7 +2542,7 @@ class Generator {
 		String aliasMapVar= generateAliasMap(n, tagHandlerVar);
 		out.printin(tagHandlerVar);
 		if (aliasMapVar == null) {
-		    out.print(".setJspContext(pageContext);");
+		    out.println(".setJspContext(pageContext);");
 		}
 		else {
 		    out.print(".setJspContext(pageContext, ");
@@ -3085,9 +3100,7 @@ class Generator {
         out.popIndent();
         out.printil( "} finally {" );
         out.pushIndent();
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_BEGIN);");
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).copyTagToPageScope(javax.servlet.jsp.tagext.VariableInfo.AT_END);");
-	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).restoreNestedVariables();");
+	out.printil("((org.apache.jasper.runtime.JspContextWrapper) jspContext).syncEndTagFile();");
         out.popIndent();
         out.printil( "}" );
 
@@ -3188,7 +3201,8 @@ class Generator {
 	boolean aliasSeen = false;
 	TagVariableInfo[] tagVars = tagInfo.getTagVariableInfos();
 	for (int i=0; i<tagVars.length; i++) {
-	    if (tagVars[i].getNameFromAttribute() != null) {
+	    if (tagVars[i].getNameFromAttribute() != null &&
+			tagVars[i].getNameGiven() != null) {
 		aliasSeen = true;
 		break;
 	    }

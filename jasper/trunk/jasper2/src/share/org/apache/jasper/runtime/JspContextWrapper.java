@@ -133,8 +133,7 @@ public class JspContextWrapper
 	if (nestedVars != null) {
 	    this.originalNestedVars = new Hashtable(nestedVars.size());
 	}
-	copyPageToTagScope(VariableInfo.AT_BEGIN);
-	saveNestedVariables();
+	syncBeginTagFile();
     }
 
     public void initialize(Servlet servlet, ServletRequest request,
@@ -320,13 +319,48 @@ public class JspContextWrapper
     }
 
     /**
+     * Synchronize variables at begin of tag file
+     */
+    public void syncBeginTagFile() {
+	copyPageToTagScope(VariableInfo.AT_BEGIN);
+	saveNestedVariables();
+    }
+
+    /**
+     * Synchronize variables before fragment invokation
+     */
+    public void syncBeforeInvoke() {
+	copyTagToPageScope(VariableInfo.NESTED);
+	copyTagToPageScope(VariableInfo.AT_BEGIN);
+    }
+
+    /**
+     * Synchronize variables after fragment invokation
+     */
+    public void syncAfterInvoke() {
+	copyPageToTagScope(VariableInfo.NESTED);
+	copyPageToTagScope(VariableInfo.AT_BEGIN);
+    }
+
+    /**
+     * Synchronize variables at end of tag file
+     */
+    public void syncEndTagFile() {
+	copyTagToPageScope(VariableInfo.AT_BEGIN);
+	copyTagToPageScope(VariableInfo.AT_END);
+	restoreNestedVariables();
+    }
+
+
+
+    /**
      * Copies the variables of the given scope from the page scope of the
      * invoking JSP context to the virtual page scope of this JSP context
      * wrapper.
      *
      * @param scope variable scope (one of NESTED or AT_BEGIN)
      */
-    public void copyPageToTagScope(int scope) {
+    private void copyPageToTagScope(int scope) {
 	Iterator iter = null;
 
 	switch (scope) {
@@ -359,7 +393,7 @@ public class JspContextWrapper
      *
      * @param scope variable scope (one of NESTED, AT_BEGIN, or AT_END)
      */
-    public void copyTagToPageScope(int scope) {
+    private void copyTagToPageScope(int scope) {
 	Iterator iter = null;
 
 	switch (scope) {
@@ -396,7 +430,7 @@ public class JspContextWrapper
      * Saves the values of any NESTED variables that are present in
      * the invoking JSP context, so they can later be restored.
      */
-    public void saveNestedVariables() {
+    private void saveNestedVariables() {
 	if (nestedVars != null) {
 	    Iterator iter = nestedVars.iterator();
 	    while (iter.hasNext()) {
@@ -414,7 +448,7 @@ public class JspContextWrapper
      * Restores the values of any NESTED variables in the invoking JSP
      * context.
      */
-    public void restoreNestedVariables() {
+    private void restoreNestedVariables() {
 	if (nestedVars != null) {
 	    Iterator iter = nestedVars.iterator();
 	    while (iter.hasNext()) {
