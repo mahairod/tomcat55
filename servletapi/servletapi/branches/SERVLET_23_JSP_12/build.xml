@@ -1,0 +1,72 @@
+<project name="Servlet API Classes" default="compile" basedir=".">
+
+  <!-- =================== Environmental Properties ======================= -->
+
+  <property name="ant.home" value="../jakarta-ant" />
+  <property name="build.compiler"   value="classic"/>
+  <property name="servletapi.build" value="../build/servletapi"/>
+  <property name="servletapi.dist"  value="../dist/servletapi"/>
+  <property name="servletapi.lib"   value="lib"/>
+
+  <!-- ===================== Prepare Directories ========================= -->
+  <target name="prepare">
+    <!-- "Build" Hierarchy -->
+    <mkdir dir="${servletapi.build}"/>
+    <mkdir dir="${servletapi.build}/classes"/>
+    <mkdir dir="${servletapi.build}/docs"/>
+    <mkdir dir="${servletapi.build}/docs/api"/>
+    <!-- "Dist" Hierarchy -->
+    <mkdir dir="${servletapi.dist}"/>
+    <mkdir dir="${servletapi.dist}/docs"/>
+    <mkdir dir="${servletapi.dist}/docs/api"/>
+    <mkdir dir="${servletapi.dist}/lib"/>
+    <mkdir dir="${servletapi.dist}/src"/>
+    <!-- "Library" Hierarchy -->
+    <mkdir dir="${servletapi.lib}"/>
+  </target>
+
+  <!-- ======================== Compile Classes ========================== -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="src/share" destdir="${servletapi.build}/classes"
+           debug="on" optimize="on" deprecation="on"/>
+    <copydir  src="src/share"    dest="${servletapi.build}/classes">
+      <include name="**/*.properties"/>
+    </copydir>
+  </target>
+
+  <!-- ======================== Build JavaDoc =========================== -->
+  <target name="javadoc" depends="prepare">
+    <javadoc packagenames="javax.servlet.*"
+             sourcepath="${basedir}/src/share"
+             destdir="${servletapi.build}/docs/api"
+             use="true"
+             windowtitle="Servlet and JavaServer Pages API Documentation"
+             doctitle="Servlet and JavaServer Pages API Documentation"
+             bottom="Copyright (c) 1999-2000 The Apache Software Foundation.  All Rights Reserved."/>
+  </target>
+
+
+  <!-- ===================== Distribution Files ========================= -->
+  <target name="dist" depends="compile,javadoc">
+    <copydir src="${servletapi.build}/docs/api"
+            dest="${servletapi.dist}/docs/api"/>
+    <jar jarfile="${servletapi.dist}/lib/servlet.jar"
+         basedir="${servletapi.build}/classes"/>
+    <copyfile src="build.xml" dest="${servletapi.dist}/lib/build.xml"/>
+    <copydir src="src/share" dest="${servletapi.dist}/src"/>
+    <copyfile src="${servletapi.dist}/lib/servlet.jar"
+              dest="${servletapi.lib}/servlet.jar"/>
+  </target>
+
+  <!-- ====================== Clean Generated Files ===================== -->
+  <target name="clean">
+    <deltree dir="${servletapi.build}"/>
+    <deltree dir="${servletapi.dist}"/>
+    <deltree dir="${servletapi.lib}"/>
+  </target>
+
+  <!-- ========================= All In One Build ======================= -->
+  <target name="all" depends="clean,dist"/>
+
+ 
+</project>
