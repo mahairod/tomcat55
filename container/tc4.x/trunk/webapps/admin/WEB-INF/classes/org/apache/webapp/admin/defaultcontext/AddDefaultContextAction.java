@@ -155,14 +155,14 @@ public class AddDefaultContextAction extends Action {
         defaultContextFm.setSwallowOutput("false");
         defaultContextFm.setUseNaming("true");
         //loader initialization
-        //defaultContextFm.setLdrCheckInterval("15");
-        //defaultContextFm.setLdrDebugLvl("0");
-        //defaultContextFm.setLdrReloadable("false");
+        defaultContextFm.setLdrCheckInterval("15");
+        defaultContextFm.setLdrDebugLvl("0");
+        defaultContextFm.setLdrReloadable("false");
         //manager initialization
-        //defaultContextFm.setMgrCheckInterval("60");
-        //defaultContextFm.setMgrDebugLvl("0");
-        //defaultContextFm.setMgrMaxSessions("-1");
-        //defaultContextFm.setMgrSessionIDInit("");
+        defaultContextFm.setMgrCheckInterval("60");
+        defaultContextFm.setMgrDebugLvl("0");
+        defaultContextFm.setMgrMaxSessions("-1");
+        defaultContextFm.setMgrSessionIDInit("");
         
         defaultContextFm.setDebugLvlVals(Lists.getDebugLevels());
         defaultContextFm.setBooleanVals(Lists.getBooleanValues());        

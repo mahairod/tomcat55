@@ -822,7 +822,7 @@ public class MBeanFactory extends BaseModelMBean {
         throws Exception {
         
         // Create a new StandardContext instance
-        StandardContext context = new StandardContext();
+        StandardContext context = new StandardContext();    
         path = getPathStr(path);
         context.setPath(path);
         context.setDocBase(docBase);
@@ -838,9 +838,10 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Add context to the host
         host.addChild(context);
-
+        
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("StandardContext");
+
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), context);
         return (oname.toString());
@@ -941,12 +942,28 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         Server server = ServerFactory.getServer();
+        String type = pname.getKeyProperty("type");
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        String pathStr = getPathStr(pname.getKeyProperty("path"));
-        Context context = (Context) host.findChild(pathStr);
-        context.setManager(manager);
+        if ((type != null) && (type.equals("Context"))) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            String pathStr = getPathStr(pname.getKeyProperty("path"));
+            Context context = (Context) host.findChild(pathStr);
+            context.setManager(manager);
+        } else if ((type != null) && (type.equals("DefaultContext"))) {
+            String hostName = pname.getKeyProperty("host");
+            DefaultContext defaultContext = null;
+            if (hostName == null) {
+                defaultContext = engine.getDefaultContext();
+            } else {
+                Host host = (Host)engine.findChild(hostName);
+                defaultContext = host.getDefaultContext();
+            }
+            if (defaultContext != null ){
+                manager.setDefaultContext(defaultContext);
+                defaultContext.setManager(manager);
+            }
+        }
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("StandardManager");
@@ -1123,12 +1140,28 @@ public class MBeanFactory extends BaseModelMBean {
         // Add the new instance to its parent component
         ObjectName pname = new ObjectName(parent);
         Server server = ServerFactory.getServer();
+        String type = pname.getKeyProperty("type");
         Service service = server.findService(pname.getKeyProperty("service"));
         Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
-        String pathStr = getPathStr(pname.getKeyProperty("path"));
-        Context context = (Context) host.findChild(pathStr);
-        context.setLoader(loader);
+        if ((type != null) && (type.equals("Context"))) {
+            Host host = (Host) engine.findChild(pname.getKeyProperty("host"));
+            String pathStr = getPathStr(pname.getKeyProperty("path"));
+            Context context = (Context) host.findChild(pathStr);
+            context.setLoader(loader);
+        } else if ((type != null) && (type.equals("DefaultContext"))) {
+            String hostName = pname.getKeyProperty("host");
+            DefaultContext defaultContext = null;
+            if (hostName == null) {
+                defaultContext = engine.getDefaultContext();
+            } else {
+                Host host = (Host)engine.findChild(hostName);
+                defaultContext = host.getDefaultContext();
+            }
+            if (defaultContext != null ){
+                loader.setDefaultContext(defaultContext);
+                defaultContext.setLoader(loader);
+            }
+        }
 
         // Return the corresponding MBean name
         ManagedBean managed = registry.findManagedBean("WebappLoader");
@@ -1311,18 +1344,32 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
+        String type = oname.getKeyProperty("type");
         String serviceName = oname.getKeyProperty("service");
-        String hostName = oname.getKeyProperty("host");
-        String contextName = getPathStr(oname.getKeyProperty("path"));
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
-        Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(hostName);
-        Context context = (Context) host.findChild(contextName);
-
-        // Remove this component from its parent component
-        context.setLoader(null);
-
+        Engine engine = (Engine) service.getContainer();  
+        String hostName = oname.getKeyProperty("host");
+        if ((type != null) && (type.equals("Loader"))) {      
+            String contextName = getPathStr(oname.getKeyProperty("path"));
+            Host host = (Host) engine.findChild(hostName);
+            Context context = (Context) host.findChild(contextName);
+            // Remove this component from its parent component
+            context.setLoader(null);
+        } else if ((type != null) && (type.equals("DefaultLoader"))) {
+            DefaultContext defaultContext = null;
+            if (hostName == null) {    
+                defaultContext = engine.getDefaultContext();
+            } else {
+                Host host = (Host) engine.findChild(hostName);
+                defaultContext = host.getDefaultContext();
+            }
+            if (defaultContext != null) {
+                // Remove this component from its parent component
+                defaultContext.setLoader(null);
+            }
+        }
+    
     }
 
 
@@ -1337,17 +1384,31 @@ public class MBeanFactory extends BaseModelMBean {
 
         // Acquire a reference to the component to be removed
         ObjectName oname = new ObjectName(name);
+        String type = oname.getKeyProperty("type");
         String serviceName = oname.getKeyProperty("service");
-        String hostName = oname.getKeyProperty("host");
-        String contextName = getPathStr(oname.getKeyProperty("path"));
         Server server = ServerFactory.getServer();
         Service service = server.findService(serviceName);
-        Engine engine = (Engine) service.getContainer();
-        Host host = (Host) engine.findChild(hostName);
-        Context context = (Context) host.findChild(contextName);
-
-        // Remove this component from its parent component
-        context.setManager(null);
+        Engine engine = (Engine) service.getContainer();  
+        String hostName = oname.getKeyProperty("host");
+        if ((type != null) && (type.equals("Manager"))) {      
+            String contextName = getPathStr(oname.getKeyProperty("path"));
+            Host host = (Host) engine.findChild(hostName);
+            Context context = (Context) host.findChild(contextName);
+            // Remove this component from its parent component
+            context.setManager(null);
+        } else if ((type != null) && (type.equals("DefaultManager"))) {
+            DefaultContext defaultContext = null;
+            if (hostName == null) {    
+                defaultContext = engine.getDefaultContext();
+            } else {
+                Host host = (Host) engine.findChild(hostName);
+                defaultContext = host.getDefaultContext();
+            }
+            if (defaultContext != null) {
+                // Remove this component from its parent component
+                defaultContext.setManager(null);
+            }
+        }
 
     }
 

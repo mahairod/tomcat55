@@ -194,12 +194,12 @@ public final class DeleteEnvEntriesAction extends Action {
                     if (host.length() > 0) {
                         dname = 
                             new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",host=" + 
+                            ResourceUtils.HOST_DEFAULTCONTEXT_TYPE + ",host=" + 
                             host + ",service=" + service);
                     } else {
                         dname = 
                             new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE +
-                            ResourceUtils.DEFAULTCONTEXT_TYPE + ",service=" + 
+                            ResourceUtils.SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + 
                             service);
                     }
                 }

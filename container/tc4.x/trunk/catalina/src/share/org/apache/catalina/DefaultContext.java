@@ -64,6 +64,7 @@
 
 package org.apache.catalina;
 
+import java.beans.PropertyChangeListener;
 import javax.naming.directory.DirContext;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ContextEjb;
@@ -205,6 +206,12 @@ public interface DefaultContext {
     public void setManager(Manager manager);
 
 
+    /**
+     * Return the naming resources associated with this web application.
+     */
+    public NamingResources getNamingResources();
+    
+    
     // ------------------------------------------------------ Public Properties
 
 
@@ -311,6 +318,14 @@ public interface DefaultContext {
 
 
     /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    
+    /**
      * Add a resource reference for this web application.
      *
      * @param resource New resource reference
@@ -351,12 +366,6 @@ public interface DefaultContext {
      * @param listener Java class name of a ContainerListener class
      */
     public void addWrapperListener(String listener);
-
-
-    /**
-     * Return the naming resources associated with this web application.
-     */
-    public NamingResources getNamingResources();
 
 
     /**
@@ -550,6 +559,14 @@ public interface DefaultContext {
      * @param name Name of the parameter to remove
      */
     public void removeParameter(String name);
+    
+    
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener);
 
 
     /**

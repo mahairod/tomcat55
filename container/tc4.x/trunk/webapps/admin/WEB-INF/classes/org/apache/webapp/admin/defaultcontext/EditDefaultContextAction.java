@@ -151,9 +151,9 @@ public class EditDefaultContextAction extends Action {
         // DefaultContext mBean
         ObjectName cname = null;
         // Loader mBean
-        //ObjectName lname = null;
+        ObjectName lname = null;
         // Manager mBean 
-        //ObjectName mname = null;
+        ObjectName mname = null;
         
         StringBuffer sb = null;
         try {
@@ -168,53 +168,55 @@ public class EditDefaultContextAction extends Action {
         }
         
         // Get the corresponding loader
-        //try {
-        //    sb = new StringBuffer(cname.getDomain());
-        //    sb.append(":type=Loader");
-        //    sb.append(",path=");
-        //    sb.append(cname.getKeyProperty("path"));
-        //    sb.append(",host=");
-        //    sb.append(cname.getKeyProperty("host"));
-        //    sb.append(",service=");
-        //    sb.append(cname.getKeyProperty("service"));
-        //    lname = new ObjectName(sb.toString());
-        // } catch (Exception e) {
-        //    String message =
-        //        resources.getMessage("error.managerName.bad",
-        //                         sb.toString());
-        //    getServlet().log(message);
-        //    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
-        //    return (null);
-        //}
+        try {
+            sb = new StringBuffer(cname.getDomain());
+            sb.append(":type=DefaultLoader");
+            String host = cname.getKeyProperty("host");
+            if (host != null) {
+                sb.append(",host=");
+                sb.append(host);
+            }
+            sb.append(",service=");
+            sb.append(cname.getKeyProperty("service"));
+            lname = new ObjectName(sb.toString());
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.managerName.bad",
+                                 sb.toString());
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
 
         // Session manager properties
         // Get the corresponding Session Manager mBean
-        //try {
-        //    sb = new StringBuffer(cname.getDomain());
-        //    sb.append(":type=Manager");
-        //    sb.append(",path=");
-        //    sb.append(cname.getKeyProperty("path"));
-        //    sb.append(",host=");
-        //    sb.append(cname.getKeyProperty("host"));
-        //    sb.append(",service=");
-        //    sb.append(cname.getKeyProperty("service"));
-        //    mname = new ObjectName(sb.toString());
-        //} catch (Exception e) {
-        //    String message =
-        //        resources.getMessage("error.managerName.bad",
-        //                         sb.toString());
-        //    getServlet().log(message);
-        //    response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
-        //    return (null);
-        //}
+        try {
+            sb = new StringBuffer(cname.getDomain());
+            sb.append(":type=DefaultManager");
+            String host = cname.getKeyProperty("host");
+            if (host != null) {
+                sb.append(",host=");
+                sb.append(host);
+            }
+            sb.append(",service=");
+            sb.append(cname.getKeyProperty("service"));
+            mname = new ObjectName(sb.toString());
+        } catch (Exception e) {
+            String message =
+                resources.getMessage("error.managerName.bad",
+                                 sb.toString());
+            getServlet().log(message);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
+            return (null);
+        }
 
         // Fill in the form values for display and editing
         DefaultContextForm defaultContextFm = new DefaultContextForm();
         session.setAttribute("defaultContextForm", defaultContextFm);
         defaultContextFm.setAdminAction("Edit");
         defaultContextFm.setObjectName(cname.toString());
-        //defaultContextFm.setLoaderObjectName(lname.toString());
-        //defaultContextFm.setManagerObjectName(mname.toString());
+        defaultContextFm.setLoaderObjectName(lname.toString());
+        defaultContextFm.setManagerObjectName(mname.toString());
         sb = new StringBuffer("DefaultContext");
         defaultContextFm.setNodeLabel(sb.toString());
         defaultContextFm.setDebugLvlVals(Lists.getDebugLevels());
@@ -241,29 +243,29 @@ public class EditDefaultContextAction extends Action {
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
 
             // loader properties
-            //attribute = "debug";
-            //defaultContextFm.setLdrDebugLvl
-            //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
-            //attribute = "checkInterval";
-            //defaultContextFm.setLdrCheckInterval
-            //    (((Integer) mBServer.getAttribute(lname, attribute)).toString());
-            //attribute = "reloadable";
-            //defaultContextFm.setLdrReloadable
-            //    (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
+            attribute = "debug";
+            defaultContextFm.setLdrDebugLvl
+                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            attribute = "checkInterval";
+            defaultContextFm.setLdrCheckInterval
+                (((Integer) mBServer.getAttribute(lname, attribute)).toString());
+            attribute = "reloadable";
+            defaultContextFm.setLdrReloadable
+                (((Boolean) mBServer.getAttribute(lname, attribute)).toString());
 
             // manager properties
-            //attribute = "debug";
-            //defaultContextFm.setMgrDebugLvl
-            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-            //attribute = "entropy";
-            //defaultContextFm.setMgrSessionIDInit
-            //    ((String) mBServer.getAttribute(mname, attribute));
-            //attribute = "maxActiveSessions";
-            //defaultContextFm.setMgrMaxSessions
-            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
-            //attribute = "checkInterval";
-            //defaultContextFm.setMgrCheckInterval
-            //    (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            attribute = "debug";
+            defaultContextFm.setMgrDebugLvl
+                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            attribute = "entropy";
+            defaultContextFm.setMgrSessionIDInit
+                ((String) mBServer.getAttribute(mname, attribute));
+            attribute = "maxActiveSessions";
+            defaultContextFm.setMgrMaxSessions
+                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
+            attribute = "checkInterval";
+            defaultContextFm.setMgrCheckInterval
+                (((Integer) mBServer.getAttribute(mname, attribute)).toString());
 
         } catch (Throwable t) {
             getServlet().log

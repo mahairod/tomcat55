@@ -129,7 +129,7 @@
 
 <br>
 
-<%-- Loader Properties table >
+<%-- Loader Properties table --%>
 
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr> <td>  <div class="table-title-text">
@@ -178,10 +178,10 @@
    </controls:table>
     </td>
   </tr>
-</table--%>
+</table>
 
 <BR>
-<%-- Session Manager Properties table >
+<%-- Session Manager Properties table --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr> <td>  <div class="table-title-text">
             <bean:message key="context.sessionmgr.properties"/>
@@ -232,7 +232,7 @@
    </controls:table>
     </td>
   </tr>
-</table--%>
+</table>
 
     <%@ include file="../buttons.jsp" %>
 

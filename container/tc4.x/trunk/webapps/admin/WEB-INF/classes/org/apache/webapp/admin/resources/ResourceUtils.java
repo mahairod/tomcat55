@@ -88,7 +88,10 @@ public class ResourceUtils {
     public final static String NAMINGRESOURCES_TYPE = "Catalina:type=NamingResources";
     public final static String GLOBAL_TYPE = ",resourcetype=Global";
     public final static String CONTEXT_TYPE = ",resourcetype=Context";
-    public final static String DEFAULTCONTEXT_TYPE = ",resourcetype=DefaultContext";
+    public final static String SERVICE_DEFAULTCONTEXT_TYPE = 
+                                                ",resourcetype=ServiceDefaultContext";
+    public final static String HOST_DEFAULTCONTEXT_TYPE = 
+                                                ",resourcetype=HostDefaultContext";    
     
     // resource class names
     public final static String USERDB_CLASS = "org.apache.catalina.UserDatabase";
@@ -120,21 +123,12 @@ public class ResourceUtils {
                     service + ",*");
             } else if (resourcetype.equals("DefaultContext")) {
                 if (host.length() > 0) {
-                    sb = new StringBuffer(ENVIRONMENT_TYPE);
-                    sb.append(DEFAULTCONTEXT_TYPE);
-                    sb.append(",host=");
-                    sb.append(host);
-                    sb.append(",service=");
-                    sb.append(service);
-                    sb.append(",*");
-                    ename = new ObjectName(sb.toString());
+                    ename = new ObjectName(ENVIRONMENT_TYPE + 
+                        HOST_DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        ",service=" + service + ",*");
                 } else {
-                    sb = new StringBuffer(ENVIRONMENT_TYPE);
-                    sb.append(DEFAULTCONTEXT_TYPE);
-                    sb.append(",service=");
-                    sb.append(service);
-                    sb.append(",*");
-                    ename = new ObjectName(sb.toString());
+                    ename = new ObjectName(ENVIRONMENT_TYPE + 
+                        SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + service + ",*");
                 }
             }
         }
@@ -201,12 +195,12 @@ public class ResourceUtils {
             } else if (resourcetype.equals("DefaultContext")) {
                 if (host.length() > 0) {
                     rname = new ObjectName(RESOURCE_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        HOST_DEFAULTCONTEXT_TYPE + ",host=" + host + 
                         ",service=" + service + ",class=" + 
                         DATASOURCE_CLASS + ",*");
                 } else {
                     rname = new ObjectName(RESOURCE_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",service=" + service + 
+                        SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + service + 
                         ",class=" + DATASOURCE_CLASS + ",*");
                 }
             }
@@ -275,12 +269,12 @@ public class ResourceUtils {
             } else if (resourcetype.equals("DefaultContext")) {
                 if (host.length() > 0) {
                     rname = new ObjectName(RESOURCE_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        HOST_DEFAULTCONTEXT_TYPE + ",host=" + host + 
                         ",service=" + service + ",class=" + 
                         MAILSESSION_CLASS + ",*");
                 } else {
                     rname = new ObjectName(RESOURCE_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",service=" + service + 
+                        SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + service + 
                         ",class=" + MAILSESSION_CLASS + ",*");
                 }
             }
@@ -348,11 +342,11 @@ public class ResourceUtils {
             } else if (resourcetype.equals("DefaultContext")) {
                 if (host.length() > 0) {
                     rname = new ObjectName(RESOURCELINK_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",host=" + host + 
+                        HOST_DEFAULTCONTEXT_TYPE + ",host=" + host + 
                         ",service=" + service + ",*");
                 } else {
                     rname = new ObjectName(RESOURCELINK_TYPE + 
-                        DEFAULTCONTEXT_TYPE + ",service=" + service + ",*");
+                        SERVICE_DEFAULTCONTEXT_TYPE + ",service=" + service + ",*");
                 }
             }
         }

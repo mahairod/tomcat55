@@ -110,6 +110,21 @@ public interface Manager {
 
 
     /**
+     * Return the DefaultContext with which this Manager is associated.
+     */
+    public DefaultContext getDefaultContext();
+
+
+    /**
+     * Set the DefaultContext with which this Manager is associated.
+     *
+     * @param defaultContext The newly associated DefaultContext
+     */
+    public void setDefaultContext(DefaultContext defaultContext);
+
+
+
+    /**
      * Return the distributable flag for the sessions supported by
      * this Manager.
      */

@@ -228,24 +228,28 @@ public final class SaveDefaultContextAction extends Action {
                     mBServer.invoke(fname, operation,
                                     values, createDefaultContextTypes);
 
-                //* Create a new Loader object
+                // Create a new Loader object
                 values = new String[1];
                 // parent of loader is the newly created context
                 values[0] = cObjectName.toString();
                 operation = "createWebappLoader";
-                //lObjectName = (String)
-                //    mBServer.invoke(fname, operation,
-                //                    values, createStandardLoaderTypes);                
+                getServlet().log(fname.toString());
+                getServlet().log("defaultContext object name = "+values[0]);                
+                lObjectName = (String)
+                    mBServer.invoke(fname, operation,
+                                    values, createStandardLoaderTypes);                
+                
+                getServlet().log("loader created "+lObjectName);
                 
                 // Create a new StandardManager object
                 values = new String[1];
                 // parent of manager is the newly created Context
                 values[0] = cObjectName.toString();
                 operation = "createStandardManager";
-                //mObjectName = (String)
-                //    mBServer.invoke(fname, operation,
-                //                    values, createStandardManagerTypes);
-                
+                mObjectName = (String)
+                    mBServer.invoke(fname, operation,
+                                    values, createStandardManagerTypes);
+                getServlet().log("manager created "+mObjectName);
                 // Add the new Default Context to our tree control node
                 addToTreeControlNode(oname, cObjectName, 
                                     parentName, resources, session);
@@ -323,70 +327,70 @@ public final class SaveDefaultContextAction extends Action {
                                   new Attribute("useNaming", new Boolean(useNaming)));
 
             // Loader properties            
-            //attribute = "reloadable";
-            //try {
-            //    reloadable = cform.getLdrReloadable();
-            //} catch (Throwable t) {
-            //    reloadable = "false";
-            //}
-            //mBServer.setAttribute(loname,
-            //                      new Attribute("reloadable", new Boolean(reloadable)));
+            attribute = "reloadable";
+            try {
+                reloadable = cform.getLdrReloadable();
+            } catch (Throwable t) {
+                reloadable = "false";
+            }
+            mBServer.setAttribute(loname,
+                                  new Attribute("reloadable", new Boolean(reloadable)));
             
-            //attribute = "debug";
-            //int debug = 0;
-            //try {
-            //    debug = Integer.parseInt(cform.getLdrDebugLvl());
-            //} catch (Throwable t) {
-            //    debug = 0;
-            //}
-            //mBServer.setAttribute(loname,
-            //                      new Attribute("debug", new Integer(debug)));
+            attribute = "debug";
+            int debug = 0;
+            try {
+                debug = Integer.parseInt(cform.getLdrDebugLvl());
+            } catch (Throwable t) {
+                debug = 0;
+            }
+            mBServer.setAttribute(loname,
+                                  new Attribute("debug", new Integer(debug)));
             
-            //attribute = "checkInterval";
-            //int checkInterval = 15;
-            //try {
-            //    checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
-            //} catch (Throwable t) {
-            //    checkInterval = 15;
-            //}
-            //mBServer.setAttribute(loname,
-            //                      new Attribute("checkInterval", new Integer(checkInterval)));
+            attribute = "checkInterval";
+            int checkInterval = 15;
+            try {
+                checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
+            } catch (Throwable t) {
+                checkInterval = 15;
+            }
+            mBServer.setAttribute(loname,
+                                  new Attribute("checkInterval", new Integer(checkInterval)));
 
             // Manager properties            
-            //attribute = "entropy";
-            //String entropy = cform.getMgrSessionIDInit();
-            //if ((entropy!=null) && (entropy.length()>=1)) {
-            //    mBServer.setAttribute(moname,
-            //                      new Attribute("entropy",entropy));
-            //}
+            attribute = "entropy";
+            String entropy = cform.getMgrSessionIDInit();
+            if ((entropy!=null) && (entropy.length()>=1)) {
+                mBServer.setAttribute(moname,
+                                  new Attribute("entropy",entropy));
+            }
             
-            //attribute = "debug";
-            //try {
-            //    debug = Integer.parseInt(cform.getMgrDebugLvl());
-            //} catch (Throwable t) {
-            //    debug = 0;
-            //}            
-            //mBServer.setAttribute(moname,
-            //                      new Attribute("debug", new Integer(debug)));
+            attribute = "debug";
+            try {
+                debug = Integer.parseInt(cform.getMgrDebugLvl());
+            } catch (Throwable t) {
+                debug = 0;
+            }            
+            mBServer.setAttribute(moname,
+                                  new Attribute("debug", new Integer(debug)));
             
-            //attribute = "checkInterval";
-            //try {
-            //    checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
-            //} catch (Throwable t) {
-            //    checkInterval = 60;
-            //}
-            //mBServer.setAttribute(moname,
-            //                      new Attribute("checkInterval", new Integer(checkInterval)));
+            attribute = "checkInterval";
+            try {
+                checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
+            } catch (Throwable t) {
+                checkInterval = 60;
+            }
+            mBServer.setAttribute(moname,
+                                  new Attribute("checkInterval", new Integer(checkInterval)));
             
-            //attribute = "maxActiveSessions";
-            //int maxActiveSessions = -1;
-            //try {
-            //    maxActiveSessions = Integer.parseInt(cform.getMgrMaxSessions());
-            //} catch (Throwable t) {
-            //    maxActiveSessions = -1;
-            //}
-            //mBServer.setAttribute(moname,
-            //                      new Attribute("maxActiveSessions", new Integer(maxActiveSessions)));
+            attribute = "maxActiveSessions";
+            int maxActiveSessions = -1;
+            try {
+                maxActiveSessions = Integer.parseInt(cform.getMgrMaxSessions());
+            } catch (Throwable t) {
+                maxActiveSessions = -1;
+            }
+            mBServer.setAttribute(moname,
+                                  new Attribute("maxActiveSessions", new Integer(maxActiveSessions)));
 
         } catch (Exception e) {
 

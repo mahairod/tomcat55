@@ -460,7 +460,7 @@ public class StandardDefaultContext
     public void setLoader(Loader loader) {
         Loader oldLoader = this.loader;
         this.loader = loader;
-
+        
         // Report this property change to interested listeners
         support.firePropertyChange("loader", oldLoader, this.loader);
     }
@@ -655,6 +655,18 @@ public class StandardDefaultContext
         synchronized (parameters) {
             parameters.put(name, value);
         }
+
+    }
+    
+    
+    /**
+     * Add a property change listener to this component.
+     *
+     * @param listener The listener to add
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -1104,6 +1116,18 @@ public class StandardDefaultContext
         synchronized (parameters) {
             parameters.remove(name);
         }
+
+    }
+    
+    
+    /**
+     * Remove a property change listener from this component.
+     *
+     * @param listener The listener to remove
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+        support.removePropertyChangeListener(listener);
 
     }
 
