@@ -72,7 +72,7 @@ package javax.servlet.jsp.tagext;
  * of an error.
  */
 
-abstract public class ValidationMessage {
+public class ValidationMessage {
 
     /**
      * Create a ValidationMessage.  The message String should be
