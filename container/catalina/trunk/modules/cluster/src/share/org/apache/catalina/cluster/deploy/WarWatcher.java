@@ -43,7 +43,7 @@ public class WarWatcher {
     /**
      * Directory to watch for war files
      */
-    protected File deployDir = null;
+    protected File watchDir = null;
 
     /**
      * Parent to be notified of changes
@@ -60,9 +60,9 @@ public class WarWatcher {
     public WarWatcher() {
     }
 
-    public WarWatcher(FileChangeListener listener, File deployDir) {
+    public WarWatcher(FileChangeListener listener, File watchDir) {
         this.listener = listener;
-        this.deployDir = deployDir;
+        this.watchDir = watchDir;
     }
 
     /*--Logic---------------------------------------------------*/
@@ -72,8 +72,8 @@ public class WarWatcher {
      */
     public void check() {
         if (log.isInfoEnabled())
-            log.info("check cluster wars at " + deployDir);
-        File[] list = deployDir.listFiles(new WarFilter());
+            log.info("check cluster wars at " + watchDir);
+        File[] list = watchDir.listFiles(new WarFilter());
         if (list == null)
             list = new File[0];
         //first make sure all the files are listed in our current status
@@ -118,18 +118,18 @@ public class WarWatcher {
     }
 
     /**
-     * @return Returns the deployDir.
+     * @return Returns the watchDir.
      */
-    public File getDeployDir() {
-        return deployDir;
+    public File getWatchDir() {
+        return watchDir;
     }
 
     /**
-     * @param deployDir
-     *            The deployDir to set.
+     * @param watchDir
+     *            The watchDir to set.
      */
-    public void setDeployDir(File deployDir) {
-        this.deployDir = deployDir;
+    public void setWatchDir(File watchDir) {
+        this.watchDir = watchDir;
     }
 
     /**

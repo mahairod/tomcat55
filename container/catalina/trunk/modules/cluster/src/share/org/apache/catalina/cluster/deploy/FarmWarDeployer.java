@@ -82,11 +82,11 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     private int count = 0;
 
     /**
-     * Frequency of the Form deploydir check. Cluster wide deployment will be
+     * Frequency of the Farm watchDir check. Cluster wide deployment will be
      * done once for the specified amount of backgrondProcess calls (ie, the
      * lower the amount, the most often the checks will occur).
      */
-    protected int processExpiresFrequency = 2;
+    protected int processDeployFrequency = 2;
 
     /**
      * Path where context descriptors should be deployed.
@@ -562,7 +562,7 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
      */
     public void backgroundProcess() {
         if (started) {
-            count = (count + 1) % processExpiresFrequency;
+            count = (count + 1) % processDeployFrequency;
             if (count == 0 && watchEnabled) {
                 watcher.check();
             }
@@ -666,24 +666,24 @@ public class FarmWarDeployer implements ClusterDeployer, FileChangeListener {
     /**
      * Return the frequency of watcher checks.
      */
-    public int getProcessExpiresFrequency() {
+    public int getProcessDeployFrequency() {
 
-        return (this.processExpiresFrequency);
+        return (this.processDeployFrequency);
 
     }
 
     /**
      * Set the watcher checks frequency.
      * 
-     * @param processExpiresFrequency
+     * @param processDeployFrequency
      *            the new manager checks frequency
      */
-    public void setProcessExpiresFrequency(int processExpiresFrequency) {
+    public void setProcessDeployFrequency(int processExpiresFrequency) {
 
         if (processExpiresFrequency <= 0) {
             return;
         }
-        this.processExpiresFrequency = processExpiresFrequency;
+        this.processDeployFrequency = processExpiresFrequency;
     }
 
     /**
