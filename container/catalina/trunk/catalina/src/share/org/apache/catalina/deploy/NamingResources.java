@@ -33,7 +33,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class NamingResources implements Serializable {
+public class NamingResources implements Serializable {
 
 
     // ----------------------------------------------------------- Constructors

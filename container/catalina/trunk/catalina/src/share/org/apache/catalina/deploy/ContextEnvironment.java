@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class ContextEnvironment implements Serializable {
+public class ContextEnvironment implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

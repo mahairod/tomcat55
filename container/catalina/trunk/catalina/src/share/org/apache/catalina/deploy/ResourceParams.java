@@ -28,7 +28,7 @@ import java.io.Serializable;
  * @version $Revision$ $Date$
  */
 
-public final class ResourceParams implements Serializable {
+public class ResourceParams implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
