@@ -1239,49 +1239,75 @@ abstract class Node implements TagConstants {
 	private Nodes atSTag;
 	private Nodes atETag;
 
+	/*
+	 * Constructor for custom action implemented by tag handler.
+	 */
 	public CustomTag(String qName, String prefix, String localName,
 			 String uri, Attributes attrs, Mark start, Node parent,
-			 TagInfo tagInfo, TagFileInfo tagFileInfo,
-			 Class tagHandlerClass) {
-
+			 TagInfo tagInfo, Class tagHandlerClass) {
 	    this(qName, prefix, localName, uri, attrs, null, start, parent,
-		 tagInfo, tagFileInfo, tagHandlerClass);
+		 tagInfo, tagHandlerClass);
 	}
 
+	/*
+	 * Constructor for custom action implemented by tag handler.
+	 */
 	public CustomTag(String qName, String prefix, String localName,
 			 String uri, Attributes attrs, Attributes xmlnsAttrs,
 			 Mark start, Node parent, TagInfo tagInfo,
-			 TagFileInfo tagFileInfo, Class tagHandlerClass) {
-
+			 Class tagHandlerClass) {
 	    super(qName, localName, attrs, xmlnsAttrs, start, parent);
+
 	    this.uri = uri;
 	    this.prefix = prefix;
 	    this.tagInfo = tagInfo;
-	    this.tagFileInfo = tagFileInfo;
 	    this.tagHandlerClass = tagHandlerClass;
 	    this.customNestingLevel = makeCustomNestingLevel();
             this.childInfo = new ChildInfo();
 
-	    if (tagHandlerClass != null) {
-		this.implementsIterationTag = 
-		    IterationTag.class.isAssignableFrom(tagHandlerClass);
-		this.implementsBodyTag =
-		    BodyTag.class.isAssignableFrom(tagHandlerClass);
-		this.implementsTryCatchFinally = 
-		    TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
-		this.implementsSimpleTag = 
-		    SimpleTag.class.isAssignableFrom(tagHandlerClass);
-		this.implementsDynamicAttributes = 
-		    DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
-	    } else if (tagFileInfo != null) {
-		// get the info from tag file
-		this.implementsIterationTag = false;
-		this.implementsBodyTag = false;
-		this.implementsTryCatchFinally = false;
-		this.implementsSimpleTag = true;
-		this.implementsDynamicAttributes =
-                        tagInfo.hasDynamicAttributes();
-	    }
+	    this.implementsIterationTag = 
+		IterationTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsBodyTag =
+		BodyTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsTryCatchFinally = 
+		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsSimpleTag = 
+		SimpleTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsDynamicAttributes = 
+		DynamicAttributes.class.isAssignableFrom(tagHandlerClass);
+	}
+
+	/*
+	 * Constructor for custom action implemented by tag file.
+	 */
+	public CustomTag(String qName, String prefix, String localName,
+			 String uri, Attributes attrs, Mark start, Node parent,
+			 TagFileInfo tagFileInfo) {
+	    this(qName, prefix, localName, uri, attrs, null, start, parent,
+		 tagFileInfo);
+	}
+
+	/*
+	 * Constructor for custom action implemented by tag file.
+	 */
+	public CustomTag(String qName, String prefix, String localName,
+			 String uri, Attributes attrs, Attributes xmlnsAttrs,
+			 Mark start, Node parent, TagFileInfo tagFileInfo) {
+
+	    super(qName, localName, attrs, xmlnsAttrs, start, parent);
+
+	    this.uri = uri;
+	    this.prefix = prefix;
+	    this.tagFileInfo = tagFileInfo;
+	    this.tagInfo = tagFileInfo.getTagInfo();
+	    this.customNestingLevel = makeCustomNestingLevel();
+            this.childInfo = new ChildInfo();
+
+	    this.implementsIterationTag = false;
+	    this.implementsBodyTag = false;
+	    this.implementsTryCatchFinally = false;
+	    this.implementsSimpleTag = true;
+	    this.implementsDynamicAttributes = tagInfo.hasDynamicAttributes();
 	}
 
 	public void accept(Visitor v) throws JasperException {

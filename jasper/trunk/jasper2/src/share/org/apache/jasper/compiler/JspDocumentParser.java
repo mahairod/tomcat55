@@ -654,7 +654,7 @@ class JspDocumentParser extends DefaultHandler
 							localName, uri));
 	}
 	Class tagHandlerClass = null;
-	if (tagFileInfo == null) {
+	if (tagInfo != null) {
 	    String handlerClassName = tagInfo.getTagClassName();
 	    try {
 	        tagHandlerClass = ctxt.getClassLoader().loadClass(handlerClassName);
@@ -663,9 +663,7 @@ class JspDocumentParser extends DefaultHandler
 		        Localizer.getMessage("jsp.error.loadclass.taghandler",
 					     handlerClassName, qName));
 	    }
-	} else {
-            tagInfo = tagFileInfo.getTagInfo();
-        }
+	}
 
 	String prefix = "";
 	int colon = qName.indexOf(':');
@@ -673,9 +671,17 @@ class JspDocumentParser extends DefaultHandler
 	    prefix = qName.substring(0, colon);
 	}
        
-	return new Node.CustomTag(qName, prefix, localName, uri, attrs,
-				  xmlnsAttrs, start, parent, tagInfo,
-				  tagFileInfo, tagHandlerClass);
+	Node.CustomTag ret = null;
+	if (tagInfo != null) {
+	    ret = new Node.CustomTag(qName, prefix, localName, uri, attrs,
+				     xmlnsAttrs, start, parent, tagInfo,
+				     tagHandlerClass);
+	} else {
+	    ret = new Node.CustomTag(qName, prefix, localName, uri, attrs,
+				     xmlnsAttrs, start, parent, tagFileInfo);
+	}
+
+	return ret;
     }
 
     /*

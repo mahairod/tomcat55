@@ -1333,7 +1333,7 @@ class Parser implements TagConstants {
 	    err.jspError(start, "jsp.error.bad_tag", shortTagName, prefix);
 	}
 	Class tagHandlerClass = null;
-	if (tagFileInfo == null) {
+	if (tagInfo != null) {
 	    // Must be a classic tag, load it here.
 	    // tag files will be loaded later, in TagFileProcessor
 	    String handlerClassName = tagInfo.getTagClassName();
@@ -1343,8 +1343,6 @@ class Parser implements TagConstants {
 	        err.jspError(start, "jsp.error.loadclass.taghandler",
 			     handlerClassName, tagName);
 	    }
-	} else {
-	    tagInfo = tagFileInfo.getTagInfo();
 	}
 
         // Parse 'CustomActionBody' production:
@@ -1357,9 +1355,13 @@ class Parser implements TagConstants {
 	
         // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
-	    new Node.CustomTag(tagName, prefix, shortTagName, uri, attrs,
-			       start, parent, tagInfo, tagFileInfo,
-			       tagHandlerClass);
+	    if (tagInfo != null) {
+		new Node.CustomTag(tagName, prefix, shortTagName, uri, attrs,
+				   start, parent, tagInfo, tagHandlerClass);
+	    } else {
+		new Node.CustomTag(tagName, prefix, shortTagName, uri, attrs,
+				   start, parent, tagFileInfo);
+	    }
 	    return true;
 	}
 	
@@ -1369,19 +1371,24 @@ class Parser implements TagConstants {
 
 	// Looking for a body, it still can be empty; but if there is a
 	// a tag body, its syntax would be dependent on the type of
-	// body content declared in TLD.
+	// body content declared in the TLD.
 	String bc;
 	if (tagInfo != null) {
 	    bc = tagInfo.getBodyContent();
-	} else if (tagFileInfo != null) {
-	    bc = TagInfo.BODY_CONTENT_SCRIPTLESS;
 	} else {
-	    bc = TagInfo.BODY_CONTENT_EMPTY;
+	    bc = tagFileInfo.getTagInfo().getBodyContent();
 	}
 
-	Node tagNode = new Node.CustomTag(tagName, prefix, shortTagName, uri,
-					  attrs, start, parent, tagInfo,
-					  tagFileInfo, tagHandlerClass);
+	Node tagNode = null;
+	if (tagInfo != null) {
+	    tagNode = new Node.CustomTag(tagName, prefix, shortTagName, uri,
+					 attrs, start, parent, tagInfo,
+					 tagHandlerClass);
+	} else {
+	    tagNode = new Node.CustomTag(tagName, prefix, shortTagName, uri,
+					 attrs, start, parent, tagFileInfo);
+	}
+
 	parseOptionalBody( tagNode, tagName, bc );
 
 	return true;

@@ -199,6 +199,7 @@ public class Compiler {
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader(),
 						   errDispatcher));
+
 	JspConfig jspConfig = options.getJspConfig();
 	JspConfig.JspProperty jspProperty =
 			jspConfig.findJspProperty(ctxt.getJspFile());

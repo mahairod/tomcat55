@@ -134,7 +134,7 @@ class TagFileProcessor {
         private String displayName = null;
         private String smallIcon = null;
         private String largeIcon = null;
-        private boolean dynamicAttributes = false;
+        private boolean dynamicAttrs = false;
         
         private Vector attributeVector;
         private Vector variableVector;
@@ -164,8 +164,8 @@ class TagFileProcessor {
                 err.jspError(n, "jsp.error.tagdirective.badbodycontent",
                              bodycontent);
             }
-            dynamicAttributes= JspUtil.booleanValue(
-                        n.getAttributeValue("dynamic-attributes"));
+            dynamicAttrs = JspUtil.booleanValue(
+	                    n.getAttributeValue("dynamic-attributes"));
             smallIcon = n.getAttributeValue("small-icon");
             largeIcon = n.getAttributeValue("large-icon");
             description = n.getAttributeValue("description");
@@ -304,17 +304,17 @@ class TagFileProcessor {
             attributeVector.copyInto(tagAttributeInfo);
 
             return new TagInfo(name,
-                               tagClassName,
-                               bodycontent,
-                               description,
-                               tagLibInfo,
-                               tei,
-                               tagAttributeInfo,
-                               displayName,
-                               smallIcon,
-                               largeIcon,
-                               tagVariableInfos,
-                               dynamicAttributes);
+			       tagClassName,
+			       bodycontent,
+			       description,
+			       tagLibInfo,
+			       tei,
+			       tagAttributeInfo,
+			       displayName,
+			       smallIcon,
+			       largeIcon,
+			       tagVariableInfos,
+			       dynamicAttrs);
         }
     }
 
@@ -323,6 +323,7 @@ class TagFileProcessor {
      * in it.  The method is used to obtain the info on the tag file, when the 
      * handler that it represents is referenced.  The tag file is not compiled
      * here.
+     *
      * @param pc the current ParserController used in this compilation
      * @param name the tag name as specified in the TLD
      * @param tagfile the path for the tagfile
@@ -330,9 +331,9 @@ class TagFileProcessor {
      * @return a TagInfo object assembled from the directives in the tag file.
      */
     public static TagInfo parseTagFileDirectives(ParserController pc,
-                                                 String name,
-                                                 String path,
-                                                 TagLibraryInfo tagLibInfo)
+						 String name,
+						 String path,
+						 TagLibraryInfo tagLibInfo)
                         throws JasperException {
 
         ErrorDispatcher err = pc.getCompiler().getErrorDispatcher();
@@ -353,7 +354,7 @@ class TagFileProcessor {
 
         /*
          * TODO: need to check for uniqueness of attribute name, variable
-         * name-given, and vraibale alias.
+         * name-given, and variable alias.
          */
 
         /*
@@ -475,10 +476,9 @@ class TagFileProcessor {
 
 
     /*
-     * A visitor that scan the page, looking for tag handlers that are tag
-     * files and compile (if necessary) and load them.
+     * Visitor which scans the page and looks for tag handlers that are tag
+     * files, compiling (if necessary) and loading them.
      */ 
-
     private class TagFileLoaderVisitor extends Node.Visitor {
 
         private Compiler compiler;
