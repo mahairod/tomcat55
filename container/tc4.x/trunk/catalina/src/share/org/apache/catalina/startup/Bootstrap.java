@@ -121,6 +121,8 @@ public final class Bootstrap {
         ClassLoader catalinaLoader = createCatalinaLoader(commonLoader);
         ClassLoader sharedLoader = createSharedLoader(commonLoader);
 
+        Thread.currentThread().setContextClassLoader(catalinaLoader);
+
         // Load our startup class and call its process() method
         try {
             
