@@ -471,6 +471,15 @@ public interface HttpServletResponse extends ServletResponse {
 
     public static final int SC_USE_PROXY = 305;
 
+     /**
+     * Status code (307) indicating that the requested resource 
+     * resides temporarily under a different URI. The temporary URI
+     * <em>SHOULD</em> be given by the <code><em>Location</em></code> 
+     * field in the response.
+     */
+
+     public static final int SC_TEMPORARY_DIRECT = 307;
+
     /**
      * Status code (400) indicating the request sent by the client was
      * syntactically incorrect.

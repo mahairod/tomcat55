@@ -147,7 +147,7 @@ public interface ServletContext {
     /**
      * Returns the minor version of the Servlet API that this
      * servlet container supports. All implementations that comply
-     * with Version 2.2 must have this method
+     * with Version 2.3 must have this method
      * return the integer 3.
      *
      * @return 		3
