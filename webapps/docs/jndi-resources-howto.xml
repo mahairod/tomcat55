@@ -387,10 +387,13 @@ Transport.send(message);
     <h3>4.  Install the JavaMail libraries</h3>
 
     <p><a href="http://java.sun.com/products/javamail/downloads/index.html" target="_blank">
-    Download the JavaMail API</a>.</p>
+    Download the JavaMail API</a>.  The JavaMail API requires the Java Activation
+    Framework (JAF) API as well.  The Java Activation Framework can be downloaded
+    from <a href="http://java.sun.com/products/javabeans/glasgow/jaf.html">Sun's site</a>.
+    </p>
 
     <p>This download includes 2 vital libraries for the configuration; 
-    activation.jar and mail.jar. Unpackage the JavaMail distribution and place 
+    activation.jar and mail.jar. Unpackage both distributions and place 
     them into $CATALINA_HOME/common/lib so that they are available to
     Tomcat during the initialization of the mail Session Resource.
     <strong>Note:</strong> placing these jars in both common/lib and a 

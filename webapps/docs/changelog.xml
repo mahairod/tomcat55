@@ -36,6 +36,9 @@
         <bug>34237</bug>: Added note and links to context and host configuration
           references in JNDI DataSources HowTo to aid the clueless. (yoavs)
       </update>
+      <update>
+        <bug>34248</bug>: Update JavaMail download instructions to include JAF. (yoavs)
+      </update>
     </changelog>
   </subsection>
   
