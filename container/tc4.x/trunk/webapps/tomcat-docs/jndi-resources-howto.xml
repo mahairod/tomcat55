@@ -577,7 +577,195 @@ tx.commit();
 
 <section name="Adding Custom Resource Factories">
 
-  <p><strong>FIXME</strong></p>
+  <p>If none of the standard resource factories meet your needs, you can
+  write your own factory and integrate it into Tomcat 4, and then configure
+  the use of this factory in the <code>conf/server.xml</code> configuration
+  file.  In the example below, we will create a factory that only knows how
+  to create <code>com.mycompany.MyBean</code> beans, from the
+  <a href="Generic JavaBean Resources">Generic JavaBean Resources</a>
+  example, above.</p>
+
+  <h3>1.  Write A Resource Factory Class</h3>
+
+  <p>You must write a class that implements the JNDI service provider
+  <code>javax.naming.spi.ObjectFactory</code> inteface.  Every time your
+  web application calls <code>lookup()</code> on a context entry that is
+  bound to this factory, the <code>getObjectInstance()</code> method is
+  called, with the following arguments:</p>
+  <ul>
+  <li><strong>Object obj</strong> - The (possibly null) object containing
+      location or reference information that can be used in creating an
+      object.  For Tomcat, this will always be an object of type
+      <code>javax.naming.Reference</code>, which contains the class name
+      of this factory class, as well as the configuration properties
+      (from <code>conf/server.xml</code>) to use in creating objects
+      to be returned.</li>
+  <li><strong>Name name</strong> - The name to which this factory is bound
+      relative to <code>nameCtx</code>, or <code>null</code> if no name
+      is specified.</li>
+  <li><strong>Context nameCtx</strong> - The context relative to which the
+      <code>name</code> parameter is specified, or <code>null</code> if
+      <code>name</code> is relative to the default initial context.</li>
+  <li><strong>Hashtable environment</strong> - The (possibly null)
+      environment that is used in creating this object.  This is generally
+      ignored in Tomcat object factories.</li>
+  </ul>
+
+  <p>To create a resource factory that knows how to produce <code>MyBean</code>
+  instances, you might create a class like this:</p>
+
+<source>
+package com.mycompany;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
+import javax.naming.Context;
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.RefAddr;
+import javax.naming.Reference;
+import javax.naming.spi.ObjectFactory;
+
+public class MyBeanFactory implements ObjectFactory {
+
+  public Object getObjectInstance(Object obj,
+      Name name, Context nameCtx, Hashtable environment)
+      throws NamingException {
+
+      // Acquire an instance of our specified bean class
+      MyBean bean = new MyBean();
+
+      // Customize the bean properties from our attributes
+      Reference ref = (Reference) obj;
+      Enumeration addrs = ref.getAll();
+      while (addrs.hasMoreElements()) {
+          RefAddr addr = (RefAddr) addrs.nextElement();
+          String name = addr.getType();
+          String value = (String) addr.getContent();
+          if (name.equals("foo")) {
+              bean.setFoo(value);
+          } else if (name.equals("bar")) {
+              try {
+                  bean.setBar(Integer.parseInt(value));
+              } catch (NumberFormatException e) {
+                  throw new NamingException("Invalid 'bar' value " + value);
+              }
+          }
+      }
+
+      // Return the customized instance
+      return (bean);
+
+  }
+
+}
+</source>
+
+  <p>In this example, we are unconditionally creating a new instance of
+  the <code>com.mycompany.MyBean</code> class, and populating its properties
+  based on the parameters included in the <code>&lt;ResourceParams&gt;</code>
+  element that configures this factory (see below).  You should note that any
+  parameter named <code>factory</code> should be skipped - that parameter is
+  used to specify the name of the factory class itself (in this case,
+  <code>com.mycompany.MyBeanFactory</code>) rather than a property of the
+  bean being configured.</p>
+
+  <p>For more information about <code>ObjectFactory</code>, see the
+  <a href="http://java.sun.com/products/jndi/docs.html">JNDI 1.2 Service
+  Provider Interface (SPI) Specification</a>.</p>
+
+  <p>You will need to compile this class against a class path that includes
+  all of the JAR files in the <code>$CATALINA_HOME/common/lib</code> and
+  <code>$CATALINA_HOME/server/lib</code> directories.  When you are through,
+  place the factory class (and the corresponding bean class) unpacked under
+  <code>$CATALINA_HOME/common/classes</code>, or in a JAR file inside
+  <code>$CATALINA_HOME/common/lib</code>.  In this way, the required class
+  files are visible to both Catalina internal resources and your web
+  application.</p>
+
+  <h3>2.  Declare Your Resource Requirements</h3>
+
+  <p>Next, modify your web application deployment descriptor
+  (<code>/WEB-INF/web.xml</code>) to declare the JNDI name under which
+  you will request new instances of this bean.  The simplest approach is
+  to use a <code>&lt;resource-env-ref&gt;</code> element, like this:</p>
+
+<source>
+&lt;resource-env-ref&gt;
+  &lt;Description&gt;
+    Object factory for MyBean instances.
+  &lt;/Description&gt;
+  &lt;resource-env-ref-name&gt;
+    bean/MyBeanFactory
+  &lt;/resource-env-ref-name&gt;
+  &lt;resource-env-ref-type&gt;
+    com.mycompany.MyBean
+  &lt;/resource-env-ref-type&gt;
+&lt;resource-env-ref&gt;
+</source>
+
+    <p><strong>WARNING</strong> - Be sure you respect the element ordering
+    that is required by the DTD for web application deployment descriptors!
+    See the
+    <a href="http://java.sun.com/products/servlet/download.html">Servlet
+    Specification</a> for details.</p>
+
+  <h3>3.  Code Your Application's Use Of This Resource</h3>
+
+  <p>A typical use of this resource environment reference might look
+  like this:</p>
+
+<source>
+Context initCtx = new InitialContext();
+Context envCtx = (Context) initCtx.lookup("java:comp/env");
+MyBean bean = (MyBean) envCtx.lookup("bean/MyBeanFactory");
+
+writer.println("foo = " + bean.getFoo() + ", bar = " +
+               bean.getBar());
+</source>
+
+    <h3>4.  Configure Tomcat's Resource Factory</h3>
+
+    <p>To configure Tomcat's resource factory, add an elements like this to the
+    <code>$CATALINA_HOME/conf/server.xml</code> file, nested inside the
+    <code>Context</code> element for this web application (or nested inside
+    a <code>DefaultContext</code> element for the surrounding
+    <code>&lt;Host&gt;</code> or <code>&lt;Engine&gt;</code> element.</p>
+<source>
+&lt;Context ...&gt;
+  ...
+  &lt;Resource name="bean/MyBeanFactory" auth="Container"
+            type="com.mycompany.MyBean"/&gt;
+  &lt;ResourceParams name="bean/MyBeanFactory"&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;factory&lt;/name&gt;
+      &lt;value&gt;com.mycompany.MyBeanFactory&lt;/value&gt;
+    &lt;/parameter&gt;
+    &lt;parameter&gt;
+      &lt;name&gt;bar&lt;/name&gt;
+      &lt;value&gt;23&lt;/value&gt;
+    &lt;/parameter&gt;
+  &lt;/ResourceParams&gt;
+  ...
+&lt;/Context&gt;
+</source>
+
+    <p>Note that the resource name (here, <code>bean/MyBeanFactory</code>
+    must match the value specified in the web application deployment
+    descriptor.  We are also initializing the value of the <code>bar</code>
+    property, which will cause <code>setBar(23)</code> to be called before
+    the new bean is returned.  Because we are not initializing the
+    <code>foo</code> property (although we could have), the bean will
+    contain whatever default value is set up by its constructor.</p>
+
+    <p>You will also note that, from the application developer's perspective,
+    the declaration of the resource environment reference, and the programming
+    used to request new instances, is identical to the approach used for the
+    <em>Generic JavaBean Resources</em> example.  This illustrates one of the
+    advantages of using JNDI resources to encapsulate functionality - you can
+    change the underlying implementation without necessarily having to
+    modify applications using the resources, as long as you maintain
+    compatible APIs.</p>
 
 </section>
 
