@@ -3689,8 +3689,8 @@ public class StandardContext
             try {
                 ContextBindings.bindThread(this, this);
             } catch (NamingException e) {
-                log(sm.getString("standardContext.namingInitFailed",
-                                 getName()));
+                // Silent catch, as this is a normal case during the early
+                // startup stages
             }
         }
 
