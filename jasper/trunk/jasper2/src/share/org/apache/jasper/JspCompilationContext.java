@@ -346,15 +346,12 @@ public class JspCompilationContext {
             int iEnd = jspUri.length();
             StringBuffer modifiedClassName = 
                 new StringBuffer(jspUri.length() - iSep);
-            if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep)) ||
-                jspUri.charAt(iSep) == '_' ) {
-                // If the first char is not a start of Java identifier or is _
-                // prepend a '_'.
+            if (!Character.isJavaIdentifierStart(jspUri.charAt(iSep))) {
                 modifiedClassName.append('_');
             }
             for (int i = iSep; i < iEnd; i++) {
                 char ch = jspUri.charAt(i);
-                if (Character.isJavaIdentifierPart(ch)) {
+                if (Character.isJavaIdentifierPart(ch) && ch != '_') {
                     modifiedClassName.append(ch);
                 } else if (ch == '.') {
                     modifiedClassName.append('_');
@@ -433,12 +430,10 @@ public class JspCompilationContext {
             int nameStart = 1;
             for (int i = 1; i < iSep; i++) {
                 char ch = jspUri.charAt(i);
-                if (i == nameStart) {
-		    if (! Character.isJavaIdentifierStart(ch) || ch == '_') {
-                        modifiedPackageName.append('_');
-                    }
-                    modifiedPackageName.append(ch);
-                } else if (Character.isJavaIdentifierPart(ch)) {
+                if (i == nameStart && !Character.isJavaIdentifierStart(ch)) {
+                    modifiedPackageName.append('_');
+                }
+                if (Character.isJavaIdentifierPart(ch) && ch != '_') {
                     modifiedPackageName.append(ch);
                 } else if (ch == '/') {
                     if (isJavaKeyword(jspUri.substring(nameStart, i))) {
@@ -671,17 +666,12 @@ public class JspCompilationContext {
      * Mangle the specified character to create a legal Java class name.
      */
     private static final String mangleChar(char ch) {
-
-        String s = Integer.toHexString(ch);
-        int nzeros = 5 - s.length();
-        char[] result = new char[6];
+        char[] result = new char[5];
         result[0] = '_';
-        for (int i = 1; i <= nzeros; i++) {
-            result[i] = '0';
-        }
-        for (int i = nzeros+1, j = 0; i < 6; i++, j++) {
-            result[i] = s.charAt(j);
-        }
+        result[1] = Character.forDigit((ch >> 12) & 0xf, 16);
+        result[2] = Character.forDigit((ch >> 8) & 0xf, 16);
+        result[3] = Character.forDigit((ch >> 4) & 0xf, 16);
+        result[4] = Character.forDigit(ch & 0xf, 16);
         return new String(result);
     }
 
