@@ -738,8 +738,7 @@ public class DefaultServlet
                     && (lastModified <= (date.getTime() + 1000)) ) {
                     // The entity has not been modified since the date 
                     // specified by the client. This is not an error case.
-                    response.sendError
-                        (HttpServletResponse.SC_NOT_MODIFIED);
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     return false;
                 }
                 
@@ -775,8 +774,7 @@ public class DefaultServlet
                 // back.
                 if ( ("GET".equals(request.getMethod()))
                      || ("HEAD".equals(request.getMethod())) ) {
-                    response.sendError
-                        (HttpServletResponse.SC_NOT_MODIFIED);
+                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                     return false;
                 } else {
                     response.sendError
@@ -1846,8 +1844,6 @@ public class DefaultServlet
         }
         PrintWriter writer = new PrintWriter(osWriter);
 
-	// FIXME - Currently pays no attention to the user's Locale
-
 	// Render the page header
 	writer.print("<html>\r\n");
 	writer.print("<head>\r\n");
@@ -1877,9 +1873,9 @@ public class DefaultServlet
 	    writer.print(rewriteUrl(contextPath));
             if (parent.equals(""))
                 parent = "/";
-            //if (contextPath.endsWith("/"))
-            //parent = parent.substring(1);
 	    writer.print(rewriteUrl(parent));
+            if (!parent.endsWith("/"))
+                writer.print("/");
             writer.print("\">");
 	    writer.print(sm.getString("directory.parent", parent));
 	    writer.print("</a>\r\n");
@@ -1929,6 +1925,8 @@ public class DefaultServlet
                 writer.print(rewriteUrl(contextPath));
                 resourceName = rewriteUrl(name + resourceName);
                 writer.print(resourceName);
+                if (childResourceInfo.collection)
+                    writer.print("/");
                 writer.print("\"><tt>");
                 writer.print(trimmed);
 

@@ -775,8 +775,9 @@ final class StandardWrapperValve
 	// Do nothing on an OK status
 	if (statusCode == HttpServletResponse.SC_OK)
 	    return;
-        if (statusCode < 400)
-            return;
+	// Do nothing on a NO MODIFIED status
+	if (statusCode == HttpServletResponse.SC_NOT_MODIFIED)
+	    return;
 
 	// Handle a custom error page for this status code
 	Context context = (Context) container.getParent();
@@ -812,7 +813,7 @@ final class StandardWrapperValve
 	// Render a default HTML status report page
 	try {
 	    try {
-		hres.setContentType("text/html");
+		hres.setContentType("text/html; charset=UTF-8");
 	    } catch (Throwable t) {
                 if (debug >= 1)
                     log("status.setContentType", t);
