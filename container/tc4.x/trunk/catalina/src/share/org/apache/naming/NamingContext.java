@@ -835,6 +835,7 @@ public class NamingContext implements Context {
                         (entry.value, name, this, env);
                     if (obj != null) {
                         entry.value = obj;
+                        entry.type = NamingEntry.ENTRY;
                     }
                     return obj;
                 } catch (Exception e) {
