@@ -213,21 +213,8 @@ public class Handler {
     {
 	try {
 	    if( initialized ) return;
-	    if( ! (this instanceof ServletWrapper) ) {
-		doInit();
-		return;
-	    }
-	    
-	    if( ! internal )
-		contextM.doPreServletInit( context, this);
 	    doInit();
-
-	    // if an exception is thrown in init, no end interceptors will
-	    // be called. that was in the origianl code J2EE used
-
-	    if( ! internal )
-		contextM.doPostServletInit( context, this);
-	    
+	    return;
 	} catch( Exception ex ) {
 	    initialized=false;
 	}
