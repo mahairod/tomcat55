@@ -878,7 +878,9 @@
   <!-- ============== BUILD: Build tomcat-coyote-http11 =================== -->
   <target name="build-tomcat-http11">
 
-    <ant dir="${tomcat-http11.home}" target="compile"/>
+    <ant dir="${tomcat-http11.home}" target="compile">
+      <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+    </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-http11.jar}"/>
