@@ -184,7 +184,7 @@ public class MBeanUtils {
      *
      * @param component The component for which to create a name
      */
-    public static String createManagedName(Object component) {
+    static String createManagedName(Object component) {
 
         // Deal with exceptions to the standard rule
         String className = component.getClass().getName();
@@ -211,7 +211,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Connector connector)
+    static ModelMBean createMBean(Connector connector)
         throws Exception {
 
         String mname = createManagedName(connector);
@@ -239,7 +239,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Context context)
+    static ModelMBean createMBean(Context context)
         throws Exception {
 
         String mname = createManagedName(context);
@@ -267,7 +267,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(ContextEnvironment environment)
+    static ModelMBean createMBean(ContextEnvironment environment)
         throws Exception {
 
         String mname = createManagedName(environment);
@@ -295,7 +295,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(ContextResource resource)
+    static ModelMBean createMBean(ContextResource resource)
         throws Exception {
 
         String mname = createManagedName(resource);
@@ -323,7 +323,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(ContextResourceLink resourceLink)
+    static ModelMBean createMBean(ContextResourceLink resourceLink)
         throws Exception {
 
         String mname = createManagedName(resourceLink);
@@ -351,7 +351,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(DefaultContext context)
+    static ModelMBean createMBean(DefaultContext context)
         throws Exception {
 
         String mname = createManagedName(context);
@@ -379,7 +379,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Engine engine)
+    static ModelMBean createMBean(Engine engine)
         throws Exception {
 
         String mname = createManagedName(engine);
@@ -407,7 +407,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Group group)
+    static ModelMBean createMBean(Group group)
         throws Exception {
 
         String mname = createManagedName(group);
@@ -435,7 +435,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Host host)
+    static ModelMBean createMBean(Host host)
         throws Exception {
 
         String mname = createManagedName(host);
@@ -463,7 +463,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Loader loader)
+    static ModelMBean createMBean(Loader loader)
         throws Exception {
 
         String mname = createManagedName(loader);
@@ -490,7 +490,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Logger logger)
+    static ModelMBean createMBean(Logger logger)
         throws Exception {
 
         String mname = createManagedName(logger);
@@ -518,7 +518,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Manager manager)
+    static ModelMBean createMBean(Manager manager)
         throws Exception {
 
         String mname = createManagedName(manager);
@@ -546,7 +546,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(MBeanFactory factory)
+    static ModelMBean createMBean(MBeanFactory factory)
         throws Exception {
 
         String mname = createManagedName(factory);
@@ -574,7 +574,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(NamingResources resource)
+    static ModelMBean createMBean(NamingResources resource)
         throws Exception {
 
         String mname = createManagedName(resource);
@@ -602,7 +602,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Realm realm)
+    static ModelMBean createMBean(Realm realm)
         throws Exception {
 
         String mname = createManagedName(realm);
@@ -630,7 +630,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Role role)
+    static ModelMBean createMBean(Role role)
         throws Exception {
 
         String mname = createManagedName(role);
@@ -658,7 +658,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Server server)
+    static ModelMBean createMBean(Server server)
         throws Exception {
 
         String mname = createManagedName(server);
@@ -686,7 +686,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Service service)
+    static ModelMBean createMBean(Service service)
         throws Exception {
 
         String mname = createManagedName(service);
@@ -714,7 +714,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(User user)
+    static ModelMBean createMBean(User user)
         throws Exception {
 
         String mname = createManagedName(user);
@@ -742,7 +742,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(UserDatabase userDatabase)
+    static ModelMBean createMBean(UserDatabase userDatabase)
         throws Exception {
 
         String mname = createManagedName(userDatabase);
@@ -770,7 +770,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public static ModelMBean createMBean(Valve valve)
+    static ModelMBean createMBean(Valve valve)
         throws Exception {
 
         String mname = createManagedName(valve);
@@ -798,7 +798,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                         Connector connector)
         throws MalformedObjectNameException {
 
@@ -839,7 +839,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Context context)
         throws MalformedObjectNameException {
 
@@ -867,7 +867,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               ContextEnvironment environment)
         throws MalformedObjectNameException {
 
@@ -921,7 +921,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               ContextResource resource)
         throws MalformedObjectNameException {
 
@@ -980,7 +980,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               ContextResourceLink resourceLink)
         throws MalformedObjectNameException {
 
@@ -1039,7 +1039,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               DefaultContext context)
         throws MalformedObjectNameException {
 
@@ -1071,7 +1071,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Engine engine)
         throws MalformedObjectNameException {
 
@@ -1092,7 +1092,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Group group)
         throws MalformedObjectNameException {
 
@@ -1114,7 +1114,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Host host)
         throws MalformedObjectNameException {
 
@@ -1138,7 +1138,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Loader loader)
         throws MalformedObjectNameException {
 
@@ -1197,7 +1197,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Logger logger)
         throws MalformedObjectNameException {
 
@@ -1241,7 +1241,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Manager manager)
         throws MalformedObjectNameException {
 
@@ -1300,7 +1300,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               NamingResources resources)
         throws MalformedObjectNameException {
 
@@ -1351,7 +1351,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               MBeanFactory factory)
         throws MalformedObjectNameException {
 
@@ -1371,7 +1371,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Realm realm)
         throws MalformedObjectNameException {
 
@@ -1415,7 +1415,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Role role)
         throws MalformedObjectNameException {
 
@@ -1437,7 +1437,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Server server)
         throws MalformedObjectNameException {
 
@@ -1457,7 +1457,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Service service)
         throws MalformedObjectNameException {
 
@@ -1478,7 +1478,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               User user)
         throws MalformedObjectNameException {
 
@@ -1500,7 +1500,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               UserDatabase userDatabase)
         throws MalformedObjectNameException {
 
@@ -1521,7 +1521,7 @@ public class MBeanUtils {
      *
      * @exception MalformedObjectNameException if a name cannot be created
      */
-    public static ObjectName createObjectName(String domain,
+    static ObjectName createObjectName(String domain,
                                               Valve valve)
         throws MalformedObjectNameException {
 
@@ -1634,7 +1634,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Connector connector, Service service)
+    static void destroyMBean(Connector connector, Service service)
         throws Exception {
 
         connector.setService(service);
@@ -1661,7 +1661,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Context context)
+    static void destroyMBean(Context context)
         throws Exception {
 
         String mname = createManagedName(context);
@@ -1686,7 +1686,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(ContextEnvironment environment)
+    static void destroyMBean(ContextEnvironment environment)
         throws Exception {
 
         String mname = createManagedName(environment);
@@ -1711,7 +1711,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(ContextResource resource)
+    static void destroyMBean(ContextResource resource)
         throws Exception {
 
         String mname = createManagedName(resource);
@@ -1736,7 +1736,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(ContextResourceLink resourceLink)
+    static void destroyMBean(ContextResourceLink resourceLink)
         throws Exception {
 
         String mname = createManagedName(resourceLink);
@@ -1761,7 +1761,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(DefaultContext context)
+    static void destroyMBean(DefaultContext context)
         throws Exception {
 
         String mname = createManagedName(context);
@@ -1786,7 +1786,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Engine engine)
+    static void destroyMBean(Engine engine)
         throws Exception {
 
         String mname = createManagedName(engine);
@@ -1811,7 +1811,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Group group)
+    static void destroyMBean(Group group)
         throws Exception {
 
         String mname = createManagedName(group);
@@ -1836,7 +1836,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Host host)
+    static void destroyMBean(Host host)
         throws Exception {
 
         String mname = createManagedName(host);
@@ -1861,7 +1861,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Loader loader)
+    static void destroyMBean(Loader loader)
         throws Exception {
 
         String mname = createManagedName(loader);
@@ -1886,7 +1886,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Logger logger)
+    static void destroyMBean(Logger logger)
         throws Exception {
 
         String mname = createManagedName(logger);
@@ -1911,7 +1911,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Manager manager)
+    static void destroyMBean(Manager manager)
         throws Exception {
 
         String mname = createManagedName(manager);
@@ -1936,7 +1936,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(NamingResources resources)
+    static void destroyMBean(NamingResources resources)
         throws Exception {
 
         String mname = createManagedName(resources);
@@ -1961,7 +1961,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Realm realm)
+    static void destroyMBean(Realm realm)
         throws Exception {
 
         String mname = createManagedName(realm);
@@ -1986,7 +1986,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Role role)
+    static void destroyMBean(Role role)
         throws Exception {
 
         String mname = createManagedName(role);
@@ -2011,7 +2011,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Server server)
+    static void destroyMBean(Server server)
         throws Exception {
 
         String mname = createManagedName(server);
@@ -2036,7 +2036,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Service service)
+    static void destroyMBean(Service service)
         throws Exception {
 
         String mname = createManagedName(service);
@@ -2061,7 +2061,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(User user)
+    static void destroyMBean(User user)
         throws Exception {
 
         String mname = createManagedName(user);
@@ -2086,7 +2086,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(UserDatabase userDatabase)
+    static void destroyMBean(UserDatabase userDatabase)
         throws Exception {
 
         String mname = createManagedName(userDatabase);
@@ -2111,7 +2111,7 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Valve valve, Container container)
+    static void destroyMBean(Valve valve, Container container)
         throws Exception {
 
         ((Contained)valve).setContainer(container);
