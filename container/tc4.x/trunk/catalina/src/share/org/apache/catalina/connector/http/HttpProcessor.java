@@ -67,6 +67,7 @@ package org.apache.catalina.connector.http;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
+import java.io.InterruptedIOException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -791,7 +792,8 @@ final class HttpProcessor
                     }
                 }
             } catch (EOFException e) {
-                //log("process.parse:  EOFException:  " + e);
+                ok = false;
+            } catch (InterruptedIOException e) {
                 ok = false;
             } catch (Exception e) {
                 try {

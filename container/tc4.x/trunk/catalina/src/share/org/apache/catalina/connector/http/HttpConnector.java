@@ -180,6 +180,13 @@ public final class HttpConnector
 
 
     /**
+     * Timeout value on the incoming connection.
+     * Note : a value of 0 means no timeout.
+     */
+    private int connectionTimeout = Constants.DEFAULT_CONNECTION_TIMEOUT;
+
+
+    /**
      * The port number on which we listen for HTTP requests.
      */
     private int port = 8080;
@@ -256,6 +263,28 @@ public final class HttpConnector
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the connection timeout for this Connector.
+     */
+    public int getConnectionTimeout() {
+
+	return (connectionTimeout);
+
+    }
+
+
+    /**
+     * Set the connection timeout for this Connector.
+     *
+     * @param count The new connection timeout
+     */
+    public void setConnectionTimeout(int connectionTimeout) {
+
+	this.connectionTimeout = connectionTimeout;
+
+    }
 
 
     /**
@@ -739,6 +768,7 @@ public final class HttpConnector
 	    Socket socket = null;
 	    try {
 		socket = serverSocket.accept();
+                socket.setSoTimeout(connectionTimeout);
 	    } catch (IOException e) {
 		if (started && !stopped)
 		    log("accept: ", e);
