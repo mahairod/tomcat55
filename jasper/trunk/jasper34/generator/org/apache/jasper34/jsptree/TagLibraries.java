@@ -74,7 +74,9 @@ import org.apache.jasper34.parser.*;
 
 /**
  * A container for all tag libraries that have been imported using
- * the taglib directive. 
+ * the taglib directive.
+ *
+ * One instance per web application.
  *
  * @author Anil K. Vijendran
  * @author Mandar Raje
@@ -82,15 +84,15 @@ import org.apache.jasper34.parser.*;
 public class TagLibraries {
 
     private Hashtable tagLibInfos;
-    private JspCompilationContext ctxt;
+    ContainerLiaison containerL;
 
     // used to keep web.xml taglib-locations
     private Hashtable locations=null;
     
-    public TagLibraries(JspCompilationContext ctxt)
+    public TagLibraries(ContainerLiaison containerL)
     {
+	this.containerL=containerL;
         this.tagLibInfos = new Hashtable();
-	this.ctxt=ctxt;
     }
 
     /** Add a location mapping. The container may do so if it
@@ -108,7 +110,7 @@ public class TagLibraries {
 	throws IOException, JasperException
     {
 	if( locations==null )
-	    ctxt.readWebXml( this );
+	    containerL.readWebXml( this );
 	
 	// ignorecase or toLowerCase
 	return (String)locations.get( uriIn );
@@ -130,7 +132,7 @@ public class TagLibraries {
 
 	TagLibraryInfoImpl tl = new TagLibraryInfoImpl(prefix, uri);
 
-	ctxt.readTLD(  this, tl, prefix, uri );
+	containerL.readTLD(  this, tl, prefix, uri );
 
 
 	addTagLibrary(prefix, tl);
@@ -148,7 +150,7 @@ public class TagLibraries {
             return false;
         else if (tli.getTag(shortTagName) != null)
             return true;
-        throw new JasperException(Constants.getString("jsp.error.bad_tag",
+        throw new JasperException(containerL.getString("jsp.error.bad_tag",
                                                       new Object[] {
                                                           shortTagName,
                                                           prefix

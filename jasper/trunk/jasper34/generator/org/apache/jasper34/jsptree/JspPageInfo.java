@@ -72,6 +72,15 @@ import org.apache.jasper34.runtime.JasperException;
 import org.apache.tomcat.util.log.*;
 import org.apache.jasper34.parser.*;
 
+/* You need to create a pageInfo before calling compiler.
+   You need to set:
+      jspFile
+      mangler
+      containerLiaison
+*/
+
+
+
 /**
  * Internal representation of the JSP page, including all collected
  * directives and options. The data is stored in a tree of JspNodes
@@ -88,7 +97,6 @@ import org.apache.jasper34.parser.*;
  */
 public class JspPageInfo {
     // XXX public fields will be replaced with API
-    public String servletClassName;
     
     public String jspServletBase = Constants.JSP_SERVLET_BASE;
     public String serviceMethodName = Constants.SERVICE_METHOD_NAME;
@@ -121,7 +129,7 @@ public class JspPageInfo {
     /* support for large files */
     public int stringId = 0;
     public Vector vector = new Vector();
-    public String dataFile;
+    private String dataFile;
 
     public TagLibraries libraries;
 
@@ -134,31 +142,144 @@ public class JspPageInfo {
     // one tag pool per tag reuse scope.
     public Vector tagPools = new Vector();
     
-    public JspCompilationContext ctxt;
+    public ContainerLiaison containerL;
 
-    public JspPageInfo(JspCompilationContext ctxt) {
-	this.beanInfo = new BeanRepository(ctxt.getClassLoader());
-        this.libraries = new TagLibraries(ctxt);
-        this.ctxt = ctxt;
-
-        // FIXME: Is this good enough? (I'm just taking the easy way out - akv)
-        if (ctxt.getOptions().getLargeFile())
-            dataFile = ctxt.getOutputDir() + File.separatorChar +
-                ctxt.getServletPackageName() + "_" +
-                ctxt.getServletClassName() + ".dat";
+    private Mangler mangler;
+    private Options options;
+    
+    public JspPageInfo(ContainerLiaison containerL, Options options,
+		       Mangler mangler)
+    {
+	this.options=options;
+	this.containerL=containerL;
+	this.beanInfo = new BeanRepository(containerL.getClassLoader());
+        this.libraries = new TagLibraries(containerL);
+	this.mangler=mangler;
     }
 
-    // -------------------- Getters --------------------
+    // --------------------   --------------------
     // XXX remove all public fields.
 
     public Options getOptions() {
-	return ctxt.getOptions();
+	//return containerL.getOptions();
+	return options;
+    }
+
+    public Mangler getMangler() {
+	return mangler;
+    }
+
+    public ContainerLiaison getContainerLiaison() {
+	return containerL;
     }
     
-    // -------------------- Setters --------------------
+    // -------------------- Java class info --------------------
+    // Refactored from JspCompilationContext
+    // XXX Some is dependent to the Java generator
+    
+    boolean errorPage;
+    String jspFile;
+    //    String servletClassName;
+    //    String servletPackageName;
+    // String servletJavaFileName;
+    String fullClassName;
+    String javaEncoding;
+    
+    /**
+     * Are we processing something that has been declared as an
+     * errorpage? 
+     */
+    public boolean isErrorPage() {
+	return errorPage;
+    }
+    
+    public void setErrorPage(boolean isErrPage) {
+	errorPage=isErrPage;
+    }
+    
+    /**
+     * Path of the JSP URI. Note that this is not a file name. This is
+     * the context rooted URI of the JSP file. 
+     */
+    public String getJspFile() {
+	return jspFile;
+    }
+
+    public void setJspFile( String s ) {
+	this.jspFile=s;
+    }
+    
+    // cache
+    private String servletClassName;
+    /**
+     * Just the class name (does not include package name) of the
+     * generated class. 
+     */
+    public String getServletClassName() {
+	if ( servletClassName==null )
+	    servletClassName=mangler.getClassName(); // servletClassName;
+	return servletClassName;
+    }
+    
+//     public void setServletClassName(String servletClassName) {
+// 	this.servletClassName=servletClassName;
+//     }
+    
+    /**
+     * The package name into which the servlet class is generated. 
+     */
+    public String getServletPackageName() {
+	return mangler.getPackageName(); //servletPackageName;
+    }
+
+    //     public void setServletPackageName(String servletPackageName) {
+    // 	this.servletPackageName=servletPackageName;
+    //     }
+    
+    /**
+     * Utility method to get the full class name from the package and
+     * class name. 
+     */
+    public String getFullClassName() {
+	return fullClassName;
+    }
+
+    /**
+     * Full path name of the Java file into which the servlet is being
+     * generated. 
+     */
+    public String getServletJavaFileName() {
+	return mangler.getJavaFileName(); // servletJavaFileName;
+    }
+
+    //     public void setServletJavaFileName(String servletJavaFileName) {
+    // 	this.servletJavaFileName=servletJavaFileName;
+    //     }
+    
+    public String  getDataFile() {
+        // FIXME: Is this good enough? (I'm just taking the easy way out - akv)
+        if (! getOptions().getLargeFile())
+	    return null;
+	if( dataFile==null ) {
+            dataFile = containerL.getOutputDir() + File.separatorChar +
+                getServletPackageName() + "_" +
+                getServletClassName() + ".dat";
+	}
+	return dataFile;
+    }
+
+    public String getJavaEncoding() {
+	return javaEncoding;
+    }
+
+    public void setJavaEncoding(String javaEncoding) {
+	this.javaEncoding=javaEncoding;
+    }
+    
+    // -------------------- JSP info --------------------
     
     public final void addGenerator(GeneratorBase gen) throws JasperException {
-        gen.init(ctxt);
+        gen.init(containerL);
         generators.addElement(gen);
     }
 
@@ -189,15 +310,7 @@ public class JspPageInfo {
     }
 
 
-    public String getServletClassName() {
-	return ctxt.getServletClassName();
-    }
+    // -------------------- Line number info --------------------
 
-    public String getServletPackageName() {
-	return ctxt.getServletPackageName();
-    }
-
-    public boolean isErrorPage() {
-	return ctxt.isErrorPage();
-    }
+    
 }

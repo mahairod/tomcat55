@@ -85,8 +85,10 @@ public class TagInfoImpl extends TagInfo {
     Hashtable methodMaps;
     BeanInfo tagClassInfo;
     Class tagHandlerClass;
+    ContainerLiaison containerL;
     
-    public TagInfoImpl(String tagName,
+    public TagInfoImpl(ContainerLiaison containerL,
+		       String tagName,
 		       String tagClassName,
 		       String bodycontent,
 		       String infoString,
@@ -95,6 +97,7 @@ public class TagInfoImpl extends TagInfo {
 		       TagAttributeInfo[] attributeInfo) {
 	super( tagName, tagClassName, bodycontent,
 	       infoString, taglib, tagExtraInfo, attributeInfo );
+	this.containerL=containerL;
         this.shortTagName = tagName;
         this.methodMaps = new Hashtable();
     }
@@ -124,7 +127,7 @@ public class TagInfoImpl extends TagInfo {
                     addSetterMethod(pd[i].getName(), pd[i].getWriteMethod());
             }
         } catch (IntrospectionException ex) {
-            throw new JasperException(Constants.getString("jsp.error.unable.to_introspect",
+            throw new JasperException(containerL.getString("jsp.error.unable.to_introspect",
                                                           new Object[] {
                                                               tagHandlerClass.getName(),
                                                               ex.getMessage()
