@@ -18,6 +18,13 @@
 <p>
 Questions that were not categorized.
 </p>
+<p>
+  <em>Tomcat 4.1.27 has a bug with respect to webapp reloading which requires a hotfix.
+    <a href="http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22096">
+      Here are more details.
+    </a>
+  </em>
+</p>
 </section>
 
 <section name="Questions">
