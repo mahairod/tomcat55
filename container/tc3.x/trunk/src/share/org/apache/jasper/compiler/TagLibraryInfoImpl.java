@@ -166,9 +166,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    InputStream is = getResourceAsStream(WEBAPP_INF);
 	    
 	    if (is != null) {
-                URL dtdURL =  this.getClass().getResource(Constants.WEBAPP_DTD_RESOURCE);
-                Document webtld = JspUtil.parseXMLDoc(is, dtdURL,
-                                                         Constants.WEBAPP_DTD_PUBLIC_ID);
+                Document webtld =
+		    JspUtil.parseXMLDoc(is,
+					Constants.WEBAPP_DTD_RESOURCE,
+					Constants.WEBAPP_DTD_PUBLIC_ID);
                 NodeList nList =  webtld.getElementsByTagName("taglib");
 	    
                 if (nList.getLength() != 0) {
@@ -332,8 +333,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     private void parseTLD(InputStream in) 
         throws JasperException
     {
-	URL tagUrl = this.getClass().getResource(Constants.TAGLIB_DTD_RESOURCE);
-	tld = JspUtil.parseXMLDoc(in, tagUrl,
+	tld = JspUtil.parseXMLDoc(in,
+				  Constants.TAGLIB_DTD_RESOURCE,
 				  Constants.TAGLIB_DTD_PUBLIC_ID);
 	
         Vector tagVector = new Vector();

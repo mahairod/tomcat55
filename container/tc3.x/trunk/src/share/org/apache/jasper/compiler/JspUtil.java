@@ -132,7 +132,7 @@ public class JspUtil {
     }
 
     // Parses the XML document contained in the InputStream.
-    public static Document parseXMLDoc(InputStream in, URL dtdURL, 
+    public static Document parseXMLDoc(InputStream in, String dtdResource, 
     					  String dtdId) throws JasperException 
     {
 	try {
@@ -147,7 +147,8 @@ public class JspUtil {
 	     * the taglib.dtdfile; this is so that jasper can run standalone 
 	     * without running out to the net to pick up the taglib.dtd file.
 	     */
-	    MyEntityResolver resolver = new MyEntityResolver(dtdId, dtdURL.toString());
+	    MyEntityResolver resolver =
+		new MyEntityResolver(dtdId, dtdResource);
             builder.setEntityResolver(resolver);
 	    tld = builder.parse(in);
 	    return tld;
@@ -269,28 +270,24 @@ public class JspUtil {
 class MyEntityResolver implements EntityResolver {
 
     String dtdId;
-    String dtdURL;
+    String dtdResource;
     
-    public MyEntityResolver(String id, String url) {
+    public MyEntityResolver(String id, String resource) {
 	this.dtdId = id;
-	this.dtdURL = url;
+	this.dtdResource = resource;
     }
     
     public InputSource resolveEntity(String publicId, String systemId)
 	throws SAXException, IOException
     {
 	//System.out.println ("publicId = " + publicId);
-	//System.out.println ("dtdId = " + dtdId);
 	//System.out.println ("systemId is " + systemId);
+	//System.out.println ("resource is " + dtdResource);
 	if (publicId.equals(dtdId)) {
-	    //System.out.println ("dtdURL is " + dtdURL);
-	    String fileName = dtdURL.substring(dtdURL.indexOf("/"),dtdURL.length());
-	    //System.out.println ("fileName is " + fileName);
-	    InputSource isrc = 
-		new InputSource(new FileInputStream (fileName));
-	    //InputStream istr = new FileInputStream (fileName);
-	    //if (istr == null) System.out.println ("Stream is null");
-	    //System.out.println ("isrc = " + isrc);
+	    InputStream input =
+		this.getClass().getResourceAsStream(dtdResource);
+	    InputSource isrc =
+		new InputSource(input);
 	    return isrc;
 	}
 	else {
