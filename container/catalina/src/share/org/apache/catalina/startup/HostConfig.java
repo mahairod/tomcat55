@@ -436,6 +436,10 @@ public class HostConfig
      */
     protected File configBase() {
 
+        if (configBase != null) {
+            return configBase;
+        }
+
         File file = new File(System.getProperty("catalina.base"), "conf");
         Container parent = host.getParent();
         if ((parent != null) && (parent instanceof Engine)) {
@@ -562,6 +566,72 @@ public class HostConfig
                     contextPath = "";
                 if (host.findChild(contextPath) != null)
                     continue;
+
+                // Checking for a nested /META-INF/context.xml
+                JarFile jar = null;
+                JarEntry entry = null;
+                InputStream istream = null;
+                BufferedOutputStream ostream = null;
+                File xml = new File
+                    (configBase, files[i].substring
+                     (0, files[i].lastIndexOf(".")) + ".xml");
+                if (!xml.exists()) {
+                    try {
+                        jar = new JarFile(dir);
+                        entry = jar.getJarEntry("META-INF/context.xml");
+                        if (entry != null) {
+                            istream = jar.getInputStream(entry);
+                            ostream =
+                                new BufferedOutputStream
+                                (new FileOutputStream(xml), 1024);
+                            byte buffer[] = new byte[1024];
+                            while (true) {
+                                int n = istream.read(buffer);
+                                if (n < 0) {
+                                    break;
+                                }
+                                ostream.write(buffer, 0, n);
+                            }
+                            ostream.flush();
+                            ostream.close();
+                            ostream = null;
+                            istream.close();
+                            istream = null;
+                            entry = null;
+                            jar.close();
+                            jar = null;
+                            deployDescriptors(configBase(), configBase.list());
+                            return;
+                        }
+                    } catch (Exception e) {
+                        // Ignore and continue
+                        if (ostream != null) {
+                            try {
+                                ostream.close();
+                            } catch (Throwable t) {
+                                ;
+                            }
+                            ostream = null;
+                        }
+                        if (istream != null) {
+                            try {
+                                istream.close();
+                            } catch (Throwable t) {
+                                ;
+                            }
+                            istream = null;
+                        }
+                        entry = null;
+                        if (jar != null) {
+                            try {
+                                jar.close();
+                            } catch (Throwable t) {
+                                ;
+                            }
+                            jar = null;
+                        }
+                    }
+                }
 
                 if (isUnpackWARs()) {
 
