@@ -6,29 +6,89 @@
 
 <web-app>
     <context-param>
-	<param-name>
-		OS
-	</param-name>
-	<param-value>
-		ULTRASPARC
-	</param-value>
+	    <param-name>
+		    OS
+	    </param-name>
+	    <param-value>
+		    ULTRASPARC
+	    </param-value>
     </context-param>
     <context-param>
-	<param-name>
-		EDITOR
-	</param-name>
-	<param-value>
-		VI
-	</param-value>
+	    <param-name>
+		    EDITOR
+	    </param-name>
+	    <param-value>
+		    VI
+	    </param-value>
     </context-param>
 
+
+<!-- START Configured Filters -->
+
+    <filter>
+        <filter-name>
+            ServletMappedDoFilter_Filter
+        </filter-name>
+        <display-name>
+            ServletMappedDoFilter_Filter
+        </display-name>
+        <filter-class>
+            tests.javax_servlet.Filter.DoFilter_Filter
+        </filter-class>
+        <init-param>
+            <param-name>
+                attribute
+            </param-name>
+            <param-value>
+                tests.javax_servlet.Filter.DoFilter_Filter.SERVLET_MAPPED
+            </param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>
+            ServletMappedInitFilter_Filter
+        </filter-name>
+        <display-name>
+            ServletMappedInitFilter_Filter
+        </display-name>
+        <filter-class>
+            tests.javax_servlet.Filter.InitFilter_Filter
+        </filter-class>
+        <init-param>
+            <param-name>
+                attribute
+            </param-name>
+            <param-value>
+                tests.javax_servlet.Filter.InitFilter_Filter.SERVLET_MAPPED
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>
+            ServletMappedDoFilter_Filter
+        </filter-name>
+        <servlet-name>
+            DoFilterTest
+        </servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>
+            ServletMappedInitFilter_Filter
+        </filter-name>
+        <servlet-name>
+            InitFilterConfigTest
+        </servlet-name>
+    </filter-mapping>
+    
+<!-- END Configured Filters -->
+
     <servlet>
-	<servlet-name>
-		Hello
-	</servlet-name>
-	<servlet-class>
-		tests.HelloWorld
-	</servlet-class>
+	    <servlet-name>
+		    Hello
+	    </servlet-name>
+	    <servlet-class>
+		    tests.HelloWorld
+	    </servlet-class>
     </servlet>
 
 <!--		ServletContext		-->
@@ -267,9 +327,27 @@
     </servlet-class>
   </servlet>
 
+ <!-- Filters -->
+
+    <servlet>
+        <servlet-name>
+            DoFilterTest
+        </servlet-name>
+        <servlet-class>
+            tests.javax_servlet.Filter.DoFilterTestServlet
+        </servlet-class>
+    </servlet>
+ 
+    <servlet>
+        <servlet-name>
+            InitFilterConfigTest
+        </servlet-name>
+        <servlet-class>
+            tests.javax_servlet.Filter.InitFilterConfigTestServlet
+        </servlet-class>
+    </servlet>
  
  <!--	UnavailableException		-->
-
 
    <servlet>
 	<servlet-name>
@@ -2089,6 +2167,25 @@
     </url-pattern>
   </servlet-mapping>
 
+  <!-- Filter -->
+
+    <servlet-mapping>
+        <servlet-name>
+            DoFilterTest
+        </servlet-name>
+        <url-pattern>
+            /DoFilterTest
+        </url-pattern>
+    </servlet-mapping>
+  
+    <servlet-mapping>
+        <servlet-name>
+            InitFilterConfigTest
+        </servlet-name>
+        <url-pattern>
+            /InitFilterConfigTest
+        </url-pattern>
+    </servlet-mapping>
 
   <!--		UnavailableException	-->
 
