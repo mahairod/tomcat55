@@ -387,6 +387,7 @@ public class Compiler {
             return true;
         }
 
+/* XXX turn off derived dependencies for now
         // determine if compile time includes have been changed
         if( jsw==null ) {
             return false;
@@ -434,6 +435,7 @@ public class Compiler {
                 return true;
             }
         }
+*/
         return false;
 
     }

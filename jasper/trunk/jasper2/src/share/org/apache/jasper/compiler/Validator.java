@@ -858,7 +858,7 @@ public class Validator {
 	    String charset = pageInfo.getPageEncoding();
 	    if (charset == null)
 		charset = isXml? "UTF-8": "ISO-8859-1";
-	    pageInfo.setContentType(defaultType + ";" + charset);
+	    pageInfo.setContentType(defaultType + ";charset=" + charset);
 	}
 
 	/*
