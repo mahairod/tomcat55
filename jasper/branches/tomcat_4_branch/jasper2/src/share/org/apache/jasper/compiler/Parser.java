@@ -212,7 +212,7 @@ public class Parser {
      */
     private String parseAttributeValue(String watch) throws JasperException {
 	Mark start = reader.mark();
-	Mark stop = reader.skipUntil(watch);
+	Mark stop = reader.skipUntilIgnoreEsc(watch);
 	if (stop == null) {
 	    err.jspError(start, "jsp.error.attribute.unterminated", watch);
 	}
