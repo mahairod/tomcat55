@@ -256,26 +256,79 @@ public final class RequestUtil {
      */
     public static String URLDecode(String str) {
         
- 	if (str != null) {
-            int len = str.length();
-            byte[] bytes = new byte[len];
-            str.getBytes(0, len, bytes, 0);
-            int ix = 0;
-            int ox = 0;
-            
-            while (ix < len) {
-                byte b = bytes[ix++];     // Get byte to test
-                if (b == '+') {
-                    b = (byte)' ';
-                } else if (b == '%') {
-                    b = (byte) ((convertHexDigit(bytes[ix++]) << 4)
-                                + convertHexDigit(bytes[ix++]));
-                } 
-                bytes[ox++] = b;
-            }
-            return new String(bytes, 0, ox);
+        return URLDecode(str, null);
+        
+    }
+
+
+    /**
+     * Decode and return the specified URL-encoded String.
+     * 
+     * @param str The url-encoded string
+     * @param enc The encoding to use; if null, the default encoding is used
+     * @exception IllegalArgumentException if a '%' character is not followed
+     * by a valid 2-digit hexadecimal number
+     */
+    public static String URLDecode(String str, String enc) {
+        
+        if (str == null)
+            return (null);
+        
+        int len = str.length();
+        byte[] bytes = new byte[len];
+        str.getBytes(0, len, bytes, 0);
+        
+        return URLDecode(bytes, enc);
+        
+    }
+
+
+    /**
+     * Decode and return the specified URL-encoded byte array.
+     * 
+     * @param bytes The url-encoded byte array
+     * @exception IllegalArgumentException if a '%' character is not followed
+     * by a valid 2-digit hexadecimal number
+     */
+    public static String URLDecode(byte[] bytes) {
+        return URLDecode(bytes, null);
+    }
+
+
+    /**
+     * Decode and return the specified URL-encoded byte array.
+     * 
+     * @param bytes The url-encoded byte array
+     * @param enc The encoding to use; if null, the default encoding is used
+     * @exception IllegalArgumentException if a '%' character is not followed
+     * by a valid 2-digit hexadecimal number
+     */
+    public static String URLDecode(byte[] bytes, String enc) {
+        
+        if (bytes == null)
+            return (null);
+        
+        int len = bytes.length;
+        int ix = 0;
+        int ox = 0;
+        while (ix < len) {
+            byte b = bytes[ix++];     // Get byte to test
+            if (b == '+') {
+                b = (byte)' ';
+            } else if (b == '%') {
+                b = (byte) ((convertHexDigit(bytes[ix++]) << 4)
+                            + convertHexDigit(bytes[ix++]));
+            } 
+            bytes[ox++] = b;
         }
-        return null;
+        if (enc != null) {
+            try {
+                return new String(bytes, 0, ox, enc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return new String(bytes, 0, ox);
         
     }
 
