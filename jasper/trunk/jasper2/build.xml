@@ -5,7 +5,6 @@
 
   <!-- See "build.properties.sample" in the top level directory for all     -->
   <!-- property values you must customize for successful building!!!        -->
-  <property name="catalina.home" value="../../jakarta-tomcat-4.0"/>
   <property file="build.properties"/>
   <property file="${catalina.home}/build.properties"/>
   <property file="${user.home}/build.properties"/>
@@ -13,7 +12,8 @@
   <!-- Build Defaults -->
   <property name="build.compiler"    value="classic"/>
   <property name="jasper.build"      value="${basedir}/build"/>
-  <property name="jasper.deploy"     value="${catalina.home}/build"/>
+  <property name="catalina.home"     value="../../jakarta-tomcat-4.1/build"/>
+  <property name="jasper.deploy"     value="${catalina.home}"/>
   <property name="jasper.dist"       value="${basedir}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
