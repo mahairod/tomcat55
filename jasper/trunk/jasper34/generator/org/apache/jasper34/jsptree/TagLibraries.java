@@ -121,8 +121,11 @@ public class TagLibraries {
     /** Add a taglib prefix and the associated URI.
 	This is the result of a taglib directive, we'll need to
 	read the descriptor if not already there.
+
+	@param uriBase the jsp page that loads the taglib, used to resolve
+                       	relative uris.
     */
-    public void addTagLibrary( String prefix, String uri )
+    public void addTagLibrary( String prefix, String uri, String uriBase )
 	throws JasperException, IOException
     {
 	if( tagLibInfos.get( prefix ) != null ) {
@@ -132,7 +135,7 @@ public class TagLibraries {
 
 	TagLibraryInfoImpl tl = new TagLibraryInfoImpl(prefix, uri);
 
-	containerL.readTLD(  this, tl, prefix, uri );
+	containerL.readTLD(  this, tl, prefix, uri, uriBase );
 
 
 	addTagLibrary(prefix, tl);
