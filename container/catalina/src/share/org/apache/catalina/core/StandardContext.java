@@ -4371,6 +4371,10 @@ public class StandardContext
         startupTime = 0;
         startTime = 0;
         tldScanTime = 0;
+
+        // Bugzilla 32867
+        distributable = false;
+
         if(log.isDebugEnabled())
             log.debug("resetContext " + oname + " " + mserver);
     }
