@@ -1,60 +1,62 @@
-#! /bin/sh
 #!/bin/sh
 #
 
 # Shell script to run watchdog test suite
  
-# This script is known to work with the standard Korn Shell under
-# Solaris and the MKS Korn shell under Windows.
-
-
-if [ "$1" = "" ]; then
+if [ "$1" = "" ] ; then
     echo usage: "$0 {all|jsp|servlet} [serverhost] [serverport]"
     exit 0
 fi
 
-
-host=localhost
-port=8080
+HOST=localhost
+PORT=8080
 default=$1
 
+if [ "$2" != "" ] ; then
+    PORT=$2
+fi
+if [ "$3" != "" ] ; then
+    HOST=$3
+fi
 
-baseDir=..
+#WATCHDOG_HOME=`pwd`/..
+WATCHDOG_HOME=..
 
-miscJars=${baseDir}/lib/moo.jar:${baseDir}/lib/testdriver.jar:${baseDir}/lib/client.jar
-appJars=${miscJars}:${baseDir}/lib/xml.jar:${baseDir}/lib/ant.jar
-sysJars=${JAVA_HOME}/lib/tools.jar
-
-appClassPath=${appJars}
 cp=$CLASSPATH
 
-CLASSPATH=${appClassPath}:${sysJars}
+CLASSPATH=${WATCHDOG_HOME}/lib/ant.jar:$CLASSPATH
+CLASSPATH=${WATCHDOG_HOME}/lib/moo.jar:$CLASSPATH
+CLASSPATH=${WATCHDOG_HOME}/lib/testdriver.jar:$CLASSPATH
+CLASSPATH=${WATCHDOG_HOME}/lib/client.jar:$CLASSPATH
+CLASSPATH=${WATCHDOG_HOME}/lib/xml.jar:$CLASSPATH
+
+CLASSPATH=$CLASSPATH:${JAVA_HOME}/lib/tools.jar
+CLASSPATH=$CLASSPATH:${JAVA_HOME}/lib/classes.zip
+
+if [ "$cp" != "" ] ; then
+    CLASSPATH=${CLASSPATH}:${cp}
+fi
 
 export CLASSPATH
-
-if [ "$cp" != "" ]; then
-    CLASSPATH=${CLASSPATH}:${cp}
-    export CLASSPATH
-fi
 
 echo Using classpath: ${CLASSPATH}
 echo
 
-
-
-if [ "${default}" = jsp -o "${default}" = all ];then
+if [ "${default}" = jsp -o "${default}" = all ] ; then
     java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} -Dwatchdog.home=\
-         $WATCHDOG_HOME -f ${WATCHDOG_HOME}/conf/jsp.xml jsp-test
+        ${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp.xml jsp-test
 fi
 
-if [ "${default}" = servlet -o "${default}" = all ];then
+if [ "${default}" = servlet -o "${default}" = all ] ; then
     java org.apache.tools.ant.Main -Dtest.port=${PORT} -Dtest.hostname=${HOST}=\
-         -Dwatchdog.home=${WATCHDOG_HOME} -f $WATCHDOG_HOME/conf/servlet.xml servlet-test
+        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/servlet.xml servlet-test
 fi
 
-if [ "$cp" != ""]; then
+if [ "$cp" != "" ] ; then
     CLASSPATH=${cp}
     export CLASSPATH
 else
     unset CLASSPATH
 fi
+
+exit 0
