@@ -25,12 +25,15 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.catalina.Host;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Expand out a WAR in a Host's appBase.
@@ -43,6 +46,7 @@ import org.apache.catalina.util.StringManager;
 
 public class ExpandWar {
 
+    private static Log log = LogFactory.getLog(ExpandWar.class);
 
     /**
      * The string resources for this package.
@@ -189,17 +193,6 @@ public class ExpandWar {
      * @param dest File object representing the destination
      */
     public static boolean copy(File src, File dest) {
-        return copyInternal(src, dest, new byte[4096]);
-    }
-
-    
-    /**
-     * Copy the specified file or directory to the destination.
-     *
-     * @param src File object representing the source
-     * @param dest File object representing the destination
-     */
-    public static boolean copyInternal(File src, File dest, byte[] buf) {
         
         boolean result = true;
         
@@ -218,33 +211,28 @@ public class ExpandWar {
             File fileSrc = new File(src, files[i]);
             File fileDest = new File(dest, files[i]);
             if (fileSrc.isDirectory()) {
-                result = copyInternal(fileSrc, fileDest, buf);
+                result = copy(fileSrc, fileDest);
             } else {
-                FileInputStream is = null;
-                FileOutputStream os = null;
+                FileChannel ic = null;
+                FileChannel oc = null;
                 try {
-                    is = new FileInputStream(fileSrc);
-                    os = new FileOutputStream(fileDest);
-                    int len = 0;
-                    while (true) {
-                        len = is.read(buf);
-                        if (len == -1)
-                            break;
-                        os.write(buf, 0, len);
-                    }
+                    ic = (new FileInputStream(fileSrc)).getChannel();
+                    oc = (new FileOutputStream(fileDest)).getChannel();
+                    ic.transferTo(0, ic.size(), oc);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(sm.getString
+                            ("expandWar.copy", fileSrc, fileDest), e);
                     result = false;
                 } finally {
-                    if (is != null) {
+                    if (ic != null) {
                         try {
-                            is.close();
+                            ic.close();
                         } catch (IOException e) {
                         }
                     }
-                    if (os != null) {
+                    if (oc != null) {
                         try {
-                            os.close();
+                            oc.close();
                         } catch (IOException e) {
                         }
                     }
