@@ -443,6 +443,8 @@ public class XmlMapper
 	    File dtdF=new File( dtd );
 	    if( dtdF.exists() )
 		try {
+                    if (debug >= 1)
+                        System.out.println("  Using alternate DTD " + dtd);
 		    return new InputSource(new FileInputStream(dtdF));
 		} catch( FileNotFoundException ex ) {
 		}
@@ -452,8 +454,11 @@ public class XmlMapper
 	dtd = (String) resDTDs.get( publicId );
 	if( dtd != null ) {
 	    InputStream is = this.getClass().getResourceAsStream( dtd );
-	    if( is!= null )
+	    if( is!= null ) {
+                if (debug >= 1)
+                    System.out.println("  Using alternate DTD " + dtd);
 		return new InputSource(is);
+            }
 	    System.out.println("XXX resource not found !!! " + dtd);
 	    System.out.println(this.getClass().getClassLoader().getClass().getName());
 	}

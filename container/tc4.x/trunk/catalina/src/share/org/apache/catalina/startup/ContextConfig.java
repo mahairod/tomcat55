@@ -422,14 +422,10 @@ public final class ContextConfig
         if (debug > 0)
             mapper.setDebug(3);
         mapper.setValidating(true);
-	File resourceFile = new File(System.getProperty("catalina.home"),
-				     Constants.TldDtdResourcePath_11);
-	mapper.registerDTDFile(Constants.TldDtdPublicId_11,
-			       resourceFile.toString());
-	resourceFile = new File(System.getProperty("catalina.home"),
-				Constants.TldDtdResourcePath_12);
-	mapper.registerDTDFile(Constants.TldDtdPublicId_12,
-			       resourceFile.toString());
+        mapper.registerDTDRes(Constants.TldDtdPublicId_11,
+                              Constants.TldDtdResourcePath_11);
+        mapper.registerDTDRes(Constants.TldDtdPublicId_12,
+                              Constants.TldDtdResourcePath_12);
 
 	mapper.addRule("taglib/listener/listener-class",
 		       mapper.methodSetter("addApplicationListener", 0));
@@ -449,14 +445,10 @@ public final class ContextConfig
 	if (debug > 0)
 	    mapper.setDebug(3);
 	mapper.setValidating(true);
-	File resourceFile = new File(System.getProperty("catalina.home"),
-				     Constants.WebDtdResourcePath_22);
-	mapper.registerDTDFile(Constants.WebDtdPublicId_22,
-			       resourceFile.toString());
-	resourceFile = new File(System.getProperty("catalina.home"),
-				Constants.WebDtdResourcePath_23);
-	mapper.registerDTDFile(Constants.WebDtdPublicId_23,
-			       resourceFile.toString());
+        mapper.registerDTDRes(Constants.WebDtdPublicId_22,
+                              Constants.WebDtdResourcePath_22);
+        mapper.registerDTDRes(Constants.WebDtdPublicId_23,
+                              Constants.WebDtdResourcePath_23);
 
         mapper.addRule("web-app",
                        new SetPublicIdAction("setPublicId"));
