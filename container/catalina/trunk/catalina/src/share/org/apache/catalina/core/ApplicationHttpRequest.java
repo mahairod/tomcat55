@@ -529,13 +529,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                     // Ignore
                 }
                 if (localSession == null && create) {
-                    localSession = context.getManager().createEmptySession();
-                    localSession.setNew(true);
-                    localSession.setValid(true);
-                    localSession.setCreationTime(System.currentTimeMillis());
-                    localSession.setMaxInactiveInterval
-                        (context.getManager().getMaxInactiveInterval());
-                    localSession.setId(other.getId());
+                    localSession = 
+                        context.getManager().createSession(other.getId());
                 }
                 if (localSession != null) {
                     localSession.access();

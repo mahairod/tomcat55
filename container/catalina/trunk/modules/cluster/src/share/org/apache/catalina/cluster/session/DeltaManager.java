@@ -235,8 +235,8 @@ public class DeltaManager
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public Session createSession() {
-        return createSession(true);
+    public Session createSession(String sessionId) {
+        return createSession(sessionId, true);
     }
 
     
@@ -247,7 +247,7 @@ public class DeltaManager
      * @param distribute
      * @return
      */
-    public Session createSession(boolean distribute) {
+    public Session createSession(String sessionId, boolean distribute) {
 
       if ((maxActiveSessions >= 0) &&
           (sessions.size() >= maxActiveSessions)) {
@@ -258,13 +258,14 @@ public class DeltaManager
 
       // Recycle or create a Session instance
       DeltaSession session = getNewDeltaSession();
-      String sessionId = generateSessionId();
-
-      synchronized (sessions) {
-        while (sessions.get(sessionId) != null) { // Guarantee uniqueness
-          duplicates++;
+      if (sessionId == null) {
           sessionId = generateSessionId();
-         }
+          synchronized (sessions) {
+              while (sessions.get(sessionId) != null) { // Guarantee uniqueness
+                  duplicates++;
+                  sessionId = generateSessionId();
+              }
+          }
       }
 
       session.setNew(true);
@@ -849,7 +850,8 @@ public class DeltaManager
                        if (log.isDebugEnabled())
                            log.debug("Manager (" + name + ") received session ("
                             + msg.getSessionID() + ") created.");
-                       DeltaSession session = (DeltaSession)createSession(false);
+                       DeltaSession session = 
+                           (DeltaSession)createSession(msg.getSessionID(), false);
                        // Q: Why inform all session listener a replicate node?
                        session.setId(msg.getSessionID());
                        session.setNew(false);
