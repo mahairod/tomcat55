@@ -241,17 +241,28 @@
     <mkdir dir="${ROOT.base}/WEB-INF/classes" />
     <mkdir dir="${jsp-examples.base}/WEB-INF/src" />
 
+    <path id="jspc.classpath">
+      <pathelement location="${java.home}/../lib/tools.jar"/>
+      <pathelement location="${tomcat.build}/server/classes"/>
+      <fileset dir="${tomcat.build}/server/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${tomcat.build}/shared/classes"/>
+      <fileset dir="${tomcat.build}/shared/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${tomcat.build}/common/classes"/>
+      <fileset dir="${tomcat.build}/common/endorsed">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${tomcat.build}/common/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <pathelement location="${build.dir}/WEB-INF/classes"/>
+    </path>
+
     <taskdef classname="org.apache.jasper.JspC" name="jasper2" >
-      <classpath id="jspc.classpath">
-        <pathelement location="${java.home}/../lib/tools.jar"/>
-        <fileset dir="${tomcat.build}/server/lib">
-          <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${tomcat.build}/common/lib">
-          <include name="*.jar"/>
-        </fileset>
-        <pathelement location="${build.dir}/classes"/>
-      </classpath>
+      <classpath refid="jspc.classpath"/>
     </taskdef>
 
     <jasper2 
@@ -281,10 +292,10 @@
     <replace file="${ROOT.base}/WEB-INF/web.xml"
              token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_ROOT_web.xml}" />
 
-    <loadfile property="generated_jsp-examples_web.xml"
-              srcFile="${jsp-examples.base}/WEB-INF/generated_web.xml"  />
+    <loadfile property="generated_JSP_web.xml"
+              srcFile="${jsp-examples.base}/WEB-INF/generated_web.xml" />
     <replace file="${jsp-examples.base}/WEB-INF/web.xml"
-             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_jsp-examples_web.xml}" />
+             token="&lt;!--GENERATED_JSPS--&gt;" value="${generated_JSP_web.xml}" />
 
     <loadfile property="generated_admin_web.xml"
               srcFile="${admin.base}/WEB-INF/generated_web.xml"  />
@@ -295,14 +306,10 @@
            optimize="off"
            debug="on" failonerror="false"
            srcdir="${ROOT.base}/WEB-INF/src" 
-	   excludes="**/*.smap"
-    >
+	   excludes="**/*.smap">
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
-          <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${admin.base}/WEB-INF/lib">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${tomcat.build}/common/lib">
@@ -317,14 +324,13 @@
            optimize="off"
            debug="on" failonerror="false"
            srcdir="${jsp-examples.base}/WEB-INF/src" 
-	   excludes="**/*.smap"
-    >
+	   excludes="**/*.smap">
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${admin.base}/WEB-INF/lib">
+        <fileset dir="${jsp-examples.base}/WEB-INF/lib">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${tomcat.build}/common/lib">
@@ -339,8 +345,7 @@
            optimize="off"
            debug="on" failonerror="false"
            srcdir="${admin.base}/WEB-INF/src" 
-	   excludes="**/*.smap"
-    >
+	   excludes="**/*.smap">
       <classpath>
         <pathelement location="${java.home}/../lib/tools.jar"/>
         <fileset dir="${tomcat.build}/server/lib">
