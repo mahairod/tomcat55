@@ -1,0 +1,116 @@
+<!--
+
+  XML file for launching Catalina applications using the Launcher.
+
+  To run any of the applications in the JDB debugger, execute the Launcher with
+  a "-Ddebug=true" argument.
+
+  To run any of the applications in JPDA mode, execute the Launcher with a
+  "-Djpda=true" argument.
+
+-->
+
+<project name="Catalina Launcher" default="catalina" basedir=".">
+
+  <!-- Set the application home to the parent directory of this directory -->
+  <property name="app.home" location="${basedir}/.."/>
+  <property name="bootstrap.jar" location="${app.home}/bin/bootstrap.jar"/>
+
+  <!-- Import the user's custom properties -->
+  <property file="${app.home}/bin/catalina.properties"/>
+
+  <!-- Set user configurable properties -->
+  <property name="catalina.base" location="${app.home}"/>
+  <property name="catalina.tmpdir" location="${app.home}/temp"/>
+  <property name="catalina.out" location="${app.home}/logs/catalina.out"/>
+  <property name="catalina.policy" location="${app.home}/conf/catalina.policy"/>
+  <property name="catalina.jvm.args" value=""/>
+  <property name="catalina.source.path" value="${app.home}/../../jakarta-servletapi-5/src/share:${app.home}/../../jakarta-tomcat-jasper/jasper2/src/share:${app.home}/../../jakarta-tomcat-connectors/coyote/src/java:${app.home}/../../jakarta-tomcat-catalina/catalina/src/share"/>
+
+  <!-- Build the classpath relative to the application home -->
+  <path id="base.class.path">
+    <pathelement location="${bootstrap.jar}"/>
+  </path>
+
+  <!-- Build the sysproperties relative to the application home -->
+  <syspropertyset id="base.sys.properties">
+    <sysproperty key="java.endorsed.dirs" file="${app.home}/common/endorsed"/>
+    <sysproperty key="java.io.tmpdir" file="${catalina.tmpdir}"/>
+    <sysproperty key="catalina.home" file="${app.home}"/>
+    <sysproperty key="catalina.base" file="${catalina.base}"/>
+  </syspropertyset>
+
+  <!-- Build the standard jvmargs -->
+  <jvmargset id="base.jvm.args">
+    <jvmarg line="${catalina.jvm.args}"/>
+    <jvmarg value="-Xdebug" if="jpda.settings"/>
+    <jvmarg value="-Xrunjdwp:${jpda.settings}" if="jpda.settings"/>
+    <jvmarg value="-sourcepath" if="jdb"/>
+    <jvmarg path="${catalina.source.path}" if="jdb"/>
+  </jvmargset>
+
+  <!-- Target that sets JDB properties when the "debug" property is set -->
+  <target name="setjdb" description="Set JDB properties" if="debug">
+
+    <property name="jdb" value="true"/>
+
+  </target>
+
+  <!-- Target that sets JPDA properties when the "jpda" property is set -->
+  <target name="setjpda" description="Set JPDA properties" if="jpda">
+
+    <condition property="jpda.transport" value="dt_shmem">
+      <os family="windows"/>
+    </condition>
+    <condition property="jpda.transport" value="dt_socket">
+      <not>
+        <os family="windows"/>
+      </not>
+    </condition>
+    <condition property="jpda.address" value="jdbconn">
+      <equals arg1="${jpda.transport}" arg2="dt_shmem"/>
+    </condition>
+    <condition property="jpda.address" value="8000">
+      <not>
+        <equals arg1="${jpda.transport}" arg2="dt_shmem"/>
+      </not>
+    </condition>
+    <property name="jpda.suspend" value="y"/>
+    <property name="jpda.settings" value="transport=${jpda.transport},address=${jpda.address},server=y,suspend=${jpda.suspend}"/>
+
+  </target>
+
+  <!-- Target that executes Catalina -->
+  <target name="catalina" description="Execute Catalina"
+    depends="setjdb,setjpda">
+
+    <!-- Set default title for minimized window -->
+    <property name="catalina.window.title" value="Catalina"/>
+
+    <!--
+      Launch Catalina. Note that the "filterclassname" attribute will force
+      the "waitforchild" attribute to "true" if any invalid arguments are
+      used or if "start" is not the last argument.
+    -->
+    <launch classname="org.apache.catalina.startup.Bootstrap"
+      waitforchild="${wait}"
+      debug="${jdb}"
+      print="${print}"
+      filterclassname="org.apache.catalina.startup.CatalinaLaunchFilter"
+      filterclasspath="${bootstrap.jar}"
+      usesystemin="false"
+      requiretools="true"
+      redirectoutput="true"
+      output="${catalina.out}"
+      displayMinimizedWindow="true"
+      minimizedWindowTitle="${catalina.window.title}">
+        <jvmargset refid="base.jvm.args"/>
+        <syspropertyset refid="base.sys.properties"/>
+        <sysproperty key="java.security.manager" value="" if="security"/>
+        <sysproperty key="java.security.policy" value="=${catalina.policy}" if="security"/>
+        <classpath refid="base.class.path"/>
+    </launch>
+
+  </target>
+
+</project>
