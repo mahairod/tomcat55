@@ -3514,8 +3514,8 @@ public class StandardContext
      */
     public boolean filterStart() {
 
-        if (log.isDebugEnabled())
-            log.debug("Starting filters");
+        if (getLogger().isDebugEnabled())
+            getLogger().debug("Starting filters");
         // Instantiate and record a FilterConfig for each defined filter
         boolean ok = true;
         synchronized (filterConfigs) {
@@ -3523,15 +3523,15 @@ public class StandardContext
             Iterator names = filterDefs.keySet().iterator();
             while (names.hasNext()) {
                 String name = (String) names.next();
-                if (log.isDebugEnabled())
-                    log.debug(" Starting filter '" + name + "'");
+                if (getLogger().isDebugEnabled())
+                    getLogger().debug(" Starting filter '" + name + "'");
                 ApplicationFilterConfig filterConfig = null;
                 try {
                     filterConfig = new ApplicationFilterConfig
                       (this, (FilterDef) filterDefs.get(name));
                     filterConfigs.put(name, filterConfig);
                 } catch (Throwable t) {
-                    getServletContext().log
+                    getLogger().error
                         (sm.getString("standardContext.filterStart", name), t);
                     ok = false;
                 }
@@ -3550,16 +3550,16 @@ public class StandardContext
      */
     public boolean filterStop() {
 
-        if (log.isDebugEnabled())
-            log.debug("Stopping filters");
+        if (getLogger().isDebugEnabled())
+            getLogger().debug("Stopping filters");
 
         // Release all Filter and FilterConfig instances
         synchronized (filterConfigs) {
             Iterator names = filterConfigs.keySet().iterator();
             while (names.hasNext()) {
                 String name = (String) names.next();
-                if (log.isDebugEnabled())
-                    log.debug(" Stopping filter '" + name + "'");
+                if (getLogger().isDebugEnabled())
+                    getLogger().debug(" Stopping filter '" + name + "'");
                 ApplicationFilterConfig filterConfig =
                   (ApplicationFilterConfig) filterConfigs.get(name);
                 filterConfig.release();
@@ -3600,21 +3600,21 @@ public class StandardContext
         Object results[] = new Object[listeners.length];
         boolean ok = true;
         for (int i = 0; i < results.length; i++) {
-            if (log.isDebugEnabled())
-                log.debug(" Configuring event listener class '" +
+            if (getLogger().isDebugEnabled())
+                getLogger().debug(" Configuring event listener class '" +
                     listeners[i] + "'");
             try {
                 Class clazz = loader.loadClass(listeners[i]);
                 results[i] = clazz.newInstance();
             } catch (Throwable t) {
-                getServletContext().log
+                getLogger().error
                     (sm.getString("standardContext.applicationListener",
                                   listeners[i]), t);
                 ok = false;
             }
         }
         if (!ok) {
-            log.error(sm.getString("standardContext.applicationSkipped"));
+            getLogger().error(sm.getString("standardContext.applicationSkipped"));
             return (false);
         }
 
@@ -3639,8 +3639,8 @@ public class StandardContext
 
         // Send application start events
 
-        if (log.isDebugEnabled())
-            log.debug("Sending application start events");
+        if (getLogger().isDebugEnabled())
+            getLogger().debug("Sending application start events");
 
         Object instances[] = getApplicationLifecycleListeners();
         if (instances == null)
@@ -3660,7 +3660,7 @@ public class StandardContext
                 fireContainerEvent("afterContextInitialized", listener);
             } catch (Throwable t) {
                 fireContainerEvent("afterContextInitialized", listener);
-                getServletContext().log
+                getLogger().error
                     (sm.getString("standardContext.listenerStart",
                                   instances[i].getClass().getName()), t);
                 ok = false;
@@ -3701,7 +3701,7 @@ public class StandardContext
                 fireContainerEvent("afterContextDestroyed", listener);
             } catch (Throwable t) {
                 fireContainerEvent("afterContextDestroyed", listener);
-                getServletContext().log
+                getLogger().error
                     (sm.getString("standardContext.listenerStop",
                                   listeners[j].getClass().getName()), t);
                 ok = false;
@@ -3846,8 +3846,7 @@ public class StandardContext
                 try {
                     wrapper.load();
                 } catch (ServletException e) {
-                    getServletContext().log
-                        (sm.getString("standardWrapper.loadException",
+                    getLogger().error(sm.getString("standardWrapper.loadException",
                                       getName()), StandardWrapper.getRootCause(e));
                     // NOTE: load errors (including a servlet that throws
                     // UnavailableException from tht init() method) are NOT
@@ -4082,8 +4081,6 @@ public class StandardContext
 
         // Create context attributes that will be required
         if (ok) {
-            if (log.isDebugEnabled())
-                log.debug("Posting standard context attributes");
             postWelcomeFiles();
         }
 
@@ -4120,7 +4117,7 @@ public class StandardContext
                 log.debug("Starting completed");
             setAvailable(true);
         } else {
-            log.error(sm.getString("standardContext.startFailed"));
+            log.error(sm.getString("standardContext.startFailed", getName()));
             try {
                 stop();
             } catch (Throwable t) {
