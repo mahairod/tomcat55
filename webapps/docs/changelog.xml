@@ -40,6 +40,9 @@
       <fix>
         <bug>31578</bug>: Update Manager configuration documentation. (yoavs)
       </fix>
+      <fix>
+        <bug>31273</bug>: Add support for derefaliases in JNDIRealm. (markt)
+      </fix>
     </changelog>
   </subsection>
 
