@@ -902,16 +902,10 @@
          command="checkout -P jakarta-tomcat-jasper" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-commons" 
-         dest=".."/>
-    <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P jakarta-tomcat-connectors" 
          dest=".."/>
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P jakarta-servletapi-5" 
-         dest=".."/>
-    <cvs cvsroot="${cvsroot}" quiet="true"
-         command="checkout -P jakarta-taglibs" 
          dest=".."/>
   </target>
 
