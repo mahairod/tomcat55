@@ -994,6 +994,10 @@
                 group="Server"
                  type="org.apache.catalina.core.StandardServer">
 
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
     <attribute   name="port"
           description="TCP port for shutdown messages"
                  type="int"/>
