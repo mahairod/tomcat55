@@ -1039,6 +1039,7 @@ public class StandardContext
         for (int i = 0; i < collections.length; i++) {
             String patterns[] = collections[i].findPatterns();
             for (int j = 0; j < patterns.length; j++) {
+                patterns[j] = adjustURLPattern(patterns[j]);
                 if (!validateURLPattern(patterns[j]))
                     throw new IllegalArgumentException
                         (sm.getString
@@ -1187,6 +1188,8 @@ public class StandardContext
         if ((servletName != null) && (urlPattern != null))
             throw new IllegalArgumentException
                 (sm.getString("standardContext.filterMap.either"));
+        // Because filter-pattern is new in 2.3, no need to adjust
+        // for 2.2 backwards compatibility
         if ((urlPattern != null) && !validateURLPattern(urlPattern))
             throw new IllegalArgumentException
                 (sm.getString("standardContext.filterMap.pattern",
@@ -1353,7 +1356,7 @@ public class StandardContext
         if (findChild(name) == null)
             throw new IllegalArgumentException
                 (sm.getString("standardContext.servletMap.name", name));
-        pattern = RequestUtil.URLDecode(pattern);
+        pattern = adjustURLPattern(RequestUtil.URLDecode(pattern));
         if (!validateURLPattern(pattern))
             throw new IllegalArgumentException
                 (sm.getString("standardContext.servletMap.pattern", pattern));
@@ -3054,6 +3057,29 @@ public class StandardContext
     protected void addDefaultMapper(String mapperClass) {
 
 	super.addDefaultMapper(this.mapperClass);
+
+    }
+
+
+    /**
+     * Adjust the URL pattern to begin with a leading slash, if appropriate
+     * (i.e. we are running a servlet 2.2 application).  Otherwise, return
+     * the specified URL pattern unchanged.
+     *
+     * @param urlPattern The URL pattern to be adjusted (if needed)
+     *  and returned
+     */
+    protected String adjustURLPattern(String urlPattern) {
+
+        if (urlPattern == null)
+            return (urlPattern);
+        if (urlPattern.startsWith("/") || urlPattern.startsWith("*."))
+            return (urlPattern);
+        if (!isServlet22())
+            return (urlPattern);
+        log(sm.getString("standardContext.urlPattern.patternWarning",
+                         urlPattern));
+        return ("/" + urlPattern);
 
     }
 
