@@ -252,7 +252,7 @@ public class ParserController {
 		if (jspReader.matches("page")) {
 		    jspReader.advance(4);
 		    jspReader.skipSpaces();
-		    Attributes attrs = jspReader.parseTagAttributes();
+		    Attributes attrs = Parser.parseAttributes(this, jspReader);
 		    String attribute = "pageEncoding";
 		    newEncoding = attrs.getValue("pageEncoding");
 		    if (newEncoding == null) {

@@ -140,6 +140,16 @@ public class Parser {
     }
 
     /**
+     * Parse Attributes for a reader, provided for external use
+     */
+    public static Attributes parseAttributes(ParserController pc,
+					     JspReader reader)
+		throws JasperException {
+	Parser tmpParser = new Parser(pc, reader);
+	return tmpParser.parseAttributes();
+    }
+
+    /**
      * Attribute ::= Name S? Eq S?
      *               (   '"<%= RTAttributeValueDouble
      *                 | '"' AttributeValueDouble

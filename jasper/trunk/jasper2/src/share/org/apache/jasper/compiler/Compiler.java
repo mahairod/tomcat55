@@ -344,44 +344,6 @@ public class Compiler {
 
 
     /**
-     * Change the encoding for the reader if specified.
-     */
-    public String changeEncodingIfNecessary(JspReader tmpReader)
-	        throws JasperException {
-
-	// A lot of code replicated from Parser.java
-	// Main aim is to "get-it-to-work".
-	while (tmpReader.skipUntil("<%@") != null) {
-
-	    tmpReader.skipSpaces();
-
-	    // check if it is a page directive.
-	    if (tmpReader.matches("page")) {
-
-		tmpReader.advance(4);
-		tmpReader.skipSpaces();
-		
-		try {
-		    Attributes attrs = tmpReader.parseTagAttributes();
-		    String ct = attrs.getValue("contentType");
-		    if (ct != null) {
-			int loc = ct.indexOf("charset=");
-			if (loc > 0) {
-			    String encoding = ct.substring(loc + 8);
-			    return encoding;
-			}
-		    }
-		} catch (ParseException ex) {
-		    // Ignore the exception here, it will be caught later.
-		    return null;
-		}
-	    }
-	}
-	return null;
-    }
-
-
-    /**
      * Remove generated files
      */
     public void removeGeneratedFiles() {
