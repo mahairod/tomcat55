@@ -86,7 +86,7 @@ public class ServletEngine {
      * we are running on.
      */
     static ServletEngine getServletEngine(String serverInfo) {
-        if (serverInfo.startsWith("Java Server Web Dev Kit")) {
+        if (serverInfo.startsWith("Tomcat Web Server")) {
             if (tomcat == null) {
                 try {
                     tomcat = (ServletEngine)
@@ -107,14 +107,6 @@ public class ServletEngine {
      * Get the class loader for this ServletContext object. 
      */
     public ClassLoader getClassLoader(ServletContext ctx) {
-        return null;
-    }
-
-    /**
-     * Get the class path for this ServletContext object. This is needed for
-     * JSP compilation.
-     */
-    public String getClassPath(ServletContext ctx) {
         return null;
     }
 }

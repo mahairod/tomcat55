@@ -74,8 +74,4 @@ public class TomcatServletEngine extends ServletEngine {
     public ClassLoader getClassLoader(ServletContext ctx) {
         return ((ServletContextFacade) ctx).getRealContext().getClassLoader();
     }
-
-    public String getClassPath(ServletContext ctx) {
-        return ((ServletContextFacade) ctx).getRealContext().getClassPath();
-    }
 }
