@@ -204,7 +204,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
 
     public void setDebug(int debug) {
         this.debug = debug;
-        super.setDebug(debug);
+        //super.setDebug(debug);
     }
     /**
      * Creates a HTTP session.
@@ -317,6 +317,11 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                 //return immediately if the session is not dirty
                 if ( useDirtyFlag && (!session.isDirty())) return null;
                 session.setIsDirty(false);
+                if (getDebug()>5) {
+                    try {
+                        log.debug("Sending session to cluster="+session);
+                    }catch ( Exception ignore) {}
+                }
                 SessionMessage msg = new SessionMessage(name,SessionMessage.EVT_SESSION_CREATED,
                     writeSession(session),
                     session.getId());
@@ -376,7 +381,15 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         {
             java.io.ByteArrayInputStream session_data = new java.io.ByteArrayInputStream(data);
             ReplicationStream session_in = new ReplicationStream(session_data,container.getLoader().getClassLoader());
+            
             Session session = sessionId!=null?this.findSession(sessionId):null;
+            //clear the old values from the existing session
+            if ( session!=null ) {
+                ReplicatedSession rs = (ReplicatedSession)session;
+                rs.expire(false);
+                session = null;
+            }//end if
+            
             if (session==null) session = createSession(false,false);
             boolean hasPrincipal = session_in.readBoolean();
             SerializablePrincipal p = null;
@@ -524,6 +537,9 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
                     Session session = this.readSession(msg.getSession(),msg.getSessionID());
                     session.setManager(this);
                     add(session);
+                    session.setValid(true);
+                    session.access();
+                    if ( getDebug()  > 5 ) log("Received replicated session="+session);
                     break;
                 }
                 default:  {
@@ -534,7 +550,7 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         }
         catch ( Exception x )
         {
-            log("Unable to receive message through javagroups channel",x,1);
+            log("Unable to receive message through TCP channel",x,1);
         }
     }
 

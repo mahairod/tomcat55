@@ -238,13 +238,16 @@ public class ReplicatedSession extends org.apache.catalina.session.StandardSessi
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer("[ReplicatedSession] Id").append(getId());        java.util.Enumeration e = getAttributeNames();
+        StringBuffer buf = new StringBuffer("ReplicatedSession id=");
+        buf.append(getId()).append(" ref=").append(super.toString()).append("\n");
+        java.util.Enumeration e = getAttributeNames();
         while ( e.hasMoreElements() ) {
             String name = (String)e.nextElement();
-            Object value = this.getAttribute(name);
-            buf.append("\n\t"+name+"="+value);
+            Object value = getAttribute(name);
+            buf.append("\tname=").append(name).append("; value=").append(value).append("\n");
         }
+        buf.append("\tLastAccess=").append(getLastAccessedTime()).append("\n");
         return buf.toString();
-
     }
+
 }
