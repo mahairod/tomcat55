@@ -407,12 +407,25 @@ public abstract class Node {
      */
     public static class AttributeDirective extends Node {
 
+        /* Use to collect all the parameters to this fragment attribut
+         * during parsing of the tag file.
+         */
+        private Vector fragmentInputs;
+
 	public AttributeDirective(Attributes attrs, Mark start, Node parent) {
 	    super(attrs, start, parent);
 	}
 
 	public void accept(Visitor v) throws JasperException {
 	    v.visit(this);
+	}
+
+	public void setFragmentInputs(Vector v) {
+	    fragmentInputs = v;
+	}
+
+	public Vector getFragmentInputs() {
+	    return fragmentInputs;
 	}
     }
 
