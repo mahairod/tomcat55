@@ -25,6 +25,33 @@
   only in the above changelog.
   </p>
 </section>
+
+<section name="Tomcat 5.5.3 (yoavs)">
+  <subsection name="General">
+  </subsection>
+
+  <subsection name="Catalina">
+  </subsection>
+
+  <subsection name="Coyote">
+    <changelog>
+      <update>
+        Allow customized server header for Standalone. (funkman)
+      </update>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+  </subsection>
+
+  <subsection name="Cluster">
+  </subsection>
+
+  <subsection name="Webapps">
+  </subsection>
+</section>
+
+
 <section name="Tomcat 5.5.2 (yoavs)">
   <subsection name="General">
     <changelog>
