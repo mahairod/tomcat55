@@ -71,8 +71,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.HttpResponse;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
 import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.Base64;
 
@@ -221,7 +219,7 @@ public class BasicAuthenticator
         int colon = unencoded.indexOf(':');
         if (colon < 0)
             return (null);
-        String username = unencoded.substring(0, colon).trim();
+        String username = unencoded.substring(0, colon);
         //        String password = unencoded.substring(colon + 1).trim();
         return (username);
 
@@ -249,7 +247,7 @@ public class BasicAuthenticator
         if (colon < 0)
             return (null);
         //        String username = unencoded.substring(0, colon).trim();
-        String password = unencoded.substring(colon + 1).trim();
+        String password = unencoded.substring(colon + 1);
         return (password);
 
     }
