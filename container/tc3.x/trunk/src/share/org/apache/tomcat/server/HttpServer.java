@@ -147,6 +147,7 @@ public class HttpServer {
     private String hostname = "";
     private String serverHeader = null;
 
+    String workDir;
     /**
      * Creates a new server with the default configuration of port=80,
      * address=null, and hostname=null.
@@ -215,10 +216,13 @@ public class HttpServer {
     }
 
 
+    public void setWorkDir( String wd ) {
+	workDir=wd;
+    }
+    
     /**
      * Return the context manager with which this server is associated.
      */
-
     public ContextManager getContextManager() {
 	return contextM;
     }
@@ -232,6 +236,7 @@ public class HttpServer {
 
     public void setContextManager(ContextManager cm) {
 	this.contextM=cm;
+	cm.setWorkDir( workDir );
     }
     
 
