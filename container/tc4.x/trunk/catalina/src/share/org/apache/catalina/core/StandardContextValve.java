@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.naming.NamingException;
 import org.apache.naming.ContextBindings;
+import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.catalina.Container;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Request;
@@ -211,25 +212,14 @@ final class StandardContextValve
 	// Ask this Wrapper to process this Request
 	response.setContext(context);
 
-/*
-        if (context.isUseNaming()) {
-            try {
-                // Bind the thread to the context
-                ContextBindings.bindThread(context, context);
-            } catch (NamingException e) {
-                e.printStackTrace();
-            }
-        }
-*/
+        // Bind current thread with the resources
+        DirContextURLStreamHandler.bindThread(context.getResources());
 
-	wrapper.invoke(request, response);
-
-/*
-        if (context.isUseNaming()) {
-            // Unbind the thread to the context
-            ContextBindings.unbindThread(context, context);
+        try {
+            wrapper.invoke(request, response);
+        } finally {
+            DirContextURLStreamHandler.unbindThread();
         }
-*/
 
     }
 
