@@ -1743,7 +1743,8 @@
         <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
             testName="GetMethod_HEADTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED"
+            returnCode="200" expectHeaders="status:GetMethod_HEADTest PASSED"
+            expectResponseBody="false"
             assertion="Returns the name of the HTTP method with which this request was made, for example, GET, POST, or PUT.,specified in the Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="A test for HttpServletRequest.getMethod() HEAD method."
         />
@@ -2145,6 +2146,14 @@
             testStrategy="Issue a request to target servlet which will call sendError() and then add a header to the response. The added header should not be visible to the client."
         />
 
+<!-- START EXCLUDE SendError_StringTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+
+
         <gtest request="GET /servlet-tests/SendError_StringTest HTTP/1.0"
             testName="SendError_StringTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
@@ -2153,10 +2162,12 @@
             testStrategy="A test for HttpServletResponse.sendError(int sc, java.lang.String msg) method."
         />
 
+END EXCLUDE SendError_StringTest -->
+
         <gtest request="GET /servlet-tests/SendError_StringIgnoreHeaderTest HTTP/1.0"
             testName="SendError_StringIgnoreHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            returnCode="100" returnCodeMsg="in SendError_StringIgnoreHeaderTest servlet"
+            returnCode="100" 
             unexpectedHeaders="HttpServletResponse:sendErrorMsgIgnoreHeader"
             assertion="Verify that headers added after sendError(int,String) are ignored by the container. Servlet Specification 2.3 section SRV.5.2."
             testStrategy="Issue a request to target servlet which will call sendError() and then add a header to the response. The added header should not be visible to the client."
@@ -2788,6 +2799,13 @@
             testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendError method."
         />
 
+<!-- START EXCLUDE HttpServletResponseWrapperSendErrorMsgTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).  This is on the
+     slate to be clarified for the next spec.
+
         <gtest request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorMsgTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
@@ -2796,6 +2814,8 @@
             assertion="Test for default behavior of this method is to call sendError(int, String) on the wrapped response object, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendError(int sc, String msg) method"
             testStrategy="Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendError method."
         />
+
+END EXCLUDE HttpServletResonseWrapperSendErrorMsgTest -->
 
         <gtest request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest" debug="0"
@@ -5024,7 +5044,7 @@
         <gtest request="HEAD /servlet-tests/GetMethod_HEADTest HTTP/1.0"
             testName="GetMethod_HEADTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            returnCode="200" returnCodeMsg="GetMethod_HEADTest PASSED"
+            returnCode="200" expectHeaders="status:GetMethod_HEADTest PASSED"
             assertion="Returns the name of the HTTP method with which this request was made, for example, GET, POST, or PUT.,specified in the  Java Servlet Pages Specification v2.3, Sec 14"
             testStrategy="A test for HttpServletRequest.getMethod() HEAD method."
         />
@@ -5515,6 +5535,13 @@
         />
     </target>
 
+<!-- START EXCLUDE SendError_StringTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+
     <target name="SendError_StringTest">
         <gtest request="GET /servlet-tests/SendError_StringTest HTTP/1.0"
             testName="SendError_StringTest" debug="0"
@@ -5525,11 +5552,13 @@
         />
     </target>
 
+END EXCLUDE SendError_StringTest -->
+
     <target name="SendError_StringIgnoreHeaderTest">
         <gtest request="GET /servlet-tests/SendError_StringIgnoreHeaderTest HTTP/1.0"
             testName="SendError_StringIgnoreHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
-            returnCode="100" returnCodeMsg="in SendError_StringIgnoreHeaderTest servlet"
+            returnCode="100" 
             unexpectedHeaders="HttpServletResponse:sendErrorMsgIgnoreHeader"
             assertion="Verify that headers added after sendError(int,String) are ignored by the container.  Servlet Specification 2.3 section SRV.5.2."
             testStrategy="Issue a request to target servlet which will call sendError() and then add a header to the response. The added header should not be visible to the client."
@@ -6274,6 +6303,13 @@
         />
     </target>
 
+<!-- START EXCLUDE HttpServletResponseWrapperSendErrorMsgTest
+
+     Test has been excluded due to ambiguity in the spec regarding 
+     the HTTP status line's reason-phrase being populated with the value
+     of msg in a call to response.sendError(int,String).
+     This is on the slate to be clarified for the next spec.
+                    
     <target name="HttpServletResponseWrapperSendErrorMsgTest">
         <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorMsgTest" debug="0"
@@ -6284,6 +6320,8 @@
             testStrategy="Client calls a servlet who's response has been wrapped.  The wrapper object adds a specific header to the  response object and calls the responses sendError method."
         />
     </target>
+
+END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
 
     <target name="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest">
         <gtest request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
