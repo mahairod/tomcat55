@@ -591,7 +591,9 @@ public class WebdavServlet
                 } catch (NamingException e) {
                     continue;
                 }
-                if (object instanceof DirContext) {
+
+                if ((object instanceof DirContext) && (depth > 0)) {
+
                     try {
                         NamingEnumeration enum = resources.list(currentPath);
                         while (enum.hasMoreElements()) {
@@ -610,27 +612,26 @@ public class WebdavServlet
                         return;
                     }
 
-                    if (depth > 0) {
-                        // Displaying the lock-null resources present in that
-                        // collection
-                        String lockPath = currentPath;
-                        if (lockPath.endsWith("/"))
-                            lockPath = 
-                                lockPath.substring(0, lockPath.length() - 1);
-                        Vector currentLockNullResources =
-                            (Vector) lockNullResources.get(lockPath);
-                        if (currentLockNullResources != null) {
-                            Enumeration lockNullResourcesList =
-                                currentLockNullResources.elements();
-                            while (lockNullResourcesList.hasMoreElements()) {
-                                String lockNullPath = (String)
-                                    lockNullResourcesList.nextElement();
-                                parseLockNullProperties
-                                    (req, generatedXML, lockNullPath, type,
-                                     properties);
-                            }
+                    // Displaying the lock-null resources present in that
+                    // collection
+                    String lockPath = currentPath;
+                    if (lockPath.endsWith("/"))
+                        lockPath = 
+                            lockPath.substring(0, lockPath.length() - 1);
+                    Vector currentLockNullResources =
+                        (Vector) lockNullResources.get(lockPath);
+                    if (currentLockNullResources != null) {
+                        Enumeration lockNullResourcesList =
+                            currentLockNullResources.elements();
+                        while (lockNullResourcesList.hasMoreElements()) {
+                            String lockNullPath = (String)
+                                lockNullResourcesList.nextElement();
+                            parseLockNullProperties
+                                (req, generatedXML, lockNullPath, type,
+                                 properties);
                         }
                     }
+
                 }
 
                 if (stack.isEmpty()) {
