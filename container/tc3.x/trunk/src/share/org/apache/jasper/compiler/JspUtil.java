@@ -135,7 +135,7 @@ public class JspUtil {
 	XmlDocumentBuilder builder = new XmlDocumentBuilder();
 	
         com.sun.xml.parser.ValidatingParser 
-            parser = new com.sun.xml.parser.ValidatingParser();
+            parser = new com.sun.xml.parser.ValidatingParser(true);
 
         /***
          * These lines make sure that we have an internal catalog entry for 
