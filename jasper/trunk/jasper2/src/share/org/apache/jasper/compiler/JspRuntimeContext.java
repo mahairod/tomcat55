@@ -82,7 +82,7 @@ import javax.servlet.jsp.JspFactory;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
-import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Options;
 import org.apache.jasper.logging.Logger;
 import org.apache.jasper.runtime.JspFactoryImpl;
@@ -308,7 +308,7 @@ public final class JspRuntimeContext implements Runnable {
         Iterator it = jsps.values().iterator();
         while (it.hasNext()) {
             JspServletWrapper jsw = (JspServletWrapper)it.next();
-            JspEngineContext ctxt = jsw.getJspEngineContext();
+            JspCompilationContext ctxt = jsw.getJspEngineContext();
             // JspServletWrapper also synchronizes on this when
             // it detects it has to do a reload
             synchronized(jsw) {
