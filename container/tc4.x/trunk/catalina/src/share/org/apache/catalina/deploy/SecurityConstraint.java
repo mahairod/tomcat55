@@ -100,6 +100,15 @@ public final class SecurityConstraint {
 
 
     /**
+     * Was an authorization constraint included in this security constraint?
+     * This is necessary to distinguish the case where an auth-constraint with
+     * no roles (signifying no direct access at all) was requested, versus
+     * a lack of auth-constraint which implies no access control checking.
+     */
+    private boolean authConstraint = false;
+
+
+    /**
      * The set of roles permitted to access resources protected by this
      * security constraint.
      */
@@ -121,6 +130,28 @@ public final class SecurityConstraint {
 
 
     // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the authorization constraint present flag for this security
+     * constraint.
+     */
+    public boolean getAuthConstraint() {
+
+        return (this.authConstraint);
+
+    }
+
+
+    /**
+     * Set the authorization constraint present flag for this security
+     * constraint.
+     */
+    public void setAuthConstraint(boolean authConstraint) {
+
+        this.authConstraint = authConstraint;
+
+    }
 
 
     /**
@@ -164,6 +195,7 @@ public final class SecurityConstraint {
 	    results[i] = authRoles[i];
 	results[authRoles.length] = authRole;
 	authRoles = results;
+        authConstraint = true;
 
     }
 

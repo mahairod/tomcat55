@@ -568,6 +568,8 @@ public final class ContextConfig
 	mapper.addRule("web-app/security-constraint",
 		       mapper.addChild("addConstraint",
 				       "org.apache.catalina.deploy.SecurityConstraint"));
+        mapper.addRule("web-app/security-constraint/auth-constraint",
+                       new SetAuthConstraint());
 	mapper.addRule("web-app/security-constraint/auth-constraint/role-name",
 		       mapper.methodSetter("addAuthRole", 0));
 	mapper.addRule("web-app/security-constraint/user-data-constraint/transport-guarantee",
@@ -1290,6 +1292,30 @@ public final class ContextConfig
 
 
 // ----------------------------------------------------------- Private Classes
+
+
+/**
+ * An XmlAction that calls the <code>setAuthConstraint(true)</code> method of
+ * the top item on the stack, which must be of type
+ * <code>org.apache.catalina.deploy.SecurityConstraint</code>.
+ */
+
+final class SetAuthConstraint extends XmlAction {
+
+    public SetAuthConstraint() {
+        super();
+    }
+
+    public void start(SaxContext ctx) {
+        Stack stack = ctx.getObjectStack();
+        SecurityConstraint securityConstraint =
+            (SecurityConstraint) stack.peek();
+        securityConstraint.setAuthConstraint(true);
+	if (ctx.getDebug() > 0)
+	    ctx.log("Calling SecurityConstraint.setAuthConstraint(true)");
+    }
+
+}
 
 
 /**
