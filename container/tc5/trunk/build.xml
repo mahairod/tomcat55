@@ -425,6 +425,13 @@
         <property name="flags.hide" value="false" />
     </ant>
 
+    <ant dir="${catalina.home}/modules" target="build">
+        <property name="catalina.build" value="${tomcat.build}" />
+        <property name="cluster.dist" value="${tomcat.build}/server/lib" />
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+
   </target>
 
   <target name="build" depends="init"
