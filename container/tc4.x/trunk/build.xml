@@ -115,7 +115,7 @@
       <fileset dir="${jasper.build}/javadoc" />
     </copy>
     <copy todir="${tomcat.build}/webapps/ROOT/servletapi-javadoc">
-      <fileset dir="${servletapi.home}/docs/api" />
+      <fileset dir="${servletapi.home}/dist/docs/api" />
     </copy>
   </target>
 
