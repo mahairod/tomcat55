@@ -18,7 +18,7 @@
   <!-- When releasing set the 'version.build' to even number
         and 'version.isdev' to zero.
   -->
-  <property name="version.build"         value="2" />
+  <property name="version.build"         value="3" />
   <property name="version.patch"         value="0" />
   <property name="version.isdev"         value="1" />
 
