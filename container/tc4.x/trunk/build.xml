@@ -96,7 +96,6 @@
     <mkdir dir="${tomcat.dist}/common/classes"/>
     <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/conf"/>
-    <mkdir dir="${tomcat.dist}/jasper"/>
     <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/logs"/>
     <mkdir dir="${tomcat.dist}/server"/>
@@ -126,9 +125,6 @@
     </copy>
     <copy todir="${tomcat.dist}/conf">
       <fileset dir="${tomcat.build}/conf" />
-    </copy>
-    <copy todir="${tomcat.dist}/jasper">
-      <fileset dir="${jasper.build}" />
     </copy>
     <copy todir="${tomcat.dist}/common/lib">
       <fileset dir="${tomcat.build}/common/lib" />
