@@ -206,7 +206,19 @@ public class ServerLifecycleListener
                 createMBeans();
 
             }
-
+            
+            // We are embedded.
+            if( lifecycle instanceof Service ) {
+                log( "Starting embeded" + lifecycle);
+                try {
+                    MBeanFactory factory = new MBeanFactory();
+                    createMBeans(factory);
+                    loadMBeanDescriptors();
+                    createMBeans((Service)lifecycle);
+                } catch( Exception ex ) {
+                    log("Error registering the service", ex);
+                }
+            }
             /*
             // Ignore events from StandardContext objects to avoid
             // reregistering the context
@@ -565,13 +577,21 @@ public class ServerLifecycleListener
         if (eLogger != null) {
             if (debug >= 2)
                 log("Creating MBean for Logger " + eLogger);
-            MBeanUtils.createMBean(eLogger);
+            try {
+                MBeanUtils.createMBean(eLogger);
+            } catch( Exception ex ) {
+                log( "Can't create mbean for logger " + eLogger );
+            }
         }
         Realm eRealm = engine.getRealm();
         if (eRealm != null) {
             if (debug >= 2)
                 log("Creating MBean for Realm " + eRealm);
-            MBeanUtils.createMBean(eRealm);
+            try {
+                MBeanUtils.createMBean(eRealm);
+            } catch( Exception ex ) {
+                log( "Can't create mbean for realm " + eRealm );
+            }
         }
 
         // Create the MBeans for the associated Valves
@@ -580,7 +600,11 @@ public class ServerLifecycleListener
             for (int j = 0; j < eValves.length; j++) {
                 if (debug >= 2)
                     log("Creating MBean for Valve " + eValves[j]);
-                MBeanUtils.createMBean(eValves[j]);
+                try {
+                    MBeanUtils.createMBean(eValves[j]);
+                } catch( Exception ex ) {
+                    log( "Can't create mbean for valve " + eRealm );
+                }
             }
         }
 

@@ -69,8 +69,10 @@ import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Binding;
+import javax.naming.CompositeName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.OperationNotSupportedException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import org.apache.catalina.Group;
@@ -162,20 +164,26 @@ public class GlobalResourcesLifecycleListener
     protected void createMBeans() {
 
         // Look up our global naming context
-        Context context = null;
+        Object context = null;
         try {
-            context = (Context) (new InitialContext()).lookup("java:/");
+            context = (new InitialContext()).lookup("java:/");
         } catch (NamingException e) {
             e.printStackTrace();
             throw new IllegalStateException
                 ("No global naming context defined for server");
         }
 
+        log( "Global context " + context + " " + context.getClass().getName());
+        if( ! (context instanceof Context) )
+            return;
+                
         // Recurse through the defined global JNDI resources context
         try {
-            createMBeans("", context);
+            createMBeans("", (Context)context);
         } catch (NamingException e) {
             log("Exception processing Global JNDI Resources", e);
+        } catch (RuntimeException e) {
+            log("RuntimeException processing Global JNDI Resources" + e.toString());
         }
 
     }
@@ -195,26 +203,40 @@ public class GlobalResourcesLifecycleListener
 
         if (debug >= 1) {
             log("Creating MBeans for Global JNDI Resources in Context '" +
-                prefix + "'");
+                prefix + "' " + context );
         }
 
         NamingEnumeration bindings = context.listBindings("");
         while (bindings.hasMore()) {
-            Binding binding = (Binding) bindings.next();
-            String name = prefix + binding.getName();
-            Object value = context.lookup(binding.getName());
-            if (debug >= 2) {
-                log("Checking resource " + name);
-            }
-            if (value instanceof Context) {
-                createMBeans(name + "/", (Context) value);
-            } else if (value instanceof UserDatabase) {
-                try {
-                    createMBeans(name, (UserDatabase) value);
-                } catch (Exception e) {
-                    log("Exception creating UserDatabase MBeans for " + name,
-                        e);
+            Object next=bindings.next();
+            if( next instanceof Binding ) {
+                Binding binding = (Binding) bindings.next();
+                String name = prefix + binding.getName();
+                Object value = context.lookup(binding.getName());
+                if (debug >= 1 && name!=null) {
+                    log("Processing resource " + name + " " + name.getClass().getName());
                 }
+                try {
+                    if (value instanceof Context) {
+                        createMBeans(name + "/", (Context) value);
+                    } else if (value instanceof UserDatabase) {
+                        try {
+                            createMBeans(name, (UserDatabase) value);
+                        } catch (Exception e) {
+                            log("Exception creating UserDatabase MBeans for " + name,
+                                e);
+                        }
+                    } 
+                } catch( OperationNotSupportedException nex ) {
+                    log( "OperationNotSupportedException processing " + next + " " + nex.toString());
+                } catch( NamingException nex ) {
+                    log( "Naming exception processing " + next + " " + nex.toString());
+                } catch( RuntimeException ex ) {
+                    log( "Runtime exception processing " + next + " " + ex.toString());
+                }
+            } else {
+                log("Foreign context " + context.getClass().getName() + " " +
+                    next.getClass().getName()+ " " + context);
             }
         }
 
