@@ -58,8 +58,7 @@ import java.beans.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.*;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
     
@@ -70,7 +69,7 @@ import org.w3c.dom.*;
  * @author duncan@x180.com
  */
 
-class ProjectHelper {
+public class ProjectHelper {
 
     static void configureProject(Project project, File buildFile)
 	throws BuildException
@@ -125,68 +124,47 @@ class ProjectHelper {
 
 	// set up any properties that may be in the config file
 
-	configureProperties(project, root);
+	//	configureProperties(project, root);
 	
 	// set up any task defs that may be in the config file
 
-	configureTaskDefs(project, root);
+	//	configureTaskDefs(project, root);
 
 	// set up the targets into the project
-
+	init(project, root );
 	configureTargets(project, root);
     }
 
-    private static void configureProperties(Project project, Element root)
-	throws BuildException 
-    {
-	NodeList list = root.getElementsByTagName("property");
-	for (int i = 0; i < list.getLength(); i++) {
-	    Element element = (Element)list.item(i);
-	    String propertyName = element.getAttribute("name");
-	    String propertyValue = element.getAttribute("value");
-
-	    // sanity check
-	    if (propertyName.equals("") || propertyValue.equals("")) {
-		String msg = "name or value attributes of property element " +
-		    "are undefined";
-		throw new BuildException(msg);
-	    }
-
-	    project.setProperty(propertyName,
-				replaceProperties( project, propertyValue ));
-	}
-    }
-
-    private static void configureTaskDefs(Project project, Element root)
+    /** Read and execute init - all other targets will be loaded after ( to
+     * make sure all properties are set ).
+     * 
+     */
+    private static void init(Project project, Element root)
 	throws BuildException
     {
-	NodeList list = root.getElementsByTagName("taskdef");
+	// Hack - all tasks outside init target will be added to init
+	// ( will be removed when / if build.xml will start using init )
+	Target initTarget = new Target();
+	initTarget.setProject(project);
+	initTarget.setName( "init" );
+	project.addTarget( "init", initTarget );
+	configureTasks( project, initTarget, root );
+
+	NodeList list = root.getElementsByTagName("target");
 	for (int i = 0; i < list.getLength(); i++) {
 	    Element element = (Element)list.item(i);
-	    String taskName = element.getAttribute("name");
-	    String taskClassName = element.getAttribute("class");
-	    
-	    // sanity check
-	    if (taskName.equals("") || taskClassName.equals("")) {
-		String msg = "name or class attributes of taskdef element "
-		    + "are undefined";
-		throw new BuildException(msg);
-	    }
-	    
-	    try {
-		Class taskClass = Class.forName(taskClassName);
-		project.addTaskDefinition(taskName, taskClass);
-	    } catch (ClassNotFoundException cnfe) {
-		String msg = "taskdef class " + taskClassName +
-		    " cannot be found";
-		throw new BuildException(msg);
-	    }
+	    String targetName = element.getAttribute("name");
+
+	    if( targetName.equals("init") ) 
+		configureTasks(project, initTarget, element);
 	}
+	initTarget.execute();
     }
 
     private static void configureTargets(Project project, Element root)
 	throws BuildException
     {
+	// configure targets
 	NodeList list = root.getElementsByTagName("target");
 	for (int i = 0; i < list.getLength(); i++) {
 	    Element element = (Element)list.item(i);
@@ -199,6 +177,10 @@ class ProjectHelper {
 		throw new BuildException(msg);
 	    }
 
+	    // init is done already
+	    if( targetName.equals("init") ) 
+		continue;
+	    
 	    Target target = new Target();
 	    target.setName(targetName);
 	    project.addTarget(targetName, target);
@@ -234,18 +216,23 @@ class ProjectHelper {
 	    if (node.getNodeType() == Node.ELEMENT_NODE) {
 		Element element = (Element)node;
 		String taskType = element.getTagName();
-		
-		// XXX
-		// put in some sanity checking
-		
-		Task task = project.createTask(taskType);
 
-		// get the attributes of this element and reflect them
-		// into the task
-
-		NamedNodeMap nodeMap = element.getAttributes();
-		configureTask(project, task, nodeMap);
-		target.addTask(task);
+		// special case - no target in a target.
+		// hack to allow this method to set "init" target
+		// using root element
+		if( ! taskType.equals( "target" ) ) {
+		    // XXX
+		    // put in some sanity checking
+		    
+		    Task task = project.createTask(taskType);
+		    
+		    // get the attributes of this element and reflect them
+		    // into the task
+		    
+		    NamedNodeMap nodeMap = element.getAttributes();
+		    configureTask(project, task, nodeMap);
+		    target.addTask(task);
+		}
 	    }
 	}
     }
@@ -308,7 +295,7 @@ class ProjectHelper {
 		    throw new BuildException(msg);
 		}
 
-		String value=replaceProperties( project, attr.getValue() );
+		String value=replaceProperties(  attr.getValue(), project.getProperties() );
 		try {
 		    setMethod.invoke(task, new String[] {value});
 		} catch (IllegalAccessException iae) {
@@ -329,7 +316,7 @@ class ProjectHelper {
 
     /** Replace ${NAME} with the property value
      */
-    public static String replaceProperties( Project proj, String value )
+    public static String replaceProperties( String value, Hashtable keys )
 	throws BuildException
     {
 	// XXX use Map instead of proj, it's too heavy
@@ -353,7 +340,7 @@ class ProjectHelper {
 					     value );
 		}
 		String n=value.substring( pos+2, endName );
-		String v=proj.getProperty( n );
+		String v=(String) keys.get( n );
 		//System.out.println("N: " + n + " " + " V:" + v); 
 		sb.append( v );
 		prev=endName+1;
@@ -361,7 +348,7 @@ class ProjectHelper {
 	}
 	if( prev < value.length() ) sb.append( value.substring( prev ) );
 	//	System.out.println("After replace: " + sb.toString());
-	//	System.out.println("Before replace: " + value);
+	// System.out.println("Before replace: " + value);
 	return sb.toString();
     }
 }

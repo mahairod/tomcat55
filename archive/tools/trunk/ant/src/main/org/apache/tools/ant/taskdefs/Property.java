@@ -70,8 +70,11 @@ public class Property extends Task {
     
     public void execute() throws BuildException {
 	try {
-	    if(name!=null)
-		project.setProperty( name, value);
+	    if(name!=null) {
+		String value1= ProjectHelper.replaceProperties(value, project.getProperties());
+		project.setProperty( name,value1);
+	    }
+				
 	    if( file!=null)
 		loadFile( file );
 	    if( resource!=null)
@@ -128,7 +131,8 @@ public class Property extends Task {
 	while( e.hasMoreElements() ) {
 	    String name=(String)e.nextElement();
 	    String value=(String)props.getProperty(name);
-	    project.setProperty( name, value);
+	    String value1= ProjectHelper.replaceProperties(value, project.getProperties());
+	    project.setProperty( name, value1);
 	}
     }
 }

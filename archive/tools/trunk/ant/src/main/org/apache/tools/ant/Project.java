@@ -122,6 +122,13 @@ public class Project {
 		    // ignore...
 		}
 	    }
+
+	    Properties systemP=System.getProperties();
+	    Enumeration e=systemP.keys();
+	    while( e.hasMoreElements() ) {
+		String n=(String) e.nextElement();
+		properties.put( n, systemP.get(n));
+	    }
        	} catch (IOException ioe) {
 	    String msg = "Can't load default task list";
 	    System.out.println(msg);
@@ -149,7 +156,7 @@ public class Project {
 
     public void log(String msg, String tag, int msgLevel) {
 	if (msgLevel <= msgOutputLevel) {
-	    out.println("[" + tag + "] " + msg);
+	    out.println("[" + tag + "]" + msg);
 	}
     }
 
@@ -161,10 +168,11 @@ public class Project {
 
     public String getProperty(String name) {
 	String property = (String)properties.get(name);
-	if (property == null) {
-	    property = System.getProperty(name);
-	}
 	return property;
+    }
+
+    public Hashtable getProperties() {
+	return properties;
     }
     
     public void setDefaultTarget(String defaultTarget) {
@@ -237,6 +245,7 @@ public class Project {
             javaVersion = "1.2";
             Class.forName("java.lang.StrictMath");
             javaVersion = "1.3";
+	    setProperty("ant.java.version", javaVersion);
         }
         catch (ClassNotFoundException cnfe) {
             // swallow as we've hit the max class version that
@@ -246,9 +255,9 @@ public class Project {
     }
 
     public void addTaskDefinition(String taskName, Class taskClass) {
-        String msg = " +User task: " + taskName + "     " + taskClass.getName();
-        log(msg, MSG_VERBOSE);
-        taskClassDefinitions.put(taskName, taskClass);
+	String msg = " +User task: " + taskName + "     " + taskClass.getName();
+	log(msg, MSG_VERBOSE);
+	taskClassDefinitions.put(taskName, taskClass);
     }
 
     /**
@@ -258,15 +267,15 @@ public class Project {
      * @exception BuildException if the Target already exists
      * in the project.
      * @see Project#addOrReplaceTarget to replace existing Targets.
-     */
-    public void addTarget(Target target) throws BuildException {
-        String name = target.getName();
-        if (targets.get(name) != null) {
-            throw new BuildException("Duplicate target: `"+name+"'");
-        }
-        addOrReplaceTarget(name, target);
+     */      
+    public void addTarget(Target target) {
+	String name = target.getName();
+	if (targets.get(name) != null) {
+	    throw new BuildException("Duplicate target: `"+name+"'");
+	}
+	addOrReplaceTarget(name, target);
     }
-    
+
     /**
      * This call expects to add a <em>new</em> Target.
      * @param target is the Target to be added to the current
@@ -276,20 +285,20 @@ public class Project {
      * in the project.
      * @see Project#addOrReplaceTarget to replace existing Targets.
      */
-    public void addTarget(String targetName, Target target)
-        throws BuildException {
-        if (targets.get(targetName) != null) {
-            throw new BuildException("Duplicate target: `"+targetName+"'");
-        }
-        addOrReplaceTarget(targetName, target);
-    }
+     public void addTarget(String targetName, Target target)
+         throws BuildException {
+         if (targets.get(targetName) != null) {
+             throw new BuildException("Duplicate target: `"+targetName+"'");
+         }
+         addOrReplaceTarget(targetName, target);
+     }
 
     /**
      * @param target is the Target to be added or replaced in
      * the current Project.
      */
     public void addOrReplaceTarget(Target target) {
-	     addOrReplaceTarget(target.getName(), target);
+	addOrReplaceTarget(target.getName(), target);
     }
     
     /**
@@ -298,11 +307,11 @@ public class Project {
      * @param targetName is the name to use for the Target
      */
     public void addOrReplaceTarget(String targetName, Target target) {
-        String msg = " +Target: " + targetName;
-        log(msg, MSG_VERBOSE);
-        targets.put(targetName, target);
- 	}
-
+	String msg = " +Target: " + targetName;
+	log(msg, MSG_VERBOSE);
+	targets.put(targetName, target);
+    }
+    
     public Task createTask(String taskType) throws BuildException {
 	Class c = (Class)taskClassDefinitions.get(taskType);
 
@@ -341,6 +350,7 @@ public class Project {
 
         int curidx = 0;
         String curtarget;
+	
         do {
             curtarget = (String) sortedTargets.elementAt(curidx++);
             runTarget(curtarget, targets);
