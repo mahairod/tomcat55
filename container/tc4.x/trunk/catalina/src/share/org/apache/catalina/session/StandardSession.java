@@ -77,9 +77,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionAttributesListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionContext;
+import org.apache.catalina.Context;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.apache.catalina.util.Enumerator;
@@ -725,18 +727,37 @@ final class StandardSession
 		(sm.getString("standardSession.removeAttribute.ise"));
 
 	// Remove this attribute from our collection
-	Object object = null;
+	Object value = null;
 	synchronized (attributes) {
-	    object = attributes.get(name);
-	    if (object == null)
-		return;
+	    value = attributes.get(name);
 	    attributes.remove(name);
 	}
 
 	// Call the valueUnbound() method if necessary
-	if (object instanceof HttpSessionBindingListener)
-	    ((HttpSessionBindingListener) object).valueUnbound
-		(new HttpSessionBindingEvent((HttpSession) this, name));
+	HttpSessionBindingEvent event =
+	  new HttpSessionBindingEvent((HttpSession) this, name, value);
+	if ((value != null) &&
+	    (value instanceof HttpSessionBindingListener))
+	    ((HttpSessionBindingListener) value).valueUnbound(event);
+
+	// Notify interested application event listeners
+	// FIXME - Assumes we notify even if the attribute was not there?
+	Context context = (Context) manager.getContainer();
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners == null)
+	    return;
+	for (int i = 0; i < listeners.length; i++) {
+	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
+	        continue;
+	    try {
+	        HttpSessionAttributesListener listener =
+		  (HttpSessionAttributesListener) listeners[i];
+		listener.attributeRemoved(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("standardSession.attributeEvent"), t);
+	    }
+	}
 
     }
 
@@ -793,15 +814,45 @@ final class StandardSession
 	    throw new IllegalArgumentException
 		(sm.getString("standardSession.setAttribute.iae"));
 
-	// Call the valueBound() method if necessary
-	if (value instanceof HttpSessionBindingListener)
-	    ((HttpSessionBindingListener) value).valueBound
-		(new HttpSessionBindingEvent((HttpSession) this, name));
-
 	// Replace or add this attribute
+	Object unbound = null;
 	synchronized (attributes) {
-	    removeAttribute(name);
+	    unbound = attributes.get(name);
 	    attributes.put(name, value);
+	}
+
+	// Call the valueUnbound() method if necessary
+	if ((unbound != null) &&
+	    (unbound instanceof HttpSessionBindingListener)) {
+	    ((HttpSessionBindingListener) unbound).valueUnbound
+	      (new HttpSessionBindingEvent((HttpSession) this, name));
+	}
+
+	// Call the valueBound() method if necessary
+	HttpSessionBindingEvent event =
+	  new HttpSessionBindingEvent((HttpSession) this, name, value);
+	if (value instanceof HttpSessionBindingListener)
+	    ((HttpSessionBindingListener) value).valueBound(event);
+
+	// Notify interested application event listeners
+	Context context = (Context) manager.getContainer();
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners == null)
+	    return;
+	for (int i = 0; i < listeners.length; i++) {
+	    if (!(listeners[i] instanceof HttpSessionAttributesListener))
+	        continue;
+	    try {
+	        HttpSessionAttributesListener listener =
+		  (HttpSessionAttributesListener) listeners[i];
+		if (unbound != null)
+		    listener.attributeReplaced(event);
+		else
+		    listener.attributeAdded(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("standardSession.attributeEvent"), t);
+	    }
 	}
 
     }

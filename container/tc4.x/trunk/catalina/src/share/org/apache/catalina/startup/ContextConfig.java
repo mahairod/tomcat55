@@ -76,6 +76,8 @@ import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Stack;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import org.apache.catalina.Authenticator;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
@@ -535,6 +537,9 @@ public final class ContextConfig
      */
     private void listenerConfig() {
 
+        if (debug >= 1)
+	    log("Configuring application event listeners");
+
         ClassLoader loader = context.getLoader().getClassLoader();
 	String listeners[] = context.findApplicationListeners();
         Object results[] = new Object[listeners.length];
@@ -545,7 +550,7 @@ public final class ContextConfig
 	      results[i] = clazz.newInstance();
 	  } catch (Throwable t) {
 	      // FIXME - should we do anything besides log these?
-	      log(sm.getString("standardContext.applicationListener",
+	      log(sm.getString("contextConfig.applicationListener",
 			       listeners[i]), t);
 	      error = true;
 	  }
@@ -562,7 +567,26 @@ public final class ContextConfig
      */
     private void listenerStartEvent() {
 
-      ; // FIXME - listenerStartEvent()
+        if (debug >= 1)
+	    log("Sending application start events");
+
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners == null)
+	    return;
+	ServletContextEvent event =
+	  new ServletContextEvent(context.getServletContext());
+	for (int i = 0; i < listeners.length; i++) {
+	    if (!(listeners[i] instanceof ServletContextListener))
+	        continue;
+	    try {
+	        ServletContextListener listener =
+		  (ServletContextListener) listeners[i];
+		listener.contextInitialized(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("contextConfig.applicationStart"), t);
+	    }
+	}
 
     }
 
@@ -572,7 +596,27 @@ public final class ContextConfig
      */
     private void listenerStopEvent() {
 
-      ; // FIXME - listenerStopEvent()
+        if (debug >= 1)
+	    log("Sending application stop events");
+
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners == null)
+	    return;
+	ServletContextEvent event =
+	  new ServletContextEvent(context.getServletContext());
+	for (int i = 0; i < listeners.length; i++) {
+	    int j = (listeners.length - 1) - i;
+	    if (!(listeners[j] instanceof ServletContextListener))
+	        continue;
+	    try {
+	        ServletContextListener listener =
+		  (ServletContextListener) listeners[j];
+		listener.contextDestroyed(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("contextConfig.applicationStop"), t);
+	    }
+	}
 
     }
 

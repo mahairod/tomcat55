@@ -75,6 +75,8 @@ import java.util.HashMap;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextAttributeEvent;
+import javax.servlet.ServletContextAttributesListener;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -518,8 +520,33 @@ public final class ApplicationContext
      */
     public void removeAttribute(String name) {
 
+        Object value = null;
+
+	// Remove the specified attribute
 	synchronized (attributes) {
+	    value = attributes.get(name);
 	    attributes.remove(name);
+	}
+
+	// Notify interested application event listeners
+	// FIXME - Assumes we notify even if the attribute was not there?
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners == null)
+	    return;
+	ServletContextAttributeEvent event =
+	  new ServletContextAttributeEvent(context.getServletContext(),
+					    name, value);
+	for (int i = 0; i < listeners.length; i++) {
+	    if (!(listeners[i] instanceof ServletContextAttributesListener))
+	        continue;
+	    try {
+	        ServletContextAttributesListener listener =
+		  (ServletContextAttributesListener) listeners[i];
+		listener.attributeRemoved(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("applicationContext.attributeEvent"), t);
+	    }
 	}
 
     }
@@ -534,8 +561,36 @@ public final class ApplicationContext
      */
     public void setAttribute(String name, Object value) {
 
+        boolean replaced = false;
+
+	// Add or replace the specified attribute
 	synchronized (attributes) {
+	    if (attributes.get(name) != null)
+	        replaced = true;
 	    attributes.put(name, value);
+	}
+
+	// Notify interested application event listeners
+	Object listeners[] = context.getApplicationListeners();
+	if (listeners == null)
+	    return;
+	ServletContextAttributeEvent event =
+	  new ServletContextAttributeEvent(context.getServletContext(),
+					    name, value);
+	for (int i = 0; i < listeners.length; i++) {
+	    if (!(listeners[i] instanceof ServletContextAttributesListener))
+	        continue;
+	    try {
+	        ServletContextAttributesListener listener =
+		  (ServletContextAttributesListener) listeners[i];
+		if (replaced)
+		    listener.attributeReplaced(event);
+		else
+		    listener.attributeAdded(event);
+	    } catch (Throwable t) {
+	        // FIXME - should we do anything besides log these?
+	        log(sm.getString("applicationContext.attributeEvent"), t);
+	    }
 	}
 
     }
