@@ -718,10 +718,10 @@ public abstract class HttpServlet extends GenericServlet
      *
      * @exception IOException	if an input or output error occurs
      *				while the servlet is handling the
-     *				TRACE request
+     *				HTTP request
      *
-     * @exception ServletException	if the request for the
-     *					TRACE cannot be handled
+     * @exception ServletException	if the HTTP request
+     *					cannot be handled
      * 
      * @see 				javax.servlet.Servlet#service
      *
