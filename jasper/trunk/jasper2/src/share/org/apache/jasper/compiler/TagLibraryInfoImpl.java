@@ -466,9 +466,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 
     TagAttributeInfo createAttribute(TreeNode elem) {
         String name = null;
+        String type = null;
         boolean required = false, rtexprvalue = false, reqTime = false,
 	    isFragment = false;
-        String type = null;
         
         Iterator list = elem.findChildren();
         while (list.hasNext()) {
@@ -502,6 +502,12 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             }
         }
         
+	if (!rtexprvalue) {
+	    // According to JSP spec, for static values (those determined at
+	    // translation time) the type is fixed at java.lang.String.
+	    type = "java.lang.String";
+	}
+
         return new TagAttributeInfo(name, required, type, rtexprvalue,
 				    isFragment);
     }
