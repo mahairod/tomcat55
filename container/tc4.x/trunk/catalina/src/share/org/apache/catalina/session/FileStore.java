@@ -77,9 +77,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -117,7 +115,8 @@ public final class FileStore
 
     /**
      * The pathname of the directory in which Sessions are stored.
-     * Relative to the temp directory for the web application.
+     * This may be an absolute pathname, or a relative path that is
+     * resolved against the temporary work directory for this application.
      */
     private String directory = ".";
 
@@ -206,21 +205,43 @@ public final class FileStore
      */
     public int getSize() throws IOException {
 
-        String[] files = getDirectoryFile().list();
+        // Acquire the list of files in our storage directory
+        File file = directory();
+        if (file == null) {
+            return (0);
+        }
+        String files[] = file.list();
 
         // Figure out which files are sessions
         int keycount = 0;
         for (int i = 0; i < files.length; i++) {
-            if (files[i].endsWith(FILE_EXT))
+            if (files[i].endsWith(FILE_EXT)) {
                 keycount++;
+            }
         }
-
         return (keycount);
 
     }
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Remove all of the Sessions in this Store.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void clear()
+        throws IOException {
+
+        String[] keys = keys();
+        for (int i = 0; i < keys.length; i++) {
+            remove(keys[i]);
+        }
+
+    }
+
 
     /**
      * Return an array containing the session identifiers of all Sessions
@@ -231,30 +252,22 @@ public final class FileStore
      */
     public String[] keys() throws IOException {
 
-        String[] files = getDirectoryFile().list();
-
-        // Figure out which files contain sessions
-        int keycount = 0;
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].endsWith(FILE_EXT))
-                keycount++;
-            else
-                files[i] = null;
+        // Acquire the list of files in our storage directory
+        File file = directory();
+        if (file == null) {
+            return (new String[0]);
         }
+        String files[] = file.list();
 
-        // Get keys from relevant filenames.
-        String[] keys = new String[keycount];
-        if (keycount > 0) {
-            keycount = 0;
-            for (int i = 0; i < files.length; i++) {
-                if (files[i] != null) {
-                    keys[keycount] = files[i].substring (0, files[i].lastIndexOf('.'));
-                    keycount++;
-                }
+        // Build and return the list of session identifiers
+        ArrayList list = new ArrayList();
+        int n = FILE_EXT.length();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].endsWith(FILE_EXT)) {
+                list.add(files[i].substring(0, files[i].length() - n));
             }
         }
-
-        return (keys);
+        return ((String[]) list.toArray(new String[list.size()]));
 
     }
 
@@ -274,11 +287,13 @@ public final class FileStore
 
         // Open an input stream to the specified pathname, if any
         File file = file(id);
-        if (file == null)
+        if (file == null) {
             return (null);
-        if (debug >= 1)
+        }
+        if (debug >= 1) {
             log(sm.getString(getStoreName()+".loading",
                              id, file.getAbsolutePath()));
+        }
 
         FileInputStream fis = null;
         ObjectInputStream ois = null;
@@ -313,7 +328,8 @@ public final class FileStore
         }
 
         try {
-            StandardSession session = (StandardSession) manager.createSession();
+            StandardSession session =
+                (StandardSession) manager.createSession();
             session.readObjectData(ois);
             session.setManager(manager);
             return (session);
@@ -341,29 +357,15 @@ public final class FileStore
      */
     public void remove(String id) throws IOException {
 
-        // Open an input stream to the specified pathname, if any
         File file = file(id);
-        if (file == null)
+        if (file == null) {
             return;
-        if (debug >= 1)
+        }
+        if (debug >= 1) {
             log(sm.getString(getStoreName()+".removing",
                              id, file.getAbsolutePath()));
-        file.delete();
-    }
-
-
-    /**
-     * Remove all of the Sessions in this Store.
-     *
-     * @exception IOException if an input/output error occurs
-     */
-    public void clear()
-        throws IOException {
-
-        String[] keys = keys();
-        for (int i = 0; i < keys.length; i++) {
-            remove(keys[i]);
         }
+        file.delete();
 
     }
 
@@ -380,11 +382,13 @@ public final class FileStore
 
         // Open an output stream to the specified pathname, if any
         File file = file(session.getId());
-        if (file == null)
+        if (file == null) {
             return;
-        if (debug >= 1)
+        }
+        if (debug >= 1) {
             log(sm.getString(getStoreName()+".saving",
                              session.getId(), file.getAbsolutePath()));
+        }
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -412,6 +416,45 @@ public final class FileStore
 
     // -------------------------------------------------------- Private Methods
 
+
+    /**
+     * Return a File object representing the pathname to our
+     * session persistence directory, if any.  The directory will be
+     * created if it does not already exist.
+     */
+    private File directory() {
+
+        if (this.directory == null) {
+            return (null);
+        }
+        if (this.directoryFile != null) {
+            // NOTE:  Race condition is harmless, so do not synchronize
+            return (this.directoryFile);
+        }
+        File file = new File(this.directory);
+        if (!file.isAbsolute()) {
+            Container container = manager.getContainer();
+            if (container instanceof Context) {
+                ServletContext servletContext =
+                    ((Context) container).getServletContext();
+                File work = (File)
+                    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+                file = new File(work, this.directory);
+            } else {
+                throw new IllegalArgumentException
+                    ("Parent Container is not a Context");
+            }
+        }
+        if (!file.exists() || !file.isDirectory()) {
+            file.delete();
+            file.mkdirs();
+        }
+        this.directoryFile = file;
+        return (file);
+
+    }
+
+
     /**
      * Return a File object representing the pathname to our
      * session persistence file, if any.
@@ -421,38 +464,14 @@ public final class FileStore
      */
     private File file(String id) {
 
-        if (directory == null)
+        if (this.directory == null) {
             return (null);
-
-        String pathname = directory + "/" + id + FILE_EXT;
-        File file = new File(pathname);
-        if (!file.isAbsolute()) {
-            File tempdir = getDirectoryFile();
-            if (tempdir != null)
-                file = new File(tempdir, pathname);
         }
+        String filename = id + FILE_EXT;
+        File file = new File(directory(), filename);
         return (file);
 
     }
 
-    /**
-     * Return a File object for the directory property.
-     */
-    private File getDirectoryFile() {
 
-        if (directoryFile == null) {
-            Container container = manager.getContainer();
-            if (container instanceof Context) {
-                ServletContext servletContext =
-                    ((Context) container).getServletContext();
-                directoryFile = (File)
-                    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-            } else {
-                    throw new IllegalArgumentException("directory not set, I can't work with this Container");
-            }
-        }
-
-        return directoryFile;
-
-    }
 }
