@@ -1384,7 +1384,7 @@ on your class path to make the <code>RealmBase</code> class available.</p>
 <p>The example application shipped with Tomcat 5 includes an area that is
 protected by a security constraint, utilizing form-based login.  To access it,
 point your browser at
-<a href="http://localhost:8080/examples/jsp/security/protected/">http://localhost:8080/examples/jsp/security/protected/</a>
+<a href="http://localhost:8080/jsp-examples/security/protected/">http://localhost:8080/jsp-examples/security/protected/</a>
 and log on with one of the usernames and passwords described for the default
 <a href="#MemoryRealm">MemoryRealm</a>.</p>
 
