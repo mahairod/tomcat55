@@ -429,7 +429,7 @@ public class StatusTransformer {
                     writer.write("" + mBeanServer.getAttribute
                                  (pName, "requestBytesSent"));
                 } else {
-                    writer.write("?");
+                    writer.write("&#63;");
                 }
                 writer.write("\"");
                 writer.write(" requestBytesReceived=\"");
@@ -437,7 +437,7 @@ public class StatusTransformer {
                     writer.write("" + mBeanServer.getAttribute
                                  (pName, "requestBytesReceived"));
                 } else {
-                    writer.write("?");
+                    writer.write("&#63;");
                 }
                 writer.write("\"");
                 writer.write(" remoteAddr=\"" 
@@ -461,27 +461,27 @@ public class StatusTransformer {
                         writer.write(" currentQueryString=\"" 
                                      + queryString + "\"");
                     } else {
-                        writer.write(" currentQueryString=\"?\"");
+                        writer.write(" currentQueryString=\"&#63;\"");
                     }
                     writer.write(" protocol=\"" 
                                  + filter(mBeanServer.getAttribute
                                           (pName, "protocol")) + "\"");
                 } else {
-                    writer.write(" method=\"?\"");
-                    writer.write(" currentUri=\"?\"");
-                    writer.write(" currentQueryString=\"?\"");
-                    writer.write(" protocol=\"?\"");
+                    writer.write(" method=\"&#63;\"");
+                    writer.write(" currentUri=\"&#63;\"");
+                    writer.write(" currentQueryString=\"&#63;\"");
+                    writer.write(" protocol=\"&#63;\"");
                 }
             } else {
-                writer.write(" requestProcessingTime=\"?\"");
-                writer.write(" requestBytesSent=\"?\"");
-                writer.write(" requestBytesRecieved=\"?\"");
-                writer.write(" remoteAddr=\"?\"");
-                writer.write(" virtualHost=\"?\"");
-                writer.write(" method=\"?\"");
-                writer.write(" currentUri=\"?\"");
-                writer.write(" currentQueryString=\"?\"");
-                writer.write(" protocol=\"?\"");
+                writer.write(" requestProcessingTime=\"&#63;\"");
+                writer.write(" requestBytesSent=\"&#63;\"");
+                writer.write(" requestBytesRecieved=\"&#63;\"");
+                writer.write(" remoteAddr=\"&#63;\"");
+                writer.write(" virtualHost=\"&#63;\"");
+                writer.write(" method=\"&#63;\"");
+                writer.write(" currentUri=\"&#63;\"");
+                writer.write(" currentQueryString=\"&#63;\"");
+                writer.write(" protocol=\"&#63;\"");
             }
             writer.write(" />");
         }
