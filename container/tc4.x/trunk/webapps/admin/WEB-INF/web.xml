@@ -11,6 +11,32 @@
     Tomcat HTML based administration web application.
   </description>
 
+  <!-- Example filter to set character encoding on each request.
+       Uncomment this filter definition, filter mapping and move
+       examples/filters.SetCharacterEncodingFilters to use filter
+       to decode post and get parameters -->
+
+  <!--
+  <filter>
+    <filter-name>Set Character Encoding</filter-name>
+    <filter-class>filters.SetCharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF8</param-value>
+    </init-param>
+  </filter>
+  -->
+
+  <!-- Example filter mapping to apply the "Set Character Encoding" filter
+       to *all* requests processed by this web application -->
+
+  <!--
+  <filter-mapping>
+    <filter-name>Set Character Encoding</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  -->
+
   <!-- Action Servlet Configuration -->
   <servlet>
     <servlet-name>action</servlet-name>
@@ -58,7 +84,7 @@
       <param-name>treebuilders</param-name>
       <param-value>
         org.apache.webapp.admin.TomcatTreeBuilder,
-        org.apache.webapp.admin.resources.ResourcesTreeBuilder,        
+        org.apache.webapp.admin.resources.ResourcesTreeBuilder,
         org.apache.webapp.admin.users.UsersTreeBuilder
     </param-value>
     </init-param>
