@@ -147,64 +147,64 @@ public class EditConnectorAction extends Action {
             
             attribute = "acceptCount";
             connectorFm.setAcceptCountText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());          
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));          
             attribute = "compression";
             connectorFm.setCompression
                 ((String) mBServer.getAttribute(cname, attribute));          
             attribute = "connectionLinger";
             connectorFm.setConnLingerText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));            
             attribute = "connectionTimeout";
             connectorFm.setConnTimeOutText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());             
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));             
             attribute = "connectionUploadTimeout";
             connectorFm.setConnUploadTimeOutText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());              
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));              
             attribute = "disableUploadTimeout";
             connectorFm.setDisableUploadTimeout
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));       
             attribute = "bufferSize";
             connectorFm.setBufferSizeText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));            
             attribute = "enableLookups";
             connectorFm.setEnableLookups
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());            
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));            
             attribute = "address";
             connectorFm.setAddress
                 ((String) mBServer.getAttribute(cname, attribute));          
             attribute = "maxKeepAliveRequests";
             connectorFm.setMaxKeepAliveText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());       
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));       
             attribute = "maxSpareThreads";
             connectorFm.setMaxSpare
-                ((String) mBServer.getAttribute(cname, attribute));         
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));         
             attribute = "maxThreads";
             connectorFm.setMaxThreads
-                ((String) mBServer.getAttribute(cname, attribute));       
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));       
             attribute = "minSpareThreads";
             connectorFm.setMinSpare
-                ((String) mBServer.getAttribute(cname, attribute));        
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));        
             attribute = "threadPriority";
             connectorFm.setThreadPriority
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));
             attribute = "secure";
             connectorFm.setSecure
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;       
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "tcpNoDelay";
             connectorFm.setTcpNoDelay
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;        
+                (String.valueOf(mBServer.getAttribute(cname, attribute)));
             attribute = "xpoweredBy";
             connectorFm.setXpoweredBy
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "URIEncoding";
             connectorFm.setURIEncodingText
                 ((String) mBServer.getAttribute(cname, attribute));
             attribute = "useBodyEncodingForURI";
             connectorFm.setUseBodyEncodingForURIText
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "allowTrace";
             connectorFm.setAllowTraceText
-                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
           
             // Ports
             attribute = "port";
@@ -213,14 +213,6 @@ public class EditConnectorAction extends Action {
             attribute = "redirectPort";
             connectorFm.setRedirectPortText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
-            
-            // Processors
-            attribute = "minProcessors";
-            //connectorFm.setMinProcessorsText
-            //    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
-            attribute = "maxProcessors";
-            //connectorFm.setMaxProcessorsText
-            //    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             
             // Supported by HTTP and HTTPS only
             if (!("AJP".equalsIgnoreCase(connectorType))) {
