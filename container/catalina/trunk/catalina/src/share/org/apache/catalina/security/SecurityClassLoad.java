@@ -90,6 +90,7 @@ public final class SecurityClassLoad {
         loadJavaxPackage(loader);
         loadCoyotePackage(loader);        
         loadHttp11Package(loader);        
+        loadJkPackage(loader);
     }
     
     
@@ -204,6 +205,9 @@ public final class SecurityClassLoad {
             (basePackage +
              "CoyoteResponseFacade$SetContentTypePrivilegedAction");
         loader.loadClass
+            (basePackage + 
+             "CoyoteResponseFacade$DateHeaderPrivilegedAction");
+        loader.loadClass
             (basePackage +
              "CoyoteRequestFacade$GetSessionPrivilegedAction");
         loader.loadClass
@@ -241,5 +245,15 @@ public final class SecurityClassLoad {
              "CoyoteResponse$3");
     }
 
+    private final static void loadJkPackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.jk.";
+        loader.loadClass
+            (basePackage +
+             "server.JkCoyoteHandler$1");
+        loader.loadClass
+            (basePackage +
+             "server.JkCoyoteHandler$StatusLinePrivilegedAction");
+    }
 }
 
