@@ -23,7 +23,6 @@
   <property name="tomcat-util.home"       value="${jtc.home}/util"/>
   <property name="tomcat-coyote.home"     value="${jtc.home}/coyote"/>
   <property name="tomcat-jk.home"         value="${jtc.home}/jk"/>
-  <property name="tomcat-webapp.home"     value="${jtc.home}/webapp"/>
   <property name="tomcat-http11.home"     value="${jtc.home}/http11"/>
 
   <!-- Dependent JARs and files -->
@@ -33,16 +32,12 @@
            value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
   <property name="tomcat-coyote.jar"
            value="${tomcat-coyote.home}/build/lib/tomcat-coyote.jar"/>
-  <property name="tomcat-jk.jar"
-           value="${tomcat-jk.home}/build/lib/tomcat-jk.jar"/>
   <property name="tomcat-jk2.jar"
            value="${tomcat-jk.home}/build/lib/tomcat-jk2.jar"/>
   <property name="tomcat-jni.jar"
            value="${tomcat-jk.home}/build/lib/tomcat-jni.jar"/>
   <property name="jk2.properties"
            value="${tomcat-jk.home}/build/conf/jk2.properties"/>
-  <property name="tomcat-warp.jar"
-           value="${tomcat-webapp.home}/build/tomcat-warp.jar"/>
   <property name="tomcat-http11.jar"
            value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
 
@@ -117,7 +112,6 @@
     <pathelement location="${tomcat-util.home}/java"/>
     <pathelement location="${tomcat-coyote.home}/src/java"/>
     <pathelement location="${tomcat-jk.home}/java"/>
-    <pathelement location="${tomcat-webapp.home}/java"/>
     <pathelement location="${tomcat-http11.home}/src/java"/>
   </path>
 
@@ -367,77 +361,10 @@
       </or>
     </condition>
     <condition property="copy.dbcp.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${dbcp.present}" arg2="true" />
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.jaas.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <and>
-            <equals arg1="${jaas.jar.present}" arg2="true" />
-            <not>
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </not>
-          </and>
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.jdbc20ext.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <and>
-            <equals arg1="${jdbc20ext.jar.present}" arg2="true" />
-            <not>
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </not>
-          </and>
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.jndi.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <and>
-            <equals arg1="${jndi.jar.present}" arg2="true" />
-            <not>
-              <or>
-                <equals arg1="${jdk.1.3.present}" arg2="true" />
-                <equals arg1="${jdk.1.4.present}" arg2="true" />
-              </or>
-            </not>
-          </and>
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.javamail.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${javamail.jar.present}" arg2="true" />
-        </or>
-      </and>
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${dbcp.present}" arg2="true" />
+      </or>
     </condition>
     <condition property="copy.jmx.jar">
       <or>
@@ -445,70 +372,17 @@
         <equals arg1="${jmx.jar.present}" arg2="true" />
       </or>
     </condition>
-    <condition property="copy.jta.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${jta.jar.present}" arg2="true" />
-        </or>
-      </and>
-    </condition>
     <condition property="copy.lang.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${lang.present}" arg2="true" />
-        </or>
-      </and>
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${lang.present}" arg2="true" />
+      </or>
     </condition>
     <condition property="copy.launcher.jars">
       <or>
         <equals arg1="${full.dist}" arg2="on" />
         <equals arg1="${launcher.jars.present}" arg2="true" />
       </or>
-    </condition>
-    <condition property="copy.ldap.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <and>
-            <equals arg1="${ldap.jar.present}" arg2="true" />
-            <not>
-              <or>
-                <equals arg1="${jdk.1.3.present}" arg2="true" />
-                <equals arg1="${jdk.1.4.present}" arg2="true" />
-              </or>
-            </not>
-          </and>
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.jsse.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <and>
-            <equals arg1="${jcert.jar.present}" arg2="true" />
-            <equals arg1="${jnet.jar.present}" arg2="true" />
-            <equals arg1="${jsse.jar.present}" arg2="true" />
-            <not>
-              <equals arg1="${jdk.1.4.present}" arg2="true" />
-            </not>
-          </and>
-        </or>
-      </and>
     </condition>
     <condition property="copy.modeler.jar">
       <or>
@@ -523,26 +397,10 @@
       </or>
     </condition>
     <condition property="copy.pool.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${pool.present}" arg2="true" />
-        </or>
-      </and>
-    </condition>
-    <condition property="copy.tyrex.jar">
-      <and>
-        <not>
-          <equals arg1="${light.dist}" arg2="on" />
-        </not>
-        <or>
-          <equals arg1="${full.dist}" arg2="on" />
-          <equals arg1="${tyrex.jar.present}" arg2="true" />
-        </or>
-      </and>
+      <or>
+        <equals arg1="${full.dist}" arg2="on" />
+        <equals arg1="${pool.present}" arg2="true" />
+      </or>
     </condition>
 
   </target>
@@ -636,18 +494,11 @@
     <echo message="--- Distribution flags ---" />
     <echo message="copy.daemon.jar=${copy.daemon.jar}" />
     <echo message="copy.dbcp.jar=${copy.dbcp.jar}" />
-    <echo message="copy.jaas.jar=${copy.jaas.jar}" />
-    <echo message="copy.jdbc20ext.jar=${copy.jdbc20ext.jar}" />
-    <echo message="copy.javamail.jar=${copy.javamail.jar}" />
     <echo message="copy.jmx.jar=${copy.jmx.jar}" />
-    <echo message="copy.jndi.jar=${copy.jndi.jar}" />
-    <echo message="copy.jta.jar=${copy.jta.jar}" />
-    <echo message="copy.ldap.jar=${copy.ldap.jar}" />
     <echo message="copy.logging.jar=${copy.logging.jar}" />
     <echo message="copy.modeler.jar=${copy.modeler.jar}" />
     <echo message="copy.pool.jar=${copy.pool.jar}" />
-    <echo message="copy.tyrex.jar=${copy.tyrex.jar}" />
-    <echo message="copy.xerces2.jars=${copy.xerces2.jars}"/>
+   <echo message="copy.xerces2.jars=${copy.xerces2.jars}"/>
 
   </target>
 
@@ -672,31 +523,15 @@
 
 
   <!-- ======================== BUILD: Copy JARs ========================== -->
-  <target name="copy-activation.jar" if="copy.javamail.jar">
-    <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
-  </target>
   <target name="copy-daemon.jar" if="copy.daemon.jar">
     <copy todir="${catalina.build}/bin" file="${commons-daemon.jar}"/>
   </target>
   <target name="copy-dbcp.jar" if="copy.dbcp.jar">
     <copy todir="${catalina.build}/common/lib" file="${commons-dbcp.jar}"/>
   </target>
-  <target name="copy-jaas.jar" if="copy.jaas.jar">
-    <copy todir="${catalina.build}/server/lib" file="${jaas.jar}"/>
-  </target>
-  <target name="copy-jdbc20ext.jar" if="copy.jdbc20ext.jar">
-    <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
-  </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
     <copy todir="${catalina.build}/server/lib" file="../etc/mx4j.license"/>
-  </target>
-  <target name="copy-jndi.jar" if="copy.jndi.jar">
-    <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
-  </target>
-  <target name="copy-jta.jar" if="copy.jta.jar">
-    <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
   </target>
   <target name="copy-launcher.jars" if="copy.launcher.jars">
     <copy todir="${catalina.build}/common/lib" file="${ant.jar}"/>
@@ -705,18 +540,6 @@
     <copy todir="${catalina.build}/bin">
       <fileset dir="src/bin" includes="*-using-launcher.*,launcher.properties,catalina.xml" />
     </copy>
-  </target>
-  <target name="copy-ldap.jar" if="copy.ldap.jar">
-    <!-- Cannot redistribute LDAP
-    <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
-    -->
-  </target>
-  <target name="copy-jsse.jar" if="copy.jsse.jar">
-    <!-- Cannot redistribute JSSE
-    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
-    -->
   </target>
   <target name="copy-modeler.jar" if="copy.modeler.jar">
     <copy todir="${catalina.build}/server/lib" file="${commons-modeler.jar}"/>
@@ -727,12 +550,6 @@
   <target name="copy-tomcat-util.jar">
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
-  <target name="copy-tyrex.jar" if="copy.tyrex.jar">
-    <!-- Don't redistribute Tyrex: Too many dependencies and complex to setup
-    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
-    -->
-  </target>
   <target name="copy-xerces2.jars">
     <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
     <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
@@ -740,7 +557,7 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="flags,flags.display,build-prepare,copy-activation.jar,copy-daemon.jar,copy-dbcp.jar,copy-jaas.jar,copy-jdbc20ext.jar,copy-jmx.jar,copy-jndi.jar,copy-jsse.jar,copy-jta.jar,copy-launcher.jars,copy-ldap.jar,copy-modeler.jar,copy-pool.jar,copy-tyrex.jar,copy-xerces2.jars">
+  <target name="build-static" depends="flags,flags.display,build-prepare,copy-daemon.jar,copy-dbcp.jar,copy-jmx.jar,copy-launcher.jars,copy-modeler.jar,copy-pool.jar,copy-xerces2.jars">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -865,7 +682,6 @@
   <target name="build-tomcat-jk">
 
     <ant dir="${tomcat-jk.home}" target="build-main">
-      <property name="tomcat40.home" value="${catalina.deploy}"/>
       <property name="tomcat41.home" value="${catalina.deploy}"/>
       <property name="catalina.home" value="${catalina.deploy}"/>
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
@@ -873,27 +689,11 @@
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
-           file="${tomcat-jk.jar}"/>
-    <copy todir="${catalina.deploy}/server/lib"
            file="${tomcat-jk2.jar}"/>
     <copy todir="${catalina.deploy}/bin"
            file="${tomcat-jni.jar}"/>
     <copy todir="${catalina.deploy}/conf"
            file="${jk2.properties}"/>
-
-  </target>
-
-
-  <!-- ================== BUILD: Build tomcat-webapp ====================== -->
-  <target name="build-tomcat-webapp">
-
-    <ant dir="${tomcat-webapp.home}" target="compile">
-      <property name="catalina.home" value="${catalina.deploy}"/>
-      <property name="targdir" value="${tomcat-webapp.home}"/>
-    </ant>
-
-    <copy todir="${catalina.deploy}/server/lib"
-           file="${tomcat-warp.jar}"/>
 
   </target>
 
@@ -941,7 +741,6 @@
     <ant dir="${tomcat-util.home}" target="clean"/>
     <ant dir="${tomcat-coyote.home}" target="clean"/>
     <ant dir="${tomcat-jk.home}" target="clean"/>
-    <ant dir="${tomcat-webapp.home}" target="clean"/>
     <ant dir="${tomcat-http11.home}" target="clean"/>
 
   </target>
@@ -1195,7 +994,7 @@
 
 
   <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
-  <target name="deploy" depends="deploy-catalina,build-tomcat-coyote,build-tomcat-jk,build-tomcat-webapp,build-tomcat-http11"
+  <target name="deploy" depends="deploy-catalina,build-tomcat-coyote,build-tomcat-jk,build-tomcat-http11"
    description="Build and deploy Catalina">
   </target>
 
