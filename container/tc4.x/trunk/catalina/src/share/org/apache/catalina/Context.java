@@ -880,6 +880,14 @@ public interface Context extends Container {
 
 
     /**
+     * Remove any resource environment reference with the specified name.
+     *
+     * @param name Name of the resource environment reference to remove
+     */
+    public void removeResourceEnvRef(String name);
+
+
+    /**
      * Remove any security role reference for the specified name
      *
      * @param role Security role (as used in the application) to remove
