@@ -179,9 +179,9 @@ public class TagEndGenerator
 
 	// TryCatchFinally
 	if (implementsTryCatchFinally) {
-	    writer.println("} catch (Throwable t) {");
+	    writer.println("} catch (Throwable exception) {");
 	    writer.pushIndent();
-	    writer.println(thVarName+".doCatch(t);");
+	    writer.println(thVarName+".doCatch(exception);");
 	    writer.popIndent();
 	}
 
