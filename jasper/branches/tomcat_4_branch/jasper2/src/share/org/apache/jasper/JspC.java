@@ -945,10 +945,16 @@ public class JspC implements Options {
         int iSep = jspUri.lastIndexOf('/');
         // Start after the first slash
         int nameStart = 1;
+        boolean isFirstIdentifierChar = true;
         for (int i = 1; i < iSep; i++) {
             char ch = jspUri.charAt(i);
             if (Character.isJavaIdentifierPart(ch)) {
+                if ( isFirstIdentifierChar
+                        && ( !Character.isJavaIdentifierStart(ch)) ) {
+                    modifiedPackageName.append('_');
+                }
                 modifiedPackageName.append(ch);
+                isFirstIdentifierChar = false;
             }
             else if (ch == '/') {
                 if (isJavaKeyword(jspUri.substring(nameStart, i))) {
@@ -956,8 +962,10 @@ public class JspC implements Options {
                 }
                 nameStart = i+1;
                 modifiedPackageName.append('.');
+                isFirstIdentifierChar = true;
             } else {
                 modifiedPackageName.append(mangleChar(ch));
+                isFirstIdentifierChar = false;
             }
         }
         if (nameStart < iSep && isJavaKeyword(jspUri.substring(nameStart, iSep))) {
