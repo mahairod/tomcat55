@@ -122,9 +122,11 @@ public class JspUtil {
 
     public static char[] escapeQuotes (char []chars) {
         CharArrayWriter caw = new CharArrayWriter();
+        boolean inJavaString = false;
         for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '"') inJavaString = !inJavaString;
             // escape out the escape character
-            if (chars[i] == '\\') caw.write('\\');
+            if (!inJavaString && (chars[i] == '\\')) caw.write('\\');
             caw.write(chars[i]);
         }
         return caw.toCharArray();
