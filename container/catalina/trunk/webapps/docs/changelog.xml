@@ -35,6 +35,10 @@
 	  <add>
 	    New store config module for better server.xml saving support (pero)
 	  </add>
+	  <update>
+	    <bug>32081</bug>: Remove the JDK requirement from the Unix scripts, submitted
+	    by Ben Souther (remm)
+	  </update>
     </changelog>
   </subsection>
 
@@ -65,6 +69,15 @@
         <bug>31198</bug>: Fix FORM and DIGEST authentication for non-ASCII
         usernames and passwords. (markt)
       </fix>
+      <fix>
+        Reimplement charset mapper (remm)
+      </fix>
+      <fix>
+        Add logging of exception which could occur when retrieving the password in JDBCRealm (remm)
+      </fix>
+      <fix>
+        <bug>25889</bug>: Don't execute queries twice, submitted by Tom Anderson (remm)
+      </fix>
     </changelog>
   </subsection>
 
@@ -72,6 +85,16 @@
     <changelog>
       <fix>
         <bug>32708</bug>: Better handling of bad encoding with the string cache. (remm)
+      </fix>
+      <fix>
+        <bug>32781</bug>: Fix bad initialization of the "scheme" field of the request
+        object, which would cause getScheme to return "http" for the first request. (remm)
+      </fix>
+      <fix>
+        Content length should be ignored if there is chunking (remm)
+      </fix>
+      <fix>
+        Remove most deprecation problems for the AJP connector (remm)
       </fix>
     </changelog>
   </subsection>
