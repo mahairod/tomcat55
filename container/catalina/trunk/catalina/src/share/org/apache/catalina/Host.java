@@ -133,7 +133,7 @@ public interface Host extends Container {
     /**
      * Return the value of the auto deploy flag.  If true, it indicates that 
      * this host's child webapps should be discovred and automatically 
-     * deployed.
+     * deployed dynamically.
      */
     public boolean getAutoDeploy();
 
@@ -161,6 +161,22 @@ public interface Host extends Container {
     public DefaultContext getDefaultContext();
     
     
+    /**
+     * Return the value of the deploy on startup flag.  If true, it indicates 
+     * that this host's child webapps should be discovred and automatically 
+     * deployed.
+     */
+    public boolean getDeployOnStartup();
+
+
+    /**
+     * Set the deploy on startup flag value for this host.
+     * 
+     * @param deployOnStartup The new deploy on startup flag
+     */
+    public void setDeployOnStartup(boolean deployOnStartup);
+
+
     /**
      * Return the canonical, fully qualified, name of the virtual host
      * this Container represents.
