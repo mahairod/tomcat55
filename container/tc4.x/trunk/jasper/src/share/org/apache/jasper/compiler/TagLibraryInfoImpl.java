@@ -364,6 +364,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                 variableVector.addElement(createVariable(element));
             } else if ("attribute".equals(tname))
                 attributeVector.addElement(createAttribute(element));
+            else if ("example".equals(tname) ||   // Ignored elements
+		     false)
+                ;
             else {
                 Constants.message("jsp.warning.unknown.element.in.tag", 
                                   new Object[] {tname},
@@ -443,6 +446,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                     rtexprvalue = JspUtil.booleanValue(s);
             } else if ("type".equals(tname))
                 type = element.getBody();
+            else if ("description".equals(tname) ||    // Ignored elements
+		     false ) 
+	      ;
             else {
                 Constants.message("jsp.warning.unknown.element.in.attribute", 
                                   new Object[] {tname},
@@ -488,6 +494,9 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			scope = VariableInfo.AT_END;
 		    }
 		}
+	    }
+            else if ("description".equals(tname) ||    // Ignored elements
+		     false ) {
             } else {
                 Constants.message("jsp.warning.unknown.element.in.variable",
                                   new Object[] {tname},
@@ -511,6 +520,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             else if ("init-param".equals(tname)) {
 		String[] initParam = createInitParam(element);
 		initParams.put(initParam[0], initParam[1]);
+            } else if ("description".equals(tname) ||    // Ignored elements
+		     false ) {
             } else {
                 Constants.message("jsp.warning.unknown.element.in.validator", //@@@ add in properties
                                   new Object[] {tname},
