@@ -98,7 +98,7 @@ public class XmlOutputter {
      */
     private int jspRootLevel = 0;
 
-    public static final String JSP_NAMESPACE = "http://java.sun.com/jsp_1_2";
+    public static final String JSP_NAMESPACE = "http://java.sun.com/dtd/jsp_1_2";
     // FLAG: JSP 1.2 PFD2 implement later
     // public static final String JSP_NAMESPACE = "http://java.sun.com/JSP/TagLibraryDescriptor";
     public static final String JSP_VERSION = "1.2";
