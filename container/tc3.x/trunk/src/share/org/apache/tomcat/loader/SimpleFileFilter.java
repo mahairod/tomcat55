@@ -102,9 +102,19 @@ public class SimpleFileFilter implements FilenameFilter {
       */
       public static String[] fileOrFiles(File f) {
           if (f==null) return null;
+
+	  String[] files;
+
+	  /* directories return null for getName()
+	     Test for these first */
+	  if( f.isDirectory() ) {
+	      files=new String[1];
+	      files[0]=f.getPath();
+	      return files;
+	  }
+	  String fname=f.getName();
           File parent=new File(f.getParent());
-          String fname=f.getName();
-          String[] files;
+
           if (fname.charAt(0)=='*') {
               String filter=fname.substring(1,fname.length());
               files=parent.list(new SimpleFileFilter(filter));
