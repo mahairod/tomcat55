@@ -462,6 +462,15 @@ public interface HttpServletResponse extends ServletResponse {
 
     public static final int SC_USE_PROXY = 305;
 
+    // Status code 306 is officially "Unused"
+
+    /**
+     * Status code (307) indicating that the requested resource
+     * resides temporarily under a different URI.
+     */
+
+    public static final int SC_TEMPORARY_REDIRECT = 307;
+
     /**
      * Status code (400) indicating the request sent by the client was
      * syntactically incorrect.
