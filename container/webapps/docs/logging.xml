@@ -4,31 +4,81 @@
 ]>
 <document url="logging.html">
 
-  &project;
+    &project;
 
   <properties>
-    <author email="remm@apache.org">Remy Maucherat</author>
     <title>Logging in Tomcat</title>
+    <author>Allistair Crossley</author>
   </properties>
 
 <body>
 
   <section name="Introduction">
-
-
-
   </section>
 
   <section name="java.util.logging">
-
-
-
   </section>
 
   <section name="log4j">
+    <p>
+      	Tomcat 5.5 has done away with with localhost_log which you may be familiar with
+	  	as the runtime exception/stack trace log. These types of error are usually thrown
+	  	by uncaught exceptions, but are still valuable to the developer. They can now be
+	  	found in the stdout log.
+	</p>
 
+	<p>
+		If you need to setup cross-context detailed logging from within Tomcat's code, then you can use a simple
+		log4j configuration. Note that this logging van be very verbose depending on the log level you chose to use.
+		Note also that a log4j logging configuration is not going to produce stack trace type logging, that is output to
+		stdout as discussed.
+	</p>
 
+	<p>Follow the following steps to setup a file named tomcat.log that has internal Tomcat logging output to it.</p>
 
+	<ol>
+		<li>
+			Create a file called log4j.properties with the following content and save it into common/classes. 
+			Use the appropriate file path convention for your OS, here is is Windows, and example *nix path may be
+			/var/jakarta-tomcat-5.5.4/logs/tomcat.log
+<source>
+log4j.rootLogger=debug, R
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=d:/jakarta-tomcat-5.5.4/logs/tomcat.log
+log4j.appender.R.MaxFileSize=10MB
+log4j.appender.R.MaxBackupIndex=10
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
+log4j.logger.org.apache.catalina=DEBUG, R</source>
+		</li>
+		<li><a>Acquire log4j1.2.8.jar</a> and add it into Tomcat's common/lib folder.</li>
+		<li>Start Tomcat</li>
+	</ol>
+
+	<p>
+		This log4j configuration sets up a file called tomcat.log in your Tomcat logs folder with a maximum file size of 10MB and
+		up to 10 backups. DEBUG level is specified which will result in the most verbose output from Tomcat. The above generated
+		about 5MB of logging with bundled web applications and Struts web applications.
+	</p>
+	
+	<p>
+		You can of course choose to be more picky about which packages to include in the logging. For example try substituting the
+		last line of the above configuration with one of these:
+	
+		<ul>
+			<li>log4j.logger.org.apache.catalina.core.ContainerBase.[Catalina].[localhost]=DEBUG, R</li>
+			<li>log4j.logger.org.apache.catalina.core=DEBUG, R</li>
+			<li>log4j.logger.org.apache.catalina.session=DEBUG, R</li>
+		</ul>
+	</p>
+	
+	<p>The usefulness of what you will find from the log4j logging is debatable and will depend on your needs. Your
+		web applications should certainly use their own log4j configuration. This is valid <i>with</i> the above.
+		You would place a similar log4j.properties file in your web application's WEB-INF/classes folder, and log4j1.2.8.jar into
+		WEB-INF/lib. Then specify your package level logging. This is a basic setup of log4j and you should consult the log4j
+		documentation for more options, but hopefully this section will get you up to a basic speed.
+	</p>
+	
   </section>
 
 </body>
