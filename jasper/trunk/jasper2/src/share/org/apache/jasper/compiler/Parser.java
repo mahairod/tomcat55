@@ -1196,6 +1196,8 @@ class Parser {
 	    parseElement(parent);
 	} else if (reader.matches("attribute")) {
 	    err.jspError(start, "jsp.error.namedAttribute.invalidUse");
+	} else if (reader.matches("body")) {
+	    err.jspError(start, "jsp.error.jspbody.invalidUse");
 	} else if (reader.matches("fallback")) {
 	    err.jspError(start, "jsp.error.fallback.invalidUse");
 	} else if (reader.matches("params")) {
