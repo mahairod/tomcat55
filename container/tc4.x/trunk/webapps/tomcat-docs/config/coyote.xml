@@ -94,6 +94,12 @@
       SSL Connector).  The default value is <code>false</code>.</p>
     </attribute>
 
+    <attribute name="URIEncoding" required="false">
+      <p>This specifies the character encoding used to decode the URI bytes,
+      after %xx decoding the URL. If not specified, ISO-8859-1 will be used.
+      </p>
+    </attribute>
+
   </attributes>
 
   </subsection>
@@ -137,7 +143,7 @@
       specifies the minimum amount of data before the output is compressed). If
       the content-length is not known and compression is set to "on" or more
       aggressive, the output will also be compressed. If not specified, this
-      attribute is set to "false".</p>
+      attribute is set to "off".</p>
     </attribute>
 
     <attribute name="connectionLinger" required="false">
