@@ -278,6 +278,9 @@ public final class CoyoteConnector
      */
     private boolean secure = false;
 
+    /** For jk, do tomcat authentication if true, trust server if false 
+     */ 
+    private boolean tomcatAuthentication = true;
 
     /**
      * The string manager for this package.
@@ -988,6 +991,14 @@ public final class CoyoteConnector
 
     }
 
+    public boolean getTomcatAuthentication() {
+        return tomcatAuthentication;
+    }
+
+    public void setTomcatAuthentication(boolean tomcatAuthentication) {
+        this.tomcatAuthentication = tomcatAuthentication;
+    }
+    
 
     /**
      * Return the TCP no delay flag value.
@@ -1206,6 +1217,8 @@ public final class CoyoteConnector
                                        "" + disableUploadTimeout);
         IntrospectionUtils.setProperty(protocolHandler, "maxKeepAliveRequests",
                                        "" + maxKeepAliveRequests);
+        IntrospectionUtils.setProperty(protocolHandler, "tomcatAuthentication",
+                                       "" + tomcatAuthentication);
         IntrospectionUtils.setProperty(protocolHandler, "compression",
                                        compression);
         if (address != null) {
