@@ -169,41 +169,55 @@
 
   </target>
 
-  <!-- ======================= Ant task based ================ -->
+  <!-- ======================= Ant/JMX based ================ -->
 
+  <target name="taskdef" >
+    <property name="tomcat.home" location="../../jakarta-tomcat-5/build" />
 
-  <target name="run-wait" depends="echo-config" 
-        description="Start tomcat as a task and wait for it to end">
-    <taskdef name="tomcat5" 
-             classname="org.apache.catalina.startup.CatalinaService" 
-             classpathref="tomcatcp" />
-   
-    <tomcat5 do="start" home="${catalina.home}" wait="true" compiler="jikes"/>
-    <!-- the task will not end until tomcat shutdown is received -->
+    <path id="jmx.test.classpath">
+      <pathelement location="target/classes" />
+      <fileset dir="${tomcat.home}/common/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/server/lib" includes="*.jar"/>
+      <fileset dir="${tomcat.home}/bin" includes="*.jar"/>
+    </path>
 
-    <echo message="==================== Tomcat5 stoped ==================== "/>
+    <!-- part of modeler -->
+    <taskdef resource="META-INF/ant.properties"
+             classpathref="jmx.test.classpath" />
   </target>
 
-  <target name="run" depends="echo-config"
+
+  <target name="run" depends="echo-config,taskdef"
         description="Start tomcat as a task and return">
-    <taskdef name="tomcat5" 
-             classname="org.apache.catalina.startup.CatalinaService" 
-             classpathref="tomcatcp" />
    
-    <tomcat5 do="start" home="${catalina.home}" wait="false" compiler="jikes"/>
+    <MLET code="org.apache.commons.modeler.BaseModelMBean"
+          name="catalina:type=server" >
+       <arg value="org.apache.catalina.startup.Catalina" />
+    </MLET>
 
-    <!-- the task will end when tomcat is initialised. You can now use it in
-         other tasks -->
+    <jmxSet name="catalina:type=server"
+            attribute="catalinaHome"
+            value="${tomcat.home}"/>
+  
+    <!-- We could also call init and set other properties - 
+         init should load the modules -->
 
-    <echo message="==================== Tomcat5 running ==================== "/>
+    <jmx name="catalina:type=server"
+         method="start" />
+    
+    <echo message="Tomcat5 running"/>
+
   </target>
+
 
   <!-- ======================= Exec/java  ================ -->
 
   <target name="java-start" depends="echo-config" 
         description="Run tomcat in-process and wait for it to end, using java task" >
 
-    <java classname="org.apache.catalina.startup.CatalinaService" fork="false">
+    <property name="tomcat.fork" value="false" />
+
+    <java classname="org.apache.catalina.startup.CatalinaService" fork="${tomcat.fork}">
       <classpath refid="tomcatcp" />
       <arg value="start" />
       <sysproperty key="catalina.home" value="${catalina.home}"/>
@@ -211,22 +225,8 @@
       <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
     </java>
 
-    <echo message="==================== Tomcat5 up and running ==================== "/>
+    <echo message="Tomcat5 running"/>
+
   </target>
-
-  <target name="java-fork" depends="echo-config" 
-        description="Fork a tomcat java process and wait for it to end">
-
-    <java classname="org.apache.catalina.startup.CatalinaService" fork="true">
-      <classpath refid="tomcatcp" />
-      <arg value="start" />
-      <sysproperty key="catalina.home" value="${catalina.home}"/>
-      <sysproperty key="build.compiler" value="jikes"/>
-      <sysproperty key="java.endorsed.dirs" value="${ant.home}/lib:${java.home}/lib"/>
-    </java>
-
-    <echo message="==================== Tomcat5 up and running ==================== "/>
-  </target>
-
 
 </project>
