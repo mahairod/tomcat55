@@ -1095,8 +1095,14 @@ public class Parser {
 
 	boolean noJspElement = false;
 	while (reader.hasMoreInput()) {
-            if (until != null && reader.matches(until)) 
+
+            if (until != null && reader.matches(until)) {
+                if (tmplStart == null)
+                    tmplStart = reader.mark();
+                if (tmplStop == null)
+                    tmplStop = reader.mark();
                 return;
+            }
 
 	    // If the file has changed because of a 'push' or a 'pop'
 	    // we must flush the character data for the old file.
