@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -58,15 +54,21 @@
  * <http://www.apache.org/>.
  *
  */ 
-package org.apache.jasper34.generator;
+package org.apache.jasper34.core;
 
 /**
+ * Customization for the class name generator. 
+ * 
  * You can control attributes like classname, packagename etc by
- * plugging in your own mangler. 
+ * plugging in your own mangler.
+ *
+ * The container liaison must implement this interface ( or use one 
+ * of the existing manglers ).
  *
  * @author Anil K. Vijendran
  */
 public interface Mangler {
+    
     /** The class name ( without package ) of the
      *  generated servlet, including the version number
      */
