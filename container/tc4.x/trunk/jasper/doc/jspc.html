@@ -8,19 +8,19 @@
 
 <H2>OVERVIEW </H2>
 
-Even thought the primary focus of JSP is as a container run environment,
+Even though the primary focus of JSP is as a container run environment,
 sometimes it is useful to create a pure servlet out of the JSP page.
-JspC encapsulates the core JSP to servlet translation into a program
+JspC encapsulates the core JSP-to-servlet translation into a program
 that has no dependencies on a containing servlet engine and allows you
 to translate JSP pages into an equivalent Java servlet.
 
-<H2>GENERAL USE </H2>
+<H2>GENERAL USE</H2>
 
 The most basic use of JspC is to compile a JSP page in place with the
-jsp page(s) as the arguments.  This will compile the page with the
-resulting java files placed in the directory JspC was called from.  The
+JSP page(s) as the arguments.  This will compile the page with the
+resulting Java files placed in the directory JspC was called from.  The
 package will be determined from the directories that the JSP page lives
-in.  This will be relative to the web-app it live in (if it exists or is
+in.  This will be relative to the web-app it lives in (if it exists or is
 specified) or the default package.  The class name will be the name of
 the JSP page without the extension.
 
@@ -32,11 +32,11 @@ Subsequent JSP pages will not be affected by this option.  The
 pages compiled by that invocation.  Web-Apps specified for translation 
 will not be affected by either of these options.</P>
 
-<P>The directory that the resulting java files will go into is specified by
+<P>The directory that the resulting Java files will go into is specified by
 the <TT>-d &lt;dir&gt;</TT> and <tt>-dd &lt;dir&gt;</tt> options.  Both
 of these specify a directory that files will be written into.  When
-using <tt>-d</tt> the java files will be placed in package appropriate
-sub directories while with <tt>-dd</tt> all of the java files will be
+using <tt>-d</tt> the Java files will be placed in package appropriate
+sub directories while with <tt>-dd</tt> all of the Java files will be
 placed literally into the specified directory (without any subdirectory
 structure).</P>
 
@@ -74,7 +74,7 @@ heuristically determined or specified by the user.<P>
 <P><tt>-uriroot &lt;dir&gt;</tt> specifies the root of the web 
 application.  This is where all absolute uris will be resolved from.  
 If it is not specified then the first JSP page will be used to derive 
-it.  To derive it each parent directory of the first JSP page is 
+it.  To derive it, each parent directory of the first JSP page is 
 searched for a <tt>WEB-INF</tt> directory, and the directory closest to 
 the JSP page that has one will be used.  If none can be found then the 
 directory JspC was called from will be used.  This only affects pages 
