@@ -752,6 +752,7 @@ file might look something like this:</p>
   &lt;taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/&gt;
   &lt;taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask"/&gt;
   &lt;taskdef name="resources" classname="org.apache.catalina.ant.ResourcesTask"/&gt;
+  &lt;taskdef name="roles"     classname="org.apache.catalina.ant.RolesTask"/&gt;
   &lt;taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/&gt;
   &lt;taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/&gt;
   &lt;taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/&gt;

@@ -68,32 +68,17 @@ import org.apache.tools.ant.Task;
 
 
 /**
- * Ant task that implements the <code>/resources</code> command, supported by
- * the Tomcat manager application.
+ * Ant task that implements the <code>/roles</code> command, supported by the
+ * Tomcat manager application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  * @since 4.1
  */
-public class ResourcesTask extends AbstractCatalinaTask {
+public class RolesTask extends AbstractCatalinaTask {
 
 
     // ------------------------------------------------------------- Properties
-
-
-    /**
-     * The fully qualified class name of the resource type being requested
-     * (if any).
-     */
-    protected String type = null;
-
-    public String getType() {
-        return (this.type);
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -107,11 +92,7 @@ public class ResourcesTask extends AbstractCatalinaTask {
     public void execute() throws BuildException {
 
         super.execute();
-        if (type != null) {
-            execute("/resources?type=" + type);
-        } else {
-            execute("/resources");
-        }
+        execute("/roles");
 
     }
 
