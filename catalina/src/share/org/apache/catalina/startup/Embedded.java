@@ -95,6 +95,8 @@ import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 
 /**
@@ -155,7 +157,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public class Embedded implements Lifecycle {
-
+    private static Log log = LogFactory.getLog(Embedded.class);
 
     // ----------------------------------------------------------- Constructors
 
@@ -264,6 +266,10 @@ public class Embedded implements Lifecycle {
      */
     protected boolean started = false;
 
+    /**
+     * Use await.
+     */
+    protected boolean await = false;
 
     /**
      * The property change support for this component.
@@ -393,6 +399,24 @@ public class Embedded implements Lifecycle {
 
     }
 
+    public void setAwait(boolean b) {
+        await = b;
+    }
+
+    public boolean isAwait() {
+        return await;
+    }
+
+    public void setCatalinaHome( String s ) {
+        System.out.println("Setting home "+ s);
+        System.setProperty( "catalina.home", s);
+    }
+
+    public void setCatalinaBase( String s ) {
+        System.setProperty( "catalina.base", s);
+    }
+
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -407,8 +431,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void addConnector(Connector connector) {
 
-        if (debug >= 1) {
-            logger.log("Adding connector (" + connector.getInfo() + ")");
+        if( log.isDebugEnabled() ) {
+            log.debug("Adding connector (" + connector.getInfo() + ")");
         }
 
         // Make sure we have a Container to send requests to
@@ -434,7 +458,7 @@ public class Embedded implements Lifecycle {
                     ((Lifecycle) connector).start();
                 }
             } catch (LifecycleException e) {
-                logger.log("Connector.start", e);
+                log.error("Connector.start", e);
             }
         }
 
@@ -448,8 +472,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void addEngine(Engine engine) {
 
-        if (debug >= 1)
-            logger.log("Adding engine (" + engine.getInfo() + ")");
+        if( log.isDebugEnabled() )
+            log.debug("Adding engine (" + engine.getInfo() + ")");
 
         // Add this Engine to our set of defined Engines
         Engine results[] = new Engine[engines.length + 1];
@@ -463,7 +487,7 @@ public class Embedded implements Lifecycle {
             try {
                 ((Lifecycle) engine).start();
             } catch (LifecycleException e) {
-                logger.log("Engine.start", e);
+                log.error("Engine.start", e);
             }
         }
 
@@ -494,8 +518,8 @@ public class Embedded implements Lifecycle {
     public Connector createConnector(InetAddress address, int port,
                                      boolean secure) {
 
-        if (debug >= 1)
-            logger.log("Creating connector for address='" +
+        if( log.isDebugEnabled() )
+            log.debug("Creating connector for address='" +
                        ((address == null) ? "ALL" : address.getHostAddress()) +
                        "' port='" + port + "' secure='" + secure + "'");
 
@@ -543,12 +567,12 @@ public class Embedded implements Lifecycle {
                         serverSocketFactoryClass.newInstance();
                     connector.setFactory(factory);
                 } catch (Exception e) {
-                    logger.log("Couldn't load SSL server socket factory.");
+                    log.error("Couldn't load SSL server socket factory.");
                 }
             }
 
         } catch (Exception e) {
-            logger.log("Couldn't create connector.");
+            log.error("Couldn't create connector.");
         } 
 
         return (connector);
@@ -581,8 +605,8 @@ public class Embedded implements Lifecycle {
      */
     public Context createContext(String path, String docBase) {
 
-        if (debug >= 1)
-            logger.log("Creating context '" + path + "' with docBase '" +
+        if( log.isDebugEnabled() )
+            log.debug("Creating context '" + path + "' with docBase '" +
                        docBase + "'");
 
         StandardContext context = new StandardContext();
@@ -607,8 +631,8 @@ public class Embedded implements Lifecycle {
      */
     public Engine createEngine() {
 
-        if (debug >= 1)
-            logger.log("Creating engine");
+        if( log.isDebugEnabled() )
+            log.debug("Creating engine");
 
         StandardEngine engine = new StandardEngine();
 
@@ -650,8 +674,8 @@ public class Embedded implements Lifecycle {
      */
     public Host createHost(String name, String appBase) {
 
-        if (debug >= 1)
-            logger.log("Creating host '" + name + "' with appBase '" +
+        if( log.isDebugEnabled() )
+            log.debug("Creating host '" + name + "' with appBase '" +
                        appBase + "'");
 
         StandardHost host = new StandardHost();
@@ -674,8 +698,8 @@ public class Embedded implements Lifecycle {
      */
     public Loader createLoader(ClassLoader parent) {
 
-        if (debug >= 1)
-            logger.log("Creating Loader with parent class loader '" +
+        if( log.isDebugEnabled() )
+            log.debug("Creating Loader with parent class loader '" +
                        parent + "'");
 
         WebappLoader loader = new WebappLoader(parent);
@@ -703,8 +727,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeConnector(Connector connector) {
 
-        if (debug >= 1) {
-            logger.log("Removing connector (" + connector.getInfo() + ")");
+        if( log.isDebugEnabled() ) {
+            log.debug("Removing connector (" + connector.getInfo() + ")");
         }
 
         // Is the specified Connector actually defined?
@@ -720,18 +744,18 @@ public class Embedded implements Lifecycle {
 
         // Stop this Connector if necessary
         if (connector instanceof Lifecycle) {
-            if (debug >= 1)
-                logger.log(" Stopping this Connector");
+            if( log.isDebugEnabled() )
+                log.debug(" Stopping this Connector");
             try {
                 ((Lifecycle) connector).stop();
             } catch (LifecycleException e) {
-                logger.log("Connector.stop", e);
+                log.error("Connector.stop", e);
             }
         }
 
         // Remove this Connector from our set of defined Connectors
-        if (debug >= 1)
-            logger.log(" Removing this Connector");
+        if( log.isDebugEnabled() )
+            log.debug(" Removing this Connector");
         int k = 0;
         Connector results[] = new Connector[connectors.length - 1];
         for (int i = 0; i < connectors.length; i++) {
@@ -752,8 +776,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeContext(Context context) {
 
-        if (debug >= 1)
-            logger.log("Removing context[" + context.getPath() + "]");
+        if( log.isDebugEnabled() )
+            log.debug("Removing context[" + context.getPath() + "]");
 
         // Is this Context actually among those that are defined?
         boolean found = false;
@@ -777,8 +801,8 @@ public class Embedded implements Lifecycle {
             return;
 
         // Remove this Context from the associated Host
-        if (debug >= 1)
-            logger.log(" Removing this Context");
+        if( log.isDebugEnabled() )
+            log.debug(" Removing this Context");
         context.getParent().removeChild(context);
 
     }
@@ -793,8 +817,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeEngine(Engine engine) {
 
-        if (debug >= 1)
-            logger.log("Removing engine (" + engine.getInfo() + ")");
+        if( log.isDebugEnabled() )
+            log.debug("Removing engine (" + engine.getInfo() + ")");
 
         // Is the specified Engine actually defined?
         int j = -1;
@@ -808,8 +832,8 @@ public class Embedded implements Lifecycle {
             return;
 
         // Remove any Connector that is using this Engine
-        if (debug >= 1)
-            logger.log(" Removing related Containers");
+        if( log.isDebugEnabled() )
+            log.debug(" Removing related Containers");
         while (true) {
             int n = -1;
             for (int i = 0; i < connectors.length; i++) {
@@ -825,18 +849,18 @@ public class Embedded implements Lifecycle {
 
         // Stop this Engine if necessary
         if (engine instanceof Lifecycle) {
-            if (debug >= 1)
-                logger.log(" Stopping this Engine");
+            if( log.isDebugEnabled() )
+                log.debug(" Stopping this Engine");
             try {
                 ((Lifecycle) engine).stop();
             } catch (LifecycleException e) {
-                logger.log("Engine.stop", e);
+                log.error("Engine.stop", e);
             }
         }
 
         // Remove this Engine from our set of defined Engines
-        if (debug >= 1)
-            logger.log(" Removing this Engine");
+        if( log.isDebugEnabled() )
+            log.debug(" Removing this Engine");
         int k = 0;
         Engine results[] = new Engine[engines.length - 1];
         for (int i = 0; i < engines.length; i++) {
@@ -857,8 +881,8 @@ public class Embedded implements Lifecycle {
      */
     public synchronized void removeHost(Host host) {
 
-        if (debug >= 1)
-            logger.log("Removing host[" + host.getName() + "]");
+        if( log.isDebugEnabled() )
+            log.debug("Removing host[" + host.getName() + "]");
 
         // Is this Host actually among those that are defined?
         boolean found = false;
@@ -878,8 +902,8 @@ public class Embedded implements Lifecycle {
             return;
 
         // Remove this Host from the associated Engine
-        if (debug >= 1)
-            logger.log(" Removing this Host");
+        if( log.isDebugEnabled() )
+            log.debug(" Removing this Host");
         host.getParent().removeChild(host);
 
     }
@@ -946,24 +970,11 @@ public class Embedded implements Lifecycle {
      */
     public void start() throws LifecycleException {
 
-        if (debug >= 1)
-            logger.log("Starting embedded server");
+        if( log.isDebugEnabled() )
+            log.debug("Starting embedded server");
 
         // Validate the setup of our required system properties
-        if (System.getProperty("catalina.home") == null) {
-            // Backwards compatibility patch for J2EE RI 1.3
-            String j2eeHome = System.getProperty("com.sun.enterprise.home");
-            if (j2eeHome != null)
-                System.setProperty
-                    ("catalina.home",
-                     System.getProperty("com.sun.enterprise.home"));
-            else
-                throw new LifecycleException
-                    ("Must set 'catalina.home' system property");
-        }
-        if (System.getProperty("catalina.base") == null)
-            System.setProperty("catalina.base",
-                               System.getProperty("catalina.home"));
+        initDirs();
 
         // Validate and update our current component state
         if (started)
@@ -1014,8 +1025,8 @@ public class Embedded implements Lifecycle {
      */
     public void stop() throws LifecycleException {
 
-        if (debug >= 1)
-            logger.log("Stopping embedded server");
+        if( log.isDebugEnabled() )
+            log.debug("Stopping embedded server");
 
         // Validate and update our current component state
         if (!started)
@@ -1040,6 +1051,72 @@ public class Embedded implements Lifecycle {
 
 
     // ------------------------------------------------------ Protected Methods
+
+    /** Initialize naming - this should only enable java:env and root naming.
+     * If tomcat is embeded in an application that already defines those -
+     * it shouldn't do it.
+     *
+     * XXX The 2 should be separated, you may want to enable java: but not
+     * the initial context and the reverse
+     * XXX Can we "guess" - i.e. lookup java: and if something is returned assume
+     * false ?
+     * XXX We have a major problem with the current setting for java: url
+     */
+    protected void initNaming() {
+        // Setting additional variables
+        if (!useNaming) {
+            System.setProperty("catalina.useNaming", "false");
+        } else {
+            System.setProperty("catalina.useNaming", "true");
+            String value = "org.apache.naming";
+            String oldValue =
+                System.getProperty(javax.naming.Context.URL_PKG_PREFIXES);
+            if (oldValue != null) {
+                value = value + ":" + oldValue;
+            }
+            System.setProperty(javax.naming.Context.URL_PKG_PREFIXES, value);
+            value = System.getProperty
+                (javax.naming.Context.INITIAL_CONTEXT_FACTORY);
+            if (value == null) {
+                System.setProperty
+                    (javax.naming.Context.INITIAL_CONTEXT_FACTORY,
+                     "org.apache.naming.java.javaURLContextFactory");
+            }
+        }
+    }
+
+    protected void initDirs() {
+        String catalinaHome=System.getProperty("catalina.home");
+        if ( catalinaHome== null) {
+            // Backwards compatibility patch for J2EE RI 1.3
+            String j2eeHome = System.getProperty("com.sun.enterprise.home");
+            if (j2eeHome != null)
+                catalinaHome=System.getProperty("com.sun.enterprise.home");
+            else if( System.getProperty("catalina.base") !=null ) {
+                catalinaHome=System.getProperty("catalina.base" );
+            } else {
+                // Original embeded behavior
+//                throw new LifecycleException
+//                    ("Must set 'catalina.home' system property");
+                // Catalina behavior
+//                System.setProperty("catalina.home",
+//                        System.getProperty("user.dir"));
+                // use IntrospectionUtils and guess the dir
+                catalinaHome=IntrospectionUtils.guessInstall("catalina.home",
+                                               "catalina.base","catalina.jar");
+                if( catalinaHome==null)
+                    catalinaHome=IntrospectionUtils.guessInstall("tomcat.install",
+                                               "catalina.home","tomcat.jar");
+
+            }
+        }
+        if( catalinaHome!=null )
+            System.setProperty( "catalin.home", catalinaHome);
+
+        if (System.getProperty("catalina.base") == null)
+            System.setProperty("catalina.base",
+                    System.getProperty("catalina.home"));
+    }
 
 
     // -------------------------------------------------------- Private Methods
