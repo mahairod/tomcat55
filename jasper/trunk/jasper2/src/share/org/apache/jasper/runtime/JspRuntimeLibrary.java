@@ -1020,7 +1020,7 @@ public class JspRuntimeLibrary {
 	}
 
 	if (enc == null) {
-	    enc = "UTF-8";	// Is this right?
+	    enc = "ISO-8859-1";	// The default request encoding 
 	}
 
 	StringBuffer out = new StringBuffer(s.length());
