@@ -39,6 +39,7 @@
     <package>org.apache.catalina</package>
 
     <ant target="dist">
+      <property name="ant.home" reference="home" project="jakarta-ant"/>
       <property name="servlet.home"
         reference="home" project="jakarta-servletapi-4"/>
       <property name="jsse.home" reference="home" project="jsse"/>
@@ -54,6 +55,8 @@
       <property name="mail.home" reference="home" project="javamail"/>
       <property name="tomcat-coyote.home" reference="home" 
         project="jakarta-tomcat-coyote"/>
+      <property name="jasper.home" reference="home" 
+        project="jakarta-tomcat-jasper_tc4"/>
       <depend property="mail.jar" project="javamail"/>
       <property name="activation.home" reference="home" project="jaf"/>
       <depend property="activation.jar" project="jaf"/>
