@@ -1048,9 +1048,16 @@ public class HttpRequestBase
 	    }
 	}
 
-	// Create a new session if requested
+	// Create a new session if requested and the response is not committed
 	if (!create)
 	    return (null);
+        if ((context != null) && (response != null) &&
+            context.getCookies() &&
+            response.getResponse().isCommitted()) {
+            throw new IllegalStateException
+              (sm.getString("httpRequestBase.createCommitted"));
+        }
+
 	session = manager.createSession();
 	if (session != null)
 	    return (session.getSession());
