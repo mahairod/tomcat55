@@ -715,7 +715,7 @@ public class StandardSession
         HttpSessionEvent event = null;
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttributeInternal(keys[i]);
+            Object attribute = attributes.get(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(getSession());
@@ -742,7 +742,7 @@ public class StandardSession
         HttpSessionEvent event = null;
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttributeInternal(keys[i]);
+            Object attribute = attributes.get(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(getSession());
@@ -1212,20 +1212,27 @@ public class StandardSession
 
         // Call the valueBound() method if necessary
         if (value instanceof HttpSessionBindingListener) {
-            event = new HttpSessionBindingEvent(getSession(), name, value);
-            try {
-                ((HttpSessionBindingListener) value).valueBound(event);
-            } catch (Throwable t){
-                manager.getContainer().getLogger().error
+            // Don't call any notification if replacing with the same value
+            Object oldValue = attributes.get(name);
+            if (value != oldValue) {
+                event = new HttpSessionBindingEvent(getSession(), name, value);
+                try {
+                    ((HttpSessionBindingListener) value).valueBound(event);
+                } catch (Throwable t){
+                    manager.getContainer().getLogger().error
                     (sm.getString("standardSession.bindingEvent"), t); 
+                }
             }
         }
 
         // Replace or add this attribute
-        Object unbound = attributes.put(name, value);
+        Object unbound = null;
+        synchronized (attributes) {
+            unbound = attributes.put(name, value);
+        }
 
         // Call the valueUnbound() method if necessary
-        if ((unbound != null) &&
+        if ((unbound != null) && (unbound != value) &&
             (unbound instanceof HttpSessionBindingListener)) {
             try {
                 ((HttpSessionBindingListener) unbound).valueUnbound
@@ -1530,16 +1537,6 @@ public class StandardSession
 
 
     /**
-     * Return the value of an attribute without a check for validity.
-     */
-    protected Object getAttributeInternal(String name) {
-
-        return (attributes.get(name));
-
-    }
-
-
-    /**
      * Remove the object bound with the specified name from this session.  If
      * the session does not have an object bound with this name, this method
      * does nothing.
@@ -1555,7 +1552,10 @@ public class StandardSession
     protected void removeAttributeInternal(String name, boolean notify) {
 
         // Remove this attribute from our collection
-        Object value = attributes.remove(name);
+        Object value = null;
+        synchronized (attributes) {
+            value = attributes.remove(name);
+        }
 
         // Do we need to do valueUnbound() and attributeRemoved() notification?
         if (!notify || (value == null)) {
