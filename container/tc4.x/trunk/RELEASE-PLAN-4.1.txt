@@ -75,10 +75,7 @@ Jasper
 ------
 
 4964 popBody() is called before doEndTag() is called in a BodyTag
-5199 <jsp:param> in <jsp:include> section not correct
-5666 Implicit object _value on jsp pages
 5793 variable element in tld with TagExtraInfo class
-6908 JavaCompiler interface setOutputDir always called with null parameter
 7059 Jasper compiler holds pointers to jars in WEB-INF/lib: cannot delete
 7989 <jsp:setProperty> and <jsp:getProperty> ignore information from 
      <jsp:useBean>
@@ -90,6 +87,7 @@ Catalina
 --------
 
 4350 SSLAuthenticator did not associate SSO session
+5199 <jsp:param> in <jsp:include> section not correct
 5352 JDBCRealm does not work with CLIENT-CERT auth-method
 5551 MANAGER: add system information query
 5603 ServletContext.getResourcePaths() returns extra slashes
