@@ -717,15 +717,13 @@ public class JspParseEventListener extends BaseJspListener {
 
 	if (directive.equals("include")) {
 	    String file = (String) attrs.get("file");
-	    String encoding = (String) attrs.get("encoding");
-
 	    if (file == null)
 		throw new CompileException(start,
 					   Constants.getString("jsp.error.include.missing.file"));
 
             // jsp.error.include.bad.file needs taking care of here??
             try {
-                reader.pushFile(file, encoding);
+                reader.pushFile(file);
             } catch (FileNotFoundException fnfe) {
                 throw new CompileException(start,
 					   Constants.getString("jsp.error.include.bad.file"));
