@@ -72,6 +72,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -88,6 +90,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.ResourceSet;
 import org.apache.catalina.util.StringManager;
 
 
@@ -350,6 +353,57 @@ public final class ApplicationContext
 
 
     /**
+     * Return a <code>RequestDispatcher</code> instance that acts as a
+     * wrapper for the resource at the given path.  The path must begin
+     * with a "/" and is interpreted as relative to the current context root.
+     *
+     * @param path The path to the desired resource.
+     */
+    public RequestDispatcher getRequestDispatcher(String path) {
+
+        // Validate the path argument
+        if (path == null)
+            return (null);
+        if (!path.startsWith("/"))
+            throw new IllegalArgumentException
+              (sm.getString("applicationContext.requestDispatcher.iae", path));
+
+        // Construct a "fake" request to be mapped by our Context
+        String contextPath = context.getPath();
+        if (contextPath == null)
+            contextPath = "";
+        String relativeURI = path;
+        String queryString = null;
+        int question = path.indexOf("?");
+        if (question >= 0) {
+            relativeURI = path.substring(0, question);
+            queryString = path.substring(question + 1);
+        }
+        HttpRequestBase request = new HttpRequestBase();
+        request.setContext(context);
+        request.setContextPath(context.getPath());
+        request.setRequestURI(contextPath + relativeURI);
+        request.setQueryString(queryString);
+        Wrapper wrapper = (Wrapper) context.map(request, true);
+        if (wrapper == null)
+            return (null);
+
+        // Construct a RequestDispatcher to process this request
+        HttpServletRequest hrequest =
+            (HttpServletRequest) request.getRequest();
+        ApplicationDispatcher dispatcher =
+          new ApplicationDispatcher(wrapper,
+                                    hrequest.getServletPath(),
+                                    hrequest.getPathInfo(),
+                                    hrequest.getQueryString(),
+                                    null);
+        return ((RequestDispatcher) dispatcher);
+
+    }
+
+
+
+    /**
      * Return the URL to the resource that is mapped to a specified path.
      * The path must begin with a "/" and is interpreted as relative to the
      * current context root.
@@ -368,57 +422,6 @@ public final class ApplicationContext
 	    return (resources.getResource(path));
 
     }
-
-
-    /**
-     * Return a <code>RequestDispatcher</code> instance that acts as a
-     * wrapper for the resource at the given path.  The path must begin
-     * with a "/" and is interpreted as relative to the current context root.
-     *
-     * @param path The path to the desired resource.
-     */
-    public RequestDispatcher getRequestDispatcher(String path) {
-
-	// Validate the path argument
-	if (path == null)
-	    return (null);
-	if (!path.startsWith("/"))
-	    throw new IllegalArgumentException
-	      (sm.getString("applicationContext.requestDispatcher.iae", path));
-
-	// Construct a "fake" request to be mapped by our Context
-	String contextPath = context.getPath();
-	if (contextPath == null)
-	    contextPath = "";
-	String relativeURI = path;
-	String queryString = null;
-	int question = path.indexOf("?");
-	if (question >= 0) {
-	    relativeURI = path.substring(0, question);
-	    queryString = path.substring(question + 1);
-	}
-	HttpRequestBase request = new HttpRequestBase();
-	request.setContext(context);
-	request.setContextPath(context.getPath());
-	request.setRequestURI(contextPath + relativeURI);
-	request.setQueryString(queryString);
-	Wrapper wrapper = (Wrapper) context.map(request, true);
-	if (wrapper == null)
-	    return (null);
-
-	// Construct a RequestDispatcher to process this request
-	HttpServletRequest hrequest =
-	    (HttpServletRequest) request.getRequest();
-	ApplicationDispatcher dispatcher =
-	  new ApplicationDispatcher(wrapper,
-	  			    hrequest.getServletPath(),
-	  			    hrequest.getPathInfo(),
-	  			    hrequest.getQueryString(),
-                                    null);
-	return ((RequestDispatcher) dispatcher);
-
-    }
-
 
 
     /**
@@ -441,6 +444,30 @@ public final class ApplicationContext
 
 
     /**
+     * Return a Set containing the resource paths of all resources defined
+     * within this web application.  Each path will be a String starting with
+     * a "/" character.  The returned set is immutable.
+     */
+    public Set getResourcePaths() {
+
+        ResourceSet set = new ResourceSet();
+        Resources resources = context.getResources();
+        if (resources == null) {
+            set.setLocked(true);
+            return (set);
+        }
+        String paths[] = resources.getResourcePaths();
+        if (paths == null)
+            paths = new String[0];
+        for (int i = 0; i < paths.length; i++)
+            set.add(paths[i]);
+        set.setLocked(true);
+        return (set);
+
+    }
+
+
+    /**
      * Return the name and version of the servlet container.
      */
     public String getServerInfo() {
@@ -456,6 +483,16 @@ public final class ApplicationContext
     public Servlet getServlet(String name) {
 
 	return (null);
+
+    }
+
+
+    /**
+     * Return the display name of this web application.
+     */
+    public String getServletContextName() {
+
+        return (context.getDisplayName());
 
     }
 
