@@ -1254,6 +1254,7 @@ public class StandardWrapper
             if( System.getSecurityManager() != null) {
                 SecurityUtil.doAsPrivilege("destroy",
                                            instance);
+                SecurityUtil.remove(instance);                           
             } else {
                 instance.destroy();
             }
@@ -1297,6 +1298,7 @@ public class StandardWrapper
                     if( System.getSecurityManager() != null) {
                         SecurityUtil.doAsPrivilege("destroy",
                                                    ((Servlet) instancePool.pop()));
+                        SecurityUtil.remove(instance);                           
                     } else {
                         ((Servlet) instancePool.pop()).destroy();
                     }
