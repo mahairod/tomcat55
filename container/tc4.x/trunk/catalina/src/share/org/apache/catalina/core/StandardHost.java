@@ -91,7 +91,9 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.Valve;
 import org.apache.catalina.core.DefaultContext;
+import org.apache.catalina.valves.ErrorDispatcherValve;
 
 
 /**
@@ -100,6 +102,7 @@ import org.apache.catalina.core.DefaultContext;
  * requests directed to a particular web application.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -151,6 +154,14 @@ public class StandardHost
      */
     private String contextClass =
         "org.apache.catalina.core.StandardContext";
+
+
+    /**
+     * The Java class name of the default error reporter implementation class 
+     * for deployed web applications.
+     */
+    private String errorReportValveClass =
+        "org.apache.catalina.valves.ErrorReportValve";
 
 
     /**
@@ -299,6 +310,34 @@ public class StandardHost
         this.mapperClass = mapperClass;
         support.firePropertyChange("mapperClass",
                                    oldMapperClass, this.mapperClass);
+
+    }
+
+
+    /**
+     * Return the Java class name of the error report valve class
+     * for new web applications.
+     */
+    public String getErrorReportValveClass() {
+
+        return (this.errorReportValveClass);
+
+    }
+
+
+    /**
+     * Set the Java class name of the error report valve class
+     * for new web applications.
+     *
+     * @param errorReportValveClass The new error report valve class
+     */
+    public void setErrorReportValveClass(String errorReportValveClass) {
+
+        String oldErrorReportValveClassClass = this.errorReportValveClass;
+        this.errorReportValveClass = errorReportValveClass;
+        support.firePropertyChange("errorReportValveClass",
+                                   oldErrorReportValveClassClass, 
+                                   this.errorReportValveClass);
 
     }
 
@@ -541,6 +580,36 @@ public class StandardHost
         sb.append(getName());
         sb.append("]");
         return (sb.toString());
+
+    }
+
+
+    /**
+     * Start this host.
+     *
+     * @exception IllegalStateException if this component has already been
+     *  started
+     * @exception LifecycleException if this component detects a fatal error
+     *  that prevents it from being started
+     */
+    public synchronized void start() throws LifecycleException {
+
+        // Set error report valve
+        if (errorReportValveClass != null) {
+            try {
+                Valve valve = (Valve) Class.forName(errorReportValveClass)
+                    .newInstance();
+                addValve(valve);
+            } catch (Throwable t) {
+                // FIXME
+                t.printStackTrace();
+            }
+        }
+
+        // Set dispatcher valve
+        addValve(new ErrorDispatcherValve());
+
+        super.start();
 
     }
 
