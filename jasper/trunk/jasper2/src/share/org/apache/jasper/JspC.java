@@ -379,15 +379,6 @@ public class JspC implements Options {
      * Resolve relative path, and create output directories.
      */
     void setupContext(JspCompilationContext clctxt) {
-        // set up a scratch/output dir if none is provided
-        if (scratchDir == null) {
-            String temp = System.getProperty("java.io.tempdir");
-            if (temp == null) {
-                temp = "";
-            }
-            scratchDir = new File(new File(temp).getAbsolutePath());
-        }
-
         String outputDir = scratchDir.getAbsolutePath();
 
         if (dirset) {
@@ -526,6 +517,15 @@ public class JspC implements Options {
         throws JasperException
     {
         try {
+            // set up a scratch/output dir if none is provided
+            if (scratchDir == null) {
+                String temp = System.getProperty("java.io.tmpdir");
+                if (temp == null) {
+                    temp = "";
+                }
+                scratchDir = new File(new File(temp).getAbsolutePath());
+            }
+
             String jspUri=file.replace('\\','/');
             String baseDir = scratchDir.getCanonicalPath();
             this.setOutputDir( baseDir + jspUri.substring( 0, jspUri.lastIndexOf( '/' ) ) );
