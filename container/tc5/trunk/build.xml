@@ -1154,6 +1154,7 @@
     <copy todir="${tomcat.dist}/server/webapps">
       <fileset dir="${tomcat.build}/server/webapps">
         <exclude name="admin/**/*.jsp" />
+        <exclude name="admin/**/*.jspf" />
         <exclude name="admin/WEB-INF/classes/**" />
         <exclude name="admin/WEB-INF/src/**" />
         <exclude name="manager/WEB-INF/classes/**" />
