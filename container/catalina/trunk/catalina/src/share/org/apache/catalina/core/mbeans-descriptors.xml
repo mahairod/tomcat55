@@ -772,6 +772,11 @@
                type="long"
                writeable="false" />
 
+    <attribute name="minTime"
+               description="Minimum processing time of a request"
+               type="long"
+               writeable="false" />
+
     <attribute name="requestCount"
                description="Number of requests processed by this wrapper"
                type="int"

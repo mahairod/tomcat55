@@ -1408,6 +1408,14 @@ public class StandardWrapper
         swValve.setMaxTime(maxTime);
     }
 
+    public long getMinTime() {
+        return swValve.getMinTime();
+    }
+
+    public void setMinTime(long minTime) {
+        swValve.setMinTime(minTime);
+    }
+
     public int getRequestCount() {
         return swValve.getRequestCount();
     }
