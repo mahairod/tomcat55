@@ -447,7 +447,7 @@ public final class ContextConfig
                        mapper.methodSetter("setDisplayName", 0));
 
 	mapper.addRule("web-app/distributable",
-		       mapper.methodSetter("setDistributable", 0));
+                       new SetDistributableAction());
 
 	mapper.addRule("web-app/ejb-ref",
 		 mapper.objectCreate("org.apache.catalina.deploy.ContextEjb"));
@@ -1112,6 +1112,29 @@ final class SetAuthConstraint extends XmlAction {
         securityConstraint.setAuthConstraint(true);
 	if (ctx.getDebug() > 0)
 	    ctx.log("Calling SecurityConstraint.setAuthConstraint(true)");
+    }
+
+}
+
+
+/**
+ * Class that calls <code>setDistributable(true)</code> for the top object
+ * on the stack, which must be a <code>org.apache.catalina.Context</code>.
+ */
+
+final class SetDistributableAction extends XmlAction {
+
+    public SetDistributableAction() {
+        super();
+    }
+
+    public void start(SaxContext ctx) throws Exception {
+        Stack stack = ctx.getObjectStack();
+        Context context = (Context) stack.peek();
+        context.setDistributable(true);
+        if (ctx.getDebug() > 0)
+            ctx.log(context.getClass().getName() +
+                    ".setDistributable( true)");
     }
 
 }
