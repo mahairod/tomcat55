@@ -93,6 +93,8 @@ file:</p>
     Configure the Java class name of the resource factory implementation to be
     used, as well as JavaBeans properties used to configure that resource
     factory.</li>
+<li><a href="config/context.html#Resource Links">&lt;ResourceLink&gt;</a> -
+    Add a link to a resource defined in the global JNDI context.</li>
 </ul>
 
 <p>Any number of these elements may be nested inside a
@@ -109,6 +111,12 @@ well, overriding corresponding values from <code>conf/server.xml</code>
 <strong>only</strong> if allowed by the corresponding
 <code>&lt;Environment&gt;</code> element (by setting the
 <code>override</code> attribute to "true").</p>
+
+<p>Global resources can be defined in the server-wide JNDI context, by adding
+the resource elements described above to the 
+<a href="config/globalresources.html">&lt;GlobalNamingResources&gt;</a> 
+child element of the <a href="config/server.html">&lt;Server&gt;</a> 
+element.</p>
 
 </section>
 
