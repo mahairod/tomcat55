@@ -31,6 +31,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.util.StringManager;
+
 
 /**
  * Facade class that wraps a Coyote request object.  
@@ -42,9 +44,7 @@ import javax.servlet.http.HttpSession;
  * @version $Revision$ $Date$
  */
 
-
-public class RequestFacade 
-    implements HttpServletRequest {
+public class RequestFacade implements HttpServletRequest {
         
         
     // ----------------------------------------------------------- DoPrivileged
@@ -218,6 +218,13 @@ public class RequestFacade
     protected Request request = null;
 
 
+    /**
+     * The string manager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -233,11 +240,23 @@ public class RequestFacade
 
 
     public Object getAttribute(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getAttribute(name);
     }
 
 
     public Enumeration getAttributeNames() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Enumeration)AccessController.doPrivileged(
                 new GetAttributePrivilegedAction());        
@@ -248,6 +267,12 @@ public class RequestFacade
 
 
     public String getCharacterEncoding() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (String)AccessController.doPrivileged(
                 new GetCharacterEncodingPrivilegedAction());
@@ -258,28 +283,57 @@ public class RequestFacade
 
 
     public void setCharacterEncoding(String env)
-        throws java.io.UnsupportedEncodingException {
+            throws java.io.UnsupportedEncodingException {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         request.setCharacterEncoding(env);
     }
 
 
     public int getContentLength() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getContentLength();
     }
 
 
     public String getContentType() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getContentType();
     }
 
 
-    public ServletInputStream getInputStream()
-        throws IOException {
+    public ServletInputStream getInputStream() throws IOException {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getInputStream();
     }
 
 
     public String getParameter(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (String)AccessController.doPrivileged(
                 new GetParameterPrivilegedAction(name));
@@ -290,6 +344,12 @@ public class RequestFacade
 
 
     public Enumeration getParameterNames() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Enumeration)AccessController.doPrivileged(
                 new GetParameterNamesPrivilegedAction());
@@ -300,6 +360,11 @@ public class RequestFacade
 
 
     public String[] getParameterValues(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
 
         String[] ret = null;
 
@@ -322,6 +387,12 @@ public class RequestFacade
 
 
     public Map getParameterMap() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Map)AccessController.doPrivileged(
                 new GetParameterMapPrivilegedAction());        
@@ -332,52 +403,111 @@ public class RequestFacade
 
 
     public String getProtocol() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getProtocol();
     }
 
 
     public String getScheme() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getScheme();
     }
 
 
     public String getServerName() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getServerName();
     }
 
 
     public int getServerPort() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getServerPort();
     }
 
 
-    public BufferedReader getReader()
-        throws IOException {
+    public BufferedReader getReader() throws IOException {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getReader();
     }
 
 
     public String getRemoteAddr() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRemoteAddr();
     }
 
 
     public String getRemoteHost() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRemoteHost();
     }
 
 
     public void setAttribute(String name, Object o) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         request.setAttribute(name, o);
     }
 
 
     public void removeAttribute(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         request.removeAttribute(name);
     }
 
 
     public Locale getLocale() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Locale)AccessController.doPrivileged(
                 new GetLocalePrivilegedAction());
@@ -388,6 +518,12 @@ public class RequestFacade
 
 
     public Enumeration getLocales() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Enumeration)AccessController.doPrivileged(
                 new GetLocalesPrivilegedAction());
@@ -398,11 +534,23 @@ public class RequestFacade
 
 
     public boolean isSecure() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isSecure();
     }
 
 
     public RequestDispatcher getRequestDispatcher(String path) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (RequestDispatcher)AccessController.doPrivileged(
                 new GetRequestDispatcherPrivilegedAction(path));
@@ -413,16 +561,33 @@ public class RequestFacade
 
 
     public String getRealPath(String path) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRealPath(path);
     }
 
 
     public String getAuthType() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getAuthType();
     }
 
 
     public Cookie[] getCookies() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
 
         Cookie[] ret = null;
 
@@ -445,16 +610,34 @@ public class RequestFacade
 
 
     public long getDateHeader(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getDateHeader(name);
     }
 
 
     public String getHeader(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getHeader(name);
     }
 
 
     public Enumeration getHeaders(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Enumeration)AccessController.doPrivileged(
                 new GetHeadersPrivilegedAction(name));
@@ -465,6 +648,12 @@ public class RequestFacade
 
 
     public Enumeration getHeaderNames() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         if (System.getSecurityManager() != null){
             return (Enumeration)AccessController.doPrivileged(
                 new GetHeaderNamesPrivilegedAction());
@@ -475,71 +664,154 @@ public class RequestFacade
 
 
     public int getIntHeader(String name) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getIntHeader(name);
     }
 
 
     public String getMethod() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getMethod();
     }
 
 
     public String getPathInfo() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getPathInfo();
     }
 
 
     public String getPathTranslated() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getPathTranslated();
     }
 
 
     public String getContextPath() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getContextPath();
     }
 
 
     public String getQueryString() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getQueryString();
     }
 
 
     public String getRemoteUser() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRemoteUser();
     }
 
 
     public boolean isUserInRole(String role) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isUserInRole(role);
     }
 
 
     public java.security.Principal getUserPrincipal() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getUserPrincipal();
     }
 
 
     public String getRequestedSessionId() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRequestedSessionId();
     }
 
 
     public String getRequestURI() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRequestURI();
     }
 
 
     public StringBuffer getRequestURL() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRequestURL();
     }
 
 
     public String getServletPath() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getServletPath();
     }
 
 
     public HttpSession getSession(boolean create) {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
 
         if (System.getSecurityManager() != null){
             return (HttpSession)AccessController.
@@ -550,46 +822,100 @@ public class RequestFacade
     }
 
     public HttpSession getSession() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return getSession(true);
     }
 
 
     public boolean isRequestedSessionIdValid() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isRequestedSessionIdValid();
     }
 
 
     public boolean isRequestedSessionIdFromCookie() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isRequestedSessionIdFromCookie();
     }
 
 
     public boolean isRequestedSessionIdFromURL() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isRequestedSessionIdFromURL();
     }
 
 
     public boolean isRequestedSessionIdFromUrl() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.isRequestedSessionIdFromURL();
     }
 
 
     public String getLocalAddr() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getLocalAddr();
     }
 
 
     public String getLocalName() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getLocalName();
     }
 
 
     public int getLocalPort() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getLocalPort();
     }
 
 
     public int getRemotePort() {
+
+        if (request == null) {
+            throw new IllegalStateException(
+                            sm.getString("requestFacade.nullRequest"));
+        }
+
         return request.getRemotePort();
     }
 
