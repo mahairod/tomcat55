@@ -4935,7 +4935,7 @@ public class StandardContext
                 org.apache.catalina.startup.Constants.ApplicationWebXml);
         }
         if (stream == null) {
-            return null;
+            return "";
         }
         BufferedReader br = new BufferedReader(
                                 new InputStreamReader(stream));
@@ -4947,7 +4947,7 @@ public class StandardContext
                 strRead = br.readLine();
             }
         } catch (IOException e) {
-            return null;
+            return "";
         }
 
         return sb.toString(); 
