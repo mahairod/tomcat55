@@ -595,8 +595,6 @@
     <copy file="./RELEASE-NOTES"
         tofile="${tomcat.build}/webapps/tomcat-docs/RELEASE-NOTES.txt"
         filtering="true" />
-    <copy file="./CHANGELOG"
-        tofile="${tomcat.build}/webapps/tomcat-docs/CHANGELOG.txt" />
 
     <!-- Build JARs for webapps classes -->
     <mkdir dir="${tomcat.build}/server/webapps/admin/WEB-INF/lib" />
@@ -1245,9 +1243,6 @@
     <copy file="RELEASE-NOTES" 
          todir="${tomcat.release}/v${version}"
      filtering="true"/>
-    <copy file="CHANGELOG" 
-         todir="${tomcat.release}/v${version}"
-     filtering="true"/>
     <copy file="resources/welcome.main.html" 
         tofile="${tomcat.release}/v${version}/README.html"
      filtering="true"/>
@@ -1284,8 +1279,6 @@
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="RELEASE-NOTES" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="CHANGELOG" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="RUNNING.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="BENCHMARKS.txt" />
@@ -1302,8 +1295,6 @@
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
        includes="RELEASE-NOTES" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-embed" 
-       includes="CHANGELOG" />
     </zip>
   </target>
 
@@ -1317,8 +1308,6 @@
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
        includes="RELEASE-NOTES" />
-      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-deployer" 
-       includes="CHANGELOG" />
     </zip>
   </target>
 
@@ -1368,7 +1357,6 @@
         <include name="LICENSE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
-        <include name="CHANGELOG" />
         <include name="RUNNING.txt" />
         <include name="BENCHMARKS.txt" />
         <exclude name="bin/catalina.sh" />
@@ -1394,7 +1382,6 @@
         <include name="LICENSE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
-        <include name="CHANGELOG" />
       </tarfileset>
       <tarfileset dir="${tomcat.embed}" prefix="${final.name}-embed">
         <include name="**" />
@@ -1412,7 +1399,6 @@
         <include name="LICENSE" />
         <include name="README.txt" />
         <include name="RELEASE-NOTES" />
-        <include name="CHANGELOG" />
       </tarfileset>
       <tarfileset dir="${tomcat.deployer}" prefix="${final.name}-deployer">
         <include name="**" />
