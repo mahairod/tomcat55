@@ -689,7 +689,10 @@ public abstract class RequestBase
      */
     public String getCharacterEncoding() {
 
-	return (this.characterEncoding);
+        if (this.characterEncoding == null)
+            return ("ISO-8859-1");
+        else
+            return (this.characterEncoding);
 
     }
 
@@ -837,11 +840,8 @@ public abstract class RequestBase
 
 	if (reader == null) {
 	    String encoding = getCharacterEncoding();
-	    InputStreamReader isr = null;
-	    if (encoding != null)
-		isr = new InputStreamReader(createInputStream(), encoding);
-	    else
-		isr = new InputStreamReader(createInputStream());
+	    InputStreamReader isr =
+		new InputStreamReader(createInputStream(), encoding);
 	    reader = new BufferedReader(isr);
 	}
 	return (reader);
