@@ -258,6 +258,14 @@ public class Connector
          replacements.put("connectionLinger", "soLinger");
          replacements.put("connectionTimeout", "soTimeout");
          replacements.put("connectionUploadTimeout", "timeout");
+         replacements.put("clientAuth", "clientauth");
+         replacements.put("keystoreFile", "keystore");
+         replacements.put("randomFile", "randomfile");
+         replacements.put("rootFile", "rootfile");
+         replacements.put("keystorePass", "keypass");
+         replacements.put("keystoreType", "keytype");
+         replacements.put("sslProtocol", "protocol");
+         replacements.put("sslProtocols", "protocols");
      }
      
      
@@ -1008,133 +1016,6 @@ public class Connector
                  ("coyoteConnector.protocolHandlerDestroyFailed", e));
         }
 
-    }
-
-    // -------------------- Management methods --------------------
-
-    
-    public String getClientAuth() {
-        String ret = "false";
-
-        String prop = (String) getProperty("clientauth");
-        if (prop != null) {
-            ret = prop;
-        }
-
-        return ret;
-    }
-
-    public void setClientAuth(String clientAuth) {
-        setProperty("clientauth", clientAuth);
-    }
-
-
-    public String getKeystoreFile() {
-        String ret = (String) getProperty("keystore");
-        return ret;
-    }
-
-    public void setKeystoreFile(String keystoreFile) {
-        setProperty("keystore", keystoreFile);
-    }
-
-    /**
-     * Return keystorePass
-     */
-    public String getKeystorePass() {
-        String ret = (String) getProperty("keypass");
-        return ret;
-    }
-
-    /**
-     * Set keystorePass
-     */
-    public void setKeystorePass(String keystorePass) {
-        setProperty("keypass", keystorePass);
-    }
-    
-    /**
-     * Gets the list of SSL cipher suites that are to be enabled
-     *
-     * @return Comma-separated list of SSL cipher suites, or null if all
-     * cipher suites supported by the underlying SSL implementation are being
-     * enabled
-     */
-    public String getCiphers() {
-        String ret = (String) getProperty("ciphers");
-        return ret;
-    }
-
-    /**
-     * Sets the SSL cipher suites that are to be enabled.
-     *
-     * Only those SSL cipher suites that are actually supported by
-     * the underlying SSL implementation will be enabled.
-     *
-     * @param ciphers Comma-separated list of SSL cipher suites
-     */
-    public void setCiphers(String ciphers) {
-        setProperty("ciphers", ciphers);
-    }
-
-    /**
-     * Gets the alias name of the keypair and supporting certificate chain
-     * used by this Connector to authenticate itself to SSL clients.
-     *
-     * @return The alias name of the keypair and supporting certificate chain
-     */
-    public String getKeyAlias() {
-        String ret = (String) getProperty("keyAlias");
-        return ret;
-    }
-
-    /**
-     * Sets the alias name of the keypair and supporting certificate chain
-     * used by this Connector to authenticate itself to SSL clients.
-     *
-     * @param alias The alias name of the keypair and supporting certificate
-     * chain
-     */
-    public void setKeyAlias(String alias) {
-        setProperty("keyAlias", alias);
-    }
-
-    /**
-     * Gets the SSL protocol variant to be used.
-     *
-     * @return SSL protocol variant
-     */
-    public String getSslProtocol() {
-        String ret = (String) getProperty("sslProtocol");
-        return ret;
-    }
-
-    /**
-     * Sets the SSL protocol variant to be used.
-     *
-     * @param sslProtocol SSL protocol variant
-     */
-    public void setSslProtocol(String sslProtocol) {
-        setProperty("sslProtocol", sslProtocol);
-    }
-
-    /**
-     * Gets the SSL protocol variants to be enabled.
-     *
-     * @return Comma-separated list of SSL protocol variants
-     */
-    public String getSslProtocols() {
-        String ret = (String) getProperty("sslProtocols");
-        return ret;
-    }
-
-    /**
-     * Sets the SSL protocol variants to be enabled.
-     *
-     * @param sslProtocols Comma-separated list of SSL protocol variants
-     */
-    public void setSslProtocols(String sslProtocols) {
-        setProperty("sslProtocols", sslProtocols);
     }
 
 
