@@ -236,6 +236,7 @@ public class DirContextURLConnection
      * Return the last modified date.
      */
     public long getLastModified() {
+
         if (!connected) {
             // Try to connect (silently)
             try {
@@ -243,6 +244,10 @@ public class DirContextURLConnection
             } catch (IOException e) {
             }
         }
+
+        if (attributes == null)
+            return 0;
+
         Attribute lastModified = 
             attributes.get(ResourceAttributes.LAST_MODIFIED);
         if (lastModified != null) {
@@ -252,6 +257,7 @@ public class DirContextURLConnection
             } catch (Exception e) {
             }
         }
+
         return 0;
     }
     
@@ -260,6 +266,7 @@ public class DirContextURLConnection
      * Returns the name of the specified header field.
      */
     public String getHeaderField(String name) {
+
         if (!connected) {
             // Try to connect (silently)
             try {
@@ -268,12 +275,16 @@ public class DirContextURLConnection
             }
         }
         
+        if (attributes == null)
+            return (null);
+
         Attribute attribute = attributes.get(name);
         try {
             return attribute.get().toString();
         } catch (Exception e) {
             // Shouldn't happen, unless the attribute has no value
         }
+
         return (null);
         
     }
