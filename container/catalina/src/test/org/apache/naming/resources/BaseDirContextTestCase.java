@@ -139,8 +139,7 @@ public abstract class BaseDirContextTestCase extends TestCase {
      * directory context.
      */
     protected static final String topLevelNames[] =
-    { "images", "jsp", "servlets", "META-INF", "WEB-INF" };
-
+    { "index.jsp", "jakarta-banner.gif", "tomcat.gif", "tomcat-power.gif", "META-INF", "WEB-INF" };
 
     /**
      * The set of names that should be present in the WEB-INF
@@ -247,7 +246,7 @@ public abstract class BaseDirContextTestCase extends TestCase {
             // Look up the WEB-INF entry
             Object webInfEntry = context.lookup("WEB-INF");
             assertNotNull("Found WEB-INF entry", webInfEntry);
-            assert("WEB-INF entry is a DirContext",
+            assertTrue("WEB-INF entry is a DirContext",
                    webInfEntry instanceof DirContext);
             DirContext webInfContext = (DirContext) webInfEntry;
 
@@ -303,7 +302,7 @@ public abstract class BaseDirContextTestCase extends TestCase {
             // Look up the WEB-INF entry
             Object webInfEntry = context.lookup("WEB-INF");
             assertNotNull("Found WEB-INF entry", webInfEntry);
-            assert("WEB-INF entry is a DirContext",
+            assertTrue("WEB-INF entry is a DirContext",
                    webInfEntry instanceof DirContext);
             DirContext webInfContext = (DirContext) webInfEntry;
 
@@ -353,20 +352,20 @@ public abstract class BaseDirContextTestCase extends TestCase {
         while (ne.hasMore()) {
 
             Object next = ne.next();
-            assert("list() returns NameClassPair instances",
+            assertTrue("list() returns NameClassPair instances",
                    next instanceof NameClassPair);
             NameClassPair ncp = (NameClassPair) next;
 
-            assert("Name '" + ncp.getName() + "' is expected",
+            assertTrue("Name '" + ncp.getName() + "' is expected",
                    isListed(ncp.getName(), list));
 
             if (isDirContext(ncp.getName())) {
-                assert("Class '" + ncp.getClassName() + "' is '" +
+                assertTrue("Class '" + ncp.getClassName() + "' is '" +
                        contextClassName + "'",
                        contextClassName.equals(ncp.getClassName()));
             }
 
-            assert("Relative is 'true'", ncp.isRelative());
+            assertTrue("Relative is 'true'", ncp.isRelative());
 
         }
 
@@ -391,30 +390,30 @@ public abstract class BaseDirContextTestCase extends TestCase {
         while (ne.hasMore()) {
 
             Object next = ne.next();
-            assert("listBindings() returns Binding instances",
+            assertTrue("listBindings() returns Binding instances",
                    next instanceof Binding);
             Binding b = (Binding) next;
 
-            assert("Name '" + b.getName() + "' is expected",
+            assertTrue("Name '" + b.getName() + "' is expected",
                    isListed(b.getName(), list));
 
             if (isDirContext(b.getName())) {
-                assert("Class '" + b.getClassName() + "' is '" +
+                assertTrue("Class '" + b.getClassName() + "' is '" +
                        contextClassName + "'",
                        contextClassName.equals(b.getClassName()));
             }
 
-            assert("Relative is 'true'", b.isRelative());
+            assertTrue("Relative is 'true'", b.isRelative());
 
             Object object = b.getObject();
             assertNotNull("Name '" + b.getName() + "' has a non-null object",
                           object);
-            if (b.getName().equals("web.xml")) {
-                assert("Entry '" + b.getName() + "' is a Resource",
-                       object instanceof Resource);
-            } else {
-                assert("Entry '" + b.getName() + "' is a DirContext",
-                       object instanceof DirContext);
+            if(isDirContext(b.getName())) {
+            	assertTrue("Entry '" + b.getName() + "' is a DirContext",
+                        object instanceof DirContext);          	
+            }  else {
+            	assertTrue("Entry '" + b.getName() + "' is a Resource",
+                       object instanceof Resource); 
             }
 
         }
@@ -445,35 +444,35 @@ public abstract class BaseDirContextTestCase extends TestCase {
         while (ne.hasMore()) {
 
             Object next = ne.next();
-            assert("getAll() returns Attribute instances",
+            assertTrue("getAll() returns Attribute instances",
                    next instanceof Attribute);
             Attribute attr = (Attribute) next;
             String name = attr.getID();
             int index = getIndex(name, webInfAttrs);
-            assert("WEB-INF attribute '" + name + "' is expected",
+            assertTrue("WEB-INF attribute '" + name + "' is expected",
                    index >= 0);
             Object value = attr.get();
             assertNotNull("get() returned non-null", value);
 
             if (name.equals("creationdate")) {
-                assert("Creation date is a date",
+                assertTrue("Creation date is a date",
                        value instanceof Date);
-                assert("Creation date equals " + creationDate,
+                assertTrue("Creation date equals " + creationDate,
                        creationDate.equals((Date) value));
             } else if (name.equals("displayname")) {
-                assert("Display name is a string",
+                assertTrue("Display name is a string",
                        value instanceof String);
-                assert("Display name equals " + displayName,
+                assertTrue("Display name equals " + displayName,
                        displayName.equals((String) value));
             } else if (name.equals("getcontentlength")) {
-                assert("Content length is a long",
+                assertTrue("Content length is a long",
                        value instanceof Long);
-                assert("Content length equals " + contentLength,
+                assertTrue("Content length equals " + contentLength,
                        contentLength == ((Long) value).longValue());
             } else if (name.equals("getlastmodified")) {
-                assert("Last modified date is a date",
+                assertTrue("Last modified date is a date",
                        value instanceof Date);
-                assert("Last modified date is " + lastModifiedDate,
+                assertTrue("Last modified date is " + lastModifiedDate,
                        lastModifiedDate.equals((Date) value));
             }
 
@@ -505,35 +504,35 @@ public abstract class BaseDirContextTestCase extends TestCase {
         while (ne.hasMore()) {
 
             Object next = ne.next();
-            assert("getAll() returns Attribute instances",
+            assertTrue("getAll() returns Attribute instances",
                    next instanceof Attribute);
             Attribute attr = (Attribute) next;
             String name = attr.getID();
             int index = getIndex(name, webXmlAttrs);
-            assert("WEB-INF/web.xml attribute '" + name + "' is expected",
+            assertTrue("WEB-INF/web.xml attribute '" + name + "' is expected",
                    index >= 0);
             Object value = attr.get();
             assertNotNull("get() returned non-null", value);
 
             if (name.equals("creationdate")) {
-                assert("Creation date is a date",
+                assertTrue("Creation date is a date",
                        value instanceof Date);
-                assert("Creation date equals " + creationDate,
+                assertTrue("Creation date equals " + creationDate,
                        creationDate.equals((Date) value));
             } else if (name.equals("displayname")) {
-                assert("Display name is a string",
+                assertTrue("Display name is a string",
                        value instanceof String);
-                assert("Display name equals " + displayName,
+                assertTrue("Display name equals " + displayName,
                        displayName.equals((String) value));
             } else if (name.equals("getcontentlength")) {
-                assert("Content length is a long",
+                assertTrue("Content length is a long",
                        value instanceof Long);
-                assert("Content length equals " + contentLength,
+                assertTrue("Content length equals " + contentLength,
                        contentLength == ((Long) value).longValue());
             } else if (name.equals("getlastmodified")) {
-                assert("Last modified date is a date",
+                assertTrue("Last modified date is a date",
                        value instanceof Date);
-                assert("Last modified date is " + lastModifiedDate,
+                assertTrue("Last modified date is " + lastModifiedDate,
                        lastModifiedDate.equals((Date) value));
             }
 

@@ -15,7 +15,7 @@
   <property name="catalina.dist"     value="${catalina.home}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
-  <property name="test.webapp"       value="../webapps/build/examples"/>
+  <property name="test.webapp"       value="../webapps/build/ROOT"/>
   <property name="test.webapp.war"   value="${java.io.tmpdir}/webapp.war"/>
 
   <!-- Source dependencies -->
