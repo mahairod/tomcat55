@@ -482,8 +482,8 @@ public class Response {
 	// 	if (usingWriter == true && writer != null)
 	// 	    writer.flush();
 
-	oBuffer.flushChars();
-	oBuffer.flushBytes();
+      oBuffer.flush();
+
 	// 	if( out!=null ) out.reallyFlush();
 	// 	if(bBuffer!=null) bBuffer.flush();
 	    //} 
