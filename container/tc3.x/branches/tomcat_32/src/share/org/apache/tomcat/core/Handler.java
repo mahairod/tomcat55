@@ -222,6 +222,7 @@ public class Handler {
 	    
 	} catch( Exception ex ) {
 	    initialized=false;
+	    throw ex;
 	}
     }
 
@@ -251,26 +252,22 @@ public class Handler {
 	if( ! initialized ) {
 	    try {
 		init();
-		if ( ! initialized )
-			return;	// return if still not initialied
 	    } catch( Exception ex ) {
 		initialized=false;
 		if( ex instanceof ClassNotFoundException ) {
 		    contextM.handleStatus( req, res, 404);
 		    return;
 		}
+		// handle error, does nothing if already handled
+		contextM.handleError( req, res, ex);
+		// rethrow the exception
 		context.log("Exception in init  " + ex.getMessage(), ex );
-                if (res.isIncluded()) {
-                    if (ex instanceof IOException)
-                        throw (IOException) ex;
-                    else if (ex instanceof ServletException)
-                        throw (ServletException) ex;
-                    else
-                        throw new ServletException
-                            ("Included Servlet Init Exception", ex);
-                }
-		contextM.handleError( req, res, ex );
-		return;
+		if (ex instanceof IOException)
+		    throw (IOException) ex;
+		else if (ex instanceof ServletException)
+		    throw (ServletException) ex;
+		else
+		    throw new ServletException("Servlet Init Exception", ex);
 	    }
 	}
        }
@@ -292,20 +289,17 @@ public class Handler {
 
 	if( t==null ) return;
 
-        // Rethrow an exception if we are inside an include
-        if (res.isIncluded()) {
-            context.log("Rethrowing included exception: " + t);
-            if (t instanceof IOException)
-                throw (IOException) t;
-            else if (t instanceof ServletException)
-                throw (ServletException) t;
-            else
-                throw new ServletException("Included Servlet Exception", t);
-        }
-
-        // Otherwise, handle a top-level error as usual
+	// handle error, does nothing if already handled
 	contextM.handleError( req, res, t );
 
+	// rethrow the exception
+	context.log("Rethrowing doService exception: " + t);
+	if (t instanceof IOException)
+	    throw (IOException) t;
+	else if (t instanceof ServletException)
+	    throw (ServletException) t;
+	else
+	    throw new ServletException("Servlet Exception", t);
     }
 
 //     protected void handleError( Request req, Response res, Throwable t) {
