@@ -588,8 +588,14 @@ public class HttpRequestBase
 	}
 
 	// Parse any parameters specified in the input stream
+        String contentType = getContentType();
+        if (contentType == null)
+            contentType = "";
+        int semicolon = contentType.indexOf(";");
+        if (semicolon >= 0)
+            contentType = contentType.substring(0, semicolon).trim();
 	if ("POST".equals(getMethod()) && (getContentLength() > 0) &&
-	    "application/x-www-form-urlencoded".equals(getContentType())) {
+	    "application/x-www-form-urlencoded".equals(contentType)) {
 	    try {
 	        byte buf[] = new byte[getContentLength()];
 		ServletInputStream is = getInputStream();
