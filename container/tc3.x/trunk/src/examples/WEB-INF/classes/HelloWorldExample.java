@@ -16,12 +16,12 @@ import javax.servlet.http.*;
 
 public class HelloWorldExample extends HttpServlet {
 
-    ResourceBundle rb = ResourceBundle.getBundle("LocalStrings");
 
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response)
         throws IOException, ServletException
     {
+        ResourceBundle rb = ResourceBundle.getBundle("LocalStrings",request.getLocale());
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
