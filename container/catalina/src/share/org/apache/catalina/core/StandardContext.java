@@ -68,6 +68,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -140,7 +142,7 @@ public class StandardContext
     extends ContainerBase
     implements Context, Serializable
 {
-    private Log log = LogFactory.getLog(StandardContext.class);
+    private transient Log log = LogFactory.getLog(StandardContext.class);
 
 
     // ----------------------------------------------------------- Constructors
@@ -520,7 +522,7 @@ public class StandardContext
     /**
      * Non proxied resources.
      */
-    private DirContext webappResources = null;
+    private transient DirContext webappResources = null;
 
     private ArrayList wrappers=new ArrayList();
 
@@ -1401,7 +1403,26 @@ public class StandardContext
 
     }
 
-
+    /** Get the absolute path to the work dir.
+     *  To avoid duplication.
+     * 
+     * @return
+     */ 
+    public String getWorkPath() {
+        File workDir = new File(getWorkDir());
+        if (!workDir.isAbsolute()) {
+            File catalinaHome = engineBase();
+            String catalinaHomePath = null;
+            try {
+                catalinaHomePath = catalinaHome.getCanonicalPath();
+                workDir = new File(catalinaHomePath,
+                        getWorkDir());
+            } catch (IOException e) {
+            }
+        }
+        return workDir.getAbsolutePath();
+    }
+    
     /**
      * Return the work directory for this Context.
      */
@@ -4119,6 +4140,23 @@ public class StandardContext
         // Notify our interested LifecycleListeners
         lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
         startTime=System.currentTimeMillis();
+        
+        //cacheContext();
+    }
+    
+    private void cacheContext() {
+        try {
+            File workDir=new File( getWorkPath() );
+            
+            File ctxSer=new File( workDir, "_tomcat_context.ser");
+            FileOutputStream fos=new FileOutputStream( ctxSer );
+            ObjectOutputStream oos=new ObjectOutputStream( fos );
+            oos.writeObject(this);
+            oos.close();
+            fos.close();
+        } catch( Throwable t ) {
+            log.info("Error saving context.ser ", t);
+        }
     }
 
     /**
@@ -4917,7 +4955,7 @@ public class StandardContext
         int size=wrappers.size();
         ObjectName result[]=new ObjectName[size];
         for( int i=0; i< size; i++ ) {
-            result[i]=((StandardWrapper)wrappers.get(i)).getObjectName();
+            result[i]=((StandardWrapper)wrappers.get(i)).getJmxName();
         }
         return result;
     }
@@ -4954,7 +4992,7 @@ public class StandardContext
             StandardHost hst=(StandardHost)getParent();
             if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
                 
-                oname=createObjectName(hst.getDomain(), hst.getObjectName());
+                oname=createObjectName(hst.getDomain(), hst.getJmxName());
                 log.debug("Checking for " + oname );
                 if(! Registry.getRegistry().getMBeanServer().isRegistered(oname))
                 {
