@@ -1191,11 +1191,9 @@
       <param name="destfile" value="${commons-digester.jar}"/>
     </antcall>
 
-    <antcall target="cvsbuild">
-      <param name="location" value="${commons-fileupload.loc}"/>
-      <param name="subdir" value="${commons-fileupload.home}"/>
+    <antcall target="downloadgz">
+      <param name="sourcefile" value="${commons-fileupload.loc}"/>
       <param name="destfile" value="${commons-fileupload.jar}"/>
-      <param name="final.name" value="commons-fileupload"/>
     </antcall>
 
     <antcall target="downloadgz">
@@ -1234,12 +1232,6 @@
     <antcall target="downloadgz">
       <param name="sourcefile" value="${commons-pool.loc}"/>
       <param name="destfile" value="${commons-pool.jar}"/>
-    </antcall>
-
-    <antcall target="downloadzip">
-      <param name="sourcefile" value="${javagroups.loc}"/>
-      <param name="destfile" value="${javagroups.jar}"/>
-      <param name="destdir" value="${base.path}"/>
     </antcall>
 
     <antcall target="downloadzip">
