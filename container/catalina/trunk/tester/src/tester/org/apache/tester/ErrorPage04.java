@@ -89,26 +89,16 @@ public class ErrorPage04 extends HttpServlet {
         value = request.getAttribute("javax.servlet.error.exception");
         if (value == null)
             sb.append(" exception is missing/");
-        else if (!(value instanceof javax.servlet.ServletException)) {
+        else if (!(value instanceof org.apache.tester.TesterException)) {
             sb.append(" exception class is ");
             sb.append(value.getClass().getName());
             sb.append("/");
         } else {
-            exception = (ServletException) value;
-            rootCause = exception.getRootCause();
-            if (rootCause == null) {
-                sb.append(" rootCause is missing/");
-            } else if (!(rootCause instanceof TesterException)) {
-                sb.append(" rootCause is ");
-                sb.append(rootCause.getClass().getName());
+            TesterException te = (TesterException) rootCause;
+            if (!"ErrorPage03 Threw Exception".equals(te.getMessage())) {
+                sb.append(" exception message is ");
+                sb.append(te.getMessage());
                 sb.append("/");
-            } else {
-                TesterException te = (TesterException) rootCause;
-                if (!"ErrorPage03 Threw Exception".equals(te.getMessage())) {
-                    sb.append(" exception message is ");
-                    sb.append(te.getMessage());
-                    sb.append("/");
-                }
             }
         }
 
@@ -121,7 +111,7 @@ public class ErrorPage04 extends HttpServlet {
             sb.append("/");
         } else {
             Class clazz = (Class) value;
-            if (!"javax.servlet.ServletException".equals(clazz.getName())) {
+            if (!"org.apache.tester.TesterException".equals(clazz.getName())) {
                 sb.append(" exception_type class is ");
                 sb.append(clazz.getName());
                 sb.append("/");
