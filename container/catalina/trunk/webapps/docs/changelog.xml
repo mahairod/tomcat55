@@ -13,6 +13,220 @@
 
 <body>
 
+<section name="Tomcat 5.0.8 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Update commons-daemon packaging for consistency and ease of use on Unix
+      (remm)
+      </fix>
+      <update>
+      Servlet specification updates, submitted by Yutaka Yoshida (jfarcand)
+      </update>
+      <update>
+      JSP specification updates, submitted by Mark Roth (kinman)
+      </update>
+      <fix>
+      <bug>22494</bug>: Removed logVerbosityLevel doc and init-param from 
+      JSP Servlet, as they're no longer used, submitted by Eric Carmichael
+      (yoavs)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      Remove some stack trace dumping in Mapperlistener (remm)
+      </fix>
+      <fix>
+      Remove extra setLogger call in Embedded.createContext (remm)
+      </fix>
+      <update>
+      Add support for Tld validation, and fix bug <bug>21917</bug> where
+      entities couldn't be resolved in a TLD (jfarcand)
+      </update>
+      <fix>
+      Fixed logic so that iterator actually gets cloned when "clone" is set to
+      true, and replace LinkedList with ArrayList (luehe)
+      </fix>
+      <fix>
+      Avoid NPE when ensuring that resource path start with '/' (luehe)
+      </fix>
+      <fix>
+      Avoid reformatting constant Expires header on every request (luehe)
+      </fix>
+      <fix>
+      Log client abort exceptions as debug information (remm)
+      </fix>
+      <fix>
+      Found a way to avoid the extra restart caused by the web.xml tracker, 
+      when the webapp was deployed by an outside source, such as the manager
+      servlet (remm)
+      </fix>
+      <fix>
+      Improve CL stopped error message, so that it is more explanatory (remm)
+      </fix>
+      <fix>
+      When using the deployer, scema validation wasn't supported (remm)
+      </fix>
+      <fix>
+      Fix NPE when getMessage of an exception returns null in the 
+      DefaultServlet (jfarcand)
+      </fix>
+      <fix>
+      Fix behavior of HttpSession.setMaxInactiveInterval() (luehe)
+      </fix>
+      <fix>
+      Cleanup of the XML descriptors for the model MBeans, removing old 
+      connectors and old attributes (remm)
+      </fix>
+      <update>
+      Update the store and persistent manager code so that both will use the
+      container provided background processing thread, rather than using one
+      thread per component (as much as two threads per context) (remm)
+      </update>
+      <add>
+      Add new managerChecksFrequency attribute to StandardContext, allowing to
+      configure how often the manager session expiration and passivation 
+      checks will be called, similar to the intervals used in Tomcat 4.1.x 
+      (remm)
+      </add>
+      <fix>
+      Disable schema validation for now, due to persistent issues with Xerces
+      (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <update>
+      Added support for specifying alias name for server keypair and cert
+      chain, to be used by the server to authenticate itself to SSL clients
+      (luehe)
+      </update>
+      <update>
+      Added support for specifying comma-separated list of SSL protocol
+      variants to be enabled, which may be useful to disable the less secure 
+      SSLv2 (luehe)
+      </update>
+      <fix>
+      Fixed bug in CoyoteConnector getter methods for SSL related attributes, 
+      which would always return null if SSL properties were configured 
+      directly on the Connector element (instead of its nested and now 
+      deprecated Factory element) (luehe)
+      </fix>
+      <update>
+      Moving the new protocols logic to the 14 Factory (billbarker)
+      </update>
+      <fix>
+      Clone request attribute names iterator (luehe)
+      </fix>
+      <fix>
+      Fix client abort logging, and throw a client abort when an IOException 
+      occurs when writing bytes (remm)
+      </fix>
+      <fix>
+      Avoid a NPE if requesting the remote address between requests or before
+      processing any request (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <update>
+      Allow a taglib to be defined more than once in taglib directives, even in
+      statically included files, and remove need for keeping a Stack for 
+      prefix bookkeeping (kinman)
+      </update>
+      <fix>
+      When including a JSP document (written in the XML syntax), in the 
+      resulting XML View of the translation unit the root element of 
+      the included segment must have the default namespace reset to "" (kinman)
+      </fix>
+      <fix>
+      Don't merge SMAP entries in the outptStartLines aren't consecutive,
+      which fixes IllegalArgumentException when SMAPs are generated (remm)
+      </fix>
+      <fix>
+      Replaced JSPC error message with localizable error code (luehe)
+      </fix>
+      <update>
+      Added -classpath option to JspC (luehe)
+      </update>
+      <fix>
+      Beautify the insertion of the XML fragment in JSPC (remm)
+      </fix>
+      <fix>
+      Restoring JVM 1.3.x compatibility to Jasper, with a new split String
+      method (billbarker)
+      </fix>
+      <fix>
+      Add attibutes doctype-root-element, doctype-system and doctype-public
+      to &lt;jsp:output&gt; for outputing a DOCTYPE declartion in xml 
+      documents, per latest spec change (kinman)
+      </fix>
+      <fix>
+      Fixed buffer realloc when writing single char (luehe)
+      </fix>
+      <fix>
+      Spec has been changed to allow for include-prelude and include-coda in
+      jsp-config (kinman)
+      </fix>
+      <fix>
+      Restored JSP default for 1.2 based tag handlers (luehe)
+      </fix>
+      <fix>
+      Adjust Java lines mappings for codes that are generated in buffers
+      (kinman)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Webapps">
+
+    <changelog>
+
+      <update>
+      Add two JMX related tasks, designed to use the jmxproxy servlet, 
+      submitted by Vivek Chopra (remm)
+      </update>
+      <docs>
+      Document usage of commons-daemon with Tomcat on Unix (remm)
+      </docs>
+      <update>
+      Add new JSP XML test in the tester, and fix the one that was already
+      there (remm)
+      </update>
+      <fix>
+      The tester should handle i18ned manager reload messages (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.7 (remm)">
 
   <subsection name="General">
@@ -119,6 +333,19 @@
       Added check for (keystoreType == null) before calling 
       getKeyManagers/getTrustManagers (luehe)
       </fix>
+      <fix>
+      Use less aggressive socket timout reduction when the server load
+      increases (remm)
+      </fix>
+      <fix>
+      Fix calculation of a request processing time (it must not include the 
+      time waiting for data in keepalive mode, or the time waiting for data 
+      for an initial request on a connection) (remm)
+      </fix>
+      <fix>
+      Fixing CoyoteConnector getters for JMX; CoyoteConnector will now rely
+      on the protocol handler for most of the values it returs (billbarker)
+      </fix>
 
     </changelog>
 
@@ -191,6 +418,11 @@
       Apply workaround for failure in optimizeLineSection() when there are 
       entries with an outputStartLine of 0, Submitted by Eric Carmichael (remm)
       </fix>
+      <fix>
+      The "out" in the Fragment helper functions is now JspWriter instead of
+      java.io.Writer, so that it won't trigger errors when a fragment contains
+      include actions (kinman)
+      </fix>
 
     </changelog>
 
@@ -219,6 +451,15 @@
       </fix>
       <fix>
       Fix webapp tagging and redeployment from a tag (remm)
+      </fix>
+      <fix>
+      Display byte sizes and times using sensible units (KB and MB, s and ms)
+      in the status servlet (remm)
+      </fix>
+      <fix>
+      Display the remote host when in keepalive status, as well as the 
+      elapsed time (it corresponds mostly to the amount of time since 
+      the start of the previous request) (remm)
       </fix>
 
     </changelog>
