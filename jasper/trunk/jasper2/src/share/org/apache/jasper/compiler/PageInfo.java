@@ -93,12 +93,20 @@ class PageInfo {
     private boolean scriptingEnabled = true;
     private boolean elEnabled = true;
     private boolean tagFile = false;
+    private boolean isXml = false;
+    private boolean isXmlSpecified = false;	// true is there is a
+						// is-xml element
+    private Vector includePrelude;
+    private Vector includeCoda;
+
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
 	this.tagLibraries = new Hashtable();
 	this.imports = new Vector();
         this.includes = new Vector();
+	this.includePrelude = new Vector();
+	this.includeCoda = new Vector();
 
 	// Enter standard imports
 	for(int i = 0; i < Constants.STANDARD_IMPORTS.length; i++)
@@ -247,5 +255,37 @@ class PageInfo {
 
     public boolean isTagFile() {
 	return tagFile;
+    }
+
+    public boolean isXml() {
+	return isXml;
+    }
+
+    public void setIsXml(boolean xml) {
+	isXml = xml;
+    }
+
+    public boolean isXmlSpecified() {
+	return isXmlSpecified;
+    }
+
+    public void setIsXmlSpecified(boolean xmlSpecified) {
+	isXmlSpecified = xmlSpecified;
+    }
+
+    public List getIncludePrelude() {
+	return includePrelude;
+    }
+
+    public void setIncludePrelude(Vector prelude) {
+	includePrelude = prelude;
+    }
+
+    public List getIncludeCoda() {
+	return includeCoda;
+    }
+
+    public void setIncludeCoda(Vector coda) {
+	includeCoda = coda;
     }
 }

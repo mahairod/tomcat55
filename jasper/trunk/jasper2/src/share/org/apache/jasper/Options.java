@@ -67,6 +67,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.apache.jasper.compiler.TldLocationsCache;
+import org.apache.jasper.compiler.JspConfig;
 
 /**
  * A class to hold all init parameters specific to the JSP engine. 
@@ -161,4 +162,9 @@ public interface Options {
      * page servlet.
      */
     public String getJavaEncoding();
+
+    /**
+     * Obtain JSP configuration informantion specified in web.xml.  
+     */
+    public JspConfig getJspConfig();
 }

@@ -217,14 +217,31 @@ public class ParserController {
 	return parsedPage;
     }
 
-    //*********************************************************************
-    // Figure out input Document
+    /** *******************************************************************
+     * Discover the properties of the page by scanning it.
+     * Properties to find out are:
+     *   * Is it in XML syntax?
+     *   * What is the the page encoding
+     * If these properties are already specified in the jsp-config element
+     * in web.xml, then they are used.
+     */
 
     private void figureOutJspDocument(String file, 
 				      String encoding,
 				      InputStreamReader reader)
 	 throws JasperException
     {
+
+	PageInfo pageInfo = compiler.getPageInfo();
+	if (pageInfo.isXmlSpecified()) {
+	    isXml = pageInfo.isXml();
+	}
+	if (pageInfo.getPageEncoding() != null) {
+	    newEncoding = pageInfo.getPageEncoding();
+	}
+	if (pageInfo.isXmlSpecified() && pageInfo.getPageEncoding() != null)
+	    return;
+
 	JspReader jspReader;
 	try {
 	    jspReader = new JspReader(ctxt, file, encoding, reader,
@@ -235,15 +252,23 @@ public class ParserController {
         jspReader.setSingleFile(true);
         Mark startMark = jspReader.mark();
 
-	// Check for the jsp:root tag
-	// No check for xml prolog, since nothing prevents a page
-	// to output XML and still use JSP syntax.
-	jspReader.reset(startMark);
-	Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
-	if (mark != null) {
-	    isXml = true;
-	} else {
-	    isXml = false;
+	if (!pageInfo.isXmlSpecified()) {
+	    // Check for the jsp:root tag
+	    // No check for xml prolog, since nothing prevents a page
+	    // to output XML and still use JSP syntax.
+	    jspReader.reset(startMark);
+	    Mark mark = jspReader.skipUntil(JSP_ROOT_TAG);
+	    if (mark != null) {
+	        isXml = true;
+	    } else {
+	        isXml = false;
+	    }
+	}
+
+	if (pageInfo.getPageEncoding() != null) {
+	    // XXX isTagFile is not correctly set, but it will be determined
+	    // elsewhere, and not here anyway.
+	    return;
 	}
 
 	newEncoding = null;
@@ -253,8 +278,8 @@ public class ParserController {
 	// FIXME: We assume xml parser will take care of
         // encoding for page in XML syntax. Correct?
 	if (!isXml) {
-	    jspReader.reset(startMark);
-	    while (jspReader.skipUntil("<%@") != null) {
+            jspReader.reset(startMark);
+            while (jspReader.skipUntil("<%@") != null) {
 		jspReader.skipSpaces();
 		boolean tIsTagFile = jspReader.matches("tag ");
 		if (tIsTagFile || jspReader.matches("page")) {

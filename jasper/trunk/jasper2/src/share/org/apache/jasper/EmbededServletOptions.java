@@ -69,6 +69,7 @@ import javax.servlet.ServletContext;
 import org.apache.jasper.logging.Logger;
 
 import org.apache.jasper.compiler.TldLocationsCache;
+import org.apache.jasper.compiler.JspConfig;
 import org.apache.jasper.xmlparser.ParserUtils;
 
 import java.util.*;
@@ -162,6 +163,11 @@ public final class EmbededServletOptions implements Options {
      * Cache for the TLD locations
      */
     private TldLocationsCache tldLocationsCache = null;
+
+    /**
+     * Jsp config information
+     */
+    JspConfig jspConfig = null;
 
     /**
      * Java platform encoding to generate the JSP
@@ -277,6 +283,10 @@ public final class EmbededServletOptions implements Options {
 
     public String getJavaEncoding() {
 	return javaEncoding;
+    }
+
+    public JspConfig getJspConfig() {
+	return jspConfig;
     }
 
     /**
@@ -428,6 +438,9 @@ public final class EmbededServletOptions implements Options {
 	// Setup the global Tag Libraries location cache for this
 	// web-application.
 	tldLocationsCache = new TldLocationsCache(context);
+
+	// Setup the jsp config info for this web app.
+	jspConfig = new JspConfig(context);
 
     }
 

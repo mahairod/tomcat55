@@ -63,6 +63,8 @@ package org.apache.jasper.compiler;
 import java.io.FileNotFoundException;
 import java.io.CharArrayWriter;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Iterator;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagFileInfo;
@@ -135,8 +137,16 @@ public class Parser {
 
 	Node.Root root = new Node.Root(null, reader.mark(), parent);
 
+	// For the Top level page, add inlcude-prelude and include-coda
+	PageInfo pageInfo = pc.getCompiler().getPageInfo();
+	if (parent == null) {
+	    parser.addInclude(root, pageInfo.getIncludePrelude());
+	}
 	while (reader.hasMoreInput()) {
 	    parser.parseElements(root);
+	}
+	if (parent == null) {
+	    parser.addInclude(root, pageInfo.getIncludeCoda());
 	}
 
 	Node.Nodes page = new Node.Nodes(root);
@@ -355,6 +365,24 @@ public class Parser {
 	// Included file expanded here
 	Node includeNode = new Node.IncludeDirective(attrs, start, parent);
 	processIncludeDirective(attrs.getValue("file"), includeNode);
+    }
+
+    /**
+     * Add a list of files.  This is used for implementing include-prelude
+     * and include-coda of jsp-config element in web.xml
+     */
+    private void addInclude(Node parent, List files) throws JasperException {
+	Iterator iter = files.iterator();
+	while (iter.hasNext()) {
+	    String file = (String) iter.next();
+	    AttributesImpl attrs = new AttributesImpl();
+	    attrs.addAttribute("", "file", "file", "CDATA", file);
+
+	    // Create a dummy Include directive node
+	    Node includeNode = new Node.IncludeDirective(attrs, reader.mark(),
+							 parent);
+	    processIncludeDirective(file, includeNode);
+	}
     }
 
     /*

@@ -194,6 +194,23 @@ public class Compiler {
     {
 	// Setup page info area
 	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader()));
+	JspConfig jspConfig = options.getJspConfig();
+	JspConfig.JspProperty jspProperty =
+			jspConfig.findJspProperty(ctxt.getJspFile());
+	if (jspProperty != null) {
+	    // If the current uri is matched by a pattern specified in
+	    // a jsp-property-group in web.xml, initialize pageInfo with
+	    // those properties.
+	    if (jspProperty.isXml() != null) {
+		pageInfo.setIsXmlSpecified(true);
+	    }
+	    pageInfo.setIsXml(JspUtil.booleanValue(jspProperty.isXml()));
+	    pageInfo.setPageEncoding(jspProperty.getPageEncoding());
+	    pageInfo.setELEnabled(JspUtil.booleanValue(jspProperty.isELEnabled()));
+	    pageInfo.setScriptingEnabled(JspUtil.booleanValue(jspProperty.isScriptingEnabled()));
+	    pageInfo.setIncludePrelude(jspProperty.getIncludePrelude());
+	    pageInfo.setIncludeCoda(jspProperty.getIncludeCoda());
+	}
 
         String javaFileName = ctxt.getServletJavaFileName();
 

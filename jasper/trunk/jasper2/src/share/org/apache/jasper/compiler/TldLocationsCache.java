@@ -173,6 +173,12 @@ public class TldLocationsCache {
             this.getClass().getClassLoader();
         ParserUtils pu = ParserUtils.createParserUtils(cl);
         TreeNode webtld = pu.parseXMLDocument(WEB_XML, is);
+
+	// Allow taglib be an element of the root or jsp-config (JSP2.0)
+	TreeNode jspConfig = webtld.findChild("jsp-config");
+	if (jspConfig != null) {
+	    webtld = jspConfig;
+	}
         Iterator taglibs = webtld.findChildren("taglib");
         while (taglibs.hasNext()) {
 

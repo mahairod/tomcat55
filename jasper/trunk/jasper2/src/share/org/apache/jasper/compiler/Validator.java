@@ -754,7 +754,7 @@ public class Validator {
 
                     // validate expression syntax if string contains
                     // expression(s)
-                    if (value.indexOf("${") != -1 /* && isELEnabled */) {
+                    if (value.indexOf("${") != -1 && pageInfo.isELEnabled()) {
                         JspUtil.validateExpressions(n.getStart(), value, err);
                         result = new Node.JspAttribute(qName, uri, localName,
 						       value, false, true,
