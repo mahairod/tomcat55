@@ -210,8 +210,11 @@ public class FileUtil {
 	if (File.separatorChar  == '\\') {
 	    // On Windows check ignore case....
 	    if (!realPath.equals(canPath)){
-		if(caseSf || !realPath.equalsIgnoreCase(canPath))
-		    return null;
+		int ls = realPath.lastIndexOf('\\');
+                if(ls > 0 && !realPath.substring(0,ls).equals(canPath)) {
+		    if(caseSf || !realPath.equalsIgnoreCase(canPath))
+			return null;
+		}
 	    }
 	}
 
