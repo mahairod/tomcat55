@@ -79,6 +79,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -158,6 +159,20 @@ public class HttpResponseBase
      * The time zone with which to construct date headers.
      */
     protected static final TimeZone zone = TimeZone.getTimeZone("GMT");
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * Return the <code>ServletResponse</code> for which this object
+     * is the facade.
+     */
+    public ServletResponse getResponse() {
+
+        return new HttpResponseFacade(this);
+
+    }
 
 
     // --------------------------------------------------------- Public Methods

@@ -79,6 +79,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRequest;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -258,6 +259,17 @@ public class HttpRequestBase
     public String getInfo() {
 
 	return (info);
+
+    }
+
+
+    /**
+     * Return the <code>ServletRequest</code> for which this object
+     * is the facade.  This method must be implemented by a subclass.
+     */
+    public ServletRequest getRequest() {
+
+        return new HttpRequestFacade(this);
 
     }
 

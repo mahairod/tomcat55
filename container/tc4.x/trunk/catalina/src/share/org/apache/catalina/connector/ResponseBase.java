@@ -331,7 +331,7 @@ public abstract class ResponseBase
      */
     public ServletResponse getResponse() {
 
-	return ((ServletResponse) this);
+	return new ResponseFacade(this);
 
     }
 

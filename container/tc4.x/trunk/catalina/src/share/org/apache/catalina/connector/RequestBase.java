@@ -345,7 +345,7 @@ public abstract class RequestBase
      */
     public ServletRequest getRequest() {
 
-	return ((ServletRequest) this);
+	return new RequestFacade(this);
 
     }
 
