@@ -2299,9 +2299,14 @@ public class StandardContext
 	    }
 	}
 
+        // Unbinding thread
         if (isUseNaming()) {
             ContextBindings.unbindThread(this, this);
         }
+
+        // Clear all application-originated servlet context attributes
+        //        if (context != null)
+        //            context.clearAttributes();
 
         // Shut down filters and application event listeners
         filterStop();
@@ -2392,12 +2397,12 @@ public class StandardContext
 
 	// Start accepting requests again
         if (ok) {
-            setPaused(false);
             log(sm.getString("standardContext.reloadingCompleted"));
         } else {
             setAvailable(false);
             log(sm.getString("standardContext.reloadingFailed"));
         }
+        setPaused(false);
 
     }
 

@@ -79,6 +79,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.Binding;
@@ -319,6 +320,32 @@ public class ApplicationContext
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Clear all application-created attributes.
+     */
+    public void clearAttributes() {
+
+        // Create list of attributes to be removed
+        ArrayList list = new ArrayList();
+        synchronized (attributes) {
+            Iterator iter = attributes.keySet().iterator();
+            while (iter.hasNext()) {
+                list.add(iter.next());
+            }
+        }
+
+        // Remove application originated attributes
+        // (read only attributes will be left in place)
+        Iterator keys = list.iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            removeAttribute(key);
+        }
+
+
+    }
 
 
     /**
@@ -833,7 +860,7 @@ public class ApplicationContext
 	// Remove the specified attribute
 	synchronized (attributes) {
             // Check for read only attribute
-            if (readOnlyAttributes.containsKey(name))
+           if (readOnlyAttributes.containsKey(name))
                 return;
             found = attributes.containsKey(name);
             if (found) {
