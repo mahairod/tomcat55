@@ -676,6 +676,10 @@
     <extension>jnlp</extension>
     <mime-type>x-java-jnlp-file</mime-type>
   </mime-mapping>
+  <mime-mapping>
+    <extension>jad</extension>
+    <mime-type>text/vnd.sun.j2me.app-descriptor</mime-type>
+  </mime-mapping>
 
   <!-- Establish the default list of welcome files -->
   <welcome-file-list>
