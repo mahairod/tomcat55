@@ -111,7 +111,8 @@ public abstract class Compiler {
         ctxt.setServletJavaFileName(javaFileName);
 
         Constants.message("jsp.message.package_name_is",
-                          new Object[] { pkgName },
+                          new Object[] { (pkgName==null)?
+                                          "[default package]":pkgName },
                           Constants.MED_VERBOSITY);
         Constants.message("jsp.message.class_name_is",
                           new Object[] { className },
