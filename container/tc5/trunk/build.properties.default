@@ -35,10 +35,9 @@ compile.optimize=off
 cvsroot=":pserver:anoncvs@cvs.apache.org:/home/cvspublic"
 
 # ----- Default Base Path for Dependent Packages -----
-#base.path=/usr/share/java
+base.path=/usr/share/java
 #base.path=../repository
 #base.path=/usr/local
-base.path=/home/yoavs/temp
 
 # ----- Jakarta files base location -----
 base-jakarta.loc=http://archive.apache.org/dist/jakarta
