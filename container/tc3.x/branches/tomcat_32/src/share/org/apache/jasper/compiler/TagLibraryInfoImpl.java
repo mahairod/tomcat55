@@ -234,6 +234,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	}
 	    
 	// FIXME Take this stuff out when taglib changes are thoroughly tested.
+        // 2000.11.15 commented out the 'copy to work dir' section,
+        // which I believe is what this FIXME comment referred to. (pierred)
 	if (uri.endsWith("jar")) {
 	    
 	    if (!isRelativeURI(uri)) {
@@ -248,6 +250,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    this.jarEntries = new Hashtable();
 	    this.ctxt = ctxt;
 	    
+            /* NOT COMPILED
 	    // First copy this file into our work directory! 
 	    {
 		File jspFile = new File(ctxt.getJspFile());
@@ -278,8 +281,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	    
 	        ctxt.addJar(jarFileName);
 	    }
-	    
-	    
+            */ // END NOT COMPILED
 	    boolean tldFound = false;
 	    ZipEntry entry;
 	    while ((entry = zin.getNextEntry()) != null) {
