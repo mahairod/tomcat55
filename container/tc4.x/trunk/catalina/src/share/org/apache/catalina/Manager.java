@@ -184,13 +184,6 @@ public interface Manager {
     public void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
-     * Get a session from the recycled ones or create a new empty one.
-     * The PersistentManager manager does not need to create session data
-     * because it reads it from the Store.
-     */                                                                         
-    public Session createEmptySession();
-
-    /**
      * Construct and return a new session object, based on the default
      * settings specified by this Manager's properties.  The session
      * id will be assigned by this method, and available via the getId()

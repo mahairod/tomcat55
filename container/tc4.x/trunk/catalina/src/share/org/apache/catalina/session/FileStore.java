@@ -333,7 +333,7 @@ public final class FileStore
 
         try {
             StandardSession session =
-                (StandardSession) manager.createEmptySession();
+                (StandardSession) manager.createSession();
             session.readObjectData(ois);
             session.setManager(manager);
             return (session);

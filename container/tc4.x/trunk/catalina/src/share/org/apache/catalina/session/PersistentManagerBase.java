@@ -660,15 +660,6 @@ public abstract class PersistentManagerBase
 
     }
 
-    /**
-     * Remove this Session from the active Sessions for this Manager,
-     * but not from the Store. (Used by the PersistentValve)
-     *
-     * @param session Session to be removed
-     */
-    public void removeSuper(Session session) {
-        super.remove (session);
-    }
 
     /**
      * Save all currently active sessions in the appropriate persistence

@@ -538,7 +538,7 @@ public class JDBCStore
 
         if(ois != null) {
             try {
-                _session = (StandardSession) manager.createEmptySession();
+                _session = (StandardSession) manager.createSession();
                 _session.readObjectData(ois);
                 _session.setManager(manager);
             } finally {
