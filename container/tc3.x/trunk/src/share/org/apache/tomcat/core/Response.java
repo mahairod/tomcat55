@@ -193,7 +193,7 @@ public class Response {
 	started = false;
 	commited = false;
 	included=false;
-	oBuffer.recycle();
+	if ( oBuffer != null ) oBuffer.recycle();
 	headers.clear();
     }
 
