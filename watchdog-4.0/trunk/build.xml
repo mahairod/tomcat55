@@ -299,13 +299,6 @@
       <fileset dir="${watchdog.build}" excludes="webapps/**"/>
     </copy>
 
-    <!-- Copy source files -->
-    <!-- Include only the test driver and server side sources (for test reviews, etc.) -->
-    <mkdir dir="${watchdog.dist}/src"/>
-    <copy  todir="${watchdog.dist}/src">
-        <fileset dir="src" includes="server/**,tools/**" excludes="CVS"/>
-    </copy>
-
     <!-- Create web application archives -->
     <mkdir     dir="${watchdog.dist}/webapps"/>
     <jar   jarfile="${watchdog.dist}/webapps/jsp-tests.war"
