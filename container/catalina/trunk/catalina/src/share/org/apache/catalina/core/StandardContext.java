@@ -257,12 +257,7 @@ public class StandardContext
     private boolean crossContext = false;
 
 
-    /**
-     * The default context name used for config file
-     */
-    private String defaultConfigFile = "context.xml";
-
-    /**
+     /**
      * The display name of this web application.
      */
     private String displayName = null;
@@ -3878,25 +3873,12 @@ public class StandardContext
             if (name.equals("")) {
                 name = "ROOT";
             }
-            File fileBase = new File(appBase);
-            File file = new File(fileBase, name + ".xml");
-            
-            /*
-             * Try to save the context information using a default file name.
-             */ 
-            if (!file.exists()){
-                file = new File(fileBase, getDocBase() + File.separator + defaultConfigFile);
-            }
+            File file = new File(appBase);
+            file = new File(file, name + ".xml");
 
-            // Make sure the file exist before setting it.
-            if (file.exists()){
-                setConfigFile(file.getPath());
-                if( log.isDebugEnabled() )
-                    log.debug( "Set config file " + file);
-            } else {
-                if( log.isDebugEnabled() )
-                    log.debug( "Config file doesn't exists: " + file);
-            }
+            setConfigFile(file.getPath());
+            if( log.isDebugEnabled() )
+                log.debug( "Set config file " + file);
         }
 
         // Add missing components as necessary
