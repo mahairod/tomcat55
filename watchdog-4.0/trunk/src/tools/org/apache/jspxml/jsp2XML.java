@@ -45,7 +45,7 @@ jsp_end_tag = new_line +"</jsp:root>" ;
 public jsp2XML(String input_jsp_file)
 {
 input_jsp="";
-xml_ns="xmlns:jsp=\"http://java.sun.com/products/jsp/dtd/jsp_1_2.dtd\"" ;
+xml_ns="xmlns:jsp=\"http://java.sun.com/JSP/Page\" version=\"1.2\"" ;
 xml_ns +=new_line ;
 tag_prefix = new Hashtable();
 readJspFileintoString(input_jsp_file) ;
@@ -139,7 +139,7 @@ if ( ((element_index < action_index)  && ( element_index != -1 ) ) || (action_in
 if ( ( cdata_closed ) && ( jsp_element_first == true ) )
 {
 //xml+=new_line+ "<jsp:cdata><![CDATA[ " + new_line ;
-xml+=new_line+ "<jsp:cdata><![CDATA[" ;
+xml+=new_line+ "<jsp:text><![CDATA[" ;
 cdata_closed=false;
 }
 
@@ -152,7 +152,7 @@ cdata_closed=false;
 
     if( jsp_char =='-' ) //jsp Comment
     {
- xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ xml+= "]]></jsp:text>" + new_line ; //end of CDATA section
  cdata_closed=true;
    xml+= new_line +"<!--" ; //XML comment
    end_index=jsp.indexOf("--%>" , last_index );
@@ -164,7 +164,7 @@ cdata_closed=false;
 
     if( jsp_char =='=' ) //Jsp Expression
     {
- xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ xml+= "]]></jsp:text>" + new_line ; //end of CDATA section
  cdata_closed=true;
    xml+=new_line+"<jsp:expression>" ; 
    end_index=jsp.indexOf("%>" , last_index );
@@ -178,7 +178,7 @@ cdata_closed=false;
 
 if( jsp_char =='!' ) //jsp Declaration
     {
- xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ xml+= "]]></jsp:text>" + new_line ; //end of CDATA section
  cdata_closed=true;
    xml+=new_line+"<jsp:declaration>" ;
    end_index=jsp.indexOf("%>" , last_index );
@@ -198,7 +198,7 @@ if( jsp_char =='@' ) //jsp Directive
 
   if (directive.indexOf ( "taglib" ) == -1 )
   {
- xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ xml+= "]]></jsp:text>" + new_line ; //end of CDATA section
  cdata_closed=true;
    }
 
@@ -207,7 +207,7 @@ if( jsp_char =='@' ) //jsp Directive
    continue;
     }//end JSP Directive
 
- xml+= "]]></jsp:cdata>" + new_line ; //end of CDATA section
+ xml+= "]]></jsp:text>" + new_line ; //end of CDATA section
  cdata_closed=true;
  //if we reach here it means we got a JSP Scriptlet
    xml+=new_line+"<jsp:scriptlet>" +new_line;
@@ -273,13 +273,13 @@ if  ( ch == ' ' ) // Ramesh: first letter left to":" should not be a whitespace
       if ( ( tag_level == 0 )  )
       {
       */
-	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
+	xml+=new_line+ "<jsp:text><![CDATA[" ;
       if ( action_index > last_index )
       {
             xml+=jsp.substring(last_index , action_index); // Include even newline 
       }
 	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
-	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
+	xml+= "]]></jsp:text>" +new_line ; //end of CDATA
 	cdata_closed= true;
       /*
       }
@@ -309,18 +309,18 @@ action_name = action_name.trim();
 	if  ( cdata_closed == false )  // If we had open cdata and one level of action
          {
 	 // xml+=new_line + "]]></jsp:cdata>"+new_line ; //end of CDATA section
-	 xml+= "]]></jsp:cdata>"+new_line ; //end of CDATA section
+	 xml+= "]]></jsp:text>"+new_line ; //end of CDATA section
          cdata_closed=true;
          }
     else
     {
-	xml+=new_line+ "<jsp:cdata><![CDATA[" ;
+	xml+=new_line+ "<jsp:text><![CDATA[" ;
       if ( action_index > last_index )
       {
             xml+=jsp.substring(last_index , action_index); // including new_line
       }
 	//xml+=new_line+"]]></jsp:cdata>" +new_line ; //end of CDATA
-	xml+= "]]></jsp:cdata>" +new_line ; //end of CDATA
+	xml+= "]]></jsp:text>" +new_line ; //end of CDATA
 	cdata_closed= true;
      }
 	/*
@@ -374,7 +374,7 @@ else  //template text again
      xml+=jsp.substring(last_index);
 //close the CDATA section
      //xml+=new_line + "]]></jsp:cdata>" + new_line ;
-     xml+= "]]></jsp:cdata>" + new_line ;
+     xml+= "]]></jsp:text>" + new_line ;
  
 return xml;
 
@@ -483,7 +483,9 @@ String output_xml =convert( input_jsp);
 //xml_prolog + xml_ns + jsp_root_tag +xml+ jsp_end_tag
 
 xml_ns+=">" + new_line ; //close the XML Name Space
-output_xml=xml_prolog+ author_comments + jsp_root_tag +xml_ns+ output_xml + jsp_end_tag ;
+// Omit "xml_prolog" per JSP 1.2 PFD2 clarifications
+// output_xml=xml_prolog+ author_comments + jsp_root_tag +xml_ns+ output_xml + jsp_end_tag ;
+output_xml= author_comments + jsp_root_tag +xml_ns+ output_xml + jsp_end_tag ;
 return output_xml;
 }
 
