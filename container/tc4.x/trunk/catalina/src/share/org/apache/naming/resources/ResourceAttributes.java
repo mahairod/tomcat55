@@ -85,7 +85,7 @@ import javax.naming.directory.Attribute;
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  * @version $Revision$
  */
-public final class ResourceAttributes extends BasicAttributes {
+public class ResourceAttributes extends BasicAttributes {
     
     
     // -------------------------------------------------------------- Constants
