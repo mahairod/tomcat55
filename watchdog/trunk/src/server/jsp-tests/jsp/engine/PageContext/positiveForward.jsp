@@ -12,6 +12,7 @@
 <%
 try{
         pageContext.forward("forward.jsp");
+	return;
     }catch(Exception e){
         out.println(e);
     }
