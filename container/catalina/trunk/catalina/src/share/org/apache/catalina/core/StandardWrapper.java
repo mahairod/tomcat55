@@ -1630,7 +1630,7 @@ public class StandardWrapper
             // Register JSP monitoring mbean
             try {
                 jspMonitorON = new ObjectName(domain +
-                                              " :type=JspMonitor,path=" +
+                                              ":type=JspMonitor,path=" +
                                               parentName + ",host=" +
                                               hostName);
                 Registry.getRegistry(null, null)
