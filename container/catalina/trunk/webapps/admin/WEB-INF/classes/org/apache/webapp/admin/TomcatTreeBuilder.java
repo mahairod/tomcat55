@@ -72,6 +72,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.modeler.ManagedBean;
+import org.apache.commons.modeler.Registry;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -434,10 +436,12 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getRealms(mBServer, containerName).iterator();
         while (realmNames.hasNext()) {
             String realmName = (String) realmNames.next();
-            ObjectName objectName = new ObjectName(realmName);
-            String nodeLabel = "Realm for " + containerNode.getLabel();
-            TreeControlNode realmNode =
-                new TreeControlNode(realmName,
+	    ManagedBean mb = Registry.getRegistry().findManagedBean(realmName);
+	    if (mb!=null && !mb.getName().equals("JAASRealm")) {
+	        ObjectName objectName = new ObjectName(realmName);
+	        String nodeLabel = "Realm for " + containerNode.getLabel();
+	        TreeControlNode realmNode =
+		    new TreeControlNode(realmName,
                                     "Realm.gif",
                                     nodeLabel,
                                     "EditRealm.do?select=" +
@@ -446,7 +450,8 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     URLEncoder.encode(nodeLabel),
                                     "content",
                                     false, domain);
-            containerNode.addChild(realmNode);
+                containerNode.addChild(realmNode);
+	    }
         }
         
     }   
