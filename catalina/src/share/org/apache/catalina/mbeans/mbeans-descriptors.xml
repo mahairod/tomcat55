@@ -1957,6 +1957,10 @@
                        server?"
                  type="boolean"/>
 
+    <attribute   name="defaultWebXml"
+          description="Location of the default web.xml resource or file"
+                 type="java.lang.String"/>
+
     <attribute   name="privileged"
           description="Access to tomcat internals"
                  type="boolean"/>
@@ -2106,6 +2110,12 @@
 
     <operation   name="stop"
           description="Stop the contex"
+               impact="ACTION"
+           returnType="void">
+    </operation>
+
+    <operation   name="destroy"
+          description="Destroy the contex"
                impact="ACTION"
            returnType="void">
     </operation>
