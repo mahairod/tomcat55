@@ -239,7 +239,7 @@ public class CoyoteConnector
     /**
      * The port number on which we listen for requests.
      */
-    private int port = 8080;
+    private int port = 0;
 
 
     /**
