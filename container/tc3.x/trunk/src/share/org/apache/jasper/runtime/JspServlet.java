@@ -341,27 +341,7 @@ public class JspServlet extends HttpServlet {
             }
 
             serviceJspFile(request, response, jspUri, null, preCompile(request));
-
-	} catch (HandleErrorPageException ex) {
-	    try {
-		if (ex.errorPage.endsWith(".html") || 
-		    ex.errorPage.endsWith(".htm")) 
-		{
-		    String rdir = new File(request.getPathInfo()).getParent();
-		    String path = rdir + ex.errorPage;
-		    response.sendRedirect(path);
-		}
-		else {
-                    String errorPage = ex.errorPage;
-                    if (!ex.errorPage.startsWith("/")) {
-                        File jspFile = new File(request.getServletPath());
-                        errorPage = jspFile.getParent()+File.separatorChar+ex.errorPage;
-                    }
-		    serviceJspFile(request, response, errorPage, ex.exception, false);
-		}
-	    } catch (Throwable t) {
-		unknownException(response, t);
-	    }
+	    
 	} catch (RuntimeException e) {
 	    throw e;
 	} catch (ServletException e) {
