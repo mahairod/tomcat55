@@ -82,7 +82,7 @@
 <source>
     cd $CATALINA_HOME/bin
     tar xvfz jsvc.tar.gz
-    cd jsvc
+    cd jsvc-src
     autoconf
     ./configure
     make
