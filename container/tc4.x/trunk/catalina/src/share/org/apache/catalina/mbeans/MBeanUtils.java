@@ -977,7 +977,7 @@ public class MBeanUtils {
         String webMod="//" + ((hostName==null)? "DEFAULT" :hostName ) + path;
         name = new ObjectName(domain + ":j2eeType=Servlet,name=" +
                 sname + ",WebModule=" +
-                webMod + ",J2EEAppilication=none,J2EEServer=none");
+                webMod + ",j2eeApplication=none,J2EEServer=none");
 
         return (name);
 
