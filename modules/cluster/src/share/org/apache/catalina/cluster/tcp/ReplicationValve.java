@@ -89,7 +89,7 @@ import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.*;
 import org.apache.catalina.cluster.SessionMessage;
-import org.apache.catalina.cluster.tcp.SimpleTcpCluster;
+import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterSession;
 import org.apache.catalina.cluster.ClusterManager;
 
@@ -109,7 +109,7 @@ import org.apache.catalina.cluster.ClusterManager;
 public class ReplicationValve
     extends ValveBase {
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( ReplicationValve.class );
 
     // ----------------------------------------------------- Instance Variables
 
@@ -191,7 +191,7 @@ public class ReplicationValve
             if (!( request.getContext().getManager() instanceof ClusterManager) ) return;
             
             ClusterManager manager = (ClusterManager)request.getContext().getManager();
-            SimpleTcpCluster cluster = (SimpleTcpCluster)getContainer().getCluster();
+            CatalinaCluster cluster = (CatalinaCluster)getContainer().getCluster();
             if ( cluster == null ) {
                 log.warn("No cluster configured for this request.");
                 return;

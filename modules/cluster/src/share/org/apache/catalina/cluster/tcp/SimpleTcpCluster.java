@@ -85,6 +85,7 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.StringManager;
 
 import org.apache.catalina.cluster.Member;
+import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.MembershipFactory;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
@@ -113,8 +114,8 @@ import java.net.URL;
  * @version $Revision$, $Date$
  */
 
-public class SimpleTcpCluster
-    implements Cluster, Lifecycle,
+public class SimpleTcpCluster 
+    implements CatalinaCluster, Lifecycle,
                MembershipListener, ListenCallback,
                LifecycleListener {
 
@@ -788,6 +789,10 @@ public class SimpleTcpCluster
      */
     public void stop(String contextPath) throws IOException {
         return;
+    }
+    
+    public Log getLogger() {
+        return log;
     }
 
 
