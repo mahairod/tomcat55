@@ -255,7 +255,7 @@ public class StatusManagerServlet
             if ((request.getPathInfo() != null) 
                 && (request.getPathInfo().equals("/all"))) {
                 // Warning: slow
-                writeApplicationsState(writer);
+                writeDetailedState(writer);
             }
 
         } catch (Exception e) {
@@ -452,16 +452,102 @@ public class StatusManagerServlet
     /**
      * Write applications state.
      */
-    protected void writeApplicationsState(PrintWriter writer)
+    protected void writeDetailedState(PrintWriter writer)
         throws Exception {
 
-        ObjectName queryHosts = new ObjectName("*:type=Host,*");
+        ObjectName queryHosts = new ObjectName("*:j2eeType=WebModule,*");
         Set hostsON = mBeanServer.queryNames(queryHosts, null);
         Iterator iterator = hostsON.iterator();
         while (iterator.hasNext()) {
-            ObjectName hostON = (ObjectName) iterator.next();
-            System.out.println("Host: " + hostON);
+            ObjectName contextON = (ObjectName) iterator.next();
+            writeContext(writer, contextON);
         }
+
+    }
+
+
+    /**
+     * Write context state.
+     */
+    protected void writeContext(PrintWriter writer, ObjectName objectName)
+        throws Exception {
+
+        String webModuleName = objectName.getKeyProperty("name");
+        String name = webModuleName;
+        if (name == null) {
+            return;
+        }
+
+        String hostName = null;
+        String contextName = null;
+        if (name.startsWith("//")) {
+            name = name.substring(2);
+        }
+        int slash = name.indexOf("/");
+        if (slash != -1) {
+            hostName = name.substring(0, slash);
+            contextName = name.substring(slash);
+        } else {
+            return;
+        }
+        // Special case for the root context
+        if (contextName.equals("/")) {
+            contextName = "";
+        }
+
+        writer.print("<h1>");
+        writer.print(name);
+        writer.print("</h1>");
+
+        writer.print("<br/>");
+
+        writer.print(" Startup time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "startupTime"));
+        writer.print(" TLD scan time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "tldScanTime"));
+
+        writer.print("<br/>");
+
+        String onStr = "*:j2eeType=Servlet,WebModule=" + webModuleName + ",*";
+        ObjectName servletObjectName = new ObjectName(onStr);
+        Set set = mBeanServer.queryMBeans(servletObjectName, null);
+        Iterator iterator = set.iterator();
+        while (iterator.hasNext()) {
+            ObjectInstance oi = (ObjectInstance) iterator.next();
+            writeWrapper(writer, oi.getObjectName());
+        }
+
+    }
+
+
+    /**
+     * Write detailed information about a wrapper.
+     */
+    public void writeWrapper(PrintWriter writer, ObjectName objectName)
+        throws Exception {
+
+        String servletName = objectName.getKeyProperty("name");
+
+        writer.print("<h2>");
+        writer.print(servletName);
+        writer.print("</h2>");
+
+        writer.print("<br/>");
+
+        writer.print(" Processing time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "processingTime"));
+        writer.print(" Max time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "maxTime"));
+        writer.print(" Request count: ");
+        writer.print(mBeanServer.getAttribute(objectName, "requestCount"));
+        writer.print(" Error count: ");
+        writer.print(mBeanServer.getAttribute(objectName, "errorCount"));
+        writer.print(" Load time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "loadTime"));
+        writer.print(" Classload time: ");
+        writer.print(mBeanServer.getAttribute(objectName, "classLoadTime"));
+
+        writer.print("<br/>");
 
     }
 
