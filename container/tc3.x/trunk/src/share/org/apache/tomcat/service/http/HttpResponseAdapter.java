@@ -118,12 +118,12 @@ public class HttpResponseAdapter extends  ResponseImpl {
 		String value=values[i];
 		headersSB.setLength(0);
 		headersSB.append(name).append(": ").append(value).append("\r\n");
-		try {
-		    sout.write( headersSB.toString().getBytes(Constants.CharacterEncoding.Default) );
-		} catch( IOException ex ) {
-		    ex.printStackTrace();
-		    //XXX mark the error - should abandon everything 
-		}
+		//		try {
+		sout.write( headersSB.toString().getBytes(Constants.CharacterEncoding.Default) );
+		//		} catch( IOException ex ) {
+		//		    ex.printStackTrace();
+		//XXX mark the error - should abandon everything 
+		//}
 	    }
 	}
 	sout.write( CRLF, 0, 2 );

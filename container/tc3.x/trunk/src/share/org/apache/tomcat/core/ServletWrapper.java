@@ -158,7 +158,7 @@ public class ServletWrapper {
         this.path = path;
     }
 
-    String getServletDescription() {
+    public String getServletDescription() {
         return this.description;
     }
 
@@ -251,7 +251,7 @@ public class ServletWrapper {
     }
 
     // XXX XXX need to go directly to Jsp API 
-    public void handleJspRequest(final HttpServletRequestFacade request,
+    void handleJspRequest(final HttpServletRequestFacade request,
 			      final HttpServletResponseFacade response)
 	throws IOException
     {
