@@ -35,6 +35,7 @@ InstallDirRegKey HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" ""
 Section "Tomcat 4.0 (required)"
 
   SectionIn 1 2 3
+
   SetOutPath $INSTDIR
   File tomcat.ico
   File LICENSE
@@ -50,6 +51,27 @@ Section "Tomcat 4.0 (required)"
   SetOutPath $INSTDIR\webapps\ROOT
   File /r webapps\ROOT\WEB-INF
   File webapps\ROOT\*.*
+
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+
+  CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 5
+
+SectionEnd
+
+Section "NT Service (NT/2k/XP only)"
+
+  SectionIn 1 2 3
+
+  ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
+  ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
+  
+  SetOutPath $INSTDIR\bin
+  File /oname=tomcat.exe bin\tomcat.exe
+  
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -install "Jakarta Tomcat" $2\jre\bin\hotspot\jvm.dll -Djava.class.path="$INSTDIR\bin\bootstrap.jar" -Dcatalina.home="$INSTDIR" -start org.apache.catalina.startup.Bootstrap -params start -stop org.apache.catalina.startup.Bootstrap -params stop -out "$INSTDIR\logs\stdout.log" -err "$INSTDIR\logs\stderr.log"'
+  
+  ClearErrors
 
 SectionEnd
 
@@ -92,7 +114,7 @@ Section "Tomcat 4.0 Start Menu Group"
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Start Tomcat.lnk" \
                  "$2\bin\java.exe" \
-                 '-jar -cp "$2\lib\tools.jar" -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
+                 '-jar -Dcatalina.home="$INSTDIR" "$INSTDIR\bin\bootstrap.jar" start' \
                  "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
 
   CreateShortCut "$SMPROGRAMS\Jakarta Tomcat 4.0\Stop Tomcat.lnk" \
@@ -190,9 +212,12 @@ Section -post
 
 SectionEnd
 
+
 Function .onInit
 
   ClearErrors
+
+  Call doUpdate
 
   ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
@@ -209,14 +234,56 @@ computer. Please download one from http://java.sun.com."
 
 FunctionEnd
 
+
 Function .onInstSuccess
 
   ExecShell open '$SMPROGRAMS\Jakarta Tomcat 4.0'
 
 FunctionEnd
 
+
+Function doUpdate
+
+  ; This function will be called if a previous Tomcat 4.0 installation has been
+  ; found
+
+  ReadRegStr $1 HKLM "SOFTWARE\Apache\Jakarta Tomcat 4.0" ""
+  IfErrors NoUpdate
+
+  MessageBox MB_YESNO|MB_ICONQUESTION \
+      "A previous installation of Jakarata Tomcat 4.0 has been found in $1.\
+ Do you want to upgrade it to the latest version ?" IDNO NoUpdate
+
+  SetOverwrite ifnewer
+  SetOutPath $INSTDIR
+  File tomcat.ico
+  File LICENSE
+  File /r bin
+  File /r common
+  File /r jasper
+  File /r lib
+  File /r logs
+  File /r server
+  File /r work
+  SetOutPath $INSTDIR\webapps
+  File /r webapps\manager
+  SetOutPath $INSTDIR\webapps\ROOT
+  File /r webapps\ROOT\WEB-INF
+  File webapps\ROOT\*.*
+
+  MessageBox MB_OK "Update was successful."
+
+  ; Installation over
+  Abort
+
+NoUpdate:
+
+FunctionEnd
+
+
 UninstallText "This will uninstall Jakarta Tomcat 4.0 from your system:"
 UninstallExeName uninst-tomcat4.exe
+
 
 Section Uninstall
 
@@ -232,6 +299,9 @@ Section Uninstall
       WriteRegStr HKCR ".jsp" "" $1
       DeleteRegValue HKCR ".jsp" "backup_val"
   NoOwn:
+
+  ExecWait '"$INSTDIR\bin\tomcat.exe" -uninstall "Jakarta Tomcat"'
+  ClearErrors
 
   DeleteRegKey HKCR "JSPFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Jakarta Tomcat 4.0"
