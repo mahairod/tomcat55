@@ -65,7 +65,10 @@
 package org.apache.tomcat.util;
 
 import java.net.URL;
+import java.net.URLConnection;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.io.IOException;
 
@@ -75,6 +78,9 @@ import java.io.IOException;
  */
 
 public class URLUtil {
+
+    private static boolean fileURLBug = false;
+    private static boolean fileURLBugChecked = false;
 
     public static URL resolve(String s)
 	throws MalformedURLException
@@ -183,4 +189,42 @@ public class URLUtil {
 	    return null;
     }
 
+    /*
+     * There was a bug in versions of Suns Java runtime
+     * in versions prior to 1.3.0 for file: URLs.  In those version
+     * URL encodings (%HH) were not decoded, in 1.3.0 and later 
+     * they are.  For example, in 1.2.2, the URL file:%2e would try
+     * try to open a file called %2e.  In 1.3.0 and later it would
+     * try to open the current directory (i.e. .).
+     *
+     * This extra URL decoding for file: URLs can open severe security
+     * holes because it causes URLs to be decoded twice.  For example,
+     * a request URI containing sequences of /%252e%252e would get
+     * interpreted as sequences of /.. and could escape the web application.
+     *
+     * The only way to determine if the current VM suffers from this bug
+     * of not is to execute a URLConnection.getInputStream() on a file 
+     * URL
+     *
+     */
+    public static synchronized boolean hasFileURLBug()
+    {
+        if(!fileURLBugChecked){
+            fileURLBugChecked = true;
+            fileURLBug = false;
+            try{
+                System.out.println("URLUtil.hasFileURLBug:  user.dir = " + System.getProperty("user.dir"));
+                URL url = new URL("file:%2e");
+                URLConnection con = url.openConnection();
+                InputStream is = con.getInputStream();
+            }catch(MalformedURLException e){
+            }catch(FileNotFoundException e){
+                fileURLBug = true;
+            }catch(IOException e){
+            }
+        }
+
+        System.out.println("URLUtil.hasFileURLBug:  " + fileURLBug);
+        return fileURLBug;
+    }
 }

@@ -168,6 +168,8 @@ public class Context {
     String vhost=null;
     Vector vhostAliases=new Vector();
     FacadeManager facadeM;
+
+    private boolean fileURLBug = URLUtil.hasFileURLBug();	// Saves a synchronized method call for each request
     
     public Context() {
 	defaultContainer=new Container();
@@ -767,9 +769,13 @@ public class Context {
 	}
 	
 	try {
-            url=new URL("file", null, 0,realPath );
+        if(!fileURLBug){
+            realPath = URLEncoder.encode(realPath);
+        }
+        System.out.println("Context.getResource:  realPath = " + realPath);
+        url=new URL("file", null, 0,realPath );
 	    if( debug>9) log( "getResourceURL=" + url + " request=" + rpath );
-	    return url;
+        return url;
 	} catch( IOException ex ) {
 	    ex.printStackTrace();
 	    return null;
