@@ -254,6 +254,7 @@ public class Main{
 					       getCommonDir());
 	    IntrospectionUtils.addJarsFromClassPath(commonJars,
 						    TOMCAT_COMMON_CLASSPATH);
+            addToTomcatClasspathSysProp(commonJars);
 
             URL[] commonClassPath=IntrospectionUtils.getClassPath(commonJars);
 	    //            displayClassPath( "common ", commonClassPath );
@@ -279,8 +280,8 @@ public class Main{
 	    IntrospectionUtils.addToClassPath(appsJars, getAppsDir());
 	    IntrospectionUtils.addJarsFromClassPath( appsJars, 
 						     TOMCAT_APPS_CLASSPATH);
+            addToTomcatClasspathSysProp(appsJars);
 
-	    
             URL[] appsClassPath=IntrospectionUtils.getClassPath(appsJars);
             ClassLoader appsCl=
 		jdk11Compat.newClassLoaderInstance(appsClassPath ,
@@ -314,7 +315,31 @@ public class Main{
 	    System.out.println( cp[i].getFile() );
 	}
     }
-    
+
+    /**
+     * Adds classpath entries from a vector of URL's to the
+     * "tc_path_add" System property.  This System property lists
+     * the classpath entries common to web applications. This System
+     * property is currently used by Jasper when its JSP servlet
+     * compiles the Java file for a JSP.
+    */
+
+    private void addToTomcatClasspathSysProp(Vector v)
+    {
+        String sep = System.getProperty("path.separator");
+        String cp = System.getProperty("tc_path_add");
+
+        Enumeration e = v.elements();
+        while( e.hasMoreElements() ) {
+            URL url = (URL)e.nextElement();
+            if( cp != null)
+                cp += sep + url.getFile();
+            else
+                cp = url.getFile();
+        }
+        if( cp != null)
+            System.setProperty("tc_path_add",cp);
+    }
 
 }
 
