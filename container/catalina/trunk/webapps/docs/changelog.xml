@@ -32,6 +32,9 @@
       <add>
         Add installer for mod_jk on IIS. (mturk)
       </add>
+	  <add>
+	    New store config module for better server.xml saving support (pero)
+	  </add>
     </changelog>
   </subsection>
 
