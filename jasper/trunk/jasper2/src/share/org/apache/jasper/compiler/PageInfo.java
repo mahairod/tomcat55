@@ -89,6 +89,7 @@ class PageInfo {
     private String errorPage = null;
     private String pageEncoding = null;
     private int maxTagNesting = 0;
+    private boolean scriptless = false;
 
     PageInfo(BeanRepository beanRepository) {
 	this.beanRepository = beanRepository;
@@ -212,4 +213,13 @@ class PageInfo {
     public void setMaxTagNesting(int maxTagNesting) {
         this.maxTagNesting = maxTagNesting;
     }
+
+    public void setScriptless(boolean s) {
+	scriptless = s;
+    }
+
+    public boolean isScriptless() {
+	return scriptless;
+    }
+
 }

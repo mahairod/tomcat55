@@ -571,30 +571,6 @@ public class Validator {
 	}
     }
 
-    /**
-     * A visitor for collection info on the page
-     */
-    static class CollectVisitor extends Node.Visitor {
-
-        private int maxTagNesting = 0;
-        private int curTagNesting = 0;
-
-        public void visit(Node.CustomTag n) throws JasperException {
-
-            if (curTagNesting > maxTagNesting) {
-                maxTagNesting = curTagNesting;
-            }
-
-            curTagNesting++;
-            visitBody(n);
-            curTagNesting--;
-        }
-
-        public void updatePageInfo(PageInfo pageInfo) {
-	    pageInfo.setMaxTagNesting(maxTagNesting);
-        }
-    }
-
     public static void validate(Compiler compiler,
 				Node.Nodes page) throws JasperException {
 
@@ -636,12 +612,6 @@ public class Validator {
 	 */
 	page.visit(new TagExtraInfoVisitor(compiler));
 
-        /*
-         * Collect information about the page and update pageInfo object.
-         */
-        CollectVisitor collectVisitor = new CollectVisitor();
-        page.visit(collectVisitor);
-        collectVisitor.updatePageInfo(compiler.getPageInfo());
     }
 
 

@@ -194,6 +194,9 @@ public class Compiler {
 	// Dump out the page (for debugging)
 	// Dumper.dump(pageNodes);
 
+	// Collect page info
+	Collector.collect(this, pageNodes);
+
 	// generate servlet .java file
 	Generator.generate(writer, this, pageNodes);
         writer.close();

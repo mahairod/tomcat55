@@ -664,6 +664,11 @@ public abstract class Node {
 	private String shortName;
 	private JspAttribute[] jspAttrs;
 	private TagData tagData;
+	private boolean scriptless;	// true if the tag and its body
+					// contians no scripting elements.
+	private boolean hasUsebean;
+	private boolean hasIncludeAction;
+	private boolean hasSetProperty;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName, Node parent) {
@@ -712,6 +717,38 @@ public abstract class Node {
 
 	public TagData getTagData() {
 	    return tagData;
+	}
+
+	public void setScriptless(boolean s) {
+	    scriptless = s;
+	}
+
+	public boolean isScriptless() {
+	    return scriptless;
+	}
+
+	public void setHasUsebean(boolean u) {
+	    hasUsebean = u;
+	}
+
+	public boolean isHasUsebean() {
+	    return hasUsebean;
+	}
+
+	public void setHasIncludeAction(boolean i) {
+	    hasIncludeAction = i;
+	}
+
+	public boolean isHasIncludeAction() {
+	    return hasIncludeAction;
+	}
+
+	public void setHasSetProperty(boolean s) {
+	    hasSetProperty = s;
+	}
+
+	public boolean isHasSetProperty() {
+	    return hasSetProperty;
 	}
     }
 

@@ -89,6 +89,7 @@ import org.apache.jasper.Constants;
 public class Generator {
 
     private ServletWriter out;
+    private MethodsBuffer methodsBuffer;
     private ErrorDispatcher err;
     private BeanRepository beanInfo;
     private JspCompilationContext ctxt;
@@ -192,10 +193,10 @@ public class Generator {
 	    out.print("implements SingleThreadModel");
 	}
 	out.println(" {");
+	out.pushIndent();
 
 	// Class body begins here
 
-	out.pushIndent();
 	generateDeclarations(page);
 	out.println();
 
@@ -227,14 +228,6 @@ public class Generator {
 
  	// Class fields declarations
      	
-        maxTagNesting = pageInfo.getMaxTagNesting();
-        if (maxTagNesting >= 0) {
-            out.printil("private static final int RELEASE_ACTION         = 0;");
-            out.printil("private static final int POP_AND_RELEASE_ACTION = 1;");
-            out.println();
-            out.println();
-        }
-
 	// Constructor (empty so far) here
 
 	// Methods here
@@ -271,17 +264,11 @@ public class Generator {
 	out.printil("JspWriter out = null;");
 	out.printil("Object page = this;");
 
-     	// pseudo "Finally" state stack objects
-        if (maxTagNesting >= 0) {
-            String depth = Integer.toString(maxTagNesting + 1);
-            out.printil("int   tagStackIndex = -1;");
-            out.printin("int[] tagStackActions = new int[");
-            out.print(depth);
-            out.println("];");
-            out.printin("javax.servlet.jsp.tagext.Tag[] tagStack = new javax.servlet.jsp.tagext.Tag[");
-            out.print(depth);
-            out.println("];");
-            out.println();
+     	// Number of tag object that need to be popped
+	// XXX TODO: use a better criteria
+	maxTagNesting = pageInfo.getMaxTagNesting();
+        if (maxTagNesting > 0) {
+	    out.printil("JspxState _jspxState = new JspxState();");
         }
 
 	out.printil("try {");
@@ -312,6 +299,25 @@ public class Generator {
     }
 
     /**
+     * Generate codes defining the classes used in the servlet.
+     * 1. Servlet state object, used to pass servlet info round methods.
+     */
+    private void generateJspState() {
+	out.println();
+	out.printil("static final class JspxState {");
+	out.pushIndent();
+	out.printil("public int tagCount;");
+	out.println();
+	out.printil("public JspxState() {");
+	out.pushIndent();
+	out.printil("tagCount = 0;");
+	out.popIndent();
+	out.printil("}");
+	out.popIndent();
+	out.printil("}");
+    }
+
+    /**
      * A visitor that generates codes for the elements in the page.
      */
     class GenerateVisitor extends Node.Visitor {
@@ -329,10 +335,15 @@ public class Generator {
 	private Hashtable tagVarNumbers;
 	private String parent;
 
+	private ServletWriter out;
+	private MethodsBuffer methodsBuffer;
+
 	/**
 	 * Constructor.
 	 */
-	public GenerateVisitor() {
+	public GenerateVisitor(ServletWriter out, MethodsBuffer methodsBuffer) {
+	    this.out = out;
+	    this.methodsBuffer = methodsBuffer;
 	    handlerInfos = new Hashtable();
 	    tagVarNumbers = new Hashtable();
 	}
@@ -347,6 +358,9 @@ public class Generator {
 	 */
 	private String attributeValue(Node.JspAttribute attr, boolean encode) {
 	    String v = attr.getValue();
+	    if (v == null)
+		return "";
+
 	    if (attr.isExpression()) {
 		if (encode) {
 		    return "java.net.URLEncoder.encode(" + v + ")";
@@ -700,18 +714,22 @@ public class Generator {
 	    // First compose the runtime output string 
 	    String s0 = "<OBJECT classid=\"" + ctxt.getOptions().getIeClassId()+
 			"\"" + makeAttr("name", name);
-	    String s1, s2;
-	    if (width.isExpression()) {
-		s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
+	    String s1="", s2="";
+	    if (width != null) {
+		if (width.isExpression()) {
+		    s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
 			" + " + quote("\"");
-	    } else {
-		s1 = quote(s0 + makeAttr("width", width.getValue()));
+		} else {
+		    s1 = quote(s0 + makeAttr("width", width.getValue()));
+		}
 	    }
-	    if (height.isExpression()) {
-		s2 = quote(" height=\"") + " + " + height.getValue() +
+	    if (height != null) {
+		if (height.isExpression()) {
+		    s2 = quote(" height=\"") + " + " + height.getValue() +
 			" + " + quote("\"");
-	    } else {
-		s2 = quote(makeAttr("height", height.getValue()));
+		} else {
+		    s2 = quote(makeAttr("height", height.getValue()));
+		}
 	    }
 	    String s3 = quote(makeAttr("hspace", hspace) +
 				makeAttr("vspace", vspace) +
@@ -762,18 +780,28 @@ public class Generator {
 		 makeAttr("type", "application/x-java-" + type + ";" +
 			  ((jreversion==null)? "": "version=" + jreversion)) +
 		 makeAttr("name", name);
-	    if (width.isExpression()) {
-		s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
+
+	    if (width != null) {
+		if (width.isExpression()) {
+		    s1 = quote(s0 + " width=\"") + " + " + width.getValue() +
 			" + " + quote("\"");
+		} else {
+		    s1 = quote(s0 + makeAttr("width", width.getValue()));
+		}
 	    } else {
-		s1 = quote(s0 + makeAttr("width", width.getValue()));
+		s1 = quote(s0);
 	    }
-	    if (height.isExpression()) {
-		s2 = quote(" height=\"") + " + " + height.getValue() +
-			" + " + quote("\"");
+	    if (height != null) {
+		if (height.isExpression()) {
+		    s2 = quote(" height=\"") + " + " + height.getValue() +
+		       " + " + quote("\"");
+		} else {
+		    s2 = quote(makeAttr("height", height.getValue()));
+		}
 	    } else {
-		s2 = quote(makeAttr("height", height.getValue()));
+		s2 = "";
 	    }
+
 	    s3 = quote(makeAttr("hspace", hspace) +
 			 makeAttr("vspace", vspace) +
 			 makeAttr("align", align) +
@@ -844,16 +872,93 @@ public class Generator {
 	    String tagEvalVar = "_jspx_eval_" + baseVar;
 	    String tagHandlerVar = "_jspx_th_" + baseVar;
 
+	    // If the tag contains no scripting element, generate its codes
+	    // to a method.
+	    ServletWriter outSave = null;
+	    MethodsBuffer methodsBufferSave = null;
+	    if (n.isScriptless() && varInfos == null &&
+			(tagVarInfos == null || tagVarInfos.length == 0)) {
+		// The tag handler and its body code can reside in a separate
+		// method if it is scriptless and does not have any scripting
+		// variable defined.
+		// For some reason, varInfos is null when var is not defined
+		// in TEI, but tagVarInfos is empty array when var is not
+		// defined in tld.
+
+		String tagMethod = "_jspx_meth_" + baseVar;
+
+		// Generate a call to this method
+		out.printin(tagMethod);
+		out.print("(");
+		if (parent != null) {
+		    out.print(parent);
+		    out.print(", ");
+		}
+		out.println("pageContext, _jspxState);");
+
+		// Set up new buffer for the method
+		outSave = out;
+		out = methodsBuffer.getOut();
+		methodsBufferSave = methodsBuffer;
+		methodsBuffer = new MethodsBuffer();
+
+		// Generate code for method declaration
+		out.println();
+		out.pushIndent();
+		out.printin("private void ");
+		out.print(tagMethod);
+		out.print("(");
+		if (parent != null) {
+		    out.print("javax.servlet.jsp.tagext.Tag ");
+		    out.print(parent);
+		    out.print(", ");
+		}
+		out.println("PageContext pageContext, JspxState _jspxState)");
+		out.printil("        throws java.io.IOException, javax.servlet.jsp.JspException {");
+		out.pushIndent();
+
+		// Initilaize local variables used in this method.
+		out.printil("JspWriter out = pageContext.getOut();");
+		if (n.isHasUsebean()) {
+		    out.println("HttpSession session = pageContext.getSession();");
+		    out.println("ServletContext application = pageContext.getServletContext();");
+		}
+		if (n.isHasUsebean() || n.isHasIncludeAction() || n.isHasSetProperty()) {
+		    out.println("HttpServletRequest request = pageContext.getRequest();");
+		}
+		if (n.isHasIncludeAction()) {
+		    out.println("ServletResponse response = pageContext.getResponse();");
+		}
+	    }
+
 	    // Generate code for start tag, body, and end tag
 	    generateCustomStart(n, varInfos, tagVarInfos, handlerInfo,
 				tagHandlerVar, tagEvalVar);
+
 	    String tmpParent = parent;
 	    parent = tagHandlerVar;
 	    visitBody(n);
+
 	    parent = tmpParent;
 	    generateCustomEnd(n, varInfos, tagVarInfos,
 			      handlerInfo.getTagHandlerClass(), tagHandlerVar,
 			      tagEvalVar);
+
+	    if (n.isScriptless() && varInfos == null &&
+			(tagVarInfos == null || tagVarInfos.length == 0)) {
+		// Generate end of method
+		out.popIndent();
+		out.printil("}");
+		out.popIndent();
+
+		// Append any methods that got generated in the body to the
+		// current buffer
+		out.print(methodsBuffer.toString());
+
+		// restore previous buffer
+		methodsBuffer = methodsBufferSave;
+		out = outSave;
+	    }
         }
 
 	private static final String SINGLE_QUOTE = "'";
@@ -984,11 +1089,6 @@ public class Generator {
             if (implementsTryCatchFinally) {
                 out.printil("try {");
                 out.pushIndent();
-            } else {
-                out.printil("tagStackActions[++tagStackIndex] = RELEASE_ACTION;");
-                out.printin("tagStack[tagStackIndex] = ");
-                out.print(tagHandlerVar);
-                out.println(";");
             }
 	    out.printin("int ");
 	    out.print(tagEvalVar);
@@ -1018,8 +1118,7 @@ public class Generator {
 		    
 		    out.printil("out = pageContext.pushBody();");
                     if (!implementsTryCatchFinally) {
-                        out.printil("tagStackActions[tagStackIndex]" +
-					" = POP_AND_RELEASE_ACTION;");
+                        out.printil("_jspxState.tagCount++;");
  		    }
 		    out.printin(tagHandlerVar);
 		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
@@ -1078,7 +1177,7 @@ public class Generator {
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
 		    out.pushIndent();
                     if (!implementsTryCatchFinally) {
-                        out.printil("tagStackActions[tagStackIndex] = RELEASE_ACTION;");
+                        out.printil("_jspxState.tagCount--;");
  		    }
 		    out.printil("out = pageContext.popBody();");
 		    out.popIndent();
@@ -1112,7 +1211,6 @@ public class Generator {
                 out.popIndent();
                 out.printil("}");
             } else {
-                out.printil("tagStackIndex--;");
                 out.printin(tagHandlerVar);
                 out.println(".release();");
 	    }
@@ -1157,13 +1255,13 @@ public class Generator {
 			if (declare && tagVarInfos[i].getDeclare()) {
 			    out.printin(tagVarInfos[i].getClassName() + " ");
 			}
+			out.printin(name);
+			out.print(" = (");
+			out.print(tagVarInfos[i].getClassName());
+			out.print(") pageContext.findAttribute(");
+			out.print(quote(name));
+			out.println(");");
 		    }
-		    out.printin(name);
-		    out.print(" = (");
-		    out.print(tagVarInfos[i].getClassName());
-		    out.print(") pageContext.findAttribute(");
-		    out.print(quote(name));
-		    out.println(");");
 		}
 	    }
 	}
@@ -1342,24 +1440,22 @@ public class Generator {
         out.popIndent();
         out.printil("} catch (Throwable t) {");
         out.pushIndent();
+/*
         out.printil("if (out != null && out.getBufferSize() != 0)");
         out.pushIndent();
         out.printil("out.clearBuffer();");
         out.popIndent();
+*/
         out.printil("if (pageContext != null) pageContext.handlePageException(t);");
         out.popIndent();
         out.printil("} finally {");
         out.pushIndent();
 
 	// Cleanup the tags on the stack
-        if (maxTagNesting >= 0) {
-            out.printil("while (tagStackIndex >= 0) {");
-            out.pushIndent();
-            out.printil("if (POP_AND_RELEASE_ACTION == tagStackActions[tagStackIndex])");
+        if (maxTagNesting > 0) {
+            out.printil("while (_jspxState.tagCount-- > 0) {");
             out.pushIndent();
             out.printil("out = pageContext.popBody();");
-            out.popIndent();
-            out.printil("tagStack[tagStackIndex--].release();");
             out.popIndent();
             out.printil("}");
         }
@@ -1373,6 +1469,14 @@ public class Generator {
         out.popIndent();
         out.printil("}");
 
+	// Append any methods that were generated
+	out.print(methodsBuffer.toString());
+
+	// generate class definition for JspxState
+        if (maxTagNesting > 0) {
+	    generateJspState();
+	}
+
         // Close the class definition
         out.popIndent();
         out.printil("}");
@@ -1383,6 +1487,7 @@ public class Generator {
      */
     Generator(ServletWriter out, Compiler compiler) {
 	this.out = out;
+	methodsBuffer = new MethodsBuffer();
 	err = compiler.getErrorDispatcher();
 	ctxt = compiler.getCompilationContext();
 	pageInfo = compiler.getPageInfo();
@@ -1401,7 +1506,7 @@ public class Generator {
 	Generator gen = new Generator(out, compiler);
 
 	gen.generatePreamble(page);
-	page.visit(gen.new GenerateVisitor());
+	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer));
 	gen.generatePostamble(page);
     }
 
@@ -1480,6 +1585,25 @@ public class Generator {
 	 */
 	public Class getTagHandlerClass() {
 	    return tagHandlerClass;
+	}
+    }
+
+    private static class MethodsBuffer {
+
+	private java.io.CharArrayWriter charWriter;
+	private ServletWriter out;
+
+	MethodsBuffer() {
+	    charWriter = new java.io.CharArrayWriter();
+	    out = new ServletWriter(new java.io.PrintWriter(charWriter));
+	}
+
+	public ServletWriter getOut() {
+	    return out;
+	}
+
+	public String toString() {
+	    return charWriter.toString();
 	}
     }
 }
