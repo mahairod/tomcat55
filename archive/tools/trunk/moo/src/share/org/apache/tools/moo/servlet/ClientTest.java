@@ -55,6 +55,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ * @author Mandar Raje [mandar@eng.sun.com]
+ * @author Arun Jamwal [arunj@eng.sun.com]
  */
 package org.apache.tools.moo.servlet;
 
@@ -84,6 +86,11 @@ import java.io.PrintWriter;
  */
 public abstract class ClientTest
     implements Testable {
+
+	private MapManager mapManager = null;
+	URL url = null;
+    boolean useCookie = false;
+
     
     /**
      * returns a description of the client test.
@@ -111,12 +118,34 @@ public abstract class ClientTest
     }
     
     /**
+     * establishes and returns an HTTP Connection (HTTP GET).
+     * This method does not set any headers nor a query string
+     */
+    public HttpURLConnection
+	getConnection(boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+	return getConnection(null, null, null, null);
+    }
+    
+    /**
      * establishes and returns an HTTP Connection with the HTTP method
      * set to method.  There are no user-defined headers, nor a query string
      */
     public HttpURLConnection
 	getConnection(String method) 
 	throws Exception {
+	return getConnection(null, null, null, method);
+    }
+    
+    /**
+     * establishes and returns an HTTP Connection with the HTTP method
+     * set to method.  There are no user-defined headers, nor a query string
+     */
+    public HttpURLConnection
+	getConnection(String method, boolean useCookie) 
+	throws Exception {
+	this.useCookie = useCookie;
 	return getConnection(null, null, null, method);
     }
     
@@ -131,7 +160,27 @@ public abstract class ClientTest
 	throws Exception {
         return getConnection(headers, null, null, null);
     }
+
+    /**
+     * establishes and returns an HTTP Connection (HTTP GET).
+     * The headers arg should be set up with the keys as HTTP headers fields and 
+     * the values as string values.
+     * This method does not set the query string
+     */
+    public HttpURLConnection
+	getConnection (Hashtable headers, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+        return getConnection(headers, null, null, null);
+    }
     
+    
+    public HttpURLConnection
+	getConnection(Hashtable headers, String query, String pathInfo, String method, boolean useCookie)
+	throws Exception {
+	    this.useCookie = useCookie;
+	    return getConnection(headers, query, pathInfo, method);
+	}
     /**
      * establishes and returns an HTTP Connection.
      * This connects to the value in the MapManager
@@ -174,7 +223,7 @@ public abstract class ClientTest
         HttpURLConnection connection = null;
 	String mapResource = this.getClass().getName();
 	
-	MapManager mapManager = MapManagerImpl.getMapManager();
+	mapManager = MapManagerImpl.getMapManager();
 
 	String testResource = mapManager.get(mapResource);
 	//associated server-side class for the client
@@ -192,7 +241,7 @@ public abstract class ClientTest
 	
 	String toConnect = testResource + queryAndPath;
 	
-	URL url = URLHelper.getURL(toConnect);
+	url = URLHelper.getURL(toConnect);
 	String host = url.getHost();
 	String port = String.valueOf(url.getPort());
 	String protocol = url.getProtocol();
@@ -215,6 +264,10 @@ public abstract class ClientTest
 		throw e;
 	    }//end catch
 	} //end if	    
+	
+	//set cookie header
+	if (this.useCookie == true)
+	    setCookieHeader(connection);
 	
 	//establish the headers
 	doHeaders(headers, connection);
@@ -291,6 +344,23 @@ public abstract class ClientTest
 	
     }
     
+ 
+	private void setCookieHeader(HttpURLConnection connection) {
+        String savedCookies = 
+	        mapManager.getCookieJar().applyRelevantCookies(this.url);
+        if (savedCookies != null) {
+            connection.setRequestProperty("Cookie", savedCookies);
+        }
+	}
+
+    private void saveCookies(HttpURLConnection connection) {
+        String recvCookies = connection.getHeaderField("Set-Cookie");
+        if (recvCookies != null) {
+            Vector receivedCookies = new Vector();
+            receivedCookies.addElement(recvCookies);
+	        mapManager.getCookieJar().recordAnyCookies(receivedCookies, this.url);
+        }
+    }
     
     /**
      * adds the headers from the headers Hashtable 
@@ -381,6 +451,9 @@ public abstract class ClientTest
 	//handle HTTP codes here
 	int code = connection.getResponseCode();
 	String message = connection.getResponseMessage();
+
+	if (this.useCookie == true)
+        saveCookies(connection);
 
 	//http response in 400s signifies Client Request Incomplete/Doc Not found ...
 	//http response in 500s signifies servlet error

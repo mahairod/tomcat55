@@ -55,14 +55,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ * @author Mandar Raje [mandar@eng.sun.com]
+ * @author Arun Jamwal [arunj@eng.sun.com]
  */
 package org.apache.tools.moo.servlet;
 
 import org.apache.tools.moo.servlet.Constants;
+import org.apache.tools.moo.cookie.CookieJar;
 import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Properties;
@@ -75,18 +79,19 @@ import java.lang.NullPointerException;
  * This class handles the mapping of client tests to server tests
  */
 public class MapManager {
+
+    private CookieJar cookieJar = new CookieJar();
     
     //maps is a hashtable from client test (key) to server test (value)
     private Hashtable maps = new Hashtable();
     
     //offers some configurability options such as the base directory of 
     // server resources (ie server-side tests)
-    private static final String ConfigFile = Constants.Config.propDir +
-	File.separator + Constants.Config.Name;
+    private static final String ConfigFile = Constants.Config.propDir +  Constants.Config.Name;
     
     public
 	MapManager() {
-	
+
 	String defaultResourceBase = "/servlet-tests";
 	Properties props = new Properties();
 	Properties tests = new Properties();
@@ -95,47 +100,30 @@ public class MapManager {
 		  defaultResourceBase);
 	
 	try {
-	    File f = new File(ConfigFile);
-	    
-	    //if config file doesn't exist, create one
-	    if (! f.exists()) {
-	        InputStream in =
-		    this.getClass().getResourceAsStream(ConfigFile);
-		FileOutputStream out = new FileOutputStream(ConfigFile);
-		byte[] buf = new byte[1024];
-		int read = 0;
-		
-		do {
-		    out.write(buf, 0, read);
-		    read = in.read(buf, 0, buf.length);
-		} while (read > -1);
-		
-		in.close();
-		out.close();
-	    }
 	    
 	    //load configuration properties
-	    props.load(new FileInputStream(f));
+        InputStream in =
+		    this.getClass().getResourceAsStream(ConfigFile);
+		if (in == null)
+	        throw new Exception();
+	    props.load(in);
 	} catch (Exception e) {
 	    System.out.println("Exception: can't find config file " +
 			       ConfigFile);
 	}
 	
-	String propFile = Constants.Config.propDir + File.separator +
-	    Constants.Config.mapFile;
-	
-        File pFile = new File(propFile);
-	
-        if (!pFile.exists()) {
-	    System.out.println("Could not find file: " + propFile);
-        }
+	String propFile = Constants.Config.propDir +  Constants.Config.mapFile;
 	
 	try {	  
 	    
-	    tests.load(new FileInputStream(pFile));
+        InputStream in =
+		    this.getClass().getResourceAsStream(propFile);
+		if (in == null)
+	        throw new FileNotFoundException();
+	    tests.load(in);
 	    maps = (Hashtable)tests;
 	} catch(FileNotFoundException e) {
-	    System.out.println("Could not find file: " + propFile);
+	    System.out.println("Servlet Could not find file: " + propFile);
 	} catch (SecurityException e) {
 	    System.out.println("Security Exception while opening: " + propFile);
 	} catch (IOException e) {
@@ -160,5 +148,9 @@ public class MapManager {
     public String
 	get(String testName) {
 	return (String)maps.get(testName);
+    }
+
+    public CookieJar getCookieJar() {
+        return this.cookieJar;
     }
 }

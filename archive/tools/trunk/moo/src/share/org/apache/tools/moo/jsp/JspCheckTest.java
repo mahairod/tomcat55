@@ -55,6 +55,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ * @author Mandar Raje [mandar@eng.sun.com]
+ * @author Arun Jamwal [arunj@eng.sun.com]
  */
 package org.apache.tools.moo.jsp;
 
@@ -87,7 +89,9 @@ public abstract class JspCheckTest
     implements Testable {
     
     MapManager mapManager;
-    
+	URL url = null;
+    boolean useCookie = false; 
+
     /**
      * returns a description of the client test.
      * This method needs to be overridden by the specific test
@@ -112,6 +116,15 @@ public abstract class JspCheckTest
 	throws Exception {
 	return getConnection(null, null, null, method);
     }
+
+    public HttpURLConnection
+	getConnection(String method, boolean useCookie) 
+	throws Exception {
+	this.useCookie = useCookie;
+	return getConnection(null, null, null, method);
+    }
+    
+    /**
     
     /**
      * establishes and returns an HTTP Connection (HTTP GET).
@@ -120,6 +133,13 @@ public abstract class JspCheckTest
     public HttpURLConnection
 	getConnection ()
 	throws Exception {
+	return getConnection(null, null, null, null);
+    }
+
+    public HttpURLConnection
+	getConnection (boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
 	return getConnection(null, null, null, null);
     }
     
@@ -134,12 +154,27 @@ public abstract class JspCheckTest
 	throws Exception {
 	return getConnection(headers, null, null, null);
     }
+
+    public HttpURLConnection
+	getConnection (Hashtable headers, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+	return getConnection(headers, null, null, null);
+    }
     
     public HttpURLConnection
 	getConnection(Hashtable headers, Hashtable queryString, String pathInfo)
 	throws Exception {
 	return getConnection(headers, queryString, pathInfo, null);
     }
+
+    public HttpURLConnection
+	getConnection(Hashtable headers, Hashtable queryString, String pathInfo, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+	return getConnection(headers, queryString, pathInfo, null);
+    }
+    
     
     /**
      * establishes and returns an HTTP Connection.
@@ -157,6 +192,14 @@ public abstract class JspCheckTest
 	getConnection(Hashtable headers, Hashtable queryString, String pathInfo,
 		      String method)
 	throws Exception {
+	return getCon(headers, doQueryString(queryString), pathInfo, method);
+    }
+
+    public HttpURLConnection
+	getConnection(Hashtable headers, Hashtable queryString, String pathInfo,
+		      String method, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
 	return getCon(headers, doQueryString(queryString), pathInfo, method);
     }
     
@@ -184,6 +227,22 @@ public abstract class JspCheckTest
 	throws Exception {
 	return getCon(headers, "?" + queryString, pathInfo, method);
     }
+
+    public HttpURLConnection
+	getQueryConnection(Hashtable headers, String queryString, String pathInfo,
+			   String method, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+	return getCon(headers, "?" + queryString, pathInfo, method);
+    }
+    
+    public HttpURLConnection
+	getCon(Hashtable headers, String query, String pathInfo, String method, boolean useCookie)
+	throws Exception {
+	this.useCookie = useCookie;
+	return getCon(headers, query, pathInfo, method);
+	}
+	
     
     /**
      * Grandaddy of all calls
@@ -210,7 +269,7 @@ public abstract class JspCheckTest
 	String toConnect = testResource + (pathInfo!=null ? "/"+pathInfo : "") +
 	    query;
 	
-	URL url = URLHelper.getURL(toConnect);
+	url = URLHelper.getURL(toConnect);
 	String host = url.getHost();
 	String port = String.valueOf(url.getPort());
 	String protocol = url.getProtocol();
@@ -234,6 +293,10 @@ public abstract class JspCheckTest
 	    }//end catch
 	} //end if	    
 	
+	//set cookie header
+	if (this.useCookie == true)
+	    setCookieHeader(connection);
+
 	//establish the headers
 	doHeaders(headers, connection);
 	
@@ -298,6 +361,23 @@ public abstract class JspCheckTest
 	return sb.toString();
     }
     
+	private void setCookieHeader(HttpURLConnection connection) {
+        String savedCookies = 
+	        mapManager.getCookieJar().applyRelevantCookies(this.url);
+        if (savedCookies != null) {
+            connection.setRequestProperty("Cookie", savedCookies);
+        }
+	}
+
+    private void saveCookies(HttpURLConnection connection) {
+        String recvCookies = connection.getHeaderField("Set-Cookie");
+        if (recvCookies != null) {
+            Vector receivedCookies = new Vector();
+            receivedCookies.addElement(recvCookies);
+	        mapManager.getCookieJar().recordAnyCookies(receivedCookies, this.url);
+        }
+    }
+
     /**
      * adds the headers from the headers Hashtable 
      * (key=HTTP header, value=HTTP value)
@@ -308,6 +388,7 @@ public abstract class JspCheckTest
      * modifies: connection 
      */
     private void doHeaders(Hashtable headers, HttpURLConnection connection) {
+
 	if (headers != null) {
 	    Enumeration enum = headers.keys();
 	    
@@ -348,6 +429,9 @@ public abstract class JspCheckTest
 	int code = connection.getResponseCode();
 	String message = connection.getResponseMessage();
 	
+	if (this.useCookie == true)
+        saveCookies(connection);
+
 	if (code >= 400) {
 	    testResult.setStatus(false);
 	    testResult.setMessage(message);

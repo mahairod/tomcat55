@@ -55,6 +55,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
+ * @author Mandar Raje [mandar@eng.sun.com]
+ * @author Arun Jamwal [arunj@eng.sun.com]
  */
 package org.apache.tools.moo.jsp;
 
@@ -65,7 +67,7 @@ public class Constants {
       //how exactly are these used?
         public static final String Name = "jcheck.properties";
 	public static final String mapFile = "jsp-tests.properties";
-	public static final String propDir = "props";
+	public static final String propDir = "/org/apache/jcheck/props/";
 	public static final String ResourceBase = "resourceBase";
     }
 

@@ -65,7 +65,7 @@ public class Constants {
 	//how exactly are these used?
         public static final String Name = "scheck.properties";
 	public static final String mapFile = "servlet-tests.properties";
-        public static final String propDir = "props";
+        public static final String propDir = "/org/apache/jcheck/props/";
 	public static final String ResourceBase = "resourceBase";
     }
     
