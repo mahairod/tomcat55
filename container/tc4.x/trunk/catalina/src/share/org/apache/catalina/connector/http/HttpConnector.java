@@ -734,17 +734,11 @@ public final class HttpConnector
 	}
 
 	// Open a server socket on the specified address
-	InetAddress[] addresses =
-	    InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
-	int i;
-	for (i = 0; i < addresses.length; i++) {
-	    if (addresses[i].getHostAddress().equals(address))
-		break;
-	}
-	if (i < addresses.length) {
+        try {
+            InetAddress is = InetAddress.getByName(address);
 	    log(sm.getString("httpConnector.anAddress", address));
-            return (factory.createSocket(port, acceptCount, addresses[i]));
-	} else {
+            return (factory.createSocket(port, acceptCount, is));
+	} catch (Exception e) {
 	    log(sm.getString("httpConnector.noAddress", address));
             return (factory.createSocket(port, acceptCount));
 	}
