@@ -40,7 +40,7 @@
   <property name="jk2.properties"
            value="${tomcat-jk.home}/build/conf/jk2.properties"/>
   <property name="tomcat-warp.jar"
-           value="${tomcat-webapp.home}/build/lib/tomcat-warp.jar"/>
+           value="${tomcat-webapp.home}/build/tomcat-warp.jar"/>
   <property name="tomcat-http11.jar"
            value="${tomcat-http11.home}/build/lib/tomcat-http11.jar"/>
 
