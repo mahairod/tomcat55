@@ -3649,7 +3649,7 @@ public class StandardContext
                 }
             }
         } catch (Throwable t) {
-            log.error(sm.getString("standardContext.resourcesStop", t));
+            log.error(sm.getString("standardContext.resourcesStop"), t);
             ok = false;
         }
 
