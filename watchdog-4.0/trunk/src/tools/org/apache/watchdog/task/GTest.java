@@ -893,7 +893,7 @@ public class GTest extends Task implements TaskContainer {
         StringBuffer reqbuf = new StringBuffer( 128 );
 
         // set the Host header
-        setHeaderDetails( "Host:" + host, requestHeaders, true );
+        setHeaderDetails( "Host:" + host + ":" + port, requestHeaders, true );
 
         // set the Content-Length header
         if ( content != null ) {
