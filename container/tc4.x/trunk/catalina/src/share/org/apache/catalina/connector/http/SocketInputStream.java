@@ -161,6 +161,15 @@ public class SocketInputStream extends BufferedInputStream {
         if (requestLine.methodEnd != 0)
             requestLine.recycle();
         
+        // Checking for a blank line
+        int chr = 0;
+        while ((chr = read()) == CR) { // Skipping CR
+            read(); // Skipping LF
+        }
+        if (chr != CR) {
+            pos--;
+        }
+
         // Reading the method name
 
         int maxRead = requestLine.method.length;
