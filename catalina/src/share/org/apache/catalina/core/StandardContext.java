@@ -4380,7 +4380,16 @@ public class StandardContext
 
         if (getLoader() != null) {
             if (reloadable && (getLoader().modified())) {
-                reload();
+                try {
+                    Thread.currentThread().setContextClassLoader
+                        (StandardContext.class.getClassLoader());
+                    reload();
+                } finally {
+                    if (getLoader() != null) {
+                        Thread.currentThread().setContextClassLoader
+                            (getLoader().getClassLoader());
+                    }
+                }
             }
             if (getLoader() instanceof WebappLoader) {
                 ((WebappLoader) getLoader()).closeJARs(false);
