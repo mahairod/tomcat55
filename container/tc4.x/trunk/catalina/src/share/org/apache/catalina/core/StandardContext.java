@@ -480,7 +480,29 @@ public class StandardContext
     private String namingContextName = null;
 
 
+    /**
+     * Caching allowed flag.
+     */
+    protected boolean cachingAllowed = true;
+
+
     // ----------------------------------------------------- Context Properties
+
+
+    /**
+     * Is caching allowed ?
+     */
+    public boolean isCachingAllowed() {
+        return cachingAllowed;
+    }
+
+
+    /**
+     * Set caching allowed flag.
+     */
+    public void setCachingAllowed(boolean cachingAllowed) {
+        this.cachingAllowed = cachingAllowed;
+    }
 
 
     /**
@@ -989,8 +1011,8 @@ public class StandardContext
     public synchronized void setResources(DirContext resources) {
 
         if (resources instanceof BaseDirContext) {
-            if (resources instanceof BaseDirContext)
-                ((BaseDirContext) resources).setDocBase(getBasePath());
+            ((BaseDirContext) resources).setDocBase(getBasePath());
+            ((BaseDirContext) resources).setCached(isCachingAllowed());
         }
         if (resources instanceof FileDirContext) {
             filesystemBased = true;
