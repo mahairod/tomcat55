@@ -21,7 +21,6 @@
   <property name="jsp-api.jar"     value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
   <property name="struts-core.jar" value="${struts.jar}" />
   <property name="struts-taglib.jar" value="${struts.jar}" />
-  <property name="struts-taglib.lib" value="${struts.lib}" />
 
   <!-- Construct Admin classpath -->
   <path id="admin.classpath">
@@ -161,12 +160,6 @@
   <target name="copy-struts.jar" if="struts.present">
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${struts-core.jar}"/>
     <copy todir="${webapps.build}/${webapp.name}/WEB-INF/lib" file="${struts-taglib.jar}" />
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-bean.tld"
-        failonerror="false" />
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-html.tld" 
-        failonerror="false" />
-    <copy todir="${webapps.build}/${webapp.name}/WEB-INF" file="${struts-taglib.lib}/struts-logic.tld"
-        failonerror="false" />
   </target>
 
 
