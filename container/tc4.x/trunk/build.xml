@@ -60,6 +60,9 @@
     <mkdir dir="${tomcat.dist}/lib"/>
     <mkdir dir="${tomcat.dist}/logs"/>
     <mkdir dir="${tomcat.dist}/server"/>
+    <mkdir dir="${tomcat.dist}/server/lib"/>
+    <mkdir dir="${tomcat.dist}/common"/>
+    <mkdir dir="${tomcat.dist}/common/lib"/>
     <mkdir dir="${tomcat.dist}/webapps"/>
     <mkdir dir="${tomcat.dist}/work"/>
   </target>
@@ -85,11 +88,14 @@
     <copy todir="${tomcat.dist}/jasper">
       <fileset dir="${tomcat.build}/jasper" />
     </copy>
+    <copy todir="${tomcat.dist}/common/lib">
+      <fileset dir="${tomcat.build}/common/lib" />
+    </copy>
     <copy todir="${tomcat.dist}/lib">
       <fileset dir="${tomcat.build}/lib" />
     </copy>
-    <copy todir="${tomcat.dist}/server">
-      <fileset dir="${tomcat.build}/server" />
+    <copy todir="${tomcat.dist}/server/lib">
+      <fileset dir="${tomcat.build}/server/lib" />
     </copy>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh" cr="remove"/>
     <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" cr="add"/>

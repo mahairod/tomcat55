@@ -31,7 +31,10 @@
     <mkdir dir="${catalina.build}/classes"/>
     <mkdir dir="${catalina.build}/conf"/>
     <mkdir dir="${catalina.build}/lib"/>
+    <mkdir dir="${catalina.build}/common"/>
+    <mkdir dir="${catalina.build}/common/lib"/>
     <mkdir dir="${catalina.build}/server"/>
+    <mkdir dir="${catalina.build}/server/lib"/>
   </target>
 
 
@@ -55,30 +58,30 @@
       </fileset>
     </copy>
 
-    <!-- Shared Extensions -->
+    <!-- Common Extensions -->
     <!--   All applications need the servlet API classes -->
-    <copy file="${servlet.jar}" tofile="${catalina.build}/bin/servlet.jar" />
+    <copy file="${servlet.jar}" tofile="${catalina.build}/common/lib/servlet.jar" />
     <!--   Copy the JNDI JAR file for use under JDK 1.2.2 -->
-    <copy file="${jndi.jar}"    tofile="${catalina.build}/bin/jndi.jar" />
+    <copy file="${jndi.jar}"    tofile="${catalina.build}/common/lib/jndi.jar" />
 
     <!-- Server Components -->
     <!--   Catalina needs JAXP compliant XML parser -->
     <copy file="${parser.jar}" 
-     tofile="${catalina.build}/server/${catalina.jaxp.parser.jar}" />
+     tofile="${catalina.build}/server/lib/${catalina.jaxp.parser.jar}" />
     <!--   Catalina needs the regular expression library -->
-    <copy todir="${catalina.build}/server">
+    <copy todir="${catalina.build}/server/lib">
       <fileset dir="${regexp.home}" includes="*.jar"/>
     </copy>
     <!--   Catalina needs the JSSE packages -->
 <!--
-    <copy file="${jcert.jar}" tofile="${catalina.build}/server/jcert.jar"/>
-    <copy file="${jnet.jar}" tofile="${catalina.build}/server/jnet.jar"/>
-    <copy file="${jsse.jar}" tofile="${catalina.build}/server/jsse.jar"/>
+    <copy file="${jcert.jar}" tofile="${catalina.build}/server/lib/jcert.jar"/>
+    <copy file="${jnet.jar}" tofile="${catalina.build}/server/lib/jnet.jar"/>
+    <copy file="${jsse.jar}" tofile="${catalina.build}/server/lib/jsse.jar"/>
 -->
   </target>
 
   <target name="copy-jaxp-jar" if="jaxp.jar.present" >
-    <copy file="${jaxp.jar}" tofile="${catalina.build}/server/jaxp.jar"/>
+    <copy file="${jaxp.jar}" tofile="${catalina.build}/server/lib/jaxp.jar"/>
   </target>    
 
 
@@ -123,7 +126,7 @@
            basedir="${catalina.build}/classes"
            includes="org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/loader/**" 
            />
-    <jar   jarfile="${catalina.build}/bin/naming.jar"
+    <jar   jarfile="${catalina.build}/common/lib/naming.jar"
            basedir="${catalina.build}/classes"
            includes="**/org/apache/naming/**" 
            excludes="**/org/apache/naming/factory/**"
@@ -170,7 +173,10 @@
     <mkdir dir="${catalina.deploy}/conf"/>
     <mkdir dir="${catalina.deploy}/lib"/>
     <mkdir dir="${catalina.deploy}/logs"/>
+    <mkdir dir="${catalina.deploy}/common"/>
+    <mkdir dir="${catalina.deploy}/common/lib"/>
     <mkdir dir="${catalina.deploy}/server"/>
+    <mkdir dir="${catalina.deploy}/server/lib"/>
     <mkdir dir="${catalina.deploy}/work"/>
   </target>
 
@@ -198,9 +204,14 @@
       <fileset dir="${catalina.build}/lib" />
     </copy>
 
+    <!-- Common Extensions -->
+    <copy todir="${catalina.deploy}/common/lib">
+      <fileset dir="${catalina.build}/common/lib" />
+    </copy>
+
     <!-- Server Components -->
-    <copy todir="${catalina.deploy}/server">
-      <fileset dir="${catalina.build}/server" />
+    <copy todir="${catalina.deploy}/server/lib">
+      <fileset dir="${catalina.build}/server/lib" />
     </copy>
 
   </target>
@@ -208,10 +219,10 @@
 
   <!-- ====================== DEPLOY: Create Catalina JAR ================= -->
   <target name="deploy-main" depends="deploy-static">
-    <jar  jarfile="${catalina.deploy}/server/catalina.jar"
+    <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
           excludes="**/org/apache/naming/**,**/connector/warp/**" />
-    <jar  jarfile="${catalina.deploy}/server/warp.jar"
+    <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
   </target>
@@ -249,14 +260,14 @@
       <fileset dir="${catalina.build}/lib" />
     </copy>
 
-    <mkdir dir="${catalina.dist}/server"/>
-    <copy todir="${catalina.dist}/server">
-      <fileset dir="${catalina.build}/server" />
+    <mkdir dir="${catalina.dist}/server/lib"/>
+    <copy todir="${catalina.dist}/server/lib">
+      <fileset dir="${catalina.build}/server/lib" />
     </copy>
-    <jar  jarfile="${catalina.dist}/server/catalina.jar"
+    <jar  jarfile="${catalina.dist}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
           excludes="**/org/apache/naming/**,**/connector/warp/**" />
-    <jar  jarfile="${catalina.dist}/server/catalina.jar"
+    <jar  jarfile="${catalina.dist}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
 

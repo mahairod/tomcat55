@@ -207,8 +207,26 @@ public final class Bootstrap {
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
 
+        File classes = new File(System.getProperty("catalina.home"),
+                                "common/classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {    
+            try {
+                URL url = new URL("file", null,
+                                  classes.getCanonicalPath() + "/");
+                if (debug >= 1)         
+                    log("  Adding " + url.toString());
+                list.add(url.toString());
+            } catch (IOException e) {   
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                e.printStackTrace(System.out);
+                System.exit(1);         
+            }
+        }
+
         File directory = new File(System.getProperty("catalina.home"),
-                                  "bin");
+                                  "common/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -258,7 +276,7 @@ public final class Bootstrap {
         ArrayList list = new ArrayList();
 
         File classes = new File(System.getProperty("catalina.home"),
-                                "classes");
+                                "server/classes");
         if (classes.exists() && classes.canRead() &&
             classes.isDirectory()) {
             try {
@@ -276,7 +294,7 @@ public final class Bootstrap {
         }
 
         File directory = new File(System.getProperty("catalina.home"),
-                                  "server");
+                                  "server/lib");
         if (!directory.exists() || !directory.canRead() ||
             !directory.isDirectory()) {
             System.out.println("Directory " + directory.getAbsolutePath()
@@ -321,6 +339,24 @@ public final class Bootstrap {
 
         // Construct the "class path" for this class loader
         ArrayList list = new ArrayList();
+
+        File classes = new File(System.getProperty("catalina.home"),
+                                "classes");
+        if (classes.exists() && classes.canRead() &&
+            classes.isDirectory()) {    
+            try {
+                URL url = new URL("file", null,
+                                  classes.getCanonicalPath() + "/");
+                if (debug >= 1)         
+                    log("  Adding " + url.toString());
+                list.add(url.toString());
+            } catch (IOException e) {   
+                System.out.println("Cannot create URL for " +
+                                   classes.getAbsolutePath());
+                e.printStackTrace(System.out);
+                System.exit(1);         
+            }
+        }
 
         File directory = new File(System.getProperty("catalina.home"),
                                   "lib");
