@@ -326,72 +326,38 @@ public class DataSourceRealm
      * @param username Username of the Principal to look up
      * @param credentials Password or other credentials to use in
      *  authenticating this username
-     *
-     * @exception SQLException if a database error occurs
      */
     protected Principal authenticate(Connection dbConnection,
                                                String username,
-                                               String credentials)
-        throws SQLException {
+                                               String credentials) {
 
-        ResultSet rs = null;
-        PreparedStatement stmt = null;
-        ArrayList list = null;
-
-        try {
-            // Look up the user's credentials
-            String dbCredentials = null;
-            stmt = credentials(dbConnection, username);
-            rs = stmt.executeQuery();
-            if (rs.next()) {
-                dbCredentials = rs.getString(1);
-            }
-            rs.close();
-            rs = null;
-            stmt.close();
-            stmt = null;
-            if (dbCredentials == null) {
-                return (null);
-            }
-            dbCredentials = dbCredentials.trim();
-    
-            // Validate the user's credentials
-            boolean validated = false;
-            if (hasMessageDigest()) {
-                // Hex hashes should be compared case-insensitive
-                validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
-            } else
-                validated = (digest(credentials).equals(dbCredentials));
-    
-            if (validated) {
-                if (container.getLogger().isTraceEnabled())
-                    container.getLogger().trace(sm.getString("dataSourceRealm.authenticateSuccess",
-                                     username));
-            } else {
-                if (container.getLogger().isDebugEnabled())
-                    container.getLogger().trace(sm.getString("dataSourceRealm.authenticateFailure",
-                                     username));
-                return (null);
-            }
-    
-            // Accumulate the user's roles
-            list = new ArrayList();
-            stmt = roles(dbConnection, username);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                String role = rs.getString(1);
-                if(role != null) {
-                    list.add(role.trim());
-                }
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (stmt != null) {
-                stmt.close();
-            }
+        // No user - can't possibly authenticate
+        if (username == null) {
+            return (null);
         }
+
+        String dbCredentials = getPassword(username);
+
+        // Validate the user's credentials
+        boolean validated = false;
+        if (hasMessageDigest()) {
+            // Hex hashes should be compared case-insensitive
+            validated = (digest(credentials).equalsIgnoreCase(dbCredentials));
+        } else
+            validated = (digest(credentials).equals(dbCredentials));
+
+        if (validated) {
+            if (container.getLogger().isTraceEnabled())
+                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateSuccess",
+                                 username));
+        } else {
+            if (container.getLogger().isDebugEnabled())
+                container.getLogger().trace(sm.getString("dataSourceRealm.authenticateFailure",
+                                 username));
+            return (null);
+        }
+
+        ArrayList list = getRoles(username);
 
         // Create and return a suitable Principal for this user
         return (new GenericPrincipal(this, username, credentials, list));
@@ -484,8 +450,65 @@ public class DataSourceRealm
      */
     protected String getPassword(String username) {
 
-        return (null);
+        ResultSet rs = null;
+        PreparedStatement stmt = null;
+        ArrayList list = null;
+        Connection dbConnection = null;
 
+        // Ensure that we have an open database connection
+        dbConnection = open();
+        if (dbConnection == null) {
+            return null;
+        }
+
+        try {
+            // Look up the user's credentials
+            String dbCredentials = null;
+            stmt = credentials(dbConnection, username);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                dbCredentials = rs.getString(1);
+            }
+            rs.close();
+            rs = null;
+            stmt.close();
+            stmt = null;
+            if (dbCredentials == null) {
+                return (null);
+            }
+            dbCredentials = dbCredentials.trim();
+
+            return (dbCredentials);
+            
+        } catch(SQLException e) {
+        	container.getLogger().error(sm
+	                .getString("datasourceRealm.getPassword.exception",
+	        		           username));
+        } finally {
+        	try {
+	            if (rs != null) {
+	                rs.close();
+	            }
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+	            if( !dbConnection.getAutoCommit() ) {
+	                dbConnection.commit();             
+	            }
+        	} catch (SQLException e) {
+            	container.getLogger().error(sm
+                        .getString("datasourceRealm.getPassword.exception",
+        		                   username));
+        		
+        	}
+            // Release the database connection we just used
+            close(dbConnection);
+            dbConnection = null;
+
+        }
+
+        return (null);
+        
     }
 
 
@@ -494,12 +517,65 @@ public class DataSourceRealm
      */
     protected Principal getPrincipal(String username) {
 
-        return (null);
+        return (new GenericPrincipal(this,
+                username,
+                getPassword(username),
+                getRoles(username)));
 
     }
 
 
+    /**
+     * Return the roles associated with the gven user name.
+     */
+    protected ArrayList getRoles(String username) {
 
+        ResultSet rs = null;
+        PreparedStatement stmt = null;
+        Connection dbConnection = null;
+
+        // Ensure that we have an open database connection
+        dbConnection = open();
+        if (dbConnection == null) {
+            return null;
+        }
+
+        try {
+            // Accumulate the user's roles
+            ArrayList list = new ArrayList();
+            stmt = roles(dbConnection, username);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                String role = rs.getString(1);
+                if (role != null) {
+                    list.add(role.trim());
+                }
+            }
+            
+            return (list);
+        } catch(SQLException e) {
+        	container.getLogger().error(sm
+	                .getString("datasourceRealm.getRoles.exception",
+	        		           username));
+        } finally {
+        	try {
+	            if (rs != null) {
+	                rs.close();
+	            }
+	            if (stmt != null) {
+	                stmt.close();
+	            }
+            } catch(SQLException e) {
+            	container.getLogger().error(sm
+    	                .getString("datasourceRealm.getRoles.exception",
+    	        		           username));
+        	}
+        }
+
+        return (null);
+    }
+    
+    
     /**
      * Return a PreparedStatement configured to perform the SELECT required
      * to retrieve user roles for the specified username.
