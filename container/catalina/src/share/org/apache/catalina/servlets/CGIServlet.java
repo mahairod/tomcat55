@@ -794,8 +794,13 @@ public final class CGIServlet extends HttpServlet {
          */
         protected void setupFromRequest(HttpServletRequest req) {
             this.contextPath = req.getContextPath();
-            this.pathInfo = req.getPathInfo();
             this.servletPath = req.getServletPath();
+            this.pathInfo = req.getPathInfo();
+            // If getPathInfo() returns null, must be using extension mapping
+            // In this case, pathInfo should be same as servletPath
+            if (this.pathInfo == null) {
+                this.pathInfo = this.servletPath;
+            }
         }
 
 
