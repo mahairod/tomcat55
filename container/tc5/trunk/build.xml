@@ -144,7 +144,7 @@
   <!-- ====================== Build all components =================== -->
   <target name="build-servletapi" unless="servletapi.build.notrequired" >
     <echo>========== Building: ${servlet-api.jar}</echo>
-
+    <mkdir dir="${servlet-api.dist}" />
     <ant dir="${api.home}/jsr154" target="dist" >
         <property name="servlet-api.dist" value="${servlet-api.home}" />
     </ant>
@@ -425,8 +425,6 @@
     <copy file="${commons-beanutils.jar}" todir="${tomcat.build}/common/lib"/>
     <copy file="${jmx.jar}" todir="${tomcat.build}/common/lib"/>
 
-    <antcall target="build-servletapi"/>
-    <antcall target="build-jspapi"/>
     <antcall target="build-tomcatutil"/>
     <antcall target="build-catalina"/>
     <antcall target="build-tomcatcoyote"/>
