@@ -112,7 +112,7 @@ public class ServerSessionManager implements SessionManager {
     }
 
     public HttpSession createSession(Context ctx) {
-	String sessionId = SessionIdGenerator.generateId();
+	String sessionId = SessionIdGenerator.generateId(null);
 	ServerSession session = new ServerSession(sessionId);
 	sessions.put(sessionId, session);
 
