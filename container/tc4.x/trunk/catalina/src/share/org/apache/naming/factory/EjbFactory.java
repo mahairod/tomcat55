@@ -126,9 +126,13 @@ public class EjbFactory
                     if (home.isInstance(beanObj)) {
                         System.out.println("Bean of type " 
                                            + beanObj.getClass().getName() 
-                                           + " doesn't implement home interface " 
+                                           + " implements home interface " 
                                            + home.getName());
                     } else {
+                        System.out.println("Bean of type " 
+                                           + beanObj.getClass().getName() 
+                                           + " doesn't implement home interface " 
+                                           + home.getName());
                         /*
                           throw new NamingException
                           ("Bean of type " + beanObj.getClass().getName() 
