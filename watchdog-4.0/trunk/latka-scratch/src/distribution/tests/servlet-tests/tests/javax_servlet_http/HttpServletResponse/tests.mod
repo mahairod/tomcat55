@@ -88,7 +88,7 @@
   <validate>
     <!--TEST STRATEGY: A test for HttpServletResponse.sendRedirect() method.-->
     <statusCode code="302" label="Sends a temporary redirect response to the client using the specified redirect location URL that is based on the context-root,specified in the Java Servlet Pages Specification v2.3, Sec 14" />
-    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/RedirectedTest" label="Sends a temporary redirect response to the client using the specified redirect location URL that is based on the context-root,specified in the Java Servlet Pages Specification v2.3, Sec 14" />
+    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/tests/javax_servlet_http/HttpServletResponse/RedirectedTestServlet" label="Sends a temporary redirect response to the client using the specified redirect location URL that is based on the context-root,specified in the Java Servlet Pages Specification v2.3, Sec 14" />
   </validate>
 </request>
 

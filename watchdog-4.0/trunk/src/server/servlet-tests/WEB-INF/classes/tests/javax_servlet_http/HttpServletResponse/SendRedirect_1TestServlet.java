@@ -85,7 +85,7 @@ public class SendRedirect_1TestServlet extends HttpServlet {
         response.flushBuffer();
 
         try {
-            response.sendRedirect( "/RedirectedTest" );
+            response.sendRedirect( getServletConfig().getInitParameter("redirectPath") );
             out.println( "SendRedirect_1Test test FAILED<BR>" );
             out.println( "     IllegalStateException exception should have been thrown<BR>" );
         } catch ( IllegalStateException ise ) {

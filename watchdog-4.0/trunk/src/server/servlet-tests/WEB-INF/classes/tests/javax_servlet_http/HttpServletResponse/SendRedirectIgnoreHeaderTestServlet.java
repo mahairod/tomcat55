@@ -80,7 +80,7 @@ public class SendRedirectIgnoreHeaderTestServlet extends HttpServlet {
 
         // Relative path of the new Location
 
-        String path = "/RedirectedTest";
+        String path = getServletConfig().getInitParameter("redirectPath");
         response.sendRedirect( path );
         response.addHeader( "HttpServletResponse", "sendRedirectIgnoreHeader" );
     }

@@ -4464,6 +4464,11 @@
     
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectTestServlet</servlet-class>
     
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>/RedirectedTest</param-value>
+    </init-param>
+    
     <load-on-startup>0</load-on-startup>
     
   
@@ -4476,6 +4481,11 @@
     <display-name>SendRedirectIgnoreHeaderTest</display-name>
     
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectIgnoreHeaderTestServlet</servlet-class>
+    
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>RedirectedTestServlet</param-value>
+    </init-param>
     
     <load-on-startup>0</load-on-startup>
     
@@ -4606,7 +4616,12 @@
     <display-name>SendRedirect_1Test</display-name>
     
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirect_1TestServlet</servlet-class>
-    
+
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>/RedirectedTest</param-value>
+    </init-param>    
+     
     <load-on-startup>0</load-on-startup>
     
   
@@ -4619,6 +4634,11 @@
     <display-name>SendRedirectForWebAppTest</display-name>
     
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectForWebAppTestServlet</servlet-class>
+    
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>RedirectedTestServlet</param-value>
+    </init-param>
     
     <load-on-startup>0</load-on-startup>
     

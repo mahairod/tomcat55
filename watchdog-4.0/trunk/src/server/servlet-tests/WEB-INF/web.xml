@@ -2125,12 +2125,20 @@
     <servlet-name>SendRedirectTest</servlet-name>
     <display-name>SendRedirectTest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectTestServlet</servlet-class>
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>/RedirectedTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
     <servlet-name>SendRedirectIgnoreHeaderTest</servlet-name>
     <display-name>SendRedirectIgnoreHeaderTest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectIgnoreHeaderTestServlet</servlet-class>
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>RedirectedTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
@@ -2191,12 +2199,20 @@
     <servlet-name>SendRedirect_1Test</servlet-name>
     <display-name>SendRedirect_1Test</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirect_1TestServlet</servlet-class>
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>/RedirectedTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
     <servlet-name>SendRedirectForWebAppTest</servlet-name>
     <display-name>SendRedirectForWebAppTest</display-name>
     <servlet-class>tests.javax_servlet_http.HttpServletResponse.SendRedirectForWebAppTestServlet</servlet-class>
+    <init-param>
+      <param-name>redirectPath</param-name>
+      <param-value>RedirectedTest</param-value>
+    </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
   <servlet>
