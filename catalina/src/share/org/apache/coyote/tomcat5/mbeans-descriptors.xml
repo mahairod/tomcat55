@@ -48,11 +48,6 @@
           description="Timeout value on the incoming connection"
                  type="int"/>
 
-    <attribute   name="curProcessors"
-          description="Current number of active processors"
-                 type="int"
-            writeable="false"/>
-
     <attribute   name="debug"
           description="The debugging detail level for this component"
                  type="int"/>
