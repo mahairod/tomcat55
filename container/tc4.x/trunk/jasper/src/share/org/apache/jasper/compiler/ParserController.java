@@ -186,7 +186,6 @@ public class ParserController {
 
         String absFileName = resolveFileName(inFileName);
 	//p("filePath: " + filePath);
-
 	String encoding = topFileEncoding;
         InputStreamReader reader = null;
         try {
@@ -419,7 +418,7 @@ public class ParserController {
 	    isAbsolute ?
 	    inFileName : (String) baseDirStack.peek() + inFileName;
 	String baseDir = 
-	    inFileName.substring(0, inFileName.lastIndexOf("/") + 1);
+	    fileName.substring(0, fileName.lastIndexOf("/") + 1);
 	baseDirStack.push(baseDir);
 	return fileName;
     }
