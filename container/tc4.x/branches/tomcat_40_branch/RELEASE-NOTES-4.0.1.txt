@@ -75,6 +75,14 @@ StandardContext: Don't start the context when the doc base doesn't exist.
 
 Documentation: Fixes in jndi-resources-howto.xml.
 
+FormAuthenticator: If the user incorrectly references the form login page 
+directly, return an error 403 (bad request) instead of a meaningless 404 
+(not found) for a path that ends with "/null".
+
+WebappCLassLoader: Modify getResourceAsStream so that there is no need to use
+URL.openStream() which would require a privileged action when using a security
+manager.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -100,6 +108,7 @@ Bugzilla Bugs Resolved:
 4067    jndi-resources-howto.xml fixes.
 4078    "%JSSE_HOME%\jsse.jar" should be "%JSSE_HOME%\lib\jsse.jar" 
         in catalina.bat.
+4104    Null saved request at FormAuthenticator.authenticate().
 
 
 ============================

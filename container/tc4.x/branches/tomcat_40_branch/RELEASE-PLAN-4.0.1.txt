@@ -72,9 +72,6 @@ Catalina    3990    JNDI/LDAP Realm password authentication process.
 Connectors  4042    Webapp component requires Port directive versus Listen 
                     directive.
 
-Catalina    4083    Bad performance when using Cocoon 2 (likely to be 
-                    postponed).
-
 
 Unconfirmed Bugs (Awaiting Reproducible Failure Case):
 -----------------------------------------------------
