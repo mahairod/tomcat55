@@ -74,6 +74,7 @@ import org.apache.tomcat.core.*;
  * <code>Session</code> implementations.
  *
  * @author Craig R. McClanahan
+ * @author Shai Fultheim [shai@brm.com]
  * @version $Revision$ $Date$
  */
 
@@ -175,8 +176,8 @@ public final class SessionUtil {
     /**
      * Generate and return a new session identifier.
      */
-    public static String generateSessionId() {
-        return SessionIdGenerator.generateId();
+    public static String generateSessionId(String jsIdent) {
+        return SessionIdGenerator.generateId(jsIdent);
     }
 
     /**

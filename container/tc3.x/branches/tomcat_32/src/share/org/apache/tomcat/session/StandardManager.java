@@ -102,6 +102,7 @@ import org.apache.tomcat.core.Request;
  * @author Craig R. McClanahan
  * @author costin@eng.sun.com
  * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
+ * @author Shai Fultheim [shai@brm.com]
  * @version $Revision$ $Date$
  */
 public final class StandardManager implements Runnable  {
@@ -351,7 +352,7 @@ public final class StandardManager implements Runnable  {
      * @exception IllegalStateException if a new session cannot be
      *  instantiated for any reason
      */
-    public HttpSession getNewSession() {
+    public HttpSession getNewSession(String jsIdent) {
 
 	if ((maxActiveSessions >= 0) &&
 	  (sessions.size() >= maxActiveSessions))
@@ -375,7 +376,7 @@ public final class StandardManager implements Runnable  {
 	session.setValid(true);
 	session.setCreationTime(System.currentTimeMillis());
 	session.setMaxInactiveInterval(this.maxInactiveInterval);
-	session.setId(SessionUtil.generateSessionId());
+	session.setId(SessionUtil.generateSessionId(jsIdent));
 
 	return (session);
     }

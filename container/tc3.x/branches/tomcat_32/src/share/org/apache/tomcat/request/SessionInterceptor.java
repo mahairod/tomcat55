@@ -75,6 +75,8 @@ import javax.servlet.http.Cookie;
  * This implementation only handles Cookies sessions, please extend or
  * add new interceptors for other methods.
  *
+ * @author costin@eng.sun.com
+ * @author Shai Fultheim [shai@brm.com]
  */
 public class SessionInterceptor extends  BaseInterceptor
 {
@@ -112,8 +114,6 @@ public class SessionInterceptor extends  BaseInterceptor
 
 	if ((foundAt=uri.indexOf(sig))!=-1){
 	    sessionId=uri.substring(foundAt+sig.length());
-	    // I hope the optimizer does it's job:-)
-	    sessionId = fixSessionId( request, sessionId );
 
 	    // rewrite URL, do I need to do anything more?
 	    request.setRequestURI(uri.substring(0, foundAt));
@@ -124,24 +124,6 @@ public class SessionInterceptor extends  BaseInterceptor
 	    request.setRequestedSessionId( sessionId );
 	}
 	return 0;
-    }
-
-    /** Fix the session id. If the session is not valid return null.
-     *  It will also clean up the session from load-balancing strings.
-     * @return sessionId, or null if not valid
-     */
-    private String fixSessionId(Request request, String sessionId){
-	// GS, We piggyback the JVM id on top of the session cookie
-	// Separate them ...
-
-	if( debug>0 ) cm.log(" Orig sessionId  " + sessionId );
-	if (null != sessionId) {
-	    int idex = sessionId.lastIndexOf(SESSIONID_ROUTE_SEP);
-	    if(idex > 0) {
-		sessionId = sessionId.substring(0, idex);
-	    }
-	}
-	return sessionId;
     }
 
     public int beforeBody( Request rrequest, Response response ) {
@@ -157,12 +139,6 @@ public class SessionInterceptor extends  BaseInterceptor
         String sessionPath = rrequest.getContext().getPath();
         if(sessionPath.length() == 0) {
             sessionPath = "/";
-        }
-
-        // GS, piggyback the jvm route on the session id.
-        String jvmRoute = rrequest.getJvmRoute();
-        if(null != jvmRoute) {
-            reqSessionId = reqSessionId + SESSIONID_ROUTE_SEP + jvmRoute;
         }
 
 	Cookie cookie = new Cookie("JSESSIONID",

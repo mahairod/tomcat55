@@ -86,6 +86,7 @@ import org.apache.tomcat.core.*;
  *
  * @author costin@eng.sun.com
  * @author hans@gefionsoftware.com (fixed it so that URL session ID is used)
+ * @author Shai Fultheim [shai@brm.com]
  */
 public final class StandardSessionInterceptor  extends BaseInterceptor {
     int manager_note;
@@ -145,7 +146,6 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 
 		if (cookie.getName().equals("JSESSIONID")) {
 			sessionId = cookie.getValue();
-			sessionId = fixSessionId( request, sessionId );
                         if (debug > 0) log("Found session id cookie " + sessionId);
                         request.setRequestedSessionId( sessionId );
                         request.setSessionIdSource( Request.SESSIONID_FROM_COOKIE );
@@ -174,7 +174,7 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 
 	if( request.getSession( false ) != null )
 	    return 0; // somebody already set the session
-	HttpSession newS=sM.getNewSession();
+	HttpSession newS=sM.getNewSession(request.getJvmRoute());
 	request.setSession( newS );
 	return 0;
     }
@@ -237,20 +237,6 @@ public final class StandardSessionInterceptor  extends BaseInterceptor {
 	} catch(IllegalStateException ex ) {
 	    throw new TomcatException( ex );
 	}
-    }
-
-    private String fixSessionId(Request request, String sessionId){
-	// GS, We piggyback the JVM id on top of the session cookie
-	// Separate them ...
-
-	if( debug>0 ) cm.log(" Orig sessionId  " + sessionId );
-	if (null != sessionId) {
-	    int idex = sessionId.lastIndexOf(SESSIONID_ROUTE_SEP);
-	    if(idex > 0) {
-		sessionId = sessionId.substring(0, idex);
-	    }
-	}
-	return sessionId;
     }
 
 }

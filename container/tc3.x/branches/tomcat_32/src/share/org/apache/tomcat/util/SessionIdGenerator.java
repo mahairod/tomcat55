@@ -76,6 +76,7 @@ package org.apache.tomcat.util;
  * @author James Duncan Davidson [duncan@eng.sun.com]
  * @author Jason Hunter [jhunter@acm.org]
  * @author Jon S. Stevens <a href="mailto:jon@latchkey.com">jon@latchkey.com</a>
+ * @author Shai Fultheim [shai@brm.com]
  */
 public class SessionIdGenerator {
 
@@ -172,7 +173,7 @@ public class SessionIdGenerator {
         return sessionId.toString();
     }
 
-    public static synchronized String generateId() {
-        return getIdentifier(null);
+    public static synchronized String generateId(String jsIdent) {
+        return getIdentifier(jsIdent);
     }
 }
