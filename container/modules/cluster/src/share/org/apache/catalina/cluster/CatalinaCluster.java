@@ -63,60 +63,64 @@
 
 package org.apache.catalina.cluster;
 
+import org.apache.catalina.Cluster;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Logger;
+import org.apache.commons.logging.Log;
+
 /**
- * The common interface used by all cluster manager.
- * This is so that we can have a more pluggable way
- * of swapping session managers for different algorithms.
+ * A <b>CatalinaCluster</b> interface allows to plug in and out the 
+ * different cluster implementations
  *
  * @author Filip Hanik
-
+ * @version $Revision$, $Date$
  */
 
-import org.apache.catalina.Manager;
+public interface CatalinaCluster
+    extends Cluster {
+    // ----------------------------------------------------- Instance Variables
 
-
-public interface ClusterManager extends Manager {
-
-   /**
-    * A message was received from another node, this
-    * is the callback method to implement if you are interested in
-    * receiving replication messages.
-    * @param msg - the message received.
-    */
-   public void messageDataReceived(SessionMessage msg);
-
-   /**
-    * When the request has been completed, the replication valve
-    * will notify the manager, and the manager will decide whether
-    * any replication is needed or not.
-    * If there is a need for replication, the manager will
-    * create a session message and that will be replicated.
-    * The cluster determines where it gets sent.
-    * @param sessionId - the sessionId that just completed.
-    * @return a SessionMessage to be sent,
-    */
-   public SessionMessage requestCompleted(String sessionId);
-
-   /**
-    * When the manager expires session not tied to a request.
-    * The cluster will periodically ask for a list of sessions
-    * that should expire and that should be sent across the wire.
-    * @return
-    */
-   public String[] getInvalidatedSessions();
-   
-   /**
-    * Return the name of the manager, typically the context name such as /replicator
-    * @return String
-    */
-   public String getName();
-   
-   public void setName(String name);
-   
-   public void setExpireSessionsOnShutdown(boolean expireSessionsOnShutdown);
-   
-   public void setUseDirtyFlag(boolean useDirtyFlag);
-   
-   public void setCluster(CatalinaCluster cluster);
+    /**
+     * Descriptive information about this component implementation.
+     */
+    public String info = "CatalinaCluster/1.0";
+    
+    /**
+     * Start the cluster, the owning container will invoke this
+     * @throws Exception - if failure to start cluster
+     */
+    public void start() throws Exception;
+    
+    /**
+     * Stops the cluster, the owning container will invoke this
+     * @throws LifecycleException
+     */
+    public void stop() throws LifecycleException;
+    
+    /**
+     * Returns the associates logger with this cluster
+     * @return Log
+     */
+    public Log getLogger();
+    
+    /**
+     * Sends a message to all the members in the cluster
+     * @param msg SessionMessage
+     */
+    public void send(SessionMessage msg);
+    
+    /**
+     * Sends a message to a specific member in the cluster
+     * @param msg SessionMessage
+     * @param dest Member
+     */
+    public void send(SessionMessage msg, Member dest);
+    
+    /**
+     * returns all the members currently participating in the cluster
+     * @return Member[]
+     */
+    public Member[] getMembers();
 
 }

@@ -69,6 +69,11 @@ import java.io.IOException;
 import org.apache.catalina.cluster.util.SmartQueue;
 public class AsyncSocketSender implements IDataSender {
     private static int threadCounter=1;
+    
+    private static org.apache.commons.logging.Log log =
+        org.apache.commons.logging.LogFactory.getLog( AsyncSocketSender.class );
+
+    
     private InetAddress address;
     private int port;
     private Socket sc = null;
@@ -82,7 +87,7 @@ public class AsyncSocketSender implements IDataSender {
         QueueThread t = new QueueThread(this);
         t.setDaemon(true);
         t.start();
-        SimpleTcpCluster.log.info("Started async sender thread for TCP replication.");
+        log.info("Started async sender thread for TCP replication.");
     }
 
     public InetAddress getAddress() {
@@ -169,7 +174,7 @@ public class AsyncSocketSender implements IDataSender {
                         sender.sendMessage(data);
                     }
                     catch (Exception x) {
-                        SimpleTcpCluster.log.warn(
+                        log.warn(
                             "Unable to asynchronously send session w/ id=" +
                             entry.getKey()+" message will be ignored.");
                     }

@@ -64,12 +64,13 @@
 package org.apache.catalina.cluster.tcp;
 
 import org.apache.catalina.cluster.io.XByteBuffer;
+import org.apache.catalina.cluster.CatalinaCluster;
 
 
 public class ReplicationTransmitter
 {
     private static org.apache.commons.logging.Log log =
-        org.apache.commons.logging.LogFactory.getLog( SimpleTcpCluster.class );
+        org.apache.commons.logging.LogFactory.getLog( ReplicationTransmitter.class );
 
     private java.util.HashMap map = new java.util.HashMap();
     public ReplicationTransmitter(IDataSender[] senders)
