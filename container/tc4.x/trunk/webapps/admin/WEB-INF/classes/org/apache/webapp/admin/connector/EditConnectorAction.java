@@ -214,6 +214,15 @@ public class EditConnectorAction extends Action {
             attribute = "address";
             connectorFm.setAddress
                 ((String) mBServer.getAttribute(cname, attribute));
+            attribute = "URIEncoding";
+            connectorFm.setURIEncodingText
+                ((String) mBServer.getAttribute(cname, attribute));
+            attribute = "useBodyEncodingForURI";
+            connectorFm.setUseBodyEncodingForURIText
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
+            attribute = "allowTrace";
+            connectorFm.setAllowTraceText
+                (((Boolean) mBServer.getAttribute(cname, attribute)).toString());       
           
             // Ports
             attribute = "port";

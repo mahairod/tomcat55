@@ -55,7 +55,7 @@
      classpath="${jmx.jar}" />
     <available property="modeler.present"
      classname="org.apache.commons.modeler.Registry"
-     classpath="${commons-modeler.jar}"/>
+     classpath="${commons-modeler.jar}:${jmx.jar}"/>
     <available property="regexp.present"
      classname="org.apache.regexp.RE"
      classpath="${regexp.jar}" />
