@@ -8,6 +8,12 @@ rem Improvements to this file are welcome
 set baseDir=%pwd%
 set host=localhost
 set port=8080
+if "%2"=="" goto nohost
+set host=%2
+:nohost:
+if "%3"=="" goto noport
+set port=%3
+:noport:
 set stest=.\conf\servlet-testlist.txt
 set jtest=.\conf\jsp-testlist.txt
 set default=all
@@ -51,9 +57,14 @@ set TOM_PREV_CLASSPATH=%CLASSPATH%
 set CLASSPATH=%TOM_CLASSPATH%;%CLASSPATH%
 rem -------------------------- end tomcatEnv.bat -------------------------------
 
+rem Only start Tomcat if no host and port parameters have been specified
+if not "%port%"=="8080" goto otherserver
+
 start java org.apache.tomcat.shell.Startup -config .\conf\server-test.xml %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 sleep 25
+
+:otherserver
 
 if "%default%"=="servlet" goto servlet
 
@@ -66,8 +77,12 @@ goto shutdown
 java -Dtest.hostName=%host% -Dtest.port=%port% org.apache.tools.moo.Main -testfile %stest%
 
 :shutdown
+rem Only shutdown Tomcat if no host and port parameters have been specified
+if not "%port%"=="8080" goto cleanup
+
 java org.apache.tomcat.shell.Shutdown %1 %2 %3 %4 %5 %6 %7 %8 %9
 
+:cleanup
 rem clean up
 
 set CLASSPATH=%cp%
