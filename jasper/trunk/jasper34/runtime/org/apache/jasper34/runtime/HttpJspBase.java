@@ -182,4 +182,7 @@ public abstract class HttpJspBase
 	throws ServletException, IOException {
     }
 
+
+    public String[] _getDepends() { return null; }
+    public String[] _getChunks() { return null; }
 }
