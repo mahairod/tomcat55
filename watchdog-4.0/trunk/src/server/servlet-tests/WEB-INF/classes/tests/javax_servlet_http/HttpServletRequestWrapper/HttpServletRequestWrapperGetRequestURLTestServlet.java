@@ -83,35 +83,32 @@ public class HttpServletRequestWrapperGetRequestURLTestServlet extends HttpServl
 
         String url = null;
 
-        Cookie c[] = request.getCookies();
-        int len = c.length;
         boolean found1 = false;
         boolean found2 = false;
         boolean found3 = false;
         boolean found4 = false;
+
         String prefix = null;
         String server = null;
         String port = null;
         String path = null;
-        int i = 0;
 
-        while ( i <= len - 1 ) {
-            String temp = c[ i ].getName();
+        for (Enumeration e = request.getHeaderNames(); e.hasMoreElements(); ) {
+            String temp = (String) e.nextElement();
 
             if ( temp.equals( "prefix" ) ) {
-                prefix = c[ i ].getValue();
+                prefix = request.getHeader( temp );
                 found1 = true;
             } else if ( temp.equals( "server" ) ) {
-                server = c[ i ].getValue();
+                server = request.getHeader( temp );
                 found2 = true;
             } else if ( temp.equals( "port" ) ) {
-                port = c[ i ].getValue();
+                port = request.getHeader( temp );
                 found3 = true;
             } else if ( temp.equals( "servletpath" ) ) {
-                path = c[ i ].getValue().replace( '_', '/' );
+                path = request.getHeader( temp ).replace( '_', '/' );
                 found4 = true;
             }
-            i++;
         }
 
         if ( ( found1 ) && ( found2 ) && ( found3 ) && ( found4 ) ) {
@@ -124,6 +121,7 @@ public class HttpServletRequestWrapperGetRequestURLTestServlet extends HttpServl
             StringBuffer sresult = request.getRequestURL();
 
             if ( sresult.length() > 0 ) {
+
                 String result = sresult.toString();
 
                 if ( result.equals( expectedResult ) || result.equals( expectedResult2 ) ) {
