@@ -416,15 +416,15 @@ docBase configured in the context configuration ".xml" file.</p>
 <p>Here is an example of installing an application using a Context
 configuration ".xml" file.
 <source>
-http://localhost:8080/manager/install?config=file:/path/to/context.xml
+http://localhost:8080/manager/install?config=file:/path/context.xml
 </source>
 </p>
 
 <p>Here is an example of installing an application using a Context
 configuration ".xml" file and a web application ".war" file located
 on the server.
-<source>                                                          
-http://localhost:8080/manager/install?config=file:/path/to/context.xml&amp;war=jar:file:/path/to/bar.war!/
+<source>
+http://localhost:8080/manager/install?config=file:/path/context.xml&amp;war=jar:file:/path/bar.war!/
 </source>
 </p>
 
