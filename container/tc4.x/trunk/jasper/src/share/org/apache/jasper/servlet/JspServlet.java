@@ -73,6 +73,9 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import org.apache.jasper.JasperException;
 import org.apache.jasper.Constants;
 import org.apache.jasper.Options;
@@ -271,16 +274,27 @@ public class JspServlet extends HttpServlet {
 	//	System.out.println("JspServlet: init " + config.getServletName() );
 	if( loader==null ) {
 	    if( jdk12 ) {
-		try {
-		    Class ld=Class.forName("org.apache.jasper.servlet.JasperLoader12");
-		    loader=(JasperLoader)ld.newInstance();
-		} catch(Throwable t ) {
-		    loghelper.log("Loading org.apache.jasper.servlet.JasperLoader12", t);
-		}
+                class createLoader12 implements PrivilegedAction {
+                    public Object run() {
+                        return
+                            (new org.apache.jasper.servlet.JasperLoader12());
+                    }
+                }
+                createLoader12 cl = new createLoader12();
+                loader = (org.apache.jasper.servlet.JasperLoader)
+                    AccessController.doPrivileged(cl);
 	    }
-	    if( loader==null )
-		loader = new org.apache.jasper.servlet.JasperLoader();
-
+	    if( loader==null ) {
+                class createLoader implements PrivilegedAction {
+                    public Object run() {
+                        return
+                            (new org.apache.jasper.servlet.JasperLoader());
+                    }
+                }
+                createLoader cl = new createLoader();
+                loader = (org.apache.jasper.servlet.JasperLoader)
+                    AccessController.doPrivileged(cl);
+            }
 	    loader.setParentClassLoader(parentClassLoader);
 	    loader.setOptions(options);
 	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
