@@ -117,17 +117,24 @@ public class HttpServletRequestWrapperGetRequestURLTestServlet extends HttpServl
         if ( ( found1 ) && ( found2 ) && ( found3 ) && ( found4 ) ) {
             String expectedResult = prefix + "://" + server + ":" + port + path;
 
+            // handle cases where server runs on port 80
+            String expectedResult2 = prefix + "://" + server + path;
+                
+
             StringBuffer sresult = request.getRequestURL();
 
             if ( sresult.length() > 0 ) {
                 String result = sresult.toString();
 
-                if ( result.equals( expectedResult ) ) {
+                if ( result.equals( expectedResult ) || result.equals( expectedResult2 ) ) {
                     out.println( "HttpServletRequestWrapperGetRequestURLTest test PASSED<BR>" );
                 } else {
                     out.println( "HttpServletRequestWrapperGetRequestURLTest test FAILED <BR>" );
                     out.println( "	HttpServletRequestWrapper.getRequestURL() returned an incorrect result <BR>" );
                     out.println( "	Expected value ->|" + expectedResult + "|<BR>" );
+                    if ( port.equals( "80" ) ) {
+                        out.println( " OR Expected value ->|" + expectedResult2 + "|<BR>" );
+                    }
                     out.println( "	Actual value ->|" + result + "|" );
                 }
             } else {
