@@ -112,8 +112,8 @@
                 </tr>
                 <tr>
                     <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
-                        <a href="examples/jsp/">JSP Examples</a><br>
-                        <a href="examples/servlets/">Servlet Examples</a><br>
+                        <a href="jsp-examples/">JSP Examples</a><br>
+                        <a href="servlets-examples/">Servlet Examples</a><br>
                         &nbsp;
                     </td>
                 </tr>
