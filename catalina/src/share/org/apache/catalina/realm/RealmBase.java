@@ -1025,6 +1025,12 @@ public abstract class RealmBase
                 throw new IllegalStateException();
             }
         }
+
+    	if (hasMessageDigest()) {
+    		// Use pre-generated digest
+    		return getPassword(username);
+    	}
+    	
         String digestValue = username + ":" + realmName + ":"
             + getPassword(username);
         byte[] digest =
