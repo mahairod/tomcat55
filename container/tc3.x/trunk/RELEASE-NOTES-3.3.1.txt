@@ -41,6 +41,8 @@ Bug No.  Description
 	 Moved the setting of the default "*.jsp" mapping so that it is now 
 	 possible to entirely disable support for jsp files.
 
+	 Fixed problem with jsp_precompile parameter to JSP files.
+
          Context properties and ContextManager properties can now be set with
          <Property ... /> elements, i.e: 
              <Property name="propname" value="thevalue" />
@@ -51,6 +53,7 @@ Bug No.  Description
          variable substitution to be used in <Context ...></Context>
          declarations.
 
+	 Added support for PureTLS as an SSL option.
 
 Server:
 
