@@ -65,6 +65,7 @@ import java.io.*;
 import java.net.URL;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.ServletException;
+import javax.servlet.Servlet;
 
 import org.xml.sax.Attributes;
 
