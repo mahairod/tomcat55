@@ -1630,6 +1630,7 @@ public class MBeanUtils {
             ClassLoader cl=ServerLifecycleListener.class.getClassLoader();
 
             registry.loadDescriptors("org.apache.catalina.mbeans",  cl);
+            registry.loadDescriptors("org.apache.catalina.authenticator", cl);
             registry.loadDescriptors("org.apache.catalina.core", cl);
             registry.loadDescriptors("org.apache.catalina.valves",  cl);
             registry.loadDescriptors("org.apache.coyote.tomcat5", cl);
