@@ -508,6 +508,9 @@ public class StandardContext
     private long startupTime;
     private long tldScanTime;
 
+    private String j2EEApplication="none";
+    private String j2EEServer="none";
+
     // ----------------------------------------------------- Context Properties
 
     public void setName( String name ) {
@@ -883,6 +886,22 @@ public class StandardContext
 
         return (info);
 
+    }
+
+    public String getJ2EEApplication() {
+        return j2EEApplication;
+    }
+
+    public void setJ2EEApplication(String j2EEApplication) {
+        this.j2EEApplication = j2EEApplication;
+    }
+
+    public String getJ2EEServer() {
+        return j2EEServer;
+    }
+
+    public void setJ2EEServer(String j2EEServer) {
+        this.j2EEServer = j2EEServer;
     }
 
 
@@ -1647,7 +1666,11 @@ public class StandardContext
             pattern = pattern.substring(pattern.lastIndexOf("*"));
             servletName = "jsp";
         }
-        addServletMapping(pattern, servletName);
+        if( findChild(servletName) != null) {
+            addServletMapping(pattern, servletName);
+        } else {
+            log.info("Skiping " + pattern + " , no servlet " + servletName);
+        }
     }
 
 
@@ -4672,14 +4695,17 @@ public class StandardContext
         String onameStr=null;
         try {
             if( oname==null || oname.getKeyProperty("j2eeType")==null ) {
-                ContainerBase ctx=(ContainerBase)parent;
+                StandardHost ctx=(StandardHost)parent;
                 String pathName=getName();
                 String hostName=getParent().getName();
                 String name= "//" + ((hostName==null)? "DEFAULT" : hostName) +
                         (("".equals(pathName))?"/":pathName );
 
-                onameStr="j2eeType=WebModule,name=" + name +
-                        ctx.getJSR77Suffix();
+                String suffix=",J2EEApplication=" +
+                        getJ2EEApplication() + ",J2EEServer=" +
+                        getJ2EEServer();
+
+                onameStr="j2eeType=WebModule,name=" + name + suffix;
                 if( log.isDebugEnabled())
                     log.debug("Registering " + onameStr + " for " + oname);
 
@@ -4763,7 +4789,7 @@ public class StandardContext
         }
         // XXX The service and domain should be the same.
         ObjectName parentName=new ObjectName( domain + ":" +
-                "type=Host,host=" + hostName + ",service=Tomcat-Standalone");
+                "type=Host,host=" + hostName);
         log.info("Adding to " + parentName );
 
         if( ! mserver.isRegistered(parentName)) {
