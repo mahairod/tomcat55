@@ -98,7 +98,7 @@ public interface Filter {
         * 1.Throws a ServletException <br>
         * 2.Does not return within a time period defined by the web container 
 	*/
-	public void init(FilterConfig filterConfig);
+	public void init(FilterConfig filterConfig) throws ServletException;
 	
 	
 	/**
