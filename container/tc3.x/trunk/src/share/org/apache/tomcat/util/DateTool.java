@@ -68,7 +68,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 import java.text.*;
-import org.apache.tomcat.core.Constants;
 
 /**
  *  Common place for date utils.
