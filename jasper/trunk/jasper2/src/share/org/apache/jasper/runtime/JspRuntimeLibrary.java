@@ -984,7 +984,7 @@ public class JspRuntimeLibrary {
     public static void include(ServletRequest request,
                                ServletResponse response,
                                String relativePath,
-                               Writer out,
+                               JspWriter out,
                                boolean flush)
         throws IOException, ServletException {
 
