@@ -87,6 +87,10 @@ debugging information?  <code>true</code> or <code>false</code>, default
 generated servlets?  By default the classpath is created dynamically based on
 the current web application.</li>
 
+<li><strong>compilerSourceVM</strong> - What JDK version are the source files compatible with? (Default JDK 1.4)</li>
+
+<li><strong>compilerTargetVM</strong> - What JDK version are the generated files compatible with? (Default JDK 1.4)</li>
+
 <li><strong>development</strong> - Is Jasper used in development mode (will
 check for JSP modification on every access)? <code>true</code> or
 <code>false</code>, default <code>true</code>.</li>
