@@ -958,6 +958,7 @@
         <exclude name="org/apache/catalina/util/Strftime.class" />
         <exclude name="org/apache/catalina/util/XMLWriter.class" />
         <exclude name="org/apache/catalina/valves/ExtendedAccessLogValve.class" />
+        <exclude name="org/apache/catalina/valves/FastCommonAccessLogValve.class" />
         <exclude name="org/apache/catalina/valves/FieldInfo.class" />
         <exclude name="org/apache/catalina/valves/JDBCAccessLogValve.class" />
         <exclude name="org/apache/catalina/valves/PersistentValve.class" />
@@ -991,6 +992,7 @@
         <include name="org/apache/catalina/util/Strftime.class" />
         <include name="org/apache/catalina/util/XMLWriter.class" />
         <include name="org/apache/catalina/valves/ExtendedAccessLogValve.class" />
+        <include name="org/apache/catalina/valves/FastCommonAccessLogValve.class" />
         <include name="org/apache/catalina/valves/FieldInfo.class" />
         <include name="org/apache/catalina/valves/JDBCAccessLogValve.class" />
         <include name="org/apache/catalina/valves/PersistentValve.class" />
