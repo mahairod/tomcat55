@@ -1486,10 +1486,13 @@ class Parser implements TagConstants {
 		    ttext.write('\\');
 		    break;
 		}
-		ch = reader.nextChar();
-		// Looking for \% or \$
-		if (ch != '%' && ch != '$') {
-		    ttext.write('\\');
+                char next = (char)reader.peekChar();
+                // Looking for \% or \$
+                // TODO: only recognize \$ if isELIgnored is false, but since
+                // it can be set in a page directive, it cannot be determined
+                // here.  Argh!
+                if (next == '%' || next == '$') {
+                    ch = reader.nextChar();
                 }
 	    }
 	    ttext.write(ch);
