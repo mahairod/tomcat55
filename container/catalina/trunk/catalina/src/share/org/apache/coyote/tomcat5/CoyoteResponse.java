@@ -70,6 +70,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.text.SimpleDateFormat;
@@ -905,7 +906,7 @@ public class CoyoteResponse
      *
      * @param cookie Cookie to be added
      */
-    public void addCookie(Cookie cookie) {
+    public void addCookie(final Cookie cookie) {
 
         if (isCommitted())
             return;
@@ -916,11 +917,25 @@ public class CoyoteResponse
 
         cookies.add(cookie);
 
-        StringBuffer sb = new StringBuffer();
-        ServerCookie.appendCookieValue
-            (sb, cookie.getVersion(), cookie.getName(), cookie.getValue(),
-             cookie.getPath(), cookie.getDomain(), cookie.getComment(), 
-             cookie.getMaxAge(), cookie.getSecure());
+        final StringBuffer sb = new StringBuffer();
+        if (System.getSecurityManager() != null) {
+            AccessController.doPrivileged(new PrivilegedAction() {
+                public Object run(){
+                    ServerCookie.appendCookieValue
+                        (sb, cookie.getVersion(), cookie.getName(), 
+                         cookie.getValue(), cookie.getPath(), 
+                         cookie.getDomain(), cookie.getComment(), 
+                         cookie.getMaxAge(), cookie.getSecure());
+                    return null;
+                }
+            });
+        } else {
+            ServerCookie.appendCookieValue
+                (sb, cookie.getVersion(), cookie.getName(), cookie.getValue(),
+                     cookie.getPath(), cookie.getDomain(), cookie.getComment(), 
+                     cookie.getMaxAge(), cookie.getSecure());
+        }
+
         // the header name is Set-Cookie for both "old" and v.1 ( RFC2109 )
         // RFC2965 is not supported by browsers and the Servlet spec
         // asks for 2109.
@@ -1305,7 +1320,7 @@ public class CoyoteResponse
      *
      * @param location Absolute URL to be validated
      */
-    protected boolean isEncodeable(String location) {
+    protected boolean isEncodeable(final String location) {
 
         if (location == null)
             return (false);
@@ -1315,13 +1330,30 @@ public class CoyoteResponse
             return (false);
 
         // Are we in a valid session that is not using cookies?
-        HttpServletRequest hreq = (HttpServletRequest) request.getRequest();
-        HttpSession session = hreq.getSession(false);
+        final HttpServletRequest hreq = 
+            (HttpServletRequest) request.getRequest();
+        final HttpSession session = hreq.getSession(false);
         if (session == null)
             return (false);
         if (hreq.isRequestedSessionIdFromCookie())
             return (false);
+        
+        if (System.getSecurityManager() != null) {
+            return ((Boolean)
+                AccessController.doPrivileged(new PrivilegedAction() {
 
+                public Object run(){
+                    return new Boolean(doIsEncodeable(hreq, session, location));
+                }
+            })).booleanValue();
+        } else {
+            return doIsEncodeable(hreq, session, location);
+        }
+    }
+
+    private boolean doIsEncodeable(HttpServletRequest hreq, 
+                                   HttpSession session,
+                                   String location){
         // Is this a valid absolute URL?
         URL url = null;
         try {
