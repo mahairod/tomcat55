@@ -120,6 +120,7 @@ public class Compiler {
     private ErrorDispatcher errDispatcher;
     private PageInfo pageInfo;
     private JspServletWrapper jsw;
+    private JasperAntLogger logger;
     private TagFileProcessor tfp;
 
     protected Project project=null;
@@ -148,20 +149,19 @@ public class Compiler {
         // Initializing project
         project = new Project();
         // XXX We should use a specialized logger to redirect to jasperlog
-        //        DefaultLogger bl=new JasperAntLogger();
-        DefaultLogger bl=new DefaultLogger();
-        bl.setOutputPrintStream(System.err);
-        bl.setErrorPrintStream(System.err);
+        logger = new JasperAntLogger();
+        logger.setOutputPrintStream(System.out);
+        logger.setErrorPrintStream(System.err);
 
         if( Constants.jasperLog.getVerbosityLevel() >= Logger.DEBUG ) {
-            bl.setMessageOutputLevel( Project.MSG_VERBOSE );
+            logger.setMessageOutputLevel( Project.MSG_VERBOSE );
         } else {
-            bl.setMessageOutputLevel( Project.MSG_INFO );
+            logger.setMessageOutputLevel( Project.MSG_INFO );
         }
         if( log.isTraceEnabled() ) {
-            bl.setMessageOutputLevel( Project.MSG_VERBOSE );
+            logger.setMessageOutputLevel( Project.MSG_VERBOSE );
         }
-        project.addBuildListener( bl );
+        project.addBuildListener( logger);
         
         if( options.getCompiler() != null ) {
             if( log.isDebugEnabled() )
@@ -169,22 +169,27 @@ public class Compiler {
             project.setProperty("build.compiler", options.getCompiler() );
         }
         project.init();
-//         Vector v=project.getBuildListeners();
-//         if( v.size() > 0 ) {
-//             BuildListener bl=(BuildListener)v.elementAt(0);
-//             System.out.println("XXX " + bl );
-//             ((DefaultLogger)bl).setMessageOutputLevel(Project.MSG_VERBOSE);
-//         }
         return project;
     }
 
-    static class JasperAntLogger extends DefaultLogger {
-        private static org.apache.commons.logging.Log log=
-            org.apache.commons.logging.LogFactory.getLog( Compiler.class );
+    class JasperAntLogger extends DefaultLogger {
+
+        private StringBuffer reportBuf = new StringBuffer();
+
         protected void printMessage(final String message,
                                     final PrintStream stream,
                                     final int priority) {
-            log.info( message );
+        }
+
+        protected void log(String message) {
+            reportBuf.append(message);
+            reportBuf.append(System.getProperty("line.separator"));
+        }
+
+        protected String getReport() {
+            String report = reportBuf.toString();
+            reportBuf.setLength(0);
+            return report;
         }
     }
 
@@ -225,31 +230,13 @@ public class Compiler {
         String javaFileName = ctxt.getServletJavaFileName();
 
         // Setup the ServletWriter
-	// We try UTF8 by default. If it fails, we use the java encoding 
-	// specified for JspServlet init parameter "javaEncoding".
-
-	String javaEncoding = "UTF8"; 
+        String javaEncoding = ctxt.getOptions().getJavaEncoding();
 	OutputStreamWriter osw = null; 
 	try {
 	    osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
 					 javaEncoding);
 	} catch (UnsupportedEncodingException ex) {
-	    // Try to get the java encoding from the "javaEncoding"
-	    // init parameter for JspServlet.
-	    javaEncoding = ctxt.getOptions().getJavaEncoding();
-	    if (javaEncoding != null) {
-		try {
-		    osw = new OutputStreamWriter
-                        (new FileOutputStream(javaFileName),javaEncoding);
-		} catch (UnsupportedEncodingException ex2) {
-		    // no luck :-(
-		    errDispatcher.jspError("jsp.error.invalid.javaEncoding",
-					   "UTF8", javaEncoding);
-		}
-	    } else {
-		errDispatcher.jspError("jsp.error.needAlternateJavaEncoding",
-				       "UTF8");
-	    }
+            errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
 	}
 
 	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
@@ -322,13 +309,13 @@ public class Compiler {
         throws FileNotFoundException, JasperException, Exception {
 
         long t1=System.currentTimeMillis();
-	String javaEncoding = "UTF8"; 
+        String javaEncoding = ctxt.getOptions().getJavaEncoding();
         String javaFileName = ctxt.getServletJavaFileName();
         String classpath = ctxt.getClassPath(); 
 
         String sep = System.getProperty("path.separator");
 
-        String errorReport = null;
+        StringBuffer errorReport = new StringBuffer();
         boolean success = true;
 
         // Start capturing the System.err output for this thread
@@ -381,9 +368,15 @@ public class Compiler {
             success = false;
         }
 
+        errorReport.append(logger.getReport());
+
         // Stop capturing the System.err output for this thread
-        errorReport = SystemLogHandler.unsetThread();
-        
+        String errorCapture = SystemLogHandler.unsetThread();
+        if (errorCapture != null) {
+            errorReport.append(System.getProperty("line.separator"));
+            errorReport.append(errorCapture);
+        }
+
         if (!ctxt.keepGenerated()) {
             File javaFile = new File(javaFileName);
             javaFile.delete();
@@ -391,8 +384,7 @@ public class Compiler {
 
         if (!success) {
             log.error( "Error compiling file: " + javaFileName + " " + errorReport);
-            if(errorReport!=null ) 
-                errDispatcher.javacError(errorReport, javaFileName, pageNodes);
+            errDispatcher.javacError(errorReport.toString(), javaFileName, pageNodes);
         }
 
         long t2=System.currentTimeMillis();

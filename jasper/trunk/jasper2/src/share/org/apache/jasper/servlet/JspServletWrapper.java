@@ -115,6 +115,7 @@ public class JspServletWrapper {
     private long available = 0L;
     private ServletConfig config;
     private Options options;
+    private boolean firstTime = true;
     private boolean isTagFile;
     private int tripCount;
 
@@ -183,6 +184,7 @@ public class JspServletWrapper {
                     }
                     
                     theServlet.init(config);
+                    firstTime = false;
                 }
             }    
         }
@@ -202,7 +204,7 @@ public class JspServletWrapper {
             if (ctxt.isRemoved()) {
                 throw new FileNotFoundException(jspUri);
             }
-            if (options.getDevelopment()) {
+            if (options.getDevelopment() || firstTime ) {
                 synchronized (this) {
                     ctxt.compile();
                 }
@@ -284,7 +286,7 @@ public class JspServletWrapper {
                      Constants.getString("jsp.error.unavailable"));
             }
 
-            if (options.getDevelopment()) {
+            if (options.getDevelopment()  || firstTime ) {
                 synchronized (this) {
                     ctxt.compile();
                 }

@@ -96,10 +96,6 @@ import org.apache.jasper.servlet.JspServletWrapper;
  * is dependent upon.  If a dpendent file changes the JSP page
  * which included it is recompiled.
  *
- * Saves information about JSP dependincies to the file
- * <code>JSP_DEPENDENCY.ser</code> in the web application context
- * work directory.
- *
  * Only used if a web application context is a directory.
  *
  * @author Glenn L. Nielsen
@@ -389,20 +385,30 @@ public final class JspRuntimeContext implements Runnable {
         if( policy != null ) {
             try {          
                 // Get the permissions for the web app context
-                String contextDir = context.getRealPath("/");
-                if( contextDir == null ) {
-                    contextDir = options.getScratchDir().toString();
+                String docBase = context.getRealPath("/");
+                if( docBase == null ) {
+                    docBase = options.getScratchDir().toString();
                 }
-                URL url = new URL("file:" + contextDir);
+                if (!docBase.endsWith(File.separator)){
+                    docBase = docBase + File.separator;
+                }
+                File contextDir = new File(docBase);
+                URL url = contextDir.getCanonicalFile().toURL();
                 codeSource = new CodeSource(url,null);
                 permissionCollection = policy.getPermissions(codeSource);
-                // Create a file read permission for web app context directory
-                if (contextDir.endsWith(File.separator)) {
-                    contextDir = contextDir + "-";
+
+                docBase = docBase + "-";
+                permissionCollection.add(new FilePermission(docBase,"read"));
+
+                // Create a file read permission for web app tempdir (work) directory
+                String workDir = options.getScratchDir().toString();
+                if (workDir.endsWith(File.separator)) {
+                    workDir = workDir + "-";
                 } else {
-                    contextDir = contextDir + File.separator + "-";
+                    workDir = workDir + File.separator + "-";
                 }
-                permissionCollection.add(new FilePermission(contextDir,"read"));
+                permissionCollection.add(new FilePermission(workDir,"read"));
+
                 // Allow the JSP to access org.apache.jasper.runtime.HttpJspBase
                 permissionCollection.add( new RuntimePermission(
                     "accessClassInPackage.org.apache.jasper.runtime") );
@@ -435,7 +441,8 @@ public final class JspRuntimeContext implements Runnable {
                         permissionCollection.add(
                                 new FilePermission(jndiUrl,"read") );
                 }
-            } catch(MalformedURLException mfe) {
+            } catch(Exception e) {
+                context.log("Security Init for context failed",e);
             }
         }
     }
