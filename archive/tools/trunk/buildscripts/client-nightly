@@ -3,6 +3,8 @@
 # This the client nightly build sh script. This was originally written
 # for tokyo, a sparc solaris client.
 
+export BASEDIR=`dirname $0`
+
 export TYEAR=`date +%Y`
 export TMONTH=`date +%m`
 export TDAY=`date +%d`
@@ -44,14 +46,14 @@ fi
 mkdir ws
 
 echo $TSEP | cat >> $TLOGFILE
-./do-checkout 
+$BASEDIR/do-checkout 
 
 echo $TSEP | cat >> $TLOGFILE
-./do-build >> $TLOGFILE
+$BASEDIR/do-build >> $TLOGFILE
 
 echo $TSEP | cat >> $TLOGFILE
-./do-test >> $TLOGFILE
-
+$BASEDIR/do-test >> $TLOGFILE
+$BASEDIR/do-package
 ./do-package 
 
 
