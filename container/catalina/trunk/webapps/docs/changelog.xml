@@ -46,11 +46,70 @@
       <fix>
         <bug>31623</bug>: Better OS400 support in setclasspath.sh. (yoavs)
       </fix>
+      <add>
+        Extend background processing to most container components. (remm)
+      </add>
+      <fix>
+        Remove all MX4J related code. (remm)
+      </fix>
+      <fix>
+        Update JAR list in TldConfig. (remm)
+      </fix>
+      <add>
+        Register datasources with JMX. With DBCP, this is enough to provide JMX management and monitoring. 
+        It might work well with many other data sources which might not register themselves in JMX 
+        but do expose their stuff in a java bean fashion. (remm)
+      </add>
+      <update>
+        Add the ability to force session cookies to be set to the root path "/". This should not be used 
+        on large servers, otherwise tons of cookies may be sent. (remm)
+      </update>
+      <fix>
+        Workaround for client socket exceptions occurring while running a CGI, which could cause 
+        the external process to hang. (remm)
+      </fix>
+      <update>
+        Optimize session cookie IDs conversion to String, since this is an unavoidable and uncacheable
+        operation. (remm)
+      </update>
+      <fix>
+        Add explicit error message if temp dir does not exist, and remove useless calls to initDirs. (remm)
+      </fix>
+      <add>
+        Add an optimized access log valve, supporting hardcoded support for the common and combined patterns,
+        and doing a majority of its write-to-logfile operations asynchronously. (remm)
+      </add>
+      <update>
+        Register an MBean to monitor and manage the StringCache, and allow invoking the reset operation. (remm)
+      </update>
     </changelog>
   </subsection>
 
   <subsection name="Coyote">
     <changelog>
+      <fix>
+        Improve i18n in TCP endpoint, and add a better error message when an exception occurs
+        in setSocketOptions. (remm)
+      </fix>
+      <fix>
+        <bug>31663</bug>: Use interval field as the delay for monitor thread. (remm)
+      </fix>
+      <fix>
+        Remove bad shutdown logic for ms pool strategy. (remm)
+      </fix>
+      <fix>
+        <bug>31090</bug>: Sync with Cookie, by adding ' ' as a special char. If a special char is present, 
+        the string will be quoted. If the client doesn't support it, the String will no be quoted anyway
+        and no IAE will be thrown. (remm)
+      </fix>
+      <add>
+        Add an optional String cache for ByteChunk.toString and CharChunk.toString. The cache is
+        unsynchronized during most of its operation, and is static after a training period. An operation
+        is provided to allow resetting the cache. (remm)
+      </add>
+      <update>
+        String caching is enabled by default for ByteChunk. (remm)
+      </update>
     </changelog>
   </subsection>
 
@@ -75,6 +134,9 @@
       <fix>
         Remove hard-coded admin context path from admin's banner.jsp. (yoavs)
       </fix>
+      <update>
+        Major connector docs update. (remm)
+      </update>
     </changelog>
   </subsection>
 
