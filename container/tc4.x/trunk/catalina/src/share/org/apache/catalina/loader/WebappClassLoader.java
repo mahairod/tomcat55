@@ -161,31 +161,25 @@ public class WebappClassLoader
         "com.sun.jndi.ldap.LdapCtxFactory",      // LDAP      added in 1.3
         "com.sun.net.ssl.internal.ssl.Provider", // JSSE      added in 1.4
         "javax.security.auth.Subject",           // JAAS      added in 1.4
-        //"javax.net.SocketFactory",               // JSSE      added in 1.4
-        //"javax.security.cert.X509Certificate",   // JSSE      added in 1.4
-        //"javax.sql.DataSource",                  // JDBC ext. added in 1.4
-        //"javax.xml.parsers.DocumentBuilder",     // JAXP      added in 1.4
-        "javax.servlet.Servlet",                 // Servlet API
-        // "org.apache.crimson.jaxp.DocumentBuilderImpl",
-                                                 // Crimson   added in 1.4
+        "javax.servlet.Servlet"                 // Servlet API
     };
 
 
     /**
-     * The set of trigger classes that will cause a proposed repository not
-     * to be added if this class is visible to the class loader that loaded
-     * this factory class.  Typically, trigger classes will be listed for
-     * components that have been integrated into the JDK for later versions,
-     * but where the corresponding JAR files are required to run on
-     * earlier versions.
+     * Set of package names which are not allowed to be loaded from a webapp
+     * class loader.
      */
-    private static final String[] classTriggers = {
-        "javax.net.",                                // JSSE      added in 1.4
-        "javax.security.cert.",                      // JSSE      added in 1.4
-        "javax.naming.",                             // JNDI      added in 1.3
-        "javax.xml.",                                // JAXP      added in 1.4
-        "org.xml.sax.",
-        "org.w3c.dom."
+    private static final String[] packageTriggers = {
+        "javax.net",                                 // JSSE      added in 1.4
+        "javax.net.ssl",                             // JSSE      added in 1.4
+        "javax.security.cert",                       // JSSE      added in 1.4
+        "javax.naming",                              // JNDI      added in 1.3
+        "javax.naming.directory",                    // JNDI      added in 1.3
+        "javax.xml.parsers",                         // JAXP      added in 1.4
+        "org.xml.sax",
+        "org.xml.sax.ext",
+        "org.xml.sax.helpers",
+        "org.w3c.dom"
     };
 
 
@@ -1911,7 +1905,6 @@ public class WebappClassLoader
             return false;
 
         // Looking up the package
-        /*
         String packageName = null;
         int pos = name.lastIndexOf('.');
         if (pos != -1)
@@ -1919,17 +1912,8 @@ public class WebappClassLoader
         else
             return true;
 
-        if (packageName.equals("javax.servlet"))
-            return false;
-        if (packageName.equals("javax.servlet.http"))
-            return false;
-        if (packageName.equals("javax.servlet.jsp"))
-            return false;
-        if (packageName.equals("javax.servlet.jsp.tagext"))
-            return false;
-        */
-        for (int i = 0; i < classTriggers.length; i++) {
-            if (name.startsWith(classTriggers[i]))
+        for (int i = 0; i < packageTriggers.length; i++) {
+            if (packageName.equals(packageTriggers[i]))
                 return false;
         }
 
