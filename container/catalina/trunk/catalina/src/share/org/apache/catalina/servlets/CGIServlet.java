@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -1594,6 +1595,7 @@ public final class CGIServlet extends HttpServlet {
              */
             Runtime rt = null;
             BufferedReader commandsStdOut = null;
+            InputStream cgiOutput = null;
             BufferedReader commandsStdErr = null;
             BufferedOutputStream commandsStdIn = null;
             Process proc = null;
@@ -1681,8 +1683,6 @@ public final class CGIServlet extends HttpServlet {
              */
 
             boolean isRunning = true;
-            commandsStdOut = new BufferedReader
-                (new InputStreamReader(proc.getInputStream()));
             commandsStdErr = new BufferedReader
                 (new InputStreamReader(proc.getErrorStream()));
             BufferedWriter servletContainerStdout = null;
@@ -1704,14 +1704,17 @@ public final class CGIServlet extends HttpServlet {
                 } ;
             }.start() ;
 
-
+            InputStream cgiHeaderStream =
+                new HTTPHeaderInputStream(proc.getInputStream());
+            BufferedReader cgiHeaderReader =
+                new BufferedReader(new InputStreamReader(cgiHeaderStream));
+            boolean isBinaryContent = false;
+            
             while (isRunning) {
-
                 try {
-
                     //set headers
                     String line = null;
-                    while (((line = commandsStdOut.readLine()) != null)
+                    while (((line = cgiHeaderReader.readLine()) != null)
                            && !("".equals(line))) {
                         if (debug >= 2) {
                             log("runCGI: addHeader(\"" + line + "\")");
@@ -1722,27 +1725,50 @@ public final class CGIServlet extends HttpServlet {
                              * response.setStatus(getStatusCode(line));
                              */
                         } else if (line.indexOf(":") >= 0) {
-                            response.addHeader
-                                (line.substring(0, line.indexOf(":")).trim(),
-                                line.substring(line.indexOf(":") + 1).trim());
+                            String header =
+                                line.substring(0, line.indexOf(":")).trim();
+                            String value =
+                                line.substring(line.indexOf(":") + 1).trim(); 
+                            response.addHeader(header , value);
+                            if ((header.toLowerCase().equals("content-type"))
+                                && (!value.toLowerCase().startsWith("text"))) {
+                                isBinaryContent = true;
+                            }
                         } else {
                             log("runCGI: bad header line \"" + line + "\"");
                         }
                     }
 
                     //write output
-                    char[] cBuf = new char[1024];
-                    while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
-                        if (servletContainerStdout != null) {
+                    if (isBinaryContent) {
+                        byte[] bBuf = new byte[2048];
+                        OutputStream out = response.getOutputStream();
+                        cgiOutput = proc.getInputStream();
+                        while ((bufRead = cgiOutput.read(bBuf)) != -1) {
                             if (debug >= 4) {
-                                log("runCGI: write(\"" + new String(cBuf, 0, bufRead) + "\")");
+                                log("runCGI: output " + bufRead +
+                                    " bytes of binary data");
                             }
-                            servletContainerStdout.write(cBuf, 0, bufRead);
+                            out.write(bBuf, 0, bufRead);
                         }
-                    }
+                    } else {
+                        commandsStdOut = new BufferedReader
+                            (new InputStreamReader(proc.getInputStream()));
 
-                    if (servletContainerStdout != null) {
-                        servletContainerStdout.flush();
+                        char[] cBuf = new char[1024];
+                        while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
+                            if (servletContainerStdout != null) {
+                                if (debug >= 4) {
+                                    log("runCGI: write(\"" +
+                                        new String(cBuf, 0, bufRead) + "\")");
+                                }
+                                servletContainerStdout.write(cBuf, 0, bufRead);
+                            }
+                        }
+    
+                        if (servletContainerStdout != null) {
+                            servletContainerStdout.flush();
+                        }
                     }
 
                     proc.exitValue(); // Throws exception if alive
@@ -1756,7 +1782,8 @@ public final class CGIServlet extends HttpServlet {
                     }
                 }
             } //replacement for Process.waitFor()
-            commandsStdOut.close()  ;
+            commandsStdOut.close();
+            cgiOutput.close();
         }
 
         private void sendToLog(BufferedReader rdr) {
@@ -1837,5 +1864,88 @@ public final class CGIServlet extends HttpServlet {
             return value;
         }
     }
+
+    /**
+     * This is an input stream specifically for reading HTTP headers. It reads
+     * upto and including the two blank lines terminating the headers. It
+     * allows the content to be read using bytes or characters as appropriate.
+     */
+    protected class HTTPHeaderInputStream extends InputStream {
+        private static final int STATE_CHARACTER = 0;
+        private static final int STATE_FIRST_CR = 1;
+        private static final int STATE_FIRST_LF = 2;
+        private static final int STATE_SECOND_CR = 3;
+        private static final int STATE_HEADER_END = 4;
+        
+        private InputStream input;
+        private int state;
+        
+        HTTPHeaderInputStream(InputStream theInput) {
+            input = theInput;
+            state = STATE_CHARACTER;
+        }
+
+        /**
+         * @see java.io.InputStream#read()
+         */
+        public int read() throws IOException {
+            if (state == STATE_HEADER_END) {
+                return -1;
+            }
+
+            int i = input.read();
+
+            // Update the state
+            // State machine looks like this
+            //
+            //    -------->--------
+            //   |      (CR)       |
+            //   |                 |
+            //  CR1--->---         |
+            //   |        |        |
+            //   ^(CR)    |(LF)    |
+            //   |        |        |
+            // CHAR--->--LF1--->--EOH
+            //      (LF)  |  (LF)  |
+            //            |(CR)    ^(LF)
+            //            |        |
+            //          (CR2)-->---
+            
+            if (i == 10) {
+                // LF
+                switch(state) {
+                    case STATE_CHARACTER:
+                        state = STATE_FIRST_LF;
+                        break;
+                    case STATE_FIRST_CR:
+                        state = STATE_FIRST_LF;
+                        break;
+                    case STATE_FIRST_LF:
+                    case STATE_SECOND_CR:
+                        state = STATE_HEADER_END;
+                        break;
+                }
+
+            } else if (i == 13) {
+                // CR
+                switch(state) {
+                    case STATE_CHARACTER:
+                        state = STATE_FIRST_CR;
+                        break;
+                    case STATE_FIRST_CR:
+                        state = STATE_HEADER_END;
+                        break;
+                    case STATE_FIRST_LF:
+                        state = STATE_SECOND_CR;
+                        break;
+                }
+
+            } else {
+                state = STATE_CHARACTER;
+            }
+            
+            return i;            
+        }
+    }  // class HTTPHeaderInputStream
 
 } //class CGIServlet
