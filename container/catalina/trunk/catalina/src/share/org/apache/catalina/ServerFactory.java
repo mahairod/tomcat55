@@ -64,6 +64,8 @@
 
 package org.apache.catalina;
 
+import org.apache.catalina.core.StandardServer;
+
 
 /**
  * <p><strong>ServerFactory</strong> allows the registration of the
@@ -95,7 +97,8 @@ public class ServerFactory {
      * Return the singleton <code>Server</code> instance for this JVM.
      */
     public static Server getServer() {
-
+        if( server==null )
+            server=new StandardServer();
         return (server);
 
     }
