@@ -202,6 +202,15 @@ public class JspServlet extends HttpServlet {
 						 ex.getMessage()
 					     }), ex,
 					    Logger.ERROR);
+		    // rethrow FileNotFoundException so someone higher up can handle
+                    if (insecure_TMI)
+                        throw ex;
+                    else
+			throw new FileNotFoundException(Constants.getString
+                                           ("jsp.error.file.not.found", 
+                                            new Object[] {
+                                                // Too Much Information -- ex.getMessage()
+                                            }));
 		}
                 return;
             }
