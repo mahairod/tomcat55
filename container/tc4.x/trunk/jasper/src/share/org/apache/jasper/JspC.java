@@ -341,7 +341,7 @@ public class JspC implements Options { //, JspCompilationContext {
                 clctxt.setOutputInDirs(true);
             }
             if (new File(clctxt.getRealPath("/")).exists()) {
-                File classes = new File(clctxt.getRealPath("/WEB-INF/lib"));
+                File classes = new File(clctxt.getRealPath("/WEB-INF/classes"));
                 try {
                      if (classes.exists()) {
                         loader.addJar(classes.getCanonicalPath());
