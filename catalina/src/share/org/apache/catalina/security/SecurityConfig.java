@@ -71,11 +71,15 @@ public final class SecurityConfig{
     
     private final static String PACKAGE_ACCESS =  "org.apache.catalina." 
                                                 + ",org.apache.jasper."
+                                                + ",org.apache.jsp."
+                                                + ",org.apache.jk.";
+    
+    private final static String PACKAGE_DEFINITION= "java."
+                                                + ",org.apache.catalina." 
+                                                + ",org.apache.jasper."
                                                 + ",org.apache.coyote."
-                                                + ",org.apache.tomcat."
-                                                + ".org.apache.jk.";
-    private final static String PACKAGE_DEFINITION= "java.,"
-                                                + PACKAGE_ACCESS;
+                                                + ",org.apache.jsp."
+                                                + ",org.apache.jk.";
     /**
      * Create a single instance of this class.
      */
