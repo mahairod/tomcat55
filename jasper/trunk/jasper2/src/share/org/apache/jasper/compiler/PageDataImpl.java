@@ -101,9 +101,6 @@ public class PageDataImpl extends PageData implements TagConstants {
     // default "xmlns:jsp" and "version" attributes of jsp:root element
     private static AttributesImpl defaultJspRootAttrs;
 
-    // input stream of the XML view
-    private InputStream is;
-
     // string buffer used to build XML view
     private StringBuffer buf;
 
@@ -136,14 +133,6 @@ public class PageDataImpl extends PageData implements TagConstants {
 	SecondPassVisitor secondPassVisitor
 	    = new SecondPassVisitor(page.getRoot(), buf);
 	page.visit(secondPassVisitor);
-
-	// Turn StringBuffer into InputStream
-        try {
-            is = new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException uee) {
-	    // should never happen
-            throw new RuntimeException(uee.toString());
-        }
     }
 
     /**
@@ -152,7 +141,13 @@ public class PageDataImpl extends PageData implements TagConstants {
      * @return the input stream of the XML view
      */
     public InputStream getInputStream() {
-	return is;
+	// Turn StringBuffer into InputStream
+        try {
+            return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException uee) {
+	    // should never happen
+            throw new RuntimeException(uee.toString());
+        }
     }
 
     /*
