@@ -1279,7 +1279,7 @@ public class DeltaSession
         
         // Call the valueBound() method if necessary
         if ( value instanceof HttpSessionBindingListener ) {
-            event = new HttpSessionBindingEvent(this, name, value);
+            event = new HttpSessionBindingEvent(getSession(), name, value);
             try {
                 ( (HttpSessionBindingListener) value).valueBound(event);
             } catch ( Exception x ) {
@@ -1295,7 +1295,7 @@ public class DeltaSession
             (unbound instanceof HttpSessionBindingListener)) {
             try {
                 ( (HttpSessionBindingListener) unbound).valueUnbound
-                    (new HttpSessionBindingEvent( (HttpSession)this, name));
+                    (new HttpSessionBindingEvent( (HttpSession)getSession(), name));
             } catch ( Exception x ) {
                 log.error("Session binding listener throw an exception",x);
             }
@@ -1322,7 +1322,7 @@ public class DeltaSession
                                            listener);
                         if (event == null) {
                             event = new HttpSessionBindingEvent
-                                (this, name, unbound);
+                                (getSession(), name, unbound);
                         }
                         listener.attributeReplaced(event);
                         fireContainerEvent(context,
@@ -1334,7 +1334,7 @@ public class DeltaSession
                                            listener);
                         if (event == null) {
                             event = new HttpSessionBindingEvent
-                                (this, name, unbound);
+                                (getSession(), name, unbound);
                         }
                         listener.attributeAdded(event);
                         fireContainerEvent(context,
@@ -1614,7 +1614,7 @@ public class DeltaSession
 
         // Call the valueUnbound() method if necessary
         HttpSessionBindingEvent event =
-          new HttpSessionBindingEvent((HttpSession) this, name, value);
+          new HttpSessionBindingEvent((HttpSession) getSession(), name, value);
         if ((value != null) &&
             (value instanceof HttpSessionBindingListener))
             try {
