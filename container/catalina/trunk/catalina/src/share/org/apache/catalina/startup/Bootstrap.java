@@ -63,6 +63,7 @@ package org.apache.catalina.startup;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -92,7 +93,6 @@ public final class Bootstrap {
 
     protected static final String CATALINA_HOME_TOKEN = "${catalina.home}";
     protected static final String CATALINA_BASE_TOKEN = "${catalina.base}";
-    protected static final String HTTP_TOKEN = "http://";
 
 
     // ------------------------------------------------------- Static Variables
@@ -154,10 +154,12 @@ public final class Bootstrap {
         StringTokenizer tokenizer = new StringTokenizer(value, ",");
         while (tokenizer.hasMoreElements()) {
             String repository = tokenizer.nextToken();
-            // Check for a remote repository
-            if (repository.startsWith(HTTP_TOKEN)) {
+            // Check for a JAR URL repository
+            try {
                 urlList.add(new URL(repository));
                 continue;
+            } catch (MalformedURLException e) {
+                // Ignore
             }
             // Local repository
             boolean packed = false;
