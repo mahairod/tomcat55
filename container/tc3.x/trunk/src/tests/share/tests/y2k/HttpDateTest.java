@@ -4,8 +4,8 @@
 
 package tests.y2k;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
 import org.apache.tomcat.util.*;
 import java.text.*;
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.*;
  * Sample test module.
  */
 
-public class HttpDateTest implements Testable {
+public class HttpDateTest extends TestableBase {
 
     String[] rfc1123Strings = new String[11];
     Calendar[] calendars = new Calendar[11];

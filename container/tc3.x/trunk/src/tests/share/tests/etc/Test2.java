@@ -9,8 +9,8 @@
 
 package tests.etc;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
+import org.apache.tools.moo.Testable;
+import org.apache.tools.moo.TestResult;
 
 public class Test2 {
 

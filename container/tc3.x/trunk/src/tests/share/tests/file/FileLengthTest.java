@@ -10,11 +10,11 @@ package tests.file;
 import java.io.*;
 import java.net.*;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
-import com.sun.moo.URLHelper;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
+import org.apache.tools.moo.URLHelper;
 
-public class FileLengthTest implements Testable {
+public class FileLengthTest extends TestableBase {
 
     public String getDescription() {
         return "File Length Test";

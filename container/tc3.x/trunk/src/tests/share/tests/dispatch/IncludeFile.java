@@ -5,11 +5,11 @@ package tests.dispatch;
 import java.io.*;
 import java.net.*;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
-import com.sun.moo.URLHelper;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
+import org.apache.tools.moo.URLHelper;
 
-public class IncludeFile implements Testable {
+public class IncludeFile extends TestableBase {
 
     public String getDescription() {
         return "File Inclusion Test";

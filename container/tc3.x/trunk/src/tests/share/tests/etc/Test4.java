@@ -9,13 +9,13 @@
 
 package tests.etc;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
-import com.sun.moo.URLHelper;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
+import org.apache.tools.moo.URLHelper;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-public class Test4 implements Testable {
+public class Test4 extends TestableBase {
 
     public static void main(String[] args) {
         Test4 test4 = new Test4();

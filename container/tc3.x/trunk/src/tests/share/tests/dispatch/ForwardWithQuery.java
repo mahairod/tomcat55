@@ -13,11 +13,11 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
-import com.sun.moo.URLHelper;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
+import org.apache.tools.moo.URLHelper;
 
-public class ForwardWithQuery implements Testable {
+public class ForwardWithQuery extends TestableBase {
 
 
   public String getDescription() {

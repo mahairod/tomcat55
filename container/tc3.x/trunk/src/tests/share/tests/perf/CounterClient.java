@@ -5,9 +5,9 @@
 
 package tests.perf;
 
-import com.sun.moo.Testable;
-import com.sun.moo.TestResult;
-import com.sun.moo.URLHelper;
+import org.apache.tools.moo.TestableBase;
+import org.apache.tools.moo.TestResult;
+import org.apache.tools.moo.URLHelper;
 
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.lang.SecurityException;
 import java.lang.NumberFormatException;
 
-public class CounterClient implements Testable {
+public class CounterClient extends TestableBase {
 
     private String method = null;
     private URL resetURL = null;
