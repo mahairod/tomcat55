@@ -427,18 +427,6 @@ public class HttpRequestAdapter extends Request {
 	requestURI=uriMB.toString();
 	queryString=queryMB.toString();
 
-	// Perform URL decoding only if necessary
-	if ((uriMB.indexOf('%') >= 0) || (uriMB.indexOf('+') >= 0)) {
-
-	    try {
-		// XXX rewrite URLDecode to avoid allocation
-		requestURI = uriMB.toString();
-		requestURI = RequestUtil.URLDecode(requestURI);
-	    } catch (Exception e) {
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return;
-	    }
-	}
 
 	//	loghelper.log("XXX " + method + " " + requestURI + " " + queryString + " " + protocol );
 
