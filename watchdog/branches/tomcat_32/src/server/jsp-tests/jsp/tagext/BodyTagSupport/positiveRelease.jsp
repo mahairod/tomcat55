@@ -14,7 +14,9 @@
 
 <%@ taglib uri="http://java.apache.org/tomcat/examples-taglib" prefix="eg" %>
 
+<% try { %>
 <eg:test toBrowser="true" att1="release">
-Test For </eg:test>
+Test For <% throw new java.lang.Exception(); %></eg:test>
+<% } catch (java.lang.Exception e) {} %>
 </body>
 </html>
