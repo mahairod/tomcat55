@@ -473,6 +473,10 @@ class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
                 name = child.getBody();
             } else if ("path".equals(tname)) {
                 path = child.getBody();
+            } else if ("example".equals(tname)) {
+                // Ignore <example> element: Bugzilla 33538
+            } else if ("tag-extension".equals(tname)) {
+                // Ignore <tag-extension> element: Bugzilla 33538
             } else {
                 if (log.isWarnEnabled()) {
                     log.warn(Localizer.getMessage(
