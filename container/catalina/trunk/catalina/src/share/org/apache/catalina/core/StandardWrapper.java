@@ -1583,15 +1583,15 @@ public class StandardWrapper
     // ------------------------------------------------------------- Attributes
         
         
-    public boolean IsEventProvider() {
+    public boolean isEventProvider() {
         return false;
     }
     
-    public boolean IsStateManageable() {
+    public boolean isStateManageable() {
         return false;
     }
     
-    public boolean IsStatisticsProvider() {
+    public boolean isStatisticsProvider() {
         return false;
     }
         

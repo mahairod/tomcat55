@@ -5144,7 +5144,7 @@ public class StandardContext
     /** Support for "stateManageable" JSR77 
      * 
      */
-    public boolean IsStateManageable() {
+    public boolean isStateManageable() {
         return true;
     }
     
@@ -5197,11 +5197,11 @@ public class StandardContext
         return startupTime;
     }
     
-    public boolean IsEventProvider() {
+    public boolean isEventProvider() {
         return false;
     }
     
-    public boolean IsStatisticsProvider() {
+    public boolean isStatisticsProvider() {
         return false;
     }
     
