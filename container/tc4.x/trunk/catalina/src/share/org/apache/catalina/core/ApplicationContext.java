@@ -65,28 +65,18 @@
 package org.apache.catalina.core;
 
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.IOException;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.Socket;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.Binding;
@@ -96,25 +86,14 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextAttributeEvent;
 import javax.servlet.ServletContextAttributeListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import org.apache.naming.resources.Resource;
 import org.apache.naming.resources.DirContextURLStreamHandler;
-import org.apache.naming.resources.DirContextURLConnection;
-import org.apache.catalina.Connector;
-import org.apache.catalina.Container;
 import org.apache.catalina.Context;
-import org.apache.catalina.Globals;
 import org.apache.catalina.Host;
-
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
-import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ResourceSet;
@@ -446,7 +425,8 @@ public class ApplicationContext
         if (!contextPath.endsWith("/"))
             contextPath = contextPath + "/";
 
-        if ((contextPath.length() > 1) && (uri.startsWith(contextPath))) {
+        if (((contextPath.length() > 1) && (uri.startsWith(contextPath))) ||
+            ((contextPath.equals("/")) && (uri.equals("/")))) {
             return (this);
         }
 
