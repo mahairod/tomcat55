@@ -563,12 +563,12 @@ public class ServerLifecycleListener
      *
      * @exception Exception if an exception is thrown during MBean creation
      */
-    protected void destroyMBeans(Connector connector) throws Exception {
+    protected void destroyMBeans(Connector connector, Service service) throws Exception {
 
         // deregister the MBean for the Connector itself
         if (debug >= 5)
             log("Destroying MBean for Connector " + connector);
-        MBeanUtils.destroyMBean(connector);
+        MBeanUtils.destroyMBean(connector, service);
 
     }
 
@@ -764,7 +764,7 @@ public class ServerLifecycleListener
         // Deregister the MBeans for the corresponding Connectors
         Connector connectors[] = service.findConnectors();
         for (int j = 0; j < connectors.length; j++) {
-            destroyMBeans(connectors[j]);
+            destroyMBeans(connectors[j], service);
         }
 
         // Deregister the MBeans for the associated Engine
@@ -1091,7 +1091,7 @@ public class ServerLifecycleListener
         }
         if ("connector".equals(propertyName)) {
             if (oldValue != null) {
-                destroyMBeans((Connector) oldValue);
+                destroyMBeans((Connector) oldValue, service);
             }
             if (newValue != null) {
                 createMBeans((Connector) newValue);

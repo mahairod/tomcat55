@@ -1277,9 +1277,10 @@ public class MBeanUtils {
      *
      * @exception Exception if an MBean cannot be deregistered
      */
-    public static void destroyMBean(Connector connector)
+    public static void destroyMBean(Connector connector, Service service)
         throws Exception {
 
+        connector.setService(service);
         String mname = createManagedName(connector);
         ManagedBean managed = registry.findManagedBean(mname);
         if (managed == null) {
@@ -1289,6 +1290,7 @@ public class MBeanUtils {
         if (domain == null)
             domain = mserver.getDefaultDomain();
         ObjectName oname = createObjectName(domain, connector);
+        connector.setService(null);
         mserver.unregisterMBean(oname);
 
     }
