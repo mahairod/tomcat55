@@ -64,7 +64,9 @@ package org.apache.jasper.compiler;
 import java.util.Stack;
 import java.util.Hashtable;
 
+import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.VariableInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
 
 /**
  * Common stuff for use with TagBegin and TagEndGenerators.
@@ -134,18 +136,49 @@ abstract class TagGeneratorBase extends GeneratorBase {
 	}
     }
 
-    protected void declareVariables(ServletWriter writer, VariableInfo[] vi,
-                                           boolean declare, boolean update, int scope)
+    protected void declareVariables(ServletWriter writer, 
+				    VariableInfo[] vi,
+				    TagVariableInfo[] tvi,
+				    TagData tagData,
+				    boolean declare, boolean update, int scope)
     {
-        if (vi != null)
-            for(int i = 0; i < vi.length; i++)
+        if (vi != null) {
+            for(int i = 0; i < vi.length; i++) {
                 if (vi[i].getScope() == scope) {
-                    if (vi[i].getDeclare() == true && declare == true)
-                        writer.println(vi[i].getClassName()+" "+vi[i].getVarName()+" = null;");
-                    if (update == true)
-                        writer.println(vi[i].getVarName()+" = ("+
-                                       vi[i].getClassName()+") pageContext.findAttribute("
-                                       +writer.quoteString(vi[i].getVarName())+");");
+                    if (vi[i].getDeclare() && declare) {
+                        writer.println(vi[i].getClassName() +
+				       " " + vi[i].getVarName() +
+				       " = null;");
+		    }
+                    if (update) {
+                        writer.println(vi[i].getVarName() + " = (" +
+                                       vi[i].getClassName() +
+				       ") pageContext.findAttribute(" +
+                                       writer.quoteString(vi[i].getVarName())+");");
+		    }
                 }
+	    }
+	} else if (tvi != null) {
+            for(int i = 0; i < tvi.length; i++) {
+		String name;
+		if (tvi[i].getNameGiven() != null) {
+		    name = tvi[i].getNameGiven();
+		} else {
+		    name = tagData.getAttributeString(tvi[i].getNameFromAttribute());
+		}
+                if (tvi[i].getScope() == scope) {
+                    if (tvi[i].getDeclare() && declare) {
+                        writer.println(tvi[i].getClassName() + 
+				       " " + name + " = null;");
+		    }
+                    if (update) {
+                        writer.println(name + " = (" +
+                                       tvi[i].getClassName() +
+				       ") pageContext.findAttribute(" +
+                                       writer.quoteString(name) + ");");
+		    }
+                }
+	    }
+	}
     }
 }

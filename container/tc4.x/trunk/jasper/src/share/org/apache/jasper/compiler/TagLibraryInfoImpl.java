@@ -373,6 +373,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                     largeIcon = t.getData();
 	    } else if (tname.equals("variable")) {
 		if (teiclass != null) {
+		    // teiclass comes first in the tag element
+		    // only need to make the check here
 		    throw new JasperException(
 			Constants.getString("tld.error.variableNotAllowed"));
 		}
@@ -393,6 +395,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 	TagVariableInfo[] tagVariableInfos
             = new TagVariableInfo[variableVector.size()];
 	variableVector.copyInto(tagVariableInfos);
+
 
         TagExtraInfo tei = null;
 
@@ -515,7 +518,14 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             } else if (tname.equals("scope")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null) {
-                    scope = Integer.valueOf(t.getData()).intValue();
+		    String s = t.getData();
+		    if ("NESTED".equals(s)) {
+			scope = VariableInfo.NESTED;
+		    } else if ("AT_BEGIN".equals(s)) {
+			scope = VariableInfo.AT_BEGIN;
+		    } else if ("AT_END".equals(s)) {
+			scope = VariableInfo.AT_END;
+		    }
 		}
             } else 
                 Constants.message("jsp.warning.unknown.element.in.variable",

@@ -64,6 +64,7 @@ import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.BodyTag;
@@ -318,9 +319,10 @@ public class TagBeginGenerator
         generateSetters(writer, parent);
 
         VariableInfo[] vi = ti.getVariableInfo(tagData);
+	TagVariableInfo[] tvi = ti.getTagVariableInfos();
 
         // Just declare AT_BEGIN here...
-        declareVariables(writer, vi, true, false, VariableInfo.AT_BEGIN);
+        declareVariables(writer, vi, tvi, tagData, true, false, VariableInfo.AT_BEGIN);
 
 	writer.println("try {");
 	writer.pushIndent();
@@ -330,10 +332,11 @@ public class TagBeginGenerator
         writer.println("int "+evalVar+" = "
                        +thVarName+".doStartTag();");
 
-        boolean implementsBodyTag = BodyTag.class.isAssignableFrom(tc.getTagHandlerClass());
+        boolean implementsBodyTag = 
+	    BodyTag.class.isAssignableFrom(tc.getTagHandlerClass());
 
         // Need to update AT_BEGIN variables here
-        declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
+        declareVariables(writer, vi, tvi, tagData, false, true, VariableInfo.AT_BEGIN);
 
         // FIXME: I'm not too sure if this is the right approach. I don't like
         //        throwing English language strings into the generated servlet.
@@ -376,9 +379,9 @@ public class TagBeginGenerator
 	writer.println("do {");
 	writer.pushIndent();
         // Need to declare and update NESTED variables here
-        declareVariables(writer, vi, true, true, VariableInfo.NESTED);
+        declareVariables(writer, vi, tvi, tagData, true, true, VariableInfo.NESTED);
         // Need to update AT_BEGIN variables here
-        declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
+        declareVariables(writer, vi, tvi, tagData, false, true, VariableInfo.AT_BEGIN);
     }
 
     public void generate(ServletWriter writer, Class phase)
@@ -387,3 +390,4 @@ public class TagBeginGenerator
         generateServiceMethodStatements(writer);
     }
 }
+

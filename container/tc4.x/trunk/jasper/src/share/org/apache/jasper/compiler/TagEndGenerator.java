@@ -61,6 +61,7 @@ import java.util.Stack;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
+import javax.servlet.jsp.tagext.TagVariableInfo;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.IterationTag;
@@ -105,8 +106,10 @@ public class TagEndGenerator
         String thVarName = tvd.tagHandlerInstanceName;
         String evalVarName = tvd.tagEvalVarName;
 
-        VariableInfo[] vi = ti.getVariableInfo(new TagData(
-                JspUtil.attrsToHashtable(attrs)));
+	TagData tagData = 
+	    new TagData(JspUtil.attrsToHashtable(attrs));
+        VariableInfo[] vi = ti.getVariableInfo(tagData);
+	TagVariableInfo[] tvi = ti.getTagVariableInfos();
 
         Class tagHandlerClass =
 	    libraries.getTagCache(prefix, shortTagName).getTagHandlerClass();
@@ -124,7 +127,7 @@ public class TagEndGenerator
         else
             writer.println("} while (false);");
 
-        declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
+        declareVariables(writer, vi, tvi, tagData, false, true, VariableInfo.AT_BEGIN);
 
         if (implementsBodyTag) {
             writer.popIndent(); // try
@@ -185,6 +188,6 @@ public class TagEndGenerator
 	writer.println("}");
 
         // Need to declare and update AT_END variables here.
-        declareVariables(writer, vi, true, true, VariableInfo.AT_END);
+        declareVariables(writer, vi, tvi, tagData, true, true, VariableInfo.AT_END);
     }
 }
