@@ -445,9 +445,11 @@ final class StandardSession
      */
     public void expire() {
 
+        // Mark this session as "being expired" if needed
 	if (expiring)
-	    return;		// Already in progress
+	    return;
 	expiring = true;
+        setValid(false);
 
 	// Remove this session from our manager's active sessions
 	if ((manager != null) && (manager instanceof ManagerBase))
@@ -480,9 +482,7 @@ final class StandardSession
 	    }
 	}
 
-	// Mark this session as invalid
-	setValid(false);
-
+        // We have completed expire of this session
 	expiring = false;
 
     }

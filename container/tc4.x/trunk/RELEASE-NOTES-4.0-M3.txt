@@ -158,6 +158,13 @@ by ServletContext.getServerInfo().
 Catalina:  Correctly record the authentication method to be returned by
 HttpServletRequest.getAuthType().
 
+Catalina:  Correctly perform host name comparisons (during request mapping)
+in a case insensitive manner in all circumstances.
+
+Catalina:  When expiring a session, mark the session invalid at the beginning
+of the expiration process, so that any simultaneous access to this session
+from a different thread will get IllegalStateException.
+
 
 ==============================
 KNOWN PROBLEMS IN THIS RELEASE:
