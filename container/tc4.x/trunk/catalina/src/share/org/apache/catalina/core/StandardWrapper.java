@@ -705,10 +705,11 @@ public final class StandardWrapper
      * at server startup time.
      * <p>
      * <b>IMPLEMENTATION NOTE</b>:  Servlets whose classnames begin with
-     * <code>org.apache.catalina.</code> (so-called "container" servlets) are loaded
-     * by the same classloader that loaded this class, rather than the classloader
-     * for the current web application.  This gives such classes access to Catalina
-     * internals, which are prevented for classes loaded for web applications.
+     * <code>org.apache.catalina.</code> (so-called "container" servlets) 
+     * are loaded by the same classloader that loaded this class, rather than 
+     * the classloader for the current web application.  
+     * This gives such classes access to Catalina internals, which are 
+     * prevented for classes loaded for web applications.
      *
      * @exception ServletException if the servlet init() method threw
      *  an exception
