@@ -1301,8 +1301,6 @@ public class Generator {
 	    out.printin("/* ----  ");
 	    out.print(n.getName());
 	    out.println(" ---- */");
-	    out.printil("{");
-	    out.pushIndent();
 
 	    // Declare AT_BEGIN scripting variables
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
@@ -1474,8 +1472,6 @@ public class Generator {
 	    }
 
 	    restoreScriptingVars(n);
-	    out.popIndent();
-	    out.printil("}");
 
 	    n.setEndJavaLine(out.getJavaLine());
 	}
