@@ -8,7 +8,7 @@
      version="2.0">
 <xsd:annotation>
 <xsd:documentation>
-@(#)jsp_2_0.xsds	1.14 11/06/02
+@(#)jsp_2_0.xsds	1.15 01/02/03
 </xsd:documentation>
 </xsd:annotation>
 
@@ -136,10 +136,10 @@ files so they can be given global property information.
 All files so described are deemed to be JSP files.  The
 following additional properties can be described:
 
-    - Control enabling of EL evaluation.
-    - Control enabling of Scripting elements.
+    - Control whether EL is ignored
+    - Control whether scripting elements are invalid
     - Indicate pageEncoding information.
-    - Indicating that a resource is a JSP document
+    - Indicate that a resource is a JSP document (XML)
     - Prelude and Coda automatic includes.
 
 </xsd:documentation>
