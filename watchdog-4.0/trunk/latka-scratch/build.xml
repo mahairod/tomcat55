@@ -1,0 +1,38 @@
+<project name="Build Watchdog Test Suite" default="compile" basedir=".">
+
+  <!-- Load user property definition overrides -->
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+  
+  <property name="watchdog.build"      value="build"/>
+  
+  <!-- Establish compilation classpath -->
+  <path id="compile.classpath">
+    <pathelement location="${latka.jar}"/>
+    <pathelement location="${jdom.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${jaxp.jar}"/>
+  </path>
+
+  <!-- ===================== Prepare Directories ========================= -->
+  <target name="prepare">
+
+    <mkdir dir="${watchdog.build}"/>
+    <mkdir dir="${watchdog.build}/classes"/>
+
+  </target>
+
+  <!-- ======================== Compile Classes ========================== -->
+  <target name="compile" depends="prepare"
+   description="Compile all classes">
+
+    <!-- Clients -->
+    <javac srcdir="src/java"
+          destdir="${watchdog.build}/classes">
+      <classpath refid="compile.classpath"/>
+    </javac>
+
+  </target>
+
+
+</project>
