@@ -911,9 +911,13 @@ public class CoyoteRequest
     public Object getAttribute(String name) {
 
         if (name.equals(Globals.DISPATCHER_TYPE_ATTR)) {
-            return dispatcherType;
+            return (dispatcherType == null) 
+                ? org.apache.catalina.core.ApplicationFilterFactory.REQUEST_INTEGER
+                : dispatcherType;
         } else if (name.equals(Globals.DISPATCHER_REQUEST_PATH_ATTR)) {
-            return requestDispatcherPath.toString();
+            return (requestDispatcherPath == null) 
+                ? getRequestPathMB().toString()
+                : requestDispatcherPath.toString();
         }
 
         Object attr=attributes.get(name);
