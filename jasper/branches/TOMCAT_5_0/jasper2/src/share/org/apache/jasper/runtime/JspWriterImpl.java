@@ -26,6 +26,7 @@ import javax.servlet.jsp.JspWriter;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.compiler.Localizer;
+import org.apache.jasper.security.SecurityUtil;
 
 /**
  * Write text to a character-output stream, buffering characters so as
@@ -125,7 +126,7 @@ public class JspWriterImpl extends JspWriter {
     }
 	
     private String getLocalizeMessage(final String message){
-        if (System.getSecurityManager() != null){
+        if (SecurityUtil.isPackageProtectionEnabled()){
            return (String)AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
                     return Localizer.getMessage(message); 
