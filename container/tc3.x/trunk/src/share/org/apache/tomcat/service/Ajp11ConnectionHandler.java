@@ -159,7 +159,7 @@ class AJPRequestAdapter extends RequestAdapterImpl {
 
 	Hashtable env_vars=new Hashtable();
 
-	Ajp11.readAJPData(in, env_vars, headers);
+	Ajp11.readAJPData(sin, env_vars, headers);
 	
 	// equiv of readRequestLine ( firsts line of the Request )
 	method= (String)env_vars.get("REQUEST_METHOD");
@@ -226,9 +226,9 @@ class Ajp11 {
         try {
             while (true) {
                 // Read four bytes from the input stream
-                if (in.read(hex) != 4) {
-                    throw new IOException("Malformed AJP request: error reading line length");
-                }
+		if (in.read(hex) != 4) {
+		    throw new IOException("Malformed AJP request: error reading line length");
+		}
                 
                 // Convert the hex length in decimal
                 len=HexUtils.convert2Int(hex);
@@ -267,7 +267,8 @@ class Ajp11 {
                 } else {
                     token2 = "";
                 }
-
+		
+		//		System.out.println(token1 + " = " + token2 );
                 // Switch, depending on what the id is
                 switch (id) {
                 case 0x43: // 'C' --> ServletZone + Servlet request

@@ -278,6 +278,16 @@ public class HttpServer implements Server {
 	connector_count++;
     }
 
+    public synchronized void addConnector( String classN ) {
+	try {
+	    Class c=Class.forName( classN );
+	    ServerConnector conn=(ServerConnector)c.newInstance();
+	    addConnector( conn );
+	} catch(Exception ex) {
+	    ex.printStackTrace();
+	}
+    }
+
 
     /**
      * Gets the <code>i</code>th server connector attached to this server.

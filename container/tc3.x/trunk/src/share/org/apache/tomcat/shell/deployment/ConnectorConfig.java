@@ -72,7 +72,7 @@ import java.util.Enumeration;
  * @author James Todd [gonzo@eng.sun.com]
  */
 
-class ConnectorConfig {
+public class ConnectorConfig {
     private String className = "";
     private Hashtable parameters = new Hashtable();
 

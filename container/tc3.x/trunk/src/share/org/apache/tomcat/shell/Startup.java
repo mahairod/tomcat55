@@ -171,6 +171,29 @@ public class Startup {
 		    contextManagerConfig.getPort(), inetAddress,
 		    contextManagerConfig.getHostName(), contextManager);
 
+		Enumeration conE=contextManagerConfig.getConnectorConfigs();
+		while( conE.hasMoreElements() ) {
+		    ConnectorConfig conC=(ConnectorConfig) conE.nextElement();
+		    String cn=conC.getClassName();
+		    ServerConnector conn=null;
+
+		    try {
+			Class c=Class.forName( cn );
+			conn=(ServerConnector)c.newInstance();
+		    } catch(Exception ex) {
+			ex.printStackTrace();
+			// XXX 
+		    }
+		    Enumeration props=conC.getParameterKeys();
+		    while( props.hasMoreElements() ) {
+			String k=(String)props.nextElement();
+			String v=(String)conC.getParameter( k );
+			conn.setProperty( k, v );
+		    }
+
+		    server.addConnector( conn );
+		}
+		
 		// XXX
 		// instead of HTTPServer it should be EndpointManager,
 		//   ContextManager, Handler, etc
