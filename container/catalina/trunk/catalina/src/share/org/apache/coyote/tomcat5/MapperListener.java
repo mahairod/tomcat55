@@ -164,7 +164,7 @@ public class MapperListener
 
 
             // Query contexts
-            onStr = domain + ":j2eeType=WebModule,*";
+            onStr = "*:j2eeType=WebModule,*";
             objectName = new ObjectName(onStr);
             set = mBeanServer.queryMBeans(objectName, null);
             iterator = set.iterator();
@@ -174,7 +174,7 @@ public class MapperListener
             }
 
             // Query wrappers
-            onStr = domain + ":j2eeType=Servlet,*";
+            onStr = "*:j2eeType=Servlet,*";
             objectName = new ObjectName(onStr);
             set = mBeanServer.queryMBeans(objectName, null);
             iterator = set.iterator();
@@ -313,6 +313,18 @@ public class MapperListener
         throws Exception {
 
         String name = objectName.getKeyProperty("name");
+        
+        // If the domain is the same with ours or the engine 
+        // name attribute is the same... - then it's ours
+        String targetDomain=objectName.getDomain();
+        if( ! domain.equals( targetDomain )) {
+            targetDomain=(String) mBeanServer.getAttribute(objectName, "engineName");
+            if( ! domain.equals( targetDomain )) {
+                // not ours
+                return;
+            }
+            
+        }
 
         String hostName = null;
         String contextName = null;
@@ -386,6 +398,18 @@ public class MapperListener
     private void registerWrapper(ObjectName objectName)
         throws Exception {
     
+        // If the domain is the same with ours or the engine 
+        // name attribute is the same... - then it's ours
+        String targetDomain=objectName.getDomain();
+        if( ! domain.equals( targetDomain )) {
+            targetDomain=(String) mBeanServer.getAttribute(objectName, "engineName");
+            if( ! domain.equals( targetDomain )) {
+                // not ours
+                return;
+            }
+            
+        }
+
         String wrapperName = objectName.getKeyProperty("name");
         String name = objectName.getKeyProperty("WebModule");
 
