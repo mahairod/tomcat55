@@ -113,13 +113,15 @@ public final class SaveHostAction extends Action {
       "java.lang.String",     // name
       "java.lang.String",     // appBase
       "boolean",              // unpackWARs
+      "boolean",              // xmlNamespaceAware
+      "boolean",              // xmlValidation
     };
 
     /**
      * The MBeanServer we will be interacting with.
      */
     private MBeanServer mBServer = null;
-    
+
 
     /**
      * The MessageResources we will be retrieving messages from.
@@ -128,8 +130,8 @@ public final class SaveHostAction extends Action {
 
 
     // --------------------------------------------------------- Public Methods
-    
-    
+
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -150,14 +152,14 @@ public final class SaveHostAction extends Action {
                                  HttpServletRequest request,
                                  HttpServletResponse response)
         throws IOException, ServletException {
-        
+
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -165,7 +167,7 @@ public final class SaveHostAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-        
+
         // Identify the requested action
         HostForm hform = (HostForm) form;
         String adminAction = hform.getAdminAction();
@@ -176,9 +178,9 @@ public final class SaveHostAction extends Action {
 
             String operation = null;
             Object values[] = null;
-            
+
             try {
-                
+
                 String serviceName = hform.getServiceName();
 
                 // Ensure that the requested host name is unique
@@ -193,19 +195,22 @@ public final class SaveHostAction extends Action {
                     saveErrors(request, errors);
                     return (new ActionForward(mapping.getInput()));
                 }
-                
+
                 // Look up our MBeanFactory MBean
                 ObjectName fname =
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
 
                 // Create a new StandardHost object
-                values = new Object[4];
-                values[0] = 
+                values = new Object[6];
+                values[0] =
                     TomcatTreeBuilder.ENGINE_TYPE + ",service=" + serviceName;
                 values[1] = hform.getHostName();
                 values[2] = hform.getAppBase();
                 values[3] = new Boolean(hform.getUnpackWARs());
-                
+                values[4] = new Boolean(hform.getXmlNamespaceAware());
+                values[5] = new Boolean(hform.getXmlValidation());
+
+
                 operation = "createStandardHost";
                 hObjectName = (String)
                     mBServer.invoke(fname, operation,
@@ -215,7 +220,7 @@ public final class SaveHostAction extends Action {
                 TreeControl control = (TreeControl)
                     session.getAttribute("treeControlTest");
                 if (control != null) {
-                    String parentName = 
+                    String parentName =
                           TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                     TreeControlNode parentNode = control.findNode(parentName);
                     if (parentNode != null) {
@@ -281,7 +286,7 @@ public final class SaveHostAction extends Action {
             }
             mBServer.setAttribute(honame,
                                   new Attribute("appBase", appBase));
-            
+
             attribute = "unpackWARs";
             String unpackWARs = "false";
             try {
@@ -291,6 +296,26 @@ public final class SaveHostAction extends Action {
             }
             mBServer.setAttribute(honame,
                                   new Attribute("unpackWARs", new Boolean(unpackWARs)));
+
+            attribute = "xmlNamespaceAware";
+            String xmlNamespaceAware = "false";
+            try {
+                xmlNamespaceAware = hform.getXmlNamespaceAware();
+            } catch (Throwable t) {
+                xmlNamespaceAware = "false";
+            }
+            mBServer.setAttribute(honame,
+                                  new Attribute("xmlNamespaceAware", new Boolean(xmlNamespaceAware)));
+
+            attribute = "xmlValidation";
+            String xmlValidation = "false";
+            try {
+                xmlValidation = hform.getXmlValidation();
+            } catch (Throwable t) {
+                xmlValidation = "false";
+            }
+            mBServer.setAttribute(honame,
+                                  new Attribute("xmlValidation", new Boolean(xmlValidation)));
 
         } catch (Exception e) {
 
@@ -303,11 +328,11 @@ public final class SaveHostAction extends Action {
                                       attribute));
             return (null);
         }
-        
+
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
-        
+
     }
-    
+
 }
