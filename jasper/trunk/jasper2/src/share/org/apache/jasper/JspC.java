@@ -209,6 +209,87 @@ public class JspC implements Options {
     private boolean listErrors = false;
     private boolean showSuccess = false;
 
+    public void setArgs(String[] arg) {
+        args = arg;
+        String tok;
+
+        dieLevel = NO_DIE_LEVEL;
+        die = dieLevel;
+
+        while ((tok = nextArg()) != null) {
+            if (tok.equals(SWITCH_VERBOSE)) {
+                verbose = true;
+                showSuccess = true;
+                listErrors = true;
+            } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
+                tok = nextArg();
+                setOutputDir( tok );
+            } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {
+                tok = nextArg();
+                if (tok != null) {
+                    scratchDir = new File(new File(tok).getAbsolutePath());
+                    dirset = false;
+                } else {
+                    // either an in-java call with an explicit null
+                    // or a "-d --" sequence should cause this,
+                    // which would mean default handling
+                    /* no-op */
+                    scratchDir = null;
+                }
+            } else if (tok.equals(SWITCH_PACKAGE_NAME)) {
+                targetPackage = nextArg();
+            } else if (tok.equals(SWITCH_COMPILE)) {
+                compile=true;
+            } else if (tok.equals(SWITCH_CLASS_NAME)) {
+                targetClassName = nextArg();
+            } else if (tok.equals(SWITCH_URI_BASE)) {
+                uriBase=nextArg();
+            } else if (tok.equals(SWITCH_URI_ROOT)) {
+                setUriroot( nextArg());
+            } else if (tok.equals(SWITCH_FILE_WEBAPP)) {
+                setUriroot( nextArg());
+            } else if ( tok.equals( SHOW_SUCCESS ) ) {
+                showSuccess = true;
+            } else if ( tok.equals( LIST_ERRORS ) ) {
+                listErrors = true;
+            } else if (tok.equals(SWITCH_WEBAPP_INC)) {
+                webxmlFile = nextArg();
+                if (webxmlFile != null) {
+                    webxmlLevel = INC_WEBXML;
+                }
+            } else if (tok.equals(SWITCH_WEBAPP_XML)) {
+                webxmlFile = nextArg();
+                if (webxmlFile != null) {
+                    webxmlLevel = ALL_WEBXML;
+                }
+            } else if (tok.equals(SWITCH_MAPPED)) {
+                mappedFile = true;
+            } else if (tok.startsWith(SWITCH_DIE)) {
+                try {
+                    dieLevel = Integer.parseInt(
+                        tok.substring(SWITCH_DIE.length()));
+                } catch (NumberFormatException nfe) {
+                    dieLevel = DEFAULT_DIE_LEVEL;
+                }
+                die = dieLevel;
+            } else {
+                //pushBackArg();
+                if (!fullstop) {
+                    argPos--;
+                }
+                // Not a recognized Option?  Start treting them as JSP Pages
+                break;
+            }
+        }
+
+        // Add all extra arguments to the list of files
+        while( true ) {
+            String file = nextFile();
+            if( file==null ) break;
+            pages.addElement( file );
+        }
+    }
+
     public boolean getKeepGenerated() {
         // isn't this why we are running jspc?
         return true;
@@ -870,87 +951,6 @@ public class JspC implements Options {
             return null;
         } else {
             return args[argPos++];
-        }
-    }
-
-    void setArgs(String[] arg) {
-        args = arg;
-        String tok;
-
-        dieLevel = NO_DIE_LEVEL;
-        die = dieLevel;
-
-        while ((tok = nextArg()) != null) {
-            if (tok.equals(SWITCH_VERBOSE)) {
-                verbose = true;
-                showSuccess = true;
-                listErrors = true;
-            } else if (tok.equals(SWITCH_OUTPUT_DIR)) {
-                tok = nextArg();
-                setOutputDir( tok );
-            } else if (tok.equals(SWITCH_OUTPUT_SIMPLE_DIR)) {
-                tok = nextArg();
-                if (tok != null) {
-                    scratchDir = new File(new File(tok).getAbsolutePath());
-                    dirset = false;
-                } else {
-                    // either an in-java call with an explicit null
-                    // or a "-d --" sequence should cause this,
-                    // which would mean default handling
-                    /* no-op */
-                    scratchDir = null;
-                }
-            } else if (tok.equals(SWITCH_PACKAGE_NAME)) {
-                targetPackage = nextArg();
-            } else if (tok.equals(SWITCH_COMPILE)) {
-                compile=true;
-            } else if (tok.equals(SWITCH_CLASS_NAME)) {
-                targetClassName = nextArg();
-            } else if (tok.equals(SWITCH_URI_BASE)) {
-                uriBase=nextArg();
-            } else if (tok.equals(SWITCH_URI_ROOT)) {
-                setUriroot( nextArg());
-            } else if (tok.equals(SWITCH_FILE_WEBAPP)) {
-                setUriroot( nextArg());
-            } else if ( tok.equals( SHOW_SUCCESS ) ) {
-                showSuccess = true;
-            } else if ( tok.equals( LIST_ERRORS ) ) {
-                listErrors = true;
-            } else if (tok.equals(SWITCH_WEBAPP_INC)) {
-                webxmlFile = nextArg();
-                if (webxmlFile != null) {
-                    webxmlLevel = INC_WEBXML;
-                }
-            } else if (tok.equals(SWITCH_WEBAPP_XML)) {
-                webxmlFile = nextArg();
-                if (webxmlFile != null) {
-                    webxmlLevel = ALL_WEBXML;
-                }
-            } else if (tok.equals(SWITCH_MAPPED)) {
-                mappedFile = true;
-            } else if (tok.startsWith(SWITCH_DIE)) {
-                try {
-                    dieLevel = Integer.parseInt(
-                        tok.substring(SWITCH_DIE.length()));
-                } catch (NumberFormatException nfe) {
-                    dieLevel = DEFAULT_DIE_LEVEL;
-                }
-                die = dieLevel;
-            } else {
-                //pushBackArg();
-                if (!fullstop) {
-                    argPos--;
-                }
-                // Not a recognized Option?  Start treting them as JSP Pages
-                break;
-            }
-        }
-
-        // Add all extra arguments to the list of files
-        while( true ) {
-            String file = nextFile();
-            if( file==null ) break;
-            pages.addElement( file );
         }
     }
 
