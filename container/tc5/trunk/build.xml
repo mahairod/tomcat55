@@ -44,6 +44,7 @@
   <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
   <property name="tomcat.build"     value="${basedir}/build"/>
   <property name="tomcat.dist"      value="${basedir}/dist"/>
+  <property name="tomcat.release"   value="${basedir}/release"/>
   <property name="webapps.build"    value="${catalina.home}/webapps/build"/>
   <property name="webapps.dist"     value="${catalina.home}/webapps/dist"/>
 
@@ -128,6 +129,8 @@
     </ant>
 
     <delete dir="${tomcat.dist}"/>
+
+    <delete dir="${tomcat.release}"/>
 
   </target>
 
@@ -418,7 +421,42 @@
 
   <!-- ==================== RELEASE: Create Release ======================= -->
   <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
-   description="Create a Tomcat 5 packaged distribution" />
+   description="Create a Tomcat 5 packaged distribution" if="full-dist">
+
+    <mkdir dir="${tomcat.release}"/>
+    <mkdir dir="${tomcat.release}/v${version}"/>
+    <mkdir dir="${tomcat.release}/v${version}/bin"/>
+    <mkdir dir="${tomcat.release}/v${version}/src"/>
+
+    <move file="${tomcat.dist}/${final.name}.tar.gz" 
+         todir="${tomcat.release}/v${version}/bin"/>
+    <move file="${tomcat.dist}/${final.name}.zip" 
+         todir="${tomcat.release}/v${version}/bin"/>
+    <move file="${tomcat.dist}/${final.name}.exe" 
+         todir="${tomcat.release}/v${version}/bin"/>
+
+    <move file="${tomcat.dist}/${final-src.name}.tar.gz" 
+         todir="${tomcat.release}/v${version}/src"/>
+    <move file="${tomcat.dist}/${final-src.name}.zip" 
+         todir="${tomcat.release}/v${version}/src"/>
+
+    <filter token="VERSION" value="${version}"/>
+    <copy file="KEYS" 
+         todir="${tomcat.release}/v${version}"/>
+    <copy file="RELEASE-NOTES" 
+         todir="${tomcat.release}/v${version}"
+     filtering="true"/>
+    <copy file="CHANGELOG" 
+         todir="${tomcat.release}/v${version}"
+     filtering="true"/>
+    <copy file="resources/welcome.main.html" 
+        tofile="${tomcat.release}/v${version}/README.html"
+     filtering="true"/>
+    <copy file="resources/welcome.bin.html" 
+        tofile="${tomcat.release}/v${version}/bin/README.html"
+     filtering="true"/>
+
+  </target>
 
   <target name="package-zip">
     <zip zipfile="${tomcat.dist}/${final.name}.zip">
@@ -445,11 +483,13 @@
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="README.txt" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="RELEASE-NOTES-*" />
+       includes="RELEASE-NOTES" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
-       includes="RELEASE-PLAN-*" />
+       includes="CHANGELOG" />
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
        includes="RUNNING.txt" />
+      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
+       includes="BENCHMARKS.txt" />
     </zip>
   </target>
 
@@ -479,9 +519,10 @@
         <include name="temp/**" />
         <include name="LICENSE" />
         <include name="README.txt" />
-        <include name="RELEASE-NOTES-*" />
-        <include name="RELEASE-PLAN-*" />
+        <include name="RELEASE-NOTES" />
+        <include name="CHANGELOG" />
         <include name="RUNNING.txt" />
+        <include name="BENCHMARKS.txt" />
       </fileset>
     </copy>
     <fixcrlf srcdir="${tomcat.dist}/${final.name}" 
