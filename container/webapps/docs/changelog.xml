@@ -125,6 +125,9 @@
       <fix>
         Remove authenticator "debug" attributes from the descriptors. (remm)
       </fix>
+     <update>
+        Refactor org.apache.catalina.deploy.ContextXXX to use new super class ContextBase. (pero)
+      </update>
     </changelog>
   </subsection>
 
