@@ -506,9 +506,13 @@ public final class RequestUtil {
                     ox = 0;
                     break;
                 case '=':
-                    key = new String(data, 0, ox, encoding);
-                    ox = 0;
-                    break;
+                    if (key == null) {
+                        key = new String(data, 0, ox, encoding);
+                        ox = 0;
+                    } else {
+                        data[ox++] = c;
+                    }                   
+                    break;  
                 case '+':
                     data[ox++] = (byte)' ';
                     break;
@@ -532,4 +536,3 @@ public final class RequestUtil {
 
 
 }
-
