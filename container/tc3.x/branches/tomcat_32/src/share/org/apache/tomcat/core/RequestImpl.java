@@ -481,8 +481,7 @@ public class RequestImpl  implements Request {
 	    return null;
 	}
 
-	reqSessionId = serverSession.getId();
-	response.setSessionId( reqSessionId );
+	response.setSessionId( serverSession.getId() );
 
 	return serverSession;
     }
