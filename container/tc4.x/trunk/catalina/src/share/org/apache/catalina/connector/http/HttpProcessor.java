@@ -778,17 +778,21 @@ final class HttpProcessor
         if (debug >= 1)
             log("Normalized: '" + uri + "' to '" + normalizedUri + "'");
 
-        if (normalizedUri == null) {
-	    log(" Invalid request URI: '" + uri + "'");
-            throw new IOException("Invalid URI: " + uri + "'");
-        }
-
 	// Set the corresponding request properties
 	((HttpRequest) request).setMethod(method);
 	request.setProtocol(protocol);
-	((HttpRequest) request).setRequestURI(normalizedUri);
+        if (normalizedUri != null) {
+            ((HttpRequest) request).setRequestURI(normalizedUri);
+        } else {
+            ((HttpRequest) request).setRequestURI(uri);
+        }
 	request.setSecure(connector.getSecure());
 	request.setScheme(connector.getScheme());
+
+        if (normalizedUri == null) {
+	    log(" Invalid request URI: '" + uri + "'");
+            throw new ServletException("Invalid URI: " + uri + "'");
+        }
 
 	if (debug >= 1)
 	    log(" Request is '" + method + "' for '" + uri +
@@ -814,8 +818,13 @@ final class HttpProcessor
         // Create a place for the normalized path
         String normalized = path;
 
-        if (normalized == null)
-            return (null);
+        // Prevent encoding '%', '/', '.' and '\', which are special reserved
+        // characters
+        if ((normalized.indexOf("%25") > 0) || (normalized.indexOf("%2F") > 0)
+            || (normalized.indexOf("%2E") > 0) 
+            || (normalized.indexOf("%5C") > 0)) {
+            return null;
+        }
 
         if (normalized.equals("/."))
             return "/";
@@ -933,6 +942,14 @@ final class HttpProcessor
                 }
             } catch (EOFException e) {
                 ok = false;
+            } catch (ServletException e) {
+                ok = false;
+                try {
+                    ((HttpServletResponse) response.getResponse())
+                        .sendError(HttpServletResponse.SC_BAD_REQUEST);
+                } catch (Exception f) {
+                    ;
+                }
             } catch (InterruptedIOException e) {
                 if (debug > 1) {
                     try {
@@ -986,10 +1003,8 @@ final class HttpProcessor
             
             // Finish up the handling of the request
             try {
-                if (ok) {
-                    response.finishResponse();
-                    request.finishRequest();
-                }
+                response.finishResponse();
+                request.finishRequest();
                 if (output != null)
                     output.flush();
             } catch (IOException e) {
