@@ -216,12 +216,6 @@ public class WebdavServlet
 
 
     /**
-     * JAXP Document builder factory.
-     */
-    private DocumentBuilderFactory documentBuilderFactory;
-
-
-    /**
      * Repository of the locks put on single resources.
      * <p>
      * Key : path <br>
@@ -276,12 +270,27 @@ public class WebdavServlet
             ;
         }
 
-        documentBuilderFactory = DocumentBuilderFactory.newInstance();
-
     }
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Return JAXP document builder instance.
+     */
+    protected DocumentBuilder getDocumentBuilder()
+        throws ServletException {
+        DocumentBuilder documentBuilder = null;
+        try {
+            documentBuilder = 
+                DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch(ParserConfigurationException e) {
+            throw new ServletException
+                (sm.getString("webdavservlet.jaxpfailed"));
+        }
+        return documentBuilder;
+    }
 
 
     /**
@@ -434,13 +443,7 @@ public class WebdavServlet
 
         Node propNode = null;
 
-        DocumentBuilder documentBuilder = null;
-        try {
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch(ParserConfigurationException e) {
-            throw new ServletException
-                (sm.getString("webdavservlet.jaxpfailed"));
-        }
+        DocumentBuilder documentBuilder = getDocumentBuilder();
 
         try {
             Document document = documentBuilder.parse
@@ -896,13 +899,7 @@ public class WebdavServlet
 
         Node lockInfoNode = null;
 
-        DocumentBuilder documentBuilder = null;
-        try {
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch(ParserConfigurationException e) {
-            throw new ServletException
-                (sm.getString("webdavservlet.jaxpfailed"));
-        }
+        DocumentBuilder documentBuilder = getDocumentBuilder();
 
         try {
             Document document = documentBuilder.parse(new InputSource
