@@ -843,7 +843,11 @@ public final class ContextConfig
             }
             File docBaseFile = new File(docBase);
             if (!docBaseFile.isAbsolute()) {
-                docBaseFile = new File(appBase, docBase);
+                File file = new File(appBase);
+                if (!file.isAbsolute()) {
+                    file = new File(System.getProperty("catalina.base"), appBase);
+                }
+                docBaseFile = new File(file, docBase);
             }
             
             String path = context.getPath();
