@@ -32,6 +32,9 @@
       <fix>
         <bug>29133</bug>: Fixed stop -force option processing in bin/catalina.sh. (yoavs)
       </fix>
+      <fix>
+        <bug>28943</bug>: Fixed CURRENT_DIR missing % signs in bin/startup.bat. (yoavs)
+      </fix>
     </changelog>
   </subsection>
  
