@@ -65,43 +65,17 @@
 package org.apache.catalina.core;
 
 
-import java.io.File;
-import java.io.IOException;
+import org.apache.catalina.*;
+import org.apache.catalina.security.SecurityUtil;
+import org.apache.catalina.util.Enumerator;
+import org.apache.catalina.util.InstanceSupport;
+import org.apache.tomcat.util.log.SystemLogHandler;
+
+import javax.servlet.*;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Stack;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SingleThreadModel;
-import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.catalina.Container;
-import org.apache.catalina.ContainerServlet;
-import org.apache.catalina.Context;
-import org.apache.catalina.InstanceEvent;
-import org.apache.catalina.InstanceListener;
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Loader;
-import org.apache.catalina.Logger;
-import org.apache.catalina.Request;
-import org.apache.catalina.Response;
-import org.apache.catalina.Wrapper;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import org.apache.catalina.loader.StandardClassLoader;
-import org.apache.catalina.util.Enumerator;
-import org.apache.catalina.util.InstanceSupport;
-import org.apache.catalina.security.SecurityUtil;
-import org.apache.tomcat.util.log.SystemLogHandler;
-
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import javax.security.auth.Subject;
 /**
  * Standard implementation of the <b>Wrapper</b> interface that represents
  * an individual servlet definition.  No child Containers are allowed, and
@@ -116,7 +90,8 @@ public final class StandardWrapper
     extends ContainerBase
     implements ServletConfig, Wrapper {
 
-
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( StandardWrapper.class );
     // ----------------------------------------------------------- Constructors
 
 
@@ -440,7 +415,7 @@ public final class StandardWrapper
      * Set the maximum number of instances that will be allocated when a single
      * thread model servlet is used.
      *
-     * @param maxInstnces New value of maxInstances
+     * @param maxInstances New value of maxInstances
      */
     public void setMaxInstances(int maxInstances) {
 
@@ -481,7 +456,7 @@ public final class StandardWrapper
     /**
      * Set the run-as identity for this servlet.
      *
-     * @param value New run-as identity value
+     * @param runAs New run-as identity value
      */
     public void setRunAs(String runAs) {
 
@@ -642,8 +617,8 @@ public final class StandardWrapper
      */
     public Servlet allocate() throws ServletException {
 
-        if (debug >= 1)
-            log("Allocating an instance");
+        if (log.isDebugEnabled())
+            log.debug("Allocating an instance");
 
         // If we are currently unloading this servlet, throw an exception
         if (unloading)
@@ -670,8 +645,8 @@ public final class StandardWrapper
             }
 
             if (!singleThreadModel) {
-                if (debug >= 2)
-                    log("  Returning non-STM instance");
+                if (log.isTraceEnabled())
+                    log.trace("  Returning non-STM instance");
                 countAllocated++;
                 return (instance);
             }
@@ -700,8 +675,8 @@ public final class StandardWrapper
                     }
                 }
             }
-            if (debug >= 2)
-                log("  Returning allocated STM instance");
+            if (log.isTraceEnabled())
+                log.trace("  Returning allocated STM instance");
             countAllocated++;
             return (Servlet) instancePool.pop();
 
@@ -833,6 +808,7 @@ public final class StandardWrapper
         SystemLogHandler.startCapture();
         Servlet servlet;
         try {
+            long t1=System.currentTimeMillis();
             // If this "servlet" is really a JSP file, get the right class.
             // HOLD YOUR NOSE - this is a kludge that avoids having to do special
             // case Catalina-specific code in Jasper - it also requires that the
@@ -866,8 +842,11 @@ public final class StandardWrapper
             // Special case class loader for a container provided servlet
             if (isContainerProvidedServlet(actualClass)) {
                 classLoader = this.getClass().getClassLoader();
-                log(sm.getString
-                      ("standardWrapper.containerServlet", getName()));
+                long t2=System.currentTimeMillis();
+                if( t2-t1 > 200 )
+                    log.info(sm.getString
+                             ("standardWrapper.containerServlet", getName()) +
+                             " " + (t2 - t1 ));
             }
     
             // Load the specified servlet class from the appropriate class loader
@@ -880,6 +859,7 @@ public final class StandardWrapper
                 }
             } catch (ClassNotFoundException e) {
                 unavailable(null);
+                log.error( "Error loading " + classLoader + " " + actualClass, e );
                 throw new ServletException
                     (sm.getString("standardWrapper.missingClass", actualClass),
                      e);
@@ -919,7 +899,10 @@ public final class StandardWrapper
                 ((ContainerServlet) servlet).setWrapper(this);
             }
     
-    
+            if( System.currentTimeMillis() -t1 > 100 ) {
+                log.info("Created servlet class " + actualClass + " " +
+                         (System.currentTimeMillis() - t1 ) );
+            }
             // Call the initialization method of this servlet
             try {
                 instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
@@ -985,6 +968,10 @@ public final class StandardWrapper
                     instancePool = new Stack();
             }
             fireContainerEvent("load", this);
+            if( System.currentTimeMillis() -t1 > 100 ) {
+                log.info("Loaded servlet  " + actualClass + " " +
+                         (System.currentTimeMillis() - t1 ) );
+            }
         } finally {
             String log = SystemLogHandler.stopCapture();
             if (log != null && log.length() > 0) {
@@ -1068,7 +1055,7 @@ public final class StandardWrapper
      *  to mark this servlet as permanently unavailable
      */
     public void unavailable(UnavailableException unavailable) {
-        log(sm.getString("standardWrapper.unavailable", getName()));
+        log.info(sm.getString("standardWrapper.unavailable", getName()));
         if (unavailable == null)
             setAvailable(Long.MAX_VALUE);
         else if (unavailable.isPermanent())
@@ -1107,7 +1094,7 @@ public final class StandardWrapper
             int nRetries = 0;
             while (nRetries < 10) {
                 if (nRetries == 0) {
-                    log("Waiting for " + countAllocated +
+                    log.info("Waiting for " + countAllocated +
                         " instance(s) to be deallocated");
                 }
                 try {
@@ -1269,7 +1256,7 @@ public final class StandardWrapper
      * container provided servlet class that should be loaded by the
      * server class loader.
      *
-     * @param name Name of the class to be checked
+     * @param classname Name of the class to be checked
      */
     private boolean isContainerProvidedServlet(String classname) {
 
@@ -1357,7 +1344,7 @@ public final class StandardWrapper
         try {
             unload();
         } catch (ServletException e) {
-            log(sm.getString("standardWrapper.unloadException", getName()), e);
+            log.error(sm.getString("standardWrapper.unloadException", getName()), e);
         }
 
         // Shut down this component
