@@ -678,7 +678,7 @@
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookies_01Test.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat,01 Jan 2000 00:00:01 GMT" 
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat, 01 Jan 2000 00:00:01 GMT" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeaderTest.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeader_01Test HTTP/1.0"
