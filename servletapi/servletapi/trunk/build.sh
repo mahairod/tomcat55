@@ -16,6 +16,6 @@ fi
 
 JAVACMD=$JAVA_HOME/bin/java
 
-cp=../jakarta-ant/lib/ant.jar:../jakarta-ant/lib/xml.jar:$JAVA_HOME/lib/tools.jar
+cp=../jakarta-ant/lib/ant.jar:$JAVA_HOME/lib/tools.jar
 $JAVACMD -classpath $cp:$CLASSPATH org.apache.tools.ant.Main "$@"
 
