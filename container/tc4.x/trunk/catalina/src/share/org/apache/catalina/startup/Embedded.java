@@ -68,8 +68,6 @@ package org.apache.catalina.startup;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.InetAddress;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import org.apache.tomcat.util.IntrospectionUtils;
 
@@ -79,7 +77,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
@@ -522,7 +519,8 @@ public class Embedded implements Lifecycle {
 
             if (address != null) {
                 IntrospectionUtils.setProperty(connector, "address", 
-                                               "" + address);
+                                               "" + address.getHostAddress());
+
             }
             IntrospectionUtils.setProperty(connector, "port", "" + port);
             IntrospectionUtils.setProperty(connector, "useURIValidationHack", 
@@ -691,7 +689,7 @@ public class Embedded implements Lifecycle {
      */
     public String getInfo() {
 
-        return (this.info);
+        return (Embedded.info);
 
     }
 
