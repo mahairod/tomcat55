@@ -592,7 +592,7 @@
 
     <attribute   name="parent"
           description="Parent (Service) that owns this Engine"
-                 type="org.apache.catalina.Service"/>
+                 type="org.apache.catalina.Service"
             writeable="false"/>
 
     <attribute   name="service"
