@@ -216,7 +216,8 @@ public class SmapStratum {
         while (i < lineData.size() - 1) {
             LineInfo li = (LineInfo)lineData.get(i);
             LineInfo liNext = (LineInfo)lineData.get(i + 1);
-            if (liNext.inputStartLine == li.inputStartLine
+            if (!liNext.lineFileIDSet
+                && liNext.inputStartLine == li.inputStartLine
                 && liNext.inputLineCount == 1
                 && li.inputLineCount == 1
                 && liNext.outputStartLine
@@ -238,7 +239,8 @@ public class SmapStratum {
         while (i < lineData.size() - 1) {
             LineInfo li = (LineInfo)lineData.get(i);
             LineInfo liNext = (LineInfo)lineData.get(i + 1);
-            if (liNext.inputStartLine == li.inputStartLine + li.inputLineCount
+            if (!liNext.lineFileIDSet
+                && liNext.inputStartLine == li.inputStartLine + li.inputLineCount
                 && liNext.outputLineIncrement == li.outputLineIncrement
                 && liNext.outputStartLine
                     == li.outputStartLine
