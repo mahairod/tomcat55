@@ -189,7 +189,7 @@ public class CookieTools {
 	}
 	// Wdy, DD-Mon-YYYY HH:MM:SS GMT
 	void append (StringBuffer buf) {
-	    String pattern = "EEE, dd-MMM-yyyyy HH:mm:ss z";
+	    String pattern = "EEE, dd-MMM-yyyy HH:mm:ss z";
 	    Locale loc = Locale.US;
 	    SimpleDateFormat df = new SimpleDateFormat(pattern, loc);
 	    TimeZone zone = TimeZone.getTimeZone("GMT");
