@@ -624,15 +624,33 @@ public class HttpServer implements Server {
 	    // Use props and CONNECTOR_PROP to load configuration info
 	    // default is HttpServerConnector
 	    addConnector( findDefaultConnector(props, getHostName(), getPort()) );
+	    connector[0].setAttribute(VHOST_PORT, new Integer(getPort()));
+	    connector[0].setAttribute(VHOST_ADDRESS, address);
+	    connector[0].setAttribute(VHOST_NAME, getHostName());
 	}
+	
 	for( int i=0; i<connector_count; i++ ) {
-	    connector[i].setAttribute(SERVER, this);
+	    //if(connector[i].getAttribute(SERVER) == null)
+	    //connector[i].setAttribute(SERVER, this);
+
 	    connector[i].setContextManager( contextM );
 	    
-	    connector[i].setAttribute(VHOST_PORT, new Integer( getPort() ));
-	    connector[i].setAttribute(VHOST_ADDRESS, address);	
-	    connector[i].setAttribute(SOCKET_FACTORY, factory);
-	    connector[i].setAttribute( VHOST_NAME, getHostName() );
+	    //if(connector[i].getAttribute(VHOST_PORT) == null)	    
+	    //connector[i].setAttribute(VHOST_PORT, new Integer( getPort() ));
+
+	    //if(connector[i].getAttribute(VHOST_ADDRESS) == null)	    
+	    //connector[i].setAttribute(VHOST_ADDRESS, address);
+
+	    //if(connector[i].getAttribute(SOCKET_FACTORY) == null)	    
+	    //connector[i].setAttribute(SOCKET_FACTORY, factory);
+
+	    //if(connector[i].getAttribute(VHOST_NAME) == null)	    
+	    //connector[i].setAttribute(VHOST_NAME, getHostName() );
 	}
     }
 }
+
+
+
+
+

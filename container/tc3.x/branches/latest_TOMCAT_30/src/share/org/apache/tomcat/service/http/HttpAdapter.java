@@ -1,5 +1,3 @@
-
-
 /*
  * $Header$
  * $Revision$
@@ -147,6 +145,22 @@ public class HttpAdapter  implements ServerConnector {
     }
 
     public Object getAttribute( String prop ) {
+
+	if(HttpServer.VHOST_NAME.equals(prop) ) {
+	    return null;
+	}
+	if(HttpServer.VHOST_PORT.equals(prop) ) {
+	    return new Integer(vport);
+	}
+	if(HttpServer.VHOST_ADDRESS.equals(prop)) {
+	    return address;
+	}
+	if(HttpServer.SERVER.equals(prop)) {
+	    return null;
+	}
+	if(HttpServer.SOCKET_FACTORY.equals(prop)) {
+	    return socketFactory;
+	}
 	return null;
     }
 
