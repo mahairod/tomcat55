@@ -251,16 +251,18 @@ public final class SecurityUtil{
                 if (session != null){
                     subject = 
                         (Subject)session.getAttribute(Globals.SUBJECT_ATTR);
+                }
 
-                    if (subject == null){
-                        subject = new Subject();
-                        
-                        if (principal != null){
-                            subject.getPrincipals().add(principal);
-                        }
-                        session.setAttribute(Globals.SUBJECT_ATTR, subject);
+                if (subject == null){
+                    subject = new Subject();
+                    
+                    if (principal != null){
+                        subject.getPrincipals().add(principal);
                     }
                 }
+
+                if (session != null)
+                    session.setAttribute(Globals.SUBJECT_ATTR, subject);
             }
 
             Subject.doAsPrivileged(subject, pea, null);       
