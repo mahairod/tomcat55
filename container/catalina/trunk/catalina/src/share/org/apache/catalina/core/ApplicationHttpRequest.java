@@ -232,7 +232,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     /**
      * The currently active session for this request.
      */
-    protected HttpSession session = null;
+    protected Session session = null;
 
 
     /**
@@ -387,17 +387,16 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public String getParameter(String name) {
 
 	parseParameters();
-        synchronized (parameters) {
-            Object value = parameters.get(name);
-            if (value == null)
-                return (null);
-            else if (value instanceof String[])
-                return (((String[]) value)[0]);
-            else if (value instanceof String)
-                return ((String) value);
-            else
-                return (value.toString());
-        }
+
+        Object value = parameters.get(name);
+        if (value == null)
+            return (null);
+        else if (value instanceof String[])
+            return (((String[]) value)[0]);
+        else if (value instanceof String)
+            return ((String) value);
+        else
+            return (value.toString());
 
     }
 
@@ -421,9 +420,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public Enumeration getParameterNames() {
 
 	parseParameters();
-        synchronized (parameters) {
-            return (new Enumerator(parameters.keySet()));
-        }
+        return (new Enumerator(parameters.keySet()));
 
     }
 
@@ -437,21 +434,19 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
     public String[] getParameterValues(String name) {
 
 	parseParameters();
-        synchronized (parameters) {
-            Object value = parameters.get(name);
-            if (value == null)
-                return ((String[]) null);
-            else if (value instanceof String[])
-                return ((String[]) value);
-            else if (value instanceof String) {
-                String values[] = new String[1];
-                values[0] = (String) value;
-                return (values);
-            } else {
-                String values[] = new String[1];
-                values[0] = value.toString();
-                return (values);
-            }
+        Object value = parameters.get(name);
+        if (value == null)
+            return ((String[]) null);
+        else if (value instanceof String[])
+            return ((String[]) value);
+        else if (value instanceof String) {
+            String values[] = new String[1];
+            values[0] = (String) value;
+            return (values);
+        } else {
+            String values[] = new String[1];
+            values[0] = value.toString();
+            return (values);
         }
 
     }
@@ -525,7 +520,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
             // Return the current session if it exists and is valid
             if (session != null)
-                return (session);
+                return (session.getSession());
 
             HttpSession other = super.getSession(false);
             if (create && (other == null)) {
@@ -539,6 +534,7 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                 try {
                     localSession =
                         context.getManager().findSession(other.getId());
+                    localSession.access();
                 } catch (IOException e) {
                     // Ignore
                 }
@@ -551,8 +547,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
                         (context.getManager().getMaxInactiveInterval());
                     localSession.setId(other.getId());
                 }
-                session = localSession.getSession();
-                return session;
+                session = localSession;
+                return session.getSession();
             }
             return null;
 
@@ -564,6 +560,16 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Recycle this request
+     */
+    public void recycle() {
+        if (session != null) {
+            session.endAccess();
+        }
+    }
 
 
     /**
@@ -586,12 +592,10 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         if (orig == null)
             return (new HashMap());
         HashMap dest = new HashMap();
-        synchronized (orig) {
-            Iterator keys = orig.keySet().iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                dest.put(key, orig.get(key));
-            }
+        Iterator keys = orig.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            dest.put(key, orig.get(key));
         }
         return (dest);
 
@@ -695,11 +699,9 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 	}
 
         parameters = new HashMap();
-        synchronized (parameters) {
-            parameters = copyMap(getRequest().getParameterMap());
-	    mergeParameters();
-	    parsedParams = true;
-        }
+        parameters = copyMap(getRequest().getParameterMap());
+        mergeParameters();
+        parsedParams = true;
     }
 
 
@@ -844,20 +846,18 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
         } catch (Exception e) {
             ;
         }
-        synchronized (parameters) {
-            Iterator keys = parameters.keySet().iterator();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                Object value = queryParameters.get(key);
-                if (value == null) {
-                    queryParameters.put(key, parameters.get(key));
-                    continue;
-                }
-                queryParameters.put
-                    (key, mergeValues(value, parameters.get(key)));
+        Iterator keys = parameters.keySet().iterator();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            Object value = queryParameters.get(key);
+            if (value == null) {
+                queryParameters.put(key, parameters.get(key));
+                continue;
             }
-            parameters = queryParameters;
+            queryParameters.put
+                (key, mergeValues(value, parameters.get(key)));
         }
+        parameters = queryParameters;
 
     }
 
