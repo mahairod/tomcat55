@@ -1007,23 +1007,23 @@ public class JspParseEventListener implements ParseEventListener {
     public void handleTagBegin(Mark start, Mark stop, 
                                Attributes attrs, String prefix,
 			       String shortTagName, TagLibraryInfo tli,
-			       TagInfo ti)
+			       TagInfo ti, boolean hasBody)
 	throws JasperException
     {
 	handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, 
-                       false);
+                       hasBody, false);
     }
 
     public void handleTagBegin(Mark start, Mark stop, 
                                Attributes attrs, String prefix,
 			       String shortTagName, TagLibraryInfo tli,
-			       TagInfo ti, boolean isXml)
+			       TagInfo ti, boolean hasBody, boolean isXml)
 	throws JasperException
     {
         TagBeginGenerator tbg = 
             new TagBeginGenerator(start, prefix, shortTagName, attrs,
 	                          tli, ti, libraries, getTagHandlerStack(), 
-                                  getTagVarNumbers(), isXml);
+                                  getTagVarNumbers(), hasBody, isXml);
         Generator gen = new GeneratorWrapper(tbg, start, stop);
 	addGenerator(gen);
         xo.append(prefix+":"+shortTagName, attrs);
@@ -1031,11 +1031,11 @@ public class JspParseEventListener implements ParseEventListener {
 
     public void handleTagEnd(Mark start, Mark stop, String prefix,
 			     String shortTagName, Attributes attrs,
-                             TagLibraryInfo tli, TagInfo ti)
+                             TagLibraryInfo tli, TagInfo ti, boolean hasBody)
 	throws JasperException
     {
         TagEndGenerator teg = new TagEndGenerator(prefix, shortTagName, attrs,
-	    tli, ti, libraries, getTagHandlerStack(), getTagVarNumbers());
+	    tli, ti, libraries, getTagHandlerStack(), getTagVarNumbers(), hasBody);
         Generator gen = new GeneratorWrapper(teg, start, stop);
 
 	addGenerator(gen);

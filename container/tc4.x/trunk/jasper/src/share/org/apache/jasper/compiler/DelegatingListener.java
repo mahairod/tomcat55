@@ -207,20 +207,20 @@ final class DelegatingListener implements ParseEventListener {
         delegate.handleInclude(start, stop, attrs, param, isXml);
     }
 
-    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti) throws JasperException
+    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti, boolean hasBody) throws JasperException
     {
-        handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, false);
+        handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, hasBody, false);
     }
-    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti, boolean isXml) throws JasperException
+    public void handleTagBegin(Mark start,Mark stop,Attributes attrs,String prefix,String shortTagName,TagLibraryInfo tli,TagInfo ti, boolean hasBody, boolean isXml) throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, isXml);
+        delegate.handleTagBegin(start, stop, attrs, prefix, shortTagName, tli, ti, hasBody, isXml);
     }
     
-    public void handleTagEnd(Mark start,Mark stop,String prefix,String shortTagName,Attributes attrs,TagLibraryInfo tli,TagInfo ti) throws JasperException
+    public void handleTagEnd(Mark start,Mark stop,String prefix,String shortTagName,Attributes attrs,TagLibraryInfo tli,TagInfo ti, boolean hasBody) throws JasperException
     {
         doAction(this.tmplStart, this.tmplStop);
-        delegate.handleTagEnd(start, stop, prefix, shortTagName, attrs, tli, ti);
+        delegate.handleTagEnd(start, stop, prefix, shortTagName, attrs, tli, ti, hasBody);
     }
     
     public TagLibraries getTagLibraries() {

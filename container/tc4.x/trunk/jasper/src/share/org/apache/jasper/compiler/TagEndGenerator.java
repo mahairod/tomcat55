@@ -85,11 +85,13 @@ public class TagEndGenerator
     TagInfo ti;
     Attributes attrs;
     TagLibraries libraries;
+    boolean hasBody;
 
     public TagEndGenerator(String prefix, String shortTagName,
                            Attributes attrs, TagLibraryInfo tli,
                            TagInfo ti, TagLibraries libraries,
-                           Stack tagHandlerStack, Hashtable tagVarNumbers)
+                           Stack tagHandlerStack, Hashtable tagVarNumbers,
+                           boolean hasBody)
     {
         setTagHandlerStack(tagHandlerStack);
         setTagVarNumbers(tagVarNumbers);
@@ -99,6 +101,7 @@ public class TagEndGenerator
         this.ti = ti;
         this.attrs = attrs;
 	this.libraries = libraries;
+        this.hasBody = hasBody;
     }
 
     public void generate(ServletWriter writer, Class phase) {
@@ -122,39 +125,43 @@ public class TagEndGenerator
 
 	writer.popIndent();
 
-        if (implementsIterationTag)
-            writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_AGAIN);");
-        else
-            writer.println("} while (false);");
+        if (hasBody) {
+            if (implementsIterationTag)
+                writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_AGAIN);");
+            else
+                writer.println("} while (false);");
+        }
 
         declareVariables(writer, vi, tvi, tagData, false, true, VariableInfo.AT_BEGIN);
 
-        if (implementsBodyTag) {
-            writer.popIndent(); // try
+        if (hasBody) {
+            if (implementsBodyTag) {
+                writer.popIndent(); // try
 
-            /** FIXME: REMOVE BEGIN */
-            //              writer.println("} catch (Throwable t) {");
-            //              writer.pushIndent();
+                /** FIXME: REMOVE BEGIN */
+                //              writer.println("} catch (Throwable t) {");
+                //              writer.pushIndent();
 
-            //              writer.println("System.err.println(\"Caught: \");");
-            //              writer.println("t.printStackTrace();");
+                //              writer.println("System.err.println(\"Caught: \");");
+                //              writer.println("t.printStackTrace();");
 
-            //              writer.popIndent();
-            /** FIXME: REMOVE END */
+                //              writer.popIndent();
+                /** FIXME: REMOVE END */
 
-            writer.println("} finally {");
-            writer.pushIndent();
-            writer.println("if ("+evalVarName+" != Tag.EVAL_BODY_INCLUDE)");
-            writer.pushIndent();
-            writer.println("out = pageContext.popBody();");
-            writer.popIndent();
+                writer.println("} finally {");
+                writer.pushIndent();
+                writer.println("if ("+evalVarName+" != Tag.EVAL_BODY_INCLUDE)");
+                writer.pushIndent();
+                writer.println("out = pageContext.popBody();");
+                writer.popIndent();
 
-            writer.popIndent();
-            writer.println("}");
+                writer.popIndent();
+                writer.println("}");
+            }
+
+	    writer.popIndent(); // EVAL_BODY
+	    writer.println("}");
         }
-
-	writer.popIndent(); // EVAL_BODY
-	writer.println("}");
 
 	writer.println("if ("+thVarName+".doEndTag() == Tag.SKIP_PAGE)");
 	writer.pushIndent(); writer.println("return;"); writer.popIndent();

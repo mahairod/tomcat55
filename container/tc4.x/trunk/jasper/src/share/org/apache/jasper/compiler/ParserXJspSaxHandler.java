@@ -231,6 +231,19 @@ class ParserXJspSaxHandler
 	    return;
 	}
 
+        // If previous node is a custom tag, call its
+        // begin tag handler
+        if (!name.equals("jsp:root")) {
+            Node prevNode = (Node)stack.peek();
+            if (prevNode instanceof NodeTag) {
+                try {
+                    processCustomTagBeginDoIt((NodeTag) prevNode, true);
+                } catch (Exception ex) {
+                    throw new SAXException(ex);
+                }
+            }
+        }
+
         // Simply push the new 'node' on the stack, and it will be
 	// processed on the 'endElement' event.
 	stack.push(node);
@@ -397,6 +410,19 @@ class ParserXJspSaxHandler
 	}
     }
 
+    // Need to delay calling the begin handler until we know whether
+    // the custom tag has a body or not. Must read ahead.
+    private void processCustomTagBeginDoIt(NodeTag node, boolean hasBody)
+        throws JasperException
+    {
+        if (!node.isBeginDone()) {
+            jspHandler.handleTagBegin(node.start, node.start, node.attrs, 
+    			              node.prefix, node.shortTagName, node.tli, 
+                                      node.ti, hasBody, true);
+            node.setBeginDone(true);
+        }
+    }
+
     private void processCustomTagBegin(String prefix, String shortTagName) 
 	throws ParseException, JasperException 
     {
@@ -415,20 +441,26 @@ class ParserXJspSaxHandler
 	       "Unable to locate TagInfo for " + prefix + ":" + shortTagName);
 	}
 	node = new NodeTag(node, prefix, shortTagName, tli, ti);
+
 	stack.push(node);
-	jspHandler.handleTagBegin(node.start, node.start, node.attrs, 
-				  prefix, shortTagName, tli, ti, true);
     }
     
     private void processCustomTagEnd(NodeTag node, Mark stop) 
 	throws ParseException, JasperException {
 	String bc = node.ti.getBodyContent();
+
+        String charString = node.getText().toString();
+        boolean hasBody = (charString.trim().length() > 0);
+
+        // call begin tag processing with body info
+        processCustomTagBeginDoIt(node, hasBody);
+
 	if (node.getText() != null && bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_EMPTY)) {
 	    throw new ParseException(node.start, "Body is supposed to be empty for "
 				     + node.rawName);
 	}
 	jspHandler.handleTagEnd(node.start, stop, node.prefix, 
-                node.shortTagName, node.attrs, node.tli, node.ti);
+                node.shortTagName, node.attrs, node.tli, node.ti, hasBody);
     }
 
     //*********************************************************************
@@ -663,6 +695,7 @@ class ParserXJspSaxHandler
 	String shortTagName;
 	TagLibraryInfo tli;
 	TagInfo ti;
+	boolean beginDone;
 
 	NodeTag(Node node, String prefix, String shortTagName, 
 		TagLibraryInfo tli, TagInfo ti)
@@ -672,6 +705,15 @@ class ParserXJspSaxHandler
 	    this.shortTagName = shortTagName;
 	    this.tli = tli;
 	    this.ti = ti;
+	    beginDone = false;
+	}
+
+	boolean isBeginDone() {
+	    return beginDone;
+	}
+
+	void setBeginDone(boolean beginDone) {
+	    this.beginDone = beginDone;
 	}
     }
 	

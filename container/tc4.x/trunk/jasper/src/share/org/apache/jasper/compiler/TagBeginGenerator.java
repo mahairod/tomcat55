@@ -99,13 +99,14 @@ public class TagBeginGenerator
     TagData tagData;
     Mark start;
     TagLibraries libraries;
+    boolean hasBody;
     boolean isXml;
 
 
     public TagBeginGenerator(Mark start, String prefix, String shortTagName, Attributes attrs,
 			     TagLibraryInfo tli, TagInfo ti, TagLibraries libraries,
                              Stack tagHandlerStack, Hashtable tagVarNumbers,
-                             boolean isXml)
+                             boolean hasBody, boolean isXml)
         throws JasperException
     {
         setTagHandlerStack(tagHandlerStack);
@@ -120,6 +121,7 @@ public class TagBeginGenerator
 	this.thVarName = "_jspx_th_"+baseVarName;
 	this.start = start;
 	this.libraries = libraries;
+        this.hasBody = hasBody;
 	this.isXml = isXml;
     }
 
@@ -358,27 +360,29 @@ public class TagBeginGenerator
             writer.popIndent();
         }
 
-        writer.println("if ("+evalVar+" != Tag.SKIP_BODY) {");
-	writer.pushIndent();
-
-	if (implementsBodyTag) {
-            writer.println("try {");
-            writer.pushIndent();
-
-	    writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
+        if (hasBody) {
+            writer.println("if ("+evalVar+" != Tag.SKIP_BODY) {");
 	    writer.pushIndent();
 
-	    writer.println("out = pageContext.pushBody();");
-	    writer.println(thVarName+".setBodyContent((BodyContent) out);");
+	    if (implementsBodyTag) {
+                writer.println("try {");
+                writer.pushIndent();
 
-	    writer.popIndent();
-	    writer.println("}");
+	        writer.println("if ("+evalVar+" != Tag.EVAL_BODY_INCLUDE) {");
+	        writer.pushIndent();
 
-	    writer.println(thVarName+".doInitBody();");
-	}
+	        writer.println("out = pageContext.pushBody();");
+	        writer.println(thVarName+".setBodyContent((BodyContent) out);");
 
-	writer.println("do {");
-	writer.pushIndent();
+	        writer.popIndent();
+	        writer.println("}");
+
+	        writer.println(thVarName+".doInitBody();");
+	    }
+
+	    writer.println("do {");
+	    writer.pushIndent();
+        }
         // Need to declare and update NESTED variables here
         declareVariables(writer, vi, tvi, tagData, true, true, VariableInfo.NESTED);
         // Need to update AT_BEGIN variables here

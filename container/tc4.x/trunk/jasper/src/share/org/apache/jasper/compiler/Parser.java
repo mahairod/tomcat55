@@ -828,6 +828,10 @@ public class Parser {
             Mark bodyStart = null;
             Mark bodyStop = null;
 
+            // Get information about the body content. When the body content is 
+            // empty, methods that manipulate the body are NOT invoked
+            boolean hasBody = false;
+
 	    
 	    
 	    if (reader.matches(CLOSE_1)
@@ -839,9 +843,9 @@ public class Parser {
 
 		listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);		
 		listener.handleTagBegin(start, reader.mark(), attrs, prefix,
-					shortTagName, tli, ti);
+					shortTagName, tli, ti, hasBody);
 		listener.handleTagEnd(start, reader.mark(), prefix, 
-				      shortTagName, attrs, tli, ti);
+				      shortTagName, attrs, tli, ti, hasBody);
 	    } else { 
 		// Body can be either
 		//     - JSP tags
@@ -850,12 +854,21 @@ public class Parser {
 		    reader.advance(CLOSE.length());
 		    bodyStart = reader.mark();
 		    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);		    
+
+                    String tagEnd = "</"+tag+">";
+                    // Watch out: skipUntil() is case sensitive
+                    bodyStop = reader.skipUntil(tagEnd.toLowerCase());
+                    if (bodyStop != null) {
+                        String bodyString = new String(reader.getChars(bodyStart, bodyStop));
+                        hasBody = (bodyString.length() > 0);
+                    }
+                    reader.reset(bodyStart);
+
 		    listener.handleTagBegin(start, bodyStart, attrs, prefix, 
-					    shortTagName, tli, ti);
+					    shortTagName, tli, ti, hasBody);
                     if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT) ||
                         bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_JSP)) 
                         {
-                            String tagEnd = "</"+tag+">";
                             // Parse until the end of the tag body. 
                             // Then skip the tag end... 
 			    if (bc.equalsIgnoreCase(TagInfo.BODY_CONTENT_TAG_DEPENDENT))
@@ -875,7 +888,7 @@ public class Parser {
 			    }
 			    listener.setTemplateInfo(parser.tmplStart, parser.tmplStop);
                             listener.handleTagEnd(parser.tmplStop, reader.mark(), prefix, 
-                                                  shortTagName, attrs, tli, ti);
+                                                  shortTagName, attrs, tli, ti, hasBody);
                         } else
                             throw new ParseException(start, 
                                                      "Internal Error: Invalid BODY_CONTENT type");

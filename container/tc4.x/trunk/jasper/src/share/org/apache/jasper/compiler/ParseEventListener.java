@@ -135,14 +135,14 @@ public interface ParseEventListener {
      * stop: can be null if the body contained JSP tags... 
      */
     void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
-                        TagLibraryInfo tli, TagInfo ti) 
+                        TagLibraryInfo tli, TagInfo ti, boolean hasBody) 
         throws JasperException;
     void handleTagBegin(Mark start, Mark stop, Attributes attrs, String prefix, String shortTagName,
-                        TagLibraryInfo tli, TagInfo ti, boolean isXml) 
+                        TagLibraryInfo tli, TagInfo ti, boolean hasBody, boolean isXml) 
         throws JasperException;
 
     void handleTagEnd(Mark start, Mark stop, String prefix, String shortTagName,
-                      Attributes attrs, TagLibraryInfo tli, TagInfo ti)
+                      Attributes attrs, TagLibraryInfo tli, TagInfo ti, boolean hasBody)
         throws JasperException;
 
     void handleForward(Mark start, Mark stop, Attributes attrs, Hashtable param)
