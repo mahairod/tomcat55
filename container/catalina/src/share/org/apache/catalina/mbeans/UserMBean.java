@@ -32,7 +32,7 @@ import org.apache.catalina.User;
 import org.apache.commons.modeler.BaseModelMBean;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
-
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * <p>A <strong>ModelMBean</strong> implementation for the
@@ -63,6 +63,15 @@ public class UserMBean extends BaseModelMBean {
         super();
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -108,7 +117,7 @@ public class UserMBean extends BaseModelMBean {
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for group " + group);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -135,7 +144,7 @@ public class UserMBean extends BaseModelMBean {
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for role " + role);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }

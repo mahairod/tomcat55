@@ -31,7 +31,7 @@ import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
-
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Implementation of a Valve that performs filtering based on comparing the
@@ -71,6 +71,29 @@ public abstract class RequestFilterValve
     extends ValveBase {
 
 
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
+
+
+    /**
+     * The descriptive information related to this implementation.
+     */
+    private static final String info =
+        "org.apache.catalina.valves.RequestFilterValve/1.0";
+
+
+    /**
+     * The StringManager for this package.
+     */
+    protected static StringManager sm =
+        StringManager.getManager(Constants.Package);
+
+
     // ----------------------------------------------------- Instance Variables
 
 
@@ -96,20 +119,6 @@ public abstract class RequestFilterValve
      * The comma-delimited set of <code>deny</code> expressions.
      */
     protected String deny = null;
-
-
-    /**
-     * The descriptive information related to this implementation.
-     */
-    private static final String info =
-        "org.apache.catalina.valves.RequestFilterValve/1.0";
-
-
-    /**
-     * The StringManager for this package.
-     */
-    protected static StringManager sm =
-        StringManager.getManager(Constants.Package);
 
 
     // ------------------------------------------------------------- Properties
@@ -230,7 +239,7 @@ public abstract class RequestFilterValve
             } catch (RESyntaxException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     (sm.getString("requestFilterValve.syntax", pattern));
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
             list = list.substring(comma + 1);

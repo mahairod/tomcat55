@@ -101,6 +101,7 @@ import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.FileDirContext;
 import org.apache.naming.resources.ProxyDirContext;
 import org.apache.naming.resources.WARDirContext;
+import org.apache.tomcat.util.compat.JdkCompat;
 
 /**
  * Standard implementation of the <b>Context</b> interface.  Each
@@ -133,6 +134,22 @@ public class StandardContext
         broadcaster = new NotificationBroadcasterSupport();
 
     }
+
+
+    // ----------------------------------------------------- Class Variables
+
+
+    /**
+     * The descriptive information string for this implementation.
+     */
+    private static final String info =
+        "org.apache.catalina.core.StandardContext/1.0";
+
+
+    /**
+     * JDK compatibility support
+     */
+    private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
 
 
     // ----------------------------------------------------- Instance Variables
@@ -302,13 +319,6 @@ public class StandardContext
      * they were defined in the deployment descriptor.
      */
     private FilterMap filterMaps[] = new FilterMap[0];
-
-
-    /**
-     * The descriptive information string for this implementation.
-     */
-    private static final String info =
-        "org.apache.catalina.core.StandardContext/1.0";
 
 
     /**
@@ -5066,7 +5076,7 @@ public class StandardContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for environment " + envs[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -5091,7 +5101,7 @@ public class StandardContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + resources[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
@@ -5116,7 +5126,7 @@ public class StandardContext
             } catch (MalformedObjectNameException e) {
                 IllegalArgumentException iae = new IllegalArgumentException
                     ("Cannot create object name for resource " + links[i]);
-                iae.initCause(e);
+                jdkCompat.chainException(iae, e);
                 throw iae;
             }
         }
