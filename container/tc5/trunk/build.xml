@@ -558,6 +558,8 @@
   <target name="fix-webapps" depends="init" >
     <!-- Extra build steps for webapps -->
 
+    <filter token="VERSION" value="${version}"/>
+
     <!-- Add release notes to the root webapp -->
     <copy file="./RELEASE-NOTES"
         tofile="${tomcat.build}/webapps/ROOT/RELEASE-NOTES.txt"
