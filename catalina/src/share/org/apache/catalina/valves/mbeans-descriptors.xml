@@ -55,27 +55,6 @@
                type="java.lang.String"/>
   </mbean>
 
-  <mbean name="CertificatesValve"
-         description="Valve that exposes SSL certificate information"
-         domain="Catalina"
-         group="Valve"
-         type="org.apache.catalina.valves.CertificatesValve">
-
-    <attribute   name="className"
-               description="Fully qualified class name of the managed object"
-               type="java.lang.String"
-               writeable="false"/>
-
-    <attribute name="containerName"
-               description="Object name of the container"
-               type="javax.management.ObjectName"/>
-
-    <attribute name="debug"
-               description="The debugging detail level for this component"
-               type="int"/>
-
-  </mbean>
-
   <mbean name="ErrorReportValve"
          description="Implementation of a Valve that outputs HTML error pages"
          domain="Catalina"
