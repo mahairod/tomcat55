@@ -496,7 +496,6 @@ public class BodyContentImpl extends BodyContent {
 	if (writer != null) {
 	    writer.close();
 	} else {
-	    cb = null;	
 	    closed = true;
 	}
     }
