@@ -119,7 +119,7 @@ package javax.servlet.jsp.tagext;
  * a picture:
  *
  * <p>
- * <IMG src="doc-images/VariableInfo-1.gif"/>
+ * <IMG src="doc-files/VariableInfo-1.gif"/>
  *
  *<p>
  * The defined values for scope are:
