@@ -211,6 +211,7 @@ public class ThreadPool  {
                     int toOpen = currentThreadCount + minSpareThreads;
                     openThreads(toOpen);
                 } else {
+		    logFull(loghelper, currentThreadCount, maxThreads);
                     // Wait for a thread to become idel.
                     while(currentThreadsBusy == currentThreadCount) {
                         try {
@@ -239,6 +240,17 @@ public class ThreadPool  {
             currentThreadsBusy++;
         }
         c.runIt(r);
+    }
+
+    static boolean logfull=true;
+    public static void logFull(Log loghelper, int currentThreadCount, int maxThreads) {
+	if( logfull ) {
+	    loghelper.log("All threads are busy, waiting. Please " +
+			  "increase maxThreads or check the servlet" +
+			  " status" + currentThreadCount + " " +
+			  maxThreads  );
+	    logfull=false;
+	} 
     }
 
     /**
