@@ -594,9 +594,9 @@ public class FileDirContext extends BaseDirContext {
                         break;
                     os.write(buffer, 0, len);
                 }
+            } finally {
                 os.close();
-            } catch (IOException ex) {
-                os.close();
+                is.close();
             }
         } catch (IOException e) {
             throw new NamingException
