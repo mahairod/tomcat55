@@ -58,6 +58,9 @@
       <update> 
         <bug>32276</bug>: Add developer info to Realm How-To. (yoavs) 
       </update> 
+      <fix> 
+        <bug>32082</bug>: Add protected getPrincipals method to MemoryRealm for easier extension. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
