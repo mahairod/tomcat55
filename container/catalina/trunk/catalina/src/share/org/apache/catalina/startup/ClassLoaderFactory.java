@@ -114,11 +114,10 @@ public final class ClassLoaderFactory {
                 File file = unpacked[i];
                 if (!file.exists() || !file.canRead())
                     continue;
+                file = new File(file.getCanonicalPath() + File.separator);
+                URL url = file.toURL();
                 if (log.isDebugEnabled())
-                    log.debug("  Including directory or JAR " 
-                        + file.getAbsolutePath());
-                URL url = new URL("file", null,
-                                  file.getCanonicalPath() + File.separator);
+                    log.debug("  Including directory " + url);
                 list.add(url);
             }
         }
@@ -138,8 +137,7 @@ public final class ClassLoaderFactory {
                     File file = new File(directory, filenames[j]);
                     if (log.isDebugEnabled())
                         log.debug("  Including jar file " + file.getAbsolutePath());
-                    URL url = new URL("file", null,
-                                      file.getCanonicalPath());
+                    URL url = file.toURL();
                     list.add(url);
                 }
             }
@@ -148,6 +146,8 @@ public final class ClassLoaderFactory {
         // Add URLs
         if (urls != null) {
             for (int i = 0; i < urls.length; i++) {
+                if (log.isDebugEnabled())
+                    log.debug("  Including URL " + urls[i]);
                 list.add(urls[i]);
             }
         }
