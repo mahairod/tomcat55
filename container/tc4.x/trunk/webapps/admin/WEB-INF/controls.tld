@@ -13,9 +13,129 @@
     Tomcat Administrative Application.
   </description>
 
-  <!-- ========== Instant Actions Tag ===================================== -->
+  <!-- ========== Instant Table Tag ===================================== -->
 
   <tag>
+
+    <name>table</name>
+    <tag-class>org.apache.webapp.admin.TableTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Render a "table" object, which is rendered as an HTML
+      "table" element. 
+      
+      NOTE:  The only valid nested content for this tag is
+      "row" tags from this library.  Anything else will cause
+      the rendered HTML to be invalid.
+
+      NOTE:  To be usable, this tag must be nested inside an
+      HTML &lt;form&gt; element.
+    </description>
+
+    <attribute>
+      <name>columns</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        (Integer) number of columns that the table contains.  If
+        not specified, only two columns will be visible.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>tableStyle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style class to be applied to the entire rendered output
+        of the instant table.  If not specified, no overall
+        style class is applied.
+      </description>
+    </attribute>
+ 
+    <attribute>
+      <name>lineStyle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The CSS style for the lines between rows.
+      </description>
+    </attribute>
+
+  </tag>
+
+    <tag>
+
+    <name>row</name>
+    <tag-class>org.apache.webapp.admin.RowTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Define a single "instant table row" option for the surrounding "table"
+      tag.  It is not valid to use this tag *except* when nested inside an
+      "table" tag.
+
+      NOTE: This tag can nest only "label" and "data" tags.
+    </description>
+
+    <attribute>
+      <name>header</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        (Boolean) variable set to "true" or "yes" if this row is
+        the header row.
+        </description>
+    </attribute>
+    
+     <attribute>
+      <name>labelStyle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The style for the label table data element.
+      </description>
+    </attribute>
+    
+     <attribute>
+      <name>dataStyle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        The style for the value of the table data element.
+      </description>
+    </attribute>    
+    
+  </tag>
+
+ <tag>
+
+    <name>label</name>
+    <tag-class>org.apache.webapp.admin.LabelTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Render a "label" object, which is rendered as a label in the row of
+      an HTML "table" element. 
+
+      NOTE:  To be usable, this tag must be nested inside a "row" tag.
+    </description>
+  </tag>
+
+ <tag>
+
+    <name>data</name>
+    <tag-class>org.apache.webapp.admin.DataTag</tag-class>
+    <body-content>JSP</body-content>
+    <description>
+      Render a "data" object, which is rendered as a label in the row of
+      an HTML "table" element. 
+
+      NOTE:  To be usable, this tag must be nested inside a "row" tag.
+    </description>
+  </tag>
+
+  <!-- ========== Instant Actions Tag ===================================== -->
+
+   <tag>
 
     <name>actions</name>
     <tag-class>org.apache.webapp.admin.ActionsTag</tag-class>
@@ -57,7 +177,6 @@
     </attribute>
 
   </tag>
-
 
   <tag>
 

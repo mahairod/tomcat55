@@ -16,6 +16,7 @@
 <!--Form -->
 
 <html:errors/>
+
 <html:form method="POST" action="/server" focus="portNumberText">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
@@ -34,96 +35,53 @@
         </div>
       </td>
     </tr>
-    <tr>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td colspan="2" align="right" nowrap>
-        <html:submit styleClass="button">
-           <bean:message key="button.save"/> 
-        </html:submit>          
-        &nbsp;
-        <html:reset styleClass="button">
-            <bean:message key="button.cancel"/> 
-        </html:reset> 
-      </td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-    </tr>
   </table>
+
+  <%@ include file="buttons.jsp" %>
+<br>
+
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
     <tr> 
       <td> 
-        <table class="front-table" border="0" cellspacing="0" cellpadding="0" width="100%">
-          <tr class="header-row"> 
-            <td width="27%"> 
-              <div class="table-header-text" align="left">Properties</div>
-            </td>
-            <td width="73%"> 
-              <div class="table-header-text" align="left">&nbsp;</div>
-            </td>
-          </tr>
-          <tr> 
-            <td>
-              <div class="table-label-text"><bean:message key="server.portnumber"/>:</div>
-            </td>
-            <td>
-              <div class="table-normal-text" >
-                <html:text property="portNumberText" size="24" maxlength="24"/>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="line-row" colspan="2"><img src="" alt="" width="1" height="1" border="0"></td>
-          </tr>
-          <tr> 
-            <td>
-              <div class="table-label-text"><bean:message key="server.debuglevel"/>:</div>
-            </td>
-            <td>
-              <div class="table-normal-text" >
+        <controls:table tableStyle="front-table" lineStyle="line-row">
+            <controls:row header="true" 
+                labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label><bean:message key="server.properties"/></controls:label>
+            <controls:data>&nbsp;</controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="server.portnumber"/>:</controls:label>
+            <controls:data>
+              <html:text property="portNumberText" size="24" maxlength="24"/>
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
+            <controls:data>
                 <html:select property="debugLvl">
-                     <bean:define id="debugLvlVals" name="serverForm" property="debugLvlVals"/>
+                     <bean:define id="debugLvlVals" name="serviceForm" property="debugLvlVals"/>
                      <html:options collection="debugLvlVals" property="value"
                    labelProperty="label"/>
                 </html:select>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="line-row" colspan="2"><img src="" alt="" width="1" height="1" border="0"></td>
-          </tr>
-          <tr> 
-            <td>
-              <div class="table-label-text"><bean:message key="server.shutdown"/>:</div>
-            </td>
-            <td>
-              <div class="table-normal-text" >
-                <html:text property="shutdownText" size="24" maxlength="24"/>
-              </div>
-            </td>
-          </tr>
-        </table>
+            </controls:data>
+        </controls:row>
+
+       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="server.shutdown"/>:</controls:label>
+            <controls:data>
+               <html:text property="shutdownText" size="24" maxlength="24"/>
+            </controls:data>
+        </controls:row>
+      </controls:table>
+
       </td>
     </tr>
   </table>
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td colspan="2" align="right" nowrap>
-        <html:submit styleClass="button">
-           <bean:message key="button.save"/> 
-        </html:submit>          
-        &nbsp;
-        <html:reset styleClass="button">
-            <bean:message key="button.cancel"/> 
-        </html:reset> 
-      </td>
-    </tr>
-  </table>
+
+  <%@ include file="buttons.jsp" %>
+
 </html:form>
 
 <!-- Standard Footer -->
