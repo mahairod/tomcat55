@@ -69,6 +69,7 @@ which you are installing all of the required Jakarta distributions.
 
   This should result in the creation of a file "ant.jar" in the "lib"
   subdirectory, which will be used when building Tomcat.
+  If you download a binary distribution, you must get Ant version 1.2 or later.
 
 * Download and install the Regular Expressions distribution (module
   "jakarta-regexp"). Assuming an install directory <install-dir>:

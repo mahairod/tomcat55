@@ -54,6 +54,7 @@ you are installing all of the required distributions.
 
   This should result in the creation of a file "ant.jar" in the "lib"
   subdirectory, which will be used when building Watchdog.
+  If you download a binary distribution, you must get Ant version 1.2 or later.
 
 * Download and install the Regular Expressions distribution (subproject
   "jakarta-regexp") into a directory named
