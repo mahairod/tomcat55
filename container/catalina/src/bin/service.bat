@@ -18,19 +18,22 @@ rem Guess CATALINA_HOME if not defined
 set CURRENT_DIR=%cd%
 if not "%CATALINA_HOME%" == "" goto gotHome
 set CATALINA_HOME=%cd%
-if exist "%CATALINA_HOME%\bin\tomcat.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat5.exe" goto okHome
 rem CD to the upper dir
 cd ..
 set CATALINA_HOME=%cd%
 :gotHome
-if exist "%CATALINA_HOME%\bin\tomcat.exe" goto okHome
+if exist "%CATALINA_HOME%\bin\tomcat5.exe" goto okHome
 echo The tomcat.exe was not found...
 echo The CATALINA_HOME environment variable is not defined correctly.
 echo This environment variable is needed to run this program
 goto end
 :okHome
-
-set EXECUTABLE=%CATALINA_HOME%\bin\tomcat.exe
+if not "%CATALINA_BASE%" == "" goto gotBase
+set CATALINA_BASE=%CATALINA_HOME%
+:gotBase
+ 
+set EXECUTABLE=%CATALINA_HOME%\bin\tomcat5.exe
 
 rem Set default Service name
 set SERVICE_NAME=Tomcat5
@@ -55,9 +58,18 @@ goto end
 
 :doInstall
 rem Install the service
-"%EXECUTABLE%" //IS//%SERVICE_NAME% --DisplayName "Apache Tomcat" --Description "Apache Tomcat Server - http://jakarta.apache.org/tomcat/"  --Install "%EXECUTABLE%" --ImagePath "%CATALINA_HOME%\bin\bootstrap.jar" --StartupClass org.apache.catalina.startup.Bootstrap;main;start --ShutdownClass org.apache.catalina.startup.Bootstrap;main;stop --Java java --Startup manual
+rem Use the environment variables as an exaple
+rem Each command line option is prefixed with PR_
+
+set PR_DISPLAYNAME=Apache Tomcat
+set PR_DESCRIPTION=Apache Tomcat Server - http://jakarta.apache.org/tomcat
+set PR_INSTALL=%EXECUTABLE%
+
+"%EXECUTABLE%" //IS//%SERVICE_NAME% --LogPath %CATALINA_HOME%\logs --Jvm auto --Classpath %CATALINA_HOME%\bin\bootstrap.jar --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop
 rem Set extra parameters
-"%EXECUTABLE%" //US//%SERVICE_NAME% --JavaOptions -Dcatalina.home="\"%CATALINA_HOME%\""#-Djava.endorsed.dirs="\"%CATALINA_HOME%\common\endorsed\""#-Xrs --StdOutputFile "%CATALINA_HOME%\logs\stdout.log" --StdErrorFile "%CATALINA_HOME%\logs\stderr.log" --WorkingPath "%CATALINA_HOME%\bin"
+"%EXECUTABLE%" //US//%SERVICE_NAME% --JvmOptions "-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\common\endorsed" --StartMode jvm --StopMode jvm
+rem More extra parameters
+"%EXECUTABLE%" //US//%SERVICE_NAME% ++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp" --StdOutput %CATALINA_HOME%\logs\stdout.log
 echo The service '%SERVICE_NAME%' has been installed
 
 :end
