@@ -32,6 +32,9 @@
       <update> 
        When the package protection is not used, do not create the doPrivileged objects so we don't suffer the performance hit.
       </update> 
+      <update>
+        <bug>32282</bug>: Modify Windows Uninstaller to remove webapps and webapps/ROOT only if user asks to remove everything. (yoavs)
+      </update>
     </changelog>
   </subsection>
 
