@@ -120,8 +120,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
      */
     public String encodeRedirectURL(String location) {
 	if (isEncodeable(toAbsolute(location)))
-	    return (toEncoded(location,
-			      response.getRequest().getRequestedSessionId()));
+	    return (toEncoded(location, response.getRequest().getSession(false)));
 	else
 	    return (location);
     }
@@ -135,11 +134,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 
     public String encodeURL(String url) {
 	if (isEncodeable(toAbsolute(url)))
-	    return (toEncoded(url,
-			      response.getRequest().getRequestedSessionId()));
+		return (toEncoded(url, response.getRequest().getSession(false)));
 	else
-	    return (url);
-    }
+		  return (url);
+	 }
 
     /**
      * @deprecated
@@ -333,12 +331,14 @@ final class HttpServletResponseFacade  implements HttpServletResponse
         if (location.startsWith("#"))
             return (false);
 
-	// Are we in a valid session that is not using cookies?
-	Request request = response.getRequest();
-	if (!request.getFacade().isRequestedSessionIdValid() )
-	    return (false);
-	if ( request.getFacade().isRequestedSessionIdFromCookie() )
-	    return (false);
+        // Are we in a valid session that is not using cookies?
+        Request request = response.getRequest();
+        HttpSession session = request.getSession(false);
+        if(session == null)
+            return false;
+		  // If the session is new, encode the URL
+		  if(!session.isNew() && request.getFacade().isRequestedSessionIdFromCookie())
+            return false;
 
 	// Is this a valid absolute URL?
 	URL url = null;
@@ -412,11 +412,12 @@ final class HttpServletResponseFacade  implements HttpServletResponse
      * @param url URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
      */
-    private String toEncoded(String url, String sessionId) {
+    private String toEncoded(String url, HttpSession session) {
 
-	if ((url == null) || (sessionId == null))
+	if ((url == null) || (session == null))
 	    return (url);
 
+   String sessionId = session.getId();
 	String path = null;
 	String query = null;
 	int question = url.indexOf("?");
@@ -431,6 +432,7 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	sb.append(sessionId);
 	if (query != null)
 	    sb.append(query);
+
 	return (sb.toString());
 
     }
