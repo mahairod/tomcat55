@@ -109,8 +109,8 @@ regexp.loc=http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/jakarta-
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
-servlet.home=${base.path}/jakarta-servletapi-4
-servlet.lib=${servlet.home}/dist/lib
+servlet.home=${base.path}/jakarta-servletapi-4/dist
+servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
 servlet.loc=jakarta-servletapi-4
 
