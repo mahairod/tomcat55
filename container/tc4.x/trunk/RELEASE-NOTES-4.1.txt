@@ -70,6 +70,10 @@ Generic Bug Fixes:
         well as set default values, and add missing JNDI name field.
 
 [4.1.2] Administration Webapp:
+        Fix many problems defining a SSL connector through the administration
+        webapp.
+
+[4.1.2] Administration Webapp:
         Many cosmetic fixes.
 
 
@@ -92,6 +96,10 @@ Catalina Bug Fixes:
 [4.1.2] DbcpDataSourceFactory:
         maxIdle attribute couldn't be set.
 
+[4.1.2] Facades:
+        Fixed a problem where the facades would still keep a pointer to the 
+        facaded objects after the end of the processing of the request.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -107,6 +115,11 @@ Jasper Bug Fixes:
 [4.1.2] Generator:
         Fixes various problems introduced by the patch which removes 
         the try/catch tag nesting.
+
+[4.1.2] #8994
+        Summary: JSPs don't recompile
+        JspServletWrapper:
+        Fix JSP recompilation when the new "development" flag is set to "true".
 
 
 ============================

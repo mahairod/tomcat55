@@ -20,12 +20,12 @@ Apache Tomcat 4.0:
 * JMX based administration features
 * JSP and Struts based administration web application
 * New Coyote HTTP/1.1 connector
-* New Coyote JK2 AJP 1.4 connector
+* New Coyote JK2 AJP 1.3 connector
 * Rewritten Jasper JSP page compiler
 * Performance and memory efficiency improvements
-* Enhanced manager application support for integration with development tools.
+* Enhanced manager application support for integration with development tools
 * Custom Ant tasks to interact with the manager application directly 
-  from build.xml scripts.
+  from build.xml scripts
 * Many other miscanellous improvements
 
 Apache Tomcat 4.1 will use the build numbering and release process first used 
