@@ -17,9 +17,14 @@ compile.optimize=on
 
 
 # ----- Build Control Flags
+
+#Build all components
 #full.dist=on
+
+#Build lightweight JDK 1.4 distribution
 #light.dist=on
-#build.sysclasspath=ignore
+
+#Hide configuration flags display
 #flags.hide=on
 
 
@@ -31,16 +36,13 @@ base.path=/usr/local
 #jtc.home=../../jakarta-tomcat-connectors
 
 
-# ----- JavaService, version 1.2.0 or later -----
-javaservice.home=${base.path}/javaservice
-
-
-# ----- NSIS, version 1.90 or later -----
-nsis.home=${base.path}/nsis
+# --------------------------------------------------
+#                REQUIRED LIBRARIES
+# --------------------------------------------------
 
 
 # ----- Commons Beanutils, version 1.1 or later -----
-commons-beanutils.home=${base.path}/commons-beanutils-1.1
+commons-beanutils.home=${base.path}/commons-beanutils-1.2
 commons-beanutils.lib=${commons-beanutils.home}
 commons-beanutils.jar=${commons-beanutils.lib}/commons-beanutils.jar
 
@@ -51,12 +53,6 @@ commons-collections.lib=${commons-collections.home}
 commons-collections.jar=${commons-collections.lib}/commons-collections.jar
 
 
-# ----- Commons Daemon, version 20020219 or later -----
-commons-daemon.home=${base.path}/commons-daemon
-commons-daemon.lib=${commons-daemon.home}
-commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
-
-
 # ----- Commons Digester, version 1.1.1 or later -----
 commons-digester.home=${base.path}/commons-digester-1.1.1
 commons-digester.lib=${commons-digester.home}
@@ -64,19 +60,24 @@ commons-digester.jar=${commons-digester.lib}/commons-digester.jar
 
 
 # ----- Commons Logging, version 0.1 or later -----
-commons-logging.home=${base.path}/commons-logging-1.1.1
+commons-logging.home=${base.path}/commons-logging-1.0
 commons-logging.lib=${commons-logging.home}
 commons-logging.jar=${commons-logging.lib}/commons-logging.jar
 
 
-# ----- Commons Modeler, version 20020117 or later -----
-commons-modeler.home=${base.path}/commons-modeler
-commons-modeler.lib=${commons-modeler.home}
-commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
+# ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
+# Note: Optional with JDK 1.3+
+jndi.home=${base.path}/jndi-1.2.1
+jndi.lib=${jndi.home}/lib
+jndi.jar=${jndi.lib}/jndi.jar
+ldap.jar=${jndi.lib}/ldap.jar
+jaas.jar=${jndi.lib}/jaas.jar
 
 
 # ----- Jakarta Regular Expressions Library, version 1.2 -----
-regexp.jar=../lib/jakarta-regexp-1.2.jar
+regexp.home=${base.path}/jakarta-regexp-1.2
+regexp.lib=${regexp.home}
+regexp.jar=${regexp.lib}/jakarta-regexp-1.2.jar
 
 
 # ----- Jakarta Servlet API Classes (Servlet 2.3 / JSP 1.2) -----
@@ -85,18 +86,58 @@ servlet.lib=${servlet.home}/lib
 servlet.jar=${servlet.lib}/servlet.jar
 
 
+# ----- Xerces XML Parser, version 1.4.4 to 2.0.0 Beta 4 -----
+# Note: Optional with JDK 1.4+
+xerces.home=${base.path}/xerces-1_4_4
+xerces.lib=${xerces.home}
+xerces.jar=${xerces.lib}/xerces.jar
+
+
+# ----- Xerces XML Parser, version 2.0.0 Beta 4 or later -----
+# Note: Optional with JDK 1.4+, or if Xerces 1.x is present
+#xerces.home=${base.path}/xerces-2_0_0
+#xerces.lib=${xerces.home}
+#xercesImpl.jar=${xerces.lib}/xercesImpl.jar
+#xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
+
+
+# --------------------------------------------------
+#                OPTIONAL LIBRARIES
+# --------------------------------------------------
+
+
 # ----- Java Activation Framework (JAF), version 1.0.1 or later -----
 activation.home=${base.path}/jaf-1.0.1
 activation.lib=${activation.home}
 activation.jar=${activation.lib}/activation.jar
 
 
-# ----- Java API for XML Processing (JAXP), version 1.1 or later -----
-jaxp.home=${base.path}/jaxp-1.1
-jaxp.lib=${jaxp.home}
-crimson.jar=${jaxp.lib}/crimson.jar
-jaxp.jar=${jaxp.lib}/jaxp.jar
-xalan.jar=${jaxp.lib}/xalan.jar
+# ----- Commons Daemon, version 20020219 or later -----
+commons-daemon.home=${base.path}/commons-daemon
+commons-daemon.lib=${commons-daemon.home}
+commons-daemon.jar=${commons-daemon.lib}/commons-daemon.jar
+
+
+# ----- Commons DBCP, version 20011030 or later -----
+commons-dbcp.home=${base.path}/commons-dbcp
+commons-dbcp.lib=${commons-dbcp.home}
+commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
+
+
+# ----- Commons Modeler, version 20020117 or later -----
+commons-modeler.home=${base.path}/commons-modeler
+commons-modeler.lib=${commons-modeler.home}
+commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
+
+
+# ----- Commons Pool, version 20011030 or later -----
+commons-pool.home=${base.path}/commons-pool
+commons-pool.lib=${commons-pool.home}
+commons-pool.jar=${commons-pool.lib}/commons-pool.jar
+
+
+# ----- JavaService, version 1.2.0 or later -----
+javaservice.home=${base.path}/javaservice
 
 
 # ----- Java Database Connectivity (JDBC) Optional Package, version 2.0 -----
@@ -105,24 +146,10 @@ jdbc20ext.lib=${jdbc20ext.home}
 jdbc20ext.jar=${jdbc20ext.lib}/jdbc2_0-stdext.jar
 
 
-# ----- Java Mail, version 1.2 or later -----
-mail.home=${base.path}/javamail-1.2
-mail.lib=${mail.home}
-mail.jar=${mail.lib}/mail.jar
-
-
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or OpenJMX 1.0b2 or later -----
 jmx.home=${base.path}/openjmx-1.0
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/openjmx.jar
-
-
-# ----- Java Naming and Directory Interface (JNDI), version 1.2 or later -----
-jndi.home=${base.path}/jndi-1.2.1
-jndi.lib=${jndi.home}/lib
-jndi.jar=${jndi.lib}/jndi.jar
-ldap.jar=${jndi.lib}/ldap.jar
-jaas.jar=${jndi.lib}/jaas.jar
 
 
 # ----- Java Secure Sockets Extension (JSSE), version 1.0.2 or later -----
@@ -145,6 +172,16 @@ junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
 
 
+# ----- Java Mail, version 1.2 or later -----
+mail.home=${base.path}/javamail-1.2
+mail.lib=${mail.home}
+mail.jar=${mail.lib}/mail.jar
+
+
+# ----- NSIS, version 1.90 or later -----
+nsis.home=${base.path}/nsis
+
+
 # ----- Struts, version 1.0.1 or later -----
 struts.home=${base.path}/jakarta-struts-1.0.1
 struts.lib=${struts.home}/lib
@@ -154,29 +191,4 @@ struts.jar=${struts.lib}/struts.jar
 tyrex.home=${base.path}/tyrex-0.9.7.0
 tyrex.lib=${tyrex.home}
 tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
-
-
-# ----- Xerces XML Parser, version 1.4.3 but less than 2.0.0beta4 -----
-xerces.home=${base.path}/xerces-1_4_3
-xerces.lib=${xerces.home}
-xerces.jar=${xerces.lib}/xerces.jar
-
-
-# ----- Xerces XML Parser, version 2.0.0beta4 or later -----
-#xerces.home=${base.path}/xerces-2_0_0_beta4
-#xerces.lib=${xerces.home}
-#xercesImpl.jar=${xerces.lib}/xercesImpl.jar
-#xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-
-
-# ----- Commons DBCP, version 20011030 or later -----
-commons-dbcp.home=${base.path}/commons-dbcp
-commons-dbcp.lib=${commons-dbcp.home}
-commons-dbcp.jar=${commons-dbcp.lib}/commons-dbcp.jar
-
-
-# ----- Commons Pool, version 20011030 or later -----
-commons-pool.home=${base.path}/commons-pool
-commons-pool.lib=${commons-pool.home}
-commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 
