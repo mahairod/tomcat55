@@ -16,6 +16,8 @@
 
 package org.apache.jasper.servlet;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -26,8 +28,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
 import org.apache.jasper.Constants;
-
-import org.apache.jasper.security.SecurityUtil;
 
 /**
  * Class loader for loading servlet class files (corresponding to JSP files) 
@@ -158,6 +158,28 @@ public class JasperLoader extends URLClassLoader {
 	return findClass(name);
     }
 
+    
+    /**
+     * Delegate to parent
+     * 
+     * @see java.lang.ClassLoader#getResourceAsStream(java.lang.String)
+     */
+    public InputStream getResourceAsStream(String name) {
+        InputStream is = parent.getResourceAsStream(name);
+        if (is == null) {
+            URL url = findResource(name);
+            if (url != null) {
+                try {
+                    is = url.openStream();
+                } catch (IOException e) {
+                    is = null;
+                }
+            }
+        }
+        return is;
+    }
+    
+    
     /**
      * Get the Permissions for a CodeSource.
      *
