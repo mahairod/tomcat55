@@ -128,8 +128,8 @@ class StandardSession
      */
     public StandardSession(Manager manager) {
 
-	super();
-	this.manager = manager;
+        super();
+        this.manager = manager;
         if (manager instanceof ManagerBase)
             this.debug = ((ManagerBase) manager).getDebug();
 
@@ -144,7 +144,7 @@ class StandardSession
      * encountered in <code>writeObject()</code>.
      */
     private static final String NOT_SERIALIZED =
-	"___NOT_SERIALIZABLE_EXCEPTION___";
+        "___NOT_SERIALIZABLE_EXCEPTION___";
 
 
     /**
@@ -289,9 +289,9 @@ class StandardSession
      */
     public void setCreationTime(long time) {
 
-	this.creationTime = time;
-	this.lastAccessedTime = time;
-	this.thisAccessedTime = time;
+        this.creationTime = time;
+        this.lastAccessedTime = time;
+        this.thisAccessedTime = time;
 
     }
 
@@ -301,7 +301,7 @@ class StandardSession
      */
     public String getId() {
 
-	return (this.id);
+        return (this.id);
 
     }
 
@@ -313,39 +313,39 @@ class StandardSession
      */
     public void setId(String id) {
 
-	if ((this.id != null) && (manager != null))
-	    manager.remove(this);
+        if ((this.id != null) && (manager != null))
+            manager.remove(this);
 
-	this.id = id;
+        this.id = id;
 
-	if (manager != null)
-	    manager.add(this);
+        if (manager != null)
+            manager.add(this);
 
-	// Notify interested application event listeners
-	StandardContext context = (StandardContext) manager.getContainer();
-	Object listeners[] = context.getApplicationListeners();
-	if (listeners != null) {
-	    HttpSessionEvent event =
-	      new HttpSessionEvent(getSession());
-	    for (int i = 0; i < listeners.length; i++) {
-		if (!(listeners[i] instanceof HttpSessionListener))
-		    continue;
+        // Notify interested application event listeners
+        StandardContext context = (StandardContext) manager.getContainer();
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners != null) {
+            HttpSessionEvent event =
+                new HttpSessionEvent(getSession());
+            for (int i = 0; i < listeners.length; i++) {
+                if (!(listeners[i] instanceof HttpSessionListener))
+                    continue;
                 HttpSessionListener listener =
                     (HttpSessionListener) listeners[i];
-		try {
+                try {
                     context.fireContainerEvent("beforeSessionCreated",
                                                listener);
-		    listener.sessionCreated(event);
+                    listener.sessionCreated(event);
                     context.fireContainerEvent("afterSessionCreated",
                                                listener);
-		} catch (Throwable t) {
+                } catch (Throwable t) {
                     context.fireContainerEvent("afterSessionCreated",
                                                listener);
-		  // FIXME - should we do anything besides log these?
-		  log(sm.getString("standardSession.sessionEvent"), t);
-		}
-	    }
-	}
+                    // FIXME - should we do anything besides log these?
+                    log(sm.getString("standardSession.sessionEvent"), t);
+                }
+            }
+        }
 
     }
 
@@ -357,7 +357,7 @@ class StandardSession
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -370,7 +370,7 @@ class StandardSession
      */
     public long getLastAccessedTime() {
 
-	return (this.lastAccessedTime);
+        return (this.lastAccessedTime);
 
     }
 
@@ -380,7 +380,7 @@ class StandardSession
      */
     public Manager getManager() {
 
-	return (this.manager);
+        return (this.manager);
 
     }
 
@@ -392,7 +392,7 @@ class StandardSession
      */
     public void setManager(Manager manager) {
 
-	this.manager = manager;
+        this.manager = manager;
 
     }
 
@@ -407,11 +407,11 @@ class StandardSession
      */
     public int getMaxInactiveInterval() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.getMaxInactiveInterval.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.getMaxInactiveInterval.ise"));
 
-	return (this.maxInactiveInterval);
+        return (this.maxInactiveInterval);
 
     }
 
@@ -425,7 +425,7 @@ class StandardSession
      */
     public void setMaxInactiveInterval(int interval) {
 
-	this.maxInactiveInterval = interval;
+        this.maxInactiveInterval = interval;
 
     }
 
@@ -437,7 +437,7 @@ class StandardSession
      */
     public void setNew(boolean isNew) {
 
-	this.isNew = isNew;
+        this.isNew = isNew;
 
     }
 
@@ -451,7 +451,7 @@ class StandardSession
      */
     public Principal getPrincipal() {
 
-	return (this.principal);
+        return (this.principal);
 
     }
 
@@ -466,7 +466,7 @@ class StandardSession
      */
     public void setPrincipal(Principal principal) {
 
-	this.principal = principal;
+        this.principal = principal;
 
     }
 
@@ -477,7 +477,7 @@ class StandardSession
      */
     public HttpSession getSession() {
 
-	return ((HttpSession) this);
+        return ((HttpSession) this);
 
     }
 
@@ -487,7 +487,7 @@ class StandardSession
      */
     public boolean isValid() {
 
-	return (this.isValid);
+        return (this.isValid);
 
     }
 
@@ -499,7 +499,7 @@ class StandardSession
      */
     public void setValid(boolean isValid) {
 
-	this.isValid = isValid;
+        this.isValid = isValid;
     }
 
 
@@ -514,8 +514,8 @@ class StandardSession
     public void access() {
 
         this.isNew = false;
-	this.lastAccessedTime = this.thisAccessedTime;
-	this.thisAccessedTime = System.currentTimeMillis();
+        this.lastAccessedTime = this.thisAccessedTime;
+        this.thisAccessedTime = System.currentTimeMillis();
 
     }
 
@@ -527,53 +527,53 @@ class StandardSession
     public void expire() {
 
         // Mark this session as "being expired" if needed
-	if (expiring)
-	    return;
-	expiring = true;
+        if (expiring)
+            return;
+        expiring = true;
         setValid(false);
 
-	// Remove this session from our manager's active sessions
-	if (manager != null)
-	    manager.remove(this);
+        // Remove this session from our manager's active sessions
+        if (manager != null)
+            manager.remove(this);
 
-	// Unbind any objects associated with this session
-	String keys[] = keys();
-	for (int i = 0; i < keys.length; i++)
-	    removeAttribute(keys[i]);
+        // Unbind any objects associated with this session
+        String keys[] = keys();
+        for (int i = 0; i < keys.length; i++)
+            removeAttribute(keys[i]);
 
-	// Notify interested application event listeners
-	// FIXME - Assumes we call listeners in reverse order
-	StandardContext context = (StandardContext) manager.getContainer();
-	Object listeners[] = context.getApplicationListeners();
-	if (listeners != null) {
-	    HttpSessionEvent event =
-	      new HttpSessionEvent(getSession());
-	    for (int i = 0; i < listeners.length; i++) {
-	        int j = (listeners.length - 1) - i;
-		if (!(listeners[j] instanceof HttpSessionListener))
-		    continue;
+        // Notify interested application event listeners
+        // FIXME - Assumes we call listeners in reverse order
+        StandardContext context = (StandardContext) manager.getContainer();
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners != null) {
+            HttpSessionEvent event =
+              new HttpSessionEvent(getSession());
+            for (int i = 0; i < listeners.length; i++) {
+                int j = (listeners.length - 1) - i;
+                if (!(listeners[j] instanceof HttpSessionListener))
+                    continue;
                 HttpSessionListener listener =
                     (HttpSessionListener) listeners[j];
-		try {
+                try {
                     context.fireContainerEvent("beforeSessionDestroyed",
                                                listener);
-		    listener.sessionDestroyed(event);
+                    listener.sessionDestroyed(event);
                     context.fireContainerEvent("afterSessionDestroyed",
                                                listener);
-		} catch (Throwable t) {
+                } catch (Throwable t) {
                     context.fireContainerEvent("afterSessionDestroyed",
                                                listener);
-		  // FIXME - should we do anything besides log these?
-		  log(sm.getString("standardSession.sessionEvent"), t);
-		}
-	    }
-	}
+                    // FIXME - should we do anything besides log these?
+                    log(sm.getString("standardSession.sessionEvent"), t);
+                }
+            }
+        }
 
         // We have completed expire of this session
-	expiring = false;
-	if ((manager != null) && (manager instanceof ManagerBase)) {
-	    recycle();
-	}
+        expiring = false;
+        if ((manager != null) && (manager instanceof ManagerBase)) {
+            recycle();
+        }
 
     }
 
@@ -584,18 +584,18 @@ class StandardSession
      */
     public void passivate() {
     
-	// Notify ActivationListeners
-	HttpSessionEvent event = null;
-	String keys[] = keys();
-	for (int i = 0; i < keys.length; i++) {
-	    Object attribute = getAttribute(keys[i]);
-	    if (attribute instanceof HttpSessionActivationListener) {
-	    	if (event == null)
-	    	    event = new HttpSessionEvent(this);
-	    	// FIXME: Should we catch throwables?
-	    	((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
-	    }
-	}
+        // Notify ActivationListeners
+        HttpSessionEvent event = null;
+        String keys[] = keys();
+        for (int i = 0; i < keys.length; i++) {
+            Object attribute = getAttribute(keys[i]);
+            if (attribute instanceof HttpSessionActivationListener) {
+                if (event == null)
+                    event = new HttpSessionEvent(this);
+                // FIXME: Should we catch throwables?
+                ((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
+            }
+        }
 
     }
 
@@ -606,18 +606,18 @@ class StandardSession
      */
     public void activate() {
     
-    	// Notify ActivationListeners
-    	HttpSessionEvent event = null;
-    	String keys[] = keys();
-    	for (int i = 0; i < keys.length; i++) {
-    	    Object attribute = getAttribute(keys[i]);
-    	    if (attribute instanceof HttpSessionActivationListener) {
-    		if (event == null)
-    		    event = new HttpSessionEvent(this);
-		// FIXME: Should we catch throwables?
-		((HttpSessionActivationListener)attribute).sessionDidActivate(event);
-	    }
-	}
+        // Notify ActivationListeners
+        HttpSessionEvent event = null;
+        String keys[] = keys();
+        for (int i = 0; i < keys.length; i++) {
+            Object attribute = getAttribute(keys[i]);
+            if (attribute instanceof HttpSessionActivationListener) {
+                if (event == null)
+                    event = new HttpSessionEvent(this);
+                // FIXME: Should we catch throwables?
+                ((HttpSessionActivationListener)attribute).sessionDidActivate(event);
+            }
+        }
 
     }
     
@@ -628,22 +628,22 @@ class StandardSession
      */
     public void recycle() {
 
-	// Reset the instance variables associated with this Session
-	attributes.clear();
+        // Reset the instance variables associated with this Session
+        attributes.clear();
         authType = null;
-	creationTime = 0L;
-	expiring = false;
-	id = null;
-	lastAccessedTime = 0L;
-	manager = null;
-	maxInactiveInterval = -1;
-	principal = null;
-	isNew = false;
-	isValid = false;
+        creationTime = 0L;
+        expiring = false;
+        id = null;
+        lastAccessedTime = 0L;
+        manager = null;
+        maxInactiveInterval = -1;
+        principal = null;
+        isNew = false;
+        isValid = false;
 
-	// Tell our Manager that this Session has been recycled
-	if ((manager != null) && (manager instanceof ManagerBase))
-	    ((ManagerBase) manager).recycle(this);
+        // Tell our Manager that this Session has been recycled
+        if ((manager != null) && (manager instanceof ManagerBase))
+            ((ManagerBase) manager).recycle(this);
 
     }
 
@@ -653,11 +653,11 @@ class StandardSession
      */
     public String toString() {
 
-	StringBuffer sb = new StringBuffer();
-	sb.append("StandardSession[");
-	sb.append(id);
-	sb.append("]");
-	return (sb.toString());
+        StringBuffer sb = new StringBuffer();
+        sb.append("StandardSession[");
+        sb.append(id);
+        sb.append("]");
+        return (sb.toString());
 
     }
 
@@ -712,11 +712,11 @@ class StandardSession
      */
     public long getCreationTime() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.getCreationTime.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.getCreationTime.ise"));
 
-	return (this.creationTime);
+        return (this.creationTime);
 
     }
 
@@ -746,9 +746,9 @@ class StandardSession
      */
     public HttpSessionContext getSessionContext() {
 
-	if (sessionContext == null)
-	    sessionContext = new StandardSessionContext();
-	return (sessionContext);
+        if (sessionContext == null)
+            sessionContext = new StandardSessionContext();
+        return (sessionContext);
 
     }
 
@@ -767,13 +767,13 @@ class StandardSession
      */
     public Object getAttribute(String name) {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.getAttribute.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.getAttribute.ise"));
 
-	synchronized (attributes) {
-	    return (attributes.get(name));
-	}
+        synchronized (attributes) {
+            return (attributes.get(name));
+        }
 
     }
 
@@ -787,13 +787,13 @@ class StandardSession
      */
     public Enumeration getAttributeNames() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.getAttributeNames.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.getAttributeNames.ise"));
 
-	synchronized (attributes) {
-	    return (new Enumerator(attributes.keySet()));
-	}
+        synchronized (attributes) {
+            return (new Enumerator(attributes.keySet()));
+        }
 
     }
 
@@ -812,7 +812,7 @@ class StandardSession
      */
     public Object getValue(String name) {
 
-	return (getAttribute(name));
+        return (getAttribute(name));
 
     }
 
@@ -829,11 +829,11 @@ class StandardSession
      */
     public String[] getValueNames() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.getValueNames.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.getValueNames.ise"));
 
-	return (keys());
+        return (keys());
 
     }
 
@@ -846,12 +846,12 @@ class StandardSession
      */
     public void invalidate() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.invalidate.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.invalidate.ise"));
 
-	// Cause this session to expire
-	expire();
+        // Cause this session to expire
+        expire();
 
     }
 
@@ -868,11 +868,11 @@ class StandardSession
      */
     public boolean isNew() {
 
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.isNew.ise"));
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.isNew.ise"));
 
-	return (this.isNew);
+        return (this.isNew);
 
     }
 
@@ -897,7 +897,7 @@ class StandardSession
      */
     public void putValue(String name, Object value) {
 
-	setAttribute(name, value);
+        setAttribute(name, value);
 
     }
 
@@ -918,15 +918,15 @@ class StandardSession
      */
     public void removeAttribute(String name) {
 
-	// Validate our current state
-	if (!expiring && !isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.removeAttribute.ise"));
+        // Validate our current state
+        if (!expiring && !isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.removeAttribute.ise"));
 
-	// Remove this attribute from our collection
-	Object value = null;
+        // Remove this attribute from our collection
+        Object value = null;
         boolean found = false;
-	synchronized (attributes) {
+        synchronized (attributes) {
             found = attributes.containsKey(name);
             if (found) {
                 value = attributes.get(name);
@@ -934,38 +934,38 @@ class StandardSession
             } else {
                 return;
             }
-	}
+        }
 
-	// Call the valueUnbound() method if necessary
-	HttpSessionBindingEvent event =
-	  new HttpSessionBindingEvent((HttpSession) this, name, value);
-	if ((value != null) &&
-	    (value instanceof HttpSessionBindingListener))
-	    ((HttpSessionBindingListener) value).valueUnbound(event);
+        // Call the valueUnbound() method if necessary
+        HttpSessionBindingEvent event =
+          new HttpSessionBindingEvent((HttpSession) this, name, value);
+        if ((value != null) &&
+            (value instanceof HttpSessionBindingListener))
+            ((HttpSessionBindingListener) value).valueUnbound(event);
 
-	// Notify interested application event listeners
-	StandardContext context = (StandardContext) manager.getContainer();
-	Object listeners[] = context.getApplicationListeners();
-	if (listeners == null)
-	    return;
-	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof HttpSessionAttributeListener))
-	        continue;
+        // Notify interested application event listeners
+        StandardContext context = (StandardContext) manager.getContainer();
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners == null)
+            return;
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof HttpSessionAttributeListener))
+                continue;
             HttpSessionAttributeListener listener =
                 (HttpSessionAttributeListener) listeners[i];
-	    try {
+            try {
                 context.fireContainerEvent("beforeSessionAttributeRemoved",
                                            listener);
-		listener.attributeRemoved(event);
+                listener.attributeRemoved(event);
                 context.fireContainerEvent("afterSessionAttributeRemoved",
                                            listener);
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 context.fireContainerEvent("afterSessionAttributeRemoved",
                                            listener);
-	        // FIXME - should we do anything besides log these?
-	        log(sm.getString("standardSession.attributeEvent"), t);
-	    }
-	}
+                // FIXME - should we do anything besides log these?
+                log(sm.getString("standardSession.attributeEvent"), t);
+            }
+        }
 
     }
 
@@ -989,7 +989,7 @@ class StandardSession
      */
     public void removeValue(String name) {
 
-	removeAttribute(name);
+        removeAttribute(name);
 
     }
 
@@ -1013,70 +1013,70 @@ class StandardSession
      */
     public void setAttribute(String name, Object value) {
 
-	// Validate our current state
-	if (!isValid)
-	    throw new IllegalStateException
-		(sm.getString("standardSession.setAttribute.ise"));
-	if ((manager != null) && manager.getDistributable() &&
-	  !(value instanceof Serializable))
-	    throw new IllegalArgumentException
-		(sm.getString("standardSession.setAttribute.iae"));
+        // Validate our current state
+        if (!isValid)
+            throw new IllegalStateException
+                (sm.getString("standardSession.setAttribute.ise"));
+        if ((manager != null) && manager.getDistributable() &&
+          !(value instanceof Serializable))
+            throw new IllegalArgumentException
+                (sm.getString("standardSession.setAttribute.iae"));
 
-	// Replace or add this attribute
-	Object unbound = null;
-	synchronized (attributes) {
-	    unbound = attributes.get(name);
-	    attributes.put(name, value);
-	}
+        // Replace or add this attribute
+        Object unbound = null;
+        synchronized (attributes) {
+            unbound = attributes.get(name);
+            attributes.put(name, value);
+        }
 
-	// Call the valueUnbound() method if necessary
-	if ((unbound != null) &&
-	    (unbound instanceof HttpSessionBindingListener)) {
-	    ((HttpSessionBindingListener) unbound).valueUnbound
-	      (new HttpSessionBindingEvent((HttpSession) this, name));
-	}
+        // Call the valueUnbound() method if necessary
+        if ((unbound != null) &&
+            (unbound instanceof HttpSessionBindingListener)) {
+            ((HttpSessionBindingListener) unbound).valueUnbound
+              (new HttpSessionBindingEvent((HttpSession) this, name));
+        }
 
-	// Call the valueBound() method if necessary
-	HttpSessionBindingEvent event =
-	  new HttpSessionBindingEvent((HttpSession) this, name, value);
-	if (value instanceof HttpSessionBindingListener)
-	    ((HttpSessionBindingListener) value).valueBound(event);
+        // Call the valueBound() method if necessary
+        HttpSessionBindingEvent event =
+          new HttpSessionBindingEvent((HttpSession) this, name, value);
+        if (value instanceof HttpSessionBindingListener)
+            ((HttpSessionBindingListener) value).valueBound(event);
 
-	// Notify interested application event listeners
-	StandardContext context = (StandardContext) manager.getContainer();
-	Object listeners[] = context.getApplicationListeners();
-	if (listeners == null)
-	    return;
-	for (int i = 0; i < listeners.length; i++) {
-	    if (!(listeners[i] instanceof HttpSessionAttributeListener))
-	        continue;
+        // Notify interested application event listeners
+        StandardContext context = (StandardContext) manager.getContainer();
+        Object listeners[] = context.getApplicationListeners();
+        if (listeners == null)
+            return;
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof HttpSessionAttributeListener))
+                continue;
             HttpSessionAttributeListener listener =
                 (HttpSessionAttributeListener) listeners[i];
-	    try {
-		if (unbound != null) {
+            try {
+                if (unbound != null) {
                     context.fireContainerEvent("beforeSessionAttributeReplaced",
                                                listener);
-		    listener.attributeReplaced(event);
+                    listener.attributeReplaced(event);
                     context.fireContainerEvent("afterSessionAttributeReplaced",
                                                listener);
-		} else {
+                } else {
                     context.fireContainerEvent("beforeSessionAttributeAdded",
                                                listener);
-		    listener.attributeAdded(event);
+                    listener.attributeAdded(event);
                     context.fireContainerEvent("afterSessionAttributeAdded",
                                                listener);
                 }
-	    } catch (Throwable t) {
+            } catch (Throwable t) {
                 if (unbound != null)
                     context.fireContainerEvent("afterSessionAttributeReplaced",
                                                listener);
                 else
                     context.fireContainerEvent("afterSessionAttributeAdded",
                                                listener);
-	        // FIXME - should we do anything besides log these?
-	        log(sm.getString("standardSession.attributeEvent"), t);
-	    }
-	}
+                // FIXME - should we do anything besides log these?
+                log(sm.getString("standardSession.attributeEvent"), t);
+            }
+        }
 
     }
 
@@ -1097,39 +1097,39 @@ class StandardSession
      * @exception IOException if an input/output error occurs
      */
     private void readObject(ObjectInputStream stream)
-	throws ClassNotFoundException, IOException {
+        throws ClassNotFoundException, IOException {
 
-	// Deserialize the scalar instance variables (except Manager)
+        // Deserialize the scalar instance variables (except Manager)
         authType = null;        // Transient only
-	creationTime = ((Long) stream.readObject()).longValue();
-	lastAccessedTime = ((Long) stream.readObject()).longValue();
-	maxInactiveInterval = ((Integer) stream.readObject()).intValue();
-	isNew = ((Boolean) stream.readObject()).booleanValue();
-	isValid = ((Boolean) stream.readObject()).booleanValue();
-	thisAccessedTime = ((Long) stream.readObject()).longValue();
-	principal = null;	// Transient only
+        creationTime = ((Long) stream.readObject()).longValue();
+        lastAccessedTime = ((Long) stream.readObject()).longValue();
+        maxInactiveInterval = ((Integer) stream.readObject()).intValue();
+        isNew = ((Boolean) stream.readObject()).booleanValue();
+        isValid = ((Boolean) stream.readObject()).booleanValue();
+        thisAccessedTime = ((Long) stream.readObject()).longValue();
+        principal = null;        // Transient only
         setId((String) stream.readObject());
         if (debug >= 2)
             log("readObject() loading session " + id);
 
-	// Deserialize the attribute count and attribute values
-	if (attributes == null)
-	    attributes = new HashMap();
-	int n = ((Integer) stream.readObject()).intValue();
+        // Deserialize the attribute count and attribute values
+        if (attributes == null)
+            attributes = new HashMap();
+        int n = ((Integer) stream.readObject()).intValue();
         boolean isValidSave = isValid;
         isValid = true;
-	for (int i = 0; i < n; i++) {
-	    String name = (String) stream.readObject();
-	    Object value = (Object) stream.readObject();
-	    if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
-		continue;
+        for (int i = 0; i < n; i++) {
+            String name = (String) stream.readObject();
+            Object value = (Object) stream.readObject();
+            if ((value instanceof String) && (value.equals(NOT_SERIALIZED)))
+                continue;
             if (debug >= 2)
                 log("  loading attribute '" + name +
                     "' with value '" + value + "'");
-	    synchronized (attributes) {
-	        attributes.put(name, value);
-	    }
-	}
+            synchronized (attributes) {
+                attributes.put(name, value);
+            }
+        }
         isValid = isValidSave;
 
     }
@@ -1156,62 +1156,62 @@ class StandardSession
      */
     private void writeObject(ObjectOutputStream stream) throws IOException {
 
-	// Write the scalar instance variables (except Manager)
-	stream.writeObject(new Long(creationTime));
-	stream.writeObject(new Long(lastAccessedTime));
-	stream.writeObject(new Integer(maxInactiveInterval));
-	stream.writeObject(new Boolean(isNew));
-	stream.writeObject(new Boolean(isValid));
-	stream.writeObject(new Long(thisAccessedTime));
-	stream.writeObject(id);
+        // Write the scalar instance variables (except Manager)
+        stream.writeObject(new Long(creationTime));
+        stream.writeObject(new Long(lastAccessedTime));
+        stream.writeObject(new Integer(maxInactiveInterval));
+        stream.writeObject(new Boolean(isNew));
+        stream.writeObject(new Boolean(isValid));
+        stream.writeObject(new Long(thisAccessedTime));
+        stream.writeObject(id);
         if (debug >= 2)
             log("writeObject() storing session " + id);
 
-	// Accumulate the names of serializable and non-serializable attributes
-	String keys[] = keys();
-	ArrayList saveNames = new ArrayList();
-	ArrayList saveValues = new ArrayList();
-	ArrayList unbinds = new ArrayList();
-	for (int i = 0; i < keys.length; i++) {
-	    Object value = null;
-	    synchronized (attributes) {
-		value = attributes.get(keys[i]);
-	    }
-	    if (value == null)
-		continue;
-	    else if (value instanceof Serializable) {
-		saveNames.add(keys[i]);
-		saveValues.add(value);
-	    } else
-		unbinds.add(keys[i]);
-	}
+        // Accumulate the names of serializable and non-serializable attributes
+        String keys[] = keys();
+        ArrayList saveNames = new ArrayList();
+        ArrayList saveValues = new ArrayList();
+        ArrayList unbinds = new ArrayList();
+        for (int i = 0; i < keys.length; i++) {
+            Object value = null;
+            synchronized (attributes) {
+                value = attributes.get(keys[i]);
+            }
+            if (value == null)
+                continue;
+            else if (value instanceof Serializable) {
+                saveNames.add(keys[i]);
+                saveValues.add(value);
+            } else
+                unbinds.add(keys[i]);
+        }
 
-	// Serialize the attribute count and the Serializable attributes
-	int n = saveNames.size();
-	stream.writeObject(new Integer(n));
-	for (int i = 0; i < n; i++) {
-	    stream.writeObject((String) saveNames.get(i));
-	    try {
-		stream.writeObject(saveValues.get(i));
+        // Serialize the attribute count and the Serializable attributes
+        int n = saveNames.size();
+        stream.writeObject(new Integer(n));
+        for (int i = 0; i < n; i++) {
+            stream.writeObject((String) saveNames.get(i));
+            try {
+                stream.writeObject(saveValues.get(i));
                 if (debug >= 2)
                     log("  storing attribute '" + saveNames.get(i) +
                         "' with value '" + saveValues.get(i) + "'");
-	    } catch (NotSerializableException e) {
-		log(sm.getString("standardSession.notSerializable",
-				 saveNames.get(i), id));
-		stream.writeObject(NOT_SERIALIZED);
+            } catch (NotSerializableException e) {
+                log(sm.getString("standardSession.notSerializable",
+                                 saveNames.get(i), id));
+                stream.writeObject(NOT_SERIALIZED);
                 if (debug >= 2)
                     log("  storing attribute '" + saveNames.get(i) +
                         "' with value NOT_SERIALIZED");
-		unbinds.add(saveNames.get(i));
-	    }
-	}
+                unbinds.add(saveNames.get(i));
+            }
+        }
 
-	// Unbind the non-Serializable attributes
-	Iterator names = unbinds.iterator();
-	while (names.hasNext()) {
-	    removeAttribute((String) names.next());
-	}
+        // Unbind the non-Serializable attributes
+        Iterator names = unbinds.iterator();
+        while (names.hasNext()) {
+            removeAttribute((String) names.next());
+        }
 
     }
 
@@ -1226,10 +1226,10 @@ class StandardSession
      */
     private String[] keys() {
 
-	String results[] = new String[0];
-	synchronized (attributes) {
-	    return ((String[]) attributes.keySet().toArray(results));
-	}
+        String results[] = new String[0];
+        synchronized (attributes) {
+            return ((String[]) attributes.keySet().toArray(results));
+        }
 
     }
 
@@ -1241,11 +1241,11 @@ class StandardSession
      */
     private void log(String message) {
 
-	if ((manager != null) && (manager instanceof ManagerBase)) {
-	    ((ManagerBase) manager).log(message);
-	} else {
-	    System.out.println("StandardSession: " + message);
-	}
+        if ((manager != null) && (manager instanceof ManagerBase)) {
+            ((ManagerBase) manager).log(message);
+        } else {
+            System.out.println("StandardSession: " + message);
+        }
 
     }
 
@@ -1258,12 +1258,12 @@ class StandardSession
      */
     private void log(String message, Throwable throwable) {
 
-	if ((manager != null) && (manager instanceof ManagerBase)) {
-	    ((ManagerBase) manager).log(message, throwable);
-	} else {
-	    System.out.println("StandardSession: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+        if ((manager != null) && (manager instanceof ManagerBase)) {
+            ((ManagerBase) manager).log(message, throwable);
+        } else {
+            System.out.println("StandardSession: " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -1300,7 +1300,7 @@ final class StandardSessionContext implements HttpSessionContext {
      */
     public Enumeration getIds() {
 
-	return (new Enumerator(dummy));
+        return (new Enumerator(dummy));
 
     }
 
@@ -1317,7 +1317,7 @@ final class StandardSessionContext implements HttpSessionContext {
      */
     public HttpSession getSession(String id) {
 
-	return (null);
+        return (null);
 
     }
 

@@ -158,7 +158,7 @@ public final class FileStore
      * The string manager for this package.
      */
     private StringManager sm =
-	StringManager.getManager(Constants.Package);
+        StringManager.getManager(Constants.Package);
 
 
     /**
@@ -211,7 +211,7 @@ public final class FileStore
      */
     public int getCheckInterval() {
 
-	return (this.checkInterval);
+        return (this.checkInterval);
 
     }
 
@@ -223,11 +223,11 @@ public final class FileStore
      */
     public void setCheckInterval(int checkInterval) {
 
-	int oldCheckInterval = this.checkInterval;
-	this.checkInterval = checkInterval;
-	support.firePropertyChange("checkInterval",
-				   new Integer(oldCheckInterval),
-				   new Integer(this.checkInterval));
+        int oldCheckInterval = this.checkInterval;
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   new Integer(oldCheckInterval),
+                                   new Integer(this.checkInterval));
 
     }
 
@@ -237,7 +237,7 @@ public final class FileStore
      */
     public String getDirectory() {
 
-	return (directory);
+        return (directory);
 
     }
 
@@ -249,11 +249,11 @@ public final class FileStore
      */
     public void setDirectory(String path) {
 
-	String oldDirectory = this.directory;
-	this.directory = path;
-	this.directoryFile = null;
-	support.firePropertyChange("directory", oldDirectory,
-				   this.directory);
+        String oldDirectory = this.directory;
+        this.directory = path;
+        this.directoryFile = null;
+        support.firePropertyChange("directory", oldDirectory,
+                                   this.directory);
 
     }
 
@@ -265,7 +265,7 @@ public final class FileStore
      */
     public String getInfo() {
 
-	return (info);
+        return (info);
 
     }
 
@@ -277,16 +277,16 @@ public final class FileStore
      */
     public int getSize() throws IOException {
 
-	String[] files = getDirectoryFile().list();
-	
-	// Figure out which files are sessions
-	int keycount = 0;
-	for (int i = 0; i < files.length; i++) {
-	    if (files[i].endsWith(FILE_EXT))
-		keycount++;
-	}
-	
-	return (keycount);
+        String[] files = getDirectoryFile().list();
+        
+        // Figure out which files are sessions
+        int keycount = 0;
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].endsWith(FILE_EXT))
+                keycount++;
+        }
+        
+        return (keycount);
 
     }
 
@@ -296,8 +296,8 @@ public final class FileStore
      */
     public Manager getManager() {
     
-    	return (this.manager);
-    	
+        return (this.manager);
+            
     }
 
 
@@ -308,9 +308,9 @@ public final class FileStore
      */
     public void setManager(Manager manager) {
 
-	Manager oldManager = this.manager;
-	this.manager = manager;
-	support.firePropertyChange("manager", oldManager, this.manager);
+        Manager oldManager = this.manager;
+        this.manager = manager;
+        support.firePropertyChange("manager", oldManager, this.manager);
 
     }
 
@@ -320,7 +320,7 @@ public final class FileStore
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -332,7 +332,7 @@ public final class FileStore
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -347,7 +347,7 @@ public final class FileStore
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -361,30 +361,30 @@ public final class FileStore
      */
     public String[] keys() throws IOException {
 
-	String[] files = getDirectoryFile().list();
+        String[] files = getDirectoryFile().list();
 
-	// Figure out which files contain sessions
-	int keycount = 0;
-	for (int i = 0; i < files.length; i++) {
-	    if (files[i].endsWith(FILE_EXT))
-		keycount++;
-	    else
-		files[i] = null;
-	}
+        // Figure out which files contain sessions
+        int keycount = 0;
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].endsWith(FILE_EXT))
+                keycount++;
+            else
+                files[i] = null;
+        }
 
-	// Get keys from relevant filenames.
-	String[] keys = new String[keycount];
-	if (keycount > 0) {
-	    keycount = 0;
-	    for (int i = 0; i < files.length; i++) {
-		if (files[i] != null) {
-		    keys[keycount] = files[i].substring (0, files[i].lastIndexOf('.'));
-		    keycount++;
-		}
-	    }
-	}
+        // Get keys from relevant filenames.
+        String[] keys = new String[keycount];
+        if (keycount > 0) {
+            keycount = 0;
+            for (int i = 0; i < files.length; i++) {
+                if (files[i] != null) {
+                    keys[keycount] = files[i].substring (0, files[i].lastIndexOf('.'));
+                    keycount++;
+                }
+            }
+        }
 
-	return (keys);
+        return (keys);
 
     }
 
@@ -402,60 +402,60 @@ public final class FileStore
     public Session load(String id)
         throws ClassNotFoundException, IOException {
 
-	// Open an input stream to the specified pathname, if any
-	File file = file(id);
-	if (file == null)
-	    return (null);
-	if (debug >= 1)
-	    log(sm.getString("fileStore.loading", id, file.getAbsolutePath()));
+        // Open an input stream to the specified pathname, if any
+        File file = file(id);
+        if (file == null)
+            return (null);
+        if (debug >= 1)
+            log(sm.getString("fileStore.loading", id, file.getAbsolutePath()));
 
-	FileInputStream fis = null;
-	ObjectInputStream ois = null;
-	Loader loader = null;
-	ClassLoader classLoader = null;
-	try {
-	    fis = new FileInputStream(file.getAbsolutePath());
-	    BufferedInputStream bis = new BufferedInputStream(fis);
-	    Container container = manager.getContainer();
-	    if (container != null)
-		loader = container.getLoader();
-	    if (loader != null)
-		classLoader = loader.getClassLoader();
-	    if (classLoader != null)
-		ois = new CustomObjectInputStream(bis, classLoader);
-	    else
-		ois = new ObjectInputStream(bis);
-	} catch (FileNotFoundException e) {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        Loader loader = null;
+        ClassLoader classLoader = null;
+        try {
+            fis = new FileInputStream(file.getAbsolutePath());
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            Container container = manager.getContainer();
+            if (container != null)
+                loader = container.getLoader();
+            if (loader != null)
+                classLoader = loader.getClassLoader();
+            if (classLoader != null)
+                ois = new CustomObjectInputStream(bis, classLoader);
+            else
+                ois = new ObjectInputStream(bis);
+        } catch (FileNotFoundException e) {
             if (debug >= 1)
                 log("No persisted data file found");
-	    return (null);
-	} catch (IOException e) {
-	    if (ois != null) {
-		try {
-		    ois.close();
-		} catch (IOException f) {
-		    ;
-		}
-		ois = null;
-	    }
-	    throw e;
-	}
+            return (null);
+        } catch (IOException e) {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException f) {
+                    ;
+                }
+                ois = null;
+            }
+            throw e;
+        }
 
-	try {
-	    StandardSession session = (StandardSession) manager.createSession();
+        try {
+            StandardSession session = (StandardSession) manager.createSession();
             session.readObjectData(ois);
-	    session.setManager(manager);
-	    return (session);
-	} finally {
-	    // Close the input stream
-	    if (ois != null) {
-		try {
-		    ois.close();
-		} catch (IOException f) {
-		    ;
-		}
-	    }
-	}
+            session.setManager(manager);
+            return (session);
+        } finally {
+            // Close the input stream
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException f) {
+                    ;
+                }
+            }
+        }
     }
 
     
@@ -470,13 +470,13 @@ public final class FileStore
      */
     public void remove(String id) throws IOException {
 
-	// Open an input stream to the specified pathname, if any
-	File file = file(id);
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("fileStore.removing", id, file.getAbsolutePath()));
-	file.delete();
+        // Open an input stream to the specified pathname, if any
+        File file = file(id);
+        if (file == null)
+            return;
+        if (debug >= 1)
+            log(sm.getString("fileStore.removing", id, file.getAbsolutePath()));
+        file.delete();
     }
 
 
@@ -488,10 +488,10 @@ public final class FileStore
     public void clear()
         throws IOException {
 
-	String[] keys = keys();
-	for (int i = 0; i < keys.length; i++) {
-	    remove(keys[i]);
-	}
+        String[] keys = keys();
+        for (int i = 0; i < keys.length; i++) {
+            remove(keys[i]);
+        }
 
     }
     
@@ -502,7 +502,7 @@ public final class FileStore
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -517,33 +517,33 @@ public final class FileStore
      */
     public void save(Session session) throws IOException {
 
-	// Open an output stream to the specified pathname, if any
-	File file = file(session.getId());
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("fileStore.saving", session.getId(), file.getAbsolutePath()));
-	FileOutputStream fos = null;
-	ObjectOutputStream oos = null;
-	try {
-	    fos = new FileOutputStream(file.getAbsolutePath());
-	    oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-	} catch (IOException e) {
-	    if (oos != null) {
-		try {
-		    oos.close();
-		} catch (IOException f) {
-		    ;
-		}
-	    }
-	    throw e;
-	}
+        // Open an output stream to the specified pathname, if any
+        File file = file(session.getId());
+        if (file == null)
+            return;
+        if (debug >= 1)
+            log(sm.getString("fileStore.saving", session.getId(), file.getAbsolutePath()));
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(file.getAbsolutePath());
+            oos = new ObjectOutputStream(new BufferedOutputStream(fos));
+        } catch (IOException e) {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException f) {
+                    ;
+                }
+            }
+            throw e;
+        }
 
-	try {
-	    ((StandardSession)session).writeObjectData(oos);
-	} finally {
-	    oos.close();
-	}
+        try {
+            ((StandardSession)session).writeObjectData(oos);
+        } finally {
+            oos.close();
+        }
 
     }
 
@@ -558,7 +558,7 @@ public final class FileStore
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -570,7 +570,7 @@ public final class FileStore
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -587,15 +587,15 @@ public final class FileStore
      */
     public void start() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("fileStore.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("fileStore.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
-	// Start the background reaper thread
-	threadStart();
+        // Start the background reaper thread
+        threadStart();
 
     }
 
@@ -611,15 +611,15 @@ public final class FileStore
      */
     public void stop() throws LifecycleException {
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("fileStore.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("fileStore.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop the background reaper thread
-	threadStop();
+        // Stop the background reaper thread
+        threadStop();
 
     }
 
@@ -631,20 +631,20 @@ public final class FileStore
      */
     void log(String message) {
 
-	Logger logger = null;
-	Container container = manager.getContainer();
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("Manager[" + container.getName() + "]: "
-		       + message);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("Manager[" + containerName
-			       + "]: " + message);
-	}
+        Logger logger = null;
+        Container container = manager.getContainer();
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("Manager[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("Manager[" + containerName
+                               + "]: " + message);
+        }
 
     }
 
@@ -660,24 +660,24 @@ public final class FileStore
      */
     private File file(String id) {
 
-	if (directory == null)
-	    return (null);
+        if (directory == null)
+            return (null);
 
-	String pathname = directory + "/" + id + FILE_EXT;
-	File file = new File(pathname);
-	if (!file.isAbsolute()) {
-	    File tempdir = getDirectoryFile();
-	    if (tempdir != null)
-		file = new File(tempdir, pathname);
-	}
-	return (file);
+        String pathname = directory + "/" + id + FILE_EXT;
+        File file = new File(pathname);
+        if (!file.isAbsolute()) {
+            File tempdir = getDirectoryFile();
+            if (tempdir != null)
+                file = new File(tempdir, pathname);
+        }
+        return (file);
 
 // FIXME: It would be nice to keep this check, but
 // it doesn't work under Windows on paths that start
 // with a drive letter.
-//	if (!file.isAbsolute())
-//	    return (null);
-//	return (file);
+//        if (!file.isAbsolute())
+//            return (null);
+//        return (file);
 
     }
 
@@ -686,63 +686,63 @@ public final class FileStore
      */
     private File getDirectoryFile() {
     
-    	if (directoryFile == null) {
-	    Container container = manager.getContainer();
-	    if (container instanceof Context) {
-		ServletContext servletContext =
-		    ((Context) container).getServletContext();
-		directoryFile = (File)
-		    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-	    } else {
-	    	throw new IllegalArgumentException("directory not set, I can't work with this Container");
-	    }
-	}
+        if (directoryFile == null) {
+            Container container = manager.getContainer();
+            if (container instanceof Context) {
+                ServletContext servletContext =
+                    ((Context) container).getServletContext();
+                directoryFile = (File)
+                    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+            } else {
+                    throw new IllegalArgumentException("directory not set, I can't work with this Container");
+            }
+        }
 
-	return directoryFile;
+        return directoryFile;
 
     }
-        	
+                
     /**
      * Invalidate all sessions that have expired.
      */
     private void processExpires() {
     
-    	if(!started)
-    	    return;
+        if(!started)
+            return;
 
-	long timeNow = System.currentTimeMillis();
-	String[] keys = null;
-	
-	try {
-	    keys = keys();
-	} catch (IOException e) {
-	    log (e.toString());
-	    e.printStackTrace();
-	    return;
-	}
-	
-	for (int i = 0; i < keys.length; i++) {
-	    try {
-		StandardSession session = (StandardSession) load(keys[i]);
-		if (!session.isValid())
-		    continue;
-		int maxInactiveInterval = session.getMaxInactiveInterval();
-		if (maxInactiveInterval < 0)
-		    continue;
-		int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-		if (timeIdle >= maxInactiveInterval) {
-		    session.expire();
-		    remove(session.getId());
-		}
-	    } catch (IOException e) {
-	    	log (e.toString());
-	    	e.printStackTrace();
-	    } catch (ClassNotFoundException e) {
-	    	log (e.toString());
-	    	e.printStackTrace();
-	    }
-	}
+        long timeNow = System.currentTimeMillis();
+        String[] keys = null;
+        
+        try {
+            keys = keys();
+        } catch (IOException e) {
+            log (e.toString());
+            e.printStackTrace();
+            return;
+        }
+        
+        for (int i = 0; i < keys.length; i++) {
+            try {
+                StandardSession session = (StandardSession) load(keys[i]);
+                if (!session.isValid())
+                    continue;
+                int maxInactiveInterval = session.getMaxInactiveInterval();
+                if (maxInactiveInterval < 0)
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle >= maxInactiveInterval) {
+                    session.expire();
+                    remove(session.getId());
+                }
+            } catch (IOException e) {
+                    log (e.toString());
+                    e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                    log (e.toString());
+                    e.printStackTrace();
+            }
+        }
 
     }
 
@@ -753,11 +753,11 @@ public final class FileStore
      */
     private void threadSleep() {
 
-	try {
-	    Thread.sleep(checkInterval * 1000L);
-	} catch (InterruptedException e) {
-	    ;
-	}
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
 
     }
 
@@ -768,13 +768,13 @@ public final class FileStore
      */
     private void threadStart() {
 
-	if (thread != null)
-	    return;
+        if (thread != null)
+            return;
 
-	threadDone = false;
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        threadDone = false;
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -785,18 +785,18 @@ public final class FileStore
      */
     private void threadStop() {
 
-	if (thread == null)
-	    return;
+        if (thread == null)
+            return;
 
-	threadDone = true;
-	thread.interrupt();
-	try {
-	    thread.join();
-	} catch (InterruptedException e) {
-	    ;
-	}
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
 
-	thread = null;
+        thread = null;
 
     }
 
@@ -809,11 +809,11 @@ public final class FileStore
      */
     public void run() {
 
-	// Loop until the termination semaphore is set
-	while (!threadDone) {
-	    threadSleep();
-	    processExpires();
-	}
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
+            threadSleep();
+            processExpires();
+        }
 
     }
 
@@ -826,48 +826,48 @@ public final class FileStore
      * with the web application to be found correctly.
      */
     private static final class CustomObjectInputStream
-	extends ObjectInputStream {
+        extends ObjectInputStream {
 
 
-	/**
-	 * The class loader we will use to resolve classes.
-	 */
-	private ClassLoader classLoader = null;
+        /**
+         * The class loader we will use to resolve classes.
+         */
+        private ClassLoader classLoader = null;
 
 
-	/**
-	 * Construct a new instance of CustomObjectInputStream
-	 *
-	 * @param stream The input stream we will read from
-	 * @param classLoader The class loader used to instantiate objects
-	 *
-	 * @exception IOException if an input/output error occurs
-	 */
-	public CustomObjectInputStream(InputStream stream,
-				       ClassLoader classLoader)
-	    throws IOException {
+        /**
+         * Construct a new instance of CustomObjectInputStream
+         *
+         * @param stream The input stream we will read from
+         * @param classLoader The class loader used to instantiate objects
+         *
+         * @exception IOException if an input/output error occurs
+         */
+        public CustomObjectInputStream(InputStream stream,
+                                       ClassLoader classLoader)
+            throws IOException {
 
-	    super(stream);
-	    this.classLoader = classLoader;
+            super(stream);
+            this.classLoader = classLoader;
 
-	}
+        }
 
 
-	/**
-	 * Load the local class equivalent of the specified stream class
-	 * description, by using the class loader assigned to this Context.
-	 *
-	 * @param classDesc Class description from the input stream
-	 *
-	 * @exception ClassNotFoundException if this class cannot be found
-	 * @exception IOException if an input/output error occurs
-	 */
-	protected Class resolveClass(ObjectStreamClass classDesc)
-	    throws ClassNotFoundException, IOException {
+        /**
+         * Load the local class equivalent of the specified stream class
+         * description, by using the class loader assigned to this Context.
+         *
+         * @param classDesc Class description from the input stream
+         *
+         * @exception ClassNotFoundException if this class cannot be found
+         * @exception IOException if an input/output error occurs
+         */
+        protected Class resolveClass(ObjectStreamClass classDesc)
+            throws ClassNotFoundException, IOException {
 
-	    return (classLoader.loadClass(classDesc.getName()));
+            return (classLoader.loadClass(classDesc.getName()));
 
-	}
+        }
 
 
     }

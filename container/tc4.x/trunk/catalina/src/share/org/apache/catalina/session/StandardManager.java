@@ -183,7 +183,7 @@ public class StandardManager
      */
     public int getCheckInterval() {
 
-	return (this.checkInterval);
+        return (this.checkInterval);
 
     }
 
@@ -195,11 +195,11 @@ public class StandardManager
      */
     public void setCheckInterval(int checkInterval) {
 
-	int oldCheckInterval = this.checkInterval;
-	this.checkInterval = checkInterval;
-	support.firePropertyChange("checkInterval",
-				   new Integer(oldCheckInterval),
-				   new Integer(this.checkInterval));
+        int oldCheckInterval = this.checkInterval;
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   new Integer(oldCheckInterval),
+                                   new Integer(this.checkInterval));
 
     }
 
@@ -213,19 +213,19 @@ public class StandardManager
      */
     public void setContainer(Container container) {
 
-	// De-register from the old Container (if any)
-	if ((this.container != null) && (this.container instanceof Context))
-	    ((Context) this.container).removePropertyChangeListener(this);
+        // De-register from the old Container (if any)
+        if ((this.container != null) && (this.container instanceof Context))
+            ((Context) this.container).removePropertyChangeListener(this);
 
-	// Default processing provided by our superclass
-	super.setContainer(container);
+        // Default processing provided by our superclass
+        super.setContainer(container);
 
-	// Register with the new Container (if any)
-	if ((this.container != null) && (this.container instanceof Context)) {
-	    setMaxInactiveInterval
-		( ((Context) this.container).getSessionTimeout()*60 );
-	    ((Context) this.container).addPropertyChangeListener(this);
-	}
+        // Register with the new Container (if any)
+        if ((this.container != null) && (this.container instanceof Context)) {
+            setMaxInactiveInterval
+                ( ((Context) this.container).getSessionTimeout()*60 );
+            ((Context) this.container).addPropertyChangeListener(this);
+        }
 
     }
 
@@ -237,7 +237,7 @@ public class StandardManager
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -248,7 +248,7 @@ public class StandardManager
      */
     public int getMaxActiveSessions() {
 
-	return (this.maxActiveSessions);
+        return (this.maxActiveSessions);
 
     }
 
@@ -261,11 +261,11 @@ public class StandardManager
      */
     public void setMaxActiveSessions(int max) {
 
-	int oldMaxActiveSessions = this.maxActiveSessions;
-	this.maxActiveSessions = max;
-	support.firePropertyChange("maxActiveSessions",
-				   new Integer(oldMaxActiveSessions),
-				   new Integer(this.maxActiveSessions));
+        int oldMaxActiveSessions = this.maxActiveSessions;
+        this.maxActiveSessions = max;
+        support.firePropertyChange("maxActiveSessions",
+                                   new Integer(oldMaxActiveSessions),
+                                   new Integer(this.maxActiveSessions));
 
     }
 
@@ -275,7 +275,7 @@ public class StandardManager
      */
     public String getPathname() {
 
-	return (this.pathname);
+        return (this.pathname);
 
     }
 
@@ -288,9 +288,9 @@ public class StandardManager
      */
     public void setPathname(String pathname) {
 
-	String oldPathname = this.pathname;
-	this.pathname = pathname;
-	support.firePropertyChange("pathname", oldPathname, this.pathname);
+        String oldPathname = this.pathname;
+        this.pathname = pathname;
+        support.firePropertyChange("pathname", oldPathname, this.pathname);
 
     }
 
@@ -310,12 +310,12 @@ public class StandardManager
      */
     public Session createSession() {
 
-	if ((maxActiveSessions >= 0) &&
-	  (sessions.size() >= maxActiveSessions))
-	    throw new IllegalStateException
-		(sm.getString("standardManager.createSession.ise"));
+        if ((maxActiveSessions >= 0) &&
+          (sessions.size() >= maxActiveSessions))
+            throw new IllegalStateException
+                (sm.getString("standardManager.createSession.ise"));
 
-	return (super.createSession());
+        return (super.createSession());
 
     }
 
@@ -334,90 +334,90 @@ public class StandardManager
         if (debug >= 1)
             log("Loading persisted sessions");
 
-	// Initialize our internal data structures
-	recycled.clear();
-	sessions.clear();
+        // Initialize our internal data structures
+        recycled.clear();
+        sessions.clear();
 
-	// Open an input stream to the specified pathname, if any
-	File file = file();
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("standardManager.loading", pathname));
-	FileInputStream fis = null;
-	ObjectInputStream ois = null;
-	Loader loader = null;
-	ClassLoader classLoader = null;
-	try {
-	    fis = new FileInputStream(file.getAbsolutePath());
-	    BufferedInputStream bis = new BufferedInputStream(fis);
-	    if (container != null)
-		loader = container.getLoader();
-	    if (loader != null)
-		classLoader = loader.getClassLoader();
-	    if (classLoader != null)
-		ois = new CustomObjectInputStream(bis, classLoader);
-	    else
-		ois = new ObjectInputStream(bis);
-	} catch (FileNotFoundException e) {
+        // Open an input stream to the specified pathname, if any
+        File file = file();
+        if (file == null)
+            return;
+        if (debug >= 1)
+            log(sm.getString("standardManager.loading", pathname));
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        Loader loader = null;
+        ClassLoader classLoader = null;
+        try {
+            fis = new FileInputStream(file.getAbsolutePath());
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            if (container != null)
+                loader = container.getLoader();
+            if (loader != null)
+                classLoader = loader.getClassLoader();
+            if (classLoader != null)
+                ois = new CustomObjectInputStream(bis, classLoader);
+            else
+                ois = new ObjectInputStream(bis);
+        } catch (FileNotFoundException e) {
             if (debug >= 1)
                 log("No persisted data file found");
-	    return;
-	} catch (IOException e) {
-	    if (ois != null) {
-		try {
-		    ois.close();
-		} catch (IOException f) {
-		    ;
-		}
-		ois = null;
-	    }
-	    throw e;
-	}
+            return;
+        } catch (IOException e) {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException f) {
+                    ;
+                }
+                ois = null;
+            }
+            throw e;
+        }
 
-	// Load the previously unloaded active sessions
-	synchronized (sessions) {
-	    try {
-		Integer count = (Integer) ois.readObject();
-		int n = count.intValue();
+        // Load the previously unloaded active sessions
+        synchronized (sessions) {
+            try {
+                Integer count = (Integer) ois.readObject();
+                int n = count.intValue();
                 if (debug >= 1)
                     log("Loading " + n + " persisted sessions");
-		for (int i = 0; i < n; i++) {
-		    StandardSession session = new StandardSession(this);
+                for (int i = 0; i < n; i++) {
+                    StandardSession session = new StandardSession(this);
                     session.readObjectData(ois);
-		    session.setManager(this);
-		    sessions.put(session.getId(), session);
-		    ((StandardSession) session).activate();
-		}
-	    } catch (ClassNotFoundException e) {
-		if (ois != null) {
-		    try {
-			ois.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    ois = null;
-		}
-		throw e;
-	    } catch (IOException e) {
-		if (ois != null) {
-		    try {
-			ois.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    ois = null;
-		}
-		throw e;
-	    }
-	}
+                    session.setManager(this);
+                    sessions.put(session.getId(), session);
+                    ((StandardSession) session).activate();
+                }
+            } catch (ClassNotFoundException e) {
+                if (ois != null) {
+                    try {
+                        ois.close();
+                    } catch (IOException f) {
+                        ;
+                    }
+                    ois = null;
+                }
+                throw e;
+            } catch (IOException e) {
+                if (ois != null) {
+                    try {
+                        ois.close();
+                    } catch (IOException f) {
+                        ;
+                    }
+                    ois = null;
+                }
+                throw e;
+            }
+        }
 
-	// Close the input stream
-	try {
-	    ois.close();
-	} catch (IOException f) {
-	    ;
-	}
+        // Close the input stream
+        try {
+            ois.close();
+        } catch (IOException f) {
+            ;
+        }
 
         // Delete the persistent storage file
         file.delete();
@@ -440,73 +440,73 @@ public class StandardManager
         if (debug >= 1)
             log("Unloading persisted sessions");
 
-	// Open an output stream to the specified pathname, if any
-	File file = file();
-	if (file == null)
-	    return;
-	if (debug >= 1)
-	    log(sm.getString("standardManager.unloading", pathname));
-	FileOutputStream fos = null;
-	ObjectOutputStream oos = null;
-	try {
-	    fos = new FileOutputStream(file.getAbsolutePath());
-	    oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-	} catch (IOException e) {
-	    if (oos != null) {
-		try {
-		    oos.close();
-		} catch (IOException f) {
-		    ;
-		}
-		oos = null;
-	    }
-	    throw e;
-	}
+        // Open an output stream to the specified pathname, if any
+        File file = file();
+        if (file == null)
+            return;
+        if (debug >= 1)
+            log(sm.getString("standardManager.unloading", pathname));
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(file.getAbsolutePath());
+            oos = new ObjectOutputStream(new BufferedOutputStream(fos));
+        } catch (IOException e) {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException f) {
+                    ;
+                }
+                oos = null;
+            }
+            throw e;
+        }
 
-	// Write the number of active sessions, followed by the details
+        // Write the number of active sessions, followed by the details
         ArrayList list = new ArrayList();
-	synchronized (sessions) {
+        synchronized (sessions) {
             if (debug >= 1)
                 log("Unloading " + sessions.size() + " sessions");
-	    try {
-		oos.writeObject(new Integer(sessions.size()));
-		Iterator elements = sessions.values().iterator();
-		while (elements.hasNext()) {
-		    StandardSession session =
+            try {
+                oos.writeObject(new Integer(sessions.size()));
+                Iterator elements = sessions.values().iterator();
+                while (elements.hasNext()) {
+                    StandardSession session =
                         (StandardSession) elements.next();
                     list.add(session);
-		    ((StandardSession) session).passivate();
+                    ((StandardSession) session).passivate();
                     session.writeObjectData(oos);
-		}
-	    } catch (IOException e) {
-		if (oos != null) {
-		    try {
-			oos.close();
-		    } catch (IOException f) {
-			;
-		    }
-		    oos = null;
-		}
-		throw e;
-	    }
-	}
+                }
+            } catch (IOException e) {
+                if (oos != null) {
+                    try {
+                        oos.close();
+                    } catch (IOException f) {
+                        ;
+                    }
+                    oos = null;
+                }
+                throw e;
+            }
+        }
 
-	// Flush and close the output stream
-	try {
-	    oos.flush();
-	    oos.close();
-	    oos = null;
-	} catch (IOException e) {
-	    if (oos != null) {
-		try {
-		    oos.close();
-		} catch (IOException f) {
-		    ;
-		}
-		oos = null;
-	    }
-	    throw e;
-	}
+        // Flush and close the output stream
+        try {
+            oos.flush();
+            oos.close();
+            oos = null;
+        } catch (IOException e) {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException f) {
+                    ;
+                }
+                oos = null;
+            }
+            throw e;
+        }
 
         // Expire all the sessions we just wrote
         if (debug >= 1)
@@ -537,7 +537,7 @@ public class StandardManager
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -549,7 +549,7 @@ public class StandardManager
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -569,12 +569,12 @@ public class StandardManager
         if (debug >= 1)
             log("Starting");
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardManager.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardManager.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Force initialization of the random number generator
         if (debug >= 1)
@@ -583,8 +583,8 @@ public class StandardManager
         if (debug >= 1)
             log("Force random number initialization completed");
 
-	// Start the background reaper thread
-	threadStart();
+        // Start the background reaper thread
+        threadStart();
 
     }
 
@@ -603,27 +603,27 @@ public class StandardManager
         if (debug >= 1)
             log("Stopping");
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardManager.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardManager.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop the background reaper thread
-	threadStop();
+        // Stop the background reaper thread
+        threadStop();
 
-	// Expire all active sessions
-	Session sessions[] = findSessions();
-	for (int i = 0; i < sessions.length; i++) {
-	    StandardSession session = (StandardSession) sessions[i];
-	    if (!session.isValid())
-		continue;
-	    session.expire();
-	}
+        // Expire all active sessions
+        Session sessions[] = findSessions();
+        for (int i = 0; i < sessions.length; i++) {
+            StandardSession session = (StandardSession) sessions[i];
+            if (!session.isValid())
+                continue;
+            session.expire();
+        }
 
-	// Require a new random number generator if we are restarted
-	this.random = null;
+        // Require a new random number generator if we are restarted
+        this.random = null;
 
     }
 
@@ -638,21 +638,21 @@ public class StandardManager
      */
     public void propertyChange(PropertyChangeEvent event) {
 
-	// Validate the source of this event
-	if (!(event.getSource() instanceof Context))
-	    return;
-	Context context = (Context) event.getSource();
+        // Validate the source of this event
+        if (!(event.getSource() instanceof Context))
+            return;
+        Context context = (Context) event.getSource();
 
-	// Process a relevant property change
-	if (event.getPropertyName().equals("sessionTimeout")) {
-	    try {
-		setMaxInactiveInterval
-		    ( ((Integer) event.getNewValue()).intValue()*60 );
-	    } catch (NumberFormatException e) {
-		log(sm.getString("standardManager.sessionTimeout",
-				 event.getNewValue().toString()));
-	    }
-	}
+        // Process a relevant property change
+        if (event.getPropertyName().equals("sessionTimeout")) {
+            try {
+                setMaxInactiveInterval
+                    ( ((Integer) event.getNewValue()).intValue()*60 );
+            } catch (NumberFormatException e) {
+                log(sm.getString("standardManager.sessionTimeout",
+                                 event.getNewValue().toString()));
+            }
+        }
 
     }
 
@@ -666,22 +666,22 @@ public class StandardManager
      */
     private File file() {
 
-	if (pathname == null)
-	    return (null);
-	File file = new File(pathname);
-	if (!file.isAbsolute()) {
-	    if (container instanceof Context) {
-		ServletContext servletContext =
-		    ((Context) container).getServletContext();
-		File tempdir = (File)
-		    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
-		if (tempdir != null)
-		    file = new File(tempdir, pathname);
-	    }
-	}
-	if (!file.isAbsolute())
-	    return (null);
-	return (file);
+        if (pathname == null)
+            return (null);
+        File file = new File(pathname);
+        if (!file.isAbsolute()) {
+            if (container instanceof Context) {
+                ServletContext servletContext =
+                    ((Context) container).getServletContext();
+                File tempdir = (File)
+                    servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+                if (tempdir != null)
+                    file = new File(tempdir, pathname);
+            }
+        }
+        if (!file.isAbsolute())
+            return (null);
+        return (file);
 
     }
 
@@ -691,21 +691,21 @@ public class StandardManager
      */
     private void processExpires() {
 
-	long timeNow = System.currentTimeMillis();
-	Session sessions[] = findSessions();
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
 
-	for (int i = 0; i < sessions.length; i++) {
-	    StandardSession session = (StandardSession) sessions[i];
-	    if (!session.isValid())
-		continue;
-	    int maxInactiveInterval = session.getMaxInactiveInterval();
-	    if (maxInactiveInterval < 0)
-		continue;
-	    int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-	    if (timeIdle >= maxInactiveInterval)
-		session.expire();
-	}
+        for (int i = 0; i < sessions.length; i++) {
+            StandardSession session = (StandardSession) sessions[i];
+            if (!session.isValid())
+                continue;
+            int maxInactiveInterval = session.getMaxInactiveInterval();
+            if (maxInactiveInterval < 0)
+                continue;
+            int timeIdle = // Truncate, do not round up
+                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+            if (timeIdle >= maxInactiveInterval)
+                session.expire();
+        }
     }
 
 
@@ -715,11 +715,11 @@ public class StandardManager
      */
     private void threadSleep() {
 
-	try {
-	    Thread.sleep(checkInterval * 1000L);
-	} catch (InterruptedException e) {
-	    ;
-	}
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
 
     }
 
@@ -730,14 +730,14 @@ public class StandardManager
      */
     private void threadStart() {
 
-	if (thread != null)
-	    return;
+        if (thread != null)
+            return;
 
-	threadDone = false;
-	threadName = "StandardManager[" + container.getName() + "]";
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        threadDone = false;
+        threadName = "StandardManager[" + container.getName() + "]";
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -748,18 +748,18 @@ public class StandardManager
      */
     private void threadStop() {
 
-	if (thread == null)
-	    return;
+        if (thread == null)
+            return;
 
-	threadDone = true;
-	thread.interrupt();
-	try {
-	    thread.join();
-	} catch (InterruptedException e) {
-	    ;
-	}
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
 
-	thread = null;
+        thread = null;
 
     }
 
@@ -772,11 +772,11 @@ public class StandardManager
      */
     public void run() {
 
-	// Loop until the termination semaphore is set
-	while (!threadDone) {
-	    threadSleep();
-	    processExpires();
-	}
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
+            threadSleep();
+            processExpires();
+        }
 
     }
 
@@ -790,48 +790,48 @@ public class StandardManager
      * with the web application to be found correctly.
      */
     private static final class CustomObjectInputStream
-	extends ObjectInputStream {
+        extends ObjectInputStream {
 
 
-	/**
-	 * The class loader we will use to resolve classes.
-	 */
-	private ClassLoader classLoader = null;
+        /**
+         * The class loader we will use to resolve classes.
+         */
+        private ClassLoader classLoader = null;
 
 
-	/**
-	 * Construct a new instance of CustomObjectInputStream
-	 *
-	 * @param stream The input stream we will read from
-	 * @param classLoader The class loader used to instantiate objects
-	 *
-	 * @exception IOException if an input/output error occurs
-	 */
-	public CustomObjectInputStream(InputStream stream,
-				       ClassLoader classLoader)
-	    throws IOException {
+        /**
+         * Construct a new instance of CustomObjectInputStream
+         *
+         * @param stream The input stream we will read from
+         * @param classLoader The class loader used to instantiate objects
+         *
+         * @exception IOException if an input/output error occurs
+         */
+        public CustomObjectInputStream(InputStream stream,
+                                       ClassLoader classLoader)
+            throws IOException {
 
-	    super(stream);
-	    this.classLoader = classLoader;
+            super(stream);
+            this.classLoader = classLoader;
 
-	}
+        }
 
 
-	/**
-	 * Load the local class equivalent of the specified stream class
-	 * description, by using the class loader assigned to this Context.
-	 *
-	 * @param classDesc Class description from the input stream
-	 *
-	 * @exception ClassNotFoundException if this class cannot be found
-	 * @exception IOException if an input/output error occurs
-	 */
-	protected Class resolveClass(ObjectStreamClass classDesc)
-	    throws ClassNotFoundException, IOException {
+        /**
+         * Load the local class equivalent of the specified stream class
+         * description, by using the class loader assigned to this Context.
+         *
+         * @param classDesc Class description from the input stream
+         *
+         * @exception ClassNotFoundException if this class cannot be found
+         * @exception IOException if an input/output error occurs
+         */
+        protected Class resolveClass(ObjectStreamClass classDesc)
+            throws ClassNotFoundException, IOException {
 
-	    return (classLoader.loadClass(classDesc.getName()));
+            return (classLoader.loadClass(classDesc.getName()));
 
-	}
+        }
 
 
     }

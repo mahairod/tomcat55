@@ -208,7 +208,7 @@ public final class PersistentManager
      */
     public int getCheckInterval() {
 
-	return (this.checkInterval);
+        return (this.checkInterval);
 
     }
 
@@ -220,11 +220,11 @@ public final class PersistentManager
      */
     public void setCheckInterval(int checkInterval) {
 
-	int oldCheckInterval = this.checkInterval;
-	this.checkInterval = checkInterval;
-	support.firePropertyChange("checkInterval",
-				   new Integer(oldCheckInterval),
-				   new Integer(this.checkInterval));
+        int oldCheckInterval = this.checkInterval;
+        this.checkInterval = checkInterval;
+        support.firePropertyChange("checkInterval",
+                                   new Integer(oldCheckInterval),
+                                   new Integer(this.checkInterval));
 
     }
 
@@ -238,19 +238,19 @@ public final class PersistentManager
      */
     public void setContainer(Container container) {
 
-	// De-register from the old Container (if any)
-	if ((this.container != null) && (this.container instanceof Context))
-	    ((Context) this.container).removePropertyChangeListener(this);
+        // De-register from the old Container (if any)
+        if ((this.container != null) && (this.container instanceof Context))
+            ((Context) this.container).removePropertyChangeListener(this);
 
-	// Default processing provided by our superclass
-	super.setContainer(container);
+        // Default processing provided by our superclass
+        super.setContainer(container);
 
-	// Register with the new Container (if any)
-	if ((this.container != null) && (this.container instanceof Context)) {
-	    setMaxInactiveInterval
-		( ((Context) this.container).getSessionTimeout()*60 );
-	    ((Context) this.container).addPropertyChangeListener(this);
-	}
+        // Register with the new Container (if any)
+        if ((this.container != null) && (this.container instanceof Context)) {
+            setMaxInactiveInterval
+                ( ((Context) this.container).getSessionTimeout()*60 );
+            ((Context) this.container).addPropertyChangeListener(this);
+        }
 
     }
 
@@ -263,9 +263,9 @@ public final class PersistentManager
      */
     public void setStore(Store store) {
     
-    	this.store = store;
-    	store.setManager(this);
-    	
+        this.store = store;
+        store.setManager(this);
+            
     }
     
     /**
@@ -273,9 +273,9 @@ public final class PersistentManager
      * storage for this Manager.
      */
     public Store getStore() {
-    	
-    	return (this.store);
-    	
+            
+        return (this.store);
+            
     }
 
     /**
@@ -285,7 +285,7 @@ public final class PersistentManager
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -296,7 +296,7 @@ public final class PersistentManager
      */
     public boolean getSaveOnRestart() {
 
-    	return saveOnRestart;
+        return saveOnRestart;
 
     }
     
@@ -312,15 +312,15 @@ public final class PersistentManager
      */
     public void setSaveOnRestart(boolean saveOnRestart) {
 
-	if (saveOnRestart == this.saveOnRestart)
-	    return;
+        if (saveOnRestart == this.saveOnRestart)
+            return;
 
-	boolean oldSaveOnRestart = this.saveOnRestart;
-    	this.saveOnRestart = saveOnRestart;
-	support.firePropertyChange("saveOnRestart",
-				   new Boolean(oldSaveOnRestart),
-				   new Boolean(this.saveOnRestart));
-				   
+        boolean oldSaveOnRestart = this.saveOnRestart;
+        this.saveOnRestart = saveOnRestart;
+        support.firePropertyChange("saveOnRestart",
+                                   new Boolean(oldSaveOnRestart),
+                                   new Boolean(this.saveOnRestart));
+                                   
     }
     
     
@@ -330,7 +330,7 @@ public final class PersistentManager
      */
     public int getMaxActiveSessions() {
 
-	return (this.maxActiveSessions);
+        return (this.maxActiveSessions);
 
     }
 
@@ -343,13 +343,13 @@ public final class PersistentManager
      */
     public void setMaxActiveSessions(int max) {
 
-	if (max == this.maxActiveSessions)
-	    return;
-	int oldMaxActiveSessions = this.maxActiveSessions;
-	this.maxActiveSessions = max;
-	support.firePropertyChange("maxActiveSessions",
-				   new Integer(oldMaxActiveSessions),
-				   new Integer(this.maxActiveSessions));
+        if (max == this.maxActiveSessions)
+            return;
+        int oldMaxActiveSessions = this.maxActiveSessions;
+        this.maxActiveSessions = max;
+        support.firePropertyChange("maxActiveSessions",
+                                   new Integer(oldMaxActiveSessions),
+                                   new Integer(this.maxActiveSessions));
 
     }
 
@@ -361,7 +361,7 @@ public final class PersistentManager
      */
     public int getMinIdleSwap() {
 
-    	return minIdleSwap;
+        return minIdleSwap;
 
     }
     
@@ -373,13 +373,13 @@ public final class PersistentManager
      */
     public void setMinIdleSwap(int min) {
 
-	if (this.minIdleSwap == min)
-	    return;
-	int oldMinIdleSwap = this.minIdleSwap;
-    	this.minIdleSwap = min;
-	support.firePropertyChange("minIdleSwap",
-				   new Integer(oldMinIdleSwap),
-				   new Integer(this.minIdleSwap));
+        if (this.minIdleSwap == min)
+            return;
+        int oldMinIdleSwap = this.minIdleSwap;
+            this.minIdleSwap = min;
+        support.firePropertyChange("minIdleSwap",
+                                   new Integer(oldMinIdleSwap),
+                                   new Integer(this.minIdleSwap));
 
     }
     
@@ -401,13 +401,13 @@ public final class PersistentManager
      */
     public void setMaxIdleSwap(int max) {
 
-	if (max == this.maxIdleSwap)
-	    return;
-	int oldMaxIdleSwap = this.maxIdleSwap;
-    	this.maxIdleSwap = max;
-	support.firePropertyChange("maxIdleSwap",
-				   new Integer(oldMaxIdleSwap),
-				   new Integer(this.maxIdleSwap));
+        if (max == this.maxIdleSwap)
+            return;
+        int oldMaxIdleSwap = this.maxIdleSwap;
+        this.maxIdleSwap = max;
+        support.firePropertyChange("maxIdleSwap",
+                                   new Integer(oldMaxIdleSwap),
+                                   new Integer(this.maxIdleSwap));
 
     }
 
@@ -417,7 +417,7 @@ public final class PersistentManager
      */
     public int getMaxIdleBackup() {
 
-    	return maxIdleBackup;
+        return maxIdleBackup;
 
     }
     
@@ -429,14 +429,14 @@ public final class PersistentManager
      */
     public void setMaxIdleBackup (int backup) {
 
-	if (backup == this.maxIdleBackup)
-	    return;
-	int oldBackup = this.maxIdleBackup;
-    	this.maxIdleBackup = backup;
-	support.firePropertyChange("maxIdleBackup",
-				   new Integer(oldBackup),
-				   new Integer(this.maxIdleBackup));
-				   
+        if (backup == this.maxIdleBackup)
+            return;
+        int oldBackup = this.maxIdleBackup;
+        this.maxIdleBackup = backup;
+        support.firePropertyChange("maxIdleBackup",
+                                   new Integer(oldBackup),
+                                   new Integer(this.maxIdleBackup));
+                                   
     }
     
     
@@ -456,19 +456,19 @@ public final class PersistentManager
      */
     public Session findSession(String id) throws IOException {
 
-	Session session = super.findSession(id);
-	if (session != null)
-	    return (session);
+        Session session = super.findSession(id);
+        if (session != null)
+            return (session);
 
-	// See if the Session is in the Store
-	if (maxActiveSessions >= 0 || maxIdleSwap >= 0 || 
-		maxIdleBackup >= 0)
-	    session = swapIn(id);
+        // See if the Session is in the Store
+        if (maxActiveSessions >= 0 || maxIdleSwap >= 0 || 
+                maxIdleBackup >= 0)
+            session = swapIn(id);
 
-	return (session);
+        return (session);
 
     }
-	
+        
     /**
      * Load any currently active sessions that were previously unloaded
      * to the appropriate persistence mechanism, if any.  If persistence is not
@@ -480,37 +480,38 @@ public final class PersistentManager
      */
     public void load() throws ClassNotFoundException, IOException {
 
-	// Initialize our internal data structures
-	recycled.clear();
-	sessions.clear();
+        // Initialize our internal data structures
+        recycled.clear();
+        sessions.clear();
 
-	if (store == null)
-	    return;
+        if (store == null)
+            return;
 
-	// If persistence is off, clear the Store and finish
-	if (!saveOnRestart && maxActiveSessions < 0 && 
-		maxIdleSwap < 0 && maxIdleBackup < 0) {
-	    try {
-		store.clear();
-	    } catch (IOException e) {
-	    	log("Exception clearing the Store: " + e);
-	    	e.printStackTrace();
-	    }
-	    
-	    return;
-	}
+        // If persistence is off, clear the Store and finish
+        if (!saveOnRestart && maxActiveSessions < 0 && 
+                maxIdleSwap < 0 && maxIdleBackup < 0) {
+            try {
+                store.clear();
+            } catch (IOException e) {
+                log("Exception clearing the Store: " + e);
+                e.printStackTrace();
+            }
+            
+            return;
 
-	String[] ids = store.keys();
-	int n = ids.length;
-	if (n == 0)
-	    return;
-	    
-	if (debug >= 1)
-	    log(sm.getString("persistentManager.loading", String.valueOf(n)));
+        }
 
-	for (int i = 0; i < n; i++)
-	    swapIn(ids[i]);
-	
+        String[] ids = store.keys();
+        int n = ids.length;
+        if (n == 0)
+            return;
+            
+        if (debug >= 1)
+            log(sm.getString("persistentManager.loading", String.valueOf(n)));
+
+        for (int i = 0; i < n; i++)
+            swapIn(ids[i]);
+        
     }
 
     /**
@@ -522,20 +523,20 @@ public final class PersistentManager
      */
     public void unload() throws IOException {
 
-	if (store == null || !saveOnRestart)
-	    return;
+        if (store == null || !saveOnRestart)
+            return;
 
-	Session sessions[] = findSessions();
-	int n = sessions.length;
-	if (n == 0)
-	    return;
-	    
-	if (debug >= 1)
-	    log(sm.getString("persistentManager.unloading", 
+        Session sessions[] = findSessions();
+        int n = sessions.length;
+        if (n == 0)
+            return;
+            
+        if (debug >= 1)
+            log(sm.getString("persistentManager.unloading", 
                              String.valueOf(n)));
 
-	for (int i = 0; i < n; i++)
-	    swapOut(sessions[i]);
+        for (int i = 0; i < n; i++)
+            swapOut(sessions[i]);
 
     }
 
@@ -550,7 +551,7 @@ public final class PersistentManager
      */
     public void addLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.addLifecycleListener(listener);
+        lifecycle.addLifecycleListener(listener);
 
     }
 
@@ -562,7 +563,7 @@ public final class PersistentManager
      */
     public void removeLifecycleListener(LifecycleListener listener) {
 
-	lifecycle.removeLifecycleListener(listener);
+        lifecycle.removeLifecycleListener(listener);
 
     }
 
@@ -582,12 +583,12 @@ public final class PersistentManager
         if (debug >= 1)
             log("Starting PersistentManager");
 
-	// Validate and update our current component state
-	if (started)
-	    throw new LifecycleException
-		(sm.getString("standardManager.alreadyStarted"));
-	lifecycle.fireLifecycleEvent(START_EVENT, null);
-	started = true;
+        // Validate and update our current component state
+        if (started)
+            throw new LifecycleException
+                (sm.getString("standardManager.alreadyStarted"));
+        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        started = true;
 
         // Force initialization of the random number generator
         if (debug >= 1)
@@ -596,13 +597,13 @@ public final class PersistentManager
         if (debug >= 1)
             log("Force random number initialization completed");
 
-	if (store == null)
-	    log("No Store configured");
-	else if (store instanceof Lifecycle)
-	    ((Lifecycle)store).start();
-	    
-	// Start the background reaper thread
-	threadStart();
+        if (store == null)
+            log("No Store configured");
+        else if (store instanceof Lifecycle)
+            ((Lifecycle)store).start();
+            
+        // Start the background reaper thread
+        threadStart();
 
     }
 
@@ -621,30 +622,30 @@ public final class PersistentManager
         if (debug >= 1)
             log("Stopping PersistentManager");
 
-	// Validate and update our current component state
-	if (!started)
-	    throw new LifecycleException
-		(sm.getString("standardManager.notStarted"));
-	lifecycle.fireLifecycleEvent(STOP_EVENT, null);
-	started = false;
+        // Validate and update our current component state
+        if (!started)
+            throw new LifecycleException
+                (sm.getString("standardManager.notStarted"));
+        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        started = false;
 
-	// Stop the background reaper thread
-	threadStop();
+        // Stop the background reaper thread
+        threadStop();
 
-	// Expire all active sessions
-	Session sessions[] = findSessions();
-	for (int i = 0; i < sessions.length; i++) {
-	    StandardSession session = (StandardSession) sessions[i];
-	    if (!session.isValid())
-		continue;
-	    session.expire();
-	}
+        // Expire all active sessions
+        Session sessions[] = findSessions();
+        for (int i = 0; i < sessions.length; i++) {
+            StandardSession session = (StandardSession) sessions[i];
+            if (!session.isValid())
+                continue;
+            session.expire();
+        }
 
-	// Require a new random number generator if we are restarted
-	this.random = null;
-	
-	if (store instanceof Lifecycle)
-	    ((Lifecycle)store).stop();
+        // Require a new random number generator if we are restarted
+        this.random = null;
+        
+        if (store instanceof Lifecycle)
+            ((Lifecycle)store).stop();
 
     }
 
@@ -659,21 +660,21 @@ public final class PersistentManager
      */
     public void propertyChange(PropertyChangeEvent event) {
 
-	// Validate the source of this event
-	if (!(event.getSource() instanceof Context))
-	    return;
-	Context context = (Context) event.getSource();
+        // Validate the source of this event
+        if (!(event.getSource() instanceof Context))
+            return;
+        Context context = (Context) event.getSource();
 
-	// Process a relevant property change
-	if (event.getPropertyName().equals("sessionTimeout")) {
-	    try {
-		setMaxInactiveInterval
-		    ( ((Integer) event.getNewValue()).intValue()*60 );
-	    } catch (NumberFormatException e) {
-		log(sm.getString("standardManager.sessionTimeout",
-				 event.getNewValue().toString()));
-	    }
-	}
+        // Process a relevant property change
+        if (event.getPropertyName().equals("sessionTimeout")) {
+            try {
+                setMaxInactiveInterval
+                    ( ((Integer) event.getNewValue()).intValue()*60 );
+            } catch (NumberFormatException e) {
+                log(sm.getString("standardManager.sessionTimeout",
+                                 event.getNewValue().toString()));
+            }
+        }
 
     }
 
@@ -686,19 +687,20 @@ public final class PersistentManager
      */
     private void processExpires() {
 
-	if (!started)
-	    return;
-	    
-	long timeNow = System.currentTimeMillis();
-	Session sessions[] = findSessions();
+        if (!started)
+            return;
+            
+        long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
 
-	for (int i = 0; i < sessions.length; i++) {
-	    StandardSession session = (StandardSession) sessions[i];
-	    if (!session.isValid())
-		continue;
-	    if (isSessionStale(session, timeNow))
-		session.expire();
-	}
+        for (int i = 0; i < sessions.length; i++) {
+            StandardSession session = (StandardSession) sessions[i];
+            if (!session.isValid())
+                continue;
+            if (isSessionStale(session, timeNow))
+                session.expire();
+        }
+
     }
 
 
@@ -707,32 +709,32 @@ public final class PersistentManager
      */
     private void processMaxIdleSwaps() {
 
-	if (!started || maxIdleSwap < 0)
-	    return;
+        if (!started || maxIdleSwap < 0)
+            return;
 
-	Session sessions[] = findSessions();
-	long timeNow = System.currentTimeMillis();
+        Session sessions[] = findSessions();
+        long timeNow = System.currentTimeMillis();
 
-	// Swap out all sessions idle longer than maxIdleSwap
-	// FIXME: What's preventing us from mangling a session during
-	// a request?
-	if (maxIdleSwap >= 0) {
-	    for (int i = 0; i < sessions.length; i++) {
-	    	StandardSession session = (StandardSession) sessions[i];
-		if (!session.isValid())
-		    continue;
-		int timeIdle = // Truncate, do not round up
-		    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-		if (timeIdle > maxIdleSwap && timeIdle > minIdleSwap) {
-		    if (debug > 1)
-			log(sm.getString
+        // Swap out all sessions idle longer than maxIdleSwap
+        // FIXME: What's preventing us from mangling a session during
+        // a request?
+        if (maxIdleSwap >= 0) {
+            for (int i = 0; i < sessions.length; i++) {
+                StandardSession session = (StandardSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle > maxIdleSwap && timeIdle > minIdleSwap) {
+                    if (debug > 1)
+                        log(sm.getString
                             ("persistentManager.swapMaxIdle", 
                              session.getId(), new Integer(timeIdle)));
-		    swapOut(session);
-		}
-	    }
-	}
-	
+                    swapOut(session);
+                }
+            }
+        }
+        
     }
 
 
@@ -741,35 +743,35 @@ public final class PersistentManager
      */
     private void processMaxActiveSwaps() {
 
-	if (!started || maxActiveSessions < 0)
-	    return;
+        if (!started || maxActiveSessions < 0)
+            return;
 
-	Session sessions[] = findSessions();
-	
-	// FIXME: Smarter algorithm (LRU)
-	if (maxActiveSessions >= sessions.length)
-	    return;
+        Session sessions[] = findSessions();
+        
+        // FIXME: Smarter algorithm (LRU)
+        if (maxActiveSessions >= sessions.length)
+            return;
 
-	if(debug > 0)
-	    log(sm.getString
+        if(debug > 0)
+            log(sm.getString
                 ("persistentManager.tooManyActive", 
                  new Integer(sessions.length)));
 
-	int toswap = sessions.length - maxActiveSessions;
-	long timeNow = System.currentTimeMillis();
-	
-	for (int i = 0; i < sessions.length && toswap > 0; i++) {
-	    int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - sessions[i].getLastAccessedTime()) / 1000L);
-	    if (timeIdle > minIdleSwap) {
-		if(debug > 1)
-		    log(sm.getString
+        int toswap = sessions.length - maxActiveSessions;
+        long timeNow = System.currentTimeMillis();
+        
+        for (int i = 0; i < sessions.length && toswap > 0; i++) {
+            int timeIdle = // Truncate, do not round up
+                (int) ((timeNow - sessions[i].getLastAccessedTime()) / 1000L);
+            if (timeIdle > minIdleSwap) {
+                if(debug > 1)
+                    log(sm.getString
                         ("persistentManager.swapTooManyActive", 
                          sessions[i].getId(), new Integer(timeIdle)));
-		swapOut(sessions[i]);
-		toswap--;
-	    }
-	}
+                swapOut(sessions[i]);
+                toswap--;
+            }
+        }
 
     }
 
@@ -779,35 +781,35 @@ public final class PersistentManager
      */
     private void processMaxIdleBackups() {
 
-	if (!started || maxIdleBackup < 0)
-	    return;
-	
-	Session sessions[] = findSessions();
-	long timeNow = System.currentTimeMillis();
+        if (!started || maxIdleBackup < 0)
+            return;
+        
+        Session sessions[] = findSessions();
+        long timeNow = System.currentTimeMillis();
 
-	// Back up all sessions idle longer than maxIdleBackup
-	if (maxIdleBackup >= 0) {
-	    for (int i = 0; i < sessions.length; i++) {
-		StandardSession session = (StandardSession) sessions[i];
-		if (!session.isValid())
-		    continue;
-		int timeIdle = // Truncate, do not round up
-		    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-		if (timeIdle > maxIdleBackup) {
-		    if (debug > 1)
-			log(sm.getString
-			    ("persistentManager.backupMaxIdle",
-			    session.getId(), new Integer(timeIdle)));
-	
-		    try {
-			backup(session);
-		    } catch (IOException e) {
-			log(sm.getString
-			    ("persistentManager.backupException", session.getId(), e));
-		    }
-		}
-	    }
-	}
+        // Back up all sessions idle longer than maxIdleBackup
+        if (maxIdleBackup >= 0) {
+            for (int i = 0; i < sessions.length; i++) {
+                StandardSession session = (StandardSession) sessions[i];
+                if (!session.isValid())
+                    continue;
+                int timeIdle = // Truncate, do not round up
+                    (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+                if (timeIdle > maxIdleBackup) {
+                    if (debug > 1)
+                        log(sm.getString
+                            ("persistentManager.backupMaxIdle",
+                            session.getId(), new Integer(timeIdle)));
+        
+                    try {
+                        backup(session);
+                    } catch (IOException e) {
+                        log(sm.getString
+                            ("persistentManager.backupException", session.getId(), e));
+                    }
+                }
+            }
+        }
 
     }
 
@@ -819,26 +821,26 @@ public final class PersistentManager
      * @param session The Session to write out.
      */
     private void swapOut(Session session) {
-	
-	if (!session.isValid() 
+        
+        if (!session.isValid() 
             || isSessionStale(session, System.currentTimeMillis()))
-	    return;
+            return;
 
-	((StandardSession)session).passivate();
+        ((StandardSession)session).passivate();
 
-	try {
-	    store.save(session);
-	} catch (IOException e) {
-	    log(sm.getString
+        try {
+            store.save(session);
+        } catch (IOException e) {
+            log(sm.getString
                 ("persistentManager.serializeError", session.getId(), e));
-	    throw new IllegalStateException 
+            throw new IllegalStateException 
                 (sm.getString("persistentManager.serializeError", 
                               session.getId(), e));
-	}
+        }
 
-	remove((StandardSession)session);
-	((StandardSession)session).recycle();
-	recycle((StandardSession)session);
+        remove((StandardSession)session);
+        ((StandardSession)session).recycle();
+        recycle((StandardSession)session);
 
     }
 
@@ -853,26 +855,26 @@ public final class PersistentManager
     private Session swapIn(String id) throws IOException {
     
         StandardSession session = null;
-	try {
-	    session = (StandardSession)store.load(id);
-	} catch (ClassNotFoundException e) {
-	    log(sm.getString("persistentManager.deserializeError", id, e));
-	    throw new IllegalStateException
+        try {
+            session = (StandardSession)store.load(id);
+        } catch (ClassNotFoundException e) {
+            log(sm.getString("persistentManager.deserializeError", id, e));
+            throw new IllegalStateException
                 (sm.getString("persistentManager.deserializeError", id, e));
-	}
+        }
 
-	if (session == null)
-	    return (null);
+        if (session == null)
+            return (null);
 
-	if (!session.isValid() 
+        if (!session.isValid() 
             || isSessionStale(session, System.currentTimeMillis())) {
-	    log("session swapped in is invalid or expired");
-	    session.expire();
-	    store.remove(id);
-	    return (null);
-	}
+            log("session swapped in is invalid or expired");
+            session.expire();
+            store.remove(id);
+            return (null);
+        }
 
-	if(debug > 2)
+        if(debug > 2)
             log(sm.getString("persistentManager.swapIn", id));
 
         session.setManager(this);
@@ -890,9 +892,9 @@ public final class PersistentManager
      */
     private void backup(Session session) throws IOException {
 
-	if (!session.isValid()
-		|| isSessionStale(session, System.currentTimeMillis()))
-	    return;
+        if (!session.isValid()
+                || isSessionStale(session, System.currentTimeMillis()))
+            return;
 
     }
 
@@ -903,7 +905,7 @@ public final class PersistentManager
      */
 //    private void recover() throws IOException {
     
-    	// FIXME: Do something
+            // FIXME: Do something
     
 //    }
 
@@ -916,15 +918,15 @@ public final class PersistentManager
      */
     private boolean isSessionStale(Session session, long timeNow) {
 
-	int maxInactiveInterval = session.getMaxInactiveInterval();
-	if (maxInactiveInterval >= 0) {
-	    int timeIdle = // Truncate, do not round up
-		(int) ((timeNow - session.getLastAccessedTime()) / 1000L);
-	    if (timeIdle >= maxInactiveInterval)
-	    	return true;
-	}
-	
-	return false;
+        int maxInactiveInterval = session.getMaxInactiveInterval();
+        if (maxInactiveInterval >= 0) {
+            int timeIdle = // Truncate, do not round up
+                (int) ((timeNow - session.getLastAccessedTime()) / 1000L);
+            if (timeIdle >= maxInactiveInterval)
+                return true;
+        }
+        
+        return false;
 
     }
     
@@ -935,11 +937,11 @@ public final class PersistentManager
      */
     private void threadSleep() {
 
-	try {
-	    Thread.sleep(checkInterval * 1000L);
-	} catch (InterruptedException e) {
-	    ;
-	}
+        try {
+            Thread.sleep(checkInterval * 1000L);
+        } catch (InterruptedException e) {
+            ;
+        }
 
     }
 
@@ -950,14 +952,14 @@ public final class PersistentManager
      */
     private void threadStart() {
 
-	if (thread != null)
-	    return;
+        if (thread != null)
+            return;
 
-	threadDone = false;
-	threadName = "PersistentManager[" + container.getName() + "]";
-	thread = new Thread(this, threadName);
-	thread.setDaemon(true);
-	thread.start();
+        threadDone = false;
+        threadName = "PersistentManager[" + container.getName() + "]";
+        thread = new Thread(this, threadName);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -968,18 +970,18 @@ public final class PersistentManager
      */
     private void threadStop() {
 
-	if (thread == null)
-	    return;
+        if (thread == null)
+            return;
 
-	threadDone = true;
-	thread.interrupt();
-	try {
-	    thread.join();
-	} catch (InterruptedException e) {
-	    ;
-	}
+        threadDone = true;
+        thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            ;
+        }
 
-	thread = null;
+        thread = null;
 
     }
 
@@ -992,14 +994,14 @@ public final class PersistentManager
      */
     public void run() {
 
-	// Loop until the termination semaphore is set
-	while (!threadDone) {
-	    threadSleep();
-	    processExpires();
-	    processMaxIdleSwaps();
-	    processMaxActiveSwaps();
-	    processMaxIdleBackups();
-	}
+        // Loop until the termination semaphore is set
+        while (!threadDone) {
+            threadSleep();
+            processExpires();
+            processMaxIdleSwaps();
+            processMaxActiveSwaps();
+            processMaxIdleBackups();
+        }
     }
 
 

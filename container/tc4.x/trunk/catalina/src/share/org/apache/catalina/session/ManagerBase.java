@@ -211,7 +211,7 @@ public abstract class ManagerBase implements Manager {
      */
     public String getAlgorithm() {
 
-	return (this.algorithm);
+        return (this.algorithm);
 
     }
 
@@ -223,9 +223,9 @@ public abstract class ManagerBase implements Manager {
      */
     public void setAlgorithm(String algorithm) {
 
-	String oldAlgorithm = this.algorithm;
-	this.algorithm = algorithm;
-	support.firePropertyChange("algorithm", oldAlgorithm, this.algorithm);
+        String oldAlgorithm = this.algorithm;
+        this.algorithm = algorithm;
+        support.firePropertyChange("algorithm", oldAlgorithm, this.algorithm);
 
     }
 
@@ -235,7 +235,7 @@ public abstract class ManagerBase implements Manager {
      */
     public Container getContainer() {
 
-	return (this.container);
+        return (this.container);
 
     }
 
@@ -247,9 +247,9 @@ public abstract class ManagerBase implements Manager {
      */
     public void setContainer(Container container) {
 
-	Container oldContainer = this.container;
-	this.container = container;
-	support.firePropertyChange("container", oldContainer, this.container);
+        Container oldContainer = this.container;
+        this.container = container;
+        support.firePropertyChange("container", oldContainer, this.container);
 
     }
 
@@ -259,7 +259,7 @@ public abstract class ManagerBase implements Manager {
      */
     public int getDebug() {
 
-	return (this.debug);
+        return (this.debug);
 
     }
 
@@ -271,7 +271,7 @@ public abstract class ManagerBase implements Manager {
      */
     public void setDebug(int debug) {
 
-	this.debug = debug;
+        this.debug = debug;
 
     }
 
@@ -283,26 +283,26 @@ public abstract class ManagerBase implements Manager {
      */
     public synchronized MessageDigest getDigest() {
 
-	if (this.digest == null) {
-	    if (debug >= 1)
-		log(sm.getString("managerBase.getting", algorithm));
-	    try {
-		this.digest = MessageDigest.getInstance(algorithm);
-	    } catch (NoSuchAlgorithmException e) {
-		log(sm.getString("managerBase.digest", algorithm), e);
-		try {
-		    this.digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
-		} catch (NoSuchAlgorithmException f) {
-		    log(sm.getString("managerBase.digest",
-				     DEFAULT_ALGORITHM), e);
-		    this.digest = null;
-		}
-	    }
-	    if (debug >= 1)
-		log(sm.getString("managerBase.gotten"));
-	}
+        if (this.digest == null) {
+            if (debug >= 1)
+                log(sm.getString("managerBase.getting", algorithm));
+            try {
+                this.digest = MessageDigest.getInstance(algorithm);
+            } catch (NoSuchAlgorithmException e) {
+                log(sm.getString("managerBase.digest", algorithm), e);
+                try {
+                    this.digest = MessageDigest.getInstance(DEFAULT_ALGORITHM);
+                } catch (NoSuchAlgorithmException f) {
+                    log(sm.getString("managerBase.digest",
+                                     DEFAULT_ALGORITHM), e);
+                    this.digest = null;
+                }
+            }
+            if (debug >= 1)
+                log(sm.getString("managerBase.gotten"));
+        }
 
-	return (this.digest);
+        return (this.digest);
 
     }
 
@@ -313,7 +313,7 @@ public abstract class ManagerBase implements Manager {
      */
     public boolean getDistributable() {
 
-	return (this.distributable);
+        return (this.distributable);
 
     }
 
@@ -327,11 +327,11 @@ public abstract class ManagerBase implements Manager {
      */
     public void setDistributable(boolean distributable) {
 
-	boolean oldDistributable = this.distributable;
-	this.distributable = distributable;
-	support.firePropertyChange("distributable",
-				   new Boolean(oldDistributable),
-				   new Boolean(this.distributable));
+        boolean oldDistributable = this.distributable;
+        this.distributable = distributable;
+        support.firePropertyChange("distributable",
+                                   new Boolean(oldDistributable),
+                                   new Boolean(this.distributable));
 
     }
 
@@ -342,11 +342,11 @@ public abstract class ManagerBase implements Manager {
      */
     public String getEntropy() {
 
-	// Calculate a semi-useful value if this has not been set
-	if (this.entropy == null)
-	    setEntropy(this.toString());
+        // Calculate a semi-useful value if this has not been set
+        if (this.entropy == null)
+            setEntropy(this.toString());
 
-	return (this.entropy);
+        return (this.entropy);
 
     }
 
@@ -358,9 +358,9 @@ public abstract class ManagerBase implements Manager {
      */
     public void setEntropy(String entropy) {
 
-	String oldEntropy = entropy;
-	this.entropy = entropy;
-	support.firePropertyChange("entropy", oldEntropy, this.entropy);
+        String oldEntropy = entropy;
+        this.entropy = entropy;
+        support.firePropertyChange("entropy", oldEntropy, this.entropy);
 
     }
 
@@ -372,7 +372,7 @@ public abstract class ManagerBase implements Manager {
      */
     public String getInfo() {
 
-	return (this.info);
+        return (this.info);
 
     }
 
@@ -383,7 +383,7 @@ public abstract class ManagerBase implements Manager {
      */
     public int getMaxInactiveInterval() {
 
-	return (this.maxInactiveInterval);
+        return (this.maxInactiveInterval);
 
     }
 
@@ -396,11 +396,11 @@ public abstract class ManagerBase implements Manager {
      */
     public void setMaxInactiveInterval(int interval) {
 
-	int oldMaxInactiveInterval = this.maxInactiveInterval;
-	this.maxInactiveInterval = interval;
-	support.firePropertyChange("maxInactiveInterval",
-				   new Integer(oldMaxInactiveInterval),
-				   new Integer(this.maxInactiveInterval));
+        int oldMaxInactiveInterval = this.maxInactiveInterval;
+        this.maxInactiveInterval = interval;
+        support.firePropertyChange("maxInactiveInterval",
+                                   new Integer(oldMaxInactiveInterval),
+                                   new Integer(this.maxInactiveInterval));
 
     }
 
@@ -412,7 +412,7 @@ public abstract class ManagerBase implements Manager {
      */
     public synchronized Random getRandom() {
 
-	if (this.random == null) {
+        if (this.random == null) {
             synchronized (this) {
                 if (this.random == null) {
                     // Calculate the new random number generator seed
@@ -421,7 +421,7 @@ public abstract class ManagerBase implements Manager {
                     char entropy[] = getEntropy().toCharArray();
                     for (int i = 0; i < entropy.length; i++) {
                         long update = ((byte) entropy[i]) << ((i % 8) * 8);
-                        seed ^= update;		    
+                        seed ^= update;                    
                     }
                     try {
                         // Construct and seed a new random number generator
@@ -438,9 +438,9 @@ public abstract class ManagerBase implements Manager {
                     log(sm.getString("managerBase.complete", randomClass));
                 }
             }
-	}
+        }
 
-	return (this.random);
+        return (this.random);
 
     }
 
@@ -450,7 +450,7 @@ public abstract class ManagerBase implements Manager {
      */
     public String getRandomClass() {
 
-	return (this.randomClass);
+        return (this.randomClass);
 
     }
 
@@ -462,10 +462,10 @@ public abstract class ManagerBase implements Manager {
      */
     public void setRandomClass(String randomClass) {
 
-	String oldRandomClass = this.randomClass;
-	this.randomClass = randomClass;
-	support.firePropertyChange("randomClass", oldRandomClass,
-				   this.randomClass);
+        String oldRandomClass = this.randomClass;
+        this.randomClass = randomClass;
+        support.firePropertyChange("randomClass", oldRandomClass,
+                                   this.randomClass);
 
     }
 
@@ -480,9 +480,9 @@ public abstract class ManagerBase implements Manager {
      */
     public void add(Session session) {
 
-	synchronized (sessions) {
-	    sessions.put(session.getId(), session);
-	}
+        synchronized (sessions) {
+            sessions.put(session.getId(), session);
+        }
 
     }
 
@@ -494,7 +494,7 @@ public abstract class ManagerBase implements Manager {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
 
-	support.addPropertyChangeListener(listener);
+        support.addPropertyChangeListener(listener);
 
     }
 
@@ -511,35 +511,35 @@ public abstract class ManagerBase implements Manager {
      */
     public Session createSession() {
 
-	// Recycle or create a Session instance
-	Session session = null;
-	synchronized (recycled) {
-	    int size = recycled.size();
-	    if (size > 0) {
-		session = (Session) recycled.get(size - 1);
-		recycled.remove(size - 1);
-	    }
-	}
-	if (session != null)
-	    session.setManager(this);
-	else
-	    session = new StandardSession(this);
+        // Recycle or create a Session instance
+        Session session = null;
+        synchronized (recycled) {
+            int size = recycled.size();
+            if (size > 0) {
+                session = (Session) recycled.get(size - 1);
+                recycled.remove(size - 1);
+            }
+        }
+        if (session != null)
+            session.setManager(this);
+        else
+            session = new StandardSession(this);
 
-	// Initialize the properties of the new session and return it
-	session.setNew(true);
-	session.setValid(true);
-	session.setCreationTime(System.currentTimeMillis());
-	session.setMaxInactiveInterval(this.maxInactiveInterval);
-	String sessionId = generateSessionId();
-	/*
-	synchronized (sessions) {
-	    while (sessions.get(sessionId) != null)	// Guarantee uniqueness
-		sessionId = generateSessionId();
-	}
-	*/
-	session.setId(sessionId);
+        // Initialize the properties of the new session and return it
+        session.setNew(true);
+        session.setValid(true);
+        session.setCreationTime(System.currentTimeMillis());
+        session.setMaxInactiveInterval(this.maxInactiveInterval);
+        String sessionId = generateSessionId();
+        /*
+        synchronized (sessions) {
+            while (sessions.get(sessionId) != null)        // Guarantee uniqueness
+                sessionId = generateSessionId();
+        }
+        */
+        session.setId(sessionId);
 
-	return (session);
+        return (session);
 
     }
 
@@ -557,12 +557,12 @@ public abstract class ManagerBase implements Manager {
      */
     public Session findSession(String id) throws IOException {
 
-	if (id == null)
-	    return (null);
-	synchronized (sessions) {
-	    Session session = (Session) sessions.get(id);
-	    return (session);
-	}
+        if (id == null)
+            return (null);
+        synchronized (sessions) {
+            Session session = (Session) sessions.get(id);
+            return (session);
+        }
 
     }
 
@@ -573,12 +573,12 @@ public abstract class ManagerBase implements Manager {
      */
     public Session[] findSessions() {
 
-	Session results[] = null;
-	synchronized (sessions) {
-	    results = new Session[sessions.size()];
-	    results = (Session[]) sessions.values().toArray(results);
-	}
-	return (results);
+        Session results[] = null;
+        synchronized (sessions) {
+            results = new Session[sessions.size()];
+            results = (Session[]) sessions.values().toArray(results);
+        }
+        return (results);
 
     }
 
@@ -590,9 +590,9 @@ public abstract class ManagerBase implements Manager {
      */
     public void remove(Session session) {
 
-	synchronized (sessions) {
-	    sessions.remove(session.getId());
-	}
+        synchronized (sessions) {
+            sessions.remove(session.getId());
+        }
 
     }
 
@@ -604,7 +604,7 @@ public abstract class ManagerBase implements Manager {
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
 
-	support.removePropertyChangeListener(listener);
+        support.removePropertyChangeListener(listener);
 
     }
 
@@ -617,27 +617,27 @@ public abstract class ManagerBase implements Manager {
      */
     protected synchronized String generateSessionId() {
 
-	// Generate a byte array containing a session identifier
-	Random random = getRandom();
-	byte bytes[] = new byte[SESSION_ID_BYTES];
-	getRandom().nextBytes(bytes);
-	bytes = getDigest().digest(bytes);
+        // Generate a byte array containing a session identifier
+        Random random = getRandom();
+        byte bytes[] = new byte[SESSION_ID_BYTES];
+        getRandom().nextBytes(bytes);
+        bytes = getDigest().digest(bytes);
 
-	// Render the result as a String of hexadecimal digits
-	StringBuffer result = new StringBuffer();
-	for (int i = 0; i < bytes.length; i++) {
-	    byte b1 = (byte) ((bytes[i] & 0xf0) >> 4);
-	    byte b2 = (byte) (bytes[i] & 0x0f);
-	    if (b1 < 10)
-		result.append((char) ('0' + b1));
-	    else
-		result.append((char) ('A' + (b1 - 10)));
-	    if (b2 < 10)
-		result.append((char) ('0' + b2));
-	    else
-		result.append((char) ('0' + (b2 - 10)));
-	}
-	return (result.toString());
+        // Render the result as a String of hexadecimal digits
+        StringBuffer result = new StringBuffer();
+        for (int i = 0; i < bytes.length; i++) {
+            byte b1 = (byte) ((bytes[i] & 0xf0) >> 4);
+            byte b2 = (byte) (bytes[i] & 0x0f);
+            if (b1 < 10)
+                result.append((char) ('0' + b1));
+            else
+                result.append((char) ('A' + (b1 - 10)));
+            if (b2 < 10)
+                result.append((char) ('0' + b2));
+            else
+                result.append((char) ('0' + (b2 - 10)));
+        }
+        return (result.toString());
 
     }
 
@@ -652,19 +652,19 @@ public abstract class ManagerBase implements Manager {
      */
     void log(String message) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("Manager[" + container.getName() + "]: "
-		       + message);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("Manager[" + containerName
-			       + "]: " + message);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("Manager[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("Manager[" + containerName
+                               + "]: " + message);
+        }
 
     }
 
@@ -677,20 +677,20 @@ public abstract class ManagerBase implements Manager {
      */
     void log(String message, Throwable throwable) {
 
-	Logger logger = null;
-	if (container != null)
-	    logger = container.getLogger();
-	if (logger != null)
-	    logger.log("Manager[" + container.getName() + "] "
-		       + message, throwable);
-	else {
-	    String containerName = null;
-	    if (container != null)
-		containerName = container.getName();
-	    System.out.println("Manager[" + containerName
-			       + "]: " + message);
-	    throwable.printStackTrace(System.out);
-	}
+        Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("Manager[" + container.getName() + "] "
+                       + message, throwable);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("Manager[" + containerName
+                               + "]: " + message);
+            throwable.printStackTrace(System.out);
+        }
 
     }
 
@@ -702,9 +702,9 @@ public abstract class ManagerBase implements Manager {
      */
     void recycle(Session session) {
 
-	synchronized (recycled) {
-	    recycled.add(session);
-	}
+        synchronized (recycled) {
+            recycled.add(session);
+        }
 
     }
 
