@@ -82,5 +82,6 @@
          IP address of the remote client.
     -->
 
-    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8081 -->
-    <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
+    <!-- Define a non-SSL Coyote HTTP/1.1 Connector on the port specified
+         during installation -->
+    <Connector 
