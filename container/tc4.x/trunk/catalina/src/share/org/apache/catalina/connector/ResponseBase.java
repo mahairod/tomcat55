@@ -464,7 +464,13 @@ public abstract class ResponseBase
             } catch (IOException e) {
                 ;
             }
-            return (new PrintWriter(output));
+            try {
+                if (this.stream == null)
+                    this.stream = createOutputStream();
+            } catch (IOException e) {
+                return null;
+            }
+            return (new PrintWriter(this.stream));
 
         } else {
 
