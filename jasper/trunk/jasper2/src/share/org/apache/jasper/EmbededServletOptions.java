@@ -87,12 +87,12 @@ public final class EmbededServletOptions implements Options {
     /**
      * Is Jasper being used in development mode?
      */
-    public boolean development = true;
+    private boolean development = true;
 
     /**
      * Do you want to keep the generated Java files around?
      */
-    public boolean keepGenerated = true;
+    private boolean keepGenerated = true;
 
     /**
      * Do you want support for "large" files? What this essentially
@@ -100,64 +100,64 @@ public final class EmbededServletOptions implements Options {
      * file is stored separately as opposed to those constant string
      * data being used literally in the generated servlet. 
      */
-    public boolean largeFile = false;
+    private boolean largeFile = false;
 
     /**
      * Determines whether tag handler pooling is enabled.
      */
-    public boolean poolingEnabled = true;
+    private boolean poolingEnabled = true;
     
     /**
      * Do you want support for "mapped" files? This will generate
      * servlet that has a print statement per line of the JSP file.
      * This seems like a really nice feature to have for debugging.
      */
-    public boolean mappedFile = false;
+    private boolean mappedFile = false;
     
     /**
      * Do you want stack traces and such displayed in the client's
      * browser? If this is false, such messages go to the standard
      * error or a log file if the standard error is redirected. 
      */
-    public boolean sendErrorToClient = false;
+    private boolean sendErrorToClient = false;
 
     /**
      * Do we want to include debugging information in the class file?
      */
-    public boolean classDebugInfo = true;
+    private boolean classDebugInfo = true;
 
     /**
      * Background compile thread check interval in seconds.
      */
-    public int checkInterval = 300;
+    private int checkInterval = 300;
 
     /**
      * JSP reloading check ?
      */
-    public boolean reloading = true;
+    private boolean reloading = true;
 
     /**
      * I want to see my generated servlets. Which directory are they
      * in?
      */
-    public File scratchDir;
+    private File scratchDir;
     
     /**
      * Need to have this as is for versions 4 and 5 of IE. Can be set from
      * the initParams so if it changes in the future all that is needed is
      * to have a jsp initParam of type ieClassId="<value>"
      */
-    public String ieClassId = "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
+    private String ieClassId = "clsid:8AD9C840-044E-11D1-B3E9-00805F499D93";
 
     /**
      * What classpath should I use while compiling generated servlets?
      */
-    public String classpath = null;
+    private String classpath = null;
     
     /**
      * Compiler to use.
      */
-    public String compiler = null;
+    private String compiler = null;
 
     /**
      * Cache for the TLD locations
@@ -167,7 +167,7 @@ public final class EmbededServletOptions implements Options {
     /**
      * Jsp config information
      */
-    JspConfig jspConfig = null;
+    private JspConfig jspConfig = null;
 
     /**
      * Java platform encoding to generate the JSP
@@ -278,7 +278,7 @@ public final class EmbededServletOptions implements Options {
     }
 
     public void setTldLocationsCache( TldLocationsCache tldC ) {
-        tldLocationsCache=tldC;
+        tldLocationsCache = tldC;
     }
 
     public String getJavaEncoding() {
