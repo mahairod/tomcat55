@@ -130,7 +130,33 @@ public class ScriptingVariabler {
 	    else
 		ownRange = parent.getNumCount();
 
-	    if (tagVarInfos != null) {
+	    if (varInfos != null) {
+		for (int i=0; i<varInfos.length; i++) {
+		    if (varInfos[i].getScope() != scope
+			    || !varInfos[i].getDeclare()) {
+			continue;
+		    }
+		    String varName = varInfos[i].getVarName();
+		    
+		    if (scope == VariableInfo.AT_BEGIN 
+			    || scope == VariableInfo.AT_END
+			    || (scope == VariableInfo.NESTED
+				&& !n.implementsBodyTag())) {
+			Integer currentRange =
+			    (Integer) scriptVars.get(varName);
+			if (currentRange == null
+			        || ownRange.compareTo(currentRange) > 0) {
+			    scriptVars.put(varName, ownRange);
+			    vec.add(varInfos[i]);
+			}
+		    } else {
+			// scope equals NESTED AND node implements BodyTag
+			if (n.getCustomNestingLevel() == 0) {
+			    vec.add(varInfos[i]);
+			}
+		    }
+		}
+	    } else {
 		for (int i=0; i<tagVarInfos.length; i++) {
 		    if (tagVarInfos[i].getScope() != scope
 			    || !tagVarInfos[i].getDeclare()) {
@@ -152,32 +178,6 @@ public class ScriptingVariabler {
 			        || ownRange.compareTo(currentRange) > 0) {
 			    scriptVars.put(varName, ownRange);
 			    vec.add(tagVarInfos[i]);
-			}
-		    } else {
-			// scope equals NESTED AND node implements BodyTag
-			if (n.getCustomNestingLevel() == 0) {
-			    vec.add(tagVarInfos[i]);
-			}
-		    }
-		}
-	    } else {
-		for (int i=0; i<varInfos.length; i++) {
-		    if (varInfos[i].getScope() != scope
-			    || !varInfos[i].getDeclare()) {
-			continue;
-		    }
-		    String varName = varInfos[i].getVarName();
-
-		    if (scope == VariableInfo.AT_BEGIN 
-			    || scope == VariableInfo.AT_END
-			    || (scope == VariableInfo.NESTED
-				&& !n.implementsBodyTag())) {
-			Integer currentRange =
-			    (Integer) scriptVars.get(varName);
-			if (currentRange == null
-			        || ownRange.compareTo(currentRange) > 0) {
-			    scriptVars.put(varName, ownRange);
-			    vec.add(varInfos[i]);
 			}
 		    } else {
 			// scope equals NESTED AND node implements BodyTag
