@@ -42,7 +42,8 @@
     <menu name="Reference">
         <item name="Release Notes"         href="RELEASE-NOTES.txt"/>
         <item name="Tomcat Configuration"  href="config/index.html"/>
-        <item name="JK Documentation"      href="coyote/jk2/index.html"/>
+        <item name="JK Documentation"      
+              href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/jk2/doc/"/>
         <item name="Servlet API Javadocs"  href="servletapi/index.html"/>
         <item name="JSP API Javadocs"      href="jspapi/index.html"/>
     </menu>
@@ -53,10 +54,7 @@
         <item name="Status"                href="status.html"/>
         <item name="Developers"            href="developers.html"/>
         <item name="Functional Specs."     href="catalina/funcspecs/index.html"/>
-        <item name="Catalina Javadocs"     href="catalina/docs/api/index.html"/>
-        <item name="Coyote Javadocs"       href="coyote/api/org/apache/coyote/package-summary.html"/>
-        <item name="HTTP/1.1 Javadocs"     href="coyote/http11/api/index.html"/>
-        <item name="Util Javadocs"         href="coyote/util/index.html"/>
+        <item name="Tomcat Javadocs"       href="catalina/docs/api/index.html"/>
         <item name="Jasper Javadocs"       href="jasper/docs/api/index.html"/>
     </menu>
 
