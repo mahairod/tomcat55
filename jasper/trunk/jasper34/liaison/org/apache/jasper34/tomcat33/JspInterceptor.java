@@ -101,19 +101,17 @@ import org.apache.tomcat.util.io.*;
  * @author Costin Manolache
  */
 public class JspInterceptor extends BaseInterceptor {
-    static final String JIKES="org.apache.jasper34.javacompiler.JikesJavaCompiler";
-    static final String JSP_SERVLET="org.apache.jasper34.servlet.JspServlet";
+    static final String JIKES=
+	"org.apache.jasper34.javacompiler.JikesJavaCompiler";
+    static final String JSP_SERVLET=
+	"org.apache.jasper34.servlet.JspServlet";
     
     Properties args=new Properties(); // args for jasper
-    boolean useJspServlet=false; 
     String jspServletCN=JSP_SERVLET;
     String runtimePackage;
     
     // -------------------- Jasper options --------------------
-    // Options that affect jasper functionality. Will be set on
-    // JspServlet ( if useJspServlet="true" ) or TomcatOptions.
-    // IMPORTANT: periodically test for new jasper options
-    
+
     /**
      * Are we keeping generated code around?
      */
@@ -191,16 +189,6 @@ public class JspInterceptor extends BaseInterceptor {
     }
     // -------------------- JspInterceptor properties --------------------
 
-    /** Use the old JspServlet to execute Jsps, instead of the
-	new code. Note that init() never worked (AFAIK) and it'll
-	be slower - but given the stability of JspServlet it may
-	be a safe option. This will significantly slow down jsps.
-	Default is false.
-    */
-    public void setUseJspServlet( boolean b ) {
-	useJspServlet=b;
-    }
-
     /** Specify the implementation class of the jsp servlet.
      */
     public void setJspServlet( String  s ) {
@@ -259,17 +247,15 @@ public class JspInterceptor extends BaseInterceptor {
 	// to the context classpath to use URLLoader and normal
 	// operation
 	// XXX alternative: use WEB-INF/classes for generated files 
-	if( ! useJspServlet ) {
-	    try {
-		// Note: URLClassLoader in JDK1.2.2 doesn't work with file URLs
-		// that contain '\' characters.  Insure only '/' is used.
-		// jspServlet uses it's own mechanism
-		URL url=new URL( "file", null,
-		 ctx.getWorkDir().getAbsolutePath().replace('\\','/') + "/");
-		ctx.addClassPath( url );
-		if( debug > 9 ) log( "Added to classpath: " + url );
-	    } catch( MalformedURLException ex ) {
-	    }
+	try {
+	    // Note: URLClassLoader in JDK1.2.2 doesn't work with file URLs
+	    // that contain '\' characters.  Insure only '/' is used.
+	    // jspServlet uses it's own mechanism
+	    URL url=new URL( "file", null,
+	       ctx.getWorkDir().getAbsolutePath().replace('\\','/') + "/");
+	    ctx.addClassPath( url );
+	    if( debug > 9 ) log( "Added to classpath: " + url );
+	} catch( MalformedURLException ex ) {
 	}
     }
 
@@ -279,31 +265,7 @@ public class JspInterceptor extends BaseInterceptor {
     public void contextInit(Context ctx)
 	throws TomcatException
     {
-	if( useJspServlet ) {
-	    // prepare jsp servlet. 
-	    Handler jasper=ctx.getServletByName( "jsp" );
-	    if ( debug>10) log( "Got jasper servlet " + jasper );
-
-	    ServletHandler jspServlet=(ServletHandler)jasper;
-	    if( jspServlet.getServletClassName() == null ) {
-		log( "Jsp already defined in web.xml " +
-		     jspServlet.getServletClassName() );
-		return;
-	    }
-	    if( debug>-1)
-		log( "jspServlet=" +  jspServlet.getServletClassName());
-	    Enumeration enum=args.keys();
-	    while( enum.hasMoreElements() ) {
-		String s=(String)enum.nextElement();
-		String v=(String)args.get(s);
-		if( debug>0 ) log( "Setting " + s + "=" + v );
-		jspServlet.getServletInfo().addInitParam(s, v );
-	    }
-
-	    jspServlet.setServletClassName(jspServletCN);
-	} else {
-	    ctx.addServlet( new JspPrecompileH());
-	}
+	ctx.addServlet( new JspPrecompileH());
     }
 
     /** Set the HttpJspBase classloader before init,
@@ -350,69 +312,108 @@ public class JspInterceptor extends BaseInterceptor {
 	to set them on JspInterceptor.
     */
     public int requestMap( Request req ) {
-	if( useJspServlet ) {
-	    // no further processing - jspServlet will take care
-	    // of the processing as before ( all processing
-	    // will happen in the handle() pipeline.
-	    return 0;
-	}
-
 	Handler wrapper=req.getHandler();
 	
 	if( wrapper==null )
 	    return 0;
 
-	if(debug> 0 )
-	    log( wrapper.getName() );
-	
-	// It's not a jsp if it's not "*.jsp" mapped or a servlet
-	if( (! "jsp".equals( wrapper.getName())) &&
-	    (! (wrapper instanceof ServletHandler)) ) {
-	    return 0;
-	}
-
-	String wrapperCN=((ServletHandler)wrapper).getServletClassName();
-	if( null != wrapperCN && ! "jsp".equals( wrapperCN )) {
-	    //it's a real servlet mapped to a .jsp
-	    if( debug > 0 )
-		log( "Class: " +
-		     ((ServletHandler)wrapper).getServletClassName());
-	    return 0;
-	}
-
+	String wrapperName=wrapper.getName();
 	ServletHandler handler=null;
 	String jspFile=null;
-
-	// There are 2 cases: extension mapped and exact map with
-	// a <servlet> with file-name declaration
-
-	// note that this code is called only the first time
-	// the jsp page is called - all other calls will treat the jsp
-	// as a regular servlet, nothing is special except the initial
-	// processing.
-
-	// XXX deal with jsp_compile
 	
-	if( "jsp".equals( wrapper.getName())) {
-	    // if it's an extension mapped file, construct and map a handler
+	// Decide if we want to deal with this request
+	// There are 2 cases:
+	//     *.jsp extension mapped 
+	//     exact map with a <servlet> with file-name declaration
+
+	if( wrapper instanceof ServletHandler ) {
+	    handler=(ServletHandler)wrapper;
+	    String wrapperCN=handler.getServletClassName();
+
+	    if( debug > 0 ) log("Found servlet handler " + handler + " "
+				+ wrapperCN );
+	    if( "jsp".equals( wrapperCN ) ) {
+		// This is the dummy servlet for *.jsp mapping,
+		// not ovverriden by users settings. It's us ?
+
+		// continue - new *.jsp page
+	    } else {
+		// a servlet - could be generated servlet or explicit
+		// *.jsp mapping by user
+		jspFile=handler.getServletInfo().getJspFile();
+		if( jspFile==null )
+		    return 0; // not a jsp managed by JspInterceptor
+		
+		// continue - jsp page created by JspInterceptor
+		// or explicit <servlet><jsp-file> declaration
+		// XXX What if the user set a JspServlet mapping ?
+	    }
+	} else {
+	    if( debug > 0 )
+		log("Found internal handler" +
+		    wrapperName );
+	    
+	    if( "jsp".equals(wrapperName) ) {
+
+		// continue - new *.jsp page
+	    } else {
+		// handler for something else - not *.jsp and not generated 
+		return 0;
+	    }
+	}
+
+	if( jspFile == null ) {
+	    // this is a new *.jsp servlet
+
 	    jspFile=req.servletPath().toString();
 	    
 	    // extension mapped jsp - define a new handler,
 	    // add the exact mapping to avoid future overhead
 	    handler= mapJspPage( req.getContext(), jspFile );
 	    req.setHandler( handler );
-	} else if( wrapper instanceof ServletHandler) {
-	    // if it's a simple servlet, we don't care about it
-	    handler=(ServletHandler)wrapper;
-	    jspFile=handler.getServletInfo().getJspFile();
-	    if( jspFile==null )
-		return 0; // not a jsp
 	}
 
+	boolean pre_compile= checkPreCompile( req );
+	
+	// Each .jsp file is compiled to a servlet, and will
+	// have a dependency to check if it's expired
+	DependManager dep= handler.getServletInfo().getDependManager();
+	
+	if( dep!=null && ! dep.shouldReload()  ) {
+	    // if the jspfile is older than the class - we're ok
+	    // this happens if the .jsp file was compiled in a previous
+	    // run of tomcat.
+	    return 0;
+	}
+
+	// we need to compile... ( or find previous .class )
+	processJspFile( req, jspFile, handler, args);
+
+	dep= handler.getServletInfo().getDependManager();
+	// we did a compilation or loaded new page 
+	dep.reset();
+	
+	if( pre_compile ) {
+	    // we may have compiled the page ( if needed ), but
+	    // we can't execute it. The handler will just
+	    // report that we detected the trick.
+
+	    // Future: detail information about compile results
+	    // and if indeed we had to do something or not
+	    req.setHandler(  ctx.
+			     getServletByName( "tomcat.jspPrecompileHandler"));
+	}
+	// continue - the servlet will be executed
+	return 0;
+    }
+
+    // -------------------- Utils --------------------
+    private boolean checkPreCompile( Request req ) {
 	// if it's a jsp_precompile request, don't execute - just
 	// compile ( if needed ). Since we'll compile the jsp on
 	// the first request the only special thing is to not
 	// execute the jsp if jsp_precompile param is in parameters.
+
 	String qString=req.queryString().toString();
 	// look for ?jsp_precompile or &jsp_precompile
 
@@ -428,40 +429,9 @@ public class JspInterceptor extends BaseInterceptor {
 		pre_compile=true;
 	    }
 	}
-	
-	// Each .jsp file is compiled to a servlet, and will
-	// have a dependency to check if it's expired
-	DependManager dep= handler.getServletInfo().getDependManager();
-	if( dep!=null && ! dep.shouldReload()  ) {
-	    if( debug > 0  )
-		log( "ShouldReload = " + dep.shouldReload());
-	    // if the jspfile is older than the class - we're ok
-	    // this happens if the .jsp file was compiled in a previous
-	    // run of tomcat.
-	    return 0;
-	}
-
-	// we need to compile... ( or find previous .class )
-	processJspFile( req, jspFile, handler, args);
-
-	dep= handler.getServletInfo().getDependManager();
-	dep.reset();
-	
-	if( pre_compile ) {
-	    // we may have compiled the page ( if needed ), but
-	    // we can't execute it. The handler will just
-	    // report that we detected the trick.
-
-	    // Future: detail information about compile results
-	    // and if indeed we had to do something or not
-	    req.setHandler(  ctx.
-			     getServletByName( "tomcat.jspPrecompileHandler"));
-	}
-	
-	return 0;
+	return pre_compile;
     }
 
-    // -------------------- Utils --------------------
     
     private static final String SERVLET_NAME_PREFIX="TOMCAT/JSP";
     
@@ -606,19 +576,52 @@ public class JspInterceptor extends BaseInterceptor {
 		synchronized ( mangler ) {
 		    compiler.jsp2java(pageInfo);
 		}
-
-		boolean result=
-		    javac( compiler, pageInfo, options, containerL, mangler );
+	    } catch( FileNotFoundException ex ) {
+		log(ctx, "FileNotFound: file:" +
+		    pageInfo.getJspFile() + " req="+req );
+		handler.setErrorException(ex);
+		handler.setState(Handler.STATE_DISABLED);
+		// until the jsp cahnges, when it'll be enabled again
+		return 404;
+	    } catch( Exception ex ) {
+		log(ctx, "jsp2java error: req="+req, ex);
+		handler.setErrorException(ex);
+		handler.setState(Handler.STATE_DISABLED);
+		// until the jsp cahnges, when it'll be enabled again
+		return 500;
+	    }
 	    
-		if(debug>0)log( "Generated " +
-				    mangler.getClassFileName() );
+	    try {
+		if( jspCompilerPluginS==null && tryJikes ) {
+		    tryJikes(pageInfo, compiler );
+		}
+	
+		JavaCompiler javaC=
+		    compiler.createJavaCompiler( pageInfo,
+						 jspCompilerPluginS );
+		compiler.prepareCompiler( javaC, pageInfo );
+		boolean status =
+		    javaC.compile( pageInfo.getMangler().getJavaFileName() );
 
+		if (status == true ) {
+		    // remove java file if !keepgenerated, etc
+		    compiler.postCompile(pageInfo);
+		}
+
+		String msg = javaC.getCompilerMessage();
+		if( status == false && msg.length() > 0 ) {
+		    // XXX parse and process the error message
+		    log( ctx, "Compiler error: " + msg );
+		    handler.setErrorException
+			( new JasperException("Compiler error: " + msg + "X"));
+		    handler.setState(Handler.STATE_DISABLED);
+		    // until the jsp cahnges, when it'll be enabled again
+		    return 500;
+		}
+		
 		addExtraDeps( depM, handler );
 	    } catch( Exception ex ) {
-		if( ctx!=null )
-		    ctx.log("compile error: req="+req, ex);
-		else
-		    log("compile error: req="+req, ex);
+		log(ctx, "compile error: req=",  ex);
 		handler.setErrorException(ex);
 		handler.setState(Handler.STATE_DISABLED);
 		// until the jsp cahnges, when it'll be enabled again
@@ -632,84 +635,54 @@ public class JspInterceptor extends BaseInterceptor {
 	return 0;
     }
 
-    /** Convert the .jsp file to a java file, then compile it to class
-     */
-    void jsp2java(Compiler compiler, Mangler mangler,
-		  JasperEngineContext containerL, JspPageInfo pageInfo )
-	throws Exception
-    {
-    }
-    
-    String javaEncoding = "UTF8";           // perhaps debatable?
-    static String sep = System.getProperty("path.separator");
-
     static boolean tryJikes=true;
-    static Class jspCompilerPlugin = null;
     static String jspCompilerPluginS;
-    
-    /** Compile a java to class. This should be moved to util, togheter
-	with JavaCompiler - it's a general purpose code, no need to
-	keep it part of jasper
-    */
-    boolean javac(Compiler compiler,
-	       JspPageInfo pageInfo,
-	       Options options,
-	       ContainerLiaison containerL,
-	       Mangler mangler)
-	throws JasperException
+
+    /** Called for the first jsp, if no compiler is specified.
+     *  @return true if jikes was found and compilation is successfull.
+     *  Side effect: tryJikes=false, set jspCompilerPlugin if successfull.
+     */
+    private void tryJikes( JspPageInfo pageInfo, Compiler compiler)   
     {
-	String javaFileName = mangler.getJavaFileName();
-
-	if( debug>0 ) log( "Compiling java file " + javaFileName);
-
-	boolean status=true;
-	String javaFile=pageInfo.getMangler().getJavaFileName();
 	JavaCompiler javaC=null;
-	
-	// If no explicit compiler, and we never tried before
-	if( jspCompilerPlugin==null && tryJikes ) {
-	    try {
-		javaC=compiler.createJavaCompiler(pageInfo,
-						  JspInterceptor.JIKES);
-		log( "Created " + javaC );
-		compiler.prepareCompiler( javaC, pageInfo );
-		status = javaC.compile( javaFile );
-		log( "Compiled  " + status + " " + javaC.getCompilerMessage() );
-		// remove java file if !keepgenerated, etc
-		compiler.postCompile(pageInfo);
-		
-	    } catch( Exception ex ) {	
-		log("Guess java compiler: no jikes " + ex.toString());
-		status=false;
-	    }
-	    if( status==false ) {
-		log("Guess java compiler: no jikes ");
-		log("Guess java compiler: OUT " +
-		    ((javaC==null)?"":javaC.getCompilerMessage()));
-		jspCompilerPlugin=null;
-		tryJikes=false;
-	    } else {
-		log("Guess java compiler: using jikes ");
-	    }
-	}
-
-	javaC=compiler.createJavaCompiler( pageInfo );
-	compiler.prepareCompiler( javaC, pageInfo );
-	status = javaC.compile( javaFile );
-
-        if (status == false) {
-            String msg = javaC.getCompilerMessage();
-            throw new JasperException("Unable to compile "
-                                      + msg);
-        }
-
-	// remove java file if !keepgenerated, etc
-	compiler.postCompile(pageInfo);
+	try {
+	    tryJikes=false;
+	    javaC=compiler.createJavaCompiler(pageInfo,
+						    JspInterceptor.JIKES);
+	    javaC.addDefaultClassPath();
+	    String dirO=pageInfo.getContainerLiaison().getOutputDir();
+	    File dirF=new File( dirO );
+	    javaC.setOutputDir( dirO );
+	    File a=new File( dirF, "a.java");
+	    PrintWriter pw=new PrintWriter( new FileWriter( a ));
+	    pw.println("public class a { public a() { } } ");
+	    pw.close();
 	    
-	if( debug > 0 ) log("Compiled ok");
-	return status;
-    }
+	    if( debug > 0 ) log( "Compiling " + a.toString() );
+	    boolean status = javaC.compile( a.toString() );
+	    
+	    if( debug > 0 )
+		log( "Compiled  " + status + " " + javaC.getCompilerMessage());
+	    
+	    a.delete();
+	    File aC=new File( dirF, "a.class");
+	    if( aC.exists() )
+		aC.delete();
 
+	    if( status ) {
+		jspCompilerPluginS=JspInterceptor.JIKES;
+		log("Detected jikes");
+	    }
+	} catch( Exception ex ) {
+	    if( javaC==null ) 
+		log("Guess java compiler: no jikes " + ex.toString() );
+	    else
+		log("Guess java compiler: no jikes1 " +
+		    javaC.getCompilerMessage() +
+		    " " +   ex.toString() );
+	}
+    }
+    
     private String getJspFilePath( String docBase, JspPageInfo pageInfo )
     {
 	return FileUtil.safePath( docBase,
@@ -787,7 +760,20 @@ public class JspInterceptor extends BaseInterceptor {
 
     }
 
-
+    private void log( Context ctx, String msg, Throwable ex ) {
+	if( ctx!=null )
+	    ctx.log( msg, ex );
+	else
+	    log( msg, ex );
+    }
+    private void log( Context ctx, String msg ) {
+	if( ctx!=null )
+	    ctx.log( msg );
+	else
+	    log( msg );
+    }
+    
+    
     }
 
 // -------------------- Jsp_precompile handler --------------------
