@@ -160,7 +160,6 @@ public class Catalina {
     public static void main(String args[]) {
 
         (new Catalina()).process(args);
-
     }
 
 
@@ -179,7 +178,11 @@ public class Catalina {
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
-
+        // FIX ME ???, something changed recently causes the catalina java
+        // process to hang at this point on shutdown unless there is an
+        // explicit System.exit().  Could this have something to do with
+        // the STM changes?
+        System.exit(1);
     }
 
 
@@ -514,8 +517,10 @@ public class Catalina {
         // Shut down the server
         if (server instanceof Lifecycle) {
             try {
-                ((Lifecycle) server).stop();
+                // Remove the ShutdownHook first so that server.stop() doesn't
+                // get invoked twice
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);
+                ((Lifecycle) server).stop();
             } catch (LifecycleException e) {
                 System.out.println("Catalina.stop: " + e);
                 e.printStackTrace(System.out);
