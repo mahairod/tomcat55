@@ -8,7 +8,7 @@
       The Tomcat Servlet/JSP Container
     </logo>
 
-    
+
     <body>
 
     <menu name="Links">
@@ -22,10 +22,10 @@
         <item name="4) Deployer"            href="deployer-howto.html"/>
         <item name="5) Manager"             href="manager-howto.html"/>
         <item name="6) Realms and AAA"      href="realm-howto.html"/>
-        <item name="7) Security Manager"    
+        <item name="7) Security Manager"
               href="security-manager-howto.html"/>
         <item name="8) JNDI Resources"      href="jndi-resources-howto.html"/>
-        <item name="9) JDBC DataSources"    
+        <item name="9) JDBC DataSources"
               href="jndi-datasource-examples-howto.html"/>
         <item name="10) Classloading"       href="class-loader-howto.html"/>
         <item name="11) JSPs"               href="jasper-howto.html"/>
@@ -33,8 +33,10 @@
         <item name="13) SSI"                href="ssi-howto.html"/>
         <item name="14) CGI"                href="cgi-howto.html"/>
         <item name="15) Proxy Support"      href="proxy-howto.html"/>
-        <item name="16) MBean Descriptor" 
-              href="mbeans-descriptor-howto.html"/>        
+        <item name="16) MBean Descriptor"
+              href="mbeans-descriptor-howto.html"/>
+        <item name="17) Default Servlet"    href="default-servlet.html"/>
+
     </menu>
 
     <menu name="Reference">
