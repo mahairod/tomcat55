@@ -108,6 +108,11 @@ public class SSIProcessor {
 	addCommand( "fsize", new SSIFsize() );
 	addCommand( "printenv", new SSIPrintenv() );
 	addCommand( "set", new SSISet() );
+	SSIConditional ssiConditional = new SSIConditional();
+	addCommand( "if", ssiConditional );
+	addCommand( "elif", ssiConditional );
+	addCommand( "endif", ssiConditional );
+	addCommand( "else", ssiConditional );
     }
 
     public void addCommand( String name, SSICommand command ) {
@@ -147,7 +152,9 @@ public class SSIProcessor {
 			index += COMMAND_START.length();
 			command.setLength( 0 ); //clear the command string
 		    } else {
-			writer.write( c );
+			if ( !ssiMediator.getConditionalState().processConditionalCommandsOnly ) {
+			    writer.write( c );
+			}
 			index++;
 		    }
 		} else {
@@ -159,20 +166,29 @@ public class SSIProcessor {
 			    ssiExternalResolver.log( "SSIProcessor.process -- processing command: " + strCmd, null );
 			}
 			String[] paramNames = parseParamNames(command, strCmd.length());
-			String[] paramValues = parseParamValues(command, strCmd.length());
+			String[] paramValues = parseParamValues(command, strCmd.length(), paramNames.length );
 			
 			//We need to fetch this value each time, since it may change during the loop
 			String configErrMsg = ssiMediator.getConfigErrMsg();		    
 			SSICommand ssiCommand = (SSICommand) commands.get(strCmd.toLowerCase());
-			if ( ssiCommand != null ) {
-			    if ( paramNames.length==paramValues.length ) {			    
-				ssiCommand.process( ssiMediator, paramNames, paramValues, writer );
-			    } else {
-				ssiExternalResolver.log( "Parameter names count does not match parameter values count on command: " + strCmd, null );
-				writer.write( configErrMsg );
-			    }
+			String errorMessage = null;
+			if ( ssiCommand == null ) {
+			    errorMessage = "Unknown command: " + strCmd;
+			} else if ( paramValues == null ) {
+			    errorMessage = "Error parsing directive parameters.";
+			} else if ( paramNames.length!=paramValues.length ) {			    
+			    errorMessage = "Parameter names count does not match parameter values count on command: " + strCmd;
 			} else {
-			    ssiExternalResolver.log( "Unknown command: " + strCmd, null);
+			    // don't process the command if we are processing conditional commands only and the
+			    // command is not conditional
+			    if ( !ssiMediator.getConditionalState().processConditionalCommandsOnly ||
+				 ssiCommand instanceof SSIConditional ) {
+				ssiCommand.process( ssiMediator, strCmd, paramNames, paramValues, writer );				
+			    }
+			}
+
+			if ( errorMessage != null ) {
+			    ssiExternalResolver.log( errorMessage, null );
 			    writer.write( configErrMsg );
 			}
 		    } else {
@@ -214,20 +230,29 @@ public class SSIProcessor {
                     bIdx++;
                 }
 
-                retBuf.append('"');
+                retBuf.append('=');
                 inside=!inside;
                 quotes=0;
 
-                while(bIdx < cmd.length()&&quotes!=2) {
-                    if(cmd.charAt(bIdx)=='"')
-                            quotes++;
+		boolean escaped=false;
+                for ( ; bIdx < cmd.length() && quotes != 2; bIdx++ ) {
+                    char c = cmd.charAt(bIdx);
 
-                    bIdx++;
+                    // Need to skip escaped characters
+                    if (c=='\\' && !escaped) {
+                        escaped = true;
+                        bIdx++;
+                        continue;
+                    }
+                    escaped = false;
+
+                    if (c=='"')
+                        quotes++;
                 }
             }
         }
 
-        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
+        StringTokenizer str = new StringTokenizer(retBuf.toString(), "=");
         String[] retString = new String[str.countTokens()];
 
         while(str.hasMoreTokens()) {
@@ -243,15 +268,14 @@ public class SSIProcessor {
      * @param cmd a value of type 'StringBuffer'
      * @return a value of type 'String[]'
      */
-    protected String[] parseParamValues(StringBuffer cmd, int start) {
-        int bIdx = start;
-        int i = 0;
-        int quotes = 0;
+    protected String[] parseParamValues(StringBuffer cmd, int start, int count) {
+	int valIndex = 0;
         boolean inside = false;
-        StringBuffer retBuf = new StringBuffer();
+	String[] vals = new String[count];
+        StringBuffer sb = new StringBuffer();
 
-        while(bIdx < cmd.length()) {
-            if(!inside) {
+        for (int bIdx = start; bIdx < cmd.length(); bIdx++ ) {
+            if (!inside) {
                 while(bIdx < cmd.length()&&
                       cmd.charAt(bIdx)!='"')
                     bIdx++;
@@ -261,26 +285,43 @@ public class SSIProcessor {
 
                 inside=!inside;
             } else {
-                while(bIdx < cmd.length() && cmd.charAt(bIdx)!='"') {
-                    retBuf.append(cmd.charAt(bIdx));
-                    bIdx++;
+                boolean escaped=false;
+                for ( ; bIdx < cmd.length(); bIdx++) {
+
+                    char c = cmd.charAt(bIdx);
+
+                    // Check for escapes
+                    if (c=='\\' && !escaped) {
+                        escaped = true;
+                        continue;
+                    }
+
+                    // If we reach the other " then stop
+                    if (c=='"' && !escaped)
+                        break;
+
+                    // Since parsing of attributes and var
+                    // substitution is done in separate places,
+                    // we need to leave escape in the string
+                    if (c=='$' && escaped)
+                        sb.append( '\\' );
+
+                    escaped = false;
+                    sb.append(c);
                 }
 
-                retBuf.append('"');
+                // If we hit the end without seeing a quote
+                // the signal an error
+                if (bIdx == cmd.length())
+                    return null;
+
+                vals[valIndex++] = sb.toString();
+                sb.delete( 0, sb.length() ); // clear the buffer
                 inside=!inside;
             }
-
-            bIdx++;
         }
 
-        StringTokenizer str = new StringTokenizer(retBuf.toString(), "\"");
-        String[] retString = new String[str.countTokens()];
-
-        while(str.hasMoreTokens()) {
-            retString[i++] = str.nextToken();
-        }
-
-        return retString;
+        return vals;
     }
 
     /**

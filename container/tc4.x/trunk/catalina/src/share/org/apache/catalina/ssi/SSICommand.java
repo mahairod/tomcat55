@@ -79,12 +79,14 @@ public interface SSICommand {
      * Write the output of the command to the writer.
      *
      * @param ssiMediator the ssi mediator
+     * @param commandName the name of the actual command ( ie. echo )
      * @param paramNames The parameter names
      * @param paramValues The parameter values
      * @param writer the writer to output to
      * @throws SSIStopProcessingException if SSI processing should be aborted
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames,
 			String[] paramValues,
 			PrintWriter writer) throws SSIStopProcessingException;

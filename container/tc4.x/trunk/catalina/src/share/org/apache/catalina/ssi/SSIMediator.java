@@ -86,6 +86,7 @@ import org.apache.catalina.util.Strftime;
  *
  * @author Bip Thelin
  * @author Amy Roh
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -102,6 +103,7 @@ public class SSIMediator {
     protected Date lastModifiedDate;
     protected int debug;
     protected Strftime strftime;
+    protected SSIConditionalState conditionalState = new SSIConditionalState();
 
     static {
 	//We try to encode only the same characters that apache does
@@ -163,6 +165,10 @@ public class SSIMediator {
 
     public String getConfigSizeFmt() {
 	return configSizeFmt;
+    }
+
+    public SSIConditionalState getConditionalState() {
+	return conditionalState;
     }
 
     public Collection getVariableNames() {

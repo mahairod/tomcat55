@@ -70,6 +70,7 @@ import java.io.PrintWriter;
 /**
  * Implements the Server-side #set command
  *
+ * @author Paul Speed 
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -77,10 +78,11 @@ public class SSISet implements SSICommand {
     /**
      * @see SSICommand
      */
-    public void process(SSIMediator ssiMediator,
-			String[] paramNames,
-			String[] paramValues,
-			PrintWriter writer) throws SSIStopProcessingException {
+    public void process( SSIMediator ssiMediator,
+			 String commandName,
+			 String[] paramNames,
+			 String[] paramValues,
+			 PrintWriter writer) throws SSIStopProcessingException {
 
 	String errorMessage = ssiMediator.getConfigErrMsg();
 	String variableName = null;

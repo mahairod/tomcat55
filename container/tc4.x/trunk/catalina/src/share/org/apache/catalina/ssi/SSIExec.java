@@ -89,6 +89,7 @@ import org.apache.catalina.util.IOTools;
  * 
  * @author Bip Thelin
  * @author Amy Roh
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  *
@@ -101,6 +102,7 @@ public class SSIExec implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames,
 			String[] paramValues,
 			PrintWriter writer) {
@@ -111,7 +113,7 @@ public class SSIExec implements SSICommand {
 	String substitutedValue = ssiMediator.substituteVariables( paramValue );
 
         if ( paramName.equalsIgnoreCase("cgi") ) {
-	    ssiInclude.process( ssiMediator, new String[] {"virtual"}, new String[] {substitutedValue}, writer );
+	    ssiInclude.process( ssiMediator, "include", new String[] {"virtual"}, new String[] {substitutedValue}, writer );
         } else if ( paramName.equalsIgnoreCase("cmd") ) {
 	    boolean foundProgram = false;
 	    try {

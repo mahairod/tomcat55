@@ -1,5 +1,5 @@
 /*
- * SSIInclude.java
+ * SSIConditionalState.java
  * $Header$
  * $Revision$
  * $Date$
@@ -64,53 +64,28 @@
 
 package org.apache.catalina.ssi;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.RequestDispatcher;
-
 /**
- * Implements the Server-side #include command
+ * This class is used by SSIMediator and SSIConditional to keep track of state information necessary to process
+ * the nested conditional commands ( if, elif, else, endif ).
  *
- * @author Bip Thelin
- * @author Paul Speed
- * @author Dan Sandberg
- * @version $Revision$, $Date$
+ *  @version   $Revision$
+ *  @author    Dan Sandberg
+ *  @author    Paul Speed
  */
-public final class SSIInclude implements SSICommand {
+class SSIConditionalState {
     /**
-     * @see SSICommand
+     * Set to true if the current conditional has already been
+     * completed, i.e.: a branch was taken.
      */
-    public void process(SSIMediator ssiMediator,
-			String commandName,
-			String[] paramNames,
-			String[] paramValues,
-			PrintWriter writer) {
+    boolean branchTaken = false;
+    
+    /**
+     * Counts the number of nested false branches.
+     */
+    int nestingCount = 0;
 
-	String configErrMsg = ssiMediator.getConfigErrMsg();
-
-	for ( int i=0; i < paramNames.length; i++ ) {
-	    String paramName = paramNames[i];
-	    String paramValue = paramValues[i];
-	    String substitutedValue = ssiMediator.substituteVariables( paramValue );
-
-	    try {
-		if ( paramName.equalsIgnoreCase("file") ||
-		     paramName.equalsIgnoreCase("virtual") ) {
-		    boolean virtual = paramName.equalsIgnoreCase("virtual");
-		    String text = ssiMediator.getFileText( substitutedValue, virtual );
-		    writer.write( text );
-		} else {
-		    ssiMediator.log("#include--Invalid attribute: " + paramName );
-		    writer.write( configErrMsg );
-		}
-	    } catch ( IOException e ) {
-		ssiMediator.log("#include--Couldn't include file: " + substitutedValue, e );
-		writer.write( configErrMsg );
-	    }
-	}
-    }
+    /**
+     * Set to true if only conditional commands ( if, elif, else, endif ) should be processed.
+     */
+    boolean processConditionalCommandsOnly = false;
 }
-

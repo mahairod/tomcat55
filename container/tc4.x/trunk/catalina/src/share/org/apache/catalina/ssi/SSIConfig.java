@@ -72,6 +72,7 @@ import java.util.Properties;
  * Implements the Server-side #exec command
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -80,6 +81,7 @@ public final class SSIConfig implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames, 
 			String[] paramValues,
 			PrintWriter writer ) {

@@ -71,6 +71,7 @@ import java.io.PrintWriter;
  * Return the result associated with the supplied Server Variable.
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -82,6 +83,7 @@ public class SSIEcho implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames,
 			String[] paramValues,
 			PrintWriter writer) {

@@ -79,6 +79,7 @@ public class SSIPrintenv implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames,
 			String[] paramValues,
 			PrintWriter writer) {

@@ -72,6 +72,7 @@ import java.text.DecimalFormat;
  * Implements the Server-side #fsize command
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -83,9 +84,10 @@ public final class SSIFsize implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
-			  String[] paramNames,
-			  String[] paramValues,
-			  PrintWriter writer) {
+			String commandName,
+			String[] paramNames,
+			String[] paramValues,
+			PrintWriter writer) {
 
 	String configErrMsg = ssiMediator.getConfigErrMsg();
         for(int i=0;i<paramNames.length;i++) {

@@ -75,6 +75,7 @@ import org.apache.catalina.util.Strftime;
  * Implements the Server-side #flastmod command
  *
  * @author Bip Thelin
+ * @author Paul Speed
  * @author Dan Sandberg
  * @version $Revision$, $Date$
  */
@@ -83,6 +84,7 @@ public final class SSIFlastmod implements SSICommand {
      * @see SSICommand
      */
     public void process(SSIMediator ssiMediator,
+			String commandName,
 			String[] paramNames,
 			String[] paramValues,
 			PrintWriter writer) {

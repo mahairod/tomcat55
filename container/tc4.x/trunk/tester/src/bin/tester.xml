@@ -1849,6 +1849,42 @@
           golden="${golden.path}/SSIFsize02.txt"/>
 
     <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional01.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional01.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional02.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional02.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional03.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional03.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional04.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional04.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional05.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional05.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional06.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional06.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional07.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional07.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional08.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional08.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/SSIConditional09.shtml" debug="${debug}"
+          golden="${golden.path}/SSIConditional09.txt"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
          request="${context.path}/SSIVarSub01.shtml" debug="${debug}"
           golden="${golden.path}/SSIVarSub01.txt"/>
 
