@@ -445,7 +445,7 @@
           <httpRequest path="/test/servlet/dispatch.IncludeJspWithSession HTTP/1.0" />
           <httpStatusMatch match="200" />
           <responseMatch match="This is an inner file"/>
-          <headerMatch name="Set-Cookie2" value="JSESSIONID=" />
+          <headerMatch name="Set-Cookie" value="JSESSIONID=" />
       </httpClient>
 
     </target>
