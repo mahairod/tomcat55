@@ -892,8 +892,18 @@ public class StandardWrapper
             if ((actualClass == null) && (jspFile != null)) {
                 Wrapper jspWrapper = (Wrapper)
                     ((Context) getParent()).findChild(Constants.JSP_SERVLET_NAME);
-                if (jspWrapper != null)
+                if (jspWrapper != null) {
                     actualClass = jspWrapper.getServletClass();
+                    // Merge init parameters
+                    String paramNames[] = jspWrapper.findInitParameters();
+                    for (int i = 0; i < paramNames.length; i++) {
+                        if (parameters.get(paramNames[i]) == null) {
+                            parameters.put
+                                (paramNames[i], 
+                                 jspWrapper.findInitParameter(paramNames[i]));
+                        }
+                    }
+                }
             }
 
             // Complain if no servlet class has been specified
