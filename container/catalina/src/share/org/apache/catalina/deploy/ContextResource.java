@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * Representation of a resource reference for a web application, as
@@ -74,7 +76,7 @@ package org.apache.catalina.deploy;
  * @version $Revision$ $Date$
  */
 
-public final class ContextResource {
+public final class ContextResource implements Serializable {
 
 
     // ------------------------------------------------------------- Properties

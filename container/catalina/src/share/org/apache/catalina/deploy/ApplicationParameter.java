@@ -64,6 +64,8 @@
 
 package org.apache.catalina.deploy;
 
+import java.io.Serializable;
+
 
 /**
  * Representation of a context initialization parameter that is configured
@@ -76,7 +78,7 @@ package org.apache.catalina.deploy;
  * @version $Revision$ $Date$
  */
 
-public final class ApplicationParameter {
+public final class ApplicationParameter implements Serializable {
 
 
     // ------------------------------------------------------------- Properties
