@@ -629,7 +629,7 @@
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSession.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK"
+           returnCode="200"
            responseMatch="got true"
  	   testName="positiveSession.jsp" 
 	   assertion="Test the implicit session object and call one of its methods, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
@@ -638,7 +638,7 @@
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/session/positiveSessionDefault.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK"
+           returnCode="200"
            responseMatch="got true"
  	   testName="positiveSessionDefault.jsp" 
 	   assertion="Test to invoke a method on the implicit session object., specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
@@ -647,7 +647,7 @@
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffAutoflush.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK"
+           returnCode="200"
            responseMatch="5999"
  	   testName="positiveBuffAutoflush.jsp" 
 	   assertion="Set autoflush to true. Use default buffer size of 8kb. Write more than 8kb of data to the out object, specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
@@ -656,7 +656,7 @@
 
       <gtest request="GET /jsp-tests/jsp/core_syntax/directives/page/buffer/positiveBuffCreate.jsp HTTP/1.0"
            debug="0" host="${host}" port="${port}"
-           returnCode="HTTP/1.0 200 OK"
+           returnCode="200"
            responseMatch="999"
  	   testName="positiveBuffCreate.jsp" 
 	   assertion="Create a buffer  size of say 12kb. Keep autoflush set to false(default).Write characters to the out object. Invoke the flush() method on out to flush the output to the client., specified in the Java Server Pages Specification v1.2, Sec 2.11.1"
