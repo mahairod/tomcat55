@@ -22,6 +22,14 @@ Jakarta projects at:
 Please report bugs and feature requests under product name "Tomcat 4".
 
 
+----> SECURITY VULNERABILITY FIXED:  In addition to the new features and
+----> bug fixes listed below, this release of Tomcat fixes a vulnerability
+----> on Windows 9x platforms (at least, possibly on other Windows versions
+----> as well) that causes request URLs like "http://localhost:8080/.../"
+----> to expose files on your disk.  This vulnerability does not exist on
+----> Unix platforms.
+
+
 ----> UPCOMING CHANGE NOTICE:  In a future beta release of Tomcat 4.0, it
 ----> is likely that the default operational mode will be to run Tomcat
 ----> under a security manager (rather than the current default of not
@@ -44,10 +52,51 @@ NEW FEATURES:
 General New Features:
 --------------------
 
+Documentation - Revised the installation instructions, as well as instructions
+for building from source, to reflect current dependencies.
+
+Spec Compliance - Tomcat 4 is now compliant with the changes in the Servlet 2.3
+(Proposed Final Draft 3) and JSP 1.2 (Proposed Final Draft 3) specifications.
+Further changes in the specifications are possible, but grow increasingly
+unlikely as they approach final release.
+
+Documentation - Started migrating to a new "tomcat-docs" web app that uses a
+standard stylesheet to manage the creation of documentation (in HTML format).
+This new web app is not yet included in the release, but a snapshot of the
+progress to date is available at:
+
+    http://jakarta.apache.org/tomcat/tomcat-4.0-doc-exp/index.html
+
 
 ---------------------
 Catalina New Features:
 ---------------------
+
+Connectors - Refactored the startup code so that Catalina can run on port 80
+(without being root) when started by JavaService or equivalent service
+managers.
+
+StandardContext / ProxyDirContext - Support the disabling of caching for
+static resource metadata.
+
+SingleSignOff Support - If you are using "single sign on" support with form
+based login, invalidating (or timing out) a session in one app will now sign
+the user off from all apps, as required by Servlet 2.3 PFD3.
+
+InstanceEvent - The events sent to Catalina-internal instance event listeners
+now include the request and response being processed if relevant.
+
+InstanceEvent - New event types for before and after dispatching are now
+fired when a servlet is invoked via a request dispatcher.
+
+Sessions and Requests - Internal implementation objects now support a new
+"notes" facility that lets Catalina components decorate them with extra
+information, without requiring creation of additional object properties, or
+exposing the information to applications by using attributes.
+
+AccessLogValve - Support a new "combined" logging format that includes the
+referer and user-agent headers, along with everything in the default "common"
+log format.
 
 
 -------------------
@@ -59,6 +108,14 @@ Jasper New Features:
 Webapps New Features:
 --------------------
 
+SetCharacterEncodingFilter - A new Filter has been added to the "/examples"
+web application shipped with Tomcat, which allows you to programmatically
+determine what character set you wish to use to interpret request parameters
+for a given request, and then call request.setCharacterEncoding().  Doing this
+as a filter means you do not need to modify all of your servlets and JSP pages
+to include this functionality.  Feel free to use this Filter as is, or as the
+basis for a more sophisticated implementation.
+
 
 ==========================
 BUG FIXES AND IMPROVEMENTS:
@@ -69,15 +126,113 @@ BUG FIXES AND IMPROVEMENTS:
 Catalina Bug Fixes:
 ------------------
 
+WebappClassLoader - [Bugzilla #2725] Non-JAR files placed in
+/WEB-INF/lib would cause continuous reloads of a reloadable context.
+
+FileDirContext - Close the input stream after finishing copying.  Otherwise,
+was causing problems deleting resources that were the source of a COPY.
+
+StandardContext - [Bugzilla #2710] getNamingContextName() was returning an
+incorrect name.
+
+AccessLogValve - [Bugzilla #2763] Include the query string (if any) in the
+access log output.
+
+FormAuthenticator - [Bugzilla #2768] When processing a form-based login and
+redirecting back to the orginally requested resource, include any query string
+that was part of the original request.
+
+StandardContext - [Bugzilla #2755] Clean up thread binding and unbinding so
+that the context class loader is set during the start and stop of listeners
+and filters.
+
+ApplicationContext - Throw IllegalArgumentException if the first argument to
+setAttribute() is null.
+
+RequestBase - Throw IllegalArgumentException if the first argument to
+setAttribute() is null.
+
+HttpProcessor - Fix for prohibitively long shutdown times when HTTP/1.1
+persistent connections are in use.
+
+FormAuthenticator - [Bugzilla #2806] Fix an endless loop that would occur
+if the <form-error-page> was within the protected area of the web application.
+There was already a special case for the login page.
+
+ContextConfig - [Bugzilla #2870] If parsing errors are encountered when
+processing web.xml, mark the application unavailable instead of letting it
+serve requests in a partially initialized state.
+
+SSLAuthenticator - [BugTraq #4485977] Authenticate users through the Realm
+when using CLIENT-CERT login, by passing the client certificate chain to a
+new Realm.authenticate() method.
+
+WebappClassLoader - The system policy file is now refreshed in the
+ClassLoader constructor, and any security exception is swallowed.
+
+FormAuthenticator - [BugTraq #4485977] Make form-based login work correctly
+even if caching of authenticated principals in the session is turned off.
+
+ApplicationDispatcher - When a RequestDispatcher is used to access a resource
+in a different context, propertly set and reset the thread context class
+loader so that the invoked resource sees the correct one.
+
+HttpResponseBase / HttpResponseImpl - Per HTTP/1.1 specification (RFC 2616),
+Section 3.1, a server should return the highest HTTP protocol version it
+claims to support.
+
+SocketInputStream - When parsing multi-line HTTP headers, correctly treat a
+TAB character as whitespace.
+
+HttpProcessor - [Bugzilla #3062] Make request URIs that contain "/..." return
+"Bad Request".  On some (all?) Windows platforms, this would cause the OS to
+walk up the directory tree and expose files, just like "../../.." type paths
+would if they were not normalized.
+
+WARP Connector - Brought the sources of the WARP connector (used to talk with
+Apache+mod_webapp) up to date with the most recent bugfixes.  Now passes all
+Watchdog and tester tests when running Apache+Tomcat (as well as when running
+Tomcat stand alone).
+
 
 ----------------
 Jasper Bug Fixes:
 ----------------
 
+JSP Compiler - [BugTraq #4481010] Do not generate implicit import for
+"javax.servlet.jsp.tagext.*".  The implicit import list now matches the
+requirements of JSP 1.2 PFD3b, page 50.  Modified code generators as needed
+to reflect this change.
+
+JSP Compiler - [Bugzilla #2602] Correct code generated for Strings with
+Unicode escape sequences like <%= "\u9b5a" %>, while still correctly dealing
+with %\>.
+
+JSP Compiler - [Bugzilla #2722] Correct the XML quoted value for the "double
+quote" character (was incorrectly rendering as "&quote;" instead of "&quot;").
+
+JSP Compiler - [Bugzilla #2748] Correct the pathname used to store template
+text when the "largefile" initialization parameter (of the JSP servlet)
+is set.  In addition, modify the generated code for this option to reflect the
+fact that java.io.* is no longer implicitly imported.
+
+XmlOutputter - [Bugzilla #2704] Correctly escape occurrences of "]]>" in XML
+output inside a CDATA section.
+
+JasperLogger - [BugTraq #4488877] Disable creation of useless background thread
+per <jsp-file> declaration, which can eventually cause resource exhaustion.
+
 
 -----------------
 Webapps Bug Fixes:
 -----------------
+
+WebdavServlet - Correct decoding of the destination header (was previously
+handled by normalize).
+
+WebdavServlet - Various fixes to support lock-null properties correctly.
+
+WebdavServlet - Correct use of DocumentBuilderFactory, which is not threadsafe.
 
 
 ============================
