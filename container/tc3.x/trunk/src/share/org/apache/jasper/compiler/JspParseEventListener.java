@@ -329,7 +329,9 @@ public class JspParseEventListener extends BaseJspListener {
 	writer.println("} catch (Exception ex) {");
 	writer.pushIndent();
         writer.println("if (out.getBufferSize() != 0)");
-        writer.pushIndent(); writer.println("out.clear();"); writer.popIndent();
+        writer.pushIndent();
+	writer.println("out.clearBuffer();");
+	writer.popIndent();
 	writer.println("pageContext.handlePageException(ex);");
 	writer.popIndent();
 	writer.println("} finally {");
