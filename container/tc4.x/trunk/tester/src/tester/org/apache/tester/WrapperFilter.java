@@ -114,10 +114,10 @@ public class WrapperFilter implements Filter {
         ServletResponse outResponse = inResponse;
         if (requestWrapper.equals("generic")) {
             outRequest = new TesterServletRequestWrapper(inRequest);
-        } /* else if (requestWrapper.equals("http")) {
-            outRequest = new TesterHttpServletRequestWrapper(inRequest);
+        } else if (requestWrapper.equals("http")) {
+            outRequest = new TesterHttpServletRequestWrapper
+                ((HttpServletRequest) inRequest);
         }
-        */
         if (responseWrapper.equals("generic")) {
             outResponse = new TesterServletResponseWrapper(inResponse);
         } else if (responseWrapper.equals("http")) {

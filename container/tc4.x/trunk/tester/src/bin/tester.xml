@@ -115,11 +115,9 @@
          request="${context.path}/GetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
 
-<!--
     <tester host="${host}" port="${port}" debug="0"
          request="${context.path}/WrappedGetQueryString01?foo=1"
       outContent="GetQueryString01 PASSED"/>
--->
 
     <!-- ========== Other ServletRequest Tests ============================ -->
 
