@@ -318,7 +318,14 @@ final class RequestDispatcherImpl implements RequestDispatcher {
 	// for the realRequest ( since the real request will still have the
 	// original handler/wrapper )
 	ServletWrapper wr=subRequest.getWrapper();
-	if( wr!=null ) wr.service(realRequest, realResponse);
+	Throwable t = null;
+	if( wr!=null ) {
+	    try {
+		wr.service(realRequest, realResponse);
+	    } catch (Throwable t1) {
+		t = t1;
+	    }
+	}
 
 	// After request, we want to restore the include attributes - for
 	// chained includes.
@@ -339,6 +346,13 @@ final class RequestDispatcherImpl implements RequestDispatcher {
 	// revert to the response behavior
 	if( ! old_included ) {
 	    realResponse.setIncluded( false );
+	}
+
+	if (t != null) {
+	    if (t instanceof IOException)
+		throw (IOException) t;
+	    else if (t instanceof ServletException)
+		throw (ServletException) t;
 	}
     }
 
