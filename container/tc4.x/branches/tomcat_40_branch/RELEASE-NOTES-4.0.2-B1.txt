@@ -37,10 +37,15 @@ General New Features:
      ***** Please note the revised documentation below related to *****
      ***** using XML parsers with Tomcat 4.0 based applications.  *****
 
+AJP: Add some documentation on AJP with Tomcat 4.
+
 
 ---------------------
 Catalina New Features:
 ---------------------
+
+StandardHost: Allow disabling the error report valve by setting its classname
+  to an empty string.
 
 
 -------------------
@@ -72,6 +77,91 @@ Generic Bug Fixes:
 Catalina Bug Fixes:
 ------------------
 
+RequestFacade: The method getRemoteHost of the facade should call 
+  getRemoteHost.
+
+WebappLoader: Add back some permissions, which were incorrectly removed while
+  refactoring the loader and classloader
+
+WebappClassLoader: getResource and getResourceAsStream weren't calling 
+  the superclass (which is needed when there are external repositories).
+
+WebappClassLoader: Will attempt to load a class even if it already 
+  failed before.
+
+Build script: Exclude the binaries from the fixCRLF.
+
+NamingContext: Specify the name in the exception message for the alreadyBound 
+  error.
+
+AccessLogValve: Fixes for potential thread safety problems.
+
+StandardContext: Cross context should default to false.
+
+GenericPrincipal: Is now a public class.
+
+Bootstrap: Remove "System.exit(0)" call at the end of the main() method.
+
+WarpConnector: making WarpConnector's thread a daemon to facilitate shutting
+  down without System.exit(0).
+
+FileDirContext: Fix security manager bug when using Windows. The base should 
+  be an absolute path (instead of a relative path), otherwise a security 
+  exception would be thrown by the case sensitivity checking code when trying 
+  to access the user.dir system property.
+
+HttpResponseStream: Don't remove the transfer encoding header if chunking is 
+  disabled.
+
+HttpProcessor: If the client announced it was closing the connection, repeat 
+  the connection: close in the response.
+
+WebappLoader: Canonicalize the context root permission.
+
+AuthenticatorBase: Fix a problem with auth constraints, where roles wouldn't 
+  get processed right when the wildcard was used.
+
+StandardEngineValve: Backport the HTTP/1.1 compliance fix to send 400 
+  (bad request) instead of 500 (internal server error) on an unrecognized 
+  or missing host.
+
+ErrorDispatcherValve: Wrapper could be null when the request was incompletely 
+  mapped, which often happened when using an authenticator valve.
+
+NamingContext: Rebind references.
+
+HttpResponseBase: Return 404 when parsing invalid URLs.
+
+StandardClassLoader: Fix race condition, where defineClass could be called 
+  multiple times on the same class.
+
+Catalina: Only set the initial context factory if it has not been set.
+
+ErrorDispatcherValve: When processing an error-page triggered by an exception,
+  set the status code to 500.
+
+StandardContext: Fix incorrect Javadoc.
+
+ErrorDispatcherValve:  Fix a NPE which occured when handling the 500 that was 
+  returned when the host mapper failed to map the request to a context. 
+  The status is still 500, but the error report gives some info on the 
+  problem, and no exception is logged.
+
+AuthenticatorBase: Set the seed after computing it.
+
+HttpResponseBase: Suspend response after sendError and sendRedirect 
+  (simulates that the response has been sent from the application perspective).
+
+StandardWrapper: Fix single thread model thread safety problems under very high
+  loads.
+
+ApplicationDispatcher: Makes forward code more robust.
+
+ResponseFacade: getOutputStream(), getWriter(), and flushBuffer()
+  non-fatal even if called after response is finished.
+
+ErrorReportValve: Fix regression when printing exception reports, caused by the
+  change of behavior of sendError.
 
 
 ----------------
@@ -80,14 +170,56 @@ Jasper Bug Fixes:
 
 JspParseEventListener: Eliminated use of hard coded '\n' line separator.
 
+TagBeginGenerator: Call doInitBody only if doStartTag 
+  returns EVAL_BODY_BUFFERED.
+
+JspFactoryImpl: JspEngineInfo.getSpecificationVersion() should return "1.2".
+
+Parser: Issue error if reserved taglib prefixes are used in taglib directives.
+
+JspParseEventListener: Eliminated use of hard coded '\n' line separator.
+
+Jasper: Many misc fixes.
+
+
 -----------------
 Webapps Bug Fixes:
 -----------------
+
+SetCharacterEncodingFilter: Make it possible to configure character encoding 
+  *only* if not set by the browser, as well as setting it unconditionally.
+
+SSI: Bug fixes.
+
+Examples: Declare the examples webapp as cross context.
+
 
 
 ----------------------
 Bugzilla Bugs Resolved:
 ----------------------
+
+4085  Error when using XML syntax for JSPs
+4327  Access log not rotated
+4431  Error in Application developer docs
+4501  java.lang.ClassCastException: org.apache.jasper.JasperException when 
+      syntax error in JSP page
+4550  Page directive improperly parses multiple import statements
+4684  Distributed Sessions intermittently fail to show up in other cluster 
+      members
+4705  Jasper seeming classpath bug using JSPC
+4949  jspc cannot find bean when using jsp:getProperty or jsp:setProperty
+4956  There are two <BODY> tags found in a source code
+4969  SSO cookie malformed in AuthenticatorBase.generateSessionId()
+5004  /a/b/c/nonexistent.jsp -> a file and directory chain created.
+5026  INITIAL_CONTEXT_FACTORY can not be defined in properties.
+5050  Taglib prefix cannot contain '-' character
+5096  PageData.getInputStream() returns XML doc with invalid encoding
+5123  Optional value variable-class is expected
+5126  Client request using HEAD results in a response body returned to client
+5169  If jsp_precompile is evalutated to be false, the request will be 
+      processed by the target JSP
+5345  Redirection fails in embedded Tomcat in wspack1-b06
 
 
 
