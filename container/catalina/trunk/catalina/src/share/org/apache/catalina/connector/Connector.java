@@ -54,7 +54,7 @@ import org.apache.tomcat.util.http.mapper.Mapper;
 public class Connector
     implements Lifecycle, MBeanRegistration
 {
-    protected static Log log = LogFactory.getLog(Connector.class);
+    private static Log log = LogFactory.getLog(Connector.class);
 
 
     // ------------------------------------------------------------ Constructor
@@ -439,9 +439,9 @@ public class Connector
 
 
     /**
-     * Set the "enable DNS lookups" flag.
+     * Set the "empty session path" flag.
      *
-     * @param enableLookups The new "enable DNS lookups" flag value
+     * @param emptySessionPath The new "empty session path" flag value
      */
     public void setEmptySessionPath(boolean emptySessionPath) {
 
