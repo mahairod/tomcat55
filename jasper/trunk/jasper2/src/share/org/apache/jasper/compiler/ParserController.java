@@ -280,6 +280,24 @@ class ParserController {
 	    if (isEncodingSetInProlog) {
 		// Prolog present only in XML syntax
 		isXml = true;
+	    } else if (sourceEnc.equals("UTF-8")) {
+		/*
+		 * We don't know if we're dealing with an XML document
+		 * unless isXml is true, but even if isXml is true, we don't
+		 * know if we're dealing with a JSP document that satisfies
+		 * the encoding auto-detection rules (the JSP document may not
+		 * have an XML prolog and start with <jsp:root ...>). 
+		 * We need to be careful, because the page may be encoded in
+		 * ISO-8859-1 (or something entirely different), and may
+		 * contain byte sequences that will cause a UTF-8 converter to
+		 * throw exceptions. 
+		 * It is safe to use a source encoding of ISO-8859-1 in this
+		 * case, as there are no invalid byte sequences in ISO-8859-1,
+		 * and the byte/character sequences we're looking for are
+		 * identical in either encoding (both UTF-8 and ISO-8859-1 are
+		 * extensions of ASCII).
+		 */
+		sourceEnc = "ISO-8859-1";
 	    }
 	}
 
