@@ -19,8 +19,10 @@
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false
+os400=false
 case "`uname`" in
 CYGWIN*) cygwin=true;;
+OS400*) os400=true;;
 esac
 
 # resolve links - $0 may be a softlink
