@@ -288,6 +288,13 @@ public class StandardContext
     private boolean crossContext = false;
 
 
+    /**
+     * The "follow standard delegation model" flag that will be used to
+     * configure our ClassLoader.
+     */
+    private boolean delegate = false;
+
+
      /**
      * The display name of this web application.
      */
@@ -611,6 +618,33 @@ public class StandardContext
      */
     public void setCachingAllowed(boolean cachingAllowed) {
         this.cachingAllowed = cachingAllowed;
+    }
+
+
+    /**
+     * Return the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     */
+    public boolean getDelegate() {
+
+        return (this.delegate);
+
+    }
+
+
+    /**
+     * Set the "follow standard delegation model" flag used to configure
+     * our ClassLoader.
+     *
+     * @param delegate The new flag
+     */
+    public void setDelegate(boolean delegate) {
+
+        boolean oldDelegate = this.delegate;
+        this.delegate = delegate;
+        support.firePropertyChange("delegate", new Boolean(oldDelegate),
+                                   new Boolean(this.delegate));
+
     }
 
 
@@ -3921,15 +3955,19 @@ public class StandardContext
         }
         
         if (getLoader() == null) {
+            ClassLoader parent = null;
             if (getPrivileged()) {
                 if (log.isDebugEnabled())
                     log.debug("Configuring privileged default Loader");
-                setLoader(new WebappLoader(this.getClass().getClassLoader()));
+                parent = this.getClass().getClassLoader();
             } else {
                 if (log.isDebugEnabled())
                     log.debug("Configuring non-privileged default Loader");
-                setLoader(new WebappLoader(getParentClassLoader()));
+                parent = getParentClassLoader();
             }
+            WebappLoader webappLoader = new WebappLoader(parent);
+            webappLoader.setDelegate(getDelegate());
+            setLoader(webappLoader);
         }
 
         // Initialize character set mapper
