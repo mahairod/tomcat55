@@ -215,9 +215,9 @@ public class WebdavServlet
 
 
     /**
-     * JAXP Document builder.
+     * JAXP Document builder factory.
      */
-    private DocumentBuilder documentBuilder;
+    private DocumentBuilderFactory documentBuilderFactory;
 
 
     /**
@@ -275,13 +275,7 @@ public class WebdavServlet
 	    ;
 	}
         
-        try {
-            documentBuilder = 
-                DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch(ParserConfigurationException e) {
-            throw new ServletException
-                (sm.getString("webdavservlet.jaxpfailed"));
-        }
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
     }
 
@@ -430,6 +424,14 @@ public class WebdavServlet
 	}
 
         Node propNode = null;
+        
+        DocumentBuilder documentBuilder = null;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch(ParserConfigurationException e) {
+            throw new ServletException
+                (sm.getString("webdavservlet.jaxpfailed"));
+        }
         
         try {
             Document document = documentBuilder.parse
@@ -839,6 +841,14 @@ public class WebdavServlet
         int lockRequestType = LOCK_CREATION;
         
         Node lockInfoNode = null;
+        
+        DocumentBuilder documentBuilder = null;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch(ParserConfigurationException e) {
+            throw new ServletException
+                (sm.getString("webdavservlet.jaxpfailed"));
+        }
         
         try {
             Document document = documentBuilder.parse(new InputSource
