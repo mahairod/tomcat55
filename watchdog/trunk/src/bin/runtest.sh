@@ -58,7 +58,7 @@ if [ "$1" != "" ]; then
 fi
 
 java org.apache.tomcat.shell.Startup -config $webconf  $* &
-sleep 25
+sleep 50
 
 if [ "${default}" = jsp -o "${default}" = all ];then
 java -Dtest.hostname=$host -Dtest.port=$port org.apache.tools.moo.Main \
@@ -72,7 +72,7 @@ fi
 
 java org.apache.tomcat.shell.Shutdown $*
 
-if ["$cp" != ""]; then
+if [ "$cp" != ""]; then
     CLASSPATH=${cp}
     export CLASSPATH
 else
