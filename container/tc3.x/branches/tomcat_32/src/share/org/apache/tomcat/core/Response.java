@@ -142,7 +142,16 @@ public interface Response {
      *  HTTP/0.9
      */
     public void setIncluded(boolean b);
-	
+
+    /** True if error has been handled
+     */
+    public boolean isErrorHandled();
+
+    /** This is used to indicate that error handling has been performed.
+     *  It is used to avoid invoking the error handling more than once
+     *  as exceptions are passed up the call stack.
+     */
+    public void setErrorHandled(boolean b);
     
     // -------------------- Buffering --------------------
     

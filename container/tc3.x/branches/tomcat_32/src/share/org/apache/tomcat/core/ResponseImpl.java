@@ -108,6 +108,7 @@ public class ResponseImpl implements Response {
     protected boolean commited = false;
     
     boolean notIncluded=true;
+    boolean errorHandled=false;
 
     // default implementation will just append everything here
     StringBuffer body=null;
@@ -155,6 +156,14 @@ public class ResponseImpl implements Response {
 
 	}
     }
+
+    public boolean isErrorHandled() {
+	return errorHandled;
+    }
+
+    public void setErrorHandled( boolean handled ) {
+	errorHandled = handled;
+    }
     
     public boolean isStarted() {
 	return started;
@@ -175,6 +184,7 @@ public class ResponseImpl implements Response {
 	started = false;
 	commited = false;
 	notIncluded=true;
+	errorHandled=false;
 	// adapter
 	body=null;
 	if( out != null ) out.recycle();
