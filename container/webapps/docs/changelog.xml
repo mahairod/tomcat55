@@ -13,12 +13,19 @@
 
 <body>
 
-<section name="Tomcat 5.0.3-dev">
+<section name="Tomcat 5.0.3 (remm)">
 
   <subsection name="General">
 
     <changelog>
 
+      <update>
+      Upgrade to commons-el 1.0 (remm)
+      </update>
+      <update>
+      Split main Catalina JAR, and move i18n related resource files to separate
+      JARs (remm)
+      </update>
       <fix>
       <bug>19808</bug>: Add the sit MIME mapping (funkman)
       </fix>
@@ -53,6 +60,38 @@
 
     <changelog>
 
+      <fix>
+      Fix JMX registration order again during context startup: the object name
+      is constructed before the pipeline initialization, but the JMX 
+      registration only occurs after the context is started (remm)
+      </fix>
+      <fix>
+      Properly close WARs after expanding them in the deployer (remm)
+      </fix>
+      <update>
+      Fix handling of invalid WARs during auto deploy, which will be logged 
+      as a simple WARN without a stack trace, and reattempt deployment later
+      (remm)
+      </update>
+      <fix>
+      Dig as deep as possible to display possible nesting of ServletExceptions
+      (funkman)
+      </fix>
+      <fix>
+      Fix NPE exception in classloader when an invalid war file is deployed
+      (jfarcand)
+      </fix>
+      <fix>
+      Container incorrectly processes invalid URL patterns in 
+      jsp-property-groups (jfarcand)
+      </fix>
+      <add>
+      Add optional XSL processing to the output of the default servlet, as well
+      the ability to include a readme file, similar to Apache (funkman)
+      </add>
+      <scode>
+      Remove bundled support for Tyrex (remm)
+      </scode>
       <fix>
       Comment out invoker servlet declaration (remm)
       </fix>
@@ -260,6 +299,9 @@
     <changelog>
 
       <fix>
+      Fix access to the remote address of a request object with JMX (remm)
+      </fix>
+      <fix>
       Fix CLIENT-CERT authentication when using PureTLS (billbarker)
       </fix>
       <update>
@@ -366,6 +408,13 @@
     <changelog>
 
       <fix>
+      <bug>20894</bug>: body-content value of "JSP" should be error 
+      if SimpleTag (kinman)
+      </fix>
+      <fix>
+      Swicth back to JSPC forking being false by default (remm)
+      </fix>
+      <fix>
       Default Jasper to not using caches for opening JAR files, which prevents
       caching (and subsequent locking on Windows) at the JDK level (remm)
       </fix>
@@ -431,6 +480,20 @@
 
     <changelog>
 
+      <update>
+      Add placeholder code for a complete status display in the Status servlet,
+      including webapps statistics (remm)
+      </update>
+      <fix>
+      Fix WAR handling when deploying and undeploying webapps using the HTML
+      manager (remm)
+      </fix>
+      <add>
+      Add documentation on the default servlet (funkman)
+      </add>
+      <fix>
+      Update information of the proxy documentation page (funkman)
+      </fix>
       <update>
       Update the manager servlet to support versioning with the deploy method,
       in addition to other smaller refactorings (remm)
