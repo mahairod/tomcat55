@@ -71,10 +71,17 @@ be interested or able to support you.
 
 <subsection name="Tomcat 5.x">
 
-<p><strong>Tomcat 5.x</strong> is the current release of Tomcat, and
+<p><strong>Tomcat 5.x</strong> is the current major release of Tomcat, and
 builds upon the Tomcat 3.3 and Tomcat 4.1 codebases. 
 The 5.x releases implement the <strong>Servlet 2.4</strong> 
 and <strong>JSP 2.0</strong> specifications.</p>
+
+<p><strong>Tomcat 5.5.x</strong>.  Tomcat 5.5 is the next branch in the 
+Tomcat 5.x major release.  While it supports the same Servlet and JSP
+Specification versions as Tomcat 5.0.x, there are significant changes
+in many areas under the hood.  Please refer to the Tomcat 5.5 Changelog
+for details.
+</p>
 
 <p><strong>Tomcat 5.0.x</strong>.  Tomcat 5.0 improves on Tomcat 4.1 in many
 ways, including:
