@@ -172,7 +172,7 @@ public class AccessInterceptor extends  BaseInterceptor  {
 	    ctx.setFormErrorPage( errorPage );
 
 	    FormAuthHandler formH=new FormAuthHandler();
-	    formH.setDebug(20);
+	    formH.setDebug(0);
 	    ctx.addServlet( formH );
 	    ctx.addServlet( new FormSecurityCheckHandler() );
 	    ctx.addErrorPage( "401", "tomcat.formAuthHandler");
