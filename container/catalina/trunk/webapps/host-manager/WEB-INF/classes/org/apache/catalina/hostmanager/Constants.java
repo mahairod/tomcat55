@@ -15,12 +15,12 @@
  */
 
 
-package org.apache.catalina.manager;
+package org.apache.catalina.hostmanager;
 
 
 public class Constants {
 
-    public static final String Package = "org.apache.catalina.manager";
+    public static final String Package = "org.apache.catalina.hostmanager";
 
     public static final String HTML_HEADER_SECTION =
         "<html>\n" +
