@@ -760,7 +760,7 @@ final class StandardWrapperValve
 	    while (true) {
 		if (testPath.equals(comparePath + "/*"))
 		    return (true);
-		int slash = comparePath.lastIndexOf("/");
+		int slash = comparePath.lastIndexOf('/');
 		if (slash < 0)
 		    break;
 		comparePath = comparePath.substring(0, slash);
@@ -770,8 +770,8 @@ final class StandardWrapperValve
 
 	// Case 3 - Extension Match
 	if (testPath.startsWith("*.")) {
-	    int slash = requestPath.lastIndexOf("/");
-	    int period = requestPath.lastIndexOf(".");
+	    int slash = requestPath.lastIndexOf('/');
+	    int period = requestPath.lastIndexOf('.');
 	    if ((slash >= 0) && (period > slash))
 		return (testPath.equals("*." +
 					requestPath.substring(period + 1)));

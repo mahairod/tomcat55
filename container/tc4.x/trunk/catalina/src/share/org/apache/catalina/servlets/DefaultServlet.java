@@ -711,7 +711,7 @@ public class DefaultServlet
         // Checking If-Match
         headerValue = request.getHeader("If-Match");
         if (headerValue != null) {
-            if (headerValue.indexOf("*") == -1) {
+            if (headerValue.indexOf('*') == -1) {
                 
                 commaTokenizer = new StringTokenizer(headerValue, ",");
                 boolean conditionSatisfied = false;
@@ -1473,7 +1473,7 @@ public class DefaultServlet
             parentDirectory = 
                 parentDirectory.substring(0, parentDirectory.length() - 1);
         }
-	int slash = parentDirectory.lastIndexOf("/");
+	int slash = parentDirectory.lastIndexOf('/');
 	if (slash >= 0) {
 	    String parent = name.substring(0, slash);
 	    writer.print("<tr><td colspan=\"3\" bgcolor=\"#ffffff\">\r\n");

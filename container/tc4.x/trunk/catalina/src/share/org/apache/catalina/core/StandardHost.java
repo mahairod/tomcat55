@@ -459,7 +459,7 @@ public class StandardHost
 	    context = (Context) findChild(uri);
 	    if (context != null)
 		break;
-	    int slash = uri.lastIndexOf("/");
+	    int slash = uri.lastIndexOf('/');
 	    if (slash < 0)
 		break;
 	    uri = uri.substring(0, slash);
@@ -836,10 +836,10 @@ public class StandardHost
         String pathname = war.toString().replace('\\', '/');
         if (pathname.endsWith("!/"))
             pathname = pathname.substring(0, pathname.length() - 2);
-        int period = pathname.lastIndexOf(".");
+        int period = pathname.lastIndexOf('.');
         if (period >= pathname.length() - 4)
             pathname = pathname.substring(0, period);
-        int slash = pathname.lastIndexOf("/");
+        int slash = pathname.lastIndexOf('/');
         if (slash >= 0)
             pathname = pathname.substring(slash + 1);
         if (debug >= 1)
@@ -876,7 +876,7 @@ public class StandardHost
             String name = jarEntry.getName();
             if (debug >= 2)
                 log("  Am processing entry " + name);
-            int last = name.lastIndexOf("/");
+            int last = name.lastIndexOf('/');
             if (last >= 0) {
                 File parent = new File(docBase,
                                        name.substring(0, last));

@@ -481,7 +481,7 @@ final class HttpProcessor
 	    // Extract the language and country for this entry
 	    String language = null;
 	    String country = null;
-	    int dash = entry.indexOf("-");
+	    int dash = entry.indexOf('-');
 	    if (dash < 0) {
 		language = entry;
 		country = "";
@@ -617,7 +617,7 @@ final class HttpProcessor
 	    } else if (header.equals(DefaultHeaders.CONTENT_TYPE_NAME)) {
 		request.setContentType(value);
 	    } else if (header.equals(DefaultHeaders.HOST_NAME)) {
-		int n = value.indexOf(":");
+		int n = value.indexOf(':');
 		if (n < 0) {
                     if (proxyName != null)
                         request.setServerName(proxyName);
@@ -741,7 +741,7 @@ final class HttpProcessor
 	int semicolon = uri.indexOf(match);
 	if (semicolon >= 0) {
 	    String rest = uri.substring(semicolon + match.length());
-	    int semicolon2 = rest.indexOf(";");
+	    int semicolon2 = rest.indexOf(';');
 	    if (semicolon2 >= 0) {
 		request.setRequestedSessionId(rest.substring(0, semicolon2));
 		rest = rest.substring(semicolon2);

@@ -3759,7 +3759,7 @@ public class StandardContext
         if (urlPattern == null)
             return (false);
         if (urlPattern.startsWith("*.")) {
-            if (urlPattern.indexOf("/") < 0)
+            if (urlPattern.indexOf('/') < 0)
                 return (true);
             else
                 return (false);

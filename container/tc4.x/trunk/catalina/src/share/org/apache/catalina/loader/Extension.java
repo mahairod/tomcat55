@@ -406,7 +406,7 @@ public final class Extension {
 
         while (true) {
 
-            int space = names.indexOf(" ");
+            int space = names.indexOf(' ');
             if (space < 0)
                 break;
             String name = names.substring(0, space).trim();

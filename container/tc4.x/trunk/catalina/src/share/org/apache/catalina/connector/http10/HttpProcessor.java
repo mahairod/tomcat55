@@ -388,7 +388,7 @@ final class HttpProcessor
 		break;
 
 	    // Parse the header name and value
-	    int colon = line.indexOf(":");
+	    int colon = line.indexOf(':');
 	    if (colon < 0)
 		throw new ServletException
 		    (sm.getString("httpProcessor.parseHeaders.colon"));
@@ -451,7 +451,7 @@ final class HttpProcessor
               while (le.hasMoreElements()) {
                 String language = (String)le.nextElement();
                 String country = "";
-                int countryIndex = language.indexOf("-");
+                int countryIndex = language.indexOf('-');
                 if (countryIndex > -1) {
                     country = language.substring(countryIndex + 1).trim();
                     language = language.substring(0, countryIndex).trim();
@@ -494,7 +494,7 @@ final class HttpProcessor
 		request.setContentType(value);
 		request.addHeader(name, value);
 	    } else if (match.equals("host")) {
-		int n = value.indexOf(":");
+		int n = value.indexOf(':');
 		if (n < 0)
 		    request.setServerName(value);
 		else {
@@ -568,7 +568,7 @@ final class HttpProcessor
 	}
 
 	// Parse any query parameters out of the request URI
-	int question = uri.indexOf("?");
+	int question = uri.indexOf('?');
 	if (question >= 0) {
 	    request.setQueryString(uri.substring(question + 1));
 	    if (debug >= 1)
@@ -582,7 +582,7 @@ final class HttpProcessor
 	int semicolon = uri.indexOf(match);
 	if (semicolon >= 0) {
 	    String rest = uri.substring(semicolon + match.length());
-	    int semicolon2 = rest.indexOf(";");
+	    int semicolon2 = rest.indexOf(';');
 	    if (semicolon2 >= 0) {
 		request.setRequestedSessionId(rest.substring(0, semicolon2));
 		rest = rest.substring(semicolon2);

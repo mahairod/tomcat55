@@ -567,7 +567,7 @@ public abstract class RequestBase
     public void setContentType(String type) {
 
 	this.contentType = type;
-	if (type.indexOf(";") >= 0)
+	if (type.indexOf(';') >= 0)
 	    characterEncoding = RequestUtil.parseCharacterEncoding(type);
 
     }

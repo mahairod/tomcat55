@@ -234,7 +234,7 @@ public final class MemoryRealm
         ArrayList list = new ArrayList();
         roles += ",";
 	while (true) {
-	    int comma = roles.indexOf(",");
+	    int comma = roles.indexOf(',');
 	    if (comma < 0)
 		break;
 	    String role = roles.substring(0, comma).trim();

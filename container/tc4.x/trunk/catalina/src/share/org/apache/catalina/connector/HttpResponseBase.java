@@ -692,7 +692,7 @@ public class HttpResponseBase
 
 	String path = url;
 	String query = "";
-	int question = url.indexOf("?");
+	int question = url.indexOf('?');
 	if (question >= 0) {
 	    path = url.substring(0, question);
 	    query = url.substring(question);

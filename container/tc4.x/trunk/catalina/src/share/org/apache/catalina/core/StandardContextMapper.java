@@ -248,7 +248,7 @@ public final class StandardContextMapper
 			pathInfo = null;
 		    break;
 		}
-		int slash = servletPath.lastIndexOf("/");
+		int slash = servletPath.lastIndexOf('/');
 		if (slash < 0)
 		    break;
 		servletPath = servletPath.substring(0, slash);
@@ -259,10 +259,10 @@ public final class StandardContextMapper
 	if (wrapper == null) {
 	    if (debug >= 2)
 		context.log("  Trying extension match");
-	    int slash = relativeURI.lastIndexOf("/");
+	    int slash = relativeURI.lastIndexOf('/');
 	    if (slash >= 0) {
 		String last = relativeURI.substring(slash);
-		int period = last.lastIndexOf(".");
+		int period = last.lastIndexOf('.');
 		if (period >= 0) {
 		    String pattern = "*" + last.substring(period);
 		    name = context.findServletMapping(pattern);

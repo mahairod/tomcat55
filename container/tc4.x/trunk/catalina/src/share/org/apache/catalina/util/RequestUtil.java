@@ -200,7 +200,7 @@ public final class RequestUtil {
 	if (start < 0)
 	    return (null);
 	String encoding = contentType.substring(start + 8);
-	int end = encoding.indexOf(";");
+	int end = encoding.indexOf(';');
 	if (end >= 0)
 	    encoding = encoding.substring(0, end);
         encoding = encoding.trim();
@@ -224,7 +224,7 @@ public final class RequestUtil {
 
         ArrayList cookies = new ArrayList();
         while (header.length() > 0) {
-            int semicolon = header.indexOf(";");
+            int semicolon = header.indexOf(';');
             if (semicolon < 0)
                 semicolon = header.length();
             if (semicolon == 0)
@@ -235,7 +235,7 @@ public final class RequestUtil {
             else
                 header = "";
 	    try {
-		int equals = token.indexOf("=");
+		int equals = token.indexOf('=');
 		if (equals > 0) {
 		    String name = URLDecode(token.substring(0, equals).trim());
 		    String value = URLDecode(token.substring(equals+1).trim());
@@ -422,7 +422,7 @@ public final class RequestUtil {
      *
      * @param map Map that accumulates the resulting parameters
      * @param data Input string containing request parameters
-     * @param urlParameters true if we're parsing parameters on the URL
+     * @param encoding Encoding to use for converting hex
      *
      * @exception UnsupportedEncodingException if the data is malformed
      */

@@ -1473,7 +1473,7 @@ public class WebdavServlet
         }
         
         if (destinationPath.startsWith(":")) {
-            int firstSeparator = destinationPath.indexOf("/");
+            int firstSeparator = destinationPath.indexOf('/');
             if (firstSeparator < 0) {
                 destinationPath = "/";
             } else {

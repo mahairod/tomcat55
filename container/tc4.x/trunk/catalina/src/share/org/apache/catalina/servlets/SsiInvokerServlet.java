@@ -338,7 +338,7 @@ public final class SsiInvokerServlet extends HttpServlet {
 	throws IndexOutOfBoundsException {
 
         String modString = ((cmd.toString()).trim()).toLowerCase();
-        return modString.substring(0, modString.indexOf(" "));
+        return modString.substring(0, modString.indexOf(' '));
     }
 
     /**

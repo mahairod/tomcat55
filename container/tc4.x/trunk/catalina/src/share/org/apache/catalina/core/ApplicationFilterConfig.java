@@ -245,6 +245,9 @@ final class ApplicationFilterConfig implements FilterConfig {
         else
             classLoader = context.getLoader().getClassLoader();
 
+        ClassLoader oldCtxClassLoader = 
+            Thread.currentThread().getContextClassLoader();
+
         // Instantiate a new instance of this filter and return it
         Class clazz = classLoader.loadClass(filterClass);
         this.filter = (Filter) clazz.newInstance();

@@ -269,7 +269,7 @@ public abstract class RequestFilterValve
 
 	ArrayList reList = new ArrayList();
 	while (list.length() > 0) {
-	    int comma = list.indexOf(",");
+	    int comma = list.indexOf(',');
 	    if (comma < 0)
 		break;
 	    String pattern = list.substring(0, comma).trim();

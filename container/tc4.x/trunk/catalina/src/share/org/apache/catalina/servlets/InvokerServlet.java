@@ -316,7 +316,7 @@ public final class InvokerServlet
         // Identify the outgoing servlet name or class, and outgoing path info
         String pathInfo = inPathInfo;
 	String servletClass = pathInfo.substring(1);
-	int slash = servletClass.indexOf("/");
+	int slash = servletClass.indexOf('/');
 	if (slash >= 0) {
 	    pathInfo = servletClass.substring(slash);
 	    servletClass = servletClass.substring(0, slash);

@@ -550,7 +550,7 @@ public class ApplicationContext
             contextPath = "";
         String relativeURI = path;
         String queryString = null;
-        int question = path.indexOf("?");
+        int question = path.indexOf('?');
         if (question >= 0) {
             relativeURI = path.substring(0, question);
             queryString = path.substring(question + 1);

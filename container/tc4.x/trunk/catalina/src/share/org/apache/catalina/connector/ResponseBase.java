@@ -797,7 +797,7 @@ public abstract class ResponseBase
 	    return;	// Ignore any call from an included servlet
 
 	this.contentType = type;
-	if (type.indexOf(";") >= 0) {
+	if (type.indexOf(';') >= 0) {
 	    encoding = RequestUtil.parseCharacterEncoding(type);
 	    if (encoding == null)
 	        encoding = "ISO-8859-1";

@@ -221,7 +221,7 @@ public class SsiMediator {
         this.origServletContext = servletContext;
         this.contextPath = req.getContextPath();
         this.path = path;
-        this.relpath = path.substring(0, path.lastIndexOf("/")+1);
+        this.relpath = path.substring(0, path.lastIndexOf('/')+1);
         this.isVirtualWebappRelative = isVirtualWebappRelative;
         int c=0;
         
@@ -261,7 +261,7 @@ public class SsiMediator {
         serverVariables.put("SERVER_SOFTWARE",
                             nullToString(servletContext.getServerInfo()));
         serverVariables.put("DOCUMENT_NAME",
-                            nullToString(path.substring(path.lastIndexOf("/")+1,
+                            nullToString(path.substring(path.lastIndexOf('/')+1,
                                                         path.length())));
         serverVariables.put("DOCUMENT_URI",
                             nullToString(path));
@@ -401,7 +401,7 @@ public class SsiMediator {
             if ((!path.startsWith("/")) || (path.startsWith("./"))) {
                 // handle as file in the current directory with original servletContext
                 servletContext = origServletContext;
-            }else if (path.indexOf("/", 1)==-1) {
+            }else if (path.indexOf('/', 1)==-1) {
                 //root context
                 servletContext = servletContext.getContext("/");
             } else if (!contextPath.equals("")) {
@@ -413,7 +413,7 @@ public class SsiMediator {
                 }
             } else if (normalized != null){
                 // find which context is the right one to handle 
-                String context = normalized.substring(0, path.indexOf("/", 1));
+                String context = normalized.substring(0, path.indexOf('/', 1));
                 ServletContext sc = servletContext.getContext(context);
                 if (sc!=null) {
                     servletContext = sc;
