@@ -1515,7 +1515,7 @@ public class Response
      * @param url URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
      */
-    private String toEncoded(String url, String sessionId) {
+    protected String toEncoded(String url, String sessionId) {
 
         if ((url == null) || (sessionId == null))
             return (url);
