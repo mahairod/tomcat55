@@ -47,7 +47,7 @@ if [ "$JASPER_OPTS" = "" ] ; then
 fi
 
 if [ "$JAVA_HOME" = "" ] ; then
-  echo You must set JAVA_HOME to point at your Java Development Kit installation
+  echo "You must set JAVA_HOME to point at your Java Development Kit installation"
   exit 1
 fi
 
@@ -71,10 +71,16 @@ fi
 
 # ----- Set Up The System Classpath -------------------------------------------
 
-CP=$CP:$JASPER_HOME/classes
-for i in $JASPER_HOME/lib/*.jar $JASPER_HOME/jasper/*.jar ; do
-  CP=$CP:$i
-CP=$CP:$JASPER_HOME/common/lib/servlet.jar
+CP="$JASPER_HOME/classes"
+for i in $JASPER_HOME/jasper/*.jar ; do
+  CP=$CP:"$i"
+done
+for i in $JASPER_HOME/lib/*.jar ; do
+  CP=$CP:"$i"
+done
+CP=$CP:"$JASPER_HOME/common/classes"
+for i in $JASPER_HOME/common/lib/*.jar ; do
+  CP=$CP:"$i"
 done
 
 
@@ -103,7 +109,7 @@ if [ "$1" = "jspc" ] ; then
 
 else
 
-  echo "Usage: jasper.sh ( jspc )"
+  echo "Usage: jasper.sh [ jspc ]"
   echo "Commands:"
   echo   jspc - Run the jasper offline JSP compiler
   exit 1
