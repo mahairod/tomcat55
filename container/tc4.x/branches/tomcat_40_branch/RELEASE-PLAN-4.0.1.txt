@@ -81,6 +81,7 @@ Bugzilla Bugs Resolved
 3736    Incorrect PathInfo on first invocation of servlet chain.
 3739    Custom tag support error.
 3759    Conversion from String to Object doesn't work.
+3779    The value of <jsp:param> should be URL encoded.
 3780    Documentation notes.
 3796    XML Classloader problem has crept back in.
 3809    Jar files in the wrong directories.
@@ -106,7 +107,8 @@ Connectors  3509    Apache 1.3.20 and mod_webapp and Tomcat 4b7 HANGS
 Connectors  3534    File Upload doesn't work with Apache, mod_webapp, Tomcat 4,
                     and WebDAV.
 
-Jasper      3779    The value of <jsp:param> should be URL encoded.
+Catalina    3770    HttpSessionListener.sessionCreated() called twice for each
+                    session.
 
 Catalina    3888    WebappClassLoader: Lifecycle error : CL stopped (bug 
                     confirmed, but conditions to reproduce it still unclear).
@@ -120,9 +122,6 @@ Nice To Have Fixes Before Final Release:
 Jasper      3668    Validation error reporting.
 
 Jasper      3704    Forward errors not reported when response is committed.
-
-Jasper      3770    HttpSessionListener.sessionCreated() called twice for each
-                    session.
 
 Catalina    3990    JNDI/LDAP Realm password authentication process.
 
