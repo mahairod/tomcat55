@@ -227,16 +227,6 @@ public final class SaveHostAction extends Action {
 
             honame = new ObjectName(hObjectName);
 
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(hform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(honame,
-                                  new Attribute("debug", new Integer(debug)));
-
             attribute = "appBase";
             String appBase = "";
             try {

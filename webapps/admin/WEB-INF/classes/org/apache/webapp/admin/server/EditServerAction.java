@@ -115,7 +115,6 @@ public class EditServerAction extends Action {
         ServerForm serverFm = new ServerForm();
         session.setAttribute("serverForm", serverFm);
         serverFm.setNodeLabel(nodeLabel);        
-        serverFm.setDebugLvlVals(Lists.getDebugLevels());
         serverFm.setObjectName(select);
         
         ObjectName sname = null;    
@@ -133,9 +132,6 @@ public class EditServerAction extends Action {
         String attribute = null;
         try {
             // Copy scalar properties
-            attribute = "debug";
-            serverFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(sname, attribute)).toString());
             attribute = "port";
             serverFm.setPortNumberText
                 (((Integer) mBServer.getAttribute(sname, attribute)).toString());

@@ -89,14 +89,6 @@
               <controls:action disabled="true">
                 -------------------------------------
               </controls:action>
-              <controls:action url='<%= "/AddLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.create"/>
-              </controls:action>
-              <controls:action url='<%= "/DeleteLogger.do?parent=" +
-                                  URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.deletes"/>
-              </controls:action>
                <%-- cannot delete or add a Realm for the service the admin app runs on --%>
               <logic:notEqual name="serviceName" value='<%= adminServiceName %>'>
               <controls:action disabled="true">
@@ -222,20 +214,6 @@
                 <html:hidden property="engineName"/>
                 <bean:write name="serviceForm" property="engineName"/>
               </logic:equal>
-            </controls:data>
-          </controls:row>
-          <controls:row header="false"
-              labelStyle="table-label-text" dataStyle="table-normal-text" styleId="debugLvlVals">
-            <controls:label>
-              <bean:message key="server.debuglevel"/>:
-            </controls:label>
-            <controls:data>
-              <bean:define id="debugLvlVals" name="serviceForm"
-                           property="debugLvlVals"/>
-              <html:select property="debugLvl" styleId="debugLvlVals">
-                <html:options collection="debugLvlVals" property="value"
-                              labelProperty="label"/>
-              </html:select>
             </controls:data>
           </controls:row>
           <controls:row header="false"

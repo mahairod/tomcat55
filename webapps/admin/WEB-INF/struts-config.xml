@@ -46,14 +46,6 @@
     <form-bean      name="aliasesForm"
                     type="org.apache.webapp.admin.host.AliasesForm"/>
 
-   <!-- ============= Logger Module ============= -->
-
-    <form-bean      name="loggerForm"
-                    type="org.apache.webapp.admin.logger.LoggerForm"/>
-                    
-    <form-bean      name="loggersForm"
-                    type="org.apache.webapp.admin.logger.LoggersForm"/>
-
     <!-- ============= Realm Module ============= -->
 
     <form-bean      name="dataSourceRealmForm"
@@ -249,15 +241,6 @@
                     path="/host/aliases.jsp"
                 redirect="false"/>
 
-    <!-- ============ Logger Module ============== -->
-
-    <forward        name="Logger"
-                    path="/logger/logger.jsp"
-                redirect="false"/>
-
-    <forward        name="Loggers"
-                    path="/logger/loggers.jsp"
-                redirect="false"/>
 
     <!-- ============ Context Module ============== -->
 
@@ -700,42 +683,6 @@
               input="/realm/memoryRealm.jsp"
                scope="session"/>
                
-    <!-- ============= Logger Module ============== -->
-
-    <!-- Set up Add Logger transaction -->
-    <action    path="/AddLogger"
-               type="org.apache.webapp.admin.logger.AddLoggerAction">
-    </action>
-
-    <!-- Set up Add Logger transaction -->
-    <action    path="/logger/AddLogger"
-               type="org.apache.webapp.admin.logger.AddLoggerAction">
-    </action>
-
-    <!-- Set up Delete Loggers transaction -->
-    <action    path="/DeleteLogger"
-               type="org.apache.webapp.admin.logger.DeleteLoggerAction"
-               name="loggersForm"
-               scope="request"/>
-
-    <!-- Perform Delete Loggers transaction -->
-    <action    path="/DeleteLoggers"
-               type="org.apache.webapp.admin.logger.DeleteLoggersAction"
-               name="loggersForm"
-               scope="request"/>
-
-    <!-- Set up Edit Logger transaction -->
-    <action    path="/EditLogger"
-               type="org.apache.webapp.admin.logger.EditLoggerAction">
-    </action>
-
-    <!-- Perform Save Logger transaction -->
-    <action    path="/SaveLogger"
-               type="org.apache.webapp.admin.logger.SaveLoggerAction"
-               name="loggerForm"
-              input="/logger/logger.jsp"
-               scope="session"/>
-
    <!-- ============= Context Module ============== -->
 
     <!-- Set up Add Context transaction -->

@@ -44,7 +44,7 @@ import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
+import org.apache.webapp.admin.valve.ValveUtil;
 
 /**
  * The <code>Action</code> that completes <em>Add Realm</em> and
@@ -133,7 +133,7 @@ public final class SaveJNDIRealmAction extends Action {
             try {
 
                 String parent = rform.getParentObjectName();
-                String objectName = DeleteLoggerAction.getObjectName(parent,
+                String objectName = ValveUtil.getObjectName(parent,
                                     TomcatTreeBuilder.REALM_TYPE);
 
                 ObjectName pname = new ObjectName(parent);
@@ -260,16 +260,6 @@ public final class SaveJNDIRealmAction extends Action {
                 mBServer.setAttribute(roname,
                         new Attribute("contextFactory",  contextFactory));
             }
-
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(rform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(roname,
-                            new Attribute("debug", new Integer(debug)));
 
             attribute = "digest";
             String digest = rform.getDigest();

@@ -76,11 +76,6 @@ public final class ServiceForm extends ActionForm {
     
     
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-    
-    /**
      * The name of the service the admin app runs on.
      */
     private String adminServiceName = null;    
@@ -90,7 +85,6 @@ public final class ServiceForm extends ActionForm {
      */
     private String defaultHost = null;
     
-    private List debugLvlVals = null;
     private List hostNameVals = null;
 
 
@@ -176,25 +170,6 @@ public final class ServiceForm extends ActionForm {
     }
         
     /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    
-    /**
      * Return the host name values.
      */
     public List getHostNameVals() {
@@ -230,25 +205,6 @@ public final class ServiceForm extends ActionForm {
     public String getEngineName() {
         
         return this.engineName;
-        
-    }
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
         
     }
     
@@ -340,7 +296,6 @@ public final class ServiceForm extends ActionForm {
         this.serviceName = null;
         this.engineName = null;
         this.adminServiceName = null;
-        this.debugLvl = "0";
         this.defaultHost = null;
     }
     
@@ -352,8 +307,6 @@ public final class ServiceForm extends ActionForm {
 
         StringBuffer sb = new StringBuffer("ServiceForm[adminAction=");
         sb.append(adminAction);
-        sb.append(",debugLvl=");
-        sb.append(debugLvl);
         sb.append(",defaultHost=");
         sb.append(defaultHost);
         sb.append(",engineName=");

@@ -287,16 +287,6 @@ public final class SaveDefaultContextAction extends Action {
             mBServer.setAttribute(loname,
                                   new Attribute("reloadable", new Boolean(reloadable)));
             
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(cform.getLdrDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(loname,
-                                  new Attribute("debug", new Integer(debug)));
-            
             attribute = "checkInterval";
             int checkInterval = 15;
             try {
@@ -314,15 +304,6 @@ public final class SaveDefaultContextAction extends Action {
                 mBServer.setAttribute(moname,
                                   new Attribute("entropy",entropy));
             }
-            
-            attribute = "debug";
-            try {
-                debug = Integer.parseInt(cform.getMgrDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }            
-            mBServer.setAttribute(moname,
-                                  new Attribute("debug", new Integer(debug)));
             
             attribute = "checkInterval";
             try {

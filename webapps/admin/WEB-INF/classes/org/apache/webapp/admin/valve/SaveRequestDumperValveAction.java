@@ -118,31 +118,6 @@ public final class SaveRequestDumperValveAction extends Action {
 
         // Perform attribute updates as requested
         String attribute = null;
-        try {
-        
-            ObjectName voname = new ObjectName(vObjectName);
-            
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(vform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(voname,
-                                  new Attribute("debug", new Integer(debug)));
-
-        } catch (Exception e) {
-
-            getServlet().log
-                (resources.getMessage(locale, "users.error.attribute.set",
-                                      attribute), e);
-            response.sendError
-                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                 resources.getMessage(locale, "users.error.attribute.set",
-                                      attribute));
-            return (null);
-        }
                 
         // Forward to the success reporting page
         session.removeAttribute(mapping.getAttribute());

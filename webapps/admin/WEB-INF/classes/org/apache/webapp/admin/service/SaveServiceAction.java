@@ -46,7 +46,7 @@ import org.apache.webapp.admin.Lists;
 import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.webapp.admin.TreeControl;
 import org.apache.webapp.admin.TreeControlNode;
-import org.apache.webapp.admin.logger.DeleteLoggerAction;
+import org.apache.webapp.admin.valve.ValveUtil;
 
 
 
@@ -216,7 +216,7 @@ public final class SaveServiceAction extends Action {
                 sObjectName = soname.toString();
                 eObjectName = eoname.toString();
                 
-                String realmOName = DeleteLoggerAction.getObjectName(
+                String realmOName = ValveUtil.getObjectName(
                                     eObjectName, TomcatTreeBuilder.REALM_TYPE);
             
                 ObjectName roname = new ObjectName(realmOName);
@@ -336,18 +336,6 @@ public final class SaveServiceAction extends Action {
         
             eoname = new ObjectName(eObjectName);
             soname = new ObjectName(sObjectName);
-
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(sform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(soname,
-                                  new Attribute("debug", new Integer(debug)));
-            mBServer.setAttribute(eoname,
-                                  new Attribute("debug", new Integer(debug)));
 
             attribute = "defaultHost";
             String defaultHost = sform.getDefaultHost();

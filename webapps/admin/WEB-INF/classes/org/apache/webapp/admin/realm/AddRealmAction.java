@@ -133,9 +133,7 @@ public class AddRealmAction extends Action {
         String realmType = "UserDatabaseRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");
         realmFm.setResource("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setRealmTypeVals(types);
     }
 
@@ -149,7 +147,6 @@ public class AddRealmAction extends Action {
         String realmType = "JNDIRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");
         realmFm.setDigest("");
         realmFm.setRoleBase("");
         realmFm.setUserSubtree("false");
@@ -165,7 +162,6 @@ public class AddRealmAction extends Action {
         realmFm.setConnectionName("");
         realmFm.setConnectionPassword("");
         realmFm.setConnectionURL("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setSearchVals(Lists.getBooleanValues());
         realmFm.setRealmTypeVals(types);
     }
@@ -180,9 +176,7 @@ public class AddRealmAction extends Action {
         String realmType = "MemoryRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");
         realmFm.setPathName("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setRealmTypeVals(types);
     }
 
@@ -196,7 +190,6 @@ public class AddRealmAction extends Action {
         String realmType = "JDBCRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");
         realmFm.setDigest("");
         realmFm.setDriver("");
         realmFm.setRoleNameCol("");
@@ -206,7 +199,6 @@ public class AddRealmAction extends Action {
         realmFm.setConnectionName("");
         realmFm.setConnectionPassword("");
         realmFm.setConnectionURL("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setRealmTypeVals(types);
     }
     
@@ -220,7 +212,6 @@ public class AddRealmAction extends Action {
         String realmType = "DataSourceRealm";
         realmFm.setNodeLabel("Realm (" + realmType + ")");
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvl("0");
         realmFm.setDataSourceName("");
         realmFm.setDigest("");
         realmFm.setLocalDataSource("false");
@@ -229,7 +220,6 @@ public class AddRealmAction extends Action {
         realmFm.setUserNameCol("");
         realmFm.setUserRoleTable("");
         realmFm.setUserTable("");
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setRealmTypeVals(types);
         realmFm.setBooleanVals(Lists.getBooleanValues());
     }

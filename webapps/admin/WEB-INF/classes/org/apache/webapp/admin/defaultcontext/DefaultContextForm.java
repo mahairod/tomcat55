@@ -97,11 +97,6 @@ public final class DefaultContextForm extends ActionForm {
     private String ldrCheckInterval = "15";
     
     /**
-     * The text for the loader Debug level.
-     */
-    private String ldrDebugLvl = "0";
-    
-    /**
      * The text for the boolean value of loader reloadable.
      */
     private String ldrReloadable = "false";
@@ -111,10 +106,6 @@ public final class DefaultContextForm extends ActionForm {
      */
     private String mgrCheckInterval = "60";
     
-    /**
-     * The text for the session manager Debug level.
-     */
-    private String mgrDebugLvl = "0";
     
     /**
      * The text for the session mgr session ID initializer.
@@ -125,11 +116,6 @@ public final class DefaultContextForm extends ActionForm {
      * The text for the session mgr max active sessions.
      */
     private String mgrMaxSessions = "0";
-    
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
     
     /*
      * Represent boolean (true, false) values for cookies etc.
@@ -247,24 +233,6 @@ public final class DefaultContextForm extends ActionForm {
         
     }
     
-    
-    /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
     
     /**
      * Return the booleanVals.
@@ -399,25 +367,6 @@ public final class DefaultContextForm extends ActionForm {
     }
     
     /**
-     * Return the Loader Debug Level Text.
-     */
-    
-    public String getLdrDebugLvl() {
-        
-        return this.ldrDebugLvl;
-        
-    }
-    
-    /**
-     * Set the Loader Debug Level Text.
-     */
-    public void setLdrDebugLvl(String ldrDebugLvl) {
-        
-        this.ldrDebugLvl = ldrDebugLvl;
-        
-    }
-    
-    /**
      * Return the loader reloadable boolean value.
      */
     public String getLdrReloadable() {
@@ -450,25 +399,6 @@ public final class DefaultContextForm extends ActionForm {
     public void setMgrCheckInterval(String mgrCheckInterval) {
         
         this.mgrCheckInterval = mgrCheckInterval;
-        
-    }
-    
-    /**
-     * Return the session mgr Debug Level Text.
-     */
-    
-    public String getMgrDebugLvl() {
-        
-        return this.mgrDebugLvl;
-        
-    }
-    
-    /**
-     * Set the session mgr Debug Level Text.
-     */
-    public void setMgrDebugLvl(String mgrDebugLvl) {
-        
-        this.mgrDebugLvl = mgrDebugLvl;
         
     }
     
@@ -533,12 +463,10 @@ public final class DefaultContextForm extends ActionForm {
         
         // loader properties
         this.ldrCheckInterval = "15";
-        this.ldrDebugLvl = "0";
         this.ldrReloadable = "true";
         
         // session manager properties
         this.mgrCheckInterval = "60";
-        this.mgrDebugLvl = "0";
         this.mgrSessionIDInit = "0";
         this.mgrMaxSessions = "-1";
     }
@@ -563,13 +491,9 @@ public final class DefaultContextForm extends ActionForm {
         // loader properties
         sb.append(",ldrCheckInterval=");
         sb.append(ldrCheckInterval);        
-        sb.append(",ldrDebugLvl=");
-        sb.append(ldrDebugLvl);
         sb.append(",ldrReloadable=");
         sb.append(ldrReloadable);
         // manager properties
-        sb.append(",mgrDebugLvl=");
-        sb.append(mgrDebugLvl);
         sb.append(",mgrCheckInterval=");
         sb.append(mgrCheckInterval);
         sb.append(",mgrSessionIDInit=");

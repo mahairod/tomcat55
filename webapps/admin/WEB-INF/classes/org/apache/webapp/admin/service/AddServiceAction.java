@@ -87,10 +87,8 @@ public class AddServiceAction extends Action {
         serviceFm.setEngineObjectName("");
         serviceFm.setServiceName("");
         serviceFm.setEngineName("");
-        serviceFm.setDebugLvl("0");
         serviceFm.setDefaultHost("localhost");        
         serviceFm.setAdminServiceName("");
-        serviceFm.setDebugLvlVals(Lists.getDebugLevels());
         serviceFm.setServerObjectName(serverName);
         ArrayList hosts = new ArrayList();
         hosts.add(new LabelValueBean

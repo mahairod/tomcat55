@@ -92,7 +92,6 @@ public class AddConnectorAction extends Action {
         if (type == null)
             type = "HTTP";    // default type is HTTP
         connectorFm.setConnectorType(type);
-        connectorFm.setDebugLvl("0");
         connectorFm.setServiceName(serviceName);
         if ("HTTPS".equalsIgnoreCase(type)) {
             connectorFm.setScheme("https");
@@ -134,7 +133,6 @@ public class AddConnectorAction extends Action {
         connectorFm.setProxyName("");
         connectorFm.setProxyPortText("0");        
         
-        connectorFm.setDebugLvlVals(Lists.getDebugLevels());
         connectorFm.setBooleanVals(Lists.getBooleanValues());                
         connectorFm.setClientAuthVals(Lists.getClientAuthValues());
         

@@ -182,16 +182,12 @@ public class EditRealmAction extends Action {
         sb.append(resources.getMessage(locale, "server.service.treeBuilder.realm"));
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
 
         String attribute = null;
         try {
 
             // Copy scalar properties
-            attribute = "debug";
-            realmFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "resourceName";
             realmFm.setResource
                 ((String) mBServer.getAttribute(rname, attribute));
@@ -223,16 +219,12 @@ public class EditRealmAction extends Action {
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
 
         String attribute = null;
         try {
 
             // Copy scalar properties
-            attribute = "debug";
-            realmFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "pathname";
             realmFm.setPathName
                 ((String) mBServer.getAttribute(rname, attribute));
@@ -264,16 +256,12 @@ public class EditRealmAction extends Action {
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
 
         String attribute = null;
         try {
 
             // Copy scalar properties
-            attribute = "debug";
-            realmFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "digest";
             realmFm.setDigest
                 ((String) mBServer.getAttribute(rname, attribute));
@@ -332,7 +320,6 @@ public class EditRealmAction extends Action {
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setSearchVals(Lists.getBooleanValues());
         realmFm.setAllowDeletion(allowDeletion(rname));
 
@@ -340,9 +327,6 @@ public class EditRealmAction extends Action {
         try {
 
             // Copy scalar properties
-            attribute = "debug";
-            realmFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "digest";
             realmFm.setDigest
                 ((String) mBServer.getAttribute(rname, attribute));
@@ -413,7 +397,6 @@ public class EditRealmAction extends Action {
         sb.append(")");
         realmFm.setNodeLabel(sb.toString());
         realmFm.setRealmType(realmType);
-        realmFm.setDebugLvlVals(Lists.getDebugLevels());
         realmFm.setAllowDeletion(allowDeletion(rname));
         realmFm.setBooleanVals(Lists.getBooleanValues());
 
@@ -424,9 +407,6 @@ public class EditRealmAction extends Action {
             attribute = "dataSourceName";
             realmFm.setDataSourceName
                 ((String) mBServer.getAttribute(rname, attribute));
-            attribute = "debug";
-            realmFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(rname, attribute)).toString());
             attribute = "digest";
             realmFm.setDigest
                 ((String) mBServer.getAttribute(rname, attribute));

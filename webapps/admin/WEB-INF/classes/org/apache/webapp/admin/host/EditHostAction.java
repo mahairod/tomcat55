@@ -144,7 +144,6 @@ public class EditHostAction extends Action {
         sb.append(hname.getKeyProperty("host"));
         sb.append(")");
         hostFm.setNodeLabel(sb.toString());
-        hostFm.setDebugLvlVals(Lists.getDebugLevels());
         hostFm.setBooleanVals(Lists.getBooleanValues());
 
         String attribute = null;
@@ -154,9 +153,7 @@ public class EditHostAction extends Action {
             attribute = "name";
             hostFm.setHostName
                 ((String) mBServer.getAttribute(hname, attribute));
-            attribute = "debug";
-            hostFm.setDebugLvl
-                (((Integer) mBServer.getAttribute(hname, attribute)).toString());
+
             attribute = "appBase";
             hostFm.setAppBase
                 ((String) mBServer.getAttribute(hname, attribute));

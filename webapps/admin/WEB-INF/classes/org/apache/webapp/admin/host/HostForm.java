@@ -67,11 +67,6 @@ public final class HostForm extends ActionForm {
     private String appBase = null;
 
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-
-    /**
      * Boolean for autoDeploy.
      */
     private String autoDeploy = "true";
@@ -95,11 +90,6 @@ public final class HostForm extends ActionForm {
      * The text for the port. -- TBD
      */
     private String findAliases = null;
-
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
 
     /*
      * Represent boolean (true, false) values for unpackWARs etc.
@@ -313,44 +303,6 @@ public final class HostForm extends ActionForm {
     }
 
     /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-
-        return this.debugLvlVals;
-
-    }
-
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-
-        this.debugLvlVals = debugLvlVals;
-
-    }
-
-
-    /**
-     * Return the Debug Level Text.
-     */
-
-    public String getDebugLvl() {
-
-        return this.debugLvl;
-
-    }
-
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-
-        this.debugLvl = debugLvl;
-
-    }
-
-    /**
      * Return the booleanVals.
      */
     public List getBooleanVals() {
@@ -441,7 +393,6 @@ public final class HostForm extends ActionForm {
         this.autoDeploy = "true";
         this.deployXML = "true";
         this.deployOnStartup = "true";
-        this.debugLvl = "0";
         this.unpackWARs = "true";
 
     }
@@ -453,8 +404,6 @@ public final class HostForm extends ActionForm {
 
         StringBuffer sb = new StringBuffer("HostForm[adminAction=");
         sb.append(adminAction);
-        sb.append(",debugLvl=");
-        sb.append(debugLvl);
         sb.append(",appBase=");
         sb.append(appBase);
         sb.append(",autoDeploy=");

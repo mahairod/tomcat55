@@ -59,20 +59,10 @@ public class RealmForm extends ActionForm {
     private String nodeLabel = null;
     
     /**
-     * The text for the debug level.
-     */
-    private String debugLvl = "0";
-
-    /**
      * The object name of the parent of this realm.
      */
     private String parentObjectName = null;
         
-    /**
-     * Set of valid values for debug level.
-     */
-    private List debugLvlVals = null;
-
     /**
      * Set of valid values for realms.
      */
@@ -197,42 +187,6 @@ public class RealmForm extends ActionForm {
     }
     
     /**
-     * Return the debugVals.
-     */
-    public List getDebugLvlVals() {
-        
-        return this.debugLvlVals;
-        
-    }
-    
-    /**
-     * Set the debugVals.
-     */
-    public void setDebugLvlVals(List debugLvlVals) {
-        
-        this.debugLvlVals = debugLvlVals;
-        
-    }
-    
-    /**
-     * Return the Debug Level Text.
-     */
-    public String getDebugLvl() {
-        
-        return this.debugLvl;
-        
-    }
-    
-    /**
-     * Set the Debug Level Text.
-     */
-    public void setDebugLvl(String debugLvl) {
-        
-        this.debugLvl = debugLvl;
-        
-    }
-    
-    /**
      * Return the allow deletion value.
      */
     public String getAllowDeletion() {
@@ -262,7 +216,6 @@ public class RealmForm extends ActionForm {
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         
         objectName = null;
-        debugLvl = "0";
         adminAction = "Edit";
         
     }

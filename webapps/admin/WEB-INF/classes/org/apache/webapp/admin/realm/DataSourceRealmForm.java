@@ -278,8 +278,6 @@ public final class DataSourceRealmForm extends RealmForm {
 
         StringBuffer sb = new StringBuffer("DataSourceRealmForm[adminAction=");
         sb.append(getAdminAction());
-        sb.append(",debugLvl=");
-        sb.append(getDebugLvl());
         sb.append(",dataSourceName=");
         sb.append(dataSourceName);
         sb.append(",digest=");
