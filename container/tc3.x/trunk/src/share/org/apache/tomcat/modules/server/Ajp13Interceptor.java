@@ -262,7 +262,7 @@ class Ajp13Request extends Request
 	if( ajp13!=null) ajp13.recycle();
     }
 
-    private static final int dL=10;
+    private static final int dL=0;
     private void d(String s ) {
 	System.err.println( "Ajp13Request: " + s );
     }
