@@ -400,8 +400,13 @@ public class NamingContextListener
         throws NamingException {
 
         // Creating the comp subcontext
-        compCtx = namingContext.createSubcontext("comp");
-        envCtx = compCtx.createSubcontext("env");
+        if (container instanceof Server) {
+            compCtx = namingContext;
+            envCtx = namingContext;
+        } else {
+            compCtx = namingContext.createSubcontext("comp");
+            envCtx = compCtx.createSubcontext("env");
+        }
 
         int i;
 
