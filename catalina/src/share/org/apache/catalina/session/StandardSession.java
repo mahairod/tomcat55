@@ -587,7 +587,7 @@ public class StandardSession
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
             if (timeIdle >= maxInactiveInterval) {
-                this.isValid = false;
+                expire(true);
             }
         }
 
