@@ -66,7 +66,9 @@ package org.apache.catalina.core;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import javax.naming.directory.DirContext;
 import org.apache.catalina.Container;
@@ -75,6 +77,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
@@ -99,7 +102,8 @@ import org.apache.catalina.util.StringManager;
  * @version $Revision$ $Date$
  */
 
-public class StandardDefaultContext implements DefaultContext {
+public class StandardDefaultContext 
+    implements DefaultContext, LifecycleListener {
 
 
     // ----------------------------------------------------------- Constructors
@@ -113,6 +117,12 @@ public class StandardDefaultContext implements DefaultContext {
 
 
     // ----------------------------------------------------- Instance Variables
+
+
+    /**
+     * Contexts we are currently associated with.
+     */
+    private Hashtable contexts = new Hashtable();
 
 
     /**
@@ -239,16 +249,19 @@ public class StandardDefaultContext implements DefaultContext {
      */
     protected Manager manager = null;
 
+
     /**
      * The string manager for this package.
      */
     protected static StringManager sm =
         StringManager.getManager(Constants.Package);
 
+
     /**
      * The property change support for this component.
      */
     protected PropertyChangeSupport support = new PropertyChangeSupport(this);
+
 
     // ----------------------------------------------------- Context Properties
 
@@ -908,6 +921,16 @@ public class StandardDefaultContext implements DefaultContext {
 
 
     /**
+     * Return the naming resources associated with this web application.
+     */
+    public NamingResources getNamingResources() {
+
+        return (this.namingResources);
+
+    }
+
+
+    /**
      * Remove the specified application listener class from the set of
      * listeners for this application.
      *
@@ -1165,17 +1188,111 @@ public class StandardDefaultContext implements DefaultContext {
 
 
     /**
+     * Process the START event for an associated Context.
+     *
+     * @param event The lifecycle event that has occurred
+     */
+    public void lifecycleEvent(LifecycleEvent event) {
+
+        StandardContext context = null;
+        NamingContextListener listener = null;
+
+        if (event.getLifecycle() instanceof StandardContext) {
+            context = (StandardContext) event.getLifecycle();
+            LifecycleListener[] listeners = context.findLifecycleListeners();
+            for (int i = 0; i < listeners.length; i++) {
+                if (listeners[i] instanceof NamingContextListener) {
+                    listener = (NamingContextListener) listeners[i];
+                    break;
+                }
+            }
+        }
+
+        if (listener == null) {
+            System.out.println("Not found");
+            return;
+        }
+
+        if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
+
+            // Add context
+            contexts.put(context, context);
+
+            NamingResources contextResources = context.getNamingResources();
+
+            // Send notifications to the listener to add the appropriate 
+            // resources
+            ContextEjb [] contextEjb = findEjbs();
+            for (int i = 0; i < contextEjb.length; i++) {
+                ContextEjb contextEntry = contextEjb[i];
+                if (contextResources.exists(contextEntry.getName())) {
+                    listener.removeEjb(contextEntry.getName());
+                }
+                listener.addEjb(contextEntry);
+            }
+            ContextEnvironment [] contextEnv = findEnvironments();
+            for (int i = 0; i < contextEnv.length; i++) {
+                ContextEnvironment contextEntry = contextEnv[i];
+                if (contextResources.exists(contextEntry.getName())) {
+                    listener.removeEnvironment(contextEntry.getName());
+                }
+                listener.addEnvironment(contextEntry);
+            }
+            ContextResource [] resources = findResources();
+            for (int i = 0; i < resources.length; i++) {
+                ContextResource contextEntry = resources[i];
+                if (contextResources.exists(contextEntry.getName())) {
+                    listener.removeResource(contextEntry.getName());
+                }
+                listener.addResource(contextEntry);
+            }
+            String [] envRefs = findResourceEnvRefs();
+            for (int i = 0; i < envRefs.length; i++) {
+                if (contextResources.exists(envRefs[i])) {
+                    listener.removeResourceEnvRef(envRefs[i]);
+                }
+                listener.addResourceEnvRef
+                    (envRefs[i], findResourceEnvRef(envRefs[i]));
+            }
+
+            // Add listener to the NamingResources listener list
+            namingResources.addPropertyChangeListener(listener);
+
+        } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
+
+            // Remove context
+            contexts.remove(context);
+
+            // Remove listener from the NamingResource listener list
+            namingResources.removePropertyChangeListener(listener);
+
+            // Remove listener from lifecycle listeners
+            context.removeLifecycleListener(this);
+
+        }
+
+    }
+
+
+    /**
      * Import the configuration from the DefaultContext into
      * current Context.
      *
      * @param context current web application context
      */
     public void importDefaultContext(Context context) {
-        if( context instanceof StandardContext )
+
+        if (context instanceof StandardContext) {
             ((StandardContext)context).setUseNaming(isUseNaming());
+            if (!contexts.containsKey(context)) {
+                ((StandardContext) context).addLifecycleListener(this);
+            }
+        }
+
         context.setCookies(getCookies());
         context.setCrossContext(getCrossContext());
         context.setReloadable(getReloadable());
+
         String [] listeners = findApplicationListeners();
         for( int i = 0; i < listeners.length; i++ ) {
             context.addApplicationListener(listeners[i]);
@@ -1200,28 +1317,36 @@ public class StandardDefaultContext implements DefaultContext {
         for( int i = 0; i < appParam.length; i++ ) {
             context.addApplicationParameter(appParam[i]);
         }
-        ContextEjb [] contextEjb = findEjbs();
-        for( int i = 0; i < contextEjb.length; i++ ) {
-            context.addEjb(contextEjb[i]);
-        }
-        ContextEnvironment [] contextEnv = findEnvironments();
-        for( int i = 0; i < contextEnv.length; i++ ) {
-            context.addEnvironment(contextEnv[i]);
-        }
-        if( context instanceof StandardContext ) {
-            ResourceParams [] resourceParams = findResourceParams();
-            for( int i = 0; i < resourceParams.length; i++ ) {
-                ((StandardContext)context).addResourceParams(resourceParams[i]);
+
+        if (!(context instanceof StandardContext)) {
+            ContextEjb [] contextEjb = findEjbs();
+            for( int i = 0; i < contextEjb.length; i++ ) {
+                context.addEjb(contextEjb[i]);
+            }
+            ContextEnvironment [] contextEnv = findEnvironments();
+            for( int i = 0; i < contextEnv.length; i++ ) {
+                context.addEnvironment(contextEnv[i]);
+            }
+            /*
+            if (context instanceof StandardContext) {
+                ResourceParams [] resourceParams = findResourceParams();
+                for( int i = 0; i < resourceParams.length; i++ ) {
+                    ((StandardContext)context).addResourceParams
+                        (resourceParams[i]);
+                }
+            }
+            */
+            ContextResource [] resources = findResources();
+            for( int i = 0; i < resources.length; i++ ) {
+                context.addResource(resources[i]);
+            }
+            String [] envRefs = findResourceEnvRefs();
+            for( int i = 0; i < envRefs.length; i++ ) {
+                context.addResourceEnvRef
+                    (envRefs[i],findResourceEnvRef(envRefs[i]));
             }
         }
-        ContextResource [] resources = findResources();
-        for( int i = 0; i < resources.length; i++ ) {
-            context.addResource(resources[i]);
-        }
-        String [] envRefs = findResourceEnvRefs();
-        for( int i = 0; i < envRefs.length; i++ ) {
-            context.addResourceEnvRef(envRefs[i],findResourceEnvRef(envRefs[i]));
-        }
+
     }
 
     /**
