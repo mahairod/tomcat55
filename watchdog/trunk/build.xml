@@ -36,6 +36,7 @@
                 dest="${tomcat.home}/lib/moo.jar" />
       <copyfile src="${watchdog.dist}/lib/client.jar" 
                 dest="${tomcat.home}/lib/client.jar" />
+      
    </target>
 
    <target name="prepare">
@@ -44,7 +45,8 @@
       <mkdir dir="${watchdog.build}/clients"/>
       <mkdir dir="${watchdog.build}/conf" />
       <mkdir dir="${watchdog.build}/lib" />
-     
+      <mkdir dir="${watchdog.build}/lib/jsp-golden"/>
+
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/classes"/>
       <mkdir dir="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
@@ -57,8 +59,8 @@
       <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.build}/lib/xml.jar"/>
 
-      <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
-      <copydir src="src/clients/org/apache/jcheck/jsp/client" dest="${watchdog.dist}/lib/jsp-golden"/>
+      <copydir src="src/clients/org/apache/jcheck/jsp/client" 
+               dest="${watchdog.build}/lib/jsp-golden"/>
 
       <copydir src="src/bin" dest="${watchdog.build}"/>
       <copydir src="src/conf" dest="${watchdog.build}/conf" />
@@ -97,6 +99,17 @@
       <javac srcdir="src/clients" destdir="${watchdog.build}/clients" 
              classpath="${watchdog-classpath}" 
              deprecation="off" />    
+        
+      <jar jarfile="${watchdog.build}/lib/client.jar"
+           basedir="${watchdog.build}/clients" 
+           items="org" />
+
+      <copydir src="${watchdog.build}/webapps/servlet-tests" 
+               dest="${tomcat.build}/webapps/servlet-tests" />
+      <copydir src="${watchdog.build}/webapps/jsp-tests" 
+               dest="${tomcat.build}/webapps/jsp-tests" />
+
+
    </target>
 
    <target name="dist" depends="main">
@@ -108,12 +121,16 @@
       <mkdir dir="${watchdog.dist}/conf" />
       <mkdir dir="${watchdog.dist}/lib" />
       <mkdir dir="${watchdog.dist}/webapps" />
-    
+      <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
+
       <copyfile src="../jakarta-tools/moo.jar"
                 dest="${watchdog.dist}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-ant/lib/xml.jar"
                 dest="${watchdog.dist}/lib/xml.jar"/>
+      
+      <copydir src="src/clients/org/apache/jcheck/jsp/client" 
+               dest="${watchdog.dist}/lib/jsp-golden"/>
 
       <copydir src="src/bin" dest="${watchdog.dist}"/>
       <copydir src="src/conf" dest="${watchdog.dist}/conf" />
@@ -133,7 +150,7 @@
 
       <jar jarfile="${watchdog.dist}/webapps/jsp-tests.war"
         basedir="${watchdog.build}/webapps/jsp-tests" 
-        items="WEB-INF,jsp,golden-files" />
+        items="WEB-INF,jsp" />
 
       <!-- build EAR -->
 

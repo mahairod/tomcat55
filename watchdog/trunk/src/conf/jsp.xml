@@ -100,11 +100,6 @@
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/useBean/negativeNoBody.jsp HTTP/1.0"
            returnCode="HTTP/1.0 500"
           />
-      <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.negativePropSyntax
-            =core_syntax/beantests/setProperty/negativePropSyntax -->
-      <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/negativePropSyntax HTTP/1.0"
-           returnCode="HTTP/1.0 500"
-          />
       <!-- org.apache.jcheck.jsp.client.core_syntax.beantests.setProperty.positiveSetPropParam
             =core_syntax/beantests/setProperty/positiveSetPropParam.jsp -->
       <gtest request="GET /jsp-tests/jsp/core_syntax/beantests/setProperty/positiveSetPropParam.jsp?Name=MANGO HTTP/1.0"
