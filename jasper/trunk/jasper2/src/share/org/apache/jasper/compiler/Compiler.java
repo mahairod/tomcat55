@@ -210,10 +210,13 @@ public class Compiler {
 	    if (jspProperty.isXml() != null) {
 		pageInfo.setIsXmlSpecified(true);
 	    }
+	    if (jspProperty.isELIgnored() != null) {
+		pageInfo.setELIgnoredSpecified(true);
+	    }
 	    pageInfo.setIsXml(JspUtil.booleanValue(jspProperty.isXml()));
 	    pageInfo.setPageEncoding(jspProperty.getPageEncoding());
-	    pageInfo.setELEnabled(JspUtil.booleanValue(jspProperty.isELEnabled()));
-	    pageInfo.setScriptingEnabled(JspUtil.booleanValue(jspProperty.isScriptingEnabled()));
+	    pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
+	    pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
 	    pageInfo.setIncludePrelude(jspProperty.getIncludePrelude());
 	    pageInfo.setIncludeCoda(jspProperty.getIncludeCoda());
 	}

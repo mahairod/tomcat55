@@ -826,7 +826,7 @@ public class Generator {
 
         public void visit(Node.ELExpression n) throws JasperException {
             n.setBeginJavaLine(out.getJavaLine());
-            if ( pageInfo.isELEnabled() ) {
+            if ( !pageInfo.isELIgnored() ) {
                 out.printil(
                     "out.write("
 		    + JspUtil.interpreterCall(this.isTagFile,

@@ -100,8 +100,7 @@ public class TagFileProcessor {
             new JspUtil.ValidAttribute("pageEncoding"),
             new JspUtil.ValidAttribute("language"),
             new JspUtil.ValidAttribute("import"),
-            new JspUtil.ValidAttribute("isScriptingEnabled"),
-            new JspUtil.ValidAttribute("isELEnabled") };
+            new JspUtil.ValidAttribute("isELIgnored") };
 
 	private static final JspUtil.ValidAttribute[] attributeDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("name", true),

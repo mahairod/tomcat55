@@ -90,8 +90,9 @@ class PageInfo {
     private String pageEncoding = null;
     private int maxTagNesting = 0;
     private boolean scriptless = false;
-    private boolean scriptingEnabled = true;
-    private boolean elEnabled = true;
+    private boolean scriptingInvalid = false;
+    private boolean elIgnored = false;
+    private boolean elIgnoredSpecified = false;
     private boolean isXml = false;
     private boolean isXmlSpecified = false;	// true is there is a is-xml
 						// element in jsp-config
@@ -234,20 +235,28 @@ class PageInfo {
 	return scriptless;
     }
 
-    public void setScriptingEnabled(boolean s) {
-	scriptingEnabled = s;
+    public void setScriptingInvalid(boolean s) {
+	scriptingInvalid = s;
     }
 
-    public boolean isScriptingEnabled() {
-	return scriptingEnabled;
+    public boolean isScriptingInvalid() {
+	return scriptingInvalid;
     }
 
-    public void setELEnabled(boolean s) {
-	elEnabled = s;
+    public void setELIgnored(boolean s) {
+	elIgnored = s;
     }
 
-    public boolean isELEnabled() {
-	return elEnabled;
+    public boolean isELIgnored() {
+	return elIgnored;
+    }
+
+    public void setELIgnoredSpecified(boolean s) {
+	elIgnoredSpecified = s;
+    }
+
+    public boolean isELIgnoredSpecified() {
+	return elIgnoredSpecified;
     }
 
     public boolean isXml() {

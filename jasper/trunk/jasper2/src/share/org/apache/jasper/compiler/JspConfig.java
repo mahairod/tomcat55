@@ -90,8 +90,8 @@ public class JspConfig {
     private boolean initialized = false;
 
     private String defaultIsXml = null;		// unspecified
-    private String defaultIsELEnabled = "true";
-    private String defaultIsScriptingEnabled = "true";
+    private String defaultIsELIgnored = null;	// unspecified
+    private String defaultIsScriptingInvalid = "false";
 
     public JspConfig(ServletContext ctxt) {
 	this.ctxt = ctxt;
@@ -109,7 +109,7 @@ public class JspConfig {
 	ParserUtils pu = ParserUtils.createParserUtils(cl);
 	TreeNode webApp = pu.parseXMLDocument(WEB_XML, is);
 	if (webApp == null || !"2.4".equals(webApp.findAttribute("version"))) {
-	    defaultIsELEnabled = "false";
+	    defaultIsELIgnored = "true";
 	    return;
 	}
 	TreeNode jspConfig = webApp.findChild("jsp-config");
@@ -126,8 +126,8 @@ public class JspConfig {
 
             Vector urlPatterns = new Vector();
 	    String pageEncoding = null;
-	    String scriptingEnabled = null;
-	    String elEnabled = null;
+	    String scriptingInvalid = null;
+	    String elIgnored = null;
 	    String isXml = null;
 	    Vector includePrelude = new Vector();
 	    Vector includeCoda = new Vector();
@@ -143,10 +143,10 @@ public class JspConfig {
 		    pageEncoding = element.getBody();
 		else if ("is-xml".equals(tname))
 		    isXml = element.getBody();
-		else if ("el-enabled".equals(tname))
-		    elEnabled = element.getBody();
-		else if ("scripting-enabled".equals(tname))
-		    scriptingEnabled = element.getBody();
+		else if ("el-ignored".equals(tname))
+		    elIgnored = element.getBody();
+		else if ("scripting-invalid".equals(tname))
+		    scriptingInvalid = element.getBody();
 		else if ("include-prelude".equals(tname))
 		    includePrelude.addElement(element.getBody());
 		else if ("include-coda".equals(tname))
@@ -192,8 +192,8 @@ public class JspConfig {
                  }
  
                  JspProperty property = new JspProperty(isXml,
-                                                        elEnabled,
-                                                        scriptingEnabled,
+                                                        elIgnored,
+                                                        scriptingInvalid,
                                                         pageEncoding,
                                                         includePrelude,
                                                         includeCoda);
@@ -218,8 +218,8 @@ public class JspConfig {
 	}
 	    
 	if (jspProperties == null) {
-	    return new JspProperty(defaultIsXml, defaultIsELEnabled,
-				   defaultIsScriptingEnabled,
+	    return new JspProperty(defaultIsXml, defaultIsELIgnored,
+				   defaultIsScriptingInvalid,
 				   null, null, null);
 	}
 
@@ -238,8 +238,8 @@ public class JspConfig {
 	Vector includeCodas = new Vector();
 
 	JspPropertyGroup isXmlMatch = null;
-	JspPropertyGroup elEnabledMatch = null;
-	JspPropertyGroup scriptingEnabledMatch = null;
+	JspPropertyGroup elIgnoredMatch = null;
+	JspPropertyGroup scriptingInvalidMatch = null;
 	JspPropertyGroup pageEncodingMatch = null;
 
 	Iterator iter = jspProperties.iterator();
@@ -272,11 +272,11 @@ public class JspConfig {
                  if (jp.isXml() != null) {
                      isXmlMatch = jpg;
                  }
-                 if (jp.isELEnabled() != null) {
-                     elEnabledMatch = jpg;
+                 if (jp.isELIgnored() != null) {
+                     elIgnoredMatch = jpg;
                  }
-                 if (jp.isScriptingEnabled() != null) {
-                     scriptingEnabledMatch = jpg;
+                 if (jp.isScriptingInvalid() != null) {
+                     scriptingInvalidMatch = jpg;
                  }
                  if (jp.getPageEncoding() != null) {
                      pageEncodingMatch = jpg;
@@ -312,17 +312,17 @@ public class JspConfig {
                                   isXmlMatch.getExtension().equals("*")))) {
                          isXmlMatch = jpg;
                  }
-                 if (jp.isELEnabled() != null &&
-                         (elEnabledMatch == null ||
-                             (elEnabledMatch.getExtension() != null &&
-                              elEnabledMatch.getExtension().equals("*")))) {
-                     elEnabledMatch = jpg;
+                 if (jp.isELIgnored() != null &&
+                         (elIgnoredMatch == null ||
+                             (elIgnoredMatch.getExtension() != null &&
+                              elIgnoredMatch.getExtension().equals("*")))) {
+                     elIgnoredMatch = jpg;
                  }
-                 if (jp.isScriptingEnabled() != null &&
-                         (scriptingEnabledMatch == null ||
-                             (scriptingEnabledMatch.getExtension() != null &&
-                              scriptingEnabledMatch.getExtension().equals("*")))) {
-                     scriptingEnabledMatch = jpg;
+                 if (jp.isScriptingInvalid() != null &&
+                         (scriptingInvalidMatch == null ||
+                             (scriptingInvalidMatch.getExtension() != null &&
+                              scriptingInvalidMatch.getExtension().equals("*")))) {
+                     scriptingInvalidMatch = jpg;
                  }
                  if (jp.getPageEncoding() != null &&
                          (pageEncodingMatch == null ||
@@ -335,25 +335,25 @@ public class JspConfig {
 
 
 	String isXml = defaultIsXml;
-	String isELEnabled = defaultIsELEnabled;
-	String isScriptingEnabled = defaultIsScriptingEnabled;
+	String isELIgnored = defaultIsELIgnored;
+	String isScriptingInvalid = defaultIsScriptingInvalid;
 	String pageEncoding = null;
 
 	if (isXmlMatch != null) {
 	    isXml = isXmlMatch.getJspProperty().isXml();
 	}
-	if (elEnabledMatch != null) {
-	    isELEnabled = elEnabledMatch.getJspProperty().isELEnabled();
+	if (elIgnoredMatch != null) {
+	    isELIgnored = elIgnoredMatch.getJspProperty().isELIgnored();
 	}
-	if (scriptingEnabledMatch != null) {
-	    isScriptingEnabled =
-		scriptingEnabledMatch.getJspProperty().isScriptingEnabled();
+	if (scriptingInvalidMatch != null) {
+	    isScriptingInvalid =
+		scriptingInvalidMatch.getJspProperty().isScriptingInvalid();
 	}
 	if (pageEncodingMatch != null) {
 	    pageEncoding = pageEncodingMatch.getJspProperty().getPageEncoding();
 	}
 
-	return new JspProperty(isXml, isELEnabled, isScriptingEnabled,
+	return new JspProperty(isXml, isELIgnored, isScriptingInvalid,
 			       pageEncoding, includePreludes, includeCodas);
     }
 
@@ -385,19 +385,19 @@ public class JspConfig {
     static public class JspProperty {
 
 	private String isXml;
-	private String elEnabled;
-	private String scriptingEnabled;
+	private String elIgnored;
+	private String scriptingInvalid;
 	private String pageEncoding;
 	private Vector includePrelude;
 	private Vector includeCoda;
 
-	JspProperty(String isXml, String elEnabled,
-		    String scriptingEnabled, String pageEncoding,
+	JspProperty(String isXml, String elIgnored,
+		    String scriptingInvalid, String pageEncoding,
 		    Vector includePrelude, Vector includeCoda) {
 
 	    this.isXml = isXml;
-	    this.elEnabled = elEnabled;
-	    this.scriptingEnabled = scriptingEnabled;
+	    this.elIgnored = elIgnored;
+	    this.scriptingInvalid = scriptingInvalid;
 	    this.pageEncoding = pageEncoding;
 	    this.includePrelude = includePrelude;
 	    this.includeCoda = includeCoda;
@@ -407,12 +407,12 @@ public class JspConfig {
 	    return isXml;
 	}
 
-	public String isELEnabled() {
-	    return elEnabled;
+	public String isELIgnored() {
+	    return elIgnored;
 	}
 
-	public String isScriptingEnabled() {
-	    return scriptingEnabled;
+	public String isScriptingInvalid() {
+	    return scriptingInvalid;
 	}
 
 	public String getPageEncoding() {

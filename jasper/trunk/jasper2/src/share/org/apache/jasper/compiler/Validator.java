@@ -109,8 +109,7 @@ public class Validator {
 	    new JspUtil.ValidAttribute("isErrorPage"),
 	    new JspUtil.ValidAttribute("contentType"),
 	    new JspUtil.ValidAttribute("pageEncoding"),
-	    new JspUtil.ValidAttribute("isScriptingEnabled"),
-	    new JspUtil.ValidAttribute("isELEnabled")
+	    new JspUtil.ValidAttribute("isELIgnored")
 	};
 
 	private boolean languageSeen = false;
@@ -223,22 +222,16 @@ public class Validator {
 			pageInfo.setThreadSafe(false);
 		    else
 			err.jspError(n, "jsp.error.isThreadSafe.invalid");
-		} else if ("isScriptingEnabled".equals(attr)) {
-		    // XXX Test for multiple occurrence?
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setScriptingEnabled(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setScriptingEnabled(false);
-		    else
-			err.jspError(n, "jsp.error.isScriptingEnabled.invalid");
-		} else if ("isELEnabled".equals(attr)) {
-		    // XXX Test for multiple occurrence?
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setELEnabled(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setELEnabled(false);
-		    else
-			err.jspError(n, "jsp.error.isELEnabled.invalid");
+		} else if ("isELIgnored".equals(attr)) {
+		    if (! pageInfo.isELIgnoredSpecified()) {
+			// If specified in jsp-config, use it
+			if ("true".equalsIgnoreCase(value))
+			    pageInfo.setELIgnored(true);
+			else if ("false".equalsIgnoreCase(value))
+			    pageInfo.setELIgnored(false);
+			else
+			    err.jspError(n, "jsp.error.isELIgnored.invalid");
+		    }
 		} else if ("isErrorPage".equals(attr)) {
 		    if (isErrorPageSeen)
 			err.jspError(n, "jsp.error.page.multiple.iserrorpage");
@@ -306,22 +299,16 @@ public class Validator {
 		    if (!"java".equalsIgnoreCase(value))
 			err.jspError(n, "jsp.error.language.nonjava");
 		    pageInfo.setLanguage(value);
-		} else if ("isScriptingEnabled".equals(attr)) {
-		    // XXX Test for multiple occurrence?
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setScriptingEnabled(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setScriptingEnabled(false);
-		    else
-			err.jspError(n, "jsp.error.isScriptingEnabled.invalid");
-		} else if ("isELEnabled".equals(attr)) {
-		    // XXX Test for multiple occurrence?
-		    if ("true".equalsIgnoreCase(value))
-			pageInfo.setELEnabled(true);
-		    else if ("false".equalsIgnoreCase(value))
-			pageInfo.setELEnabled(false);
-		    else
-			err.jspError(n, "jsp.error.isELEnabled.invalid");
+		} else if ("isELIgnored".equals(attr)) {
+		    if (! pageInfo.isELIgnoredSpecified()) {
+			// If specified in jsp-config, use it
+			if ("true".equalsIgnoreCase(value))
+			    pageInfo.setELIgnored(true);
+			else if ("false".equalsIgnoreCase(value))
+			    pageInfo.setELIgnored(false);
+			else
+			    err.jspError(n, "jsp.error.isELIgnored.invalid");
+		    }
 		} else if ("pageEncoding".equals(attr)) {
 		    if (pageEncodingSeen) 
 			err.jspError(n, "jsp.error.page.multiple.pageencoding");
@@ -620,25 +607,25 @@ public class Validator {
 	}
         
 	public void visit(Node.Declaration n) throws JasperException {
-	    if (! pageInfo.isScriptingEnabled()) {
+	    if (pageInfo.isScriptingInvalid()) {
 		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
 	    }
 	}
 
         public void visit(Node.Expression n) throws JasperException {
-	    if (! pageInfo.isScriptingEnabled()) {
+	    if (pageInfo.isScriptingInvalid()) {
 		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
 	    }
 	}
 
         public void visit(Node.Scriptlet n) throws JasperException {
-	    if (! pageInfo.isScriptingEnabled()) {
+	    if (pageInfo.isScriptingInvalid()) {
 		err.jspError(n.getStart(), "jsp.error.no.scriptlets");
 	    }
 	}
 
 	public void visit(Node.ELExpression n) throws JasperException {
-            if ( pageInfo.isELEnabled() ) {
+            if ( !pageInfo.isELIgnored() ) {
                 JspUtil.validateExpressions(
                     n.getStart(),
                     "${" + new String(n.getText()) + "}", 
@@ -909,7 +896,7 @@ public class Validator {
 
                     // validate expression syntax if string contains
                     // expression(s)
-                    if (value.indexOf("${") != -1 && pageInfo.isELEnabled()) {
+                    if (value.indexOf("${") != -1 && !pageInfo.isELIgnored()) {
                         JspUtil.validateExpressions(
                             n.getStart(),
                             value, 
@@ -951,7 +938,7 @@ public class Validator {
 	private boolean isExpression(Node.CustomTag n, String value) {
 	    if ((n.isXmlSyntax() && value.startsWith("%="))
 		    || (!n.isXmlSyntax() && value.startsWith("<%="))
-   		    || (value.indexOf("${") != -1 && pageInfo.isELEnabled()))
+   		    || (value.indexOf("${") != -1 && !pageInfo.isELIgnored()))
 		return true;
 	    else
 		return false;
