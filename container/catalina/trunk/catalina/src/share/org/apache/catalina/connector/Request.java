@@ -2220,7 +2220,7 @@ public class Request
         cookie.setMaxAge(-1);
         String contextPath = null;
         if (!connector.getEmptySessionPath() && (getContext() != null)) {
-            contextPath = getContext().getPath();
+            contextPath = getContext().getEncodedPath();
         }
         if ((contextPath != null) && (contextPath.length() > 0)) {
             cookie.setPath(contextPath);
