@@ -64,11 +64,9 @@ package org.apache.tomcat.modules.aaa;
 import org.apache.tomcat.core.*;
 import org.apache.tomcat.util.res.StringManager;
 import org.apache.tomcat.util.buf.HexUtils;
+import org.apache.tomcat.util.aaa.*;
 import java.security.*;
-//import java.security.Principal;
-//import java.io.File;
-//import java.util.Enumeration;
-//import java.util.Hashtable;
+import java.security.Principal;
 import java.util.Vector;
 import java.io.*;
 import java.net.*;
@@ -447,6 +445,7 @@ public final class JDBCRealm extends BaseInterceptor {
                 req.setAuthType(ctx.getAuthMethod());
             if (user != null) {
                 req.setRemoteUser(user);
+		req.setUserPrincipal( new JdbcPrincipal( user ));
                 String userRoles[] = getUserRoles(user);
                 req.setUserRoles(userRoles);
                 return OK;
@@ -524,4 +523,13 @@ public final class JDBCRealm extends BaseInterceptor {
         shutdown();
     }
 
+    // Nothing - except cary on the class name information 
+    public static class JdbcPrincipal extends SimplePrincipal {
+	private String name;
+
+	JdbcPrincipal(String name) {
+	    super(name);
+	}
+    }
 }
+
