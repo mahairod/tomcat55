@@ -679,7 +679,7 @@ class Validator {
 	    Hashtable tagDataAttrs = new Hashtable(attrs.getLength());
 	    for (int i=0; i<attrs.getLength(); i++) {
 		boolean found = false;
-		for (int j=0; j<tldAttrs.length; j++) {
+		for (int j=0; tldAttrs != null && j<tldAttrs.length; j++) {
 		    if (attrs.getQName(i).equals(tldAttrs[j].getName())) {
 			if (tldAttrs[j].canBeRequestTime()) {
                             Class expectedType = String.class;
@@ -748,7 +748,7 @@ class Validator {
 						      true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
-				     attrs.getQName(i));
+				     attrs.getQName(i), n.getShortName());
 		    }
 		}
 	    }
@@ -776,7 +776,7 @@ class Validator {
 			    = new Node.JspAttribute(na, true);
 		    } else {
 			err.jspError(n, "jsp.error.bad_attribute",
-				     na.getName());
+				     na.getName(), n.getShortName());
 		    }
 		}
 	    }
