@@ -907,8 +907,12 @@ Coyote Bug Fixes:
 [4.1.23] CoyoteAdapter:
          Reject decoded URIs which don't start with '/'.
 
-[4.1.23] Cookies:
+[4.1.24] Cookies:
          Add handling for bad cookies.
+
+[4.1.24] #16508
+         CoyoteResponse:
+         Fix value of the committed flag after the response is finished.
 
 
 ----------------
@@ -1214,6 +1218,9 @@ Jasper Bug Fixes:
 
 [4.1.23] Compiler:
          Avoid NPE when using JSPC using the built-in compiler.
+
+[4.1.24] JspC:
+         Set the thread context class loader to the specified classpath.
 
 
 ============================
