@@ -208,7 +208,8 @@ public class ParserController {
         }
 
         newEncoding = null;
-
+        String pageEncoding = null;
+        
         // Figure out the encoding of the page
         // xml parser will take care of encoding for
         // page in XML syntax since we pass it a stream
@@ -219,20 +220,17 @@ public class ParserController {
                 if (jspReader.matches("page")) {
                     jspReader.skipSpaces();
                     Attributes attrs = Parser.parseAttributes(this, jspReader);
-                    String attribute = "pageEncoding";
-                    newEncoding = attrs.getValue("pageEncoding");
-                    if (newEncoding == null) {
+                    pageEncoding = attrs.getValue("pageEncoding");
+                    if (pageEncoding == null) {
                         String contentType = attrs.getValue("contentType");
                         if (contentType != null) {
                             int loc = contentType.indexOf("charset=");
                             if (loc != -1) {
                                 newEncoding = contentType.substring(loc+8);
-                                return;
                             }
                         }
-                        if (newEncoding == null)
-                            newEncoding = "ISO-8859-1";
                     } else {
+                        newEncoding = pageEncoding;
                         return;
                     }
                 }
