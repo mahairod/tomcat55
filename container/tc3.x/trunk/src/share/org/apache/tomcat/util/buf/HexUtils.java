@@ -97,6 +97,13 @@ public final class HexUtils {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
     
+    /**
+     * Table for DEC to HEX byte translation.
+     */
+    public static final byte[] HEX = 
+    { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', 
+      (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', 
+      (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
 
 
     /**
