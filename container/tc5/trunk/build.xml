@@ -99,7 +99,7 @@
     </uptodate>
 
     <uptodate property="tomcatjk.build.notrequired"
-              targetfile="${tomcat.build}/server/lib/tomcat-jk2.jar">
+              targetfile="${tomcat.build}/server/lib/tomcat-ajp.jar">
       <srcfiles dir="${jtc.home}/jk/java" includes="**" />
     </uptodate>
 
@@ -187,15 +187,17 @@
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
       <property name="jmx.jar" value="${jmx.jar}"/>
       <property name="jmx.detect" value="true"/>
-      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
 
       <property name="jk.build" value="${tomcat.build}"/>
 
+      <property name="tomcat-coyote.jar" value="${tomcat.build}/server/lib/tomcat-coyote.jar" />
+      <property name="tomcat-jk2.jar" value="${tomcat.build}/server/lib/tomcat-ajp.jar" />
+      <!--
       <property name="tomcat-jk.jar" value="${tomcat.build}/server/lib/tomcat-jk.jar" />
       <property name="tomcat-jkconfig.jar" value="${tomcat.build}/server/lib/jkconfig.jar" />
       <property name="tomcat-jkshm.jar" value="${tomcat.build}/server/lib/jkshm.jar" />
-      <property name="tomcat-jk2.jar" value="${tomcat.build}/server/lib/tomcat-jk2.jar" />
       <property name="tomcat-jni.jar" value="${tomcat.build}/server/lib/tomcat-jni.jar" />
+      -->
 
     </ant>
 
@@ -653,7 +655,7 @@
       <fileset dir="build/server/lib">
         <include name="tomcat-coyote.jar"/>
         <include name="tomcat-http11.jar"/>
-        <include name="tomcat-jk2.jar"/>
+        <include name="tomcat-ajp.jar"/>
       </fileset>
     </copy>
 
