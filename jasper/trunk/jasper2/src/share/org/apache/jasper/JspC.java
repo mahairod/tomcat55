@@ -369,7 +369,7 @@ public class JspC implements Options {
      * Background compilation check intervals in seconds
      */
     public int getCheckInterval() {
-        return 300;
+        return 0;
     }
 
     /**

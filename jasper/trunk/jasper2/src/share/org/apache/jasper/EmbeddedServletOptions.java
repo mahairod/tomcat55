@@ -91,7 +91,7 @@ public final class EmbeddedServletOptions implements Options {
     /**
      * Background compile thread check interval in seconds.
      */
-    private int checkInterval = 300;
+    private int checkInterval = 0;
 
     /**
      * Is the generation of SMAP info for JSR45 debuggin suppressed?
