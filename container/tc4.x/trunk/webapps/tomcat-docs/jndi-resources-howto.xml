@@ -201,16 +201,16 @@ public class MyBean {
 
 <source>
 &lt;resource-env-ref&gt;
-  &lt;Description&gt;
+  &lt;description&gt;
     Object factory for MyBean instances.
-  &lt;/Description&gt;
+  &lt;/description&gt;
   &lt;resource-env-ref-name&gt;
     bean/MyBeanFactory
   &lt;/resource-env-ref-name&gt;
   &lt;resource-env-ref-type&gt;
     com.mycompany.MyBean
   &lt;/resource-env-ref-type&gt;
-&lt;resource-env-ref&gt;
+&lt;/resource-env-ref&gt;
 </source>
 
     <p><strong>WARNING</strong> - Be sure you respect the element ordering
