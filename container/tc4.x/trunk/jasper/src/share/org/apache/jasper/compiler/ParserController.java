@@ -187,7 +187,10 @@ public class ParserController {
         File file = new File(absFileName);
 	String filePath = (ctxt == null) 
 	    ? file.getAbsolutePath()
-	    : file.toString();//ctxt.getRealPath(file.toString());
+	    : ctxt.getRealPath(file.toString());
+        if (filePath == null) {
+            filePath = file.toString();
+        }
 	//p("filePath: " + filePath);
 
 	String encoding = topFileEncoding;
