@@ -310,6 +310,7 @@ public class Validator {
 	public void visit(Node.IncludeDirective n) throws JasperException {
 	    JspUtil.checkAttributes("Include directive", n.getAttributes(),
 				    includeDirectiveAttrs, n.getStart(), err);
+	    visitBody(n);
 	}
 
 	public void visit(Node.TaglibDirective n) throws JasperException {
@@ -329,6 +330,7 @@ public class Validator {
 				    includeActionAttrs, n.getStart(), err);
 	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
 				      n.isXmlSyntax()));
+	    visitBody(n);
         };
 
 	public void visit(Node.ForwardAction n) throws JasperException {
@@ -336,6 +338,7 @@ public class Validator {
 				    forwardActionAttrs, n.getStart(), err);
 	    n.setPage(getJspAttribute("page", n.getAttributeValue("page"),
 				      n.isXmlSyntax()));
+	    visitBody(n);
 	}
 
 	public void visit(Node.GetProperty n) throws JasperException {
@@ -400,6 +403,8 @@ public class Validator {
 		beanInfo.addApplicationBean(name,className);
 	    } else 
 		err.jspError(n, "jsp.error.useBean.badScope");
+
+	    visitBody(n);
 	}
 
 	public void visit(Node.PlugIn n) throws JasperException {
@@ -413,6 +418,8 @@ public class Validator {
 		err.jspError(n, "jsp.error.plugin.badtype");
 	    if (n.getAttributeValue("code") == null)
 		err.jspError(n, "jsp.error.plugin.nocode");
+
+	    visitBody(n);
 	}
 
 	public void visit(Node.CustomTag n) throws JasperException {
