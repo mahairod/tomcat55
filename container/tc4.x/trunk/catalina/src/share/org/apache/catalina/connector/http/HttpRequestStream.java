@@ -267,7 +267,9 @@ public class HttpRequestStream extends RequestStream {
         chunkPos = 0;
         
         try {
-            String numberValue = readLineFromStream().trim();
+            String numberValue = readLineFromStream();
+            if (numberValue != null)
+                numberValue = numberValue.trim();
             chunkLength = 
                 Integer.parseInt(numberValue, 16);
         } catch (NumberFormatException e) {
