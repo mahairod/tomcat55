@@ -196,6 +196,12 @@ public final class ContextConfig
      * deployment descriptor files.
      */
     private static Digester webDigester = null;
+    
+    
+    /**
+     * The <code>Rule</code> used to parse the web.xml
+     */
+    private static WebRuleSet webRuleSet = new WebRuleSet();
 
     /**
      * Attribute value used to turn on/off XML validation
@@ -352,6 +358,8 @@ public final class ContextConfig
                 }
             }
         }
+        webRuleSet.recycle();
+
         long t2=System.currentTimeMillis();
         if( (t2-t1 ) > 200 ) 
             log.debug("Processed  " + url + " "  + ( t2-t1));
@@ -619,7 +627,7 @@ public final class ContextConfig
         webEntityResolver = registerLocalSchema(webEntityResolver);
 
         webDigester.setEntityResolver(webEntityResolver);
-        webDigester.addRuleSet(new WebRuleSet());
+        webDigester.addRuleSet(webRuleSet);
         return (webDigester);
     }
 
@@ -686,6 +694,8 @@ public final class ContextConfig
                 }
             }
         }
+        webRuleSet.recycle();
+        
         long t2=System.currentTimeMillis();
         if( (t2-t1) > 200 )
             log.debug("Processed default web.xml " + file + " "  + ( t2-t1));

@@ -91,6 +91,24 @@ public class WebRuleSet extends RuleSetBase {
      * The matching pattern prefix to use for recognizing our elements.
      */
     protected String prefix = null;
+    
+    
+    /**
+     * The <code>SetSessionConfig</code> rule used to parse the web.xml
+     */
+    protected SetSessionConfig sessionConfig;
+    
+    
+    /**
+     * The <code>SetLoginConfig</code> rule used to parse the web.xml
+     */
+    protected SetLoginConfig loginConfig;
+
+    
+    /**
+     * The <code>SetJspConfig</code> rule used to parse the web.xml
+     */    
+    protected SetJspConfig jspConfig;
 
 
     // ------------------------------------------------------------ Constructor
@@ -136,7 +154,10 @@ public class WebRuleSet extends RuleSetBase {
      *  should be added.
      */
     public void addRuleInstances(Digester digester) {
-
+        sessionConfig = new SetSessionConfig(digester);
+        jspConfig = new SetJspConfig(digester);
+        loginConfig = new SetLoginConfig(digester);
+        
         digester.addRule(prefix + "web-app",
                          new SetPublicIdRule(digester, "setPublicId"));
 
@@ -144,9 +165,6 @@ public class WebRuleSet extends RuleSetBase {
                                "addParameter", 2);
         digester.addCallParam(prefix + "web-app/context-param/param-name", 0);
         digester.addCallParam(prefix + "web-app/context-param/param-value", 1);
-
-        digester.addRule(prefix + "web-app/deployment-extension",
-                         new CheckDeploymentExtensionRule(digester));
 
         digester.addCallMethod(prefix + "web-app/display-name",
                                "setDisplayName", 0);
@@ -264,12 +282,18 @@ public class WebRuleSet extends RuleSetBase {
 
          digester.addCallMethod(prefix + "web-app/listener/listener-class",
                                 "addApplicationListener", 0);
-
+         
+        digester.addRule(prefix + "web-app/jsp-config",
+                         jspConfig);
+        
         digester.addCallMethod(prefix + "web-app/jsp-config/jsp-property-group/url-pattern",
                                "addJspMapping", 0);
 
         digester.addCallMethod(prefix + "web-app/listener/listener-class",
                                "addApplicationListener", 0);
+        
+        digester.addRule(prefix + "web-app/login-config",
+                         loginConfig);
 
         digester.addObjectCreate(prefix + "web-app/login-config",
                                  "org.apache.catalina.deploy.LoginConfig");
@@ -383,9 +407,6 @@ public class WebRuleSet extends RuleSetBase {
                             "addChild",
                             "org.apache.catalina.Container");
 
-        digester.addRule(prefix + "web-app/servlet/deployment-extension",
-                         new CheckDeploymentExtensionRule(digester));
-
         digester.addCallMethod(prefix + "web-app/servlet/init-param",
                                "addInitParameter", 2);
         digester.addCallParam(prefix + "web-app/servlet/init-param/param-name",
@@ -415,6 +436,9 @@ public class WebRuleSet extends RuleSetBase {
         digester.addCallParam(prefix + "web-app/servlet-mapping/servlet-name", 1);
         digester.addCallParam(prefix + "web-app/servlet-mapping/url-pattern", 0);
 
+        digester.addRule(prefix + "web-app/session-config",
+                         sessionConfig);
+        
         digester.addCallMethod(prefix + "web-app/session-config/session-timeout",
                                "setSessionTimeout", 1,
                                new Class[] { Integer.TYPE });
@@ -435,39 +459,81 @@ public class WebRuleSet extends RuleSetBase {
 
     }
 
-
+    /**
+     * Reset counter used for validating the web.xml file.
+     */
+    public void recycle(){
+        jspConfig.isJspConfigSet = false;
+        sessionConfig.isSessionConfigSet = false;
+        loginConfig.isLoginConfigSet = false;
+    }
 }
 
 
 // ----------------------------------------------------------- Private Classes
 
+
 /**
- * A Rule that checks mustUnderstand attribute.  It throws an Exception if
- * mustUnderstand attribute is true since stand-alone Tomcat currently does
- * not have a way of recognizing an extension within a deployment descriptor.
+ * Rule to check that the <code>login-config</code> is occuring 
+ * only 1 time within the web.xml
  */
-
-final class CheckDeploymentExtensionRule extends Rule {
-
-    public CheckDeploymentExtensionRule(Digester digester) {
+final class SetLoginConfig extends Rule {
+    protected boolean isLoginConfigSet = false;
+    public SetLoginConfig(Digester digester) {
         super(digester);
     }
 
     public void begin(Attributes attributes) throws Exception {
-        String mustUnderstand = attributes.getValue("mustUnderstand");
-        if ((mustUnderstand != null) && (mustUnderstand.equals("true"))) {
-            String namespace = attributes.getValue("namespace");
-            if (digester.getDebug() > 0) {
-                digester.log("Exception thrown CheckDeploymentExtensionRule");
-            }
-            throw new Exception("deployment-extension "+namespace+
-            " attribute mustUnderstand is set to true");
+        if (isLoginConfigSet){
+            throw new IllegalArgumentException(
+            "<login-config> element is limited to 1 occurance");
         }
-
+        isLoginConfigSet = true;
     }
 
 }
 
+
+/**
+ * Rule to check that the <code>jsp-config</code> is occuring 
+ * only 1 time within the web.xml
+ */
+final class SetJspConfig extends Rule {
+    protected boolean isJspConfigSet = false;
+    public SetJspConfig(Digester digester) {
+        super(digester);
+    }
+
+    public void begin(Attributes attributes) throws Exception {
+        if (isJspConfigSet){
+            throw new IllegalArgumentException(
+            "<jsp-config> element is limited to 1 occurance");
+        }
+        isJspConfigSet = true;
+    }
+
+}
+
+
+/**
+ * Rule to check that the <code>jsp-config</code> is occuring 
+ * only 1 time within the web.xml
+ */
+final class SetSessionConfig extends Rule {
+    protected boolean isSessionConfigSet = false;
+    public SetSessionConfig(Digester digester) {
+        super(digester);
+    }
+
+    public void begin(Attributes attributes) throws Exception {
+        if (isSessionConfigSet){
+            throw new IllegalArgumentException(
+            "<session-config> element is limited to 1 occurance");
+        }
+        isSessionConfigSet = true;
+    }
+
+}
 
 /**
  * A Rule that calls the <code>setAuthConstraint(true)</code> method of
