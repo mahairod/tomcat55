@@ -92,14 +92,8 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * To initiate a normal shutdown, call the <code>stop()</code> method of
  * this object.
  * <p>
- * <strong>IMPLEMENTATION NOTE</strong>:  The <code>main()</code> method of
- * this class is a simple example that exercizes the features of dynamically
- * starting and stopping various components.  You can execute this by executing
- * the following steps (on a Unix platform):
- * <pre>
- *   cd $CATALINA_HOME
- *   ./bin/catalina.sh embedded
- * </pre>
+ * @see org.apache.catalina.startup.Catalina#main For a complete example
+ * of how Tomcat is set up and launched as an Embedded application.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
