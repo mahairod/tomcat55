@@ -185,14 +185,22 @@ public final class HttpResponseStream extends ResponseStream {
         // change the chunking mode
         if (count != 0)
             return;
-        this.useChunking = 
+        // Check the basic cases in which we chunk
+        useChunking = 
             (!response.isCommitted()
-             && response.isChunkingAllowed()
              && response.getContentLength() == -1
              && response.getStatus() != HttpServletResponse.SC_PARTIAL_CONTENT
-             && response.getStatus() != HttpServletResponse.SC_NOT_MODIFIED
-             && !response.isCloseConnection());
-        if (this.useChunking)
+             && response.getStatus() != HttpServletResponse.SC_NOT_MODIFIED);
+        if (!response.isChunkingAllowed() && useChunking) {
+            // If we should chunk, but chunking is forbidden by the connector,
+            // we close the connection
+            response.addHeader("Connection", "close");
+        } else {
+            response.removeHeader("Connection", "close");
+        }
+        // Don't chunk is the connection will be closed
+        useChunking = (useChunking && !response.isCloseConnection());
+        if (useChunking)
             response.addHeader("Transfer-Encoding", "chunked");
         else
             response.removeHeader("Transfer-Encoding", "chunked");

@@ -760,7 +760,9 @@ final class HttpProcessor
                         // requested.
                         ackRequest(output);
                         // If the protocol is HTTP/1.1, chunking is allowed.
-                        ((HttpResponseImpl) response).setAllowChunking(true);
+                        if (connector.isChunkingAllowed())
+                            ((HttpResponseImpl) response)
+                                .setAllowChunking(true);
                     }
                 }
             } catch (EOFException e) {

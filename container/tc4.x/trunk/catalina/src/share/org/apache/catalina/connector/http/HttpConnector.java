@@ -249,6 +249,12 @@ public final class HttpConnector
     private String threadSync = "";
 
 
+    /**
+     * Is chunking allowed ?
+     */
+    private boolean allowChunking = true;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -270,6 +276,28 @@ public final class HttpConnector
     public void setAcceptCount(int count) {
 
 	this.acceptCount = count;
+
+    }
+
+
+    /**
+     * Get the allow chunking flag.
+     */
+    public boolean isChunkingAllowed() {
+
+        return (allowChunking);
+
+    }
+
+
+    /**
+     * Set the allow chunking flag.
+     * 
+     * @param allowChunking Allow chunking flag
+     */
+    public void setAllowChunking(boolean allowChunking) {
+
+        this.allowChunking = allowChunking;
 
     }
 

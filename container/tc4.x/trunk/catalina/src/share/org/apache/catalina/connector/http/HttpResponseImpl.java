@@ -222,52 +222,6 @@ final class HttpResponseImpl
 
 
     /**
-     * Add the specified header to the specified value.
-     *
-     * @param name Name of the header to set
-     * @param value Value to be set
-     */
-    public void addHeader(String name, String value) {
-
-	if (isCommitted())
-	    return;
-
-	if (included)
-	    return;	// Ignore any call from an included servlet
-
-        super.addHeader(name, value);
-
-        if (name.equals("Connection") && responseStream != null)
-            responseStream.checkChunking(this);
-
-    }
-
-
-
-
-    /**
-     * Set the specified header to the specified value.
-     *
-     * @param name Name of the header to set
-     * @param value Value to be set
-     */
-    public void setHeader(String name, String value) {
-
-	if (isCommitted())
-	    return;
-
-	if (included)
-	    return;	// Ignore any call from an included servlet
-
-        super.setHeader(name, value);
-
-        if (name.equals("Connection") && responseStream != null)
-            responseStream.checkChunking(this);
-
-    }
-
-
-    /**
      * Removes the specified header.
      *
      * @param name Name of the header to remove
@@ -289,9 +243,6 @@ final class HttpResponseImpl
                     headers.remove(name);
             }
 	}
-
-        if (name.equals("Connection") && responseStream != null)
-            responseStream.checkChunking(this);
 
     }
 
