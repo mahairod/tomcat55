@@ -290,6 +290,11 @@ public class MapperListener
         if ( ! mBeanServer.isRegistered(engineName)) return;
         String defaultHost = 
             (String) mBeanServer.getAttribute(engineName, "defaultHost");
+        ObjectName hostName = new ObjectName
+            (domain + ":type=Host," + "host=" + defaultHost);
+        if (!mBeanServer.isRegistered(hostName)) {
+            log.warn("Unknown default host: " + defaultHost);
+        }
         // This should probablt be called later 
         if( defaultHost != null ) {
             mapper.setDefaultHostName(defaultHost);
