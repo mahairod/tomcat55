@@ -68,6 +68,8 @@ package org.apache.catalina.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -162,6 +164,33 @@ final class ApplicationFilterChain implements FilterChain {
      * @exception ServletException if a servlet exception occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response)
+        throws IOException, ServletException {
+
+        if( System.getSecurityManager() != null ) {
+            final ServletRequest req = request;
+            final ServletResponse res = response;
+            try {
+                java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedExceptionAction()
+                    {
+                        public Object run() throws ServletException, IOException {
+                            internalDoFilter(req,res);
+                            return null;       
+                        }               
+                    }              
+                );                 
+            } catch( PrivilegedActionException pe) {
+                Exception e = pe.getException();
+                if( e.getClass().getName().equals("javax.servlet.ServletException") )
+                    throw (ServletException)e; 
+                throw (IOException)e;        
+            }
+        } else {
+            internalDoFilter(request,response);
+        }
+    }    
+     
+    private void internalDoFilter(ServletRequest request, ServletResponse response)
         throws IOException, ServletException {
 
         // Construct an iterator the first time this method is called
