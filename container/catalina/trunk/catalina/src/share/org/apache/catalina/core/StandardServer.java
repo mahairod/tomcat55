@@ -734,7 +734,7 @@ public final class StandardServer
      * @exception RuntimeOperationsException if an exception is reported
      *  by the persistence mechanism
      */
-    public synchronized void store() throws Exception {
+    public synchronized void storeConfig() throws Exception {
 
         // Calculate file objects for the old and new configuration files.
         String configFile = "conf/server.xml"; // FIXME - configurable?

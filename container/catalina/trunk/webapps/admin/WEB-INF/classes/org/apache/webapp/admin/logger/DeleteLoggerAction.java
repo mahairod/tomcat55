@@ -216,11 +216,18 @@ public class DeleteLoggerAction extends Action {
         StringBuffer sb = new StringBuffer(domain+MBeanType);
         String type = poname.getKeyProperty("type");
         String j2eeType = poname.getKeyProperty("j2eeType");
+        String path = "";
+        String host = "";
+        String name = poname.getKeyProperty("name");
+        if ((name != null) && (name.length() > 0)) {
+            name = name.substring(2);
+            int i = name.indexOf("/");
+            host = name.substring(0,i);
+            path = name.substring(i); 
+        }
         if ("WebModule".equalsIgnoreCase(j2eeType)) { // container is context            
-            sb.append(",path=");
-            sb.append(poname.getKeyProperty("path"));
-            sb.append(",host=");
-            sb.append(poname.getKeyProperty("host"));
+            sb.append(",path="+path);
+            sb.append(",host="+host);
         }
         if ("Host".equalsIgnoreCase(type)) {    // container is host
             sb.append(",host=");

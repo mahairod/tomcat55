@@ -885,9 +885,13 @@ public class MBeanUtils {
                 String serviceName = null;
                 if (service != null)
                     serviceName = service.getName();
-                name = new ObjectName(domain + ":type=Connector" +
-                                      ",port=" + port +
-                                      ",address=" + address);
+                StringBuffer sb = new StringBuffer(domain);
+                sb.append(":type=Connector");
+                sb.append(",port=" + port);
+                if ((address != null) && (address.length()>0)) {
+                    sb.append(",address=" + address);
+                }
+                name = new ObjectName(sb.toString());
                 return (name);
             } catch (Exception e) {
                 throw new MalformedObjectNameException
@@ -920,9 +924,11 @@ public class MBeanUtils {
         String path = context.getPath();
         if (path.length() < 1)
             path = "/";
-        name = new ObjectName(domain + ":type=Context,path=" +
-                              path + ",host=" +
-                              host.getName());
+        // FIXME 
+        name = new ObjectName(domain + ":j2eeType=WebModule,name=//" +
+                              host.getName()+ path +
+                              ",J2EEApplication=none,J2EEServer=none");
+    
         return (name);
 
     }
@@ -1570,6 +1576,10 @@ public class MBeanUtils {
 
         ObjectName name = null;
         Container container = null;
+        String className=valve.getClass().getName();
+        int period = className.lastIndexOf('.');
+        if (period >= 0)
+            className = className.substring(period + 1);
         if( valve instanceof Contained ) {
             container = ((Contained)valve).getContainer();
         }
@@ -1577,18 +1587,27 @@ public class MBeanUtils {
             throw new MalformedObjectNameException(
                                "Cannot create mbean for non-contained valve " +
                                valve);
-        }
-        
+        }        
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
             String local="";
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  getSeq(local) + local );
+            int seq = getSeq(local);
+            String ext="";
+            if( seq > 0 ) {
+                ext=",seq=" + seq;
+            }
+            name = new ObjectName(domain + ":type=Valve,name=" + className + 
+                                    ext + local );
         } else if (container instanceof Host) {
             Service service = ((Engine)container.getParent()).getService();
             String local=",host=" +container.getName();
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  getSeq(local) + local);
+            int seq = getSeq(local);
+            String ext="";
+            if( seq > 0 ) {
+                ext=",seq=" + seq;
+            }
+            name = new ObjectName(domain + ":type=Valve,name=" + className + 
+                                    ext + local );
         } else if (container instanceof Context) {
             String path = ((Context)container).getPath();
             if (path.length() < 1) {
@@ -1598,8 +1617,13 @@ public class MBeanUtils {
             Service service = ((Engine) host.getParent()).getService();
             String local=",path=" + path + ",host=" +
                     host.getName();
-            name = new ObjectName(domain + ":type=Valve,sequence=" +
-                                  getSeq(local) + local );
+            int seq = getSeq(local);
+            String ext="";
+            if( seq > 0 ) {
+                ext=",seq=" + seq;
+            }
+            name = new ObjectName(domain + ":type=Valve,name=" + className + 
+                                    ext + local );
         }
 
         return (name);

@@ -195,17 +195,27 @@ public final class SaveContextAction extends Action {
             String operation = null;
             Object values[] = null;
             
-            try {
+            try {                
+                String docBase = cform.getDocBase();
+                if ((docBase == null) || (docBase.length() < 1)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("docBase", 
+                        new ActionError("error.docBase.required"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                }
                 // get the parent host name
                 String parentName = cform.getParentObjectName();
                 ObjectName honame = new ObjectName(parentName);
                 
                 // Ensure that the requested context name is unique
-                ObjectName oname =
-                    new ObjectName(honame.getDomain() +
-                                   TomcatTreeBuilder.CONTEXT_TYPE +
-                                   ",path=" + cform.getPath() +
-                                   ",host=" + honame.getKeyProperty("host"));
+                ObjectName oname = 
+                        new ObjectName(honame.getDomain() + 
+                                    ":j2eeType=WebModule,name=//" +
+                                    honame.getKeyProperty("host") + 
+                                    cform.getPath() +
+                                    // FIXME set J2EEApplication and J2EEServer
+                                    ",J2EEApplication=none,J2EEServer=none");                   
                 
                 if (mBServer.isRegistered(oname)) {
                     ActionErrors errors = new ActionErrors();
@@ -229,7 +239,7 @@ public final class SaveContextAction extends Action {
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardContextTypes);
-
+                getServlet().log("context="+cObjectName+" path="+values[1]+" docbase="+values[2]);
                 // Create a new Loader object
                 values = new String[1];
                 // parent of loader is the newly created context
@@ -464,7 +474,16 @@ public final class SaveContextAction extends Action {
         if (control != null) {
             TreeControlNode parentNode = control.findNode(parentName);
             if (parentNode != null) {
-                String path = oname.getKeyProperty("path");
+                String type = "Context";
+                String path = "";
+                String host = "";
+                String name = oname.getKeyProperty("name");
+                if ((name != null) && (name.length() > 0)) {
+                    name = name.substring(2);
+                    int i = name.indexOf("/");
+                    host = name.substring(0,i);
+                    path = name.substring(i); 
+                }
                 String nodeLabel = "Context (" + path + ")";
                 String encodedName = URLEncoder.encode(oname.toString());
                 TreeControlNode childNode = 
@@ -476,18 +495,8 @@ public final class SaveContextAction extends Action {
                                         "content",
                                         true, domain);
                 parentNode.addChild(childNode);
+        
                 // FIXME - force a redisplay
-                String type = oname.getKeyProperty("type");
-                if (type == null) {
-                    type = "";
-                }
-                if (path == null) {
-                    path = "";
-                }        
-                String host = oname.getKeyProperty("host");
-                if (host == null) {
-                    host = "";
-                }        
                 TreeControlNode subtree = new TreeControlNode
                     ("Context Resource Administration " + containerName,
                     "folder_16_pad.gif",

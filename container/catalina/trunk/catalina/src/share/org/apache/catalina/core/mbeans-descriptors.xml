@@ -513,7 +513,7 @@
                description="Object names of all services we know about"
                type="[Ljavax.management.ObjectName;"/>
       
-    <operation name="store"
+    <operation name="storeConfig"
                description="Save current state to server.xml file"
                impact="ACTION"
                returnType="void">

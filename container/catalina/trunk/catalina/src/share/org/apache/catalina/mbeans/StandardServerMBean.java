@@ -137,7 +137,7 @@ public class StandardServerMBean extends BaseModelMBean {
         Server server = ServerFactory.getServer();
         if (server instanceof StandardServer) {
             try {
-                ((StandardServer) server).store();
+                ((StandardServer) server).storeConfig();
             } catch (Exception e) {
                 throw new MBeanException(e, "Error updating conf/server.xml");
             }

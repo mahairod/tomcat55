@@ -180,14 +180,31 @@ public class DeleteContextAction extends Action {
         try {
             ObjectName poname = new ObjectName(patternObject);
             String domain = poname.getDomain();
-            String pattern = domain + TomcatTreeBuilder.CONTEXT_TYPE +
-                             TomcatTreeBuilder.WILDCARD +
-                             ",host=" + poname.getKeyProperty("host"); 
+            StringBuffer sb = new StringBuffer(domain);
+            sb.append(":j2eeType=WebModule,*");
+            ObjectName search = new ObjectName(sb.toString());
             // get all available contexts only for this host
             Iterator items =
-                mBServer.queryNames(new ObjectName(pattern), null).iterator();
+                mBServer.queryNames(search, null).iterator();
+            String item = null;
+            String host = poname.getKeyProperty("host");
+            if (host==null) {
+                String name = poname.getKeyProperty("name");
+                if ((name != null) && (name.length() > 0)) {
+                    name = name.substring(2);
+                    int i = name.indexOf("/");
+                    host = name.substring(0,i);
+                }
+            }
+            String hostPrefix = "//"+host;
+            String hostAttr = null;
             while (items.hasNext()) {
-                list.add(items.next().toString());
+                item = items.next().toString();
+                ObjectName oname = new ObjectName(item);
+                hostAttr = oname.getKeyProperty("name");
+                if (hostAttr.startsWith(hostPrefix)) {
+                    list.add(item);
+                }
             }
         } catch (Exception e) {
             getServlet().log
