@@ -72,7 +72,7 @@ You can make additional APIs available to all of your web applications by
 putting unpacked classes into a "classes" directory (not created by default),
 or by placing them in JAR files in the "lib" directory.
 
-Tomcat 5.0 also makes Xerces 2 and the Commons Logging API (release 1.0.3)  
+Tomcat 5.0 also makes Xerces 2 and the Commons Logging API (release 1.0.3)
 available to web applications.
 
 
@@ -123,17 +123,17 @@ Tomcat on Linux:
 ---------------
 
 Virtual machine crashes can be experienced when using certain combinations of
-kernel / glibc under Linux with Sun Hotspot 1.2 to 1.3. The crashes were 
+kernel / glibc under Linux with Sun Hotspot 1.2 to 1.3. The crashes were
 reported to occur mostly on startup. Sun JDK 1.4 does not exhibit the problems,
 and neither does IBM JDK for Linux.
 
-The problems can be fixed by reducing the default stack size. At bash shell, 
+The problems can be fixed by reducing the default stack size. At bash shell,
 do "ulimit -s 2048"; use "limit stacksize 2048" for tcsh.
 
 GLIBC 2.2 / Linux 2.4 users should also define an environment variable:
 export LD_ASSUME_KERNEL=2.2.5
 
-Additionally, Redhat Linux 9.0 users should use the same setting, to avoid 
+Additionally, Redhat Linux 9.0 users should use the same setting, to avoid
 stability problems.
 
 
@@ -147,25 +147,47 @@ sidestep the security manager access control). In Tomcat 5.0, they have been
 disabled by default, as our goal is to provide a fully secure default
 configuration. However, CGI and SSI remain available.
 
-To enable CGI and SSI on Windows:
-* rename the file %CATALINA_HOME%\server\lib\servlets-cgi.renametojar to
-  %CATALINA_HOME%\server\lib\servlets-cgi.jar.
-* rename the file %CATALINA_HOME%\server\lib\servlets-ssi.renametojar to
-  %CATALINA_HOME%\server\lib\servlets-ssi.jar.
-* in %CATALINA_HOME%\conf\web.xml, uncomment the servlet declarations starting
-  on lines 226 and 250, as well as the associated servlet mappings
-  on lines 276 and 294. Alternately, these servlet declarations and mappings 
-  can be added to your web application deployment descriptor.
 
-To enable CGI and SSI on Unix:
+To enable CGI:
 * rename the file $CATALINA_HOME/server/lib/servlets-cgi.renametojar to
   $CATALINA_HOME/server/lib/servlets-cgi.jar.
+* in $CATALINA_HOME/conf/web.xml, you will need to uncomment 2 areas, the
+  servlet declaration and the servlet mapping. The servlet declaration
+  looks similar to this:
+    <servlet>
+        <servlet-name>cgi</servlet-name>
+        ...
+    </servlet>
+
+  While the servlet mapping looks similar to this:
+    <servlet-mapping>
+        <servlet-name>cgi</servlet-name>
+        <url-pattern>/cgi-bin/*</url-pattern>
+    </servlet-mapping>
+
+  Alternately, these servlet declarations and mappings
+  can be added to your web application deployment descriptor.
+
+To enable SSI:
 * rename the file $CATALINA_HOME/server/lib/servlets-ssi.renametojar to
   $CATALINA_HOME/server/lib/servlets-ssi.jar.
-* in $CATALINA_HOME/conf/web.xml, uncomment the servlet declarations starting
-  on lines 226 and 250, as well as the associated servlet mappings
-  on lines 276 and 294. Alternately, these servlet declarations and mappings 
+* in $CATALINA_HOME/conf/web.xml, you will need to uncomment 2 areas, the
+  servlet declaration and the servlet mapping. The servlet declaration
+  looks similar to this:
+    <servlet>
+        <servlet-name>ssi</servlet-name>
+        ...
+    </servlet>
+
+  While the servlet mapping looks similar to this:
+    <servlet-mapping>
+        <servlet-name>ssi</servlet-name>
+        <url-pattern>*.shtml</url-pattern>
+    </servlet-mapping>
+
+  Alternately, these servlet declarations and mappings
   can be added to your web application deployment descriptor.
+
 
 
 ---------------------
