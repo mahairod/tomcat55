@@ -188,7 +188,7 @@ public class ServletRequestWrapper implements ServletRequest {
      */
 
     public ServletInputStream getInputStream() throws IOException {
-	return null;
+	return this.request.getInputStream();;
 	}
      
     
