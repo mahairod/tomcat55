@@ -130,7 +130,7 @@ public class UserDatabaseRealm
      * The global JNDI name of the <code>UserDatabase</code> resource
      * we will be utilizing.
      */
-    protected String resourceName = "java:/catalina/UserDatabase";
+    protected String resourceName = "java:/UserDatabase";
 
 
     /**
@@ -174,7 +174,7 @@ public class UserDatabaseRealm
      */
     public void setResourceName(String resourceName) {
 
-        this.resourceName = resourceName;
+        this.resourceName = "java:" + resourceName;
 
     }
 
