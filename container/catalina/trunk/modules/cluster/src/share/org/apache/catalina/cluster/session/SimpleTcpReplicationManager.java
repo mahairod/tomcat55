@@ -554,18 +554,6 @@ public class SimpleTcpReplicationManager extends org.apache.catalina.session.Sta
         }
     }
 
-    public IDataSender createDataSender(Member addr) {
-        try  {
-            Member mbr = addr;
-            return new SocketSender(InetAddress.getByName(mbr.getHost()),mbr.getPort());
-        } catch ( Exception x ){
-            log("Unable to create a socket for replication.",x);
-        }
-        return null;
-
-    }
-
-
     public void messageDataReceived(SessionMessage msg) {
         try {
             messageReceived(msg, msg.getAddress()!=null?(Member)msg.getAddress():null);
