@@ -97,7 +97,9 @@ abstract class Node {
     /**
      * Zero-arg Constructor.
      */
-    public Node() {}
+    public Node() {
+	this.isDummy = true;
+    }
 
     /**
      * Constructor.
