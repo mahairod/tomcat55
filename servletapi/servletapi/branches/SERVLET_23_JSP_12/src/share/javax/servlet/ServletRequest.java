@@ -163,10 +163,10 @@ public interface ServletRequest {
      *
      * @param		a <code>String</code> containing the name of 
      *			the chararacter encoding.
-     *
+     * @throws		java.io.UnsupportedEncodingException if this is not a valid encoding
      */
 
-    public void setCharacterEncoding(String env);
+    public void setCharacterEncoding(String env) throws java.io.UnsupportedEncodingException;
 
     
     
