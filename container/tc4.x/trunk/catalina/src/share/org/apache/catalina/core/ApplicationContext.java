@@ -866,6 +866,12 @@ public final class ApplicationContext
      */
     public void setAttribute(String name, Object value) {
 
+        // Null value is the same as removeAttribute()
+        if (value == null) {
+            removeAttribute(name);
+            return;
+        }
+
         boolean replaced = false;
 
 	// Add or replace the specified attribute

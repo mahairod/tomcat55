@@ -966,6 +966,12 @@ public abstract class RequestBase
      */
     public void setAttribute(String name, Object value) {
 
+        // Null value is the same as removeAttribute()
+        if (value == null) {
+            removeAttribute(name);
+            return;
+        }
+
 	synchronized (attributes) {
 	    attributes.put(name, value);
 	}
