@@ -70,9 +70,22 @@ public class RequestInfoExample extends HttpServlet {
         out.println(HTMLFilter.filter(request.getPathInfo()));
         out.println("</td></tr><tr><td>");
         out.println(rb.getString("requestinfo.label.remoteaddr"));
+
+ 	String cipherSuite=
+ 	    (String)request.getAttribute("javax.servlet.request.cipher_suite");
         out.println("</td><td>");                
         out.println(request.getRemoteAddr());
         out.println("</table>");
+
+ 	if(cipherSuite!=null){
+ 	    out.println("</td></tr><tr><td>");	
+ 	    out.println("SSLCipherSuite:");
+ 	    out.println("</td>");
+ 	    out.println("<td>");	    
+ 	    out.println(request.getAttribute("javax.servlet.request.cipher_suite"));
+	    out.println("</td>");	    
+ 	}
+	
     }
 
     public void doPost(HttpServletRequest request,
