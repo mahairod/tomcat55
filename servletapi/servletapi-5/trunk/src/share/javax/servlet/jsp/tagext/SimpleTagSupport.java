@@ -72,22 +72,19 @@ public class SimpleTagSupport
     private JspTag parentTag;
     
     /** The JSP context for the upcoming tag invocation */
-    private JspContext jspContext;
+    protected JspContext jspContext;
     
     /** The body of the tag */
-    private JspFragment jspBody;
+    protected JspFragment jspBody;
     
     /** 
-     * Default processing of the tag returning EVAL_PAGE.
-     *
-     * @return EVAL_PAGE
+     * Default processing of the tag does nothing.
      *
      * @see SimpleTag#doTag()
      */ 
-    public int doTag() 
+    public void doTag() 
         throws javax.servlet.jsp.JspException 
     {
-        return EVAL_PAGE;
     }
     
     /**

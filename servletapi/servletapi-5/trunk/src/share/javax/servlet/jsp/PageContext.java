@@ -113,9 +113,6 @@ import javax.servlet.jsp.tagext.BodyContent;
  * <p>
  * The following methods enable the <B>management of nested</B> JspWriter streams to
  * implement Tag Extensions: <code>pushBody()</code> and <code>popBody()</code>
- * To facilitate Simple Tag Extensions, the <code>pushPageScope()</code>,
- * <code>popPageScope()</code> and <code>peekPageScope()</code> methods are
- * added.
  *
  * <p><B>Methods Intended for JSP authors</B>
  * <p>
