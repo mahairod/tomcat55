@@ -1135,6 +1135,11 @@
   <target name="run-tester"
    description="Catalina Tests" depends="dist-tester">
 
+  	<!-- For Java 1.4 -->
+  	<copy file="${jmx.jar}" tofile="${tomcat.build}/bin/jmx.jar" />
+    <copy todir="${tomcat.build}/common/endorsed" file="${xercesImpl.jar}"/>
+    <copy todir="${tomcat.build}/common/endorsed" file="${xml-apis.jar}"/>
+  	
     <parallel>
 
         <java classname="LauncherBootstrap" fork="yes">

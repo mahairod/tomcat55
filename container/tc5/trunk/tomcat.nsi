@@ -138,16 +138,6 @@ Section "Core" SecTomcatCore
   SetOutPath $INSTDIR\conf\Catalina\localhost
   File conf\Catalina\localhost\manager.xml
 
-  IfSilent 0 +3
-  Call findJavaPath
-  Pop $2
-
-  IfSilent +2 0
-  !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
-
-;  CopyFiles /SILENT "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
-  ClearErrors
-
   Call configure
   Call findJavaPath
   Pop $2
@@ -282,7 +272,7 @@ Section "Webapps" SecWebapps
 SectionEnd
 
 Section -post
-  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath "$JavaHome\lib\tools.jar;$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
+  nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --Classpath ";$INSTDIR\bin\bootstrap.jar" --StartClass org.apache.catalina.startup.Bootstrap --StopClass org.apache.catalina.startup.Bootstrap --StartParams start --StopParams stop  --StartMode jvm --StopMode jvm'
   nsExec::ExecToLog '"$INSTDIR\bin\tomcat5.exe" //US//Tomcat5 --JvmOptions "-Dcatalina.home=$INSTDIR#-Djava.endorsed.dirs=$INSTDIR\common\endorsed#-Djava.io.tmpdir=$INSTDIR\temp" --StdOutput "$INSTDIR\logs\stdout.log" --StdError "$INSTDIR\logs\stderr.log"'
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
