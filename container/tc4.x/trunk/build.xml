@@ -214,7 +214,7 @@
 
 
   <!-- ================= DIST: Create Windows Installer =================== -->
-  <target name="installer" depends="dist, dist-source"
+  <target name="installer" depends="dist, dist-source, prepare-release"
    description="Create Windows installer" if="execute.installer">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="NSIS must be installed in the default directory"/>
@@ -270,9 +270,9 @@
   <target name="prepare-release">
     <condition property="execute.installer">
       <and>
-        <equals arg1="${full.dist}" arg2="on" />
         <os family="windows" />
         <available file="${javaservice.home}/bin/JavaService.exe" />
+        <available file="${nsis.home}\makensis.exe" />
       </and>
     </condition>
   </target>
