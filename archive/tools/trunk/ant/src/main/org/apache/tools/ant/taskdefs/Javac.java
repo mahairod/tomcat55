@@ -271,7 +271,8 @@ public class Javac extends Task {
     private void scanDir(File srcDir, File destDir) {
 
 	String[] list = srcDir.list(new DesirableFilter());
-	for (int i = 0; i < list.length; i++) {
+	int len = (list==null ? 0 : list.length);
+	for (int i = 0; i < len; i++) {
 	    String filename = list[i];
 	    File srcFile = new File(srcDir, filename);
 	    File destFile = new File(destDir, filename);
