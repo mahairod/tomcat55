@@ -832,7 +832,7 @@
                         username"
                  type="java.lang.String"/>
 
-    <attribute   name="userRoleTable"remove
+    <attribute   name="userRoleTable"
           description="The table that holds the relation between user's and
                         roles"
                  type="java.lang.String"/>
