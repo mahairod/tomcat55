@@ -79,9 +79,9 @@ public interface MsgConnector {
 
     public MsgBuffer getMsgBuffer();
 
-    public void send( MsgBuffer msg ) throws IOException;
+    public void send(MsgBuffer msg) throws IOException;
 
-    public int receive( MsgBuffer msg ) throws IOException;
+    public int receive(MsgBuffer msg) throws IOException;
 
-    
+    public void close() throws IOException;
 }

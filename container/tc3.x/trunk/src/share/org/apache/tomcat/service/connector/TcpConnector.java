@@ -136,4 +136,13 @@ class TcpConnector implements MsgConnector
 	//	msg.dump("SEND");
 	out.write( b, 0, len );
     }
+    
+    public void close() throws IOException {
+    if(null != out) {        
+    out.close();
+    }
+    if(null !=in) {
+    in.close();
+    }
+    }
 }
