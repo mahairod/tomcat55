@@ -291,12 +291,15 @@ public class PoolTcpEndpoint { // implements Endpoint {
 		    s=new Socket("127.0.0.1", port );
 		}else{
 		    s=new Socket(inet, port );
+                    // setting soLinger to a small value will help shutdown the
+                    // connection quicker
+                    s.setSoLinger(true, 0);
 		}
 		s.close();
 		//		System.out.println("Closing socket " + port );
 		serverSocket.close(); // XXX?
 	    } catch(Exception e) {
-		e.printStackTrace();
+                log("Caught exception trying to unlock accept.", e);
 	    }
 	    serverSocket = null;
 	}
