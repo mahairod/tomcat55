@@ -49,7 +49,7 @@
     </menu>
 
     <menu name="Tomcat Development">
-        <item name="Building from Source"  href="BUILDING.txt"/>
+        <item name="Building"              href="building.html"/>
         <item name="Changelog"             href="changelog.html"/>
         <item name="Status"                href="status.html"/>
         <item name="Developers"            href="developers.html"/>

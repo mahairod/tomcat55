@@ -125,9 +125,10 @@ are responsible for installing, configuring, and operating a Tomcat 5 server.
 <p>The following documents are for Java developers who wish to contribute to
 the development of the <em>Tomcat</em> project.</p>
 <ul>
-<li><a href="BUILDING.txt"><strong>Building from Source</strong></a> - Details the
-    steps necessary to download Tomcat 5 source code (and the other packages
-    that it depends on), and build a binary distribution from those sources.
+<li><a href="building.html"><strong>Building from Source</strong></a> - 
+    Details the steps necessary to download Tomcat 5 source code (and the 
+    other packages that it depends on), and build a binary distribution from 
+    those sources.
     </li>
 <li><a href="changelog.html"><strong>Changelog</strong></a> - Details the
     changes made to Tomcat.
