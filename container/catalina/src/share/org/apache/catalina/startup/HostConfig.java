@@ -561,8 +561,6 @@ public class HostConfig
             context.setConfigFile(contextXml.getAbsolutePath());
             context.setPath(contextPath);
             // Add the context XML to the list of watched files
-            // FIXME: Special case of a xml which points to a WAR without unpackWAR or
-            //        a directory outside of appBase -> the .xml should be a redeployResource
             deployedApp.reloadResources.put
                 (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
             // Add the associated docBase to the redeployed list if it's a WAR
@@ -601,6 +599,22 @@ public class HostConfig
                         new Long(docBase.lastModified()));
                 addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
             } else {
+                if (context.getDocBase() != null) {
+                    File docBase = new File(context.getDocBase());
+                    if (!docBase.isAbsolute()) {
+                        docBase = new File(appBase(), context.getDocBase());
+                    }
+                    try {
+                        docBase = docBase.getCanonicalFile();
+                        if (!docBase.getAbsolutePath().startsWith(appBase().getAbsolutePath())) {
+                            deployedApp.redeployResources.put
+                                (contextXml.getAbsolutePath(), new Long(contextXml.lastModified()));
+                            deployedApp.reloadResources.remove(contextXml.getAbsolutePath());
+                        }
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                }
                 addWatchedResources(deployedApp, null, context);
             }
         } catch (Throwable t) {
@@ -924,7 +938,16 @@ public class HostConfig
                     // Delete other redeploy resources
                     for (int j = 0; j < resources.length; j++) {
                         if (j != i) {
-                            ExpandWar.delete(new File(resources[j]));
+                            try {
+                                File current = new File(resources[j]);
+                                current = current.getCanonicalFile();
+                                if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
+                                    || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                                    ExpandWar.delete(current);
+                            } catch (IOException e) {
+                                log.warn(sm.getString
+                                        ("hostConfig.canonicalizing", app.name), e);
+                            }
                         }
                     }
                     deployed.remove(app.name);
@@ -942,12 +965,30 @@ public class HostConfig
                 }
                 // Delete all redeploy resources
                 for (int j = 0; j < resources.length; j++) {
-                    ExpandWar.delete(new File(resources[j]));
+                    try {
+                        File current = new File(resources[j]);
+                        current = current.getCanonicalFile();
+                        if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
+                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                            ExpandWar.delete(current);
+                    } catch (IOException e) {
+                        log.warn(sm.getString
+                                ("hostConfig.canonicalizing", app.name), e);
+                    }
                 }
                 // Delete reload resources as well (to remove any remaining .xml descriptor)
                 String[] resources2 = (String[]) app.reloadResources.keySet().toArray(new String[0]);
                 for (int j = 0; j < resources2.length; j++) {
-                    ExpandWar.delete(new File(resources2[j]));
+                    try {
+                        File current = new File(resources2[j]);
+                        current = current.getCanonicalFile();
+                        if ((current.getAbsolutePath().startsWith(appBase().getAbsolutePath()))
+                            || (current.getAbsolutePath().startsWith(configBase().getAbsolutePath())))
+                            ExpandWar.delete(current);
+                    } catch (IOException e) {
+                        log.warn(sm.getString
+                                ("hostConfig.canonicalizing", app.name), e);
+                    }
                 }
                 deployed.remove(app.name);
                 return;
