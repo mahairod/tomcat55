@@ -24,6 +24,12 @@
       <update>
         Changed build dependency on JUnit from 3.7 to 3.8.1. (yoavs)
       </update>
+      <update>
+        Added ant-launcher.jar (Ant 1.6 and later) to common/lib, as it's required by the Launcher scripts. (yoavs)
+      </update>
+      <fix>
+        <bug>28989</bug>: Added ant-launcher.jar to launcher classpath. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   
