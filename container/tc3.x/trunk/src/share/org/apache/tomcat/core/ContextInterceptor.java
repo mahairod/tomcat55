@@ -86,5 +86,13 @@ public interface ContextInterceptor {
     /** Notify when a servlet is removed from context
      */
     public int removeServlet( Context ctx, ServletWrapper sw);
-    
+
+    /** Notify when a mapping is added to a context
+     */
+    public int addMapping( Context ctx, String path, ServletWrapper servlet);
+
+    /** Notify when a mapping is deleted  from  a context
+     */
+    public int removeMapping( Context ctx, String path );
+
 }

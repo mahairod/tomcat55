@@ -165,4 +165,29 @@ public class FileUtil {
 
         return patchPath;
     }
+
+    
+    // Probably not needed, original code used by Context.getRealPath()
+    // XXX Find if it is duplicated, merge with the other "path" functions
+    public static String normPath( String path ) {
+	int i = -1;
+	// norm path
+	if( path==null) {
+	    // Shouldn't happen, find out what is wrong
+	    /*DEBUG*/ try {throw new Exception(); } catch(Exception ex) {ex.printStackTrace();}
+	    return "";
+	}
+        while ((i = path.indexOf('\\')) > -1) {
+            String a = path.substring(0, i);
+            String b = "";
+ 
+            if (i < path.length() - 1) {
+                b = path.substring(i + 1);
+            } 
+ 
+            path = a + "/" + b;
+        }
+	return path;
+    }
+
 }
