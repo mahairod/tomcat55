@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -138,7 +134,6 @@ public class IncludeGenerator
 			writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +
 				       key + "=\" + \"" + value[0] + "\";");
 		    } else {
-			writer.println("String [] _tmpS = new String[" + value.length +"];");
 			for (int i = 0; i < value.length; i++) {
 			    if (!JspUtil.isExpression(value[i]))
 				writer.println("_jspx_qStr = _jspx_qStr + \"" + sep +

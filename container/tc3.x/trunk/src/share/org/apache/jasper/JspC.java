@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -197,6 +193,10 @@ public class JspC implements Options { //, JspCompilationContext {
     public String getJspCompilerPath() {
        // we don't compile, so this is meanlingless
         return null;
+    }
+
+    public String getJavaEncoding() {
+	return "UTF-8";
     }
 
     public String getClassPath() {
