@@ -73,14 +73,14 @@ import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import org.apache.catalina.Context;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.Enumerator;
 
 
 /**
  * Implementation of a <code>javax.servlet.FilterConfig</code> useful in
- * constructing stacks of filters for a particular request.
+ * managing the filter instances instantiated when a web application
+ * is first started.
  *
  * @author Craig R. McClanahan
  * @version $Revision$ $Date$
@@ -96,9 +96,9 @@ final class ApplicationFilterConfig implements FilterConfig {
      * Construct a new ApplicationFilterConfig for the specified filter
      * definition.
      *
+     * @param context The context with which we are associated
      * @param filterDef Filter definition for which a FilterConfig is to be
      *  constructed
-     * @param wrapper The Wrapper with which we are associated
      *
      * @exception ClassCastException if the specified class does not implement
      *  the <code>javax.servlet.Filter</code> interface
@@ -108,12 +108,12 @@ final class ApplicationFilterConfig implements FilterConfig {
      * @exception InstantiationException if an exception occurs while
      *  instantiating the filter object
      */
-    public ApplicationFilterConfig(FilterDef filterDef, Wrapper wrapper)
+    public ApplicationFilterConfig(Context context, FilterDef filterDef)
 	throws ClassCastException, ClassNotFoundException,
 	       IllegalAccessException, InstantiationException {
 
 	super();
-	setWrapper(wrapper);
+        this.context = context;
 	setFilterDef(filterDef);
 
     }
@@ -140,19 +140,6 @@ final class ApplicationFilterConfig implements FilterConfig {
     private FilterDef filterDef = null;
 
 
-    /**
-     * The <code>ApplicationFilterConfig</code> of the next filter in our
-     * configured filter stack.
-     */
-    private ApplicationFilterConfig nextConfig = null;
-
-
-    /**
-     * The Wrapper with which we are associated.
-     */
-    private Wrapper wrapper = null;
-
-
     // --------------------------------------------------- FilterConfig Methods
 
 
@@ -162,30 +149,6 @@ final class ApplicationFilterConfig implements FilterConfig {
     public String getFilterName() {
 
 	return (filterDef.getFilterName());
-
-    }
-
-
-    /**
-     * Return the remaining Filter objects in the Filter stack, in the order
-     * they have been configured.
-     */
-    public Iterator getFilters() {
-
-	// NOTE - The list of filters we are about to accumulate includes
-	// the container-provided filter at the end that wraps the call to
-	// the servlet's service() method
-	ArrayList list = new ArrayList();
-	ApplicationFilterConfig next = getNextConfig();
-	while (next != null) {
-	    list.add(next.getFilter());
-	    next = next.getNextConfig();
-	}
-
-	// NOTE - The iterator we are about to return probably does support
-	// remove(), but calling it has no impact on the actual functionality
-	// of filter processing so I don't see it as a big issue
-	return (list.iterator());
 
     }
 
@@ -224,19 +187,6 @@ final class ApplicationFilterConfig implements FilterConfig {
 
 
     /**
-     * Return the next Filter object in the filter stack.
-     */
-    public Filter getNext() {
-
-	if (nextConfig == null)
-	    return (null);
-	else
-	    return (nextConfig.getFilter());
-
-    }
-
-
-    /**
      * Return the ServletContext of our associated web application.
      */
     public ServletContext getServletContext() {
@@ -252,8 +202,8 @@ final class ApplicationFilterConfig implements FilterConfig {
     public String toString() {
 
 	StringBuffer sb = new StringBuffer("ApplicationFilterConfig[");
-	sb.append("wrapper=");
-	sb.append(wrapper.getName());
+        sb.append("name=");
+        sb.append(filterDef.getFilterName());
 	sb.append(", filterClass=");
 	sb.append(filterDef.getFilterClass());
 	sb.append("]");
@@ -267,22 +217,35 @@ final class ApplicationFilterConfig implements FilterConfig {
 
     /**
      * Return the application Filter we are configured for.
-     */
-    Filter getFilter() {
-
-	return (this.filter);
-
-    }
-
-
-    /**
-     * Set the application Filter we are configured for.
      *
-     * @param filter The new application Filter
+     * @exception ClassCastException if the specified class does not implement
+     *  the <code>javax.servlet.Filter</code> interface
+     * @exception ClassNotFoundException if the filter class cannot be found
+     * @exception IllegalAccessException if the filter class cannot be
+     *  publicly instantiated
+     * @exception InstantiationException if an exception occurs while
+     *  instantiating the filter object
      */
-    void setFilter(Filter filter) {
+    Filter getFilter() throws ClassCastException, ClassNotFoundException,
+        IllegalAccessException, InstantiationException {
 
-	this.filter = filter;
+        // Return the existing filter instance, if any
+        if (this.filter != null)
+            return (this.filter);
+
+        // Identify the class loader we will be using
+        String filterClass = filterDef.getFilterClass();
+        ClassLoader classLoader = null;
+        if (filterClass.startsWith("org.apache.catalina."))
+            classLoader = this.getClass().getClassLoader();
+        else
+            classLoader = context.getLoader().getClassLoader();
+
+        // Instantiate a new instance of this filter and return it
+        Class clazz = classLoader.loadClass(filterClass);
+        this.filter = (Filter) clazz.newInstance();
+        filter.setFilterConfig(this);
+	return (this.filter);
 
     }
 
@@ -295,6 +258,19 @@ final class ApplicationFilterConfig implements FilterConfig {
 	return (this.filterDef);
 
     }
+
+
+    /**
+     * Release the Filter instance associated with this FilterConfig,
+     * if there is one.
+     */
+    void release() {
+
+        if (this.filter != null)
+            filter.setFilterConfig(null);
+        this.filter = null;
+
+     }
 
 
     /**
@@ -325,74 +301,10 @@ final class ApplicationFilterConfig implements FilterConfig {
 
 	} else {
 
-	    // Identify the class loader we will be using
-	    String filterClass = filterDef.getFilterClass();
-	    ClassLoader classLoader = null;
-	    // FIXME - share this test with StandardWrapper somehow
-	    if (filterClass.startsWith("org.apache.catalina."))
-		classLoader = this.getClass().getClassLoader();
-	    else
-		classLoader = context.getLoader().getClassLoader();
+            // Allocate a new filter instance
+            Filter filter = getFilter();
 
-	    // Instantiate a new instance of this filter
-	    Class clazz = classLoader.loadClass(filterClass);
-	    this.filter = (Filter) clazz.newInstance();
-	    filter.setFilterConfig(this);
 	}
-
-    }
-
-
-    /**
-     * Return the <code>ApplicationFilterConfig</code> of the next filter
-     * in our filter stack.
-     */
-    ApplicationFilterConfig getNextConfig() {
-
-	return (nextConfig);
-
-    }
-
-
-    /**
-     * Set the <code>ApplicationFilterConfig</code> of the next filter
-     * in our filter stack.
-     *
-     * @param nextConfig The next filter configuration object
-     */
-    void setNextConfig(ApplicationFilterConfig nextConfig) {
-
-	this.nextConfig = nextConfig;
-	if (nextConfig == null) {
-	    this.filter = null;
-	    this.context = null;
-	}
-
-    }
-
-
-    /**
-     * Return the Wrapper we are configured for.
-     */
-    Wrapper getWrapper() {
-
-	return (this.wrapper);
-
-    }
-
-
-    /**
-     * Set the Wrapper we are configured for.
-     *
-     * @param wrapper The new Wrapper
-     */
-    void setWrapper(Wrapper wrapper) {
-
-	this.wrapper = wrapper;
-	if (this.wrapper == null)
-	    this.context = null;
-	else
-	    this.context = (Context) this.wrapper.getParent();
 
     }
 

@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -238,6 +239,13 @@ public final class StandardContext
      * class name of the Java exception.
      */
     private HashMap exceptionPages = new HashMap();
+
+
+    /**
+     * The set of filter configurations (and associated filter instances) we
+     * have initialized, keyed by filter name.
+     */
+    private HashMap filterConfigs = new HashMap();
 
 
     /**
@@ -2455,7 +2463,28 @@ public final class StandardContext
         if (debug >= 1)
             log("Starting filters");
 
-        return (true);  // No actions currently required
+        // Instantiate and record a FilterConfig for each defined filter
+        boolean ok = true;
+        synchronized (filterConfigs) {
+            filterConfigs.clear();
+            Iterator names = filterDefs.keySet().iterator();
+            while (names.hasNext()) {
+                String name = (String) names.next();
+                if (debug >= 1)
+                    log(" Starting filter '" + name + "'");
+                ApplicationFilterConfig filterConfig = null;
+                try {
+                    filterConfig = new ApplicationFilterConfig
+                      (this, (FilterDef) filterDefs.get(name));
+                    filterConfigs.put(name, filterConfig);
+                } catch (Throwable t) {
+                    log(sm.getString("standardContext.filterStart", name), t);
+                    ok = false;
+                }
+            }
+        }
+
+        return (ok);
 
     }
 
@@ -2470,7 +2499,35 @@ public final class StandardContext
         if (debug >= 1)
             log("Stopping filters");
 
-        return (true);  // No actions currently required
+        // Release all Filter and FilterConfig instances
+        synchronized (filterConfigs) {
+            Iterator names = filterConfigs.keySet().iterator();
+            while (names.hasNext()) {
+                String name = (String) names.next();
+                if (debug >= 1)
+                    log(" Stopping filter '" + name + "'");
+                ApplicationFilterConfig filterConfig =
+                  (ApplicationFilterConfig) filterConfigs.get(name);
+                filterConfig.release();
+            }
+            filterConfigs.clear();
+        }
+        return (true);
+
+    }
+
+
+    /**
+     * Find and return the initialized <code>FilterConfig</code> for the
+     * specified filter name, if any; otherwise return <code>null</code>.
+     *
+     * @param name Name of the desired filter
+     */
+    public FilterConfig findFilterConfig(String name) {
+
+        synchronized (filterConfigs) {
+            return ((FilterConfig) filterConfigs.get(name));
+        }
 
     }
 

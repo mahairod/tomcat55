@@ -67,7 +67,6 @@ package org.apache.catalina.core;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -243,34 +242,17 @@ final class StandardWrapperValve
 	    servlet = null;
 	}
 
-	// Create the filter stack for this request
-	ApplicationFilterConfig filters = null;
-	try {
-	    if (servlet != null) {
-		filters = createFilters(request, servlet);
-	    }
-	} catch (Throwable e) {
-	    log(sm.getString("standardWrapper.createFilters",
-			     wrapper.getName()), e);
-	    throwable = e;
-	    exception(request, response, e);
-	    servlet = null;
-	}
+	// Create the filter chain for this request
+        ApplicationFilterChain filterChain =
+          createFilterChain(request, servlet);
 
-	// Call the filter stack for this request
+	// Call the filter chain for this request
+        // NOTE: This also calls the servlet's service() method
 	try {
-	    if (servlet != null) {
+	    if ((servlet != null) && (filterChain != null)) {
 		support.fireInstanceEvent(InstanceEvent.BEFORE_SERVICE_EVENT,
 					  servlet);
-		filters.getFilter().doFilter(sreq, sres);
-		/*
-		if ((servlet instanceof HttpServlet) &&
-		    (hreq != null) && (hres != null)) {
-		    ((HttpServlet) servlet).service(hreq, hres);
-		} else {
-		    servlet.service(sreq, sres);
-		}
-		*/
+                filterChain.doFilter(sreq, sres);
 		support.fireInstanceEvent(InstanceEvent.AFTER_SERVICE_EVENT,
 					  servlet);
 	    }
@@ -305,9 +287,10 @@ final class StandardWrapperValve
 	    exception(request, response, e);
 	}
 
-	// Release the filter stack (if any) for this request
+	// Release the filter chain (if any) for this request
 	try {
-	    releaseFilters(request, filters);
+            if (filterChain != null)
+                filterChain.release();
 	} catch (Throwable e) {
 	    log(sm.getString("standardWrapper.releaseFilters",
 			     wrapper.getName()), e);
@@ -344,122 +327,108 @@ final class StandardWrapperValve
 
 
     /**
-     * Construct and return a linked list of <code>FilterConfig</code>
-     * objects, and their associated <code>Filters</code>, that are relevant
-     * for this request.  A container-supplied filter to call the servlet
-     * method will always be appended, so this method is guaranteed to
-     * return at least one filter.
+     * Construct and return a FilterChain implementation that will wrap the
+     * execution of the specified servlet instance.  If we should not execute
+     * a filter chain at all, return <code>null</code>.
      * <p>
-     * <strong>IMPLEMENTATION NOTE</strong>:  This initial implementation is
-     * not at all optimized, because it dynamically instantiates the relevant
-     * filter instances every time, with no pooling.  Functionality first,
-     * then optimization.
+     * <strong>FIXME</strong> - Pool the chain instances!
      *
-     * @param request The request we are processing
-     * @param servlet The servlet we are wrapping
-     *
-     * @exception Exception if an exception occurs while creating the
-     *  filter list
+     * @param request The servlet request we are processing
+     * @param servlet The servlet instance to be wrapped
      */
-    private ApplicationFilterConfig createFilters(Request request,
-						  Servlet servlet)
-	throws Exception {
+    private ApplicationFilterChain createFilterChain(Request request,
+                                                     Servlet servlet) {
 
-	// Acquire the filter mappings for this Context
-	Wrapper wrapper = (Wrapper) getContainer();
-	Context context = (Context) wrapper.getParent();
-	FilterMap filterMaps[] = context.findFilterMaps();
+        // If there is no servlet to execute, return null
+        if (servlet == null)
+            return (null);
 
-	// Acquire the information we will need to match filter mappings
-	String requestPath = null;
-	if (request instanceof HttpRequest) {
-	    HttpServletRequest hreq =
-		(HttpServletRequest) request.getRequest();
-	    String contextPath = hreq.getContextPath();
-	    if (contextPath == null)
-		contextPath = "";
-	    String requestURI = hreq.getRequestURI();
-	    if (requestURI.length() >= contextPath.length())
-		requestPath = requestURI.substring(contextPath.length());
-	}
-	String servletName = wrapper.getName();
+        // Create and initialize a filter chain object
+        ApplicationFilterChain filterChain =
+          new ApplicationFilterChain();
+        filterChain.setServlet(servlet);
 
-	if (debug >= 1)
-	    log("Creating filter stack for request path '" + requestPath +
-		"' and servlet '" + servlet + "'");
+        // Acquire the filter mappings for this Context
+        Wrapper wrapper = (Wrapper) getContainer();
+        StandardContext context = (StandardContext) wrapper.getParent();
+        FilterMap filterMaps[] = context.findFilterMaps();
 
-	// Create a stack of the relevant filters only
-	int n = 0;
-	ApplicationFilterConfig first = null;
-	ApplicationFilterConfig last = null;
-	ApplicationFilterConfig next = null;
+        // If there are no filter mappings, we are done
+        if ((filterMaps == null) || (filterMaps.length == 0))
+            return (filterChain);
+//        if (debug >= 1)
+//            log("createFilterChain:  Processing " + filterMaps.length +
+//                " filter map entries");
 
-	// Add filters that match on URL pattern first
-	for (int i = 0; i < filterMaps.length; i++) {
-	    if (!matchFiltersURL(filterMaps[i], requestPath))
-		continue;
-	    FilterDef filterDef =
-		context.findFilterDef(filterMaps[i].getFilterName());
-	    if (filterDef == null) {
-		;	// FIXME - log configuration problem
-		continue;
-	    }
-	    if (debug >= 2)
-		log(" Adding filter '" + filterDef.getFilterName() + "'");
-	    next = new ApplicationFilterConfig(filterDef, wrapper);
-	    if (first == null)
-		first = next;
-	    if (last != null)
-		last.setNextConfig(next);
-	    last = next;
-	    n++;
-	}
+        // Acquire the information we will need to match filter mappings
+        String requestPath = null;
+        if (request instanceof HttpRequest) {
+            HttpServletRequest hreq =
+                (HttpServletRequest) request.getRequest();
+            String contextPath = hreq.getContextPath();
+            if (contextPath == null)
+                contextPath = "";
+            String requestURI = hreq.getRequestURI();
+            if (requestURI.length() >= contextPath.length())
+                requestPath = requestURI.substring(contextPath.length());
+        }
+        String servletName = wrapper.getName();
+//        if (debug >= 1) {
+//            log(" requestPath=" + requestPath);
+//            log(" servletName=" + servletName);
+//        }
+        int n = 0;
 
-	// Add filters that match on servlet name second
-	for (int i = 0; i < filterMaps.length; i++) {
-	    if (!matchFiltersServlet(filterMaps[i], servletName))
-		continue;
-	    FilterDef filterDef =
-		context.findFilterDef(filterMaps[i].getFilterName());
-	    if (filterDef == null) {
-		;	// FIXME - log configuration problem
-		continue;
-	    }
-	    if (debug >= 2)
-		log(" Adding filter '" + filterDef.getFilterName() + "'");
-	    next = new ApplicationFilterConfig(filterDef, wrapper);
-	    if (first == null)
-		first = next;
-	    if (last != null)
-		last.setNextConfig(next);
-	    last = next;
-	    n++;
-	}
+        // Add the relevant path-mapped filters to this filter chain
+        for (int i = 0; i < filterMaps.length; i++) {
+//            if (debug >= 2)
+//                log(" Checking path-mapped filter '" +
+//                    filterMaps[i] + "'");
+            if (!matchFiltersURL(filterMaps[i], requestPath))
+                continue;
+            ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
+                context.findFilterConfig(filterMaps[i].getFilterName());
+            if (filterConfig == null) {
+//                if (debug >= 2)
+//                    log(" Missing path-mapped filter '" +
+//                        filterMaps[i] + "'");
+                ;       // FIXME - log configuration problem
+                continue;
+            }
+//            if (debug >= 2)
+//                log(" Adding path-mapped filter '" +
+//                    filterConfig.getFilterName() + "'");
+            filterChain.addFilter(filterConfig);
+            n++;
+        }
 
-	// Add an internal filter to call the servlet itself third
-	if (debug >= 2)
-	    log(" Adding container-provided wrapper filter");
-	if (this.filterDef == null) {
-	    FilterDef newDef = new FilterDef();
-	    newDef.setFilterClass("org.apache.catalina.core.ApplicationFilterWrapper");
-	    newDef.setFilterName("org.apache.catalina.core.ApplicationFilterWrapper");
-	    this.filterDef = newDef;
-	}
-	next = new ApplicationFilterConfig(this.filterDef, wrapper);
-	ApplicationFilterWrapper filter =
-	    (ApplicationFilterWrapper) next.getFilter();
-	filter.setServlet(servlet);
-	if (first == null)
-	    first = next;
-	if (last != null)
-	    last.setNextConfig(next);
-	last = next;
-	n++;
-	if (debug >= 1)
-	    log(" Total of " + n + " filters configured");
+        // Add filters that match on servlet name second
+        for (int i = 0; i < filterMaps.length; i++) {
+//            if (debug >= 2)
+//                log(" Checking servlet-mapped filter '" +
+//                    filterMaps[i] + "'");
+            if (!matchFiltersServlet(filterMaps[i], servletName))
+                continue;
+            ApplicationFilterConfig filterConfig = (ApplicationFilterConfig)
+                context.findFilterConfig(filterMaps[i].getFilterName());
+            if (filterConfig == null) {
+//                if (debug >= 2)
+//                    log(" Missing servlet-mapped filter '" +
+//                        filterMaps[i] + "'");
+                ;       // FIXME - log configuration problem
+                continue;
+            }
+//            if (debug >= 2)
+//                log(" Adding servlet-mapped filter '" +
+//                     filterMaps[i] + "'");
+            filterChain.addFilter(filterConfig);
+            n++;
+        }
 
-	// Return the constructed filter chain
-	return (first);
+        // Return the completed filter chain
+//        if (debug >= 2)
+//            log(" Returning chain with " + n + " filters");
+        return (filterChain);
 
     }
 
@@ -716,9 +685,9 @@ final class StandardWrapperValve
     private boolean matchFiltersServlet(FilterMap filterMap,
 					String servletName) {
 
-	if (debug >= 3)
-	    log("  Matching servlet name '" + servletName +
-		"' against mapping " + filterMap);
+//	if (debug >= 3)
+//	    log("  Matching servlet name '" + servletName +
+//		"' against mapping " + filterMap);
 
 	if (servletName == null)
 	    return (false);
@@ -739,9 +708,9 @@ final class StandardWrapperValve
     private boolean matchFiltersURL(FilterMap filterMap,
 				    String requestPath) {
 
-	if (debug >= 3)
-	    log("  Matching request path '" + requestPath +
-		"' against mapping " + filterMap);
+//	if (debug >= 3)
+//	    log("  Matching request path '" + requestPath +
+//		"' against mapping " + filterMap);
 
 	if (requestPath == null)
 	    return (false);
@@ -780,34 +749,11 @@ final class StandardWrapperValve
 					requestPath.substring(period + 1)));
 	}
 
-
 	// Case 4 - "Default" Match
 	return (false);	// NOTE - Not relevant for selecting filters
 
     }
 
-
-    /**
-     * Release the specified filter stack associated with this request.
-     *
-     * @param request The request being processed
-     * @param filters The filter stack being released
-     *
-     * @exception Exception if an exception occurs during the release
-     */
-    private void releaseFilters(Request request,
-				ApplicationFilterConfig filters)
-	throws Exception {
-
-	while (filters != null) {
-	    filters.getFilter().setFilterConfig(null);
-	    filters.setFilter(null);
-	    ApplicationFilterConfig next = filters.getNextConfig();
-	    filters.setNextConfig(null);
-	    filters = next;
-	}
-
-    }
 
     /**
      * Handle the HTTP status code (and corresponding message) generated
@@ -899,7 +845,7 @@ final class StandardWrapperValve
             if (debug >= 1)
                 log("status.write", e);
 	}
-        
+
 
     }
 
