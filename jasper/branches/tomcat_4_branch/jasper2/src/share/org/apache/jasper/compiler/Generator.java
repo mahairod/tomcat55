@@ -648,7 +648,7 @@ public class Generator {
             if (beanInfo.checkVariable(name)) {
                 // Bean is defined using useBean, introspect at compile time
                 Class bean = beanInfo.getBeanType(name);
-                String beanName = bean.getName();
+                String beanName = JspUtil.getCanonicalName(bean);
                 java.lang.reflect.Method meth =
                     JspRuntimeLibrary.getReadMethod(bean, property);
                 String methodName = meth.getName();
@@ -1293,21 +1293,23 @@ public class Generator {
             declareScriptingVars(n, VariableInfo.AT_BEGIN);
             saveScriptingVars(n, VariableInfo.AT_BEGIN);
 
-            out.printin(tagHandlerClass.getName());
+            String tagHandlerClassName =
+                JspUtil.getCanonicalName(tagHandlerClass);
+            out.printin(tagHandlerClassName);
             out.print(" ");
             out.print(tagHandlerVar);
             out.print(" = ");
             if (ctxt.getOptions().isPoolingEnabled()) {
                 out.print("(");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.print(") ");
                 out.print(n.getTagHandlerPoolName());
                 out.print(".get(");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.println(".class);");
             } else {
                 out.print("new ");
-                out.print(tagHandlerClass.getName());
+                out.print(tagHandlerClassName);
                 out.println("();");
             }
 
@@ -1750,11 +1752,12 @@ public class Generator {
                     throws JasperException {
             
             if (propEditorClass != null) {
-                return "(" + c.getName()
+                String className = JspUtil.getCanonicalName(c);
+                return "(" + className
                     + ")JspRuntimeLibrary.getValueFromBeanInfoPropertyEditor("
-                    + c.getName() + ".class, \"" + attrName + "\", "
+                    + className + ".class, \"" + attrName + "\", "
                     + quote(s) + ", "
-                    + propEditorClass.getName() + ".class)";
+                    + JspUtil.getCanonicalName(propEditorClass) + ".class)";
             } else if (c == String.class) {
                 return quote(s);
             } else if (c == boolean.class) {
@@ -1808,9 +1811,10 @@ public class Generator {
             } else if (c == Object.class) {
                 return "new String(" + quote(s) + ")";
             } else {
-                return "(" + c.getName()
+                String className = JspUtil.getCanonicalName(c);
+                return "(" + className
                     + ")JspRuntimeLibrary.getValueFromPropertyEditorManager("
-                    + c.getName() + ".class, \"" + attrName + "\", "
+                    + className + ".class, \"" + attrName + "\", "
                     + quote(s) + ")";
             }
         }   

@@ -423,6 +423,35 @@ public class JspUtil {
         }
         return b;
     }
+
+    // javac -classpath ~mint/tomcat/common/lib/ant.jar:~mint/tomcat/common/endorsed/xml-apis.jar:~mint/tomcat/common/lib/servlet.jar `find . -name \*.java ` 
+
+
+    /**
+     * Compute the canonical name from a Class instance.  Note that a
+     * simple replacment of '$' with '.' of a binary name would not work,
+     * as '$' is a legal Java Identifier character.
+     * @param c A instance of java.lang.Class
+     * @return  The canonical name of c.
+     */
+    public static String getCanonicalName(Class c) {
+
+        String binaryName = c.getName();
+        c = c.getDeclaringClass();
+
+        if (c == null) {
+            return binaryName;
+        }
+
+        StringBuffer buf = new StringBuffer(binaryName);
+        do {
+            buf.setCharAt(c.getName().length(), '.');
+            c = c.getDeclaringClass();
+        } while ( c != null);
+
+        return buf.toString();
+    }
+
 }
 
 class MyEntityResolver implements EntityResolver {
