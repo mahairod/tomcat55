@@ -72,7 +72,7 @@ import java.util.EventListener;
  * or unbound from a session. The object is notified
  * by an {@link HttpSessionBindingEvent} object. This may be as a result
  * of a servlet programmer explicitly unbinding an attribute from a session,
- * due to a session being invalidated, or die to a session timing out.
+ * due to a session being invalidated, or due to a session timing out.
  *
  *
  * @author		Various

@@ -195,7 +195,7 @@ public interface ServletRequest {
      *
      * @return		a <code>String</code> containing the name 
      *			of the MIME type of 
-     * 			the request, or -1 if the type is not known
+     * 			the request, or null if the type is not known
      *
      */
 
@@ -380,7 +380,7 @@ public interface ServletRequest {
      * Retrieves the body of the request as character data using
      * a <code>BufferedReader</code>.  The reader translates the character
      * data according to the character encoding used on the body.
-     * Either this method or {@link #getReader} may be called to read the
+     * Either this method or {@link #getInputStream} may be called to read the
      * body, not both.
      * 
      *
@@ -422,12 +422,13 @@ public interface ServletRequest {
 
     /**
      * Returns the fully qualified name of the client that sent the
-     * request, or the IP address of the client if the name cannot be
-     * determined. For HTTP servlets, same as the value of the CGI variable 
+     * request. If the engine cannot or chooses not to resolve the hostname 
+     * (to improve performance), this method returns the dotted-string form of 
+     * the IP address. For HTTP servlets, same as the value of the CGI variable 
      * <code>REMOTE_HOST</code>.
      *
-     * @return		a <code>String</code> containing the fully qualified name 
-     *			of the client
+     * @return		a <code>String</code> containing the fully 
+     * qualified name of the client
      *
      */
 
@@ -446,6 +447,9 @@ public interface ServletRequest {
      * package names. Names beginning with <code>java.*</code>,
      * <code>javax.*</code>, and <code>com.sun.*</code>, are
      * reserved for use by Sun Microsystems.
+     *<br> If the value passed in is null, the effect is the same as
+     * calling {@link #removeAttribute}.
+     *
      *
      *
      * @param name			a <code>String</code> specifying 
