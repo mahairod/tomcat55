@@ -7,7 +7,11 @@ baseDir=`pwd`
 
 echo $baseDir .....
 
-ADDL_CLASSPATH=../jakarta-ant/lib/ant.jar:$JAVA_HOME/lib/tools.jar
+if [ "$ANT_HOME" = "" ] ; then
+  ANT_HOME=../jakarta-ant
+fi
+
+ADDL_CLASSPATH=$ANT_HOME/lib/ant.jar:$JAVA_HOME/lib/tools.jar
 
 if [ -n "$CLASSPATH" ]; then
   CLASSPATH=$CLASSPATH:$ADDL_CLASSPATH
