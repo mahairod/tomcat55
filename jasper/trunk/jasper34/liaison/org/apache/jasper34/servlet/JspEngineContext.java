@@ -67,6 +67,8 @@ import org.apache.jasper34.generator.*;
 import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.*;
+import org.apache.jasper34.jsptree.*;
+import org.apache.jasper34.liaison.*;
 import org.apache.jasper34.parser.*;
 import org.apache.jasper34.javacompiler.*;
 
@@ -351,6 +353,24 @@ public class JspEngineContext implements JspCompilationContext {
         {
             return path;
         }
+    }
+
+    public void readWebXml( TagLibraries tli )
+	throws IOException, JasperException
+    {
+	TagLibReader reader=new TagLibReader( this, tli );
+	reader.readWebXml( tli );
+    }
+
+    /** Read a tag lib descriptor ( tld ). You can use the default
+	implementation ( TagLibReader ).
+    */
+    public void readTLD( TagLibraries libs,
+			 TagLibraryInfoImpl tl, String prefix, String uri )
+    	throws IOException, JasperException
+    {
+	TagLibReader reader=new TagLibReader( this, libs );
+	reader.readTagLib( tl, prefix, uri );
     }
 
    
