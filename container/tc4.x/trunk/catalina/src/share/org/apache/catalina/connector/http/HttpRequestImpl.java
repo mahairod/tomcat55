@@ -162,7 +162,7 @@ final class HttpRequestImpl
      */
     public ServletInputStream createInputStream() throws IOException {
 
-	return (new HttpRequestStream(this));
+	return (new HttpRequestStream(this, (HttpResponseImpl) response));
 
     }
 

@@ -83,8 +83,10 @@ public class HttpRequestStream extends RequestStream {
      * Construct a servlet input stream associated with the specified Request.
      *
      * @param request The associated request
+     * @param response The associated response
      */
-    public HttpRequestStream(HttpRequestImpl request) {
+    public HttpRequestStream(HttpRequestImpl request, 
+                             HttpResponseImpl response) {
 
 	super(request);
         String transferEncoding = request.getHeader("Transfer-Encoding");
@@ -92,6 +94,11 @@ public class HttpRequestStream extends RequestStream {
         chunk = ((transferEncoding != null) 
                  && (transferEncoding.indexOf("chunked") != -1));
         
+        if ((!chunk) && (length == -1)) {
+            // Ask for connection close
+            response.addHeader("Connection", "close");
+        }
+
     }
     
     
@@ -224,8 +231,8 @@ public class HttpRequestStream extends RequestStream {
                     
                     while (nbRead < chunkLength) {
                         currentRead = 
-                            stream.read(chunkBuffer, nbRead, 
-                                        chunkLength - nbRead);
+                            super.read(chunkBuffer, nbRead, 
+                                       chunkLength - nbRead);
                         if (currentRead == -1)
                             throw new IOException
                                 (sm.getString("requestStream.read.error"));
@@ -233,8 +240,8 @@ public class HttpRequestStream extends RequestStream {
                     }
                     
                     // Skipping the CRLF
-                    stream.read();
-                    stream.read();
+                    super.read();
+                    super.read();
                     
                 }
                 
@@ -244,15 +251,7 @@ public class HttpRequestStream extends RequestStream {
             
         } else {
             
-            // Have we read the specified content length already?
-            if ((length >= 0) && (count >= length))
-                return (-1);	// End of file indicator
-            
-            // Read and count the next byte, then return it
-            int b = stream.read();
-            if (b >= 0)
-                count++;
-            return (b);
+            return (super.read());
             
         }
         
@@ -277,7 +276,7 @@ public class HttpRequestStream extends RequestStream {
         
 	StringBuffer sb = new StringBuffer();
 	while (true) {
-	    int ch = stream.read();
+	    int ch = super.read();
 	    if (ch < 0) {
 		if (sb.length() == 0) {
 		    return (null);

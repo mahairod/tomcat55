@@ -734,8 +734,6 @@ final class HttpProcessor
 
         while (ok && keepAlive) {
             
-            //System.out.println("Parsing request");
-            
             try {
                 request.setStream(input);
                 request.setResponse(response);
