@@ -358,7 +358,6 @@ public class JspRuntimeLibrary {
      * @param unescString The string to shell-escape
      * @return The escaped shell string.
      */
-
     public static String escapeQueryString(String unescString) {
     if ( unescString == null )
         return null;
