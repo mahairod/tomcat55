@@ -233,10 +233,10 @@ public class PoolTcpEndpoint extends Logger.Helper  { // implements Endpoint {
 		}
 	    }
 	} catch( IOException ex ) {
-	    log("couldn't start endpoint", ex, Logger.DEBUG);
+	    //	    log("couldn't start endpoint", ex, Logger.DEBUG);
             throw ex;
 	} catch( InstantiationException ex1 ) {
-	    log("couldn't start endpoint", ex1, Logger.DEBUG);
+	    //	    log("couldn't start endpoint", ex1, Logger.DEBUG);
             throw ex1;
 	}
 	if(isPool) {
