@@ -219,10 +219,10 @@ struts.jar=${struts.lib}/struts.jar
 struts.loc=http://jakarta.apache.org/builds/jakarta-struts/release/v1.0.2/jakarta-struts-1.0.2.tar.gz
 
 
-# ----- Tyrex Data Source, version 0.9.7 -----
-tyrex.home=${base.path}/tyrex-0.9.7.0
+# ----- Tyrex Data Source, version 1.0 -----
+tyrex.home=${base.path}/tyrex-1.0
 tyrex.lib=${tyrex.home}
-tyrex.jar=${tyrex.lib}/tyrex-0.9.7.0.jar
-tyrex.loc=ftp://ftp.exolab.org/pub/tyrex/tyrex-0.9.7.0/tyrex-0.9.7.0.jar
+tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
+tyrex.loc=ftp://ftp.exolab.org/pub/tyrex/tyrex-1.0/tyrex-1.0.jar
 
 

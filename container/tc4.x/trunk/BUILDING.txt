@@ -355,7 +355,7 @@ NOTE:  The Tomcat binaries are distrbuted with MX4J.
 NOTE:  This step is only required if you wish to build the Tyrex connection
 pool implementation for JNDI-accessed data sources.
 
-* Download the Tyrex JAR or release (version 0.9.7) from:
+* Download the Tyrex JAR or release (version 1.0) from:
 
     http://tyrex.exolab.org/download.html
 
