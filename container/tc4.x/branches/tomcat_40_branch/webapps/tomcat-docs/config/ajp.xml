@@ -265,10 +265,11 @@
            The mod_jserv configuration directives are not compatible 
            with mod_jk!</p>
 
-           <p>Unlike Tomcat 3, Tomcat 4 doesn't automatically generate the 
+           <p>Like Tomcat 3, Tomcat 4 can automatically generate the 
            necessary <code>$CATALINA_HOME/conf/mod_jk.conf</code>,
-           and it will have to be created manually. Note that Tomcat 
-           and Apache must be restarted after adding a new context.</p>
+           but it can also be created manually. Note that Tomcat 
+           and Apache must be restarted after adding a new context.
+           See the "Using ApacheConfig" section for more details.</p>
 
            <p>The basic configuration is as follows:</p>
 
@@ -504,9 +505,9 @@ JkMount /servlet/* ajp13
         <a href="http://jakarta.apache.org/builds/jakarta-tomcat/release/v3.3/bin/win32/i386/">link</a>.
         </p>
 
-        <p>Note: See below for examples of the configuration files. Those 
-        configuration files assume Tomcat is installed in the 
-        <code>c:\jakarta-tomcat-4.0.1</code> directory.</p>
+        <p>You can then either manually define a few extra configuration files
+        (read below), or use the automatic IISConfig to have Tomcat generate 
+        them for you (see next section).</p>
 
         <p>The next step is to create worker.properties to help 
         isapi_redirect.dll to identify where to find Tomcat and its 
@@ -518,57 +519,20 @@ JkMount /servlet/* ajp13
         <p>Then the <code>uriworkermap.properties</code> file must be created
         in <code>%CATALINA_HOME%\conf</code> directory.</p>
 
-     </subsection>
-
-     <subsection name="Configuring IIS">
-
-        <p>
-        <ul>
-           <li>Launch Internet Service Manager</li>
-           <li>Stop the Web Site if it is running</li>
-           <li>Create a virtual directory, by clicking on the default 
-               web site
-              <ul>
-                 <li>Type the alias to say jakarta, press Next</li>
-                 <li>Set the directory to <code>%CATALINA_HOME%\bin</code>
-                     where you installed isapi_redirect.dll, press next</li>
-                 <li>Provide only read and execute privileges for 
-                     security purposes</li>
-              </ul>
-           </li>
-           <li>Add a filter to the default web site, using the 
-           IIS Management Console, right click on the properties and 
-           go to ISAPI filters tab. Press Add button, 
-           add isapi_redirect.dll as a filter the name of the filter 
-           should reflect its task (for example, "Jakarta Redirector"). 
-           The Executable field should point to the place where we installed 
-           isapi_redirect.dll, in our case 
-           <code>%CATALINA_HOME%\bin\isapi_redirect.dll</code></li>
-           <li>Copy and paste the registry entries found below into a file 
-           iis_redirect.reg. Remember to correct the 
-           directories where Tomcat is installed in this file. 
-           Run the iis_redirect.reg file found at the end of this document. 
-           This will create entries in the registry which 
-           the isapi_redirect.dll looks for to determine the configuration 
-           and location of Tomcat.</li>
-           <li>Startup IIS.</li>
-           <li>Go to the Properties of the web site and select the ISAPI 
-           filters tab to make sure that the ISAPI filter got registered 
-           correctly. It should have a Green arrow alongside it. 
-           Note: it is recommended to restart computer for the ISAPI filter 
-           to load.</li>
-        </ul>
-        </p>
+        <p>Note: See below for examples of the configuration files. Those 
+        configuration files assume Tomcat is installed in the 
+        <code>c:\jakarta-tomcat-4.0.1</code> directory.</p>
 
      </subsection>
+
      <subsection name="Using IISConfig">
 	  <p>Tomcat 4 provides extra flexability over Tomcat 3 in setting up 
 	     the automatic generation of the IIS configuration file.  
 	     However, this comes at the cost of a bit more complexity.  Each
 	     time that Tomcat is started, it will write the configuration file
-	     to <code>%CATALINA_HOME%/conf/auto/uriworkers.properties</code>. If
-	     enabled as a <code>Server</code> Listener, it will also write the
-	     required registry entries to 
+	     to <code>%CATALINA_HOME%/conf/auto/uriworkersmap.properties</code>.
+             If enabled as a <code>Server</code> Listener, it will also write 
+             the required registry entries to 
 	     <code>%CATALINA_HOME%/conf/auto/iis_redirect.reg</code>. You may
 	     enter the settings into the registry by double-clicking on this
 	     file from the Windows Explorer.</p>
@@ -654,6 +618,48 @@ JkMount /servlet/* ajp13
 	  </attribute>
 	 </attributes>
      </subsection>
+
+     <subsection name="Configuring IIS">
+
+        <p>
+        <ul>
+           <li>Launch Internet Service Manager</li>
+           <li>Stop the Web Site if it is running</li>
+           <li>Create a virtual directory, by clicking on the default 
+               web site
+              <ul>
+                 <li>Type the alias to say jakarta, press Next</li>
+                 <li>Set the directory to <code>%CATALINA_HOME%\bin</code>
+                     where you installed isapi_redirect.dll, press next</li>
+                 <li>Provide only read and execute privileges for 
+                     security purposes</li>
+              </ul>
+           </li>
+           <li>Add a filter to the default web site, using the 
+           IIS Management Console, right click on the properties and 
+           go to ISAPI filters tab. Press Add button, 
+           add isapi_redirect.dll as a filter the name of the filter 
+           should reflect its task (for example, "Jakarta Redirector"). 
+           The Executable field should point to the place where we installed 
+           isapi_redirect.dll, in our case 
+           <code>%CATALINA_HOME%\bin\isapi_redirect.dll</code></li>
+           <li>If not done yet, enter the keys from 
+           <code>iis_redirect.reg</code> in the Windows registry (this can
+           be done by double-clicking on the file in the explorer).
+           Note: When manually creating the file (maybe from the example given
+           below), remember to correct the directories where Tomcat 
+           is installed.</li>
+           <li>Startup IIS.</li>
+           <li>Go to the Properties of the web site and select the ISAPI 
+           filters tab to make sure that the ISAPI filter got registered 
+           correctly. It should have a Green arrow alongside it. 
+           Note: it is recommended to restart computer for the ISAPI filter 
+           to load.</li>
+        </ul>
+        </p>
+
+     </subsection>
+
      <subsection name="Sample worker.properties file">
 
         <p>
