@@ -85,7 +85,11 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
+  <target name="copy-tyrex" depends="build-prepare" if="tyrex.present">
+    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+  </target>
+
+  <target name="build-static" depends="build-prepare,copy-tyrex">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -102,22 +106,15 @@
     <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${copy.crimson.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
-<!-- Cannot redistribute JSSE
-    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
--->
     <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
-<!-- Cannot redistribute JSSE
     <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
--->
-<!-- Cannot redistribute JSSE
     <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
--->
+    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
@@ -456,6 +453,14 @@
     <copy todir="${catalina.dist}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
     </copy>
+
+    <!-- Cannot redistribute JSSE -->
+    <echo>
+        Cannot redistribute JSSE. Deleting jars from distribution.
+    </echo>
+    <delete file="${catalina.deploy}/common/lib/jcert.jar"/>
+    <delete file="${catalina.deploy}/common/lib/jnet.jar"/>
+    <delete file="${catalina.deploy}/common/lib/jsse.jar"/>
 
     <!-- Configuration Files -->
     <mkdir dir="${catalina.dist}/conf"/>
