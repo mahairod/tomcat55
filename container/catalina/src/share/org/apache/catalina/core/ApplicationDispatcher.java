@@ -46,9 +46,9 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.connector.ResponseFacade;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.catalina.util.StringManager;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.IntrospectionUtils;
 
 
 /**
@@ -715,18 +715,12 @@ final class ApplicationDispatcher
             // Extra aggressive rootCause finding
             do {
                 try {
-                    rootCauseCheck = (Throwable)PropertyUtils.getProperty
+                    rootCauseCheck = (Throwable)IntrospectionUtils.getProperty
                                                 (rootCause, "rootCause");
                     if (rootCauseCheck!=null)
                         rootCause = rootCauseCheck;
 
                 } catch (ClassCastException ex) {
-                    rootCauseCheck = null;
-                } catch (IllegalAccessException ex) {
-                    rootCauseCheck = null;
-                } catch (NoSuchMethodException ex) {
-                    rootCauseCheck = null;
-                } catch (java.lang.reflect.InvocationTargetException ex) {
                     rootCauseCheck = null;
                 }
             } while (rootCauseCheck != null);

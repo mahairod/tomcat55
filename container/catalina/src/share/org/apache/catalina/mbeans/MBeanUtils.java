@@ -52,11 +52,11 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.valves.ValveBase;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
+import org.apache.tomcat.util.IntrospectionUtils;
 
 
 /**
@@ -789,9 +789,9 @@ public class MBeanUtils {
         if (connector.getClass().getName().indexOf("CoyoteConnector") >= 0 ) {
             try {
                 String address = (String)
-                    PropertyUtils.getSimpleProperty(connector, "address");
+                    IntrospectionUtils.getProperty(connector, "address");
                 Integer port = (Integer)
-                    PropertyUtils.getSimpleProperty(connector, "port");
+                    IntrospectionUtils.getProperty(connector, "port");
                 Service service = connector.getService();
                 String serviceName = null;
                 if (service != null)
