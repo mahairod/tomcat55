@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999-2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,37 +65,70 @@
 package org.apache.catalina;
 
 
+import java.io.IOException;
+import javax.servlet.ServletException;
+
+
 /**
- * An optional interface, normally implemented by a Container, that indicates
- * support for a pipeline of <b>Valves</b> is present.  When pipeline support
- * is present, the Container's <code>invoke()</code> method will call the
- * <code>invoke()</code> method of the first added Valve, which will either
- * generate the response or pass the request on to the next Valve in the
- * pipeline.
- * <p>
- * The Container must ensure that at least one Valve in the pipeline actually
- * generates the response and returns.  Typically, this is accomplished by
- * configuring the Container's normal processing (in the absence of any
- * other Valves) as a Valve that always appears last in the pipeline.
+ * <p>Interface describing a collection of Valves that should be executed
+ * in sequence when the <code>invoke()</code> method is invoked.  It is
+ * required that a Valve somewhere in the pipeline (usually the last one)
+ * must process the request and create the corresponding response, rather
+ * than trying to pass the request on.</p>
+ *
+ * <p>There is generally a single Pipeline instance associated with each
+ * Container.  The container's normal request processing functionality is
+ * generally encapsulated in a container-specific Valve, which should always
+ * be executed at the end of a pipeline.  To facilitate this, the
+ * <code>setBasic()</code> method is provided to set the Valve instance that
+ * will always be executed last.  Other Valves will be executed in the order
+ * that they were added, before the basic Valve is executed.</p>
  *
  * @author Craig R. McClanahan
+ * @author Peter Donald
  * @version $Revision$ $Date$
  */
 
 public interface Pipeline {
 
 
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * <p>Return the Valve instance that has been distinguished as the basic
+     * Valve for this Pipeline (if any).
+     */
+    public Valve getBasic();
+
+
+    /**
+     * <p>Set the Valve instance that has been distinguished as the basic
+     * Valve for this Pipeline (if any).  Prioer to setting the basic Valve,
+     * the Valve's <code>setContainer()</code> will be called, if it
+     * implements <code>Contained</code>, with the owning Container as an
+     * argument.  The method may throw an <code>IllegalArgumentException</code>
+     * if this Valve chooses not to be associated with this Container, or
+     * <code>IllegalStateException</code> if it is already associated with
+     * a different Container.</p>
+     *
+     * @param valve Valve to be distinguished as the basic Valve
+     */
+    public void setBasic(Valve valve);
+
+
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Add a new Valve to the end of the pipeline associated with this
+     * <p>Add a new Valve to the end of the pipeline associated with this
      * Container.  Prior to adding the Valve, the Valve's
-     * <code>setContainer</code> method must be called, with this Container
-     * as an argument.  The method may throw an
+     * <code>setContainer()</code> method will be called, if it implements
+     * <code>Contained</code>, with the owning Container as an argument.
+     * The method may throw an
      * <code>IllegalArgumentException</code> if this Valve chooses not to
      * be associated with this Container, or <code>IllegalStateException</code>
-     * if it is already associated with a different Container.
+     * if it is already associated with a different Container.</p>
      *
      * @param valve Valve to be added
      *
@@ -110,15 +143,36 @@ public interface Pipeline {
 
 
     /**
-     * Return the first Valve in the pipeline associated with this Container.
-     * If there are no such Valves, <code>null</code> is returned.
+     * Return the set of Valves in the pipeline associated with this
+     * Container, including the basic Valve (if any).  If there are no
+     * such Valves, a zero-length array is returned.
      */
-    public Valve findValves();
+    public Valve[] getValves();
+
+
+    /**
+     * Cause the specified request and response to be processed by the Valves
+     * associated with this pipeline, until one of these valves causes the
+     * response to be created and returned.  The implementation must ensure
+     * that multiple simultaneous requests (on different threads) can be
+     * processed through the same Pipeline without interfering with each
+     * other's control flow.
+     *
+     * @param request The servlet request we are processing
+     * @param response The servlet response we are creating
+     *
+     * @exception IOException if an input/output error occurs
+     * @exception ServletException if a servlet exception is thrown
+     */
+    public void invoke(Request request, Response response)
+        throws IOException, ServletException;
 
 
     /**
      * Remove the specified Valve from the pipeline associated with this
-     * Container, if it is found; otherwise, do nothing.
+     * Container, if it is found; otherwise, do nothing.  If the Valve is
+     * found and removed, the Valve's <code>setContainer(null)</code> method
+     * will be called if it implements <code>Contained</code>.
      *
      * @param valve Valve to be removed
      */
