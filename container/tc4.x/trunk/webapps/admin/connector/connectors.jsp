@@ -64,8 +64,12 @@
         <logic:iterate name="connectorsList" id="connector">
           <tr class="line-row">
             <td><div align="left" class="table-normal-text">&nbsp;
+            <%-- the connector the admin app is running on cannot be deleted 
+                 through the tool --%>
+            <logic:notMatch name="connector" value='<%= Integer.toString(request.getServerPort()) %>'>
               <html:multibox property="connectors"
                                 value="<%= connector.toString() %>"/>
+            </logic:notMatch>                     
             </div></td>
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditConnector.do?select=" + 
