@@ -274,7 +274,7 @@ public class MBeanFactory extends BaseModelMBean {
         service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("AjpConnector");
+        ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());
@@ -359,7 +359,7 @@ public class MBeanFactory extends BaseModelMBean {
     
     
     /**
-     * Create a new HTTPConnector
+     * Create a new HttpConnector
      *
      * @param parent MBean Name of the associated parent component
      * @param address The IP address on which to bind
@@ -367,7 +367,7 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHTTPConnector(String parent, String address, int port)
+    public String createHttpConnector(String parent, String address, int port)
         throws Exception {
 
         Object retobj = null;
@@ -405,7 +405,7 @@ public class MBeanFactory extends BaseModelMBean {
         service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("HttpConnector");
+        ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());
@@ -414,7 +414,7 @@ public class MBeanFactory extends BaseModelMBean {
 
     
     /**
-     * Create a new HTTPSConnector
+     * Create a new HttpsConnector
      *
      * @param parent MBean Name of the associated parent component
      * @param address The IP address on which to bind
@@ -422,7 +422,7 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHTTPSConnector(String parent, String address, int port)
+    public String createHttpsConnector(String parent, String address, int port)
         throws Exception {
 
         Object retobj = null;
@@ -474,7 +474,7 @@ public class MBeanFactory extends BaseModelMBean {
         service.addConnector((Connector)retobj);
 
         // Return the corresponding MBean name
-        ManagedBean managed = registry.findManagedBean("HttpsConnector");
+        ManagedBean managed = registry.findManagedBean("CoyoteConnector");
         ObjectName oname =
             MBeanUtils.createObjectName(managed.getDomain(), (Connector)retobj);
         return (oname.toString());

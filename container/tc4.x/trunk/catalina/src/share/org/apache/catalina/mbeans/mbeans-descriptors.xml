@@ -52,83 +52,6 @@
   </mbean>
 
 
-  <mbean         name="AjpConnector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="Implementation of an Ajp connector"
-               domain="Catalina"
-                group="Connector"
-                 type="org.apache.coyote.tomcat4.CoyoteConnector">
-
-    <attribute   name="acceptCount"
-          description="The accept count for this Connector"
-                 type="int"/>
-
-    <attribute   name="address"
-          description="The IP address on which to bind"
-                 type="java.lang.String"/>
-
-    <attribute   name="bufferSize"
-          description="The input buffer size we should create on input streams"
-                 type="int"/>
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="connectionTimeout"
-          description="Timeout value on the incoming connection"
-                 type="int"/>
-
-    <attribute   name="curProcessors"
-          description="Current number of active processors"
-                 type="int"
-            writeable="false"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="secret"
-          description="Authentication secret (I guess ... not in Javadocs)"
-                 type="java.lang.String"/>
-
-    <attribute   name="enableLookups"
-          description="The 'enable DNS lookups' flag for this Connector"
-                 type="boolean"/>
-
-    <attribute   name="redirectPort"
-          description="The redirect port for non-SSL to SSL redirects"
-                 type="int"/>
-
-    <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                        initialization time"
-                 type="int"/>
-
-    <attribute   name="port"
-          description="The port number on which we listen for ajp13 requests"
-                 type="int"/>
-
-    <attribute   name="scheme"
-          description="Protocol name for this Connector (http, https)"
-                 type="java.lang.String"/>
-
-    <attribute   name="secure"
-          description="Is this a secure (SSL) Connector?"
-                 type="boolean"/>
-
-    <attribute    name="tomcatAuthentication"
-           description="Should Tomcat perform all authentications?"
-                  type="boolean"/>
-
-  </mbean>
-
-
   <mbean         name="BasicAuthenticator"
             className="org.apache.catalina.mbeans.ClassNameMBean"
           description="An Authenticator and Valve implementation of HTTP BASIC
@@ -203,6 +126,82 @@
 
   </mbean>
 
+
+<mbean         name="CoyoteConnector"
+            className="org.apache.catalina.mbeans.ClassNameMBean"
+          description="Implementation of a Coyote connector"
+               domain="Catalina"
+                group="Connector"
+                 type="org.apache.coyote.tomcat4.CoyoteConnector">
+
+    <attribute   name="acceptCount"
+          description="The accept count for this Connector"
+                 type="int"/>
+
+    <attribute   name="address"
+          description="The IP address on which to bind"
+                 type="java.lang.String"/>
+
+    <attribute   name="bufferSize"
+          description="The input buffer size we should create on input streams"
+                 type="int"/>
+
+    <attribute   name="className"
+          description="Fully qualified class name of the managed object"
+                 type="java.lang.String"
+            writeable="false"/>
+
+    <attribute   name="connectionTimeout"
+          description="Timeout value on the incoming connection"
+                 type="int"/>
+
+    <attribute   name="curProcessors"
+          description="Current number of active processors"
+                 type="int"
+            writeable="false"/>
+
+    <attribute   name="debug"
+          description="The debugging detail level for this component"
+                 type="int"/>
+
+    <attribute   name="secret"
+          description="Authentication secret (I guess ... not in Javadocs)"
+                 type="java.lang.String"/>
+
+    <attribute   name="enableLookups"
+          description="The 'enable DNS lookups' flag for this Connector"
+                 type="boolean"/>
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
+                 type="int"/>
+
+    <attribute   name="maxProcessors"
+          description="The maximum number of processors allowed"
+                 type="int"/>
+
+    <attribute   name="minProcessors"
+          description="The minimum number of processors to start at
+                        initialization time"
+                 type="int"/>
+
+    <attribute   name="port"
+          description="The port number on which we listen for ajp13 requests"
+                 type="int"/>
+
+    <attribute   name="scheme"
+          description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secure"
+          description="Is this a secure (SSL) Connector?"
+                 type="boolean"/>
+
+    <attribute    name="tomcatAuthentication"
+           description="Should Tomcat perform all authentications?"
+                  type="boolean"/>
+
+  </mbean>
 
 
   <mbean         name="DefaultContext"
@@ -486,158 +485,6 @@
                  type="int"/>
 
   </mbean>
-
-
-  <mbean         name="HttpConnector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="Implementation of a Http Coyote connector for Tomcat 4.x"
-               domain="Catalina"
-                group="Connector"
-                 type="org.apache.coyote.tomcat4.CoyoteConnector">
-
-    <attribute   name="acceptCount"
-          description="The accept count for this Connector"
-                 type="int"/>
-
-    <attribute   name="address"
-          description="The IP address on which to bind"
-                 type="java.lang.String"/>
-
-    <attribute   name="bufferSize"
-          description="The input buffer size we should create on input streams"
-                 type="int"/>
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="connectionTimeout"
-          description="Timeout value on the incoming connection"
-                 type="int"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="enableLookups"
-          description="The 'enable DNS lookups' flag for this Connector"
-                 type="boolean"/>
-
-    <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                        initialization time"
-                 type="int"/>
-
-    <attribute   name="port"
-          description="The port number on which we listen for ajp13 requests"
-                 type="int"/>
-
-    <attribute   name="proxyName"
-          description="The server name to which we should pretend requests to
-                        this Connector were directed"
-                 type="java.lang.String"/>
-
-    <attribute   name="proxyPort"
-          description="The server port to which we should pretend requests to
-                        this Connector were directed"
-                 type="int"/>
-
-    <attribute   name="redirectPort"
-          description="The redirect port for non-SSL to SSL redirects"
-                 type="int"/>
-
-    <attribute   name="scheme"
-          description="Protocol name for this Connector (http, https)"
-                 type="java.lang.String"/>
-
-  </mbean>
-
-
-  <mbean         name="HttpsConnector"
-            className="org.apache.catalina.mbeans.HttpsConnectorMBean"
-          description="Implementation of a Https Coyote connector for Tomcat 4.x"
-               domain="Catalina"
-                group="Connector"
-                 type="org.apache.coyote.tomcat4.CoyoteConnector">
-
-    <attribute   name="acceptCount"
-          description="The accept count for this Connector"
-                 type="int"/>
-
-    <attribute   name="address"
-          description="The IP address on which to bind"
-                 type="java.lang.String"/>
-
-    <attribute   name="bufferSize"
-          description="The input buffer size we should create on input streams"
-                 type="int"/>
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="clientAuth"
-          description="Should we require client authentication?"
-                 type="boolean"/>
-
-    <attribute   name="connectionTimeout"
-          description="Timeout value on the incoming connection"
-                 type="int"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="enableLookups"
-          description="The 'enable DNS lookups' flag for this Connector"
-                 type="boolean"/>
-
-    <attribute   name="keystoreFile"
-          description="Pathname to the key store file to be used"
-                 type="java.lang.String"/>
-
-    <attribute   name="keystorePass"
-          description="Password for accessing the key store file"
-                 type="java.lang.String"/>
-
-    <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                        initialization time"
-                 type="int"/>
-
-    <attribute   name="port"
-          description="The port number on which we listen for ajp13 requests"
-                 type="int"/>
-
-    <attribute   name="proxyName"
-          description="The server name to which we should pretend requests to
-                        this Connector were directed"
-                 type="java.lang.String"/>
-
-    <attribute   name="proxyPort"
-          description="The server port to which we should pretend requests to
-                        this Connector were directed"
-                 type="int"/>
-
-    <attribute   name="redirectPort"
-          description="The redirect port for non-SSL to SSL redirects"
-                 type="int"/>
-
-    <attribute   name="scheme"
-          description="Protocol name for this Connector (http, https)"
-                 type="java.lang.String"/>
-
-  </mbean>
  
 
   <mbean         name="JAASRealm"
@@ -876,79 +723,6 @@
 
   </mbean>
 
-  <mbean         name="JK2Connector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
-          description="Implementation of an JK2 connector"
-               domain="Catalina"
-                group="Connector"
-                 type="org.apache.coyote.tomcat4.CoyoteConnector">
-
-    <attribute   name="acceptCount"
-          description="The accept count for this Connector"
-                 type="int"/>
-
-    <attribute   name="address"
-          description="The IP address on which to bind"
-                 type="java.lang.String"/>
-
-    <attribute   name="bufferSize"
-          description="The input buffer size we should create on input streams"
-                 type="int"/>
-
-    <attribute   name="className"
-          description="Fully qualified class name of the managed object"
-                 type="java.lang.String"
-            writeable="false"/>
-
-    <attribute   name="connectionTimeout"
-          description="Timeout value on the incoming connection"
-                 type="int"/>
-
-    <attribute   name="debug"
-          description="The debugging detail level for this component"
-                 type="int"/>
-
-    <attribute   name="enableLookups"
-          description="The 'enable DNS lookups' flag for this Connector"
-                 type="boolean"/>
-
-    <attribute   name="maxProcessors"
-          description="The maximum number of processors allowed"
-                 type="int"/>
-
-    <attribute   name="minProcessors"
-          description="The minimum number of processors to start at
-                        initialization time"
-                 type="int"/>
-
-    <attribute   name="port"
-          description="The port number on which we listen for ajp13 requests"
-                 type="int"/>
-
-    <attribute   name="processorClassName"
-          description="Fully qualified class name of Coyote processor class"
-                 type="java.lang.String"/>
-
-    <attribute   name="proxyName"
-          description="The server name to which we should pretend requests to
-                        this Connector were directed"
-                 type="java.lang.String"/>
-
-    <attribute   name="proxyPort"
-          description="The server port to which we should pretend requests to
-                        this Connector were directed"
-                 type="int"/>
-
-    <attribute   name="redirectPort"
-          description="The redirect port for non-SSL to SSL redirects"
-                 type="int"/>
-
-    <attribute   name="scheme"
-          description="Protocol name for this Connector (http, https)"
-                 type="java.lang.String"/>
-
-  </mbean>
-
 
   <mbean         name="JNDIRealm"
             className="org.apache.catalina.mbeans.ClassNameMBean"
@@ -1024,8 +798,8 @@
                  type="java.lang.String"/>
     </operation>
 
-    <operation   name="createAjp13Connector"
-          description="Create a new Ajp13Connector"
+    <operation   name="createAjpConnector"
+          description="Create a new AjpConnector"
                impact="ACTION"
            returnType="java.lang.String">
       <parameter name="parent"
@@ -1039,21 +813,6 @@
                  type="int"/>
     </operation>
 
-    <operation   name="createCoyoteConnector"
-          description="Create a new CoyoteConnector"
-               impact="ACTION"
-           returnType="java.lang.String">
-      <parameter name="parent"
-          description="MBean Name of the associated parent component"
-                 type="java.lang.String"/>
-     <parameter name="address"
-          description="The IP address on which to bind"
-                 type="java.lang.String"/>
-      <parameter name="port"
-          description="TCP port number to listen on"
-                 type="int"/>
-    </operation>
-    
     <operation   name="createDefaultContext"
           description="Create a new DefaultContext"
                impact="ACTION"
@@ -1072,14 +831,14 @@
                  type="java.lang.String"/>
     </operation>
 
-    <operation   name="createHttp10Connector"
-          description="Create a new HTTP/1.0 Connector"
+    <operation   name="createHttpConnector"
+          description="Create a new HttpConnector"
                impact="ACTION"
            returnType="java.lang.String">
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
-      <parameter name="address"
+     <parameter name="address"
           description="The IP address on which to bind"
                  type="java.lang.String"/>
       <parameter name="port"
@@ -1087,14 +846,14 @@
                  type="int"/>
     </operation>
 
-    <operation   name="createHttp11Connector"
-          description="Create a new HTTP/1.1 Connector"
+    <operation   name="createHttpsConnector"
+          description="Create a new HttpsConnector"
                impact="ACTION"
            returnType="java.lang.String">
       <parameter name="parent"
           description="MBean Name of the associated parent component"
                  type="java.lang.String"/>
-      <parameter name="address"
+     <parameter name="address"
           description="The IP address on which to bind"
                  type="java.lang.String"/>
       <parameter name="port"

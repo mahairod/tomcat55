@@ -95,6 +95,10 @@ import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
 import org.apache.catalina.Store;
 import org.apache.catalina.Valve;
+import org.apache.catalina.deploy.NamingResources;
+import org.apache.catalina.deploy.ContextResource;
+import org.apache.catalina.deploy.ContextEnvironment;
+import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.net.ServerSocketFactory;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.BaseModelMBean;
@@ -696,7 +700,79 @@ public class StandardServerMBean extends BaseModelMBean {
 
     }
 
+    
+    /**
+     * Store the specified GlobalNamingResources properties.
+     *
+     * @param writer PrintWriter to which we are storing
+     * @param indent Number of spaces to indent this element
+     * @param resources Object whose properties are being stored
+     *
+     * @exception Exception if an exception occurs while storing
+     */
+    private void storeGlobalNamingResources(PrintWriter writer, int indent,
+                              NamingResources globalNamingResources) throws Exception {
+       
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }
+        writer.println("<GlobalNamingResources>");
+        
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }        
+        // Store nested <Environment> elements
+        ContextEnvironment[] envs = globalNamingResources.findEnvironments();
+        if (envs.length > 0) {
+            writer.print("<Environment");
+        }
+        for (int i = 0; i < envs.length; i++) {
+            storeAttributes(writer, false, envs[i]);
+        }
+        writer.println("/>");
 
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }                
+        // Store nested <Resource> elements
+        ContextResource[] resources = globalNamingResources.findResources();
+        if (resources.length > 0) {
+            writer.print("<Resource");
+        }
+        for (int i = 0; i < resources.length; i++) {
+            storeAttributes(writer, false, resources[i]);
+        }
+        writer.println(">");
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }          
+        writer.println("</Resource>");
+        
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }          
+        // Store nested <ResourceParams> elements
+        ResourceParams[] resourceParams = globalNamingResources.findResourceParams();
+        if (resourceParams.length > 0) {
+            writer.print("<ResourceParams ");
+        }
+        for (int i = 0; i < resourceParams.length; i++) {
+            storeAttributes(writer, false, resourceParams[i]);
+        }
+        writer.println(">");
+        for (int i = 0; i < indent + 2; i++) {
+            writer.print(' ');
+        }          
+        writer.println("</ResourceParams>");
+        
+        for (int i = 0; i < indent; i++) {
+            writer.print(' ');
+        }          
+        writer.println("</GlobalNamingResources>");                           
+                                  
+    }
+    
+    
     /**
      * Store the specified Host properties.
      *
@@ -936,7 +1012,10 @@ public class StandardServerMBean extends BaseModelMBean {
         writer.println(">");
 
         // Store nested <GlobalNamingResources> element
-        ; // FIXME
+        NamingResources globalNamingResources = server.getGlobalNamingResources();
+        if (globalNamingResources != null) {
+            storeGlobalNamingResources(writer, indent + 2, globalNamingResources);
+        }
 
         // Store nested <Listener> elements
         if (server instanceof Lifecycle) {
