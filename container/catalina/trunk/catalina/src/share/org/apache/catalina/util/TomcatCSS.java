@@ -75,6 +75,7 @@ public class TomcatCSS {
         "B {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} " +
         "P {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;}" +
         "A {color : black;}" +
+        "A.name {color : black;}" +
         "HR {color : #525D76;}";
 
 
