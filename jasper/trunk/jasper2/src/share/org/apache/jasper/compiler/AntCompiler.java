@@ -194,6 +194,11 @@ public class AntCompiler extends Compiler {
             javac.setTarget(options.getCompilerTargetVM());
             info.append("   compilerTargetVM=" + options.getCompilerTargetVM() + "\n");
         }
+
+        if (options.getCompilerSourceVM() != null) {
+            javac.setSource(options.getCompilerSourceVM());
+            info.append("   compilerSourceVM=" + options.getCompilerSourceVM() + "\n");
+        }
         
         // Build includes path
         PatternSet.NameEntry includes = javac.createInclude();

@@ -139,6 +139,11 @@ public final class EmbeddedServletOptions implements Options {
     private String compilerTargetVM = "1.4";
 
     /**
+     * The compiler source VM.
+     */
+    private String compilerSourceVM = "1.4";
+
+    /**
      * Cache for the TLD locations
      */
     private TldLocationsCache tldLocationsCache = null;
@@ -301,6 +306,13 @@ public final class EmbeddedServletOptions implements Options {
      */
     public String getCompilerTargetVM() {
         return compilerTargetVM;
+    }
+
+    /**
+     * @see Options#getCompilerSourceVM
+     */
+    public String getCompilerSourceVM() {
+        return compilerSourceVM;
     }
 
     public boolean getErrorOnUseBeanInvalidClassAttribute() {
@@ -567,6 +579,11 @@ public final class EmbeddedServletOptions implements Options {
         String compilerTargetVM = config.getInitParameter("compilerTargetVM");
         if(compilerTargetVM != null) {
             this.compilerTargetVM = compilerTargetVM;
+        }
+
+        String compilerSourceVM = config.getInitParameter("compilerSourceVM");
+        if(compilerSourceVM != null) {
+            this.compilerSourceVM = compilerSourceVM;
         }
 
         String javaEncoding = config.getInitParameter("javaEncoding");
