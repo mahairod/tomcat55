@@ -4444,28 +4444,6 @@ public class StandardContext
     }
 
 
-    /**
-     * Return the abbreviated name of this container for logging messsages
-     */
-    protected String logName() {
-
-        if (logName != null) {
-            return logName;
-        }
-        String loggerName = ((getName() == null) || (getName().equals(""))) 
-                             ? "[/]" : ("[" + getName() + "]");
-        Container current = getParent();
-        while (current != null) {
-            loggerName = "[" + current.getName() + "]" 
-                + ((loggerName != null) ? ("." + loggerName) : "");
-            current = current.getParent();
-        }
-        logName = ContainerBase.class.getName() + "." + loggerName;
-        return logName;
-        
-    }
-
-    
     // -------------------------------------------------------- Private Methods
 
 
