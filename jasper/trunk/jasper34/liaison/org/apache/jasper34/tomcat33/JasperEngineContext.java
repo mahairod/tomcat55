@@ -61,6 +61,7 @@ import org.apache.jasper34.core.Compiler;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.parser.*;
+import org.apache.jasper34.javacompiler.*;
 import org.apache.jasper34.jsptree.*;
 import org.apache.jasper34.liaison.*;
 
@@ -68,71 +69,47 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-//import org.apache.jasper.JspCompilationContext;
+import org.apache.tomcat.core.*;
+import org.apache.tomcat.util.compat.*;
+    
 
-/** Alternative implementation of JspCompilationContext ( in addition
-    to the servlet and standalone ). Used by JspInterceptor - but
-    it's in no way specific to tomcat.
-*/
+/** Container liaison for tomcat33
+ *
+ * @author Costin Manolache
+ */
 public class JasperEngineContext extends ContainerLiaison
 {
-    JspReader reader;
-    ServletWriter writer;
-    ServletContext context;
-    ClassLoader loader;
-    boolean isErrPage;
-    String jspFile;
-    String servletClassName;
-    String servletPackageName;
-    String servletJavaFileName;
-    String contentType;
-    Options options;
+    String cpath;  // cache
 
-    String cpath;    // for compiling JSPs.
-    ServletContext sctx;
-    String outputDir;
-
-    public JasperEngineContext()
-    {
-    }
-
-    public void setClassPath( String s ) {
-	cpath=s;
-    }
+    Context ctx;
     
+    public JasperEngineContext(Context ctx)
+    {
+	this.ctx=ctx;
+	debug=ctx.getDebug();
+    }
+
     /**
-     * The classpath that is passed off to the Java compiler. 
+     * Extract the class path from the Context
      */
     public String getClassPath() {
-	return cpath;
-    }
-    
-    /**
-     * Get the input reader for the JSP text. 
-     */
-    public JspReader getReader() {
-	if( debug>0 ) log("getReader " + reader );
-        return reader;
-    }
-    
-    /**
-     * Where is the servlet being generated?
-     */
-    public ServletWriter getWriter() {
-	if( debug>0 ) log("getWriter " + writer );
-        return writer;
-    }
+	if( cpath != null )
+	    return cpath;
+	String separator = System.getProperty("path.separator", ":");
+	URL classP[]=ctx.getClassPath();
+        cpath= JavaCompiler.extractClassPath(classP);
 
-    public void setServletContext( Object o ) {
-	sctx=(ServletContext)o;
-    }
-    
-    /**
-     * Get the ServletContext for the JSP we're processing now. 
-     */
-    public ServletContext getServletContext() {
-	if( debug>0 ) log("getCtx " + sctx );
-        return sctx;
+	Jdk11Compat jdkProxy=Jdk11Compat.getJdkCompat();
+        URL appsCP[];
+        URL commonCP[];
+        ClassLoader parentLoader=ctx.getContextManager().getParentLoader();
+        appsCP=jdkProxy.getParentURLs(parentLoader);
+        commonCP=jdkProxy.getURLs(parentLoader);
+	if( appsCP!=null ) 
+	    cpath+=separator+  JavaCompiler.extractClassPath(appsCP);
+	if( commonCP!=null ) 
+	    cpath+=separator+ JavaCompiler.extractClassPath(commonCP);
+	return cpath;
     }
     
     /**
@@ -140,161 +117,28 @@ public class JasperEngineContext extends ContainerLiaison
      * this JSP? I don't think this is used right now -- akv. 
      */
     public ClassLoader getClassLoader() {
-	if( debug>0 ) log("getLoader " + loader );
-        return loader;
+	if( debug>0 ) log("getLoader " + ctx.getClassLoader() );
+        return ctx.getClassLoader();
     }
 
-    public void setClassLoader( ClassLoader cl ) {
-	loader=cl;
-    }
-
-    public void addJar( String jar ) throws IOException {
-	if( debug>0 ) log("Add jar " + jar);
-	//loader.addJar( jar );
-    }
-
-    /**
-     * Are we processing something that has been declared as an
-     * errorpage? 
-     */
-    public boolean isErrorPage() {
-	if( debug>0 ) log("isErrorPage " + isErrPage );
-        return isErrPage;
-    }
-    
     /**
      * What is the scratch directory we are generating code into?
      * FIXME: In some places this is called scratchDir and in some
      * other places it is called outputDir.
      */
     public String getOutputDir() {
-	if( debug>0 ) log("getOutputDir " + outputDir  );
-        return outputDir;
+	if( debug>0 )
+	    log("getOutputDir " +  ctx.getWorkDir().getAbsolutePath() );
+	return ctx.getWorkDir().getAbsolutePath();
     }
 
-    public void setOutputDir(String s ) {
-	outputDir=s;
-    }
-    
-    /**
-     * Path of the JSP URI. Note that this is not a file name. This is
-     * the context rooted URI of the JSP file. 
-     */
-    public String getJspFile() {
-	if( debug>0 ) log("getJspFile " +  jspFile);
-	return jspFile;
-    }
-
-    public void setJspFile( String s ) {
-	jspFile=s;
-    }
-    
-    /**
-     * Just the class name (does not include package name) of the
-     * generated class. 
-     */
-    public String getServletClassName() {
-	if( debug>0 ) log("getServletClassName " +  servletClassName);
-        return servletClassName;
-    }
-
-    public void setServletClassName( String s ) {
-	servletClassName=s;
-    }
-    
-    /**
-     * The package name into which the servlet class is generated. 
-     */
-    public String getServletPackageName() {
-	if( debug>0 ) log("getServletPackageName " +
-			   servletPackageName );
-        return servletPackageName;
-    }
-
-    /**
-     * Utility method to get the full class name from the package and
-     * class name. 
-     */
-    public final String getFullClassName() {
-	if( debug>0 ) log("getServletPackageName " +
-			   servletPackageName + "." + servletClassName);
-        if (servletPackageName == null)
-            return servletClassName;
-        return servletPackageName + "." + servletClassName;
-    }
-
-    /**
-     * Full path name of the Java file into which the servlet is being
-     * generated. 
-     */
-    public String getServletJavaFileName() {
-	if( debug>0 ) log("getServletPackageName " +
-			   servletPackageName + "." + servletClassName);
-        return servletJavaFileName;
-    }
-
-    /**
-     * Are we keeping generated code around?
-     */
-    public boolean keepGenerated() {
-        return options.getKeepGenerated();
-    }
-
-    /**
-     * What's the content type of this JSP? Content type includes
-     * content type and encoding. 
-     */
-//     public String getContentType() {
-//         return contentType;
-//     }
-
-    /**
-     * Get hold of the Options object for this context. 
-     */
-    public Options getOptions() {
-        return options;
-    }
-
-    public void setOptions(Options options) {
-	this.options=options;
-    }
-    
-//     public void setContentType(String contentType) {
-//         this.contentType = contentType;
-//     }
-
-    public void setReader(JspReader reader) {
-        this.reader = reader;
-    }
-    
-    public void setWriter(ServletWriter writer) {
-        this.writer = writer;
-    }
-    
-    public void setServletPackageName(String servletPackageName) {
-        this.servletPackageName = servletPackageName;
-    }
-    
-    public void setServletJavaFileName(String servletJavaFileName) {
-        this.servletJavaFileName = servletJavaFileName;
-    }
-    
-    public void setErrorPage(boolean isErrPage) {
-        this.isErrPage = isErrPage;
-    }
-
-    public Compiler createCompiler() throws JasperException {
-	if( debug>0 ) log("createCompiler ");
-	return null;
-    }
-    
-    public String resolveRelativeUri(String uri)
+    public String resolveRelativeUri(String uri, String baseURI)
     {
 	if( debug>0 ) log("resolveRelativeUri " + uri);
 	if (uri.charAt(0) == '/') {
 	    return uri;
         } else {
-            String baseURI = jspFile.substring(0, jspFile.lastIndexOf('/'));
+	    //String baseURI = jspFile.substring(0, jspFile.lastIndexOf('/'));
             return baseURI + '/' + uri;
         }
     }
@@ -302,7 +146,7 @@ public class JasperEngineContext extends ContainerLiaison
     public java.io.InputStream getResourceAsStream(String res)
     {
 	if( debug>0 ) log("getResourceAsStream " + res);
-	return sctx.getResourceAsStream(res);
+	return ((ServletContext)ctx.getFacade()).getResourceAsStream(res);
     }
 
     /** 
@@ -311,9 +155,9 @@ public class JasperEngineContext extends ContainerLiaison
      */
     public String getRealPath(String path)
     {
-	if( debug>0 ) log("getRealPath " + path + " = " +
-			  sctx.getRealPath( path ));
-	return sctx.getRealPath( path );
+	String rpath=((ServletContext)ctx.getFacade()).getRealPath( path );
+	if( debug>0 ) log("getRealPath " + path + " = " + rpath );
+	return rpath;
     }
 
     public void readWebXml( TagLibraries tli )
@@ -327,16 +171,31 @@ public class JasperEngineContext extends ContainerLiaison
 	implementation ( TagLibReader ).
     */
     public void readTLD( TagLibraries libs,
-			 TagLibraryInfoImpl tl, String prefix, String uri )
+			 TagLibraryInfoImpl tl, String prefix, String uri,
+			 String uriBase )
     	throws IOException, JasperException
     {
 	TagLibReader reader=new TagLibReader( this, libs );
-	reader.readTagLib( tl, prefix, uri );
+	reader.readTLD( tl, prefix, uri, uriBase );
+    }
+
+    /** Hook called after a JSP page has been detected and processed.
+     *  The container may register the page as if it would be a web.xml
+     *  servlet and avoid the future overhead of going through the
+     *  jsp module.
+     */
+    public boolean addJspServlet( String uri, String servletName ) {
+	return false;
+    }
+
+    public boolean addDependency( String servletName, String file ) {
+	return false;
     }
     
-    // development tracing 
-    private static int debug=0;
-    private void log( String s ) {
-	System.out.println("JasperEngineContext: "+ s);
+    
+    // -------------------- development tracing --------------------
+    private int debug=0;
+    public void log( String s ) {
+	ctx.log("JasperEngineContext: "+ s);
     }
 }

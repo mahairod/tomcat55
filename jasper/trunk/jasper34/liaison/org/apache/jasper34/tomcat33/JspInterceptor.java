@@ -217,10 +217,10 @@ public class JspInterceptor extends BaseInterceptor {
 	    type=JIKES;
 	if( "javac".equals( type ) )
 	    type="org.apache.jasper34.javacompiler.SunJavaCompiler";
-		
+	
 	args.put( "jspCompilerPlugin", type );
     }
-
+    
     int pageContextPoolSize=JspFactoryImpl.DEFAULT_POOL_SIZE;
     /** Set the PageContext pool size for jasper factory.
 	0 will disable pooling of PageContexts.
@@ -300,15 +300,6 @@ public class JspInterceptor extends BaseInterceptor {
 		jspServlet.getServletInfo().addInitParam(s, v );
 	    }
 
-	    // XXX redo - when containerL becomes one per/context 
-// 	    if( debug > 0 ) {
-// 		//enable jasperServlet logging
-// 		log( "Seetting debug on jsp servlet");
-// 		containerL.setLog(loghelper);
-// 		// 		org.apache.jasper.containerL.jasperLog.
-// 		// 		    setVerbosityLevel("debug");
-// 	    }
-
 	    jspServlet.setServletClassName(jspServletCN);
 	} else {
 	    ctx.addServlet( new JspPrecompileH());
@@ -331,7 +322,7 @@ public class JspInterceptor extends BaseInterceptor {
 		    log( "PreServletInit: HttpJspBase.setParentClassLoader" +
 			 sw );
 		HttpJspBase h = (HttpJspBase) theServlet;
-		h.setClassLoader(ctx.getClassLoader());
+		//h.setClassLoader(ctx.getClassLoader());
 	    }
 	} catch(Exception ex ) {
 	    throw new TomcatException( ex );
@@ -371,9 +362,21 @@ public class JspInterceptor extends BaseInterceptor {
 	if( wrapper==null )
 	    return 0;
 
+	if(debug> 0 )
+	    log( wrapper.getName() );
+	
 	// It's not a jsp if it's not "*.jsp" mapped or a servlet
 	if( (! "jsp".equals( wrapper.getName())) &&
 	    (! (wrapper instanceof ServletHandler)) ) {
+	    return 0;
+	}
+
+	String wrapperCN=((ServletHandler)wrapper).getServletClassName();
+	if( null != wrapperCN && ! "jsp".equals( wrapperCN )) {
+	    //it's a real servlet mapped to a .jsp
+	    if( debug > 0 )
+		log( "Class: " +
+		     ((ServletHandler)wrapper).getServletClassName());
 	    return 0;
 	}
 
@@ -439,8 +442,7 @@ public class JspInterceptor extends BaseInterceptor {
 	}
 
 	// we need to compile... ( or find previous .class )
-	JasperLiaison liasion=new JasperLiaison(getLog(), debug);
-	liasion.processJspFile( req, jspFile, handler, args);
+	processJspFile( req, jspFile, handler, args);
 
 	dep= handler.getServletInfo().getDependManager();
 	dep.reset();
@@ -507,49 +509,7 @@ public class JspInterceptor extends BaseInterceptor {
 	return wrapper;
     }
 
-}
 
-// -------------------- Jsp_precompile handler --------------------
-
-/** What to do for jsp precompile
- */
-class JspPrecompileH extends Handler {
-    static StringManager sm=StringManager.
-	getManager("org.apache.tomcat.resources");
-    
-    JspPrecompileH() {
-	name="tomcat.jspPrecompileHandler";
-    }
-
-    public void doService(Request req, Response res)
-	throws Exception
-    {
-	res.setContentType("text/html");	
-
-	String msg="<h1>Jsp Precompile Done</h1>";
-
-	res.setContentLength(msg.length());
-
-	res.getBuffer().write( msg );
-    }
-}
-
-
-
-
-// -------------------- The main Jasper Liaison --------------------
-
-final class JasperLiaison {
-    Log log;
-    final int debug;
-    //    ContainerLiaison containerL;
-    
-    JasperLiaison(  Log log, int debug ) {
-	this.log=log;
-	this.debug=debug;
-	//	this.containerL=containerL;
-    }
-    
     /** Generate mangled names, check for previous versions,
      *  generate the .java file, compile it - all the expensive
      *  operations. This happens only once ( or when the jsp file
@@ -564,7 +524,7 @@ final class JasperLiaison {
 	// to either compile it or find the previous compiled version
 	// If dep.isExpired() we need to recompile.
 
-	if( debug > 10 ) log.log( "Before compile sync  " + jspFile );
+	if( debug > 10 ) log( "Before compile sync  " + jspFile );
 	synchronized( handler ) {
 	    
 	    // double check - maybe another thread did that for us
@@ -575,9 +535,9 @@ final class JasperLiaison {
 	    }
 	    if( debug > 0 ) 
 		if( depM == null )
-		    log.log( "DepM==null ");
+		    log( "DepM==null ");
 		else
-		    log.log( "DepM.shouldReload()" + depM.shouldReload());
+		    log( "DepM.shouldReload()" + depM.shouldReload());
 	    Context ctx=req.getContext();
 	    
 	    // Mangle the names - expensive operation, but nothing
@@ -589,19 +549,16 @@ final class JasperLiaison {
 
 	    Options options=new OptionsProperties(args); 
 	    
-	    JasperEngineContext ctxt = new JasperEngineContext();
-	    ctxt.setClassPath( computeClassPath( req.getContext()) );
-	    ctxt.setServletContext( req.getContext().getFacade());
-	    ctxt.setOptions( options );
-	    ctxt.setClassLoader( req.getContext().getClassLoader());
-	    ctxt.setOutputDir(req.getContext().getWorkDir().getAbsolutePath());
-	    
-	    JspPageInfo pageInfo=new JspPageInfo( ctxt, options, mangler );
+	    JasperEngineContext containerL =
+		new JasperEngineContext(req.getContext());
+	    containerL.setOptions( options );
+
+	    JspPageInfo pageInfo=new JspPageInfo( containerL, options, mangler );
 	    
 	    //pageInfo.setServletClassName( mangler.getClassName());
 	    pageInfo.setJspFile( jspFile );
 	    
-	    Compiler compiler=new Compiler(ctxt);
+	    Compiler compiler=new Compiler(containerL);
 	    
 	    // register the handler as dependend of the jspfile 
 	    if( depM==null ) {
@@ -614,7 +571,7 @@ final class JasperLiaison {
 		if( ! depM.shouldReload() ) {
 		    addExtraDeps( depM, handler );		    
 		    if( debug > 0 )
-			log.log( "Loaded dependency, shouldReload = " +
+			log( "Loaded dependency, shouldReload = " +
 				 depM.shouldReload() );
  		    return 0;
 		}
@@ -641,17 +598,19 @@ final class JasperLiaison {
 
 	    // Update the class name in wrapper
 	    if( debug> 1 )
-		log.log( "Update class Name " + mangler.getServletClassName());
+		log( "Update class Name " + mangler.getServletClassName());
 	    handler.setServletClassName( mangler.getServletClassName() );
 
 	    
 	    try {
+		synchronized ( mangler ) {
+		    compiler.jsp2java(pageInfo);
+		}
 
-		jsp2java( compiler, mangler, ctxt, pageInfo );
-
-		javac( compiler, pageInfo, options, ctxt, mangler );
+		boolean result=
+		    javac( compiler, pageInfo, options, containerL, mangler );
 	    
-		if(debug>0)log.log( "Generated " +
+		if(debug>0)log( "Generated " +
 				    mangler.getClassFileName() );
 
 		addExtraDeps( depM, handler );
@@ -659,7 +618,7 @@ final class JasperLiaison {
 		if( ctx!=null )
 		    ctx.log("compile error: req="+req, ex);
 		else
-		    log.log("compile error: req="+req, ex);
+		    log("compile error: req="+req, ex);
 		handler.setErrorException(ex);
 		handler.setState(Handler.STATE_DISABLED);
 		// until the jsp cahnges, when it'll be enabled again
@@ -676,30 +635,9 @@ final class JasperLiaison {
     /** Convert the .jsp file to a java file, then compile it to class
      */
     void jsp2java(Compiler compiler, Mangler mangler,
-		  JasperEngineContext ctxt, JspPageInfo pageInfo )
+		  JasperEngineContext containerL, JspPageInfo pageInfo )
 	throws Exception
     {
-	if( debug > 0 ) log.log( "Generating " + mangler.getJavaFileName());
-	// make sure we have the directories
-	String javaFileName=mangler.getJavaFileName();
-	
-	File javaFile=new File(javaFileName);
-	
-	// make sure the directory is created
-	new File( javaFile.getParent()).mkdirs();
-	
-	// we will compile ourself
-	// compiler.setJavaCompiler( null );
-	
-	
-	synchronized ( mangler ) {
-	    compiler.jsp2java(pageInfo);
-	}
-	if( debug > 0 ) {
-	    File f = new File( mangler.getJavaFileName());
-	    log.log( "Created file : " + f +  " " + f.lastModified());
-	    
-	}
     }
     
     String javaEncoding = "UTF8";           // perhaps debatable?
@@ -713,7 +651,7 @@ final class JasperLiaison {
 	with JavaCompiler - it's a general purpose code, no need to
 	keep it part of jasper
     */
-    void javac(Compiler compiler,
+    boolean javac(Compiler compiler,
 	       JspPageInfo pageInfo,
 	       Options options,
 	       ContainerLiaison containerL,
@@ -721,91 +659,101 @@ final class JasperLiaison {
 	throws JasperException
     {
 	String javaFileName = mangler.getJavaFileName();
-	if( debug>0 ) log.log( "Compiling java file " + javaFileName);
+
+	if( debug>0 ) log( "Compiling java file " + javaFileName);
 
 	boolean status=true;
-	if( jspCompilerPluginS == null ) {
-	    jspCompilerPluginS=options.getJspCompilerPlugin();
-	}
+	String javaFile=pageInfo.getMangler().getJavaFileName();
+	JavaCompiler javaC=null;
 	
 	// If no explicit compiler, and we never tried before
 	if( jspCompilerPlugin==null && tryJikes ) {
-
-	    ByteArrayOutputStream out = new ByteArrayOutputStream (256);
 	    try {
-		jspCompilerPlugin=Class.forName(JspInterceptor.JIKES);
-		JavaCompiler javaC=
-		    JavaCompiler.createJavaCompiler( containerL,
-						     jspCompilerPlugin );
+		javaC=compiler.createJavaCompiler(pageInfo,
+						  JspInterceptor.JIKES);
+		compiler.prepareCompiler( javaC, pageInfo );
+		status = javaC.compile( javaFile );
+
+		// remove java file if !keepgenerated, etc
+		compiler.postCompile(pageInfo);
 		
-		compiler.prepareCompiler( javaC, options, pageInfo );
-		javaC.setMsgOutput(out);
-		status = compiler.javac(pageInfo, javaC );
 	    } catch( Exception ex ) {	
-		log.log("Guess java compiler: no jikes " + ex.toString());
+		log("Guess java compiler: no jikes " + ex.toString());
 		status=false;
 	    }
 	    if( status==false ) {
-		log.log("Guess java compiler: no jikes ");
-		log.log("Guess java compiler: OUT " + out.toString());
+		log("Guess java compiler: no jikes ");
+		log("Guess java compiler: OUT " +
+		    ((javaC==null)?"":javaC.getCompilerMessage()));
 		jspCompilerPlugin=null;
 		tryJikes=false;
 	    } else {
-		log.log("Guess java compiler: using jikes ");
+		log("Guess java compiler: using jikes ");
 	    }
 	}
 
-	JavaCompiler javaC=
-	    JavaCompiler.createJavaCompiler( containerL, jspCompilerPlugin );
-	compiler.prepareCompiler( javaC, options, pageInfo );
-	ByteArrayOutputStream out = new ByteArrayOutputStream (256);
-	javaC.setMsgOutput(out);
-	
-	status = javaC.compile(javaFileName);
+	javaC=compiler.createJavaCompiler( pageInfo );
+	compiler.prepareCompiler( javaC, pageInfo );
+	status = javaC.compile( javaFile );
 
-        if (!containerL.getOptions().getKeepGenerated()) {
-            File javaFile = new File(javaFileName);
-            javaFile.delete();
-        }
-    
         if (status == false) {
-            String msg = out.toString ();
+            String msg = javaC.getCompilerMessage();
             throw new JasperException("Unable to compile "
                                       + msg);
         }
-	if( debug > 0 ) log.log("Compiled ok");
+
+	// remove java file if !keepgenerated, etc
+	compiler.postCompile(pageInfo);
+	    
+	if( debug > 0 ) log("Compiled ok");
+	return status;
     }
 
-    private String computeClassPath(Context ctx) {
-	String separator = System.getProperty("path.separator", ":");
-	URL classP[]=ctx.getClassPath();
-        String cpath = "";
-        cpath+=extractClassPath(classP);
-        Jdk11Compat jdkProxy=Jdk11Compat.getJdkCompat();
-        URL appsCP[];
-        URL commonCP[];
-        ClassLoader parentLoader=ctx.getContextManager().getParentLoader();
-        appsCP=jdkProxy.getParentURLs(parentLoader);
-        commonCP=jdkProxy.getURLs(parentLoader);
-	if( appsCP!=null ) 
-	    cpath+=separator+extractClassPath(appsCP);
-	if( commonCP!=null ) 
-	    cpath+=separator+extractClassPath(commonCP);
-	return cpath;
+    private String getJspFilePath( String docBase, JspPageInfo pageInfo )
+    {
+	return FileUtil.safePath( docBase,
+				  pageInfo.getJspFile());
     }
-    String extractClassPath(URL urls[]){
-	String separator = System.getProperty("path.separator", ":");
-        String cpath="";
-        for(int i=0; i< urls.length; i++ ) {
-            URL cp = urls[i];
-	    if( cp == null ) {
-		continue;
-	    }
-            File f = new File( cp.getFile());
-            if (cpath.length()>0) cpath += separator;
-            cpath += f;
-        }
-        return cpath;
+    
+    // Add an "expire check" to the generated servlet.
+    private DependManager setDependency( Context ctx, Mangler mangler,
+					 ServletHandler handler,
+					 JspPageInfo pageInfo )
+    {
+	ServletInfo info=handler.getServletInfo();
+	// create a lastModified checker.
+	if( debug>0) log("Registering dependency for " + handler );
+	DependManager depM=new DependManager(4); // jsps have fewer deps
+	depM.setDebug( debug );
+	Dependency dep=new Dependency();
+	File depFile=new File(getJspFilePath(ctx.getAbsolutePath(),
+					     pageInfo));
+	dep.setOrigin( depFile );
+	System.out.println("XXX " + depFile + " " + depFile.lastModified());
+	dep.setTarget( handler );
+	//dep.setLocal( true );
+	File f=new File( pageInfo.getMangler().getClassFileName() );
+	if( mangler.getVersion() > 0 ) {
+	    // it has a previous version
+	    dep.setLastModified(f.lastModified());
+	    // update the "expired" variable
+	    System.out.println("XXY " + f + " " + f.lastModified());
+	    dep.checkExpiry();
+	} else {
+	    dep.setLastModified( -1 );
+	    dep.setExpired( true );
+	}
+	depM.addDependency( dep );
+	
+	if( debug>0 )
+	    log( "file = " + pageInfo.getMangler().getClassFileName() + " " +
+		     f.lastModified() );
+	if( debug>0 )
+	    log("origin = " + dep.getOrigin() + " " +
+		    dep.getOrigin().lastModified());
+
+	info.setDependManager( depM );
+	return depM;
     }
 
     private void addExtraDeps( DependManager depM, ServletHandler handler )
@@ -826,7 +774,7 @@ final class JasperLiaison {
 		    d.setLastModified( f.lastModified() );
 		    d.checkExpiry();
 		    depM.addDependency( d );
-		    log.log( "Adding dependency " + d  +
+		    log( "Adding dependency " + d  +
 			     " " + depM.shouldReload() );
 		}
 	    }
@@ -836,66 +784,30 @@ final class JasperLiaison {
 
     }
 
-    private String getJspFilePath( String docBase, JspPageInfo pageInfo )
-    {
-	return FileUtil.safePath( docBase,
-				  pageInfo.getJspFile());
+
     }
 
+// -------------------- Jsp_precompile handler --------------------
+
+/** What to do for jsp precompile
+ */
+class JspPrecompileH extends Handler {
+    static StringManager sm=StringManager.
+	getManager("org.apache.tomcat.resources");
     
-    // Add an "expire check" to the generated servlet.
-    private DependManager setDependency( Context ctx, Mangler mangler,
-					 ServletHandler handler,
-					 JspPageInfo pageInfo )
-    {
-	ServletInfo info=handler.getServletInfo();
-	// create a lastModified checker.
-	if( debug>0) log.log("Registering dependency for " + handler );
-	DependManager depM=new DependManager(4); // jsps have fewer deps
-	depM.setDebug( debug );
-	Dependency dep=new Dependency();
-	File depFile=new File(getJspFilePath(ctx.getAbsolutePath(),
-					     pageInfo));
-	dep.setOrigin( depFile );
-	System.out.println("XXX " + depFile + " " + depFile.lastModified());
-	dep.setTarget( handler );
-	//dep.setLocal( true );
-	File f=new File( mangler.getClassFileName() );
-	if( mangler.getVersion() > 0 ) {
-	    // it has a previous version
-	    dep.setLastModified(f.lastModified());
-	    // update the "expired" variable
-	    System.out.println("XXY " + f + " " + f.lastModified());
-	    dep.checkExpiry();
-	} else {
-	    dep.setLastModified( -1 );
-	    dep.setExpired( true );
-	}
-	depM.addDependency( dep );
-	
-	if( debug>0 )
-	    log.log( "file = " + mangler.getClassFileName() + " " +
-		     f.lastModified() );
-	if( debug>0 )
-	    log.log("origin = " + dep.getOrigin() + " " +
-		    dep.getOrigin().lastModified());
-	/* This would add a dependency on the whole application,
-	   causing a reload of the context when a jsp changes.
-	*/
-	/*
-	try {
-	    DependManager dm=(DependManager)ctx.getContainer().
-		getNote("DependManager");
-	    if( dm!=null ) {
-		dm.addDependency( dep );
-	    }
-	} catch( TomcatException ex ) {
-	    ex.printStackTrace();
-	}
-	*/
-	info.setDependManager( depM );
-	return depM;
+    JspPrecompileH() {
+	name="tomcat.jspPrecompileHandler";
     }
 
+    public void doService(Request req, Response res)
+	throws Exception
+    {
+	res.setContentType("text/html");	
 
+	String msg="<h1>Jsp Precompile Done</h1>";
+
+	res.setContentLength(msg.length());
+
+	res.getBuffer().write( msg );
+    }
 }
