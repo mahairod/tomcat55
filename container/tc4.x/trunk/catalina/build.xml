@@ -876,6 +876,7 @@
 
     <ant dir="${tomcat-webapp.home}" target="compile">
       <property name="catalina.home" value="${catalina.deploy}"/>
+      <property name="targdir" value="${tomcat-webapp.home}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
