@@ -1240,6 +1240,8 @@
       	<exclude name="catalina.xml"/>
       	<exclude name="commons-launcher.jar"/>
       	<exclude name="*-using-launcher.*"/>
+      	<exclude name="LauncherBootstrap.class"/>
+      	<exclude name="launcher.properties"/>
       </fileset>
     </copy>
     <copy todir="${tomcat.dist}/common/classes">
@@ -1439,6 +1441,7 @@
     <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}.zip">
       <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
       	<include name="bin/**"/>
+     	<include name="common/**"/>
      	<include name="conf/**"/>
      	<include name="logs/**"/>
      	<include name="server/**"/>
