@@ -319,6 +319,7 @@
         <include name="org/apache/service/ServiceController.class" />
         <include name="org/apache/catalina/startup/Bootstrap.class" />
         <include name="org/apache/catalina/startup/BootstrapService.class" />
+        <include name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <include name="org/apache/catalina/loader/Extension.class" />
         <include name="org/apache/catalina/loader/Reloader.class" />
@@ -334,6 +335,7 @@
         <exclude name="**/connector/warp/**" />
         <exclude name="org/apache/catalina/startup/Bootstrap.class" />
         <exclude name="org/apache/catalina/startup/BootstrapService.class" />
+        <exclude name="org/apache/catalina/startup/ClassLoaderFactory.class" />
         <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
         <exclude name="org/apache/catalina/loader/Extension.class" />
         <exclude name="org/apache/catalina/loader/Reloader.class" />

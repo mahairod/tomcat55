@@ -130,11 +130,44 @@ public final class BootstrapService
         setCatalinaBase();
 
         // Construct the class loaders we will need
-        ClassLoader commonLoader = createCommonLoader();
-        ClassLoader catalinaLoader =
-            createCatalinaLoader(commonLoader);
-        ClassLoader sharedLoader = createSharedLoader(commonLoader);
-        
+        ClassLoader commonLoader = null;
+        ClassLoader catalinaLoader = null;
+        ClassLoader sharedLoader = null;
+        try {
+
+            File unpacked[] = new File[1];
+            File packed[] = new File[1];
+            ClassLoaderFactory.setDebug(debug);
+
+            unpacked[0] = new File(getCatalinaHome(),
+                                   "common" + File.separator + "classes");
+            packed[0] = new File(getCatalinaHome(),
+                                 "common" + File.separator + "lib");
+            commonLoader =
+                ClassLoaderFactory.createClassLoader(unpacked, packed, null);
+
+            unpacked[0] = new File(getCatalinaHome(),
+                                   "server" + File.separator + "classes");
+            packed[0] = new File(getCatalinaHome(),
+                                 "server" + File.separator + "lib");
+            catalinaLoader =
+                ClassLoaderFactory.createClassLoader(unpacked, packed,
+                                                     commonLoader);
+
+            unpacked[0] = new File(getCatalinaHome(),
+                                   "classes");
+            packed[0] = new File(getCatalinaHome(),
+                                 "lib");
+            sharedLoader =
+                ClassLoaderFactory.createClassLoader(unpacked, packed,
+                                                     commonLoader);
+
+        } catch (Throwable t) {
+
+            log("Class loader creation threw exception", t);
+
+        }
+
         Thread.currentThread().setContextClassLoader(catalinaLoader);
         
         // Load our startup class and call its process() method
@@ -271,10 +304,45 @@ public final class BootstrapService
                 System.out.println("Create Catalina server");
 
                 // Construct the class loaders we will need
-                ClassLoader commonLoader = createCommonLoader();
-                ClassLoader catalinaLoader =
-                    createCatalinaLoader(commonLoader);
-                ClassLoader sharedLoader = createSharedLoader(commonLoader);
+                ClassLoader commonLoader = null;
+                ClassLoader catalinaLoader = null;
+                ClassLoader sharedLoader = null;
+                try {
+
+                    File unpacked[] = new File[1];
+                    File packed[] = new File[1];
+                    ClassLoaderFactory.setDebug(debug);
+
+                    unpacked[0] = new File(getCatalinaHome(),
+                                           "common" + File.separator + "classes");
+                    packed[0] = new File(getCatalinaHome(),
+                                         "common" + File.separator + "lib");
+                    commonLoader =
+                        ClassLoaderFactory.createClassLoader(unpacked, packed, null);
+
+                    unpacked[0] = new File(getCatalinaHome(),
+                                           "server" + File.separator + "classes");
+                    packed[0] = new File(getCatalinaHome(),
+                                         "server" + File.separator + "lib");
+                    catalinaLoader =
+                        ClassLoaderFactory.createClassLoader(unpacked, packed,
+                                                             commonLoader);
+
+                    unpacked[0] = new File(getCatalinaHome(),
+                                           "classes");
+                    packed[0] = new File(getCatalinaHome(),
+                                         "lib");
+                    sharedLoader =
+                        ClassLoaderFactory.createClassLoader(unpacked, packed,
+                                                             commonLoader);
+
+                } catch (Throwable t) {
+
+                    log("Class loader creation threw exception", t);
+                    System.exit(1);
+
+                }
+
 
                 Thread.currentThread().setContextClassLoader(catalinaLoader);
 
@@ -371,224 +439,6 @@ public final class BootstrapService
 
 
     /**
-     * Construct and return the class loader to be used for loading
-     * of the shared system classes.
-     */
-    private static ClassLoader createCommonLoader() {
-
-        if (debug >= 1)
-            log("Creating COMMON class loader");
-
-        // Check to see if JNDI is already present in the system classpath
-        boolean loadJNDI = true;
-        try {
-            Class.forName("javax.naming.Context");
-            loadJNDI = false;
-        } catch (ClassNotFoundException e) {
-        }
-
-        // Construct the "class path" for this class loader
-        ArrayList list = new ArrayList();
-
-        // Add the "common/classes" directory if it exists
-        File classes = new File(getCatalinaHome(), "common/classes");
-        if (classes.exists() && classes.canRead() &&
-            classes.isDirectory()) {
-            try {
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + File.separator);
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Add all JAR files in the "common/lib" directory if it exists
-        File directory = new File(getCatalinaHome(), "common/lib");
-        if (!directory.exists() || !directory.canRead() ||
-            !directory.isDirectory()) {
-            System.out.println("Directory " + directory.getAbsolutePath()
-                               + " does not exist");
-            System.exit(1);
-        }
-        String filenames[] = directory.list();
-        for (int i = 0; i < filenames.length; i++) {
-            String filename = filenames[i].toLowerCase();
-            if ((!filename.endsWith(".jar")) ||
-                (filename.indexOf("bootstrap.jar") != -1) ||
-                ((!loadJNDI) && (filename.indexOf("jndi.jar") != -1)))
-                continue;
-            File file = new File(directory, filenames[i]);
-            try {
-                URL url = new URL("file", null, file.getCanonicalPath());
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   filenames[i]);
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Construct the class loader itself
-        String array[] = (String[]) list.toArray(new String[list.size()]);
-        StandardClassLoader loader = new StandardClassLoader(array);
-
-        return (loader);
-
-    }
-
-
-    /**
-     * Construct and return the class loader to be used for loading
-     * Catalina internal classes.
-     */
-    private static ClassLoader createCatalinaLoader(ClassLoader parent) {
-
-        if (debug >= 1)
-            log("Creating CATALINA class loader");
-
-        // Construct the "class path" for this class loader
-        ArrayList list = new ArrayList();
-
-        // Add the "server/classes" directory if it exists
-        File classes = new File(getCatalinaHome(), "server/classes");
-        if (classes.exists() && classes.canRead() &&
-            classes.isDirectory()) {
-            try {
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + File.separator);
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Add all JAR files in the "server/lib" directory if it exists
-        File directory = new File(getCatalinaHome(), "server/lib");
-        if (!directory.exists() || !directory.canRead() ||
-            !directory.isDirectory()) {
-            System.out.println("Directory " + directory.getAbsolutePath()
-                               + " does not exist");
-            System.exit(1);
-        }
-        String filenames[] = directory.list();
-        for (int i = 0; i < filenames.length; i++) {
-            if (!filenames[i].toLowerCase().endsWith(".jar"))
-                continue;
-            File file = new File(directory, filenames[i]);
-            try {
-                URL url = new URL("file", null, file.getCanonicalPath());
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   filenames[i]);
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Construct the class loader itself
-        String array[] = (String[]) list.toArray(new String[list.size()]);
-        StandardClassLoader loader = new StandardClassLoader(array, parent);
-
-        return (loader);
-
-    }
-
-
-    /**
-     * Construct and return the class loader to be used for shared
-     * extensions by web applications loaded with Catalina.
-     */
-    private static ClassLoader createSharedLoader(ClassLoader parent) {
-
-        if (debug >= 1)
-            log("Creating SHARED class loader");
-
-        // Construct the "class path" for this class loader
-        ArrayList list = new ArrayList();
-
-        // Add the "classes" directory if it exists
-        File classes = new File(getCatalinaHome(), "classes");
-        if (classes.exists() && classes.canRead() &&
-            classes.isDirectory()) {
-            try {
-                URL url = new URL("file", null,
-                                  classes.getCanonicalPath() + File.separator);
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   classes.getAbsolutePath());
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Add all JAR files in the "lib" directory if it exists
-        File directory = new File(getCatalinaHome(), "lib");
-        if (!directory.exists() || !directory.canRead() ||
-            !directory.isDirectory()) {
-            System.out.println("Directory " + directory.getAbsolutePath()
-                               + " does not exist");
-            System.exit(1);
-        }
-        String filenames[] = directory.list();
-        for (int i = 0; i < filenames.length; i++) {
-            if (!filenames[i].toLowerCase().endsWith(".jar"))
-                continue;
-            File file = new File(directory, filenames[i]);
-            try {
-                URL url = new URL("file", null, file.getCanonicalPath());
-                if (debug >= 1)
-                    log("  Adding " + url.toString());
-                list.add(url.toString());
-            } catch (IOException e) {
-                System.out.println("Cannot create URL for " +
-                                   filenames[i]);
-                e.printStackTrace(System.out);
-                System.exit(1);
-            }
-        }
-
-        // Construct the class loader itself
-        String array[] = (String[]) list.toArray(new String[list.size()]);
-        StandardClassLoader loader = new StandardClassLoader(array, parent);
-
-        /*
-        System.out.println("AVAILABLE OPTIONAL PACKAGES:");
-        Extension available[] = loader.findAvailable();
-        for (int i = 0; i < available.length; i++)
-            System.out.println(available[i].toString());
-        System.out.println("REQUIRED OPTIONAL PACKAGES:");
-        Extension required[] = loader.findRequired();
-        for (int i = 0; i < required.length; i++)
-            System.out.println(required[i].toString());
-        System.out.println("===========================");
-        */
-
-        return (loader);
-
-    }
-
-
-    /**
      * Set the <code>catalina.base</code> System property to the current
      * working directory if it has not been set.
      */
@@ -638,6 +488,20 @@ public final class BootstrapService
 
         System.out.print("Bootstrap: ");
         System.out.println(message);
+
+    }
+
+
+    /**
+     * Log a debugging detail message with an exception.
+     *
+     * @param message The message to be logged
+     * @param exception The exception to be logged
+     */
+    private static void log(String message, Throwable exception) {
+
+        log(message);
+        exception.printStackTrace(System.out);
 
     }
 
