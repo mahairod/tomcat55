@@ -87,6 +87,7 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
 
+import org.apache.webapp.admin.logger.SetUpLoggerAction;
 import org.apache.webapp.admin.realm.SetUpUserDBRealmAction;
 
 /**
