@@ -506,7 +506,9 @@ public abstract class ManagerBase implements Manager {
 		recycled.remove(size - 1);
 	    }
 	}
-	if (session == null)
+	if (session != null)
+	    session.setManager(this);
+	else
 	    session = new StandardSession(this);
 
 	// Initialize the properties of the new session and return it
@@ -544,7 +546,10 @@ public abstract class ManagerBase implements Manager {
 	if (id == null)
 	    return (null);
 	synchronized (sessions) {
-	    return ((Session) sessions.get(id));
+	    Session session = (Session) sessions.get(id);
+	    if (session != null)
+		session.access();
+	    return (session);
 	}
 
     }

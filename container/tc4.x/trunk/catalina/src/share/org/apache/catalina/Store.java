@@ -92,6 +92,20 @@ public interface Store {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getInfo();
+    
+
+    /**
+     * Return the Manager instance associated with this Store.
+     */
+    public Manager getManager();
+
+
+    /**
+     * Set the Manager associated with this Store. 
+     *
+     * @param manager The Manager which will use this Store.
+     */
+    public void setManager(Manager manager);
 
 
     /**
@@ -147,6 +161,12 @@ public interface Store {
      * @exception IOException if an input/output error occurs
      */
     public void remove(String id) throws IOException;
+    
+    
+    /**
+     * Remove all Sessions from this Store.
+     */
+    public void clear() throws IOException;
 
 
     /**

@@ -77,6 +77,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionAttributesListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -538,10 +539,58 @@ final class StandardSession
 
         // We have completed expire of this session
 	expiring = false;
+	if ((manager != null) && (manager instanceof ManagerBase)) {
+	    recycle();
+	    ((ManagerBase) manager).recycle(this);
+	}
 
     }
 
 
+    /**
+     * Perform the internal processing required to passivate
+     * this session.
+     */
+    public void passivate() {
+    
+	// Notify ActivationListeners
+	HttpSessionEvent event = null;
+	String keys[] = keys();
+	for (int i = 0; i < keys.length; i++) {
+	    Object attribute = getAttribute(keys[i]);
+	    if (attribute instanceof HttpSessionActivationListener) {
+	    	if (event == null)
+	    	    event = new HttpSessionEvent(this);
+	    	// FIXME: Should we catch throwables?
+	    	((HttpSessionActivationListener)attribute).sessionWillPassivate(event);
+	    }
+	}
+
+    }
+
+    
+    /**
+     * Perform internal processing required to activate this
+     * session.
+     */
+    public void activate() {
+    
+    	// Notify ActivationListeners
+    	HttpSessionEvent event = null;
+    	String keys[] = keys();
+    	for (int i = 0; i < keys.length; i++) {
+    	    Object attribute = getAttribute(keys[i]);
+    	    if (attribute instanceof HttpSessionActivationListener) {
+    		if (event == null)
+    		    event = new HttpSessionEvent(this);
+		// FIXME: Should we catch throwables?
+		((HttpSessionActivationListener)attribute).sessionDidActivate(event);
+	    }
+	}
+
+    }
+    
+    
     /**
      * Return the <code>isValid</code> flag for this session.
      */
