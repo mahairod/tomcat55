@@ -273,6 +273,7 @@ public class Catalina {
 
         // Initialize the digester
         Digester digester = new Digester();
+        digester.setClassLoader(StandardServer.class.getClassLoader());
         if (debug)
             digester.setDebug(999);
         digester.setValidating(false);
