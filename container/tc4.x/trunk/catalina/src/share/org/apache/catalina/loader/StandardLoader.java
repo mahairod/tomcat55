@@ -624,6 +624,10 @@ public final class StandardLoader
 		    if( contextURL != null )
 			((StandardClassLoader)classLoader).setPermissions
                             (contextURL);
+                    String contextRoot = servletContext.getRealPath("/");
+                    if (contextRoot != null)
+                        ((StandardClassLoader)classLoader).setPermissions
+                            (contextRoot);
 		} catch (MalformedURLException e) {
 		}
 	    }

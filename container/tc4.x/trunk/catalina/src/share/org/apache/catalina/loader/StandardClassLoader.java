@@ -296,16 +296,24 @@ public class StandardClassLoader
 
 
     /**
-     * Instance of the SecurityManager installed.
+     * The context directory path read FilePermission if this loader
+     * is for a web application context, and this web application is running
+     * from an unpacked directory.
      */
-    private SecurityManager securityManager = null;
+    private FilePermission rootPermission = null;
 
 
     /**
-     * The context directory path read FilePermission if this loader
+     * The context directory URL read FilePermission if this loader
      * is for a web application context.
      */
-    private FilePermission filePermission = null;
+    private FilePermission urlPermission = null;
+
+
+    /**
+     * Instance of the SecurityManager installed.
+     */
+    private SecurityManager securityManager = null;
 
 
     /**
@@ -372,6 +380,30 @@ public class StandardClassLoader
 
     }
 
+
+    /**
+     * If there is a Java SecurityManager, refresh the security
+     * policies from file and set the context security permisions
+     * for the specified context root directory path
+     *
+     * @param path Context directory root directory path
+     */
+    public void setPermissions(String path) {
+	if( securityManager != null ) {
+            // System.out.println("setPermissionsPath: " + path);
+	    String contextDir = path;
+	    if( contextDir.endsWith(File.separator) )
+		contextDir = contextDir + "-";
+	    else
+		contextDir = contextDir + File.separator + "-";
+	    // Refresh the security policies
+	    Policy policy = Policy.getPolicy();
+	    policy.refresh();
+            rootPermission = new FilePermission(contextDir,"read");
+	}
+    }
+
+
     /**
      * If there is a Java SecurityManager, refresh the security
      * policies from file and set the context security permissions.
@@ -380,7 +412,8 @@ public class StandardClassLoader
      */
     public void setPermissions(URL url) {
 	if( securityManager != null ) {
-	    String contextDir = url.getFile();
+            // System.out.println("setPermissionsURL: " + url.toString());
+	    String contextDir = url.toString();
 	    if( contextDir.endsWith(File.separator) )
 		contextDir = contextDir + "-";
 	    else
@@ -388,9 +421,10 @@ public class StandardClassLoader
 	    // Refresh the security policies
 	    Policy policy = Policy.getPolicy();
 	    policy.refresh();
-            filePermission = new FilePermission(contextDir,"read");
+            urlPermission = new FilePermission(contextDir,"read");
 	}
     }
+
 
     // ------------------------------------------------------- Reloader Methods
 
@@ -1052,17 +1086,23 @@ public class StandardClassLoader
     /**
      * Get the Permissions for a CodeSource.  If this instance
      * of StandardClassLoader is for a web application context,
-     * add FilePermission "context root", "read".
+     * add FilePermissions for the base directory (if unpacked)
+     * and the context URL.
      *
      * @param CodeSource where the code was loaded from
      * @return PermissionCollection for CodeSource
      */
     protected final PermissionCollection getPermissions(CodeSource codeSource) {
 	PermissionCollection pc = super.getPermissions(codeSource);
-	if( filePermission != null && pc != null)
-	    pc.add(filePermission);
-	return pc;
+        if (pc != null) {
+            if (rootPermission != null)
+                pc.add(rootPermission);
+            if (urlPermission != null)
+                pc.add(urlPermission);
+        }
+	return (pc);
     }
+
 
     // ------------------------------------------------------ Protected Methods
 
