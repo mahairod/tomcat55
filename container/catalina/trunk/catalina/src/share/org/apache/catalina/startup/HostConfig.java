@@ -202,16 +202,24 @@ public class HostConfig
      */
     private HashMap webXmlLastModified = new HashMap();
 
+
+    /**
+     * Last modified dates of the Context xml files of the contexts, keyed by
+     * context name.
+     */
+    private HashMap contextXmlLastModified = new HashMap();
+
+
     /**
      * Attribute value used to turn on/off XML validation
      */
-     private boolean xmlValidation = false;
+    private boolean xmlValidation = false;
 
 
     /**
      * Attribute value used to turn on/off XML namespace awarenes.
      */
-     private boolean xmlNamespaceAware = false;
+    private boolean xmlNamespaceAware = false;
 
 
     // ------------------------------------------------------------- Properties
@@ -638,7 +646,7 @@ public class HostConfig
     /**
      * Check deployment descriptors last modified date.
      */
-    protected void checkWebXmlLastModified() {
+    protected void checkContextLastModified() {
 
         if (!(host instanceof Deployer))
             return;
@@ -673,23 +681,52 @@ public class HostConfig
                 } else {
                     if (lastModified.longValue() != newLastModified) {
                         webXmlLastModified.remove(contextName);
-                        ((Lifecycle) context).stop();
-                        // Note: If the context was already stopped, a 
-                        // Lifecycle exception will be thrown, and the context
-                        // won't be restarted
-                        ((Lifecycle) context).start();
+                        restartContext(context);
                     }
                 }
-            } catch (LifecycleException e) {
-                ; // Ignore
             } catch (NamingException e) {
                 ; // Ignore
+            }
+
+            Long lastModified = (Long) contextXmlLastModified.get(contextName);
+            String configFileName = context.getConfigFile();
+            if (configFileName != null) {
+                File configFile = new File(configFileName);
+                if (!configFile.isAbsolute()) {
+                    configFile = new File(System.getProperty("catalina.base"),
+                                          configFile.getPath());
+                }
+                long newLastModified = configFile.lastModified();
+                if (lastModified == null) {
+                    contextXmlLastModified.put
+                        (contextName, new Long(newLastModified));
+                } else {
+                    if (lastModified.longValue() != newLastModified) {
+                        contextXmlLastModified.remove(contextName);
+                        restartContext(context);
+                    }
+                }
             }
 
         }
 
     }
 
+
+    protected boolean restartContext(Context context) {
+        log.info("restartContext(" + context.getName() + ")");
+        boolean result = true;
+        try {
+            ((Lifecycle) context).stop();
+            // Note: If the context was already stopped, a 
+            // Lifecycle exception will be thrown, and the context
+            // won't be restarted
+            ((Lifecycle) context).start();
+        } catch (LifecycleException e) {
+            result = false;
+        }
+        return result;
+    }
 
 
     /**
@@ -1063,7 +1100,7 @@ public class HostConfig
             deployApps();
 
             // Check for web.xml modification
-            checkWebXmlLastModified();
+            checkContextLastModified();
 
         }
 
