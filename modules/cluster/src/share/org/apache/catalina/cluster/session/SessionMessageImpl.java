@@ -1,6 +1,6 @@
 package org.apache.catalina.cluster.session;
 
-import org.apache.catalina.cluster.SessionMessage;
+
 import org.apache.catalina.cluster.Member;
 /**
  * <p>Title: </p>
