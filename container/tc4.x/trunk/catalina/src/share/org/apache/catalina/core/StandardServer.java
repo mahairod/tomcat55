@@ -289,9 +289,10 @@ public final class StandardServer
                 continue;
             }
 
-            // Read a line of characters from the socket
+            // Read a set of characters from the socket
             StringBuffer command = new StringBuffer();
-            while (true) {
+            int expected = shutdown.length();
+            while (expected > 0) {
                 int ch = -1;
                 try {
                     ch = stream.read();
@@ -303,6 +304,7 @@ public final class StandardServer
                 if (ch < 32)  // Control character or EOF terminates loop
                     break;
                 command.append((char) ch);
+                expected--;
             }
 
             // Close the socket now that we are done with it
