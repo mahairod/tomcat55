@@ -779,6 +779,14 @@ public class StandardServerMBean extends BaseModelMBean {
             writer.println("</WrapperListener>");
         }
 
+        // Store nested naming resources elements
+        /* FIXME - DefaultContext does not have a getNamingResources() method
+        NamingResources nresources = dcontext.getNamingResources();
+        if (nresources != null) {
+            storeNamingResources(writer, indent + 2, nresources);
+        }
+        */
+
         // Store the ending of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
