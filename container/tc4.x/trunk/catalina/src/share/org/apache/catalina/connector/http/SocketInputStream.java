@@ -100,6 +100,12 @@ public class SocketInputStream extends InputStream {
 
 
     /**
+     * HT.
+     */
+    private static final byte HT = (byte) '\t';
+
+
+    /**
      * COLON.
      */
     private static final byte COLON = (byte) ':';
@@ -440,7 +446,7 @@ public class SocketInputStream extends InputStream {
                     pos = 0;
                     readStart = 0;
                 }
-                if (buf[pos] == SP) {
+                if ((buf[pos] == SP) || (buf[pos] == HT)) {
                     pos++;
                 } else {
                     space = false;
@@ -484,7 +490,9 @@ public class SocketInputStream extends InputStream {
                 pos++;
             }
 
-            if (read() != SP) {
+            int nextChr = read();
+
+            if ((nextChr != SP) && (nextChr != HT)) {
                 pos--;
                 validLine = false;
             } else {
@@ -583,8 +591,9 @@ public class SocketInputStream extends InputStream {
         pos = 0;
         count = 0;
         int nRead = is.read(buf, 0, buf.length);
-        if (nRead > 0)
+        if (nRead > 0) {
             count = nRead;
+        }
     }
 
 
