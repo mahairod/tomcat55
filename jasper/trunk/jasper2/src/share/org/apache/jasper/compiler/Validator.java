@@ -138,14 +138,14 @@ public class Validator {
 
 		if ("language".equals(attr)) {
 		    if (languageSeen)
-			err.jspError(n, "jsp.error.language.multiple");
+			err.jspError(n, "jsp.error.page.multiple.language");
 		    languageSeen = true;
 		    if (!"java".equalsIgnoreCase(value))
 			err.jspError(n, "jsp.error.language.nonjava");
 		    pageInfo.setLanguage(value);
 		} else if ("extends".equals(attr)) {
 		    if (extendsSeen)
-			err.jspError(n, "jsp.error.extends.multiple");
+			err.jspError(n, "jsp.error.page.multiple.extends");
 		    extendsSeen = true;
 		    pageInfo.setExtends(value);
 		    /*
@@ -158,7 +158,7 @@ public class Validator {
 			n.addImport(value);
 		} else if ("contentType".equals(attr)) {
 		    if (contentTypeSeen) 
-			err.jspError(n, "jsp.error.contentType.multiple");
+			err.jspError(n, "jsp.error.page.multiple.contenttypes");
 		    contentTypeSeen = true;
 		    pageInfo.setContentType(value);
 		} else if ("session".equals(attr)) {
@@ -173,7 +173,7 @@ public class Validator {
 			err.jspError(n, "jsp.error.session.invalid");
 		} else if ("buffer".equals(attr)) {
 		    if (bufferSeen)
-			err.jspError(n, "jsp.error.buffer.multiple");
+			err.jspError(n, "jsp.error.page.multiple.buffer");
 		    bufferSeen = true;
 
 		    if ("none".equalsIgnoreCase(value))
@@ -192,7 +192,7 @@ public class Validator {
 		    }
 		} else if ("autoFlush".equals(attr)) {
 		    if (autoFlushSeen)
-			err.jspError(n, "jsp.error.autoFlush.multiple");
+			err.jspError(n, "jsp.error.page.multiple.autoflush");
 		    autoFlushSeen = true;
 		    if ("true".equalsIgnoreCase(value))
 			pageInfo.setAutoFlush(true);
@@ -202,7 +202,7 @@ public class Validator {
 			err.jspError(n, "jsp.error.autoFlush.invalid");
 		} else if ("isthreadSafe".equals(attr)) {
 		    if (isThreadSafeSeen)
-			err.jspError(n, "jsp.error.isThreadSafe.multiple");
+			err.jspError(n, "jsp.error.page.multiple.threadsafe");
 		    isThreadSafeSeen = true;
 		    if ("true".equalsIgnoreCase(value))
 			pageInfo.setThreadSafe(true);
@@ -212,7 +212,7 @@ public class Validator {
 			err.jspError(n, "jsp.error.isThreadSafe.invalid");
 		} else if ("isErrorPage".equals(attr)) {
 		    if (isErrorPageSeen)
-			err.jspError(n, "jsp.error.isErrorPage.multiple");
+			err.jspError(n, "jsp.error.page.multiple.iserrorpage");
 		    isErrorPageSeen = true;
 		    if ("true".equalsIgnoreCase(value))
 			pageInfo.setIsErrorPage(true);
@@ -222,7 +222,7 @@ public class Validator {
 			err.jspError(n, "jsp.error.isErrorPage.invalid");
 		} else if ("errorPage".equals(attr)) {
 		    if (errorPageSeen) 
-			err.jspError(n, "jsp.error.errorPage.multiple");
+			err.jspError(n, "jsp.error.page.multiple.errorpage");
 		    errorPageSeen = true;
 		    pageInfo.setErrorPage(value);
 		} else if ("info".equals(attr)) {
@@ -231,7 +231,7 @@ public class Validator {
 		    infoSeen = true;
 		} else if ("pageEncoding".equals(attr)) {
 		    if (pageEncodingSeen) 
-			err.jspError(n, "jsp.error.pageEncoding.multiple");
+			err.jspError(n, "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
 		    pageInfo.setPageEncoding(value);
 		}
