@@ -165,9 +165,9 @@ public class UsersTreeBuilder implements TreeBuilder {
              false);
 
         root.addChild(subtree);
+        subtree.addChild(users);
         subtree.addChild(groups);
         subtree.addChild(roles);
-        subtree.addChild(users);
 
     }
 
