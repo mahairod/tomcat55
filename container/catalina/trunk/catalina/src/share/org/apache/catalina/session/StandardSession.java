@@ -575,10 +575,14 @@ public class StandardSession
      */
     public boolean isValid() {
 
-        if (!this.isValid || this.expiring) {
+        if (this.expiring){
+            return true;
+        }
+
+        if (!this.isValid ) {
             return false;
         }
- 
+        
         if (maxInactiveInterval >= 0) { 
             long timeNow = System.currentTimeMillis();
             int timeIdle = (int) ((timeNow - lastAccessedTime) / 1000L);
@@ -1154,7 +1158,7 @@ public class StandardSession
     public void removeAttribute(String name, boolean notify) {
 
         // Validate our current state
-        if (!expiring && !isValid())
+        if (!isValid())
             throw new IllegalStateException
                 (sm.getString("standardSession.removeAttribute.ise"));
 
