@@ -73,6 +73,9 @@
       <fix>
         <bug>30561</bug>: Broken restart of NamingService. (yoavs)
       </fix>
+      <fix>
+        <bug>30179</bug>: Better Bootstrap handling of catalina.properties. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
