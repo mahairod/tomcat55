@@ -696,6 +696,18 @@ public class WebappLoader
             DirContextURLStreamHandler.bind
                 ((ClassLoader) classLoader, this.container.getResources());
 
+            StandardContext ctx=(StandardContext)container;
+            Engine eng=(Engine)ctx.getParent().getParent();
+            String path = ctx.getPath();
+            if (path.equals("")) {
+                path = "/";
+            }   
+            ObjectName cloname = new ObjectName
+                (ctx.getEngineName() + ":type=WebappClassLoader,path="
+                 + path + ",host=" + ctx.getParent().getName());
+            Registry.getRegistry(null, null)
+                .registerComponent(classLoader, cloname, null);
+
         } catch (Throwable t) {
             log.error( "LifecycleException ", t );
             throw new LifecycleException("start: ", t);
@@ -731,6 +743,22 @@ public class WebappLoader
         if (classLoader instanceof Lifecycle)
             ((Lifecycle) classLoader).stop();
         DirContextURLStreamHandler.unbind((ClassLoader) classLoader);
+
+        try {
+            StandardContext ctx=(StandardContext)container;
+            Engine eng=(Engine)ctx.getParent().getParent();
+            String path = ctx.getPath();
+            if (path.equals("")) {
+                path = "/";
+            }
+            ObjectName cloname = new ObjectName
+                (ctx.getEngineName() + ":type=WebappClassLoader,path="
+                 + path + ",host=" + ctx.getParent().getName());
+            Registry.getRegistry(null, null).unregisterComponent(cloname);
+        } catch (Throwable t) {
+            log.error( "LifecycleException ", t );
+        }
+
         classLoader = null;
 
         destroy();
