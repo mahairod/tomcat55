@@ -400,7 +400,11 @@ public class GTest extends Task {
      */
     public void setRequestHeaders( String s ) {
         requestHeaders = new HashMap();
-        getHeaderDetails( s, requestHeaders, true );
+        StringTokenizer tok = new StringTokenizer( s, "|" );
+        while ( tok.hasMoreElements() ) {
+            String header = (String) tok.nextElement();
+            getHeaderDetails( header, requestHeaders, true );
+        }
     }
 
     /**
@@ -780,18 +784,18 @@ public class GTest extends Task {
 		
                 while ( iter.hasNext() ) {
                     String headerKey = ( String ) iter.next();
-		    ArrayList values = (ArrayList) requestHeaders.get( headerKey );
-		    String[] value = (String[]) values.toArray( new String[ values.size() ] );
-		    for ( int i = 0; i < value.length; i++ ) {
-			StringBuffer sb = new StringBuffer( 25 );
-			sb.append( headerKey );
-			sb.append( ": " );
-			sb.append( value[ i ] );
-			pw.println( sb.toString() );
-			if ( debug > 0 ) {
-			    System.out.println( sb.toString() );
-			}
-		    }
+		            ArrayList values = (ArrayList) requestHeaders.get( headerKey );
+		            String[] value = (String[]) values.toArray( new String[ values.size() ] );
+		            for ( int i = 0; i < value.length; i++ ) {
+			            StringBuffer sb = new StringBuffer( 25 );
+			            sb.append( headerKey );
+			            sb.append( ": " );
+			            sb.append( value[ i ] );
+			            pw.println( sb.toString() );
+			            if ( debug > 0 ) {
+			                System.out.println( " REQUEST HEADER: " + sb.toString() );
+			            }
+		            }
                 }
             }
 
