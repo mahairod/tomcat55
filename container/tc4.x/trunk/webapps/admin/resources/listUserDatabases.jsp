@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -20,12 +20,12 @@
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
+      <td width="81%">
         <div class="page-title-text" align="left">
           <bean:message key="resources.treeBuilder.databases"/>
         </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
           <%@ include file="listUserDatabases.jspf" %>
         </div>

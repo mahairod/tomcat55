@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
@@ -27,7 +27,7 @@
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
-       <div class="page-title-text" align="left"> 
+       <div class="page-title-text" align="left">
          <logic:equal name="jndiRealmForm" property="adminAction" value="Create">
             <bean:message key="actions.realms.create"/>
           </logic:equal>
@@ -36,20 +36,20 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <logic:notEqual name="jndiRealmForm" property="adminAction" value="Create">              
-                <logic:notEqual name="jndiRealmForm" property="allowDeletion" value="false">  
-                <controls:action url='<%= "/DeleteRealm.do?select=" + 
-                                        URLEncoder.encode(thisObjectName) %>'>  
-                <bean:message key="actions.realms.delete"/> 
-            </controls:action>           
-           </logic:notEqual>  
+            <logic:notEqual name="jndiRealmForm" property="adminAction" value="Create">
+                <logic:notEqual name="jndiRealmForm" property="allowDeletion" value="false">
+                <controls:action url='<%= "/DeleteRealm.do?select=" +
+                                        URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.realms.delete"/>
+            </controls:action>
+           </logic:notEqual>
         </logic:notEqual>
-       </controls:actions>   
+       </controls:actions>
          </div>
       </td>
     </tr>
@@ -58,10 +58,10 @@
   <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -81,21 +81,21 @@
                 </logic:equal>
             </controls:data>
         </controls:row>
-      
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.connName"/>:</controls:label>
             <controls:data>
               <html:text property="connectionName" size="30"/>
             </controls:data>
         </controls:row>
-      
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.connPassword"/>:</controls:label>
             <controls:data>
                 <html:text property="connectionPassword" size="30"/>
             </controls:data>
         </controls:row>
-      
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.connURL"/>:</controls:label>
             <controls:data>
@@ -191,19 +191,19 @@
                 <html:text property="userPassword" size="30"/>
             </controls:data>
         </controls:row>
-      
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="realm.userPattern"/>:</controls:label>
             <controls:data>
                 <html:text property="userPattern" size="30"/>
             </controls:data>
         </controls:row>
-      
+
       </controls:table>
       </td>
     </tr>
   </table>
-  
+
     <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>

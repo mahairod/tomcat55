@@ -1,6 +1,6 @@
 <!-- Standard Struts Entries -->
 
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -28,8 +28,8 @@
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
-      <td width="81%"> 
-       <div class="page-title-text" align="left"> 
+      <td width="81%">
+       <div class="page-title-text" align="left">
          <logic:equal name="loggerForm" property="adminAction" value="Create">
             <bean:message key="actions.loggers.create"/>
           </logic:equal>
@@ -38,18 +38,18 @@
           </logic:equal>
        </div>
       </td>
-      <td width="19%"> 
+      <td width="19%">
         <div align="right">
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
-            <logic:notEqual name="loggerForm" property="adminAction" value="Create">              
+            <logic:notEqual name="loggerForm" property="adminAction" value="Create">
             <controls:action url='<%= "/DeleteLogger.do?select=" +
                                   URLEncoder.encode(thisObjectName) %>'>
-                <bean:message key="actions.loggers.delete"/> 
-            </controls:action>          
+                <bean:message key="actions.loggers.delete"/>
+            </controls:action>
             </logic:notEqual>
-       </controls:actions>   
+       </controls:actions>
          </div>
       </td>
     </tr>
@@ -58,10 +58,10 @@
   <br>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
        <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -81,7 +81,7 @@
                 </logic:equal>
             </controls:data>
         </controls:row>
-        
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="server.debuglevel"/>:</controls:label>
             <controls:data>
@@ -92,7 +92,7 @@
                 </html:select>
             </controls:data>
         </controls:row>
- 
+
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.verbositylevel"/>:</controls:label>
             <controls:data>
@@ -102,7 +102,7 @@
                         labelProperty="label"/>
                 </html:select>
             </controls:data>
-        </controls:row>   
+        </controls:row>
       </controls:table>
       </td>
     </tr>
@@ -110,21 +110,21 @@
 
     <%-- Display the following fields only if it is a FileLogger --%>
     <%-- These are the properties specific to a FileLogger --%>
-     <logic:equal name="loggerForm" property="loggerType" scope="session" 
+     <logic:equal name="loggerForm" property="loggerType" scope="session"
                   value="FileLogger">
      <br>
-        
+
      <table border="0" cellspacing="0" cellpadding="0" width="100%">
-        <tr> <td>  <div class="table-title-text">  
+        <tr> <td>  <div class="table-title-text">
             <bean:message key="logger.filelogger.properties"/>
         </div> </td> </tr>
      </table>
 
     <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-     <tr> 
-      <td> 
+     <tr>
+      <td>
      <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label><bean:message key="service.property"/></controls:label>
             <controls:data><bean:message key="service.value"/></controls:data>
@@ -133,21 +133,21 @@
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.directory"/>:</controls:label>
             <controls:data>
-               <html:text property="directory" size="25"/> 
+               <html:text property="directory" size="25"/>
             </controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.prefix"/>:</controls:label>
             <controls:data>
-               <html:text property="prefix" size="25"/> 
+               <html:text property="prefix" size="25"/>
             </controls:data>
         </controls:row>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="logger.suffix"/>:</controls:label>
             <controls:data>
-               <html:text property="suffix" size="15"/> 
+               <html:text property="suffix" size="15"/>
             </controls:data>
         </controls:row>
 
@@ -160,14 +160,14 @@
                    labelProperty="label"/>
                 </html:select>
             </controls:data>
-        </controls:row> 
+        </controls:row>
    </controls:table>
    </td>
   </tr>
   </table>
  </logic:equal>
-  
-    
+
+
     <%@ include file="../buttons.jsp" %>
   <br>
   </html:form>

@@ -1,5 +1,5 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" import="java.net.URLEncoder" %>
+<%@ page language="java" import="java.net.URLEncoder" contentType="text/html;charset=utf-8" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
@@ -19,7 +19,7 @@
 <html:form method="POST" action="/SaveAlias">
 
   <html:hidden property="hostName"/>
-  
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr class="page-title-row">
       <td align="left" nowrap>
@@ -33,16 +33,16 @@
 <br>
 
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td> <div class="table-title-text"> 
+    <tr> <td> <div class="table-title-text">
         <bean:message key="new.alias"/>
     </div> </td> </tr>
   </table>
 
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
+    <tr>
+      <td>
         <controls:table tableStyle="front-table" lineStyle="line-row">
-            <controls:row header="true" 
+            <controls:row header="true"
                 labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>
                 <bean:message key="service.property"/>
@@ -71,9 +71,9 @@
 
 <%-- Aliases List --%>
  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-    <tr> <td> 
-        <div class="table-title-text"> 
-            <bean:message key="host.aliases"/> 
+    <tr> <td>
+        <div class="table-title-text">
+            <bean:message key="host.aliases"/>
         </div>
     </td> </tr>
   </table>
@@ -81,13 +81,13 @@
   <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
     <tr> <td>
         <table class="front-table" border="1" cellspacing="0" cellpadding="0" width="100%">
-          <tr class="header-row"> 
-            <td width="27%"> 
+          <tr class="header-row">
+            <td width="27%">
               <div class="table-header-text" align="left"><bean:message key="host.alias.name"/> </div>
             </td> </tr>
 
             <logic:iterate id="aliasVal" name="aliasForm" property="aliasVals">
-            <tr> <td width="27%" valign="top" colspan=2> 
+            <tr> <td width="27%" valign="top" colspan=2>
                 <div class="table-normal-text"> <%= aliasVal %> </div>
             </td> </tr>
             </logic:iterate>
