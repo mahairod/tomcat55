@@ -457,7 +457,7 @@
   </mime-mapping>
   <mime-mapping>
     <extension>jnlp</extension>
-    <mime-type>x-java-jnlp-file</mime-type>
+    <mime-type>application/x-java-jnlp-file</mime-type>
   </mime-mapping>
   <mime-mapping>
     <extension>jpe</extension>
