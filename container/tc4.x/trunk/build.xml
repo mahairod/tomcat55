@@ -202,7 +202,7 @@
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
       <fileset dir="${catalina.build}/javadoc" />
     </copy>
-    <ant dir="./jasper" target="javadoc"/>
+    <ant dir="${jasper.home}" target="javadoc"/>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api">
       <fileset dir="${jasper.build}/javadoc" />
@@ -245,7 +245,7 @@
 
 
   <!-- ================= DIST: Create Windows Installer =================== -->
-  <target name="installer" depends="dist, dist-source, prepare-release"
+  <target name="installer"
    description="Create Windows installer" if="execute.installer">
     <echo message="Builds a Windows installer based on Nullsoft Installer"/>
     <echo message="NSIS must be installed in the default directory"/>
