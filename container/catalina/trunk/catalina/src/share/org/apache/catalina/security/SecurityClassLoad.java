@@ -90,6 +90,7 @@ public final class SecurityClassLoad {
         loadJavaxPackage(loader);
         loadCoyotePackage(loader);        
         loadHttp11Package(loader);        
+        loadJkPackage(loader);
     }
     
     
@@ -239,6 +240,14 @@ public final class SecurityClassLoad {
         loader.loadClass
             (basePackage +
              "CoyoteResponse$3");
+    }
+
+    private final static void loadJkPackage(ClassLoader loader)
+        throws Exception {
+        String basePackage = "org.apache.tomcat.util.";
+        loader.loadClass
+            (basePackage +
+             "buff.C2BConverter");
     }
 
 }
