@@ -620,8 +620,12 @@ public class StandardClassLoader
             int i = name.lastIndexOf('.');
             if (i >= 0) {
                 try {
+		    if (debug >= 4)
+		        log("      securityManager.checkPackageDefinition");
                     securityManager.checkPackageDefinition(name.substring(0,i));
                 } catch (Exception se) {
+		    if (debug >= 4)
+		        log("      -->Exception-->ClassNotFoundException", se);
 		    throw new ClassNotFoundException(name);
                 }
             }
@@ -631,7 +635,15 @@ public class StandardClassLoader
         // (throws ClassNotFoundException if it is not found)
         Class clazz = null;
         try {
-            clazz = super.findClass(name);
+	    if (debug >= 4)
+	        log("      super.findClass(" + name + ")");
+	    try {
+	        clazz = super.findClass(name);
+	    } catch (RuntimeException e) {
+	        if (debug >= 4)
+		    log("      -->RuntimeException Rethrown", e);
+		throw e;
+	    }
             if (clazz == null) {
                 if (debug >= 3)
                     log("    --> Returning ClassNotFoundException");
@@ -639,7 +651,7 @@ public class StandardClassLoader
             }
         } catch (ClassNotFoundException e) {
             if (debug >= 3)
-                log("    --> Passing on ClassNotFoundException");
+                log("    --> Passing on ClassNotFoundException", e);
             throw e;
         }
 
@@ -649,6 +661,8 @@ public class StandardClassLoader
                 continue;
             String pathname =
                 repositories[i].substring(0, repositories[i].length() - 1);
+	    if (debug >= 4)
+	        log("      Checking repository " + pathname);
             if (pathname.startsWith("file://"))
                 pathname = pathname.substring(7);
             else if (pathname.startsWith("file:"))
@@ -667,6 +681,10 @@ public class StandardClassLoader
         }
 
         // Return the class we have located
+	if (debug >= 4)
+	    log("      Returning class " + clazz);
+	if ((debug >= 4) && (clazz != null))
+	    log("      Loaded by " + clazz.getClassLoader());
         return (clazz);
 
     }
