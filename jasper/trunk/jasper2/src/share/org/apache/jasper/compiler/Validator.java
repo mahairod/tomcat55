@@ -492,13 +492,6 @@ class Validator {
             if (subElems == null) {
 		err.jspError(n, "jsp.error.params.emptyBody");
 	    }
-	    for (int i=0; i<subElems.size(); i++) {
-		Node subElem = subElems.getNode(i);
-		if (!(subElem instanceof Node.ParamAction)) {
-		    err.jspError(n, "jsp.error.params.illegalChild");
-                }
-            }
-
             visitBody(n);
 	}
 

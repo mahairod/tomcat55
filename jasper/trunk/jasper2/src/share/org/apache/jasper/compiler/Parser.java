@@ -1068,18 +1068,9 @@ class Parser {
      *            | ( '>' S? Param* '</jsp:params>' )
      */
     private void parseJspParams(Node parent) throws JasperException {
-        if( reader.matches( "/>" ) ) {
-            // No elements, don't create node.
-        }
-        else if( reader.matches( ">" ) ) {
-            reader.skipSpaces();
-            Node jspParamsNode = new Node.ParamsAction(start, parent);
-            parseBody(jspParamsNode, "jsp:params", JAVAX_BODY_CONTENT_PARAM );
-        }
-        else {
-            err.jspError(reader.mark(), "jsp.error.unterminated",
-                "&lt;jsp:params" );
-        }
+	Node jspParamsNode = new Node.ParamsAction(start, parent);
+	parseOptionalBody(jspParamsNode, "jsp:params",
+			  JAVAX_BODY_CONTENT_PARAM );
     }
 
     /*
@@ -1090,7 +1081,6 @@ class Parser {
      *                )
      */
     private void parseFallBack(Node parent) throws JasperException {
-	Mark bodyStart = reader.mark();
 	Node fallBackNode = new Node.FallBackAction(start, parent);
 	parseOptionalBody(fallBackNode, "jsp:fallback", 
 			  JAVAX_BODY_CONTENT_TEMPLATE_TEXT);
