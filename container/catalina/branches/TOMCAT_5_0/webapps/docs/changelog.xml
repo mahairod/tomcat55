@@ -20,6 +20,9 @@
       <update>
         Added Xalan note in RELEASE-NOTE section on XML parsers. (yoavs)
       </update>
+      <fix>
+        <bug>30756</bug>: Bad syntax in sample web.xml. (yoavs)
+      </fix>
     </changelog>
   </subsection>
   <subsection name="Catalina">
