@@ -153,10 +153,7 @@ public class Compiler {
         logger = new JasperAntLogger();
         logger.setOutputPrintStream(System.out);
         logger.setErrorPrintStream(System.err);
-
-        if( log.isTraceEnabled() ) {
-            logger.setMessageOutputLevel( Project.MSG_VERBOSE );
-        }
+	logger.setMessageOutputLevel(Project.MSG_INFO);
         project.addBuildListener( logger);
         
         if( options.getCompiler() != null ) {
