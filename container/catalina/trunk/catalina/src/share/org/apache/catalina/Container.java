@@ -253,6 +253,28 @@ public interface Container {
 
 
     /**
+     * Get the delay between the invocation of the execute method on
+     * this container and its children. Child containers will not be invoked
+     * if their delay value is not negative (which would mean they are using 
+     * their own thread). Setting this to a positive value will cause 
+     * a thread to be spawn. After waiting the specified amount of time, 
+     * the thread will invoke the executePeriodic method on this container 
+     * and all its children.
+     */
+    public int getExecuteDelay();
+
+
+    /**
+     * Set the delay between the invocation of the execute method on this
+     * container and its children.
+     * 
+     * @param delay The delay in seconds between the invocation of execute 
+     *              methods
+     */
+    public void setExecuteDelay(int delay);
+
+
+    /**
      * Return a name string (suitable for use by humans) that describes this
      * Container.  Within the set of child containers belonging to a particular
      * parent, Container names must be unique.
@@ -345,6 +367,14 @@ public interface Container {
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Execute a periodic task, such as reloading, etc. This method will be
+     * invoked inside the classloading context of this container. Unexpected
+     * throwables will be caught and logged.
+     */
+    public void execute();
 
 
     /**
