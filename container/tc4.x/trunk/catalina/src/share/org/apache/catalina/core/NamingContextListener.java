@@ -281,7 +281,6 @@ public class NamingContextListener
             }
             ContextAccessController.setSecurityToken(getName(), container);
             ContextBindings.bindContext(container, namingContext, container);
-            //ContextBindings.bindThread(container, container);
 
             // Setting the context in read/write mode
             ContextAccessController.setWritable(getName(), container);
@@ -292,13 +291,10 @@ public class NamingContextListener
                 log(sm.getString("naming.namingContextCreationFailed", e));
             }
 
-            // Setting the context in read only mode
-            ContextAccessController.setReadOnly(getName());
-
-            //ContextBindings.unbindThread(container, container);
-
             // Binding the naming context to the class loader
             if (container instanceof Context) {
+                // Setting the context in read only mode
+                ContextAccessController.setReadOnly(getName());
                 try {
                     ContextBindings.bindClassLoader
                         (container, container, 
@@ -351,6 +347,8 @@ public class NamingContextListener
 
     /**
      * Acknowledge the occurrence of the specified event.
+     * Note: Will never be called when the listener is associated to a Server,
+     * since it is not a Container.
      *
      * @param event ContainerEvent that has occurred
      */
