@@ -3878,49 +3878,6 @@ public class StandardContext
         setConfigured(false);
         boolean ok = true;
 
-        // Set config file name
-        /*
-        File configBase = getConfigBase();
-        if ((configBase != null) && saveConfig) {
-            if (getConfigFile() == null) {
-                File file = new File(configBase, getDefaultConfigFile());
-                setConfigFile(file.getPath());
-                // If the docbase is outside the appBase, we should save our
-                // config
-                try {
-                    File appBaseFile = new File(getAppBase());
-                    if (!appBaseFile.isAbsolute()) {
-                        appBaseFile = new File(engineBase(), getAppBase());
-                    }
-                    String appBase = appBaseFile.getCanonicalPath();
-                    String basePath = 
-                        (new File(getBasePath())).getCanonicalPath();
-                    if (!basePath.startsWith(appBase)) {
-                        Server server = ServerFactory.getServer();
-                        ((StandardServer) server).storeContext(this);
-                    }
-                } catch (Exception e) {
-                    log.warn("Error storing config file", e);
-                }
-            } else {
-                try {
-                    String canConfigFile = 
-                        (new File(getConfigFile())).getCanonicalPath();
-                    if (!canConfigFile.startsWith
-                        (configBase.getCanonicalPath())) {
-                        File file = 
-                            new File(configBase, getDefaultConfigFile());
-                        if (copy(new File(canConfigFile), file)) {
-                            setConfigFile(file.getPath());
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn("Error setting config file", e);
-                }
-            }
-        }
-        */
-
         // Add missing components as necessary
         if (webappResources == null) {   // (1) Required by Loader
             if (log.isDebugEnabled())
