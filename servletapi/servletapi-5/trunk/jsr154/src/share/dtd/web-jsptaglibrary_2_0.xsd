@@ -10,7 +10,7 @@
 
 <xsd:annotation>
 <xsd:documentation>
-@(#)web-jsptaglibrary_2_0.xsds	1.14 08/14/02
+@(#)web-jsptaglibrary_2_0.xsds	1.18 09/19/02
 </xsd:documentation>
 </xsd:annotation>
 <xsd:annotation>
@@ -61,12 +61,12 @@ http://java.sun.com/xml/ns/j2ee
 and by indicating the version of the schema by
 using the version element as shown below:
 
-    <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+    &lt;taglib xmlns="http://java.sun.com/xml/ns/j2ee"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="..."
      version="2.0">
     ...
-    </taglib>
+    &lt;/taglib>
 
 The instance documents may indicate the published
 version of the schema using xsi:schemaLocation attribute
@@ -137,7 +137,7 @@ by the taglibType.
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="body-contentType">
+<xsd:complexType name="body-contentType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -163,17 +163,18 @@ scriptless      The body accepts only template text, EL
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="tagdependent"/>
-        <xsd:enumeration value="TAGDEPENDENT"/>
-        <xsd:enumeration value="JSP"/>
-        <xsd:enumeration value="empty"/>
-        <xsd:enumeration value="EMPTY"/>
-        <xsd:enumeration value="scriptless"/>
-        <xsd:enumeration value="SCRIPTLESS"/>
-    </xsd:restriction>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="tagdependent"/>
+            <xsd:enumeration value="TAGDEPENDENT"/>
+            <xsd:enumeration value="JSP"/>
+            <xsd:enumeration value="empty"/>
+            <xsd:enumeration value="EMPTY"/>
+            <xsd:enumeration value="scriptless"/>
+            <xsd:enumeration value="SCRIPTLESS"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -211,15 +212,7 @@ example             Optional informal description of an
 </xsd:annotation>
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="name"
                      type="j2ee:tld-canonical-nameType">
         <xsd:annotation>
@@ -244,7 +237,7 @@ example             Optional informal description of an
 
         </xsd:element>
         <xsd:element name="function-signature"
-                     type="xsd:string">
+                     type="j2ee:string">
         <xsd:annotation>
         <xsd:documentation>
 
@@ -261,7 +254,7 @@ example             Optional informal description of an
 
         </xsd:element>
         <xsd:element name="example"
-                     type="xsd:string"
+                     type="j2ee:xsdStringType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
@@ -274,6 +267,7 @@ example             Optional informal description of an
 
         </xsd:element>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -303,6 +297,7 @@ registered automatically.
         </xsd:annotation>
         </xsd:element>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -332,6 +327,7 @@ path    Where to find the .tag file implementing this
         <xsd:element name="path"
                      type="j2ee:pathType"/>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -385,15 +381,7 @@ tag-extension     Zero or more extensions that provide extra
 </xsd:annotation>
 
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="name"
                      type="j2ee:tld-canonical-nameType"/>
         <xsd:element name="tag-class"
@@ -445,7 +433,7 @@ tag-extension     Zero or more extensions that provide extra
                      type="j2ee:generic-booleanType"
                      minOccurs="0"/>
         <xsd:element name="example"
-                     type="xsd:string"
+                     type="j2ee:xsdStringType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
@@ -475,6 +463,7 @@ tag-extension     Zero or more extensions that provide extra
 	</xsd:annotation>
 	</xsd:element>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -522,16 +511,7 @@ taglib-extension zero or more extensions that provide extra
 </xsd:documentation>
 </xsd:annotation>
     <xsd:sequence>
-        <xsd:element name="description"
-                     type="j2ee:descriptionType"
-                     minOccurs="0"
-                     maxOccurs="unbounded"/>
-        <xsd:element name="display-name"
-                     type="j2ee:display-nameType"
-                     minOccurs="0" maxOccurs="unbounded"/>
-        <xsd:element name="icon"
-                     type="j2ee:iconType"
-                     minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:group ref="j2ee:descriptionGroup"/>
         <xsd:element name="tlib-version"
                      type="j2ee:dewey-versionType">
         <xsd:annotation>
@@ -562,7 +542,7 @@ taglib-extension zero or more extensions that provide extra
 
         </xsd:element>
         <xsd:element name="uri"
-                     type="xsd:anyURI"
+                     type="j2ee:xsdAnyURIType"
                      minOccurs="0">
         <xsd:annotation>
         <xsd:documentation>
@@ -629,7 +609,7 @@ taglib-extension zero or more extensions that provide extra
     </xsd:annotation>
 
     </xsd:attribute>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
@@ -731,11 +711,12 @@ fragment	whether this attribute is a fragment
 	    </xsd:element>
 	</xsd:choice>
     </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="tld-canonical-nameType">
+<xsd:complexType name="tld-canonical-nameType">
 
 <xsd:annotation>
 <xsd:documentation>
@@ -748,9 +729,10 @@ The name must conform to the lexical rules for an NMTOKEN.
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="xsd:NMTOKEN"/>
-
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:xsdNMTOKENType"/>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -765,43 +747,44 @@ defined by a validatorType.
 </xsd:documentation>
 </xsd:annotation>
 
-<xsd:sequence>
-    <xsd:element name="description"
-                 type="j2ee:descriptionType"
-                 minOccurs="0"
-                 maxOccurs="unbounded"/>
-    <xsd:element name="validator-class"
-                 type="j2ee:fully-qualified-classType">
-    <xsd:annotation>
-    <xsd:documentation>
+    <xsd:sequence>
+        <xsd:element name="description"
+                     type="j2ee:descriptionType"
+                     minOccurs="0"
+                     maxOccurs="unbounded"/>
+        <xsd:element name="validator-class"
+                     type="j2ee:fully-qualified-classType">
+        <xsd:annotation>
+        <xsd:documentation>
 
-    Defines the TagLibraryValidator class that can be used
-    to validate the conformance of a JSP page to using this
-    tag library.
+        Defines the TagLibraryValidator class that can be used
+        to validate the conformance of a JSP page to using this
+        tag library.
 
-    </xsd:documentation>
-    </xsd:annotation>
-    </xsd:element>
-    <xsd:element name="init-param"
-                 type="j2ee:param-valueType"
-                 minOccurs="0" maxOccurs="unbounded">
-    <xsd:annotation>
-    <xsd:documentation>
+        </xsd:documentation>
+        </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="init-param"
+                     type="j2ee:param-valueType"
+                     minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+        <xsd:documentation>
 
-    The init-param element contains a name/value pair as an
-    initialization param.
+        The init-param element contains a name/value pair as an
+        initialization param.
 
-    </xsd:documentation>
-    </xsd:annotation>
+        </xsd:documentation>
+        </xsd:annotation>
 
-    </xsd:element>
+        </xsd:element>
 
-</xsd:sequence>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 <!-- **************************************************** -->
 
-<xsd:simpleType name="variable-scopeType">
+<xsd:complexType name="variable-scopeType">
 <xsd:annotation>
 <xsd:documentation>
 
@@ -812,12 +795,14 @@ TagExtraInfo for details.  The allowed values are,
 </xsd:documentation>
 </xsd:annotation>
 
-    <xsd:restriction base="j2ee:string">
-        <xsd:enumeration value="NESTED"/>
-        <xsd:enumeration value="AT_BEGIN"/>
-        <xsd:enumeration value="AT_END"/>
-    </xsd:restriction>
-</xsd:simpleType>
+    <xsd:simpleContent>
+        <xsd:restriction base="j2ee:string">
+            <xsd:enumeration value="NESTED"/>
+            <xsd:enumeration value="AT_BEGIN"/>
+            <xsd:enumeration value="AT_END"/>
+        </xsd:restriction>
+    </xsd:simpleContent>
+</xsd:complexType>
 
 <!-- **************************************************** -->
 
@@ -949,7 +934,7 @@ fragment		 The fragment to which the variable
 	    </xsd:element>
         </xsd:choice>
     </xsd:sequence>
-
+    <xsd:attribute name="id" type="xsd:ID"/>
 </xsd:complexType>
 
 </xsd:schema>
