@@ -41,6 +41,7 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
+            <logic:notEqual name="contextForm" property="adminAction" value="Create">
             <controls:action url='<%= "/AddLogger.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.create"/>
@@ -62,10 +63,14 @@
             <controls:action disabled="true">  -------------------------------------  </controls:action>
             <controls:action url="">  <bean:message key="actions.valves.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.valves.deletes"/> </controls:action>
-            <controls:action> --------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.thiscontext.delete"/> </controls:action>
-           --%>
-       </controls:actions>   
+            --%>
+              <controls:action disabled="true">  -------------------------------------  </controls:action>
+              <controls:action url='<%= "/DeleteContext.do?select=" +
+                                        URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.contexts.delete"/>
+              </controls:action>
+            </logic:notEqual>
+        </controls:actions>   
          </div>
       </td>
     </tr>

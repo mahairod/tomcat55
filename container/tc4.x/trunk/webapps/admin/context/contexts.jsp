@@ -70,7 +70,7 @@
             <td><div align="left" class="table-normal-text">&nbsp;
               <html:link page='<%= "/EditContext.do?select=" + 
                          java.net.URLEncoder.encode(context.toString()) %>'>
-                <controls:attribute name="context" attribute="name"/>
+                <controls:attribute name="context" attribute="path"/>
               </html:link>
             </div></td>
           </tr>
