@@ -1939,7 +1939,7 @@ public class StandardContext
         }
 
         if( findChild(servletName) != null) {
-            addServletMapping(pattern, servletName);
+            addServletMapping(pattern, servletName, true);
         } else {
             log.debug("Skiping " + pattern + " , no servlet " + servletName);
         }
@@ -2130,7 +2130,24 @@ public class StandardContext
      *  is not known to this Context
      */
     public void addServletMapping(String pattern, String name) {
+        addServletMapping(pattern, name, false);
+    }
 
+
+    /**
+     * Add a new servlet mapping, replacing any existing mapping for
+     * the specified pattern.
+     *
+     * @param pattern URL pattern to be mapped
+     * @param name Name of the corresponding servlet to execute
+     * @param jspWildCard true if name identifies the JspServlet
+     * and pattern contains a wildcard; false otherwise
+     *
+     * @exception IllegalArgumentException if the specified servlet name
+     *  is not known to this Context
+     */
+    public void addServletMapping(String pattern, String name,
+                                  boolean jspWildCard) {
         // Validate the proposed mapping
         if (findChild(name) == null)
             throw new IllegalArgumentException
@@ -2155,7 +2172,7 @@ public class StandardContext
         wrapper.addMapping(pattern);
 
         // Update context mapper
-        mapper.addWrapper(pattern, wrapper);
+        mapper.addWrapper(pattern, wrapper, jspWildCard);
 
         fireContainerEvent("addServletMapping", pattern);
 
