@@ -69,6 +69,7 @@
     <option project="jakarta-avalon-phoenix"/>
     <depend project="jakarta-tomcat-coyote_tc5"/>
     <depend project="jakarta-tomcat-catalina"/>
+    <depend project="jakarta-tomcat-jasper_tc5"/>
     <depend project="jakarta-tomcat-util" runtime="true"/>
     <depend project="jakarta-servletapi-5-servlet"/>
     <depend project="jakarta-servletapi-5-jsp"/>
