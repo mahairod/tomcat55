@@ -1298,7 +1298,7 @@ public class WebdavServlet
         generatedXML.writeElement(null, "lockdiscovery",
                                   XMLWriter.OPENING);
 
-        lock.toXML(generatedXML, true);
+        lock.toXML(generatedXML);
 
         generatedXML.writeElement(null, "lockdiscovery",
                                   XMLWriter.CLOSING);
@@ -2703,15 +2703,6 @@ public class WebdavServlet
          * append an XML fragment to the given XML writer.
          */
         public void toXML(XMLWriter generatedXML) {
-            toXML(generatedXML, false);
-        }
-
-
-        /**
-         * Get an XML representation of this lock token. This method will
-         * append an XML fragment to the given XML writer.
-         */
-        public void toXML(XMLWriter generatedXML, boolean showToken) {
 
             generatedXML.writeElement(null, "activelock", XMLWriter.OPENING);
 
@@ -2741,17 +2732,11 @@ public class WebdavServlet
             generatedXML.writeElement(null, "timeout", XMLWriter.CLOSING);
 
             generatedXML.writeElement(null, "locktoken", XMLWriter.OPENING);
-            if (showToken) {
-                Enumeration tokensList = tokens.elements();
-                while (tokensList.hasMoreElements()) {
-                    generatedXML.writeElement(null, "href", XMLWriter.OPENING);
-                    generatedXML.writeText("opaquelocktoken:"
-                                           + tokensList.nextElement());
-                    generatedXML.writeElement(null, "href", XMLWriter.CLOSING);
-                }
-            } else {
+            Enumeration tokensList = tokens.elements();
+            while (tokensList.hasMoreElements()) {
                 generatedXML.writeElement(null, "href", XMLWriter.OPENING);
-                generatedXML.writeText("opaquelocktoken:dummytoken");
+                generatedXML.writeText("opaquelocktoken:"
+                                       + tokensList.nextElement());
                 generatedXML.writeElement(null, "href", XMLWriter.CLOSING);
             }
             generatedXML.writeElement(null, "locktoken", XMLWriter.CLOSING);
