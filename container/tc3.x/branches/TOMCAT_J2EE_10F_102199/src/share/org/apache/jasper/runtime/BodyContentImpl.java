@@ -568,11 +568,7 @@ public class BodyContentImpl extends BodyContent {
      * @returns the value of the BodyJspWriter as a String
      */
     public String getString() {
-	//XXX need to optimize this
-	    char[] tmp = new char [ nextChar - 1];
-	    for (int i=0; i < tmp.length; i++) 
-	        tmp[i] = cb[i];	
-	    return new String (tmp);
+        return new String(cb, 0, nextChar-1);
     }
 	
     /**
@@ -584,7 +580,7 @@ public class BodyContentImpl extends BodyContent {
      * this body evaluation
      */
     public void writeOut(Writer out) throws IOException {
-        out.write (cb);
+        out.write(cb, 0, nextChar-1);
 	//Flush not called as the writer passed could be a BodyContent and
 	//it doesn't allow to flush.
     }
