@@ -89,10 +89,12 @@ public final class ContextEjb {
      * @param home Java class name of the EJB home implementation class
      * @param remote Java class name of the EJB remote implementation class
      * @param link Optional link to a J2EE EJB definition 
+     * @param runAs Optional security role for transactions performed
+     *  to this Enterprise JavaBean resource reference
      */
     public ContextEjb(String name, String description,
 		      String type, String home,
-		      String remote, String link) {
+		      String remote, String link, String runAs) {
 
         super();        
 	this.name = name;
@@ -101,6 +103,7 @@ public final class ContextEjb {
 	this.home = home;
 	this.remote = remote;
 	this.link = link;
+	this.runAs = runAs;
 
     }
 
@@ -113,6 +116,7 @@ public final class ContextEjb {
     private String link = null;
     private String name = null;
     private String remote = null;
+    private String runAs = null;
     private String type = null;
 
 
@@ -137,6 +141,10 @@ public final class ContextEjb {
 
     public String getRemote() {
 	return (this.remote);
+    }
+
+    public String getRunAs() {
+	return (this.runAs);
     }
 
     public String getType() {

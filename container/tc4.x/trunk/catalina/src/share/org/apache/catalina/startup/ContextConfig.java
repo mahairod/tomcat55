@@ -340,7 +340,7 @@ public final class ContextConfig
 		       mapper.methodSetter("setDistributable", 0));
 
 	mapper.addRule("web-app/ejb-ref",
-		       mapper.methodSetter("addEjb", 6));
+		       mapper.methodSetter("addEjb", 7));
 	mapper.addRule("web-app/ejb-ref/description",
 		       mapper.methodParam(1));
 	mapper.addRule("web-app/ejb-ref/ejb-ref-name",
@@ -353,6 +353,8 @@ public final class ContextConfig
 		       mapper.methodParam(4));
 	mapper.addRule("web-app/ejb-ref/ejb-link",
 		       mapper.methodParam(5));
+	mapper.addRule("web-app/ejb-ref/runAs",
+		       mapper.methodParam(6));
 
 	mapper.addRule("web-app/env-entry",
 		       mapper.methodSetter("addEnvironment", 4));

@@ -725,12 +725,14 @@ public final class StandardContext
      * @param home Java class name of the EJB home implementation class
      * @param remote Java class name of the EJB remote implementation class
      * @param link Optional link to a J2EE EJB definition
+     * @param runAs Optional run as security role
      */
     public void addEjb(String name, String description,
 		       String type, String home,
-		       String remote, String link) {
+		       String remote, String link, String runAs) {
 
-	addEjb(new ContextEjb(name, description, type, home, remote, link));
+	addEjb(new ContextEjb(name, description, type, home,
+			      remote, link, runAs));
 
     }
 
