@@ -133,9 +133,9 @@
                type="[Ljava.lang.String;"
                writeable="false"/>
       
-    <attribute name="parentClassLoader"
-               description="Parent class loader."
-               type="java.lang.ClassLoader" />
+    <attribute name="loader"
+               description="Associated loader."
+               type="org.apache.catalina.Loader" />
       
     <attribute name="managedResource"
                description="The managed resource this MBean is associated with"
@@ -148,6 +148,10 @@
     <attribute name="override"
                description="The DefaultContext override flag for this web application"
                type="boolean"/>
+      
+    <attribute name="parentClassLoader"
+               description="Parent class loader."
+               type="java.lang.ClassLoader" />
       
     <attribute name="path"
                description="The context path for this Context"
