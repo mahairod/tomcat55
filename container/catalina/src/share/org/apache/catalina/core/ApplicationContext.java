@@ -113,7 +113,6 @@ import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ResourceSet;
@@ -152,13 +151,6 @@ public class ApplicationContext
         public Object run() {
             HttpRequest request = new MappingRequest
                 (context.getPath(), contextPath + relativeURI, queryString);
-            /*
-            HttpRequestBase request = new HttpRequestBase();
-            request.setContext(context);
-            request.setContextPath(context.getPath());
-            request.setRequestURI(contextPath + relativeURI);
-            request.setQueryString(queryString);
-            */
             Wrapper wrapper = (Wrapper) context.map(request, true);
             if (wrapper == null)
                 return (null);
