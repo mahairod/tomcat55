@@ -113,7 +113,8 @@ import javax.servlet.jsp.*;
  * tag handler implements the TryCatchFinally interface; see that
  * interface for details.
  * <p>
- * <IMG src="doc-files/BodyTagProtocol.gif"/>
+ * <IMG src="doc-files/BodyTagProtocol.gif"
+ *      alt="Lifecycle Details Transition Diagram for BodyTag"/>
  *
  * <p><B>Empty and Non-Empty Action</B>
  * <p> If the TagLibraryDescriptor file indicates that the action must

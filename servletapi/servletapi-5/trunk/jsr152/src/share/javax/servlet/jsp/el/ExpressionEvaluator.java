@@ -67,21 +67,26 @@ import java.util.Map;
  * <p>An instance of the ExpressionEvaluator can be obtained via the 
  * JspContext / PageContext</p>
  *
- * <p>The parseExpression() and evaluate() methods must be thread-safe.  That is,
- * multiple threads may call these methods on the same ExpressionEvaluator
- * object simultaneously.  Implementations should synchronize access if
- * they depend on transient state.  Implementations should not, however,
- * assume that only one object of each ExpressionEvaluator type will be
- * instantiated; global caching should therefore be static.</p>
+ * <p>The parseExpression() and evaluate() methods must be thread-safe.  
+ * That is, multiple threads may call these methods on the same 
+ * ExpressionEvaluator object simultaneously.  Implementations should 
+ * synchronize access if they depend on transient state.  Implementations 
+ * should not, however, assume that only one object of each 
+ * ExpressionEvaluator type will be instantiated; global caching should 
+ * therefore be static.</p>
  *
- * <p>For JSP EL expressions, an expression string without '${' and '}' 
- * tokens is considered to be a static string.  One or more occurrences 
- * of '${' and '}' can be used in the expression string to delimit 
- * dynamic expressions.  Examples:
+ * <p>Only a single EL expression, starting with '${' and ending with
+ * '}', can be parsed or evaluated at a time.  EL expressions 
+ * cannot be mixed with static text.  For example, attempting to 
+ * parse or evaluate "<code>abc${1+1}def${1+1}ghi</code>" or even
+ * "<code>${1+1}${1+1}</code>" will cause an <code>ELException</code> to
+ * be thrown.</p>
+ *
+ * <p>The following are examples of syntactically legal EL expressions:
+ *
  * <ul>
- *   <li><code>${lastName}</code></li>
+ *   <li><code>${person.lastName}</code></li>
  *   <li><code>${8 * 8}</code></li>
- *   <li><code>Version ${major}.${minor}</code></li>
  *   <li><code>${my:reverse('hello')}</code></li>
  * </ul>
  * </p>
@@ -99,23 +104,21 @@ public abstract class ExpressionEvaluator {
      * @param expectedType The expected type of the result of the evaluation
      * @param fMapper A FunctionMapper to resolve functions found in 
      *     the expression.  It can be null, in which case no functions 
-     *     are supported for this invocation.  The FunctionMapper will be
-     *     invoked one or more times between parsing the expression and
-     *     evaluating it, and must return a consistent value each time
-     *     it is invoked.
-     * @param defaultPrefix The default prefix to use when a function is
-     *     encountered with no prefix, or "" if the default is no prefix.
-     *     If the value null is provided, an ELException will be thrown if
-     *     a function call is encountered with no prefix.  This is useful
-     *     for situations where a function must have a prefix.
+     *     are supported for this invocation.  The ExpressionEvaluator 
+     *     must not hold on to the FunctionMapper reference after 
+     *     returning from <code>parseExpression()</code>.  The 
+     *     <code>Expression</code> object returned must invoke the same 
+     *     functions regardless of whether the mappings in the 
+     *     provided <code>FunctionMapper</code> instance change between 
+     *     calling <code>ExpressionEvaluator.parseExpression()</code>
+     *     and <code>Expression.evaluate()</code>.
      * @return The Expression object encapsulating the arguments.
      *
      * @exception ELException Thrown if parsing errors were found.
      */ 
     public abstract Expression parseExpression( String expression, 
 				       Class expectedType, 
-				       FunctionMapper fMapper,
-				       String defaultPrefix ) 
+				       FunctionMapper fMapper ) 
       throws ELException; 
 
 
@@ -131,15 +134,7 @@ public abstract class ExpressionEvaluator {
      *     runtime to resolve the name of implicit objects into Objects.
      * @param fMapper A FunctionMapper to resolve functions found in 
      *     the expression.  It can be null, in which case no functions 
-     *     are supported for this invocation.  The FunctionMapper will be
-     *     invoked one or more times between parsing the expression and
-     *     evaluating it, and must return a consistent value each time
-     *     it is invoked.
-     * @param defaultPrefix The default prefix to use when a function is
-     *     encountered with no prefix, or "" if the default is no prefix.
-     *     If the value null is provided, an ELException will be thrown if
-     *     a function call is encountered with no prefix.  This is useful
-     *     for situations where a function must have a prefix.
+     *     are supported for this invocation.  
      * @return The result of the expression evaluation.
      *
      * @exception ELException Thrown if the expression evaluation failed.
@@ -147,8 +142,7 @@ public abstract class ExpressionEvaluator {
     public abstract Object evaluate( String expression, 
 			    Class expectedType, 
 			    VariableResolver vResolver,
-			    FunctionMapper fMapper,
-			    String defaultPrefix ) 
+			    FunctionMapper fMapper ) 
       throws ELException; 
 }
 

@@ -86,7 +86,8 @@ import javax.servlet.jsp.*;
  * details.
  *
  * <p>
- * <IMG src="doc-files/IterationTagProtocol.gif"/>
+ * <IMG src="doc-files/IterationTagProtocol.gif"
+ *      alt="Lifecycle Details Transition Diagram for IterationTag"/>
  *
  * <p><B>Empty and Non-Empty Action</B>
  * <p> If the TagLibraryDescriptor file indicates that the action must

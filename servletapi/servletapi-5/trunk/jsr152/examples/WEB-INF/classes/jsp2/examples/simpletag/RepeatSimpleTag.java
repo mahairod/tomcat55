@@ -19,7 +19,7 @@ public class RepeatSimpleTag extends SimpleTagSupport {
 
     public void doTag() throws JspException, IOException {
         for (int i=0; i<num; i++) {
-            jspContext.setAttribute("count", String.valueOf( i + 1 ) );
+            getJspContext().setAttribute("count", String.valueOf( i + 1 ) );
 	    getJspBody().invoke(null);
         }
     }
