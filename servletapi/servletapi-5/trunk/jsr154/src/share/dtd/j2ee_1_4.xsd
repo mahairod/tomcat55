@@ -8,7 +8,7 @@
      version="1.4">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)j2ee_1_4.xsds	1.37 03/02/11
+      @(#)j2ee_1_4.xsds	1.39 03/04/07
     </xsd:documentation>
   </xsd:annotation>
 
@@ -1222,13 +1222,13 @@ Deployment File may indicate one of the following:
 
 	The role-nameType designates the name of a security role.
 
-	The name must conform to the lexical rules for an NMTOKEN.
+	The name must conform to the lexical rules for a token.
 
       </xsd:documentation>
     </xsd:annotation>
 
     <xsd:simpleContent>
-      <xsd:restriction base="j2ee:xsdNMTOKENType"/>
+      <xsd:restriction base="j2ee:string"/>
     </xsd:simpleContent>
   </xsd:complexType>
 
@@ -1394,14 +1394,18 @@ Deployment File may indicate one of the following:
     <xsd:annotation>
       <xsd:documentation>
 
-	The url-patternType contains the url pattern of the mapping. It must
-	follow the rules specified in Section 11.2 of the Servlet API
-	Specification.
+	The url-patternType contains the url pattern of the mapping.
+	It must follow the rules specified in Section 11.2 of the
+	Servlet API Specification. This pattern is assumed to be in
+	URL-decoded form and must not contain CR(#xD) or LF(#xA).
+	If it contains those characters, the container must inform
+	the developer with a descriptive error message.
+	The container must preserve all characters including whitespaces.
 
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>
-      <xsd:restriction base="j2ee:string"/>
+      <xsd:extension base="xsd:string"/>
     </xsd:simpleContent>
   </xsd:complexType>
 

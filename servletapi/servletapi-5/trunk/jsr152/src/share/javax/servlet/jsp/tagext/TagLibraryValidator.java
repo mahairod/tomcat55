@@ -76,7 +76,15 @@ import java.util.Map;
  *
  * once initialized, the validate(String, String, PageData) method will
  * be invoked, where the first two arguments are the prefix
- * and uri arguments used in the taglib directive.
+ * and uri arguments used in the taglib directive.  The prefix is intended
+ * to make it easier to produce an error message.  However, it is not
+ * always accurate.  In the case where a single URI is mapped to more 
+ * than one prefix in the XML view, the prefix of the first URI is provided.
+ * Therefore, to provide high quality error messages in cases where the 
+ * tag elements themselves are checked, the prefix parameter should be 
+ * ignored and the actual prefix of the element should be used instead.  
+ * TagLibraryValidators should always use the uri to identify elements 
+ * as beloning to the tag library, not the prefix.
  *
  * <p>
  * A TagLibraryValidator instance
@@ -101,6 +109,13 @@ import java.util.Map;
  * objects.  The container then, in turn, can use these
  * values to provide more precise information on the location
  * of an error.
+ *
+ * <p>
+ * The actual prefix of the <code>id</code> attribute may or may not be 
+ * <code>jsp</code> but it will always map to the namespace
+ * <code>http://java.sun.com/JSP/Page</code>.  A TagLibraryValidator
+ * implementation must rely on the uri, not the prefix, of the <code>id</code>
+ * attribute.
  */
 
 abstract public class TagLibraryValidator {
@@ -135,12 +150,14 @@ abstract public class TagLibraryValidator {
 
     /**
      * Validate a JSP page.
-     * This will get invoked once per directive in the JSP page.
-     * This method will return null if the page is valid; otherwise
+     * This will get invoked once per unique tag library URI in the
+     * XML view.  This method will return null if the page is valid; otherwise
      * the method should return an array of ValidationMessage objects.
      * An array of length zero is also interpreted as no errors.
      *
-     * @param prefix the value of the prefix argument in the directive
+     * @param prefix the first prefix with which the tag library is 
+     *     associated, in the XML view.  Note that some tags may use 
+     *     a different prefix if the namespace is redefined.
      * @param uri the value of the uri argument in the directive
      * @param page the JspData page object
      * @return A null object, or zero length array if no errors, an array

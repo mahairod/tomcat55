@@ -8,7 +8,7 @@
 	    version="2.4">
   <xsd:annotation>
     <xsd:documentation>
-      @(#)web-app_2_4.xsds	1.55 03/02/19
+      @(#)web-app_2_4.xsds     1.57 03/04/07
     </xsd:documentation>
   </xsd:annotation>
 
@@ -379,7 +379,7 @@
     </xsd:annotation>
 
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="[~\s]+"/>
+      <xsd:pattern value="[^\s]+"/>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1011,7 +1011,7 @@
 
     <xsd:sequence>
       <xsd:element name="session-timeout"
-		   type="j2ee:xsdNonNegativeIntegerType"
+		   type="j2ee:xsdIntegerType"
 		   minOccurs="0">
 	<xsd:annotation>
 	  <xsd:documentation>
