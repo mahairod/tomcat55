@@ -333,6 +333,6 @@ public abstract class ValveBase
 
     public ObjectName getContainerName() {
         if( container== null) return null;
-        return ((ContainerBase)container).getObjectName();
+        return ((ContainerBase)container).getJmxName();
     }
 }
