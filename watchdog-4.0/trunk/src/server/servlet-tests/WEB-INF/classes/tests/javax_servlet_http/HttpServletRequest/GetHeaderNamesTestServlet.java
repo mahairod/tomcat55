@@ -116,6 +116,13 @@ public class GetHeaderNamesTestServlet extends HttpServlet {
 			{
 				out.println("GetHeaderNamesTest test PASSED");
 			}
+         else
+                       {
+			out.println("GetHeaderNamesTest test FAILED");
+			out.println("returned String= "+ final_header);
+
+                       }
+
 
 		}
 

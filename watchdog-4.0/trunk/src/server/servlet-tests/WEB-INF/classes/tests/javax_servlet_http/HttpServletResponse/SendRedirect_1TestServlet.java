@@ -77,11 +77,11 @@ public class SendRedirect_1TestServlet extends HttpServlet {
 
 	 public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		ServletOutputStream sos =null; 
 		sos = response.getOutputStream();
 		response.setBufferSize(60);
-		response.setContentType("text/html");
 
 		response.flushBuffer();
 		sos.println("Good Luck");

@@ -79,16 +79,5 @@ public class AddCookieTestServlet extends HttpServlet {
 
 		//check for this in the client side
 		response.addCookie(new Cookie("BestLanguage","java"));
-		if (response.containsHeader("Set-Cookie") == true)
-		{
-			out.println("AddCookieTest test PASSED");
 		}
-		else
-		{
-			out.println("AddCookieTest test FAILED");
-			out.println("response.containsHeader() method did not return true"); 
-			out.println("Actual Value -> " + response.containsHeader("Set-Cookie"));
-			out.println("Expected Value -> true");
-		}
-	}
 }

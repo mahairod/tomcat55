@@ -411,7 +411,7 @@
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncodingTest.html" />
 
 
-      <gtest request="GET /servlet-tests/ServletRequestGetCharacterEncoding_1Test HTTP/1.0"
+      <gtest request="GET /servlet-tests/servletRequestGetCharacterEncoding_1Test HTTP/1.0"
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/ServletRequestGetCharacterEncoding_1Test.html" />
 
@@ -678,7 +678,7 @@
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetCookies_01Test.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat , 01 Jan 2000 00:00:01 GMT" 
+           debug="0" host="${host}" port="${port}" requestHeaders="If-Modified-Since:Sat,01 Jan 2000 00:00:01 GMT" 
            goldenFile="${wgdir}/javax_servlet_http/HttpServletRequest/GetDateHeaderTest.html" />
 
       <gtest request="GET /servlet-tests/GetDateHeader_01Test HTTP/1.0"
@@ -800,11 +800,10 @@
 <!-- javax_servlet_http_HttpServletResponse tests -->
 
       <gtest request="GET /servlet-tests/AddCookieTest HTTP/1.0"
-           goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/AddCookieTest.html"
            debug="0" host="${host}" port="${port}"  expectHeaders="Set-Cookie:BestLanguage=java" />
 
       <gtest request="GET /servlet-tests/AddDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Thu, 15 Jan 1970 06:56:07 GMT" />
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
 
       <gtest request="GET /servlet-tests/AddHeaderTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  expectHeaders="MyStrHeader:java" />
@@ -836,7 +835,7 @@
            goldenFile="${wgdir}/javax_servlet_http/HttpServletResponse/SendRedirect_1Test.html" />
 
       <gtest request="GET /servlet-tests/SetDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Thu, 15 Jan 1970 06:56:07 GMT" />
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
 
       <gtest request="GET /servlet-tests/SetHeaderTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"  expectHeaders="MyStrHeader:Java" />
@@ -1237,7 +1236,7 @@
 
      <target name="AddDateHeaderTest" >
       <gtest request="GET /servlet-tests/AddDateHeaderTest HTTP/1.0"
-           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Thu, 15 Jan 1970 06:56:07 GMT" />
+           debug="0" host="${host}" port="${port}"  expectHeaders="DateInfo:Sat, 25 Apr 1970 07:29:03 GMT" />
      </target>
 
      <target name="AddHeaderTest" >

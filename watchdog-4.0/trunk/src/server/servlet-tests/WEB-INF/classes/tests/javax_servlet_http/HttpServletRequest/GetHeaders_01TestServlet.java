@@ -88,13 +88,16 @@ public class GetHeaders_01TestServlet extends HttpServlet {
 		}
 		else
 		{
+	         int count=0;
 		   while (emptyHeaders.hasMoreElements() )
                    {
+                    count++;
                  String value = (String) emptyHeaders.nextElement() ;
 			out.println("getHeaders returing Non-Null value for Accept-Language");
 			out.println("HeaderValue : " + value );
 	       	   }
-			out.println("GetHeaders_01Test test FAILED");
+                        if(count==0)
+			out.println("GetHeaders_01Test test PASSED");
                 }
 
 	}

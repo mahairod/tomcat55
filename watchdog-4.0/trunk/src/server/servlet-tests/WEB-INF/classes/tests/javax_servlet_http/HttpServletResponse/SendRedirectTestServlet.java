@@ -78,7 +78,7 @@ public class SendRedirectTestServlet extends HttpServlet {
 
 		// Relative path of the new Location
 
-		String path = "/RedirectedTestServlet";
+		String path = "RedirectedTestServlet";
 		response.sendRedirect(path);
 	}
 }

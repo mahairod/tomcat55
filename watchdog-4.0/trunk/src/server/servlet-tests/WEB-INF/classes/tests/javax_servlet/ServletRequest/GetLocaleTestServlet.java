@@ -83,12 +83,12 @@ public class GetLocaleTestServlet extends GenericServlet {
 
 		PrintWriter out = response.getWriter();
 
-		if (request.getLocale().toString().trim().equals("en-us")) {
+		if (request.getLocale().toString().equals("en_US")) {
 			out.println("GetLocaleTest test PASSED");
                 }
 		else {
 			out.println("GetLocaleTest test FAILED");
-                        out.println("Locale = " + request.getLocale().toString().trim()  );
+                        out.println("Locale = " + request.getLocale().toString() );
 		}
 	}
 }

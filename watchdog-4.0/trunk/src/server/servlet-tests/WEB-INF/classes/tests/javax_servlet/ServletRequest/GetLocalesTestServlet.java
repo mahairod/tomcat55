@@ -85,19 +85,28 @@ public class GetLocalesTestServlet extends GenericServlet {
 		PrintWriter out = response.getWriter();
 
 		Enumeration e = request.getLocales();
+                String locale1="null" ;
+                String locale2="null" ;
 
 		int count=0;
 		while(e.hasMoreElements()) {
                         count++;
                         Locale gotLocale = (Locale)e.nextElement();
-                        if ( (gotLocale.equals("en-us")) || (gotLocale.equals("en-gb")) ) {
-                                out.println("GetLocalesTest test PASSED");
-                        }
+                        if ( gotLocale.equals("en_US") )
+                        locale1="us" ;
 
-                }
-                if(count !=2) {
-                        out.println("GetLocalesTest test FAILED <BR>");
-                        out.println("Number of Locales returned -> " + count);
-                }
+                        if ( gotLocale.equals("en_GB") )
+                        locale1="gb" ;
+
+                        }
+ String final_string = locale1 + locale2;
+
+                    if(final_string.equals("usgb") )
+                               out.println("GetLocalesTest test PASSED");
+                    else
+                      {
+                        out.println("GetLocalesTest test FAILED ");
+                        out.println("Final Locale String = " + final_string);
+                      }
 	}
 }

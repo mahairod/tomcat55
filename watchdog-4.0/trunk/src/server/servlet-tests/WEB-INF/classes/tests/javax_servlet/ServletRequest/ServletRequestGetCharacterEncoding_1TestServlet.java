@@ -81,7 +81,7 @@ public class ServletRequestGetCharacterEncoding_1TestServlet extends GenericServ
 		String encoding = request.getCharacterEncoding();
 
 		// in client side we set it to null
-		if(encoding==null) {
+		if(encoding.equals("ISO-8859-1") ) {
 				out.println("ServletRequestGetCharacterEncoding_1Test test PASSED");
 		}// else wrong type of encoding
 		else {
