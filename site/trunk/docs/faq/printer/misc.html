@@ -354,7 +354,14 @@
     <a name="version">How to I get Tomcat's version number?</a>
   </b>
   <div style="padding-left : 20px;">
+    <p>
     <code>javax.servlet.ServletContext.getServerInfo();</code>
+    </p>
+    <p>
+    Starting with tomcat 5.0.28 - there is now a <tt>version.sh</tt>
+    (or <tt>version.bat</tt>)  program in the bin directory.
+    It will print the version number of tomcat to Standard output.
+    </p>
   </div><br>
 
   <b style="font-size: larger">
@@ -741,7 +748,7 @@
       <li><a href="http://www.friendster.com">Friendster</a>.</li>
       <li><a href="http://www.webshots.com">WebShots</a>.</li>
       <li><a href="http://marc.theaimsgroup.com/?l=tomcat-dev&m=109396561900857&w=2">University of Florida</a>.</li>
-      <li><a href="http://archives.real-time.com/pipermail/cocoon-users/2003-October/040770.html">Various Cocoon on tomcat applications</a>.</li> 
+      <li><a href="http://archives.real-time.com/pipermail/cocoon-users/2003-October/040770.html">Various Cocoon on tomcat applications</a>.</li>
       <li><a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=108334244910127&w=2">Another mailing list thread with production system references...</a></li>
     </ul>
     This list is limited mostly by our free time.  There are numerous other
@@ -752,7 +759,7 @@
     but please let us know (by sending a message to tomat-user@jakarta.apache.org)
     if your site is using tomcat in production.
   </div><br>
- 
+
   <b style="font-size: larger">
     <a name="commonsLoggingLog4j">
       How do I configure commons-logging and log4j in tomcat 5?

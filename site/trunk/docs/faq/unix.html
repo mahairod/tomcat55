@@ -3,7 +3,7 @@
       dd {padding-bottom : 10px;}
     </style></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="http://jakarta.apache.org//images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
       Tomcat FAQ
-    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Unix / Linux Questions</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/unix.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
+    " align="right" src="../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--LEFT SIDE NAVIGATION--><td nowrap="true" valign="top" width="20%"><p><strong>Links</strong></p><ul><li><a href="..">Tomcat Home</a></li><li><a href="index.html">FAQ Home</a></li></ul><p><strong>Contents</strong></p><ul><li><a href="bugs.html">Bugs</a></li><li><a href="classnotfound.html">Class Not Found</a></li><li><a href="connectors.html">Connectors</a></li><li><a href="database.html">Database</a></li><li><a href="deployment.html">Deployment</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Howto">How do I</a></li><li><a href="unix.html">Linux / Unix</a></li><li><a href="logging.html">Logging</a></li><li><a href="os2.html">OS/2, z/OS</a></li><li><a href="memory.html">Memory</a></li><li><a href="meta.html">Meta</a></li><li><a href="misc.html">Miscellaneous</a></li><li><a href="performance.html">Monitoring / Performance</a></li><li><a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">Other Resources</a></li><li><a href="security.html">Security</a></li><li><a href="version.html">Which Version</a></li><li><a href="tomcatuser.html">Tomcat User List</a></li><li><a href="windows.html">Windows</a></li></ul></td><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Unix / Linux Questions</h2></td><td nowrap="true" valign="top" align="right"><small><a href="printer/unix.html"><img alt="Printer Friendly Version" border="0" src="../images/printer.gif"><br>print-friendly<br>version
                     </a></small></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
   <p>
     I wish there was more to say right here or to link to something.
@@ -59,6 +59,7 @@
   </a>
   </b>
   <div style="padding-left : 20px;">
+    <p>
     You either need to run headless or run an alternate X-server. Some more
     information can be found
     <a href="http://marc.theaimsgroup.com/?t=104803047600003&r=1&w=2">
@@ -71,6 +72,11 @@
     <a href="http://marc.theaimsgroup.com/?l=tomcat-user&m=101614645312259&w=2">
         here
     </a>.
+    </p>
+
+    <p> Or if your are using a JVM 1.4 or better, you can use the system property
+        <tt>java.awt.headless=true</tt>
+    </p>
   </div><br>
 
   <b style="font-size: larger">
