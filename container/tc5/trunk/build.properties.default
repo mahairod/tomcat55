@@ -40,7 +40,13 @@ base.path=/usr/share/java
 #base.path=/usr/local
 
 # ----- Jakarta files base location -----
-base-jakarta.loc=http://archive.apache.org/dist/jakarta/
+base-jakarta.loc=http://archive.apache.org/dist/jakarta
+
+# ----- XML files base location -----
+base-xml.loc=http://archive.apache.org/dist/xml
+
+# ----- Sourceforge files base location -----
+base-sf.loc=http://telia.dl.sourceforge.net/sourceforge
 
 # --------------------------------------------------
 #                REQUIRED LIBRARIES
@@ -129,7 +135,7 @@ xerces.home=${base.path}/xerces-2_6_0
 xerces.lib=${xerces.home}
 xercesImpl.jar=${xerces.lib}/xercesImpl.jar
 xmlParserAPIs.jar=${xerces.lib}/xmlParserAPIs.jar
-xerces.loc=http://archive.apache.org/dist/xml/xerces-j/binaries/Xerces-J-bin.2.6.0.tar.gz
+xerces.loc=${base-xml.loc}/xerces-j/binaries/Xerces-J-bin.2.6.0.tar.gz
 
 
 # --------------------------------------------------
@@ -176,21 +182,21 @@ jmx.home=${base.path}/mx4j-1.1.1
 jmx.lib=${jmx.home}/lib
 jmx.jar=${jmx.lib}/mx4j-jmx.jar
 jmx-tools.jar=${jmx.lib}/mx4j-tools.jar
-jmx.loc=http://telia.dl.sourceforge.net/sourceforge/mx4j/mx4j-1.1.1.tar.gz
+jmx.loc=${base-sf.loc}/mx4j/mx4j-1.1.1.tar.gz
 
 
 # ----- JUnit Unit Test Suite, version 3.7 or later -----
 junit.home=${base.path}/junit3.7
 junit.lib=${junit.home}
 junit.jar=${junit.lib}/junit.jar
-junit.loc=http://telia.dl.sourceforge.net/sourceforge/junit/junit3.7.zip
+junit.loc=${base-sf.loc}/junit/junit3.7.zip
 
 
 # ----- NSIS, version 2.0 or later -----
-nsis.home=${base.path}/nsis-2.0-b4
+nsis.home=${base.path}/nsis-2.0-rc1
 nsis.exe=${nsis.home}/makensis.exe
 nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
-nsis.loc=http://telia.dl.sourceforge.net/sourceforge/nsis/nsis20b4.exe
+nsis.loc=${base-sf.loc}/nsis/nsis20rc1.exe
 
 
 # ----- Struts, version 1.1 or later -----
