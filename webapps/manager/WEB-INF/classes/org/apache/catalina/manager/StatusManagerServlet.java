@@ -513,7 +513,7 @@ public class StatusManagerServlet
             writer.write("<td nowrap>");
             writer.write("" + filter(mBeanServer.getAttribute
                                      (pName, "method").toString()));
-            writer.write("" + filter(mBeanServer.getAttribute
+            writer.write(" " + filter(mBeanServer.getAttribute
                                      (pName, "currentUri").toString()));
             String queryString = (String) mBeanServer.getAttribute
                 (pName, "currentQueryString");
