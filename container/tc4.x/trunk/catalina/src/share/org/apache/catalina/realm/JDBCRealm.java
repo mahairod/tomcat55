@@ -537,6 +537,7 @@ public class JDBCRealm
         if (connectionPassword != null)
             props.put("password", connectionPassword);
         dbConnection = driver.connect(connectionURL, props);
+        dbConnection.setAutoCommit(false);
         return (dbConnection);
 
     }
