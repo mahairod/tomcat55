@@ -1481,10 +1481,24 @@ public class WebdavServlet
             }
         }
         
+        destinationPath = normalize(destinationPath);
+        
         if (debug > 0)
             System.out.println("Dest path :" + destinationPath);
         
+        if ((destinationPath.toUpperCase().startsWith("/WEB-INF")) ||
+            (destinationPath.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(WebdavStatus.SC_FORBIDDEN);
+            return false;
+        }
+        
         String path = getRelativePath(req);
+        
+        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
+            (path.toUpperCase().startsWith("/META-INF"))) {
+            resp.sendError(WebdavStatus.SC_FORBIDDEN);
+            return false;
+        }
         
         if (destinationPath.equals(path)) {
             resp.sendError(WebdavStatus.SC_FORBIDDEN);
