@@ -47,6 +47,9 @@
       <update>
         <bug>32282</bug>: Modify Windows Uninstaller to only remove webapps/ROOT and webapps if user asks to remove everything. (yoavs)
       </update>
+      <update>
+        Add DIGEST authentication support to the JDBC realm. Supports both digested and cleartext passwords. (markt)
+      </update>
     </changelog>
   </subsection>
 
