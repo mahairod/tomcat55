@@ -105,17 +105,25 @@ class DefaultErrorHandler implements ErrorHandler {
 	Object[] args = null;
         StringBuffer buf = new StringBuffer();
 	
-	for (int i=0; i<details.length; i++) {
-	    args = new Object[] {
-		new Integer(details[i].getJspBeginLineNumber()), 
-		details[i].getJspFileName()
-	    };
-	    buf.append(Localizer.getMessage("jsp.error.single.line.number",
-					   args));
-	    buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
-	    buf.append(details[i].getErrorMessage());
-	    buf.append('\n');
-	}
+        if ((details.length == 1) 
+            && (details[0].getJspBeginLineNumber() == -1)
+            && (details[0].getJspFileName() == null)) {
+            // Special case: No Java compiler found
+            buf.append(Localizer.getMessage("jsp.error.nojavac"));
+            buf.append('\n');
+        } else {
+            for (int i=0; i < details.length; i++) {
+                args = new Object[] {
+                    new Integer(details[i].getJspBeginLineNumber()), 
+                    details[i].getJspFileName()
+                };
+                buf.append(Localizer.getMessage("jsp.error.single.line.number",
+                                                args));
+                buf.append(Localizer.getMessage("jsp.error.corresponding.servlet"));
+                buf.append(details[i].getErrorMessage());
+                buf.append('\n');
+            }
+        }
 
 	throw new JasperException(Localizer.getMessage("jsp.error.unable.compile")
 				  + buf);
