@@ -37,7 +37,7 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.cluster.CatalinaCluster;
 import org.apache.catalina.cluster.ClusterManager;
 import org.apache.catalina.cluster.ClusterMessage;
-import org.apache.catalina.cluster.Constants;
+import org.apache.catalina.cluster.tcp.Constants;
 import org.apache.catalina.cluster.Member;
 import org.apache.catalina.cluster.MembershipListener;
 import org.apache.catalina.cluster.MembershipService;
@@ -61,11 +61,14 @@ import org.apache.tomcat.util.IntrospectionUtils;
  * FIXME remove install/remove/start/stop context dummys
  * FIXME better stats
  * FIXME factor out receiver handling
- * FIXME Support JMX and Lifecycle Listener Notification (start/stop member) (start/stop context/manager)
  * FIXME optimize message package creation
  * FIXME better compress message handling
  * FIXME Clearer implementation from notifyListenersOnReplication flag
- *
+ * FIXME Handle more than one Replication valve use one pipeline and Programme als Delgation valve to cluster pipeline.
+ * 
+ * FIXME wrote testcases
+ * FIXME Factor out session MessageListener
+ * 
  * @author Filip Hanik
  * @author Remy Maucherat
  * @author Peter Rossbach
@@ -83,8 +86,26 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     /**
      * Descriptive information about this component implementation.
      */
-    protected static final String info = "SimpleTcpCluster/1.0";
+    protected static final String info = "SimpleTcpCluster/1.1";
 
+    public static final String BEFORE_MEMBERREGISTER_EVENT = "before_member_register";
+
+    public static final String AFTER_MEMBERREGISTER_EVENT = "after_member_register";
+
+    public static final String BEFORE_MANAGERREGISTER_EVENT = "before_manager_register";
+
+    public static final String AFTER_MANAGERREGISTER_EVENT = "after_manager_register";
+
+    public static final String BEFORE_MANAGERUNREGISTER_EVENT = "before_manager_unregister";
+
+    public static final String AFTER_MANAGERUNREGISTER_EVENT = "after_manager_unregister";
+
+    public static final String BEFORE_MEMBERUNREGISTER_EVENT = "before_member_unregister";
+
+    public static final String AFTER_MEMBERUNREGISTER_EVENT = "after_member_unregister";
+
+    public static final String SEND_MESSAGE_FAILURE_EVENT = "send_message_failure";
+    
     /**
      * the service that provides the membership
      */
@@ -196,6 +217,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     private ObjectName objectName = null;
 
+    private boolean notifyLifecycleListenerOnFailure = false;
+
+    
     // ------------------------------------------------------------- Properties
 
     public SimpleTcpCluster() {
@@ -241,7 +265,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         Container oldContainer = this.container;
         this.container = container;
         support.firePropertyChange("container", oldContainer, this.container);
-        //this.container.
     }
 
     /**
@@ -253,6 +276,23 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         return (this.container);
     }
 
+    
+    /**
+     * @return Returns the notifyLifecycleListenerOnFailure.
+     */
+    public boolean isNotifyLifecycleListenerOnFailure() {
+        return notifyLifecycleListenerOnFailure;
+    }
+    
+    /**
+     * @param notifyLifecycleListenerOnFailure The notifyLifecycleListenerOnFailure to set.
+     */
+    public void setNotifyLifecycleListenerOnFailure(boolean notifyListenerOnFailure) {
+        boolean oldNotifyListenerOnFailure = this.notifyLifecycleListenerOnFailure;
+        this.notifyLifecycleListenerOnFailure = notifyListenerOnFailure;
+        support.firePropertyChange("notifyLifecycleListenerOnFailure", oldNotifyListenerOnFailure, this.notifyLifecycleListenerOnFailure);
+    }
+    
     /**
      * Sets the configurable protocol stack. This is a setting in server.xml
      * where you can configure your protocol.
@@ -290,6 +330,12 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     // --------------------------------------------------------- Public Methods
 
+    
+    /** Create new Manager and add to cluster
+     * @param name Context Name of this manager
+     * @see org.apache.catalina.Cluster#createManager(java.lang.String)
+     * @see #addManager(String, ClusterManager)
+     */
     public synchronized Manager createManager(String name) {
         if (log.isDebugEnabled())
             log.debug("Creating ClusterManager for context " + name
@@ -306,19 +352,28 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         return manager;
     }
 
-    /* remove an application form cluster replication bus
-     * FIXME notify someone (JMX(Listener)
+    /** remove an application form cluster replication bus
      * @see org.apache.catalina.cluster.CatalinaCluster#removeManager(java.lang.String)
      */
     public void removeManager(String name) {
-        managers.remove(name);
-    }
+        Manager manager = getManager(name);
+        if(manager != null ) {
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(BEFORE_MANAGERUNREGISTER_EVENT, manager);
+            managers.remove(name);
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_MANAGERUNREGISTER_EVENT, manager);
+        }
+     }
 
-    /* add an application to cluster replication bus
-     * FIXME notify someone (JMX(Listener)
+    /** add an application to cluster replication bus
+     * @param name of the context 
+     * @param manager manager to register 
      * @see org.apache.catalina.cluster.CatalinaCluster#addManager(java.lang.String, org.apache.catalina.cluster.ClusterManager)
      */
     public void addManager(String name, ClusterManager manager) {
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_MANAGERREGISTER_EVENT, manager);
         manager.setName(name);
         manager.setCluster(this);
         manager.setDistributable(true);
@@ -326,6 +381,8 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         manager.setUseDirtyFlag(useDirtyFlag);
         manager.setNotifyListenersOnReplication(notifyListenersOnReplication);
         managers.put(name, manager);
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_MANAGERREGISTER_EVENT, manager);
     }
 
     public Manager getManager(String name) {
@@ -335,16 +392,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     // ------------------------------------------------------ Lifecycle Methods
 
     /**
-     * Add a lifecycle event listener to this component.
-     * 
-     * @param listener
-     *            The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-        lifecycle.addLifecycleListener(listener);
-    }
-
-    /**
      * Execute a periodic task, such as reloading, etc. This method will be
      * invoked inside the classloading context of this container. Unexpected
      * throwables will be caught and logged.
@@ -352,7 +399,19 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public void backgroundProcess() {
         if (clusterDeployer != null)
             clusterDeployer.backgroundProcess();
+        if( clusterSender != null)
+            clusterSender.backgroundProcess();
 
+    }
+
+    /**
+     * Add a lifecycle event listener to this component.
+     * 
+     * @param listener
+     *            The listener to add
+     */
+    public void addLifecycleListener(LifecycleListener listener) {
+        lifecycle.addLifecycleListener(listener);
     }
 
     /**
@@ -375,6 +434,19 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         lifecycle.removeLifecycleListener(listener);
     }
 
+    /** 
+     * Use as base to handle start/stop/periodic Events from host.
+     * Currently only log the messages as trace level.
+     * 
+     * @see org.apache.catalina.LifecycleListener#lifecycleEvent(org.apache.catalina.LifecycleEvent)
+     */
+    public void lifecycleEvent(LifecycleEvent lifecycleEvent) {
+        if(log.isTraceEnabled())
+            log.trace(sm.getString("SimpleTcpCluster.event.log",lifecycleEvent.getType(), lifecycleEvent.getData())) ;
+    }
+
+    // ------------------------------------------------------ public
+    
     /**
      * Prepare for the beginning of active use of the public methods of this
      * component. This method should be called after <code>configure()</code>,
@@ -383,7 +455,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * other nodes in the cluster, and request the current session state to be
      * transferred to this node.
      * 
-     * FIXME notify someone (JMX(Listener)   
      * @exception IllegalStateException
      *                if this component has already been started
      * @exception LifecycleException
@@ -395,6 +466,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
             throw new LifecycleException(sm.getString("cluster.alreadyStarted"));
         if (log.isInfoEnabled())
             log.info("Cluster is about to start");
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, this);
+
         try {
             if (log.isDebugEnabled())
                 log.debug("Invoking addValve on " + getContainer()
@@ -429,15 +503,62 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                                 x);
             } //catch
             this.started = true;
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_START_EVENT, this);
         } catch (Exception x) {
             log.error("Unable to start cluster.", x);
             throw new LifecycleException(x);
         }
     }
 
-    /*
+    /**
+     * Gracefully terminate the active use of the public methods of this
+     * component. This method should be the last one called on a given instance
+     * of this component. <BR>
+     * This will disconnect the cluster communication channel and stop the
+     * listener thread.
+     * 
+     * @exception IllegalStateException
+     *                if this component has not been started
+     * @exception LifecycleException
+     *                if this component detects a fatal error that needs to be
+     *                reported
+     */
+    public void stop() throws LifecycleException {
+
+        if (!started)
+            throw new IllegalStateException(sm.getString("cluster.notStarted"));
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(BEFORE_STOP_EVENT, this);
+        
+        unregisterMBeans();
+
+        membershipService.stop();
+        membershipService.removeMembershipListener();
+        try {
+            clusterSender.stop();
+        } catch (Exception x) {
+            log.error("Unable to stop cluster sender.", x);
+        }
+        try {
+            clusterReceiver.stop();
+            clusterReceiver.setCatalinaCluster(null);
+        } catch (Exception x) {
+            log.error("Unable to stop cluster receiver.", x);
+        }
+        if (clusterDeployer != null) {
+            clusterDeployer.stop();
+        }
+        started = false;
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, this);
+    }
+
+    /**
      * send a cluster message to one member
      * 
+     * @param msg message to transfer
+     * @param dest Receiver member
      * @see org.apache.catalina.cluster.CatalinaCluster#send(org.apache.catalina.cluster.ClusterMessage,
      *      org.apache.catalina.cluster.Member)
      */
@@ -466,6 +587,11 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
                 clusterSender.sendMessage(msg.getUniqueId(), data);
             }
         } catch (Exception x) {
+            if(notifyLifecycleListenerOnFailure) {
+                // Notify our interested LifecycleListeners
+                lifecycle.fireLifecycleEvent(SEND_MESSAGE_FAILURE_EVENT, 
+                 new SendMessageData(msg,dest,x));                
+            }
             log.error("Unable to send message through cluster sender.", x);
         }
     }
@@ -495,44 +621,6 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         send(msg, null);
     }
 
-    /**
-     * Gracefully terminate the active use of the public methods of this
-     * component. This method should be the last one called on a given instance
-     * of this component. <BR>
-     * This will disconnect the cluster communication channel and stop the
-     * listener thread.
-     * 
-     * FIXME notify someone (JMX(Listener)
-     * @exception IllegalStateException
-     *                if this component has not been started
-     * @exception LifecycleException
-     *                if this component detects a fatal error that needs to be
-     *                reported
-     */
-    public void stop() throws LifecycleException {
-
-        if (!started)
-            throw new IllegalStateException(sm.getString("cluster.notStarted"));
-        unregisterMBeans();
-
-        membershipService.stop();
-        membershipService.removeMembershipListener();
-        try {
-            clusterSender.stop();
-        } catch (Exception x) {
-            log.error("Unable to stop cluster sender.", x);
-        }
-        try {
-            clusterReceiver.stop();
-            clusterReceiver.setCatalinaCluster(null);
-        } catch (Exception x) {
-            log.error("Unable to stop cluster receiver.", x);
-        }
-        if (clusterDeployer != null) {
-            clusterDeployer.stop();
-        }
-        started = false;
-    }
 
     /* New cluster member is registered
      * FIXME notify someone (JMX(Listener)
@@ -542,22 +630,29 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         try {
             if (log.isInfoEnabled())
                 log.info("Replication member added:" + member);
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(BEFORE_MEMBERREGISTER_EVENT, member);
             clusterSender.add(member);
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_MEMBERREGISTER_EVENT, member);
         } catch (Exception x) {
             log.error("Unable to connect to replication system.", x);
         }
 
     }
 
-    /* Cluster member is gone
-     * FIXME notify someone (JMX(Listener)
+    /** Cluster member is gone
      * @see org.apache.catalina.cluster.MembershipListener#memberDisappeared(org.apache.catalina.cluster.Member)
      */
     public void memberDisappeared(Member member) {
         if (log.isInfoEnabled())
             log.info("Received member disappeared:" + member);
         try {
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(BEFORE_MEMBERUNREGISTER_EVENT, member);
             clusterSender.remove(member);
+            // Notify our interested LifecycleListeners
+            lifecycle.fireLifecycleEvent(AFTER_MEMBERUNREGISTER_EVENT, member);
         } catch (Exception x) {
             log.error("Unable remove cluster node from replication system.", x);
         }
@@ -617,6 +712,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
     public void setUseDirtyFlag(boolean useDirtyFlag) {
         this.useDirtyFlag = useDirtyFlag;
     }
+
+    
+    // --------------------------------------------------------- receiver messages
 
     public void messageDataReceived(byte[] data) {
         long timeSent = System.currentTimeMillis();
@@ -682,14 +780,9 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
         }
     }
 
-    public void lifecycleEvent(LifecycleEvent lifecycleEvent) {
-        if (log.isDebugEnabled())
-            log.debug("\nlifecycleEvent\n\nType" + lifecycleEvent.getType()
-                    + "\nData" + lifecycleEvent.getData() + "\n\n\n");
-    }
+ 
+    // --------------------------------------------------------- Cluster Wide Deployments
 
-    // --------------------------------------------------------- Cluster Wide
-    // Deployments
     /**
      * Start an existing web application, attached to the specified context path
      * in all the other nodes in the cluster. Only starts a web application if
@@ -706,6 +799,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      *                currently installed web application
      * @exception IOException
      *                if an input/output error occurs during startup
+     * @deprecated since 5.5.10
      */
     public void startContext(String contextPath) throws IOException {
         return;
@@ -739,6 +833,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @exception IllegalStateException
      *                if the specified context path is already attached to an
      *                existing web application
+     * @deprecated since 5.5.10
      */
     public void installContext(String contextPath, URL war) {
         if (log.isDebugEnabled())
@@ -762,6 +857,7 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
      * @exception IOException
      *                if an input/output error occurs while stopping the web
      *                application
+     * @deprecated since 5.5.10
      */
     public void stop(String contextPath) throws IOException {
         return;
@@ -830,6 +926,20 @@ public class SimpleTcpCluster implements CatalinaCluster, Lifecycle,
 
     public Valve getValve() {
         return valve;
+    }
+
+    /**
+     * Get the cluster listeners associated with this cluster. If this
+     * Array has no listeners registered, a zero-length array is returned.
+     */
+    public MessageListener[] findClusterListeners() {
+        if(clusterListeners.size() > 0) {
+            MessageListener[] listener = new MessageListener[clusterListeners.size()];
+            clusterListeners.toArray(listener);
+            return listener ;
+        } else
+            return new MessageListener[0] ;
+
     }
 
     public void addClusterListener(MessageListener listener) {

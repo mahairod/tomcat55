@@ -36,7 +36,7 @@ import org.apache.catalina.cluster.io.ObjectReader;
  * @version $Revision$, $Date$
  */
 public class TcpReplicationThread extends WorkerThread {
-    private static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
+    public static final byte[] ACK_COMMAND = new byte[] {6, 2, 3};
     private static org.apache.commons.logging.Log log =
         org.apache.commons.logging.LogFactory.getLog( TcpReplicationThread.class );
     private ByteBuffer buffer = ByteBuffer.allocate (1024);

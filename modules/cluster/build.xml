@@ -3,16 +3,14 @@
 
   <!-- ===================== Initialize Property Values =================== -->
 
-  <!-- See "build.properties.sample" in the top level directory for all     -->
-  <!-- property values you must customize for successful building!!!        -->
-  <!--property file="build.properties"/>
-  <property file="../build.properties"/>
-  <property file="${user.home}/build.properties"/-->
+  <property file="../../../build.properties" />
+  <property file="../../../jakarta-tomcat-5/build.properties.default" />
 
   <!-- Build Defaults -->
-  <property name="catalina.build"     location="../.."/>
-  <property name="cluster.build"     value="${catalina.home}/modules/cluster/build"/>
-  <property name="cluster.dist"     value="${catalina.home}/modules/cluster/dist"/>
+  <property name="catalina.home"  location="../.."/>
+  <property name="catalina.build" location="../../../jakarta-tomcat-5/build"/>
+  <property name="cluster.build"  value="${catalina.home}/modules/cluster/build"/>
+  <property name="cluster.dist"   value="${catalina.home}/modules/cluster/dist"/>
 
     <!-- Construct Catalina classpath -->
   <path id="cluster.classpath">
@@ -136,6 +134,10 @@
     </jar>
   </target>
 
+  <target name="copy" depends="dist" >
+     <copy file="${cluster.dist}/catalina-cluster.jar" todir="${catalina.build}/server/lib" />
+  </target>
+  
   <!-- ======================== DIST: Clean Directory ===================== -->
 
 
