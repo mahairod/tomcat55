@@ -1115,6 +1115,36 @@ mod_webapp into mod_jk )
 
    <target name="security_chk">
       <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp. HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp%2E HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp%252E HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp/ HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp%5C HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
+           request="GET /test/jsp/HelloWorld.jsp%255C HTTP/1.0"
+           returnCode="${http.protocol} 404" 
+      />
+
+      <gtest description="This URL should return 404 Not Found"
            request="GET /test/jsp/HelloWorld.jsp%20 HTTP/1.0"
            returnCode="${http.protocol} 404" 
       />
