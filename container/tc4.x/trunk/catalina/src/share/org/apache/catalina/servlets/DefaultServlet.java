@@ -584,12 +584,6 @@ public class DefaultServlet
 
         String path = getRelativePath(req);
 
-        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
-            (path.toUpperCase().startsWith("/META-INF"))) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
         // Retrieve the resources
         DirContext resources = getResources();
 
@@ -739,12 +733,6 @@ public class DefaultServlet
         }
 
         String path = getRelativePath(req);
-
-        if ((path.toUpperCase().startsWith("/WEB-INF")) ||
-            (path.toUpperCase().startsWith("/META-INF"))) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
 
         // Retrieve the Catalina context
         // Retrieve the resources
@@ -1130,16 +1118,6 @@ public class DefaultServlet
             else
                 log("DefaultServlet.serveResource:  Serving resource '" +
                     path + "' headers only");
-        }
-
-        // Exclude any resource in the /WEB-INF and /META-INF subdirectories
-        // (the "toUpperCase()" avoids problems on Windows systems)
-        if ((path == null) ||
-            path.toUpperCase().startsWith("/WEB-INF") ||
-            path.toUpperCase().startsWith("/META-INF")) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                               request.getRequestURI());
-            return;
         }
 
         // Retrieve the Catalina context and Resources implementation
