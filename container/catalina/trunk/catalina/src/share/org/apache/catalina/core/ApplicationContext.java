@@ -228,7 +228,7 @@ public class ApplicationContext
             String mapuri = uri;
             while (true) {
                 child = (Context) host.findChild(mapuri);
-                if (context != null)
+                if (child != null)
                     break;
                 int slash = mapuri.lastIndexOf('/');
                 if (slash < 0)

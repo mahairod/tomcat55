@@ -969,8 +969,20 @@ final class ApplicationDispatcher
             (current instanceof HttpServletRequest)) {
             // Compute a crossContext flag
             HttpServletRequest hcurrent = (HttpServletRequest) current;
-            boolean crossContext = 
-                !(context.getPath().equals(hcurrent.getContextPath()));
+            boolean crossContext = false;
+            if ((outerRequest instanceof ApplicationHttpRequest) ||
+                (outerRequest instanceof HttpRequest) ||
+                (outerRequest instanceof HttpServletRequest)) {
+                HttpServletRequest houterRequest = 
+                    (HttpServletRequest) outerRequest;
+                Object contextPath = houterRequest.getAttribute
+                    (Globals.INCLUDE_CONTEXT_PATH_ATTR);
+                if (contextPath == null) {
+                    // Forward
+                    contextPath = houterRequest.getContextPath();
+                }
+                crossContext = !(context.getPath().equals(contextPath));
+            }
             wrapper = new ApplicationHttpRequest
                 (hcurrent, context, crossContext);
         } else {
