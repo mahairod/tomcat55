@@ -562,6 +562,7 @@ public final class StandardPipeline
 
         valveContext.set(basic, valves);
         valveContext.invokeNext(request, response);
+        valveContext.set(null, null);
 
     }
 

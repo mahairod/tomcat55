@@ -343,6 +343,7 @@ final class ApplicationFilterChain implements FilterChain {
         n = 0;
         pos = 0;
         servlet = null;
+        support = null;
 
     }
 
