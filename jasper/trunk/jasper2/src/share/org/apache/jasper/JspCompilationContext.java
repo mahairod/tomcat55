@@ -552,6 +552,7 @@ public class JspCompilationContext {
         createCompiler();
         if (isPackagedTagFile || jspCompiler.isOutDated()) {
             try {
+                jspLoader = null;
                 jspCompiler.compile();
                 jsw.setReload(true);
                 jsw.setCompilationException(null);
