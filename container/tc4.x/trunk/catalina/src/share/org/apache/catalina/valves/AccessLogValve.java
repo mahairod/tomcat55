@@ -804,7 +804,7 @@ public final class AccessLogValve
         monthFormatter.setTimeZone(tz);
         yearFormatter = new SimpleDateFormat("yyyy");
         yearFormatter.setTimeZone(tz);
-        timeFormatter = new SimpleDateFormat("kk:mm:ss");
+        timeFormatter = new SimpleDateFormat("HH:mm:ss");
         timeFormatter.setTimeZone(tz);
         currentDate = new Date();
         dateStamp = dateFormatter.format(currentDate);
