@@ -37,9 +37,11 @@ public class ThreadPool
 
     List idle = new LinkedList();
     Object mutex = new Object();
+    Object interestOpsMutex = null;
 
-    ThreadPool (int poolSize, Class threadClass) throws Exception {
+    ThreadPool (int poolSize, Class threadClass, Object interestOpsMutex) throws Exception {
         // fill up the pool with worker threads
+        this.interestOpsMutex = interestOpsMutex;
         for (int i = 0; i < poolSize; i++) {
             WorkerThread thread = (WorkerThread)threadClass.newInstance();
             thread.setPool(this);
@@ -90,5 +92,8 @@ public class ThreadPool
             idle.add (worker);
             mutex.notify();
         }
+    }
+    public Object getInterestOpsMutex() {
+        return interestOpsMutex;
     }
 }

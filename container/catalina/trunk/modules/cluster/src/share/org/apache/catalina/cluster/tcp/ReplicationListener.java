@@ -50,12 +50,14 @@ public class ReplicationListener implements Runnable,ClusterReceiver
     private int tcpListenPort;
     private boolean isSenderSynchronized;
     
+    private Object interestOpsMutex = new Object();
+    
     public ReplicationListener() {
     }
 
     public void start() {
         try {
-            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class);
+            pool = new ThreadPool(tcpThreadCount, TcpReplicationThread.class, interestOpsMutex);
             if ( "auto".equals(tcpListenAddress) ) {
                 tcpListenAddress = java.net.InetAddress.getLocalHost().
                     getHostAddress();
@@ -110,6 +112,16 @@ public class ReplicationListener implements Runnable,ClusterReceiver
 
                 int n = selector.select(tcpSelectorTimeout);
                 if (n == 0) {
+                    //there is a good chance that we got here 
+                    //because the TcpReplicationThread called
+                    //selector wakeup().
+                    //if that happens, we must ensure that that
+                    //thread has enough time to call interestOps
+                    synchronized (interestOpsMutex) {
+                        //if we got the lock, means there are no
+                        //keys trying to register for the 
+                        //interestOps method
+                    }
                     continue; // nothing to do
                 }
                 // get an iterator over the set of selected keys
@@ -242,6 +254,9 @@ public class ReplicationListener implements Runnable,ClusterReceiver
 
     public int getPort() {
         return getTcpListenPort();
+    }
+    public Object getInterestOpsMutex() {
+        return interestOpsMutex;
     }
 
 }
