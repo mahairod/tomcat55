@@ -166,8 +166,6 @@ public class Tomcat {
 
     public void execute(String args[] ) throws Exception {
 	if( ! processArgs( args ) ) {
-	    System.out.println(sm.getString("tomcat.wrongargs"));
-	    printUsage();
 	    return;
 	}
 
@@ -278,7 +276,12 @@ public class Tomcat {
     boolean doStop=false;
     
     public static void printUsage() {
-	System.out.println(sm.getString("tomcat.usage"));
+        System.out.println("Usage: java org.apache.tomcat.startup.Tomcat {options}");
+        System.out.println("  Options are:");
+        System.out.println("    -config file (or -f file)  Use this file instead of server.xml");
+        System.out.println("    -help (or help)            Show this usage report");
+        System.out.println("    -home dir (or -h dir)      Use this directory as tomcat.home");
+        System.out.println("    -stop                      Shut down currently running Tomcat");
     }
 
     /** Process arguments - set object properties from the list of args.
@@ -290,17 +293,27 @@ public class Tomcat {
 	    if (arg.equals("-help") || arg.equals("help")) {
 		printUsage();
 		return false;
-		
 	    } else if (arg.equals("-stop")) {
 		doStop=true;
 	    } else if (arg.equals("-f") || arg.equals("-config")) {
 		i++;
-		if( i < args.length )
+		if( i < args.length ) {
 		    configFile = args[i];
+                } else {
+                    printUsage();
+                    return (false);
+                }
 	    } else if (arg.equals("-h") || arg.equals("-home")) {
 		i++;
-		if (i < args.length)
+		if (i < args.length) {
 		    System.getProperties().put("tomcat.home", args[i]);
+                } else {
+                    printUsage();
+                    return (false);
+                }
+            } else {
+                printUsage();
+                return false;
 	    }
 	}
 	return true;
