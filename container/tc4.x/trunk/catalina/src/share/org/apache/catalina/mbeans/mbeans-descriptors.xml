@@ -128,7 +128,7 @@
 
 
 <mbean         name="CoyoteConnector"
-            className="org.apache.catalina.mbeans.ClassNameMBean"
+            className="org.apache.catalina.mbeans.ConnectorMBean"
           description="Implementation of a Coyote connector"
                domain="Catalina"
                 group="Connector"
@@ -151,6 +151,10 @@
                  type="java.lang.String"
             writeable="false"/>
 
+    <attribute   name="clientAuth"
+          description="Should we require client authentication?"
+                 type="boolean"/>
+
     <attribute   name="connectionTimeout"
           description="Timeout value on the incoming connection"
                  type="int"/>
@@ -164,17 +168,17 @@
           description="The debugging detail level for this component"
                  type="int"/>
 
-    <attribute   name="secret"
-          description="Authentication secret (I guess ... not in Javadocs)"
-                 type="java.lang.String"/>
-
     <attribute   name="enableLookups"
           description="The 'enable DNS lookups' flag for this Connector"
                  type="boolean"/>
 
-    <attribute   name="redirectPort"
-          description="The redirect port for non-SSL to SSL redirects"
-                 type="int"/>
+    <attribute   name="keystoreFile"
+          description="Pathname to the key store file to be used"
+                 type="java.lang.String"/>  
+
+    <attribute   name="keystorePass"
+          description="Password for accessing the key store file"
+                 type="java.lang.String"/>  
 
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
@@ -187,10 +191,26 @@
 
     <attribute   name="port"
           description="The port number on which we listen for ajp13 requests"
+  		type="int"/>
+
+    <attribute   name="proxyName"
+          description="Ther Server name to which we should pretend requests to this Connector"
+                 type="java.lang.String"/>             
+  
+    <attribute   name="proxyPort"
+          description="Ther Server port to which we should pretend requests to this Connector"
+                 type="java.lang.String"/>  
+
+    <attribute   name="redirectPort"
+          description="The redirect port for non-SSL to SSL redirects"
                  type="int"/>
 
     <attribute   name="scheme"
           description="Protocol name for this Connector (http, https)"
+                 type="java.lang.String"/>
+
+    <attribute   name="secret"
+          description="Authentication secret (I guess ... not in Javadocs)"
                  type="java.lang.String"/>
 
     <attribute   name="secure"

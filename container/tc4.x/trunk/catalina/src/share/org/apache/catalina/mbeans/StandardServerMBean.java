@@ -765,6 +765,7 @@ public class StandardServerMBean extends BaseModelMBean {
         }          
         writer.println("</ResourceParams>");
         
+        // Store the ending of this element
         for (int i = 0; i < indent; i++) {
             writer.print(' ');
         }          
