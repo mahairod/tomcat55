@@ -89,13 +89,26 @@ public class JspServlet extends HttpServlet {
      * the number of JSPs that have been loaded into the webapp with which
      * this JspServlet is associated.
      *
-     * This info may be used for monitoring purposes.
+     * <p>This info may be used for monitoring purposes.
      *
      * @return The number of JSPs that have been loaded into the webapp with
      * which this JspServlet is associated
      */
     public int getJspCount() {
         return this.rctxt.getJspCount();
+    }
+
+
+    /**
+     * Gets the number of JSPs that have been reloaded.
+     *
+     * <p>This info may be used for monitoring purposes.
+     *
+     * @return The number of JSPs (in the webapp with which this JspServlet is
+     * associated) that have been reloaded
+     */
+    public int getJspReloadCount() {
+        return this.rctxt.getJspReloadCount();
     }
 
 

@@ -140,7 +140,13 @@ public class JspServletWrapper {
                     }
                     
                     theServlet.init(config);
-                    firstTime = false;
+
+                    if (!firstTime) {
+                        ctxt.getRuntimeContext().incrementJspReloadCount();
+                    } else {
+                        firstTime = false;
+                    }
+
                     reload = false;
                 }
             }    

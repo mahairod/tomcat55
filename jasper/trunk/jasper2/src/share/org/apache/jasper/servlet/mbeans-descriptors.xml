@@ -11,6 +11,10 @@
           description="The number of JSPs that have been loaded into a webapp"
                  type="int"/>
 
+    <attribute   name="jspReloadCount"
+          description="The number of JSPs that have been reloaded"
+                 type="int"/>
+
   </mbean>
 
 </mbeans-descriptors>

@@ -60,6 +60,11 @@ public final class JspRuntimeContext implements Runnable {
     // Logger
     private static Log log = LogFactory.getLog(JspRuntimeContext.class);
 
+    /*
+     * Counts how many times the webapp's JSPs have been reloaded.
+     */
+    private int jspReloadCount;
+
     /**
      * Preload classes required at runtime by a JSP servlet so that
      * we don't get a defineClassInPackage security exception.
@@ -165,7 +170,7 @@ public final class JspRuntimeContext implements Runnable {
      */
     private String threadName = "JspRuntimeContext";
 
-    // ------------------------------------------------------ Protected Methods
+    // ------------------------------------------------------ Public Methods
 
     /**
      * Add a new JspServletWrapper.
@@ -251,6 +256,25 @@ public final class JspRuntimeContext implements Runnable {
             ((JspServletWrapper) servlets.next()).destroy();
         }
     }
+
+    /**
+     * Increments the JSP reload counter.
+     */
+    public void incrementJspReloadCount() {
+        synchronized(this) {
+            jspReloadCount++;
+        }
+    }
+
+    /**
+     * Gets the current value of the JSP reload counter.
+     *
+     * @return The current value of the JSP reload counter
+     */
+    public int getJspReloadCount() {
+        return jspReloadCount;
+    }
+
 
     // -------------------------------------------------------- Private Methods
 
