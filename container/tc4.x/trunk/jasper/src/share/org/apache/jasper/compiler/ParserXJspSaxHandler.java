@@ -318,6 +318,10 @@ class ParserXJspSaxHandler
 		node.validate(true, false);
 		// push the node back, it will be needed by the container node
 		stack.push(node);
+	    } else if (name.equals("jsp:params")) {
+                // don't have it pushed on the stack...
+                // this is a noop...
+                return;
 	    } else if (name.equals("jsp:fallback")) {
 		node.validate(false, true);
 		// push the node back, it will be needed by the container node
