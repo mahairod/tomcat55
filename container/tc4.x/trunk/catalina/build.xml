@@ -27,6 +27,7 @@
   <property name="tomcat-http11.home"     value="${jtc.home}/http11"/>
 
   <!-- Dependent JARs and files -->
+  <property name="ant.jar" value="${ant.home}/lib/ant.jar"/>
   <property name="tomcat-util.jar"
            value="${tomcat-util.home}/build/lib/tomcat-util.jar"/>
   <property name="tomcat-coyote.jar"
@@ -47,6 +48,7 @@
   <!-- Construct Catalina classpath -->
   <path id="catalina.classpath">
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${ant.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-daemon.jar}"/>
@@ -79,6 +81,7 @@
   <path id="test.classpath">
     <pathelement location="${junit.jar}"/>
     <pathelement location="${activation.jar}"/>
+    <pathelement location="${ant.jar}"/>
     <pathelement location="${commons-beanutils.jar}"/>
     <pathelement location="${commons-collections.jar}"/>
     <pathelement location="${commons-daemon.jar}"/>
