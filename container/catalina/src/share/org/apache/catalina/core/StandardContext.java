@@ -3703,6 +3703,13 @@ public class StandardContext
                 ((BaseDirContext) webappResources).setDocBase(getBasePath());
                 ((BaseDirContext) webappResources).allocate();
             }
+            // Register the cache in JMX
+            ObjectName resourcesName = 
+                new ObjectName(this.getDomain() + ":type=Cache,host=" + 
+                               getHostname() + ",path=" 
+                               + (("".equals(getPath()))?"/":getPath()));
+            Registry.getRegistry().registerComponent
+                (proxyDirContext, resourcesName, null);
             this.resources = proxyDirContext;
         } catch (Throwable t) {
             log.error(sm.getString("standardContext.resourcesStart"), t);
@@ -3729,6 +3736,12 @@ public class StandardContext
                 if (webappResources instanceof BaseDirContext) {
                     ((BaseDirContext) webappResources).release();
                 }
+                // Unregister the cache in JMX
+                ObjectName resourcesName = 
+                    new ObjectName(this.getDomain() + ":type=Cache,host=" + 
+                                   getHostname() + ",path=" 
+                                   + (("".equals(getPath()))?"/":getPath()));
+                Registry.getRegistry().unregisterComponent(resourcesName);
             }
         } catch (Throwable t) {
             log.error(sm.getString("standardContext.resourcesStop"), t);
