@@ -241,6 +241,8 @@ public class Handler {
 	if( ! initialized ) {
 	    try {
 		init();
+		if ( ! initialized )
+			return;	// return if still not initialied
 	    } catch( Exception ex ) {
 		initialized=false;
 		if( ex instanceof ClassNotFoundException ) {

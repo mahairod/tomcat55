@@ -106,7 +106,8 @@ public class ServletWrapper extends Handler {
     protected long lastAccessed;
     protected int serviceCount = 0;
     
-    int loadOnStartup=0;
+    boolean loadOnStartup=false;
+    int loadOnStartupLevel=-1;
 
     Hashtable securityRoleRefs=new Hashtable();
 
@@ -125,17 +126,24 @@ public class ServletWrapper extends Handler {
     
     // -------------------- Servlet specific properties 
     public void setLoadOnStartUp( int level ) {
-	loadOnStartup=level;
+    loadOnStartupLevel=level;
+    loadOnStartup=true;
     }
 
     public void setLoadOnStartUp( String level ) {
-	loadOnStartup=new Integer(level).intValue();
+    if (level.length() > 0)
+        loadOnStartupLevel=new Integer(level).intValue();
+    loadOnStartup=true;
     }
 
-    public int getLoadOnStartUp() {
+    public boolean getLoadOnStartUp() {
 	return loadOnStartup;
     }
-    
+
+    public int getLoadOnStartUpLevel() {
+	return loadOnStartupLevel;
+    }
+ 
     void setReloadable(boolean reloadable) {
 	isReloadable = reloadable;
     }
@@ -342,7 +350,14 @@ public class ServletWrapper extends Handler {
 	}
 
 	if( unavailable!=null  ) {
-	    // Don't load if Unavailable timer is in place
+		// Don't load at all if permanently unavailable 
+	    if (((UnavailableException) unavailable).getUnavailableSeconds() == -1) { 
+		handleUnavailable( req, res );
+		initialized = false; 
+		return; 
+	    } 
+
+		// Don't load if Unavailable timer is in place
 	    if(  stillUnavailable() ) {
 		handleUnavailable( req, res );
 		initialized=false;
@@ -354,6 +369,10 @@ public class ServletWrapper extends Handler {
 	// called only if unavailable==null or timer expired.
 	// will do an init
 	super.service( req, res );
+
+	// if unavailable set, assume problem in init()
+	if (unavailable!=null)
+		handleUnavailable( req, res);
     }
 
     protected void doService(Request req, Response res)

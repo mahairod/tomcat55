@@ -181,9 +181,8 @@ public class LoadOnStartupInterceptor extends BaseInterceptor {
 	while(enum.hasMoreElements()) {
 	    String name=(String)enum.nextElement();
 	    ServletWrapper sw=ctx.getServletByName( name );
-	    int i=sw.getLoadOnStartUp();
-	    Integer level=new Integer(i);
-	    if( i!= 0) {
+	    if(sw.getLoadOnStartUp()) {
+	    Integer level=new Integer(sw.getLoadOnStartUpLevel());
 		Vector v;
 		if( loadableServlets.get(level) != null ) 
 		    v=(Vector)loadableServlets.get(level);
