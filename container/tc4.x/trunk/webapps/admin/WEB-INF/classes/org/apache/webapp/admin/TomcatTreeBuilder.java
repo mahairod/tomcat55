@@ -482,7 +482,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             false);
         TreeControlNode mailsessions = new TreeControlNode
             ("Context Mail Sessions " + containerName,
-            "Datasource.gif",
+            "Mailsession.gif",
             resources.getMessage("resources.treeBuilder.mailsessions"),
             "resources/listMailSessions.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +

@@ -139,7 +139,7 @@ public class ResourcesTreeBuilder implements TreeBuilder {
              false);
         TreeControlNode mailsessions = new TreeControlNode
             ("Globally Administer Mail Sessions ",
-            "Datasource.gif",
+            "Mailsession.gif",
             resources.getMessage("resources.treeBuilder.mailsessions"),
             "resources/listMailSessions.do?resourcetype=Global&forward=" +
             URLEncoder.encode("MailSessions List Setup"),
