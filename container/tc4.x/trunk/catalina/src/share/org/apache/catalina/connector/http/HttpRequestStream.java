@@ -99,6 +99,10 @@ public class HttpRequestStream extends RequestStream {
             response.addHeader("Connection", "close");
         }
 
+        http11 = request.getProtocol().equals("HTTP/1.1");
+        
+        System.out.println("HTTP/1.1: " + http11);
+        
     }
     
     
@@ -135,6 +139,12 @@ public class HttpRequestStream extends RequestStream {
     protected int chunkPos = 0;
     
     
+    /**
+     * HTTP/1.1 flag.
+     */
+    protected boolean http11 = false;
+    
+    
     // --------------------------------------------------------- Public Methods
     
     
@@ -160,8 +170,9 @@ public class HttpRequestStream extends RequestStream {
             
         } else {
             
-            if (length > 0) {
+            if (http11 && (length > 0)) {
                 while (count < length) {
+                    System.out.println("Consuming bytes");
                     int b = read();
                     if (b < 0)
                         break;

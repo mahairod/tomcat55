@@ -290,6 +290,25 @@ final class HttpRequestImpl
     }
 
 
+    /**
+     * Perform whatever actions are required to flush and close the input
+     * stream or reader, in a single operation.
+     *
+     * @exception IOException if an input/output error occurs
+     */
+    public void finishRequest() throws IOException {
+
+        // If neither a reader or an is have been opened, do it to consume
+        // request bytes, if any
+        if ((reader == null) && (stream == null) && (getContentLength() != 0)
+            && (getProtocol().equals("HTTP/1.1")))
+            getInputStream();
+
+        super.finishRequest();
+
+    }
+
+
     // ------------------------------------------------- ServletRequest Methods
 
 
