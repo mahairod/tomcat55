@@ -776,7 +776,7 @@ public class JspC implements Options {
      * Locate all jsp files in the webapp. Used if no explicit
      * jsps are specified.
      */
-    public void scanFiles( File base ) {
+    public void scanFiles( File base ) throws JasperException {
         Stack dirs = new Stack();
         dirs.push(base);
         if (extensions == null) {
@@ -798,12 +798,14 @@ public class JspC implements Options {
                         dirs.push(f2.getPath());
                         //System.out.println("++" + f2.getPath());
                     } else {
+                        String path = f2.getPath();
+                        String uri = path.substring(uriRoot.length());
                         ext = files[i].substring(files[i].lastIndexOf('.')
 						 + 1);
-                        if (extensions.contains(ext)) {
+                        if (extensions.contains(ext) ||
+                                jspConfig.isJspPage(uri)) {
                             //System.out.println(s + "?" + files[i]);
-                            pages.addElement(s + File.separatorChar
-					     + files[i]);
+                            pages.addElement(path);
                         } else {
 			    //System.out.println("not done:" + ext);
                         }
@@ -831,6 +833,9 @@ public class JspC implements Options {
                 locateUriRoot( firstJspF );
 	    }
 
+	    if( context==null )
+		initServletContext();
+
 	    // No explicit page, we'll process all .jsp in the webapp
 	    if (pages.size() == 0) {
 		scanFiles( new File( uriRoot ));
@@ -845,9 +850,6 @@ public class JspC implements Options {
 		throw new JasperException(
                     Localizer.getMessage("jsp.error.jspc.uriroot_not_dir"));
 	    }
-
-	    if( context==null )
-		initServletContext();
 
 	    initWebXml();
 

@@ -208,12 +208,7 @@ public class JspConfig {
 	}
     }
 
-    /**
-     * Find a property that best matches the supplied resource.
-     * @param uri the resource supplied.
-     * @return a JspProperty if a match is found, null otherwise
-     */
-    public JspProperty findJspProperty(String uri) throws JasperException {
+    private void init() throws JasperException {
 
 	if (!initialized) {
 	    processWebDotXml(ctxt);
@@ -223,6 +218,16 @@ public class JspConfig {
 						 null, null, null);
 	    initialized = true;
 	}
+    }
+
+    /**
+     * Find a property that best matches the supplied resource.
+     * @param uri the resource supplied.
+     * @return a JspProperty indicating the best match, or some default.
+     */
+    public JspProperty findJspProperty(String uri) throws JasperException {
+
+	init();
 
 	// JSP Configuration settings do not apply to tag files	    
 	if (jspProperties == null || uri.endsWith(".tag")
@@ -362,6 +367,53 @@ public class JspConfig {
 
 	return new JspProperty(isXml, isELIgnored, isScriptingInvalid,
 			       pageEncoding, includePreludes, includeCodas);
+    }
+
+    /**
+     * To find out if an uri matches an url pattern in jsp config.  If so,
+     * then the uri is a JSP page.  This is used primarily for jspc.
+     */
+    public boolean isJspPage(String uri) throws JasperException {
+
+        init();
+        if (jspProperties == null) {
+            return false;
+        }
+
+        String uriPath = null;
+        int index = uri.lastIndexOf('/');
+        if (index >=0 ) {
+            uriPath = uri.substring(0, index+1);
+        }
+        String uriExtension = null;
+        index = uri.lastIndexOf('.');
+        if (index >=0) {
+            uriExtension = uri.substring(index+1);
+        }
+
+        Iterator iter = jspProperties.iterator();
+        while (iter.hasNext()) {
+
+            JspPropertyGroup jpg = (JspPropertyGroup) iter.next();
+            JspProperty jp = jpg.getJspProperty();
+
+            String extension = jpg.getExtension();
+            String path = jpg.getPath();
+
+            if (extension == null) {
+                if (uri.equals(path)) {
+                    // There is an exact match
+                    return true;
+                }
+            } else {
+                if ((path == null || path.equals(uriPath)) &&
+                    (extension.equals("*") || extension.equals(uriExtension))) {
+                    // Matches *, *.ext, /p/*, or /p/*.ext
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     static class JspPropertyGroup {
