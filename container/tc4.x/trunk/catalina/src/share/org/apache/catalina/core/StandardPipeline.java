@@ -176,8 +176,8 @@ public class StandardPipeline
     /**
      * The per-thread execution state for processing through this pipeline.
      * The actual value is a java.lang.Integer object containing the subscript
-     * into the <code>values</code> array, or a subscript equal to
-     * <code>values.length</code> if the basic Valve is currently being
+     * into the <code>valves</code> array, or a subscript equal to
+     * <code>valves.length</code> if the basic Valve is currently being
      * processed.
      */
     protected ThreadLocal state = new ThreadLocal();
