@@ -203,7 +203,12 @@ NoDocumentaion:
   CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Start Tomcat.lnk" \
                  "$INSTDIR\bin\tomcatw.exe" \
                  '//GT//Tomcat5' \
-                 "$INSTDIR\tomcat.ico" 0 SW_SHOWNORMAL
+                 "$INSTDIR\bin\tomcatw.exe" 1 SW_SHOWNORMAL
+
+  CreateShortCut "$SMPROGRAMS\Apache Tomcat 5.0\Configure Tomcat.lnk" \
+                 "$INSTDIR\bin\tomcatw.exe" \
+                 '//ES//Tomcat5' \
+                 "$INSTDIR\bin\tomcatw.exe" 0 SW_SHOWNORMAL
 
 SectionEnd
 
