@@ -105,6 +105,51 @@
   </mbean>
 
 
+  <mbean         name="Group"
+            className="org.apache.catalina.mbeans.GroupMBean"
+          description="Group from a user database"
+               domain="Catalina"
+                group="Group"
+                 type="org.apache.catalina.Group">
+
+    <attribute   name="description"
+          description="Description of this group"
+                 type="java.lang.String"/>
+
+    <attribute   name="groupname"
+          description="Group name of this group"
+                 type="java.lang.String"/>
+
+    <attribute   name="roles"
+          description="Authorized roles for this group"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
+    <attribute   name="users"
+          description="MBean Names of user members of this group"
+                 type="java.lang.String[]"/>
+
+    <operation   name="addRole"
+          description="Add a new authorized role for this group"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="role"
+          description="Role to be added"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeRole"
+          description="Remove an old authorized role for this group"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="role"
+          description="Role to be removed"
+                 type="java.lang.String"/>
+    </operation>
+
+  </mbean>
+
+
   <mbean         name="Http10Connector"
           description="HTTP/1.0 Connector for Tomcat Standalone"
                domain="Catalina"
@@ -546,6 +591,85 @@
     <attribute   name="pathname"
           description="The pathname of the XML file containing our database information"
                  type="java.lang.String"/>
+
+  </mbean>
+
+
+  <mbean         name="MemoryUserDatabase"
+            className="org.apache.catalina.mbeans.MemoryUserDatabaseMBean"
+          description="In-memory user and group database"
+               domain="Catalina"
+                group="UserDatabase"
+                 type="org.apache.catalina.users.MemoryUserDatabase">
+
+    <attribute   name="encoding"
+          description="Character encoding to use when writing XML file"
+                 type="java.lang.String"/>
+
+    <attribute   name="groups"
+          description="MBean Names of all defined groups"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
+    <attribute   name="pathname"
+          description="Relative or absolute pathname to database file"
+                 type="java.lang.String"/>
+
+    <attribute   name="users"
+          description="MBean Names of all defined users"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
+    <operation   name="createGroup"
+          description="Create new group and return MBean name"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="groupname"
+          description="Group name of the new group"
+                 type="java.lang.String"/>
+      <parameter name="description"
+          description="Description of the new group"
+                 type="java.lang.String"/>
+      <parameter name="roles"
+          description="Roles list for the new group"
+                 type="java.lang.String[]"/>
+    </operation>
+
+    <operation   name="createUser"
+          description="Create new user and return MBean name"
+               impact="ACTION"
+           returnType="java.lang.String">
+      <parameter name="username"
+          description="User name of the new group"
+                 type="java.lang.String"/>
+      <parameter name="password"
+          description="Password of the new user"
+                 type="java.lang.String"/>
+      <parameter name="fullName"
+          description="Full name of the new user"
+                 type="java.lang.String"/>
+      <parameter name="roles"
+          description="Roles list for the new user"
+                 type="java.lang.String[]"/>
+    </operation>
+
+    <operation   name="findGroup"
+          description="Return MBean Name of the specified group (if any)"
+               impact="INFO"
+           returnType="java.lang.String">
+      <parameter name="groupname"
+          description="Group name of the requested group"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="findUser"
+          description="Return MBean Name of the specified user (if any)"
+               impact="INFO"
+           returnType="java.lang.String">
+      <parameter name="username"
+          description="User name of the requested user"
+                 type="java.lang.String"/>
+    </operation>
 
   </mbean>
 
@@ -1056,6 +1180,73 @@
     <attribute   name="verbosity"
           description="The verbosity level for above which log messages may be filtered"
                  type="int"/>
+
+  </mbean>
+
+
+  <mbean         name="User"
+            className="org.apache.catalina.mbeans.UserMBean"
+          description="User from a user database"
+               domain="Catalina"
+                group="User"
+                 type="org.apache.catalina.User">
+
+    <attribute   name="fullName"
+          description="Full name of this user"
+                 type="java.lang.String"/>
+
+    <attribute   name="groups"
+          description="MBean Names of groups this user is a member of"
+                 type="java.lang.String[]"/>
+
+    <attribute   name="password"
+          description="Password of this user"
+                 type="java.lang.String"/>
+
+    <attribute   name="roles"
+          description="Authorized roles for this user"
+                 type="java.lang.String[]"
+            writeable="false"/>
+
+    <attribute   name="username"
+          description="User name of this user"
+                 type="java.lang.String"/>
+
+    <operation   name="addGroup"
+          description="Add a new group membership for this user"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="group"
+          description="MBean Name of the new group"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="addRole"
+          description="Add a new authorized role for this user"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="role"
+          description="Role to be added"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeGroup"
+          description="Remove an old group membership for this user"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="group"
+          description="MBean Name of the old group"
+                 type="java.lang.String"/>
+    </operation>
+
+    <operation   name="removeRole"
+          description="Remove an old authorized role for this user"
+               impact="ACTION"
+           returnType="void">
+      <parameter name="role"
+          description="Role to be removed"
+                 type="java.lang.String"/>
+    </operation>
 
   </mbean>
 
