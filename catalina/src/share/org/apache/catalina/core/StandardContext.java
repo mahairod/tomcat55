@@ -86,6 +86,7 @@ import org.apache.catalina.startup.TldConfig;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.ExtensionValidator;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.URLEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.modeler.Registry;
@@ -143,6 +144,25 @@ public class StandardContext
      * JDK compatibility support
      */
     private static final JdkCompat jdkCompat = JdkCompat.getJdkCompat();
+
+
+    /**
+     * Array containing the safe characters set.
+     */
+    protected static URLEncoder urlEncoder;
+
+
+    /**
+     * GMT timezone - all HTTP dates are on GMT
+     */
+    static {
+        urlEncoder = new URLEncoder();
+        urlEncoder.addSafeCharacter('-');
+        urlEncoder.addSafeCharacter('_');
+        urlEncoder.addSafeCharacter('.');
+        urlEncoder.addSafeCharacter('*');
+        urlEncoder.addSafeCharacter('/');
+    }
 
 
     // ----------------------------------------------------- Instance Variables
@@ -265,6 +285,12 @@ public class StandardContext
      */
     private boolean crossContext = false;
 
+    
+    /**
+     * Encoded path.
+     */
+    private String encodedPath = null;
+    
 
     /**
      * The "follow standard delegation model" flag that will be used to
@@ -628,8 +654,15 @@ public class StandardContext
 
     // ----------------------------------------------------- Context Properties
 
+
+    public String getEncodedPath() {
+        return encodedPath;
+    }
+
+
     public void setName( String name ) {
         super.setName( name );
+        encodedPath = urlEncoder.encode(name);
     }
 
 

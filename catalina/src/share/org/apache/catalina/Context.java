@@ -253,6 +253,12 @@ public interface Context extends Container {
 
 
     /**
+     * Return the URL encoded context path, using UTF-8.
+     */
+    public String getEncodedPath();
+
+
+    /**
      * Return the login configuration descriptor for this web application.
      */
     public LoginConfig getLoginConfig();
