@@ -5,7 +5,7 @@ BASEDIR=`dirname $0`
 
 echo "<build name=\"apache-1.3\">"
 cd ${BUILD_DIR}/ws/apache-1.3
-./configure --prefix=/opt/apache-1.3.9 \
+./configure --prefix=${APACHE_HOME} \
 	    --enable-rule=SHARED_CORE \
 	    --add-module=${BUILD_DIR}/ws/jakarta-tomcat/src/native/apache/modules/mod_ajp23.c \
 	    --enable-module=most \
@@ -14,5 +14,11 @@ cd ${BUILD_DIR}/ws/apache-1.3
 	    --enable-shared=ajp23
 make
 make install
+
+
+# Fix configuration files, from helpers/binbuild
+sed -e "s%Port 8080%Port 8000%" \
+    ${APACHE_HOME}/conf/httpd.conf.default > ${APACHE_HOME}/conf/httpd.conf
+
 echo "</build>"
 
