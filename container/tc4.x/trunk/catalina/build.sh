@@ -13,6 +13,8 @@
 #
 #   JAXP_HOME        Must point at your JAXP installation [REQUIRED]
 #
+#   JSSE_HOME        Must point at your JSSE installation [REQUIRED]
+#
 #   SERVLETAPI_HOME  Must point at your "jakarta-servletapi" installation.
 #                    [../../jakarta-servletapi]
 #
@@ -40,6 +42,11 @@ if [ "$JAXP_HOME" = "" ] ; then
   exit 1
 fi
 
+if [ "$JSSE_HOME" = "" ] ; then
+  echo You must set JSSE_HOME to point at your Java Security Extensions install
+  exit 1
+fi
+
 if [ "$SERVLETAPI_HOME" = "" ] ; then
   SERVLETAPI_HOME=../../jakarta-servletapi
 fi
@@ -55,5 +62,5 @@ fi
 
 # ----- Execute The Requested Build -------------------------------------------
 
-java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Djaxp.home=$JAXP_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
+java $ANT_OPTS -classpath $CP org.apache.tools.ant.Main -Dant.home=$ANT_HOME -Djaxp.home=$JAXP_HOME -Djsse.home=$JSSE_HOME -Dservletapi.home=$SERVLETAPI_HOME "$@"
 
