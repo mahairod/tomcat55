@@ -62,6 +62,7 @@
 package org.apache.jasper.compiler;
 
 import org.apache.jasper.JspEngineContext;
+import org.apache.jasper.JasperException;
 
 /**
  * Helpful abstract base class that generators can extend. 
@@ -71,7 +72,7 @@ import org.apache.jasper.JspEngineContext;
 abstract class GeneratorBase implements Generator {
     protected JspEngineContext ctxt;
 
-    public void init(JspEngineContext ctxt) {
+    public void init(JspEngineContext ctxt) throws JasperException {
         this.ctxt = ctxt;
     }
     

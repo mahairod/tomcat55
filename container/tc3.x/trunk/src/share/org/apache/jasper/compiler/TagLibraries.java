@@ -69,7 +69,8 @@ import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.Tag;
 
 /**
- * A container for all tag libraries that have been imported. 
+ * A container for all tag libraries that have been imported using
+ * the taglib directive. 
  *
  * @author Anil K. Vijendran
  */
@@ -80,7 +81,7 @@ public class TagLibraries {
         this.cl = cl;
     }
     
-    void addTagLibrary(String prefix, TagLibraryInfo tli) {
+    void addTagLibrary(String prefix, TagLibraryInfoImpl tli) {
         tagLibInfos.put(prefix, tli);
     }
     
@@ -93,8 +94,8 @@ public class TagLibraries {
         return false;
     }
     
-    public TagLibraryInfo getTagLibInfo(String prefix) {
-        return (TagLibraryInfo) tagLibInfos.get(prefix);
+    public TagLibraryInfoImpl getTagLibInfo(String prefix) {
+        return (TagLibraryInfoImpl) tagLibInfos.get(prefix);
     }
 
     private Hashtable tagLibInfos;

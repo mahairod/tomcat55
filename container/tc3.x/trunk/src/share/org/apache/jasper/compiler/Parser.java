@@ -725,7 +725,7 @@ public class Parser {
                 return false;
             }
             
-            TagLibraryInfo tli = libraries.getTagLibInfo(prefix);
+            TagLibraryInfoImpl tli = libraries.getTagLibInfo(prefix);
             TagInfo ti = tli.getTag(shortTagName);
             
             if (ti == null)

@@ -102,7 +102,10 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
     XmlDocument tld;
 
     Hashtable jarEntries;
+    Hashtable tagCaches = new Hashtable();
+    
     JspEngineContext ctxt;
+
     
 
     private final void print(String name, String value, PrintWriter w) {
@@ -447,5 +450,13 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
         int nRead;
         while ((nRead = in.read(buf, 0, buf.length)) != -1)
             out.write(buf, 0, nRead);
+    }
+
+    TagCache getTagCache(String shortTagName) {
+        return (TagCache) tagCaches.get(shortTagName);
+    }
+
+    void putTagCache(String shortTagName, TagCache tc) {
+        tagCaches.put(shortTagName, tc);
     }
 }

@@ -58,80 +58,78 @@
  * <http://www.apache.org/>.
  *
  */ 
-
 package org.apache.jasper.compiler;
 
 import java.util.Hashtable;
 
-import javax.servlet.jsp.tagext.TagLibraryInfo;
-import javax.servlet.jsp.tagext.TagInfo;
-import javax.servlet.jsp.tagext.VariableInfo;
-import javax.servlet.jsp.tagext.TagData;
-import javax.servlet.jsp.tagext.Tag;
-import javax.servlet.jsp.tagext.BodyTag;
+import java.lang.reflect.Method;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.beans.IntrospectionException;
+
+import org.apache.jasper.JasperException;
+import org.apache.jasper.Constants;
 
 /**
- * Custom tag support. 
+ * A simple cache to hold results of one-time evaluation for a custom 
+ * tag. 
  *
- * @author Anil K. Vijendran
+ * @author Anil K. Vijendran (akv@eng.sun.com)
  */
-public class TagEndGenerator
-    extends TagGeneratorBase 
-    implements ServiceMethodPhase
-{
-    String prefix, shortTagName;
-    TagLibraryInfoImpl tli;
-    TagInfo ti;
-    Hashtable attrs;
-
-    public TagEndGenerator(String prefix, String shortTagName, 
-                           Hashtable attrs, TagLibraryInfoImpl tli, 
-                           TagInfo ti) 
-    {
-        this.prefix = prefix;
+public class TagCache {
+    String shortTagName;
+    Hashtable methodMaps;
+    BeanInfo tagClassInfo;
+    Class tagHandlerClass;
+    
+    TagCache(String shortTagName) {
         this.shortTagName = shortTagName;
-        this.tli = tli;
-        this.ti = ti;
-        this.attrs = attrs;
+        this.methodMaps = new Hashtable();
+    }
+
+    private void addSetterMethod(String attrName, Method m) {
+        methodMaps.put(attrName, m);
     }
     
-    public void generate(ServletWriter writer, Class phase) {
-	String thVarName = tagEnd();
-        VariableInfo[] vi = ti.getVariableInfo(new TagData(attrs));
+    Method getSetterMethod(String attrName) {
+        return (Method) methodMaps.get(attrName);
+    }
 
-        Class tagHandlerClass = tli.getTagCache(shortTagName).getTagHandlerClass();
-        boolean implementsBodyTag = BodyTag.class.isAssignableFrom(tagHandlerClass);
-	
-	writer.popIndent();
+    void setTagHandlerClass(Class tagHandlerClass) 
+        throws JasperException
+    {
+        try {
+            this.tagClassInfo = Introspector.getBeanInfo(tagHandlerClass);
+            this.tagHandlerClass = tagHandlerClass;
+            PropertyDescriptor[] pd = tagClassInfo.getPropertyDescriptors();
+            for(int i = 0; i < pd.length; i++) {
+                /* FIXME: why is the check for null below needed?? -akv */
+                /* 
+                   FIXME: should probably be checking for things like
+                          pageContext, bodyContent, and parent here -akv
+                */
+                if (pd[i].getWriteMethod() != null)
+                    addSetterMethod(pd[i].getName(), pd[i].getWriteMethod());
+            }
+        } catch (IntrospectionException ex) {
+            throw new JasperException(Constants.getString("jsp.error.unable.to_introspect",
+                                                          new Object[] {
+                                                              tagHandlerClass.getName(),
+                                                              ex.getMessage()
+                                                          }
+                                                          ));
+        }
+    }
 
-        if (implementsBodyTag)
-            writer.println("} while ("+thVarName+".doAfterBody() == BodyTag.EVAL_BODY_TAG);");
-        else
-            writer.println("} while (false);");
-        
-        declareVariables(writer, vi, false, true, VariableInfo.AT_BEGIN);
-	writer.popIndent(); // try 
-	writer.println("} finally {");
-	writer.pushIndent();
-	writer.println("out = pageContext.popBody();");
-	writer.popIndent();
-	writer.println("}");
-
-	writer.popIndent(); // EVAL_BODY
-	writer.println("}");
-
-	writer.println("if ("+thVarName+".doEndTag() == Tag.SKIP_PAGE)");
-	writer.pushIndent(); writer.println("return;"); writer.popIndent();
-
-	writer.popIndent(); // try
-	writer.println("} finally {");
-	writer.pushIndent();
-	writer.println(thVarName+".release();");
-	writer.popIndent();
-	writer.println("}");
-
-        // Need to declare and update AT_END variables here. 
-        declareVariables(writer, vi, true, true, VariableInfo.AT_END);
+    Class getTagHandlerClass() {
+        return tagHandlerClass;
+    }
+    
+    BeanInfo getTagClassInfo() {
+        return tagClassInfo;
     }
 }
+
+    

@@ -90,7 +90,7 @@ public class PluginGenerator
 	this.fallback = fallback;
     }
 
-    public void init(JspEngineContext ctxt) {
+    public void init(JspEngineContext ctxt) throws JasperException {
         ieClassId = ctxt.getOptions().ieClassId();
     }
     

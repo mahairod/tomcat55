@@ -71,5 +71,5 @@ import org.apache.jasper.JspEngineContext;
 public interface Generator {
     void generate (ServletWriter out, Class phase) throws JasperException;
     boolean generateCoordinates(Class phase);
-    void init(JspEngineContext ctxt);
+    void init(JspEngineContext ctxt) throws JasperException;
 }
