@@ -51,84 +51,70 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */
+ */ 
+ 
 package javax.servlet.jsp.tagext;
 
-import javax.servlet.jsp.JspContext;
-
 /**
- * Interface for defining "simple tag handlers." 
- * <p>
- * Instead of supporting <code>doStartTag()</code> and <code>doEndTag()</code>, 
- * the <code>SimpleTag</code> interface provides a simple 
- * <code>doTag()</code> method, which is called once and only once for any 
- * given tag invocation.  All tag logic, iteration, body evaluations, etc. 
- * are to be performed in this single method.  Thus, simple tag handlers 
- * have the equivalent power of <code>IterationTag</code>, but with a much 
- * simpler lifecycle and interface.
- * <p>
- * To support body content, the <code>setJspBody()</code> 
- * method is provided.  The container invokes the <code>setJspBody()</code> 
- * method with a <code>JspFragment</code> object encapsulating the body of 
- * the tag.  The tag handler implementation can call 
- * <code>invoke()</code> on that fragment to evaluate the body as
- * many times as it needs.
- * 
- * @see SimpleTagSupport
+ * Tag information for a tag file in a Tag Library;
+ * This class is instantiated from the Tag Library Descriptor file (TLD)
+ * and is available only at translation time.
  */
 
-public interface SimpleTag extends JspTag {
-    
-    /**
-     * Skip the rest of the page.
-     * Valid return value for doTag().
-     */
-    public final static int SKIP_PAGE = 5;
+public class TagFileInfo {
 
     /**
-     * Continue evaluating the page.
-     * Valid return value for doTag().
+     * Constructor for TagFileInfo from data in the JSP 2.0 format for TLD.
+     * This class is to be instantiated only from the TagLibrary code
+     * under request from some JSP code that is parsing a
+     * TLD (Tag Library Descriptor).
+     *
+     * Note that, since TagLibibraryInfo reflects both TLD information
+     * and taglib directive information, a TagFileInfo instance is
+     * dependent on a taglib directive.  This is probably a
+     * design error, which may be fixed in the future.
+     *
+     * @param name The unique action name of this tag
+     * @param path Where to find the .tag file implementing this 
+     *     action, relative to the location of the TLD file.
+     * @param tagInfo The detailed information about this tag, as parsed
+     *     from the directives in the tag file.
      */
-    public final static int EVAL_PAGE = 6;
-    
-    /** 
-     * Called by the container to invoke this tag.
-     * The implementation of this method is provided by the tag library
-     * developer, and handles all tag processing, body iteration, etc.
-     * 
-     * @return SKIP_PAGE to abort the processing, or EVAL_PAGE to continue. 
-     */ 
-    public int doTag() 
-        throws javax.servlet.jsp.JspException; 
-    
-    /**
-     * Sets the parent of this tag, for collaboration purposes.
-     */
-    public void setParent( JspTag parent );
-    
-    /**
-     * Returns the parent of this tag, for collaboration purposes.
-     */ 
-    public JspTag getParent();
-    
-    /**
-     * Stores the provided page context in the protected 
-     * jspContext field.
-     * 
-     * @see Tag#setPageContext
-     */
-    public void setJspContext( JspContext pc );
-                
-    /** 
-     * Provides the body of this tag as a JspFragment object, able to be 
-     * invoked zero or more times by the tag handler. 
-     * <p>
-     * This method is invoked by the JSP page implementation 
-     * object prior to <code>doTag()</code>. 
-     * 
-     * @param body The fragment encapsulating the body of this tag. 
-     */ 
-    public void setJspBody( JspFragment jspBody );
+    public TagFileInfo( String name, String path, TagInfo tagInfo ) {
+        this.name = name;
+        this.path = path;
+        this.tagInfo = tagInfo;
+    }
 
-    
+    /**
+     * The unique action name of this tag.
+     *
+     * @return The (short) name of the tag.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Where to find the .tag file implementing this action.
+     *
+     * @return The path of the tag file, relative to the TLD, or "." if 
+     *     the tag file was defined in an implicit tag file.
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Returns information about this tag, parsed from the directives 
+     * in the tag file.
+     */
+    public TagInfo getTagInfo() {
+        return tagInfo;
+    }
+
+    // private fields for 2.0 info
+    private String name;
+    private String path;
+    private TagInfo tagInfo;
 }

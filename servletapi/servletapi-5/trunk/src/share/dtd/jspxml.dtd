@@ -77,6 +77,12 @@
 >
 
 <!ELEMENT jsp:directive.page EMPTY>
+<!--
+    The contentType default is not relevant for XML views of
+    JSP pages since it differs depending on the originating
+    syntax (text/html;ISO-8859-1 for JSP Pages in standard syntax, or
+    text/xml;UTF-8 for JSP Documents in XML syntax.
+-->
 <!ATTLIST jsp:directive.page
     language        CDATA           "java"
     extends         %ClassName;     #IMPLIED
@@ -89,6 +95,9 @@
     info            CDATA           #IMPLIED
     errorPage       %URL;           #IMPLIED
     isErrorPage     %Bool;          "false"
+    pageEncoding    CDATA           #IMPLIED
+    isScriptingEnabled %Bool;       "true"
+    isELEnabled     %Bool;          #IMPLIED
 >
 
 <!-- the jsp:directive.include only appears in JSP documents and does
