@@ -368,6 +368,9 @@ public class ResponseImpl implements Response {
 
     public void setBufferCommitted( boolean v ) {
 	this.commited=v;
+	// 	System.out.println("Buffer commited " );
+	// 	/*DEBUG*/ try {throw new Exception(); }
+	//catch(Exception ex) {ex.printStackTrace();}
     }
     
     public void reset() throws IllegalStateException {

@@ -122,7 +122,7 @@ public class PrefixMapper {
      */
     public void removeAllMappings( String host, String path ) {
 	PrefixMapper vmap=this;
-	if( host==null ) {
+	if( host!=null ) {
 	    vmap=(PrefixMapper)vhostMaps.get(host);
 	}
 	
