@@ -196,7 +196,7 @@ public class JspUtil {
             returnString = expression;
         }
 
-        return returnString;
+        return escapeXml(returnString);
     }
 
     /**
