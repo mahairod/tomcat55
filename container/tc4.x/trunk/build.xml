@@ -7,6 +7,7 @@
   <!-- property values you must customize for successful building!!!        -->
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
+  <property file="build.properties.default"/>
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
