@@ -81,6 +81,7 @@ import org.apache.struts.action.ActionMapping;
 import javax.management.QueryExp;
 
 import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 
 /**
  * Delete services that are selected to be deleted.
@@ -145,10 +146,26 @@ public class DeleteServiceAction extends Action {
             while (names.hasNext()) {
                 try {
                     ObjectName oName = (ObjectName) names.next();
-                    // delete this mBean
-                    mBServer.unregisterMBean(oName);
+ 
+                    // remove this mBean                                        
+                    Iterator serverItr =
+                    mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+                    TomcatTreeBuilder.WILDCARD), null).iterator();
+                    
+                    ObjectInstance objInstance = (ObjectInstance)serverItr.next();
+                    ObjectName server = (objInstance).getObjectName();
+                    
+                    // remove this service
+                    Object[] serviceParam = new Object[1];
+                    serviceParam[0] = new String(oName.toString());
+                    
+                    String[] type = new String[1];
+                    type[0]= "java.lang.String";
+                    
+                    mBServer.invoke(server, "removeService", serviceParam, type);
+                    
                 } catch (Throwable t) {
-                    throw new ServletException("Exception while deleting", t);
+                    throw new ServletException("Exception while removing service", t);
                 }
             }
         }
