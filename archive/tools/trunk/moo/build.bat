@@ -15,7 +15,7 @@ set CLASSPATH=.\..\ant.jar
 goto next
 
 :next
-echo Using classapth: %CLASSPATH%
+echo Using classpath: %CLASSPATH%
 java org.apache.tools.ant.Main %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 rem clean up classpath after
