@@ -953,8 +953,18 @@ public class Parser {
 	} else if (reader.matches("forward")) {
 	    parseForward(parent);
 	} else if (reader.matches("invoke")) {
+	    if (!isTagFile) {
+		err.jspError(reader.mark(),
+			     "jsp.error.invalid.action.isnottagfile",
+			     "<jsp:invoke");
+	    }
 	    parseInvoke(parent);
 	} else if (reader.matches("doBody")) {
+	    if (!isTagFile) {
+		err.jspError(reader.mark(),
+			     "jsp.error.invalid.action.isnottagfile",
+			     "<jsp:doBody");
+	    }
 	    parseDoBody(parent);
 	} else if (reader.matches("getProperty")) {
 	    parseGetProperty(parent);
