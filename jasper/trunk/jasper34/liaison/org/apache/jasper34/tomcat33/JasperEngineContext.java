@@ -102,9 +102,9 @@ public class JasperEngineContext extends ContainerLiaison
 	Jdk11Compat jdkProxy=Jdk11Compat.getJdkCompat();
         URL appsCP[];
         URL commonCP[];
-        ClassLoader parentLoader=ctx.getContextManager().getParentLoader();
-        appsCP=jdkProxy.getParentURLs(parentLoader);
-        commonCP=jdkProxy.getURLs(parentLoader);
+        ClassLoader parentLoader=ctx.getClassLoader();
+        appsCP=jdkProxy.getURLs(parentLoader,1);
+        commonCP=jdkProxy.getURLs(parentLoader,2);
 	if( appsCP!=null ) 
 	    cpath+=separator+  JavaCompiler.extractClassPath(appsCP);
 	if( commonCP!=null ) 
