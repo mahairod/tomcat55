@@ -274,19 +274,26 @@ public class PageContextImpl
 
     public void setAttribute(String name, Object attribute) {
 
-	if (name == null || attribute == null)
-	    throw new NullPointerException("Null name or attribute value");
+	if (name == null) {
+	    throw new NullPointerException("Null name");
+	}
 
-	attributes.put(name, attribute);
+	if (attribute != null) {
+	    attributes.put(name, attribute);
+	} else {
+	    removeAttribute(name, PAGE_SCOPE);
+	}
     }
 
 
     public void setAttribute(String name, Object o, int scope) {
 
-	if (name == null || o == null)
-	    throw new NullPointerException("Null name or attribute value");
+	if (name == null) {
+	    throw new NullPointerException("Null name");
+	}
 
-	switch (scope) {
+	if (o != null) {
+	    switch (scope) {
 	    case PAGE_SCOPE:
 		attributes.put(name, o);
 		break;
@@ -309,6 +316,10 @@ public class PageContextImpl
 
 	    default:
 		throw new IllegalArgumentException("Invalid scope");
+	    } // switch
+
+	} else {
+	    removeAttribute(name, scope);
 	}
     }
 
