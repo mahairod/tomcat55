@@ -29,6 +29,9 @@
       <update>
         <bug>32454</bug>: Amended JNDI documentation for JavaMail/JavaActivationFramework usage. (yoavs)
       </update>
+      <fix>
+        <bug>32603</bug>: Updated Host doc to reflect appBase resolution. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
