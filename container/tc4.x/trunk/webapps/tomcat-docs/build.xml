@@ -88,7 +88,7 @@
     <style basedir="appdev"
            destdir="${webapps.build}/${webapp.name}/appdev"
          extension=".html"
-             style="../tomcat-docs.xsl"
+             style="tomcat-docs.xsl"
           excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression=".."/>
@@ -100,7 +100,7 @@
     <style basedir="funcspecs"
            destdir="${webapps.build}/${webapp.name}/catalina/funcspecs"
          extension=".html"
-             style="../tomcat-docs.xsl"
+             style="tomcat-docs.xsl"
           excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression="../.."/>
@@ -110,7 +110,7 @@
     <style basedir="config"
            destdir="${webapps.build}/${webapp.name}/config"
          extension=".html"
-             style="../tomcat-docs.xsl"
+             style="tomcat-docs.xsl"
           excludes="project.xml"
           includes="*.xml">
       <param name="relative-path" expression=".."/>

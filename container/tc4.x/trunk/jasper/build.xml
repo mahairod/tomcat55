@@ -26,6 +26,15 @@
   <property name="tools.jar"       value="${java.home}/lib/tools.jar"/>
 
 
+  <!-- Construct Jasper classpath -->
+  <path id="jasper.classpath">
+    <pathelement location="${tools.jar}"/>
+    <pathelement location="${parser.jar}"/>
+    <pathelement location="${jaxp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${jasper.build}/classes"/>
+  </path>
+
   <!-- Construct unit tests classpath -->
   <path id="test.classpath">
     <pathelement location="${parser.jar}"/>
@@ -55,8 +64,8 @@
     <copy todir="${jasper.build}/bin">
       <fileset dir="src/bin" />
     </copy>
-    <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${jasper.build}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${jasper.build}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${jasper.build}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.build}/bin/jspc.sh"/>
 
@@ -85,9 +94,10 @@
 
     <!-- Compile internal server components -->
     <javac srcdir="src/share" destdir="${jasper.build}/classes"
-     classpath="${tools.jar}:${parser.jar}:${jaxp.jar}:${servlet.jar}"
      deprecation="off" debug="on" optimize="off"
-     excludes="**/CVS/**"/>
+     excludes="**/CVS/**">
+      <classpath refid="jasper.classpath" />
+    </javac>
 
     <!-- Copy static resource files -->
     <copy todir="${jasper.build}/classes">
@@ -120,7 +130,7 @@
     <delete dir="${jasper.build}/javadoc"/>
     <mkdir dir="${jasper.build}/javadoc"/>
     <javadoc packagenames="org.apache.jasper.*"
-     classpath="${tools.jar}:${parser.jar}:${jaxp.jar}:${servlet.jar}:${jasper.build}/classes"
+     classpathref="jasper.classpath"
      sourcepath="src/share"
      destdir="${jasper.build}/javadoc"
      author="true"
@@ -164,8 +174,8 @@
     <copy todir="${jasper.deploy}/bin">
       <fileset dir="${jasper.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${jasper.deploy}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.deploy}/bin/jspc.sh"/>
 
@@ -220,8 +230,8 @@
     <copy dest="${jasper.dist}/bin">
       <fileset dir="${jasper.build}/bin" />
     </copy>
-    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" cr="remove"/>
-    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.bat" cr="add"/>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${jasper.dist}/bin" includes="*.bat" eol="crlf"/>
     <chmod perm="+x" file="${jasper.dist}/bin/jasper.sh"/>
     <chmod perm="+x" file="${jasper.dist}/bin/jspc.sh"/>
 
