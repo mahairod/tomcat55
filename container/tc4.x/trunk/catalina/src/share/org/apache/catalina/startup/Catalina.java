@@ -494,6 +494,15 @@ public class Catalina {
         if (server instanceof Lifecycle) {
             try {
                 server.initialize();
+            } catch (LifecycleException e) {
+                System.out.println("Catalina.start: " + e);
+                e.printStackTrace(System.out);
+                if (e.getThrowable() != null) {
+                    System.out.println("----- Root Cause -----");
+                    e.getThrowable().printStackTrace(System.out);
+                }
+            }
+            try {
                 ((Lifecycle) server).start();
             } catch (LifecycleException e) {
                 System.out.println("Catalina.start: " + e);
