@@ -1029,6 +1029,10 @@ Jasper Bug Fixes:
          Remove custom flushing, which caused client disconnects to log
          stack traces with Jasper.
 
+[4.1.19] #15105
+         PageContextImpl:
+         pushBody()/popBody() error on tomcat 4.1.X.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
