@@ -78,6 +78,7 @@ import javax.servlet.SingleThreadModel;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
+import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.InstanceListener;
@@ -809,6 +810,13 @@ public final class StandardWrapper
 	    throw new ServletException
 		(sm.getString("standardWrapper.instantiate", actualClass), e);
 	}
+
+        // Special handling for ContainerServlet instances
+        if ((servlet instanceof ContainerServlet) &&
+            isContainerServlet(actualClass)) {
+            ((ContainerServlet) servlet).setWrapper(this);
+        }
+
 
 	// Call the initialization method of this servlet
 	try {

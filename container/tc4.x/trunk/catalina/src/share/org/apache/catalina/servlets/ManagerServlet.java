@@ -74,10 +74,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Container;
+import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Deployer;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Session;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
@@ -157,7 +156,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public final class ManagerServlet
-    extends HttpServlet {
+    extends HttpServlet implements ContainerServlet {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -188,6 +187,44 @@ public final class ManagerServlet
      */
     private static StringManager sm =
       StringManager.getManager(Constants.Package);
+
+
+    /**
+     * The Wrapper container associated with this servlet.
+     */
+    private Wrapper wrapper = null;
+
+
+    // ----------------------------------------------- ContainerServlet Methods
+
+
+    /**
+     * Return the Wrapper with which we are associated.
+     */
+    public Wrapper getWrapper() {
+
+        return (this.wrapper);
+
+    }
+
+
+    /**
+     * Set the Wrapper with which we are associated.
+     *
+     * @param wrapper The new wrapper
+     */
+    public void setWrapper(Wrapper wrapper) {
+
+        this.wrapper = wrapper;
+        if (wrapper == null) {
+            context = null;
+            deployer = null;
+        } else {
+            context = (Context) wrapper.getParent();
+            deployer = (Deployer) context.getParent();
+        }
+
+    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -261,6 +298,11 @@ public final class ManagerServlet
      */
     public void init() throws ServletException {
 
+        // Ensure that our ContainerServlet properties have been set
+        if ((wrapper == null) || (context == null))
+            throw new UnavailableException
+                (sm.getString("managerServlet.noWrapper"));
+
         // Verify that we were not accessed using the invoker servlet
         String servletName = getServletConfig().getServletName();
         if (servletName == null)
@@ -278,10 +320,6 @@ public final class ManagerServlet
 	    ;
 	}
 
-	// Identify the internal container resources we need
-	Wrapper wrapper = (Wrapper) getServletConfig();
-	context = (Context) wrapper.getParent();
-	deployer = (Deployer) context.getParent();
 
 	// Log debugging messages as necessary
 	if (debug >= 1) {

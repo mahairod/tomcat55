@@ -69,13 +69,13 @@ import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
-import org.apache.catalina.HttpRequest;
-import org.apache.catalina.HttpResponse;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.StringManager;
 
@@ -90,7 +90,7 @@ import org.apache.catalina.util.StringManager;
  */
 
 public final class InvokerServlet
-    extends HttpServlet {
+    extends HttpServlet implements ContainerServlet {
 
 
     // ----------------------------------------------------- Instance Variables
@@ -113,6 +113,41 @@ public final class InvokerServlet
      */
     private static StringManager sm =
         StringManager.getManager(Constants.Package);
+
+
+    /**
+     * The Wrapper container associated with this servlet.
+     */
+    private Wrapper wrapper = null;
+
+
+    // ----------------------------------------------- ContainerServlet Methods
+
+
+    /**
+     * Return the Wrapper with which we are associated.
+     */
+    public Wrapper getWrapper() {
+
+        return (this.wrapper);
+
+    }
+
+
+    /**
+     * Set the Wrapper with which we are associated.
+     *
+     * @param wrapper The new wrapper
+     */
+    public void setWrapper(Wrapper wrapper) {
+
+        this.wrapper = wrapper;
+        if (wrapper == null)
+            context = null;
+        else
+            context = (Context) wrapper.getParent();
+
+    }
 
 
     // --------------------------------------------------------- Public Methods
@@ -187,6 +222,11 @@ public final class InvokerServlet
      */
     public void init() throws ServletException {
 
+        // Ensure that our ContainerServlet properties have been set
+        if ((wrapper == null) || (context == null))
+            throw new UnavailableException
+                (sm.getString("invokerServlet.noWrapper"));
+
 	// Set our properties from the initialization parameters
 	String value = null;
 	try {
@@ -195,11 +235,6 @@ public final class InvokerServlet
 	} catch (Throwable t) {
 	    ;
 	}
-
-	// Identify the internal container resources we need
-	Wrapper wrapper = (Wrapper) getServletConfig();
-	context = (Context) wrapper.getParent();
-
 	if (debug >= 1)
 	    log("init: Associated with Context '" + context.getPath() + "'");
 
