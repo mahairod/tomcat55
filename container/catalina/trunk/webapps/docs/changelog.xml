@@ -26,6 +26,41 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.9 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <add>
+        Add JULI, a java.util.logging implementation, used to provide sane defaults and
+        configurability equivalent to Tomcat 4.0 for Tomcat 5.5 logging (remm)
+      </add>
+      <docs>
+        Add JULI documentation to the logging page (remm)
+      </docs>
+    </changelog>
+   </subsection>
+
+  <subsection name="Catalina">
+    <changelog>
+      <fix>
+        Remove some instances of expanded folder removal (remm)
+      </fix>
+      <fix>
+        Don't call mkdirs if we're not going to save the configuration in StandardContext (remm)
+      </fix>
+      <fix>
+        Fix context classloader binding during loader initialization (it was set to null before) (remm)
+      </fix>
+      <fix>
+        The webapp logger should only be retrieved when the context classloader is set to the 
+        webapp's classloader (remm)
+      </fix>
+      <fix>
+        Add back retry logic in JDBC realm in case of a connection failure (remm)
+      </fix>
+    </changelog>
+   </subsection>
+</section>
+
 <section name="Tomcat 5.5.8 (yoavs)">
   <subsection name="General">
     <changelog>
