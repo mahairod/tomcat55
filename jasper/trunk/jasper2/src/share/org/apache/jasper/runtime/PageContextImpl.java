@@ -692,24 +692,24 @@ public class PageContextImpl extends PageContext implements VariableResolver {
         // Make sure that the response object is not the wrapper for include
         while (response instanceof ServletResponseWrapperInclude) {
             response = ((ServletResponseWrapperInclude)response).getResponse();
-            }
+        }
 
-            final String path = getAbsolutePathRelativeToContext(relativeUrlPath);
-            String includeUri
-                = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
+        final String path = getAbsolutePathRelativeToContext(relativeUrlPath);
+        String includeUri
+            = (String) request.getAttribute(Constants.INC_SERVLET_PATH);
             
-            final ServletResponse fresponse = response;
-            final ServletRequest frequest = request;
+        final ServletResponse fresponse = response;
+        final ServletRequest frequest = request;
             
+        if (includeUri != null)
+            request.removeAttribute(Constants.INC_SERVLET_PATH);
+        try {
+            context.getRequestDispatcher(path).forward(request, response);
+        } finally {
             if (includeUri != null)
-                request.removeAttribute(Constants.INC_SERVLET_PATH);
-            try {
-                context.getRequestDispatcher(path).forward(request, response);
-            } finally {
-                if (includeUri != null)
-                    request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
+                request.setAttribute(Constants.INC_SERVLET_PATH, includeUri);
             request.setAttribute(Constants.FORWARD_SEEN, "true");
-            }
+        }
     }
 
     public BodyContent pushBody() {
