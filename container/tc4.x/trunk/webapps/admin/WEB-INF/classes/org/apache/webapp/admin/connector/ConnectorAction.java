@@ -60,7 +60,7 @@
  */
 
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.connector;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -80,11 +80,9 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
+
 import org.apache.struts.util.MessageResources;
+import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * Implementation of <strong>Action</strong> that validates
@@ -95,9 +93,15 @@ import org.apache.struts.util.MessageResources;
  */
 
 public final class ConnectorAction extends Action {
-    
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
     
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     // --------------------------------------------------------- Public Methods
     
     
@@ -122,51 +126,61 @@ public final class ConnectorAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            /**
-             * Get the connector Name from the form.
-             * This is used to lookup the MBeanServer and
-             * retrieve this connector's MBean.
-             */
-            String connectorName = request.getParameter("connectorName");
-            
+        
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
+        // Validate the request parameters specified by the user
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        ObjectName connectorObjName = null;        
+        /**
+         * Get the connector Name from the form.
+         * This is used to retrieve this connector's MBean.
+         */
+        String connectorName = request.getParameter("connectorName");
+        
+        try {
             Iterator connectorItr =
             mBServer.queryMBeans(new
             ObjectName(connectorName), null).iterator();
             
             ObjectInstance objInstance = (ObjectInstance)connectorItr.next();
-            ObjectName connectorObjName = (objInstance).getObjectName();
-            
-            /**
-             * Extracting the values from the form and
-             * updating the MBean with the new values.
-             */
+            connectorObjName = (objInstance).getObjectName();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBean reference " + connectorName, t);
+        }
+                
+        String attribute = null;
+        /**
+         * Extracting the values from the form and
+         * updating the MBean with the new values.
+         */
+        try{
             
             String debugLvlText = request.getParameter("debugLvl");
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.DEBUG_PROP_NAME,
+                new Attribute(
+                attribute = SetUpConnectorAction.DEBUG_PROP_NAME,
                 debugLvl));
             }
             
@@ -174,7 +188,8 @@ public final class ConnectorAction extends Action {
             if(acceptCountText != null) {
                 Integer acceptCount = new Integer(acceptCountText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.ACCEPT_COUNT_PROP_NAME,
+                new Attribute(
+                attribute = SetUpConnectorAction.ACCEPT_COUNT_PROP_NAME,
                 acceptCount));
             }
             
@@ -182,16 +197,17 @@ public final class ConnectorAction extends Action {
             if(connTimeOutText != null) {
                 Integer connTimeOut = new Integer(connTimeOutText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.CONN_TO_PROP_NAME,
-                connTimeOut));
-                
+                new Attribute(
+                attribute = SetUpConnectorAction.CONN_TO_PROP_NAME,
+                connTimeOut));                
             }
             
             String bufferSizeText = request.getParameter("bufferSizeText");
             if(bufferSizeText != null) {
                 Integer bufferSize = new Integer(bufferSizeText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.BUFF_SIZE_PROP_NAME,
+                new Attribute(
+                attribute = SetUpConnectorAction.BUFF_SIZE_PROP_NAME,
                 bufferSize));
             }
             
@@ -199,22 +215,22 @@ public final class ConnectorAction extends Action {
             if(enableLookups != null) {
                 Boolean enable = Boolean.valueOf(enableLookups);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.ENABLE_LOOKUPS_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.ENABLE_LOOKUPS_PROP_NAME, 
                 enable));
             }
             
             String address = request.getParameter("address");
             if(address != null) {
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.ADDRESS_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.ADDRESS_PROP_NAME,
                 address));
             }
-                        
+            
             String minProcessorsText = request.getParameter("minProcessorsText");
             if (minProcessorsText != null) {
                 Integer minProcessors = new Integer(minProcessorsText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.PROC_MIN_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.PROC_MIN_PROP_NAME,
                 minProcessors));
             }
             
@@ -223,7 +239,7 @@ public final class ConnectorAction extends Action {
             if(maxProcessorsText != null) {
                 Integer maxProcessors = new Integer(maxProcessorsText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.PROC_MAX_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.PROC_MAX_PROP_NAME,
                 maxProcessors));
             }
             
@@ -231,36 +247,42 @@ public final class ConnectorAction extends Action {
             if (portText != null) {
                 Integer port = new Integer(portText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.PORT_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.PORT_PROP_NAME,
                 port));
             }
-                        
+            
             String redirectPortText = request.getParameter("redirectPortText");
             if(redirectPortText != null) {
                 Integer redirectPort = new Integer(redirectPortText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.REDIRECT_PORT_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.REDIRECT_PORT_PROP_NAME,
                 redirectPort));
             }
             
             String proxyName = request.getParameter("proxyName");
             if (proxyName != null) {
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.PROXY_NAME_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.PROXY_NAME_PROP_NAME,
                 proxyName));
             }
-                        
+            
             String proxyPortText = request.getParameter("proxyPortText");
             if(proxyPortText != null) {
                 Integer proxyPort = new Integer(proxyPortText);
                 mBServer.setAttribute(connectorObjName,
-                new Attribute(SetUpConnectorAction.PROXY_PORT_PROP_NAME,
+                new Attribute(attribute=SetUpConnectorAction.PROXY_PORT_PROP_NAME,
                 proxyPort));
             }
             
         }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.set",
+            attribute), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.set",
+            attribute));
+            return (null);
         }
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");

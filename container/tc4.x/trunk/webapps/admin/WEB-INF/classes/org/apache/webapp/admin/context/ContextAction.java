@@ -60,7 +60,7 @@
  */
 
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.context;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -80,11 +80,9 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
+
 import org.apache.struts.util.MessageResources;
+import org.apache.webapp.admin.ApplicationServlet;
 
 /**
  * Implementation of <strong>Action</strong> that validates
@@ -96,7 +94,15 @@ import org.apache.struts.util.MessageResources;
 
 public final class ContextAction extends Action {
     
+    /**
+     * The MBeanServer we will be interacting with.
+     */
     private static MBeanServer mBServer = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     
     // --------------------------------------------------------- Public Methods
     
@@ -122,51 +128,62 @@ public final class ContextAction extends Action {
     HttpServletResponse response)
     throws IOException, ServletException {
         
-        try{
-            
-            // front end validation and checking.
-            // ===================================================
-            MessageResources messages = getResources();
-            Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
-            
-            // Validate the request parameters specified by the user
-            ActionErrors errors = new ActionErrors();
-            
-            // Report any errors we have discovered back to the original form
-            if (!errors.empty()) {
-                saveErrors(request, errors);
-                return (new ActionForward(mapping.getInput()));
-            }
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
-            /**
-             * Get the context Name from the form.
-             * This is used to lookup the MBeanServer and
-             * retrieve this context's MBean.
-             */
-            String contextName = request.getParameter("contextName");
-            
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+        Locale locale = (Locale)request.getSession().getAttribute(Action.LOCALE_KEY);
+        
+        // Validate the request parameters specified by the user
+        ActionErrors errors = new ActionErrors();
+        
+        // Report any errors we have discovered back to the original form
+        if (!errors.empty()) {
+            saveErrors(request, errors);
+            return (new ActionForward(mapping.getInput()));
+        }
+        
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
+        
+        /**
+         * Get the context Name from the form.
+         * This is used to lookup the MBeanServer and
+         * retrieve this context's MBean.
+         */
+        String contextName = request.getParameter("contextName");
+        ObjectName contextObjName = null;
+        ObjectInstance objInstance = null;
+        try {
             Iterator contextItr =
             mBServer.queryMBeans(new
             ObjectName(contextName), null).iterator();
             
-            ObjectInstance objInstance = (ObjectInstance)contextItr.next();
-            ObjectName contextObjName = (objInstance).getObjectName();
-            
-            /**
-             * Extracting the values from the form and
-             * updating the MBean with the new values.
-             */
+            objInstance = (ObjectInstance)contextItr.next();
+            contextObjName = (objInstance).getObjectName();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBean reference " + contextName, t);
+        }
+        
+        String attribute = null;
+        
+        /**
+         * Extracting the values from the form and
+         * updating the MBean with the new values.
+         */
+        try{
             
             String cookiesText = request.getParameter("cookies");
             if(cookiesText != null) {
                 Boolean cookies = Boolean.valueOf(cookiesText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.COOKIES_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.COOKIES_PROP_NAME,
                 cookies));
             }
             
@@ -174,7 +191,8 @@ public final class ContextAction extends Action {
             if(crossContextText != null) {
                 Boolean crossContext = Boolean.valueOf(crossContextText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.CROSS_CONTEXT_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.CROSS_CONTEXT_PROP_NAME,
                 crossContext));
             }
             
@@ -182,14 +200,16 @@ public final class ContextAction extends Action {
             if(debugLvlText != null) {
                 Integer debugLvl = new Integer(debugLvlText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.DEBUG_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.DEBUG_PROP_NAME,
                 debugLvl));
-            }            
+            }
             
             String docBase = request.getParameter("docBase");
             if(docBase != null) {
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.DOC_BASE_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.DOC_BASE_PROP_NAME,
                 docBase));
             }
             
@@ -197,22 +217,24 @@ public final class ContextAction extends Action {
             if(overrideText != null) {
                 Boolean override = Boolean.valueOf(overrideText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.OVERRIDE_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.OVERRIDE_PROP_NAME,
                 override));
             }
-                        
+            
+            attribute = SetUpContextAction.PATH_PROP_NAME; 
             String path = request.getParameter("path");
             if(path != null) {
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.PATH_PROP_NAME,
-                path));
-            }            
+                new Attribute(attribute, path));
+            }
             
             String reloadableText = request.getParameter("reloadable");
             if(reloadableText != null) {
                 Boolean reloadable = Boolean.valueOf(reloadableText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.RELOADABLE_PROP_NAME,
+                new Attribute(
+                attribute= SetUpContextAction.RELOADABLE_PROP_NAME,
                 reloadable));
             }
             
@@ -220,14 +242,16 @@ public final class ContextAction extends Action {
             if(useNamingText != null) {
                 Boolean useNaming = Boolean.valueOf(useNamingText);
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.USENAMING_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.USENAMING_PROP_NAME,
                 useNaming));
             }
-                       
+            
             String workDir = request.getParameter("workDir");
             if(workDir != null) {
                 mBServer.setAttribute(contextObjName,
-                new Attribute(SetUpContextAction.WORKDIR_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.WORKDIR_PROP_NAME,
                 workDir));
             }
             
@@ -240,31 +264,34 @@ public final class ContextAction extends Action {
             
             objInstance = (ObjectInstance)loaderItr.next();
             ObjectName loaderObjName = (objInstance).getObjectName();
-                        
+            
             String ldrCheckInterval = request.getParameter("ldrCheckInterval");
             if(ldrCheckInterval != null) {
                 Integer ldrCheckInt = new Integer(ldrCheckInterval);
                 mBServer.setAttribute(loaderObjName,
-                new Attribute(SetUpContextAction.CHECKINTERVAL_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.CHECKINTERVAL_PROP_NAME,
                 ldrCheckInt));
-            }       
-                
+            }
+            
             String ldrDebugLvlText = request.getParameter("ldrDebugLvl");
             if(ldrCheckInterval != null) {
                 Integer ldrDebugLvl = new Integer(ldrDebugLvlText);
                 mBServer.setAttribute(loaderObjName,
-                new Attribute(SetUpContextAction.DEBUG_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.DEBUG_PROP_NAME,
                 ldrDebugLvl));
-            }            
-                            
+            }
+            
             String ldrReloadable = request.getParameter("ldrReloadable");
             if(ldrReloadable != null) {
                 Boolean ldrReload = new Boolean(ldrReloadable);
                 mBServer.setAttribute(loaderObjName,
-                new Attribute(SetUpContextAction.RELOADABLE_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.RELOADABLE_PROP_NAME,
                 ldrReload));
-            }            
-
+            }
+            
             // write session manager properties
             // retrieve the corresponding manager mBean
             String managerName = request.getParameter("managerName");
@@ -274,42 +301,53 @@ public final class ContextAction extends Action {
             
             objInstance = (ObjectInstance)managerItr.next();
             ObjectName managerObjName = (objInstance).getObjectName();
-                        
+            
             String mgrCheckInterval = request.getParameter("mgrCheckInterval");
             if(mgrCheckInterval != null) {
                 Integer mgrCheckInt = new Integer(mgrCheckInterval);
                 mBServer.setAttribute(managerObjName,
-                new Attribute(SetUpContextAction.CHECKINTERVAL_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.CHECKINTERVAL_PROP_NAME,
                 mgrCheckInt));
-            }       
-                                               
+            }
+            
             String mgrDebugLvlText = request.getParameter("mgrDebugLvl");
             if(mgrDebugLvlText != null) {
                 Integer mgrDebugLvl = new Integer(mgrDebugLvlText);
                 mBServer.setAttribute(managerObjName,
-                new Attribute(SetUpContextAction.DEBUG_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.DEBUG_PROP_NAME,
                 mgrDebugLvl));
-            }       
-                                           
+            }
+            
             String mgrSessionIDInit = request.getParameter("mgrSessionIDInit");
-            if(mgrSessionIDInit != null) {                
+            if(mgrSessionIDInit != null) {
                 mBServer.setAttribute(managerObjName,
-                new Attribute(SetUpContextAction.SESSIONID_INIT_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.SESSIONID_INIT_PROP_NAME,
                 mgrSessionIDInit));
-            }                   
-                               
+            }
+            
             String mgrMaxSessions = request.getParameter("mgrMaxSessions");
             if(mgrMaxSessions != null) {
                 Integer mgrMaxSess = new Integer(mgrMaxSessions);
                 mBServer.setAttribute(managerObjName,
-                new Attribute(SetUpContextAction.MAXACTIVE_SESSIONS_PROP_NAME,
+                new Attribute(
+                attribute = SetUpContextAction.MAXACTIVE_SESSIONS_PROP_NAME,
                 mgrMaxSess));
-            }       
+            }
             
         }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.set",
+            attribute), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.set",
+            attribute));
+            return (null);
         }
+        
         if (servlet.getDebug() >= 1)
             servlet.log(" Forwarding to success page");
         // Forward back to the test page

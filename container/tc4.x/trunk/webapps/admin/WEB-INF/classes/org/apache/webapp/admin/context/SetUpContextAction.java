@@ -60,8 +60,7 @@
  */
 
 
-package org.apache.webapp.admin;
-
+package org.apache.webapp.admin.context;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -84,14 +83,10 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.ApplicationServlet;
+import org.apache.webapp.admin.TomcatTreeBuilder;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -104,7 +99,15 @@ import org.apache.struts.util.MessageResources;
 
 public class SetUpContextAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     
     // ---- Context Properties ----
     public final static String COOKIES_PROP_NAME = "cookies";
@@ -151,6 +154,11 @@ public class SetUpContextAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
         
         if (form == null) {
             getServlet().log(" Creating new ContextForm bean under key "
@@ -195,36 +203,18 @@ public class SetUpContextAction extends Action {
         String contextName = null;
         String loaderName = null;
         String managerName = null;
+  
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
         
-        // context properties
-        Boolean cookies = null;
-        Boolean crossContext = null;
-        Integer debug = null;
-        String docBase = null;
-        Boolean override = null;
-        String path = null;
-        Boolean reloadable = null;
-        Boolean useNaming = null;
-        String workDir = null;
+        String attribute = null;
         
-        // loader properties
-        Integer ldrCheckInterval = null;
-        Integer ldrDebug = null;
-        Boolean ldrReloadable = null;
-        
-        // session properties
-        Integer mgrCheckInterval = null;
-        Integer mgrDebug = null;
-        String mgrSessionIDInit = null;
-        Integer mgrMaxSessions = null; 
-       
-        try{
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
+        try{            
             Iterator contextItr =
             mBServer.queryMBeans(new
             ObjectName(selectedName), null).iterator();
@@ -233,84 +223,121 @@ public class SetUpContextAction extends Action {
             ObjectName contextObjName = (objInstance).getObjectName();
             
             // Extracting the attribute values for the Context from the MBean
+            attribute = COOKIES_PROP_NAME;
+            contextFm.setCookies(
+            ((Boolean) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            cookies = (Boolean) mBServer.getAttribute(contextObjName,
-            COOKIES_PROP_NAME);
+            attribute = CROSS_CONTEXT_PROP_NAME;
+            contextFm.setCrossContext(
+            ((Boolean) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            crossContext = (Boolean) mBServer.getAttribute(contextObjName,
-            CROSS_CONTEXT_PROP_NAME);
+            attribute = DEBUG_PROP_NAME;
+            contextFm.setDebugLvl(
+            ((Integer) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            debug = (Integer) mBServer.getAttribute(contextObjName,
-            DEBUG_PROP_NAME);
+            attribute = DOC_BASE_PROP_NAME;
+            contextFm.setDocBase(
+            (String) mBServer.getAttribute(contextObjName,
+            attribute));
             
-            docBase = (String) mBServer.getAttribute(contextObjName,
-            DOC_BASE_PROP_NAME);
+            attribute = OVERRIDE_PROP_NAME;
+            contextFm.setOverride(
+            ((Boolean) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            override = (Boolean) mBServer.getAttribute(contextObjName,
-            OVERRIDE_PROP_NAME);
+            attribute = PATH_PROP_NAME;
+            contextFm.setPath(
+            (String) mBServer.getAttribute(contextObjName,
+            attribute));
             
-            path = (String) mBServer.getAttribute(contextObjName,
-            PATH_PROP_NAME);
+            attribute = RELOADABLE_PROP_NAME;
+            contextFm.setReloadable(
+            ((Boolean) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            reloadable = (Boolean) mBServer.getAttribute(contextObjName,
-            RELOADABLE_PROP_NAME);
+            attribute = USENAMING_PROP_NAME;
+            contextFm.setUseNaming(
+            ((Boolean) mBServer.getAttribute(contextObjName,
+            attribute)).toString());
             
-            useNaming = (Boolean) mBServer.getAttribute(contextObjName,
-            USENAMING_PROP_NAME);
-            
-            workDir = (String) mBServer.getAttribute(contextObjName,
-            WORKDIR_PROP_NAME);
+            attribute = WORKDIR_PROP_NAME;
+            contextFm.setWorkDir(
+            (String) mBServer.getAttribute(contextObjName,
+            attribute));
             
             // Loader properties
             // Get the corresponding Loader mBean
             int i = selectedName.indexOf(",");
-            if (i != -1) 
+            if (i != -1)
                 loaderName = TomcatTreeBuilder.LOADER_TYPE +
                 selectedName.substring(i, selectedName.length());
-
+            
             Iterator loaderItr =
             mBServer.queryMBeans(new ObjectName(loaderName), null).iterator();
             
             objInstance = (ObjectInstance)loaderItr.next();
             ObjectName loaderObjName = (objInstance).getObjectName();
-           
-            ldrCheckInterval = (Integer) mBServer.getAttribute(loaderObjName,
-            CHECKINTERVAL_PROP_NAME);
-                    
-            ldrDebug = (Integer) mBServer.getAttribute(loaderObjName,
-            DEBUG_PROP_NAME);
             
-            ldrReloadable = (Boolean) mBServer.getAttribute(loaderObjName,
-            RELOADABLE_PROP_NAME);                
+            attribute = CHECKINTERVAL_PROP_NAME;
+            contextFm.setLdrCheckInterval(
+            ((Integer) mBServer.getAttribute(loaderObjName,
+            attribute)).toString());
             
-            // Session manager properties         
+            attribute = DEBUG_PROP_NAME;
+            contextFm.setLdrDebugLvl(
+            ((Integer) mBServer.getAttribute(loaderObjName,
+            attribute)).toString());
+            
+            attribute = RELOADABLE_PROP_NAME;
+            contextFm.setLdrReloadable(
+            ((Boolean) mBServer.getAttribute(loaderObjName,
+            attribute)).toString());
+            
+            // Session manager properties
             // Get the corresponding Session Manager mBean
             i = selectedName.indexOf(",");
-            if (i != -1) 
-                managerName = TomcatTreeBuilder.MANAGER_TYPE + 
-                              selectedName.substring(i, selectedName.length());
-                       
+            if (i != -1)
+                managerName = TomcatTreeBuilder.MANAGER_TYPE +
+                selectedName.substring(i, selectedName.length());
+            
             Iterator managerItr =
             mBServer.queryMBeans(new ObjectName(managerName), null).iterator();
             
             objInstance = (ObjectInstance)managerItr.next();
             ObjectName managerObjName = (objInstance).getObjectName();
-           
-            mgrCheckInterval = (Integer) mBServer.getAttribute(managerObjName,
-            CHECKINTERVAL_PROP_NAME);                
-                  
-            mgrDebug = (Integer) mBServer.getAttribute(managerObjName,
-            DEBUG_PROP_NAME);         
             
-            mgrSessionIDInit = (String) mBServer.getAttribute(managerObjName,
-            SESSIONID_INIT_PROP_NAME);   
-             
-            mgrMaxSessions = (Integer) mBServer.getAttribute(managerObjName,
-            MAXACTIVE_SESSIONS_PROP_NAME);         
+            attribute = CHECKINTERVAL_PROP_NAME;
+            contextFm.setMgrCheckInterval(
+            ((Integer) mBServer.getAttribute(managerObjName,
+            attribute)).toString());
+            
+            attribute = DEBUG_PROP_NAME;
+            contextFm.setMgrDebugLvl(
+            ((Integer) mBServer.getAttribute(managerObjName,
+            attribute)).toString());
+            
+            attribute = SESSIONID_INIT_PROP_NAME;
+            contextFm.setMgrSessionIDInit(
+            ((String) mBServer.getAttribute(managerObjName,
+            attribute)).toString());
+            
+            attribute = MAXACTIVE_SESSIONS_PROP_NAME;
+            contextFm.setMgrMaxSessions(
+            ((Integer) mBServer.getAttribute(managerObjName,
+            attribute)).toString());
             
         } catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.get",
+            attribute), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.get",
+            attribute));
+            return (null);
         }
         
         //setting values obtained from the mBean to be displayed in the form.
@@ -318,33 +345,10 @@ public class SetUpContextAction extends Action {
         contextFm.setNodeLabel(nodeLabel);
         contextFm.setContextName(selectedName);
         contextFm.setLoaderName(loaderName);
-        contextFm.setManagerName(managerName);
-        
-        contextFm.setDebugLvlVals(debugLvlList);
+        contextFm.setManagerName(managerName);        
+        contextFm.setDebugLvlVals(debugLvlList);  
         contextFm.setBooleanVals(booleanList);
         
-        // -- Context Properties --
-        contextFm.setCookies(cookies.toString());
-        contextFm.setCrossContext(crossContext.toString());
-        contextFm.setDebugLvl(debug.toString());
-        contextFm.setDocBase(docBase);
-        contextFm.setOverride(override.toString());
-        contextFm.setPath(path);
-        contextFm.setReloadable(reloadable.toString());
-        contextFm.setUseNaming(useNaming.toString());
-        contextFm.setWorkDir(workDir);
-        
-        // -- Loader properties --
-        contextFm.setLdrCheckInterval(ldrCheckInterval.toString());
-        contextFm.setLdrDebugLvl(ldrDebug.toString());
-        contextFm.setLdrReloadable(ldrReloadable.toString());
-        
-        // Session manager properties --
-        contextFm.setMgrCheckInterval(mgrCheckInterval.toString());
-        contextFm.setMgrDebugLvl(mgrDebug.toString());
-        contextFm.setMgrSessionIDInit(mgrSessionIDInit.toString());
-        contextFm.setMgrMaxSessions(mgrMaxSessions.toString());
-       
         // Forward back to the test page
         return (mapping.findForward("Context"));
     }

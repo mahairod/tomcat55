@@ -33,7 +33,7 @@
 
     <!-- Connector form bean -->
     <form-bean      name="connectorForm"
-                    type="org.apache.webapp.admin.ConnectorForm"/>
+                    type="org.apache.webapp.admin.connector.ConnectorForm"/>
 
     <!-- Host form bean -->
     <form-bean      name="hostForm"
@@ -41,7 +41,7 @@
 
     <!-- Context form bean -->
     <form-bean      name="contextForm"
-                    type="org.apache.webapp.admin.ContextForm"/>
+                    type="org.apache.webapp.admin.context.ContextForm"/>
                     
     <!-- Logger form bean -->
     <form-bean      name="loggerForm"
@@ -122,15 +122,15 @@
                 redirect="false"/>
 
     <forward        name="Service"
-                    path="/service.jsp"
+                    path="/service/service.jsp"
                 redirect="false"/>
 
     <forward        name="Delete Service"
-                    path="/deleteService.jsp"
+                    path="/service/deleteService.jsp"
                 redirect="false"/>
 
     <forward        name="Add Service"
-                    path="/addService.jsp"
+                    path="/service/addService.jsp"
                 redirect="false"/>
 
     <forward        name="Connector"
@@ -269,9 +269,6 @@
                type="org.apache.webapp.admin.service.SetUpServiceAction"
                name="serviceForm"
                scope="session">
-      <forward        name="SetUpService"
-                      path="/service.jsp"
-                  redirect="true"/>
     </action>
 
    <!-- Set up Delete Service datastructure -->
@@ -280,8 +277,7 @@
                name="deleteServiceForm"
                scope="session">
     </action>
-    
-    
+        
     <!-- Set up Add Service datastructure -->
     <action    path="/setUpAddService"
                type="org.apache.webapp.admin.service.SetUpAddServiceAction"
@@ -291,12 +287,9 @@
     
    <!-- Set up Connector datastructure -->
     <action    path="/setUpConnector"
-               type="org.apache.webapp.admin.SetUpConnectorAction"
+               type="org.apache.webapp.admin.connector.SetUpConnectorAction"
                name="connectorForm"
                scope="session">
-      <forward        name="SetUpConnector"
-                      path="/connector.jsp"
-                  redirect="true"/>
     </action>
 
      <!-- Set up Host datastructure -->
@@ -304,19 +297,13 @@
                type="org.apache.webapp.admin.SetUpHostAction"
                name="hostForm"
                scope="session">
-      <forward        name="SetUpHost"
-                      path="/host.jsp"
-                  redirect="true"/>
     </action>
     
       <!-- Set up Context datastructure -->
     <action    path="/setUpContext"
-               type="org.apache.webapp.admin.SetUpContextAction"
+               type="org.apache.webapp.admin.context.SetUpContextAction"
                name="contextForm"
                scope="session">
-      <forward        name="SetUpContext"
-                      path="/context.jsp"
-                  redirect="true"/>
     </action>
     
     <!-- Set up Logger datastructure -->
@@ -324,9 +311,6 @@
                type="org.apache.webapp.admin.SetUpLoggerAction"
                name="loggerForm"
                scope="session">
-      <forward        name="SetUpLogger"
-                      path="/logger.jsp"
-                  redirect="true"/>
     </action>
 
     <!-- Set up Memory Realm datastructure -->
@@ -334,9 +318,6 @@
                type="org.apache.webapp.admin.realm.SetUpMemoryRealmAction"
                name="memoryRealmForm"
                scope="session">
-    <forward        name="SetUpMemoryRealm"
-                      path="/memoryRealm.jsp"
-                  redirect="true"/>
     </action>
 
    <!-- Set up JDBC Realm datastructure -->
@@ -381,12 +362,12 @@
                type="org.apache.webapp.admin.service.ServiceAction"
                name="serviceForm"
               scope="session"
-              input="/service.jsp">
+              input="/service/service.jsp">
     </action>
 
     <!-- Process a connector change -->
     <action    path="/connector"
-               type="org.apache.webapp.admin.ConnectorAction"
+               type="org.apache.webapp.admin.connector.ConnectorAction"
                name="connectorForm"
               scope="session"
               input="/connector.jsp">
@@ -402,7 +383,7 @@
     
      <!-- Process a context change -->
     <action    path="/context"
-               type="org.apache.webapp.admin.ContextAction"
+               type="org.apache.webapp.admin.context.ContextAction"
                name="contextForm"
               scope="session"
               input="/context.jsp">
@@ -429,14 +410,14 @@
 
     <!-- Delete service action -->
     <action    path="/deleteService"
-              input="/deleteService.jsp"
+              input="/service/deleteService.jsp"
                name="deleteServiceForm"
               scope="request"
                type="org.apache.webapp.admin.service.DeleteServiceAction"/>
                
     <!-- Add service action -->
     <action    path="/addService"
-              input="/addService.jsp"
+              input="/service/addService.jsp"
                name="addServiceForm"
               scope="request"
                type="org.apache.webapp.admin.service.AddServiceAction"/>

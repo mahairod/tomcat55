@@ -60,8 +60,7 @@
  */
 
 
-package org.apache.webapp.admin;
-
+package org.apache.webapp.admin.connector;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -84,14 +83,9 @@ import javax.management.QueryExp;
 import javax.management.Query;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.management.JMException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanInfo;
 
-import javax.management.modelmbean.ModelMBean;
-import javax.management.modelmbean.ModelMBeanInfo;
-
+import org.apache.webapp.admin.LabelValueBean;
+import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.struts.util.MessageResources;
 
 /**
@@ -104,7 +98,15 @@ import org.apache.struts.util.MessageResources;
 
 public class SetUpConnectorAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     
     public final static String SCHEME_PROP_NAME = "scheme";
     
@@ -151,6 +153,11 @@ public class SetUpConnectorAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
         
         if (form == null) {
             getServlet().log(" Creating new ConnectorForm bean under key "
@@ -192,31 +199,18 @@ public class SetUpConnectorAction extends Action {
             booleanList.add(new LabelValueBean("False", "false"));
         }
         
-        String connectorName = null;        
-        String scheme = null;
-        Integer debug = null;
-        String acceptCountText = null;
-        Integer connTimeOut = null;
-        Integer bufferSize = null;
-        String address = null;
-        Boolean enableLookups = null;
+        String connectorName = null;
+
+        // Acquire a reference to the MBeanServer containing our MBeans
+        try {
+            mBServer = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+            ("Cannot acquire MBeanServer reference", t);
+        }
         
-        String portText = null;
-        String redirectPortText = null;
-        
-        Integer maxProcessors = null;
-        Integer minProcessors = null;
-        
-        String proxyName = null;
-        String proxyPortText = null;
-        
+        String attribute = null;
         try{
-            
-            if(mBServer == null) {
-                ApplicationServlet servlet = (ApplicationServlet)getServlet();
-                mBServer = servlet.getServer();
-            }
-            
             Iterator connectorItr =
             mBServer.queryMBeans(new
             ObjectName(selectedName), null).iterator();
@@ -224,91 +218,89 @@ public class SetUpConnectorAction extends Action {
             ObjectInstance objInstance = (ObjectInstance)connectorItr.next();
             ObjectName connectorObjName = (objInstance).getObjectName();
             
-            /*
-            ModelMBeanInfo info = (ModelMBeanInfo) mBServer.getMBeanInfo(connectorObjName);
-            MBeanAttributeInfo attrs[] = info.getAttributes();
-            for (int i = 0; i < attrs.length; i++)
-                System.out.println("  AttributeInfo=" + attrs[i]);
-            
-            MBeanOperationInfo opers[] = info.getOperations();
-            for (int i = 0; i < opers.length; i++)
-                System.out.println("  Operation=" + opers[i]);
-            */
-            
             // Extracting the attribute values for the Connector from the MBean
-            scheme = (String) mBServer.getAttribute(connectorObjName,
-            SCHEME_PROP_NAME);
+            attribute = SCHEME_PROP_NAME;
+            connectorFm.setScheme(
+            (String) mBServer.getAttribute(connectorObjName,
+            attribute));
             
-            Integer acceptCount = (Integer) mBServer.getAttribute(connectorObjName,
-            ACCEPT_COUNT_PROP_NAME);
-            acceptCountText = acceptCount.toString();
+            attribute = ACCEPT_COUNT_PROP_NAME;
+            connectorFm.setAcceptCountText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            connTimeOut = (Integer) mBServer.getAttribute(connectorObjName,
-            CONN_TO_PROP_NAME);
-
-            debug = (Integer) mBServer.getAttribute(connectorObjName,
-            DEBUG_PROP_NAME);
+            attribute = CONN_TO_PROP_NAME;
+            connectorFm.setConnTimeOutText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            bufferSize = (Integer) mBServer.getAttribute(connectorObjName,
-            BUFF_SIZE_PROP_NAME);
+            attribute = DEBUG_PROP_NAME;
+            connectorFm.setDebugLvl(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            address = (String) mBServer.getAttribute(connectorObjName,
-            ADDRESS_PROP_NAME);
+            attribute = BUFF_SIZE_PROP_NAME;
+            connectorFm.setBufferSizeText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            enableLookups = (Boolean) mBServer.getAttribute(connectorObjName,
-            ENABLE_LOOKUPS_PROP_NAME);
+            attribute = ADDRESS_PROP_NAME;
+            connectorFm.setAddress(
+            (String) mBServer.getAttribute(connectorObjName,
+            attribute));
             
-            Integer port = (Integer) mBServer.getAttribute(connectorObjName,
-            PORT_PROP_NAME);
-            if (port != null) portText = port.toString();
+            attribute = ENABLE_LOOKUPS_PROP_NAME;
+            connectorFm.setEnableLookups(
+            ((Boolean) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            Integer redirectPort = (Integer) mBServer.getAttribute(connectorObjName,
-            REDIRECT_PORT_PROP_NAME);
-            redirectPortText = redirectPort.toString();
-  
-            minProcessors = (Integer) mBServer.getAttribute(connectorObjName,
-            PROC_MIN_PROP_NAME);
+            attribute = PORT_PROP_NAME;
+            connectorFm.setPortText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            maxProcessors = (Integer) mBServer.getAttribute(connectorObjName,
-            PROC_MAX_PROP_NAME);
+            attribute = REDIRECT_PORT_PROP_NAME;
+            connectorFm.setRedirectPortText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            proxyName = (String) mBServer.getAttribute(connectorObjName,
-            PROXY_NAME_PROP_NAME);
+            attribute = PROC_MIN_PROP_NAME;
+            connectorFm.setMinProcessorsText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
-            Integer proxyPort = (Integer) mBServer.getAttribute(connectorObjName,
-            PROXY_PORT_PROP_NAME);
-            proxyPortText = proxyPort.toString();
+            attribute = PROC_MAX_PROP_NAME;
+            connectorFm.setMaxProcessorsText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
+            
+            attribute = PROXY_NAME_PROP_NAME;
+            connectorFm.setProxyName(
+            (String) mBServer.getAttribute(connectorObjName,
+            attribute));
+            
+            attribute = PROXY_PORT_PROP_NAME;
+            connectorFm.setProxyPortText(
+            ((Integer) mBServer.getAttribute(connectorObjName,
+            attribute)).toString());
             
         } catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.get",
+            attribute), t);
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.get",
+            attribute));
+            return (null);
         }
         
         //setting values obtained from the mBean to be displayed in the form.
-        connectorFm.setScheme(scheme);
         connectorFm.setNodeLabel(nodeLabel);
-        connectorFm.setAcceptCountText(acceptCountText);
-        connectorFm.setConnTimeOutText(connTimeOut.toString());
-        
-        connectorFm.setDebugLvl(debug.toString());
-        connectorFm.setDebugLvlVals(debugLvlList);
-        
-        connectorFm.setEnableLookups(enableLookups.toString());
-        connectorFm.setBooleanVals(booleanList);
-        
-        connectorFm.setBufferSizeText(bufferSize.toString());
-        connectorFm.setAddress(address);
-        
-        connectorFm.setMinProcessorsText(minProcessors.toString());
-        connectorFm.setMaxProcessorsText(maxProcessors.toString());
-        
-        connectorFm.setPortText(portText);
-        connectorFm.setRedirectPortText(redirectPortText);
-        
-        connectorFm.setProxyName(proxyName);
-        connectorFm.setProxyPortText(proxyPortText);
-        
         connectorFm.setConnectorName(selectedName);
+        
+        connectorFm.setDebugLvlVals(debugLvlList);
+        connectorFm.setBooleanVals(booleanList);
         
         // Forward back to the test page
         return (mapping.findForward("Connector"));

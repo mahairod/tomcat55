@@ -60,7 +60,7 @@
  */
 
 
-package org.apache.webapp.admin;
+package org.apache.webapp.admin.connector;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionError;
@@ -600,7 +600,7 @@ public final class ConnectorForm extends ActionForm {
      *
      */
     
-    private void numberCheck(String field, String numText, boolean rangeCheck,
+    public void numberCheck(String field, String numText, boolean rangeCheck,
     int min, int max) {
         
         /* Check for 'is required' */

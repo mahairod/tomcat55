@@ -127,49 +127,50 @@ public class DeleteServiceAction extends Action {
             throw new ServletException
             ("Cannot acquire MBeanServer reference", t);
         }
-
+        
         // selected services to be deleted
         String[] selected  = request.getParameterValues("checkbox");
         
         // process delete action
-        for (int index=0; index <selected.length; index++) {
-            String pattern = selected[index];
-
-            Iterator names = null;
-            
-            try {
-                names = mBServer.queryNames(new ObjectName(pattern), null).iterator();
-            } catch (Throwable t) {
-                throw new ServletException("queryNames(" + pattern + ")", t);
-            }
-            
-            while (names.hasNext()) {
+        if (selected != null) {
+            for (int index=0; index <selected.length; index++) {
+                String pattern = selected[index];
+                
+                Iterator names = null;
+                
                 try {
-                    ObjectName oName = (ObjectName) names.next();
- 
-                    // remove this mBean                                        
-                    Iterator serverItr =
-                    mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
-                    TomcatTreeBuilder.WILDCARD), null).iterator();
-                    
-                    ObjectInstance objInstance = (ObjectInstance)serverItr.next();
-                    ObjectName server = (objInstance).getObjectName();
-                    
-                    // remove this service
-                    Object[] serviceParam = new Object[1];
-                    serviceParam[0] = new String(oName.toString());
-                    
-                    String[] type = new String[1];
-                    type[0]= "java.lang.String";
-                    
-                    mBServer.invoke(server, "removeService", serviceParam, type);
-                    
+                    names = mBServer.queryNames(new ObjectName(pattern), null).iterator();
                 } catch (Throwable t) {
-                    throw new ServletException("Exception while removing service", t);
+                    throw new ServletException("queryNames(" + pattern + ")", t);
+                }
+                
+                while (names.hasNext()) {
+                    try {
+                        ObjectName oName = (ObjectName) names.next();
+                        
+                        // remove this mBean
+                        Iterator serverItr =
+                        mBServer.queryMBeans(new ObjectName(TomcatTreeBuilder.SERVER_TYPE +
+                        TomcatTreeBuilder.WILDCARD), null).iterator();
+                        
+                        ObjectInstance objInstance = (ObjectInstance)serverItr.next();
+                        ObjectName server = (objInstance).getObjectName();
+                        
+                        // remove this service
+                        Object[] serviceParam = new Object[1];
+                        serviceParam[0] = new String(oName.toString());
+                        
+                        String[] type = new String[1];
+                        type[0]= "java.lang.String";
+                        
+                        mBServer.invoke(server, "removeService", serviceParam, type);
+                        
+                    } catch (Throwable t) {
+                        throw new ServletException("Exception while removing service", t);
+                    }
                 }
             }
         }
-        
         //Fix me -- need to refresh the tree?
         return (mapping.findForward("Save Successful"));
     }

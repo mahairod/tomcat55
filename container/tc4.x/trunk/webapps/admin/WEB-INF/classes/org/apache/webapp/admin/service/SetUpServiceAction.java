@@ -97,7 +97,15 @@ import org.apache.webapp.admin.TomcatTreeBuilder;
 
 public class SetUpServiceAction extends Action {
     
-    private static MBeanServer mBServer = null;
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
+    
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
     
     public final static String NAME_PROP_NAME = "name";
     public final static String HOST_PROP_NAME = "defaultHost";
@@ -131,6 +139,10 @@ public class SetUpServiceAction extends Action {
     throws IOException, ServletException {
         
         HttpSession session = request.getSession();
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -155,7 +167,7 @@ public class SetUpServiceAction extends Action {
         String selectedName = request.getParameter("select");
         // label of the node that was clicked on.
         String nodeLabel = request.getParameter("nodeLabel");
-                    
+        
         ServiceForm serviceFm = (ServiceForm) form;
         
         if(debugLvlList == null) {
@@ -175,8 +187,9 @@ public class SetUpServiceAction extends Action {
         
         String serviceName = null;
         String engineName = null;
-        Integer debug = null;
         String defaultHost = null;
+     
+        String attribute = null;
         
         try{
             
@@ -187,8 +200,9 @@ public class SetUpServiceAction extends Action {
             ObjectInstance objInstance = (ObjectInstance)serviceItr.next();
             ObjectName serviceObjName = (objInstance).getObjectName();
             
-            serviceName = (String) mBServer.getAttribute(serviceObjName,
-            NAME_PROP_NAME);
+            attribute = NAME_PROP_NAME;
+            serviceName = 
+            (String) mBServer.getAttribute(serviceObjName, attribute);
             
             // FIX-ME
             // nodelabel might be null in case of returning from delete screen
@@ -204,14 +218,16 @@ public class SetUpServiceAction extends Action {
             ObjectName engineObjName = ((ObjectInstance)engineItr.next()).getObjectName();
             
             /*set values from engine mBean*/
-            engineName = (String) mBServer.getAttribute(engineObjName,
-            NAME_PROP_NAME);
+            attribute = NAME_PROP_NAME;
+            serviceFm.setEngineName(
+            (String) mBServer.getAttribute(engineObjName, attribute));
             
-            debug = (Integer) mBServer.getAttribute(engineObjName,
-            DEBUG_PROP_NAME);
+            attribute = DEBUG_PROP_NAME;
+            serviceFm.setDebugLvl(
+            ((Integer) mBServer.getAttribute(engineObjName, attribute)).toString());
             
-            defaultHost = (String) mBServer.getAttribute(engineObjName,
-            HOST_PROP_NAME);
+            attribute = HOST_PROP_NAME;
+            defaultHost = (String) mBServer.getAttribute(engineObjName, attribute);
             
             // defaultHost is an optional attribute of Engine,
             // display blank if this value was not set.
@@ -232,23 +248,31 @@ public class SetUpServiceAction extends Action {
             while(hostItr.hasNext()) {
                 
                 ObjectName hostObjName = ((ObjectInstance)hostItr.next()).getObjectName();
+                attribute = NAME_PROP_NAME;
                 String hostName = (String) mBServer.getAttribute(hostObjName,
-                NAME_PROP_NAME);
+                attribute);
                 // add this to the list that will be displayed in
-                // the pulldown menu..
+                // the pulldown menu.
                 hostNameList.add(new LabelValueBean(hostName, hostName));
             }
             
         }catch(Throwable t){
-            t.printStackTrace(System.out);
-            //forward to error page
+            getServlet().log
+            (resources.getMessage(locale, "users.error.attribute.get",
+            attribute), t);
+            
+            response.sendError
+            (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            resources.getMessage(locale, "users.error.attribute.get",
+            attribute));
+            
+            return (null);
         }
         
         serviceFm.setNodeLabel(nodeLabel);
+        
         serviceFm.setServiceName(serviceName);
         serviceFm.setDefaultHost(defaultHost);
-        serviceFm.setDebugLvl(debug.toString());
-        serviceFm.setEngineName(engineName);
         serviceFm.setDebugLvlVals(debugLvlList);
         serviceFm.setHostNameVals(hostNameList);
         

@@ -164,6 +164,8 @@ public class SetUpDeleteServiceAction extends Action {
         
         // Forward the Set as a request attribute
         request.setAttribute("services", services);
+        if (deleteThis != null) 
+            return new ActionForward("/deleteService.jsp");
         return (mapping.findForward("Delete Service"));
     }
 }
