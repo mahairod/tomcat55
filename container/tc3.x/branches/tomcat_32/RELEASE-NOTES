@@ -334,6 +334,7 @@ This section highlights the bugs fixed in this release.
      the older version of JAXP and there is no requirement for users
      to upgrade to JAXP 1.1 unless their applications require the new
      version.
+  -  Fixed NullPointerException in HttpConnectionHandler.  (#4577)
      
 
 7.2 Security Vulnerabilities fixed in Tomcat 3.2.4
