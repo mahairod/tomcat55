@@ -1,5 +1,4 @@
 <!-- Standard Struts Entries -->
-
 <%@ page language="java" import="java.net.URLEncoder" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
@@ -64,16 +63,26 @@
             <%--
             <controls:action url="">  <bean:message key="actions.requestfilter.create"/> </controls:action>
             <controls:action url="">  <bean:message key="actions.requestfilter.delete"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.realms.create"/> </controls:action>
-            <controls:action url="">  <bean:message key="actions.realms.deletes"/> </controls:action>
-            <controls:action> ------------------------------------- </controls:action>
+            <controls:action disabled="true"> ------------------------------------- </controls:action>
             <controls:action url="">  <bean:message key="actions.valves.create"/> </controls:action>
+            <controls:action url="">  <bean:message key="actions.valves.deletes"/> </controls:action>
+            <controls:action disabled="true"> ------------------------------------- </controls:action>
+            <controls:action url='<%= "/AddContext.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'>
+                <bean:message key="actions.contexts.create"/>
+            </controls:action>              
+            --%> 
+            <controls:action url='<%= "/DeleteContext.do?parent=" + 
+                                  URLEncoder.encode(thisObjectName) %>'> 
+                <bean:message key="actions.contexts.deletes"/> 
+            </controls:action>
+            <controls:action disabled="true"> 
+                ------------------------------------- 
+            </controls:action>
             <controls:action url='<%= "/AddRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
             </controls:action>              
-            --%> 
             <controls:action url='<%= "/DeleteRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 

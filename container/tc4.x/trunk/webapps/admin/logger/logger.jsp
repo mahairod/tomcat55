@@ -43,10 +43,12 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action disabled="true"> --------------------------------- </controls:action>
+            <logic:notEqual name="loggerForm" property="adminAction" value="Create">              
             <controls:action url='<%= "/DeleteLogger.do?select=" +
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.loggers.delete"/> 
-            </controls:action>            
+            </controls:action>          
+            </logic:notEqual>
        </controls:actions>   
          </div>
       </td>

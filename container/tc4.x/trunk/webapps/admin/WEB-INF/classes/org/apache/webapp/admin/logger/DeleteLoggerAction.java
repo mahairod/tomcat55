@@ -214,7 +214,7 @@ public class DeleteLoggerAction extends Action {
         StringBuffer sb = new StringBuffer(MBeanType);
         ObjectName poname = new ObjectName(parent);
         String type = poname.getKeyProperty("type");
-        if ("Context".equalsIgnoreCase(type)) { // container is context
+        if ("Context".equalsIgnoreCase(type)) { // container is context            
             sb.append(",path=");
             sb.append(poname.getKeyProperty("path"));
             sb.append(",host=");

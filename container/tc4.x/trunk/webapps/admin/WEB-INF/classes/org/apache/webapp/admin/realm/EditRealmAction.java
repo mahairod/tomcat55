@@ -199,13 +199,7 @@ public class EditRealmAction extends Action {
         }
        
         return (mapping.findForward(realmType));
-        
-        /*
-   */
-            
-        // Forward to the realm display page
-        // return (mapping.findForward("Realm"));
-        
+                
     }
 
     private void setUpUserDatabaseRealm(ObjectName rname,

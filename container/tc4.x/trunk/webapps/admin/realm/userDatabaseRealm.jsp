@@ -20,6 +20,7 @@
 
   <bean:define id="thisObjectName" type="java.lang.String"
                name="userDatabaseRealmForm" property="objectName"/>
+  <html:hidden property="parentObjectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
 
@@ -27,8 +28,12 @@
     <tr bgcolor="7171A5">
       <td width="81%"> 
         <div class="page-title-text" align="left"> 
-          <bean:write name="userDatabaseRealmForm" property="nodeLabel" 
-                      scope="session"/>
+         <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Create">
+            <bean:message key="actions.realms.create"/>
+          </logic:equal>
+          <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
+            <bean:message key="actions.realms.edit"/>
+          </logic:equal>
         </div>
       </td>
       <td width="19%"> 
@@ -61,10 +66,17 @@
         </controls:row>
 
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
-            <controls:label><bean:message key="connector.type"/>:</controls:label>
+        <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
-              <bean:write name="userDatabaseRealmForm" 
-                          property="realmType" scope="session"/>
+                 <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Create">
+                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)">
+                     <bean:define id="realmTypeVals" name="userDatabaseRealmForm" property="realmTypeVals"/>
+                     <html:options collection="realmTypeVals" property="value" labelProperty="label"/>
+                    </html:select>
+                </logic:equal>
+                <logic:equal name="userDatabaseRealmForm" property="adminAction" value="Edit">
+                  <bean:write name="userDatabaseRealmForm" property="realmType" scope="session"/>
+                </logic:equal>
             </controls:data>
         </controls:row>
 

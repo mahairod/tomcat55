@@ -132,10 +132,6 @@
     <forward        name="Connector"
                     path="/connector.jsp"
                 redirect="false"/>
-
-    <forward        name="Context"
-                    path="/context.jsp"
-                redirect="false"/>
                    
     <forward        name="Save Successful"
                     path="/saved.jsp"
@@ -179,6 +175,16 @@
                     path="/logger/loggers.jsp"
                 redirect="false"/>
 
+    <!-- ============ Context Module ============== -->
+
+    <forward        name="Context"
+                    path="/context/context.jsp"
+                redirect="false"/>
+
+    <forward        name="Contexts"
+                    path="/context/contexts.jsp"
+                redirect="false"/>
+
     <!-- ============ Realm Module ============== -->
 
     <forward        name="JDBCRealm"
@@ -207,7 +213,7 @@
                     path="/context/context.jsp"
                 redirect="false"/>
 
-    <forward        name="Hosts"
+    <forward        name="Contexts"
                     path="/context/contexts.jsp"
                 redirect="false"/>
         

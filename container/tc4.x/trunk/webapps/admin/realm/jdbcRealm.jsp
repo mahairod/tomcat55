@@ -1,8 +1,9 @@
 <!-- Standard Struts Entries -->
-<%@ page language="java" %>
+<%@ page language="java" import="java.net.URLEncoder" %>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/controls.tld" prefix="controls" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
 <html:html locale="true">
 
@@ -18,15 +19,21 @@
 <html:form method="POST" action="/SaveJDBCRealm">
 
   <bean:define id="thisObjectName" type="java.lang.String"
-               name="userDatabaseRealmForm" property="objectName"/>
+               name="jdbcRealmForm" property="objectName"/>
   <html:hidden property="adminAction"/>
+  <html:hidden property="parentObjectName"/>
   <html:hidden property="objectName"/>
 
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%">
        <div class="page-title-text" align="left"> 
-          <bean:write name="jdbcRealmForm" property="nodeLabel" scope="session"/>
+         <logic:equal name="jdbcRealmForm" property="adminAction" value="Create">
+            <bean:message key="actions.realms.create"/>
+          </logic:equal>
+          <logic:equal name="jdbcRealmForm" property="adminAction" value="Edit">
+            <bean:message key="actions.realms.edit"/>
+          </logic:equal>
        </div>
       </td>
       <td width="19%"> 
@@ -34,7 +41,12 @@
       <controls:actions>
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
-            <controls:action url="">  <bean:message key="actions.thisrealm.delete"/> </controls:action>
+            <logic:notEqual name="jdbcRealmForm" property="adminAction" value="Create">              
+             <controls:action url='<%= "/DeleteRealm.do?select=" + 
+                                        URLEncoder.encode(thisObjectName) %>'>  
+                <bean:message key="actions.realms.delete"/> 
+              </controls:action>           
+             </logic:notEqual>          
        </controls:actions>   
          </div>
       </td>
@@ -56,7 +68,15 @@
       <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.type"/>:</controls:label>
             <controls:data>
-              <bean:write name="jdbcRealmForm" property="realmType" scope="session"/>
+                 <logic:equal name="jdbcRealmForm" property="adminAction" value="Create">
+                    <html:select property="realmType" onchange="IA_jumpMenu('self',this)">
+                     <bean:define id="realmTypeVals" name="jdbcRealmForm" property="realmTypeVals"/>
+                     <html:options collection="realmTypeVals" property="value" labelProperty="label"/>
+                    </html:select>
+                </logic:equal>
+                <logic:equal name="jdbcRealmForm" property="adminAction" value="Edit">
+                  <bean:write name="jdbcRealmForm" property="realmType" scope="session"/>
+                </logic:equal>
             </controls:data>
         </controls:row>
       

@@ -174,6 +174,16 @@ public final class JNDIRealmForm extends ActionForm {
      */
     private List searchVals = null;
     
+    /**
+     * The object name of the parent of this Realm.
+     */
+    private String parentObjectName = null;
+
+    /**
+     * Set of valid values for realms.
+     */
+    private List realmTypeVals = null;
+    
     // ------------------------------------------------------------- Properties
     
        /**
@@ -500,6 +510,44 @@ public final class JNDIRealmForm extends ActionForm {
     public void setContextFactory(String contextFactory ) {
         
         this.contextFactory  = contextFactory ;
+        
+    }
+    
+     /**
+     * Return the parent object name of the Realm this bean refers to.
+     */
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
+    }
+
+
+    /**
+     * Set the parent object name of the Realm this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
+    }
+    
+        
+   /**
+     * Return the realmTypeVals.
+     */
+    public List getRealmTypeVals() {
+        
+        return this.realmTypeVals;
+        
+    }
+    
+    /**
+     * Set the realmTypeVals.
+     */
+    public void setRealmTypeVals(List realmTypeVals) {
+        
+        this.realmTypeVals = realmTypeVals;
         
     }
     

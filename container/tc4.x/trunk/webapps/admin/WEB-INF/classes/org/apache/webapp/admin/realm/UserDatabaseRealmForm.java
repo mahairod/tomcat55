@@ -94,7 +94,7 @@ public final class UserDatabaseRealmForm extends ActionForm {
     private String objectName = null;
 
     /**
-     * The object name of the parent of this Logger.
+     * The object name of the parent of this Realm.
      */
     private String parentObjectName = null;
 
@@ -123,6 +123,12 @@ public final class UserDatabaseRealmForm extends ActionForm {
      * The text for the node label.
      */
     private String nodeLabel = null;
+    
+    /**
+     * Set of valid values for realms.
+     */
+    private List realmTypeVals = null;
+
     
     // ------------------------------------------------------------- Properties
     
@@ -268,6 +274,24 @@ public final class UserDatabaseRealmForm extends ActionForm {
     public void setNodeLabel(String nodeLabel) {
         
         this.nodeLabel = nodeLabel;
+        
+    }
+    
+   /**
+     * Return the realmTypeVals.
+     */
+    public List getRealmTypeVals() {
+        
+        return this.realmTypeVals;
+        
+    }
+    
+    /**
+     * Set the realmTypeVals.
+     */
+    public void setRealmTypeVals(List realmTypeVals) {
+        
+        this.realmTypeVals = realmTypeVals;
         
     }
     

@@ -100,12 +100,12 @@
               <controls:action>
                 -------------------------------------
               </controls:action>
+              --%>
             <controls:action url='<%= "/AddRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.realms.create"/>
-            </controls:action>              
-              --%>
-              <controls:action url='<%= "/DeleteRealm.do?parent=" + 
+             </controls:action>              
+             <controls:action url='<%= "/DeleteRealm.do?parent=" + 
                                   URLEncoder.encode(thisObjectName) %>'> 
                 <bean:message key="actions.realms.deletes"/> 
               </controls:action>
@@ -210,7 +210,6 @@
             </controls:label>
             <controls:data>
               <logic:equal name="serviceForm" property="adminAction" value="Create">
-
                 <html:text property="engineName" size="24" maxlength="24"/>
               </logic:equal>
               <logic:equal name="serviceForm" property="adminAction" value="Edit">

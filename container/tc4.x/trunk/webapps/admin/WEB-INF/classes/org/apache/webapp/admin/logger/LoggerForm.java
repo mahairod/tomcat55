@@ -143,7 +143,7 @@ public final class LoggerForm extends ActionForm {
 
     // ------------------------------------------------------------- Properties
     
-       /**
+   /**
      * Return the administrative action represented by this form.
      */
     public String getAdminAction() {
@@ -399,7 +399,7 @@ public final class LoggerForm extends ActionForm {
         
     }
     
-        /**
+    /**
      * Return the loggerTypeVals.
      */
     public List getLoggerTypeVals() {

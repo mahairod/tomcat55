@@ -165,6 +165,16 @@ public final class JDBCRealmForm extends ActionForm {
      */
     private String connectionURL = null;
     
+    /**
+     * The object name of the parent of this Realm.
+     */
+    private String parentObjectName = null;
+
+    /**
+     * Set of valid values for realms.
+     */
+    private List realmTypeVals = null;
+    
     // ------------------------------------------------------------- Properties
 
        /**
@@ -436,6 +446,44 @@ public final class JDBCRealmForm extends ActionForm {
     public void setConnectionURL(String connectionURL) {
         
         this.connectionURL = connectionURL;
+        
+    }
+    
+     /**
+     * Return the parent object name of the Realm this bean refers to.
+     */
+    public String getParentObjectName() {
+
+        return this.parentObjectName;
+
+    }
+
+
+    /**
+     * Set the parent object name of the Realm this bean refers to.
+     */
+    public void setParentObjectName(String parentObjectName) {
+
+        this.parentObjectName = parentObjectName;
+
+    }
+    
+        
+   /**
+     * Return the realmTypeVals.
+     */
+    public List getRealmTypeVals() {
+        
+        return this.realmTypeVals;
+        
+    }
+    
+    /**
+     * Set the realmTypeVals.
+     */
+    public void setRealmTypeVals(List realmTypeVals) {
+        
+        this.realmTypeVals = realmTypeVals;
         
     }
     
