@@ -725,7 +725,7 @@
     </jar>
 
     <!-- Servlets - CGI Servlet -->
-    <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar">
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.renametojar">
       <fileset dir="${catalina.build}/server/classes">
         <include name="org/apache/catalina/servlets/CGI*" />
       </fileset>
