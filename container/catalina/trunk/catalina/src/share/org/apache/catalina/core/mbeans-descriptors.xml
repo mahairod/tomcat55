@@ -445,17 +445,13 @@
                description="The debugging detail level for this component"
                type="int"/>
       
-    <attribute name="deploy"
+    <attribute name="deployOnStartup"
                description="The deploy on startup flag for this Host"
                type="boolean"/>
-                 
+
     <attribute name="deployXML"
                description="deploy Context XML config files property"
                is="true"
-               type="boolean"/>
-      
-    <attribute name="liveDeploy"
-               description="The live deploy flag for this Host"
                type="boolean"/>
       
     <attribute name="managedResource"
