@@ -774,10 +774,9 @@ public final class ContextConfig
 		        continue;
 		    File jarFile = new File(libFile, filenames[i]);
 		    if (debug > 0)
-		        log(" Adding '" + jarFile.getAbsolutePath() + "'");
-                    //	    loader.addRepository(jarFile.getAbsolutePath());
-		    loader.addRepository("jar:" + libURL.toString() +
-                                         "!/" + libFile);
+		        log(" Adding '" + "file: " +
+                            jarFile.getAbsolutePath() + "'");
+                    loader.addRepository("file:" + jarFile.getAbsolutePath());
 		}
 	    }
 	}

@@ -325,7 +325,7 @@ public class StandardClassLoader
     public void addRepository(String repository) {
 
         if (debug >= 1)
-            log("addRespository(" + repository + ")");
+            log("addRepository(" + repository + ")");
 
         // Add this repository to our underlying class loader
         try {
