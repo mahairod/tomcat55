@@ -70,6 +70,7 @@
   <!--   debug               Debugging detail level for messages logged     -->
   <!--                       by this servlet.  [0]                          -->
 
+<!--
     <servlet>
         <servlet-name>invoker</servlet-name>
         <servlet-class>
@@ -81,6 +82,7 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+-->
 
 
   <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
