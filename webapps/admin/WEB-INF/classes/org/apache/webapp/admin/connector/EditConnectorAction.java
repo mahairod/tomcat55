@@ -198,7 +198,7 @@ public class EditConnectorAction extends Action {
                 ((String) mBServer.getAttribute(cname, attribute));        
             attribute = "threadPriority";
             connectorFm.setThreadPriority
-                ((String) mBServer.getAttribute(cname, attribute));
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());
             attribute = "secure";
             connectorFm.setSecure
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;       
