@@ -45,8 +45,6 @@ public class SmapUtil {
 
     private static org.apache.commons.logging.Log log=
         org.apache.commons.logging.LogFactory.getLog( SmapUtil.class );
-    
-    private static final boolean verbose = false;
 
     //*********************************************************************
     // Constants
@@ -286,10 +284,7 @@ public class SmapUtil {
             copy(4 + 2 + 2); // magic min/maj version
             int constantPoolCountPos = genPos;
             int constantPoolCount = readU2();
-            if (verbose) {
-                if (log.isDebugEnabled())
-                    log.debug("constant pool count: " + constantPoolCount);
-            }
+            log("constant pool count: " + constantPoolCount);
             writeU2(constantPoolCount);
 
             // copy old constant pool return index of SDE symbol, if found
@@ -303,45 +298,27 @@ public class SmapUtil {
                 ++constantPoolCount;
                 randomAccessWriteU2(constantPoolCountPos, constantPoolCount);
 
-                if (verbose) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                        "SourceDebugExtension not found, installed at: "
-                            + sdeIndex);
-                }
+                log("SourceDebugExtension not found, installed at: " + sdeIndex);
             } else {
-                if (verbose) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                        "SourceDebugExtension found at: " + sdeIndex);
-                }
+                log("SourceDebugExtension found at: " + sdeIndex);
             }
             copy(2 + 2 + 2); // access, this, super
             int interfaceCount = readU2();
             writeU2(interfaceCount);
-            if (verbose) {
-                if (log.isDebugEnabled())
-                    log.debug("interfaceCount: " + interfaceCount);
-            }
+            log("interfaceCount: " + interfaceCount);
             copy(interfaceCount * 2);
             copyMembers(); // fields
             copyMembers(); // methods
             int attrCountPos = genPos;
             int attrCount = readU2();
             writeU2(attrCount);
-            if (verbose) {
-                if (log.isDebugEnabled())
-                    log.debug("class attrCount: " + attrCount);
-            }
+            log("class attrCount: " + attrCount);
             // copy the class attributes, return true if SDE attr found (not copied)
             if (!copyAttrs(attrCount)) {
                 // we will be adding SDE and it isn't already counted
                 ++attrCount;
                 randomAccessWriteU2(attrCountPos, attrCount);
-                if (verbose) {
-                    if (log.isDebugEnabled())
-                        log.debug("class attrCount incremented");
-                }
+                log("class attrCount incremented");
             }
             writeAttrForSDE(sdeIndex);
         }
@@ -349,18 +326,12 @@ public class SmapUtil {
         void copyMembers() {
             int count = readU2();
             writeU2(count);
-            if (verbose) {
-                if (log.isDebugEnabled())
-                    log.debug("members count: " + count);
-            }
+            log("members count: " + count);
             for (int i = 0; i < count; ++i) {
                 copy(6); // access, name, descriptor
                 int attrCount = readU2();
                 writeU2(attrCount);
-                if (verbose) {
-                    if (log.isDebugEnabled())
-                        log.debug("member attr count: " + attrCount);
-                }
+                log("member attr count: " + attrCount);
                 copyAttrs(attrCount);
             }
         }
@@ -372,19 +343,13 @@ public class SmapUtil {
                 // don't write old SDE
                 if (nameIndex == sdeIndex) {
                     sdeFound = true;
-                    if (verbose) {
-                        if (log.isDebugEnabled())
-                            log.debug("SDE attr found");
-                    }
+                    log("SDE attr found");
                 } else {
                     writeU2(nameIndex); // name
                     int len = readU4();
                     writeU4(len);
                     copy(len);
-                    if (verbose) {
-                        if (log.isDebugEnabled())
-                            log.debug("attr len: " + len);
-                    }
+                    log("attr len: " + len);
                 }
             }
             return sdeFound;
@@ -463,10 +428,7 @@ public class SmapUtil {
                 switch (tag) {
                     case 7 : // Class
                     case 8 : // String
-                        if (verbose) {
-                            if (log.isDebugEnabled())
-                                log.debug(i + " copying 2 bytes");
-                        }
+                        log(i + " copying 2 bytes");
                         copy(2);
                         break;
                     case 9 : // Field
@@ -475,18 +437,12 @@ public class SmapUtil {
                     case 3 : // Integer
                     case 4 : // Float
                     case 12 : // NameAndType
-                        if (verbose) {
-                            if (log.isDebugEnabled())
-                                log.debug(i + " copying 4 bytes");
-                        }
+                        log(i + " copying 4 bytes");
                         copy(4);
                         break;
                     case 5 : // Long
                     case 6 : // Double
-                        if (verbose) {
-                            if (log.isDebugEnabled())
-                                log.debug(i + " copying 8 bytes");
-                        }
+                        log(i + " copying 8 bytes");
                         copy(8);
                         i++;
                         break;
@@ -495,11 +451,7 @@ public class SmapUtil {
                         writeU2(len);
                         byte[] utf8 = readBytes(len);
                         String str = new String(utf8, "UTF-8");
-                        if (verbose) {
-                            if (log.isDebugEnabled())
-                                log.debug(
-                                i + " read class attr -- '" + str + "'");
-                        }
+                        log(i + " read class attr -- '" + str + "'");
                         if (str.equals(nameSDE)) {
                             sdeIndex = i;
                         }
@@ -755,4 +707,10 @@ public class SmapUtil {
             return map;
         }
     }
+    
+    private static void log(String msg) {
+        if (log.isDebugEnabled())
+            log.debug(msg);
+    }
+    
 }
