@@ -122,7 +122,7 @@ export CLASSPATH
 
 ## -------------------- Process options -------------------- 
 # add tomcat.policy - even if we don't use sandbox, it doesn't hurt
-TOMCAT_OPTS="$TOMCAT_OPTS -Djava.security.policy==${TOMCAT_HOME}/lib/tomcat.policy "
+TOMCAT_OPTS="$TOMCAT_OPTS -Djava.security.policy==${TOMCAT_HOME}/conf/tomcat.policy "
 
 
 # We start the server up in the background for a couple of reasons:

@@ -196,7 +196,17 @@ public class Main{
     public void initSecurityFile() {
 	if( args.length > 1 &&
 	    "-sandbox".equals( args[1] ) ) {
-	    if( null == System.getProperty("java.security.policy")) {
+	    String oldPolicy=System.getProperty("java.security.policy");
+	    if( oldPolicy != null ) {
+		if( oldPolicy.startsWith("=") )
+		    oldPolicy=oldPolicy.substring(1);
+		File f=new File( oldPolicy );
+		if( ! f.exists() ) {
+		    debug( "Can't find old policy " + oldPolicy );
+		    oldPolicy=null;
+		}
+	    }
+	    if( null == oldPolicy ) {
 		File f=null;
 		String policyFile=installDir + File.separator + "conf" +
 		    File.separator + "tomcat.policy";
