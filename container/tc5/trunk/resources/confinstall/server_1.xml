@@ -64,7 +64,7 @@
          You can also enable an SSL HTTP/1.1 Connector on port 8443 by
          following the instructions below and uncommenting the second Connector
          entry.  SSL support requires the following steps (see the SSL Config
-         HOWTO in the Tomcat 4.0 documentation bundle for more detailed
+         HOWTO in the Tomcat 5 documentation bundle for more detailed
          instructions):
          * Download and install JSSE 1.0.2 or later, and put the JAR files
            into "$JAVA_HOME/jre/lib/ext".

@@ -290,7 +290,7 @@
 
   <!-- ==================== RELEASE: Create Release ======================= -->
   <target name="release" depends="prepare-release,clean,dist,dist-source,installer,package-zip,package-tgz,package-src-zip,package-src-tgz"
-   description="Create a Tomcat 4 packaged distribution" />
+   description="Create a Tomcat 5 packaged distribution" />
 
   <target name="package-zip">
     <zip zipfile="${tomcat.dist}/${final.name}.zip">
