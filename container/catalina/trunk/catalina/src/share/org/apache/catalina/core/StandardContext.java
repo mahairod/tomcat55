@@ -418,6 +418,12 @@ public class StandardContext
 
 
     /**
+     * Unpack WAR property.
+     */
+    private boolean unpackWAR = true;
+
+
+    /**
      * The DefaultContext override flag for this web application.
      */
     private boolean override = false;
@@ -1394,6 +1400,25 @@ public class StandardContext
 
     }
 
+
+    /**
+     * Unpack WAR flag accessor.
+     */
+    public boolean getUnpackWAR() {
+
+        return (unpackWAR);
+
+    }
+
+
+    /**
+     * Unpack WAR flag mutator.
+     */
+    public void setUnpackWAR(boolean unpackWAR) {
+
+        this.unpackWAR = unpackWAR;
+
+    }
 
     /**
      * Return the Java class name of the Wrapper implementation used
