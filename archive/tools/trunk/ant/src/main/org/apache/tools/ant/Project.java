@@ -371,8 +371,35 @@ public class Project {
     public File resolveFile(String fileName) {
 	// deal with absolute files
 	if (fileName.startsWith("/")) return new File( fileName );
-	if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
-	    if (fileName.indexOf(":\\")==1) return new File( fileName );
+
+        // Eliminate consecutive slashes after the drive spec
+        if (fileName.length() >= 2 &&
+            Character.isLetter(fileName.charAt(0)) &&
+            fileName.charAt(1) == ':') {
+            char[] ca = fileName.replace('/', '\\').toCharArray();
+            char c;
+            StringBuffer sb = new StringBuffer();
+
+            for (int i = 0; i < ca.length; i++) {
+                if ((ca[i] != '\\') ||
+                    (ca[i] == '\\' &&
+                        i > 0 &&
+                        ca[i - 1] != '\\')) {
+                    if (i == 0 &&
+                        Character.isLetter(ca[i]) &&
+                        i < ca.length - 1 &&
+                        ca[i + 1] == ':') {
+                        c = Character.toUpperCase(ca[i]);
+                    } else {
+                        c = ca[i];
+                    }
+
+                    sb.append(c);
+                }
+            }
+
+            return new File(sb.toString());
+        }
 
 	File file = new File(baseDir.getAbsolutePath());
 	StringTokenizer tok = new StringTokenizer(fileName, "/", false);
