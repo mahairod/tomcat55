@@ -23,6 +23,7 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Valve;
 import org.apache.commons.logging.Log;
+import org.apache.catalina.Manager;
 
 /**
  * A <b>CatalinaCluster</b> interface allows to plug in and out the 
@@ -78,6 +79,12 @@ public interface CatalinaCluster
      */
     public Member[] getMembers();
     
+    /**
+     * Return the member that represents this node.
+     * @return Member
+     */
+    public Member getLocalMember();
+    
     public void setClusterSender(ClusterSender sender);
     
     public ClusterSender getClusterSender();
@@ -95,5 +102,12 @@ public interface CatalinaCluster
     public void addClusterListener(MessageListener listener);
     
     public void removeClusterListener(MessageListener listener);
+    
+    public void setClusterDeployer(ClusterDeployer deployer);
+    
+    public ClusterDeployer getClusterDeployer();
+    
+    public Manager getManager(String name);
+    public void removeManager(String name);
     
 }
