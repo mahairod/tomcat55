@@ -220,13 +220,21 @@ public class BeanFactory
                 return bean;
 
             } catch (java.beans.IntrospectionException ie) {
-                throw new NamingException(ie.getMessage());
+                NamingException ne = new NamingException(ie.getMessage());
+                ne.setRootCause(ie);
+                throw ne;
             } catch (java.lang.IllegalAccessException iae) {
-                throw new NamingException(iae.getMessage());
+                NamingException ne = new NamingException(iae.getMessage());
+                ne.setRootCause(iae);
+                throw ne;
             } catch (java.lang.InstantiationException ie2) {
-                throw new NamingException(ie2.getMessage());
+                NamingException ne = new NamingException(ie2.getMessage());
+                ne.setRootCause(ie2);
+                throw ne;
             } catch (java.lang.reflect.InvocationTargetException ite) {
-                throw new NamingException(ite.getMessage());
+                NamingException ne = new NamingException(ite.getMessage());
+                ne.setRootCause(ite);
+                throw ne;
             }
 
         } else {

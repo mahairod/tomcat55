@@ -59,6 +59,9 @@
       <fix>
         Externalize constant strings defining the location of deployment related resources. (remm)
       </fix>
+      <fix>
+        <bug>31052</bug>: BeanFactory swallows root cause of exception. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
