@@ -256,6 +256,7 @@ public class Main{
 	    initSecurityFile();
 	    initClassLoader();
 
+	    jdk11Compat.setContextClassLoader(commonCL);
             Class cls=commonCL.loadClass((String)tasks.get(task));
 	    
             Object proxy=cls.newInstance();
