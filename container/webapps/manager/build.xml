@@ -15,6 +15,20 @@
   <property name="webapps.dist"    value="../dist"/>
   <property name="webapp.name"     value="manager"/>
 
+  <!-- Dependent JARs and files -->
+  <property name="servlet-api.jar" value="${api.home}/jsr154/dist/lib/servlet-api.jar"/>
+  <property name="jsp-api.jar"     value="${api.home}/jsr152/dist/lib/jsp-api.jar"/>
+
+  <!-- Construct Admin classpath -->
+  <path id="manager.classpath">
+    <pathelement location="${catalina.deploy}/classes"/>
+    <pathelement location="${commons-fileupload.jar}"/>
+    <pathelement location="${commons-modeler.jar}"/>
+    <pathelement location="${jmx.jar}"/>
+    <pathelement location="${servlet-api.jar}"/>
+    <pathelement location="${jsp-api.jar}"/>
+  </path>
+
 
   <!-- =================== BUILD: Create Directories ====================== -->
   <target name="build-prepare">
@@ -22,6 +36,7 @@
     <mkdir dir="${webapps.build}/${webapp.name}"/>
     <mkdir dir="${webapps.build}/${webapp.name}/images"/>
     <mkdir dir="${webapps.build}/${webapp.name}/WEB-INF"/>
+    <mkdir dir="${webapps.build}/${webapp.name}/WEB-INF/classes"/>
   </target>
 
 
@@ -57,14 +72,13 @@
       </fileset>
     </copy>
 
-<!--
     <javac   srcdir="WEB-INF/classes" 
              destdir="${webapps.build}/${webapp.name}/WEB-INF/classes"
-             classpath="${servlet.jar}"
              debug="${compile.debug}" deprecation="${compile.deprecation}"
              optimize="${compile.optimize}"
-             excludes="**/CVS/**"/>
--->
+             excludes="**/CVS/**">
+      <classpath refid="manager.classpath" />
+    </javac>
 
   </target>
 
