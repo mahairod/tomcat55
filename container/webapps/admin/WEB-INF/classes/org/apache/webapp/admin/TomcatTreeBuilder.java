@@ -80,6 +80,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
+import javax.management.AttributeNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -436,9 +437,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
             Lists.getRealms(mBServer, containerName).iterator();
         while (realmNames.hasNext()) {
             String realmName = (String) realmNames.next();
-	    ManagedBean mb = Registry.getRegistry().findManagedBean(realmName);
-	    if (mb!=null && !mb.getName().equals("JAASRealm")) {
-	        ObjectName objectName = new ObjectName(realmName);
+	    ObjectName objectName = new ObjectName(realmName);
+            // Create tree nodes for non JAASRealm only
+            try {
+                mBServer.getAttribute(objectName, "validate");
+            } catch (AttributeNotFoundException e) {
 	        String nodeLabel = "Realm for " + containerNode.getLabel();
 	        TreeControlNode realmNode =
 		    new TreeControlNode(realmName,
@@ -451,7 +454,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
                                     "content",
                                     false, domain);
                 containerNode.addChild(realmNode);
-	    }
+            }
         }
         
     }   
