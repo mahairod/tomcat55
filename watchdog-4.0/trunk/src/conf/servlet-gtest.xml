@@ -6266,7 +6266,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperConstructorTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperConstructorTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperConstructorTest HTTP/1.0"
             testName="HttpServletResponseWrapperConstructorTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             goldenFile="${wgdir}/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperConstructorTest.html"
@@ -6276,7 +6276,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperAddCookieTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperAddCookieTest HTTP/1.0"
             testName="HttpServletResponseWrapperAddCookieTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="GenericResponseWrapper:addCookie|Set-Cookie:BestLanguage=Java"
@@ -6287,7 +6287,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperAddDateHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperAddDateHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperAddDateHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyDateHeader:Mon, 12 Jan 1970 10:20:54 GMT|GenericResponseWrapper:addDateHeader"
@@ -6298,7 +6298,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperAddHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperAddHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperAddHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyStrHeader:Java|MyStrHeader:Java2|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|GenericResponseWrapper:addHeader|MyStrHeader2:Java3"
@@ -6309,7 +6309,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperAddIntHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperAddIntHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperAddIntHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyIntHeader:2|GenericResponseWrapper:addIntHeader"
@@ -6320,7 +6320,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperContainsHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperContainsHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperContainsHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyStrHeader:HttpServletResponseWrapperContainsHeaderTest|GenericResponseWrapper:setHeader|GenericResponseWrapper:containsHeader"
@@ -6331,7 +6331,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperEncodeURLTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperEncodeURLTest HTTP/1.0"
             testName="HttpServletResponseWrapperEncodeURLTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="GenericResponseWrapper:encodeURL"
@@ -6342,7 +6342,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperEncodeRedirectURLTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperEncodeRedirectURLTest HTTP/1.0"
             testName="HttpServletResponseWrapperEncodeRedirectURLTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="GenericResponseWrapper:encodeRedirectURL"
@@ -6353,7 +6353,7 @@ END EXCLUDE SendError_StringTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSendErrorTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="100"
@@ -6371,7 +6371,7 @@ END EXCLUDE SendError_StringTest -->
      This is on the slate to be clarified for the next spec.
                     
     <target name="HttpServletResponseWrapperSendErrorMsgTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorMsgTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="200" returnCodeMsg="in HttpServletResponseWrapperSendErrorMsgTest servlet"
@@ -6384,7 +6384,7 @@ END EXCLUDE SendError_StringTest -->
 END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
 
     <target name="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorMsgIgnoreHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="100"
@@ -6395,7 +6395,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSendErrorIgnoreHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendErrorIgnoreHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendErrorIgnoreHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="100"
@@ -6406,7 +6406,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSendRedirectTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendRedirectTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="302"
@@ -6417,7 +6417,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectIgnoreHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendRedirectIgnoreHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="302"
@@ -6428,7 +6428,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSendRedirectForWebAppTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSendRedirectForWebAppTest HTTP/1.0"
             testName="HttpServletResponseWrapperSendRedirectForWebAppTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="302"
@@ -6439,7 +6439,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSetDateHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSetDateHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSetDateHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="GenericResponseWrapper:setDateHeader|DateInfo:Sat, 25 Apr 1970 07:29:03 GMT"
@@ -6450,7 +6450,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSetHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSetHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSetHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyStrHeader:Java|GenericResponseWrapper:addHeader|GenericResponseWrapper:setHeader"
@@ -6461,7 +6461,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSetIntHeaderTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSetIntHeaderTest HTTP/1.0"
             testName="HttpServletResponseWrapperSetIntHeaderTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             expectHeaders="MyIntHeader:2|GenericResponseWrapper:addIntHeader|GenericResponseWrapper:setIntHeader"
@@ -6472,7 +6472,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSetStatusMsgTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSetStatusMsgTest HTTP/1.0"
             testName="HttpServletResponseWrapperSetStatusMsgTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="200" returnCodeMsg="in HttpServletResponseWrapperSetStatusMsgTest servlet"
@@ -6483,7 +6483,7 @@ END EXCLUDE HttpServletResponseWrapperSendErrorMsgTest -->
     </target>
 
     <target name="HttpServletResponseWrapperSetStatusTest">
-        <watchdog request="GET /servlet-tests/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
+        <watchdog request="GET /servlet-tests/hsresw/HttpServletResponseWrapperSetStatusTest HTTP/1.0"
             testName="HttpServletResponseWrapperSetStatusTest" debug="0"
             host="${host}" port="${port}" exactMatch="true"
             returnCode="200"
