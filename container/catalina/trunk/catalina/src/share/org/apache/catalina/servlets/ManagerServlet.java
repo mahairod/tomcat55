@@ -1103,7 +1103,6 @@ public class ManagerServlet
             // Identify the appBase of the owning Host of this Context (if any)
             String appBase = null;
             File appBaseDir = null;
-            String appBasePath = null;
             if (context.getParent() instanceof Host) {
                 appBase = ((Host) context.getParent()).getAppBase();
                 appBaseDir = new File(appBase);
@@ -1111,7 +1110,6 @@ public class ManagerServlet
                     appBaseDir = new File(System.getProperty("catalina.base"),
                                           appBase);
                 }
-                appBasePath = appBaseDir.getCanonicalPath();
             }
 
             // Validate the docBase path of this application
