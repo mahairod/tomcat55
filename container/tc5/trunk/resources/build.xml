@@ -11,8 +11,8 @@
 
   <!-- Project Properties -->
   <property name="name"                  value="Apache Tomcat" />
-  <property name="year"                  value="2003" />
-  <property name="version"               value="5.0" />
+  <property name="year"                  value="2005" />
+  <property name="version"               value="5.5" />
   <property name="project"               value="jakarta-tomcat" />
   <property name="final.name"            value="${project}-${version}" />
   <property name="final-src.name"        value="${project}-${version}-src" />
@@ -49,6 +49,17 @@
     <ant dir="${tomcat.home}" target="download" />
     <ant dir="${tomcat.home}" target="deploy" />
 
+  </target>
+
+  <!-- Top-level clean target added per Bugzilla 33325 -->
+  <target name="clean"
+          description="Clean (delete) all project files">
+    <echo message="Deleting all project files" />
+    <delete dir="${api.home}" />
+    <delete dir="${catalina.home}" />
+    <delete dir="${jasper.home}" />
+    <delete dir="${jtc.home}" />
+    <delete dir="${tomcat.home}" />
   </target>
 
   <target name="checkout"
