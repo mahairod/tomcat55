@@ -429,6 +429,10 @@
            debug="0" host="${host}" port="${port}" 
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetInputStreamTest.html" />
 
+      <gtest request="GET /servlet-tests/GetInputStream_1Test HTTP/1.0"
+           debug="0" host="${host}" port="${port}" 
+           goldenFile="${wgdir}/javax_servlet/ServletRequest/GetInputStream_1Test.html" />
+
       <gtest request="GET /servlet-tests/GetLocaleTest HTTP/1.0"
            debug="0" host="${host}" port="${port}" requestHeaders="Accept-Language:en-us"
            goldenFile="${wgdir}/javax_servlet/ServletRequest/GetLocaleTest.html" />
