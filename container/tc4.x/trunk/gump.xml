@@ -18,6 +18,8 @@
         runtime="true"/>
       <depend property="commons-logging.jar" project="commons-logging"
         runtime="true"/>
+      <depend property="commons-logging-api.jar" project="commons-logging"
+        runtime="true"/>
       <property name="regexp.jar"
         reference="jarpath" id="regexp" project="jakarta-regexp"/>
       <property name="jtc.home" reference="srcdir" 
