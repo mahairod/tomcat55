@@ -115,7 +115,7 @@
   <validate>
     <!--TEST STRATEGY: Client calls a servlet who's response has been wrapped. The wrapper object adds a specific header to the response object and calls the responses sendRedirect method.-->
     <statusCode code="302" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
-    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/hsresw/HttpServletResponseWrapperRedirectedTest" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
+    <responseHeader headerName="Location" headerValue="http://${host}:${port}/servlet-tests/tests/javax_servlet_http/HttpServletResponseWrapper/HttpServletResponseWrapperRedirectedTest" label="Test for default behavior of this method is to return sendRedirect(String) on the wrapped response object of a URL that is based on the context-root, specified in the Java Servlet Pages Specification v2.3, Sec 14 - javax.servlet.HttpServletResponseWrapper. sendRedirect(String location) method" />
   </validate>
 </request>
 
