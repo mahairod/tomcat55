@@ -56,6 +56,7 @@
   InstallDirRegKey HKLM "SOFTWARE\Apache Group\Tomcat\5.0" ""
 
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  ReserveFile "jvm.ini"
   ReserveFile "config.ini"
 
 SubSection "Tomcat" SecTomcat
@@ -80,9 +81,7 @@ Section "Core" SecTomcatCore
   File webapps\*.xml
   File /r webapps\ROOT
 
-  Call findJavaPath
-  Pop $2
-
+  !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
   CopyFiles "$2\lib\tools.jar" "$INSTDIR\common\lib" 4500
   BringToFront
 
@@ -94,6 +93,8 @@ Section "Service" SecTomcatService
 
   SectionIn 3
 
+  !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
+  Push $2
   Call findJVMPath
   Pop $2
 
@@ -129,8 +130,7 @@ Section "Start Menu Items" SecMenu
 
   SectionIn 1 2 3
 
-  Call findJavaPath
-  Pop $2
+  !insertmacro MUI_INSTALLOPTIONS_READ $2 "jvm.ini" "Field 2" "State"
 
   SetOutPath "$SMPROGRAMS\Apache Tomcat 5.0"
 
@@ -207,12 +207,7 @@ SectionEnd
 Function .onInit
 
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "config.ini"
-
-  ClearErrors
-
-  Call findJavaPath
-  Pop $1
-  MessageBox MB_OK "Using Java Development Kit found in $1"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "jvm.ini"
 
 FunctionEnd
 
@@ -232,14 +227,14 @@ Function .onInitDialog
       !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
     !insertmacro MUI_INNERDIALOG_STOP 1
 
-    !insertmacro MUI_INNERDIALOG_START 2
+    !insertmacro MUI_INNERDIALOG_START 3
       !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
       !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 2
-
-    !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
     !insertmacro MUI_INNERDIALOG_STOP 3
+
+    !insertmacro MUI_INNERDIALOG_START 4
+      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+    !insertmacro MUI_INNERDIALOG_STOP 4
 
   !insertmacro MUI_INNERDIALOG_END
 
@@ -268,14 +263,29 @@ Function SetPage
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+      !insertmacro MUI_HEADER_TEXT "Java Virtual Machine" "Java Virtual Machine path selection."
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "Title" "Java Virtual Machine path selection"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      Call findJavaPath
+      Pop $3
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "jvm.ini" "Field 2" "State" $3
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "jvm.ini" "" ""
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-   !insertmacro MUI_PAGE_STOP 3
+      Call checkJvm
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+    !insertmacro MUI_PAGE_STOP 3
 
     !insertmacro MUI_PAGE_START 4
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+   !insertmacro MUI_PAGE_STOP 4
+
+    !insertmacro MUI_PAGE_START 5
       !insertmacro MUI_HEADER_TEXT "Configuration" "Tomcat basic configuration."
       !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "Title" "${NAME} ${VERSION} Configuration Options"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
@@ -283,16 +293,16 @@ Function SetPage
       !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
       !insertmacro MUI_INSTALLOPTIONS_WRITE "config.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 4 "config.ini" "" ""
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 5 "config.ini" "" ""
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 6
+
+    !insertmacro MUI_PAGE_START 7
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
+    !insertmacro MUI_PAGE_STOP 7
 
   !insertmacro MUI_PAGE_END
 
@@ -320,7 +330,7 @@ FunctionEnd
 ;
 ; Find the JAVA_HOME used on the system, and put the result on the top of the
 ; stack
-; Will exit if the path cannot be determined
+; Will return an empty string if the path cannot be determined
 ;
 Function findJavaPath
 
@@ -339,12 +349,12 @@ Function findJavaPath
 
   FoundJDK:
 
-  IfErrors 0 NoAbort
-    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
-computer. Please download one from http://java.sun.com. If there is already \ a JDK installed on this computer, set an environment variable JAVA_HOME to the \ pathname of the directory where it is installed."
-    Abort
+  IfErrors 0 NoErrors
+  StrCpy $1 ""
 
-  NoAbort:
+NoErrors:
+
+  ClearErrors
 
   ; Put the result in the stack
   Push $1
@@ -357,11 +367,13 @@ FunctionEnd
 ; ====================
 ;
 ; Find the full JVM path, and put the result on top of the stack
-; Will exit if the path cannot be determined
+; Argument: JVM base path (result of findJavaPath)
+; Will return an empty string if the path cannot be determined
 ;
 Function findJVMPath
 
-  ReadEnvStr $1 JAVA_HOME
+  Pop $1
+
   IfFileExists "$1\jre\bin\hotspot\jvm.dll" 0 TryJDK14
     StrCpy $2 "$1\jre\bin\hotspot\jvm.dll"
     Goto EndIfFileExists
@@ -385,19 +397,40 @@ Function findJVMPath
   ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "RuntimeLib"
   
   FoundJVMPath:
-  
-  IfErrors 0 NoAbort
-    MessageBox MB_OK "Couldn't find a Java Development Kit installed on this \
-computer. Please download one from http://java.sun.com."
-    Abort
 
-  NoAbort:
+  IfErrors 0 NoErrors
+  StrCpy $2 ""
+
+NoErrors:
+
+  ClearErrors
 
   ; Put the result in the stack
   Push $2
 
 FunctionEnd
 
+
+; ====================
+; CheckJvm Function
+; ====================
+;
+Function checkJvm
+
+  !insertmacro MUI_INSTALLOPTIONS_READ $3 "jvm.ini" "Field 2" "State"
+  IfFileExists "$3\bin\java.exe" NoErrors1
+  MessageBox MB_OK "No Java Virtual Machine found."
+  Quit
+NoErrors1:
+  Push $3
+  Call findJvmPath
+  Pop $4
+  StrCmp $4 "" 0 NoErrors2
+  MessageBox MB_OK "No Java Virtual Machine found."
+  Quit
+NoErrors2:
+
+FunctionEnd
 
 ; ==================
 ; Configure Function
