@@ -140,10 +140,12 @@ Section "Core" SecTomcatCore
   File /nonfatal /r server\classes
   SetOutPath $INSTDIR\server\webapps
   File /r server\webapps\manager
+  File /r server\webapps\host-manager
   SetOutPath $INSTDIR\webapps
   File /r webapps\ROOT
   SetOutPath $INSTDIR\conf\Catalina\localhost
   File conf\Catalina\localhost\manager.xml
+  File conf\Catalina\localhost\host-manager.xml
 
   Call configure
   Call findJavaPath
