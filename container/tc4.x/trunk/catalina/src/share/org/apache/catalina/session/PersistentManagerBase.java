@@ -897,7 +897,11 @@ public abstract class PersistentManagerBase
                 StandardSession session = (StandardSession) sessions[i];
                 if (!session.isValid())
                     continue;
-                session.expire();
+                try {
+                    session.expire();
+                } catch (Throwable t) {
+                    ;
+                }
             }
         }
 
