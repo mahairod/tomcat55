@@ -529,6 +529,8 @@ public class PageContextImpl
     public void handlePageException(Throwable t)
         throws IOException, ServletException 
     {
+	if (t == null) throw new NullPointerException("null Throwable");
+
 	if (errorPageURL != null && !errorPageURL.equals("")) {
 
 	    // Set request attributes
