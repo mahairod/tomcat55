@@ -104,6 +104,17 @@ public final class Globals {
     public static final String CLASS_LOADER_ATTR =
         "org.apache.catalina.classloader";
 
+    /**
+     * Request dispatcher state.
+     */
+    public static final String DISPATCHER_TYPE_ATTR = 
+        "org.apache.catalina.core.DISPATCHER_TYPE";
+
+    /**
+     * Request dispatcher path.
+     */
+    public static final String DISPATCHER_REQUEST_PATH_ATTR = 
+        "org.apache.catalina.core.DISPATCHER_REQUEST_PATH";
 
     /**
      * The JNDI directory context which is associated with the context. This
