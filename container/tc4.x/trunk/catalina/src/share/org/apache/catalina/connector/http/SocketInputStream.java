@@ -165,7 +165,11 @@ public class SocketInputStream extends BufferedInputStream {
         // Checking for a blank line
         int chr = 0;
         do { // Skipping CR or LF
-            chr = read();
+            try {
+                chr = read();
+            } catch (IOException e) {
+                chr = -1;
+            }
         } while ((chr == CR) || (chr == LF));
         if (chr == -1)
             throw new EOFException

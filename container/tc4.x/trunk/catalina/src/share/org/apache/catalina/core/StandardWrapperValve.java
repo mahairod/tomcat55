@@ -522,6 +522,9 @@ final class StandardWrapperValve
 		return;
 	}
 
+        // The response is an error
+        response.setError();
+
 	// Reset the response (if possible)
         //        if (debug >= 1)
         //            log(" Resetting response");
@@ -795,14 +798,14 @@ final class StandardWrapperValve
 	    return;
 
 	// Reset the response data buffer (if possible)
-	try {
-            //	    response.resetBuffer();
-	    hresponse.reset(statusCode, message);
+        try {
+            if (hresponse.isError())
+                hresponse.reset(statusCode, message);
 	} catch (Throwable e) {
             if (debug >= 1)
                 log("status.reset", e);
 	}
-
+        
 	// Render a default HTML status report page
 	try {
 	    try {
@@ -812,22 +815,24 @@ final class StandardWrapperValve
                     log("status.setContentType", t);
 	    }
 	    PrintWriter writer = response.getReporter();
-	    writer.println("<html>");
-	    writer.println("<head>");
-	    writer.println("<title>" +
-			   sm.getString("standardWrapper.statusTitle") +
-			   "</title>");
-	    writer.println("</head>");
-	    writer.println("<body bgcolor=\"white\">");
-	    writer.println("<br><br>");
-	    writer.println("<h1>" +
-			   sm.getString("standardWrapper.statusHeader",
-					"" + statusCode, message) +
-			   "</h1>");
-	    writer.println(report);
-	    writer.println("</body>");
-	    writer.println("</html>");
-	    writer.flush();
+            if (writer != null) {
+                writer.println("<html>");
+                writer.println("<head>");
+                writer.println("<title>" +
+                               sm.getString("standardWrapper.statusTitle") +
+                               "</title>");
+                writer.println("</head>");
+                writer.println("<body bgcolor=\"white\">");
+                writer.println("<br><br>");
+                writer.println("<h1>" +
+                               sm.getString("standardWrapper.statusHeader",
+                                            "" + statusCode, message) +
+                               "</h1>");
+                writer.println(report);
+                writer.println("</body>");
+                writer.println("</html>");
+                writer.flush();
+            }
 	} catch (IllegalStateException e) {
             if (debug >= 1)
                 log("status.write", e);

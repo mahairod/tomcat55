@@ -96,6 +96,7 @@ import org.apache.catalina.util.RequestUtil;
  * methods need to be implemented.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -975,6 +976,8 @@ public class HttpResponseBase
 
 	if (included)
 	    return;	// Ignore any call from an included servlet
+
+        setError();
 
 	// Record the status code and message.
 	this.status = status;

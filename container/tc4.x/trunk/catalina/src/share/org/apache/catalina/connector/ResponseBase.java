@@ -204,6 +204,12 @@ public abstract class ResponseBase
     protected PrintWriter writer = null;
 
 
+    /**
+     * Error flag. True if the response is an error report.
+     */
+    protected boolean error = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -352,6 +358,26 @@ public abstract class ResponseBase
     }
 
 
+    /**
+     * Set the error flag.
+     */
+    public void setError() {
+
+        this.error = true;
+
+    }
+
+
+    /**
+     * Error flag accessor.
+     */
+    public boolean isError() {
+
+        return (this.error);
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -431,12 +457,28 @@ public abstract class ResponseBase
      */
     public PrintWriter getReporter() {
 
-        try {
-            flushBuffer();
-        } catch (IOException e) {
-            ;
+        if (isError()) {
+
+            try {
+                flushBuffer();
+            } catch (IOException e) {
+                ;
+            }
+            return (new PrintWriter(output));
+
+        } else {
+
+            if (this.stream != null) {
+                return null;
+            } else {
+                try {
+                    return (new PrintWriter(getOutputStream()));
+                } catch (IOException e) {
+                    return null;
+                }
+            }
+
         }
-	return (new PrintWriter(output));
 
     }
 
@@ -462,6 +504,7 @@ public abstract class ResponseBase
 	request = null;
 	stream = null;
 	writer = null;
+        error = false;
 
     }
 
