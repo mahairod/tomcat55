@@ -147,7 +147,7 @@ public class TldLocationsCache {
     // Constructor and Initilizations
     
     public TldLocationsCache(ServletContext ctxt) {
-        this(ctxt, false);
+        this(ctxt, true);
     }
 
     /** Constructor. 
