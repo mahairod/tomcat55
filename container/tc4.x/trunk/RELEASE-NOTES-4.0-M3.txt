@@ -87,6 +87,11 @@ BodyContent object.  This spec change supports improved performance for the
 (common) case where the nested content of a custom tag is simply rendered to
 the response anyway, with no need for double buffering.
 
+Catalina:  Thanks to the efforts of Dave Johnson and Richard Frazer of
+Haht Commerce, we now have several UML diagrams that document the internal
+architecture of Catalina.  Check the contents of "catalina/docs/dev" in the
+source distribution.
+
 
 =========
 BUG FIXES:
@@ -167,6 +172,9 @@ from a different thread will get IllegalStateException.
 
 Catalina:  Single Sign On support now properly remembers the authentication
 method used to originally authenticate the user.
+
+Catalina:  Restore the presentation of default error pages with a content type
+of "text/html".
 
 
 ==============================
