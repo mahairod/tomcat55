@@ -194,7 +194,7 @@ final class StandardContextValve
         if (((StandardContext) container).getSwallowOutput()) {
             try {
                 SystemLogHandler.startCapture();
-                wrapper.invoke(request, response);
+                wrapper.getPipeline().invoke(request, response);
             } finally {
                 String log = SystemLogHandler.stopCapture();
                 if (log != null && log.length() > 0) {
@@ -202,7 +202,7 @@ final class StandardContextValve
                 }
             }
         } else {
-            wrapper.invoke(request, response);
+            wrapper.getPipeline().invoke(request, response);
         }
 
     }
