@@ -180,8 +180,12 @@ public class JspContextWrapper
     }
 
     public void removeAttribute(String name) {
-	removeAttribute(name, PAGE_SCOPE);
-	invokingJspCtxt.removeAttribute(name);
+	pageAttributes.remove(name);
+	invokingJspCtxt.removeAttribute(name, REQUEST_SCOPE);
+	if (getSession() != null) {
+	    invokingJspCtxt.removeAttribute(name, SESSION_SCOPE);
+	}
+	invokingJspCtxt.removeAttribute(name, APPLICATION_SCOPE);
     }
 
     public void removeAttribute(String name, int scope) {
@@ -364,6 +368,8 @@ public class JspContextWrapper
 	    Object obj = getAttribute(varName);
 	    if (obj != null) {
 		invokingJspCtxt.setAttribute(varName, obj);
+	    } else {
+		invokingJspCtxt.removeAttribute(varName, PAGE_SCOPE);
 	    }
 	}
     }
