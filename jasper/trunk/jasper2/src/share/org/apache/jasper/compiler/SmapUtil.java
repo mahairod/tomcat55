@@ -160,7 +160,8 @@ public class SmapUtil {
      * Returns an unqualified version of the given file path.
      */
     private static String unqualify(String path) {
-        return path.substring(path.lastIndexOf(File.separator) + 1);
+        path = path.replace('\\', '/');
+        return path.substring(path.lastIndexOf('/') + 1);
     }
 
     /**
