@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -66,12 +62,15 @@
 package org.apache.jasper34.core;
 
 import org.apache.jasper34.generator.*;
-// import org.apache.jasper.compiler.ServletWriter;
-// //import org.apache.jasper.runtime.JspLoader;
-// import org.apache.jasper.compiler.TagLibraries;
+import org.apache.jasper34.parser.*;
 import java.io.IOException;
-import org.apache.jasper34.generator.Compiler;
 import org.apache.jasper34.runtime.JasperException;
+
+// XXX @deprecated - will be split up in ContainerLiaison 
+// and jsptree.*
+
+
+
 /**
  * A place holder for various things that are used through out the JSP
  * engine. This is a per-request/per-context data structure. Some of

@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Revision$
- * $Date$
- *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -67,7 +63,12 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 /**
- * A class to hold all init parameters specific to the JSP engine. 
+ * A class to hold all init parameters specific to the JSP engine.
+ *
+ * The container liaison will implement this interface to pass options
+ * or use one of the existing implementations. We  have support for
+ * using Properties, command line options, ServletConfig and setters
+ * ( might need some refactoring )
  *
  * @author Anil K. Vijendran
  * @author Hans Bergsten

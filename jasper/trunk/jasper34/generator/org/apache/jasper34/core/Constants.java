@@ -62,7 +62,10 @@ import java.text.MessageFormat;
 
 import org.apache.tomcat.util.log.Log;
 import org.apache.tomcat.util.res.StringManager;
- 
+
+// @deprecated will be refactored, part will move to ContainerLiaiason,
+// part to options
+
 /**
  * Some constants and other global data that are used by the compiler
  * and the runtime.
