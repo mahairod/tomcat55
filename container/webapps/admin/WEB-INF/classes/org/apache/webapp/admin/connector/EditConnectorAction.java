@@ -228,7 +228,16 @@ public class EditConnectorAction extends Action {
                 ((String) mBServer.getAttribute(cname, attribute));          
             attribute = "maxKeepAliveRequests";
             connectorFm.setMaxKeepAliveText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());         
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());       
+            attribute = "maxSpareThreads";
+            connectorFm.setMaxSpare
+                ((String) mBServer.getAttribute(cname, attribute));         
+            attribute = "maxThreads";
+            connectorFm.setMaxThreads
+                ((String) mBServer.getAttribute(cname, attribute));       
+            attribute = "minSpareThreads";
+            connectorFm.setMinSpare
+                ((String) mBServer.getAttribute(cname, attribute));        
             attribute = "secure";
             connectorFm.setSecure
                 (((Boolean) mBServer.getAttribute(cname, attribute)).toString());;       
@@ -249,11 +258,11 @@ public class EditConnectorAction extends Action {
             
             // Processors
             attribute = "minProcessors";
-            connectorFm.setMinProcessorsText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+            //connectorFm.setMinProcessorsText
+            //    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             attribute = "maxProcessors";
-            connectorFm.setMaxProcessorsText
-                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+            //connectorFm.setMaxProcessorsText
+            //    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             
             // Supported by HTTP and HTTPS only
             if (!("AJP".equalsIgnoreCase(connectorType))) {

@@ -158,6 +158,9 @@ public class AddConnectorAction extends Action {
         connectorFm.setMinProcessorsText("5");
         connectorFm.setMaxProcessorsText("20");
         connectorFm.setMaxKeepAliveText("100");
+        connectorFm.setMaxSpare("50");
+        connectorFm.setMaxThreads("200");
+        connectorFm.setMinSpare("4");
         connectorFm.setSecure("false");
         connectorFm.setTcpNoDelay("true");
         connectorFm.setXpoweredBy("false");
