@@ -732,11 +732,6 @@ public class StandardSession
             if (manager != null)
                 manager.remove(this);
 
-            // Unbind any objects associated with this session
-            String keys[] = keys();
-            for (int i = 0; i < keys.length; i++)
-                removeAttribute(keys[i], notify);
-
             // Notify interested session event listeners
             if (notify) {
                 fireSessionEvent(Session.SESSION_DESTROYED_EVENT, null);
@@ -744,6 +739,11 @@ public class StandardSession
 
             // We have completed expire of this session
             expiring = false;
+
+            // Unbind any objects associated with this session
+            String keys[] = keys();
+            for (int i = 0; i < keys.length; i++)
+                removeAttributeInternal(keys[i], notify);
 
         }
 
@@ -1182,53 +1182,7 @@ public class StandardSession
             throw new IllegalStateException
                 (sm.getString("standardSession.removeAttribute.ise"));
 
-        // Remove this attribute from our collection
-        Object value = attributes.remove(name);
-
-        // Do we need to do valueUnbound() and attributeRemoved() notification?
-        if (!notify || (value == null)) {
-            return;
-        }
-
-        // Call the valueUnbound() method if necessary
-        HttpSessionBindingEvent event = null;
-        if (value instanceof HttpSessionBindingListener) {
-            event = new HttpSessionBindingEvent(this, name, value);
-            ((HttpSessionBindingListener) value).valueUnbound(event);
-        }
-
-        // Notify interested application event listeners
-        Context context = (Context) manager.getContainer();
-        Object listeners[] = context.getApplicationEventListeners();
-        if (listeners == null)
-            return;
-        for (int i = 0; i < listeners.length; i++) {
-            if (!(listeners[i] instanceof HttpSessionAttributeListener))
-                continue;
-            HttpSessionAttributeListener listener =
-                (HttpSessionAttributeListener) listeners[i];
-            try {
-                fireContainerEvent(context,
-                                   "beforeSessionAttributeRemoved",
-                                   listener);
-                if (event == null) {
-                    event = new HttpSessionBindingEvent(this, name, value);
-                }
-                listener.attributeRemoved(event);
-                fireContainerEvent(context,
-                                   "afterSessionAttributeRemoved",
-                                   listener);
-            } catch (Throwable t) {
-                try {
-                    fireContainerEvent(context,
-                                       "afterSessionAttributeRemoved",
-                                       listener);
-                } catch (Exception e) {
-                    ;
-                }
-                log(sm.getString("standardSession.attributeEvent"), t);
-            }
-        }
+        removeAttributeInternal(name, notify);
 
     }
 
@@ -1589,6 +1543,72 @@ public class StandardSession
     protected Object getAttributeInternal(String name) {
 
         return (attributes.get(name));
+
+    }
+
+
+    /**
+     * Remove the object bound with the specified name from this session.  If
+     * the session does not have an object bound with this name, this method
+     * does nothing.
+     * <p>
+     * After this method executes, and if the object implements
+     * <code>HttpSessionBindingListener</code>, the container calls
+     * <code>valueUnbound()</code> on the object.
+     *
+     * @param name Name of the object to remove from this session.
+     * @param notify Should we notify interested listeners that this
+     *  attribute is being removed?
+     */
+    protected void removeAttributeInternal(String name, boolean notify) {
+
+        // Remove this attribute from our collection
+        Object value = attributes.remove(name);
+
+        // Do we need to do valueUnbound() and attributeRemoved() notification?
+        if (!notify || (value == null)) {
+            return;
+        }
+
+        // Call the valueUnbound() method if necessary
+        HttpSessionBindingEvent event = null;
+        if (value instanceof HttpSessionBindingListener) {
+            event = new HttpSessionBindingEvent(this, name, value);
+            ((HttpSessionBindingListener) value).valueUnbound(event);
+        }
+
+        // Notify interested application event listeners
+        Context context = (Context) manager.getContainer();
+        Object listeners[] = context.getApplicationEventListeners();
+        if (listeners == null)
+            return;
+        for (int i = 0; i < listeners.length; i++) {
+            if (!(listeners[i] instanceof HttpSessionAttributeListener))
+                continue;
+            HttpSessionAttributeListener listener =
+                (HttpSessionAttributeListener) listeners[i];
+            try {
+                fireContainerEvent(context,
+                                   "beforeSessionAttributeRemoved",
+                                   listener);
+                if (event == null) {
+                    event = new HttpSessionBindingEvent(this, name, value);
+                }
+                listener.attributeRemoved(event);
+                fireContainerEvent(context,
+                                   "afterSessionAttributeRemoved",
+                                   listener);
+            } catch (Throwable t) {
+                try {
+                    fireContainerEvent(context,
+                                       "afterSessionAttributeRemoved",
+                                       listener);
+                } catch (Exception e) {
+                    ;
+                }
+                log(sm.getString("standardSession.attributeEvent"), t);
+            }
+        }
 
     }
 
