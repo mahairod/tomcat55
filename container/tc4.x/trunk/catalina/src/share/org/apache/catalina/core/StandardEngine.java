@@ -181,6 +181,31 @@ public class StandardEngine
     }
 
 
+    /**
+     * Return the default Mapper class name.
+     */
+    public String getMapperClass() {
+
+        return (this.mapperClass);
+
+    }
+
+
+    /**
+     * Set the default Mapper class name.
+     *
+     * @param mapperClass The new default Mapper class name
+     */
+    public void setMapperClass(String mapperClass) {
+
+        String oldMapperClass = this.mapperClass;
+        this.mapperClass = mapperClass;
+        support.firePropertyChange("mapperClass",
+                                   oldMapperClass, this.mapperClass);
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -268,14 +293,14 @@ public class StandardEngine
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    // ------------------------------------------------------ Protected Methods
 
 
     /**
      * Add a default Mapper implementation if none have been configured
      * explicitly.
      *
-     * @param mapperClass Java class name of the default Mapper
+     * @param mapperClass The default mapper class name to add
      */
     protected void addDefaultMapper(String mapperClass) {
 

@@ -154,7 +154,8 @@ final class StandardEngineValve
 	if (host == null) {
 	    ((HttpServletResponse) response.getResponse()).sendError
 		(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-		 sm.getString("standardEngine.notHost"));
+		 sm.getString("standardEngine.noHost",
+                              request.getRequest().getServerName()));
 	    return;
 	}
 

@@ -1031,6 +1031,7 @@ public abstract class ContainerBase
 	if (started)
 	    throw new LifecycleException
 		(sm.getString("containerBase.alreadyStarted", logName()));
+	addDefaultMapper(this.mapperClass);
 	started = true;
 
 	// Start our subordinate components, if any
@@ -1044,9 +1045,6 @@ public abstract class ContainerBase
 	    ((Lifecycle) realm).start();
 	if ((resources != null) && (resources instanceof Lifecycle))
 	    ((Lifecycle) resources).start();
-
-	// Add a default Mapper if none have been defined
-	addDefaultMapper(this.mapperClass);
 
 	// Start our Mappers, if any
 	Mapper mappers[] = findMappers();
