@@ -64,36 +64,41 @@ General New Features:
 Catalina New Features:
 ---------------------
 
-[4.1.3] Catalina:
-        Implement custom logger which can be used to capture System.out and
-        System.err to a buffer for later use.
+[4.1.3]  Catalina:
+         Implement custom logger which can be used to capture System.out and
+         System.err to a buffer for later use.
 
-[4.1.3] SSIServlet:
-        Complete rewrite of the SSI functionality (WARNING: servlet class name
-        has changed).
+[4.1.3]  SSIServlet:
+         Complete rewrite of the SSI functionality (WARNING: servlet class name
+         has changed).
 
-[4.1.3] CoyoteConnector:
-        Add PureTLS support.
+[4.1.3]  CoyoteConnector:
+         Add PureTLS support.
 
-[4.1.4] Embedded:
-        Add support for Coyote HTTP/1.1 and Coyote JK 2.
+[4.1.4]  Embedded:
+         Add support for Coyote HTTP/1.1 and Coyote JK 2.
 
-[4.1.4] DefaultContext:
-        Refactoring of DefaultContext to support dynamic configuration (naming
-        resources and other misc properties).
+[4.1.4]  DefaultContext:
+         Refactoring of DefaultContext to support dynamic configuration (naming
+         resources and other misc properties).
 
-[4.1.4] MBeanUtils:
-        Allow specifying custom MBean descriptor files.
+[4.1.4]  MBeanUtils:
+         Allow specifying custom MBean descriptor files.
 
-[4.1.5] ServerLifecycleListener:
-        Generate MBeans for the JNDI resources of the contexts.
+[4.1.5]  ServerLifecycleListener:
+         Generate MBeans for the JNDI resources of the contexts.
 
-[4.1.8] BootstrapService:
-        Allow passing parameters to the BootstrapService.
+[4.1.8]  BootstrapService:
+         Allow passing parameters to the BootstrapService.
 
 [4.1.15] JNDIRealm:
          Add support for SSL with the JNDIRealm.
 
+[4.1.16] AuthenticatorBase:
+         Add a configuration option to disable setting the headers which 
+         prevent proxies from caching protected pages.  Using this option may
+         open security holes in your application, so it should only be used
+         if you are certain about what you are doing.
 
 -------------------
 Jasper New Features:
