@@ -83,6 +83,9 @@ public class BaseJspListener implements ParseEventListener {
 	this.writer = writer;
     }
 
+    public void setTemplateInfo(Mark start, Mark stop) {
+    }
+
     public void beginPageProcessing() throws JasperException {
     }
     
@@ -142,7 +145,7 @@ public class BaseJspListener implements ParseEventListener {
 	throw new JasperException(Constants.getString("jsp.error.not.impl.plugin"));
     }
     
-    public void handleCharData(char[] chars) throws JasperException {
+    public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
         System.err.print(chars);
     }
 

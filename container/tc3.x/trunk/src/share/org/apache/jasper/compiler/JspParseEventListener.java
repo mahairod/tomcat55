@@ -89,6 +89,8 @@ import org.apache.tomcat.logging.Logger;
  */
 public class JspParseEventListener extends BaseJspListener {
 
+    private static CommentGenerator commentGenerator = new JakartaCommentGenerator();    
+
     JspCompilationContext ctxt;
     
     String jspServletBase = Constants.JSP_SERVLET_BASE;
@@ -130,6 +132,14 @@ public class JspParseEventListener extends BaseJspListener {
         gen.init(ctxt);
         generators.addElement(gen);
     }
+
+    public static void setCommentGenerator(CommentGenerator generator) {
+	if ( null == commentGenerator) {
+	    throw new IllegalArgumentException("null == generator");
+	}
+
+	commentGenerator = generator;
+    }    
     
     /*
      * Package private since I want everyone to come in through 
@@ -707,23 +717,27 @@ public class JspParseEventListener extends BaseJspListener {
             if (phase.isInstance(generator)) {
                 boolean genCoords = generator.generateCoordinates(phase);
                 if (genCoords) {
-                    if (start != null && stop != null) {
-                        if (start.fileid == stop.fileid) {
-			    String fileName = out.quoteString(
-			    				start.getFile ());
-                            out.println("// begin [file="+fileName+";from="+
-                                        start.toShortString()+";to="+stop.toShortString()+"]");
-			}
-                        else
-                            out.println("// begin [from="+start+";to="+stop+"]");
-                    } else
-                        out.println("// begin");
-                    out.pushIndent();
+		    commentGenerator.generateStartComment
+			(generator, out, start, stop);
+                    //if (start != null && stop != null) {
+		    //  if (start.fileid == stop.fileid) {
+		    //    String fileName = out.quoteString(
+		    //    				start.getFile ());
+		    //      out.println("// begin [file="+fileName+";from="+
+		    //                  start.toShortString()+";to="+stop.toShortString()+"]");
+		    //}
+		    //  else
+		    //      out.println("// begin [from="+start+";to="+stop+"]");
+                    //} else
+		    //  out.println("// begin");
+                    //out.pushIndent();
                 }
                 generator.generate(out, phase);
                 if (genCoords) {
-                    out.popIndent();
-                    out.println("// end");
+		    commentGenerator.generateEndComment
+			(generator, out, start, stop);
+                    //out.popIndent();
+                    //out.println("// end");
                 }
             }
         }
@@ -831,7 +845,7 @@ public class JspParseEventListener extends BaseJspListener {
     }
     
     
-    public void handleCharData(char[] chars) throws JasperException {
+    public void handleCharData(Mark start, Mark stop, char[] chars) throws JasperException {
         GeneratorBase cdg;
 
         if (ctxt.getOptions().getLargeFile())
@@ -845,7 +859,7 @@ public class JspParseEventListener extends BaseJspListener {
         // FIXME: change null
         Generator gen
             = new GeneratorWrapper(cdg,
-                                   null, null);
+                                   start, stop);
 	
 	addGenerator(gen);
     }
