@@ -74,7 +74,7 @@ public class Java extends Task {
      */
     public void execute() throws BuildException {
         
-        project.log("Calling " + classname);
+        project.log("Calling " + classname, "java", project.MSG_VERBOSE);
         
         if (classname == null) {
             throw new BuildException("Class name must not be null.");

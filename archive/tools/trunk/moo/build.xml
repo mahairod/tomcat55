@@ -12,7 +12,7 @@
 
     <!-- create classes -->
     <javac srcdir="src/share" destdir="build/classes" 
-	   classpath="./../servlet-2.2.0.jar" />
+	   classpath="../servlet-2.2.0.jar" />
 
   </target>
 
