@@ -227,6 +227,9 @@ class PageDataImpl extends PageData implements TagConstants {
 		if (rootAttrs.getIndex(qName) == -1) {
 		    String location = attrs.getValue("uri");
 		    if (location != null) {
+                        if (location.startsWith("/")) {
+                            location = URN_JSPTLD + location;
+                        }
 			rootAttrs.addAttribute("", "", qName, "CDATA",
 					       location);
 		    } else {

@@ -82,7 +82,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Kin-man Chung
  * @author Jan Luehe
  */
-class TagLibraryInfoImpl extends TagLibraryInfo {
+class TagLibraryInfoImpl extends TagLibraryInfo implements TagConstants {
 
     // Logger
     private static Log log = LogFactory.getLog(TagLibraryInfoImpl.class);
@@ -726,9 +726,13 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
     public ValidationMessage[] validate(PageData thePage) {
 	TagLibraryValidator tlv = getTagLibraryValidator();
 	if (tlv == null) return null;
-	return tlv.validate(getPrefixString(),
-                            (getReliableURN() != null) ? getReliableURN() : getURI(),
-                            thePage);
+
+        String uri = getURI();
+        if (uri.startsWith("/")) {
+            uri = URN_JSPTLD + uri;
+        }
+
+	return tlv.validate(getPrefixString(), uri, thePage);
     }
 
     protected TagLibraryValidator tagLibraryValidator; 
