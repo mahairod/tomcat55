@@ -681,7 +681,7 @@
   </target>
   <target name="copy-jmx.jar" if="copy.jmx.jar">
     <copy todir="${catalina.build}/server/lib" file="${jmx.jar}"/>
-    <copy todir="${catalina.build}/server/lib" file="../lib/openjmx.license"/>
+    <copy todir="${catalina.build}/server/lib" file="../lib/mx4j.license"/>
   </target>
   <target name="copy-jndi.jar" if="copy.jndi.jar">
     <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
@@ -711,7 +711,7 @@
     <copy todir="${catalina.build}/server/lib" file="${tomcat-util.jar}"/>
   </target>
   <target name="copy-tyrex.jar" if="copy.tyrex.jar">
-    <!--
+    <!-- Don't redistribute Tyrex: Too many dependencies and complex to setup
     <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
     -->
