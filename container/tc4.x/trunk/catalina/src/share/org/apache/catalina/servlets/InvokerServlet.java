@@ -342,25 +342,31 @@ public final class InvokerServlet
                 log("Creating wrapper for '" + servletClass +
                     "' with mapping '" + pattern + "'");
 
-            // Create and install a new wrapper
-            try {
-                wrapper = context.createWrapper();
-                wrapper.setName(name);
-                wrapper.setLoadOnStartup(1);
-                wrapper.setServletClass(servletClass);
-                context.addChild(wrapper);
-                context.addServletMapping(pattern, name);
-            } catch (Throwable t) {
-                log(sm.getString("invokerServlet.cannotCreate",
-                                 inRequestURI), t);
-                if (included)
-                    throw new ServletException
-                        (sm.getString("invokerServlet.cannotCreate",
-                                      inRequestURI), t);
-                else {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                                       inRequestURI);
-                    return;
+            // Create and install a new wrapper (synchronized to avoid
+            // race conditions when multiple requests try to initialize
+            // the same servlet at the same time)
+            synchronized (this) {
+                try {
+                    wrapper = context.createWrapper();
+                    wrapper.setName(name);
+                    wrapper.setLoadOnStartup(1);
+                    wrapper.setServletClass(servletClass);
+                    context.addChild(wrapper);
+                    context.addServletMapping(pattern, name);
+                } catch (Throwable t) {
+                    log(sm.getString("invokerServlet.cannotCreate",
+                                     inRequestURI), t);
+                    context.removeServletMapping(pattern);
+                    context.removeChild(wrapper);
+                    if (included)
+                        throw new ServletException
+                            (sm.getString("invokerServlet.cannotCreate",
+                                          inRequestURI), t);
+                    else {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                                           inRequestURI);
+                        return;
+                    }
                 }
             }
 

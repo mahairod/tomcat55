@@ -39,6 +39,9 @@
     </menu>
 
     <menu name="Jasper Developers">
+<!--
+        <item name="Overall Requirements"  href="jasper-requirements.html"/>
+-->
         <item name="Javadocs"              href="jasper/docs/api/index.html"/>
     </menu>
 

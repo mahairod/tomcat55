@@ -116,6 +116,10 @@ itself, or to better understand its internal architecture and operation.</p>
 the development of the <em>Jasper</em> JSP container portion of Tomcat
 itself, or to better understand its internal architecture and operation.</p>
 <ul>
+<!--
+<li><a href="jasper-requirements.html"><strong>Jasper Overall Requirements</strong></a>
+    - High level Jasper development requirements For Tomcat 4.1.</li>
+-->
 <li><a href="jasper/docs/api/index.html"><strong>Javadocs</strong></a>
     - Javadoc API documentation for the <em>Jasper</em> JSP container
     portion of Tomcat 4.</li>
