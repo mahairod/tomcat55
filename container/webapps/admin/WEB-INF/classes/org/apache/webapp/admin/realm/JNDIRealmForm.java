@@ -84,41 +84,6 @@ public final class JNDIRealmForm extends RealmForm {
     // ----------------------------------------------------- Instance Variables
 
     /**
-     * Should we search the entire subtree for matching roles?
-     */
-    private String roleSubtree = "false";
-
-    /**
-     * Should we search the entire subtree for matching users?
-     */
-    private String userSubtree = "false";
-
-    /**
-     * The text for the digest algorithm.
-     */
-    private String digest = null;
-
-    /**
-     * The text for the role Base.
-     */
-    private String roleBase = null;
-
-    /**
-     * The text for the user role name.
-     */
-    private String userRoleName = null;
-
-    /**
-     * The text for the role name.
-     */
-    private String roleName = null;
-
-    /**
-     * The text for the role Pattern.
-     */
-    private String rolePattern = null;
-
-    /**
      * The text for the connection user name.
      */
     private String connectionName = null;
@@ -139,19 +104,59 @@ public final class JNDIRealmForm extends RealmForm {
     private String contextFactory = null;
 
     /**
+     * The text for the digest algorithm.
+     */
+    private String digest = null;
+
+    /**
+     * The text for the role Base.
+     */
+    private String roleBase = null;
+
+    /**
+     * The text for the role name.
+     */
+    private String roleName = null;
+
+    /**
+     * The text for the role Pattern.
+     */
+    private String rolePattern = null;
+
+    /**
+     * Should we search the entire subtree for matching roles?
+     */
+    private String roleSubtree = "false";
+
+    /**
+     * The text for the user Base.
+     */
+    private String userBase = null;
+
+    /**
      * The text for the user Password.
      */
     private String userPassword = null;
 
     /**
-     * The text for the user search Pattern.
+     * The text for the user Pattern.
      */
     private String userPattern = null;
+
+    /**
+     * The text for the user role name.
+     */
+    private String userRoleName = null;
 
     /**
      * The text for the user Search.
      */
     private String userSearch = null;
+
+    /**
+     * Should we search the entire subtree for matching users?
+     */
+    private String userSubtree = "false";
 
     /**
      * Set of valid values for search subtrees(true/false).
@@ -266,6 +271,24 @@ public final class JNDIRealmForm extends RealmForm {
     public void setRoleName(String roleName) {
 
         this.roleName  = roleName ;
+
+    }
+
+    /**
+     * Return the userBase.
+     */
+    public String getUserBase() {
+
+        return this.userBase ;
+
+    }
+
+    /**
+     * Set the userBase.
+     */
+    public void setUserBase(String userBase ) {
+
+        this.userBase  = userBase ;
 
     }
 
@@ -458,6 +481,7 @@ public final class JNDIRealmForm extends RealmForm {
 
         this.rolePattern = null;
         this.roleBase = null;
+        this.userBase = null;
         this.userPassword = null;
         this.userPattern = null;
         this.userSearch = null;
@@ -495,6 +519,8 @@ public final class JNDIRealmForm extends RealmForm {
         sb.append(roleBase);
         sb.append("',userPassword='");
         sb.append(userPassword);
+        sb.append(",userBase=");
+        sb.append(userBase);
         sb.append("',userPattern=");
         sb.append(userPattern);
         sb.append("',userSearch=");
@@ -532,12 +558,33 @@ public final class JNDIRealmForm extends RealmForm {
         if (submit != null) {
             // the following fields are required.
 
-            if ((digest == null) || (digest.length() < 1)) {
-                errors.add("digest",
-                new ActionError("error.digest.required"));
+            if ((connectionURL == null) || (connectionURL.length() < 1)) {
+                errors.add("connectionURL",
+                new ActionError("error.connURL.required"));
             }
 
-            if ((roleName == null) || (roleName.length() < 1)) {
+            // Either userPattern or userSearch should be specified not both
+            boolean isUserPatternSpecified = false;
+            boolean isUserSearchSpecified = false;
+            if ((userPattern != null) && (userPattern.length() > 0)) {
+                isUserPatternSpecified = true;
+            }
+
+            if ((userSearch != null) && (userSearch.length() > 0)) {
+                isUserSearchSpecified = true;
+            }
+
+            if (isUserPatternSpecified && isUserSearchSpecified) {
+                errors.add("userPattern" ,
+                new ActionError("error.userPattern.userSearch.defined"));
+            }
+
+            /*if ((digest == null) || (digest.length() < 1)) {
+                errors.add("digest",
+                new ActionError("error.digest.required"));
+            } */
+
+            /*if ((roleName == null) || (roleName.length() < 1)) {
                 errors.add("roleName",
                 new ActionError("error.roleName.required"));
             }
@@ -557,6 +604,11 @@ public final class JNDIRealmForm extends RealmForm {
                 new ActionError("error.roleBase.required"));
             }
 
+            if ((userBase == null) || (userBase.length() < 1)) {
+                errors.add("userBase",
+                new ActionError("error.userBase.required"));
+            }
+
             if ((userPassword == null) || (userPassword.length() < 1)) {
                 errors.add("userPassword",
                 new ActionError("error.userPassword.required"));
@@ -572,7 +624,6 @@ public final class JNDIRealmForm extends RealmForm {
                 new ActionError("error.userSearch.required"));
             }
 
-
             if ((connectionName == null) || (connectionName.length() < 1)) {
                 errors.add("connectionName",
                 new ActionError("error.connName.required"));
@@ -583,15 +634,10 @@ public final class JNDIRealmForm extends RealmForm {
                 new ActionError("error.connPassword.required"));
             }
 
-            if ((connectionURL == null) || (connectionURL.length() < 1)) {
-                errors.add("connectionURL",
-                new ActionError("error.connURL.required"));
-            }
-
-             if ((contextFactory == null) || (contextFactory.length() < 1)) {
+            if ((contextFactory == null) || (contextFactory.length() < 1)) {
                 errors.add("contextFactory",
                 new ActionError("error.contextFactory.required"));
-            }
+            } */
         }
 
         return errors;
