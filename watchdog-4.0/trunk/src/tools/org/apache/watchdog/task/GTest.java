@@ -951,22 +951,30 @@ public class GTest extends Task implements TaskContainer {
         if ( debug > 0 ) {
             System.out.println( " REQUEST: " + request );
         }
-        reqbuf.append( request ).append( CRLF );;
+        reqbuf.append( request ).append( CRLF );
 
-        // append all rquest headers 
+        // append all request headers 
         if ( !requestHeaders.isEmpty() ) {
             Iterator iter = requestHeaders.keySet().iterator();
-		
+	        	
             while ( iter.hasNext() ) {
+                StringBuffer tmpBuf = new StringBuffer(32);
                 String headerKey = ( String ) iter.next();
 		        ArrayList values = (ArrayList) requestHeaders.get( headerKey );
 		        String[] value = (String[]) values.toArray( new String[ values.size() ] );
+                tmpBuf.append( headerKey ).append(": ");
 		        for ( int i = 0; i < value.length; i++ ) {
-			        reqbuf.append( headerKey ).append( ": " ).append( value[ i ] ).append( CRLF );
-			        if ( debug > 0 ) {
-			            System.out.println( " REQUEST HEADER: " + headerKey + ": " + value[ i ] );
-			        }
+                    if ((i + 1) == value.length) {
+			            tmpBuf.append( value[ i ] );
+                    } else {
+                        tmpBuf.append( value[ i ] ).append(", ");
+                    }
 		        }
+			    if ( debug > 0 ) {
+			        System.out.println( " REQUEST HEADER: " + tmpBuf.toString());
+			    }
+                tmpBuf.append( CRLF );
+                reqbuf.append(tmpBuf.toString());
             }
         }
 
