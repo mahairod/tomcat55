@@ -1756,6 +1756,8 @@ class Generator {
 
         public void visit(Node.UninterpretedTag n) throws JasperException {
 
+            n.setBeginJavaLine(out.getJavaLine());
+
             /*
              * Write begin tag
              */
@@ -1816,9 +1818,13 @@ class Generator {
             } else {
                 out.println("/>\");");
             }
+
+            n.setEndJavaLine(out.getJavaLine());
         }
 
         public void visit(Node.JspElement n) throws JasperException {
+
+            n.setBeginJavaLine(out.getJavaLine());
 
             // Compute attribute value string for XML-style and named
             // attributes
@@ -1882,6 +1888,8 @@ class Generator {
             } else {
                 out.println(" + \"/>\");");
             }
+
+            n.setEndJavaLine(out.getJavaLine());
         }
 
         public void visit(Node.TemplateText n) throws JasperException {
@@ -2007,6 +2015,8 @@ class Generator {
 
         public void visit(Node.InvokeAction n) throws JasperException {
 
+            n.setBeginJavaLine(out.getJavaLine());
+
             // Copy virtual page scope of tag file to page scope of invoking
             // page
             out.printil(
@@ -2041,9 +2051,13 @@ class Generator {
                 }
                 out.println(");");
             }
+
+            n.setEndJavaLine(out.getJavaLine());
         }
 
         public void visit(Node.DoBodyAction n) throws JasperException {
+
+            n.setBeginJavaLine(out.getJavaLine());
 
             // Copy virtual page scope of tag file to page scope of invoking
             // page
@@ -2081,6 +2095,8 @@ class Generator {
                 }
                 out.println(");");
             }
+
+            n.setEndJavaLine(out.getJavaLine());
         }
 
         public void visit(Node.AttributeGenerator n) throws JasperException {
