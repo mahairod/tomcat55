@@ -66,6 +66,9 @@ problem you are having before reporting a bug.</p>
       Search the Tomcat 4 bug database
       <a href="http://nagoya.apache.org/bugzilla/query.cgi?product=Tomcat%204">
       here</a>.<br />
+      Search the Tomcat 5 bug database
+      <a href="http://nagoya.apache.org/bugzilla/query.cgi?product=Tomcat%205">
+      here</a>.<br />
     </p>
   </subsection>
 
