@@ -482,6 +482,17 @@ shutting down Tomcat.</p>
 &lt;Ajp12Connector port=&quot;8007&quot; ajpidFile=&quot;conf/ajp12_2.id&quot; /&gt;
 </pre>
 
+<h4>Additional note:</h4>
+
+<p>If using <em>Ajp12Connector</em> to shutdown Tomcat, the minimum of 2
+threads have to be configured, or the shutdown will not be successful. Default
+configuration (no <em>maxThreads</em>) configures more then 2 threads and
+should work fine.</p>
+
+<p>You need two threads since one is always supposed to be listening, and the
+other does the actual shutting down.  Since the shutdown thread tries to
+unblock the listening thread, it hangs if there isn't anyone listening.</p>
+
 <hr size="5">
 
 <!-- ======================================== -->
