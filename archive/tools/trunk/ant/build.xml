@@ -1,10 +1,12 @@
 <!-- basedir attrib of project is optional -->
 
 <project name="BuildTool" default="main" basedir=".">
+  <property name="dist.dir" value="${user.home}/opt" />
+  <property name="package.dir" value="/home/ftp/pub/tomcat" />
 
   <!-- system properties can be defined here, compiler can have the values:
        classic, modern, jikes -->
-
+  <property name="ant.dir" value="${dist.dir}/ant" />
   <property name="build.compiler" value="classic"/>
 
   <!-- need to define the default taskdefs elsewhere -->
@@ -19,6 +21,30 @@
     <!-- need to make a way for a jar to include other jar files -->
     <jar jarfile="../ant.jar" basedir="build" items="org"
      manifest="src/etc/manifest"/>
+  </target>
+
+  <target name="dist" depends="main">
+     <mkdir dir="${ant.dir}" />
+     <mkdir dir="${ant.dir}/lib" />
+     <mkdir dir="${ant.dir}/bin" />
+     <mkdir dir="${ant.dir}/docs" />
+     <jar jarfile="${ant.dir}/lib/ant.jar" basedir="build" items="org"  manifest="src/etc/manifest"/>
+     <copyfile src="../projectx-tr2.jar" dest="${ant.dir}/lib/xml.jar"/>
+     <copyfile src="build.xml" dest="${ant.dir}/lib/build.xml"/>
+     <copydir src="src/bin" dest="${ant.dir}/bin" />
+     <copydir src="docs" dest="${ant.dir}/docs" />
+     <jar jarfile="${ant.dir}/src.zip" basedir="src" items="bin,etc,main" />
+     <chmod perm="+x" src="${ant.dir}/bin/ant" />
+  </target>
+
+  
+  <target name="package" depends="dist" >
+     <jar jarfile="${package.dir}/ant.zip" basedir="${ant.dir}" items="bin,lib,docs,src.zip" />
+ </target>
+
+  <target name="install" >
+    <!-- make symbolic link -->
+    <!-- replace ANT_HOME in ant -->
   </target>
 
   <target name="clean">

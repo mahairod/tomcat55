@@ -1,0 +1,35 @@
+#! /bin/sh
+
+if [ "$ANT_HOME" = "" ] ; then
+  # try to find ANT
+  if [ -d /opt/ant ] ; then 
+    ANT_HOME=/opt/ant
+  fi
+
+  if [ -d ${HOME}/opt/ant ] ; then 
+    ANT_HOME=${HOME}/opt/ant
+  fi
+
+  ## resolve links - $0 may be a link to ant's home
+  PRG=$0
+  progname=`basename $0`
+  
+  while [ -L "$PRG" ]; do
+    ls=`/bin/ls -ld "$PRG"`
+    link=`/usr/bin/expr "$ls" : '.*-> \(.*\)$'`
+    if /usr/bin/expr "$link" : '/' > /dev/null; then
+	PRG="$link"
+    else
+	PRG="`/usr/bin/dirname $PRG`/$link"
+    fi
+  done
+  
+  ANT_HOME=`dirname "$PRG"`/..
+
+fi
+
+
+
+CLASSPATH=${ANT_HOME}/lib/ant.jar:${ANT_HOME}/lib/xml.jar:$CLASSPATH
+
+java -Dant.home=${ANT_HOME} org.apache.tools.ant.Main $@
