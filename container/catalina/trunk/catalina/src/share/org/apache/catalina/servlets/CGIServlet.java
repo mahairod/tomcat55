@@ -1782,8 +1782,12 @@ public final class CGIServlet extends HttpServlet {
                     }
                 }
             } //replacement for Process.waitFor()
-            commandsStdOut.close();
-            cgiOutput.close();
+            // Close the output stream used
+            if (isBinaryContent) {
+                cgiOutput.close();
+            } else {
+                commandsStdOut.close();
+            }
         }
 
         private void sendToLog(BufferedReader rdr) {
