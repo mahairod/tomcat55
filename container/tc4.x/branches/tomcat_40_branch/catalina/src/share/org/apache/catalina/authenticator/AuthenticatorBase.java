@@ -2,6 +2,9 @@
  * $Header$
  * $Revision$
  * $Date$
+ * $Header$
+ * $Revision$
+ * $Date$
  *
  * ====================================================================
  *
@@ -474,6 +477,13 @@ public abstract class AuthenticatorBase
         }
         if ((debug >= 1) && (constraint != null))
             log(" Subject to constraint " + constraint);
+
+        // Make sure that constrained resources are not cached by web proxies
+        // or browsers as caching can provide a security hole
+        HttpServletResponse sresponse = (HttpServletResponse)response.getResponse();
+        sresponse.setHeader("Pragma", "No-cache");
+        sresponse.setHeader("Cache-Control", "no-cache");
+        sresponse.setDateHeader("Expires", 1);
 
         // Enforce any user data constraint for this security constraint
         if (debug >= 1)
