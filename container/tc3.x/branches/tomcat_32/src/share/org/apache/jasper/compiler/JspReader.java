@@ -278,7 +278,7 @@ public class JspReader {
     {
         this.context = ctx;
 	this.encoding = encoding;
-	if (this.encoding == null) this.encoding = "8859_1";
+	if (this.encoding == null) this.encoding = "ISO-8859-1";
 	pushFile(file, encoding);
     }
 
