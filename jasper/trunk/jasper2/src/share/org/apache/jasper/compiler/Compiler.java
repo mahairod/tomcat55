@@ -146,105 +146,129 @@ public class Compiler {
      * @return a smap for the current JSP page, if one is generated,
      *         null otherwise
      */
-    private String[] generateJava()
-        throws Exception
-    {
-	String[] smapStr = null;
+    private String[] generateJava() throws Exception {
+        
+        String[] smapStr = null;
 
         long t1=System.currentTimeMillis();
 
-	// Setup page info area
-	pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader(),
-						   errDispatcher));
+        // Setup page info area
+        pageInfo = new PageInfo(new BeanRepository(ctxt.getClassLoader(),
+                                                   errDispatcher));
 
-	JspConfig jspConfig = options.getJspConfig();
-	JspConfig.JspProperty jspProperty =
-			jspConfig.findJspProperty(ctxt.getJspFile());
+        JspConfig jspConfig = options.getJspConfig();
+        JspConfig.JspProperty jspProperty =
+            jspConfig.findJspProperty(ctxt.getJspFile());
 
         /*
          * If the current uri is matched by a pattern specified in
          * a jsp-property-group in web.xml, initialize pageInfo with
          * those properties.
          */
-        pageInfo.setELIgnored(JspUtil.booleanValue(jspProperty.isELIgnored()));
-        pageInfo.setScriptingInvalid(JspUtil.booleanValue(jspProperty.isScriptingInvalid()));
+        pageInfo.setELIgnored(JspUtil.booleanValue(
+                                            jspProperty.isELIgnored()));
+        pageInfo.setScriptingInvalid(JspUtil.booleanValue(
+                                            jspProperty.isScriptingInvalid()));
         if (jspProperty.getIncludePrelude() != null) {
             pageInfo.setIncludePrelude(jspProperty.getIncludePrelude());
         }
-	if (jspProperty.getIncludeCoda() != null) {
+        if (jspProperty.getIncludeCoda() != null) {
 	    pageInfo.setIncludeCoda(jspProperty.getIncludeCoda());
-	}
+        }
+
         String javaFileName = ctxt.getServletJavaFileName();
+        ServletWriter writer = null;
 
-        // Setup the ServletWriter
-        String javaEncoding = ctxt.getOptions().getJavaEncoding();
-	OutputStreamWriter osw = null; 
-	try {
-	    osw = new OutputStreamWriter(new FileOutputStream(javaFileName),
-					 javaEncoding);
-	} catch (UnsupportedEncodingException ex) {
-            errDispatcher.jspError("jsp.error.needAlternateJavaEncoding", javaEncoding);
-	}
+        try {
+            // Setup the ServletWriter
+            String javaEncoding = ctxt.getOptions().getJavaEncoding();
+            OutputStreamWriter osw = null; 
 
-	ServletWriter writer = new ServletWriter(new PrintWriter(osw));
-        ctxt.setWriter(writer);
+            try {
+                osw = new OutputStreamWriter(
+                            new FileOutputStream(javaFileName), javaEncoding);
+            } catch (UnsupportedEncodingException ex) {
+                errDispatcher.jspError("jsp.error.needAlternateJavaEncoding",
+                                       javaEncoding);
+            }
 
-        // Reset the temporary variable counter for the generator.
-        JspUtil.resetTemporaryVariableName();
+            writer = new ServletWriter(new PrintWriter(osw));
+            ctxt.setWriter(writer);
 
-	// Parse the file
-	ParserController parserCtl = new ParserController(ctxt, this);
-	pageNodes = parserCtl.parse(ctxt.getJspFile());
+            // Reset the temporary variable counter for the generator.
+            JspUtil.resetTemporaryVariableName();
 
-	if (ctxt.isPrototypeMode()) {
-	    // generate prototype .java file for the tag file
-	    Generator.generate(writer, this, pageNodes);
-            writer.close();
-	    return null;
-	}
+	    // Parse the file
+	    ParserController parserCtl = new ParserController(ctxt, this);
+	    pageNodes = parserCtl.parse(ctxt.getJspFile());
 
-	// Validate and process attributes
-	Validator.validate(this, pageNodes);
+	    if (ctxt.isPrototypeMode()) {
+                // generate prototype .java file for the tag file
+                Generator.generate(writer, this, pageNodes);
+                writer.close();
+                writer = null;
+                return null;
+            }
 
-        long t2=System.currentTimeMillis();
-	// Dump out the page (for debugging)
-	// Dumper.dump(pageNodes);
+            // Validate and process attributes
+            Validator.validate(this, pageNodes);
 
-	// Collect page info
-	Collector.collect(this, pageNodes);
+            long t2=System.currentTimeMillis();
+            // Dump out the page (for debugging)
+            // Dumper.dump(pageNodes);
 
-	// Compile (if necessary) and load the tag files referenced in
-	// this compilation unit.
-	tfp = new TagFileProcessor();
-	tfp.loadTagFiles(this, pageNodes);
+            // Collect page info
+            Collector.collect(this, pageNodes);
 
-        long t3=System.currentTimeMillis();
+            // Compile (if necessary) and load the tag files referenced in
+            // this compilation unit.
+            tfp = new TagFileProcessor();
+            tfp.loadTagFiles(this, pageNodes);
+
+            long t3=System.currentTimeMillis();
         
-	// Determine which custom tag needs to declare which scripting vars
-	ScriptingVariabler.set(pageNodes, errDispatcher);
+            // Determine which custom tag needs to declare which scripting vars
+            ScriptingVariabler.set(pageNodes, errDispatcher);
 
-	// Optimizations by Tag Plugins
-	TagPluginManager tagPluginManager = options.getTagPluginManager();
-	tagPluginManager.apply(pageNodes, errDispatcher, pageInfo);
+            // Optimizations by Tag Plugins
+            TagPluginManager tagPluginManager = options.getTagPluginManager();
+            tagPluginManager.apply(pageNodes, errDispatcher, pageInfo);
 
-        // Optimization: concatenate contiguous template texts.
-        TextOptimizer.concatenate(this, pageNodes);
+            // Optimization: concatenate contiguous template texts.
+            TextOptimizer.concatenate(this, pageNodes);
 
-	// Generate static function mapper codes.
-	ELFunctionMapper.map(this, pageNodes);
+            // Generate static function mapper codes.
+            ELFunctionMapper.map(this, pageNodes);
 
-	// generate servlet .java file
-	Generator.generate(writer, this, pageNodes);
-        writer.close();
-        // The writer is only used during the compile, dereference
-        // it in the JspCompilationContext when done to allow it
-        // to be GC'd and save memory.
-        ctxt.setWriter(null);
+            // generate servlet .java file
+            Generator.generate(writer, this, pageNodes);
+            writer.close();
+            writer = null;
 
-        long t4=System.currentTimeMillis();
-        if( t4-t1 > 500 ) {
-            log.debug("Generated "+ javaFileName + " total=" +
-                      (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" + ( t2-t1 ));
+            // The writer is only used during the compile, dereference
+            // it in the JspCompilationContext when done to allow it
+            // to be GC'd and save memory.
+            ctxt.setWriter(null);
+
+            long t4=System.currentTimeMillis();
+            if( t4-t1 > 500 ) {
+                log.debug("Generated "+ javaFileName + " total=" +
+                          (t4-t1) + " generate=" + ( t4-t3 ) + " validate=" +
+                          ( t2-t1 ));
+            }
+
+        } catch (Exception e) {
+            // Remove the generated .java file
+            new File(javaFileName).delete();            
+            throw e;
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    // do nothing
+                }
+            }
         }
         
         // JSR45 Support
@@ -252,15 +276,14 @@ public class Compiler {
             smapStr = SmapUtil.generateSmap(ctxt, pageNodes);
         }
 
-	// If any proto type .java and .class files was generated,
-	// the prototype .java may have been replaced by the current
-	// compilation (if the tag file is self referencing), but the
-	// .class file need to be removed, to make sure that javac would
-	// generate .class again from the new .java file just generated.
+        // If any proto type .java and .class files was generated,
+        // the prototype .java may have been replaced by the current
+        // compilation (if the tag file is self referencing), but the
+        // .class file need to be removed, to make sure that javac would
+        // generate .class again from the new .java file just generated.
+        tfp.removeProtoTypeFiles(ctxt.getClassFileName());
 
-	tfp.removeProtoTypeFiles(ctxt.getClassFileName());
-
-	return smapStr;
+        return smapStr;
     }
 
     /** 
