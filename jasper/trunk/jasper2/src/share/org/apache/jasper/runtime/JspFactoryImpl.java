@@ -139,12 +139,12 @@ public class JspFactoryImpl extends JspFactory {
         try {
 	    PageContext pc;
 	    if( USE_POOL ) {
-		pc=(PageContextImpl)pool.get();
+                pc = (PageContext) pool.get();
 		if( pc == null ) {
 		    pc= new PageContextImpl(this);
 		}
 	    } else {
-		pc =  new PageContextImpl(this);
+		pc = new PageContextImpl(this);
 	    }
 	    pc.initialize(servlet, request, response, errorPageURL, 
                           needsSession, bufferSize, autoflush);
@@ -158,7 +158,7 @@ public class JspFactoryImpl extends JspFactory {
 
     private void internalReleasePageContext(PageContext pc) {
         pc.release();
-	if( USE_POOL) {
+	if (USE_POOL && (pc instanceof PageContextImpl)) {
 	    pool.put( pc );
 	}
     }
