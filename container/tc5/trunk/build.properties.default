@@ -28,7 +28,7 @@ compile.optimize=on
 #flags.hide=on
 
 
-# ----- CVS setup -----
+# ----- Proxy setup -----
 #proxy.host=proxy.domain
 #proxy.port=8080
 #proxy.use=on
