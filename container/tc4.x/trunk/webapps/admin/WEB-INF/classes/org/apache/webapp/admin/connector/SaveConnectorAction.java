@@ -337,7 +337,7 @@ public final class SaveConnectorAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("maxProcessors", new Integer(maxProcessors))); 
       
-            // proxy name and port exist only for Coyote Connectors.
+            // proxy name and port exist only for Coyote HTTP/1.1 Connectors.
             // and not for AJP connector
             if (!("HTTP(AJP)".equalsIgnoreCase(connectorType))) {
                 attribute = "proxyName";              
