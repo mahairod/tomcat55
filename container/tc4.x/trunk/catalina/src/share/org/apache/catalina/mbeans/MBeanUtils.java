@@ -105,7 +105,6 @@ import org.apache.catalina.deploy.ContextResource;
 import org.apache.catalina.deploy.ContextResourceLink;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
-import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
@@ -1571,7 +1570,15 @@ public class MBeanUtils {
         throws MalformedObjectNameException {
 
         ObjectName name = null;
-        Container container = ((ValveBase)valve).getContainer();
+        Container container = null;
+        if( valve instanceof Contained ) {
+            container = ((Contained)valve).getContainer();
+        }
+        if( container == null ) {
+            throw new MalformedObjectNameException(
+                               "Cannot create mbean for non-contained valve " +
+                               valve);
+        }
 
         if (container instanceof Engine) {
             Service service = ((Engine)container).getService();
