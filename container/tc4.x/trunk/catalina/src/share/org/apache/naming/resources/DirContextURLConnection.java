@@ -199,7 +199,6 @@ public class DirContextURLConnection
                     collection = (DirContext) object;
             } catch (NamingException e) {
                 // Object not found
-                throw new IOException("Resource not found");
             }
             
             connected = true;
