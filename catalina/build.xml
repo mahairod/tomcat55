@@ -731,6 +731,8 @@
 
     <ant dir="${tomcat-http11.home}" target="compile">
       <property name="commons-logging.jar" value="${commons-logging.jar}"/>
+      <property name="commons-modeler.jar" value="${commons-modeler.jar}"/>
+      <property name="jmx.jar" value="${jmx.jar}"/>
     </ant>
 
     <copy todir="${catalina.deploy}/server/lib"
