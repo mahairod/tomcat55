@@ -5,7 +5,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999,2004 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -179,6 +179,12 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             } catch (FileNotFoundException ex) {
                 err.jspError("jsp.error.file.not.found", location[0]);
             }
+
+            // Check TLD file location conforms to JSP.7.3.1
+            if (!location[0].startsWith("/WEB-INF/")) {
+                err.jspError("jsp.error.tld.invalid.location", location[0]);
+            }
+
             // Now parse the tld.
             parseTLD(ctxt, location[0], in);
         } else {
