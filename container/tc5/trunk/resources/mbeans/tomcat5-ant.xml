@@ -1,4 +1,4 @@
-<project name="tomcat-embed" default="run" basedir=".">
+<project name="tomcat-embed" default="start" basedir=".">
 
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
