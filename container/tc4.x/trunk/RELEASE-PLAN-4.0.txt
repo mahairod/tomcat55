@@ -66,17 +66,9 @@ Jasper      3079    NullPointerException in JakartaCommentGenerator.generateEnd
 
 Jasper      3127    <jsp:directive.include/> not supported
 
-Jasper      3174    XML view of JSP document is incorrect
-
 Jasper      3235    JSPC command line compiler does not support taglibs
 
 Jasper      3350    Using XML syntax causes content rearrangement
-
-Jasper      3351    JSP documents in XML syntax produce invalid XML
-
-Jasper      3366    Character tag attributes
-
-Jasper      3381    Tag attributes of type short not working
 
 Jasper      3398    Jasper does not support primitive types for tag variables
 
