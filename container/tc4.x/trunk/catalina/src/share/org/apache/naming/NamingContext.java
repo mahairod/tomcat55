@@ -850,7 +850,7 @@ public class NamingContext implements Context {
      * must already exist.
      * 
      * @param name the name to bind; may not be empty
-     * @param obj the object to bind; possibly null
+     * @param object the object to bind; possibly null
      * @param rebind if true, then perform a rebind (ie, overwrite)
      * @exception NameAlreadyBoundException if name is already bound
      * @exception InvalidAttributesException if object did not supply all 
@@ -892,21 +892,23 @@ public class NamingContext implements Context {
             } else {
                 // Getting the type of the object and wrapping it within a new
                 // NamingEntry
-                if (obj instanceof Context) {
-                    entry = new NamingEntry(name.get(0), obj, 
+                Object toBind = 
+                    NamingManager.getStateToBind(obj, name, this, env);
+                if (toBind instanceof Context) {
+                    entry = new NamingEntry(name.get(0), toBind, 
                                             NamingEntry.CONTEXT);
-                } else if (obj instanceof LinkRef) {
-                    entry = new NamingEntry(name.get(0), obj, 
+                } else if (toBind instanceof LinkRef) {
+                    entry = new NamingEntry(name.get(0), toBind, 
                                             NamingEntry.LINK_REF);
-                } else if (obj instanceof Reference) {
-                    entry = new NamingEntry(name.get(0), obj, 
+                } else if (toBind instanceof Reference) {
+                    entry = new NamingEntry(name.get(0), toBind, 
                                             NamingEntry.REFERENCE);
-                } else if (obj instanceof Referenceable) {
-                    obj = ((Referenceable) obj).getReference();
-                    entry = new NamingEntry(name.get(0), obj, 
+                } else if (toBind instanceof Referenceable) {
+                    toBind = ((Referenceable) toBind).getReference();
+                    entry = new NamingEntry(name.get(0), toBind, 
                                             NamingEntry.REFERENCE);
                 } else {
-                    entry = new NamingEntry(name.get(0), obj, 
+                    entry = new NamingEntry(name.get(0), toBind, 
                                             NamingEntry.ENTRY);
                 }
                 bindings.put(name.get(0), entry);
