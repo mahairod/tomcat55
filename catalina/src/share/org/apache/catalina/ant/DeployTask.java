@@ -232,7 +232,7 @@ public class DeployTask extends AbstractCatalinaTask {
         if (update) {
             sb.append("&update=true");
         }
-        if ((war != null) && (tag != null)) {
+        if (tag != null) {
             sb.append("&tag=");
             sb.append(URLEncoder.encode(tag));
         }
