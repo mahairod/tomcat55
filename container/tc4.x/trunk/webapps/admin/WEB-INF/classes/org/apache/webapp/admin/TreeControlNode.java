@@ -347,6 +347,18 @@ public class TreeControlNode implements Serializable {
 
 
     /**
+     * Remove this node from the tree.
+     */
+    public void remove() {
+
+        if (tree != null) {
+            tree.removeNode(this);
+        }
+
+    }
+
+
+    /**
      * Remove the child node (and all children of that child) at the
      * specified position in the child list.
      *
@@ -361,6 +373,33 @@ public class TreeControlNode implements Serializable {
             tree.removeNode(child);
             child.setParent(null);
             children.remove(offset);
+        }
+
+    }
+
+
+    // -------------------------------------------------------- Package Methods
+
+
+    /**
+     * Remove the specified child node.  It is assumed that all of the
+     * children of this child node have already been removed.
+     *
+     * @param child Child node to be removed
+     */
+    void removeChild(TreeControlNode child) {
+
+        if (child == null) {
+            return;
+        }
+        synchronized (children) {
+            int n = children.size();
+            for (int i = 0; i < n; i++) {
+                if (child == (TreeControlNode) children.get(i)) {
+                    children.remove(i);
+                    return;
+                }
+            }
         }
 
     }

@@ -256,10 +256,15 @@ public class TreeControl implements Serializable {
             TreeControlNode children[] = node.findChildren();
             for (int i = 0; i < children.length; i++)
                 removeNode(children[i]);
+            TreeControlNode parent = node.getParent();
+            if (parent != null) {
+                parent.removeChild(node);
+            }
             node.setParent(null);
             node.setTree(null);
-            if (node == this.root)
+            if (node == this.root) {
                 this.root = null;
+            }
         }
 
     }

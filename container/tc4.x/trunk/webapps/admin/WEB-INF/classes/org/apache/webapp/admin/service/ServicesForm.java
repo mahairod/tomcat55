@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  *    Alternately, this acknowlegement may appear in the software itself,
  *    if and wherever such third-party acknowlegements normally appear.
  *
- * 4. The names "The Jakarta Project", "Struts", and "Apache Software
+ * 4. The names "The Jakarta Project", "Tomcat", and "Apache Software
  *    Foundation" must not be used to endorse or promote products derived
  *    from this software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -59,77 +59,55 @@
  *
  */
 
+package org.apache.webapp.admin.service;
 
-package org.apache.webapp.admin;
 
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 
 /**
- * Simple debugging action that dumps a list of the MBeans that are
- * visible in our MBeanServer.
+ * Form bean for deleting services.
  *
- * @author Craig R. McClanahan
+ * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public final class DumpServerAction extends Action {
+public class ServicesForm extends ActionForm {
+
+
+    // ------------------------------------------------------------- Properties
+
+
+    /**
+     * The object names of the services to be deleted.
+     */
+    private String services[] = new String[0];
+
+    public String[] getServices() {
+        return (this.services);
+    }
+
+    public void setServices(String services[]) {
+        this.services = services;
+    }
 
 
     // --------------------------------------------------------- Public Methods
 
 
     /**
-     * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it).
-     * Return an <code>ActionForward</code> instance describing where and how
-     * control should be forwarded, or <code>null</code> if the response has
-     * already been completed.
+     * Reset all properties to their default values.
      *
-     * @param mapping The ActionMapping used to select this instance
-     * @param actionForm The optional ActionForm bean for this request (if any)
-     * @param request The HTTP request we are processing
-     * @param response The HTTP response we are creating
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet exception occurs
+     * @param mapping The mapping used to select this instance
+     * @param request The servlet request we are processing
      */
-    public ActionForward perform(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
-        throws IOException, ServletException {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
 
-        // Create a request attribute with our collection of MBeans
-        MBeanServer server = ((ApplicationServlet) getServlet()).getServer();
-        Iterator names = server.queryNames(null, null).iterator();
-        ArrayList list = new ArrayList();
-        while (names.hasNext()) {
-            list.add(names.next().toString());
-        }
-        Collections.sort(list);
-        request.setAttribute("names", list);
-
-        // Forward to the corresponding display page
-        return (mapping.findForward("Dump Server Results"));
+        this.services = new String[0];
 
     }
-
+        
 
 }

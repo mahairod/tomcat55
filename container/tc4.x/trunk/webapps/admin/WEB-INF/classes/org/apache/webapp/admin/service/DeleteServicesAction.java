@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,46 +63,64 @@
 package org.apache.webapp.admin.service;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.TreeSet;
-import java.util.Set;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.ObjectInstance;
+import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.QueryExp;
-import javax.management.Query;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.JMException;
 import org.apache.struts.util.MessageResources;
 
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TomcatTreeBuilder;
+import org.apache.webapp.admin.TreeControl;
+import org.apache.webapp.admin.TreeControlNode;
+
 
 /**
- * Test <code>Action</code> that handles events to delete services.
+ * The <code>Action</code> that completes <em>Delete Services</em>
+ * transactions.
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  */
 
-public class SetUpDeleteServiceAction extends Action {
+public class DeleteServicesAction extends Action {
+
+
+    /**
+     * Signature for the <code>removeService</code> operation.
+     */
+    private String removeServiceTypes[] =
+    { "java.lang.String",      // Object name
+    };
+
+
+    /**
+     * The MBeanServer we will be interacting with.
+     */
+    private MBeanServer mBServer = null;
     
-    private static MBeanServer mBServer = null;
-    
+
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
+
+
     // --------------------------------------------------------- Public Methods
+    
     
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -120,13 +138,19 @@ public class SetUpDeleteServiceAction extends Action {
      * @exception ServletException if a servlet exception occurs
      */
     public ActionForward perform(ActionMapping mapping,
-    ActionForm form,
-    HttpServletRequest request,
-    HttpServletResponse response)
-    throws IOException, ServletException {
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws IOException, ServletException {
         
+        
+        // Look up the components we will be using as needed
         HttpSession session = request.getSession();
-        
+        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        if (resources == null) {
+            resources = getServlet().getResources();
+        }
+
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
             mBServer = ((ApplicationServlet) getServlet()).getServer();
@@ -135,35 +159,55 @@ public class SetUpDeleteServiceAction extends Action {
             ("Cannot acquire MBeanServer reference", t);
         }
         
-        String pattern = null;
-        
-        String deleteThis = request.getParameter("this");
-        if (deleteThis != null) {
-            // this particular service is to be deleted.
-            pattern = TomcatTreeBuilder.SERVICE_TYPE + 
-                      ",name=" + deleteThis;
-        } else {            
-            // Acquire the entire set of service MBean names to be listed
-            pattern = TomcatTreeBuilder.SERVICE_TYPE +
-                      TomcatTreeBuilder.WILDCARD;
-        }
-        
-        Set results = null;
+        // Delete the specified Services
+        String services[]  = ((ServicesForm) form).getServices();
+        String values[] = new String[1];
+        String operation = "removeService";
         try {
-            results = mBServer.queryNames(new ObjectName(pattern), null);
-        } catch (Throwable t) {
-            throw new ServletException("queryNames(" + pattern + ")", t);
+
+            // Look up our MBeanFactory MBean
+            ObjectName fname =
+                new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
+
+            // Look up our tree control data structure
+            TreeControl control = (TreeControl)
+                session.getAttribute("treeControlTest");
+
+            // Remove the specified services
+            for (int i = 0; i < services.length; i++) {
+                values[0] = services[i];
+                mBServer.invoke(fname, operation,
+                                values, removeServiceTypes);
+                if (control != null) {
+                    control.selectNode(null);
+                    TreeControlNode node = control.findNode(services[i]);
+                    if (node != null) {
+                        node.remove();
+                    } else {
+                        getServlet().log("Missing TreeControlNode for " +
+                                         services[i]);
+                    }
+                } else {
+                    getServlet().log("Missing TreeControl attribute");
+                }
+            }
+
+        } catch (Exception e) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.invoke",
+                                      operation), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.invoke",
+                                      operation));
+            return (null);
+
         }
-        
-        TreeSet services = new TreeSet();
-        Iterator names = results.iterator();
-        while (names.hasNext()) {
-            ObjectName name = (ObjectName) names.next();
-            services.add(name);
-        }
-        
-        // Forward the Set as a request attribute
-        request.setAttribute("services", services);        
-        return (mapping.findForward("Delete Service"));
+
+        // Report successful completion of this transaction
+        return (mapping.findForward("Save Successful"));
+
     }
+    
 }

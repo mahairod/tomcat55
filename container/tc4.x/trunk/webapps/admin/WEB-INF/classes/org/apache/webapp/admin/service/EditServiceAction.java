@@ -108,6 +108,7 @@ public class EditServiceAction extends Action {
      */
     private MessageResources resources = null;
     
+
     private ArrayList debugLvlList = null;
     private ArrayList hostNameList = null;
     
@@ -192,7 +193,7 @@ public class EditServiceAction extends Action {
 
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();
-        request.setAttribute(mapping.getAttribute(), serviceFm);
+        session.setAttribute("serviceForm", serviceFm);
         serviceFm.setAdminAction("Edit");
         serviceFm.setObjectName(sname.toString());
         serviceFm.setEngineObjectName(ename.toString());

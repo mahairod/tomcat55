@@ -16,7 +16,8 @@
 
 <html:errors/>
 
-<html:form method="post" action="/deleteService">
+<html:form method="post" action="/DeleteServices">
+
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="7171A5">
       <td width="81%"> 
@@ -44,38 +45,40 @@
 
   <%-- Services List --%>
 
-  <table class="back-table" border="0" cellspacing="0" cellpadding="1" width="100%">
-    <tr> 
-      <td> 
-        <table class="front-table" border="1"
-         cellspacing="0" cellpadding="0" width="100%">
-          <tr class="header-row">
-            <td><div align="left" class="table-header-text">
-              <bean:message key="actions.delete"/>
+  <table class="back-table" border="0" cellspacing="0" cellpadding="1"
+         width="100%">
+    <tr><td> 
+
+      <table class="front-table" border="1"
+       cellspacing="0" cellpadding="0" width="100%">
+
+        <tr class="header-row">
+          <td><div align="left" class="table-header-text">
+            <bean:message key="actions.delete"/>
+          </div></td>
+          <td><div align="left" class="table-header-text">
+            <bean:message key="host.name"/>
+          </div></td>
+        </tr>
+
+        <logic:iterate name="servicesList" id="service">
+          <tr class="line-row">
+            <td><div align="left" class="table-normal-text">&nbsp;
+              <html:multibox property="services"
+                                value="<%= service.toString() %>"/>
             </div></td>
-            <td><div align="left" class="table-header-text">
-              <bean:message key="host.name"/>
+            <td><div align="left" class="table-normal-text">&nbsp;
+              <html:link page='<%= "/EditService.do?select=" + 
+                         java.net.URLEncoder.encode(service.toString()) %>'>
+                <controls:attribute name="service" attribute="name"/>
+              </html:link>
             </div></td>
           </tr>
+        </logic:iterate>
 
-          <logic:iterate name="services" id="service">
+      </table>
 
-            <tr class="line-row">
-                <td><div align="left" class="table-normal-text">&nbsp;
-                    <input type="checkbox" name="checkbox" 
-                     value='<%= service.toString() %>' >                  
-                </div></td>
-              <td><div align="left" class="table-normal-text">&nbsp;
-                <html:link page='<%= "/setUpService.do?select=" + 
-                               java.net.URLEncoder.encode(service.toString()) %>'>
-                  <controls:attribute name="service" attribute="name"/>
-                </html:link>
-              </div></td>
-            </tr>
-          </logic:iterate>
-        </table>
-      </td>
-    </tr>
+    </td></tr>
   </table>
 
 <%@ include file="../buttons.jsp" %>

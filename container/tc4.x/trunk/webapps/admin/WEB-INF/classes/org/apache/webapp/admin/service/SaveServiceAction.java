@@ -79,6 +79,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -189,6 +190,18 @@ public final class SaveServiceAction extends Action {
 
             try {
 
+                // Ensure that the requested service name is unique
+                ObjectName oname =
+                    new ObjectName(TomcatTreeBuilder.SERVICE_TYPE +
+                                   ",name=" + sform.getServiceName());
+                if (mBServer.isRegistered(oname)) {
+                    ActionErrors errors = new ActionErrors();
+                    errors.add("serviceName",
+                               new ActionError("error.serviceName.exists"));
+                    saveErrors(request, errors);
+                    return (new ActionForward(mapping.getInput()));
+                }
+
                 // Look up our MBeanFactory MBean
                 ObjectName fname =
                     new ObjectName(TomcatTreeBuilder.FACTORY_TYPE);
@@ -288,9 +301,8 @@ public final class SaveServiceAction extends Action {
             return (null);
         }
         
-        if (servlet.getDebug() >= 1)
-            servlet.log(" Forwarding to success page");
-        // Forward back to the test page
+        // Forward to the success reporting page
+        session.removeAttribute(mapping.getAttribute());
         return (mapping.findForward("Save Successful"));
         
     }

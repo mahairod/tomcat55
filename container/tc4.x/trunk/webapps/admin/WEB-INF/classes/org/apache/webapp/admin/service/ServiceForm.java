@@ -388,10 +388,17 @@ public final class ServiceForm extends ActionForm {
         String submit = request.getParameter("submit");
         
         if (submit != null) {
+
+            if ((serviceName == null) || (serviceName.length() < 1)) {
+                errors.add("serviceName",
+                           new ActionError("error.serviceName.required"));
+            }
             
-            if ((engineName == null) || (engineName.length() < 1))
+            if ((engineName == null) || (engineName.length() < 1)) {
                 errors.add("engineName",
-                new ActionError("error.engineName.required"));
+                           new ActionError("error.engineName.required"));
+            }
+
         }
         
         return errors;

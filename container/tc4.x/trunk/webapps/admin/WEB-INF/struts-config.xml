@@ -19,14 +19,6 @@
     <form-bean      name="serverForm"
                     type="org.apache.webapp.admin.ServerForm"/>
 
-    <!-- Service form bean -->
-    <form-bean      name="serviceForm"
-                    type="org.apache.webapp.admin.service.ServiceForm"/>
-                    
-    <!-- Delete Service form bean -->
-    <form-bean      name="deleteServiceForm"
-                    type="org.apache.webapp.admin.service.DeleteServiceForm"/>
-
     <!-- Connector form bean -->
     <form-bean      name="connectorForm"
                     type="org.apache.webapp.admin.connector.ConnectorForm"/>
@@ -70,6 +62,15 @@
     <!-- UserDB Realm form bean -->
     <form-bean      name="userdbRealmForm"
                     type="org.apache.webapp.admin.realm.UserDBRealmForm"/>
+
+
+    <!-- ============= Service Module ============= -->
+
+    <form-bean      name="serviceForm"
+                    type="org.apache.webapp.admin.service.ServiceForm"/>
+                    
+    <form-bean      name="servicesForm"
+                    type="org.apache.webapp.admin.service.ServicesForm"/>
 
 
     <!-- ========== User Database Module ========== -->
@@ -125,14 +126,6 @@
                     path="/server.jsp"
                 redirect="false"/>
 
-    <forward        name="Service"
-                    path="/service/service.jsp"
-                redirect="false"/>
-
-    <forward        name="Delete Service"
-                    path="/service/deleteService.jsp"
-                redirect="false"/>
-
     <forward        name="Connector"
                     path="/connector.jsp"
                 redirect="false"/>
@@ -183,6 +176,17 @@
 
     <forward        name="UserDBRealm"
                     path="/realm/userDBRealm.jsp"
+                redirect="false"/>
+
+
+    <!-- ============ Service Module ============== -->
+
+    <forward        name="Service"
+                    path="/service/service.jsp"
+                redirect="false"/>
+
+    <forward        name="Services"
+                    path="/service/services.jsp"
                 redirect="false"/>
 
 
@@ -355,14 +359,6 @@
               input="/server.jsp">
     </action>
 
-   <!-- Process a user server change -->
-    <action    path="/service"
-               type="org.apache.webapp.admin.service.ServiceAction"
-               name="serviceForm"
-              scope="session"
-              input="/service/service.jsp">
-    </action>
-
     <!-- Process a connector change -->
     <action    path="/connector"
                type="org.apache.webapp.admin.connector.ConnectorAction"
@@ -422,20 +418,6 @@
     <action    path="/treeControlTest"
                type="org.apache.webapp.admin.TreeControlTestAction"/>
 
-    <!-- Delete service action -->
-    <action    path="/deleteService"
-              input="/service/deleteService.jsp"
-               name="deleteServiceForm"
-              scope="request"
-               type="org.apache.webapp.admin.service.DeleteServiceAction"/>
-               
-    <!-- Add service action -->
-    <action    path="/addService"
-              input="/service/addService.jsp"
-               name="serviceForm"
-              scope="request"
-               type="org.apache.webapp.admin.service.AddServiceAction"/>
-
     <!-- JDBC realm action -->
     <action    path="/JDBCRealm"
                type="org.apache.webapp.admin.realm.JDBCRealmAction"
@@ -468,32 +450,33 @@
 
     <!-- Set up Add Service transaction -->
     <action    path="/AddService"
-               type="org.apache.webapp.admin.service.AddServiceAction"
-               name="serviceForm"
-               scope="request">
+               type="org.apache.webapp.admin.service.AddServiceAction">
     </action>
+
+    <!-- Set up Delete Services transaction -->
+    <action    path="/DeleteService"
+               type="org.apache.webapp.admin.service.DeleteServiceAction"
+               name="servicesForm"
+               scope="request"/>
+
+    <!-- Perform Delete Services transaction -->
+    <action    path="/DeleteServices"
+               type="org.apache.webapp.admin.service.DeleteServicesAction"
+               name="servicesForm"
+               scope="request"/>
 
     <!-- Set up Edit Service transaction -->
     <action    path="/EditService"
-               type="org.apache.webapp.admin.service.EditServiceAction"
-               name="serviceForm"
-               scope="request">
+               type="org.apache.webapp.admin.service.EditServiceAction">
     </action>
 
     <!-- Perform Save Service transaction -->
     <action    path="/SaveService"
                type="org.apache.webapp.admin.service.SaveServiceAction"
                name="serviceForm"
-               scope="request"/>
+              input="/service/service.jsp"
+               scope="session"/>
 
-
-    <!-- FIXME - Set up Delete Service transaction -->
-    <action    path="/setUpDeleteService"
-               type="org.apache.webapp.admin.service.SetUpDeleteServiceAction"
-               name="deleteServiceForm"
-               scope="request">
-    </action>
-        
     <!-- ========== User Database Module ========== -->
 
     <action    path="/users/deleteGroups"

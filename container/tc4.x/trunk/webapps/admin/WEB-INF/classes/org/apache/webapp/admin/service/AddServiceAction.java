@@ -126,7 +126,8 @@ public class AddServiceAction extends Action {
         
         // Fill in the form values for display and editing
         ServiceForm serviceFm = new ServiceForm();
-        request.setAttribute(mapping.getAttribute(), serviceFm);
+        HttpSession session = request.getSession();
+        session.setAttribute("serviceForm", serviceFm);
         serviceFm.setAdminAction("Create");
         serviceFm.setObjectName("");
         serviceFm.setEngineObjectName("");

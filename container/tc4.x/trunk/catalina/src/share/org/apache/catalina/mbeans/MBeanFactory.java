@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -836,6 +836,49 @@ public class MBeanFactory extends BaseModelMBean {
     }
 
 
+    /**
+     * Remove an existing Host.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeHost(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        Engine engine = (Engine) service.getContainer();
+        Host host = (Host) engine.findChild(hostName);
+
+        // Remove this component from its parent component
+        engine.removeChild(host);
+
+    }
+
+
+    /**
+     * Remove an existing Service.
+     *
+     * @param name MBean Name of the component to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeService(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("name");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+
+        // Remove this component from its parent component
+        server.removeService(service);
+
+    }
 
 
 }

@@ -20,6 +20,8 @@
 <html:form method="POST" action="/SaveService">
 
   <bean:define id="serviceName" name="serviceForm" property="serviceName"/>
+  <bean:define id="thisObjectName" type="java.lang.String"
+               name="serviceForm" property="objectName"/>
   <html:hidden property="adminAction"/>
   <html:hidden property="objectName"/>
   <html:hidden property="engineObjectName"/>
@@ -117,12 +119,10 @@
                 -------------------------------------
               </controls:action>
               --%>
-              <%--
-              <controls:action url='<%= "/setUpDeleteService.do?this=" +
-                                        serviceName %>'>  
+              <controls:action url='<%= "/DeleteService.do?select=" +
+                                        URLEncoder.encode(thisObjectName) %>'>
                 <bean:message key="actions.service.delete"/>
               </controls:action>
-              --%>
             </logic:notEqual>
           </controls:actions>
         </div>

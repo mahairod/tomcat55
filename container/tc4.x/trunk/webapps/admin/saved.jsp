@@ -7,26 +7,23 @@
 
 <html:html locale="true">
 
-<!-- Standard Content -->
+  <body bgcolor="white">
 
-<%@ include file="header.jsp" %>
+    <%-- Cause our tree control to refresh itself --%>
+    <script language="JavaScript">
+      <!--
+        parent.tree.location='treeControlTest.do';
+      -->
+    </script>
 
-<!-- Body -->
+    <%@ include file="header.jsp" %>
 
-<body bgcolor="white">
+    <center><h2>
+      <bean:message key="save.success"/>
+    </h2></center>
 
-<center>
+    <%@ include file="footer.jsp" %>
 
-<h2>
-  <bean:message key="save.success"/>
-</h2>
-
-</center>
-
-</body>
-
-<!-- Standard Footer -->
-
-<%@ include file="footer.jsp" %>
+  </body>
 
 </html:html>
