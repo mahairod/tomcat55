@@ -83,21 +83,11 @@ public class BodyContentImpl extends BodyContent {
     private int nextChar;
     static String lineSeparator = System.getProperty("line.separator");
     private boolean closed = false;
-    protected JspWriter writer = null;
 
     public BodyContentImpl (JspWriter writer) {
         super(writer);
-        this.writer = writer;
 	cb = new char[bufferSize];
 	nextChar = 0;
-    }
-
-    public JspWriter getEnclosingWriter() {
-        return writer;
-    }
-
-    public void setEnclosingWriter(JspWriter writer) {
-        this.writer = writer;
     }
 
     private void ensureOpen() throws IOException {

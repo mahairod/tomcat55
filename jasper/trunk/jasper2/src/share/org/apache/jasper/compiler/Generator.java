@@ -402,7 +402,7 @@ public class Generator {
 	    out.printil("session = pageContext.getSession();");
 	out.printil("out = pageContext.getOut();");
         if (maxTagNesting > 0) {
-            out.printil("_jspxState.outs[0] = out;");
+            out.printil("_jspxState.out = out;");
         }
 	out.println();
     }
@@ -434,13 +434,15 @@ public class Generator {
 	out.println();
 	out.printil("public int tagDepth;");
 	out.println();
-	out.printil("public JspWriter[] outs;");
+	out.printil("public javax.servlet.jsp.tagext.BodyContent[] outs;");
+	out.println();
+	out.printil("public JspWriter out;");
 	out.println();
 	out.printil("public JspxState() {");
 	out.pushIndent();
 	out.printil("tagCount = 0;");
-	out.printil("tagDepth = 0;");
-	out.printil("outs = new JspWriter[" + (maxTagNesting + 1) + "];");
+	out.printil("tagDepth = -1;");
+	out.printil("outs = new org.apache.jasper.runtime.BodyContentImpl[" + (maxTagNesting) + "];");
 	out.popIndent();
 	out.printil("}");
 	out.popIndent();
@@ -1048,7 +1050,16 @@ public class Generator {
 		out.pushIndent();
 
 		// Initilaize local variables used in this method.
-		out.printil("JspWriter out = _jspxState.outs[_jspxState.tagDepth];");
+		out.printil("JspWriter out = null;");
+                out.printil("if (_jspxState.tagDepth < 0) {");
+		out.pushIndent();
+                out.printil("out = _jspxState.out;");
+		out.popIndent();
+                out.printil("} else {");
+		out.pushIndent();
+                out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
+		out.popIndent();
+                out.printil("}");
 		if (n.isHasUsebean()) {
 		    out.println("HttpSession session = pageContext.getSession();");
 		    out.println("ServletContext application = pageContext.getServletContext();");
@@ -1256,12 +1267,17 @@ public class Generator {
  		    }
                     out.printil("_jspxState.tagDepth++;");
 
-                    out.printil("out = pageContext.allocateBody(_jspxState.outs[_jspxState.tagDepth], out);");
-                    out.printil("_jspxState.outs[_jspxState.tagDepth] = out;");
+                    out.printil("if (_jspxState.outs[_jspxState.tagDepth] == null) {");
+		    out.pushIndent();
+                    out.printil("_jspxState.outs[_jspxState.tagDepth] = new org.apache.jasper.runtime.BodyContentImpl(out);");
+		    out.popIndent();
+		    out.printil("}");
+
+                    out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
 		    out.printil("pageContext.setOut(out);");
 
 		    out.printin(tagHandlerVar);
-		    out.println(".setBodyContent((javax.servlet.jsp.tagext.BodyContent) out);");
+		    out.println(".setBodyContent(_jspxState.outs[_jspxState.tagDepth]);");
 		    out.printin(tagHandlerVar);
 		    out.println(".doInitBody();");
 		    
@@ -1320,8 +1336,8 @@ public class Generator {
                     if (!implementsTryCatchFinally) {
                         out.printil("_jspxState.tagCount--;");
  		    }
+                    out.printil("out = _jspxState.outs[_jspxState.tagDepth].getEnclosingWriter();");
                     out.printil("_jspxState.tagDepth--;");
-		    out.printil("out = _jspxState.outs[_jspxState.tagDepth];");
                     out.printil("pageContext.setOut(out);");
 		    out.popIndent();
 		}
@@ -1578,7 +1594,7 @@ public class Generator {
 
 	// Cleanup the tags on the stack
         if (maxTagNesting > 0) {
-            out.printil("out = _jspxState.outs[0];");
+            out.printil("out = _jspxState.out;");
             out.printil("pageContext.setOut(out);");
         }
 
