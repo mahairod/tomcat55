@@ -414,7 +414,7 @@ public class ParserController {
 		String fileName = ctxt.getRealPath(file.toString());
 		in = ctxt.getResourceAsStream(file.toString());
 		if (in == null) {
-		    throw new FileNotFoundException(fileName);
+		    throw new FileNotFoundException(file.toString());
 		}
 		reader = new InputStreamReader(in, encoding);
 	    }
