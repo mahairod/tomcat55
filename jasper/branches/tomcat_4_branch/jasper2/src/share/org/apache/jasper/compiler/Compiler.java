@@ -63,6 +63,8 @@ package org.apache.jasper.compiler;
 import java.util.*;
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
+
 import javax.servlet.ServletException;
 import javax.servlet.Servlet;
 
@@ -407,7 +409,10 @@ public class Compiler {
                 ctxt.incrementRemoved();
                 return false;
             }
-            jspRealLastModified = jspUrl.openConnection().getLastModified();
+
+            URLConnection conn = jspUrl.openConnection();        
+            jspRealLastModified = conn.getLastModified();
+            conn.getInputStream().close();
         } catch (Exception e) {
             e.printStackTrace();
             return true;
@@ -468,8 +473,12 @@ public class Compiler {
                     //System.out.println("Compiler: outdated, no includeUri " + include );
                     return true;
                 }
-                if (includeUrl.openConnection().getLastModified() >
-                    targetLastModified) {
+
+                URLConnection includeUrlConn = includeUrl.openConnection();
+                long includeLastModified = includeUrlConn.getLastModified();
+                includeUrlConn.getInputStream().close();
+
+                if (includeLastModified > targetLastModified) {
                     //System.out.println("Compiler: outdated, include old " + include );
                     return true;
                 }
