@@ -75,6 +75,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Server;
 import org.apache.catalina.ServerFactory;
 import org.apache.catalina.Service;
@@ -988,6 +989,67 @@ public class MBeanFactory extends BaseModelMBean {
         // Remove this component from its parent component
         engine.removeChild(host);
 
+    }
+
+
+    /**
+     * Remove an existing Logger.
+     *
+     * @param name MBean Name of the comonent to remove
+     *
+     * @exception Exception if a component cannot be removed
+     */
+    public void removeLogger(String name) throws Exception {
+
+        // Acquire a reference to the component to be removed
+        ObjectName oname = new ObjectName(name);
+        String serviceName = oname.getKeyProperty("service");
+        String hostName = oname.getKeyProperty("host");
+        String path = oname.getKeyProperty("path");
+        Server server = ServerFactory.getServer();
+        Service service = server.findService(serviceName);
+        StandardEngine engine = (StandardEngine) service.getContainer();
+        if (hostName == null) {             // if logger's container is Engine
+            Logger logger = engine.getLogger();
+            Container container = logger.getContainer();
+            if (container instanceof StandardEngine) {
+                String sname =
+                    ((StandardEngine)container).getService().getName();
+                if (sname.equals(serviceName)) {
+                    engine.setLogger(null);
+                }
+            }
+        } else if (path == null) {      // if logger's container is Host
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            Logger logger = host.getLogger();
+            Container container = logger.getContainer();
+            if (container instanceof StandardHost) {
+                String hn = ((StandardHost)container).getName();
+                StandardEngine se =
+                    (StandardEngine) ((StandardHost)container).getParent();
+                String sname = se.getService().getName();
+                if (sname.equals(serviceName) && hn.equals(hostName)) {
+                    host.setLogger(null);
+                }
+            }
+        } else {                // logger's container is Context
+            StandardHost host = (StandardHost) engine.findChild(hostName);
+            StandardContext context = (StandardContext) host.findChild(path);
+            Logger logger = context.getLogger();
+            Container container = logger.getContainer();
+            if (container instanceof StandardContext) {
+                String pathName = ((StandardContext)container).getName();
+                StandardHost sh =
+                    (StandardHost)((StandardContext)container).getParent();
+                String hn = sh.getName();;
+                StandardEngine se = (StandardEngine)sh.getParent();
+                String sname = se.getService().getName();
+                if ((sname.equals(serviceName) && hn.equals(hostName)) &&
+                        pathName.equals(path)) {
+                    context.setLogger(null);
+                }
+            }
+        }
     }
 
 
