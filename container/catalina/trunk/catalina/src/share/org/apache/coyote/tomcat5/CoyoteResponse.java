@@ -1438,7 +1438,10 @@ public class CoyoteResponse
                                     }
                            });   
                         } catch (PrivilegedActionException pae){
-                            throw new IllegalArgumentException(location);
+                            IllegalArgumentException iae =
+                                new IllegalArgumentException(location);
+                            iae.initCause(pae.getCause());
+                            throw iae;
                         }
                     } else {
                         encodedURI = urlEncoder.encodeURL(relativePath);
@@ -1448,7 +1451,10 @@ public class CoyoteResponse
                 }
                 redirectURLCC.append(location, 0, location.length());
             } catch (IOException e) {
-                throw new IllegalArgumentException(location);
+                IllegalArgumentException iae =
+                    new IllegalArgumentException(location);
+                iae.initCause(e);
+                throw iae;
             }
 
             return redirectURLCC.toString();
