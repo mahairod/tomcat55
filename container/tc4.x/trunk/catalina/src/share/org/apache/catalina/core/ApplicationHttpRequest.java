@@ -73,6 +73,7 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
@@ -96,6 +97,18 @@ import org.apache.catalina.util.StringManager;
  */
 
 class ApplicationHttpRequest extends HttpServletRequestWrapper {
+
+
+    // ------------------------------------------------------- Static Variables
+
+
+    /**
+     * The set of attribute names that are special for request dispatchers.
+     */
+    protected static final String specials[] =
+    { Globals.REQUEST_URI_ATTR, Globals.CONTEXT_PATH_ATTR,
+      Globals.SERVLET_PATH_ATTR, Globals.PATH_INFO_ATTR,
+      Globals.QUERY_STRING_ATTR };
 
 
     // ----------------------------------------------------------- Constructors
@@ -214,6 +227,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 	synchronized (attributes) {
 	    attributes.remove(name);
+            if (!isSpecial(name))
+                getRequest().removeAttribute(name);
 	}
 
     }
@@ -230,6 +245,8 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 	synchronized (attributes) {
 	    attributes.put(name, value);
+            if (!isSpecial(name))
+                getRequest().setAttribute(name, value);
 	}
 
     }
@@ -577,6 +594,23 @@ class ApplicationHttpRequest extends HttpServletRequestWrapper {
 
 
     // ------------------------------------------------------ Protected Methods
+
+
+    /**
+     * Is this attribute name one of the special ones that is added only for
+     * included servlets?
+     *
+     * @param name Attribute name to be tested
+     */
+    protected boolean isSpecial(String name) {
+
+        for (int i = 0; i < specials.length; i++) {
+            if (specials[i].equals(name))
+                return (true);
+        }
+        return (false);
+
+    }
 
 
     /**

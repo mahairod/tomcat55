@@ -375,6 +375,16 @@
          request="${context.path}/WrappedInclude02?exception=NullPointerException"
       outContent="Include02 PASSED" debug="${debug}"/>
 
+    <!-- ========== Included Servlet Sets Attribute ======================= -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include03"
+      outContent="Include03 PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude03"
+      outContent="Include03 PASSED" debug="${debug}"/>
+
   </target>
 
 
