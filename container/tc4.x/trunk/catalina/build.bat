@@ -29,12 +29,12 @@ set _SERVLETAPI_HOME=%SERVLETAPI_HOME%
 
 rem ----- Verify and Set Required Environment Variables -----------------------
 
-if not "%JAVA_HOME% == "" goto gotJavaHome
+if not "%JAVA_HOME%" == "" goto gotJavaHome
 echo You must set JAVA_HOME to point at your Java Development Kit installation
 goto cleanup
 :gotJavaHome
 
-if not "%JAXP_HOME% == "" goto gotJaxpHome
+if not "%JAXP_HOME%" == "" goto gotJaxpHome
 echo You must set JAXP_HOME to point at your Java API for XML Parsing install
 goto cleanup
 :gotJaxpHome
@@ -56,7 +56,7 @@ set CLASSPATH=%CLASSPATH%;%ANT_HOME%\lib\ant.jar;%JAVA_HOME%\lib\tools.jar
 
 rem ----- Execute The Requested Build -----------------------------------------
 
-java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Djaxp.home=%JAXP_HOME% -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+java %ANT_OPTS% org.apache.tools.ant.Main -Dant.home=%ANT_HOME% -Djaxp.home="%JAXP_HOME%" -Dservletapi.home=%SERVLETAPI_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 rem ----- Restore Environment Variables ---------------------------------------
