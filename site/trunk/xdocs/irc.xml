@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="marc.saegesser@apropos.com">Marc A. Saegesser</author>
+    <title>Jakarta Tomcat</title>
+  </properties>
+
+<body>
+
+<section name="Apache Tomcat on IRC">
+
+<p>An IRC channel dedicated to Tomcat exists on OpenProjects.</p> 
+
+<p><code>#tomcat</code> at <code>us.openprojects.net</code>.
+Click <a href="irc://us.openprojects.net/tomcat">here</a> to connect to the
+channel using Mozilla.</p> 
+
+</section>
+
+</body>
+</document>

@@ -34,6 +34,7 @@
         <item name="Overview"              href="/site/getinvolved.html"/>
         <item name="CVS Repositories"      href="/site/cvsindex.html"/>
         <item name="Mailing Lists"         href="/site/mail.html"/>
+        <item name="IRC"                   href="/irc.html"/>
         <item name="Reference Library"     href="/site/library.html"/>
         <item name="Bug Database"          href="/site/bugs.html"/>
     </menu>

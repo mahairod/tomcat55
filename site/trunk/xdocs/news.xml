@@ -10,6 +10,32 @@
 
 <section name="News &amp; Status">
 
+<h3>18 March 2002 - Tomcat IRC channel</h3>
+
+<p>
+<code>#tomcat</code> at <code>us.openprojects.net</code>.
+Click <a href="irc://us.openprojects.net/tomcat">here</a> to connect to the
+channel using Mozilla.
+</p>
+
+<hr noshade="noshade" size="1"/>
+
+<h3>18 March 2002 - Tomcat Coyote 1.0 Beta 3 Released</h3>
+
+<p>
+Coyote is a connector API designed to be used with Tomcat.
+</p>
+<p>
+Coyote includes:
+<ul>
+<li>A high performance HTTP/1.1 processor</li>
+<li>An adapter for Tomcat 3.3.x</li>
+<li>An adapter for Tomcat 4.0.x</li>
+</ul>
+</p>
+
+<hr noshade="noshade" size="1"/>
+
 <h3>5 March 2002 - Jakarta Tomcat 3.3.1 Release Candidate 1 Released</h3>
 
 <p>Tomcat 3.3.1 Release Candidate 1 is the first release candidate of Tomcat 3.3.1.
