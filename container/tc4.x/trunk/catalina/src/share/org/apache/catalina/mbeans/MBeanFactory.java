@@ -303,7 +303,7 @@ public class MBeanFactory extends BaseModelMBean {
      *
      * @exception Exception if an MBean cannot be created or registered
      */
-    public String createHttp11Connector(String parent, String address, int port))
+    public String createHttp11Connector(String parent, String address, int port)
         throws Exception {
 
         ManagedBean managed = registry.findManagedBean(parent);
