@@ -352,6 +352,14 @@ class PageDataImpl extends PageData implements TagConstants {
 	public void visit(Node.JspText n) throws JasperException {
 	    appendTag(JSP_TEXT, n.getAttributes(), n.getBody());
 	}
+
+	public void visit(Node.DoBodyAction n) throws JasperException {
+	    appendTag(JSP_DO_BODY, n.getAttributes(), n.getBody());
+	}
+
+        public void visit(Node.InvokeAction n) throws JasperException {
+	    appendTag(JSP_INVOKE, n.getAttributes(), n.getBody());
+	}
         
 	public void visit(Node.TemplateText n) throws JasperException {
 	    /*
