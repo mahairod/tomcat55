@@ -79,7 +79,9 @@
         <servlet-class>
             PermanentlyUnavailable
         </servlet-class>
+<!--
         <load-on-startup></load-on-startup>
+-->
     </servlet>
 
     <servlet-mapping>
