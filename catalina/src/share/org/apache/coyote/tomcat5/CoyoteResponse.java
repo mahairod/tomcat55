@@ -113,7 +113,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.CharsetMapper;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
-
+import org.apache.catalina.util.DateTool;
 
 /**
  * Wrapper object for the Coyote response.
@@ -131,10 +131,7 @@ public class CoyoteResponse
 
 
     public CoyoteResponse() {
-
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
         urlEncoder.addSafeCharacter('/');
-
     }
 
 
@@ -143,8 +140,7 @@ public class CoyoteResponse
     /**
      * The date format we will use for creating date headers.
      */
-    protected final SimpleDateFormat format =
-        new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+    protected SimpleDateFormat format = null;
 
 
     /**
@@ -939,8 +935,15 @@ public class CoyoteResponse
             return;
 
         // Ignore any call from an included servlet
-        if (included)
+        if (included) {
             return;
+        }
+
+        if (format == null) {
+            format = new SimpleDateFormat(DateTool.HTTP_RESPONSE_DATE_HEADER,
+                                          Locale.US);
+            format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
 
         addHeader(name, FastHttpDateFormat.formatDate(value, format));
 
@@ -1190,8 +1193,15 @@ public class CoyoteResponse
             return;
 
         // Ignore any call from an included servlet
-        if (included)
+        if (included) {
             return;
+        }
+
+        if (format == null) {
+            format = new SimpleDateFormat(DateTool.HTTP_RESPONSE_DATE_HEADER,
+                                          Locale.US);
+            format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
 
         setHeader(name, FastHttpDateFormat.formatDate(value, format));
 
