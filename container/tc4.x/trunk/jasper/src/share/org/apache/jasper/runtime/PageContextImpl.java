@@ -438,6 +438,7 @@ public class PageContextImpl extends PageContext {
 	    // to get a stack trace for the real problem
 	    if (t instanceof IOException) throw (IOException)t;
 	    if (t instanceof ServletException) throw (ServletException)t;
+            if (t instanceof RuntimeException) throw (RuntimeException)t;
 	    throw new ServletException(t);
 	}
     }
