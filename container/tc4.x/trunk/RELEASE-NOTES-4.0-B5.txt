@@ -22,6 +22,26 @@ Jakarta projects at:
 Please report bugs and feature requests under product name "Tomcat 4".
 
 
+----> SECURITY ALERT:  Two security-related problems were discovered in
+----> the Tomcat 4.0-b4 release which was announced on 05/11/2001.  These
+----> vulnerabilities have been fixed in this beta release.  Anyone who
+----> downloaded and installed Tomcat 4.0-b4 is urged to upgrade to this
+----> new release immediately.
+
+
+----> UPCOMING CHANGE NOTICE:  In a future beta release of Tomcat 4.0, it
+----> is likely that the default operational mode will be to run Tomcat
+----> under a security manager (rather than the current default of not
+----> using one).  This may necessitate editing the policy permissions
+----> file ($CATALINA_HOME/conf/catalina.policy) if your web applications
+----> require permissions that are not enabled by default (such as connecting
+----> to network ports).  You are urged to test your applications with
+----> Tomcat 4.0-b5 running under the security manager now, so that this
+----> upcoming change will not be disruptive.  To do so, start Tomcat 4.0
+----> with the command "$CATALINA_HOME/bin/catalina.sh start -security"
+----> (Unix) or "%CATALINA_HOME%\bin\catalina start -security" (Windows).
+
+
 ============
 NEW FEATURES:
 ============
@@ -30,6 +50,14 @@ NEW FEATURES:
 ---------------------
 Catalina New Features:
 ---------------------
+
+Facades:  The servlet API implementation objects that are passed to a servlet
+are now protected by facades.  This avoids a security vulnerability (that
+existed only when Tomcat 4.0 was *not* run under a security manager) that
+allowed servlets to call arbitrary public methods on these classes via Java
+reflection.  NOTE:  While facades solve this particular problem, servlets can
+do many other negative things (like shutting down Tomcat by executing
+System.exit(0)) unless you run Tomcat under a security manager.  
 
 
 -------------------
@@ -50,6 +78,26 @@ BUG FIXES AND IMPROVEMENTS:
 ------------------
 Catalina Bug Fixes:
 ------------------
+
+JSP Source Exposure Vulnerability:  Previous versions of Tomcat would expose
+the source code to a JSP page, on some JDK platforms, when a request URL like
+this was processed:
+    http://localhost:8080/examples/jsp/num/numguess.jsp%00
+The problem occurs because the null character (%00) causes extension mapping
+to fail, so this URL is passed to the default file-serving servlet.  If the
+web application is running in an unpacked directory structure, the JDK's
+implementation of the File I/O methods is typically written in C, and the C
+runtimes will not have any problem treating the null character as a filename
+terminator.  Now, Tomcat 4.0 will throw HTTP error 400 (bad request) if you
+use invalid characters (including %00) in your request URLs.
+
+StandardClassLoader:  Correct resource existence checks when using a URL.
+This was causing automatic class reloading to fail in some cases.
+
+Bootstrap:  Preload additional classes necessary to pass all unit test and
+Watchdog tests (and run many other test applications) when a security manager
+is enabled.  Previously, problems could occur with
+ServletContext.getResourcePaths() and ServletResponse.setLocale().
 
 
 ----------------
