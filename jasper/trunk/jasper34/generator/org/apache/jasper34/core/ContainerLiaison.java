@@ -70,7 +70,7 @@ import org.apache.jasper34.runtime.JasperException;
 
 
 /**
- * The container can override this to provide services to jasper.
+ * The container must override this to provide services to jasper.
  *
  *
  * @author Anil K. Vijendran
@@ -89,8 +89,16 @@ public abstract class ContainerLiaison {
 	liaison=l;
     }
 
-    // --------------------  resource access --------------------
+    // -------------------- Options --------------------
+    /**
+     * Get hold of the Options object for this context. 
+     */
+    public abstract Options getOptions();
 
+
+
+    // --------------------  resource access --------------------
+    
     /** 
      * Get the full value of a URI relative to this compilations context
      */
@@ -154,18 +162,22 @@ public abstract class ContainerLiaison {
 
     
     // -------------------- messages --------------------
+    // XXX TODO
+
     /**
      * Get hold of a "message" or any string from our resources
      * database. 
      */
-    public String getString(String key) {
+    public static String getString(String key) {
         return getString(key, null);
     }
 
     /**
      * Format the string that is looked up using "key" using "args". 
      */
-    public abstract String getString(String key, Object[] args);
+    public static String getString(String key, Object[] args) {
+	return resources.getString(key,args);
+    }
 
     
     /** 
@@ -178,7 +190,9 @@ public abstract class ContainerLiaison {
      *                       appropriate for the current verbosity
      *                       level. 
      */
-    public abstract void message(String key, int verbosityLevel);
+    public static void message(String key, int verbosityLevel) {
+	message( key, null, verbosityLevel );
+    }
 
 
     /**
@@ -191,8 +205,32 @@ public abstract class ContainerLiaison {
      *                       appropriate for the current verbosity
      *                       level. 
      */
-    public abstract void message(String key, Object[] args,
-				 int verbosityLevel);
+    public static void message(String key, Object[] args, int verbosityLevel) {
+	if (jasperLog == null)
+	    jasperLog = Log.getLog("JASPER_LOG", null);
+	
+	if (jasperLog != null){
+	    String msg = getString(key,args);
+	    msg=(msg==null)?key:msg;
+	    jasperLog.log(msg, verbosityLevel);
+        }
+    }
+
+    // -------------------- Implementation --------------------
+    // XXX will be moved to base impl.
+
+    public void setLog( Log l ) {
+	jasperLog=l;
+    }
     
+    /**
+     * This is where all our error messages and such are stored. 
+     */
+    private static StringManager resources=
+	StringManager.getManager("org.apache.jasper34.runtime.res");
+
+    private static Log jasperLog = null;    
+
+
 }
 
