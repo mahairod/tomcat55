@@ -258,13 +258,6 @@ public class StandardClassLoader
 
 
     /**
-     * The cache of ClassCacheEntries for classes we have loaded locally,
-     * keyed by class name.
-     */
-    protected HashMap classCache = new HashMap();
-
-
-    /**
      * The debugging detail level of this component.
      */
     protected int debug = 0;
@@ -534,56 +527,10 @@ public class StandardClassLoader
 
 
     /**
-     * Have one or more classes or resources been modified so that a reload
-     * is appropriate?
-     * <p>
-     * <strong>IMPLEMENTATION NOTE</strong> - We assume that anything loaded
-     * from a JAR file will never need to be reloaded unless the JAR file
-     * itself has been updated.  Unpacked classes or resources loaded from
-     * a directory are checked individually.
+     * This class loader doesn't check for reloading.
      */
     public boolean modified() {
 
-        if (debug >= 2)
-            log("modified()");
-
-        // Build a list of the classes we currently have cached
-        if (classCache.size() < 1)
-            return (false);
-        ClassCacheEntry entries[] = new ClassCacheEntry[0];
-        synchronized (classCache) {
-            entries =
-                (ClassCacheEntry[]) classCache.values().toArray(entries);
-        }
-
-        // Check for modifications to any of these classes
-        for (int i = 0; i < entries.length; i++) {
-            if (entries[i].origin instanceof File) {
-                File origin = (File) entries[i].origin;
-                if (entries[i].lastModified != origin.lastModified()) {
-                    if (debug >= 2)
-                        log("  Class '" + entries[i].loadedClass.getName() +
-                            "' was modified");
-                    return (true);
-                }
-            } else if (entries[i].origin instanceof URL) {
-                URL url = (URL) entries[i].origin;
-                try {
-                    URLConnection urlConn = url.openConnection();
-                    if (entries[i].lastModified != urlConn.getLastModified()) {
-                        if (debug >= 2)
-                            log("  Class '"
-                                + entries[i].loadedClass.getName()
-                                + "' was modified");
-                        return (true);
-                    }
-                } catch (IOException e) {
-                    log("    Failed tracking modifications of '" + url + "'");
-                }
-            }
-        }
-
-        // No classes have been modified
         return (false);
 
     }
@@ -668,6 +615,9 @@ public class StandardClassLoader
                 log("      super.findClass(" + name + ")");
             try {
                 synchronized (this) {
+                    clazz = findLoadedClass(name);
+                    if (clazz != null)
+                        return clazz;
                     clazz = super.findClass(name);
                 }
             } catch(AccessControlException ace) {
@@ -686,88 +636,6 @@ public class StandardClassLoader
             if (debug >= 3)
                 log("    --> Passing on ClassNotFoundException", e);
             throw e;
-        }
-
-        // Re-locate the class ourselves to track modifications if possible
-        for (int i = 0; i < repositories.length; i++) {
-            if (!repositories[i].endsWith("/"))
-                continue;
-            String pathname =
-                repositories[i].substring(0, repositories[i].length() - 1);
-            if (debug >= 4)
-                log("      Checking repository " + pathname);
-            if ((pathname.startsWith("file://"))
-                || (pathname.startsWith("file:"))) {
-
-                if (pathname.startsWith("file://")) {
-                    pathname = pathname.substring(7);
-                } else if (pathname.startsWith("file:")) {
-                    pathname = pathname.substring(5);
-                }
-                pathname += File.separatorChar
-                    + name.replace('.', File.separatorChar) + ".class";
-
-                try {
-                    File file = new File(pathname);
-                    if (file.exists() && file.canRead()) {
-                        if (debug >= 3)
-                            log("    Caching from '" + file.getAbsolutePath() +
-                                "' modified '" +
-                                (new java.sql.Timestamp(file.lastModified())) +
-                                "'");
-                        synchronized (classCache) {
-                            classCache.put
-                                (name, new ClassCacheEntry
-                                 (clazz, file, file.lastModified()));
-                        }
-                    }
-
-                } catch(AccessControlException ace) {
-                    // Don't worry about caching the class last modified
-                    // if ClassLoader doesn't have permission to read file
-                }
-
-            } else {
-
-                pathname += "/" + name.replace('.', '/') + ".class";
-
-                try {
-                    URLStreamHandler streamHandler = null;
-                    String protocol = parseProtocol(pathname);
-                    if (factory != null)
-                        streamHandler =
-                            factory.createURLStreamHandler(protocol);
-                    URL classUrl = new URL(null, pathname, streamHandler);
-                    try {
-                        URLConnection classUrlConnection =
-                            classUrl.openConnection();
-                        // Check for existence
-                        InputStream is = classUrlConnection.getInputStream();
-                        is.close();
-                        if (debug >= 4)
-                            log("    Caching from '" + classUrl.toString() +
-                                "' modified '" +
-                                (new java.sql.Timestamp
-                                    (classUrlConnection.getLastModified())) +
-                                "'");
-                        synchronized (classCache) {
-                            classCache.put(name, new ClassCacheEntry
-                                           (clazz, classUrl,
-                                            classUrlConnection.getLastModified()));
-                        }
-                    } catch (IOException e) {
-                    }
-
-                } catch(MalformedURLException ex) {
-                    // Should never happen
-                    ex.printStackTrace();
-                } catch(AccessControlException ace) {
-                    // Don't worry about caching the class last modified
-                    // if ClassLoader doesn't have permission to read file
-                }
-
-            }
-
         }
 
         // Return the class we have located
@@ -1332,83 +1200,6 @@ public class StandardClassLoader
 
         System.out.println("StandardClassLoader: " + message);
         throwable.printStackTrace(System.out);
-
-    }
-
-
-    // ------------------------------------------------------- Private Classes
-
-
-    /**
-     * The cache entry for a particular class loaded by this class loader.
-     */
-    private static class ClassCacheEntry {
-
-        /**
-         * The "last modified" time of the origin file at the time this class
-         * was loaded, in milliseconds since the epoch.
-         */
-        long lastModified;
-
-        /**
-         * The actual loaded class.
-         */
-        Class loadedClass;
-
-        /**
-         * The File (for a directory) or JarFile (for a JAR) from which this
-         * class was loaded, or <code>null</code> if loaded from the system.
-         */
-        Object origin;
-
-        /**
-         * Construct a new instance of this class.
-         */
-        public ClassCacheEntry(Class loadedClass, Object origin,
-                               long lastModified) {
-
-            this.loadedClass = loadedClass;
-            this.origin = origin;
-            this.lastModified = lastModified;
-
-        }
-
-    }
-
-
-    /**
-     * The cache entry for a particular resource loaded by this class loader.
-     */
-    private static class ResourceCacheEntry {
-
-        /**
-         * The "last modified" time of the origin file at the time this
-         * resource was loaded, in milliseconds since the epoch.
-         */
-        long lastModified;
-
-        /**
-         * The actual loaded resource.
-         */
-        byte loadedResource[];
-
-        /**
-         * The File (for a directory) or JarFile (for a JAR) from which this
-         * resource was loaded, or <code>null</code> if loaded from the system.
-         */
-        Object origin;
-
-        /**
-         * Construct a new instance of this class.
-         */
-        public ResourceCacheEntry(byte loadedResource[], Object origin,
-                                  long lastModified) {
-
-            this.loadedResource = loadedResource;
-            this.origin = origin;
-            this.lastModified = lastModified;
-
-        }
 
     }
 
