@@ -380,7 +380,13 @@ public class FileUtil {
 	
 	while ((ze = zis.getNextEntry()) != null) {
 	    try {
-		File f = new File(dir, ze.getName());
+
+		// Bug 2033
+		File f;
+		if( File.separatorChar == '\\' ) // NT
+		    f = new File( dir, ze.getName().replace('/','\\') );
+		else
+		    f = new File( dir, ze.getName() );
 		// create intermediary directories - sometimes zip don't add them
 		File dirF=new File(f.getParent());
 		dirF.mkdirs();
