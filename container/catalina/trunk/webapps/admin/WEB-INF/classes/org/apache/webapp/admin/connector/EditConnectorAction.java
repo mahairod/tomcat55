@@ -291,7 +291,7 @@ public class EditConnectorAction extends Action {
                     ((String) mBServer.getAttribute(cname, attribute));
                 attribute = "clientAuth";
                 connectorFm.setClientAuthentication
-                    (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+                    (((String) mBServer.getAttribute(cname, attribute)));
                 attribute = "ciphers";
                 connectorFm.setCiphers
                     ((String) mBServer.getAttribute(cname, attribute));   

@@ -471,8 +471,8 @@ public final class SaveConnectorAction extends Action {
                 
                 attribute = "clientAuth";              
                 mBServer.setAttribute(coname,
-                              new Attribute("clientAuth", new Boolean(
-                                             cform.getClientAuthentication())));   
+                              new Attribute("clientAuth", 
+                                             cform.getClientAuthentication()));   
                 
                 attribute = "ciphers";
                 String ciphers = cform.getCiphers();
