@@ -194,6 +194,11 @@
 
     <copy todir="${jsp-api.build}/examples">
       <fileset dir="examples"/>
+      <mapper type="glob" from="*.jspx" to="*.jspx.txt"/>
+    </copy>
+    
+    <copy todir="${jsp-api.build}/examples">
+      <fileset dir="examples"/>
       <mapper type="glob" from="*.jspf" to="*.jspf.txt"/>
     </copy>
 

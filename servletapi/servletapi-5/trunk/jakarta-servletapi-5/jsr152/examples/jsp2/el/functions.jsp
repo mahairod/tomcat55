@@ -15,7 +15,7 @@
     <blockquote>
       <u><b>Change Parameter</b></u>
       <form action="functions.jsp" method="GET">
-	  foo = <input type="text" name="foo" value="${param["foo"]}">
+	  foo = <input type="text" name="foo" value="${param['foo']}">
           <input type="submit">
       </form>
       <br>
