@@ -87,6 +87,35 @@ public class DeployTask extends AbstractCatalinaTask {
 
 
     /**
+     * URL of the context configuration file for this application, if any.
+     */
+    protected String config = null;
+
+    public String getConfig() {
+        return (this.config);
+    }
+
+    public void setConfig(String config) {
+        this.config = config;
+    }
+
+
+    /**
+     * URL of the server local web application archive (WAR) file 
+     * to be deployed.
+     */
+    protected String localWar = null;
+
+    public String getLocalWar() {
+        return (this.localWar);
+    }
+
+    public void setLocalWar(String localWar) {
+        this.localWar = localWar;
+    }
+
+
+    /**
      * The context path of the web application we are managing.
      */
     protected String path = null;
@@ -97,6 +126,34 @@ public class DeployTask extends AbstractCatalinaTask {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+
+    /**
+     * Tag to associate with this to be deployed webapp.
+     */
+    protected String tag = null;
+
+    public String getTag() {
+        return (this.tag);
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+
+    /**
+     * Update existing webapps.
+     */
+    protected boolean update = false;
+
+    public boolean getUpdate() {
+        return (this.update);
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
 
@@ -129,22 +186,48 @@ public class DeployTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        if (war == null) {
+        if ((war == null) && (localWar == null) && (tag == null)) {
             throw new BuildException
-                ("Must specify 'war' attribute");
+                ("Must specify either 'war', 'localWar', or 'tag' attribute");
         }
+
+        // Building an input stream on the WAR to upload, if any
         BufferedInputStream stream = null;
+        String contentType = null;
         int contentLength = -1;
-        try {
-            URL url = new URL(war);
-            URLConnection conn = url.openConnection();
-            contentLength = conn.getContentLength();
-            stream = new BufferedInputStream(conn.getInputStream(), 1024);
-        } catch (IOException e) {
-            throw new BuildException(e);
+        if (war != null) {
+            try {
+                URL url = new URL(war);
+                URLConnection conn = url.openConnection();
+                contentLength = conn.getContentLength();
+                stream = new BufferedInputStream(conn.getInputStream(), 1024);
+            } catch (IOException e) {
+                throw new BuildException(e);
+            }
+            contentType = "application/octet-stream";
         }
+
+        // Building URL
+        StringBuffer sb = new StringBuffer("/deploy?path=");
+        sb.append(URLEncoder.encode(this.path));
+        if ((war == null) && (config != null)) {
+            sb.append("&config=");
+            sb.append(URLEncoder.encode(config));
+        }
+        if ((war == null) && (localWar != null)) {
+            sb.append("&war=");
+            sb.append(URLEncoder.encode(localWar));
+        }
+        if (update) {
+            sb.append("&update=true");
+        }
+        if ((war != null) && (tag != null)) {
+            sb.append("&tag=");
+            sb.append(URLEncoder.encode(tag));
+        }
+
         execute("/deploy?path=" + URLEncoder.encode(this.path), stream,
-                "application/octet-stream", contentLength);
+                contentType, contentLength);
 
     }
 
