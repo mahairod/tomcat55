@@ -270,6 +270,11 @@
 
     <filter-mapping>
         <filter-name>HttpFilter</filter-name>
+        <url-pattern>/WrappedInclude04</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>HttpFilter</filter-name>
         <url-pattern>/WrappedJndi01</url-pattern>
     </filter-mapping>
 
@@ -650,6 +655,21 @@
     <servlet>
         <servlet-name>Include03a</servlet-name>
         <servlet-class>org.apache.tester.Include03a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include04</servlet-name>
+        <servlet-class>org.apache.tester.Include04</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include04a</servlet-name>
+        <servlet-class>org.apache.tester.Include04a</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Include04b</servlet-name>
+        <servlet-class>org.apache.tester.Include04b</servlet-class>
     </servlet>
 
     <servlet>
@@ -1164,6 +1184,26 @@
     <servlet-mapping>
         <servlet-name>Include03a</servlet-name>
         <url-pattern>/Include03a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include04</servlet-name>
+        <url-pattern>/Include04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include04</servlet-name>
+        <url-pattern>/WrappedInclude04</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include04a</servlet-name>
+        <url-pattern>/Include04a</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Include04b</servlet-name>
+        <url-pattern>/Include04b</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

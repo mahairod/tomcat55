@@ -699,6 +699,20 @@
          request="${context.path}/WrappedInclude03?path=/Include03b.jsp"
       outContent="Include03 PASSED" debug="${debug}"/>
 
+    <!-- ========== Include Then Forward ================================== -->
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include04"
+      outContent="Include04b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/WrappedInclude04"
+      outContent="Include04b PASSED" debug="${debug}"/>
+
+    <tester host="${host}" port="${port}" protocol="${protocol}"
+         request="${context.path}/Include05.jsp"
+      outContent="Include05b PASSED" debug="${debug}"/>
+
   </target>
 
 
