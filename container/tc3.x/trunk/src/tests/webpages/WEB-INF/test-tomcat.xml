@@ -138,6 +138,13 @@
           </httpRequest>
           <httpStatusMatch match="200" />
       </httpClient>
+      <httpClient>
+          <comment>Japanese</comment>
+          <httpRequest path="/test/servlet/ja">
+             <param name="lang" value="ja" />
+          </httpRequest>
+          <responseMatch match="Location = &#xBD;&#xEA;&#xBA;&#xDF;&#xC3;&#xCF;" />
+      </httpClient>
   </target>
 
   <target name="params" depends="init">
