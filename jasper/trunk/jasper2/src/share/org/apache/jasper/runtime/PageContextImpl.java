@@ -145,7 +145,7 @@ public class PageContextImpl
 	_initialize(servlet, request, response, errorPageURL, needsSession, bufferSize, autoFlush);
     }
 
-    void _initialize(Servlet servlet, ServletRequest request,
+    private void _initialize(Servlet servlet, ServletRequest request,
                            ServletResponse response, String errorPageURL,
                            boolean needsSession, int bufferSize,
                            boolean autoFlush)
@@ -495,8 +495,8 @@ public class PageContextImpl
         }
     }
 
-    protected BodyContentImpl[] outs = new BodyContentImpl[0];
-    protected int depth = -1;
+    private BodyContentImpl[] outs = new BodyContentImpl[0];
+    private int depth = -1;
 
     public BodyContent pushBody() {
 	return (BodyContent) pushBody(null);
@@ -642,7 +642,7 @@ public class PageContextImpl
         }
     }
 
-    protected JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
+    private JspWriterImpl _createOut(int bufferSize, boolean autoFlush)
         throws IOException, IllegalArgumentException {
         try {
             return new JspWriterImpl(response, bufferSize, autoFlush);
@@ -658,36 +658,36 @@ public class PageContextImpl
 
     // per Servlet state
 
-    protected 	        Servlet         servlet;
-    protected 		ServletConfig   config;
-    protected 		ServletContext  context;
+    private 	        Servlet         servlet;
+    private 		ServletConfig   config;
+    private 		ServletContext  context;
 
-    protected 		JspFactory	factory;
+    private 		JspFactory	factory;
 
-    protected		boolean		needsSession;
+    private		boolean		needsSession;
 
-    protected		String		errorPageURL;
+    private		String		errorPageURL;
 
-    protected		boolean		autoFlush;
-    protected		int		bufferSize;
+    private		boolean		autoFlush;
+    private		int		bufferSize;
 
     // page scope attributes
 
-    protected transient Hashtable	attributes = new Hashtable(16);
+    private transient Hashtable	attributes = new Hashtable(16);
 
     // per request state
 
-    protected transient ServletRequest	request;
-    protected transient ServletResponse response;
-    protected transient Object          page;
+    private transient ServletRequest	request;
+    private transient ServletResponse   response;
+    private transient Object            page;
 
-    protected transient HttpSession	session;
+    private transient HttpSession	session;
 
-    protected boolean isIncluded;
+    private boolean isIncluded;
 
     // initial output stream
 
-    protected transient JspWriter       out;
-    protected transient JspWriterImpl   baseOut;
+    private transient JspWriter       out;
+    private transient JspWriterImpl   baseOut;
 
 }
