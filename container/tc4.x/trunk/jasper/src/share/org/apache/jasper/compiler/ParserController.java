@@ -183,22 +183,16 @@ public class ParserController {
 	throws FileNotFoundException, JasperException
     {
         //p("parse(" + inFileName + ")");
+
         String absFileName = resolveFileName(inFileName);
-        File file = new File(absFileName);
-	String filePath = (ctxt == null) 
-	    ? file.getAbsolutePath()
-	    : ctxt.getRealPath(file.toString());
-        if (filePath == null) {
-            filePath = file.toString();
-        }
 	//p("filePath: " + filePath);
 
 	String encoding = topFileEncoding;
         InputStreamReader reader = null;
         try {
             // Figure out what type of JSP document we are dealing with
-            reader = getReader(file, encoding, absFileName);
-            figureOutJspDocument(file, encoding, reader);
+            reader = getReader(absFileName, encoding);
+            figureOutJspDocument(absFileName, encoding, reader);
             //p("isXml = " + isXml + "   hasTaglib = " + hasTaglib);
 	    encoding = (newEncoding!=null) ? newEncoding : encoding;
 	    if (isTopFile) {
@@ -213,11 +207,11 @@ public class ParserController {
 
             // dispatch to the proper parser
 	    
-            reader = getReader(file, encoding, absFileName);
+            reader = getReader(absFileName, encoding);
             if (isXml) {
-                (new ParserXJspSax(filePath, reader, jspHandler)).parse();
+                (new ParserXJspSax(absFileName, reader, jspHandler)).parse();
             } else {
-                (new Parser(ctxt, file, encoding, reader, jspHandler)).parse();
+                (new Parser(ctxt, absFileName, encoding, reader, jspHandler)).parse();
             }
 	    baseDirStack.pop();
         } finally {
@@ -232,7 +226,7 @@ public class ParserController {
     //*********************************************************************
     // Figure out input Document
 
-    private void figureOutJspDocument(File file, 
+    private void figureOutJspDocument(String file, 
 				      String encoding,
 				      InputStreamReader reader)
 	 throws JasperException
@@ -420,37 +414,28 @@ public class ParserController {
      * baseDirStack.
      */
     private String resolveFileName(String inFileName) {
-	File file = new File(inFileName);
-        boolean isAbsolute = file.getPath().startsWith(File.separator);
+        boolean isAbsolute = inFileName.startsWith("/");
 	String fileName = 
 	    isAbsolute ?
-	    inFileName : (String)baseDirStack.peek() + inFileName;
+	    inFileName : (String) baseDirStack.peek() + inFileName;
 	String baseDir = 
-	    inFileName.substring(0, file.getPath().lastIndexOf(File.separator) + 1);
+	    inFileName.substring(0, inFileName.lastIndexOf("/") + 1);
 	baseDirStack.push(baseDir);
 	return fileName;
     }
 
-    private InputStreamReader getReader(File file, String encoding,
-					String absFileName)
+    private InputStreamReader getReader(String file, String encoding)
 	throws FileNotFoundException, JasperException
     {
         InputStream in;
         InputStreamReader reader;
 
 	try {
-	    if (ctxt == null) {
-		in = new FileInputStream(file);
-		reader = new InputStreamReader(in, encoding);
-	    } else {
-		//String fileName = ctxt.getRealPath(file.toString());
-		in = ctxt.getResourceAsStream(file.toString());
-		if (in == null) {
-		    throw new FileNotFoundException(absFileName);
-		}
-		reader = new InputStreamReader(in, encoding);
-	    }
-	    return reader;
+            in = ctxt.getResourceAsStream(file);
+            if (in == null) {
+                throw new FileNotFoundException(file);
+            }
+            return new InputStreamReader(in, encoding);
 	} catch (UnsupportedEncodingException ex) {
 	    throw new JasperException(
                 Constants.getString("jsp.error.unsupported.encoding",

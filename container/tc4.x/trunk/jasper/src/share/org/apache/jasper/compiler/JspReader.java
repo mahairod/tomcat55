@@ -240,16 +240,12 @@ public class JspReader {
     }
     */
 
-    private void pushFile2(File file, String encoding, 
+    private void pushFile2(String file, String encoding, 
 			   InputStreamReader reader) 
 	throws ParseException, FileNotFoundException 
     {
 	// Register the file
-	String longName = (context == null)
-	    ? file.getAbsolutePath()
-	    : context.getRealPath(file.toString());
-        if (longName == null)
-            longName = file.toString();
+	String longName = file;
 
 	int fileid = registerSourceFile(longName);
 
@@ -312,7 +308,7 @@ public class JspReader {
     }
 	
     protected JspReader(JspCompilationContext ctx,
-			File file,
+			String file,
 			String encoding, InputStreamReader reader) 
 	throws ParseException, FileNotFoundException
     {

@@ -129,7 +129,7 @@ public class Parser {
     }
 
     // new constructor for JSP1.2
-    public Parser(JspCompilationContext ctxt, File file, 
+    public Parser(JspCompilationContext ctxt, String file, 
 		  String encoding, InputStreamReader inReader, 
 		  final ParseEventListener lnr) 
 	throws ParseException, java.io.FileNotFoundException
