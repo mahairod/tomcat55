@@ -1128,6 +1128,7 @@ public class CoyoteRequest
                 (sm.getString("coyoteRequest.getReader.ise"));
 
         usingReader = true;
+        inputBuffer.checkConverter();
         return reader;
 
     }
