@@ -71,6 +71,7 @@ import javax.servlet.jsp.el.FunctionMapper;
 
 import org.apache.jasper.Constants;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.JspCompilationContext;
 
 import org.xml.sax.Attributes;
 
@@ -94,6 +95,7 @@ public class Validator {
 
 	private PageInfo pageInfo;
 	private ErrorDispatcher err;
+	JspConfig.JspProperty jspProperty;
 
 	private static final JspUtil.ValidAttribute[] pageDirectiveAttrs = {
 	    new JspUtil.ValidAttribute("language"),
@@ -127,9 +129,14 @@ public class Validator {
 	/*
 	 * Constructor
 	 */
-	DirectiveVisitor(Compiler compiler) {
+	DirectiveVisitor(Compiler compiler) throws JasperException {
 	    this.pageInfo = compiler.getPageInfo();
 	    this.err = compiler.getErrorDispatcher();
+	    JspCompilationContext ctxt = compiler.getCompilationContext();
+	    JspConfig jspConfig = ctxt.getOptions().getJspConfig();
+	    if (jspConfig != null) {
+		this.jspProperty = jspConfig.findJspProperty(ctxt.getJspFile());
+	    }
 	}
 
 	public void visit(Node.PageDirective n) throws JasperException {    
@@ -256,6 +263,18 @@ public class Validator {
 		    if (pageEncodingSeen) 
 			err.jspError(n, "jsp.error.page.multiple.pageencoding");
 		    pageEncodingSeen = true;
+		    // Make sure the page-encoding specified in a 
+		    // jsp-property-group (if present) matches that of the page
+		    // directive
+		    if (jspProperty != null) {
+			String jspConfigPageEnc = jspProperty.getPageEncoding();
+			if (jspConfigPageEnc != null
+			            && !jspConfigPageEnc.equals(value)) {
+			    err.jspError(n,
+					 "jsp.error.page.pageencoding.conflict",
+					 jspConfigPageEnc, value);
+			}
+		    }
 		    pageInfo.setPageEncoding(value);
 		}
 	    }
