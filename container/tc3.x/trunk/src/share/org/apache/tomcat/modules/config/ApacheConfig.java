@@ -417,7 +417,7 @@ public class ApacheConfig  extends BaseJkConfig {
     /** Forward all requests for a context to tomcat.
 	The default.
      */
-    private boolean generateStupidMappings(Context context,
+    private void generateStupidMappings(Context context,
 					   PrintWriter mod_jk )
     {
 	String ctxPath  = context.getPath();
@@ -426,7 +426,7 @@ public class ApacheConfig  extends BaseJkConfig {
 	
         if( noRoot &&  "".equals(ctxPath) ) {
             log("Ignoring root context in forward-all mode  ");
-            return true;
+            return;
         } 
 	if( vhost != null ) {
 	    generateNameVirtualHost(mod_jk );
@@ -455,7 +455,6 @@ public class ApacheConfig  extends BaseJkConfig {
 	    mod_jk.println("</VirtualHost>");
 	    indent="";
 	}
-	return true;
     }    
 
     
@@ -528,36 +527,22 @@ public class ApacheConfig  extends BaseJkConfig {
 	}
     }
 
-    private boolean addMapping( Context ctx, Container ct,
-				PrintWriter mod_jk )
-    {
-	int type=ct.getMapType();
-	String ctPath=ct.getPath();
-	String ctxPath=ctx.getPath();
-
-	if( type==Container.EXTENSION_MAP ) {
-	    if( ctPath.length() < 3 ) return false;
-	    String ext=ctPath.substring( 2 );
-	    return addExtensionMapping( ctxPath, ext , mod_jk );
-	}
-	String fullPath=null;
-	if( ctPath.startsWith("/" ))
-	    fullPath=ctxPath+ ctPath;
-	else
-	    fullPath=ctxPath + "/" + ctPath;
-	return addMapping( fullPath, mod_jk);
-    }
-
-    private boolean addExtensionMapping( String ctxPath, String ext,
+    /** Add an Apache extension mapping.
+     */
+    protected boolean addExtensionMapping( String ctxPath, String ext,
 					 PrintWriter mod_jk )
     {
+        if( debug > 0 )
+            log( "Adding extension map for " + ctxPath + "/*." + ext );
 	mod_jk.println(indent + "JkMount " + ctxPath + "/*." + ext
 		       + " " + jkProto);
 	return true;
     }
     
     
-    private boolean addMapping( String fullPath, PrintWriter mod_jk ) {
+    /** Add a fulling specified Appache mapping.
+     */
+    protected boolean addMapping( String fullPath, PrintWriter mod_jk ) {
         if( debug > 0 )
             log( "Adding map for " + fullPath );
 	mod_jk.println(indent + "JkMount " + fullPath + "  " + jkProto );
