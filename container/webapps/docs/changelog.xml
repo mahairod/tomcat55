@@ -26,6 +26,21 @@
   </p>
 </section>
 
+<section name="Tomcat 5.5.6 (yoavs)">
+  <subsection name="General">
+    <changelog>
+    </changelog>
+  </subsection>
+
+  <subsection name="Jasper">
+    <changelog>
+      <update>
+        Updated Jasper-HowTo section on using Jikes, changed conf/web.xml JSPServlet to refer people to Jasper-HowTo so that we don't have these instructions in two places. (yoavs)
+      </update>
+    </changelog>
+  </subsection>
+</section>
+
 <section name="Tomcat 5.5.5 (yoavs)">
   <subsection name="General">
     <changelog>
