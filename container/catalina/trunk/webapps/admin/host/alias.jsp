@@ -57,7 +57,7 @@
                 <bean:message key="host.alias.name"/>:
             </controls:label>
             <controls:data>
-              <html:text property="aliasName" size="24" maxlength="24" styleId="aliasName"/>
+              <html:text property="aliasName" size="24" maxlength="128" styleId="aliasName"/>
             </controls:data>
         </controls:row>
       </controls:table>
