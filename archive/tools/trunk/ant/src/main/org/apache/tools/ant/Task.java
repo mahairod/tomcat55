@@ -128,6 +128,11 @@ public abstract class Task {
 	    return false;
 	}
 
+	// cvs file
+	if (filename.equalsIgnoreCase("template")) {
+	    return false;
+	}
+
 	// default
 	return true;
     }
