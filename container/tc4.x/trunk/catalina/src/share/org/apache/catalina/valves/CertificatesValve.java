@@ -388,6 +388,21 @@ public final class CertificatesValve
         //            log(" expose: Has cipher suite " + cipherSuite +
         //                " and key size " + keySize);
 
+        // Expose ssl_session (getId)
+        byte [] ssl_session = session.getId();
+        if (ssl_session!=null) {
+            StringBuffer buf=new StringBuffer("");
+            for(int x=0; x<ssl_session.length; x++) {
+                String digit=Integer.toHexString((int)ssl_session[x]);
+                if (digit.length()<2) buf.append('0');
+                if (digit.length()>2) digit=digit.substring(digit.length()-2);
+                buf.append(digit);
+            }
+            request.getRequest().setAttribute(
+                "javax.servlet.request.ssl_session",
+                buf.toString());
+        }
+
         // If we have cached certificates, return them
         Object cached = session.getValue(Globals.CERTIFICATES_ATTR);
         if (cached != null) {
