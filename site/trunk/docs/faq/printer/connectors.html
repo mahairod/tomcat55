@@ -6,13 +6,16 @@
     " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Tomcat FAQ</h1><h2>Connectors</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Preface"><strong>Preface</strong></a></font></td></tr><tr><td><blockquote>
   <p>
     Please see the
-    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">
+    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
         Other Resources
     </a> Link for other pages describing how they were able to link
     Tomcat with a connector. With luck, someone documented their experience
     in an environment which is similar to yours.
 
-</p>
+  </p>
+  <p>
+    <a href="http://jakarta.apache.org/tomcat/connectors-doc/">JK docs.</a>
+  </p>
 </blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Questions"><strong>Questions</strong></a></font></td></tr><tr><td><blockquote>
 <p>
   <ul>
@@ -106,7 +109,7 @@
       <li>
         jk2 is a refactoring of mod_jk and uses the Apache Portable
         Runtime (apr). But due to lack of developer interest, it is unsupported.
-        The alternative is mod_jk or mod_ajp.
+        The alternative is mod_jk or mod_proxy_ajp.
       </li>
       <li>
         <b>mod_jk is great and should be used for production. It is getting
@@ -117,8 +120,8 @@
         need some of the features of jk, jk2 - this is a very simple
         alternative.
       </li>
-      <li>mod_ajp. With apache 2.2, mod_proxy was rewritten to support
-          load balancing as well as a new transport called mod_ajp.
+      <li>mod_proxy_ajp. With apache 2.2, mod_proxy was rewritten to support
+          load balancing as well as a new transport called mod_proxy_ajp.
           This module is distributed with the Apache http server, not
           the Tomcat server.
       </li>

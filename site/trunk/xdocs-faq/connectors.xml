@@ -18,13 +18,16 @@
 <section name="Preface">
   <p>
     Please see the
-    <a href="http://nagoya.apache.org/wiki/apachewiki.cgi?Tomcat/Links">
+    <a href="http://wiki.apache.org/jakarta-tomcat/UsefulLinks">
         Other Resources
     </a> Link for other pages describing how they were able to link
     Tomcat with a connector. With luck, someone documented their experience
     in an environment which is similar to yours.
 
-</p>
+  </p>
+  <p>
+    <a href="http://jakarta.apache.org/tomcat/connectors-doc/">JK docs.</a>
+  </p>
 </section>
 
 
@@ -124,7 +127,7 @@
       <li>
         jk2 is a refactoring of mod_jk and uses the Apache Portable
         Runtime (apr). But due to lack of developer interest, it is unsupported.
-        The alternative is mod_jk or mod_ajp.
+        The alternative is mod_jk or mod_proxy_ajp.
       </li>
       <li>
         <b>mod_jk is great and should be used for production. It is getting
@@ -135,8 +138,8 @@
         need some of the features of jk, jk2 - this is a very simple
         alternative.
       </li>
-      <li>mod_ajp. With apache 2.2, mod_proxy was rewritten to support
-          load balancing as well as a new transport called mod_ajp.
+      <li>mod_proxy_ajp. With apache 2.2, mod_proxy was rewritten to support
+          load balancing as well as a new transport called mod_proxy_ajp.
           This module is distributed with the Apache http server, not
           the Tomcat server.
       </li>
