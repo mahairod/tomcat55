@@ -276,7 +276,7 @@ public abstract class Compiler {
      * subclasses of Compiler. This is used by the compile method
      * to do all the compilation. 
      */
-    protected abstract boolean isOutDated();
+    public abstract boolean isOutDated();
     
     /**
      * Set java compiler info

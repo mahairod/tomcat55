@@ -90,8 +90,8 @@ public class JspCompiler extends Compiler implements Mangler {
         setMangler(this);
         computePackageName();
         computeClassFileName();
-        computeClassFileData();
-        computeJavaFileName();
+        //computeClassFileData();
+        //computeJavaFileName();
     }
 
     public final String getPackageName() {
@@ -99,10 +99,14 @@ public class JspCompiler extends Compiler implements Mangler {
     }
     
     public final String getClassName() {
+	if (className == null)
+	    computeClassFileData();
         return className;
     }
 
     public final String getJavaFileName() {
+	if (javaFileName == null)
+	    computeJavaFileName();
         return javaFileName;
     }
     
@@ -117,8 +121,27 @@ public class JspCompiler extends Compiler implements Mangler {
      *
      * Can (meant to) be overridden by subclasses of JspCompiler. 
      */
-    protected boolean isOutDated() {
-        return outDated;
+    //protected boolean isOutDated() {
+    //  return outDated;
+    //}
+    public boolean isOutDated() {
+	
+	ServletContext ctx = ctxt.getServletContext();
+	File jspReal = null;
+	
+        if (ctx != null) 
+            jspReal = new File(ctx.getRealPath(jsp.getPath()));
+        else
+            jspReal = jsp;
+	
+        File classFile = new File(classFileName);
+        
+        if (classFile.exists()) {
+	    outDated = classFile.lastModified() < jspReal.lastModified();
+	} else
+	    outDated = true;
+
+	return outDated;
     }
 
     public static String [] keywords = { 
@@ -184,7 +207,7 @@ public class JspCompiler extends Compiler implements Mangler {
     }
 
     public final void computeJavaFileName() {
-	javaFileName = className + ".java";
+	javaFileName = getClassName() + ".java";
 	if (outputDir != null && !outputDir.equals(""))
 	    javaFileName = outputDir + File.separatorChar + javaFileName;
     }
@@ -252,7 +275,7 @@ public class JspCompiler extends Compiler implements Mangler {
 
 
     private final void computeClassFileData()
-	throws JasperException
+	//throws JasperException
     {
         ServletContext ctx = ctxt.getServletContext();
         
@@ -280,15 +303,19 @@ public class JspCompiler extends Compiler implements Mangler {
 		// be computed only if someone ask for it.
 		cfd = new ClassFileData(outDated, classFileName, null);
 	    }
-            String classNameFromFile = ClassName.getClassName(classFileName);
-            String cn = cfd.getClassName();
-            int lastDot = cn.lastIndexOf('.');
-            if (lastDot != -1)
-                className = cn.substring(lastDot+1,
-                                         classNameFromFile.length());
-            else
-                className = cn;	    
-        }
+	    try {
+		String classNameFromFile = ClassName.getClassName(classFileName);
+		String cn = cfd.getClassName();
+		int lastDot = cn.lastIndexOf('.');
+		if (lastDot != -1)
+		    className = cn.substring(lastDot+1,
+					     classNameFromFile.length());
+		else
+		    className = cn;
+	    } catch (JasperException ex) {
+		ex.printStackTrace();
+	    }
+	}
     }
 }
 
@@ -321,9 +348,9 @@ class ClassFileData {
                                                   className.length())).intValue();
     }
 	
-    public boolean isOutDated() {
-        return outDated;
-    }
+    //public boolean isOutDated() {
+    //  return outDated;
+    //}
 	
     public String getClassName() {
         if(className==null)
@@ -369,3 +396,5 @@ class ClassFileData {
         }
     }
 }
+
+

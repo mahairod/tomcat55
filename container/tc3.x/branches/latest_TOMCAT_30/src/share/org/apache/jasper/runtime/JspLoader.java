@@ -224,7 +224,8 @@ public class JspLoader extends ClassLoader {
         Compiler compiler = ctxt.createCompiler();
         
         try {
-            outDated = compiler.compile();
+	    if (jspClass == null || compiler.isOutDated())
+		outDated = compiler.compile();
         } catch (FileNotFoundException ex) {
             throw ex;
         } catch (JasperException ex) {
