@@ -76,6 +76,20 @@
             <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
                 <tr>
                     <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
+                        <font face="Verdana" size="+1"><i>Administration</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td bgcolor="#FFDC75" bordercolor="#000000" nowrap>
+                        <a href="admin">Tomcat Administration</a><br>
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <table width="100%" border="1" cellspacing="0" cellpadding="3" bordercolor="#000000">
+                <tr>
+                    <td bgcolor="#D2A41C" bordercolor="#000000" align="left" nowrap>
                         <font face="Verdana" size="+1"><i>Documentation</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
                     </td>
                 </tr>
