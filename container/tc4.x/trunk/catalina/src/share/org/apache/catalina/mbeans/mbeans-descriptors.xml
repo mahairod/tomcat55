@@ -204,7 +204,7 @@
   
     <attribute   name="proxyPort"
           description="Ther Server port to which we should pretend requests to this Connector"
-                 type="java.lang.String"/>  
+                 type="int"/>  
 
     <attribute   name="redirectPort"
           description="The redirect port for non-SSL to SSL redirects"
