@@ -107,6 +107,10 @@
                description="Location of the default web.xml resource or file"
                type="java.lang.String"/>
       
+    <attribute name="engineName"
+               description="Name of the engine domain, if different from the context domain"
+               type="java.lang.String"/>
+      
     <attribute name="privileged"
                description="Access to tomcat internals"
                type="boolean"/>
@@ -532,6 +536,11 @@
                description="Object names of all services we know about"
                type="[Ljavax.management.ObjectName;"/>
       
+    <operation name="await"
+               description="Wait for the shutdown message"
+               impact="ACTION"
+               returnType="void" />
+
     <operation name="storeConfig"
                description="Save current state to server.xml file"
                impact="ACTION"
