@@ -341,7 +341,7 @@ public class ManagerServlet
         if (command == null) {
             writer.println(sm.getString("managerServlet.noCommand"));
         } else if (command.equals("/deploy")) {
-            if (war != null) {
+            if (war != null || config != null) {
                 deploy(writer, config, path, war, update);
             } else {
                 deploy(writer, path, tag);
