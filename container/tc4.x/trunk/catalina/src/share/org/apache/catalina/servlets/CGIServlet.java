@@ -364,7 +364,7 @@ public class CGIServlet extends HttpServlet {
         //Wrapper wrapper = (Wrapper) getServletConfig();
         //context = (Context) wrapper.getParent();
 
-    context = config.getServletContext();
+        context = config.getServletContext();
         if (debug >= 1) {
             //log("init: Associated with Context '" + context.getPath() + "'");
         }
@@ -436,10 +436,10 @@ public class CGIServlet extends HttpServlet {
         out.println("<li><b>contextPath</b> = " +
                        req.getContextPath());
         Cookie cookies[] = req.getCookies();
-    if (cookies!=null) {
-        for (int i = 0; i < cookies.length; i++)
+        if (cookies!=null) {
+            for (int i = 0; i < cookies.length; i++)
                 out.println("<li><b>cookie</b> " + cookies[i].getName() +" = " +cookies[i].getValue());
-    }
+        }
         Enumeration headers = req.getHeaderNames();
         while (headers.hasMoreElements()) {
             String header = (String) headers.nextElement();
@@ -750,7 +750,7 @@ public class CGIServlet extends HttpServlet {
          *
          */
         protected CGIEnvironment(HttpServletRequest req,
-                                 ServletContext context) {
+                                 ServletContext context) throws IOException {
             setupFromContext(context);
             setupFromRequest(req);
 
@@ -946,7 +946,7 @@ public class CGIServlet extends HttpServlet {
          * @return   true if environment was set OK, false if there
          *           was a problem and no environment was set
          */
-        protected boolean setCGIEnvironment(HttpServletRequest req) {
+        protected boolean setCGIEnvironment(HttpServletRequest req) throws IOException {
 
             /*
              * This method is slightly ugly; c'est la vie.
@@ -1104,8 +1104,8 @@ public class CGIServlet extends HttpServlet {
                     //NOOP per CGI specification section 11.2
                 } else if("HOST".equalsIgnoreCase(header)) {
                     String host = req.getHeader(header);
-        int idx =  host.indexOf(":");
-        if(idx < 0) idx = host.length();
+                int idx =  host.indexOf(":");
+                if(idx < 0) idx = host.length();
                     envp.put("HTTP_" + header.replace('-', '_'),
                              host.substring(0, idx));
                 } else {
@@ -1114,7 +1114,8 @@ public class CGIServlet extends HttpServlet {
                 }
             }
 
-            command = sCGIFullPath;
+            File fCGIFullPath = new File(sCGIFullPath);
+            command = fCGIFullPath.getCanonicalPath();
             envp.put("X_TOMCAT_SCRIPT_PATH", command);  //for kicks
 
             this.env = envp;
@@ -1555,17 +1556,19 @@ public class CGIServlet extends HttpServlet {
 
             //create query arguments
             Enumeration paramNames = params.keys();
-            StringBuffer cmdAndArgs = new StringBuffer(command);
+            StringBuffer cmdAndArgs = new StringBuffer("\"" + command + "\"");
             if (paramNames != null && paramNames.hasMoreElements()) {
                 cmdAndArgs.append(" ");
                 while (paramNames.hasMoreElements()) {
                     String k = (String) paramNames.nextElement();
                     String v = params.get(k).toString();
                     if ((k.indexOf("=") < 0) && (v.indexOf("=") < 0)) {
+                        cmdAndArgs.append("\"");
                         cmdAndArgs.append(k);
                         cmdAndArgs.append("=");
                         v = java.net.URLEncoder.encode(v);
                         cmdAndArgs.append(v);
+                        cmdAndArgs.append("\"");
                         cmdAndArgs.append(" ");
                     }
                 }
@@ -1578,11 +1581,11 @@ public class CGIServlet extends HttpServlet {
                 env.put("CONTENT_LENGTH", new Integer(contentLength));
             }*/
 
-        if (command.endsWith(".pl") || command.endsWith(".cgi")) {
+        //if (command.endsWith(".pl") || command.endsWith(".cgi")) {
             StringBuffer perlCommand = new StringBuffer("perl ");
             perlCommand.append(cmdAndArgs.toString());
             cmdAndArgs = perlCommand;
-        }
+        //}
 
             rt = Runtime.getRuntime();
             proc = rt.exec(cmdAndArgs.toString(), hashToStringArray(env), wd);
