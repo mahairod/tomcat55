@@ -1,12 +1,12 @@
-<project name="TestRun" default="main" init="init">
+<project name="TestRun" default="main">
 
-   <target name="init">
-     <property name="host" value="localhost" />
-     <property name="port" value="8080" />
-    
-     <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
-     <property name="wgdir" value="${watchdog.home}/lib/jsp-golden" />
-   </target>
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
+
+   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <property name="wgdir" value="${watchdog.home}/lib/jsp-golden" />
+
+   <target name="main" depends="jsp-test" />
 
   <!-- ==================== Watchdog JSP tests ==================== -->
    
@@ -562,9 +562,6 @@
            debug="0" host="${host}" port="${port}"
            goldenFile="${wgdir}/tagext/VariableInfo/positiveGetClassName.html" />
    </target>
-
-   <target name="main" depends="jsp-test" />
-
 
 <!-- sample of all the various test options allowed
     <gtest description="Content Type Test"

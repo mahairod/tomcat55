@@ -1,17 +1,13 @@
 <project name="jakarta-watchdog" default="main" basedir=".">
-  <property name="build.compiler" value="classic"/>
 
-  <!-- system properties can be defined here, compiler can have the values:
-       classic, modern, jikes -->
+   <!-- System property definitions -->
 
-   <target name="init">
-     <property name="build.compiler" value="classic"/>
+   <property name="build.compiler" value="classic"/>
+   <property name="watchdog.build" value="../build/watchdog"/>
+   <property name="watchdog.dist" value="../dist/watchdog"/>
+   <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../jakarta-servletapi/lib/servlet.jar" />
 
-     <property name="watchdog.build" value="../build/watchdog"/>
-     <property name="watchdog.dist" value="../dist/watchdog"/>
-     <property name="watchdog-classpath" value="../jakarta-tools/moo.jar:../jakarta-tools/servlet-2.2.0.jar" />
-   </target>
-
+   <!-- Prepare the unpacked destination directory -->
 
    <target name="prepare">
 
@@ -25,36 +21,42 @@
       <mkdir dir="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib"/>
       <mkdir dir="${watchdog.build}/webapps/jsp-tests"/>
 
-      <copydir src="src/server/jsp-tests" dest="${watchdog.build}/webapps/jsp-tests"/>
-      <copydir src="src/server/servlet-tests" dest="${watchdog.build}/webapps/servlet-tests"/>
-      <copyfile src="../jakarta-tools/moo.jar" dest="${watchdog.build}/lib/moo.jar"/>
+      <copydir  src="src/server/jsp-tests"
+               dest="${watchdog.build}/webapps/jsp-tests"/>
+      <copydir  src="src/server/servlet-tests"
+               dest="${watchdog.build}/webapps/servlet-tests"/>
+      <copyfile src="../jakarta-tools/moo.jar"
+               dest="${watchdog.build}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-ant/lib/ant.jar"
                 dest="${watchdog.build}/lib/ant.jar"/>
 
+      <copyfile src="../jakarta-servletapi/lib/servlet.jar"
+                dest="${watchdog.build}/lib/servlet.jar"/>
+
       <copyfile src="../jakarta-tools/testdriver.jar"
                 dest="${watchdog.build}/lib/testdriver.jar"/>
 
-      <copyfile src="../jakarta-ant/lib/xml.jar"
-                dest="${watchdog.build}/lib/xml.jar"/>
+      <copydir  src="src/clients/org/apache/jcheck/jsp/client" 
+                dest="${watchdog.build}/lib/jsp-golden"/>
 
-      <copydir src="src/clients/org/apache/jcheck/jsp/client" 
-               dest="${watchdog.build}/lib/jsp-golden"/>
+      <copydir  src="src/bin" dest="${watchdog.build}/bin"/>
+      <copydir  src="src/conf" dest="${watchdog.build}/conf" />
 
-      <copydir src="src/bin" dest="${watchdog.build}/bin"/>
-      <copydir src="src/conf" dest="${watchdog.build}/conf" />
-
-      <copydir src="doc" dest="${watchdog.build}/doc" />
+      <copydir  src="doc" dest="${watchdog.build}/doc" />
       <copyfile src="Readme" 
-                dest="${watchdog.build}/doc/Readme"/>
+               dest="${watchdog.build}/doc/Readme"/>
 
       <copyfile src="../jakarta-tools/moo.jar" 
-                dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
+               dest="${watchdog.build}/webapps/servlet-tests/WEB-INF/lib/moo.jar"/>
       <copyfile src="../jakarta-tools/moo.jar" 
-                dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
+               dest="${watchdog.build}/webapps/jsp-tests/WEB-INF/lib/moo.jar"/>
 
-      <chmod src="${watchdog.build}/bin/watchdog.sh" perm="+x"/> 
+      <chmod    src="${watchdog.build}/bin/watchdog.sh" perm="+x"/> 
+
    </target>       
+
+   <!-- Compile the test suite -->
 
    <target name="main" depends="prepare">
 
@@ -93,6 +95,8 @@
 
    </target>
 
+   <!-- Prepare the distribution destination directory -->
+
    <target name="dist" depends="main">
 
       <mkdir dir="${watchdog.dist}"/>
@@ -100,29 +104,29 @@
       <mkdir dir="${watchdog.dist}/webapps" />
       <mkdir dir="${watchdog.dist}/lib/jsp-golden"/>
 
-      <copydir src="doc" dest="${watchdog.dist}/doc" />
+      <copydir  src="doc" dest="${watchdog.dist}/doc" />
       <copyfile src="Readme" 
-                dest="${watchdog.dist}/doc/Readme"/>
+               dest="${watchdog.dist}/doc/Readme"/>
 
       <copyfile src="../jakarta-tools/moo.jar"
-                dest="${watchdog.dist}/lib/moo.jar"/>
+               dest="${watchdog.dist}/lib/moo.jar"/>
 
       <copyfile src="../jakarta-ant/lib/ant.jar"
-                dest="${watchdog.dist}/lib/ant.jar"/>
+               dest="${watchdog.dist}/lib/ant.jar"/>
+
+      <copyfile src="../jakarta-servletapi/lib/servlet.jar"
+               dest="${watchdog.dist}/lib/servlet.jar"/>
 
       <copyfile src="../jakarta-tools/testdriver.jar"
-                dest="${watchdog.dist}/lib/testdriver.jar"/>
+               dest="${watchdog.dist}/lib/testdriver.jar"/>
 
-      <copyfile src="../jakarta-ant/lib/xml.jar"
-                dest="${watchdog.dist}/lib/xml.jar"/>
-      
       <copydir src="src/clients/org/apache/jcheck/jsp/client" 
-               dest="${watchdog.dist}/lib/jsp-golden"/>
+              dest="${watchdog.dist}/lib/jsp-golden"/>
 
-      <copydir src="src/bin" dest="${watchdog.dist}/bin"/>
-      <copydir src="src/conf" dest="${watchdog.dist}/conf" />
+      <copydir  src="src/bin" dest="${watchdog.dist}/bin"/>
+      <copydir  src="src/conf" dest="${watchdog.dist}/conf" />
     
-      <chmod src="${watchdog.dist}/bin/watchdog.sh" perm="+x"/>
+      <chmod    src="${watchdog.dist}/bin/watchdog.sh" perm="+x"/>
 
       <jar jarfile="${watchdog.dist}/lib/client.jar"
         basedir="${watchdog.build}/clients" 
@@ -140,7 +144,8 @@
 
       <mkdir dir="${watchdog.build}/tmp" />
       <mkdir dir="${watchdog.build}/tmp/META-INF" />
-      <copyfile src="src/etc/ear-dd.xml" dest="${watchdog.build}/tmp/META-INF/application.xml" />
+      <copyfile src="src/etc/ear-dd.xml"
+               dest="${watchdog.build}/tmp/META-INF/application.xml" />
       <copyfile src="${watchdog.dist}/webapps/servlet-tests.war" 
                 dest="${watchdog.build}/tmp/servlet-tests.war" />
       <copyfile src="${watchdog.dist}/webapps/jsp-tests.war" 
@@ -154,7 +159,9 @@
       
    </target>
 
-   <target name="clean" depends="init">
+   <!-- Clean out the unpacked and distribution directories -->
+
+   <target name="clean">
       <deltree dir="${watchdog.build}"/>
       <deltree dir="${watchdog.dist}"/>
    </target>

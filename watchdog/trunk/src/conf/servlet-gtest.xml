@@ -1,25 +1,20 @@
-<project name="TestRun" default="main" init="init">
+<project name="TestRun" default="main">
 
-   <target name="init">
-     <property name="host" value="localhost" />
-     <property name="port" value="8080" />
+   <property name="host" value="localhost" />
+   <property name="port" value="8080" />
     
-     <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
-     <property name="wgdir" value="${watchdog.home}/lib/jsp-golden" />
-   </target>
+   <taskdef name="gtest" classname="org.apache.tomcat.task.GTest" />
+   <property name="wgdir" value="${watchdog.home}/lib/jsp-golden" />
+
+   <target name="main" depends="watchdog-Servlet" />
 
   <!-- ==================== Watchdog Servlet tests ==================== -->
-   
 
    <target name="watchdog-Servlet">
       <gtest request="GET /servlet-tests/ResetTest HTTP/1.0"
            debug="0" host="${host}" port="${port}"
            returnCode="HTTP/1.0 200 OK" />
    </target>
-
-
-   <target name="main" depends="watchdog-Servlet" />
-
 
 <!-- sample of all the various test options allowed
     <gtest description="Content Type Test"
@@ -29,7 +24,6 @@
            expectHeaders="Content-Type:image/gif" />
            exactMatch="true"  />
 -->
-
 
 </project>
 
