@@ -2,7 +2,6 @@
 
 
 * Filter mapping optimization (remm)
-* Request dispatcher optimization (remm)
 * Tag plugins for JSTL
 * Optimization of BASIC authentication handling (remm)
 * (optional) Optimization of DIGEST authentication handling
@@ -14,6 +13,11 @@
 * Deployer refactoring (remm)
 * Documentation updates for new user guide book (remm)
 * Split main catalina.jar (remm)
+* Scalability improvements: merge threads at the server level responsible for:
+  session expiration (1 per webapp), webapp deployment and reloading (1 per 
+  host), webapp class reloading (1 per webapp if used). A new method should be
+  introduced in the Container interface; this thread would peridically invoke
+  that method on the whole Container tree. (remm)
 
 
 
