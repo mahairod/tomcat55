@@ -33,8 +33,8 @@
             installed as a Windows
             NT/2k/XP service no matter what setting is selected. Using the
             checkbox on the component page sets the service as "auto"
-            startup, so that Tomcat is automatically startup when Windows
-            starts. For optimal security, the service should be affected a
+            startup, so that Tomcat is automatically started when Windows
+            starts. For optimal security, the service should be run as a
             separate user, with reduced permissions (see the Windows Services
             administration tool and its documentation).</li>
         <li><strong>Java location</strong>: The installer will use the registry
@@ -59,8 +59,8 @@
     </p>
 
     <p>The installer will create shortcuts allowing starting and configuring 
-       Tomcat. It is important to note that Tomcat administration web 
-       application can only be used when Tomcat is started.</p>
+       Tomcat. It is important to note that the Tomcat administration web 
+       application can only be used when Tomcat is running.</p>
 
   </section>
 
@@ -108,8 +108,8 @@
 </source>
 
     <p>jsvc has other useful parameters, such as <code>-user</code> which 
-       causes to switch to another user after the daemon initialization is
-       complete. This allows, for example, running Tomcat as a non priviledged
+       causes it to switch to another user after the daemon initialization is
+       complete. This allows, for example, running Tomcat as a non privileged
        user while still being able to use privileged ports. 
        <code>jsvc --help</code> will return the full jsvc usage 
        information. In particular, the <code>-debug</code> option is useful
