@@ -410,7 +410,9 @@ public class JspReader {
 	         ret = mark(), ch = nextChar()) {	    
 	    if (ch == limit.charAt(0)) {
 		for (int i = 1 ; i < limlen ; i++) {
-		    if (Character.toLowerCase((char) nextChar()) != limit.charAt(i))
+		    if (peekChar() == limit.charAt(i))
+			nextChar();
+		    else
 			continue skip;
 		}
 		return ret;

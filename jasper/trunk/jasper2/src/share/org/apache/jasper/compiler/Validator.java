@@ -175,7 +175,7 @@ public class Validator {
 			err.jspError(n, "jsp.error.buffer.multiple");
 		    bufferSeen = true;
 
-		    if ("none".equalsIgnoreCase(attr))
+		    if ("none".equalsIgnoreCase(value))
 			pageInfo.setBuffer(0);
 		    else {
 			if (value == null || !value.endsWith("kb"))
@@ -232,7 +232,7 @@ public class Validator {
 	    }
 
 	    // Check for bad combinations
-	    if (pageInfo.getBuffer() == 0 && pageInfo.isAutoFlush())
+	    if (pageInfo.getBuffer() == 0 && !pageInfo.isAutoFlush())
 		err.jspError(n, "jsp.error.page.badCombo");
 
 	    // Attributes for imports for this node have been processed by

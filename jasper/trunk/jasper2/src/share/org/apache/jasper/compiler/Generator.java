@@ -317,9 +317,10 @@ public class Generator {
 
 		public void visit(Node.ParamAction n) throws JasperException {
 
+		    out.print(" + \"");
 		    out.print(separator);
 		    out.print(n.getAttributeValue("name"));
-		    out.print('=');
+		    out.print("=\" + ");
 		    out.print(attributeValue(n.getValue(), true));
 
 		    // The separator is '&' after the second use
