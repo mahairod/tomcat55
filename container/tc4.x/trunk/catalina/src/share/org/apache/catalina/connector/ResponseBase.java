@@ -496,6 +496,14 @@ public abstract class ResponseBase
 
 
     /**
+     * Recycle the facade object.
+     */
+    public void recycleFacade() {
+        facade = new ResponseFacade(this);
+    }
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
@@ -517,6 +525,7 @@ public abstract class ResponseBase
         stream = null;
         writer = null;
         error = false;
+        recycleFacade();
 
     }
 

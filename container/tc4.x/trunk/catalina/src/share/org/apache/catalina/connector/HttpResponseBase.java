@@ -323,6 +323,14 @@ public class HttpResponseBase
 
 
     /**
+     * Recycle the facade object.
+     */
+    public void recycleFacade() {
+        facade = new HttpResponseFacade(this);
+    }
+
+
+    /**
      * Release all object references, and initialize instance variables, in
      * preparation for reuse of this object.
      */
