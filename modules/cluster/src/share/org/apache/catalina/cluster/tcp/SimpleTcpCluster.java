@@ -319,12 +319,12 @@ public class SimpleTcpCluster
     }
 
     public void setReplicationMode(String mode) {
-        if ("synchronous".equals(mode) ||
-            "asynchronous".equals(mode)) {
+        String msg = IDataSenderFactory.validateMode(mode);
+        if ( msg == null ) {
             log.debug("Setting replcation mode to "+mode);
             this.replicationMode = mode;
         } else
-            throw new IllegalArgumentException("Replication mode must be either synchronous or asynchronous");
+            throw new IllegalArgumentException(msg);
 
     }
     /**
@@ -496,8 +496,8 @@ public class SimpleTcpCluster
                                             this.tcpAddress,
                                             this.tcpPort,
                                             this.tcpSelectorTimeout,
-                                            "synchronous".equals(this.
-                    replicationMode));
+                                            IDataSenderFactory.SYNC_MODE.equals(replicationMode) ||
+                                            IDataSenderFactory.POOLED_SYNC_MODE.equals(replicationMode));
                 mReplicationListener.setDaemon(true);
                 mReplicationListener.start();
             }
@@ -592,7 +592,6 @@ public class SimpleTcpCluster
         log.info("Received member disappeared:"+member);
         try
         {
-            log.info("Replication member disappeared:" + member);
             Member mbr = member;
             mReplicationTransmitter.remove(InetAddress.getByName(mbr.getHost()),
                                  mbr.getPort());

@@ -506,7 +506,7 @@ implements org.apache.catalina.cluster.ClusterManager
                     reqNow = System.currentTimeMillis();
                     isTimeout=((reqNow-reqStart)>(1000*60));
                 } while ( (!isStateTransferred()) && (!isTimeout));
-                if ( isTimeout ) {
+                if ( isTimeout || (!isStateTransferred()) ) {
                     log.error("Manager["+getName()+"], No session state received, timing out.");
                 }else {
                     log.info("Manager["+getName()+"], session state received in "+(reqNow-reqStart)+" ms.");

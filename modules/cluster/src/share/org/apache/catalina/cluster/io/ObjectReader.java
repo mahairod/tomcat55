@@ -105,6 +105,11 @@ public class ObjectReader
     public int append(byte[] data,int off,int len) throws java.io.IOException {
         boolean result = false;
         buffer.append(data,off,len);
+        int pkgCnt = buffer.countPackages();
+        return pkgCnt;
+    }
+
+    public int execute() throws java.io.IOException {
         int pkgCnt = 0;
         boolean pkgExists = buffer.doesPackageExist();
         while ( pkgExists ) {
@@ -114,10 +119,6 @@ public class ObjectReader
             pkgExists = buffer.doesPackageExist();
         }//end if
         return pkgCnt;
-    }
-
-    public int execute() throws java.io.IOException {
-        return append(new byte[0],0,0);
     }
 
     public int write(ByteBuffer buf)
