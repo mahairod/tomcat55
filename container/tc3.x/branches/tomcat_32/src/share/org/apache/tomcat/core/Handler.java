@@ -246,7 +246,8 @@ public class Handler {
     public void service(Request req, Response res) 
         throws IOException, ServletException
     {
-      synchronized(this) {
+      if (! initialized ) {    
+       synchronized(this) {
 	if( ! initialized ) {
 	    try {
 		init();
@@ -272,6 +273,7 @@ public class Handler {
 		return;
 	    }
 	}
+       }
       }
 
 	if( ! internal )
