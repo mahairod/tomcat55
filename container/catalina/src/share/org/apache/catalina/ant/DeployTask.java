@@ -142,9 +142,9 @@ public class DeployTask extends AbstractCatalinaTask {
             throw new BuildException
                 ("Must specify 'path' attribute");
         }
-        if ((war == null) && (localWar == null) && (tag == null)) {
+        if ((war == null) && (localWar == null) && (config == null) && (tag == null)) {
             throw new BuildException
-                ("Must specify either 'war', 'localWar', or 'tag' attribute");
+                ("Must specify either 'war', 'localWar', 'config', or 'tag' attribute");
         }
 
         // Building an input stream on the WAR to upload, if any
