@@ -424,7 +424,7 @@ public class JspServlet extends HttpServlet {
         else if (value.equals("false"))
             return (false);            // ?jsp_precompile=false
         else
-            throw new ServletException("Cannott have request parameter " +
+            throw new ServletException("Cannot have request parameter " +
                                        Constants.PRECOMPILE + " set to " +
                                        value);
 
