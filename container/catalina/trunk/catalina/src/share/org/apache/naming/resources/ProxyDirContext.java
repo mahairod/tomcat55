@@ -1687,7 +1687,7 @@ public class ProxyDirContext implements DirContext {
         if (cache == null)
             return false;
         synchronized (this) {
-            CacheEntry[] newCache = new CacheEntry[cache.length + 1];
+            CacheEntry[] newCache = new CacheEntry[cache.length - 1];
             CacheEntry removedEntry = removeMap(cache, newCache, name);
             if (removedEntry != null) {
                 cache = newCache;
