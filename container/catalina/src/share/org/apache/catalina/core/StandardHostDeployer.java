@@ -123,13 +123,6 @@ public class StandardHostDeployer implements Deployer {
 
 
     /**
-     * The <code>Context</code> that was added via a call to
-     * <code>addChild()</code> while parsing the configuration descriptor.
-     */
-    private Context context = null;
-
-
-    /**
      * The <code>ContextRuleSet</code> associated with our
      * <code>digester</code> instance.
      */
@@ -493,7 +486,6 @@ public class StandardHostDeployer implements Deployer {
         }
 
         // Install the new web application
-        this.context = null;
         this.overrideDocBase = docBase;
         InputStream stream = null;
         try {
@@ -800,7 +792,7 @@ public class StandardHostDeployer implements Deployer {
      */
     public void addChild(Container child) {
 
-        context = (Context) child;
+        Context context = (Context) child;
         String contextPath = context.getPath();
         if (contextPath == null)
             throw new IllegalArgumentException
