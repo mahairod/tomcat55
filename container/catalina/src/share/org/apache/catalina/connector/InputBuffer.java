@@ -23,6 +23,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
 
+import org.apache.catalina.security.SecurityUtil;
 import org.apache.coyote.Request;
 import org.apache.tomcat.util.buf.B2CConverter;
 import org.apache.tomcat.util.buf.ByteChunk;
@@ -465,7 +466,7 @@ public class InputBuffer extends Reader
             enc = DEFAULT_ENCODING;
         conv = (B2CConverter) encoders.get(enc);
         if (conv == null) {
-            if (System.getSecurityManager() != null){
+            if (SecurityUtil.isPackageProtectionEnabled()){
                 try{
                     conv = (B2CConverter)AccessController.doPrivileged(
                             new PrivilegedExceptionAction(){

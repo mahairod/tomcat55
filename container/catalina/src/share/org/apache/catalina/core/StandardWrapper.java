@@ -243,7 +243,21 @@ public class StandardWrapper
     private StandardWrapperValve swValve;
     private long loadTime=0;
     private int classLoadTime=0;
-
+    
+    /**
+     * Static class array used when the SecurityManager is turned on and 
+     * <code>Servlet.init</code> is invoked.
+     */
+    private static Class[] classType = new Class[]{ServletConfig.class};
+    
+    
+    /**
+     * Static class array used when the SecurityManager is turned on and 
+     * <code>Servlet.service</code>  is invoked.
+     */                                                 
+    private static Class[] classTypeUsedInService = new Class[]{
+                                                         ServletRequest.class,
+                                                         ServletResponse.class};
     // ------------------------------------------------------------- Properties
 
 
@@ -960,7 +974,7 @@ public class StandardWrapper
             // Load the specified servlet class from the appropriate class loader
             Class classClass = null;
             try {
-                if (System.getSecurityManager() != null){
+                if (SecurityUtil.isPackageProtectionEnabled()){
                     final ClassLoader fclassLoader = classLoader;
                     final String factualClass = actualClass;
                     try{
@@ -1043,12 +1057,13 @@ public class StandardWrapper
                                                   servlet);
 
                 if( System.getSecurityManager() != null) {
-                    Class[] classType = new Class[]{ServletConfig.class};
+
                     Object[] args = new Object[]{((ServletConfig)facade)};
                     SecurityUtil.doAsPrivilege("init",
                                                servlet,
                                                classType,
                                                args);
+                    args = null;
                 } else {
                     servlet.init(facade);
                 }
@@ -1062,13 +1077,12 @@ public class StandardWrapper
                     DummyResponse res = new DummyResponse();
 
                     if( System.getSecurityManager() != null) {
-                        Class[] classType = new Class[]{ServletRequest.class,
-                                                        ServletResponse.class};
                         Object[] args = new Object[]{req, res};
                         SecurityUtil.doAsPrivilege("service",
                                                    servlet,
-                                                   classType,
+                                                   classTypeUsedInService,
                                                    args);
+                        args = null;
                     } else {
                         servlet.service(req, res);
                     }
