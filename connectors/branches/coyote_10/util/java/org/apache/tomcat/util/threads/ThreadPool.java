@@ -159,15 +159,6 @@ public class ThreadPool  {
      *   call register() in order to set a name.
      */
     public static ThreadPool createThreadPool(boolean jmx) {
-        if( jmx ) {
-            try {
-                Class.forName( "org.apache.commons.modeler.Registry");
-                Class tpc=Class.forName( "org.apache.tomcat.util.threads.ThreadPoolMX");
-                ThreadPool res=(ThreadPool)tpc.newInstance();
-                return res;
-            } catch( Exception ex ) {
-            }
-        }
         return new ThreadPool();
     }
 
