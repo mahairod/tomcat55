@@ -336,6 +336,14 @@ public class Ajp13Interceptor extends PoolTcpConnector
 		    }
 		}
 
+		// special case - low level AJP13 packet, like
+		// PING/PONG ...
+		if( status == 999 )
+		{	
+			req.recycle();
+			continue; 
+		} 
+
 		// special case - invalid AJP13 packet, error 
 		// decoding packet ...
 		// we drop the connection rigth now
