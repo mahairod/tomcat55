@@ -736,7 +736,10 @@ public class JspParseEventListener implements ParseEventListener {
                 for(int i = 0; i < pdhis.length; i++) {
                     PageDirectiveHandlerInfo pdhi = pdhis[i];
                     if (attr.equals(pdhi.attribute)) {
-                        String value = (String) attrs.getValue(pdhi.attribute);
+			// Retrieve the attribute keyed by index, not by name,
+			// to handle page directives, where multiple import
+			// attributes may be specified
+			String value = attrs.getValue(j);
                         pdhi.handler.handlePageDirectiveAttribute(this, value,
                                                                   start, stop);
                     }
