@@ -16,8 +16,8 @@
 
 <section name="Preface">
   <p>
-    This section of the FAQ deals with topics specific to the OS/2
-    system and related/derivative platforms.
+    This section of the FAQ deals with topics specific to the OS/2, z/OS,
+    and related or derivative platforms.
   </p>
 </section>
 
@@ -36,6 +36,11 @@
        </a>
      </li>
 
+     <li>
+       <a href="#zOS">
+         Are there ways to integrate Tomcat into z/OS?
+       </a>
+     </li>
   </ul>
 </section>
 
@@ -63,6 +68,14 @@
     Note again that the above scripts may be specific to a Tomcat version or branch.
   </answer>
 
+  <question>
+    <a name="zOS">
+      Are there ways to integrate Tomcat into z/OS?
+    </a>
+  </question>
+  <answer>
+    Yes.  One such tool is <a href="http://jzos.com/">JZOS</a>.
+  </answer>
 </section>
 
 
