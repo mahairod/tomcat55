@@ -437,8 +437,6 @@ Function configure
 
   DetailPrint "tomcat-users.xml written"
 
- NoLinks:
-
   RMDir /r "$TEMP\confinstall"
 
 FunctionEnd
