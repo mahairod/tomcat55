@@ -65,6 +65,8 @@ import java.io.CharArrayWriter;
 import javax.servlet.jsp.tagext.*;
 import org.xml.sax.Attributes;
 import org.apache.jasper.JasperException;
+import org.apache.jasper.compiler.tagplugin.TagPluginContext;
+
 
 /**
  * An internal data representation of a JSP page or a JSP docuement (XML).
@@ -985,10 +987,14 @@ abstract class Node {
 	private Node.CustomTag customTagParent;
 	private Integer numCount;
 	private boolean useTagPlugin;
+	private TagPluginContext tagPluginContext;
+
 	/**
 	 * The following two fields are used for holding the Java
 	 * scriptlets that the tag plugins may generate.  Meaningful
 	 * only if useTagPlugin is true;
+	 * Could move them into TagPluginContextImpl, but we'll need
+	 * to cast tagPluginContext to TagPluginContextImpl all the time...
 	 */
 	private Nodes atSTag;
 	private Nodes atETag;
@@ -1215,6 +1221,14 @@ abstract class Node {
 
 	public boolean useTagPlugin() {
 	    return useTagPlugin;
+	}
+
+	public void setTagPluginContext(TagPluginContext tagPluginContext) {
+	    this.tagPluginContext = tagPluginContext;
+	}
+
+	public TagPluginContext getTagPluginContext() {
+	    return tagPluginContext;
 	}
 
 	public void setAtSTag(Nodes sTag) {

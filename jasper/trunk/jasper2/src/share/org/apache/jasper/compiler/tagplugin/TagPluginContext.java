@@ -142,5 +142,26 @@ public interface TagPluginContext {
      * is deemed too compilicated for optimization.
      */
     void dontUseTagPlugin();
+
+    /**
+     * Get the PluginContext for the parent of this custom tag.  NOTE:
+     * The operations available for PluginContext so obtained is limited
+     * to getAttribute and setAttribute, and queries (e.g. isScriptless(),
+     * There should be no generate*().
+     * @return The pluginContext for the parent node.
+     *         null if the parent is not a custom tag, or if the pluginConxt
+     *         if not available (because useTagPlugin is false, e.g).
+     */
+    TagPluginContext getParentContext();
+
+    /**
+     * Associate the attribute with a value in the current tagplugin context.
+     */
+    void setAttribute(String attr, Object value);
+
+    /**
+     * Get the value of an attribute in the current tagplugin context.
+     */
+    Object getAttribute(String attr);
 }
 

@@ -175,13 +175,15 @@ public class TagPluginManager {
 	}
 
 	TagPluginContext tagPluginContext = new TagPluginContextImpl(n, pageInfo);
+	n.setTagPluginContext(tagPluginContext);
 	tagPlugin.doTag(tagPluginContext);
     }
 
     static class TagPluginContextImpl implements TagPluginContext {
-	Node.CustomTag node;
-	Node.Nodes curNodes;
-	PageInfo pageInfo;
+	private Node.CustomTag node;
+	private Node.Nodes curNodes;
+	private PageInfo pageInfo;
+	private HashMap pluginAttributes;
 
 	TagPluginContextImpl(Node.CustomTag n, PageInfo pageInfo) {
 	    this.node = n;
@@ -191,6 +193,23 @@ public class TagPluginManager {
 	    curNodes = new Node.Nodes();
 	    n.setAtSTag(curNodes);
 	    n.setUseTagPlugin(true);
+	    pluginAttributes = new HashMap();
+	}
+
+	public TagPluginContext getParentContext() {
+	    Node parent = node.getParent();
+	    if (! (parent instanceof Node.CustomTag)) {
+		return null;
+	    }
+	    return ((Node.CustomTag) parent).getTagPluginContext();
+	}
+
+	public void setAttribute(String key, Object value) {
+	    pluginAttributes.put(key, value);
+	}
+
+	public Object getAttribute(String key) {
+	    return pluginAttributes.get(key);
 	}
 
 	public boolean isScriptless() {
@@ -198,21 +217,21 @@ public class TagPluginManager {
 	}
 
 	public boolean isConstantAttribute(String attribute) {
-	    Node.JspAttribute attr = getAttribute(attribute);
+	    Node.JspAttribute attr = getNodeAttribute(attribute);
 	    if (attr == null)
 		return false;
 	    return attr.isLiteral();
 	}
 
 	public String getConstantAttribute(String attribute) {
-	    Node.JspAttribute attr = getAttribute(attribute);
+	    Node.JspAttribute attr = getNodeAttribute(attribute);
             if (attr == null)
 		return null;
 	    return attr.getValue();
 	}
 
 	public boolean isAttributeSpecified(String attribute) {
-	    return getAttribute(attribute) != null;
+	    return getNodeAttribute(attribute) != null;
 	}
 
 	public String getTemporaryVariableName() {
@@ -252,7 +271,7 @@ public class TagPluginManager {
 	    curNodes = node.getAtETag();
 	}
 
-	private Node.JspAttribute getAttribute(String attribute) {
+	private Node.JspAttribute getNodeAttribute(String attribute) {
 	    Node.JspAttribute[] attrs = node.getJspAttributes();
 	    for (int i=0; i < attrs.length; i++) {
 		if (attrs[i].getName().equals(attribute)) {
