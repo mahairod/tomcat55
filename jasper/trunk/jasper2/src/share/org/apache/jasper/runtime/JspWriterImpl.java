@@ -63,6 +63,8 @@ package org.apache.jasper.runtime;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.jsp.JspWriter;
@@ -166,6 +168,17 @@ public class JspWriterImpl extends JspWriter {
 	}
     }
 	
+    private String getLocalizeMessage(final String message){
+        if (System.getSecurityManager() != null){
+           return (String)AccessController.doPrivileged(new PrivilegedAction(){
+                public Object run(){
+                    return Localizer.getMessage(message); 
+                }
+           });
+        } else {
+            return Localizer.getMessage(message);
+        }
+    }
 
     /**
      * Discard the output buffer.
@@ -173,10 +186,10 @@ public class JspWriterImpl extends JspWriter {
     public final void clear() throws IOException {
         if (bufferSize == 0)
             throw new IllegalStateException(
-                    Localizer.getMessage("jsp.error.ise_on_clear"));
+                    getLocalizeMessage("jsp.error.ise_on_clear"));
         if (flushed)
             throw new IOException(
-                    Localizer.getMessage("jsp.error.attempt_to_clear_flushed_buffer"));
+                    getLocalizeMessage("jsp.error.attempt_to_clear_flushed_buffer"));
         ensureOpen();
         nextChar = 0;
     }
@@ -184,13 +197,13 @@ public class JspWriterImpl extends JspWriter {
     public void clearBuffer() throws IOException {
         if (bufferSize == 0)
             throw new IllegalStateException(
-                    Localizer.getMessage("jsp.error.ise_on_clear"));
+                    getLocalizeMessage("jsp.error.ise_on_clear"));
         ensureOpen();
         nextChar = 0;
     }
 
     private final void bufferOverflow() throws IOException {
-        throw new IOException(Localizer.getMessage("jsp.error.overflow"));
+        throw new IOException(getLocalizeMessage("jsp.error.overflow"));
     }
 
     /**

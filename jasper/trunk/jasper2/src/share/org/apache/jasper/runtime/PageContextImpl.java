@@ -479,18 +479,23 @@ public class PageContextImpl extends PageContext implements VariableResolver {
     }
 
     public Object findAttribute(final String name) {
-        if (name == null) {
-            throw new NullPointerException(
-                    Localizer.getMessage("jsp.error.attribute.null_name"));
-        }
-
         if (System.getSecurityManager() != null){
             return AccessController.doPrivileged(new PrivilegedAction(){
                 public Object run(){
+                    if (name == null) {
+                        throw new NullPointerException(
+                                Localizer.getMessage("jsp.error.attribute.null_name"));
+                    }
+
                     return doFindAttribute(name);
                 }
             });
         } else {
+            if (name == null) {
+                throw new NullPointerException(
+                        Localizer.getMessage("jsp.error.attribute.null_name"));
+            }
+
             return doFindAttribute(name);
         }
     }
