@@ -73,6 +73,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
@@ -107,6 +111,8 @@ import org.apache.catalina.valves.ValveBase;
 final class StandardHostValve
     extends ValveBase {
 
+
+    private static Log log = LogFactory.getLog(StandardHostValve.class);
 
     // ----------------------------------------------------- Instance Variables
 
@@ -234,9 +240,10 @@ final class StandardHostValve
 
         // If this is an aborted request from a client just log it and return
         if (realError instanceof ClientAbortException ) {
-            log(sm.getString(
-                "standardHost.clientAbort",
-                ((ClientAbortException)realError).getThrowable().getMessage()));
+            log.debug
+                (sm.getString("standardHost.clientAbort",
+                              ((ClientAbortException) realError).getThrowable()
+                              .getMessage()));
             return;
         }
 

@@ -71,6 +71,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.apache.tomcat.util.buf.MessageBytes;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
@@ -78,13 +85,10 @@ import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
-import org.apache.tomcat.util.buf.MessageBytes;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Valve that implements the default basic behavior for the
@@ -254,6 +258,10 @@ final class StandardWrapperValve
                 filterChain.doFilter(hreq, hres);
             }
             hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+        } catch (ClientAbortException e) {
+            hreq.removeAttribute(Globals.JSP_FILE_ATTR);
+            throwable = e;
+            exception(request, response, e);
         } catch (IOException e) {
             hreq.removeAttribute(Globals.JSP_FILE_ATTR);
             log(sm.getString("standardWrapper.serviceException",
@@ -304,8 +312,10 @@ final class StandardWrapperValve
                 }
             } while (rootCauseCheck != null);
 
-            log(sm.getString("standardWrapper.serviceException",
-                             wrapper.getName()), rootCause);
+            if (!(rootCause instanceof ClientAbortException)) {
+                log(sm.getString("standardWrapper.serviceException",
+                                 wrapper.getName()), rootCause);
+            }
             throwable = e;
             exception(request, response, e);
         } catch (Throwable e) {
