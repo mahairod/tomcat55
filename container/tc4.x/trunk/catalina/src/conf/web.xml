@@ -1,38 +1,47 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+<!DOCTYPE web-app
+     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
-    <!-- ======================== Introduction ============================== -->
-    <!-- This document defines default values for *all* web applications      -->
-    <!-- loaded into this instance of Tomcat.  As each application is         -->
-    <!-- deployed, this file is processed, followed by the                    -->
-    <!-- "/WEB-INF/web.xml" deployment descriptor from your own               -->
-    <!-- applications.                                                        -->
-    <!-- ================== Built In Servlet Definitions ==================== -->
-    <!-- The default servlet for all web applications, that serves static     -->
-    <!-- resources.  It processes all requests that are not mapped to other   -->
-    <!-- servlets with servlet mappings (defined either here or in your own   -->
-    <!-- web.xml file.  This servlet supports the following initialization    -->
-    <!-- parameters (default values are in square brackets):                  -->
-    <!--                                                                      -->
-    <!--   debug               Debugging detail level for messages logged     -->
-    <!--                       by this servlet.  [0]                          -->
-    <!--                                                                      -->
-    <!--   input               Input buffer size (in bytes) when reading      -->
-    <!--                       resources to be served.  [2048]                -->
-    <!--                                                                      -->
-    <!--   listings            Should directory listings be produced if there -->
-    <!--                       is no welcome file in this directory?  [true]  -->
-    <!--                                                                      -->
-    <!--   output              Output buffer size (in bytes) when writing     -->
-    <!--                       resources to be served.  [2048]                -->
-    <!--                                                                      -->
-    <!--   readonly            Is this context "read only", so HTTP           -->
-    <!--                       commands like PUT and DELETE are               -->
-    <!--                       rejected?  [true]                              -->
+
+  <!-- ======================== Introduction ============================== -->
+  <!-- This document defines default values for *all* web applications      -->
+  <!-- loaded into this instance of Tomcat.  As each application is         -->
+  <!-- deployed, this file is processed, followed by the                    -->
+  <!-- "/WEB-INF/web.xml" deployment descriptor from your own               -->
+  <!-- applications.                                                        -->
+
+
+  <!-- ================== Built In Servlet Definitions ==================== -->
+
+
+  <!-- The default servlet for all web applications, that serves static     -->
+  <!-- resources.  It processes all requests that are not mapped to other   -->
+  <!-- servlets with servlet mappings (defined either here or in your own   -->
+  <!-- web.xml file.  This servlet supports the following initialization    -->
+  <!-- parameters (default values are in square brackets):                  -->
+  <!--                                                                      -->
+  <!--   debug               Debugging detail level for messages logged     -->
+  <!--                       by this servlet.  [0]                          -->
+  <!--                                                                      -->
+  <!--   input               Input buffer size (in bytes) when reading      -->
+  <!--                       resources to be served.  [2048]                -->
+  <!--                                                                      -->
+  <!--   listings            Should directory listings be produced if there -->
+  <!--                       is no welcome file in this directory?  [true]  -->
+  <!--                                                                      -->
+  <!--   output              Output buffer size (in bytes) when writing     -->
+  <!--                       resources to be served.  [2048]                -->
+  <!--                                                                      -->
+  <!--   readonly            Is this context "read only", so HTTP           -->
+  <!--                       commands like PUT and DELETE are               -->
+  <!--                       rejected?  [true]                              -->
+
     <servlet>
         <servlet-name>default</servlet-name>
-        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+        <servlet-class>
+          org.apache.catalina.servlets.DefaultServlet
+        </servlet-class>
         <init-param>
             <param-name>debug</param-name>
             <param-value>0</param-value>
@@ -43,72 +52,80 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <!-- The "invoker" servlet, which executes anonymous servlet classes      -->
-    <!-- that have not been defined in a web.xml file.  Traditionally, this   -->
-    <!-- servlet is mapped to URL pattern "/servlet/*", but you can map it    -->
-    <!-- to other patterns as well.  The extra path info portion of such a    -->
-    <!-- request must be the fully qualified class name of a Java class that  -->
-    <!-- implements Servlet (or extends HttpServlet), or the servlet name     -->
-    <!-- of an existing servlet definition.     This servlet supports the     -->
-    <!-- following initialization parameters (default values are in square    -->
-    <!-- brackets):                                                           -->
-    <!--                                                                      -->
-    <!--   debug               Debugging detail level for messages logged     -->
-    <!--                       by this servlet.  [0]                          -->
+
+
+  <!-- The "invoker" servlet, which executes anonymous servlet classes      -->
+  <!-- that have not been defined in a web.xml file.  Traditionally, this   -->
+  <!-- servlet is mapped to URL pattern "/servlet/*", but you can map it    -->
+  <!-- to other patterns as well.  The extra path info portion of such a    -->
+  <!-- request must be the fully qualified class name of a Java class that  -->
+  <!-- implements Servlet (or extends HttpServlet), or the servlet name     -->
+  <!-- of an existing servlet definition.     This servlet supports the     -->
+  <!-- following initialization parameters (default values are in square    -->
+  <!-- brackets):                                                           -->
+  <!--                                                                      -->
+  <!--   debug               Debugging detail level for messages logged     -->
+  <!--                       by this servlet.  [0]                          -->
+
     <servlet>
         <servlet-name>invoker</servlet-name>
-        <servlet-class>org.apache.catalina.servlets.InvokerServlet</servlet-class>
+        <servlet-class>
+          org.apache.catalina.servlets.InvokerServlet
+        </servlet-class>
         <init-param>
             <param-name>debug</param-name>
             <param-value>0</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
-    <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
-    <!-- used by Tomcat to support JSP pages.  Traditionally, this servlet    -->
-    <!-- is mapped to URL patterh "*.jsp".  This servlet supports the         -->
-    <!-- following initialization parameters (default values are in square    -->
-    <!-- brackets):                                                           -->
-    <!--                                                                      -->
-    <!--   classpath           What class path should I use while compiling   -->
-    <!--                       generated servlets?  [Created dynamically      -->
-    <!--                       based on the current web application]          -->
-    <!--                                                                      -->
-    <!--   ieClassId           The class-id value to be sent to Internet      -->
-    <!--                       Explorer when using <jsp:plugin> tags.         -->
-    <!--                       [clsid:8AD9C840-044E-11D1-B3E9-00805F499D93]   -->
-    <!--                                                                      -->
-    <!--   jspCompilerPlugin   The fully qualified class name of the JSP      -->
-    <!--                       compiler plug-in to be used.  See below for    -->
-    <!--                       more information.                              -->
-    <!--                       [Use internal JDK compiler]                    -->
-    <!--                                                                      -->
-    <!--   keepgenerated       Should we keep the generated Java source code  -->
-    <!--                       for each page instead of deleting it? [true]   -->
-    <!--                                                                      -->
-    <!--   largefile           Should we store the static content of JSP      -->
-    <!--                       pages in external data files, to reduce the    -->
-    <!--                       size of the generated servlets?  [false]       -->
-    <!--                                                                      -->
-    <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
-    <!--                       by this servlet.  Increasing levels cause the  -->
-    <!--                       generation of more messages.  Valid values are -->
-    <!--                       FATAL, ERROR, WARNING, INFORMATION, and DEBUG. -->
-    <!--                       [WARNING]                                      -->
-    <!--                                                                      -->
-    <!--   mappedfile          Should we generate static content with one     -->
-    <!--                       print statement per input line, to ease        -->
-    <!--                       debugging?  [false]                            -->
-    <!--                                                                      -->
-    <!--   scratchdir          What scratch directory should we use when      -->
-    <!--                       compiling JSP pages?  [default work directory  -->
-    <!--                       for the current web application]               -->
-    <!--                                                                      -->
-    <!-- If you wish to use Jikes to compile JSP pages:                       -->
-    <!-- * Set the "classpath" initialization parameter appropriately         -->
-    <!--   for this web application.                                          -->
-    <!-- * Set the "jspCompilerPlugin" initialization parameter to            -->
-    <!--   "org.apache.jasper.compiler.JikesJavaCompiler".                    -->
+
+
+  <!-- The JSP page compiler and execution servlet, which is the mechanism  -->
+  <!-- used by Tomcat to support JSP pages.  Traditionally, this servlet    -->
+  <!-- is mapped to URL patterh "*.jsp".  This servlet supports the         -->
+  <!-- following initialization parameters (default values are in square    -->
+  <!-- brackets):                                                           -->
+  <!--                                                                      -->
+  <!--   classpath           What class path should I use while compiling   -->
+  <!--                       generated servlets?  [Created dynamically      -->
+  <!--                       based on the current web application]          -->
+  <!--                                                                      -->
+  <!--   ieClassId           The class-id value to be sent to Internet      -->
+  <!--                       Explorer when using <jsp:plugin> tags.         -->
+  <!--                       [clsid:8AD9C840-044E-11D1-B3E9-00805F499D93]   -->
+  <!--                                                                      -->
+  <!--   jspCompilerPlugin   The fully qualified class name of the JSP      -->
+  <!--                       compiler plug-in to be used.  See below for    -->
+  <!--                       more information.                              -->
+  <!--                       [Use internal JDK compiler]                    -->
+  <!--                                                                      -->
+  <!--   keepgenerated       Should we keep the generated Java source code  -->
+  <!--                       for each page instead of deleting it? [true]   -->
+  <!--                                                                      -->
+  <!--   largefile           Should we store the static content of JSP      -->
+  <!--                       pages in external data files, to reduce the    -->
+  <!--                       size of the generated servlets?  [false]       -->
+  <!--                                                                      -->
+  <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
+  <!--                       by this servlet.  Increasing levels cause the  -->
+  <!--                       generation of more messages.  Valid values are -->
+  <!--                       FATAL, ERROR, WARNING, INFORMATION, and DEBUG. -->
+  <!--                       [WARNING]                                      -->
+  <!--                                                                      -->
+  <!--   mappedfile          Should we generate static content with one     -->
+  <!--                       print statement per input line, to ease        -->
+  <!--                       debugging?  [false]                            -->
+  <!--                                                                      -->
+  <!--   scratchdir          What scratch directory should we use when      -->
+  <!--                       compiling JSP pages?  [default work directory  -->
+  <!--                       for the current web application]               -->
+  <!--                                                                      -->
+  <!-- If you wish to use Jikes to compile JSP pages:                       -->
+  <!-- * Set the "classpath" initialization parameter appropriately         -->
+  <!--   for this web application.                                          -->
+  <!-- * Set the "jspCompilerPlugin" initialization parameter to            -->
+  <!--   "org.apache.jasper.compiler.JikesJavaCompiler".                    -->
+
     <servlet>
         <servlet-name>jsp</servlet-name>
         <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
@@ -118,146 +135,171 @@
         </init-param>
         <load-on-startup>3</load-on-startup>
     </servlet>
-    <!-- Server Side Includes processing servlet, which processes SSI         -->
-    <!-- directives in HTML pages consistent with similar support in web      -->
-    <!-- servers like Apache.  Traditionally, this servlet is mapped to       -->
-    <!-- URL pattern "*.shtml".  This servlet supports the following          -->
-    <!-- initialization parameters (default values are in square brackets):   -->
-    <!--                                                                      -->
-    <!--   buffered            Should output from this servlet be buffered?   -->
-    <!--                       (0=false, 1=true)  [0]                         -->
-    <!--                                                                      -->
-    <!--   debug               Debugging detail level for messages logged     -->
-    <!--                       by this servlet.  [0]                          -->
-    <!--                                                                      -->
-    <!--   expires             The number of seconds before a page with SSI   -->
-    <!--                       directives will expire.  [No default]          -->
-    <!--                                                                      -->
-    <!--   isVirtualWebappRelative                                            -->
-    <!--                       Should "virtual" paths be interpreted as       -->
-    <!--                       relative to the context root, instead of       -->
-    <!--                       the server root?  (0=false, 1=true) [0]        -->
-    <!--                                                                      -->
-    <!--   ignoreUnsupportedDirective                                         -->
-    <!--                       Should unknown or misspelled Ssi directives    -->
-    <!--                       be ignored and no errors shown?                -->
-    <!--                       (0=false, 1=true) [1]                          -->
-    <!-- IMPORTANT: To use the SSI servlet, you also need to rename the       -->
-    <!--            $CATALINA_HOME/server/lib/servlets-ssi.renametojar file   -->
-    <!--            to $CATALINA_HOME/server/lib/servlets-ssi.jar             -->
-    <!--
-  <servlet>
-    <servlet-name>ssi</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.SsiInvokerServlet</servlet-class>
-    <init-param>
-      <param-name>buffered</param-name>
-      <param-value>1</param-value>
-    </init-param>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>0</param-value>
-    </init-param>
-    <init-param>
-      <param-name>expires</param-name>
-      <param-value>666</param-value>
-    </init-param>
-    <init-param>
-      <param-name>isVirtualWebappRelative</param-name>
-      <param-value>0</param-value>
-    </init-param>
+
+
+  <!-- Server Side Includes processing servlet, which processes SSI         -->
+  <!-- directives in HTML pages consistent with similar support in web      -->
+  <!-- servers like Apache.  Traditionally, this servlet is mapped to       -->
+  <!-- URL pattern "*.shtml".  This servlet supports the following          -->
+  <!-- initialization parameters (default values are in square brackets):   -->
+  <!--                                                                      -->
+  <!--   buffered            Should output from this servlet be buffered?   -->
+  <!--                       (0=false, 1=true)  [0]                         -->
+  <!--                                                                      -->
+  <!--   debug               Debugging detail level for messages logged     -->
+  <!--                       by this servlet.  [0]                          -->
+  <!--                                                                      -->
+  <!--   expires             The number of seconds before a page with SSI   -->
+  <!--                       directives will expire.  [No default]          -->
+  <!--                                                                      -->
+  <!--   isVirtualWebappRelative                                            -->
+  <!--                       Should "virtual" paths be interpreted as       -->
+  <!--                       relative to the context root, instead of       -->
+  <!--                       the server root?  (0=false, 1=true) [0]        -->
+  <!--                                                                      -->
+  <!--   ignoreUnsupportedDirective                                         -->
+  <!--                       Should unknown or misspelled Ssi directives    -->
+  <!--                       be ignored and no errors shown?                -->
+  <!--                       (0=false, 1=true) [1]                          -->
+  <!--                                                                      -->
+  <!-- IMPORTANT: To use the SSI servlet, you also need to rename the       -->
+  <!--            $CATALINA_HOME/server/lib/servlets-ssi.renametojar file   -->
+  <!--            to $CATALINA_HOME/server/lib/servlets-ssi.jar             -->
+
+<!--
+    <servlet>
+        <servlet-name>ssi</servlet-name>
+        <servlet-class>
+          org.apache.catalina.servlets.SsiInvokerServlet
+        </servlet-class>
         <init-param>
-            <param-name>ignoreUnsupportedDirective</param-name>
-            <param-value>1</param-value>
+          <param-name>buffered</param-name>
+          <param-value>1</param-value>
         </init-param>
-    <load-on-startup>4</load-on-startup>
-  </servlet>
+        <init-param>
+          <param-name>debug</param-name>
+          <param-value>0</param-value>
+        </init-param>
+        <init-param>
+          <param-name>expires</param-name>
+          <param-value>666</param-value>
+        </init-param>
+        <init-param>
+          <param-name>isVirtualWebappRelative</param-name>
+          <param-value>0</param-value>
+        </init-param>
+        <init-param>
+          <param-name>ignoreUnsupportedDirective</param-name>
+          <param-value>1</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
 -->
-    <!-- Common Gateway Includes (CGI) processing servlet, which supports     -->
-    <!-- execution of external applications that conform to the CGI spec      -->
-    <!-- requirements.  Typically, this servlet is mapped to the URL pattern  -->
-    <!-- "/cgi-bin/*", which means that any CGI applications that are         -->
-    <!-- executed must be present within the web application.  This servlet   -->
-    <!-- supports the following initialization parameters (default values     -->
-    <!-- are in square brackets):                                             -->
-    <!--                                                                      -->
-    <!--   cgiPathPrefix       The CGI search path will start at              -->
-    <!--                       webAppRootDir + File.separator + this prefix.  -->
-    <!--                       [WEB-INF/cgi]                                  -->
-    <!--                                                                      -->
-    <!--   clientInputTimeout  The time (in milliseconds) to wait for input   -->
-    <!--                       from the browser before assuming that there    -->
-    <!--                       is none.  [100]                                -->
-    <!--                                                                      -->
-    <!--   debug               Debugging detail level for messages logged     -->
-    <!--                       by this servlet.  [0]                          -->
-    <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
-    <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
-    <!--            to $CATALINA_HOME/server/lib/servlets-cgi.jar             -->
-    <!--
-  <servlet>
-    <servlet-name>cgi</servlet-name>
-    <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
-    <init-param>
-      <param-name>clientInputTimeout</param-name>
-      <param-value>100</param-value>
-    </init-param>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>6</param-value>
-    </init-param>
-    <init-param>
-      <param-name>cgiPathPrefix</param-name>
-      <param-value>WEB-INF/cgi</param-value>
-    </init-param>
-     <load-on-startup>5</load-on-startup>
-   </servlet>
+
+
+  <!-- Common Gateway Includes (CGI) processing servlet, which supports     -->
+  <!-- execution of external applications that conform to the CGI spec      -->
+  <!-- requirements.  Typically, this servlet is mapped to the URL pattern  -->
+  <!-- "/cgi-bin/*", which means that any CGI applications that are         -->
+  <!-- executed must be present within the web application.  This servlet   -->
+  <!-- supports the following initialization parameters (default values     -->
+  <!-- are in square brackets):                                             -->
+  <!--                                                                      -->
+  <!--   cgiPathPrefix       The CGI search path will start at              -->
+  <!--                       webAppRootDir + File.separator + this prefix.  -->
+  <!--                       [WEB-INF/cgi]                                  -->
+  <!--                                                                      -->
+  <!--   clientInputTimeout  The time (in milliseconds) to wait for input   -->
+  <!--                       from the browser before assuming that there    -->
+  <!--                       is none.  [100]                                -->
+  <!--                                                                      -->
+  <!--   debug               Debugging detail level for messages logged     -->
+  <!--                       by this servlet.  [0]                          -->
+  <!--                                                                      -->
+  <!-- IMPORTANT: To use the CGI servlet, you also need to rename the       -->
+  <!--            $CATALINA_HOME/server/lib/servlets-cgi.renametojar file   -->
+  <!--            to $CATALINA_HOME/server/lib/servlets-cgi.jar             -->
+
+<!--
+    <servlet>
+        <servlet-name>cgi</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
+        <init-param>
+          <param-name>clientInputTimeout</param-name>
+          <param-value>100</param-value>
+        </init-param>
+        <init-param>
+          <param-name>debug</param-name>
+          <param-value>6</param-value>
+        </init-param>
+        <init-param>
+          <param-name>cgiPathPrefix</param-name>
+          <param-value>WEB-INF/cgi</param-value>
+        </init-param>
+         <load-on-startup>5</load-on-startup>
+    </servlet>
 -->
-    <!-- ================ Built In Servlet Mappings ========================= -->
-    <!-- The servlet mappings for the built in servlets defined above.  Note  -->
-    <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
-    <!-- must uncomment these mappings (or add them to your application's own -->
-    <!-- web.xml deployment descriptor) to enable these services              -->
+
+
+  <!-- ================ Built In Servlet Mappings ========================= -->
+
+
+  <!-- The servlet mappings for the built in servlets defined above.  Note  -->
+  <!-- that, by default, the CGI and SSI servlets are *not* mapped.  You    -->
+  <!-- must uncomment these mappings (or add them to your application's own -->
+  <!-- web.xml deployment descriptor) to enable these services              -->
+
     <!-- The mapping for the default servlet -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
     <!-- The mapping for the invoker servlet -->
     <servlet-mapping>
         <servlet-name>invoker</servlet-name>
         <url-pattern>/servlet/*</url-pattern>
     </servlet-mapping>
+
     <!-- The mapping for the JSP servlet -->
     <servlet-mapping>
         <servlet-name>jsp</servlet-name>
         <url-pattern>*.jsp</url-pattern>
     </servlet-mapping>
+
     <!-- The mapping for the SSI servlet -->
-    <!--
-  <servlet-mapping>
-    <servlet-name>ssi</servlet-name>
-    <url-pattern>*.shtml</url-pattern>
-  </servlet-mapping>
+<!--
+    <servlet-mapping>
+        <servlet-name>ssi</servlet-name>
+        <url-pattern>*.shtml</url-pattern>
+    </servlet-mapping>
 -->
+
     <!-- The mapping for the CGI Gateway servlet -->
-    <!--
-  <servlet-mapping>
-    <servlet-name>cgi</servlet-name>
-    <url-pattern>/cgi-bin/*</url-pattern>
-  </servlet-mapping>
+<!--
+    <servlet-mapping>
+        <servlet-name>cgi</servlet-name>
+        <url-pattern>/cgi-bin/*</url-pattern>
+    </servlet-mapping>
 -->
-    <!-- ==================== Default Session Configuration ================= -->
-    <!-- You can set the default session timeout (in minutes) for all newly   -->
-    <!-- created sessions by modifying the value below.                       -->
+
+
+  <!-- ==================== Default Session Configuration ================= -->
+  <!-- You can set the default session timeout (in minutes) for all newly   -->
+  <!-- created sessions by modifying the value below.                       -->
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    <!-- ===================== Default MIME Type Mappings =================== -->
-    <!-- When serving static resources, Tomcat will automatically generate    -->
-    <!-- a "Content-Type" header based on the resource's filename extension,  -->
-    <!-- based on these mappings.  Additional mappings can be added here (to  -->
-    <!-- apply to all web applications), or in your own application's web.xml -->
-    <!-- deployment descriptor.                                               -->
+
+
+  <!-- ===================== Default MIME Type Mappings =================== -->
+  <!-- When serving static resources, Tomcat will automatically generate    -->
+  <!-- a "Content-Type" header based on the resource's filename extension,  -->
+  <!-- based on these mappings.  Additional mappings can be added here (to  -->
+  <!-- apply to all web applications), or in your own application's web.xml -->
+  <!-- deployment descriptor.                                               -->
+
     <mime-mapping>
         <extension>abs</extension>
         <mime-type>audio/x-mpeg</mime-type>
@@ -767,20 +809,24 @@
         <extension>zip</extension>
         <mime-type>application/zip</mime-type>
     </mime-mapping>
-    <!-- ==================== Default Welcome File List ===================== -->
-    <!-- When a request URI refers to a directory, the default servlet looks  -->
-    <!-- for a "welcome file" within that directory and, if present,          -->
-    <!-- to the corresponding resource URI for display.  If no welcome file   -->
-    <!-- is present, the default servlet either serves a directory listing,   -->
-    <!-- or returns a 404 status, depending on how it is configured.          -->
-    <!--                                                                      -->
-    <!-- If you define welcome files in your own application's web.xml        -->
-    <!-- deployment descriptor, that list *replaces* the list configured      -->
-    <!-- here, so be sure that you include any of the default values that     -->
-    <!-- you wish to include.                                                 -->
+
+
+  <!-- ==================== Default Welcome File List ===================== -->
+  <!-- When a request URI refers to a directory, the default servlet looks  -->
+  <!-- for a "welcome file" within that directory and, if present,          -->
+  <!-- to the corresponding resource URI for display.  If no welcome file   -->
+  <!-- is present, the default servlet either serves a directory listing,   -->
+  <!-- or returns a 404 status, depending on how it is configured.          -->
+  <!--                                                                      -->
+  <!-- If you define welcome files in your own application's web.xml        -->
+  <!-- deployment descriptor, that list *replaces* the list configured      -->
+  <!-- here, so be sure that you include any of the default values that     -->
+  <!-- you wish to include.                                                 -->
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
 </web-app>
