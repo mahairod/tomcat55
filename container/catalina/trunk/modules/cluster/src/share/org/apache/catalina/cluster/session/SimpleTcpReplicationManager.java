@@ -110,6 +110,7 @@ import java.net.InetAddress;
  * a byte array using the StandardSession.readObjectData, StandardSession.writeObjectData methods.
  */
 public class SimpleTcpReplicationManager extends org.apache.catalina.session.StandardManager
+implements org.apache.catalina.cluster.ClusterManager
 {
 
     //the channel configuration
