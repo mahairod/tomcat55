@@ -64,6 +64,7 @@
 
 package org.apache.naming.resources;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Date;
@@ -896,6 +897,7 @@ public class FileDirContext extends BaseDirContext {
         if (!file.isDirectory())
             return entries;
         String[] names = file.list();
+        Arrays.sort(names);             // Sort alphabetically
         if (names == null)
             return entries;
         NamingEntry entry = null;
