@@ -208,21 +208,12 @@
           userRoleTable="user_roles" roleNameCol="role_name" />
       -->
 
-      <!-- Define the default virtual host -->
-      <Host name="localhost" debug="0" appBase="webapps"
-       unpackWARs="true" autoDeploy="true">
-
-      <!-- Add the following attributes if you want to turn XML validation
-           on. Remember to comment the Host element above. 
-           
-           Note: XML Schema validationn will works with Xerces 2.0.1 or 
-           Xerces 2.1. Xerces 2.0.2 and Xerces 2.2 have bugs that prevent 
-           their use with Tomcat-->
-      <!--
+      <!-- Define the default virtual host
+           Note: XML Schema validationn will not works with Xerces 2.2.
+       -->
       <Host name="localhost" debug="0" appBase="webapps"
        unpackWARs="true" autoDeploy="true"
-       xmlValidation="true" xmlNamespaceAware="true">
-      -->
+       xmlValidation="false" xmlNamespaceAware="false">
 
         <!-- Defines a cluster for this node,
              By defining this element, means that every manager will be changed.
