@@ -808,6 +808,14 @@ public class DeltaManager
            }
    
        }
+       
+       protected void sessionExpired(String id) {
+           SessionMessage msg = new SessionMessage(getName(), 
+                                                   SessionMessage.EVT_SESSION_EXPIRED,
+                                                   null,
+                                                   id);
+           cluster.send(msg);
+       }
    
        /**
         * When the manager expires session not tied to a request.
@@ -856,10 +864,9 @@ public class DeltaManager
                        break;
                    }
                    case SessionMessage.EVT_SESSION_EXPIRED: {
-                       Session session = findSession(msg.getSessionID());
+                       DeltaSession session = (DeltaSession)findSession(msg.getSessionID());
                        if (session != null) {
-                           session.expire();
-                           this.remove(session);
+                           session.expire(true,false);
                        } //end if
                        break;
                    }
