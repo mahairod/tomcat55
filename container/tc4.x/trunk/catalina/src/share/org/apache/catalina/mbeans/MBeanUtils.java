@@ -120,15 +120,15 @@ public class MBeanUtils {
 
 
     /**
-     * The <code>MBeanServer</code> for this application.
-     */
-    private static MBeanServer mserver = createServer();
-
-
-    /**
      * The configuration information registry for our managed beans.
      */
     private static Registry registry = createRegistry();
+
+
+    /**
+     * The <code>MBeanServer</code> for this application.
+     */
+    private static MBeanServer mserver = createServer();
 
 
     // --------------------------------------------------------- Static Methods
@@ -497,8 +497,9 @@ public class MBeanUtils {
 
         if (mserver == null) {
             try {
-                Trace.parseTraceProperties();
-                mserver = MBeanServerFactory.createMBeanServer();
+                //Trace.parseTraceProperties();
+                //mserver = MBeanServerFactory.createMBeanServer();
+                mserver = Registry.getServer();
             } catch (Throwable t) {
                 t.printStackTrace(System.out);
                 System.exit(1);
