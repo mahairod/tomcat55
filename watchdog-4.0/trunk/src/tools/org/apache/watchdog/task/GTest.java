@@ -90,6 +90,8 @@ public class GTest extends Task implements TaskContainer {
 
     String prefix = "http";
     String host = "localhost";
+    String localHost = null;
+    String localIP = null;
     int port = 8080;
     int debug = 0;
 
@@ -428,11 +430,22 @@ public class GTest extends Task implements TaskContainer {
      *
      * @param s a <code>String</code> value in the form
      *          of METHOD PATH HTTP_VERSION
+     */
+    public void setRequest ( String s ) {
+        this.request = s;
+    }
+
+    /**
+     * Private utility method to 'massage' a request string that
+     * may or may not have replacement markers for the request parameters.
+     *
+     * @param req the request to manipulate
+     * @param socket local socket.  Used to rebuild specified query strings.
+     *
      * @exception Exception if an error occurs
      */
-    public void setRequest ( String s ) throws Exception {
-
-        this.request = replaceMarkers( s );
+    private void rebuildRequest(String req, Socket socket) throws Exception {
+        this.request = replaceMarkers(req, socket );
         String addressString = request.substring( request.indexOf( "/" ), request.indexOf( "HTTP" ) ).trim();
 
         if ( addressString.indexOf( "?" ) > -1 ) {
@@ -505,7 +518,7 @@ public class GTest extends Task implements TaskContainer {
                 resultOut.write( ( "\n<testStrategy>" + testStrategy + "</testStrategy>\n" ).getBytes() );
             }
 
-            dispatch( request, requestHeaders );
+            dispatch(requestHeaders );
 
             boolean result = checkResponse( magnitude );
 
@@ -893,13 +906,15 @@ public class GTest extends Task implements TaskContainer {
      * <code>dispatch</code> sends the request and any
      * configured request headers to the target server.
      *
-     * @param request a <code>String</code> value
      * @param requestHeaders a <code>HashMap</code> value
      */
-    private void dispatch( String request, HashMap requestHeaders ) 
+    private void dispatch( HashMap requestHeaders ) 
     throws Exception {
         // XXX headers are ignored
         Socket socket = new Socket( host, port );
+
+        //socket obtained, rebuild the request.
+        rebuildRequest(request, socket);
 
         InputStream in = new CRBufferedInputStream( socket.getInputStream() );
 
@@ -1028,37 +1043,35 @@ public class GTest extends Task implements TaskContainer {
      *
      * @param request An HTTP request. 
      */
-     private String replaceMarkers( String request ) {
+     private String replaceMarkers( String req, Socket socket ) {
         
         final String CLIENT_IP = "client.ip";
         final String CLIENT_HOME = "client.host";
 
-        StringTokenizer tok = new StringTokenizer( request, "|" );
-        StringBuffer sb = new StringBuffer( 50 );
-        InetAddress addr = null;
-        String host = null;
-        String ip = null;
-        try {
-            addr = InetAddress.getLocalHost(); 
-            host = addr.getHostName();
-            ip = addr.getHostAddress();
-        } catch ( UnknownHostException nshe ) {
-            System.out.println( " [WARNING] Unable to determine local host and IP address.  Defaulting to localhost" );
-            host = "localhost";
-            ip = "127.0.0.1";
+        if (localIP == null || localHost == null) {
+            InetAddress addr = socket.getLocalAddress(); 
+            localHost = addr.getHostName();
+            localIP = addr.getHostAddress();
         }
+
+        if (req.indexOf('|') > -1) {
+            StringTokenizer tok = new StringTokenizer( request, "|" );
+            StringBuffer sb = new StringBuffer( 50 );
         
-        while ( tok.hasMoreElements() ) {
-            String token = tok.nextToken();
-            if ( token.equals( CLIENT_IP ) ) {
-                sb.append( ip );
-            } else if ( token.equals( CLIENT_HOME ) ) {
-                sb.append( host );
-            } else {
-                sb.append( token );
+            while ( tok.hasMoreElements() ) {
+                String token = tok.nextToken();
+                if ( token.equals( CLIENT_IP ) ) {
+                    sb.append( localIP );
+                } else if ( token.equals( CLIENT_HOME ) ) {
+                    sb.append( localHost );
+                } else {
+                    sb.append( token );
+                }
             }
+            return sb.toString(); 
+        } else {
+            return req;
         }
-        return sb.toString();
     }
             
 
