@@ -71,14 +71,10 @@ package org.apache.jasper.compiler;
  *
  * @author Mandar Raje
  */
-public class MappedCharDataGenerator 
-    extends GeneratorBase
-    implements ServiceMethodPhase
-{
-    char[] chars;
+public class MappedCharDataGenerator extends CharDataGenerator {
     
     public MappedCharDataGenerator(char[] chars) {
-	this.chars = chars;
+	super(chars);
     }
 
     public void generate(ServletWriter writer, Class phase) {
