@@ -166,7 +166,7 @@ public class JasperLoader extends URLClassLoader {
                           
         // (.5) Permission to access this class when using a SecurityManager
         int dot = name.lastIndexOf('.');
-        if (System.getSecurityManager() != null) {     
+        if (securityManager != null) {     
             if (dot >= 0) {                
                 try {                    
                     securityManager.checkPackageAccess(name.substring(0,dot));
@@ -182,7 +182,7 @@ public class JasperLoader extends URLClassLoader {
         // Class is in a package, delegate to thread context class loader
         if( !name.startsWith(Constants.JSP_PACKAGE_NAME) ) {
             ClassLoader classLoader = null;
-            if (System.getSecurityManager() != null) {
+            if (securityManager != null) {
                  classLoader = (ClassLoader)AccessController.doPrivileged(privLoadClass);
             } else {
                 classLoader = Thread.currentThread().getContextClassLoader();
@@ -200,7 +200,7 @@ public class JasperLoader extends URLClassLoader {
             byte [] cdata = loadClassDataFromFile(classFile);
             if( cdata == null )
                 throw new ClassNotFoundException(name);
-            if( System.getSecurityManager() != null ) {
+            if( securityManager != null ) {
                 ProtectionDomain pd = new ProtectionDomain(
                         codeSource,permissionCollection);
                 clazz = defineClass(name,cdata,0,cdata.length,pd);
