@@ -195,7 +195,6 @@ public class StandardEngine
      * This property should not be changed once it is set.
      */
     public void setJvmRoute(String routeId) {
-        this.log("setJvmRoute=" + routeId);
         jvmRouteId = routeId;
     }
 
