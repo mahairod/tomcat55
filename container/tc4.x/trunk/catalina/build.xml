@@ -1173,7 +1173,7 @@
     <!-- Naming - Resources JAR File -->
     <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar">
       <fileset dir="${catalina.build}/server/classes">
-        <include name="org/apache/naming/resources/*" />
+        <include name="org/apache/naming/resources/**" />
       </fileset>
     </jar>
 
