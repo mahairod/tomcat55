@@ -664,8 +664,6 @@ public class HttpResponseBase
 	String language = locale.getLanguage();
 	if ((language != null) && (language.length() > 0))
 	    setHeader("Content-Language", language);
-	;	// FIXME -- set encoding based on the locale?
-
 
     }
 

@@ -77,6 +77,7 @@ import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.util.LocaleToCharsetMap;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.StringManager;
 
@@ -148,7 +149,7 @@ public abstract class ResponseBase
     /**
      * The character encoding associated with this Response.
      */
-    protected String encoding = "ISO-8859-1";
+    protected String encoding = null;
 
 
     /**
@@ -448,7 +449,7 @@ public abstract class ResponseBase
 	contentLength = -1;
 	contentType = "text/plain";
 	context = null;
-	encoding = "ISO-8859-1";
+	encoding = null;
 	included = false;
 	locale = Locale.getDefault();
 	output = null;
@@ -576,7 +577,10 @@ public abstract class ResponseBase
      */
     public String getCharacterEncoding() {
 
-	return (encoding);
+	if (encoding == null)
+	    return ("ISO-8859-1");
+	else
+	    return (encoding);
 
     }
 
@@ -747,7 +751,9 @@ public abstract class ResponseBase
 	    return;	// Ignore any call from an included servlet
 
 	this.locale = locale;
-	;	// FIXME -- set encoding based on the locale!
+	String encoding = LocaleToCharsetMap.getCharset(locale);
+	if (encoding != null)
+	    this.encoding = encoding;
 
     }
 
