@@ -112,7 +112,6 @@ public final class SaveConnectorAction extends Action {
       "int"                  // port      
     };
 
-
     /**
      * The MBeanServer we will be interacting with.
      */
@@ -203,8 +202,13 @@ public final class SaveConnectorAction extends Action {
                     TomcatTreeBuilder.SERVICE_TYPE + ",name=" + serviceName;
                 values[1] = cform.getAddress();
                 values[2] = new Integer(cform.getPortText());
+
+                if ("HTTP".equalsIgnoreCase(connectorType)) {
+                        operation = "createCoyoteConnector"; // HTTP
+                } else { 
+                        operation = "createJK2Connector";   // HTTPS
+                }
                 
-                operation = "create" + connectorType;
                 cObjectName = (String)
                     mBServer.invoke(fname, operation,
                                     values, createStandardConnectorTypes);
@@ -330,21 +334,40 @@ public final class SaveConnectorAction extends Action {
             mBServer.setAttribute(coname,
                                   new Attribute("maxProcessors", new Integer(maxProcessors))); 
       
-            if("CoyoteConnector".equalsIgnoreCase(connectorType)) {
-                attribute = "proxyName";              
+            // proxy name and port exist for both Coyote and JK2 Connectors.
+            attribute = "proxyName";              
+            mBServer.setAttribute(coname,
+                              new Attribute("proxyName", cform.getProxyName()));            
+            attribute = "proxyPort";
+            int proxyPort = 0;
+            try {
+                proxyPort = Integer.parseInt(cform.getProxyPortText());
+            } catch (Throwable t) {
+                proxyPort = 0;
+            }
+            mBServer.setAttribute(coname,
+                              new Attribute("proxyPort", new Integer(proxyPort))); 
+   
+            // HTTPS (JK2 connector) specific properties
+            if("HTTPS".equalsIgnoreCase(connectorType)) {
+                attribute = "clientAuth";              
                 mBServer.setAttribute(coname,
-                                  new Attribute("proxyName", cform.getProxyName()));            
-                attribute = "proxyPort";
-                int proxyPort = 0;
-                try {
-                    proxyPort = Integer.parseInt(cform.getProxyPortText());
-                } catch (Throwable t) {
-                    proxyPort = 0;
-                }
-                mBServer.setAttribute(coname,
-                                  new Attribute("proxyPort", new Integer(proxyPort))); 
-                }
-            
+                              new Attribute("clientAuth", new Boolean(cform.getClientAuthentication())));            
+                
+                attribute = "keystoreFile";
+                String keyFile = cform.getKeyStoreFileName();
+                if ((keyFile != null) || (keyFile.length()>0)) 
+                    mBServer.setAttribute(coname,
+                              new Attribute("keystoreFile", keyFile));            
+                
+                attribute = "keystorePass";
+                String keyPass = cform.getKeyStorePassword();
+                if ((keyPass != null) || (keyPass.length()>0)) 
+                    mBServer.setAttribute(coname,
+                              new Attribute("keystorePass", keyPass));                 
+                // request.setAttribute("warning", "connector.keyPass.warning");               
+             }
+ 
         } catch (Exception e) {
 
             getServlet().log

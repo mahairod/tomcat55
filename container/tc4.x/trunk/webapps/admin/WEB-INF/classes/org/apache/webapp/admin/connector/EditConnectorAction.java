@@ -172,7 +172,6 @@ public class EditConnectorAction extends Action {
         connectorFm.setNodeLabel(sb.toString());
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());               
         connectorFm.setBooleanVals(Lists.getBooleanValues());        
-
         
         String attribute = null;
         try {
@@ -224,16 +223,28 @@ public class EditConnectorAction extends Action {
             connectorFm.setMaxProcessorsText
                 (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
             
-            // Supported only by Coyote Connector.            
-            if ("CoyoteConnector".equalsIgnoreCase(connectorType)) {
-                // Initialize rest of variables.            
-                attribute = "proxyName";
-                connectorFm.setProxyName
+            // Supported by Coyote and JK2 Connectors both.            
+            attribute = "proxyName";
+            connectorFm.setProxyName
+                ((String) mBServer.getAttribute(cname, attribute));
+            attribute = "proxyPort";
+            connectorFm.setProxyPortText
+                (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
+                
+            if ("HTTPS".equalsIgnoreCase(connectorType)) {
+                // Initialize rest of variables. 
+                // These are set only for SSL connectors.
+                attribute = "clientAuth";
+                connectorFm.setClientAuthentication
+                    (((Boolean) mBServer.getAttribute(cname, attribute)).toString());
+                attribute = "keystoreFile";
+                connectorFm.setKeyStoreFileName
                     ((String) mBServer.getAttribute(cname, attribute));
-                attribute = "proxyPort";
-                connectorFm.setProxyPortText
-                    (((Integer) mBServer.getAttribute(cname, attribute)).toString());            
-            }
+                attribute = "keystorePass";
+                connectorFm.setKeyStorePassword
+                    ((String) mBServer.getAttribute(cname, attribute));            
+            }     
+                
                         
         } catch (Throwable t) {
             getServlet().log

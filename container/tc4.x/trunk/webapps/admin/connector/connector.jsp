@@ -83,12 +83,15 @@
             </controls:data>
         </controls:row>
 
+    <%-- do not show scheme while creating a new connector --%>
+    <logic:notEqual name="connectorForm" property="adminAction" value="Create">              
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.scheme"/>:</controls:label>
             <controls:data>
               <bean:write name="connectorForm" property="scheme" scope="session"/>
             </controls:data>
         </controls:row>
+     </logic:notEqual>
 
         <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
             <controls:label><bean:message key="connector.accept.count"/>:</controls:label>
@@ -193,11 +196,7 @@
             </controls:data>
         </controls:row>
 
-<%-- The following properties are supported only on Coyote Connector --%>
-     <logic:equal name="connectorForm" property="connectorType" scope="session" 
-                  value="CoyoteConnector">
-     <br>
-
+<%-- The following properties are supported for both Coyote and JK2 Connectors --%>
         <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
             <controls:label>Proxy</controls:label>
             <controls:data>&nbsp;</controls:data>
@@ -216,8 +215,46 @@
                 <html:text property="proxyPortText" size="5"/> 
             </controls:data>
         </controls:row>
+
+<%-- The following properties are supported only on HTTPS JK2 Connector --%>
+     <logic:equal name="connectorForm" property="connectorType" scope="session" 
+                  value="HTTPS">
+        <br>
+
+        <controls:row header="true" labelStyle="table-header-text" dataStyle="table-header-text">
+            <controls:label>Factory Properties:</controls:label>
+            <controls:data>&nbsp;</controls:data>
+        </controls:row>
+    
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="connector.client.auth"/>:</controls:label>
+            <controls:data>
+                <html:select property="clientAuthentication">
+                     <bean:define id="booleanVals" name="connectorForm" property="booleanVals"/>
+                     <html:options collection="booleanVals" property="value"
+                   labelProperty="label"/>
+                </html:select>
+            </controls:data>
+        </controls:row>
+
+      <%-- FIXME: Input only allowed on create transaction?? --%>
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="connector.keystore.filename"/>:</controls:label>
+            <controls:data>
+                <html:text property="keyStoreFileName" size="15"/> 
+            </controls:data>
+        </controls:row>
+
+        <controls:row labelStyle="table-label-text" dataStyle="table-normal-text">
+            <controls:label><bean:message key="connector.keystore.password"/>:</controls:label>
+            <controls:data>
+                <%-- should the password be of type html:password or is cleartext ok? --%>
+                <html:text property="keyStorePassword" size="15"/> 
+            </controls:data>
+        </controls:row>
+
     </logic:equal>
-      </controls:table>
+   </controls:table>
   
       </td>
     </tr>

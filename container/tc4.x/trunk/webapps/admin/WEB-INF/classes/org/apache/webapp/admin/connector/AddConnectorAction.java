@@ -135,7 +135,8 @@ public class AddConnectorAction extends Action {
         connectorFm.setConnectorName("");
         String type = request.getParameter("type");
         if (type == null)
-            type = "CoyoteConnector";    // default type is CoyoteConnector
+            //type = "CoyoteConnector";    // default type is CoyoteConnector
+            type = "HTTP";    // default type is HTTP
         connectorFm.setConnectorType(type);
         connectorFm.setDebugLvl("0");
         connectorFm.setServiceName(serviceName);
@@ -149,7 +150,10 @@ public class AddConnectorAction extends Action {
         connectorFm.setRedirectPortText("-1");
         connectorFm.setMinProcessorsText("5");
         connectorFm.setMaxProcessorsText("20");
-                
+        connectorFm.setClientAuthentication("false");
+        connectorFm.setKeyStoreFileName("");
+        connectorFm.setKeyStorePassword("");
+                       
         // should be set only for Coyote, not supported by all connector types      
         if ("CoyoteConnector".equalsIgnoreCase(type)) {
             connectorFm.setProxyName("");
@@ -159,21 +163,36 @@ public class AddConnectorAction extends Action {
         connectorFm.setDebugLvlVals(Lists.getDebugLevels());
         connectorFm.setBooleanVals(Lists.getBooleanValues());                
         
+        /*
         String connectorTypes[] = new String[2];
         connectorTypes[0] = "CoyoteConnector";
         connectorTypes[1] = "Ajp13Connector";
+        */
         
+        String schemeTypes[]= new String[2];
+        schemeTypes[0] = "HTTP";
+        schemeTypes[1] = "HTTPS";
+                
         ArrayList types = new ArrayList();    
         // the first element in the select list should be the type selected
         types.add(new LabelValueBean(type,
                 "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName) 
                 + "&type=" + type));        
-        for (int i=0; i< connectorTypes.length; i++) {
+         for (int i=0; i< schemeTypes.length; i++) {
+            if (!type.equalsIgnoreCase(schemeTypes[i])) {
+                types.add(new LabelValueBean(schemeTypes[i],
+                "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
+                + "&type=" + schemeTypes[i]));        
+            }
+        /*
+         for (int i=0; i< connectorTypes.length; i++) {
             if (!type.equalsIgnoreCase(connectorTypes[i])) {
-                types.add(new LabelValueBean(connectorTypes[i],
+                types.add(new LabelValueBean(schemeTypes[i],
                 "/admin/AddConnector.do?serviceName=" + URLEncoder.encode(serviceName)
                 + "&type=" + connectorTypes[i]));        
             }
+         */
+        
         }
         connectorFm.setConnectorTypeVals(types);
         

@@ -135,7 +135,7 @@ public final class ConnectorForm extends ActionForm {
     private String bufferSizeText = null;
     
     /**
-     * The value of eanble Lookups.
+     * The value of enable Lookups.
      */
     private String enableLookups = "false";
     
@@ -180,7 +180,22 @@ public final class ConnectorForm extends ActionForm {
      * The text for the connectorName.
      */
     private String connectorName = null;
-    
+        
+    /**
+     * Whether client authentication is supported.
+     */
+    private String clientAuthentication = "false";
+        
+    /**
+     * The keyStore Filename.
+     */
+    private String keyStoreFileName = null;
+        
+    /**
+     * The keyStore Password.
+     */
+    private String keyStorePassword = null;
+
     /**
      * Set of valid values for debug level.
      */
@@ -424,7 +439,64 @@ public final class ConnectorForm extends ActionForm {
         this.proxyPortText = proxyPortText;
         
     }
-    
+
+   /**
+     * Return the true/false value of client authentication.
+     */
+    public String getClientAuthentication() {
+
+        return this.clientAuthentication;
+
+    }
+
+
+    /**
+     * Set whether client authentication is supported or not.
+     */
+    public void setClientAuthentication(String clientAuthentication) {
+
+        this.clientAuthentication = clientAuthentication;
+
+    }
+
+          /**
+     * Return the object name of the service this connector belongs to.
+     */
+    public String getKeyStoreFileName() {
+
+        return this.keyStoreFileName;
+
+    }
+
+
+    /**
+     * Set the object name of the Service this connector belongs to.
+     */
+    public void setKeyStoreFileName(String keyStoreFileName) {
+
+        this.keyStoreFileName = keyStoreFileName;
+
+    }
+
+          /**
+     * Return the object name of the service this connector belongs to.
+     */
+    public String getKeyStorePassword() {
+
+        return this.keyStorePassword;
+
+    }
+
+
+    /**
+     * Set the object name of the Service this connector belongs to.
+     */
+    public void setKeyStorePassword(String keyStorePassword) {
+
+        this.keyStorePassword = keyStorePassword;
+
+    }
+
     /**
      * Return the debugVals.
      */
@@ -634,6 +706,9 @@ public final class ConnectorForm extends ActionForm {
         this.redirectPortText = null;
         this.proxyName = null;
         this.proxyPortText = null;
+        this.keyStoreFileName = null;
+        this.keyStorePassword = null;        
+        this.clientAuthentication = "false";
         
     }
     
@@ -701,9 +776,9 @@ public final class ConnectorForm extends ActionForm {
                 }
             }   
             
-            // not supported by all connector types
-            if ("CoyoteConnector".equalsIgnoreCase(connectorType)) 
-                numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
+            // supported by both Coyote and JK2 connectors
+            numberCheck("proxyPortText",  proxyPortText, true, 0, 65535);
+                                    
         }
         
         return errors;
