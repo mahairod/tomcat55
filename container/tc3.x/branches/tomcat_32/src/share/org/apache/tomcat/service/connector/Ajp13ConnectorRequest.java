@@ -254,7 +254,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
 		return -1;
 	    }
 	}
-        return bodyBuff[pos++];
+        return (char) bodyBuff[pos++];
     }
     
     public int doRead(byte[] b, int off, int len) throws IOException 
