@@ -1348,7 +1348,7 @@ public class CoyoteConnector
     {
         if (initialized) {
             log.info(sm.getString("coyoteConnector.alreadyInitialized"));
-            return;
+           return;
         }
 
         this.initialized = true;
@@ -1459,9 +1459,8 @@ public class CoyoteConnector
         try {
             protocolHandler.pause();
         } catch (Exception e) {
-            throw new LifecycleException
-                (sm.getString
-                 ("coyoteConnector.protocolHandlerPauseFailed", e));
+            log.error(sm.getString
+                      ("coyoteConnector.protocolHandlerPauseFailed"), e);
         }
     }
 
@@ -1474,9 +1473,8 @@ public class CoyoteConnector
         try {
             protocolHandler.resume();
         } catch (Exception e) {
-            throw new LifecycleException
-                (sm.getString
-                 ("coyoteConnector.protocolHandlerResumeFailed", e));
+            log.error(sm.getString
+                      ("coyoteConnector.protocolHandlerResumeFailed"), e);
         }
     }
 
