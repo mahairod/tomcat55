@@ -3623,7 +3623,7 @@ public class StandardContext
             }
             this.resources = proxyDirContext;
         } catch (Throwable t) {
-            log.error(sm.getString("standardContext.resourcesStart", t));
+            log.error(sm.getString("standardContext.resourcesStart"), t);
             ok = false;
         }
 
