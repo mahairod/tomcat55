@@ -11,9 +11,9 @@
 
   <!-- Build Defaults -->
   <property name="build.compiler"    value="classic"/>
-  <property name="catalina.build"    value="build"/>
-  <property name="catalina.deploy"   value="../build"/>
-  <property name="catalina.dist"     value="dist"/>
+  <property name="catalina.build"    value="${basedir}/build"/>
+  <property name="catalina.deploy"   value="${basedir}/../build"/>
+  <property name="catalina.dist"     value="${basedir}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="test.webapp"       value="../webapps/build/examples"/>

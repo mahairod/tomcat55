@@ -11,9 +11,9 @@
 
   <!-- Build Defaults -->
   <property name="build.compiler"    value="classic"/>
-  <property name="jasper.build"      value="build"/>
-  <property name="jasper.deploy"     value="../build"/>
-  <property name="jasper.dist"       value="dist"/>
+  <property name="jasper.build"      value="${basedir}/build"/>
+  <property name="jasper.deploy"     value="${basedir}/../build"/>
+  <property name="jasper.dist"       value="${basedir}/dist"/>
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
   <property name="tools.jar"         value="${java.home}/lib/tools.jar"/>

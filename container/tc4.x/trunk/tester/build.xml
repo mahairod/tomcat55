@@ -9,9 +9,9 @@
 
   <property name="build.compiler"  value="classic"/>
   <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
-  <property name="tester.build"    value="build"/>
-  <property name="tester.deploy"   value="../build"/>
-  <property name="tester.dist"     value="dist"/>
+  <property name="tester.build"    value="${basedir}/build"/>
+  <property name="tester.deploy"   value="${basedir}/../build"/>
+  <property name="tester.dist"     value="${basedir}/dist"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="ant.jar"         value="${ant.home}/lib/ant.jar"/>

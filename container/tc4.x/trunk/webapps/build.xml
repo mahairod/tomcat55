@@ -10,9 +10,9 @@
   <property file="${user.home}/build.properties"/>
 
   <property name="build.compiler"  value="classic"/>
-  <property name="webapps.build"   value="build"/>
-  <property name="webapps.deploy"  value="../build"/>
-  <property name="webapps.dist"    value="dist"/>
+  <property name="webapps.build"   value="${basedir}/build"/>
+  <property name="webapps.deploy"  value="${basedir}/../build"/>
+  <property name="webapps.dist"    value="${basedir}/dist"/>
 
 
   <!-- =================== BUILD: Create Directories ====================== -->
