@@ -274,6 +274,7 @@ public class Main{
             ClassLoader serverCl=
                     jdk11Compat.newClassLoaderInstance(serverClassPath ,
 						       commonCl);
+	    jdk11Compat.setContextClassLoader( serverCl );
 
 	    // Create the webapps class loader --------------------
             Vector appsJars = new Vector();
