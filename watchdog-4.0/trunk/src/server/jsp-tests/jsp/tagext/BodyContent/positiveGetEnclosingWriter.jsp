@@ -17,7 +17,9 @@
 %>
 <!-- checking for JspWriter object -->
 <%= (bc.getEnclosingWriter()) instanceof javax.servlet.jsp.JspWriter %>
-
+<%
+        pageContext.popBody();
+%>
 
 </body>
 </html>

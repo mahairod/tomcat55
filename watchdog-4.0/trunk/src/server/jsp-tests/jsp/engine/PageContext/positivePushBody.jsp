@@ -21,6 +21,7 @@
 	BodyContent bc = pageContext.pushBody();
 	bc.println(".com");
 	out.println(bc.getString());
+	pageContext.popBody();
 %>
 </body>
 </html>

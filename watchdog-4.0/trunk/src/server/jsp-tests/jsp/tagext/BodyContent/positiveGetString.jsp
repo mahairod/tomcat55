@@ -15,7 +15,7 @@
 	BodyContent bc = pageContext.pushBody();
 	bc.println("Checking For getString() method");
 	out.println(bc.getString());
-		
+	pageContext.popBody();		
 %>
 
 

@@ -16,6 +16,9 @@
 %>
 <!-- checking for Reader object -->
 <%= (bc.getReader()) instanceof java.io.Reader %>
+<%
+        pageContext.popBody();
+%>
 
 </body>
 </html>
