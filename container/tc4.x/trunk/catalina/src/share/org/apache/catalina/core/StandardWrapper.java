@@ -1111,7 +1111,9 @@ public final class StandardWrapper
         ClassLoader classLoader = instance.getClass().getClassLoader();
 
         PrintStream out = System.out;
-        SystemLogHandler.startCapture();
+        if (swallowOutput) {
+            SystemLogHandler.startCapture();
+        }
 
         // Call the servlet destroy() method
         try {
@@ -1136,12 +1138,14 @@ public final class StandardWrapper
             // restore the context ClassLoader
             Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
             // Write captured output
-            String log = SystemLogHandler.stopCapture();
-            if (log != null && log.length() > 0) {
-                if (getServletContext() != null) {
-                    getServletContext().log(log);
-                } else {
-                    out.println(log);
+            if (swallowOutput) {
+                String log = SystemLogHandler.stopCapture();
+                if (log != null && log.length() > 0) {
+                    if (getServletContext() != null) {
+                        getServletContext().log(log);
+                    } else {
+                        out.println(log);
+                    }
                 }
             }
         }
