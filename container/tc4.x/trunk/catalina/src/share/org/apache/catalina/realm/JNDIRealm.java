@@ -90,6 +90,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.util.StringManager;
 import org.apache.catalina.util.Base64;
 
+
 /**
  * <p>Implementation of <strong>Realm</strong> that works with a directory
  * server accessed via the Java Naming and Directory Interface (JNDI) APIs.
@@ -1340,6 +1341,7 @@ public class JNDIRealm extends RealmBase {
 
         // Set up parameters for an appropriate search
         String filter = roleFormat.format(new String[] { dn, username });
+        filter = doRFC2254Encoding(filter);
         SearchControls controls = new SearchControls();
         if (roleSubtree)
             controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
@@ -1671,6 +1673,51 @@ public class JNDIRealm extends RealmBase {
         return null;
 
     }
+
+
+    /**
+     * Given an LDAP search string, returns the string with certain characters
+     * escaped according to RFC 2254 guidelines.
+     * The character mapping is as follows:
+     *     char ->  Replacement
+     *    ---------------------------
+     *     *  -> \2a
+     *     (  -> \28
+     *     )  -> \29
+     *     \  -> \5c
+     *     \0 -> \00
+     * @param inString string to escape according to RFC 2254 guidelines
+     * @return
+     */
+    protected String doRFC2254Encoding(String inString) {
+        StringBuffer buf = new StringBuffer(inString.length());
+        for (int i = 0; i < inString.length(); i++) {
+            char c = inString.charAt(i);
+            switch (c) {
+                case '\\':
+                    buf.append("\\5c");
+                    break;
+                case '*':
+                    buf.append("\\2a");
+                    break;
+                case '(':
+                    buf.append("\\28");
+                    break;
+                case ')':
+                    buf.append("\\29");
+                    break;
+                case '\0':
+                    buf.append("\\00");
+                    break;
+                default:
+                    buf.append(c);
+                    break;
+            }
+        }
+        return buf.toString();
+    }
+
+
 }
 
 // ------------------------------------------------------ Private Classes

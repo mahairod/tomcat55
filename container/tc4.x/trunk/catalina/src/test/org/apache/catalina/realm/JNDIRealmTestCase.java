@@ -247,6 +247,73 @@ public class JNDIRealmTestCase extends TestCase {
         assertStringArraysEquals(expected, actual);
     }
 
+
+    public void testRFC2254EncodingEmptyString() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("");
+        Assert.assertEquals("empty", "", actual);
+    }
+
+    public void testRFC2254EncodingNoChange() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=aname,o=acontext");
+        Assert.assertEquals("no change", "cn=aname,o=acontext", actual);
+    }
+
+    public void testRFC2254EncodingAsterisk() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=some*name,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=some\\2aname,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingAsteriskAtEnd() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=somename,o=somecontext*");
+        Assert.assertEquals("asterisk", "cn=somename,o=somecontext\\2a", actual);
+    }
+
+    public void testRFC2254EncodingAsteriskAtBeginning() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=*somename,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=\\2asomename,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingOpenParen() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=somena(me,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=somena\\28me,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingCloseParen() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=somename,o=some)context");
+        Assert.assertEquals("asterisk", "cn=somename,o=some\\29context", actual);
+    }
+
+    public void testRFC2254EncodingSlash() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=s\\omename,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=s\\5comename,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingNul() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=so\0mename,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=so\\00mename,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingTwoCharsInARow() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=so\\\\mename,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=so\\5c\\5cmename,o=somecontext", actual);
+    }
+
+    public void testRFC2254EncodingAllEncodedChars() {
+        JNDIRealm realm = new JNDIRealm();
+        String actual = realm.doRFC2254Encoding("cn=so\\*()\0\\mename,o=somecontext");
+        Assert.assertEquals("asterisk", "cn=so\\5c\\2a\\28\\29\\00\\5cmename,o=somecontext", actual);
+    }
+
     public void assertStringArraysEquals(String[] expected, String[] actual) {
         Assert.assertTrue("not null", actual != null);
         Assert.assertEquals("array count is wrong", expected.length, actual.length);
