@@ -62,6 +62,9 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
     - Reference manual that documents all available elements and attributes
       that may be placed into a Tomcat 4 <code>conf/server.xml</code> file.
     </li>
+<li><a href="ssl-howto.html"><strong>SSL HOW-TO</strong></a> - Installing and
+    configuring SSL support so that your Tomcat will serve requests using
+    the <code>https</code> protocol.</li>
 </ul>
 
 </section>
