@@ -731,7 +731,7 @@ public class StandardSession
         HttpSessionEvent event = null;
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttribute(keys[i]);
+            Object attribute = getAttributeInternal(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
@@ -753,7 +753,7 @@ public class StandardSession
         HttpSessionEvent event = null;
         String keys[] = keys();
         for (int i = 0; i < keys.length; i++) {
-            Object attribute = getAttribute(keys[i]);
+            Object attribute = getAttributeInternal(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
                     event = new HttpSessionEvent(this);
@@ -1571,6 +1571,18 @@ public class StandardSession
         String results[] = new String[0];
         synchronized (attributes) {
             return ((String[]) attributes.keySet().toArray(results));
+        }
+
+    }
+
+
+    /**
+     * Return the value of an attribute without a check for validity.
+     */
+    private Object getAttributeInternal(String name) {
+
+        synchronized (attributes) {
+            return (attributes.get(name));
         }
 
     }

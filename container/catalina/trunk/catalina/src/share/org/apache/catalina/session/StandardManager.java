@@ -449,10 +449,8 @@ public class StandardManager
                     StandardSession session = getNewSession();
                     session.readObjectData(ois);
                     session.setManager(this);
-                    if (session.isValid()) {
-                        sessions.put(session.getId(), session);
-                        session.activate();
-                    }
+                    sessions.put(session.getId(), session);
+                    session.activate();
                 }
             } catch (ClassNotFoundException e) {
               log.error(sm.getString("standardManager.loading.cnfe", e), e);
