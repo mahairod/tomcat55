@@ -191,8 +191,12 @@ public class RowTag extends BodyTagSupport {
         
         // Find our parent TableTag instance
         Tag parent = getParent();
-        if ((parent == null) || !(parent instanceof TableTag))
+        while ((parent != null) && !(parent instanceof TableTag)) {
+            parent = parent.getParent();
+        }
+        if (parent == null) {
             throw new JspException("Must be nested in a TableTag instance");
+        }
         TableTag table = (TableTag) parent;
         
         // Register the information for the row represented by

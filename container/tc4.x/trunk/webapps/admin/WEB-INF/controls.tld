@@ -322,4 +322,66 @@
 
   </tag>
 
+  <!-- ========== JMX Attribute Display Tag =============================== -->
+
+  <tag>
+
+    <name>attribute</name>
+    <tag-class>org.apache.webapp.admin.AttributeTag</tag-class>
+    <body-content>empty</body-content>
+    <description>
+      Look up an attribute on a JMX MBean, specified by an object name
+      specified by the "name" (and optional "property" and "scope")
+      attributes, and render it to the current JSP writer.  The object name
+      identified by these attributes can be either a java.lang.String version
+      of the name, or a javax.management.ObjectName instance.
+    </description>
+
+    <attribute>
+      <name>attribute</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the attribute of the JMX MBean whose value is to be
+        retrieved and written to the current JSP writer.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of a bean, optionally in some scope identified by the "scope"
+        attribute.  If the "property" attribute is not specified, this bean
+        must by a String or an ObjectName.  Otherwise, this bean must have
+        a property getter for the property named by "property", which will
+        return the String or ObjectName.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>property</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of a bean property, on the bean identified by the "name"
+        (and optional "scope") attributes, that is either a String or an
+        ObjectName of the JMX MBean whose attribute is to be retrieved.
+      </description>
+    </attribute>
+
+    <attribute>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <description>
+        Name of the scope ("page", "request", "session", or "application")
+        in which the bean identified by the "name" attribute is to be found.
+        If not specified, all scopes will be searched in ascending order.
+      </description>
+    </attribute>
+
+  </tag>
+
 </taglib>

@@ -39,6 +39,14 @@
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
 
+    <!-- List Groups form bean -->
+    <form-bean      name="listGroupsForm"
+                    type="org.apache.webapp.admin.ListGroupsForm"/>
+
+    <!-- List Users form bean -->
+    <form-bean      name="listUsersForm"
+                    type="org.apache.webapp.admin.ListUsersForm"/>
+
   </form-beans>
 
 
@@ -88,6 +96,14 @@
                 
     <forward        name="Blank"
                     path="/blank.jsp"
+                redirect="false"/>
+
+    <forward        name="Groups List"
+                    path="/listGroups.jsp"
+                redirect="false"/>
+
+    <forward        name="Users List"
+                    path="/listUsers.jsp"
                 redirect="false"/>
 
   </global-forwards>
@@ -222,6 +238,16 @@
     <!-- Tree control test action -->
     <action    path="/treeControlTest"
                type="org.apache.webapp.admin.TreeControlTestAction"/>
+
+    <!-- Set up groups list action -->
+    <action    path="/listGroups"
+               name="listGroupsForm"
+               type="org.apache.webapp.admin.ListGroupsAction"/>
+
+    <!-- Set up users list axction -->
+    <action    path="/listUsers"
+               name="listUsersForm"
+               type="org.apache.webapp.admin.ListUsersAction"/>
 
   </action-mappings>
   

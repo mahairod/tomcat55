@@ -49,7 +49,10 @@
     </init-param>
     <init-param>
       <param-name>treebuilders</param-name>
-      <param-value>org.apache.webapp.admin.TomcatTreeBuilder</param-value>
+      <param-value>
+        org.apache.webapp.admin.TomcatTreeBuilder,
+        org.apache.webapp.admin.UsersTreeBuilder
+    </param-value>
     </init-param>
     <load-on-startup>2</load-on-startup>
   </servlet>

@@ -7,7 +7,7 @@
  *
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,38 +64,35 @@ package org.apache.webapp.admin;
 
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.modelmbean.ModelMBean;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 
 /**
- * Test <code>Action</code> sets up  tree control data structure
- * for tree widget
+ * Retrieve the Set of MBean namess for all currently defined users,
+ * and expose them as a request attribute named "users".
  *
- * @author Jazmin Jonson
- * @author Manveen Kaur
+ * @author Craig R. McClanahan
  * @version $Revision$ $Date$
  */
 
-public class SetUpTreeAction extends Action {
+public class ListUsersAction extends Action {
 
-    public static final int INIT_PLUGIN_MAX = 10;
-    public static final String TREEBUILDER_KEY = "treebuilders";
-    public static final String ROOTNODENAME_KEY = "rootnodename";
 
     // --------------------------------------------------------- Public Methods
+
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
@@ -118,68 +115,36 @@ public class SetUpTreeAction extends Action {
                                  HttpServletResponse response)
         throws IOException, ServletException {
 
-        ApplicationServlet servlet = (ApplicationServlet)getServlet();
 
-        // Getting init parms from web.xml
-
-        // Get the string to be displayed as root node while rendering the tree
-        String rootnodeName = 
-            (String)servlet.getServletConfig().getInitParameter(ROOTNODENAME_KEY);
-        
-        String treeBuildersStr  =
-            (String)servlet.getServletConfig().getInitParameter(TREEBUILDER_KEY);
-        
-        // Make the root node and tree control
-        
-        // The root node gets rendered only if its value 
-        // is set as an init-param in web.xml
-        
-        TreeControlNode root =
-            new TreeControlNode("ROOT-NODE",
-                                null, rootnodeName,
-                                "setUpTree.do?select=ROOT-NODE",
-                                "content", true);
-                
-        TreeControl control = new TreeControl(root);
-        
-        if(treeBuildersStr != null) {
-            Class treeBuilderImpl;
-            TreeBuilder treeBuilderBase;
-
-            ArrayList treeBuilders = new ArrayList(INIT_PLUGIN_MAX);
-            int i = 0;
-            StringTokenizer st = new StringTokenizer(treeBuildersStr, ", ");
-            while (st.hasMoreTokens()) {
-                treeBuilders.add(st.nextToken().trim());
-            }
-
-            if(treeBuilders.size() == 0)
-                treeBuilders.add(treeBuildersStr.trim());
-
-            for(i = 0; i < treeBuilders.size(); i++) {
-
-                try{
-                    treeBuilderImpl = Class.forName((String)treeBuilders.get(i));
-                    treeBuilderBase =
-                        (TreeBuilder)treeBuilderImpl.newInstance();
-                    treeBuilderBase.buildTree(control, servlet, request);
-                }catch(Throwable t){
-                    t.printStackTrace(System.out);
-                }
-            }
+        // Acquire a reference to the MBeanServer containing our MBeans
+        MBeanServer mserver = null;
+        try {
+            mserver = ((ApplicationServlet) getServlet()).getServer();
+        } catch (Throwable t) {
+            throw new ServletException
+                ("Cannot acquire MBeanServer reference", t);
         }
 
-        HttpSession session = request.getSession();
-        session.setAttribute("treeControlTest", control);
-
-         String  name = request.getParameter("select");
-         if (name != null) {
-            control.selectNode(name);
-            // Forward back to the Blank page
-            return (mapping.findForward("Blank"));
+        // Acquire the set of user MBean names to be listed
+        // FIXME - limit to global user database?
+        String pattern = "Users:type=User,*";
+        Set results = null;
+        try {
+            results = mserver.queryNames(new ObjectName(pattern), null);
+        } catch (Throwable t) {
+            throw new ServletException("queryNames(" + pattern + ")", t);
+        }
+        TreeSet users = new TreeSet();
+        Iterator names = results.iterator();
+        while (names.hasNext()) {
+            ObjectName name = (ObjectName) names.next();
+            users.add(name.toString());
         }
 
-         return (mapping.findForward("Tree Control Test"));
+        // Forward the Set as a request attribute
+        request.setAttribute("users", users);
+        return (mapping.findForward("Users List"));
 
     }
+
 }
