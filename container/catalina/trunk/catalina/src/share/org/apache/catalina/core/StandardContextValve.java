@@ -165,7 +165,7 @@ final class StandardContextValve
             relativeURI.equals("/WEB-INF") ||
             relativeURI.startsWith("/META-INF/") ||
             relativeURI.startsWith("/WEB-INF/")) {
-            notFound(requestURI, (HttpServletResponse) response.getResponse());
+            forbidden(requestURI, (HttpServletResponse) response.getResponse());
             return;
         }
 
@@ -216,6 +216,26 @@ final class StandardContextValve
         }
 
     }
+    
+    
+    /**
+     * Report a "forbidden" error for the specified resource. 
+     *
+     * @param requestURI The request URI for the requested resource
+     * @param response The response we are creating
+     */
+    private void forbidden(String requestURI, HttpServletResponse response) {
+
+        try {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, requestURI);
+        } catch (IllegalStateException e) {
+            ;
+        } catch (IOException e) {
+            ;
+        }
+
+    }
+
 
     /**
      * Report a "not found" error for the specified resource.  FIXME:  We
