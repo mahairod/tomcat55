@@ -494,7 +494,7 @@ public class TomcatTreeBuilder implements TreeBuilder{
             false);
         TreeControlNode resourcelinks = new TreeControlNode
             ("Resource Links " + containerName,
-            "Datasource.gif",
+            "ResourceLink.gif",
             resources.getMessage("resources.treeBuilder.resourcelinks"),
             "resources/listResourceLinks.do?resourcetype=" + 
                 URLEncoder.encode(type) + "&path=" +
