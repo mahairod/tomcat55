@@ -96,6 +96,7 @@ public class Generator {
     private boolean breakAtLF;
     private PageInfo pageInfo;
     private int maxTagNesting;
+    private Vector tagHandlerPoolNames;
 
     /**
      * @param s the input string
@@ -158,6 +159,99 @@ public class Generator {
     }
 
     /**
+     * Compiles list of tag handler pool names.
+     */
+    private void compileTagHandlerPoolList(Node.Nodes page)
+	    throws JasperException {
+
+	class TagHandlerPoolVisitor extends Node.Visitor {
+
+	    private Vector names;
+
+	    /*
+	     * Constructor
+	     *
+	     * @param v Vector of tag handler pool names to populate
+	     */
+	    TagHandlerPoolVisitor(Vector v) {
+		names = v;
+	    }
+
+	    /*
+	     * Gets the name of the tag handler pool for the given custom tag
+	     * and adds it to the list of tag handler pool names unless it is
+	     * already contained in it.
+	     */
+	    public void visit(Node.CustomTag n) throws JasperException {
+		
+		String name = createTagHandlerPoolName(n.getPrefix(),
+							n.getShortName(),
+							n.getAttributes());
+		n.setTagHandlerPoolName(name);
+		if (!names.contains(name)) {
+		    names.add(name);
+		}
+		visitBody(n);
+	    }
+
+	    /*
+	     * Creates the name of the tag handler pool whose tag handlers may
+	     * be (re)used to service this action.
+	     *
+	     * @return The name of the tag handler pool
+	     */
+	    private String createTagHandlerPoolName(String prefix,
+						    String shortName,
+						    Attributes attrs) {
+		String poolName = null;
+
+		if (prefix.indexOf('-') >= 0)
+		    prefix = JspUtil.replace(prefix, '-', "$1");
+		if (prefix.indexOf('.') >= 0)
+		    prefix = JspUtil.replace(prefix, '.', "$2");
+
+		if (shortName.indexOf('-') >= 0)
+		    shortName = JspUtil.replace(shortName, '-', "$1");
+		if (shortName.indexOf('.') >= 0)
+		    shortName = JspUtil.replace(shortName, '.', "$2");
+		if (shortName.indexOf(':') >= 0)
+		    shortName = JspUtil.replace(shortName, ':', "$3");
+
+		poolName = "_jspx_tagPool_" + prefix + "_" + shortName;
+		if (attrs != null) {
+		    String[] attrNames = new String[attrs.getLength()];
+		    for (int i=0; i<attrNames.length; i++) {
+			attrNames[i] = attrs.getQName(i);
+		    }
+		    Arrays.sort(attrNames, Collections.reverseOrder());
+		    for (int i=0; i<attrNames.length; i++) {
+			poolName = poolName + "_" + attrNames[i];
+		    }
+		}
+		return poolName;
+	    }
+	}
+
+	page.visit(new TagHandlerPoolVisitor(tagHandlerPoolNames));
+    }
+
+    /**
+     * Generates the destroy() method which is responsible for calling the
+     * release() method on every tag handler in any of the tag handler pools.
+     */
+    private void generateDestroy() {
+	out.printil("public void jspDestroy() {");
+	out.pushIndent();
+	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
+	    out.printin((String) tagHandlerPoolNames.elementAt(i));
+	    out.println(".release();");
+	}
+	out.popIndent();	
+	out.printil("}");
+	out.println();
+    }
+
+    /**
      * Generates the beginning of the static portion of the servelet.
      */
     private void generatePreamble(Node.Nodes page) throws JasperException {
@@ -204,15 +298,13 @@ public class Generator {
 
         // Static data for getIncludes()
         out.printil("private static java.util.Vector _jspx_includes;");
-        out.println();  
         out.println();
         List includes = pageInfo.getIncludes();
         iter = includes.iterator();
         if( !includes.isEmpty() ) {
             out.printil("static {");
             out.pushIndent();
-            out.printin(
-                "_jspx_includes = new java.util.Vector(");
+            out.printin("_jspx_includes = new java.util.Vector(");
             out.print(""+includes.size());
             out.println(");");
             while (iter.hasNext()) {
@@ -222,14 +314,25 @@ public class Generator {
             }
             out.popIndent();                     
             out.printil("}");
-            out.println();  
             out.println();
         }
 
- 	// Class fields declarations
+ 	// Class variable declarations
      	
-	// Constructor (empty so far) here
-
+	// Declare tag pools, one per (tag with specific attribute list).
+	if (!tagHandlerPoolNames.isEmpty()) {
+	    for (int i=0; i<tagHandlerPoolNames.size(); i++) {
+		out.printil("private org.apache.jasper.runtime.TagHandlerPool "
+			    + tagHandlerPoolNames.elementAt(i) + ";");
+	    }
+            out.println();
+	}
+ 
+	// Constructor
+	if (!tagHandlerPoolNames.isEmpty()) {
+	    generateServletConstructor(servletClassName);
+	}
+ 
 	// Methods here
 
 	// Method used to get compile time include file dependencies
@@ -239,8 +342,11 @@ public class Generator {
         out.popIndent();
         out.printil("}");
         out.println();
-        out.println();
 
+	if (!tagHandlerPoolNames.isEmpty()) {
+	    generateDestroy();
+	}
+ 
 	// Now the service method
 	out.printin("public void ");
 	out.print  (serviceMethodName);
@@ -295,6 +401,21 @@ public class Generator {
 	if (pageInfo.isSession())
 	    out.printil("session = pageContext.getSession();");
 	out.printil("out = pageContext.getOut();");
+	out.println();
+    }
+
+    /*
+     * Generates the servlet constructor.
+     */
+    private void generateServletConstructor(String servletClassName) {
+	out.printil("public " + servletClassName + "() {");
+	out.pushIndent();
+	for (int i=0; i<tagHandlerPoolNames.size(); i++) {
+	    out.printin((String) tagHandlerPoolNames.elementAt(i));
+	    out.println(" = new org.apache.jasper.runtime.TagHandlerPool();");
+	}
+	out.popIndent();
+	out.printil("}");
 	out.println();
     }
 
@@ -1081,9 +1202,14 @@ public class Generator {
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
 	    out.print(tagHandlerVar);
-	    out.print(" = new ");
+	    out.print(" = (");
 	    out.print(tagHandlerClass.getName());
-	    out.println("();");
+	    out.print(") ");
+	    out.print(n.getTagHandlerPoolName());
+	    out.print(".get(");
+	    out.print(tagHandlerClass.getName());
+	    out.println(".class);");
+
 	    generateSetters(n, tagHandlerVar, handlerInfo);
 	    
             if (implementsTryCatchFinally) {
@@ -1206,13 +1332,17 @@ public class Generator {
                 out.pushIndent();
 		out.printin(tagHandlerVar);
 		out.println(".doFinally();");
-                out.printin(tagHandlerVar);
-                out.println(".release();");
+                out.printin(n.getTagHandlerPoolName());
+                out.print(".reuse(");
+		out.print(tagHandlerVar);
+		out.println(");");
                 out.popIndent();
                 out.printil("}");
             } else {
-                out.printin(tagHandlerVar);
-                out.println(".release();");
+                out.printin(n.getTagHandlerPoolName());
+                out.println(".reuse(");
+		out.printin(tagHandlerVar);
+		out.println(");");
 	    }
 
 	    // Declare and synchronize AT_END variables
@@ -1266,28 +1396,6 @@ public class Generator {
 	    }
 	}
 
-	private String replace(String name, char replace, String with) {
-	    StringBuffer buf = new StringBuffer();
-	    int begin = 0;
-	    int end;
-	    int last = name.length();
-
-	    while (true) {
-		end = name.indexOf(replace, begin);
-		if (end < 0) {
-		    end = last;
-		}
-		buf.append(name.substring(begin, end));
-		if (end == last) {
-		    break;
-		}
-		buf.append(with);
-		begin = end + 1;
-	    }
-
-	    return buf.toString();
-	}
-	
 	/*
 	 * Creates a tag variable name by concatenating the given prefix and
 	 * shortName and replacing '-' with "$1", '.' with "$2", and ':' with
@@ -1296,16 +1404,16 @@ public class Generator {
 	private String createTagVarName(String fullName, String prefix,
 					String shortName) {
 	    if (prefix.indexOf('-') >= 0)
-		prefix = replace(prefix, '-', "$1");
+		prefix = JspUtil.replace(prefix, '-', "$1");
 	    if (prefix.indexOf('.') >= 0)
-		prefix = replace(prefix, '.', "$2");
+		prefix = JspUtil.replace(prefix, '.', "$2");
 
 	    if (shortName.indexOf('-') >= 0)
-		shortName = replace(shortName, '-', "$1");
+		shortName = JspUtil.replace(shortName, '-', "$1");
 	    if (shortName.indexOf('.') >= 0)
-		shortName = replace(shortName, '.', "$2");
+		shortName = JspUtil.replace(shortName, '.', "$2");
 	    if (shortName.indexOf(':') >= 0)
-		shortName = replace(shortName, ':', "$3");
+		shortName = JspUtil.replace(shortName, ':', "$3");
 
 	    synchronized (tagVarNumbers) {
 		String varName = prefix + "_" + shortName + "_";
@@ -1493,6 +1601,7 @@ public class Generator {
 	pageInfo = compiler.getPageInfo();
 	beanInfo = pageInfo.getBeanRepository();
 	breakAtLF = ctxt.getOptions().getMappedFile();
+	tagHandlerPoolNames = new Vector();
     }
 
     /**
@@ -1505,6 +1614,7 @@ public class Generator {
 				Node.Nodes page) throws JasperException {
 	Generator gen = new Generator(out, compiler);
 
+	gen.compileTagHandlerPoolList(page);
 	gen.generatePreamble(page);
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer));
 	gen.generatePostamble(page);

@@ -669,6 +669,7 @@ public abstract class Node {
 	private boolean hasUsebean;
 	private boolean hasIncludeAction;
 	private boolean hasSetProperty;
+	private String tagHandlerPoolName;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName, Node parent) {
@@ -750,6 +751,15 @@ public abstract class Node {
 	public boolean isHasSetProperty() {
 	    return hasSetProperty;
 	}
+
+	public String getTagHandlerPoolName() {
+	    return tagHandlerPoolName;
+	}
+
+	public void setTagHandlerPoolName(String s) {
+	    tagHandlerPoolName = s;
+	}
+
     }
 
     /**

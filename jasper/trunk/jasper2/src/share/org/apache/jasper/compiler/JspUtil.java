@@ -356,7 +356,7 @@ public class JspUtil {
 	}
 	return escString;
     }
-    
+ 
     /**
      *  Escape the 5 entities defined by XML.
      */
@@ -381,7 +381,33 @@ public class JspUtil {
         }
         return sb.toString();
     }
-    
+
+    /**
+     * Replaces any occurrence of <tt>replace</tt> with <tt>with</tt> in the
+     * given string.
+     */
+    public static String replace(String name, char replace, String with) {
+	StringBuffer buf = new StringBuffer();
+	int begin = 0;
+	int end;
+	int last = name.length();
+
+	while (true) {
+	    end = name.indexOf(replace, begin);
+	    if (end < 0) {
+		end = last;
+	    }
+	    buf.append(name.substring(begin, end));
+	    if (end == last) {
+		break;
+	    }
+	    buf.append(with);
+	    begin = end + 1;
+	}
+	
+	return buf.toString();
+    }
+
     public static class ValidAttribute {
    	String name;
 	boolean mandatory;
