@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -572,6 +574,7 @@ public class HostConfig
                             }
                             istream = null;
                         }
+                    } finally {
                         entry = null;
                         if (jar != null) {
                             try {
@@ -1017,11 +1020,46 @@ public class HostConfig
 
 
     /**
+     *  Check remove wars, dir and context xml's
+     */
+    protected void checkRemoveApps() {
+        File appBase = appBase();
+        File configBase = configBase();
+        List currentDeployed = (List) deployed.clone();
+        Iterator iter = currentDeployed.iterator();
+        while (iter.hasNext()) {
+            String filename = (String) iter.next();
+            if (filename.toLowerCase().endsWith(".xml")) {
+                File file = new File(configBase, filename);
+                if (!file.exists()) {
+                    log.debug(sm.getString("hostConfig.removeXML", filename));
+                    deployed.remove(filename);
+                }
+                continue;
+            }
+            File file = new File(appBase, filename);
+            if (!file.exists()) {
+                if (log.isDebugEnabled() ) {
+                    if (filename.toLowerCase().endsWith(".war"))
+                        log.debug(sm.getString("hostConfig.removeDIR", 
+                                               filename));
+                    else
+                        log.debug(sm.getString("hostConfig.removeWAR",
+                                               filename));
+                }
+                deployed.remove(filename);
+            }
+        }
+    }
+
+
+    /**
      * Deploy webapps.
      */
     protected void check() {
 
         if (host.getAutoDeploy()) {
+            checkRemoveApps();
             // Deploy apps if the Host allows auto deploying
             deployApps();
             // Check for web.xml modification
