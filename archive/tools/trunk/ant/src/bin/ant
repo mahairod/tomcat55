@@ -32,6 +32,11 @@ if [ "$ANT_HOME" = "" ] ; then
 
 fi
 
+# Allow .antrc to specifiy flags to java cmd
+if [ "$JAVACMD" = "" ] ; then 
+  JAVACMD=java
+fi
+
 # Use the original tools.jar if available
 if [ ! "$JAVA_HOME" = "" ] ; then
    CLASSPATH=${JAVA_HOME}/lib/tools.jar:$CLASSPATH
@@ -42,4 +47,4 @@ fi
 CLASSPATH=${ANT_HOME}/lib/ant.jar:${ANT_HOME}/lib/xml.jar:$CLASSPATH
 export CLASSPATH
 
-java -Dant.home=${ANT_HOME} org.apache.tools.ant.Main $@
+$JAVACMD -Dant.home=${ANT_HOME} org.apache.tools.ant.Main $@
