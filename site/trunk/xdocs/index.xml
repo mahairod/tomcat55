@@ -79,21 +79,14 @@ specifications.  </p>
 which one is right for you.  More details about each release can be found in 
 the associated release notes.</p> 
 
-<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.1 is the current production
-quality release.  Tomcat 4.0 is the next generation of Tomcat.  The 4.0 servlet
-container (Catalina) has been developed from the ground up for flexibility and
-performance.  Version 4.0 implements the final released versions of the Servlet
-2.3 and JSP 1.2 specifications.  As required by the specifications, Tomcat 4.0
-also supports web applications built for the Servlet 2.2 and JSP 1.1
-specifications with no changes.</p>
-
-<p><strong>Tomcat 3.3</strong>. Version 3.3 is the current production quality
-release. It continues the refactoring that was begun in version 3.2 and
-carries it to its logical conclusion.  Version 3.3 provides a much more modular
-design and allows the servlet container to be customized by adding and removing
-modules that control the processing of servlet requests.  This version also
-contains many performance improvements. The future 3.3.1 release continues on
-the same path with more specific performance and security improvements.</p> 
+<p><strong>Tomcat 3.1.x</strong>.  The 3.1 release contained several 
+improvements over Tomcat 3.0, including servlet reloading, WAR file 
+support and added connectors for the IIS and Netscape web servers.  The 
+latest maintenance release, 3.1.1, contained fixes for security problems.  
+There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat 
+3.1 should update to 3.1.1 to close the security holes and they are 
+strongly encouraged to migrate to the current production release, Tomcat 
+3.2.3.</p> 
 
 <p><strong>Tomcat 3.2.x</strong>. Version 3.2 added few new features since 3.1;
 the major effort was a refactoring of the internals to improve performance and
@@ -104,14 +97,21 @@ users of Tomcat versions prior to 3.2.3 should updgrade as soon as possible.
 The 3.2.x branch will continue in maintenance mode, but no new feature releases
 are planned.</p> 
 
-<p><strong>Tomcat 3.1.x</strong>.  The 3.1 release contained several 
-improvements over Tomcat 3.0, including servlet reloading, WAR file 
-support and added connectors for the IIS and Netscape web servers.  The 
-latest maintenance release, 3.1.1, contained fixes for security problems.  
-There is no active development ongoing for Tomcat 3.1.x.  Users of Tomcat 
-3.1 should update to 3.1.1 to close the security holes and they are 
-strongly encouraged to migrate to the current production release, Tomcat 
-3.2.3.</p> 
+<p><strong>Tomcat 3.3</strong>. Version 3.3 is the current production quality
+release. It continues the refactoring that was begun in version 3.2 and
+carries it to its logical conclusion.  Version 3.3 provides a much more modular
+design and allows the servlet container to be customized by adding and removing
+modules that control the processing of servlet requests.  This version also
+contains many performance improvements. The future 3.3.1 release continues on
+the same path with more specific performance and security improvements.</p> 
+
+<p><strong>Tomcat 4.0.x</strong>.  Tomcat 4.0.1 is the current production
+quality release.  Tomcat 4.0 is the next generation of Tomcat.  The 4.0 servlet
+container (Catalina) has been developed from the ground up for flexibility and
+performance.  Version 4.0 implements the final released versions of the Servlet
+2.3 and JSP 1.2 specifications.  As required by the specifications, Tomcat 4.0
+also supports web applications built for the Servlet 2.2 and JSP 1.1
+specifications with no changes.</p>
 
 </section>
 
