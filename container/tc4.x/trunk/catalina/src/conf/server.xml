@@ -193,7 +193,7 @@
         -->
         <Valve className="org.apache.catalina.valves.AccessLogValve"
                  directory="logs"  prefix="localhost_access_log." suffix=".txt"
-                 pattern="common"/>
+                 pattern="common" resolveHosts="false"/>
 
         <!-- Logger shared by all Contexts related to this virtual host.  By
              default (when using FileLogger), log files are created in the "logs"
