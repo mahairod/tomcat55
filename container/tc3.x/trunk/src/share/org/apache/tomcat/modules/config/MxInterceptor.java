@@ -154,9 +154,14 @@ public class MxInterceptor  extends BaseInterceptor {
             
             mserver.setAttribute(serverName, new Attribute("Port", new Integer(port)));
 
+			// use authentication if user/password set
             if( auth!=null && user!=null && password!=null) 
                 mserver.setAttribute(serverName, new Attribute("AuthenticationMethod", auth));
-                        
+
+			// add user names
+			mserver.invoke(serverName, "addAuthorization", new Object[] {user, password}, 
+			               new String[] {"java.lang.String", "java.lang.String"});
+
            	ObjectName processorName = new ObjectName("Http:name=XSLTProcessor");
             mserver.createMBean("mx4j.adaptor.http.XSLTProcessor", processorName, null);
 			mserver.setAttribute(serverName, new Attribute("ProcessorName", processorName));
