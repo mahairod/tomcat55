@@ -27,6 +27,7 @@
         <item name="Class Loader HOW-TO"   href="class-loader-howto.html"/>
         <item name="Manager App HOW-TO"    href="manager-howto.html"/>
         <item name="Proxy Support HOW-TO"  href="proxy-howto.html"/>
+        <item name="Realm HOW-TO"          href="realm-howto.html"/>
         <item name="SSL Config HOW-TO"     href="ssl-howto.html"/>
     </menu>
 

@@ -71,6 +71,11 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
 <li><a href="proxy-howto.html"><strong>Proxy Support HOW-TO</strong></a> -
     Configuring Tomcat 4 to run behind a proxy server (or a web server
     functioning as a proxy server).</li>
+<li><a href="realm-howto.html"><strong>Realm Configuration HOW-TO</strong></a>
+    - Description of how to configure <em>Realms</em> (databases of users,
+    passwords, and their associated roles) for use in web applications that
+    utilize <em>Container Managed Security</em> (FIXME - hyperlink to
+    background info on this).</li>
 <li><a href="ssl-howto.html"><strong>SSL Configuration HOW-TO</strong></a> -
     Installing and
     configuring SSL support so that your Tomcat will serve requests using

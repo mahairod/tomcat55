@@ -341,14 +341,59 @@
   </target>
 
 
-  <!-- ====================== DEPLOY: Create Catalina JAR ================= -->
+  <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
   <target name="deploy-main" depends="deploy-static">
+
+    <!-- Catalina Main JAR File -->
     <jar  jarfile="${catalina.deploy}/server/lib/catalina.jar"
           basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class" />
+          excludes="**/org/apache/naming/**,**/connector/warp/**,org/apache/catalina/startup/Bootstrap.class,org/apache/catalina/startup/BootstrapService.class,org/apache/catalina/loader/StandardClassLoader*.class,org/apache/catalina/loader/Extension.class,org/apache/catalina/loader/Reloader.class,org/apache/catalina/startup/SecurityManagerDebug.class,org/apache/catalina/servlets/**,org/apache/catalina/util/ssi/**" />
+
+    <!-- WARP Connector JAR File -->
     <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
           basedir="${catalina.build}/classes" 
           includes="**/connector/warp/**" />
+
+    <!-- Servlets - Common Files -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Constants.class,org/apache/catalina/servlets/*.properties" />
+
+    <!-- Servlets - CGI Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/CGI*" />
+
+    <!-- Servlets - Default File-Serving Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-default.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Default*" />
+
+    <!-- Servlets - Invoker Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Invoker*" />
+
+    <!-- Servlets - Manager Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-manager.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/*Manager*" />
+
+    <!-- Servlets - Snoop Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Snoop*" />
+
+    <!-- Servlets - SSI Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-ssi.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Ssi*,org/apache/catalina/util/ssi/**" />
+
+    <!-- Servlets - Webdav Servlet -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar"
+          basedir="${catalina.build}/classes" 
+          includes="org/apache/catalina/servlets/Webdav*" />
+
   </target>
 
 
@@ -389,12 +434,6 @@
     <copy todir="${catalina.dist}/server/lib">
       <fileset dir="${catalina.build}/server/lib" />
     </copy>
-    <jar  jarfile="${catalina.dist}/server/lib/catalina.jar"
-          basedir="${catalina.build}/classes" 
-          excludes="**/org/apache/naming/**,**/connector/warp/**" />
-    <jar  jarfile="${catalina.dist}/server/lib/warp.jar"
-          basedir="${catalina.build}/classes" 
-          includes="**/connector/warp/**" />
 
   </target>
 

@@ -105,6 +105,8 @@ Jasper      3195    Javadoc errors during build
 
 Jasper      3340    sun.tools.javac.Main has been deprecated in JDK 1.4-beta-2
 
+Jasper      3433    Bad performance on JspWriterImpl.java
+
 Servletapi  3196    Javadoc errors during build
 
 Servletapi  3344    Typo in javadocs
