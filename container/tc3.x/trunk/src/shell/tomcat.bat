@@ -77,7 +77,8 @@ set TOMCAT_INSTALL=%TOMCAT_HOME%
 :gotTcInstall
 if exist "%TOMCAT_INSTALL%\lib\tomcat.jar" goto okTcInstall
 echo "%TOMCAT_INSTALL%\lib\tomcat.jar" not found.
-echo Unable to locate "lib\tomcat.jar", check the value of TOMCAT_INSTALL.
+echo Unable to locate "lib\tomcat.jar", check the value of TOMCAT_HOME and/or
+echo     TOMCAT_INSTALL.
 goto cleanup
 :okTcInstall
 
