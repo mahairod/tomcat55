@@ -193,12 +193,6 @@ public class DefaultServlet
     protected static URLEncoder urlEncoder;
 
 
-    /**
-     * Thread local resource info.
-     */
-    protected ThreadLocal localResourceInfo = new ThreadLocal();
-
-
     // ----------------------------------------------------- Static Initializer
 
 
@@ -247,9 +241,6 @@ public class DefaultServlet
      * Finalize this servlet.
      */
     public void destroy() {
-
-        ;       // No actions necessary
-
     }
 
 
@@ -590,13 +581,7 @@ public class DefaultServlet
         // Input stream for temp. content file used to support partial PUT
         FileInputStream contentFileInStream = null;
 
-        ResourceInfo resourceInfo = (ResourceInfo) localResourceInfo.get();
-        if (resourceInfo == null) {
-            resourceInfo = new ResourceInfo(path, resources);
-            localResourceInfo.set(resourceInfo);
-        } else {
-            resourceInfo.set(path, resources);
-        }
+        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
         Range range = parseContentRange(req, resp);
 
         InputStream resourceInputStream = null;
@@ -920,13 +905,7 @@ public class DefaultServlet
 
         // Retrieve the Catalina context and Resources implementation
         DirContext resources = getResources();
-        ResourceInfo resourceInfo = (ResourceInfo) localResourceInfo.get();
-        if (resourceInfo == null) {
-            resourceInfo = new ResourceInfo(path, resources);
-            localResourceInfo.set(resourceInfo);
-        } else {
-            resourceInfo.set(path, resources);
-        }
+        ResourceInfo resourceInfo = new ResourceInfo(path, resources);
 
         if (!resourceInfo.exists) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, 
