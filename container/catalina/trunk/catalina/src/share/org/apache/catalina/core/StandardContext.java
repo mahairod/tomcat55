@@ -3698,17 +3698,19 @@ public class StandardContext
             try {
                 fireContainerEvent("beforeContextDestroyed", listener);
                 listener.contextDestroyed(event);
-                fireContainerEvent("beforeContextDestroyed", listener);
+                fireContainerEvent("afterContextDestroyed", listener);
             } catch (Throwable t) {
-                fireContainerEvent("beforeContextDestroyed", listener);
+                fireContainerEvent("afterContextDestroyed", listener);
                 getServletContext().log
                     (sm.getString("standardContext.listenerStop",
                                   listeners[j].getClass().getName()), t);
                 ok = false;
             }
         }
+
         setApplicationEventListeners(null);
         setApplicationLifecycleListeners(null);
+
         return (ok);
 
     }
@@ -4032,12 +4034,12 @@ public class StandardContext
                 // if any
                 if (pipeline instanceof Lifecycle) {
                     ((Lifecycle) pipeline).start();
-		}
-
+                }
+                
                 if(getProcessTlds()) {
-		    processTlds();
-		}
-
+                    processTlds();
+                }
+                
                 // Notify our interested LifecycleListeners
                 lifecycle.fireLifecycleEvent(START_EVENT, null);
 
@@ -4204,43 +4206,7 @@ public class StandardContext
         }
     }
 
-    /**
-     * Stop this Context component. Experimental, please ignore.
-     *
-     * @exception LifecycleException if a shutdown error occurs
-     */
-    public synchronized void stopNew() throws LifecycleException {
-        // Mark this application as unavailable while we shut down
-        setAvailable(false);
-
-        // Binding thread
-        ClassLoader oldCCL = bindThread();
-
-        try {
-            // Stop our filters
-            filterStop();
-            
-            // Finalize our character set mapper
-            setCharsetMapper(null);
-            
-            // Stop our application listeners
-            listenerStop();
-            
-            // Stop resources
-            resourcesStop();
-            
-            super.stop();
-        } finally {
-            
-            // Unbinding thread
-            unbindThread(oldCCL);
-            
-        }
-        
-        // Reset application context
-        context = null;
-    }
-
+    
     /**
      * Stop this Context component.
      *
@@ -4283,10 +4249,6 @@ public class StandardContext
             ((Lifecycle) manager).stop();
         }
 
-        // Clear all application-originated servlet context attributes
-        if (context != null)
-            context.clearAttributes();
-
         // Finalize our character set mapper
         setCharsetMapper(null);
 
@@ -4313,6 +4275,10 @@ public class StandardContext
 
             // Stop our application listeners
             listenerStop();
+
+            // Clear all application-originated servlet context attributes
+            if (context != null)
+                context.clearAttributes();
 
             // Stop resources
             resourcesStop();
