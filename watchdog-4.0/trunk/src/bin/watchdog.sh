@@ -4,7 +4,7 @@
 # Shell script to run watchdog test suite
  
 if [ "$1" = "" ] ; then
-    echo usage: "$0 {all|jsp|servlet} [serverhost] [serverport]"
+    echo usage: "$0 {all|jsp|jsp-xml|jsp-all|servlet} [serverhost] [serverport]"
     exit 0
 fi
 
@@ -51,6 +51,10 @@ if [ "$WATCHDOG_HOME" = "" ] ; then
     exit 1
 fi
 
+if [ "$JAKARTA_HOME" != "" ] ; then
+   TOMCAT_HOME=${JAKARTA_HOME}/jakarta-tomcat-4.0
+fi
+
 
 cp=$CLASSPATH
 
@@ -71,7 +75,17 @@ export CLASSPATH
 echo Using classpath: ${CLASSPATH}
 echo
 
-if [ "${default}" = jsp -o "${default}" = all ] ; then
+if [ "${default}" = jsp -o "${default}" = all -o "${default}" = jsp-all ] ; then
+
+	if [ "$TOMCAT_HOME" = "" ] ; then
+    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
+        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp-gtest.xml jsp-test
+        fi
+
+    echo "TOMCAT_HOME is " $TOMCAT_HOME
+
+    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
+        -Dtomcat.home=${TOMCAT_HOME} -f ${WATCHDOG_HOME}/conf/jsp-xml.xml jsp-test
     java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
         -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp-gtest.xml jsp-test
 fi
@@ -85,6 +99,21 @@ if [ "${default}" = gtestservlet -o "${default}" = all ] ; then
     java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
         -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/servlet-gtest.xml gtestservlet-test
 fi
+
+if [ "${default}" = jsp-xml -o "${default}" = all -o "${default}" = jsp-all ] ; then
+	if [ "$TOMCAT_HOME" = "" ] ; then
+        	echo TOMCAT_HOME not set, you need to set it or install in a standard location
+    exit 1
+	fi
+    echo "TOMCAT_HOME is " $TOMCAT_HOME
+    echo "Running JSP tests with the XML view of jsp pages......"
+
+    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
+        -Dtomcat.home=${TOMCAT_HOME} -f ${WATCHDOG_HOME}/conf/jsp-xml.xml xml-test
+    java org.apache.tools.ant.Main -Dport=${PORT} -Dhost=${HOST} \
+        -Dwatchdog.home=${WATCHDOG_HOME} -f ${WATCHDOG_HOME}/conf/jsp-gtest.xml jsp-test
+fi
+
 
 if [ "$cp" != "" ] ; then
     CLASSPATH=${cp}
