@@ -229,6 +229,7 @@ public class PoolTcpEndpoint { // implements Endpoint {
 
     public void startEndpoint() throws IOException, InstantiationException {
 	try {
+	    //	    System.out.println("Creating socket " + port );
 	    if(factory==null)
 		factory=ServerSocketFactory.getDefault();
 	    if(serverSocket==null) {
@@ -262,8 +263,13 @@ public class PoolTcpEndpoint { // implements Endpoint {
 	    tp.shutdown();
 	    running = false;
 	    try {
+		// Need to create a connection to unlock the accept();
+		Socket s=new Socket("127.0.0.1", port );
+		s.close();
+		//		System.out.println("Closing socket " + port );
 		serverSocket.close(); // XXX?
 	    } catch(Exception e) {
+		e.printStackTrace();
 	    }
 	    serverSocket = null;
 	}
@@ -277,7 +283,7 @@ public class PoolTcpEndpoint { // implements Endpoint {
     	    if (running) {
 		if(null!= serverSocket) {
 		    accepted = serverSocket.accept();
-		    if(running == false) {
+		    if(!running) {
 			if(null != accepted) {
 			    accepted.close();  // rude, but unlikely!
 			    accepted = null;
