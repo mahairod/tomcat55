@@ -112,7 +112,7 @@
 
 
   <!-- ====================== DIST: Create Archives ======================= -->
-  <target name="dist" depends="dist-static,dist-javadoc,dist-source">
+  <target name="dist" depends="deploy-main,dist-static,dist-javadoc,dist-source">
 <!-- Comment out until startup timing issues are resolved
     <jar jarfile="${tomcat.dist}/webapps/ROOT.war"
          basedir="${tomcat.build}/webapps/ROOT" includes="**"/>
