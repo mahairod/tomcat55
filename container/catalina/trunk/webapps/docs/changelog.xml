@@ -13,6 +13,357 @@
 
 <body>
 
+<section name="Tomcat 5.0.19 (remm)">
+
+  <subsection name="General">
+
+    <changelog>
+
+      <fix>
+      Updates and additions to Spanish translations, submitted by Jesus Marin 
+      (larryi)
+      </fix>
+      <scode>
+      Remove nearly all compiler warnings: remaining bad imports, deprecated
+      digester and modeler usage (remm)
+      </scode>
+      <fix>
+      Add new build targets for Gumpy (billbarker)
+      </fix>
+      <update>
+      Update to NSIS 2.0 (remm)
+      </update>
+      <update>
+      Update to latest commons-daemon (mturk)
+      </update>
+      <fix>
+      Add support for silent installations in the NSIS script (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Catalina">
+
+    <changelog>
+
+      <fix>
+      <bug>12363</bug>: valueBound() must be called before the object is made 
+      available via getAttribute(), submitted by Pablo Morales (makt)
+      </fix>
+      <fix>
+      <bug>26237</bug>: fixed a typo in MemoryUserDatabase which would cause 
+      problems if the pathname is aboslute, submitted by Xavier Poinsard
+      (remm)
+      </fix>
+      <fix>
+      <bug>26261</bug>: don't call expire after calling isValid, submitted by
+      Paul Harvey (remm)
+      </fix>
+      <fix>
+      Use response encoding when generating error report (luehe)
+      </fix>
+      <fix>
+      <bug>26051</bug>: session must not expire even if the request processing
+      time is bigger than the session timeout (remm)
+      </fix>
+      <update>
+      Optimize session access: remove synchronization, minimize object 
+      allocation for events, and reduce the amount of hashtable lookups (remm)
+      </update>
+      <fix>
+      Replaced SC_INTERNAL_SERVER_ERROR with SC_FORBIDDEN if anonymous access
+      is not allowed (luehe)
+      </fix>
+      <fix>
+      <bug>11042</bug>: comment in server.xml now shows that connectionTimeout
+      should be set to 0 rather than -1 to disable timeout (markt)
+      </fix>
+      <fix>
+      Try to fix some character corruption in non-English resource strings 
+      in the nightly build (larryi)
+      </fix>
+      <fix>
+      Improvements to session activity tracking, handling the case where the
+      session is new, as well as cross context (remm)
+      </fix>
+      <fix>
+      <bug>26341</bug>: when calling the removeAttributes during session 
+      expiration, notified attributes should see the session as invalid (remm)
+      </fix>
+      <fix>
+      <bug>26010</bug>: '_' was an inappropriate character to replace 
+      the path separator, since it's a common character in HTTP; '#' will be
+      used instead (remm)
+      </fix>
+      <fix>
+      Add missing setUseContextClassLoader call to avoid possible classloader 
+      issue when Tomcat is embedded (jfarcand)
+      </fix>
+      <update>
+      Update service shutdown procedure: pause connectors, wait for a while,
+      stop the container, stop connectors (remm)
+      </update>
+      <fix>
+      Strip out any path parameter when doing request dispatcher mapping
+      (luehe)
+      </fix>
+      <fix>
+      Throw the proper exception type when a name is already bound, submitted
+      by Robert Kruger (remm)
+      </fix>
+      <fix>
+      <bug>26414</bug>: add support for liking to user transactions, submitted
+      by Robert Kruger (remm)
+      </fix>
+      <fix>
+      <bug>26373</bug>: initialize mapper before load on startup servlets
+      (remm)
+      </fix>
+      <fix>
+      Ignore setBufferSize()/setLocale() calls on included response (luehe)
+      </fix>
+      <fix>
+      <bug>26611</bug>: forward + include was hiding the special forward
+      request attributes (remm)
+      </fix>
+      <fix>
+      <bug>26487</bug>: RFC 2254 done on whole string instead of just DN, 
+      submitted by Jeff Tulley (funkman)
+      </fix>
+      <fix>
+      <bug>26715</bug>: Call endAccess after reading a session from storage 
+      so that the session properly timeouts, submitted by Jochen Strunk
+      (remm)
+      </fix>
+      <fix>
+      Fix rule matching algorithm for one character constraints, such as /s/*
+      (billbarker)
+      </fix>
+      <update>
+      Added support for configurable session id length (luehe)
+      </update>
+      <fix>
+      The forward request attributes must reflect the original request, so 
+      only set them if the request being passed doesn't have them (remm)
+      </fix>
+      <fix>
+      <bug>26838</bug>: refactor once again the enum algorithm (remm)
+      </fix>
+      <fix>
+      <bug>14283</bug>: Catch and log exceptions in listeners (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Coyote">
+
+    <changelog>
+
+      <fix>
+      Fix JMX self-registration of JK when loading the "normal" way 
+      (billbarker)
+      </fix>
+      <fix>
+      Add an option to allow the admin to *not* JMX register the requests,
+      since reclaiming memory can be difficult in JNI mode (billbarker)
+      </fix>
+      <fix>
+      Add request unregistration, to avoid the memory leak which was
+      affecting HTTP (billbarker)
+      </fix>
+      <fix>
+      Fix the problem that every Handler was getting added twice (billbarker)
+      </fix>
+      <fix>
+      Handle unregistering Requests for ChannelUnix (billbarker)
+      </fix>
+      <fix>
+      Don't create a monitor thread unless maxSpareThreads is smaller than
+      maxThreads (remm)
+      </fix>
+      <add>
+      Allow configuring the size of the HTTP header buffer, which represents
+      the majority of the memory allocated by Tomcat; the new default value
+      is 4KB (remm)
+      </add>
+      <update>
+      Allow the option to only "want" client authentication, submitted by
+      Michael Becker (billbarker)
+      </update>
+      <add>
+      Implement clean shutdown of the connectors, using new pause and resume 
+      methods on the connector interface (remm)
+      </add>
+      <update>
+      Add support for connector pause to JK (billbarker)
+      </update>
+      <fix>
+      Cleanup the logging for unknown packets in JK (remm)
+      </fix>
+      <fix>
+      Avoid java.util.ConcurrentModificationException seen with very high load
+      in RequestGroupInfo (luehe)
+      </fix>
+      <fix>
+      <bug>26492</bug>: consider all session ids sent as cookies until one is 
+      valid; also don't create cookie objects from sessionId cookies, which 
+      seems consistent with sessionId hiding from the URL (remm)
+      </fix>
+      <fix>
+      <bug>25805</bug>: add localDataSource flag, based on code submitted 
+      by Neil Katin (remm)
+      </fix>
+      <fix>
+      <bug>26567</bug>: the mapper will complain if the default host is 
+      not known, which could make mapping fail without a way to easily 
+      identify the cause (remm)
+      </fix>
+      <fix>
+      <bug>25363</bug>: Expose the SSL attributes in getAttributeNames()
+      (remm)
+      </fix>
+      <fix>
+      Make sure a filter is always added in all cases (remm)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Jasper">
+
+    <changelog>
+
+      <fix>
+      <bug>26191</bug>: fix classcast exception is JSP document parser, 
+      submitted by Trond Aasan (remm)
+      </fix>
+      <fix>
+      <bug>26242</bug>: add back a setVerbose setter to jspc for compatibility
+      with Ant (remm)
+      </fix>
+      <fix>
+      <bug>26276</bug>: generated TLD inconsistent after tagfile changes
+      (kinman)
+      </fix>
+      <fix>
+      <bug>26335</bug>: modification check for tagfiles does not work 
+      recursively (kinman)
+      </fix>
+      <fix>
+      <bug>26432</bug>: Incorrect mapping for url pattern in jsp property group
+      (kinman)
+      </fix>
+      <fix>
+      Implicit "pageContext" object no longer exposed in tag files, to comply 
+      with JSP spec (luehe)
+      </fix>
+      <fix>
+      <bug>26628</bug>: Fix handling of a EL function with no arguments (remm)
+      </fix>
+      <fix>
+      Convert selected tag attribute types to their Fully-Qualified-Name
+      equivalents if the taglib is JSP 1.2 based (luehe)
+      </fix>
+      <update>
+      Ported (from org.apache.catalina.startup.TldConfig) ability to ignore
+      (for TLD scanning purposes) JARs (in the classloader delegation chain)
+      that are known not to contain any TLDs (luehe)
+      </update>
+      <fix>
+      <bug>13960</bug>, <bug>13961</bug>: Javadocs fixes, submitted by 
+      David Medinets (markt)
+      </fix>
+      <fix>
+      <bug>26796</bug>: include fails when tag files are referenced in
+      a tag directives (kinman)
+      </fix>
+      <fix>
+      Parser for JSP pages in XML syntax ignores custom action's body type
+      (luehe)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+  <subsection name="Modules">
+
+    <changelog>
+
+      <fix>
+      <bug>12361</bug>: support CGI scripts in unpacked WARs: scripts are 
+      extracted to the context work directory before execution (markt)
+      </fix>
+      <update>
+      Add support for URIEncoding, useBodyEncodingForURI, and allowTrace
+      properties on the connector (larryi)
+      </update>
+      <fix>
+      Updating the admin webapp for the change in type of clientAuth 
+      (billbarker)
+      </fix>
+      <add>
+      Add WebDAV webapp to TC5 (markt)
+      </add>
+      <docs>
+      <bug>13805</bug>: update docs to show that the shared directory 
+      is relative to CATALINA_BASE not CATALINA_HOME (markt)
+      </docs>
+      <update>
+      Added in distributed expire logic for the delta session (fhanik)
+      </update>
+      <add>
+      Added in a module cluster interface (fhanik)
+      </add>
+      <add>
+      Refactored a lot of the cluster code: the cluster element has sub 
+      elements, makes the configuration is modular (fhanik)
+      </add>
+      <docs>
+      Document other methods for load balancing (remm)
+      </docs>
+      <docs>
+      Document that Context elements should not be placed in server.xml
+      (yoavs, remm)
+      </docs>
+      <update>
+      Add examples, introductory notes, and a brief how-to notes for tag 
+      plugins (kinman)
+      </update>
+      <fix>
+      Fixed bug with the fact that the manager base has a static variable 
+      called name, caused session messages to be sent to the wrong managers
+      (fhanik)
+      </fix>
+      <fix>
+      Fixed serialization of principal when replicating data (fhanik)
+      </fix>
+      <fix>
+      Port various session fixes (fhanik)
+      </fix>
+      <docs>
+      Small docs updates for CGI and others (idarwin)
+      </docs>
+      <fix>
+      <bug>26906</bug>: The destination path needs to be normalised after the 
+      protocol and host has been removed (if present) (markt)
+      </fix>
+      <fix>
+      Lock token must be returned after lock creation, submitted 
+      by Pieter van Prooijen (markt)
+      </fix>
+
+    </changelog>
+
+  </subsection>
+
+</section>
+
 <section name="Tomcat 5.0.18 (remm)">
 
   <subsection name="General">
