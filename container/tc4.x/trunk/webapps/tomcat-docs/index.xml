@@ -62,6 +62,9 @@ are responsible for installing, configuring, and operating a Tomcat 4 server.
     - Reference manual that documents all available elements and attributes
       that may be placed into a Tomcat 4 <code>conf/server.xml</code> file.
     </li>
+<li><a href="class-loader-howto.html"><strong>Class Loader HOW-TO</strong></a>
+    - Information about class loading in Tomcat 4, including where to place
+    your application classes so that they are visible.</li>
 <li><a href="manager-howto.html"><strong>Manager App HOW-TO</strong></a> -
     Operating the <code>Manager</code> web app to deploy, undeploy, and
     redeploy applications while Tomcat is running.</li>
