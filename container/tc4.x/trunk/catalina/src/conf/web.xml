@@ -128,10 +128,6 @@
   <!--   keepgenerated       Should we keep the generated Java source code  -->
   <!--                       for each page instead of deleting it? [true]   -->
   <!--                                                                      -->
-  <!--   largefile           Should we store the static content of JSP      -->
-  <!--                       pages in external data files, to reduce the    -->
-  <!--                       size of the generated servlets?  [false]       -->
-  <!--                                                                      -->
   <!--   logVerbosityLevel   The level of detailed messages to be produced  -->
   <!--                       by this servlet.  Increasing levels cause the  -->
   <!--                       generation of more messages.  Valid values are -->
