@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -741,6 +742,18 @@ public abstract class RequestBase
 
 
     /**
+     * Returns a <code>Map</code> of the parameters of this request.
+     * Request parameters are extra information sent with the request.
+     * For HTTP servlets, parameters are contained in the query string
+     * or posted form data.
+     *
+     * @return A <code>Map</code> containing parameter names as keys
+     *  and parameter values as map values.
+     */
+    public abstract Map getParameterMap();
+
+
+    /**
      * Return the names of all defined request parameters for this request.
      */
     public abstract Enumeration getParameterNames();
@@ -914,6 +927,22 @@ public abstract class RequestBase
 	synchronized (attributes) {
 	    attributes.put(name, value);
 	}
+
+    }
+
+
+    /**
+     * Overrides the name of the character encoding used in the body of
+     * this request.  This method must be called prior to reading request
+     * parameters or reading input using <code>getReader()</code>.
+     *
+     * @param enc The character encoding to be used
+     *
+     * @since Servlet 2.3
+     */
+    public void setCharacterEncoding(String enc) {
+
+        ; // FIXME - setCharacterEncoding()
 
     }
 

@@ -73,6 +73,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -584,6 +585,14 @@ final class WrappedRequest
 
 
     /**
+     * Return the reconstructed URL for this request.
+     */
+    public StringBuffer getRequestURL() {
+        return (null); // FIXME - getRequestURL()
+    }
+
+
+    /**
      * Return the portion of the request URI used to select the servlet
      * that will process this request.
      */
@@ -1028,6 +1037,14 @@ final class WrappedRequest
 
 
     /**
+     * Return a Map of the parameters for this request.
+     */
+    public Map getParameterMap() {
+        return (null); // FIXME - getParameterMap()
+    }
+
+
+    /**
      * Return the names of all defined request parameters for this request.
      */
     public Enumeration getParameterNames() {
@@ -1162,6 +1179,14 @@ final class WrappedRequest
 	synchronized (attributes) {
 	    attributes.put(name, value);
 	}
+    }
+
+
+    /**
+     * Set the character encoding to be used for this request.
+     */
+    public void setCharacterEncoding(String enc) {
+        ; // FIXME - setCharacterEncoding()
     }
 
 

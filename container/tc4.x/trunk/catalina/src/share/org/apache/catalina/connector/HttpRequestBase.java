@@ -75,6 +75,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Map;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
@@ -622,6 +623,22 @@ public class HttpRequestBase
 
 
     /**
+     * Returns a <code>Map</code> of the parameters of this request.
+     * Request parameters are extra information sent with the request.
+     * For HTTP servlets, parameters are contained in the query string
+     * or posted form data.
+     *
+     * @return A <code>Map</code> containing parameter names as keys
+     *  and parameter values as map values.
+     */
+    public Map getParameterMap() {
+
+        return (null); // FIXME - getParameterMap()
+
+    }
+
+
+    /**
      * Return the names of all defined request parameters for this request.
      */
     public Enumeration getParameterNames() {
@@ -904,6 +921,29 @@ public class HttpRequestBase
     public String getRequestURI() {
 
 	return (requestURI);
+
+    }
+
+
+    /**
+     * Reconstructs the URL the client used to make the request.
+     * The returned URL contains a protocol, server name, port
+     * number, and server path, but it does not include query
+     * string parameters.
+     * <p>
+     * Because this method returns a <code>StringBuffer</code>,
+     * not a <code>String</code>, you can modify the URL easily,
+     * for example, to append query parameters.
+     * <p>
+     * This method is useful for creating redirect messages and
+     * for reporting errors.
+     *
+     * @return A <code>StringBuffer</code> object containing the
+     *  reconstructed URL
+     */
+    public StringBuffer getRequestURL() {
+
+        return (null); // FIXME - getRequestURL()
 
     }
 
