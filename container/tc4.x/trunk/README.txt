@@ -41,13 +41,11 @@ which you are installing all of the required Jakarta distributions.
   JDK 1.2 environment).  None of the JNDI providers are required, unless you
   need to use them in your own applications.
 
-* Download and install the Xerces Java Parser (release 1.2.0 or above)
-  from <http://xml.apache.org/xerces-j/index.html>. Set an
-  environment variable "XERCES_HOME" pointing at the directory to which you
-  installed this distribution.  In addition, add the "xerces.jar" 
-  file to your classpath. 
-  [Please note that Xerces is included with Xalan, so if
-   you have Xalan already you don't need a separate download.]
+* Download and install the Java API for XML Processing 1.1
+  from <http://java.sun.com/xml/download.html>. Set an
+  environment variable "JAXP_HOME" pointing at the directory to which you
+  installed this distribution.  
+  [Other XML parsers may also be used. See below for details]
 
 * Download and install the Java Secure Sockets Extension (JSSE) implementation
   (current version number is 1.0.1) from <http://java.sun.com/products/jsse>.
@@ -214,3 +212,37 @@ Before committing any changes to the Tomcat 4.0 CVS repository, you MUST do a
 scripts, to ensure that the entire build process runs cleanly.  Also, ensure
 that all current tests (both internal to Tomcat and those in Watchdog) run
 correctly with your updated code.
+
+XML parsers in Tomcat 4.0
+=========================
+
+  In the tomcat-4.0 build procedure, an XML parser is required for three
+  different components:
+  
+     1. ant
+        See ant specific requirements for an XML parser
+     2. catalina
+        At least JAXP1.0 compliant XML parser
+     3. jasper
+        At least JAXP1.1 compliant XML parser
+  
+  All of these requirements can be handled globally by setting
+  environment variable JAXP_HOME (as described above).
+  
+  The default jar files used for XML parsing are then:
+     JAXP_HOME/jaxp.jar and JAXP_HOME/crimson.jar
+  
+  * To change the 'XML parser' jar file used:
+  
+    JAXP_PARSER_JAR [default: crimson.jar]
+    (e.g. xerces.jar)
+  
+  * To set the XML parser of each component individually:
+  
+    ANT_XML_CLASSPATH [default: JAXP_HOME/JAXP_PARSER_JAR;JAXP_HOME/jaxp.jar]
+  
+    CATALINA_JAXP_HOME [default: JAXP_HOME]
+    CATALINA_JAXP_PARSER_JAR [default: JAXP_PARSER_JAR]
+  
+    JASPER_JAXP_HOME [default: JAXP_HOME]
+    JASPER_JAXP_PARSER_JAR [default: JAXP_PARSER_JAR]
