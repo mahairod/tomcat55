@@ -137,9 +137,11 @@ public class RequestMapper {
 	    int counter = 0;
 
             while (stillSearching) {
-                if (wrapper.getPath() != null &&
+                if (wrapper != null &&
+                    wrapper.getPath() != null &&
 		    wrapper.getServletClass() == null) {
-		    wrapper = getMatch(wrapper.getPath() + pathInfo);
+		    wrapper = getMatch(wrapper.getPath() +
+                        (pathInfo == null ? "" : pathInfo));
 		    this.mapPath = this.servletPath;
 
                     if (stillSearching &&
