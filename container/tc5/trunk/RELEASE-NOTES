@@ -11,7 +11,6 @@ $Id$
 KNOWN ISSUES IN THIS RELEASE:
 ============================
 
-* JMX required
 * Tomcat 5.0 and JNI Based Applications
 * Tomcat 5.0 Standard APIs Available
 * Tomcat 5.0 and XML Parsers
@@ -23,20 +22,6 @@ KNOWN ISSUES IN THIS RELEASE:
 * Symlinking static resources
 * Enabling invoker servlet
 * When all else fails
-
-
-------------
-JMX required
-------------
-
-Due to new licensing guidelines mandated by the Apache Software
-Foundation Board of Directors, a JMX implementation can no longer
-be distributed with the Apache Tomcat binaries. As a result, you
-must download a JMX 1.2 implementation (such as the Sun Reference
-Implementation) and copy the JAR containing the API and
-implementation of the JMX specification to: ${catalina.home}/bin/jmx.jar
-
-For similar reasons, a Windows installer for Tomcat is no longer available.
 
 
 -------------------------------------

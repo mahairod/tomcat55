@@ -1130,9 +1130,7 @@
 
     <!-- Copy the contents of each "build" directory -->
     <copy todir="${tomcat.dist}/bin">
-      <fileset dir="${tomcat.build}/bin">
-        <exclude name="jmx.jar" />
-      </fileset>
+      <fileset dir="${tomcat.build}/bin" />
     </copy>
     <copy todir="${tomcat.dist}/common/classes">
       <fileset dir="${tomcat.build}/common/classes" />
