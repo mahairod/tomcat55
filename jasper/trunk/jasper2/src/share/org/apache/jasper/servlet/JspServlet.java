@@ -202,18 +202,17 @@ public class JspServlet extends HttpServlet {
 
             if (includeUri == null) {
 		jspUri = request.getServletPath();
+                // When jsp-property-group/url-matching is used, and when the 
+                // jsp is not defined with <servlet-name>, the url
+                // as to be passed as it is to the JSP container (since 
+                // Catalina doesn't know anything about the requested JSP 
+                if (request.getPathInfo() != null) {
+                    jspUri = request.getServletPath() + request.getPathInfo();
+                }
             } else {
                 jspUri = includeUri;
             }
                                 
-            // When jsp-property-group/url-matching is used, and when the 
-            // jsp is not defined with <servlet-name>, the url
-            // as to be passed as it is to the JSP container (since Catalina
-            // doesn't know anything about the requested JSP 
-            if(request.getPathInfo() != null){
-                jspUri = request.getServletPath() + request.getPathInfo();
-            }
-            
             String jspFile = (String) request.getAttribute(Constants.JSP_FILE);
             if (jspFile != null) {
                 jspUri = jspFile;
