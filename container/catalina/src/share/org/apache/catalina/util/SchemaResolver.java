@@ -101,18 +101,11 @@ public class SchemaResolver implements EntityResolver {
 
 
     /**
-     * The XML schema to use for validating an XML instance.
-     */
-    protected String schemaLocation = null;
-
-
-    /**
      * Create a new <code>EntityResolver</code> that will redirect
      * all remote dtds and schema to a locat destination.
      * @param schemaLocation the XML Schema used to validate xml instance.
      */
-    public SchemaResolver(String schemaLocation, Digester digester) {
-        this.schemaLocation = schemaLocation;
+    public SchemaResolver(Digester digester) {
         this.digester = digester;
     }
 
@@ -162,7 +155,7 @@ public class SchemaResolver implements EntityResolver {
 
         // Redirect the schema location to a local destination
         String key = null;
-        if (schemaLocation != null && entityURL == null && systemId != null) {
+        if (entityURL == null && systemId != null) {
             key = systemId.substring(systemId.lastIndexOf('/')+1);
             entityURL = (String)entityValidator.get(key);
         }
