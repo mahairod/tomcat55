@@ -2156,9 +2156,6 @@ public class Generator {
 	    declareScriptingVars(n, VariableInfo.AT_BEGIN);
 	    saveScriptingVars(n, VariableInfo.AT_BEGIN);
 
-	    out.printil("{");
-	    out.pushIndent();
-
 	    out.printin(tagHandlerClass.getName());
 	    out.print(" ");
 	    out.print(tagHandlerVar);
@@ -2199,8 +2196,6 @@ public class Generator {
 	    out.println(".doTag();");
 
 	    restoreScriptingVars(n, VariableInfo.AT_BEGIN);
-	    out.popIndent();
-	    out.printil("}");
             
 	    // Synchronize AT_BEGIN scripting variables
 	    syncScriptingVars(n, VariableInfo.AT_BEGIN);
