@@ -272,7 +272,7 @@ public class SimpleTcpCluster
     private long msgSendTime = 0;
     private long lastChecked = System.currentTimeMillis();
     private boolean isJdk13 = false;
-    private String managerClassName = "org.apache.catalina.cluster.session.SimpleTcpReplicationManager";
+    private String managerClassName = "org.apache.catalina.cluster.session.DeltaManager";
 
     // ------------------------------------------------------------- Properties
 
