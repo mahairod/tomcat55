@@ -308,7 +308,11 @@ public final class NamingResources {
         if (entries.containsKey(resourceLink.getName())) {
             return;
         } else {
-            entries.put(resourceLink.getName(), resourceLink.getType());
+            Object value = resourceLink.getType();
+            if (value == null) {
+                value = new Integer(0);
+            }
+            entries.put(resourceLink.getName(), value);
         }
 
         synchronized (resourceLinks) {
