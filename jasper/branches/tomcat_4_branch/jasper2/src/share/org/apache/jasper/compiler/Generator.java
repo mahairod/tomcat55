@@ -1368,7 +1368,6 @@ public class Generator {
 		    // Assume EVAL_BODY_BUFFERED
 		    out.pushIndent();
 		    out.printil("javax.servlet.jsp.tagext.BodyContent _bc = pageContext.pushBody();");
-		    out.printil("_bc.clear();");
 		    out.printil("out = _bc;");
 
 		    out.printin(tagHandlerVar);

@@ -448,7 +448,10 @@ public class PageContextImpl extends PageContext {
             newOuts[depth] = new BodyContentImpl(out);
             outs = newOuts;
         }
+
+	outs[depth].clearBody();
         out = outs[depth];
+
         return outs[depth];
     }
 
