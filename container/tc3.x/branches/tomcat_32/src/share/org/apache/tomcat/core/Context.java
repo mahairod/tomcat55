@@ -807,7 +807,8 @@ public class Context {
     }
 
     /**  method to return the Localized version of the file whose
-     *   name is passed as an argument.
+     *   name is passed as an argument. This corresponds to "file" type
+     *   localization resource lookup mechanism.
      *
      *  The method performs a resource lookup in a manner similar to the
      *  one specified by java.util.ResourceBundle.
@@ -854,11 +855,55 @@ public class Context {
      */
     public String getRealPath (String path, Locale reqLocale, Locale fbLocale)
     {
+	return getRealPath (path, reqLocale, fbLocale, "file");
+    }
+
+    /**  method to return the Localized version of the file whose
+     *   name is passed as an argument. The localization is done based
+     *   on localization subdirectories under the docBase.
+     *
+     *  The method performs a resource lookup in a manner similar to the
+     *  one used for JavaHelp resources.
+     *
+     *  Search for localized versions of the file are looked for:
+     *
+     *   <docBase> + "/" + language1 + "_" + country1 + "_" + variant1 + file
+     *   <docBase> + "/" + language1 + "_" + country1 + file
+     *   <docBase> + "/" + language1 + file
+     *   <docBase> + "/" + language2 + "_" + country2 + "_" + variant1 + file
+     *   <docBase> + "/" + language2 + "_" + country2 + file
+     *   <docBase> + "/" + language2 + file
+     *   <docBase> + file
+     *
+     *  Where language1, country1, variant1 are associated with the Locale
+     *  passed as an argument and language2, country2, variant are associated
+     *  with the fallback Locale passed as argument.
+     *
+     *
+     *  @param path the pathname for the resource whose localized version
+     *          we are seeking
+     *  @param loc the Locale we are interested in.
+     *  @param fbLoc the fallback Locale to use if unsuccessful
+     *  @param locType the type of localization required "file", "docbase"
+     *
+     *  @return a String with the path of the "best localized match" for
+     *          the file whose path has been passed as argument.
+     */
+    public String getRealPath (String path, Locale reqLocale, Locale fbLocale,
+			       String locType)
+    {
         String base = getAbsolutePath();
         if (path == null) path = "";
 
-        String realPath = FileUtil.getLocalizedFile (base, path,
-						     reqLocale, fbLocale);
+        String realPath = null;
+
+	if ("file".equals (locType))
+	    realPath = FileUtil.getLocalizedFile (base, path,
+						  reqLocale, fbLocale);
+	else if ("docbase".equals (locType))
+	    realPath = FileUtil.getDocBaseLocalizedFile (base, path,
+						  reqLocale, fbLocale);
+
 	if( debug>5) {
 	    log("Get real path " + path + " " + realPath + " " + base
 		 + reqLocale.toString() + " " + fbLocale.toString() );
