@@ -324,9 +324,11 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatCore} $(DESC_SecTomcatCore)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatService} $(DESC_SecTomcatService)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatSource} $(DESC_SecTomcatSource)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecTomcatDocs} $(DESC_SecTomcatDocs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} $(DESC_SecMenu)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDocs} $(DESC_SecDocs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAdmin} $(DESC_SecAdmin)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecWebapps} $(DESC_SecWebapps)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

@@ -1381,6 +1381,7 @@
 
   <!-- ====================== DIST: Create Javadoc ======================== -->
   <target name="dist-javadoc">
+  	<!--
     <ant dir="${catalina.home}" target="dist-javadoc"/>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
@@ -1391,6 +1392,7 @@
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api">
       <fileset dir="${jasper.build}/javadoc" />
     </copy>
+    -->
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
       <fileset dir="${api.home}/jsr154/dist/docs/api" />
@@ -1508,7 +1510,7 @@
 
 
   <!-- ==================== RELEASE: Create Release ======================= -->
-  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-compat-zip,package-compat-tgz,package-admin-zip,package-admin-tgz,package-src-zip,package-src-tgz,clean-tester,run-tester"
+  <target name="release" depends="clean,dist,dist-source,prepare-release,installer,package-zip,package-tgz,package-embed-zip,package-embed-tgz,package-deployer-zip,package-deployer-tgz,package-compat-zip,package-compat-tgz,package-admin-zip,package-admin-tgz,package-src-zip,package-src-tgz,package-docs-tgz,clean-tester,run-tester"
    description="Create a Tomcat 5 packaged distribution">
 
     <filter token="VERSION" value="${version}"/>
@@ -1582,33 +1584,33 @@
 
 	  <target name="package-compat-zip">
 	    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-compat.zip">
-	      <zipfileset dir="${tomcat.compat}" prefix="${final.name}-compat" 
+	      <zipfileset dir="${tomcat.compat}" prefix="${final.name}t" 
 	                  includes="**" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="LICENSE" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="NOTICE" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="README.txt" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-compat" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="RELEASE-NOTES" />
 	    </zip>
 	  </target>
 
 	  <target name="package-admin-zip">
 	    <zip zipfile="${tomcat.release}/v${version}/bin/${final.name}-admin.zip">
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}">
 	      	<include name="server/webapps/admin/**"/>
 	      	<include name="conf/Catalina/localhost/admin.xml"/>
 	        <exclude name="*.jsp" />
 	      </zipfileset>
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="LICENSE" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="NOTICE" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="README.txt" />
-	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}-admin" 
+	      <zipfileset dir="${tomcat.dist}" prefix="${final.name}" 
 	       includes="RELEASE-NOTES" />
 	    </zip>
 	  </target>
@@ -1728,13 +1730,13 @@
 	     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
 	    <tar longfile="gnu" compression="gzip"
 	          tarfile="${tomcat.release}/v${version}/bin/${final.name}-compat.tar.gz">
-	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-compat">
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
 	        <include name="LICENSE" />
 	        <include name="NOTICE" />
 	        <include name="README.txt" />
 	        <include name="RELEASE-NOTES" />
 	      </tarfileset>
-	      <tarfileset dir="${tomcat.compat}" prefix="${final.name}-compat">
+	      <tarfileset dir="${tomcat.compat}" prefix="${final.name}">
 	        <include name="**" />
 	      </tarfileset>
 	    </tar>
@@ -1745,23 +1747,49 @@
 	     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
 	    <tar longfile="gnu" compression="gzip"
 	          tarfile="${tomcat.release}/v${version}/bin/${final.name}-admin.tar.gz">
-	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
 	        <include name="LICENSE" />
 	        <include name="NOTICE" />
 	        <include name="README.txt" />
 	        <include name="RELEASE-NOTES" />
 	      </tarfileset>
-	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}-admin">
+	      <tarfileset dir="${tomcat.dist}" prefix="${final.name}">
 	        <include name="server/webapps/admin/**" />
 	        <exclude name="*.jsp" />
 	      </tarfileset>
-	        <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}-admin">
+	        <tarfileset dir="${tomcat.dist}" mode="600" prefix="${final.name}">
 	          <include name="conf/Catalina/localhost/admin.xml" />
 	        </tarfileset>
 	    </tar>
 	  </target>
 
-  <target name="package-src-zip">
+  <target name="package-docs-tgz">
+    <ant dir="${catalina.home}" target="dist-javadoc"/>
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/catalina/docs/api">
+      <fileset dir="${catalina.build}/javadoc" />
+    </copy>
+    <ant dir="${jasper.home}" target="javadoc"/>
+    <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api"/>
+    <copy todir="${tomcat.dist}/webapps/tomcat-docs/jasper/docs/api">
+      <fileset dir="${jasper.build}/javadoc" />
+    </copy>
+    <fixcrlf srcdir="${tomcat.dist}" 
+     includes="*.txt,LICENSE,NOTICE" eol="lf"/>
+    <tar longfile="gnu" compression="gzip"
+          tarfile="${tomcat.release}/v${version}/bin/${final.name}-fulldocs.tar.gz">
+      <tarfileset dir="${tomcat.dist}" prefix="tomcat-5.5-doc">
+        <include name="LICENSE" />
+        <include name="NOTICE" />
+        <include name="README.txt" />
+      </tarfileset>
+      <tarfileset dir="${tomcat.dist}/webapps/tomcat-docs" prefix="tomcat-5.5-doc">
+        <include name="**" />
+      </tarfileset>
+    </tar>
+  </target>
+
+ <target name="package-src-zip">
     <!-- Package Tomcat Source -->
     <zip zipfile="${tomcat.release}/v${version}/src/${final-src.name}.zip">
       <zipfileset dir="${tomcat.dist}/src" prefix="${final-src.name}" />
