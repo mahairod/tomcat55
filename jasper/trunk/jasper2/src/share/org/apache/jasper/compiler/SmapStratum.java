@@ -269,7 +269,8 @@ public class SmapStratum {
     public synchronized String getString() {
 	// check state and initialize buffer
 	if (fileNameList.size() == 0 || lineData.size() == 0)
-	    throw new IllegalStateException();
+	    return null;
+
 	StringBuffer out = new StringBuffer();
 
 	// print StratumSection

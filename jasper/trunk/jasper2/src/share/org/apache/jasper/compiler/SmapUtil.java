@@ -86,16 +86,14 @@ public class SmapUtil {
 
     /**
      * Generates an appropriate SMAP representing the current compilation
-     * context and optionally installs in the target .class file.  (JSR-045.)
-     * If the keepGenerated flag is set in the compilation context, the
-     * generated .smap file will remain.  Otherwise, it will be deleted.
+     * context.  (JSR-045.)
      *
-     * @param install True if the SourceDebugExtension is to be installed
-     *     in the generated .class file, or false if not.
+     * @param ctxt Current compilation context
+     * @param pageNodes The current JSP page
+     * @return a SMAP for the page
      */
-    public static void generateSmap(JspCompilationContext ctxt,
-                                              Node.Nodes pageNodes,
-					      boolean install )
+    public static String generateSmap(JspCompilationContext ctxt,
+                                              Node.Nodes pageNodes)
         throws IOException 
     {
 	// set up our SMAP generator
@@ -121,34 +119,22 @@ public class SmapUtil {
         SmapStratum s = new SmapStratum("JSP");
 
         g.setOutputFileName(unqualify(ctxt.getServletJavaFileName()));
-        // recursively map out Node.Nodes, it seems ugly..but its the only way??
+        // Map out Node.Nodes
         evaluateNodes(pageNodes, s);
         g.addStratum(s, true);
 
-	/*
-         * Save the output to a temporary file (just so as to use
-         * Robert's interface -- so that I don't have to keep changing
-         * this code if he updates it).  TODO:  We could do this more
-         * gracefully later.  But writing out the SMAP to a known
-	 * filename (servlet.class.smap) will also make troubleshooting
-         * easier.
-	 */
-
-        File outSmap = new File(ctxt.getClassFileName() + ".smap");
-	PrintWriter so = new PrintWriter(
-	    new OutputStreamWriter(new FileOutputStream(outSmap),
-				   SMAP_ENCODING));
-	so.print(g.getString());
-	so.close();
+//	System.out.println(g.getString());
+	return g.getString();
     }
     
-    public static void installSmap(JspCompilationContext ctxt) throws IOException {
-        File outSmap = new File(ctxt.getClassFileName() + ".smap");
-        File outServlet = new File(ctxt.getClassFileName());
-        SDEInstaller.install(outServlet, outSmap);
-//        if( !ctxt.keepGenerated() ) {
-            outSmap.delete();
-//        }
+    public static void installSmap(String classFileName, String smap)
+               throws IOException {
+        if (smap == null) {
+            return;
+        }
+
+        File outServlet = new File(classFileName);
+        SDEInstaller.install(outServlet, smap.getBytes());
     }
 
 
@@ -215,18 +201,28 @@ public class SmapUtil {
             }
         }
 
-        SDEInstaller(File inClassFile, File attrFile, File outClassFile)
+        static void install(File classFile, byte[] smap)
+                throws IOException {
+            File tmpFile = new File(classFile.getPath() + "tmp");
+            new SDEInstaller(classFile, smap, tmpFile);
+            if (!classFile.delete()) {
+                throw new IOException("classFile.delete() failed");
+            }
+            if (!tmpFile.renameTo(classFile)) {
+                throw new IOException("tmpFile.renameTo(classFile) failed")
+;
+            }
+        }
+
+        SDEInstaller(File inClassFile, byte[] sdeAttr, File outClassFile)
                 throws IOException {
             if (!inClassFile.exists()) {
                 throw new FileNotFoundException("no such file: " + inClassFile);
             }
-            if (!attrFile.exists()) {
-                throw new FileNotFoundException("no such file: " + attrFile);
-            }
  
+            this.sdeAttr = sdeAttr;
             // get the bytes
             orig = readWhole(inClassFile);
-            sdeAttr = readWhole(attrFile);
             gen = new byte[orig.length + sdeAttr.length + 100];
     
             // do it
@@ -237,6 +233,11 @@ public class SmapUtil {
             outStream.write(gen, 0, genPos);
             outStream.close();
         }
+
+        SDEInstaller(File inClassFile, File attrFile, File outClassFile)
+                throws IOException {
+            this(inClassFile, readWhole(attrFile), outClassFile);
+	}
 
         static byte[] readWhole(File input) throws IOException {
             FileInputStream inStream = new FileInputStream(input);

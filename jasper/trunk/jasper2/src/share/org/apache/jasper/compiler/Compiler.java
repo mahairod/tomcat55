@@ -191,10 +191,14 @@ public class Compiler {
 
     /** 
      * Compile the jsp file from the current engine context
+     * @return a smap for the current JSP page, if one is generated,
+     *         null otherwise
      */
-    private void generateJava()
+    private String generateJava()
         throws Exception
     {
+	String smapStr = null;
+
         long t1=System.currentTimeMillis();
 
 	// Setup page info area
@@ -249,7 +253,7 @@ public class Compiler {
 	    // generate prototype .java file for the tag file
 	    Generator.generate(writer, this, pageNodes);
             writer.close();
-	    return;
+	    return null;
 	}
 
 	// Generate FunctionMapper (used for validation of EL expressions and
@@ -299,7 +303,7 @@ public class Compiler {
         
         //JSR45 Support - note this needs to be checked by a JSR45 guru
         if (! options.suppressSmap()) {
-            SmapUtil.generateSmap(ctxt, pageNodes, true);
+            smapStr = SmapUtil.generateSmap(ctxt, pageNodes);
         }
 
 	// If any proto type .java and .class files was generated,
@@ -309,12 +313,14 @@ public class Compiler {
 	// generate .class again from the new .java file just generated.
 
 	tfp.removeProtoTypeFiles(ctxt.getClassFileName());
+
+	return smapStr;
     }
 
     /** 
      * Compile the jsp file from the current engine context
      */
-    private void generateClass()
+    private void generateClass(String smap)
         throws FileNotFoundException, JasperException, Exception {
 
         long t1=System.currentTimeMillis();
@@ -425,7 +431,7 @@ public class Compiler {
 
         //JSR45 Support - note this needs to be checked by a JSR45 guru
         if (! options.suppressSmap()) {
-            SmapUtil.installSmap(ctxt);
+            SmapUtil.installSmap(ctxt.getClassFileName(), smap);
         }
     }
 
@@ -449,9 +455,9 @@ public class Compiler {
         }
 
         try {
-            generateJava();
+            String smap = generateJava();
             if (compileClass) {
-                generateClass();
+                generateClass(smap);
             }
         } finally {
             if (tfp != null) {
