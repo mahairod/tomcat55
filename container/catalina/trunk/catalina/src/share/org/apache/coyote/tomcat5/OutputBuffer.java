@@ -633,22 +633,7 @@ public class OutputBuffer extends Writer
             }
             
             encoders.put(enc, conv);
-            /*
-            try {
-                conv = new C2BConverter(bb, enc);
-                encoders.put(enc, conv);
-            } catch (IOException e) {
-                conv = (C2BConverter) encoders.get(DEFAULT_ENCODING);
-                if (conv == null) {
-                    try {
-                        conv = new C2BConverter(bb, DEFAULT_ENCODING);
-                        encoders.put(DEFAULT_ENCODING, conv);
-                    } catch (IOException ex) {
-                        // Ignore
-                    }
-                }
-            }
-            */
+
         }
     }
 
