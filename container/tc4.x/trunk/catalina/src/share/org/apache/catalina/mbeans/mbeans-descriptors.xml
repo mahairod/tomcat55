@@ -148,7 +148,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="override"
-          description="Does this environment entry allow overrides by the 
+          description="Does this environment entry allow overrides by the
 	  application deployment descriptor"
                  type="boolean"/>
 
@@ -262,11 +262,11 @@
 
     <attribute   name="keystoreFile"
           description="Pathname to the key store file to be used"
-                 type="java.lang.String"/>  
+                 type="java.lang.String"/>
 
     <attribute   name="keystorePass"
           description="Password for accessing the key store file"
-                 type="java.lang.String"/>  
+                 type="java.lang.String"/>
 
     <attribute   name="maxProcessors"
           description="The maximum number of processors allowed"
@@ -288,11 +288,11 @@
 
     <attribute   name="proxyName"
           description="Ther Server name to which we should pretend requests to this Connector"
-                 type="java.lang.String"/>             
-  
+                 type="java.lang.String"/>
+
     <attribute   name="proxyPort"
           description="Ther Server port to which we should pretend requests to this Connector"
-                 type="int"/>  
+                 type="int"/>
 
     <attribute   name="redirectPort"
           description="The redirect port for non-SSL to SSL redirects"
@@ -1052,7 +1052,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="userSubtree"
-          description="Should we search the entire subtree for matching 
+          description="Should we search the entire subtree for matching
                        users?"
                  type="boolean"/>
 
@@ -1063,6 +1063,10 @@
     <attribute   name="userPattern"
           description="The message format used to select a user"
                  type="java.lang.String"/>
+
+   <attribute   name="userSearch"
+         description="The message format used to search for a user"
+                type="java.lang.String"/>
 
     <attribute   name="contextFactory"
           description="The JNDI context factory for this Realm"
@@ -1346,7 +1350,7 @@
           description="MBean Name of the component to be removed"
                  type="java.lang.String"/>
     </operation>
-    
+
     <operation   name="removeHost"
           description="Remove an existing Host"
                impact="ACTION"
@@ -1592,26 +1596,26 @@
 
   <mbean         name="NamingResources"
             className="org.apache.catalina.mbeans.NamingResourcesMBean"
-          description="Holds and manages the naming resources defined in the 
+          description="Holds and manages the naming resources defined in the
 	  J2EE Enterprise Naming Context and their associated JNDI context"
                domain="Catalina"
                 group="Resources"
                  type="org.apache.catalina.deploy.NamingResources">
 
     <attribute   name="environments"
-          description="MBean Names of the set of defined environment entries 
+          description="MBean Names of the set of defined environment entries
 	  for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resources"
-          description="MBean Names of all the defined resource references 
+          description="MBean Names of all the defined resource references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
 
     <attribute   name="resourceLinks"
-          description="MBean Names of all the defined resource link references 
+          description="MBean Names of all the defined resource link references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
@@ -1907,7 +1911,7 @@
                  type="java.lang.String"/>
 
     <attribute   name="environments"
-          description="MBean Names of the set of defined environment entries 
+          description="MBean Names of the set of defined environment entries
 	  for this web application"
                  type="java.lang.String[]"
             writeable="false"/>
@@ -1930,7 +1934,7 @@
                  type="boolean"/>
 
     <attribute   name="resources"
-          description="MBean Names of all the defined resource references 
+          description="MBean Names of all the defined resource references
 	  for this application."
                  type="java.lang.String[]"
             writeable="false"/>
@@ -2048,7 +2052,7 @@
 
   </mbean>
 
-  
+
   <mbean         name="StandardHost"
             className="org.apache.catalina.mbeans.StandardHostMBean"
           description="Standard Host Component"
@@ -2181,7 +2185,7 @@
                         created by this Manager"
                  type="int"/>
 
-    <attribute name="maxIdleBackup" 
+    <attribute name="maxIdleBackup"
           description="The time interval (in seconds) since the last access
                         to a session before it is eligible for being
                         persisted to the session store, or -1 to disable"
@@ -2193,7 +2197,7 @@
                         session store, or -1 to disable"
                  type="int" />
 
-    <attribute name="minIdleSwap" 
+    <attribute name="minIdleSwap"
           description="The time interval (in seconds) since the last access
                         to a session before it will be eligible to be
                         persisted to the session store, or -1 to disable"
@@ -2349,7 +2353,7 @@
                  type="int"/>
 
   </mbean>
-  
+
 
   <mbean         name="SystemErrLogger"
             className="org.apache.catalina.mbeans.ClassNameMBean"
