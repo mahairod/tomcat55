@@ -102,6 +102,7 @@ public class ResponseStream
         count = 0;
         this.response = response;
         this.stream = response.getStream();
+        this.suspended = response.isSuspended();
 
     }
 
@@ -153,6 +154,12 @@ public class ResponseStream
     protected OutputStream stream = null;
 
 
+    /**
+     * Has this response output been suspended?
+     */
+    protected boolean suspended = false;
+
+
     // ------------------------------------------------------------- Properties
 
 
@@ -178,6 +185,26 @@ public class ResponseStream
     }
 
 
+    /**
+     * Set the suspended flag.
+     */
+    void setSuspended(boolean suspended) {
+
+        this.suspended = suspended;
+
+    }
+
+
+    /**
+     * Suspended flag accessor.
+     */
+    boolean isSuspended() {
+
+        return (this.suspended);
+
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -186,6 +213,10 @@ public class ResponseStream
      * any further output data to throw an IOException.
      */
     public void close() throws IOException {
+
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseStream.suspended"));
 
         if (closed)
             throw new IOException(sm.getString("responseStream.close.closed"));
@@ -201,6 +232,10 @@ public class ResponseStream
      * response to be committed.
      */
     public void flush() throws IOException {
+
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseStream.suspended"));
 
         if (closed)
             throw new IOException(sm.getString("responseStream.flush.closed"));
@@ -219,6 +254,9 @@ public class ResponseStream
      * @exception IOException if an input/output error occurs
      */
     public void write(int b) throws IOException {
+
+        if (suspended)
+            return;
 
         if (closed)
             throw new IOException(sm.getString("responseStream.write.closed"));
@@ -242,6 +280,9 @@ public class ResponseStream
      */
     public void write(byte b[]) throws IOException {
 
+        if (suspended)
+            return;
+
         write(b, 0, b.length);
 
     }
@@ -258,6 +299,9 @@ public class ResponseStream
      * @exception IOException if an input/output error occurs
      */
     public void write(byte b[], int off, int len) throws IOException {
+
+        if (suspended)
+            return;
 
         if (closed)
             throw new IOException(sm.getString("responseStream.write.closed"));

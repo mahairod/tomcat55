@@ -131,15 +131,23 @@ public final class HttpResponseStream extends ResponseStream {
      */
     public void write(int b)
         throws IOException {
+
+        if (suspended)
+            return;
+
         if (useChunking && !writingChunk) {
             writingChunk = true;
-            print("1\r\n");
-            super.write(b);
-            println();
-            writingChunk = false;
+            try {
+                print("1\r\n");
+                super.write(b);
+                println();
+            } finally {
+                writingChunk = false;
+            }
         } else {
             super.write(b);
         }
+
     }
 
 
@@ -148,17 +156,25 @@ public final class HttpResponseStream extends ResponseStream {
      */
     public void write(byte[] b, int off, int len)
         throws IOException {
+
+        if (suspended)
+            return;
+
         if (useChunking && !writingChunk) {
             if (len > 0) {
                 writingChunk = true;
-                println(Integer.toHexString(len));
-                super.write(b, off, len);
-                println();
-                writingChunk = false;
+                try {
+                    println(Integer.toHexString(len));
+                    super.write(b, off, len);
+                    println();
+                } finally {
+                    writingChunk = false;
+                }
             }
         } else {
             super.write(b, off, len);
         }
+
     }
 
 
@@ -168,11 +184,18 @@ public final class HttpResponseStream extends ResponseStream {
      */
     public void close() throws IOException {
 
+        if (suspended)
+            throw new IOException
+                (sm.getString("responseStream.suspended"));
+
         if (useChunking) {
             // Write the final chunk.
             writingChunk = true;
-            print("0\r\n\r\n");
-            writingChunk = false;
+            try {
+                print("0\r\n\r\n");
+            } finally {
+                writingChunk = false;
+            }
         }
         super.close();
 

@@ -403,6 +403,8 @@ public abstract class ResponseBase
     public void setSuspended(boolean suspended) {
 
         this.suspended = suspended;
+        if (stream != null)
+            ((ResponseStream) stream).setSuspended(suspended);
 
     }
 
