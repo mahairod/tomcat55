@@ -122,6 +122,9 @@ extern "C" {
     #define PATH_SEPERATOR          (';')
     #define FILE_SEPERATOR          ('\\')
     #define PATH_ENV_VARIABLE       ("PATH")
+
+    /* incompatible names... */
+    #define strcasecmp stricmp
 #else
     #define JK_METHOD
     #define C_LEVEL_TRY_START       

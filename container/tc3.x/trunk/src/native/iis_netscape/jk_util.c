@@ -113,15 +113,15 @@ static int JK_METHOD log_to_file(jk_logger_t *l,
 
 int jk_parse_log_level(const char *level)
 {
-    if(0 == stricmp(level, JK_LOG_INFO_VERB)) {
+    if(0 == strcasecmp(level, JK_LOG_INFO_VERB)) {
         return JK_LOG_INFO_LEVEL;
     }
 
-    if(0 == stricmp(level, JK_LOG_ERROR_VERB)) {
+    if(0 == strcasecmp(level, JK_LOG_ERROR_VERB)) {
         return JK_LOG_ERROR_LEVEL;
     }
 
-    if(0 == stricmp(level, JK_LOG_EMERG_VERB)) {
+    if(0 == strcasecmp(level, JK_LOG_EMERG_VERB)) {
         return JK_LOG_EMERG_LEVEL;
     }
 

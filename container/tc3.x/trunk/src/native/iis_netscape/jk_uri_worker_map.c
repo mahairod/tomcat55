@@ -320,7 +320,7 @@ char *map_uri_to_worker(jk_uri_worker_map_t *uw_map,
 
                         /* for WinXX, fix the JsP != jsp problems */
 #ifdef WIN32                        
-                        if(0 == stricmp(suffix, uw_map->maps[i].suffix)) {
+                        if(0 == strcasecmp(suffix, uw_map->maps[i].suffix)) {
 #else
                         if(0 == strcmp(suffix, uw_map->maps[i].suffix)) {
 #endif
