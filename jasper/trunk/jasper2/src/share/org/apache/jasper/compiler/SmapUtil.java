@@ -65,6 +65,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.jasper.JasperException;
 import org.apache.jasper.JspCompilationContext;
@@ -99,13 +102,22 @@ public class SmapUtil {
      * @param pageNodes The current JSP page
      * @return a SMAP for the page
      */
-    public static String generateSmap(
+    public static String[] generateSmap(
         JspCompilationContext ctxt,
         Node.Nodes pageNodes)
         throws IOException {
+
+        // Scan the nodes for presence of Jasper generated inner classes
+        PreScanVisitor psVisitor = new PreScanVisitor();
+        try {
+            pageNodes.visit(psVisitor);
+        } catch (JasperException ex) {
+        }
+        HashMap map = psVisitor.getMap();
+
         // set up our SMAP generator
         SmapGenerator g = new SmapGenerator();
-
+        
         /** Disable reading of input SMAP because:
             1. There is a bug here: getRealPath() is null if .jsp is in a jar
         	Bugzilla 14660.
@@ -126,8 +138,10 @@ public class SmapUtil {
         SmapStratum s = new SmapStratum("JSP");
 
         g.setOutputFileName(unqualify(ctxt.getServletJavaFileName()));
+
         // Map out Node.Nodes
-        evaluateNodes(pageNodes, s, ctxt.getOptions().getMappedFile());
+        evaluateNodes(pageNodes, s, map, ctxt.getOptions().getMappedFile());
+        s.optimizeLineSection();
         g.addStratum(s, true);
 
         if (ctxt.getOptions().isSmapDumped()) {
@@ -140,17 +154,55 @@ public class SmapUtil {
             so.print(g.getString());
             so.close();
         }
-        return g.getString();
+
+        String classFileName = ctxt.getClassFileName();
+        int innerClassCount = map.size();
+        String [] smapInfo = new String[2 + innerClassCount*2];
+        smapInfo[0] = classFileName;
+        smapInfo[1] = g.getString();
+
+        int count = 2;
+        Iterator iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String innerClass = (String) entry.getKey();
+            s = (SmapStratum) entry.getValue();
+            s.optimizeLineSection();
+            g = new SmapGenerator();
+            g.setOutputFileName(unqualify(ctxt.getServletJavaFileName()));
+            g.addStratum(s, true);
+
+            String innerClassFileName =
+                classFileName.substring(0, classFileName.indexOf(".class")) +
+                '$' + innerClass + ".class";
+            if (ctxt.getOptions().isSmapDumped()) {
+                File outSmap = new File(innerClassFileName + ".smap");
+                PrintWriter so =
+                    new PrintWriter(
+                        new OutputStreamWriter(
+                            new FileOutputStream(outSmap),
+                            SMAP_ENCODING));
+                so.print(g.getString());
+                so.close();
+            }
+            smapInfo[count] = innerClassFileName;
+            smapInfo[count+1] = g.getString();
+            count += 2;
+        }
+
+        return smapInfo;
     }
 
-    public static void installSmap(String classFileName, String smap)
+    public static void installSmap(String[] smap)
         throws IOException {
         if (smap == null) {
             return;
         }
 
-        File outServlet = new File(classFileName);
-        SDEInstaller.install(outServlet, smap.getBytes());
+        for (int i = 0; i < smap.length; i += 2) {
+            File outServlet = new File(smap[i]);
+            SDEInstaller.install(outServlet, smap[i+1].getBytes());
+        }
     }
 
     //*********************************************************************
@@ -497,22 +549,34 @@ public class SmapUtil {
     public static void evaluateNodes(
         Node.Nodes nodes,
         SmapStratum s,
+        HashMap innerClassMap,
         boolean breakAtLF) {
         try {
-            nodes.visit(new SmapGenVisitor(s, breakAtLF));
+            nodes.visit(new SmapGenVisitor(s, breakAtLF, innerClassMap));
         } catch (JasperException ex) {
         }
-        s.optimizeLineSection();
     }
 
     static class SmapGenVisitor extends Node.Visitor {
 
         private SmapStratum smap;
         private boolean breakAtLF;
+        private HashMap innerClassMap;
 
-        SmapGenVisitor(SmapStratum s, boolean breakAtLF) {
+        SmapGenVisitor(SmapStratum s, boolean breakAtLF, HashMap map) {
             this.smap = s;
             this.breakAtLF = breakAtLF;
+            this.innerClassMap = map;
+        }
+
+        public void visitBody(Node n) throws JasperException {
+            SmapStratum smapSave = smap;
+            String innerClass = n.getInnerClassName();
+            if (innerClass != null) {
+                this.smap = (SmapStratum) innerClassMap.get(innerClass);
+            }
+            super.visitBody(n);
+            smap = smapSave;
         }
 
         public void visit(Node.Declaration n) throws JasperException {
@@ -697,6 +761,22 @@ public class SmapUtil {
             }
 
             doSmap(n, lineCount, 1, skippedLines);
+        }
+    }
+
+    private static class PreScanVisitor extends Node.Visitor {
+
+        HashMap map = new HashMap();
+
+        public void doVisit(Node n) {
+            String inner = n.getInnerClassName();
+            if (inner != null && !map.containsKey(inner)) {
+                map.put(inner, new SmapStratum("JSP"));
+            }
+        }
+
+        HashMap getMap() {
+            return map;
         }
     }
 }

@@ -186,10 +186,10 @@ public class Compiler {
      * @return a smap for the current JSP page, if one is generated,
      *         null otherwise
      */
-    private String generateJava()
+    private String[] generateJava()
         throws Exception
     {
-	String smapStr = null;
+	String[] smapStr = null;
 
         long t1=System.currentTimeMillis();
 
@@ -306,7 +306,7 @@ public class Compiler {
     /** 
      * Compile the servlet from .java file to .class file
      */
-    private void generateClass(String smap)
+    private void generateClass(String[] smap)
         throws FileNotFoundException, JasperException, Exception {
 
         long t1=System.currentTimeMillis();
@@ -426,7 +426,7 @@ public class Compiler {
 
         // JSR45 Support
         if (! options.isSmapSuppressed()) {
-            SmapUtil.installSmap(ctxt.getClassFileName(), smap);
+            SmapUtil.installSmap(smap);
         }
     }
 
@@ -453,7 +453,7 @@ public class Compiler {
         }
 
         try {
-            String smap = generateJava();
+            String[] smap = generateJava();
             if (compileClass) {
                 generateClass(smap);
             }

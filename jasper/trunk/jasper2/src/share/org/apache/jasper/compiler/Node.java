@@ -116,6 +116,13 @@ abstract class Node implements TagConstants {
     protected Nodes namedAttributeNodes; // cached for performance
     protected String qName;
     protected String localName;
+    /*
+     * The name of the inner class to which the codes for this node and
+     * its body are generated.  For instance, for <jsp:body> in foo.jsp,
+     * this is "foo_jspHelper".  This is primarily used for communicating
+     * such info from Generator to Smap generator.
+     */
+    protected String innerClassName;
 
     private boolean isDummy;
 
@@ -398,6 +405,14 @@ abstract class Node implements TagConstants {
 	    n = n.getParent();
 	}
 	return (Node.Root) n;
+    }
+
+    public String getInnerClassName() {
+        return innerClassName;
+    }
+
+    public void setInnerClassName(String icn) {
+        innerClassName = icn;
     }
 
     /**

@@ -94,6 +94,8 @@ import org.xml.sax.Attributes;
  * @author Mandar Raje
  * @author Rajiv Mordani
  * @author Pierre Delisle
+ *
+ * Tomcat 4.1.x and Tomcat 5:
  * @author Kin-man Chung
  * @author Jan Luehe
  * @author Shawn Bayern
@@ -3913,6 +3915,7 @@ class Generator {
             Fragment result = new Fragment(fragments.size(), parent);
             fragments.add(result);
             this.used = true;
+            parent.setInnerClassName(className);
 
             ServletWriter out = result.getGenBuffer().getOut();
             out.pushIndent();
