@@ -77,6 +77,8 @@
       <depend property="commons-pool.jar" project="commons-pool"/>
       <depend property="commons-logging.jar" project="commons-logging"
         runtime="true"/>
+      <depend property="commons-logging-api.jar" project="commons-logging"
+        runtime="true"/>
     </ant>
 
     <depend project="jakarta-ant"/>
