@@ -85,15 +85,15 @@ import org.apache.webapp.admin.Lists;
  */
 
 public class AddHostAction extends Action {
-    
+
     /**
      * The MessageResources we will be retrieving messages from.
      */
     private MessageResources resources = null;
-    
-    
+
+
     // --------------------------------------------------------- Public Methods
-    
+
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
      * response (or forward to another web component that will create it).
@@ -114,18 +114,18 @@ public class AddHostAction extends Action {
     HttpServletRequest request,
     HttpServletResponse response)
     throws IOException, ServletException {
-        
+
         // Acquire the resources that we need
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
         if (resources == null) {
             resources = getServlet().getResources();
         }
-        
+
         // the service Name is needed to retrieve the engine mBean to
         // which the new host mBean will be added.
         String serviceName = request.getParameter("serviceName");
-        
+
         // Fill in the form values for display and editing
         HostForm hostFm = new HostForm();
         session.setAttribute("hostForm", hostFm);
@@ -136,13 +136,15 @@ public class AddHostAction extends Action {
         hostFm.setServiceName(serviceName);
         hostFm.setAppBase("");
         hostFm.setUnpackWARs("false");
+        hostFm.setXmlNamespaceAware("false");
+        hostFm.setXmlValidation("false");
         hostFm.setDebugLvlVals(Lists.getDebugLevels());
-        hostFm.setBooleanVals(Lists.getBooleanValues());        
-        
+        hostFm.setBooleanVals(Lists.getBooleanValues());
+
         // Forward to the host display page
         return (mapping.findForward("Host"));
-        
+
     }
-    
-    
+
+
 }
