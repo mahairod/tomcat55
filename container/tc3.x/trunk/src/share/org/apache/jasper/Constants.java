@@ -106,6 +106,14 @@ public class Constants {
     };
 
     /**
+     * ServletContext attribute for classpath. This is tomcat specific. 
+     * Other servlet engines can choose to have this attribute if they 
+     * want to have this JSP engine running on them. 
+     */
+    public static final String SERVLET_CLASSPATH = "servlet.classpath";
+
+
+    /**
      * Codes that indicate how verbose you want the JSP engine to be. 
      */
     public static final int FATAL_ERRORS = Integer.MIN_VALUE;
@@ -115,7 +123,6 @@ public class Constants {
     public static final int HIGH_VERBOSITY = 3;
 
     public static int jspVerbosityLevel = 0;
-
 
     /**
      * Default size of the JSP buffer.
