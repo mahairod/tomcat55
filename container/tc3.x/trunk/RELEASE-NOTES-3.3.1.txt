@@ -237,6 +237,7 @@ Bug No.  Description
 6348     Fix problem with getNamedDispatcher() when used with a JSP mapped
          in the web.xml.
 
+6515	 Block setting of Date-Headers from within an include.
 
 Configuration:
 
