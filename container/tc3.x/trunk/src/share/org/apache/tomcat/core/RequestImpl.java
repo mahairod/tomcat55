@@ -433,7 +433,7 @@ public class RequestImpl  implements Request {
 	// if the interceptors found a request id, use it
 	if( reqSessionId != null ) {
 	    // we have a session !
-	    serverSession=sM.findSession( context, reqSessionId );
+	    serverSession=sM.findSession( reqSessionId );
 	    if( serverSession!=null) return serverSession;
 	}
 
@@ -441,7 +441,7 @@ public class RequestImpl  implements Request {
 	    return null;
 
 	// no session exists, create flag
-	serverSession =sM.createSession( context );
+	serverSession =sM.createSession( );
 	reqSessionId = serverSession.getId();
 
 	// XXX XXX will be changed - post-request Interceptors
