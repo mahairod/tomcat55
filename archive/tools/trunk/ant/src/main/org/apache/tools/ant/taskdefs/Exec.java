@@ -73,10 +73,10 @@ public class Exec extends Task {
 	try {
 	    // test if os match
 	    String myos=System.getProperty("os.name");
-	    project.log("Myos= " + myos, "exec", Project.MSG_WARN);
+	    project.log("Myos= " + myos, Project.MSG_VERBOSE);
 	    if( ( os != null ) && ( os.indexOf(myos) < 0 ) ){
 		// this command will be executed only on the specified OS
-		project.log("Not found in " + os, "exec", Project.MSG_WARN);
+		project.log("Not found in " + os, Project.MSG_VERBOSE);
 		return;
 	    }
 		
@@ -86,8 +86,11 @@ public class Exec extends Task {
 	    String ant=project.getProperty("ant.home");
 	    if(ant==null) throw new BuildException("Needs ant.home");
 		
-	    command=ant + "/bin/antRun " + dir + " " + command;
-            project.log(command, "exec", Project.MSG_WARN);
+	    String antRun = project.resolveFile(ant + "/bin/antRun").toString();
+	    if (myos.toLowerCase().indexOf("windows")>=0)
+		antRun=antRun+".bat";
+	    command=antRun + " " + project.resolveFile(dir) + " " + command;
+            project.log(command, Project.MSG_VERBOSE);
 		
 	    // exec command on system runtime
 	    Process proc = Runtime.getRuntime().exec( command);
@@ -95,16 +98,17 @@ public class Exec extends Task {
 	    InputStreamReader isr=new InputStreamReader(proc.getInputStream());
 	    BufferedReader din = new BufferedReader(isr);
 	    
-	    project.log("Output: ", "exec", Project.MSG_WARN);
 	    PrintWriter fos=null;
-	    if( out!=null ) 
+	    if( out!=null )  {
 		fos=new PrintWriter( new FileWriter( out ) );
+        	project.log("Output redirected to " + out, Project.MSG_VERBOSE);
+	    }
 
 	    // pipe CVS output to STDOUT
 	    String line;
 	    while((line = din.readLine()) != null) {
 		if( fos==null)
-		    project.log(line, "exec", Project.MSG_ERR);
+		    project.log(line, "exec", Project.MSG_INFO);
 		else
 		    fos.println(line);
 	    }
