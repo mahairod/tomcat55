@@ -404,15 +404,15 @@ public final class SaveContextAction extends Action {
             mBServer.setAttribute(loname,
                                   new Attribute("debug", new Integer(debug)));
             
-            attribute = "checkInterval";
-            int checkInterval = 15;
-            try {
-                checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
-            } catch (Throwable t) {
-                checkInterval = 15;
-            }
-            mBServer.setAttribute(loname,
-                                  new Attribute("checkInterval", new Integer(checkInterval)));
+            //attribute = "checkInterval";
+            //int checkInterval = 15;
+            //try {
+            //    checkInterval = Integer.parseInt(cform.getLdrCheckInterval());
+            //} catch (Throwable t) {
+            //    checkInterval = 15;
+            //}
+            //mBServer.setAttribute(loname,
+            //                      new Attribute("checkInterval", new Integer(checkInterval)));
 
             // Manager properties            
             attribute = "entropy";
@@ -431,14 +431,14 @@ public final class SaveContextAction extends Action {
             mBServer.setAttribute(moname,
                                   new Attribute("debug", new Integer(debug)));
             
-            attribute = "checkInterval";
-            try {
-                checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
-            } catch (Throwable t) {
-                checkInterval = 60;
-            }
-            mBServer.setAttribute(moname,
-                                  new Attribute("checkInterval", new Integer(checkInterval)));
+            //attribute = "checkInterval";
+            //try {
+            //    checkInterval = Integer.parseInt(cform.getMgrCheckInterval());
+            //} catch (Throwable t) {
+            //    checkInterval = 60;
+            //}
+            //mBServer.setAttribute(moname,
+            //                      new Attribute("checkInterval", new Integer(checkInterval)));
             
             attribute = "maxActiveSessions";
             int maxActiveSessions = -1;
