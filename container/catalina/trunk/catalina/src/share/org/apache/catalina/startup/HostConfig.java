@@ -88,6 +88,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.StringManager;
 import org.apache.naming.resources.ResourceAttributes;
@@ -458,6 +459,9 @@ public class HostConfig
 
         if (!(host instanceof Deployer))
             return;
+
+        // Initialize the deployer
+        ((Deployer) host).findDeployedApps();
 
         File appBase = appBase();
         if (!appBase.exists() || !appBase.isDirectory())
@@ -888,31 +892,33 @@ public class HostConfig
         boolean result = true;
         log.info("restartContext(" + context.getName() + ")");
 
-        /*
-        try {
-            StandardContext sctx=(StandardContext)context;
-            sctx.reload();
-        } catch( Exception ex ) {
-            log.warn("Erorr stopping context " + context.getName()  +  " " +
-                    ex.toString());
+        if (context instanceof StandardContext) {
+            try {
+                StandardContext sctx = (StandardContext)context;
+                sctx.reload();
+            } catch( Exception e ) {
+                log.warn(sm.getString
+                         ("hostConfig.context.restart", context.getName()), e);
+                result = false;
+            }
+        } else {
+            try {
+                ((Lifecycle) context).stop();
+            } catch( Exception ex ) {
+                log.warn(sm.getString
+                         ("hostConfig.context.restart", context.getName()), e);
+            }
+            // If the context was not started (for example an error 
+            // in web.xml) we'll still get to try to start
+            try {
+                ((Lifecycle) context).start();
+            } catch (Exception e) {
+                log.warn(sm.getString
+                         ("hostConfig.context.restart", context.getName()), e);
+                result = false;
+            }
         }
-        */
-        try {
-            ((Lifecycle) context).stop();
-        } catch( Exception ex ) {
-            log.warn("Erorr stopping context " + context.getName()  +  " " +
-                    ex.toString());
-        }
-        // if the context was not started ( for example an error in web.xml)
-        // we'll still get to try to start
-        try {
-            ((Lifecycle) context).start();
-        } catch (Exception e) {
-            log.warn("Error restarting context " + context.getName() + " " +
-                    e.toString());
-            result = false;
-        }
-        
+
         return result;
     }
 
