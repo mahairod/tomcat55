@@ -248,11 +248,16 @@ class TagLibraryInfoImpl extends TagLibraryInfo {
         // Create an iterator over the child elements of our <taglib> element
         ParserUtils pu = new ParserUtils();
         TreeNode tld = pu.parseXMLDocument(uri, in);
-        Iterator list = tld.findChildren();
+
+	// Check to see if the <taglib> root element contains a 'version'
+	// attribute, which was added in JSP 2.0 to replace the <jsp-version>
+	// subelement
+	this.jspversion = tld.findAttribute("version");
 
         // Process each child element of our <taglib> element
-        while (list.hasNext()) {
+        Iterator list = tld.findChildren();
 
+        while (list.hasNext()) {
             TreeNode element = (TreeNode) list.next();
             String tname = element.getName();
 
