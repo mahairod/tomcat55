@@ -58,7 +58,7 @@ public class SessionMessageImpl implements SessionMessage, java.io.Serializable 
      * @param attrValue - the value of the attribute added
 
      */
-    public SessionMessageImpl( String contextName,
+    private SessionMessageImpl( String contextName,
                            int eventtype,
                            byte[] session,
                            String sessionID)

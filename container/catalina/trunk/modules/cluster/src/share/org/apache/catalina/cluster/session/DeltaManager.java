@@ -343,7 +343,8 @@ public class DeltaManager
               getName(),
               SessionMessage.EVT_SESSION_CREATED,
               null,
-              sessionId);
+              sessionId,
+              sessionId+System.currentTimeMillis());
           cluster.send(msg);
           session.resetDeltaRequest();
       }
@@ -634,7 +635,8 @@ public class DeltaManager
                     new SessionMessageImpl(this.getName(),
                                        SessionMessage.EVT_GET_ALL_SESSIONS,
                                        null,
-                                       "GET-ALL");
+                                       "GET-ALL",
+                                       "GET-ALL-"+getName());
                 //just to make sure the other server has the context started
 //                long timetowait = 20000-mbr.getMemberAliveTime();
 //                if ( timetowait > 0 ) {
@@ -796,6 +798,7 @@ public class DeltaManager
                        msg = new SessionMessageImpl(getName(),
                                              SessionMessage.EVT_SESSION_ACCESSED,
                                              null,
+                                             sessionId,
                                              sessionId+System.currentTimeMillis());
                    }
                    
@@ -816,7 +819,8 @@ public class DeltaManager
            SessionMessage msg = new SessionMessageImpl(getName(), 
                                                    SessionMessage.EVT_SESSION_EXPIRED,
                                                    null,
-                                                   id);
+                                                   id,
+                                                   id+"-EXPIRED-MSG");
            cluster.send(msg);
        }
    
@@ -850,7 +854,7 @@ public class DeltaManager
                        log.debug("Manager ("+name+") unloading sessions complete");
                        SessionMessage newmsg = new SessionMessageImpl(name,
                            SessionMessage.EVT_ALL_SESSION_DATA,
-                           data, "");
+                           data, "SESSION-STATE","SESSION-STATE-"+getName());
                        cluster.send(newmsg, sender);
                        break;
                    }
