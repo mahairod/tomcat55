@@ -77,7 +77,7 @@ public class ForwardTestServlet extends GenericServlet {
 
     public void service( ServletRequest request, ServletResponse response )
     throws ServletException, IOException {
-        String path = "/ForwardedServlet";
+        String path = getServletConfig().getInitParameter("forwardTarget");
         RequestDispatcher rd = getServletContext().getRequestDispatcher( path );
         rd.forward( request, response );
     }

@@ -846,9 +846,13 @@
     <display-name>ForwardTest</display-name>
     
     <servlet-class>tests.javax_servlet.RequestDispatcher.ForwardTestServlet</servlet-class>
+
+    <init-param>
+      <param-name>forwardTarget</param-name>
+      <param-value>/tests/javax_servlet/RequestDispatcher/ForwardedServlet</param-value>
+    </init-param>
     
-    <load-on-startup>0</load-on-startup>
-    
+    <load-on-startup>0</load-on-startup>    
   
   </servlet>
   
