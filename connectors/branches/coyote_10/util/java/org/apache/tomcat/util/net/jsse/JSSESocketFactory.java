@@ -92,15 +92,17 @@ import javax.net.ssl.HandshakeCompletedEvent;
 public class JSSESocketFactory
     extends org.apache.tomcat.util.net.ServerSocketFactory
 {
-    private String keystoreType;
+    String keystoreType;
 
+    static org.apache.commons.logging.Log logger =
+	org.apache.commons.logging.LogFactory.getLog(JSSESocketFactory.class);
     static String defaultKeystoreType = "JKS";
     static String defaultProtocol = "TLS";
     static String defaultAlgorithm = "SunX509";
     static boolean defaultClientAuth = false;
 
-    private boolean clientAuth = false;
-    private SSLServerSocketFactory sslProxy = null;
+    boolean clientAuth = false;
+    SSLServerSocketFactory sslProxy = null;
     
     // defaults
     static String defaultKeystoreFile=System.getProperty("user.home") +
@@ -146,7 +148,7 @@ public class JSSESocketFactory
     // -------------------- Internal methods
     /** Read the keystore, init the SSL socket factory
      */
-    private void initProxy() throws IOException {
+    void initProxy() throws IOException {
 	try {
 	    Security.addProvider (new sun.security.provider.Sun());
 	    Security.addProvider (new com.sun.net.ssl.internal.ssl.Provider());
@@ -247,12 +249,18 @@ public class JSSESocketFactory
      
     /** Set server socket properties ( accepted cipher suites, etc)
      */
-    private void initServerSocket(ServerSocket ssocket) {
+    void initServerSocket(ServerSocket ssocket) {
 	SSLServerSocket socket=(SSLServerSocket)ssocket;
 
 	// We enable all cipher suites when the socket is
 	// connected - XXX make this configurable 
 	String cipherSuites[] = socket.getSupportedCipherSuites();
+	if(logger.isDebugEnabled()) {
+	    StringBuffer sb = new StringBuffer();
+	    for(int ii=0; ii < cipherSuites.length; ii++)
+		sb.append(cipherSuites[ii]).append(':');
+	    logger.debug("CipherSuites: " + sb);
+	}
 	socket.setEnabledCipherSuites(cipherSuites);
 
 	// we don't know if client auth is needed -
@@ -260,7 +268,7 @@ public class JSSESocketFactory
 	socket.setNeedClientAuth(clientAuth);
     }
 
-    private KeyStore initKeyStore( String keystoreFile,
+    KeyStore initKeyStore( String keystoreFile,
 				   String keyPass)
 	throws IOException
     {

@@ -59,11 +59,13 @@
 
 package org.apache.tomcat.util.net.jsse;
 
+import org.apache.tomcat.util.compat.JdkCompat;
 import org.apache.tomcat.util.net.SSLImplementation;
 import org.apache.tomcat.util.net.SSLSupport;
 import org.apache.tomcat.util.net.ServerSocketFactory;
 import java.io.*;
 import java.net.*;
+import java.lang.reflect.Constructor;
 import javax.net.ssl.SSLSocket;
 
 /* JSSEImplementation:
@@ -72,12 +74,21 @@ import javax.net.ssl.SSLSocket;
 
    @author EKR
 */
-	
+        
 public class JSSEImplementation extends SSLImplementation
 {
+    static final String JSSE14SocketFactory = 
+        "org.apache.tomcat.util.net.jsse.JSSE14SocketFactory";
+    static final String JSSE14Support = 
+        "org.apache.tomcat.util.net.jsse.JSSE14Support";
+    static final String SSLSocketClass = "javax.net.ssl.SSLSocket";
+
+    static org.apache.commons.logging.Log logger = 
+        org.apache.commons.logging.LogFactory.getLog(JSSEImplementation.class);
+
     public JSSEImplementation() throws ClassNotFoundException {
-	// Check to see if JSSE is floating around somewhere
-	Class.forName("javax.net.ssl.SSLServerSocketFactory");
+        // Check to see if JSSE is floating around somewhere
+        Class.forName("javax.net.ssl.SSLServerSocketFactory");
     }
 
 
@@ -87,12 +98,43 @@ public class JSSEImplementation extends SSLImplementation
       
     public ServerSocketFactory getServerSocketFactory()
     {
-	return new JSSESocketFactory();
+        ServerSocketFactory ssf = null;
+        if( JdkCompat.isJava14() ) {
+            try {
+                Class ssfCl = Class.forName(JSSE14SocketFactory);
+                ssf =(ServerSocketFactory)ssfCl.newInstance();
+            } catch(Exception ex) {
+                if(logger.isDebugEnabled())
+                    logger.debug("Error finding " + JSSE14SocketFactory, ex);
+                ssf = new JSSESocketFactory();
+            }
+        } else {
+            ssf = new JSSESocketFactory();
+        }
+        return ssf;
     } 
 
     public SSLSupport getSSLSupport(Socket s)
     {
-	return new JSSESupport((SSLSocket)s);
+        SSLSupport ssls = null;
+        if( JdkCompat.isJava14() ) {
+            try {
+                Class sslsCl = Class.forName(JSSE14Support);
+                Class [] cparams = new Class[1];
+                cparams[0] = Class.forName(SSLSocketClass);
+                Constructor sslc = sslsCl.getConstructor(cparams);
+                Object [] params = new Object[1];
+                params[0] = s;
+                ssls = (SSLSupport)sslc.newInstance(params);
+            } catch(Exception ex) {
+                if(logger.isDebugEnabled())
+                    logger.debug("Unable to get " + JSSE14Support, ex);
+                ssls = new JSSESupport((SSLSocket)s);
+            }
+        } else {
+            ssls = new JSSESupport((SSLSocket)s);
+        }
+        return ssls;
     }
 
 
