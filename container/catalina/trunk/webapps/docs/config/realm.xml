@@ -193,6 +193,11 @@
     information from the directory:</p>
 
     <attributes>
+       <attribute name="authentication" required="false">
+         <p>A string specifying the type of authentication to use.
+         "none", "simple", "strong" or a provider specific definition
+         can be used. If no value is given the providers default is used.</p>
+       </attribute>
 
       <attribute name="connectionName" required="false">
         <p>The directory username to use when establishing a
@@ -219,6 +224,11 @@
         <p>Fully qualified Java class name of the factory class used
         to acquire our JNDI <code>InitialContext</code>.  By default,
         assumes that the standard JNDI LDAP provider will be utilized.</p>
+      </attribute>
+      
+      <attribute name="protocol" required="false">
+         <p>A string specifying the security protocol to use. If not given
+         the providers default is used.</p>
       </attribute>
 
       <attribute name="roleBase" required="false">
