@@ -689,11 +689,11 @@
     <copy todir="${catalina.build}/common/lib" file="../lib/tyrex.license"/>
   </target>
   <target name="copy-xerces.jar" if="copy.xerces.jar">
-    <copy todir="${catalina.build}/common/lib" file="${xerces.jar}"/>
+    <copy todir="${catalina.build}/common/endorsed" file="${xerces.jar}"/>
   </target>
   <target name="copy-xerces2.jars" if="copy.xerces2.jars">
-    <copy todir="${catalina.build}/common/lib" file="${xercesImpl.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${xmlParserAPIs.jar}"/>
+    <copy todir="${catalina.build}/common/endorsed" file="${xercesImpl.jar}"/>
+    <copy todir="${catalina.build}/common/endorsed" file="${xmlParserAPIs.jar}"/>
   </target>
 
 
@@ -970,6 +970,7 @@
     <mkdir dir="${catalina.deploy}/conf"/>
     <mkdir dir="${catalina.deploy}/logs"/>
     <mkdir dir="${catalina.deploy}/common/classes"/>
+    <mkdir dir="${catalina.deploy}/common/endorsed"/>
     <mkdir dir="${catalina.deploy}/common/lib"/>
     <mkdir dir="${catalina.deploy}/server/classes"/>
     <mkdir dir="${catalina.deploy}/server/lib"/>
@@ -994,6 +995,9 @@
     <chmod perm="+x" file="${catalina.deploy}/bin/tool-wrapper.sh"/>
 
     <!-- Common Extensions -->
+    <copy todir="${catalina.deploy}/common/endorsed">
+      <fileset dir="${catalina.build}/common/endorsed" />
+    </copy>
     <copy todir="${catalina.deploy}/common/lib">
       <fileset dir="${catalina.build}/common/lib" />
     </copy>
