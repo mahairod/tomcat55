@@ -86,9 +86,9 @@ public class GetMethod_HEADTestServlet extends HttpServlet {
 
         if ( result != null ) {
             if ( result.equalsIgnoreCase( expectedResult ) ) {
-                response.sendError( HttpServletResponse.SC_OK, "GetMethod_HEADTest PASSED" );
+                response.addHeader( "status", "GetMethod_HEADTest PASSED" );
             } else {
-                response.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "GetMethod_HEADTest FAILED" );
+                response.addHeader( "status", "GetMethod_HEADTest FAILED" );
             }
         } 
     }
