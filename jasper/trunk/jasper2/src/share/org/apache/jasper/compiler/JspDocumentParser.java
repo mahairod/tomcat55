@@ -221,6 +221,13 @@ class JspDocumentParser extends DefaultHandler
 	    return;
 	}
 
+	// jsp:text must not have any subelements
+	if (TEXT_ACTION.equals(current.getLocalName())) {
+	    throw new SAXParseException(
+	            Localizer.getMessage("jsp.error.text.has_subelement"),
+		    locator);
+	}
+
 	Mark start = new Mark(path, locator.getLineNumber(),
 			      locator.getColumnNumber());
 
