@@ -101,10 +101,10 @@ public class JNIConnectionHandler {
     static boolean reuse=true;
     
     public void processConnection(long s, long l) {
+	JNIRequestAdapter reqA=null;
+	JNIResponseAdapter resA=null;
 
         try {
-	    JNIRequestAdapter reqA=null;
-	    JNIResponseAdapter resA=null;
 	    
 	    if( reuse ) {
 		synchronized( this ) {
@@ -112,7 +112,6 @@ public class JNIConnectionHandler {
 			reqA=new JNIRequestAdapter( contextM, this);
 			resA=new JNIResponseAdapter( this );
 			contextM.initRequest( reqA, resA );
-			pool.addElement( reqA );
 		    } else {
 			reqA = (JNIRequestAdapter)pool.lastElement();
 			resA=(JNIResponseAdapter)reqA.getResponse();
@@ -148,6 +147,11 @@ public class JNIConnectionHandler {
     	} catch(Exception ex) {
     	    ex.printStackTrace();
     	}
+	if( reuse ) {
+	    synchronized( this ) {
+		pool.addElement( reqA );
+	    }
+	}
     }
 
     native int readEnvironment(long s, long l, String []env);
