@@ -96,16 +96,16 @@ public class HttpServletRequestWrapperGetRequestURLTestServlet extends HttpServl
         for (Enumeration e = request.getHeaderNames(); e.hasMoreElements(); ) {
             String temp = (String) e.nextElement();
 
-            if ( temp.equals( "prefix" ) ) {
+            if ( temp.equalsIgnoreCase( "prefix" ) ) {
                 prefix = request.getHeader( temp );
                 found1 = true;
-            } else if ( temp.equals( "server" ) ) {
+            } else if ( temp.equalsIgnoreCase( "server" ) ) {
                 server = request.getHeader( temp );
                 found2 = true;
-            } else if ( temp.equals( "port" ) ) {
+            } else if ( temp.equalsIgnoreCase( "port" ) ) {
                 port = request.getHeader( temp );
                 found3 = true;
-            } else if ( temp.equals( "servletpath" ) ) {
+            } else if ( temp.equalsIgnoreCase( "servletpath" ) ) {
                 path = request.getHeader( temp ).replace( '_', '/' );
                 found4 = true;
             }
