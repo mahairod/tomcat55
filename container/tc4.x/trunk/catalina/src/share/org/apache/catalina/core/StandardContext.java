@@ -69,6 +69,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Hashtable;
@@ -125,6 +126,7 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
 import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.loader.StandardClassLoader;
 import org.apache.catalina.loader.StandardLoader;
 import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.util.CharsetMapper;
@@ -298,6 +300,14 @@ public class StandardContext
      * to each newly created Wrapper by <code>createWrapper()</code>.
      */
     private String instanceListeners[] = new String[0];
+
+
+    /**
+     * The special class loader created for Jasper in order to isolate
+     * its use of an XML parser from the libraries made visible to
+     * web applications.
+     */
+    private ClassLoader jasperLoader = null;
 
 
     /**
@@ -724,6 +734,7 @@ public class StandardContext
     public synchronized void setLoader(Loader loader) {
 
 	super.setLoader(loader);
+        jasperLoader = null;
 
     }
 
@@ -1003,6 +1014,51 @@ public class StandardContext
 	support.firePropertyChange("charsetMapperClass",
 				   oldCharsetMapperClass,
 				   this.charsetMapperClass);
+
+    }
+
+
+    /**
+     * Return the special class loader for Jasper for this web application,
+     * creating one if required.
+     */
+    public synchronized ClassLoader getJasperLoader() {
+
+        // Return the existing class loader (if any)
+        if (jasperLoader != null) {
+            return (jasperLoader);
+        }
+
+        // Can we set up the corresponding Jasper class loader?
+        if (loader == null) {
+            return (null);
+        }
+        ClassLoader classLoader = loader.getClassLoader();
+        if (classLoader == null) {
+            return (null);
+        }
+
+        // Set up the Jasper class loader
+        StandardClassLoader newLoader = new StandardClassLoader(classLoader);
+        File directory = new File(System.getProperty("catalina.home"),
+                                  "jasper");
+        if (directory.exists() && directory.canRead() &&
+            directory.isDirectory()) {
+            String filenames[] = directory.list();
+            for (int i = 0; i < filenames.length; i++) {
+                if (!filenames[i].endsWith(".jar"))
+                    continue;
+                File file = new File(directory, filenames[i]);
+                try {
+                    URL url = new URL("file", null, file.getCanonicalPath());
+                    newLoader.addRepository(url.toString());
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(e.toString());
+                }
+            }
+        }
+        jasperLoader = newLoader;
+        return (jasperLoader);
 
     }
 

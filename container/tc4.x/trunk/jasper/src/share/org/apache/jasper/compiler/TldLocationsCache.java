@@ -156,7 +156,8 @@ public class TldLocationsCache {
 
         // Parse the web application deployment descriptor
         ClassLoader cl =
-            (ClassLoader) ctxt.getAttribute(Constants.SERVLET_CLASS_LOADER);
+            // (ClassLoader) ctxt.getAttribute(Constants.SERVLET_CLASS_LOADER);
+            this.getClass().getClassLoader();
         ParserUtils pu = ParserUtils.createParserUtils(cl);
         TreeNode webtld = pu.parseXMLDocument(WEB_XML, is);
         Iterator taglibs = webtld.findChildren("taglib");

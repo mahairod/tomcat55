@@ -718,6 +718,8 @@ public final class StandardWrapper
 		(sm.getString("standardWrapper.missingLoader", getName()));
 	}
 	ClassLoader classLoader = loader.getClassLoader();
+
+        // Special case class loader for a Catalina internal servlet
 	if (isContainerServlet(actualClass)) {
 	    classLoader = this.getClass().getClassLoader();
 	    log(sm.getString
@@ -726,17 +728,8 @@ public final class StandardWrapper
 
         // Special case class loader for the Jasper JSP servlet
         if (actualClass.equals(Constants.JSP_SERVLET_CLASS)) {
-            if (jasperLoader == null) {
-                jasperLoader = createJasperLoader(classLoader);
-		// Preload below class to prevent defineClassInPackage
-		// SecurityManager AccessControlException
-		try {
-                    jasperLoader.loadClass(
-                        "org.apache.jasper.runtime.ServletResponseWrapperInclude");
-		} catch(ClassNotFoundException e) {
-		}
-	    }
-            classLoader = jasperLoader;
+            classLoader = ((StandardContext) getParent()).getJasperLoader();
+            log(sm.getString("standardWrapper.jasperLoader", getName()));
         }
 
 	// Load the specified servlet class from the appropriate class loader
@@ -1001,51 +994,6 @@ public final class StandardWrapper
     protected void addDefaultMapper(String mapperClass) {
 
 	;	// No need for a default Mapper on a Wrapper
-
-    }
-
-
-    /**
-     * Create and return a custom class loader for the Jasper JSP servlet
-     * that picks up the relevant classes from the "jasper" subdirectory
-     * underneath "catalina.home".
-     *
-     * @param classLoader The web app class loader to be our parent
-     *
-     * @exception IllegalArgumentException if an error occurs building a
-     *  URL for one of the repository JAR files
-     */
-    protected ClassLoader createJasperLoader(ClassLoader classLoader) {
-
-        // Create a new class loader with the webapp class loader as parent
-        StandardClassLoader jasperLoader =
-            new StandardClassLoader(classLoader);
-
-        // Accumulate the list of repositories to be added for this loader
-        File directory = new File(System.getProperty("catalina.home"),
-                                  "jasper");
-        if (!directory.exists() || !directory.canRead() ||
-            !directory.isDirectory())
-            return (jasperLoader);
-        String filenames[] = directory.list();
-        for (int i = 0; i < filenames.length; i++) {
-            if (!filenames[i].endsWith(".jar"))
-                continue;
-            File file = new File(directory, filenames[i]);
-            try {
-                URL url = new URL("file", null, file.getCanonicalPath());
-                jasperLoader.addRepository(url.toString());
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e.toString());
-            }
-        }
-
-        // Return the configured class loader
-        if (debug >= 1) {
-            log("Created Jasper Class Loader");
-            log(jasperLoader.toString());
-        }
-        return (jasperLoader);
 
     }
 
