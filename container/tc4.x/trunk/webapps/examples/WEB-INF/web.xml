@@ -6,6 +6,11 @@
 
 <web-app>
 
+    <display-name>Tomcat Examples</display-name>
+    <description>
+      Tomcat Example servlets and JSP pages.
+    </description>
+
     <!-- Define servlet-mapped and path-mapped example filters -->
     <filter>
         <filter-name>Servlet Mapped Filter</filter-name>

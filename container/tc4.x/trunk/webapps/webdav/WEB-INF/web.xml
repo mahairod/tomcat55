@@ -6,6 +6,11 @@
 
 <web-app>
 
+  <display-name>Webdav Content Management</display-name>
+  <description>
+     Webdav Content Management
+  </description>
+
   <servlet>
     <servlet-name>webdav</servlet-name>
     <servlet-class>org.apache.catalina.servlets.WebdavServlet</servlet-class>
