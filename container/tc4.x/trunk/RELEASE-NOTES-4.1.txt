@@ -704,6 +704,10 @@ Coyote Bug Fixes:
          NamingResourcesMBean:
          Fix resource link creation.
 
+[4.1.17] #15258
+         JK 2 ChannelSocket:
+         Bind all addresses by default.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -922,6 +926,9 @@ Jasper Bug Fixes:
          Generator:
          Scripting variables declared AT_END do not work when tag
          implements TryCatchFinally.
+
+[4.1.17] Compiler:
+         Make exception reports more detailed.
 
 
 ============================
