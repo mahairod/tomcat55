@@ -14,13 +14,12 @@ INTRODUCTION:
 This document describes the changes that have been made in the current
 beta release of Apache Tomcat, relative to the previous release.
 
-Bug reports should be entered at the interim bug reporting system for
+Bug reports should be entered at the bug reporting system for
 Jakarta projects at:
 
         http://nagoya.apache.org/bugzilla/
 
-Please use project codes "Catalina" and "Jasper" for servlet-related and
-JSP-related bug reports, respectively.
+Please report bugs and feature requests under product name "Tomcat 4".
 
 
 ============
@@ -70,6 +69,27 @@ changes of the Servlet Specification, Version 2.3, Proposed Final Draft 2:
   id tracking, throw IllegalStateException because there is no way the client
   could ever find out about this session.
 
+DistributableManager: Work has begun on support for distributable applications
+in Tomcat 4.0.
+
+JNDI Naming Support:  You can now bind threads, as well as class loaders, to
+specific directory contexts.  This is required for automatic reloading on
+modified classes to work using the new JNDI access to static resources.
+
+HttpConnector:  It is now possible to disable lookups of the remote host name
+when the web app calls request.getRemoteHost().  Lookups are enabled by default
+but you might wish to disable them to improve performance, by setting the
+"disableLookups" attribute of the <Connector> element to "true".
+
+SSL Required Redirect:  If a request is being processed on a non-SSL
+connection, and is subject to a security constraint that includes a transport
+guarantee requiring SSL, the request will be automatically redirected to the
+port number configured by the "redirectPort" of the non-SSL <Connector>.  As
+long as an SSL connector is configured within the same <Service> element (and
+thus talks to the same set of web apps), sessions will be maintained across
+this redirect as well.
+
+
 -------------------
 Jasper New Features:
 -------------------
@@ -85,6 +105,7 @@ of the JavaServer Pages Specification, Version 1.2, Proposed Final Draft 2:
 - When an action has no body, the methods related to body manipulation
   (setBodyContent(), doInitBody(), and doAfterBody()) are *not* invoked.
   A body of whitespace is significant in JSP syntax, but not in XML syntax.
+
 
 --------------------
 Webapps New Features:
@@ -180,6 +201,47 @@ UnavailableException from it's init() method, this should make *only* the
 servlet in question unavailable.  It was making the entire web app
 unavailable.
 
+ApplicationHttpRequest: Allow an "include"d servlet to set and remove request
+attributes, with those changes being visible to the calling servlet.
+
+HttpRequestBase:  HttpServletRequest.getCookies() is supposed to return null
+if no cookies were included on this request.  We were returning a zero length
+array.
+
+ApplicationDispatcher:  Correctly handle a <servlet> definition utilizing a
+<jsp-file> element when that servlet is the subject of a request dispatcher
+forward or include.
+
+StandardClassLoader: Correctly register repositories based on non-file
+protocols (which broke class reloading).
+
+ContainerBase, Standard{Engine,Host,Context}: Make it possible to dynamically
+select the Mapper implementation class used to map a request to a child
+container.  This makes it possible to experiment with new implementations
+without impacting overall stability.
+
+FastEngineMapper:  Initial implementation of an Engine->Host Mapper that runs
+much faster than the current StandardEngineMapper.  It is not yet the default,
+but will become the default after more testing.
+
+NonLoginAuthenticator:  If the only security constraint defined for a web app
+imposes only limits not related to authentication (such as only a <transport-
+guarantee>), install a special Authenticator that does not challenge the user
+for authentication.  In this way, the remaining constraints are still
+enforced, rather than being ignored.
+
+StandardWrapper:  The context class loader is set during calls to init() and
+destroy(), so that webapp-local classes can be referenced in these methods.
+
+ApplicationFilterChain:  Correct exception handling behavior when a Filter or
+Servlet throws a RuntimeException.  Previously, this exception was wrapped in
+a ServletException before being passed to an error page.  Now, the
+RuntimeException itself is passed.
+
+AuthenticatorBase:  Update access control logic to correctly process
+authentication constraints with a "*" <role-name> element, which means that
+all roles are allowed.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -195,6 +257,9 @@ XmlOutputter:  Make the XML output consistent with the DTD -- the spec was
 inconsistent.
 
 TagBeginGenerator:  Use QName instead of LocalName to match element values.
+
+PageContextImpl:  When a JSP page throws a RuntimeException, do not wrap it in
+a ServletException before throwing it to the container.
 
 
 -----------------
@@ -267,3 +332,15 @@ them in a JDK 1.3 environment.  You MUST NOT replace these files with a
 different (or later) release of JAXP, unless that later release has had
 the sealed attribute removed, or you will encounter "package sealing violation"
 errors when trying to use a different XML parser in a web application.
+
+
+--------------------
+MOD_WEBAPP Connector:
+--------------------
+
+A new version of the Apache 1.3 side of the MOD_WEBAPP connector is included
+in this release, in the "connectors" directory.  It has not been tested
+heavily yet, so it should be considered experimental.
+
+
+
