@@ -57,6 +57,9 @@ import javax.servlet.http.HttpServletResponse;
      */
 public class ProcessHelper {
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ProcessHelper.class );
+    
     /** script/command to be executed */
     private String command = null;
 
@@ -243,8 +246,8 @@ public class ProcessHelper {
                 this.getClass().getName() + ": not ready to run.");
         }
 
-        if (debug >= 1) {
-            log("runCGI(envp=[" + env + "], command=" + command + ")");
+        if (log.isDebugEnabled()) {
+            log.debug("runCGI(envp=[" + env + "], command=" + command + ")");
         }
 
         if ((command.indexOf(File.separator + "." + File.separator) >= 0)
@@ -307,14 +310,14 @@ public class ProcessHelper {
          * Second -- any remaining input
          */
         commandsStdIn = new BufferedOutputStream(proc.getOutputStream());
-        if (debug >= 2) {
-            log("runCGI stdin=[" + stdin + "], qs=" + env.get("QUERY_STRING"));
+        if (log.isDebugEnabled()) {
+            log.debug("runCGI stdin=[" + stdin + "], qs=" + env.get("QUERY_STRING"));
         }
         if ("POST".equals(env.get("REQUEST_METHOD"))) {
-            if (debug >= 2) {
-                log("runCGI: writing ---------------\n");
-                log(postIn);
-                log(
+            if (log.isDebugEnabled()) {
+                log.debug("runCGI: writing ---------------\n");
+                log.debug(postIn);
+                log.debug(
                     "runCGI: new content_length="
                         + contentLength
                         + "---------------\n");
@@ -327,8 +330,8 @@ public class ProcessHelper {
              * coming...
              */
             if (stdin.available() <= 0) {
-                if (debug >= 2) {
-                    log(
+                if (log.isDebugEnabled()) {
+                    log.debug(
                         "runCGI stdin is NOT available ["
                             + stdin.available()
                             + "]");
@@ -339,8 +342,8 @@ public class ProcessHelper {
                 }
             }
             if (stdin.available() > 0) {
-                if (debug >= 2) {
-                    log(
+                if (log.isDebugEnabled()) {
+                    log.debug(
                         "runCGI stdin IS available ["
                             + stdin.available()
                             + "]");
@@ -349,22 +352,19 @@ public class ProcessHelper {
                 bufRead = -1;
                 try {
                     while ((bufRead = stdin.read(bBuf)) != -1) {
-                        if (debug >= 2) {
-                            log(
+                        if (log.isDebugEnabled()) {
+                            log.debug(
                                 "runCGI: read ["
                                     + bufRead
                                     + "] bytes from stdin");
                         }
                         commandsStdIn.write(bBuf, 0, bufRead);
                     }
-                    if (debug >= 2) {
-                        log("runCGI: DONE READING from stdin");
+                    if (log.isDebugEnabled()) {
+                        log.debug("runCGI: DONE READING from stdin");
                     }
                 } catch (IOException ioe) {
-                    //REMIND: replace with logging
-                    //REMIND: should I throw this exception?
-                    log("runCGI: couldn't write all bytes.");
-                    ioe.printStackTrace();
+                    log.error("runCGI: couldn't write all bytes.", ioe);
                 }
             }
         }
@@ -409,8 +409,8 @@ public class ProcessHelper {
                 String line = null;
                 while (((line = commandsStdOut.readLine()) != null)
                     && !("".equals(line))) {
-                    if (debug >= 2) {
-                        log("runCGI: addHeader(\"" + line + "\")");
+                    if (log.isDebugEnabled()) {
+                        log.debug("runCGI: addHeader(\"" + line + "\")");
                     }
                     if (line.startsWith("HTTP")) {
                         //TODO: should set status codes (NPH support)
@@ -428,8 +428,8 @@ public class ProcessHelper {
                 cBuf = new char[1024];
                 while ((bufRead = commandsStdOut.read(cBuf)) != -1) {
                     if (servletContainerStdout != null) {
-                        if (debug >= 4) {
-                            log("runCGI: write(\"" + new String(cBuf) + "\")");
+                        if (log.isDebugEnabled()) {
+                            log.debug("runCGI: write(\"" + new String(cBuf) + "\")");
                         }
                         servletContainerStdout.write(cBuf, 0, bufRead);
                     }
@@ -484,10 +484,6 @@ public class ProcessHelper {
         }
         qs.append(lineSeparator);
         return qs.append(postInput).toString();
-    }
-
-    private void log(String s) {
-        System.out.println(s);
     }
 
     public int getIClientInputTimeout() {

@@ -72,7 +72,7 @@ public class JMXQueryTask extends AbstractCatalinaTask {
     public void execute() throws BuildException {
         super.execute();
         String queryString = (query == null) ? "":("?qry="+query);
-        System.out.println ("INFO:Query string is " + queryString); 
+        log("Query string is " + queryString); 
         execute ("/jmxproxy/" + queryString);
     }
 }

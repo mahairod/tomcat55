@@ -33,6 +33,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since    Tomcat 4.0
  */
 public class ProcessEnvironment {
+    
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( ProcessEnvironment.class );
+    
     /** context of the enclosing servlet */
     private ServletContext context = null;
 
@@ -93,7 +97,9 @@ public class ProcessEnvironment {
             setupFromContext(context);
             setupFromRequest(req);
             this.valid = deriveProcessEnvironment(req);
-            log(this.getClass().getName() + "() ctor, debug level " + debug);
+            if (log.isDebugEnabled()) 
+                log.debug(this.getClass().getName() + "() ctor, debug level " + 
+                          debug);
     }
 
 
@@ -253,11 +259,6 @@ public class ProcessEnvironment {
         String subForBlanks) {
             return (("".equals(couldBeBlank) || couldBeBlank == null) ?
                 subForBlanks : couldBeBlank);
-    }
-
-
-    protected void log(String s) {
-        System.out.println(s);
     }
 
 

@@ -37,6 +37,8 @@ public class CatalinaProperties {
 
     // ------------------------------------------------------- Static Variables
 
+    private static org.apache.commons.logging.Log log=
+        org.apache.commons.logging.LogFactory.getLog( CatalinaProperties.class );
 
     private static Properties properties = null;
 
@@ -123,7 +125,7 @@ public class CatalinaProperties {
 
         if ((is == null) || (error != null)) {
             // Do something
-            System.out.println("Error");
+            log.warn("Failed to load catalina.properties", error);
         }
 
         // Register the properties as system properties

@@ -332,7 +332,8 @@ public class Catalina extends Embedded {
                          new SetParentClassLoaderRule(parentClassLoader));
 
         long t2=System.currentTimeMillis();
-        log.debug("Digester for server.xml created " + ( t2-t1 ));
+        if (log.isDebugEnabled())
+            log.debug("Digester for server.xml created " + ( t2-t1 ));
         return (digester);
 
     }
@@ -384,8 +385,7 @@ public class Catalina extends Embedded {
                 digester.parse(is);
                 fis.close();
             } catch (Exception e) {
-                System.out.println("Catalina.stop: " + e);
-                e.printStackTrace(System.out);
+                log.error("Catalina.stop: ", e);
                 System.exit(1);
             }
         }
@@ -401,8 +401,7 @@ public class Catalina extends Embedded {
             stream.close();
             socket.close();
         } catch (IOException e) {
-            System.out.println("Catalina.stop: " + e);
-            e.printStackTrace(System.out);
+            log.error("Catalina.stop: ", e);
             System.exit(1);
         }
 
@@ -464,7 +463,7 @@ public class Catalina extends Embedded {
         }
 
         if (inputStream == null) {
-            System.out.println("Can't load server.xml");
+            log.warn("Can't load server.xml");
             return;
         }
 
@@ -474,9 +473,8 @@ public class Catalina extends Embedded {
             digester.parse(inputSource);
             inputStream.close();
         } catch (Exception e) {
-            System.out.println("Catalina.start using "
-                               + getConfigFile() + ": " + e);
-            e.printStackTrace(System.out);
+            log.warn("Catalina.start using "
+                               + getConfigFile() + ": " , e);
             return;
         }
 
