@@ -27,30 +27,23 @@ following:
 (1) Download and Install the Ant Binary Distribution
 
 NOTE: Previous versions of Tomcat 4.0 relied on Ant 1.3 for the build
-process. The 1.4 release is now required.
+process. The 1.5 release is now required.
 
-* Download a binary distribution of Ant 1.4 from:
+* Download a binary distribution of Ant 1.5 from:
 
-    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.5/bin/
 
   On a Windows platform, you will need:
-    jakarta-ant-1.4-bin.zip
-    jakarta-ant-1.4-optional.jar
+    jakarta-ant-1.5-bin.zip
 
   On a Unix platform, you will need:
-    jakarta-ant-1.4-bin.tar.gz
-    jakarta-ant-1.4-optional.jar
+    jakarta-ant-1.5-bin.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   Ant release resides in its own directory (conventionally named
-  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
+  "jakarta-ant-1.5").  For the purposes of the remainder of this document,
   the symbolic name "${ant.home}" is used to refer to the full pathname of
   the release directory.
-
-* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
-  the directory "${ant.home}/lib".  This makes available several Ant
-  extension commands that are commonly required when building Jakarta
-  based projects.
 
 * Modify the PATH environment variable to include directory
   "${ant.home}/bin" in its list.  This makes the "ant" command line script
