@@ -261,12 +261,6 @@ public class InvokerServlet extends HttpServlet {
 
     public void doError(HttpServletResponse response)
     throws ServletException, IOException {
-        response.setStatus(403);
-	response.setContentType("text/html");
-
-	PrintWriter out = response.getWriter();
-
-	out.println("<html><body>Invoker could not find a servlet</body>");
-	out.println("</html>");
+        response.sendError(404);
     }    
 }
