@@ -2552,6 +2552,23 @@
 
   <!-- END javax_servlet_http_HttpSessionListener Definitions -->
 
+  <!-- START webapps_dirstruct Definitions -->
+
+  <servlet>
+      <servlet-name>ClassFileTest</servlet-name>
+      <display-name>ClassFileTest</display-name>
+      <servlet-class>tests.webapps.dirstruct.ClassFileTestServlet</servlet-class>
+      <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet>
+      <servlet-name>JarFileTest</servlet-name>
+      <display-name>JarFileTest</display-name>
+      <servlet-class>tests.webapps.dirstruct.JarFileTestServlet</servlet-class>
+      <load-on-startup>0</load-on-startup>
+  </servlet>
+
+  <!-- END webapps_dirstruct Definitions -->
+
   <!-- END Servlet Definitions -->
 
 
@@ -4136,6 +4153,19 @@
   </servlet-mapping>
 
   <!-- END javax_servlet_http_HttpSessionListener mappings -->
+
+  <!-- START webapps_dirstruct mappings -->
+
+  <servlet-mapping>
+      <servlet-name>ClassFileTest</servlet-name>
+      <url-pattern>/ClassFileTest</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+      <servlet-name>JarFileTest</servlet-name>
+      <url-pattern>/JarFileTest</url-pattern>
+  </servlet-mapping>
+
+  <!-- END webapps_dirstruct mappings -->
   
   <!-- END Servlet Mappings -->
   
