@@ -100,6 +100,16 @@ public class JspServlet extends HttpServlet {
 
 
     /**
+     * Resets the JSP reload counter.
+     *
+     * @param count Value to which to reset the JSP reload counter
+     */
+    public void setJspReloadCount(int count) {
+        this.rctxt.setJspReloadCount(count);
+    }
+
+
+    /**
      * Gets the number of JSPs that have been reloaded.
      *
      * <p>This info may be used for monitoring purposes.
