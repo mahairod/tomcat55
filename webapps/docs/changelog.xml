@@ -27,6 +27,14 @@
 </section>
 
 <section name="Tomcat 5.5.10 (yoavs)">
+  <subsection name="General">
+    <changelog>
+      <update>
+        <bug>33522</bug>: Update jasper-howto to reflect use of javac switch. (yoavs)
+      </update>
+    </changelog>
+  </subsection>
+
   <subsection name="Catalina">
     <changelog>
       <fix>
