@@ -46,10 +46,15 @@
     </init-param>
 -->
     <init-param>
+      <!-- Levels: FATAL ERROR WARNING INFORMATION DEBUG -->
+      <param-name>logVerbosityLevel</param-name>
+      <param-value>DEBUG</param-value>
+    </init-param>
+    <init-param>
       <param-name>sax2DriverClassName</param-name>
       <param-value>org.apache.xerces.parsers.SAXParser</param-value>
     </init-param>
-g<!--
+<!--
     <load-on-startup>4</load-on-startup>
 -->
   </servlet>
