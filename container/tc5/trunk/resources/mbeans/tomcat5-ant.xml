@@ -29,54 +29,62 @@
     -->
 
   <target name="jmx-console-ri" depends="init" description="Enable JMX-RI console ( web interface )" >
-    <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
-           name="jmx-console:type=HtmlAdaptorServer,port=9998">
-    </mbean>
-    <jmx-attribute objectName="jmx-console:type=HtmlAdaptorServer,port=9998" 
-                   attribute="Port" type="int" value="9998"/>
 
-    <jmx-operation objectName="jmx-console:type=HtmlAdaptorServer,port=9998"
-                   operation="start" />
+    <jmx-service>
+      <mbean code="com.sun.jdmk.comm.HtmlAdaptorServer"
+             name="jmx-console:type=HtmlAdaptorServer,port=9998">
+         <attribute name="Port" value="9998"/>
+     </mbean>
+    </jmx-service>    
+
+  </target>
+
+  <target name="jmx-console-mx4j" depends="init" description="Enable JMX console ( mx4j )" >
+
+    <jmx-service>
+      <mbean code="mx4j.adaptor.http.XSLTProcessor"
+             name="Http:name=XSLTProcessor">
+      </mbean>
+      <mbean code="mx4j.adaptor.http.HttpAdaptor"
+             name="Http:name=HttpAdaptor">
+         <attribute name="Port" value="9998"/>
+         <attribute name="ProcessorName" value="Http:name=XSLTProcessor"/>
+     </mbean>
+    </jmx-service>    
+
   </target>
 
 
   <!-- ======================= Server.xml based ================ -->
+  <property name="domain" value="Catalina" />
 
   <target name="run" depends="init"
         description="Start tomcat as an mbean using server.xml config and returns">
-    <property name="domain" value="Catalina" />
 
-    <modeler code="org.apache.catalina.startup.Catalina"
-          name="${domain}:type=server" />
 
-    <jmxSet objectName="${domain}:type=server"
-            attribute="catalinaHome"
-            value="${tomcat.home}"/>
-  
-    <!-- We could also call init and set other properties - 
-         init should load the modules -->
-
-    <jmx objectName="${domain}:type=server"
-         operation="start" />
-
+    <jmx-service>
+       <mbean code="org.apache.catalina.startup.Catalina"
+              name="${domain}:type=server" 
+              modeler="true" >
+         <attribute name="catalinaHome"
+                    value="${tomcat.home}"/>
+       </mbean>
+    </jmx-service>
 
     <echo message="Tomcat5 running"/>
 
-    <!-- let's add a context - using JMX 
-    <property name="admin1Name" 
-              value="${domain}:j2eeType=WebModule,name=//localhost/admin1,J2EEApplication=none,J2EEServer=none" />
+    <!-- let's add a context - using JMX. 
+         That will fail with class loader problems... XXX 
+      -->
 
-    <modeler code="org.apache.catalina.core.StandardContext"
-           name="${admin1Name}" />
-
-    <jmxSet objectName="${admin1Name}"
-            attribute="docBase"
-            value="${tomcat.home}/server/webapps/admin" />
-
-    <jmx objectName="${admin1Name}"
-         operation="init" />
-    -->
-
+    <jmx-service>
+       <mbean name="${domain}:j2eeType=WebModule,name=//localhost/servlet-examples,J2EEApplication=none,J2EEServer=none" 
+              code="org.apache.catalina.core.StandardContext"
+              modeler="true">
+         <attribute name="docBase"
+                    value="/ws/50/build/webapps/servlet-examples" />
+       </mbean>
+    </jmx-service>
     
   </target>
 
@@ -87,7 +95,7 @@
   <target name="await" depends="init"
         description="Wait for tomcat stop. Call this target after run">
 
-    <jmx objectName="Catalina:type=server"
+    <jmx objectName="${domain}:type=server"
          operation="await" />
 
   </target>
