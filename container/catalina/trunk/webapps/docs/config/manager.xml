@@ -116,7 +116,8 @@
         pathname of the file in which session state will be preserved
         across application restarts, if possible.  The default is
         "SESSIONS.ser".  See <a href="#Restart Persistence">Restart
-        Persistence</a> for more information.</p>
+        Persistence</a> for more information. Restart persistence may be 
+        disabled by setting this attribute to an empty string.</p>
       </attribute>
 
       <attribute name="randomClass" required="false">
