@@ -79,7 +79,7 @@ import org.apache.webapp.admin.LabelValueBean;
  * @version $Revision$ $Date$
  */
 
-public final class AccessLogForm extends ActionForm {
+public final class AccessLogValveForm extends ActionForm {
     
     // ----------------------------------------------------- Instance Variables
     
