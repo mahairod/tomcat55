@@ -613,6 +613,7 @@ public class SimpleTcpCluster
             {
                 tcpAddress = java.net.InetAddress.getByName(address);
             }//end if
+            svcproperties.setProperty("tcpListenHost",address);
         }catch ( Exception x ){
             log.error("Unable to set listen address",x);
         }
