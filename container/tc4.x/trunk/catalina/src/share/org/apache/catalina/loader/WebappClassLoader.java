@@ -119,8 +119,6 @@ import org.apache.naming.resources.Resource;
  * <p>
  * <strong>IMPLEMENTATION NOTE</strong> - No check for sealing violations or
  * security is made unless a security manager is present.
- * <p>
- * <strong>FIXME</strong> - Implement findResources.
  *
  * @author Remy Maucherat
  * @author Craig R. McClanahan
@@ -1007,7 +1005,7 @@ public class WebappClassLoader
                 // Note : Not getting an exception here means the resource was
                 // found
                 try {
-                    result.addElement(new File(files[i], name).toURL());
+                    result.addElement(getURL(new File(files[i], name)));
                 } catch (MalformedURLException e) {
                     // Ignore
                 }
@@ -1020,7 +1018,7 @@ public class WebappClassLoader
             JarEntry jarEntry = jarFiles[i].getJarEntry(name);
             if (jarEntry != null) {
                 try {
-                    String jarFakeUrl = jarRealFiles[i].toURL().toString();
+                    String jarFakeUrl = getURL(jarRealFiles[i]).toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + name;
                     result.addElement(new URL(jarFakeUrl));
                 } catch (MalformedURLException e) {
@@ -1418,9 +1416,9 @@ public class WebappClassLoader
             URL[] urls = new URL[length];
             for (i = 0; i < length; i++) {
                 if (i < filesLength) {
-                    urls[i] = files[i].toURL();
+                    urls[i] = getURL(files[i]);
                 } else if (i < filesLength + jarFilesLength) {
-                    urls[i] = jarRealFiles[i - filesLength].toURL();
+                    urls[i] = getURL(jarRealFiles[i - filesLength]);
                 } else {
                     urls[i] = external[i - filesLength - jarFilesLength];
                 }
@@ -1652,7 +1650,7 @@ public class WebappClassLoader
 
                 entry = new ResourceEntry();
                 try {
-                    entry.source = new File(files[i], path).toURL();
+                    entry.source = getURL(new File(files[i], path));
                 } catch (MalformedURLException e) {
                     return null;
                 }
@@ -1704,7 +1702,7 @@ public class WebappClassLoader
 
                 entry = new ResourceEntry();
                 try {
-                    String jarFakeUrl = jarRealFiles[i].toURL().toString();
+                    String jarFakeUrl = getURL(jarRealFiles[i]).toString();
                     jarFakeUrl = "jar:" + jarFakeUrl + "!/" + path;
                     entry.source = new URL(jarFakeUrl);
                 } catch (MalformedURLException e) {
@@ -1884,6 +1882,23 @@ public class WebappClassLoader
             return false;
 
         return true;
+
+    }
+
+
+    /**
+     * Get URL.
+     */
+    protected URL getURL(File file)
+        throws MalformedURLException {
+
+        File realFile = file;
+        try {
+            realFile = realFile.getCanonicalFile();
+        } catch (IOException e) {
+            // Ignore
+        }
+        return realFile.toURL();
 
     }
 
