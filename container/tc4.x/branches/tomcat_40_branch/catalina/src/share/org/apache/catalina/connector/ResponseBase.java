@@ -891,6 +891,9 @@ public abstract class ResponseBase
         if ((this.encoding == null) && (this.context != null)) {
             CharsetMapper mapper = context.getCharsetMapper();
             this.encoding = mapper.getCharset(locale);
+            if (contentType.indexOf(';') < 0) {
+                contentType = contentType + ";charset=" + encoding;
+            }
         }
 
     }
