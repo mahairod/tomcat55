@@ -20,7 +20,7 @@ import java.net.URLEncoder;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.struts.action.Action;
+import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 import org.apache.webapp.admin.TreeBuilder;
@@ -61,9 +61,9 @@ public class ResourcesTreeBuilder implements TreeBuilder {
                           HttpServletRequest request) {
 
         MessageResources resources = (MessageResources)
-            servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
+            servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+        Locale locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
         addSubtree(treeControl.getRoot(), resources, locale);
 
     }

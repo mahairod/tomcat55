@@ -42,11 +42,6 @@ import org.apache.webapp.admin.Lists;
 
 public class AddConnectorAction extends Action {
     
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
     
     // --------------------------------------------------------- Public Methods
     
@@ -73,10 +68,6 @@ public class AddConnectorAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
         
         // the service Name is needed to retrieve the engine mBean to
         // which the new connector mBean will be added.

@@ -56,11 +56,6 @@ public final class SaveAccessLogValveAction extends Action {
      */
     private MBeanServer mBServer = null;
     
-    /**
-     * The MessageResources we will be retrieving messages from.
-     */
-    private MessageResources resources = null;
-    
     // --------------------------------------------------------- Public Methods
     
     
@@ -87,10 +82,8 @@ public final class SaveAccessLogValveAction extends Action {
         
         // Acquire the resources that we need
         HttpSession session = request.getSession();
-        Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
-        if (resources == null) {
-            resources = getServlet().getResources();
-        }
+        Locale locale = getLocale(request);
+        MessageResources resources = getResources(request);
         
         // Acquire a reference to the MBeanServer containing our MBeans
         try {
@@ -122,16 +115,6 @@ public final class SaveAccessLogValveAction extends Action {
         
             ObjectName voname = new ObjectName(vObjectName);
             
-            attribute = "debug";
-            int debug = 0;
-            try {
-                debug = Integer.parseInt(vform.getDebugLvl());
-            } catch (Throwable t) {
-                debug = 0;
-            }
-            mBServer.setAttribute(voname,
-                                  new Attribute("debug", new Integer(debug)));
-  
             attribute = "directory";
             mBServer.setAttribute(voname,
                          new Attribute("directory", vform.getDirectory()));

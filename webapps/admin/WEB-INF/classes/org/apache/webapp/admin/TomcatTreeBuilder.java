@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.modeler.ManagedBean;
 import org.apache.commons.modeler.Registry;
+import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
@@ -91,11 +92,11 @@ public class TomcatTreeBuilder implements TreeBuilder{
 
         try {
             HttpSession session = request.getSession();
-            locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
+            locale = (Locale) session.getAttribute(Globals.LOCALE_KEY);
             mBServer = servlet.getServer();
             TreeControlNode root = treeControl.getRoot();
             resources = (MessageResources)
-                servlet.getServletContext().getAttribute(Action.MESSAGES_KEY);
+                servlet.getServletContext().getAttribute(Globals.MESSAGES_KEY);
             getServers(root);
         } catch(Throwable t){
             t.printStackTrace(System.out);
