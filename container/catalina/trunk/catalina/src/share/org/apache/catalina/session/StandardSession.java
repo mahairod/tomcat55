@@ -725,7 +725,7 @@ public class StandardSession
             Object attribute = getAttributeInternal(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
-                    event = new HttpSessionEvent(this);
+                    event = new HttpSessionEvent(getSession());
                 try {
                     ((HttpSessionActivationListener)attribute)
                         .sessionWillPassivate(event);
@@ -751,7 +751,7 @@ public class StandardSession
             Object attribute = getAttributeInternal(keys[i]);
             if (attribute instanceof HttpSessionActivationListener) {
                 if (event == null)
-                    event = new HttpSessionEvent(this);
+                    event = new HttpSessionEvent(getSession());
                 try {
                     ((HttpSessionActivationListener)attribute)
                         .sessionDidActivate(event);
@@ -1217,7 +1217,7 @@ public class StandardSession
 
         // Call the valueBound() method if necessary
         if (value instanceof HttpSessionBindingListener) {
-            event = new HttpSessionBindingEvent(this, name, value);
+            event = new HttpSessionBindingEvent(getSession(), name, value);
             try {
                 ((HttpSessionBindingListener) value).valueBound(event);
             } catch (Throwable t){
@@ -1233,7 +1233,7 @@ public class StandardSession
             (unbound instanceof HttpSessionBindingListener)) {
             try {
                 ((HttpSessionBindingListener) unbound).valueUnbound
-                    (new HttpSessionBindingEvent(this, name));
+                    (new HttpSessionBindingEvent(getSession(), name));
             } catch (Throwable t) {
                 log(sm.getString("standardSession.bindingEvent"), t);
             }
@@ -1256,7 +1256,7 @@ public class StandardSession
                                        listener);
                     if (event == null) {
                         event = new HttpSessionBindingEvent
-                            (this, name, unbound);
+                            (getSession(), name, unbound);
                     }
                     listener.attributeReplaced(event);
                     fireContainerEvent(context,
@@ -1267,7 +1267,8 @@ public class StandardSession
                                        "beforeSessionAttributeAdded",
                                        listener);
                     if (event == null) {
-                        event = new HttpSessionBindingEvent(this, name, value);
+                        event = new HttpSessionBindingEvent
+                            (getSession(), name, value);
                     }
                     listener.attributeAdded(event);
                     fireContainerEvent(context,
@@ -1561,7 +1562,7 @@ public class StandardSession
         // Call the valueUnbound() method if necessary
         HttpSessionBindingEvent event = null;
         if (value instanceof HttpSessionBindingListener) {
-            event = new HttpSessionBindingEvent(this, name, value);
+            event = new HttpSessionBindingEvent(getSession(), name, value);
             ((HttpSessionBindingListener) value).valueUnbound(event);
         }
 
@@ -1580,7 +1581,8 @@ public class StandardSession
                                    "beforeSessionAttributeRemoved",
                                    listener);
                 if (event == null) {
-                    event = new HttpSessionBindingEvent(this, name, value);
+                    event = new HttpSessionBindingEvent
+                        (getSession(), name, value);
                 }
                 listener.attributeRemoved(event);
                 fireContainerEvent(context,
