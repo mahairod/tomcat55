@@ -382,36 +382,51 @@ public class JspServlet extends HttpServlet {
     }
 
 
+    /**
+     * <p>Look for a <em>precompilation request</em> as described in
+     * Section 8.4.2 of the JSP 1.2 Specification.  <strong>WARNING</strong> -
+     * we cannot use <code>request.getParameter()</code> for this, because
+     * that will trigger parsing all of the request parameters, and not give
+     * a servlet the opportunity to call
+     * <code>request.setCharacterEncoding()</code> first.</p>
+     *
+     * @param request The servlet requset we are processing
+     *
+     * @exception ServletException if an invalid parameter value for the
+     *  <code>jsp_precompile</code> parameter name is specified
+     */
     boolean preCompile(HttpServletRequest request) 
         throws ServletException 
     {
-        boolean precompile = false;
-        String precom = request.getParameter(Constants.PRECOMPILE);
-        String qString = request.getQueryString();
-        
-        if (precom != null) {
-	    // An equal sign was specified 
-	    // (?jsp_precompile=... or &jsp_precompile=...)
-            if (precom.equals("true") || precom.trim().length()==0) {
-                precompile = true;
-            } else if (precom.equals("false")) {
-                precompile = false;
-            } else {
-		// This is illegal.
-		throw new ServletException("Can't have request parameter " +
-					   Constants.PRECOMPILE + " set to " + precom);
-	    }
-        } else {
-	    // Check if precompile is specified (but it does not have
-	    // the '=' following it.)
-	    if (qString != null && 
-		     (qString.startsWith(Constants.PRECOMPILE) ||
-		     qString.indexOf("&" + Constants.PRECOMPILE)
-		     != -1)) {
-		precompile = true;
-	    }
-	}
-        return precompile;
+
+        String queryString = request.getQueryString();
+        if (queryString == null)
+            return (false);
+        int start = queryString.indexOf(Constants.PRECOMPILE);
+        if (start < 0)
+            return (false);
+        queryString =
+            queryString.substring(start + Constants.PRECOMPILE.length());
+        if (queryString.length() == 0)
+            return (true);             // ?jsp_precompile
+        if (queryString.startsWith("&"))
+            return (true);             // ?jsp_precompile&foo=bar...
+        if (!queryString.startsWith("="))
+            return (false);            // part of some other name or value
+        int limit = queryString.length();
+        int ampersand = queryString.indexOf("&");
+        if (ampersand > 0)
+            limit = ampersand;
+        String value = queryString.substring(1, limit);
+        if (value.equals("true"))
+            return (true);             // ?jsp_precompile=true
+        else if (value.equals("false"))
+            return (false);            // ?jsp_precompile=false
+        else
+            throw new ServletException("Cannott have request parameter " +
+                                       Constants.PRECOMPILE + " set to " +
+                                       value);
+
     }
     
     
