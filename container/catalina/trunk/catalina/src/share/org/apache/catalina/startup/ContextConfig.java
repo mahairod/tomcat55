@@ -493,15 +493,12 @@ public final class ContextConfig
         webDigester.setNamespaceAware(namespaceAware);
         webDigester.setValidating(validation);
        
-        if (webDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
+        if (webDigester.getFactory().getClass()
+                .getName().indexOf("xerces")!=-1) {
             webDigester = patchXerces(webDigester);
         }
-        
-        url = ContextConfig.class.
-                    getResource(Constants.WebSchemaResourcePath_24);
 
-        SchemaResolver webEntityResolver = new SchemaResolver(url.toString(),
-                                                              webDigester);
+        SchemaResolver webEntityResolver = new SchemaResolver( webDigester);
 
         if (validation) {
             if (webDigester.getFactory().getClass()

@@ -457,13 +457,12 @@ public final class TldConfig  {
         tldDigester.setNamespaceAware(xmlNamespaceAware);
         tldDigester.setValidating(xmlValidation);
         
-        if (tldDigester.getFactory().getClass().getName().indexOf("xerces")!=-1) {
+        if (tldDigester.getFactory().getClass()
+                    .getName().indexOf("xerces")!=-1) {
             tldDigester = patchXerces(tldDigester);
         }
         // Set the schemaLocation
-        url = TldConfig.class.getResource(Constants.TldSchemaResourcePath_20);
-        SchemaResolver tldEntityResolver = new SchemaResolver(url.toString(), 
-                                                              tldDigester);
+        SchemaResolver tldEntityResolver = new SchemaResolver( tldDigester);
 
         if (xmlValidation) {
             if (tldDigester.getFactory().getClass()
