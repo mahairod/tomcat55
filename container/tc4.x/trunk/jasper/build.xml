@@ -11,8 +11,6 @@
 
   <!-- Build Defaults -->
   <property name="build.compiler"    value="classic"/>
-  <property name="copy.crimson.jar"  value="../lib/crimson.jar"/>
-  <property name="copy.jaxp.jar"     value="../lib/jaxp.jar"/>
   <property name="jasper.build"      value="build"/>
   <property name="jasper.deploy"     value="../build"/>
   <property name="jasper.dist"       value="dist"/>
@@ -22,20 +20,18 @@
 
   <!-- Construct Jasper classpath -->
   <path id="jasper.classpath">
-    <pathelement location="${copy.crimson.jar}"/>
-    <pathelement location="${copy.jaxp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${jasper.build}/classes"/>
   </path>
 
   <!-- Construct unit tests classpath -->
   <path id="test.classpath">
     <pathelement location="${junit.jar}"/>
-    <pathelement location="${copy.crimson.jar}"/>
-    <pathelement location="${copy.jaxp.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${tools.jar}"/>
+    <pathelement location="${xerces.jar}"/>
     <pathelement location="${jasper.build}/classes"/>
     <pathelement location="${jasper.build}/tests"/>
   </path>
