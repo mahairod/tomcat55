@@ -422,6 +422,13 @@ public class HostConfig
 
     }
 
+    /**
+     * Get the name of the configBase.
+     * For use with JMX management.
+     */
+    public String getConfigBaseName() {
+        return configBase().getAbsolutePath();
+    }
 
     /**
      * Given a context path, get the config file name.
@@ -1133,8 +1140,72 @@ public class HostConfig
             deployApps(name);
         }
     }
-    
-    
+
+    /**
+     * Add a new Context to be managed by us.
+     * Entry point for the admin webapp, and other JMX Context controlers.
+     */
+    public void manageApp(Context context)  {    
+
+        String contextPath = context.getPath();
+        
+        if (deployed.containsKey(contextPath))
+            return;
+
+        DeployedApplication deployedApp = new DeployedApplication(contextPath);
+        
+        // Add the associated docBase to the redeployed list if it's a WAR
+        boolean isWar = false;
+        if (context.getDocBase() != null) {
+            File docBase = new File(context.getDocBase());
+            if (!docBase.isAbsolute()) {
+                docBase = new File(appBase(), context.getDocBase());
+            }
+            deployedApp.redeployResources.put(docBase.getAbsolutePath(),
+                                          new Long(docBase.lastModified()));
+            if (docBase.getAbsolutePath().toLowerCase().endsWith(".war")) {
+                isWar = true;
+            }
+        }
+        host.addChild(context);
+        // Add the eventual unpacked WAR and all the resources which will be
+        // watched inside it
+        if (isWar && unpackWARs) {
+            String name = null;
+            String path = context.getPath();
+            if (path.equals("")) {
+                name = "ROOT";
+            } else {
+                if (path.startsWith("/")) {
+                    name = path.substring(1);
+                } else {
+                    name = path;
+                }
+            }
+            File docBase = new File(name);
+            if (!docBase.isAbsolute()) {
+                docBase = new File(appBase(), name);
+            }
+            deployedApp.redeployResources.put(docBase.getAbsolutePath(),
+                        new Long(docBase.lastModified()));
+            addWatchedResources(deployedApp, docBase.getAbsolutePath(), context);
+        } else {
+            addWatchedResources(deployedApp, null, context);
+        }
+        deployed.put(contextPath, deployedApp);
+    }
+
+    /**
+     * Remove a webapp from our control.
+     * Entry point for the admin webapp, and other JMX Context controlers.
+     */
+    public void unmanageApp(String contextPath) {
+        if(isServiced(contextPath)) {
+            deployed.remove(contextPath);
+            host.removeChild(host.findChild(contextPath));
+        }
+    }
+
     // ----------------------------------------------------- Instance Variables
 
 
