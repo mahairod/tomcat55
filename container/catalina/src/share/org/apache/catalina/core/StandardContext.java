@@ -166,6 +166,12 @@ public class StandardContext
 
 
     /**
+     * The antiResourceLocking flag for this Context.
+     */
+    private boolean antiResourceLocking = false;
+
+    
+    /**
      * The set of application listener class names configured for this
      * application, in the order they were encountered in the web.xml file.
      */
@@ -815,6 +821,32 @@ public class StandardContext
      */
     public void setApplicationLifecycleListeners(Object listeners[]) {
         applicationLifecycleListenersObjects = listeners;
+    }
+
+
+    /**
+     * Return the antiResourceLocking flag for this Context.
+     */
+    public boolean getAntiResourceLocking() {
+
+        return (this.antiResourceLocking);
+
+    }
+
+
+    /**
+     * Set the application available flag for this Context.
+     *
+     * @param available The new application available flag
+     */
+    public void setAntiResourceLocking(boolean antiResourceLocking) {
+
+        boolean oldAntiResourceLocking = this.antiResourceLocking;
+        this.antiResourceLocking = antiResourceLocking;
+        support.firePropertyChange("antiResourceLocking",
+                                   new Boolean(oldAntiResourceLocking),
+                                   new Boolean(this.antiResourceLocking));
+
     }
 
 

@@ -19,6 +19,7 @@ package org.apache.catalina.startup;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -181,6 +182,80 @@ public class ExpandWar {
     }
 
 
+    /**
+     * Copy the specified file or directory to the destination.
+     *
+     * @param src File object representing the source
+     * @param dest File object representing the destination
+     */
+    public static boolean copy(File src, File dest) {
+        return copyInternal(src, dest, new byte[4096]);
+    }
+
+    
+    /**
+     * Copy the specified file or directory to the destination.
+     *
+     * @param src File object representing the source
+     * @param dest File object representing the destination
+     */
+    public static boolean copyInternal(File src, File dest, byte[] buf) {
+        
+        boolean result = true;
+        
+        String files[] = null;
+        if (src.isDirectory()) {
+            files = src.list();
+            result = dest.mkdir();
+        } else {
+            files = new String[1];
+            files[0] = src.getName();
+        }
+        if (files == null) {
+            files = new String[0];
+        }
+        for (int i = 0; (i < files.length) && result; i++) {
+            File fileSrc = new File(src, files[i]);
+            File fileDest = new File(dest, files[i]);
+            if (fileSrc.isDirectory()) {
+                result = copyInternal(fileSrc, fileDest, buf);
+            } else {
+                FileInputStream is = null;
+                FileOutputStream os = null;
+                try {
+                    is = new FileInputStream(fileSrc);
+                    os = new FileOutputStream(fileDest);
+                    int len = 0;
+                    while (true) {
+                        len = is.read(buf);
+                        if (len == -1)
+                            break;
+                        os.write(buf, 0, len);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    result = false;
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                    if (os != null) {
+                        try {
+                            os.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+        
+    }
+    
+        
     /**
      * Delete the specified directory, including all of its contents and
      * subdirectories recursively.
