@@ -619,11 +619,11 @@
     </jar>
 
     <!-- Add XML declarations for admin, manager and balancer -->
-    <move file="${tomcat.build}/server/webapps/manager/manager.xml"
+    <copy file="${tomcat.build}/server/webapps/manager/manager.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
-    <move file="${tomcat.build}/server/webapps/admin/admin.xml"
+    <copy file="${tomcat.build}/server/webapps/admin/admin.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
-    <move file="${tomcat.build}/webapps/balancer/balancer.xml"
+    <copy file="${tomcat.build}/webapps/balancer/balancer.xml"
          todir="${tomcat.build}/conf/Catalina/localhost" />
 
   </target>
