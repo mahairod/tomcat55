@@ -107,8 +107,14 @@ public class JAASCallbackHandler implements CallbackHandler {
             } else if (callbacks[i] instanceof PasswordCallback) {
                 if (realm.getDebug() >= 3)
                     realm.log("Returning password " + password);
+                final char[] passwordcontents;
+                if (password != null) {
+                    passwordcontents = password.toCharArray();
+                } else {
+                    passwordcontents = new char[0];
+                }
                 ((PasswordCallback) callbacks[i]).setPassword
-                    (password.toCharArray());
+                    (passwordcontents);
             } else {
                 throw new UnsupportedCallbackException(callbacks[i]);
             }
