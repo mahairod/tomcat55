@@ -30,7 +30,7 @@ fi
 JAVA_OPTS=
 
 # Set the default -Djava.endorsed.dirs argument
-JAVA_ENDORSED_DIRS="$BASEDIR"/bin:"$BASEDIR"/common/lib
+JAVA_ENDORSED_DIRS="$BASEDIR"/bin:"$BASEDIR"/common/endorsed
 
 # Set standard CLASSPATH
 CLASSPATH="$JAVA_HOME"/lib/tools.jar
