@@ -2464,13 +2464,6 @@ public class StandardContext
         // Shut down filters
         filterStop();
 
-        // Clear all application-originated servlet context attributes
-        if (context != null)
-            context.clearAttributes();
-
-        // Shut down application event listeners
-        listenerStop();
-
         // Shut down our session manager
         if ((manager != null) && (manager instanceof Lifecycle)) {
             try {
@@ -2494,6 +2487,13 @@ public class StandardContext
                 }
             }
         }
+
+        // Shut down application event listeners
+        listenerStop();
+
+        // Clear all application-originated servlet context attributes
+        if (context != null)
+            context.clearAttributes();
 
         if (isUseNaming()) {
             // Stop
@@ -2540,6 +2540,10 @@ public class StandardContext
         // Binding thread
         oldCCL = bindThread();
 
+        // Restore the "Welcome Files" and "Resources" context attributes
+        postResources();
+        postWelcomeFiles();
+
         // Restart our application event listeners and filters
         if (ok) {
             if (!listenerStart()) {
@@ -2553,10 +2557,6 @@ public class StandardContext
                 ok = false;
             }
         }
-
-        // Restore the "Welcome Files" and "Resources" context attributes
-        postResources();
-        postWelcomeFiles();
 
         // Restart our currently defined servlets
         for (int i = 0; i < children.length; i++) {
@@ -3319,9 +3319,9 @@ public class StandardContext
             try {
                 fireContainerEvent("beforeContextDestroyed", listener);
                 listener.contextDestroyed(event);
-                fireContainerEvent("beforeContextDestroyed", listener);
+                fireContainerEvent("afterContextDestroyed", listener);
             } catch (Throwable t) {
-                fireContainerEvent("beforeContextDestroyed", listener);
+                fireContainerEvent("afterContextDestroyed", listener);
                 log(sm.getString("standardContext.listenerStop",
                                  listeners[j].getClass().getName()), t);
                 ok = false;
@@ -3695,13 +3695,6 @@ public class StandardContext
         // Stop our filters
         filterStop();
 
-        // Clear all application-originated servlet context attributes
-        if (context != null)
-            context.clearAttributes();
-
-        // Stop our application listeners
-        listenerStop();
-
         // Finalize our character set mapper
         setCharsetMapper(null);
 
@@ -3729,6 +3722,13 @@ public class StandardContext
                 if (children[i] instanceof Lifecycle)
                     ((Lifecycle) children[i]).stop();
             }
+
+            // Stop our application listeners
+            listenerStop();
+
+            // Clear all application-originated servlet context attributes
+            if (context != null)
+                context.clearAttributes();
 
             // Stop our Mappers, if any
             Mapper mappers[] = findMappers();
