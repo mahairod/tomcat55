@@ -225,13 +225,28 @@
       <parameter name="name"
           description="Unique name of this Host"
                  type="java.lang.String"/>
-      <parameter name="appBase"
-          description="Application base directory for this Host"
-                 type="java.lang.String"/>
+      <parameter name="autoDeploy"
+          description="The auto deploy flag for this Host"
+               type="boolean"/>           
+      <parameter name="deployOnStartup"
+          description="The deploy on startup flag for this Host"
+               type="boolean"/>
+      <parameter name="deployXML"
+          description="deploy Context XML config files property"
+               type="boolean"/> 
       <parameter name="unpackWARs"
-          description="Should we unpack WARs when auto-deploying?"
-                 type="boolean"/>
+          description="Unpack WARs property"
+               type="boolean"/>
+      <parameter name="xmlNamespaceAware"
+          description="Attribute value used to turn on/off XML namespace awareness"
+               type="boolean"/>
+      <parameter name="xmlValidation"
+               description="Attribute value used to turn on/off XML validation"
+               type="boolean"/>
     </operation>
+
+
+
 
     <operation   name="createStandardManager"
           description="Create a new StandardManager"
