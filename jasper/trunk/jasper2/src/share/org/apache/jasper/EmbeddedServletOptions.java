@@ -117,11 +117,6 @@ public final class EmbeddedServletOptions implements Options {
      */
     private boolean isPoolingEnabled = true;
 
-     /**
-      * Tag handler pool size.
-      */
-    private int tagPoolSize;
-    
     /**
      * Do you want support for "mapped" files? This will generate
      * servlet that has a print statement per line of the JSP file.
@@ -236,13 +231,6 @@ public final class EmbeddedServletOptions implements Options {
     
     public boolean isPoolingEnabled() {
 	return isPoolingEnabled;
-    }
-
-    /**
-     * Returns the tag handler pool size.
-     */
-    public int getTagPoolSize() {
-	return tagPoolSize;
     }
 
     /**
@@ -369,8 +357,6 @@ public final class EmbeddedServletOptions implements Options {
     public EmbeddedServletOptions(ServletConfig config,
 				 ServletContext context) {
 
-	this.tagPoolSize = Constants.MAX_POOL_SIZE;
-
         Enumeration enum=config.getInitParameterNames();
         while( enum.hasMoreElements() ) {
             String k=(String)enum.nextElement();
@@ -421,25 +407,6 @@ public final class EmbeddedServletOptions implements Options {
 		    log.warn(Localizer.getMessage("jsp.warning.enablePooling"));
 		}		       	   
 	    }
-        }
-
-        String tagPoolSizeParam = config.getInitParameter("tagPoolSize");
-        if (tagPoolSizeParam != null) {
-            try {
-                this.tagPoolSize = Integer.parseInt(tagPoolSizeParam);
-                if (this.tagPoolSize <= 0) {
-                    this.tagPoolSize = Constants.MAX_POOL_SIZE;
-		    if (log.isWarnEnabled()) {
-			log.warn(Localizer.getMessage("jsp.warning.invalidTagPoolSize",
-						      Integer.toString(Constants.MAX_POOL_SIZE)));
-		    }
-                }
-            } catch(NumberFormatException ex) {
-		if (log.isWarnEnabled()) {
-		    log.warn(Localizer.getMessage("jsp.warning.invalidTagPoolSize",
-						  Integer.toString(Constants.MAX_POOL_SIZE)));
-		}
-            }
         }
 
         String mapFile = config.getInitParameter("mappedfile"); 

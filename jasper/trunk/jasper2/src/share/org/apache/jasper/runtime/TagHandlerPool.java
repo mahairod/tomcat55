@@ -75,8 +75,8 @@ public class TagHandlerPool {
 
     private Tag[] handlers;
 
-    public static String OPTION_TAGPOOL="jasper.tagpoolClassName";
-    public static String OPTION_MAXSIZE="jasper.tagpoolMaxSize";
+    public static String OPTION_TAGPOOL="tagpoolClassName";
+    public static String OPTION_MAXSIZE="tagpoolMaxSize";
 
     // index of next available tag handler
     private int current;

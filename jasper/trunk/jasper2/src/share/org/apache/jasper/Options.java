@@ -94,11 +94,6 @@ public interface Options {
      */
     public boolean isPoolingEnabled();
 
-     /**
-      * Returns the size used by all tag handler pools.
-      */
-    public int getTagPoolSize();
-
     /**
      * Are we supporting HTML mapped servlets?
      */
