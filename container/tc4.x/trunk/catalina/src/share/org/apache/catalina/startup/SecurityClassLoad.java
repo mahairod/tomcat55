@@ -126,6 +126,14 @@ public final class SecurityClassLoad {
             (basePackage + "util.URL");
         loader.loadClass(basePackage + "util.Enumerator");
         loader.loadClass("javax.servlet.http.Cookie");
+        try {
+            loader.loadClass("org.apache.coyote.tomcat4.CoyoteRequest$PrivilegedGetSession");
+        } catch(Throwable t) {
+        }
+        try {
+            loader.loadClass("org.apache.coyote.http11.Constants");
+        } catch(Throwable t) {
+        }
 
     }
 }
