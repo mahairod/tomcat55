@@ -143,6 +143,10 @@ public final class ForEach implements TagPlugin {
         ctxt.generateJavaSource("else if (" + itemsV + " instanceof Iterator)");
         ctxt.generateJavaSource(iterV + "=(Iterator)" + itemsV + ";");
 
+	// Enumeration
+	ctxt.generateJavaSource("else if (" + itemsV + " instanceof Enumeration)");
+	ctxt.generateJavaSource(iterV + "=toIterator((Enumeration)" + itemsV + ");");
+
         // Map
         ctxt.generateJavaSource("else if (" + itemsV + " instanceof Map)");
         ctxt.generateJavaSource(iterV + "=((Map)" + itemsV + ").entrySet().iterator();");
@@ -320,5 +324,19 @@ public final class ForEach implements TagPlugin {
 	    "  });\n" +
 	    "}"
 	);
+
+	// Enumeration
+	ctxt.generateDeclaration("enumIterator",
+	    "private Iterator toIterator(final Enumeration e){\n" +
+	    "  return (new Iterator() {\n" +
+	    "    public boolean hasNext() {\n" +
+	    "      return e.hasMoreElements();}\n" +
+	    "    public Object next() {\n" +
+	    "      return e.nextElement();}\n" +
+	    "    public void remove() {}\n" +
+	    "  });\n" +
+	    "}"
+	);
+
     }
 }
