@@ -72,8 +72,6 @@ public class HttpServletResponseWrapperEncodeRedirectURLTestServlet extends Http
 
     public void service ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 
-        HttpSession session = request.getSession(true);
-
         String expectedResult = "/HttpServletResponseWrapperRedirectedTest";
         PrintWriter out = response.getWriter();
         out.println( "in HttpServletResponseWrapperEncodeRedirectURLTest servlet<BR>" );
