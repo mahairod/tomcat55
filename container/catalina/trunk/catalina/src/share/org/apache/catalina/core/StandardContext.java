@@ -3964,9 +3964,15 @@ public class StandardContext
         postWorkDirectory();
 
         // Validate required extensions
-        ExtensionValidator validator = ExtensionValidator.getInstance();
-        boolean dependencyCheck = validator.validateApplication(
-                                  getResources(), this);
+        boolean dependencyCheck = true;
+        try {
+            ExtensionValidator validator = ExtensionValidator.getInstance();
+            dependencyCheck = validator.validateApplication(getResources(),
+                                                            this);
+        } catch (IOException ioe) {
+            dependencyCheck = false;
+        }
+
         if (!dependencyCheck) {
             // do not make application available if depency check fails
             log.error( "Error in dependencyCheck");
