@@ -851,6 +851,10 @@ public class GTest extends Task {
             */
 
             if ( content != null ) {
+                int length = content.length();
+                if ( debug > 0 ) {
+                    System.out.println( " REQUEST HEADER: Content-Length: " + length );
+                }
                 pw.println( "Content-Length: " + content.length() );
             }
 
