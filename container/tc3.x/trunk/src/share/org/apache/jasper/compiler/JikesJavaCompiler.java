@@ -91,6 +91,7 @@ public class JikesJavaCompiler implements JavaCompiler {
     String compilerPath = "jikes";
     String outdir;
     OutputStream out;
+    boolean classDebugInfo=false;
 
     /**
      * Specify where the compiler can be found
@@ -127,6 +128,13 @@ public class JikesJavaCompiler implements JavaCompiler {
       this.out = out;
     }
 
+    /**
+     * Set if you want debugging information in the class file 
+     */ 
+    public void setClassDebugInfo(boolean classDebugInfo) {
+        this.classDebugInfo = classDebugInfo;
+    }
+
    /**
      * Execute the compiler
      * @param source - file name of the source to be compiled
@@ -151,14 +159,27 @@ public class JikesJavaCompiler implements JavaCompiler {
             } 
         }
 
-        String[] compilerCmd = new String[] {
-          "\"" + compilerPath + "\"",
-          //XXX - add encoding once Jikes supports it
-          "-classpath", "\"" + classpath + MicrosoftClasspath + "\"",
-          "-d", "\"" + outdir + "\"",
-          "-nowarn",
-          "\"" + source + "\""
-        };
+        String[] compilerCmd;
+        if (classDebugInfo) {
+	    compilerCmd = new String[] {
+		"\"" + compilerPath + "\"",
+                "-g",
+		//XXX - add encoding once Jikes supports it
+		"-classpath", "\"" + classpath + MicrosoftClasspath + "\"",
+		"-d", "\"" + outdir + "\"",
+		"-nowarn",
+		"\"" + source + "\""
+	    };
+        } else {
+	    compilerCmd = new String[] {
+		"\"" + compilerPath + "\"",
+		//XXX - add encoding once Jikes supports it
+		"-classpath", "\"" + classpath + MicrosoftClasspath + "\"",
+		"-d", "\"" + outdir + "\"",
+		"-nowarn",
+		"\"" + source + "\""
+	    };
+	}
 
         ByteArrayOutputStream tmpErr = new ByteArrayOutputStream(OUTPUT_BUFFER_SIZE);
 	try {

@@ -1,4 +1,8 @@
 /*
+ * $Header$
+ * $Revision$
+ * $Date$
+ *
  * ====================================================================
  * 
  * The Apache Software License, Version 1.1
@@ -261,6 +265,7 @@ public class Compiler {
                             classpath + sep + ctxt.getOutputDir());
         javac.setOutputDir(ctxt.getOutputDir());
         javac.setMsgOutput(out);
+        javac.setClassDebugInfo(ctxt.getOptions().getClassDebugInfo());
 
         /**
          * Execute the compiler
