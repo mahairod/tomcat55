@@ -267,12 +267,20 @@ public class FileUtil {
 	    patchPath = sb.toString();
 	}
 
-	// fix path on NetWare
+	// fix path on NetWare - all '/' become '\\' and remove duplicate '\\'
 	if (System.getProperty("os.name").startsWith("NetWare") &&
 	    path.length() >=3 &&
-	    path.indexOf(':') > 0)
-	    patchPath = patchPath.replace('/', '\\');
-
+	    path.indexOf(':') > 0) {
+            char ca[] = patchPath.replace('/', '\\').toCharArray();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < ca.length; i++) {
+                if ((ca[i] != '\\') ||
+                    (ca[i] == '\\' && i > 0 && ca[i-1] != '\\')) {
+                    sb.append(ca[i]);
+                }
+            }
+            patchPath = sb.toString();
+        }
 	return patchPath;
     }
 
