@@ -718,6 +718,10 @@ Coyote Bug Fixes:
          JK 2 CoyoteHandler:
          Fix NPE occurring in SSL mode.
 
+[4.1.19] #10383
+         Ajp13
+         Fix hanging Ajp13Processor and web server request when invalid Cookie sent.
+         An HTTP status code 400 - Bad Request is now returned.
 
 ----------------
 Jasper Bug Fixes:
