@@ -998,7 +998,7 @@ class Validator {
 		    String attrPrefix = na.getPrefix();
 		    if (na.getLocalName().equals(tldAttrs[j].getName())
 			    && (attrPrefix == null || attrPrefix.length() == 0
-				|| attrPrefix == n.getPrefix())) {
+				|| attrPrefix.equals(n.getPrefix()))) {
 			jspAttrs[start + i] = new Node.JspAttribute(na, false);
 			NamedAttributeVisitor nav = null;
 			if (na.getBody() != null) {
