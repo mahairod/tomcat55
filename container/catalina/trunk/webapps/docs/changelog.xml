@@ -62,6 +62,10 @@
       <bug>22413</bug>: response.encodeURL(response.encodeURL("xxx.jsp") now 
       works correctly in root context (markt)
       </fix>
+      <fix>
+      Fix subject lost problem with JAAS realm, submitted by Janne Vaananen 
+      (jfarcand)
+      </fix>
 
     </changelog>
 
