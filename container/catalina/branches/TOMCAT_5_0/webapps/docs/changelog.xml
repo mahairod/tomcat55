@@ -98,6 +98,9 @@
       <fix>
         <bug>29866</bug>: JspReader#skipUntil may try to read beyond the end of the file. (yoavs)
       </fix>
+      <fix>
+        <bug>32330</bug>: JspC changes context classloader. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 
