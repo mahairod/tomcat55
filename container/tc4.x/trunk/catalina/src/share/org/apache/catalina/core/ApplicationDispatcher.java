@@ -117,10 +117,12 @@ final class ApplicationDispatcher
      *  (if any)
      * @param queryString Query string parameters included with this request
      *  (if any)
+     * @param name Servlet name (if a named dispatcher was created)
+     *  else <code>null</code>
      */
     public ApplicationDispatcher
 	(Wrapper wrapper, String servletPath,
-	 String pathInfo, String queryString) {
+	 String pathInfo, String queryString, String name) {
 
 	super();
 
@@ -130,10 +132,12 @@ final class ApplicationDispatcher
 	this.servletPath = servletPath;
 	this.pathInfo = pathInfo;
 	this.queryString = queryString;
+        this.name = name;
 
 	if (debug >= 1)
 	    log("servletPath=" + this.servletPath + ", pathInfo=" +
-		this.pathInfo + ", queryString=" + queryString);
+		this.pathInfo + ", queryString=" + queryString +
+                ", name=" + this.name);
 
     }
 
@@ -151,6 +155,12 @@ final class ApplicationDispatcher
      * The debugging detail level for this component.
      */
     private int debug = 0;
+
+
+    /**
+     * The servlet name for a named dispatcher.
+     */
+    private String name = null;
 
 
     /**
@@ -356,13 +366,17 @@ final class ApplicationDispatcher
 	}
 
 	// Handle an HTTP named dispatcher include
-	else if ((servletPath == null) && (pathInfo == null)) {
+	else if (name != null) {
 
 	    if (debug >= 1)
 		log(" Named Dispatcher Include");
 
+	    ApplicationHttpRequest wrequest =
+		new ApplicationHttpRequest((HttpServletRequest) request);
+            wrequest.setAttribute("org.apache.catalina.NAMED", name);
+
 	    try {
-		invoke(request, wresponse);
+		invoke(wrequest, wresponse);
 	    } catch (IOException e) {
 		throw e;
 	    } catch (ServletException e) {

@@ -326,7 +326,7 @@ public final class ApplicationContext
 	if (wrapper == null)
 	    return (null);
 	ApplicationDispatcher dispatcher =
-	  new ApplicationDispatcher(wrapper, null, null, null);
+	  new ApplicationDispatcher(wrapper, null, null, null, name);
 	return ((RequestDispatcher) dispatcher);
 
     }
@@ -413,7 +413,8 @@ public final class ApplicationContext
 	  new ApplicationDispatcher(wrapper,
 	  			    hrequest.getServletPath(),
 	  			    hrequest.getPathInfo(),
-	  			    hrequest.getQueryString());
+	  			    hrequest.getQueryString(),
+                                    null);
 	return ((RequestDispatcher) dispatcher);
 
     }
