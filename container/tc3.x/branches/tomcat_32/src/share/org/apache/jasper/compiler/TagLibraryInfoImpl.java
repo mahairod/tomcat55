@@ -144,7 +144,8 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
             return ctxt.getResourceAsStream(uri);
         } else {
             // assume it translates to a real file, and use getRealPath
-            return new FileInputStream(ctxt.getRealPath(uri));
+            String real = ctxt.getRealPath(uri);
+            return (real == null) ? null : new FileInputStream(real);
         }
     }
 
