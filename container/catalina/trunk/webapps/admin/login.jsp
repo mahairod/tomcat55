@@ -5,6 +5,10 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 
+<% // Force the initialization of "action" servlet
+   getServletContext().getNamedDispatcher("action").include(request,response);
+%> 
+
 <html:html locale="true">
 
 <!-- Make sure window is not in a frame -->
