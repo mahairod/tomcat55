@@ -177,7 +177,9 @@ Generic Bug Fixes:
 [4.1.11] Administration Webapp:
          Fix adding a context with the administration webapp.
 
-[4.1.12] Fix SSL-cert authentication when using the Coyote Connector.
+[4.1.12] Administration Webapp:
+         Complete support for DefaultContext.
+
 
 ------------------
 Catalina Bug Fixes:
@@ -440,6 +442,17 @@ Catalina Bug Fixes:
          "caseSensitive" flag rather than on the path separator. Most Unix OSes
          can set that to false.
 
+[4.1.12] SSLAuthenticator:
+         Add back client authentication support.
+
+[4.1.12] SECURITY:
+         Disable InvokerServlet in the default webapp configuration, 
+         and restrict the servlets it can invoke.
+
+[4.1.12] #12286
+         JDBCStore:
+         Fix NPE on shutdown.
+
 
 ----------------
 Jasper Bug Fixes:
@@ -610,6 +623,9 @@ Jasper Bug Fixes:
 [4.1.11] JspServletWrapper:
          Fix Jasper when "development" option is set to "false".
 
+[4.1.12] JspRuntimeContext:
+         Add permission to allow reading the work directory.
+
 
 ============================
 KNOWN ISSUES IN THIS RELEASE:
@@ -626,6 +642,7 @@ KNOWN ISSUES IN THIS RELEASE:
 * Using Jasper 1 with Tomcat 4.1
 * Administrartion web application
 * Symlinking static resources
+* Enabling invoker servlet
 
 
 -------------------------------------
@@ -813,7 +830,15 @@ Symlinking static resources:
 Unix symlinks will not work when used in a web application to link resources 
 located outside the web application root directory.
 
-This behavior will be made optional in an upcoming version of Tomcat 4.1, but
-will be the default one.
+This behavior is optional, and the "allowLinking" flag may be used to disable
+the check.
 
 
+------------------------
+Enabling invoker servlet:
+------------------------
+
+Starting with Tomcat 4.1.12, the invoker servlet is no longer available by 
+default in all webapp. Enabling it for all webapps is possible by editing
+$CATALINA_HOME/conf/web.xml to uncomment the "/servlet/*" servlet-mapping
+definition.
