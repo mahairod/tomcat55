@@ -180,7 +180,8 @@ public class JspWriterImpl extends JspWriter {
      * Discard the output buffer.
      */
     public final void clear() throws IOException {
-        if (bufferSize == 0)
+        if ((bufferSize == 0) && (out != null))
+            // clear() is illegal after any unbuffered output (JSP.5.5)
             throw new IllegalStateException(Constants.getString("jsp.error.ise_on_clear"));
         if (flushed)
             throw new IOException(Constants.getString("jsp.error.attempt_to_clear_flushed_buffer"));
