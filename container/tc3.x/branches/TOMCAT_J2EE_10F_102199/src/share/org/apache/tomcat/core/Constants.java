@@ -171,6 +171,8 @@ public class Constants {
     }
 
     public static class JSP {
+        public static final String NAME = "jsp";
+
         public static class Directive {
             public static class Compile {
                 public static final String Name = "jsp_precompile";
@@ -196,6 +198,8 @@ public class Constants {
             "javax.servlet.error.exception_type";
         public static final String ERROR_MESSAGE =
             "javax.servlet.error.message";
+        public static final String RESOLVED_SERVLET =
+            "javax.servlet.resolved";
     }
 
     public static class Locale {

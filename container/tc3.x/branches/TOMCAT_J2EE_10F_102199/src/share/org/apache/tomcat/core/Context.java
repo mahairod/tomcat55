@@ -635,6 +635,13 @@ public class Context {
 	request.setServletPath(result.getServletPath());
 	request.setPathInfo(result.getPathInfo());
 
+        if (result.getMappedPath() != null) {
+            request.setAttribute(Constants.Attribute.RESOLVED_SERVLET,
+                result.getMappedPath());
+        } else {
+            request.removeAttribute(Constants.Attribute.RESOLVED_SERVLET);
+        }
+
 	result.getWrapper().handleRequest(request.getFacade(),
             response.getFacade());
 
