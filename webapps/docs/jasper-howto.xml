@@ -122,6 +122,9 @@ print statement per input line, to ease debugging?
 <li><strong>scratchdir</strong> - What scratch directory should we use when
 compiling JSP pages? Default is the work directory for the current web
 application.</li>
+
+<li><strong>trimSpaces</strong> - Should white spaces in template text between
+actions or directives be trimmed ?, default <code>false</code>.</li>
 </ul>
 </p>
 
