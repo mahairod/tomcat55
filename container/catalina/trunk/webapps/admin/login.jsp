@@ -51,7 +51,7 @@
         <font color="#FFFFFF"><label for="username"><bean:message key="prompt.username"/></label></font>
       </th>
       <td align="left">
-        <input type="text" name="j_username" size="16" maxlength="16" id="username"/>
+        <input type="text" name="j_username" size="16" id="username"/>
       </td>
     </tr>
     <p>
@@ -60,7 +60,7 @@
         <font color="#FFFFFF"><label for="password"><bean:message key="prompt.password"/></label></font>
       </th>
       <td align="left">
-        <input type="password" name="j_password" size="16" maxlength="16" id="password"/>
+        <input type="password" name="j_password" size="16" id="password"/>
       </td>
     </tr>
 
