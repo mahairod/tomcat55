@@ -142,7 +142,7 @@ public class Config {
 	    // 	    loadConfig(is, validate);
 	} else {
 	    try {
-	        configURL = URLUtil.resolve(configFile, null);
+	        configURL = URLUtil.resolve(configFile);
 	    } catch (MalformedURLException mue) {
 	        String msg = sm.getString("startup.loadconfig.mue",
 		    configFile);
