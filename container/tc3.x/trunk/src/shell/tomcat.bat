@@ -27,7 +27,7 @@ if "%1" == "start" goto startServer
 if "%1" == "stop" goto stopServer
 @echo on
 @echo Usage:
-@echo tomcat [start|stop]
+@echo "tomcat [start|stop]"
 @echo off
 goto cleanup
 
