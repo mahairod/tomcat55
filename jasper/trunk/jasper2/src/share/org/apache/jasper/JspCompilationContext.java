@@ -609,7 +609,6 @@ public class JspCompilationContext {
 				      ex);
         }
         removed = 0;
-        jsw.setReload(false);
         return servletClass;
     }
 
