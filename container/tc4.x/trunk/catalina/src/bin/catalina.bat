@@ -85,7 +85,7 @@ set SECURITY_POLICY_FILE=
 set DEBUG_OPTS=
 set JPDA=
 
-if not "%1" == "jpda" goto noJpda
+if not ""%1"" == ""jpda"" goto noJpda
 set JPDA=jpda
 if not "%JPDA_ADDRESS%" == "" got gotJpdaAddress
 set JPDA_ADDRESS=jdbconn
