@@ -492,12 +492,18 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
                     name = t.getData();
             } else if (tname.equals("required"))  {
                 Text t = (Text) e.getFirstChild();
-                if (t != null)
+                if (t != null) {
                     required = Boolean.valueOf(t.getData()).booleanValue();
+		    if( t.getData().equalsIgnoreCase("yes") )
+			required = true;
+		}
             } else if (tname.equals("rtexprvalue")) {
                 Text t = (Text) e.getFirstChild();
-                if (t != null)
+                if (t != null) {
                     rtexprvalue = Boolean.valueOf(t.getData()).booleanValue();
+                    if( t.getData().equalsIgnoreCase("yes") )
+                        rtexprvalue = true;
+		}
             } else if (tname.equals("type")) {
                 Text t = (Text) e.getFirstChild();
                 if (t != null)
