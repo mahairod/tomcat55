@@ -43,7 +43,7 @@
       them (jfarcand)
       </fix>
       <fix>
-      Regression (Bugzilla 28971): the server cookies should be parsed after the context 
+      <bug>28971</bug>: Regression: the server cookies should be parsed after the context 
       is mapped, otherwise, the session cookie is never considered valid, and 
       it will use the last one (remm).
       </fix>
