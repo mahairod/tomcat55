@@ -115,13 +115,29 @@ public final class ReplicationStream
      */
     public Class resolveClass(ObjectStreamClass classDesc)
         throws ClassNotFoundException, IOException {
+        String name = classDesc.getName();
+        boolean tryRepFirst = name.startsWith("org.apache.catalina.cluster");
         try
         {
-            return (classLoader.loadClass(classDesc.getName()));
+            if ( tryRepFirst ) return findReplicationClass(name);
+            else return findWebappClass(name);
         }
         catch ( Exception x )
         {
-            return getClass().getClassLoader().loadClass(classDesc.getName());
+            if ( tryRepFirst ) return findWebappClass(name);
+            else return findReplicationClass(name);
         }
     }
+    
+    public Class findReplicationClass(String name)
+        throws ClassNotFoundException, IOException {
+        return Class.forName(name, false, getClass().getClassLoader());
+    }
+
+    public Class findWebappClass(String name)
+        throws ClassNotFoundException, IOException {
+        return Class.forName(name, false, classLoader);
+    }
+
+
 }
