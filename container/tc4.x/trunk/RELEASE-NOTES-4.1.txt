@@ -915,6 +915,16 @@ Coyote Bug Fixes:
 [4.1.25] JkHandler:
          Fix decoding of SSL CLIENT-CERTs passed from Apache/IIS/iPlanet.
 
+[4.1.25] mod_jk:
+         Fix potential path-traversal problem in mappings.
+
+[4.1.25] JSSE SSL:
+         Re-factor to remove dependencies on Sun classes when using a 1.4.x JVM.
+         It should now be possible to set up a SSL Connector with any vendors 
+         1.4.x JVM, without having to install Sun's JSSE 1.0.x.
+
+[4.1.25] PureTLS SSL:
+         Fix problems with getting the CLIENT-CERT.
 
 ----------------
 Jasper Bug Fixes:
