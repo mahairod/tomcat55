@@ -8,6 +8,7 @@
 
   <properties>
     <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <author email="yoavs@apache.org">Yoav Shapira</author>
     <title>The HTTP Connector</title>
   </properties>
 
@@ -284,6 +285,14 @@
       <p>If set to <code>true</code>, the TCP_NO_DELAY option will be
       set on the server socket, which improves performance under most
       circumstances.  This is set to <code>true</code> by default.</p>
+    </attribute>
+
+    <attribute name="threadPriority" required="false">
+      <p>The priority of the request processing threads within the JVM.
+      The default value is <code>java.lang.Thread#NORM_PRIORITY</code>.
+      See the JavaDoc for the java.lang.Thread class for more details on
+      what this priority means.
+      </p>
     </attribute>
 
   </attributes>
