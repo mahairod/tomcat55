@@ -63,8 +63,11 @@
   <!-- ====================== DIST: Copy Static Files ===================== -->
   <target name="dist-static" depends="dist-prepare">
 
-    <copyfile src="./LICENSE"             dest="${tomcat.dist}/LICENSE"/>
-    <copyfile src="./NEW_SPECS.txt"       dest="${tomcat.dist}/NEW_SPECS.txt"/>
+    <copydir src="."                      dest="${tomcat.dist}">
+      <include name="LICENSE"/>
+      <include name="NEW_SPECS.txt"/>
+      <include name="RELEASE*"/>
+    </copydir>
 
     <copydir src="${tomcat.build}/bin"     dest="${tomcat.dist}/bin"/>
     <copydir src="${tomcat.build}/conf"    dest="${tomcat.dist}/conf"/>
