@@ -32,7 +32,10 @@ import java.io.FileNotFoundException;
  * @version 1.0
  */
 public class FileMessageFactory {
-    
+    /*--Static Variables----------------------------------------*/
+    public static org.apache.commons.logging.Log log = org.apache.commons.logging.LogFactory
+            .getLog(FileMessageFactory.class);
+   
     /**
      * The number of bytes that we read from file
      */
@@ -102,10 +105,12 @@ public class FileMessageFactory {
         throws FileNotFoundException, IOException{
         this.file = f;
         this.openForWrite = openForWrite;
+        if(log.isDebugEnabled())
+            log.debug("open file " + f + " write " +  openForWrite);
         if ( openForWrite ) {
             if (!file.exists()) file.createNewFile();
             out = new FileOutputStream(f);
-        } else {
+          } else {
             size = file.length();
             totalNrOfMessages = (size / READ_SIZE) + 1;
             in = new FileInputStream(f);
@@ -167,6 +172,8 @@ public class FileMessageFactory {
      */
     public boolean writeMessage(FileMessage msg) throws IllegalArgumentException, IOException {
         if ( !openForWrite ) throw new IllegalArgumentException("Can't write message, this factory is reading.");
+        if(log.isTraceEnabled())
+            log.trace("Message " + msg + " data " + msg.getData() + " data length " + msg.getDataLength() + " out " + out );
         out.write(msg.getData(),0,msg.getDataLength());
         nrOfMessagesProcessed++;
         out.flush();
