@@ -1,0 +1,191 @@
+<project name="Tomcat" default="main" basedir=".">
+
+  <target name="init">
+    <!-- Ant.home is set automatically by ant. If you set it here it will not
+         work  -->
+    <property name="ant.home" value="../jakarta-ant" />
+    <property name="build.compiler" value="classic"/>
+    <property name="tomcat.build" value="../build/tomcat"/>
+    <property name="tomcat.home" value="../dist/tomcat"/>
+  </target>
+
+  <!-- ==================== Copy static files ==================== -->
+  <!-- IF YOU CHANGE, sync dist.prepare !!! -->
+
+  <target name="prepare" depends="init">
+    <mkdir dir="src/doc"/> <!-- Temp change until dir is not empty -->
+    <mkdir dir="${tomcat.build}"/>
+    <mkdir dir="${tomcat.build}/classes"/>
+    <mkdir dir="${tomcat.build}/conf"/>
+    <mkdir dir="${tomcat.build}/src"/>
+    <mkdir dir="${tomcat.build}/lib"/>
+    <mkdir dir="${tomcat.build}/logs"/>
+    <mkdir dir="${tomcat.build}/bin"/>
+    <mkdir dir="${tomcat.build}/doc"/>
+    <mkdir dir="${tomcat.build}/webapps"/>
+
+    <copydir src="src/shell" dest="${tomcat.build}/bin" />
+    <copydir src="src/etc" dest="${tomcat.build}/conf"/>
+    <copydir src="src/doc" dest="${tomcat.build}/doc"/>
+
+    <copyfile src="build.xml" dest="${tomcat.build}/conf/build.xml"/>
+    <mkdir dir="${tomcat.build}/lib/test"/>
+    <mkdir dir="${tomcat.build}/lib/test/Golden"/>
+    <copydir src="src/tests/share/tests/jsp/Golden" dest="${tomcat.build}/lib/test/Golden"/>
+
+    <!-- include ant, it is used for testing and will be used for
+         configuration and few other tasks -->
+    <copydir src="${ant.home}/bin" dest="${tomcat.build}/bin"/>
+    <copyfile src="${ant.home}/lib/xml.jar" dest="${tomcat.build}/lib/xml.jar"/>
+    <copyfile src="${ant.home}/lib/ant.jar" dest="${tomcat.build}/lib/ant.jar"/>
+
+    <copyfile src="LICENSE" dest="${tomcat.build}/LICENSE"/>
+
+    <fixcrlf srcdir="${tomcat.build}" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tomcat.build}" includes="*.bat" cr="add"/>
+
+    <chmod perm="+x" src="${tomcat.build}/bin/ant"/>
+    <chmod perm="+x" src="${tomcat.build}/bin/antRun"/>
+    <chmod perm="+x" src="${tomcat.build}/bin/tomcat.sh"/>
+    <chmod perm="+x" src="${tomcat.build}/bin/jspc.sh"/>
+    <chmod perm="+x" src="${tomcat.build}/bin/startup.sh"/>
+    <chmod perm="+x" src="${tomcat.build}/bin/shutdown.sh"/>
+  </target>
+
+  <!-- ==================== Build tomcat ==================== -->
+  <target name="tomcat" depends="prepare">
+    <javac srcdir="src/share" destdir="${tomcat.build}/classes"
+           classpath="${tomcat.build}/lib/xml.jar" debug="on"/>
+
+    <copydir src="src/share" dest="${tomcat.build}/classes">
+      <include name="**/*.properties" />
+    </copydir>
+
+    <javac srcdir="src/j2ee" destdir="${tomcat.build}/classes"
+           classpath="${tomcat.build}/lib/xml.jar" debug="on"/>
+
+    <copydir src="src/j2ee" dest="${tomcat.build}/classes">
+      <include name="**/*.properties" />
+    </copydir>
+
+    <rmic base="${tomcat.build}/classes"
+          classname="org.apache.tomcat.shell.AdminImpl"/>
+  </target>
+
+  <!-- ==================== Build all web applications ==================== -->
+  <target name="webapps" depends="prepare">
+    <!-- Examples -->
+    <mkdir dir="${tomcat.build}/webapps/examples"/>
+    <copydir src="src/examples" dest="${tomcat.build}/webapps/examples"/>
+    <javac srcdir="src/examples/WEB-INF/classes"
+           destdir="${tomcat.build}/webapps/examples/WEB-INF/classes"
+           classpath="${tomcat.build}/classes"/>
+    <javac srcdir="src/examples/jsp/plugin/applet"
+           destdir="${tomcat.build}/webapps/examples/jsp/plugin/applet"/>
+
+    <!-- Root context -->
+    <mkdir dir="${tomcat.build}/webapps/ROOT"/>
+    <copydir src="src/webpages" dest="${tomcat.build}/webapps/ROOT"/>
+    <javac srcdir="src/webpages/WEB-INF/classes"
+           destdir="${tomcat.build}/webapps/ROOT/WEB-INF/classes"
+           classpath="${tomcat.build}/classes"/>
+
+    <!-- admin context -->
+    <mkdir dir="${tomcat.build}/webapps/admin"/>
+    <copydir src="src/admin" dest="${tomcat.build}/webapps/admin"/>
+    <javac srcdir="src/admin/WEB-INF/classes"
+           destdir="${tomcat.build}/webapps/admin/WEB-INF/classes"
+           classpath="${tomcat.build}/classes"/>
+
+    <!-- Test application -->
+    <mkdir dir="${tomcat.build}/webapps/test"/>
+    <copydir src="src/tests/webpages" dest="${tomcat.build}/webapps/test"/>
+    <javac srcdir="src/tests/webpages/WEB-INF/classes"
+           destdir="${tomcat.build}/webapps/test/WEB-INF/classes"
+           classpath="${tomcat.build}/classes"/>
+  </target>
+
+
+  <!-- ==================== Copy the files to distribution format ==================== -->
+  <target name="dist" depends="main,webapps">
+
+    <mkdir dir="${tomcat.home}"/>
+    <copydir src="${tomcat.build}" dest="${tomcat.home}"/>
+    <copydir src="src/share/javax" dest="${tomcat.home}/src/javax"/>
+    <copydir src="src/share/org" dest="${tomcat.home}/src/org"/>
+
+    <!-- create tomcat jar files -->
+    <jar jarfile="${tomcat.home}/lib/webserver.jar"
+         basedir="${tomcat.home}/classes"
+         includes="org/apache/tomcat/**"/> 
+    <jar jarfile="${tomcat.home}/lib/servlet.jar"
+         basedir="${tomcat.home}/classes"
+         includes="javax/servlet/**"/>
+    <jar jarfile="${tomcat.home}/lib/jasper.jar"
+         basedir="${tomcat.home}/classes"
+         includes="org/apache/jasper/**"/>
+
+    <!-- Add Tomcat internal javadoc -->
+    <mkdir dir="${tomcat.home}/webapps/ROOT/javadoc" />
+    <javadoc packagenames="org.apache.tomcat.core"
+             sourcepath="src/share"
+             destdir="${tomcat.home}/webapps/ROOT/javadoc"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle="Tomcat internal API"
+             doctitle="Tomcat internal"
+             bottom="Copyright &#169; 2000 Apache Software Foundation. All Rights Reserved."
+    />
+
+    <deltree dir="${tomcat.home}/classes"/>
+
+
+    <!-- create webapp WARS -->
+    <jar   jarfile="${tomcat.home}/webapps/examples.war"
+           basedir="${tomcat.home}/webapps/examples"
+           includes="**" /> 
+    <deltree dir="${tomcat.home}/webapps/examples"/>
+
+    <jar   jarfile="${tomcat.home}/webapps/admin.war"
+           basedir="${tomcat.home}/webapps/admin"
+           includes="**" /> 
+    <deltree dir="${tomcat.home}/webapps/admin"/>
+
+    <jar   jarfile="${tomcat.home}/webapps/ROOT.war"
+           basedir="${tomcat.home}/webapps/ROOT"
+           includes="**" />
+    <deltree dir="${tomcat.home}/webapps/ROOT"/>
+
+    <jar   jarfile="${tomcat.home}/webapps/test.war"
+           basedir="${tomcat.home}/webapps/test"
+           includes="**" /> 
+    <deltree dir="${tomcat.home}/webapps/test"/>
+
+    <!-- Change permissions for unix -->
+    <chmod perm="+x" src="${tomcat.home}/bin/tomcat.sh"/>
+    <chmod perm="+x" src="${tomcat.home}/bin/jspc.sh"/>
+    <chmod perm="+x" src="${tomcat.home}/bin/startup.sh"/>
+    <chmod perm="+x" src="${tomcat.home}/bin/shutdown.sh"/>
+    <chmod perm="+x" src="${tomcat.home}/bin/test-tomcat.sh"/>
+  </target>
+ 
+  <!-- =================================================================== -->
+  <!-- Packages the distribution with ZIP                                  -->
+  <!-- =================================================================== -->
+  <target name="dist-zip" depends="dist">
+    <zip zipfile="${Name}-${version}.zip" basedir="${tomcat.home}" includes="**"/>
+  </target>
+
+  
+
+  <!-- ==================== Admin ==================== -->
+  <target name="clean" depends="init">
+    <deltree dir="${tomcat.build}"/>
+    <deltree dir="${tomcat.home}"/>
+  </target>
+  
+  <target name="all" depends="clean,dist"/>
+  <target name="main" depends="tomcat,webapps"/>
+  
+</project>
