@@ -128,6 +128,13 @@ public final class NamingResources {
 
 
     /**
+     * The message destination referencess for this web application,
+     * keyed by name.
+     */
+    private HashMap mdrs = new HashMap();
+
+
+    /**
      * The resource environment references for this web application,
      * keyed by name.
      */
@@ -259,6 +266,28 @@ public final class NamingResources {
             localEjbs.put(ejb.getName(), ejb);
         }
         support.firePropertyChange("localEjb", null, ejb);
+
+    }
+
+
+    /**
+     * Add a message destination reference for this web application.
+     *
+     * @param mdr New message destination reference
+     */
+    public void addMessageDestinationRef(MessageDestinationRef mdr) {
+
+        if (entries.containsKey(mdr.getName())) {
+            return;
+        } else {
+            entries.put(mdr.getName(), mdr.getType());
+        }
+
+        synchronized (mdrs) {
+            mdr.setNamingResources(this);
+            mdrs.put(mdr.getName(), mdr);
+        }
+        support.firePropertyChange("messageDestinationRef", null, mdr);
 
     }
 
@@ -429,6 +458,36 @@ public final class NamingResources {
         synchronized (localEjbs) {
             ContextLocalEjb results[] = new ContextLocalEjb[localEjbs.size()];
             return ((ContextLocalEjb[]) localEjbs.values().toArray(results));
+        }
+
+    }
+
+
+    /**
+     * Return the message destination reference with the specified name,
+     * if any; otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired message destination reference
+     */
+    public MessageDestinationRef findMessageDestinationRef(String name) {
+
+        synchronized (mdrs) {
+            return ((MessageDestinationRef) mdrs.get(name));
+        }
+
+    }
+
+
+    /**
+     * Return the defined message destination references for this application.
+     * If there are none, a zero-length array is returned.
+     */
+    public MessageDestinationRef[] findMessageDestinationRefs() {
+
+        synchronized (mdrs) {
+            MessageDestinationRef results[] =
+                new MessageDestinationRef[mdrs.size()];
+            return ((MessageDestinationRef[]) mdrs.values().toArray(results));
         }
 
     }
@@ -625,6 +684,28 @@ public final class NamingResources {
         if (localEjb != null) {
             support.firePropertyChange("localEjb", localEjb, null);
             localEjb.setNamingResources(null);
+        }
+
+    }
+
+
+    /**
+     * Remove any message destination reference with the specified name.
+     *
+     * @param name Name of the message destination resource reference to remove
+     */
+    public void removeMessageDestinationRef(String name) {
+
+        entries.remove(name);
+
+        MessageDestinationRef mdr = null;
+        synchronized (mdrs) {
+            mdr = (MessageDestinationRef) mdrs.remove(name);
+        }
+        if (mdr != null) {
+            support.firePropertyChange("messageDestinationRef",
+                                       mdr, null);
+            mdr.setNamingResources(null);
         }
 
     }

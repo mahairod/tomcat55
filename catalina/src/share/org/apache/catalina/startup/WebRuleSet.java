@@ -287,6 +287,40 @@ public class WebRuleSet extends RuleSetBase {
         digester.addCallParam(prefix + "web-app/resource-env-ref/resource-env-ref-name", 0);
         digester.addCallParam(prefix + "web-app/resource-env-ref/resource-env-ref-type", 1);
 
+        digester.addObjectCreate(prefix + "web-app/message-destination",
+                                 "org.apache.catalina.deploy.MessageDestination");
+        digester.addSetNext(prefix + "web-app/message-destination",
+                            "addMessageDestination",
+                            "org.apache.catalina.deploy.MessageDestination");
+
+        digester.addCallMethod(prefix + "web-app/message-destination/description",
+                               "setDescription", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination/display-name",
+                               "setDisplayName", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination/icon/large-icon",
+                               "setLargeIcon", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination/icon/small-icon",
+                               "setSmallIcon", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination/message-destination-name",
+                               "setName", 0);
+
+        digester.addObjectCreate(prefix + "web-app/message-destination-ref",
+                                 "org.apache.catalina.deploy.MessageDestinationRef");
+        digester.addSetNext(prefix + "web-app/message-destination-ref",
+                            "addMessageDestinationRef",
+                            "org.apache.catalina.deploy.MessageDestinationRef");
+
+        digester.addCallMethod(prefix + "web-app/message-destination-ref/description",
+                               "setDescription", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination-ref/message-destination-link",
+                               "setLink", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination-ref/message-destination-ref-name",
+                               "setName", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination-ref/message-destination-type",
+                               "setType", 0);
+        digester.addCallMethod(prefix + "web-app/message-destination-ref/message-destination-usage",
+                               "setUsage", 0);
+
         digester.addObjectCreate(prefix + "web-app/resource-ref",
                                  "org.apache.catalina.deploy.ContextResource");
         digester.addSetNext(prefix + "web-app/resource-ref",

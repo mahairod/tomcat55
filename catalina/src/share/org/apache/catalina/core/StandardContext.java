@@ -132,6 +132,8 @@ import org.apache.catalina.deploy.ErrorPage;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.MessageDestination;
+import org.apache.catalina.deploy.MessageDestinationRef;
 import org.apache.catalina.deploy.NamingResources;
 import org.apache.catalina.deploy.ResourceParams;
 import org.apache.catalina.deploy.SecurityCollection;
@@ -337,6 +339,12 @@ public class StandardContext
      */
     private String mapperClass =
         "org.apache.catalina.core.StandardContextMapper";
+
+
+    /**
+     * The message destinations for this web application.
+     */
+    private HashMap messageDestinations = new HashMap();
 
 
     /**
@@ -1536,6 +1544,35 @@ public class StandardContext
 
 
     /**
+     * Add a message destination for this web application.
+     *
+     * @param md New message destination
+     */
+    public void addMessageDestination(MessageDestination md) {
+
+        synchronized (messageDestinations) {
+            messageDestinations.put(md.getName(), md);
+        }
+        fireContainerEvent("addMessageDestination", md.getName());
+
+    }
+
+
+    /**
+     * Add a message destination reference for this web application.
+     *
+     * @param mdr New message destination reference
+     */
+    public void addMessageDestinationRef
+        (MessageDestinationRef mdr) {
+
+        namingResources.addMessageDestinationRef(mdr);
+        fireContainerEvent("addMessageDestinationRef", mdr.getName());
+
+    }
+
+
+    /**
      * Add a new MIME mapping, replacing any existing mapping for
      * the specified extension.
      *
@@ -2031,6 +2068,65 @@ public class StandardContext
     public ContextLocalEjb[] findLocalEjbs() {
 
         return namingResources.findLocalEjbs();
+
+    }
+
+
+    /**
+     * Return the message destination with the specified name, if any;
+     * otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired message destination
+     */
+    public MessageDestination findMessageDestination(String name) {
+
+        synchronized (messageDestinations) {
+            return ((MessageDestination) messageDestinations.get(name));
+        }
+
+    }
+
+
+    /**
+     * Return the set of defined message destinations for this web
+     * application.  If none have been defined, a zero-length array
+     * is returned.
+     */
+    public MessageDestination[] findMessageDestinations() {
+
+        synchronized (messageDestinations) {
+            MessageDestination results[] =
+                new MessageDestination[messageDestinations.size()];
+            return ((MessageDestination[])
+                    messageDestinations.values().toArray(results));
+        }
+
+    }
+
+
+    /**
+     * Return the message destination ref with the specified name, if any;
+     * otherwise, return <code>null</code>.
+     *
+     * @param name Name of the desired message destination ref
+     */
+    public MessageDestinationRef
+        findMessageDestinationRef(String name) {
+
+        return namingResources.findMessageDestinationRef(name);
+
+    }
+
+
+    /**
+     * Return the set of defined message destination refs for this web
+     * application.  If none have been defined, a zero-length array
+     * is returned.
+     */
+    public MessageDestinationRef[]
+        findMessageDestinationRefs() {
+
+        return namingResources.findMessageDestinationRefs();
 
     }
 
@@ -2839,6 +2935,34 @@ public class StandardContext
 
         namingResources.removeLocalEjb(name);
         fireContainerEvent("removeLocalEjb", name);
+
+    }
+
+
+    /**
+     * Remove any message destination with the specified name.
+     *
+     * @param name Name of the message destination to remove
+     */
+    public void removeMessageDestination(String name) {
+
+        synchronized (messageDestinations) {
+            messageDestinations.remove(name);
+        }
+        fireContainerEvent("removeMessageDestination", name);
+
+    }
+
+
+    /**
+     * Remove any message destination ref with the specified name.
+     *
+     * @param name Name of the message destination ref to remove
+     */
+    public void removeMessageDestinationRef(String name) {
+
+        namingResources.removeMessageDestinationRef(name);
+        fireContainerEvent("removeMessageDestinationRef", name);
 
     }
 
