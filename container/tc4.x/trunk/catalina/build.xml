@@ -19,6 +19,8 @@
 
   <property name="test.failonerror"  value="true"/>
   <property name="test.runner"       value="junit.textui.TestRunner"/>
+  <property name="test.webapp"       value="${basedir}/../webapps/build/examples"/>
+  <property name="test.webapp.war"   value="${java.io.tmpdir}/webapp.war"/>
 
   <!-- ================== Derived Property Values ========================= -->
   <property name="jaxp.jar"        value="${catalina.jaxp.home}/jaxp.jar"/>
@@ -234,8 +236,31 @@
   <!-- ==================== BUILD: Execute Unit Tests ===================== -->
   <target name="test" if="junit.present"
    description="Run all unit test cases"
-   depends="build-tests,test-util"
->
+   depends="build-tests,test-dir-context,test-util">
+  </target>
+
+  <target name="test-dir-context" if="junit.present">
+
+    <echo message="Running FileDirContext tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <sysproperty key="doc.base" value="${test.webapp}"/>
+      <arg value="org.apache.naming.resources.FileDirContextTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+    <echo message="Running WARDirContext tests"/>
+    <jar jarfile="${test.webapp.war}">
+      <fileset dir="${test.webapp}"/>
+    </jar>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <sysproperty key="doc.base" value="${test.webapp.war}"/>
+      <arg value="org.apache.naming.resources.WARDirContextTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+    <delete file="${test.webapp.war}"/>
+
   </target>
 
   <target name="test-util" if="junit.present">
