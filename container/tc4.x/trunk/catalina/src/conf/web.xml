@@ -236,10 +236,6 @@
   <!--   executable           Name of the exectuable used to run the        -->
   <!--                        script. [perl]                                -->
   <!--                                                                      -->
-  <!--   parameterEncoding    Name of parameter encoding to be used with    -->
-  <!--                        CGI servlet.                                  -->
-  <!--                        [System.getProperty("file.encoding","UTF-8")] -->
-  <!--                                                                      -->
   <!--   passShellEnvironment Should the shell environment variables (if    -->
   <!--                        any) be passed to the CGI script? [false]     -->
   <!--                                                                      -->
