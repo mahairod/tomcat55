@@ -233,14 +233,12 @@
   <listener>
     <listener-class>tests.javax_servlet_http.HttpSessionBindingListener.HSBindingListener</listener-class>
   </listener>
-<!--
   <listener>
     <listener-class>tests.javax_servlet_http.HttpSessionEvent.HSEvent</listener-class>
   </listener>
   <listener>
     <listener-class>tests.javax_servlet_http.HttpSessionListener.HSListener</listener-class>
   </listener>
--->
 
   <!-- END Listener Definitions -->
 
