@@ -1,0 +1,4858 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+
+<web-app>
+    <context-param>
+	<param-name>
+		OS
+	</param-name>
+	<param-value>
+		ULTRASPARC
+	</param-value>
+    </context-param>
+    <context-param>
+	<param-name>
+		EDITOR
+	</param-name>
+	<param-value>
+		VI
+	</param-value>
+    </context-param>
+
+    <servlet>
+	<servlet-name>
+		Hello
+	</servlet-name>
+	<servlet-class>
+		tests.HelloWorld
+	</servlet-class>
+    </servlet>
+
+<!--		ServletContext		-->
+
+    <servlet>
+	<servlet-name>
+		GetInitParameterTest
+	</servlet-name>
+	<servlet-class>
+			tests.javax_servlet.ServletContext.GetInitParameterTestServlet
+		</servlet-class>
+	    </servlet>
+	    <servlet>
+		<servlet-name>
+			GetInitParameterNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetInitParameterNamesTestServlet
+		</servlet-class>
+	    </servlet>
+
+	    <servlet>
+		<servlet-name>
+			GetInitParameter_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetInitParameter_1TestServlet
+		</servlet-class>
+	    </servlet>
+	    <servlet>
+	      <servlet-name>
+		  config
+	      </servlet-name>
+
+	      <servlet-class>
+			tests.javax_servlet.ServletConfig.GetInitParameterNamesTestServlet
+	      </servlet-class>
+	      <init-param>
+		<param-name>
+			Team
+		</param-name>
+		<param-value>
+			WebAccess
+		</param-value>
+	     </init-param>
+	     <init-param>
+		<param-name>
+			org
+		</param-name>
+		<param-value>
+			sun
+		</param-value>
+	     </init-param>
+
+	    </servlet>
+
+
+	    <servlet>
+		<servlet-name>
+			configA
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletConfig.GetInitParameterTestServlet
+	</servlet-class>
+
+	<init-param>
+		<param-name>
+			Team
+		</param-name>
+		<param-value>
+			WebAccess
+		</param-value>
+	</init-param>
+    </servlet>
+
+    <servlet>
+	<servlet-name>
+		configB
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.ServletConfig.GetInitParameterNames_1TestServlet
+	</servlet-class>
+    </servlet>
+
+    <servlet>
+	<servlet-name>
+		configC
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.ServletConfig.GetInitParameter_1TestServlet
+	</servlet-class>
+    </servlet>
+
+
+    <!--	ServletRequest		-->
+
+    <servlet>
+	<servlet-name>
+		GetRequestDispatcherTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.ServletRequest.GetRequestDispatcherTestServlet
+	</servlet-class>
+    </servlet>
+
+
+    <!-- 	HttpServletRequest	-->
+    <servlet>
+	<servlet-name>
+		GetContextPathTest	
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletRequest.GetContextPathTestServlet
+	</servlet-class>
+    </servlet>
+
+    <servlet>
+	<servlet-name>
+		GetHeadersTest	
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletRequest.GetHeadersTestServlet
+   	</servlet-class>
+    </servlet>
+
+    <servlet>
+	<servlet-name>
+		GetHeaders_01Test	
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletRequest.GetHeaders_01TestServlet
+	</servlet-class>
+    </servlet>
+
+
+    <servlet>
+	<servlet-name>
+		GetUserPrincipalTest	
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletRequest.GetUserPrincipalTestServlet
+	</servlet-class>
+    </servlet>
+
+    <servlet>
+	<servlet-name>
+		IsUserInRoleTest	
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletRequest.IsUserInRoleTestServlet
+	</servlet-class>
+  </servlet>
+
+ 
+ <!--	UnavailableException		-->
+
+
+   <servlet>
+	<servlet-name>
+		UEConstructor3Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.UnavailableException.Constructor3TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		UEConstructor4Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.UnavailableException.Constructor4TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		IsPermanent_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.UnavailableException.IsPermanent_1TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		GetUnavailableSeconds_3Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.UnavailableException.GetUnavailableSeconds_3TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		GetUnavailableSeconds_4Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.UnavailableException.GetUnavailableSeconds_4TestServlet
+	</servlet-class>
+  </servlet>
+
+  <!--	HttpServletResponse	-->
+
+   <servlet>
+	<servlet-name>
+		SetHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.SetHeader_1TestServlet
+	</servlet-class>
+  </servlet>
+
+  <servlet>
+	<servlet-name>
+		SetIntHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.SetIntHeader_1TestServlet
+	</servlet-class>
+  </servlet>
+
+  <servlet>
+	<servlet-name>
+		SetDateHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.SetDateHeader_1TestServlet
+	</servlet-class>
+  </servlet>
+
+  <servlet>
+	<servlet-name>
+		AddHeaderTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddHeaderTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		AddHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddHeader_1TestServlet
+	</servlet-class>
+  </servlet>
+
+
+   <servlet>
+	<servlet-name>
+		AddIntHeaderTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddIntHeaderTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		AddIntHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddIntHeader_1TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		AddDateHeaderTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddDateHeaderTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		AddDateHeader_1Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpServletResponse.AddDateHeader_1TestServlet
+	</servlet-class>
+   </servlet>
+
+
+  <!--		HttpSession	-->
+
+   <servlet>
+	<servlet-name>
+		GetAttributeTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.GetAttributeTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		GetAttribute_01Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.GetAttribute_01TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		GetAttribute_02Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.GetAttribute_02TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		SetAttribute_01Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.SetAttribute_01TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		SetAttributeTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.SetAttributeTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		RemoveAttributeTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.RemoveAttributeTestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		RemoveAttribute_01Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.RemoveAttribute_01TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		RemoveAttribute_02Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.RemoveAttribute_02TestServlet
+	</servlet-class>
+  </servlet>
+
+   <servlet>
+	<servlet-name>
+		GetAttributeNames_01Test
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.GetAttributeNames_01TestServlet
+	</servlet-class>
+  </servlet>
+
+
+   <servlet>
+	<servlet-name>
+		GetAttributeNamesTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet_http.HttpSession.GetAttributeNamesTestServlet
+	</servlet-class>
+  </servlet>
+
+
+   <servlet>
+	<servlet-name>
+		PUTest
+	</servlet-name>
+	<servlet-class>
+		tests.javax_servlet.Servlet.PermanentUnavailabilityTestServlet
+	</servlet-class>
+  </servlet>
+
+	<servlet>
+		<servlet-name>
+			GetResourceTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetResourceTestServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>
+			GetHeaderNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetHeaderNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetPathTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetPathTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetPathTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetPathTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameterValuesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameterValuesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ConstructorTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.ConstructorTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRemoteHostTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetRemoteHostTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoDestroyedTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoDestroyedTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetServletNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletPathTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetServletPathTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ReadLineTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletInputStream.ReadLineTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCharacterEncodingTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetCharacterEncodingTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetPath_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetPath_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Constructor_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.Constructor_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameterNames_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameterNames_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetReader_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetReader_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCGetAttributeNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetAttributeNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRemoteUserTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetRemoteUserTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetSessionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionContext.GetSessionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCharacterEncoding_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetCharacterEncoding_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMethod_POSTTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetMethod_POSTTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetVersionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetVersionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetVersionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetVersionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletNameTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletConfig.GetServletNameTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetNamedDispatcher_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetNamedDispatcher_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMethod_HEADTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetMethod_HEADTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetCommentTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetCommentTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCommentTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetCommentTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServerInfoTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetServerInfoTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetIntHeader_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetIntHeader_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetIntHeader_2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetIntHeader_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameterValues_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameterValues_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCGetAttribute_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetAttribute_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletInfoTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.GenericServlet.GetServletInfoTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetPathInfoTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetPathInfoTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			HSBGetSessionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionBindingEvent.GetSessionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetPathTranslatedTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetPathTranslatedTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoInit2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoInit2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SendRedirect_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SendRedirect_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			CookieCloneTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.CookieCloneTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCRemoveAttributeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.RemoveAttributeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetDomain_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetDomain_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetComment_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetComment_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCGetServletContextTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletConfig.GetServletContextTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetLocaleTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetLocaleTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameterTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameterTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DestroyTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.GenericServlet.DestroyTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRootCause_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.GetRootCause_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetAuthTypeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetAuthTypeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRealPathTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetRealPathTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SRGetRealPathTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetRealPathTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetServletTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletContextTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.GenericServlet.GetServletContextTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetStatus_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SetStatus_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContentLengthTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetContentLengthTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetNameTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetNameTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetLocalesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetLocalesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ParseQueryStringTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpUtils.ParseQueryStringTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			RemoveValue_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.RemoveValue_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			RemoveValue_02Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.RemoveValue_02TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoInit1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoInit1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMimeType_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetMimeType_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoServletInfoTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoServletInfoTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			RemoveValueTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.RemoveValueTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetStatusTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SetStatusTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletsTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetServletsTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContentLength_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetContentLength_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCreationTimeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetCreationTimeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Constructor4Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.Constructor4TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Constructor3Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.Constructor3TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SEConstructor2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.Constructor2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SEConstructor1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.Constructor1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ParseQueryString_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpUtils.ParseQueryString_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SetHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsRequestedSessionIdFromUrlTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdFromURL_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetValue_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetValue_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetValue_02Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetValue_02TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			PutValue_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.PutValue_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			PutValue_02Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.PutValue_02TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetQueryString_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetQueryString_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetPathInfo_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetPathInfo_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetLocales_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetLocales_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMinorVersionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetMinorVersionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMajorVersionTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetMajorVersionTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsRequestedSessionIdValidTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdValidTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServerNameTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetServerNameTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoServletConfigTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoServletConfigTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameter_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameter_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetDateHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetDateHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsPermanentTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.IsPermanentTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRemoteAddrTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetRemoteAddrTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContextTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetContextTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRootCauseTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletException.GetRootCauseTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetQueryStringTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetQueryStringTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetContentTypeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.SetContentTypeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContentType_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetContentType_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsRequestedSessionIdFromURLTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdFromURLTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UEConstructor1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.Constructor1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetMaxInactiveIntervalTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.SetMaxInactiveIntervalTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMaxInactiveIntervalTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetMaxInactiveIntervalTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetDateHeader_02Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetDateHeader_02TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetDateHeader_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetDateHeader_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SingleModelTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.SingleThreadModel.SingleModelTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetProtocolTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetProtocolTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMaxAge_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetMaxAge_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCGetRequestDispatcherTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetRequestDispatcherTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMaxInactiveInterval_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetMaxInactiveInterval_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetIdsTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionContext.GetIdsTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetResourceAsStream_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetResourceAsStream_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			HSBEGetNameTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionBindingEvent.GetNameTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCookies_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetCookies_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SRGetCharacterEncodingTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetCharacterEncodingTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetValueNames_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetValueNames_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContext_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetContext_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			DoServiceTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.Servlet.DoServiceTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ContainsHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.ContainsHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetResourceAsStreamTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetResourceAsStreamTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UEConstructor2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.Constructor2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServletConfigTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.GenericServlet.GetServletConfigTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRequestURLTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpUtils.GetRequestURLTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRequestDispatcher_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetRequestDispatcher_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			EncodeURLTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.EncodeURLTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			EncodeUrlTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.EncodeURL_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRequestedSessionIdTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetRequestedSessionIdTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetInputStream_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetInputStream_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetContentLengthTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.SetContentLengthTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCSetAttributeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.SetAttributeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SCGetAttributeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetAttributeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SRSetAttributeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.SetAttributeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SRGetAttributeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetAttributeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ContainsHeader_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.ContainsHeader_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsNew_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.IsNew_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetUnavailableSeconds_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.GetUnavailableSeconds_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetDomainTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetDomainTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetDomainTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetDomainTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			EncodeRedirectURL_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.EncodeRedirectURL_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsNewTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.IsNewTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetUnavailableSecondsTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.GetUnavailableSecondsTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			EncodeRedirectURLTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.EncodeRedirectURLTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			EncodeRedirectUrlTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.EncodeRedirectURL_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			InvalidateTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.InvalidateTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetContentTypeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetContentTypeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetValueTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetValueTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetValueTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetValueTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Log_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.Log_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Log_2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.Log_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Log_3Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.Log_3TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			HSGetIdTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetIdTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetMaxAgeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetMaxAgeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ParsePostDataTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpUtils.ParsePostDataTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetSecureTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.GetSecureTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetSecureTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.SetSecureTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			HSGetValueTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetValueTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			PutValueTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.PutValueTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMethodTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetMethodTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ValueUnboundTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionBindingListener.ValueUnboundTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetValueNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSession.GetValueNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			AddCookieTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.AddCookieTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetDateHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SetDateHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetIntHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SetIntHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetSchemeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetSchemeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SendRedirectTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletResponse.SendRedirectTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ValueBoundTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpSessionBindingListener.ValueBoundTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsRequestedSessionIdFromCookieTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.IsRequestedSessionIdFromCookieTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetCookiesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetCookiesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SRGetAttributeNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetAttributeNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetRequestURITest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetRequestURITestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ParsePostData_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpUtils.ParsePostData_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetInputStreamTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetInputStreamTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetHeader_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetHeader_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetNamedDispatcherTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetNamedDispatcherTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetMimeTypeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletContext.GetMimeTypeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetServerPortTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetServerPortTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetIntHeaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetIntHeaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UEGetServletTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.UnavailableException.GetServletTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetSession_01Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.HttpServletRequest.GetSession_01TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetParameterNamesTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetParameterNamesTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetReaderTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletRequest.GetReaderTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			FlushBufferTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.FlushBufferTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ResetTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.ResetTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Reset_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.Reset_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetLocaleTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.SetLocaleTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetBufferSizeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetBufferSizeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetWriterTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetWriterTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetOutputStreamTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetOutputStreamTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetOutputStream_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetOutputStream_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetBufferSizeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.SetBufferSizeTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			GetWriter_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.GetWriter_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IsCommittedTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.IsCommittedTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SetBufferSize_2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletResponse.SetBufferSize_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ServletClassTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet_http.Cookie.NoclassServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			SessionTimeOutTest
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.SessionTimeOutTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			JspFile_1Test
+		</servlet-name>
+		<jsp-file>
+			DoesNotExist
+		</jsp-file>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ErrorHandlingTest
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.ErrorHandlingTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ErrorHandling_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.ErrorHandling_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UrlPatternTest
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.UrlPatternTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UrlPattern_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.UrlPattern_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			UrlPattern_2Test
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.UrlPattern_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ErrorHandling_2Test
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.ErrorHandling_2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ErrorHandling_3Test
+		</servlet-name>
+		<servlet-class>
+			tests.deployment_descriptor.ErrorHandling_3TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print3Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print3TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print4Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print4TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print5Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print5TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print6Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print6TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Print7Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Print7TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println2Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println2TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println3Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println3TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println4Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println4TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println5Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println5TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println6Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println6TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println7Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println7TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Println8Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.ServletOutputStream.Println8TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			ForwardTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.RequestDispatcher.ForwardTestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Forward_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.RequestDispatcher.Forward_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			Include_1Test
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.RequestDispatcher.Include_1TestServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>
+			IncludeTest
+		</servlet-name>
+		<servlet-class>
+			tests.javax_servlet.RequestDispatcher.IncludeTestServlet
+		</servlet-class>
+	</servlet>
+  <!--		Mappings		-->
+
+    <servlet-mapping>
+	<servlet-name>
+		config
+	</servlet-name>
+	<url-pattern>
+		/config
+	</url-pattern>
+    </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		configA
+	</servlet-name>
+	<url-pattern>
+		/configA
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		configB
+	</servlet-name>
+	<url-pattern>
+		/configB
+	</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+	<servlet-name>
+		configC
+	</servlet-name>
+	<url-pattern>
+		/configC
+	</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+	<servlet-name>
+		GetRequestDispatcherTest
+	</servlet-name>
+	<url-pattern>
+		/GetRequestDispatcherTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <!--		UnavailableException	-->
+
+  <servlet-mapping>
+	<servlet-name>
+		UEConstructor3Test
+	</servlet-name>
+	<url-pattern>
+		/UEConstructor3Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		UEConstructor4Test
+	</servlet-name>
+	<url-pattern>
+		/UEConstructor4Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetUnavailableSeconds_3Test
+	</servlet-name>
+	<url-pattern>
+		/GetUnavailableSeconds_3Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetUnavailableSeconds_4Test
+	</servlet-name>
+	<url-pattern>
+		/GetUnavailableSeconds_4Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		IsPermanent_1Test
+	</servlet-name>
+	<url-pattern>
+		/IsPermanent_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+<!--	HttpServletResponse	-->
+
+
+  <servlet-mapping>
+	<servlet-name>
+		GetHeadersTest
+	</servlet-name>
+	<url-pattern>
+		/GetHeadersTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetHeaders_01Test
+	</servlet-name>
+	<url-pattern>
+		/GetHeaders_01Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetContextPathTest
+	</servlet-name>
+	<url-pattern>
+		/GetContextPathTest
+	</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+	<servlet-name>
+		IsUserInRoleTest
+	</servlet-name>
+	<url-pattern>
+		/IsUserInRoleTest
+	</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+	<servlet-name>
+		GetUserPrincipalTest
+	</servlet-name>
+	<url-pattern>
+		/GetUserPrincipalTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <!--	HttpServletResponse	-->
+
+  <servlet-mapping>
+	<servlet-name>
+		SetHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/SetHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		SetIntHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/SetIntHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		SetDateHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/SetDateHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+	<servlet-name>
+		AddHeaderTest
+	</servlet-name>
+	<url-pattern>
+		/AddHeaderTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		AddHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/AddHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		AddIntHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/AddIntHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		AddIntHeaderTest
+	</servlet-name>
+	<url-pattern>
+		/AddIntHeaderTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		AddDateHeader_1Test
+	</servlet-name>
+	<url-pattern>
+		/AddDateHeader_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		AddDateHeaderTest
+	</servlet-name>
+	<url-pattern>
+		/AddDateHeaderTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetInitParameterTest
+	</servlet-name>
+	<url-pattern>
+		/GetInitParameterTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetInitParameterNamesTest
+	</servlet-name>
+	<url-pattern>
+		/GetInitParameterNamesTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetInitParameter_1Test
+	</servlet-name>
+	<url-pattern>
+		/GetInitParameter_1Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetAttributeTest
+	</servlet-name>
+	<url-pattern>
+		/GetAttributeTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetAttribute_01Test
+	</servlet-name>
+	<url-pattern>
+		/GetAttribute_01Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetAttribute_02Test
+	</servlet-name>
+	<url-pattern>
+		/GetAttribute_02Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		RemoveAttribute_02Test
+	</servlet-name>
+	<url-pattern>
+		/RemoveAttribute_02Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		RemoveAttribute_01Test
+	</servlet-name>
+	<url-pattern>
+		/RemoveAttribute_01Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		RemoveAttributeTest
+	</servlet-name>
+	<url-pattern>
+		/RemoveAttributeTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		SetAttributeTest
+	</servlet-name>
+	<url-pattern>
+		/SetAttributeTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		SetAttribute_01Test
+	</servlet-name>
+	<url-pattern>
+		/SetAttribute_01Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetAttributeNamesTest
+	</servlet-name>
+	<url-pattern>
+		/GetAttributeNamesTest
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		GetAttributeNames_01Test
+	</servlet-name>
+	<url-pattern>
+		/GetAttributeNames_01Test
+	</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+	<servlet-name>
+		PUTest
+	</servlet-name>
+	<url-pattern>
+		/PUTest
+	</url-pattern>
+  </servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetResourceTest
+		</servlet-name>
+		<url-pattern>
+			/GetResourceTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetHeaderNamesTest
+		</servlet-name>
+		<url-pattern>
+			/GetHeaderNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetPathTest
+		</servlet-name>
+		<url-pattern>
+			/GetPathTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetPathTest
+		</servlet-name>
+		<url-pattern>
+			/SetPathTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameterValuesTest
+		</servlet-name>
+		<url-pattern>
+			/GetParameterValuesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ConstructorTest
+		</servlet-name>
+		<url-pattern>
+			/ConstructorTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRemoteHostTest
+		</servlet-name>
+		<url-pattern>
+			/GetRemoteHostTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoDestroyedTest
+		</servlet-name>
+		<url-pattern>
+			/DoDestroyedTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletNamesTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletPathTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletPathTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ReadLineTest
+		</servlet-name>
+		<url-pattern>
+			/ReadLineTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCharacterEncodingTest
+		</servlet-name>
+		<url-pattern>
+			/GetCharacterEncodingTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetPath_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetPath_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Constructor_1Test
+		</servlet-name>
+		<url-pattern>
+			/Constructor_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameterNames_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetParameterNames_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetReader_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetReader_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCGetAttributeNamesTest
+		</servlet-name>
+		<url-pattern>
+			/SCGetAttributeNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRemoteUserTest
+		</servlet-name>
+		<url-pattern>
+			/GetRemoteUserTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetSessionTest
+		</servlet-name>
+		<url-pattern>
+			/GetSessionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCharacterEncoding_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetCharacterEncoding_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMethod_POSTTest
+		</servlet-name>
+		<url-pattern>
+			/GetMethod_POSTTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetVersionTest
+		</servlet-name>
+		<url-pattern>
+			/SetVersionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetVersionTest
+		</servlet-name>
+		<url-pattern>
+			/GetVersionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletNameTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletNameTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetNamedDispatcher_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetNamedDispatcher_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMethod_HEADTest
+		</servlet-name>
+		<url-pattern>
+			/GetMethod_HEADTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetCommentTest
+		</servlet-name>
+		<url-pattern>
+			/SetCommentTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCommentTest
+		</servlet-name>
+		<url-pattern>
+			/GetCommentTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServerInfoTest
+		</servlet-name>
+		<url-pattern>
+			/GetServerInfoTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetIntHeader_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetIntHeader_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetIntHeader_2Test
+		</servlet-name>
+		<url-pattern>
+			/GetIntHeader_2Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameterValues_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetParameterValues_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCGetAttribute_1Test
+		</servlet-name>
+		<url-pattern>
+			/SCGetAttribute_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletInfoTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletInfoTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetPathInfoTest
+		</servlet-name>
+		<url-pattern>
+			/GetPathInfoTest/*
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			HSBGetSessionTest
+		</servlet-name>
+		<url-pattern>
+			/HSBGetSessionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetPathTranslatedTest
+		</servlet-name>
+		<url-pattern>
+			/GetPathTranslatedTest/*
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoInit2Test
+		</servlet-name>
+		<url-pattern>
+			/DoInit2Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SendRedirect_1Test
+		</servlet-name>
+		<url-pattern>
+			/SendRedirect_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			CookieCloneTest
+		</servlet-name>
+		<url-pattern>
+			/CookieCloneTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCRemoveAttributeTest
+		</servlet-name>
+		<url-pattern>
+			/SCRemoveAttributeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetComment_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetComment_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetDomain_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetDomain_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCGetServletContextTest
+		</servlet-name>
+		<url-pattern>
+			/SCGetServletContextTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetLocaleTest
+		</servlet-name>
+		<url-pattern>
+			/GetLocaleTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameterTest
+		</servlet-name>
+		<url-pattern>
+			/GetParameterTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DestroyTest
+		</servlet-name>
+		<url-pattern>
+			/DestroyTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRootCause_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetRootCause_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetAuthTypeTest
+		</servlet-name>
+		<url-pattern>
+			/GetAuthTypeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRealPathTest
+		</servlet-name>
+		<url-pattern>
+			/GetRealPathTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SRGetRealPathTest
+		</servlet-name>
+		<url-pattern>
+			/SRGetRealPathTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletContextTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletContextTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetStatus_1Test
+		</servlet-name>
+		<url-pattern>
+			/SetStatus_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContentLengthTest
+		</servlet-name>
+		<url-pattern>
+			/GetContentLengthTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetNameTest
+		</servlet-name>
+		<url-pattern>
+			/GetNameTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetLocalesTest
+		</servlet-name>
+		<url-pattern>
+			/GetLocalesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ParseQueryStringTest
+		</servlet-name>
+		<url-pattern>
+			/ParseQueryStringTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			RemoveValue_01Test
+		</servlet-name>
+		<url-pattern>
+			/RemoveValue_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			RemoveValue_02Test
+		</servlet-name>
+		<url-pattern>
+			/RemoveValue_02Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoInit1Test
+		</servlet-name>
+		<url-pattern>
+			/DoInit1Test
+		</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>
+			GetMimeType_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetMimeType_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoServletInfoTest
+		</servlet-name>
+		<url-pattern>
+			/DoServletInfoTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			RemoveValueTest
+		</servlet-name>
+		<url-pattern>
+			/RemoveValueTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetStatusTest
+		</servlet-name>
+		<url-pattern>
+			/SetStatusTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletsTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletsTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContentLength_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetContentLength_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCreationTimeTest
+		</servlet-name>
+		<url-pattern>
+			/GetCreationTimeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Constructor4Test
+		</servlet-name>
+		<url-pattern>
+			/Constructor4Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Constructor3Test
+		</servlet-name>
+		<url-pattern>
+			/Constructor3Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SEConstructor2Test
+		</servlet-name>
+		<url-pattern>
+			/SEConstructor2Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SEConstructor1Test
+		</servlet-name>
+		<url-pattern>
+			/SEConstructor1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ParseQueryString_01Test
+		</servlet-name>
+		<url-pattern>
+			/ParseQueryString_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/SetHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsRequestedSessionIdFromUrlTest
+		</servlet-name>
+		<url-pattern>
+			/IsRequestedSessionIdFromUrlTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetValue_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetValue_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetValue_02Test
+		</servlet-name>
+		<url-pattern>
+			/GetValue_02Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			PutValue_01Test
+		</servlet-name>
+		<url-pattern>
+			/PutValue_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			PutValue_02Test
+		</servlet-name>
+		<url-pattern>
+			/PutValue_02Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetQueryString_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetQueryString_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetPathInfo_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetPathInfo_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetLocales_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetLocales_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMinorVersionTest
+		</servlet-name>
+		<url-pattern>
+			/GetMinorVersionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMajorVersionTest
+		</servlet-name>
+		<url-pattern>
+			/GetMajorVersionTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsRequestedSessionIdValidTest
+		</servlet-name>
+		<url-pattern>
+			/IsRequestedSessionIdValidTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServerNameTest
+		</servlet-name>
+		<url-pattern>
+			/GetServerNameTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoServletConfigTest
+		</servlet-name>
+		<url-pattern>
+			/DoServletConfigTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameter_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetParameter_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetDateHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/GetDateHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsPermanentTest
+		</servlet-name>
+		<url-pattern>
+			/IsPermanentTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRemoteAddrTest
+		</servlet-name>
+		<url-pattern>
+			/GetRemoteAddrTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContextTest
+		</servlet-name>
+		<url-pattern>
+			/GetContextTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRootCauseTest
+		</servlet-name>
+		<url-pattern>
+			/GetRootCauseTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetQueryStringTest
+		</servlet-name>
+		<url-pattern>
+			/GetQueryStringTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetContentTypeTest
+		</servlet-name>
+		<url-pattern>
+			/SetContentTypeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContentType_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetContentType_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsRequestedSessionIdFromURLTest
+		</servlet-name>
+		<url-pattern>
+			/IsRequestedSessionIdFromURLTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			UEConstructor2Test
+		</servlet-name>
+		<url-pattern>
+			/UEConstructor2Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			UEConstructor1Test
+		</servlet-name>
+		<url-pattern>
+			/UEConstructor1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetMaxInactiveIntervalTest
+		</servlet-name>
+		<url-pattern>
+			/SetMaxInactiveIntervalTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMaxInactiveIntervalTest
+		</servlet-name>
+		<url-pattern>
+			/GetMaxInactiveIntervalTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetDateHeader_02Test
+		</servlet-name>
+		<url-pattern>
+			/GetDateHeader_02Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetDateHeader_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetDateHeader_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SingleModelTest
+		</servlet-name>
+		<url-pattern>
+			/SingleModelTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetProtocolTest
+		</servlet-name>
+		<url-pattern>
+			/GetProtocolTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMaxAge_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetMaxAge_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCGetRequestDispatcherTest
+		</servlet-name>
+		<url-pattern>
+			/SCGetRequestDispatcherTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMaxInactiveInterval_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetMaxInactiveInterval_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetIdsTest
+		</servlet-name>
+		<url-pattern>
+			/GetIdsTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetResourceAsStream_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetResourceAsStream_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			HSBEGetNameTest
+		</servlet-name>
+		<url-pattern>
+			/HSBEGetNameTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCookies_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetCookies_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SRGetCharacterEncodingTest
+		</servlet-name>
+		<url-pattern>
+			/SRGetCharacterEncodingTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetValueNames_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetValueNames_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContext_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetContext_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			DoServiceTest
+		</servlet-name>
+		<url-pattern>
+			/DoServiceTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ContainsHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/ContainsHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetResourceAsStreamTest
+		</servlet-name>
+		<url-pattern>
+			/GetResourceAsStreamTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServletConfigTest
+		</servlet-name>
+		<url-pattern>
+			/GetServletConfigTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRequestDispatcher_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetRequestDispatcher_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRequestURLTest
+		</servlet-name>
+		<url-pattern>
+			/GetRequestURLTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			EncodeURLTest
+		</servlet-name>
+		<url-pattern>
+			/EncodeURLTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			EncodeUrlTest
+		</servlet-name>
+		<url-pattern>
+			/EncodeUrlTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRequestedSessionIdTest
+		</servlet-name>
+		<url-pattern>
+			/GetRequestedSessionIdTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetInputStream_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetInputStream_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetContentLengthTest
+		</servlet-name>
+		<url-pattern>
+			/SetContentLengthTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCSetAttributeTest
+		</servlet-name>
+		<url-pattern>
+			/SCSetAttributeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SCGetAttributeTest
+		</servlet-name>
+		<url-pattern>
+			/SCGetAttributeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SRSetAttributeTest
+		</servlet-name>
+		<url-pattern>
+			/SRSetAttributeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SRGetAttributeTest
+		</servlet-name>
+		<url-pattern>
+			/SRGetAttributeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ContainsHeader_01Test
+		</servlet-name>
+		<url-pattern>
+			/ContainsHeader_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsNew_01Test
+		</servlet-name>
+		<url-pattern>
+			/IsNew_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetUnavailableSeconds_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetUnavailableSeconds_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetDomainTest
+		</servlet-name>
+		<url-pattern>
+			/GetDomainTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetDomainTest
+		</servlet-name>
+		<url-pattern>
+			/SetDomainTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			EncodeRedirectURL_1Test
+		</servlet-name>
+		<url-pattern>
+			/EncodeRedirectURL_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsNewTest
+		</servlet-name>
+		<url-pattern>
+			/IsNewTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetUnavailableSecondsTest
+		</servlet-name>
+		<url-pattern>
+			/GetUnavailableSecondsTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			EncodeRedirectURLTest
+		</servlet-name>
+		<url-pattern>
+			/EncodeRedirectURLTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			EncodeRedirectUrlTest
+		</servlet-name>
+		<url-pattern>
+			/EncodeRedirectUrlTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			InvalidateTest
+		</servlet-name>
+		<url-pattern>
+			/InvalidateTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetContentTypeTest
+		</servlet-name>
+		<url-pattern>
+			/GetContentTypeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetValueTest
+		</servlet-name>
+		<url-pattern>
+			/SetValueTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetValueTest
+		</servlet-name>
+		<url-pattern>
+			/GetValueTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Log_1Test
+		</servlet-name>
+		<url-pattern>
+			/Log_1Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Log_2Test
+		</servlet-name>
+		<url-pattern>
+			/Log_2Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			Log_3Test
+		</servlet-name>
+		<url-pattern>
+			/Log_3Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			HSGetIdTest
+		</servlet-name>
+		<url-pattern>
+			/HSGetIdTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetMaxAgeTest
+		</servlet-name>
+		<url-pattern>
+			/SetMaxAgeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ParsePostDataTest
+		</servlet-name>
+		<url-pattern>
+			/ParsePostDataTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetSecureTest
+		</servlet-name>
+		<url-pattern>
+			/GetSecureTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetSecureTest
+		</servlet-name>
+		<url-pattern>
+			/SetSecureTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			HSGetValueTest
+		</servlet-name>
+		<url-pattern>
+			/HSGetValueTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			PutValueTest
+		</servlet-name>
+		<url-pattern>
+			/PutValueTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/GetHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMethodTest
+		</servlet-name>
+		<url-pattern>
+			/GetMethodTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ValueUnboundTest
+		</servlet-name>
+		<url-pattern>
+			/ValueUnboundTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetValueNamesTest
+		</servlet-name>
+		<url-pattern>
+			/GetValueNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			AddCookieTest
+		</servlet-name>
+		<url-pattern>
+			/AddCookieTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetDateHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/SetDateHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SetIntHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/SetIntHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetSchemeTest
+		</servlet-name>
+		<url-pattern>
+			/GetSchemeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SendRedirectTest
+		</servlet-name>
+		<url-pattern>
+			/SendRedirectTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ValueBoundTest
+		</servlet-name>
+		<url-pattern>
+			/ValueBoundTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			IsRequestedSessionIdFromCookieTest
+		</servlet-name>
+		<url-pattern>
+			/IsRequestedSessionIdFromCookieTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetCookiesTest
+		</servlet-name>
+		<url-pattern>
+			/GetCookiesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			SRGetAttributeNamesTest
+		</servlet-name>
+		<url-pattern>
+			/SRGetAttributeNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetRequestURITest
+		</servlet-name>
+		<url-pattern>
+			/GetRequestURITest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			ParsePostData_01Test
+		</servlet-name>
+		<url-pattern>
+			/ParsePostData_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetInputStreamTest
+		</servlet-name>
+		<url-pattern>
+			/GetInputStreamTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetHeader_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetHeader_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetNamedDispatcherTest
+		</servlet-name>
+		<url-pattern>
+			/GetNamedDispatcherTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetMimeTypeTest
+		</servlet-name>
+		<url-pattern>
+			/GetMimeTypeTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetServerPortTest
+		</servlet-name>
+		<url-pattern>
+			/GetServerPortTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetIntHeaderTest
+		</servlet-name>
+		<url-pattern>
+			/GetIntHeaderTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			UEGetServletTest
+		</servlet-name>
+		<url-pattern>
+			/UEGetServletTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetSession_01Test
+		</servlet-name>
+		<url-pattern>
+			/GetSession_01Test
+		</url-pattern>
+
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>
+			GetParameterNamesTest
+		</servlet-name>
+		<url-pattern>
+			/GetParameterNamesTest
+		</url-pattern>
+
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetReaderTest
+		</servlet-name>
+		<url-pattern>
+			/GetReaderTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			FlushBufferTest
+		</servlet-name>
+		<url-pattern>
+			/FlushBufferTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ResetTest
+		</servlet-name>
+		<url-pattern>
+			/ResetTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Reset_1Test
+		</servlet-name>
+		<url-pattern>
+			/Reset_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			SetLocaleTest
+		</servlet-name>
+		<url-pattern>
+			/SetLocaleTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetBufferSizeTest
+		</servlet-name>
+		<url-pattern>
+			/GetBufferSizeTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetWriterTest
+		</servlet-name>
+		<url-pattern>
+			/GetWriterTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetOutputStreamTest
+		</servlet-name>
+		<url-pattern>
+			/GetOutputStreamTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetOutputStream_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetOutputStream_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			SetBufferSizeTest
+		</servlet-name>
+		<url-pattern>
+			/SetBufferSizeTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			GetWriter_1Test
+		</servlet-name>
+		<url-pattern>
+			/GetWriter_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			IsCommittedTest
+		</servlet-name>
+		<url-pattern>
+			/IsCommittedTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			SetBufferSize_2Test
+		</servlet-name>
+		<url-pattern>
+			/SetBufferSize_2Test
+		</url-pattern>
+	</servlet-mapping>
+
+	<!--	Deployment DescriptorsTest	-->
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ServletClassTest
+		</servlet-name>
+		<url-pattern>
+			/ServletClassTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			SessionTimeOutTest
+		</servlet-name>
+		<url-pattern>
+			/SessionTimeOutTest
+		</url-pattern>
+	</servlet-mapping>
+
+	<!--
+	<servlet>
+		<servlet-name>
+			JspFileTest
+		</servlet-name>
+		<jsp-file>
+			/JspTestFile.jsp
+		</jsp-file>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>
+			JspFileTest
+		</servlet-name>
+		<url-pattern>
+			/JspFileTest
+		</url-pattern>
+	</servlet-mapping>
+	-->
+
+
+	<servlet-mapping>
+		<servlet-name>
+			JspFile_1Test
+		</servlet-name>
+		<url-pattern>
+			/JspFile_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ErrorHandlingTest
+		</servlet-name>
+		<url-pattern>
+			/ErrorHandlingTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ErrorHandling_1Test
+		</servlet-name>
+		<url-pattern>
+			/ErrorHandling_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			UrlPatternTest
+		</servlet-name>
+		<url-pattern>
+			/UrlPatternTest/checking/*
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			UrlPattern_1Test
+		</servlet-name>
+		<url-pattern>
+			/UrlPattern_1Test/*
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			UrlPattern_2Test
+		</servlet-name>
+		<url-pattern>
+			/*.doc
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ErrorHandling_2Test
+		</servlet-name>
+		<url-pattern>
+			/ErrorHandling_2Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ErrorHandling_3Test
+		</servlet-name>
+		<url-pattern>
+			/ErrorHandling_3Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+<!--		ServletOutputStream	-->
+	
+
+	<servlet-mapping>
+		<servlet-name>
+			Print1Test
+		</servlet-name>
+		<url-pattern>
+			/Print1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print2Test
+		</servlet-name>
+		<url-pattern>
+			/Print2Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print3Test
+		</servlet-name>
+		<url-pattern>
+			/Print3Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print4Test
+		</servlet-name>
+		<url-pattern>
+			/Print4Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print5Test
+		</servlet-name>
+		<url-pattern>
+			/Print5Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print6Test
+		</servlet-name>
+		<url-pattern>
+			/Print6Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Print7Test
+		</servlet-name>
+		<url-pattern>
+			/Print7Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println1Test
+		</servlet-name>
+		<url-pattern>
+			/Println1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println2Test
+		</servlet-name>
+		<url-pattern>
+			/Println2Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println3Test
+		</servlet-name>
+		<url-pattern>
+			/Println3Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println4Test
+		</servlet-name>
+		<url-pattern>
+			/Println4Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println5Test
+		</servlet-name>
+		<url-pattern>
+			/Println5Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println6Test
+		</servlet-name>
+		<url-pattern>
+			/Println6Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println7Test
+		</servlet-name>
+		<url-pattern>
+			/Println7Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Println8Test
+		</servlet-name>
+		<url-pattern>
+			/Println8Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			ForwardTest
+		</servlet-name>
+		<url-pattern>
+			/ForwardTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Forward_1Test
+		</servlet-name>
+		<url-pattern>
+			/Forward_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			Include_1Test
+		</servlet-name>
+		<url-pattern>
+			/Include_1Test
+		</url-pattern>
+	</servlet-mapping>
+
+
+
+	<servlet-mapping>
+		<servlet-name>
+			IncludeTest
+		</servlet-name>
+		<url-pattern>
+			/IncludeTest
+		</url-pattern>
+	</servlet-mapping>
+
+
+	<session-config>
+		<session-timeout>
+			1
+		</session-timeout>
+	</session-config>
+
+	<error-page>
+		<error-code>
+			404	
+		</error-code>
+		<location>
+			/IsNotThere
+		</location>
+	</error-page>
+
+	<error-page>
+		<error-code>
+			503	
+		</error-code>
+		<location>
+			/503.html
+		</location>
+	</error-page>
+
+	<error-page>
+		<error-code>
+			500	
+		</error-code>
+		<location>
+			/IsNotThere
+		</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>
+			ServletException
+		</exception-type>
+		<location>
+			/IsNotThere
+		</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>
+			UnavaialableException
+		</exception-type>
+		<location>
+			/503.html
+		</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>
+			FileNotFoundException
+		</exception-type>
+		<location>
+			/NotAvailable
+		</location>
+	</error-page>
+
+  <security-constraint>
+	<web-resource-collection>
+		<web-resource-name>
+			IsUserInRoleTest
+		</web-resource-name>
+		<!--
+		<urlpattern>
+			/UserInRole
+		</urlpattern>
+		-->
+		<http-method>
+			GET
+		</http-method>
+		<http-method>
+			POST
+		</http-method>
+	</web-resource-collection>
+	<auth-constraint>
+		<role-name>
+			Analyst
+		</role-name>
+	</auth-constraint>
+  </security-constraint>
+</web-app>
