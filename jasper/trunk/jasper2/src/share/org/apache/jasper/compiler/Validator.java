@@ -478,11 +478,7 @@ class Validator {
                                     paramActionAttrs, err);
 	    // make sure the value of the 'name' attribute is not a
 	    // request-time expression
-	    if (isExpression(n, n.getAttributes().getValue("name"))) {
-		err.jspError(n,
-			     "jsp.error.attribute.standard.non_rt_with_expr",
-			     "name", "jsp:param");
-	    }
+	    throwErrorIfExpression(n, "name", "jsp:param");
 	    n.setValue(getJspAttribute("value", null, null,
 				       n.getAttributeValue("value"),
                                        java.lang.String.class, null,
@@ -574,6 +570,18 @@ class Validator {
 
 	public void visit(Node.PlugIn n) throws JasperException {
             JspUtil.checkAttributes("Plugin", n, plugInAttrs, err);
+
+	    throwErrorIfExpression(n, "type", "jsp:plugin");
+	    throwErrorIfExpression(n, "code", "jsp:plugin");
+	    throwErrorIfExpression(n, "codebase", "jsp:plugin");
+	    throwErrorIfExpression(n, "align", "jsp:plugin");
+	    throwErrorIfExpression(n, "archive", "jsp:plugin");
+	    throwErrorIfExpression(n, "hspace", "jsp:plugin");
+	    throwErrorIfExpression(n, "jreversion", "jsp:plugin");
+	    throwErrorIfExpression(n, "name", "jsp:plugin");
+	    throwErrorIfExpression(n, "vspace", "jsp:plugin");
+	    throwErrorIfExpression(n, "nspluginurl", "jsp:plugin");
+	    throwErrorIfExpression(n, "iepluginurl", "jsp:plugin");
 
 	    String type = n.getTextAttribute("type");
 	    if (type == null)
@@ -891,6 +899,24 @@ class Validator {
 			n.getAttributeValue("omit-xml-declaration"));
 	}
 
+	public void visit(Node.InvokeAction n) throws JasperException {
+
+            JspUtil.checkAttributes("Invoke", n, invokeAttrs, err);
+	    if (n.getAttributeValue("var") != null
+		    && n.getAttributeValue("varReader") != null) {
+		err.jspError(n, "jsp.error.invoke.varAndVarReader");
+	    }
+	}
+
+	public void visit(Node.DoBodyAction n) throws JasperException {
+
+            JspUtil.checkAttributes("DoBody", n, doBodyAttrs, err);
+	    if (n.getAttributeValue("var") != null
+		    && n.getAttributeValue("varReader") != null) {
+		err.jspError(n, "jsp.error.doBody.varAndVarReader");
+	    }
+	}
+
 	/**
 	 * Preprocess attributes that can be expressions.  Expression
 	 * delimiters are stripped.
@@ -992,21 +1018,18 @@ class Validator {
 		return false;
 	}
 
-	public void visit(Node.InvokeAction n) throws JasperException {
-
-            JspUtil.checkAttributes("Invoke", n, invokeAttrs, err);
-	    if (n.getAttributeValue("var") != null
-		    && n.getAttributeValue("varReader") != null) {
-		err.jspError(n, "jsp.error.invoke.varAndVarReader");
-	    }
-	}
-
-	public void visit(Node.DoBodyAction n) throws JasperException {
-
-            JspUtil.checkAttributes("DoBody", n, doBodyAttrs, err);
-	    if (n.getAttributeValue("var") != null
-		    && n.getAttributeValue("varReader") != null) {
-		err.jspError(n, "jsp.error.doBody.varAndVarReader");
+	/*
+	 * Throws exception if the value of the attribute with the given
+	 * name in the given node is given as an RT or EL expression, but the
+	 * spec requires a static value.
+	 */
+	private void throwErrorIfExpression(Node n, String attrName,
+					    String actionName)
+	            throws JasperException {
+	    if (isExpression(n, n.getAttributes().getValue(attrName))) {
+		err.jspError(n,
+			     "jsp.error.attribute.standard.non_rt_with_expr",
+			     attrName, actionName);
 	    }
 	}
     }
