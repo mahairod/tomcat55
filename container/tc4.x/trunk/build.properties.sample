@@ -137,8 +137,8 @@ commons-modeler.lib=${commons-modeler.home}
 commons-modeler.jar=${commons-modeler.lib}/commons-modeler.jar
 
 
-# ----- Commons Pool, version 20011030 or later -----
-commons-pool.home=${base.path}/commons-pool
+# ----- Commons Pool, version 1.0 or later -----
+commons-pool.home=${base.path}/commons-pool-1.0
 commons-pool.lib=${commons-pool.home}
 commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 

@@ -34,6 +34,10 @@ NEW FEATURES:
 General New Features:
 --------------------
 
+[4.1.1] Administration Webapp:
+        Complete development of the initial version of the administration web
+        application.
+
 
 ---------------------
 Catalina New Features:
@@ -47,6 +51,9 @@ Jasper New Features:
 [4.1.1] JspServlet, Options:
         Add new "reloading" flag allowing to disable the JSP reloading checks,
         to allow better performance on production servers.
+
+[4.1.1] JspServlet:
+        Refactor the JSP modification checking as a background thread.
 
 
 ==========================
