@@ -67,6 +67,9 @@ import java.io.PrintWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.io.IOException;
 
 import org.apache.jasper.JspCompilationContext;
 import org.apache.jasper.Constants;
@@ -274,11 +277,105 @@ public class Compiler {
     
         if (status == false) {
             String msg = out.toString ();
+            msg = getJspLineErrors(msg, writer.getLineMap());
+
+            //FIXME!!
+            //Using an exception as flow control is not a good idea. Refactor me!
             throw new JasperException(Constants.getString("jsp.error.unable.compile")
                                       + msg);
         }
 
         return true;
+    }
+
+    /**
+     * Parse compiler error message. Get line number. Use JspLineMap object to
+     * find the corresponding line in the jsp file. Create new error message with
+     * jsp line information.
+     */
+    private String getJspLineErrors(String msg, JspLineMap map) throws IOException {
+
+        if (map == null) return msg;
+
+        //System.out.println(map.toString());
+
+        StringBuffer errorMsg = new StringBuffer();
+        BufferedReader br = new BufferedReader(new StringReader(msg));
+        String line;
+
+        while (true) {
+            line=br.readLine();
+            if (line==null) break;
+
+            // line number is between a set of colons
+            int beginColon=line.indexOf(':');
+            int endColon=line.indexOf(':', beginColon+1);
+
+            if (beginColon<0 || endColon<0) {
+                errorMsg.append(line);
+                errorMsg.append('\n');
+                continue;
+            }
+
+            String nr = line.substring(beginColon+1, endColon);
+            int lineNr = Integer.parseInt( nr );
+
+            //System.out.println("lineNr: " + lineNr);
+
+            // Now do the mapping
+            errorMsg.append(findMapping(map, lineNr));
+            errorMsg.append(line);
+            errorMsg.append('\n');
+        }
+        br.close();
+        map.clear();
+
+        return errorMsg.toString();
+    }
+
+    /**
+     * Find map item that corresponds to the specified line number
+     */
+    private String findMapping(JspLineMap map, int lineNr) {
+
+        for (int i=map.size() - 1; i >= 0; i--) {
+            JspLineMapItem mapItem = (JspLineMapItem) map.get(i);
+
+            if (mapItem == null) continue;
+
+            if (mapItem.getBeginServletLnr() <= lineNr &&
+                mapItem.getEndServletLnr() >= lineNr) {
+                return createErrorMsg(map, mapItem);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Create error message including the jsp line numbers and file name
+     */
+    private String createErrorMsg(JspLineMap map, JspLineMapItem mapping) {
+        StringBuffer msg = new StringBuffer();
+
+        if (mapping.getBeginJspLnr() == mapping.getEndJspLnr()) {
+            msg.append(Constants.getString("jsp.error.single.line.number",
+                       new Object[] {
+                           new Integer(mapping.getBeginJspLnr()), 
+                           map.getFileName(mapping.getStartJspFileNr())
+                       }));
+        }
+        else {
+            msg.append(Constants.getString("jsp.error.multiple.line.number",
+                       new Object[] { 
+                           new Integer(mapping.getBeginJspLnr()), 
+                           new Integer(mapping.getEndJspLnr()), 
+                           map.getFileName(mapping.getStartJspFileNr())
+                       }));
+        }
+
+        msg.append(Constants.getString("jsp.error.corresponding.servlet"));
+
+        return msg.toString();
     }
 
     /**

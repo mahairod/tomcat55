@@ -211,7 +211,23 @@ public final class Mark {
 	return true;
     }
 
+    // -------------------- Locator interface --------------------
 
+    public int getLineNumber() {
+        return line;
+    }
+
+    public int getColumnNumber() {
+        return col;
+    }
+
+    public String getSystemId() {
+        return getFile();
+    }
+
+    public String getPublicId() {
+        return null;
+    }
 
     public String toString() {
 	return getFile()+"("+line+","+col+")";

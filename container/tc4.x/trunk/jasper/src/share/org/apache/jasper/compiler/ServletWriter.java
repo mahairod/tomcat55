@@ -76,10 +76,15 @@ public class ServletWriter {
 
     // Current indent level:
     int indent = 0;
-    
+
     // The sink writer:
     PrintWriter writer;
     
+    // servlet line numbers start from 1, but we pre-increment
+    private int javaLine = 0;
+    private JspLineMap lineMap = new JspLineMap();
+
+
     public ServletWriter(PrintWriter writer) {
 	this.writer = writer;
     }
@@ -88,6 +93,22 @@ public class ServletWriter {
 	writer.close();
     }
     
+    // -------------------- Access informations --------------------
+
+    public int getJavaLine() {
+        return javaLine;
+    }
+
+    public void setLineMap(JspLineMap map) {
+        this.lineMap = map;
+    }
+
+    public JspLineMap getLineMap() {
+        return lineMap;
+    }
+
+    // -------------------- Formatting --------------------
+
     public void pushIndent() {
 	if ((indent += TAB_WIDTH) > SPACES.length())
 	    indent = SPACES.length();
@@ -157,10 +178,12 @@ public class ServletWriter {
     }
 
     public void println(String line) {
+        javaLine++;
 	writer.println(SPACES.substring(0, indent)+line);
     }
 
     public void println() {
+        javaLine++;
 	writer.println("");
     }
 
@@ -170,6 +193,14 @@ public class ServletWriter {
     
 
     public void print(String s) {
+        int index = 0;
+
+        // look for hidden newlines inside strings
+        while ((index=s.indexOf('\n',index)) > -1 ) {
+            javaLine++;
+            index++;
+        }
+
 	writer.print(s);
     }
 
@@ -178,9 +209,10 @@ public class ServletWriter {
 	BufferedReader reader = 
             new BufferedReader(new StringReader(multiline));
 	try {
-    	    for (String line = null ; (line = reader.readLine()) != null ; ) 
+    	    for (String line = null ; (line = reader.readLine()) != null ; ) {
 		//		println(SPACES.substring(0, indent)+line);
 		println(line);
+            }
 	} catch (IOException ex) {
 	    // Unlikely to happen, since we're acting on strings
 	}

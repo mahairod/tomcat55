@@ -84,6 +84,13 @@ import org.apache.jasper.JspCompilationContext;
  */
 public class JakartaCommentGenerator implements CommentGenerator {
     
+    // -------------------- Generate comments --------------------
+    // The code generator also maintains line number info.
+
+    // JakartaCommentGenerator can generate the line numbers
+    // ( the way it generates the comments )
+    JspLineMapItem lineMapItem;
+
     /**
      * Generates "start-of the JSP-embedded code block" comment
      *
@@ -97,6 +104,7 @@ public class JakartaCommentGenerator implements CommentGenerator {
         throws JasperException 
     {
 	String html = "";
+
         if (generator instanceof CharDataGenerator) {
 	   html = "// HTML ";
 	}
@@ -111,7 +119,11 @@ public class JakartaCommentGenerator implements CommentGenerator {
 	    out.println(html + "// begin");
         }
 
-      out.pushIndent();
+        // add the jsp to servlet line mappings
+        lineMapItem = new JspLineMapItem();
+        lineMapItem.setBeginServletLnr(out.getJavaLine());
+
+        out.pushIndent();
     }
 
    /**
@@ -123,9 +135,36 @@ public class JakartaCommentGenerator implements CommentGenerator {
      * @exception JasperException
      */
     public void generateEndComment(Generator generator, ServletWriter out, Mark start, Mark stop) throws JasperException {
+
 	out.popIndent();
         out.println("// end");
+
+        JspLineMap myLineMap = out.getLineMap();
+
+        // add the jsp to servlet line mappings
+        lineMapItem.setEndServletLnr(out.getJavaLine());
+        lineMapItem.setStartJspFileNr(myLineMap.addFileName(start.getSystemId()));
+        lineMapItem.setBeginJspLnr(start.getLineNumber() + 1);
+        lineMapItem.setBeginJspColNr(start.getColumnNumber() + 1);
+        lineMapItem.setStopJspFileNr(myLineMap.addFileName(stop.getSystemId()));
+        lineMapItem.setEndJspLnr(stop.getLineNumber() + 1);
+        lineMapItem.setEndJspColNr(stop.getColumnNumber() + 1);
+
+        myLineMap.add(lineMapItem);
     }
+
+
+    // The format may change
+    private String toShortString( Mark mark ) {
+        return "("+mark.getLineNumber() + ","+mark.getColumnNumber() +")";
+    }
+
+    //
+    private String toString( Mark mark ) {
+        return mark.getSystemId()+"("+mark.getLineNumber()+","+mark.getColumnNumber() +")";
+    }
+
+
 }
 //        String fileName = "null";
 //         if(start != null) {

@@ -109,6 +109,6 @@ public class UninterpretedTagBeginGenerator
             sb.append(">");
         }
 	writer.print(sb.toString());
-	writer.print("\");\n");
+	writer.println("\");");
     }
 }
