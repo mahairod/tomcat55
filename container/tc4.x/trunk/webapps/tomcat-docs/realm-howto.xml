@@ -314,6 +314,193 @@ described above, and accessed with username "dbuser" and password "dbpass":</p>
 </subsection>
 
 
+<subsection name="DataSourceRealm">
+
+<h3>Introduction</h3>
+
+<p><strong>DataSourceRealm</strong> is an implementation of the Tomcat 4
+<code>Realm</code> interface that looks up users in a relational database
+accessed via a JNDI named JDBC DataSource.  There is substantial configuration
+flexibility that lets you adapt to existing table and column names, as long
+as your database structure conforms to the following requirements:</p>
+<ul>
+<li>There must be a table, referenced below as the <em>users</em> table,
+    that contains one row for every valid user that this <code>Realm</code>
+    should recognize.</li>
+<li>The <em>users</em> table must contain at least two columns (it may
+    contain more if your existing applications required it):
+    <ul>
+    <li>Username to be recognized by Tomcat when the user logs in.</li>
+    <li>Password to be recognized by Tomcat when the user logs in.
+        This value may in cleartext or digested - see below for more
+        information.</li>
+    </ul></li>    
+<li>There must be a table, referenced below as the <em>user roles</em> table,
+    that contains one row for every valid role that is assigned to a
+    particular user.  It is legal for a user to have zero, one, or more than
+    one valid role.</li>
+<li>The <em>user roles</em> table must contain at least two columns (it may
+    contain more if your existing applications required it):
+    <ul>
+    <li>Username to be recognized by Tomcat (same value as is specified
+        in the <em>users</em> table).</li>
+    <li>Role name of a valid role associated with this user.</li>
+    </ul></li>    
+</ul>
+
+<h3>Quick Start</h3>
+                  
+<p>To set up Tomcat to use JDBCRealm, you will need to follow these steps:</p>
+<ol>              
+<li>If you have not yet done so, create tables and columns in your database
+    that conform to the requirements described above.</li>
+<li>Configure a database username and password for use by Tomcat, that has
+    at least read only access to the tables described above.  (Tomcat will
+    never attempt to write to these tables.)</li>
+<li>Configure a JNDI named JDBC DataSource for your database.  Refer to the
+    <a href="jndi-datasource-examples-howto.xml">JNDI DataSource Example HOW-TO</a>
+    for information on how to configure a JNDI named JDBC DataSource.</li>
+<li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
+    <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
+<li>Restart Tomcat 4 if it is already running.</li>
+</ol>
+
+<h3>Realm Element Attributes</h3>
+
+<p>To configure JDBCRealm, you will create a <code>&lt;Realm&gt;</code>
+element and nest it in your <code>$CATALINA_HOME/conf/server.xml</code> file,
+as described <a href="#Configuring a Realm">above</a>.  The following
+attributes are supported by this implementation:</p>
+
+<attributes>
+
+  <attribute name="className" required="true">
+    <p>The fully qualified Java class name of this Realm implementation.
+    You <strong>MUST</strong> specify the value
+    "<code>org.apache.catalina.realm.JDBCRealm</code>" here.</p>
+  </attribute>
+
+  <attribute name="connectionName" required="true">
+    <p>The database username used to establish a JDBC connection.</p>
+  </attribute>
+
+  <attribute name="connectionPassword" required="true">
+    <p>The database password used to establish a JDBC connection.</p>
+  </attribute>
+
+  <attribute name="connectionURL" required="true">
+    <p>The database URL used to establish a JDBC connection.</p>
+  </attribute>
+    
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this Realm
+    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
+    
+  <attribute name="digest" required="false">
+    <p>The digest algorithm used to store passwords in non-plaintext formats.
+    Valid values are those accepted for the algorithm name by the
+    <code>java.security.MessageDigest</code> class.  See
+    <a href="#Digested Passwords">Digested Passwords</a> for more
+    information.  If not specified, passwords are stored in clear text.</p>
+  </attribute>
+    
+  <attribute name="driverName" required="true">
+    <p>The fully qualified Java class name of the JDBC driver to be used.
+    Consult the documentation for your JDBC driver for the appropriate
+    value.</p>
+  </attribute>
+    
+  <attribute name="roleNameCol" required="true">
+    <p>The name of the column, in the <em>user roles</em> table, that
+    contains the name of a role assigned to this user.</p>
+  </attribute>
+    
+  <attribute name="userCredCol" required="true">
+    <p>The name of the column, in the <em>users</em> table, that contains
+    the password for this user (either in clear text, or digested if the
+    <code>digest</code> attribute is set).</p>
+  </attribute>
+    
+  <attribute name="userNameCol" required="true">
+    <p>The name of the column, in the <em>users</em> and <em>user roles</em>
+    tables, that contains the username of this user.</p>
+  </attribute>
+
+  <attribute name="userRoleTable" required="true">
+    <p>The name of the table that contains one row for each <em>role</em>
+    assigned to a particular <em>username</em>.  This table must include at
+    least the columns named by the <code>userNameCol</code> and
+    <code>roleNameCol</code> attributes.</p>
+  </attribute>
+
+  <attribute name="userTable" required="true">
+    <p>The name of the table that contains one row for each <em>username</em>
+    to be recognized by Tomcat.  This table must include at least the columns
+    named by the <code>userNameCol</code> and <code>userCredCol</code>
+    attributes.</p>
+  </attribute>
+
+</attributes>
+
+<h3>Example</h3>
+
+<p>An example SQL script to create the needed tables might look something
+like this (adapt the syntax as required for your particular database):</p>
+<source>
+create table users (
+  user_name         varchar(15) not null primary key,
+  user_pass         varchar(15) not null
+);
+
+create table user_roles (
+  user_name         varchar(15) not null,
+  role_name         varchar(15) not null,
+  primary key (user_name, role_name)
+);
+</source>
+
+<p>Here is an example for using a MySQL database called "authority", configured
+with the tables described above, and accessed with the JNDI JDBC DataSource with
+name "java:/comp/env/jdbc/authority".</p>
+<source>
+&lt;Realm className="org.apache.catalina.realm.DataSourceRealm" debug="99"
+   dataSourceName="java:/comp/env/jdbc/authority"
+   userTable="users" userNameCol="user_name" userCredCol="user_pass"
+   userRoleTable="user_roles" roleNameCol="role_name"/&gt;
+</source>
+
+<h3>Additional Notes</h3>
+
+<p>DataSourceRealm operates according to the following rules:</p>
+<ul>
+<li>When a user attempts to access a protected resource for the first time,
+    Tomcat 4 will call the <code>authenticate()</code> method of this
+    <code>Realm</code>.  Thus, any changes you have made to the database
+    directly (new users, changed passwords or roles, etc.) will be immediately
+    reflected.</li>
+<li>Once a user has been authenticated, the user (and his or her associated
+    roles) are cached within Tomcat for the duration of the user's login.
+    (For FORM-based authentication, that means until the session times out or
+    is invalidated; for BASIC authentication, that means until the user
+    closes their browser).  Any changes to the database information for an
+    already authenticated user will <strong>not</strong> be reflected until
+    the next time that user logs on again.</li>
+<li>Administering the information in the <em>users</em> and <em>user roles</em>
+    table is the responsibility of your own applications.  Tomcat does not
+    provide any built-in capabilities to maintain users and roles.</li>
+<li>Debugging and exception messages logged by this <code>Realm</code> will
+    be recorded by the <code>Logger</code> that is associated with our
+    surrounding <code>Context</code>, <code>Host</code>, or
+    <code>Engine</code>.  By default, the corresponding Logger will create a
+    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
+</ul>
+
+</subsection>
+
+
 <subsection name="JNDIRealm">
 
 <h3>Introduction</h3>

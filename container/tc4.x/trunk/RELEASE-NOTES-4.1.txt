@@ -107,6 +107,9 @@ Catalina New Features:
 [4.1.16] AccessLogValve:
          Allow disabling log file rotation, and add new patterns.
 
+[4.1.17] DataSourceRealm:
+         A new Realm implementation which can use a JNDI named JDBC
+         DataSource has been added.
 
 -------------------
 Jasper New Features:

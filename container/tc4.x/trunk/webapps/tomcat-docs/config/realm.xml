@@ -153,6 +153,80 @@
     JDBC Database Realm component.</p>
 
 
+    <h3>
+      DataSource Database Realm (org.apache.catalina.realm.DataSourceRealm)
+    </h3>
+
+    <p>The <strong>DataSource Database Realm</strong> connects Catalina to
+    a relational database, accessed through a JNDI named JDBC DataSource
+    to perform lookups of usernames, passwords, and their associated
+    roles.  Because the lookup is done each time that it is required,
+    changes to the database will be immediately reflected in the
+    information used to authenticate new logins.</p>
+
+    <p>The JDBC Realm uses a single db connection. This requires that
+    realm based authentication be synchronized, i.e. only one authentication
+    can be done at a time. This could be a bottleneck for applications
+    with high volumes of realm based authentications.</p>
+
+    <p>The DataSource Database Realm supports simultaneous realm based
+    authentications and allows the underlying JDBC DataSource to
+    handle optimizations like database connection pooling.</p>
+
+    <p>A rich set of additional attributes lets you configure the name
+    of the JNDI JDBC DataSource, as well as the table and
+    column names used to retrieve the required information:</p>
+
+    <attributes>
+
+      <attribute name="dataSourceName" required="true">
+        <p>The name of the JNDI JDBC DataSource for this Realm.</p>
+      </attribute>
+
+      <attribute name="digest" required="false">
+        <p>The name of the <code>MessageDigest</code> algorithm used
+        to encode user passwords stored in the database.  If not specified,
+        user passwords are assumed to be stored in clear-text.</p>
+      </attribute>
+
+      <attribute name="roleNameCol" required="true">
+        <p>Name of the column, in the "user roles" table, which contains
+        a role name assigned to the corresponding user.</p>
+      </attribute>
+
+      <attribute name="userCredCol" required="true">
+        <p>Name of the column, in the "users" table, which contains
+        the user's credentials (i.e. password(.  If a value for the
+        <code>digest</code> attribute is specified, this component
+        will assume that the passwords have been encoded with the
+        specified algorithm.  Otherwise, they will be assumed to be
+        in clear text.</p>
+      </attribute>
+
+      <attribute name="userNameCol" required="true">
+        <p>Name of the column, in the "users" and "user roles" table,
+        that contains the user's username.</p>
+      </attribute>
+
+      <attribute name="userRoleTable" required="true">
+        <p>Name of the "user roles" table, which must contain columns
+        named by the <code>userNameCol</code> and <code>roleNameCol</code>
+        attributes.</p>
+      </attribute>
+
+      <attribute name="userTable" required="true">
+        <p>Name of the "users" table, which must contain columns named
+        by the <code>userNameCol</code> and <code>userCredCol</code>
+        attributes.</p>
+      </attribute>
+
+    </attributes>
+
+    <p>See the <a href="../realm-howto.html#DataSourceRealm">
+    DataSource Realm HOW-TO</a> for more information on setting up container
+    managed security using the DataSource Database Realm component.</p>
+
+
     <h3>JNDI Directory Realm (org.apache.catalina.realm.JNDIRealm)</h3>
 
 
