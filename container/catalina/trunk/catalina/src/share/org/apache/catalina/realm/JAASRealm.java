@@ -540,10 +540,6 @@ public class JAASRealm
             }
             
             if (roleClasses.contains(principalClass)) {
-                roles.add(principal.getName());
-            }
-
-            if (roleClasses.contains(principalClass)) {
                 roles.add(principal);
                 if( log.isDebugEnabled() ) {
                     log.debug(sm.getString("jaasRealm.rolePrincipalAdd", principal.getName()));
