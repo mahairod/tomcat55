@@ -187,16 +187,14 @@ public class WebappClassLoader
 
     /**
      * Set of package names which are not allowed to be loaded from a webapp
-     * class loader.
+     * class loader without delegating first.
      */
     private static final String[] packageTriggers = {
-        "javax.naming",                              // JNDI
-        "javax.naming.directory",                    // JNDI
-        "javax.xml.parsers",                         // JAXP
+        "javax",                                     // Java extensions
         "org.xml.sax",                               // SAX 1 & 2
-        "org.xml.sax.ext",                           // SAX 1 & 2
-        "org.xml.sax.helpers",                       // SAX 1 & 2
-        "org.w3c.dom"                                // DOM 1 & 2
+        "org.w3c.dom",                               // DOM 1 & 2
+        "org.apache.xerces",                         // Xerces 1 & 2
+        "org.apache.xalan"                           // Xalan
     };
 
 
@@ -1344,8 +1342,10 @@ public class WebappClassLoader
             }
         }
 
+        boolean delegateLoad = delegate || filter(name);
+
         // (1) Delegate to our parent if requested
-        if (delegate) {
+        if (delegateLoad) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
             ClassLoader loader = parent;
@@ -1382,7 +1382,7 @@ public class WebappClassLoader
         }
 
         // (3) Delegate to parent unconditionally
-        if (!delegate) {
+        if (!delegateLoad) {
             if (debug >= 3)
                 log("  Delegating to parent classloader");
             ClassLoader loader = parent;
@@ -1907,6 +1907,35 @@ public class WebappClassLoader
 
 
     /**
+     * Filter classes.
+     * 
+     * @param name class name
+     * @return true if the class should be filtered
+     */
+    protected boolean filter(String name) {
+
+        if (name == null)
+            return false;
+
+        // Looking up the package
+        String packageName = null;
+        int pos = name.lastIndexOf('.');
+        if (pos != -1)
+            packageName = name.substring(0, pos);
+        else
+            return false;
+
+        for (int i = 0; i < packageTriggers.length; i++) {
+            if (packageName.startsWith(packageTriggers[i]))
+                return true;
+        }
+
+        return false;
+
+    }
+
+
+    /**
      * Validate a classname. As per SRV.9.7.2, we must restict loading of 
      * classes from J2SE (java.*) and classes of the servlet API 
      * (javax.servlet.*). That should enhance robustness and prevent a number
@@ -1922,19 +1951,6 @@ public class WebappClassLoader
             return false;
         if (name.startsWith("java."))
             return false;
-
-        // Looking up the package
-        String packageName = null;
-        int pos = name.lastIndexOf('.');
-        if (pos != -1)
-            packageName = name.substring(0, pos);
-        else
-            return true;
-
-        for (int i = 0; i < packageTriggers.length; i++) {
-            if (packageName.equals(packageTriggers[i]))
-                return false;
-        }
 
         return true;
 
