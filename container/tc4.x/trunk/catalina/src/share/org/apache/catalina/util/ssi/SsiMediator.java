@@ -85,6 +85,7 @@ import org.apache.catalina.util.ssi.SsiExec;
 
 /**
  * @author Bip Thelin
+ * @author Amy Roh
  * @version $Revision$, $Date$
  *
  */
@@ -106,11 +107,17 @@ public class SsiMediator {
 
     protected static ServletContext servletContext = null;
 
+    protected static ServletContext origServletContext = null;
+
+    protected static String contextPath = null;
+
     protected static String relpath = "/";
 
     protected static String path = new String();
 
     protected static int debug = 0;
+
+    protected static boolean isVirtualWebappRelative = false;
 
     public SsiMediator() {}
 
@@ -129,9 +136,10 @@ public class SsiMediator {
 		       OutputStream out,
 		       ServletContext servletContext,
 		       int debug,
-		       String path) {
+		       String path,
+               boolean isVirtualWebappRelative) {
 	this.debug = debug;
-	flush(req, res, out, servletContext, path);
+	flush(req, res, out, servletContext, path, isVirtualWebappRelative);
     }
 
     public final SsiCommand getCommand(String cmd) {
@@ -142,13 +150,17 @@ public class SsiMediator {
 		      HttpServletResponse res,
 		      OutputStream out,
 		      ServletContext servletContext,
-		      String path) {
+		      String path,
+              boolean isVirtualWebappRelative) {
 	this.req = req;
 	this.res = res;
 	this.out = out;
 	this.servletContext = servletContext;
+    this.origServletContext = servletContext;
+    this.contextPath = req.getContextPath();
 	this.path = path;
 	this.relpath = path.substring(0, path.lastIndexOf("/")+1);
+    this.isVirtualWebappRelative = isVirtualWebappRelative;
 	int c=0;
 
 	serverVariables.put("AUTH_TYPE",
@@ -295,6 +307,32 @@ public class SsiMediator {
 		normalized.substring(index + 3);
 	}
 
+    if (!isVirtualWebappRelative) {
+        // case of virtual="file.txt", "./file.txt", or dir/file.txt
+        if ((!path.startsWith("/")) || (path.startsWith("./"))) {
+            // handle as file in the current directory with original servletContext
+            servletContext = origServletContext;
+        }else if (path.indexOf("/", 1)==-1) {
+            //root context
+            servletContext = servletContext.getContext("/");
+        } else if (!contextPath.equals("")) {
+            //starts with the context path of this webapp
+            if ((normalized !=null) && (normalized.startsWith(contextPath))) {
+                // strip off the context path
+                servletContext = servletContext.getContext(contextPath);
+                normalized = normalized.substring(contextPath.length());
+            }
+        } else if (normalized != null){
+            // find which context is the right one to handle 
+            String context = normalized.substring(0, path.indexOf("/", 1));
+            ServletContext sc = servletContext.getContext(context);
+            if (sc!=null) {
+                servletContext = sc;
+                normalized = normalized.substring(context.length());
+            }
+        }
+    }
+
 	return (normalized);
     }
 
@@ -325,6 +363,8 @@ public class SsiMediator {
          *     normalized = RequestUtil.URLDecode(normalized, "UTF8");
          */
 
+         servletContext = origServletContext;
+
         if (normalized == null)
             return (null);
 
@@ -341,8 +381,7 @@ public class SsiMediator {
 		normalized.substring(index + 1);
 	}
 
-	// If it starts with a "/" or contains "../" we
-	// return <code>null</code>.
+	// If it starts with a "/" or contains "../" we return <code>null</code>.
 	if (normalized.startsWith("/") || normalized.indexOf("../") >= 0)
 	    return (null);
 
