@@ -61,7 +61,8 @@ public class DeltaRequest implements Externalizable {
     
     public DeltaRequest(String sessionId, boolean recordAllActions) {
         this.recordAllActions=recordAllActions;
-        setSessionId(sessionId);
+        if(sessionId != null)
+            setSessionId(sessionId);
     }
 
 
