@@ -113,7 +113,6 @@ import org.apache.catalina.HttpRequest;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
-import org.apache.catalina.connector.HttpRequestBase;
 import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.ResourceSet;
