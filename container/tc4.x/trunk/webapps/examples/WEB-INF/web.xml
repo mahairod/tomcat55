@@ -6,6 +6,32 @@
 
 <web-app>
 
+    <!-- Define servlet-mapped and path-mapped example filters -->
+    <filter>
+        <filter-name>Servlet Mapped Filter</filter-name>
+        <filter-class>filters.ExampleFilter</filter-class>
+	<init-param>
+	    <param-name>attribute</param-name>
+	    <param-value>filters.ExampleFilter.SERVLET_MAPPED</param-value>
+	</init-param>
+    </filter>
+    <filter>
+        <filter-name>Path Mapped Filter</filter-name>
+        <filter-class>filters.ExampleFilter</filter-class>
+	<init-param>
+	    <param-name>attribute</param-name>
+	    <param-value>filters.ExampleFilter.PATH_MAPPED</param-value>
+	</init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>Servlet Mapped Filter</filter-name>
+	<servlet-name>invoker</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Path Mapped Filter</filter-name>
+	<url-pattern>/servlet/*</url-pattern>
+    </filter-mapping>
+
     <!-- Define example application events listeners -->
     <listener>
         <listener-class>listeners.ContextListener</listener-class>
