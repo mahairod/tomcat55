@@ -605,7 +605,12 @@ class JspDocumentParser extends DefaultHandler
 	Node node = null;
 
 	if (localName.equals(ROOT_ACTION)) {
-	    node = new Node.JspRoot(qName, nonTaglibAttrs, nonTaglibXmlnsAttrs,
+            if (!(current instanceof Node.Root)) {
+                throw new SAXParseException(
+                    Localizer.getMessage("jsp.error.nested_jsproot"),
+                    locator);
+            }
+            node = new Node.JspRoot(qName, nonTaglibAttrs, nonTaglibXmlnsAttrs,
 				    taglibAttrs, start, current);
 	    if (isTop) {
 		pageInfo.setHasJspRoot(true);
