@@ -668,7 +668,8 @@ final class HttpProcessor
 	int question = requestLine.indexOf("?");
 	if (question >= 0) {
 	    request.setQueryString
-                (new String(requestLine.uri, 0, question + 1));
+                (new String(requestLine.uri, question + 1, 
+                            requestLine.uriEnd - question - 1));
 	    if (debug >= 1)
 	        log(" Query string is " +
 		    ((HttpServletRequest) request.getRequest())
