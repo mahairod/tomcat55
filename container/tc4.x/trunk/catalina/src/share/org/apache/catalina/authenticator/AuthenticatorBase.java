@@ -167,7 +167,7 @@ public abstract class AuthenticatorBase
     /**
      * The debugging detail level for this component.
      */
-    protected int debug = 99;
+    protected int debug = 0;
 
 
     /**
