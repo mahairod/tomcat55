@@ -684,7 +684,6 @@ public abstract class PersistentManagerBase
     public void load() {
 
         // Initialize our internal data structures
-        recycled.clear();
         sessions.clear();
 
         if (store == null)

@@ -393,7 +393,6 @@ public class StandardManager
             log.debug("Start: Loading persisted sessions");
 
         // Initialize our internal data structures
-        recycled.clear();
         sessions.clear();
 
         // Open an input stream to the specified pathname, if any
