@@ -913,41 +913,56 @@ public class Context {
     }
 
     private void loadServlets() {
-	Vector loadServlets = new Vector();
+	Vector orderedKeys = new Vector();
 	Enumeration e = loadableServlets.keys();
+	
+	// order keys
 
 	while (e.hasMoreElements()) {
 	    Integer key = (Integer)e.nextElement();
-	    Vector v = (Vector)loadableServlets.get(key);
-	    Enumeration lse = v.elements();
+	    int slot = -1;
 
-	    while (lse.hasMoreElements()) {
-	        loadServlets.addElement(lse.nextElement());
+	    for (int i = 0; i < orderedKeys.size(); i++) {
+	        if (key.intValue() <
+		    ((Integer)(orderedKeys.elementAt(i))).intValue()) {
+		    slot = i;
+
+		    break;
+		}
+	    }
+
+	    if (slot > -1) {
+	        orderedKeys.insertElementAt(key, slot);
+	    } else {
+	        orderedKeys.addElement(key);
 	    }
 	}
 
-        // Changed because this is exactly opposite of what we want....
-        // Servlets were being loaded in the exact opposite order.
-        // Priorities IMO, should start with 0.
-        // Only System Servlets should be at 0 and rest of the servlets
-        // should be +ve integers.
-        // WARNING: Please do not change this without talking to:
-        // harishp@eng.sun.com (J2EE impact)
-	// for (int i = loadServlets.size() - 1; i >= 0; i--) {
+	// loaded ordered servlets
 
-	for(int i = 0; i < loadServlets.size(); ++i) {
-            String servletName = (String)loadServlets.elementAt(i);
-	    LookupResult result =
-	        container.lookupServletByName(servletName);
+	// Priorities IMO, should start with 0.
+	// Only System Servlets should be at 0 and rest of the
+	// servlets should be +ve integers.
+	// WARNING: Please do not change this without talking to:
+	// harishp@eng.sun.com (J2EE impact)
 
-	    try {
-	        result.getWrapper().loadServlet(); 
-	    } catch (Exception ee) {
-		ee.printStackTrace();
-	        String msg = sm.getString("context.loadServlet.e",
-		    servletName);
+	for (int i = 0; i < orderedKeys.size(); i ++) {
+	    Integer key = (Integer)orderedKeys.elementAt(i);
+	    e = ((Vector)(loadableServlets.get(key))).elements();
 
-	        System.out.println(msg);
+	    while (e.hasMoreElements()) {
+		String servletName = (String)e.nextElement();
+		LookupResult result =
+		    container.lookupServletByName(servletName);
+
+		try {
+		    result.getWrapper().loadServlet();
+		} catch (Exception ee) {
+		    String msg = sm.getString("context.loadServlet.e",
+		        servletName);
+
+		    System.out.println(msg);
+		} 
 	    }
 	}
     }
