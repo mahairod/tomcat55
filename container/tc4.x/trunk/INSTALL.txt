@@ -1,0 +1,179 @@
+                  Apache Tomcat Version 4.0 Beta 6
+                  ================================
+                            Install Guide
+                            =============
+
+$Id$
+
+
+============
+INTRODUCTION:
+============
+
+Welcome!
+
+This document explains how to perform a stand-alone installation of the
+Tomcat 4.0 servlet container.  Once you're up and running, you will have
+access to the more detailed documentation locally via Tomcat's default
+home page, as well as administrative and sample applications.  As well,
+the documentation is available locally at:
+
+    $CATALINA_HOME/webapps/docs/index.html
+    
+where $CATALINA_HOME is the root of the directory you extracted the Tomcat
+files to.
+
+The absolute latest version of the documentation is always available online
+at the following URL:
+
+    http://jakarta.apache.org/tomcat/tomcat-4.0-doc/index.html
+    
+Because the documentation released with each version of Tomcat is the latest
+as of that release, there is a good chance the online documentation will be
+slightly updated.
+
+NOTE: It is STRONGLY reccomended that you complete this minimal, stand-alone
+installation before continuing on to more advanced topics.
+
+
+===========
+DOWNLOADING:
+===========
+
+In the rare occasion that you find yourself reading this file without a copy
+of Tomcat 4 to install, you can obtain the latest version here
+
+    http://jakarta.apache.org/site/binindex.html
+
+NEW FEATURE NOTE!  Tomcat 4.0-beta-6 includes a new, experimental, installer
+for the Windows platform.  Simply download and execute the
+"jakarta-tomcat-4.0-b6.exe" file from the release directory pointed at by
+the above link.  As an alternative, you can install Tomcat 4.0-beta-6 manually
+from the ZIP file download, in the manner described below.
+
+
+==========
+INSTALLING:
+==========
+
+Fortunately, installing the Tomcat servlet container consists of a few,
+easy steps: extract the archive, and set environment variables.
+
+Of course, since Tomcat is written in Java, it is assumed that you have
+installed at least version 1.2 of the JDK.  You can download the JDK from
+Sun at the following URL
+
+    http://java.sun.com/j2se/
+
+Version 1.3.1 (or later) of the JDK is recommended.
+
+1) Unpack the files
+
+    You've most likely completed this step already =)
+    
+    Lets say that for installation (A), you're on a Windows machine and
+    you've unpacked the files to "C:\jakarta-tomcat-4.0".  You can use a
+    tool like WinZip or pkunzip command-line version.
+    
+    Or for installation (B) on a *nix machine, you've unpacked it to
+    "/usr/local/jakarta-tomcat-4.0"
+    
+    cd /usr/local
+    mv <tomcat-download-file> /usr/local
+  
+    tar xzvf jakarta-tomcat-4.0-br.tar.gz
+    
+    OR
+    
+    uncompress jakarta-tomcat-4.0-br.tar.Z
+    tar xvf jakarta-tomcat-4.0-br.tar
+
+2) Set your environment variables
+
+    Tomcat 4 requires 2 environment variables: CATALINA_HOME and JAVA_HOME.
+    CATALINA_HOME should be set to the root of your Tomcat installation, and
+    JAVA_HOME should be set to the root of your JDK installation.
+    
+    For the Win9X-series of operating systems, add the following lines to
+    your C:\AUTOEXEC.BAT file:
+    
+        SET CATALINA_HOME=C:\jakarta-tomcat-4.0
+        SET JAVA_HOME=C:\jdk1.3.1
+    
+    In WinNT-based systems, you modify environment variables by first right-
+    clicking on the "My Computer" icon, and then "Properties".  You can either
+    add these as System or User Environment variables.
+    
+    For *nix systems,
+    
+    export CATALINA_HOME=/usr/local/jakarta-tomcat-4.0
+    export JAVA_HOME=/usr/local/jdk1.3
+    
+    This should either be done in a startup script or /etc/profile to make it
+    system-wide.  Preferably a startup script so the variables are available
+    on Tomcat so it can start on boot if required.
+
+3) Start it
+
+    To start the container, execute the script appropriate to your operating
+    system.  The startup and shutdown scripts are named appropriately, and
+    found in $CATALINA_HOME/bin.  For *nix, that will be the scripts ending
+    with the "sh" extension, and for Windows, "bat".
+    
+    For Win9X, 
+    
+    cd %CATALINA_HOME%\bin
+    startup.bat
+
+    For *nix,
+    
+    cd $CATALINA_HOME/bin
+    ./startup.sh
+    
+4) Test it
+
+    Fire up your web browser, and request
+    
+        http://localhost:8080/
+        
+    ...and you should be presented with the default Tomcat homepage.
+
+
+===============
+TROUBLESHOOTING:
+===============
+
+There are only really 3 things that can go wrong during the stand-alone
+install:
+
+1) The most common hiccup is when another web server (or any process for that
+   matter) has laid claim to port 8080.  This is the default HTTP port that
+   Tomcat attempts to bind to at startup.  To change this, open the file:
+
+       $CATALINA_HOME/conf/server.xml
+    
+   ...and search for '8080'.  Change it to a port that isn't in use, and is
+   greater than 1024, as ports less than or equal to 1024 require superuser
+   access to bind to.
+   
+   Restart Tomcat and you're in business.  Be sure that you replace the "8080"
+   in the URL you're using to access Tomcat.  For example, if you change the
+   port to 1977, you would request the URL http://localhost:1977/.
+
+2) An "out of environment space" error when running the batch files in
+   Win9X/ME-based operating systems.
+
+   Right-click on the STARTUP.BAT and SHUTDOWN.BAT files.  Click on
+   "Properties" then on the "Memory" tab.  For the "Initial environment" field,
+   enter in something like 4096.
+   
+   After you click apply, Windows will create shortcuts in the directory with
+   which you can use to start and stop the container.
+
+3) The 'localhost' machine isn't found.  This could happen if you're behing a
+   proxy.  If that's the case, make sure the proxy configuration for your
+   browser knows that you shouldn't be going through the proxy to access the
+   "localhost" machine.
+   
+   In Netscape, this is under Edit/preferences -> Advanced/proxies, and in
+   Internet Explorer, Tools -> Internet Options -> Connections -> LAN Settings.
