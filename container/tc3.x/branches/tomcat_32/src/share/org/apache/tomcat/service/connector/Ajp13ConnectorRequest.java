@@ -249,7 +249,7 @@ public class Ajp13ConnectorRequest extends RequestImpl
     
     public int doRead() throws IOException 
     {
-        if(pos > blen) {
+        if(pos >= blen) {
             refeelReadBuffer();
         }
         return bodyBuff[pos++];
