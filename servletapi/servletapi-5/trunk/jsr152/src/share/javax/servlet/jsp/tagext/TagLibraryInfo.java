@@ -148,7 +148,7 @@ abstract public class TagLibraryInfo {
     /**
      * The preferred short name (prefix) as indicated in the TLD.
      * This may be used by authoring tools as the preferred prefix
-     * to use when creating an include directive for this library.
+     * to use when creating an taglib directive for this library.
      *
      * @return the preferred short name for the library
      */
@@ -157,10 +157,9 @@ abstract public class TagLibraryInfo {
     }
 
     /**
-     * The "reliable" URN indicated in the TLD.
+     * The "reliable" URN indicated in the TLD (the uri element).
      * This may be used by authoring tools as a global identifier
-     * (the uri attribute) to use when creating a taglib directive
-     * for this library.
+     * to use when creating a taglib directive for this library.
      *
      * @return a reliable URN to a TLD like this
      */

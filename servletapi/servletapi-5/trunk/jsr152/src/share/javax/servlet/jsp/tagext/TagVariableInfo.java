@@ -139,7 +139,8 @@ public class TagVariableInfo {
     /**
      * The body of the &lt;variable-class&gt; element.  
      *
-     * @return The name of the class of the variable
+     * @return The name of the class of the variable or
+     *         'java.lang.String' if not defined in the TLD.
      */
 
     public String getClassName() {
@@ -149,7 +150,8 @@ public class TagVariableInfo {
     /**
      * The body of the &lt;declare&gt; element
      *
-     * @return Whether the variable is to be declared or not
+     * @return Whether the variable is to be declared or not.
+     *         If not defined in the TLD, 'true' will be returned.
      */
 
     public boolean getDeclare() {
@@ -159,7 +161,9 @@ public class TagVariableInfo {
     /**
      * The body of the &lt;scope&gt; element
      *
-     * @return The scope to give the variable.
+     * @return The scope to give the variable.  NESTED
+     *         scope will be returned if not defined in 
+     *         the TLD.
      */
 
     public int getScope() {
