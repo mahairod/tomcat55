@@ -193,13 +193,13 @@ public class TagFileProcessor {
                 // type is fixed to "JspFragment" and a translation error
                 // must occur if specified.
                 if (type != null) {
-                    err.jspError("jsp.error.fragmentwithtype");
+                    err.jspError(n, "jsp.error.fragmentwithtype");
                 }
                 // rtexprvalue is fixed to "true" and a translation error
                 // must occur if specified.
                 rtexprvalue = true;
                 if( rtexprvalueString != null ) {
-                    err.jspError("jsp.error.frgmentwithrtexprvalue" );
+                    err.jspError(n, "jsp.error.frgmentwithrtexprvalue" );
                 }
             } else {
                 if (type == null)

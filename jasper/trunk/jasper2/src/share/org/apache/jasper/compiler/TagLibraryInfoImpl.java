@@ -226,10 +226,6 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 		// it to release the cached entry, so
 		// there's no way to redeploy from the same JAR file.  Wierd.
 	    } catch (Exception ex) {
-		Constants.message(
-                    "jsp.error.taglib.jarFileException",
-		    new Object[] {url.toString(), ex.getMessage()},
-		    Logger.ERROR);
 		if (stream != null) {
 		    try {
 			stream.close();
@@ -240,6 +236,7 @@ public class TagLibraryInfoImpl extends TagLibraryInfo {
 			jarFile.close();
 		    } catch (Throwable t) {}
 		}
+		throw new JasperException(ex);
 	    }
 	}
     }
