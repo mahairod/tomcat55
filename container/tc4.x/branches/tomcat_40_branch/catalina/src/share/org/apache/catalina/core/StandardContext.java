@@ -3265,10 +3265,15 @@ public class StandardContext
         if (getResources() == null) {   // (1) Required by Loader
             if (debug >= 1)
                 log("Configuring default Resources");
-            if ((docBase != null) && (docBase.endsWith(".war")))
-                setResources(new WARDirContext());
-            else
-                setResources(new FileDirContext());
+            try {
+                if ((docBase != null) && (docBase.endsWith(".war")))
+                    setResources(new WARDirContext());
+                else
+                    setResources(new FileDirContext());
+            } catch (IllegalArgumentException e) {
+                log("Error initializing resources: " + e.getMessage());
+                ok = false;
+            }
         }
         if (getLoader() == null) {      // (2) Required by Manager
             if (debug >= 1)
@@ -3281,7 +3286,8 @@ public class StandardContext
             setManager(new StandardManager());
         }
 
-        DirContextURLStreamHandler.bind(getResources());
+        if (ok)
+            DirContextURLStreamHandler.bind(getResources());
 
         // Initialize character set mapper
         getCharsetMapper();
@@ -3292,7 +3298,8 @@ public class StandardContext
         // Standard container startup
         if (debug >= 1)
             log("Processing standard container startup");
-        super.start();
+        if (ok)
+            super.start();
         if (!getConfigured())
             ok = false;
 
@@ -3506,6 +3513,10 @@ public class StandardContext
 
         ClassLoader oldContextClassLoader = 
             Thread.currentThread().getContextClassLoader();
+
+        if (getResources() == null)
+            return oldContextClassLoader;
+
         Thread.currentThread().setContextClassLoader
             (getLoader().getClassLoader());
 

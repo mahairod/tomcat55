@@ -596,6 +596,9 @@ public class WebappLoader
         lifecycle.fireLifecycleEvent(START_EVENT, null);
         started = true;
 
+        if (container.getResources() == null)
+            return;
+
         // Register a stream handler factory for the JNDI protocol
         URLStreamHandlerFactory streamHandlerFactory =
             new DirContextURLStreamHandlerFactory();
