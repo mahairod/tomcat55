@@ -221,19 +221,19 @@ public class JspServlet extends HttpServlet {
 
             boolean precompile = preCompile(request);
 
-	    if (log.isInfoEnabled()) {	    
-		log.info("JspEngine --> " + jspUri);
-		log.info("\t     ServletPath: " + request.getServletPath());
-		log.info("\t        PathInfo: " + request.getPathInfo());
-		log.info("\t        RealPath: " + context.getRealPath(jspUri));
-		log.info("\t      RequestURI: " + request.getRequestURI());
-		log.info("\t     QueryString: " + request.getQueryString());
-		log.info("\t  Request Params: ");
+	    if (log.isDebugEnabled()) {	    
+		log.debug("JspEngine --> " + jspUri);
+		log.debug("\t     ServletPath: " + request.getServletPath());
+		log.debug("\t        PathInfo: " + request.getPathInfo());
+		log.debug("\t        RealPath: " + context.getRealPath(jspUri));
+		log.debug("\t      RequestURI: " + request.getRequestURI());
+		log.debug("\t     QueryString: " + request.getQueryString());
+		log.debug("\t  Request Params: ");
 		Enumeration e = request.getParameterNames();
 		while (e.hasMoreElements()) {
 		    String name = (String) e.nextElement();
-		    log.info("\t\t " + name + " = " +
-			     request.getParameter(name));
+		    log.debug("\t\t " + name + " = " +
+                              request.getParameter(name));
 		}
 	    }
             serviceJspFile(request, response, jspUri, null, precompile);
