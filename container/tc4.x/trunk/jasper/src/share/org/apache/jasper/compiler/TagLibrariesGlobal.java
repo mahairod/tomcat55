@@ -144,7 +144,7 @@ public class TagLibrariesGlobal {
 	InputStream is = ctxt.getResourceAsStream(WEB_XML);
 	if (is == null) {
 	    throw new JasperException(
-		Constants.getString("jsp.error.internal.file.not.found", 
+		Constants.getString("jsp.error.internal.filenotfound", 
 				    new Object[]{WEB_XML}));
 	}
 	Document webtld =
