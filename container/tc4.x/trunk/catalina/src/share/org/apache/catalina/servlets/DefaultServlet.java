@@ -1047,7 +1047,9 @@ public class DefaultServlet
         if (resourceInfo.collection) {
 
 	    if (!request.getRequestURI().endsWith("/")) {
-	        response.sendRedirect(request.getRequestURI() + "/");
+                String redirectPath = request.getRequestURI() + "/";
+                redirectPath = appendParameters(request, redirectPath);
+	        response.sendRedirect(redirectPath);
 		return;
 	    }
 
@@ -1058,7 +1060,8 @@ public class DefaultServlet
                 if ((contextPath != null) && (!contextPath.equals("/"))) {
                     redirectPath = contextPath + redirectPath;
                 }
-                response.sendRedirect(rewriteUrl(redirectPath));
+                redirectPath = appendParameters(request, redirectPath);
+                response.sendRedirect(redirectPath);
                 return;
             }
             
@@ -1364,6 +1367,38 @@ public class DefaultServlet
         }
         
         return result;
+    }
+
+
+    /**
+     * Append the request parameters to the redirection string before calling
+     * sendRedirect.
+     */
+    protected String appendParameters(HttpServletRequest request, 
+                                      String redirectPath) {
+        
+        StringBuffer result = new StringBuffer(rewriteUrl(redirectPath));
+        
+        Enumeration enum = request.getParameterNames();
+        if (enum.hasMoreElements())
+            result.append("?");
+        
+        while (enum.hasMoreElements()) {
+            String name = (String) enum.nextElement();
+            String[] values = request.getParameterValues(name);
+            for (int i = 0; i < values.length; i++) {
+                result.append(rewriteUrl(name));
+                result.append("=");
+                result.append(rewriteUrl(values[i]));
+                if (i < (values.length - 1))
+                    result.append("&");
+            }
+            if (enum.hasMoreElements())
+                result.append("&");
+        }
+        
+        return result.toString();
+        
     }
 
 
