@@ -547,8 +547,6 @@ implements org.apache.catalina.cluster.ClusterManager
                         String id = oin.readUTF();
                         byte[] data = (byte[])oin.readObject();
                         Session session = readSession(data,id);
-                        session.setManager(this);
-                        add(session);
                     }//for
                     stateTransferred=true;
                     break;
