@@ -1372,9 +1372,10 @@ public abstract class ContainerBase
         if( this.getParent() == null ) {
             // "Life" update
             ObjectName parentName=getParentName();
-            
+
+            //log.info("Register " + parentName );
             if( parentName != null && 
-                    ! mserver.isRegistered(parentName)) 
+                    mserver.isRegistered(parentName)) 
             {
                 mserver.invoke(parentName, "addChild", new Object[] { this },
                         new String[] {"org.apache.catalina.Container"});
