@@ -4353,7 +4353,6 @@ public class StandardContext
         if( oname != null ) { 
             Registry.getRegistry().unregisterComponent(oname); 
         }
-        Registry.getRegistry().registerComponent(this, oname, null);
         
     }
 
