@@ -297,7 +297,7 @@
     <mkdir          dir="${dist.home}/docs/api"/>
     <javadoc sourcepath="src"
                 destdir="${dist.home}/docs/api"
-           packagenames="*"/>
+           packagenames="*">
       <classpath refid="compile.classpath"/>
     </javadoc>
 
