@@ -1,7 +1,10 @@
 
 
 
-* Filter mapping optimization (remm)
+* Casts removal for main pipeline (remm)
+* Deployer refactoring (remm)
+* Documentation updates for new user guide book (remm)
+* Split main catalina.jar (remm)
 * Tag plugins for JSTL
 * Optimization of BASIC authentication handling (remm)
 * (optional) Optimization of DIGEST authentication handling
@@ -10,9 +13,6 @@
 * (optional) GUI for the deployer
 * (optional) Stack size reduction (removal of valves to improve runtime 
   performance and ease debugging)
-* Deployer refactoring (remm)
-* Documentation updates for new user guide book (remm)
-* Split main catalina.jar (remm)
 
 
 
