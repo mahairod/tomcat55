@@ -8,6 +8,7 @@ start=org.apache.catalina.ant.StartTask
 stop=org.apache.catalina.ant.StopTask
 undeploy=org.apache.catalina.ant.UndeployTask
 validator=org.apache.catalina.ant.ValidatorTask
+jkstatus=org.apache.catalina.ant.JKStatusUpdateTask
 
 # Jasper tasks
 jasper2=org.apache.jasper.JspC
