@@ -206,7 +206,7 @@ public class HttpRequestStream extends RequestStream {
                     return (-1);
             }
             
-            return (chunkBuffer[chunkPos++]);
+            return (chunkBuffer[chunkPos++] & 0xff);
             
         } else {
             
