@@ -51,18 +51,6 @@
     <form-bean      name="setLocaleForm"
                     type="org.apache.webapp.admin.SetLocaleForm"/>
 
-    <!-- List Groups form bean -->
-    <form-bean      name="listGroupsForm"
-                    type="org.apache.webapp.admin.ListGroupsForm"/>
-
-    <!-- List Users form bean -->
-    <form-bean      name="listUsersForm"
-                    type="org.apache.webapp.admin.ListUsersForm"/>
-
-    <!-- User form bean -->
-    <form-bean      name="userForm"
-                    type="org.apache.webapp.admin.UserForm"/>
-
     <!-- JDBC Realm form bean -->
     <form-bean      name="jdbcRealmForm"
                     type="org.apache.webapp.admin.realm.JDBCRealmForm"/>
@@ -71,9 +59,27 @@
     <form-bean      name="memoryRealmForm"
                     type="org.apache.webapp.admin.realm.MemoryRealmForm"/>
 
-   <!-- UserDB Realm form bean -->
+    <!-- UserDB Realm form bean -->
     <form-bean      name="userdbRealmForm"
                     type="org.apache.webapp.admin.realm.UserDBRealmForm"/>
+
+    <!-- ========== User Database Module ========== -->
+
+    <form-bean      name="databaseForm"
+                    type="org.apache.webapp.admin.users.BaseForm"/>
+
+    <form-bean      name="groupForm"
+                    type="org.apache.webapp.admin.users.GroupForm"/>
+
+    <form-bean      name="roleForm"
+                    type="org.apache.webapp.admin.users.RoleForm"/>
+
+    <form-bean      name="userForm"
+                    type="org.apache.webapp.admin.users.UserForm"/>
+
+
+    <!-- ========== ==================== ========== -->
+
 
   </form-beans>
 
@@ -134,18 +140,6 @@
                     path="/blank.jsp"
                 redirect="false"/>
 
-    <forward        name="Groups List"
-                    path="/listGroups.jsp"
-                redirect="false"/>
-
-    <forward        name="Users List"
-                    path="/listUsers.jsp"
-                redirect="false"/>
-
-    <forward        name="Users List Setup"
-                    path="/listUsers.do"
-                redirect="false"/>
-
     <forward        name="Logger"
                     path="/logger.jsp"
                 redirect="false"/>
@@ -165,6 +159,46 @@
     <forward        name="UserDBRealm"
                     path="/userDBRealm.jsp"
                 redirect="false"/>
+
+    <!-- ========== User Database Module ========== -->
+
+    <forward        name="Group"
+                    path="/users/group.jsp"
+                redirect="false"/>
+
+    <forward        name="Groups List"
+                    path="/users/listGroups.jsp"
+                redirect="false"/>
+
+    <forward        name="Groups List Setup"
+                    path="/users/listGroups.do"
+                redirect="false"/>
+
+    <forward        name="Role"
+                    path="/users/role.jsp"
+                redirect="false"/>
+
+    <forward        name="Roles List"
+                    path="/users/listRoles.jsp"
+                redirect="false"/>
+
+    <forward        name="Roles List Setup"
+                    path="/users/listRoles.do"
+                redirect="false"/>
+
+    <forward        name="User"
+                    path="/users/user.jsp"
+                redirect="false"/>
+
+    <forward        name="Users List"
+                    path="/users/listUsers.jsp"
+                redirect="false"/>
+
+    <forward        name="Users List Setup"
+                    path="/users/listUsers.do"
+                redirect="false"/>
+
+    <!-- ========== ==================== ========== -->
 
   </global-forwards>
 
@@ -355,27 +389,6 @@
     <action    path="/treeControlTest"
                type="org.apache.webapp.admin.TreeControlTestAction"/>
 
-    <!-- Set up groups list action -->
-    <action    path="/listGroups"
-               name="listGroupsForm"
-               type="org.apache.webapp.admin.ListGroupsAction"/>
-
-    <!-- Set up users list action -->
-    <action    path="/listUsers"
-               name="listUsersForm"
-               type="org.apache.webapp.admin.ListUsersAction"/>
-
-    <!-- Set up user action -->
-    <action    path="/setUpUser"
-               type="org.apache.webapp.admin.SetUpUserAction"/>
-
-    <!-- Save user action -->
-    <action    path="/saveUser"
-              input="/user.jsp"
-               name="userForm"
-              scope="request"
-               type="org.apache.webapp.admin.SaveUserAction"/>
-
     <!-- Delete service action -->
     <action    path="/deleteService"
               input="/deleteService.jsp"
@@ -410,6 +423,54 @@
                name="userdbRealmForm"
                scope="session"
                input="/userDBRealm.jsp"/>
+
+
+    <!-- ========== User Database Module ========== -->
+
+    <action    path="/users/listGroups"
+               name="databaseForm"
+              scope="request"
+               type="org.apache.webapp.admin.users.ListGroupsAction"/>
+
+    <action    path="/users/listRoles"
+               name="databaseForm"
+              scope="request"
+               type="org.apache.webapp.admin.users.ListRolesAction"/>
+
+    <action    path="/users/listUsers"
+               name="databaseForm"
+              scope="request"
+               type="org.apache.webapp.admin.users.ListUsersAction"/>
+
+    <action    path="/users/saveGroup"
+              input="/users/group.jsp"
+               name="groupForm"
+              scope="session"
+               type="org.apache.webapp.admin.users.SaveGroupAction"/>
+
+    <action    path="/users/saveRole"
+              input="/users/role.jsp"
+               name="roleForm"
+              scope="session"
+               type="org.apache.webapp.admin.users.SaveRoleAction"/>
+
+    <action    path="/users/saveUser"
+              input="/users/user.jsp"
+               name="userForm"
+              scope="session"
+               type="org.apache.webapp.admin.users.SaveUserAction"/>
+
+    <action    path="/users/setUpGroup"
+               type="org.apache.webapp.admin.users.SetUpGroupAction"/>
+
+    <action    path="/users/setUpRole"
+               type="org.apache.webapp.admin.users.SetUpRoleAction"/>
+
+    <action    path="/users/setUpUser"
+               type="org.apache.webapp.admin.users.SetUpUserAction"/>
+
+    <!-- ========== ==================== ========== -->
+
 
   </action-mappings>  
     
