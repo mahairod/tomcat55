@@ -104,7 +104,6 @@ class PageInfo {
     private boolean scriptingInvalid = false;
     private String isELIgnoredValue;
     private boolean isELIgnored = false;
-    private boolean elIgnoredSpecified = false;
     private String omitXmlDecl = null;
 
     private boolean isJspPrefixHijacked;
@@ -194,14 +193,6 @@ class PageInfo {
 
     public boolean isScriptingInvalid() {
 	return scriptingInvalid;
-    }
-
-    public void setELIgnoredSpecified(boolean s) {
-	elIgnoredSpecified = s;
-    }
-
-    public boolean isELIgnoredSpecified() {
-	return elIgnoredSpecified;
     }
 
     public List getIncludePrelude() {

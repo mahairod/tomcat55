@@ -196,10 +196,7 @@ class Validator {
 		    }
 		} else if ("isELIgnored".equals(attr)) {
 		    if (pageInfo.getIsELIgnored() == null) {
-			if (!pageInfo.isELIgnoredSpecified()) {
-			    // If specified in jsp-config, use it
-			    pageInfo.setIsELIgnored(value, n, err, true);
-			} 
+                        pageInfo.setIsELIgnored(value, n, err, true);
 		    } else if (!pageInfo.getIsELIgnored().equals(value)) {
 			err.jspError(n, "jsp.error.page.conflict.iselignored",
 				     pageInfo.getIsELIgnored(), value);
@@ -268,10 +265,7 @@ class Validator {
 		    }
 		} else if ("isELIgnored".equals(attr)) {
 		    if (pageInfo.getIsELIgnored() == null) {
-			if (!pageInfo.isELIgnoredSpecified()) {
-			    // If specified in jsp-config, use it
-			    pageInfo.setIsELIgnored(value, n, err, false);
-			} 
+                        pageInfo.setIsELIgnored(value, n, err, false);
 		    } else if (!pageInfo.getIsELIgnored().equals(value)) {
 			err.jspError(n, "jsp.error.tag.conflict.iselignored",
 				     pageInfo.getIsELIgnored(), value);
