@@ -61,7 +61,8 @@ package org.apache.jasper34.servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.core.Compiler;
@@ -99,12 +100,11 @@ public class JspEngineContext extends ContainerLiaison
     HttpServletResponse res;
     
 
-    public JspEngineContext(ClassLoader loader, String classpath, 
+    public JspEngineContext(String classpath, 
                             ServletContext context, String jspFile, 
                             boolean isErrPage, Options options, 
                             HttpServletRequest req, HttpServletResponse res) 
     {
-        this.loader = loader;
         this.classpath = classpath;
         this.context = context;
         this.jspFile = jspFile;
@@ -133,7 +133,8 @@ public class JspEngineContext extends ContainerLiaison
      * The classpath that is passed off to the Java compiler. 
      */
     public String getClassPath() {
-        return ((JasperLoader)loader).getClassPath() + classpath;
+	// XXX Use common code, toolkit
+        return  options.getClassPath();
     }
     
     /**
@@ -162,13 +163,54 @@ public class JspEngineContext extends ContainerLiaison
      * this JSP? I don't think this is used right now -- akv. 
      */
     public ClassLoader getClassLoader() {
+	if( loader==null ) {
+	    
+	    try {
+		ClassLoader parentClassLoader=getParentLoader( context );
+		File sDir=options.getScratchDir();
+
+		// PD will be set in the policy
+		// XXX get loader
+		URL urls[]=new URL[1];
+		urls[0]=new URL( "file", null,
+			 sDir.getAbsolutePath().replace('\\','/') + "/");
+
+		// XXX JDK1.1, compat 
+		loader=new URLClassLoader( urls, parentClassLoader);
+	    } catch( Exception ex ) {
+		ex.printStackTrace();
+	    }
+
+	}
         return loader;
     }
 
-//     public void addJar( String jar ) throws IOException  {
-// 	loader.addJar( jar );
-//     }
+    /** Extract parent class loader from ServletContext
+     */
+    private ClassLoader getParentLoader(ServletContext ctx) {
+	ClassLoader parentClassLoader =
+	    (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
+	if (parentClassLoader == null)
+	    parentClassLoader = this.getClass().getClassLoader();
+	
+	// getClass().getClassLoader() returns null in JDK 1.1.6/1.1.8
+	if (parentClassLoader != null) {
+            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
+				     new Object[] {
+		parentClassLoader.toString()
+		    }, Log.DEBUG);
+	}
+	else {
+            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
+				     new Object[] {
+		"<none>"
+		    }, Log.DEBUG);
+	}
+	return parentClassLoader;
+    }
 
+
+    
     /**
      * Are we processing something that has been declared as an
      * errorpage? 
@@ -297,7 +339,7 @@ public class JspEngineContext extends ContainerLiaison
     /** 
      * Get the full value of a URI relative to this compilations context
      */
-    public String resolveRelativeUri(String uri)
+    public String resolveRelativeUri(String uri, String baseUri)
     {
         if (uri.charAt(0) == '/')
         {
@@ -305,9 +347,9 @@ public class JspEngineContext extends ContainerLiaison
         }
         else
         {
-            String actURI =  req.getServletPath();
-            String baseURI = actURI.substring(0, actURI.lastIndexOf('/'));
-            return baseURI + '/' + uri;
+	    //            String actURI =  req.getServletPath();
+            //String baseURI = actURI.substring(0, actURI.lastIndexOf('/'));
+            return baseUri + '/' + uri;
         }
     }    
 
@@ -349,11 +391,12 @@ public class JspEngineContext extends ContainerLiaison
 	implementation ( TagLibReader ).
     */
     public void readTLD( TagLibraries libs,
-			 TagLibraryInfoImpl tl, String prefix, String uri )
+			 TagLibraryInfoImpl tl, String prefix, String uri,
+			 String uriBase )
     	throws IOException, JasperException
     {
 	TagLibReader reader=new TagLibReader( this, libs );
-	reader.readTagLib( tl, prefix, uri );
+	reader.readTLD( tl, prefix, uri, uriBase );
     }
     
    

@@ -77,6 +77,7 @@ import org.apache.jasper34.runtime.*;
 import org.apache.jasper34.core.*;
 import org.apache.jasper34.generator.*;
 import org.apache.jasper34.jsptree.*;
+import org.apache.jasper34.javacompiler.*;
 import org.apache.jasper34.liaison.*;
 import org.apache.jasper34.core.Compiler;
 
@@ -92,157 +93,19 @@ public class JspServlet extends HttpServlet {
 
     Log loghelper = Log.getLog("JASPER_LOG", "JspServlet");
     
-    class JspServletWrapper {
-        Servlet theServlet;
-	String jspUri;
-	boolean isErrorPage;
-	// ServletWrapper will set this 
-	Class servletClass;
-	
-	JspServletWrapper(String jspUri, boolean isErrorPage) {
-	    this.jspUri = jspUri;
-	    this.isErrorPage = isErrorPage;
-	    this.theServlet = null;
-	}
-	
-	private void load() throws JasperException, ServletException {
-	    try {
-		// Class servletClass = (Class) loadedJSPs.get(jspUri);
-		// This is to maintain the original protocol.
-		destroy();
-
-		theServlet = (Servlet) servletClass.newInstance();
-	    } catch (Exception ex) {
-		throw new JasperException(ex);
-	    }
-	    theServlet.init(JspServlet.this.config);
-	    if (theServlet instanceof HttpJspBase)  {
-                HttpJspBase h = (HttpJspBase) theServlet;
-                h.setClassLoader(JspServlet.this.parentClassLoader);
-	    }
-	}
-	
-	private void loadIfNecessary(HttpServletRequest req, HttpServletResponse res) 
-            throws JasperException, ServletException, FileNotFoundException 
-        {
-            // First try context attribute; if that fails then use the 
-            // classpath init parameter. 
-
-            // Should I try to concatenate them if both are non-null?
-
-            String cp = (String) context.getAttribute(Constants.SERVLET_CLASSPATH);
-
-            String accordingto;
-
-            if (cp == null || cp.equals("")) {
-                accordingto = "according to the init parameter";
-                cp = options.getClassPath();
-            } else 
-                accordingto = "according to the Servlet Engine";
-            
-            ContainerLiaison.message("jsp.message.cp_is", 
-                              new Object[] { 
-                                  accordingto,
-                                  cp == null ? "" : cp
-                              }, 
-                              Log.INFORMATION);
-
-            if ( loadJSP(jspUri, cp, isErrorPage, req, res) 
-		 || theServlet == null) {
-                load();
-            }
-	}
-	
-	public void service(HttpServletRequest request, 
-			    HttpServletResponse response,
-			    boolean precompile)
-	    throws ServletException, IOException, FileNotFoundException 
-	{
-            try {
-                loadIfNecessary(request, response);
-
-		// If a page is to only to be precompiled return.
-		if (precompile)
-		    return;
-
-		if (theServlet instanceof SingleThreadModel) {
-		    // sync on the wrapper so that the freshness
-		    // of the page is determined right before servicing
-		    synchronized (this) {
-			theServlet.service(request, response);
-		    }
-		} else {
-		    theServlet.service(request, response);
-		}
-
-            } catch (FileNotFoundException ex) {
-		try {
-                    if (insecure_TMI) {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                                           ContainerLiaison.getString
-                                           ("jsp.error.file.not.found.TMI", 
-                                            new Object[] {
-                                                ex.getMessage()
-                                            }));
-                    } else {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                                           ContainerLiaison.getString
-                                           ("jsp.error.file.not.found", 
-                                            new Object[] {
-                                                // Too Much Information -- ex.getMessage()
-                                            }));
-                    }
-		} catch (IllegalStateException ise) {
-                    // logs are presumed to be secure, thus the TMI info can be logged
-		    ContainerLiaison.message(ContainerLiaison.getString
-					     ("jsp.error.file.not.found.TMI",
-					     new Object[] {
-						 ex.getMessage()
-					     }), 
-					    Log.ERROR);
-		    // rethrow FileNotFoundException so someone higher up can handle
-                    if (insecure_TMI)
-                        throw ex;
-                    else
-			throw new FileNotFoundException(ContainerLiaison.getString
-                                           ("jsp.error.file.not.found", 
-                                            new Object[] {
-                                                // Too Much Information -- ex.getMessage()
-                                            }));
-		}
-                return;
-            }
-	}
-
-	public void destroy() {
-	    if (theServlet != null)
-		theServlet.destroy();
-	}
-    }
-	
-	
     protected ServletContext context = null;
-    protected Hashtable jsps = new Hashtable();
-    //    protected Hashtable loadedJSPs = new Hashtable();
+
+    // XXX Is it the config of JspServlet or of the jsp page ?
     protected ServletConfig config;
-    protected ClassLoader loader;
-    protected Options options;
-    protected ClassLoader parentClassLoader;
-    //    protected ServletEngine engine;
+
     protected String serverInfo;
-    
+
+    protected Hashtable jsps = new Hashtable();
+
+    protected Options options;
+
     /** Set to true to provide Too Much Information on errors */
     private final boolean insecure_TMI = false;
-
-    static boolean firstTime = true;
-    static boolean jdk12=false;
-    static {
-	try {
-	    Class.forName( "java.security.PrivilegedAction" );
-	    jdk12=true;
-	} catch(Throwable ex ) {
-	}
-    }
 
     public void init(ServletConfig config)
 	throws ServletException
@@ -253,97 +116,15 @@ public class JspServlet extends HttpServlet {
         this.serverInfo = context.getServerInfo();
         
 	options = new OptionsServletConfig(config, context);
+	//	if( debug>0 )
+	log("Init " + config );
 
-	parentClassLoader = (ClassLoader) context.getAttribute(Constants.SERVLET_CLASS_LOADER);
-	if (parentClassLoader == null)
-	    parentClassLoader = this.getClass().getClassLoader();
-            
-	// getClass().getClassLoader() returns null in JDK 1.1.6/1.1.8
-	if (parentClassLoader != null) {
-            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
-                              new Object[] {
-                                  parentClassLoader.toString()
-                              }, Log.DEBUG);
-            }
-	else {
-            ContainerLiaison.message("jsp.message.parent_class_loader_is", 
-                              new Object[] {
-                                  "<none>"
-                              }, Log.DEBUG);
-	}
-	//	System.out.println("JspServlet: init " + config.getServletName() );
-	if( loader==null ) {
-	    if( jdk12 ) {
-		try {
-		    Class ld=Class.forName("org.apache.jasper34.servlet.JasperLoader12");
-		    loader=(JasperLoader)ld.newInstance();
-		} catch(Throwable t ) {
-		    loghelper.log("Loading org.apache.jasper34.servlet.JasperLoader12", t);
-		}
-	    }
-	    if( loader==null )
-		loader = new JasperLoader();
-
-	    ((JasperLoader)loader).setParentClassLoader(parentClassLoader);
-	    ((JasperLoader)loader).setScratchDir(options.getScratchDir().toString());
-	    Object pd=context.getAttribute("org.apache.tomcat.protection_domain");
-	    ((JasperLoader)loader).setProtectionDomain( pd );
-	}
-	if (firstTime) {
-	    firstTime = false;
-	    ContainerLiaison.message("jsp.message.scratch.dir.is", 
-			      new Object[] { 
-				  options.getScratchDir().toString() 
-			      }, Log.INFORMATION );
-	    ContainerLiaison.message("jsp.message.dont.modify.servlets", Log.INFORMATION);
+	// XXX each generate servlet will check that - so it works with JSPC
+	// and without JspServlet
+	if( JspFactory.getDefaultFactory() ==null )
 	    JspFactory.setDefaultFactory(new JspFactoryImpl());
-	}
     }
 
-    private void serviceJspFile(HttpServletRequest request, 
-      				HttpServletResponse response, String jspUri, 
-				Throwable exception, boolean precompile) 
-	throws ServletException, IOException
-    {
-	boolean isErrorPage = exception != null;
-	
-	JspServletWrapper wrapper = (JspServletWrapper) jsps.get(jspUri);
-	if (wrapper == null) {
-	    wrapper = new JspServletWrapper(jspUri, isErrorPage);
-	    jsps.put(jspUri, wrapper);
-	}
-	
-	wrapper.service(request, response, precompile);
-    }
-
-
-    boolean preCompile(HttpServletRequest request) 
-        throws ServletException 
-    {
-        boolean precompile = false;
-        String precom = request.getParameter(Constants.PRECOMPILE);
-        String qString = request.getQueryString();
-        
-        if (precom != null) {
-            if (precom.equals("true")) 
-                precompile = true;
-            else if (precom.equals("false")) 
-                precompile = false;
-            else {
-		    // This is illegal.
-		    throw new ServletException("Can't have request parameter " +
-					       Constants.PRECOMPILE + " set to " + precom);
-		}
-	    }
-        else if (qString != null && (qString.startsWith(Constants.PRECOMPILE) ||
-                                     qString.indexOf("&" + Constants.PRECOMPILE)
-                                     != -1))
-            precompile = true;
-
-        return precompile;
-    }
-    
-    
 
     public void service (HttpServletRequest request, 
     			 HttpServletResponse response)
@@ -360,33 +141,36 @@ public class JspServlet extends HttpServlet {
             else
                 jspUri = includeUri;
 
-//	    System.out.println("JspServletWrapper: " + includeUri + " " +
-//                            jspUri + 
-// 			       (String) request.getAttribute(
-//                                  Constants.INC_REQUEST_URI));
+            boolean precompile = isPreCompile(request);
 
-            boolean precompile = preCompile(request);
+	    // XXX This seemed to be true all the time.
+	    // When do we have exception ??
+	    boolean isErrorPage = false; //exception != null;
+	
+	    JspServletWrapper wrapper = (JspServletWrapper) jsps.get(jspUri);
+	    if( debug>0 )
+		log("Service " + jspUri + " " + wrapper );
+	    if (wrapper == null) {
+		wrapper = new JspServletWrapper(jspUri, isErrorPage);
+		jsps.put(jspUri, wrapper);
+	    }
 
-// 	    Log jasperLog = Constants.jasperLog;
+	    wrapper.initWrapper( context, options, request, response);
+
+	    if( wrapper.isOutDated() ) {
+		compileJsp(wrapper, wrapper.jspUri, wrapper.isErrorPage,
+			   request, response);
+	    }
 	    
-//             if (jasperLog != null &&
-// 		jasperLog.getLevel() >= Log.INFORMATION)
-// 		{
-// 		    jasperLog.log("JspEngine --> "+jspUri);
-// 		    jasperLog.log("\t     ServletPath: "+request.getServletPath());
-// 		    jasperLog.log("\t        PathInfo: "+request.getPathInfo());
-// 		    jasperLog.log("\t        RealPath: "
-// 				  +getServletConfig().getServletContext().getRealPath(jspUri));
-// 		    jasperLog.log("\t      RequestURI: "+request.getRequestURI());
-// 		    jasperLog.log("\t     QueryString: "+request.getQueryString());
-// 		    jasperLog.log("\t  Request Params: ");
-// 		    Enumeration e = request.getParameterNames();
-// 		    while (e.hasMoreElements()) {
-// 			String name = (String) e.nextElement();
-// 			jasperLog.log("\t\t "+name+" = "+request.getParameter(name));
-// 		    }
-// 		}
-            serviceJspFile(request, response, jspUri, null, precompile);
+
+	    // If a page is to only to be precompiled return.
+	    if (precompile)
+		return;
+	
+	    wrapper.service(request, response);
+
+	} catch (FileNotFoundException ex) {
+	    handleFileNotFoundException( ex, response );
 	} catch (RuntimeException e) {
 	    throw e;
 	} catch (ServletException e) {
@@ -396,17 +180,94 @@ public class JspServlet extends HttpServlet {
 	} catch (Throwable e) {
 	    throw new ServletException(e);
 	}
-
-	// It's better to throw the exception - we don't
-	// know if we can deal with sendError ( buffer may be
-	// commited )
-	// catch (Throwable t) {
-	// 	    unknownException(response, t);
-	// 	}
     }
 
+    void compileJsp(JspServletWrapper jsw,String jspUri,  boolean isErrorPage,
+		    HttpServletRequest req, HttpServletResponse res) 
+	throws JasperException, FileNotFoundException 
+    {
+	synchronized ( this ) {
+	    try {
+		// second check - maybe it was compiled while we
+		// waited for the sync 
+		if ( ! jsw.isOutDated() )
+		    return;
+		
+		Compiler compiler = new Compiler(jsw.containerL);
+		compiler.jsp2java( jsw.pageInfo );
+		String javaFile=
+		    jsw.pageInfo.getMangler().getJavaFileName();
+		
+		JavaCompiler javaC=
+		    compiler.createJavaCompiler( jsw.pageInfo );
+		compiler.prepareCompiler( javaC, jsw.pageInfo );
+		boolean status = javaC.compile( javaFile );
+		
+		if (status == false) {
+		    String msg = javaC.getCompilerMessage();
+		    throw new JasperException("Unable to compile " + msg);
+		    // XXX remember this - until the file is changed !!
+		}
+		
+		// remove java file if !keepgenerated, etc
+		compiler.postCompile(jsw.pageInfo);
+	       
+		if( jsw.theServlet == null) {
+		    // A (re)load happened - need to init the servlet
+		    jsw.load( this.config );
+		}
+	    } catch (ClassNotFoundException cex) {
+		throw new JasperException(
+	       	  ContainerLiaison.getString("jsp.error.unable.load"),cex);
+	    } catch (FileNotFoundException ex) {
+		throw ex;
+	    } catch (JasperException ex) {
+		throw ex;
+	    } catch (Exception ex) {
+		throw new JasperException(
+		 ContainerLiaison.getString("jsp.error.unable.compile"), ex);
+	    }
+	}
+    }
+
+    // XXX Do we need all this ??? 
+    private void handleFileNotFoundException( IOException ex,
+					      HttpServletResponse response)
+	throws IOException, IllegalStateException
+    {
+	try {
+	    if (insecure_TMI) {
+		response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+				       ContainerLiaison.getString
+				   ("jsp.error.file.not.found.TMI", 
+				    new Object[] { ex.getMessage() }));
+	    } else {
+		response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+				   ContainerLiaison.getString
+				   ("jsp.error.file.not.found", 
+				    new Object[] {}));
+	    }
+	} catch (IllegalStateException ise) {
+	    // logs are presumed to be secure,
+	    //  thus the TMI info can be logged
+	    ContainerLiaison.message(ContainerLiaison.getString
+					 ("jsp.error.file.not.found.TMI",
+					  new Object[] { ex.getMessage()}), 
+				     Log.ERROR);
+	    // rethrow FileNotFoundException so someone higher
+	    // up can handle
+	    if (insecure_TMI)
+		throw ex;
+	    else
+		throw new FileNotFoundException(ContainerLiaison.getString
+						("jsp.error.file.not.found", 
+						     new Object[] {}));
+	}
+    }
+
+    /** Destroy all generated Jsp Servlets
+     */
     public void destroy() {
-	//	if (Constants.jasperLog != null)
 	ContainerLiaison.message("JspServlet.destroy()", Log.INFORMATION);
 
 	Enumeration servlets = jsps.elements();
@@ -414,133 +275,43 @@ public class JspServlet extends HttpServlet {
 	    ((JspServletWrapper) servlets.nextElement()).destroy();
     }
 
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @param classpath explicitly set the JSP compilation path.
-     *  @return true if JSP files is newer
+
+    
+    // -------------------- Utils --------------------
+
+    /** Detect if we're in a precompile request
      */
-    boolean loadJSP(String jspUri, String classpath, 
-	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
+    private boolean isPreCompile(HttpServletRequest request) 
+        throws ServletException 
     {
-	// Loader knows how to set the right priviledges, and call
-	// doLoadeJsp
-	return ((JasperLoader)loader).loadJSP( this,jspUri, classpath, isErrorPage, req, res );
-    }
-
-
-
-    /*  Check if we need to reload a JSP page.
-     *
-     *  Side-effect: re-compile the JSP page.
-     *
-     *  @param classpath explicitly set the JSP compilation path.
-     *  @return true if JSP files is newer
-     */
-    protected boolean doLoadJSP(String jspUri, String classpath, 
-	boolean isErrorPage, HttpServletRequest req, HttpServletResponse res) 
-	throws JasperException, FileNotFoundException 
-    {
-	JspServletWrapper jsw=(JspServletWrapper) jsps.get(jspUri);
-	if( jsw==null ) {
-	    throw new JasperException("Can't happen - JspServletWrapper=null");
-	}
-	//	Class jspClass = (Class) loadedJSPs.get(jspUri);
-	boolean firstTime = jsw.servletClass == null;
-   JspEngineContext ctxt = new JspEngineContext(loader, classpath,
-                                                     context, jspUri, 
-                                                     isErrorPage, options,
-                                                     req, res);
-   
-	boolean outDated = false; 
-	ContainerLiaison containerL=ctxt;
-	
-        Compiler compiler = new Compiler(ctxt);
-	//compiler.setJavaCompiler(ctxt.getJavaCompiler());
-
-	ManglerOld mangler=new ManglerOld();
-        JspPageInfo pageInfo=new JspPageInfo( ctxt, options,
-					      mangler );
-       
-	pageInfo.setJspFile( jspUri );
-	pageInfo.setErrorPage( isErrorPage );
-	
-	mangler.init(pageInfo.getJspFile(), containerL.getOutputDir());
-	//	compiler.setMangler( mangler );
-	
+        boolean precompile = false;
+        String precom = request.getParameter(Constants.PRECOMPILE);
+        String qString = request.getQueryString();
         
-        try {
-            outDated = isOutDated( containerL, pageInfo.getJspFile(), mangler);
-            if ( (jsw.servletClass == null) || outDated ) {
-                synchronized ( this ) {
-                    if ((jsw.servletClass == null) ||
-			( isOutDated(containerL, pageInfo.getJspFile(),
-				     mangler) ))  {
-                        outDated = compiler.compile(pageInfo,
-						    ctxt.getJavaCompiler());
-                    }
-		}
-            }
-        } catch (FileNotFoundException ex) {
-	    compiler.removeGeneratedFiles(pageInfo);
-            throw ex;
-        } catch (JasperException ex) {
-            throw ex;
-        } catch (Exception ex) {
-	    throw new JasperException(ContainerLiaison.getString("jsp.error.unable.compile"),
-                                      ex);
-	}
-
-	// Reload only if it's outdated
-	if((jsw.servletClass == null) || outDated) {
-	    try {
-// 		if( null ==ctxt.getServletClassName() ) {
-// 		    compiler.computeServletClassName();
-// 		}
-		jsw.servletClass =
-		    loader.loadClass(pageInfo.getFullClassName());
-                        //loadClass(ctxt.getFullClassName(), true);
-	    } catch (ClassNotFoundException cex) {
-		throw new JasperException(ContainerLiaison.getString("jsp.error.unable.load"), 
-					  cex);
+        if (precom != null) {
+            if (precom.equals("true")) 
+                precompile = true;
+            else if (precom.equals("false")) 
+                precompile = false;
+            else {
+		// This is illegal.
+		throw new ServletException("Can't have request parameter " +
+					   Constants.PRECOMPILE +
+					   " set to " + precom);
 	    }
-	    
-	    //	    loadedJSPs.put(jspUri, jspClass);
-	}
-	
-	return outDated;
+	} else if (qString != null &&
+		   (qString.startsWith(Constants.PRECOMPILE) ||
+		    qString.indexOf("&" + Constants.PRECOMPILE) != -1))
+            precompile = true;
+
+        return precompile;
+    }
+    
+
+    private int debug=10;
+    public void log( String s ) {
+	System.out.println("JspServlet: " + s );
     }
 
-    /**
-     * Determines whether the current JSP class is older than the JSP file
-     * from whence it came
-     */
-    public boolean isOutDated(ContainerLiaison containerL, String jspS,
-			      Mangler mangler)
-    {
-	boolean outDated=false;
-	File jsp=new File( jspS );
-        File jspReal = null;
 
-        String realPath = containerL.getRealPath(jsp.getPath());
-        if (realPath == null)
-            return true;
-
-        jspReal = new File(realPath);
-	
-	if(!jspReal.exists()){
-	    return true;
-	}
-	
-	File classFile = new File(mangler.getClassFileName());
-        if (classFile.exists()) {
-            outDated = classFile.lastModified() < jspReal.lastModified();
-        } else {
-            outDated = true;
-        }
-
-        return outDated;
-    }
 }
