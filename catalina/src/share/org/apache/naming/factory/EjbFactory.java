@@ -174,9 +174,17 @@ public class EjbFactory
                     } catch(Throwable t) {
                     }
                 }
+            } else {
+                String javaxEjbFactoryClassName =
+                    System.getProperty("javax.ejb.Factory",
+                                       Constants.OPENEJB_EJB_FACTORY);
+                try {
+                    factory = (ObjectFactory)
+                        Class.forName(javaxEjbFactoryClassName).newInstance();
+                } catch(Throwable t) {
+                }
             }
 
-            // Note: No defaults here
             if (factory != null) {
                 return factory.getObjectInstance
                     (obj, name, nameCtx, environment);
