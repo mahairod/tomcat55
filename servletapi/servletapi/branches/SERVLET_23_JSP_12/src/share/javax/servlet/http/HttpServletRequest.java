@@ -204,11 +204,13 @@ public interface HttpServletRequest extends ServletRequest {
      * @param name		a <code>String</code> specifying the
      *				header name
      *
-     * @return			a <code>Enumeration</code> containing the
-     *				values of the requested
-     *				header, or <code>null</code>
-     *				if the request does not
-     *				have any headers of that name
+     * @return			an <code>Enumeration</code> containing
+     *                  	the values of the requested header. If
+     *                  	the request does not have any headers of
+     *                  	that name return an empty
+     *                  	enumeration. If 
+     *                  	the container does not allow access to
+     *                  	header information, return null
      *
      */			
 
@@ -235,6 +237,7 @@ public interface HttpServletRequest extends ServletRequest {
      *				if the servlet container does not
      *				allow servlets to use this method,
      *				<code>null</code>
+     *				
      *
      */
 
