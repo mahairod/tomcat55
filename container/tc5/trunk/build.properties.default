@@ -160,11 +160,11 @@ commons-pool.jar=${commons-pool.lib}/commons-pool.jar
 commons-pool.loc=http://www.apache.org/dist/jakarta/commons/pool/binaries/pool-1.0.1.tar.gz
 
 
-# ----- Commons FileUpload, version 1.0 or later -----
-commons-fileupload.home=${base.path}/commons-fileupload-1.0-beta-1
+# ----- Commons FileUpload, version 1.0-20030531 or later -----
+commons-fileupload.home=${base.path}/commons-fileupload-1.0-rc1
 commons-fileupload.lib=${commons-fileupload.home}
 commons-fileupload.jar=${commons-fileupload.lib}/commons-fileupload-1.0-beta-1.jar
-commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/fileupload/binaries/commons-fileupload-1.0-beta-1.tar.gz
+commons-fileupload.loc=http://www.apache.org/dist/jakarta/commons/nightly/fileupload/commons-fileupload-20030531.tar.gz
 
 
 # ----- Java Management Extensions (JMX), JMX RI 1.0.1 or later or MX4J 1.1 or later -----
