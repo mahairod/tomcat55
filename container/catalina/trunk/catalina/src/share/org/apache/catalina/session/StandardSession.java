@@ -495,6 +495,9 @@ public class StandardSession
     public void setMaxInactiveInterval(int interval) {
 
         this.maxInactiveInterval = interval;
+        if (isValid && interval == 0) {
+            expire();
+        }
 
     }
 
