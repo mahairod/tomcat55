@@ -10,6 +10,7 @@
   
   <!-- If not set explicitely in one of the user overrides, set it here 
     -->
+  <property name="base.path" location="../repository" />
 
   <property file="build.properties.default"/>
 
@@ -81,7 +82,6 @@
     <mkdir dir="${tomcat.build}"/>
     <mkdir dir="${tomcat.build}/classes" />
     <mkdir dir="${tomcat.build}/server/lib" />
-    <mkdir dir="${tomcat.build}/common/lib" />
     <mkdir dir="${tomcat.build}/common/lib" />
 
     <uptodate property="servletapi.build.notrequired"
@@ -251,7 +251,6 @@
     <mkdir dir="${ROOT.base}/WEB-INF/src" />
     <mkdir dir="${ROOT.base}/WEB-INF/classes" />
     <mkdir dir="${jsp-examples.base}/WEB-INF/src" />
-	<echo message="${tomcat.build}"/>
 
     <path id="jspc.classpath">
       <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -963,10 +962,6 @@
     </copy>
     <copy todir="${tomcat.dist}/server/webapps">
       <fileset dir="${tomcat.build}/server/webapps" />
-    </copy>
-    <mkdir dir="${tomcat.dist}/shared/classes"/>
-    <copy todir="${tomcat.dist}/common/classes">
-      <fileset dir="${tomcat.build}/common/classes" />
     </copy>
 <!--
     <copy todir="${tomcat.dist}/shared/lib">
