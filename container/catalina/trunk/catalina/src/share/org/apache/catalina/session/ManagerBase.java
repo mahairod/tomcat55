@@ -601,6 +601,15 @@ public abstract class ManagerBase implements Manager, MBeanRegistration {
 
 
     // --------------------------------------------------------- Public Methods
+
+
+    /**
+     * Implements the Manager interface, direct call to processExpires
+     */
+    public void backgroundProcess() {
+    }
+
+
     public void destroy() {
         if( oname != null )
             Registry.getRegistry().unregisterComponent(oname);
