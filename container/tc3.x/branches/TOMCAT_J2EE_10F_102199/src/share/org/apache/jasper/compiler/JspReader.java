@@ -664,7 +664,7 @@ public class JspReader {
 	if ( ! isSpace() ) {
 	    int ch = peekChar();
 	    // Look for a single-char work delimiter:
-	    if ( ch == '=' || ch == '>' || ch == '"' || ch == '\'' ) 
+	    if ( ch == '=' || ch == '>' || ch == '"' || ch == '\'' || ch == '/') 
 		return true;
 	    // Look for an end-of-comment or end-of-tag:		
 	    if ( ch == '-' ) {
