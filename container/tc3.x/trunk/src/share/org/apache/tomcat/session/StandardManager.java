@@ -328,6 +328,16 @@ public final class StandardManager implements Runnable  {
                 that given.
         */
         public void setSessions(Hashtable sessions) {
+            
+                // make sure all the sessions know they belong to us
+                Enumeration e = sessions.keys();
+                while (e.hasMoreElements())
+                {
+                    StandardSession sess 
+                        = (StandardSession)sessions.get(e.nextElement());
+                    sess.setManager(this);
+                }
+            
                 this.sessions = sessions;
         }
 	
