@@ -120,6 +120,7 @@ public class EjbFactory
                 Object beanObj = (new InitialContext()).lookup(ejbLink);
                 // Load home interface and checking if bean correctly
                 // implements specified home interface
+                /*
                 String homeClassName = ref.getClassName();
                 try {
                     Class home = Class.forName(homeClassName);
@@ -133,17 +134,16 @@ public class EjbFactory
                                            + beanObj.getClass().getName() 
                                            + " doesn't implement home interface " 
                                            + home.getName());
-                        /*
-                          throw new NamingException
-                          ("Bean of type " + beanObj.getClass().getName() 
-                          + " doesn't implement home interface " 
-                          + home.getName());
-                        */
+                        throw new NamingException
+                            ("Bean of type " + beanObj.getClass().getName() 
+                             + " doesn't implement home interface " 
+                             + home.getName());
                     }
                 } catch (ClassNotFoundException e) {
                     System.out.println("Couldn't load home interface "
                                        + homeClassName);
                 }
+                */
                 return beanObj;
             }
             
