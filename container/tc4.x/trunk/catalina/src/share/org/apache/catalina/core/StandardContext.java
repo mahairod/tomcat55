@@ -3190,12 +3190,12 @@ public class StandardContext
         Hashtable contextEnv = new Hashtable();
         javax.naming.Context namingContext = 
             new NamingContext(contextEnv, getName());
-        ContextAccessController.setSecurityToken(getName(), this);
-        ContextBindings.bindContext(getName(), namingContext, this);
-        ContextBindings.bindThread(getName(), this);
+        ContextAccessController.setSecurityToken(this, this);
+        ContextBindings.bindContext(this, namingContext, this);
+        ContextBindings.bindThread(this, this);
 
         // Setting the context in read/write mode
-        ContextAccessController.setWritable(getName(), this);
+        ContextAccessController.setWritable(this, this);
 
         // Creating the comp subcontext
         javax.naming.Context compCtx = namingContext.createSubcontext("comp");
@@ -3326,11 +3326,14 @@ public class StandardContext
             log(sm.getString("standardContext.bindFailed", e));
         }
 
-
         // Setting the context in read only mode
-        ContextAccessController.setReadOnly(getName());
+        ContextAccessController.setReadOnly(this);
 
-        ContextBindings.unbindThread(getName(), this);
+        ContextBindings.unbindThread(this, this);
+
+        // Binding the naming context to the class loader
+        ContextBindings.bindClassLoader
+            (this, this, getLoader().getClassLoader());
 
     }
 

@@ -101,7 +101,7 @@ public class ContextAccessController {
      * @param name Name of the context
      * @param context Security token
      */
-    public static void setSecurityToken(String name, Object token) {
+    public static void setSecurityToken(Object name, Object token) {
         if ((!securityTokens.containsKey(name)) && (token != null)) {
             securityTokens.put(name, token);
         }
@@ -117,7 +117,7 @@ public class ContextAccessController {
      * @param context Submitted security token
      */
     public static boolean checkSecurityToken
-        (String name, Object token) {
+        (Object name, Object token) {
         Object refToken = securityTokens.get(name);
         if (refToken == null)
             return (true);
@@ -133,7 +133,7 @@ public class ContextAccessController {
      * @param name Name of the context
      * @param token Security token
      */
-    public static void setWritable(String name, Object token) {
+    public static void setWritable(Object name, Object token) {
         if (checkSecurityToken(name, token))
             readOnlyContexts.remove(name);
     }
@@ -144,7 +144,7 @@ public class ContextAccessController {
      * 
      * @param name Name of the context
      */
-    public static void setReadOnly(String name) {
+    public static void setReadOnly(Object name) {
         readOnlyContexts.put(name, name);
     }
 
@@ -154,7 +154,7 @@ public class ContextAccessController {
      * 
      * @param name Name of the context
      */
-    public static boolean isWritable(String name) {
+    public static boolean isWritable(Object name) {
         return !(readOnlyContexts.containsKey(name));
     }
 

@@ -187,21 +187,25 @@ final class StandardContextValve
 	// Ask this Wrapper to process this Request
 	response.setContext(context);
 
+/*
         if (context.isUseNaming()) {
             try {
                 // Bind the thread to the context
-                ContextBindings.bindThread(context.getName(), context);
+                ContextBindings.bindThread(context, context);
             } catch (NamingException e) {
                 e.printStackTrace();
             }
         }
+*/
 
 	wrapper.invoke(request, response);
 
+/*
         if (context.isUseNaming()) {
             // Unbind the thread to the context
-            ContextBindings.unbindThread(context.getName(), context);
+            ContextBindings.unbindThread(context, context);
         }
+*/
 
     }
 

@@ -127,7 +127,8 @@ public class javaURLContextFactory
     public Object getObjectInstance(Object obj, Name name, Context nameCtx,
                                     Hashtable environment)
         throws NamingException {
-        if (ContextBindings.isThreadBound()) {
+        if ((ContextBindings.isThreadBound()) || 
+            (ContextBindings.isClassLoaderBound())) {
             return new SelectorContext(environment);
         } else {
             return null;
@@ -140,7 +141,8 @@ public class javaURLContextFactory
      */
     public Context getInitialContext(Hashtable environment)
         throws NamingException {
-        if (ContextBindings.isThreadBound()) {
+        if (ContextBindings.isThreadBound() || 
+            (ContextBindings.isClassLoaderBound())) {
             // Redirect the request to the bound initial context
             return new SelectorContext(environment, true);
         } else {
