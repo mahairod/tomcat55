@@ -455,15 +455,15 @@ source factory.
 NOTE:  This step is only required if you wish to build the classes needed to
 run Tomcat as a native operating system daemon using commons-daemon.
 
-* Download a binary distribution of version 1.0-Alpha or later from:
+* Download a binary distribution of version 1.0 or later from:
 
     http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-daemon
 
   On a Windows platform, you will need:
-    commons-daemon-1.0-Alpha.zip
+    commons-daemon-1.0.zip
 
   On a Unix platform, you will need:
-    commons-daemon-1.0-Alpha.tar.gz
+    commons-daemon-1.0.tar.gz
 
 * Unpack the binary distribution into a convenient location so that the
   distribution resides in its own directory.
