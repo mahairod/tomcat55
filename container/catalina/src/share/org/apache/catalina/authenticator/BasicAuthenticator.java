@@ -29,6 +29,9 @@ import org.apache.catalina.deploy.LoginConfig;
 import org.apache.catalina.util.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.buf.ByteChunk;
+import org.apache.tomcat.util.buf.CharChunk;
+import org.apache.tomcat.util.buf.MessageBytes;
 
 
 
@@ -47,7 +50,30 @@ public class BasicAuthenticator
 
 
 
-    // ----------------------------------------------------- Instance Variables
+    /**
+     * Authenticate bytes.
+     */
+    public static final byte[] AUTHENTICATE_BYTES = {
+        (byte) 'W',
+        (byte) 'W',
+        (byte) 'W',
+        (byte) '-',
+        (byte) 'A',
+        (byte) 'u',
+        (byte) 't',
+        (byte) 'h',
+        (byte) 'e',
+        (byte) 'n',
+        (byte) 't',
+        (byte) 'i',
+        (byte) 'c',
+        (byte) 'a',
+        (byte) 't',
+        (byte) 'e'
+    };
+
+
+   // ----------------------------------------------------- Instance Variables
 
 
     /**
@@ -119,9 +145,39 @@ public class BasicAuthenticator
         }
 
         // Validate any credentials already included with this request
-        String authorization = request.getAuthorization();
-        String username = parseUsername(authorization);
-        String password = parsePassword(authorization);
+        String username = null;
+        String password = null;
+
+        MessageBytes authorization = 
+            request.getCoyoteRequest().getMimeHeaders()
+            .getValue("authorization");
+        
+        if (authorization != null) {
+            authorization.toBytes();
+            ByteChunk authorizationBC = authorization.getByteChunk();
+            if (authorizationBC.startsWithIgnoreCase("basic ", 0)) {
+                authorizationBC.setOffset(authorizationBC.getOffset() + 6);
+                // FIXME: Add trimming
+                // authorizationBC.trim();
+                
+                CharChunk authorizationCC = authorization.getCharChunk();
+                Base64.decode(authorizationBC, authorizationCC);
+                
+                // Get username and password
+                int colon = authorizationCC.indexOf(':');
+                if (colon < 0) {
+                    username = authorizationCC.toString();
+                } else {
+                    char[] buf = authorizationCC.getBuffer();
+                    username = new String(buf, 0, colon);
+                    password = new String(buf, colon + 1, 
+                            buf.length - colon - 1);
+                }
+                
+                authorizationBC.setOffset(authorizationBC.getOffset() - 6);
+            }
+        }
+        
         principal = context.getRealm().authenticate(username, password);
         if (principal != null) {
             register(request, response, principal, Constants.BASIC_METHOD,
@@ -130,74 +186,25 @@ public class BasicAuthenticator
         }
 
         // Send an "unauthorized" response and an appropriate challenge
-        String realmName = config.getRealmName();
-        if (realmName == null)
-            realmName = request.getServerName() + ":" + request.getServerPort();
-        response.setHeader("WWW-Authenticate",
-                       "Basic realm=\"" + realmName + "\"");
+        MessageBytes authenticate = 
+            response.getCoyoteResponse().getMimeHeaders()
+            .addValue(AUTHENTICATE_BYTES, 0, AUTHENTICATE_BYTES.length);
+        CharChunk authenticateCC = authenticate.getCharChunk();
+        authenticateCC.append("Basic realm=\"");
+        if (config.getRealmName() == null) {
+            authenticateCC.append(request.getServerName());
+            authenticateCC.append(':');
+            authenticateCC.append(Integer.toString(request.getServerPort()));
+        } else {
+            authenticateCC.append(config.getRealmName());
+        }
+        authenticateCC.append('\"');        
+        authenticate.toChars();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         //response.flushBuffer();
         return (false);
 
     }
-
-
-    // ------------------------------------------------------ Protected Methods
-
-
-    /**
-     * Parse the username from the specified authorization credentials.
-     * If none can be found, return <code>null</code>.
-     *
-     * @param authorization Authorization credentials from this request
-     */
-    protected String parseUsername(String authorization) {
-
-        if (authorization == null)
-            return (null);
-        if (!authorization.toLowerCase().startsWith("basic "))
-            return (null);
-        authorization = authorization.substring(6).trim();
-
-        // Decode and parse the authorization credentials
-        String unencoded =
-            new String(Base64.decode(authorization.getBytes()));
-        int colon = unencoded.indexOf(':');
-        if (colon < 0)
-            return (null);
-        String username = unencoded.substring(0, colon);
-        //        String password = unencoded.substring(colon + 1).trim();
-        return (username);
-
-    }
-
-
-    /**
-     * Parse the password from the specified authorization credentials.
-     * If none can be found, return <code>null</code>.
-     *
-     * @param authorization Authorization credentials from this request
-     */
-    protected String parsePassword(String authorization) {
-
-        if (authorization == null)
-            return (null);
-        if (!authorization.startsWith("Basic "))
-            return (null);
-        authorization = authorization.substring(6).trim();
-
-        // Decode and parse the authorization credentials
-        String unencoded =
-          new String(Base64.decode(authorization.getBytes()));
-        int colon = unencoded.indexOf(':');
-        if (colon < 0)
-            return (null);
-        //        String username = unencoded.substring(0, colon).trim();
-        String password = unencoded.substring(colon + 1);
-        return (password);
-
-    }
-
 
 
 }
