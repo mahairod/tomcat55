@@ -49,10 +49,13 @@
         <bug>31277</bug>: Clarified automatic application deployment section of Host configuration page. (yoavs)
       </fix>
      <fix> 
-       <bug>28631</bug>: JAASRealm enhancements to support custom user, role class names, use Commons-Logging. (yoavs) 
+       <bug>28631</bug>: JAASRealm enhancements to support custom user and role classes  use Commons-Logging. (yoavs)
      </fix> 
      <fix>
        <bug>31364</bug>: Missing resource in org.apache.catalina.core.LocalString.properties. (yoavs)
+     </fix>
+     <fix>
+       <bug>31362</bug>: Missing -Xdebug in catalina.bat when launching with JPDA and Security. (yoavs)
      </fix>
     </changelog>
   </subsection>
