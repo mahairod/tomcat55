@@ -142,8 +142,8 @@
   <!--                       for the current web application]               -->
   <!--                                                                      -->
   <!-- If you wish to use Jikes to compile JSP pages:                       -->
-  <!--   Set the init parameter "compiler" to "jikes".                      -->
-  <!--   Define the property "-Dbuild.compiler.emacs" when starting Tomcat. -->
+  <!--   Set the init parameter "compiler" to "jikes".  Define              -->
+  <!--   the property "-Dbuild.compiler.emacs=true" when starting Tomcat.   -->
   <!--   If you get an error reporting that jikes can't use UTF8 encoding,  -->
   <!--   try setting the init parameter "javaEncoding" to "ISO-8859-1".     -->
 
