@@ -29,11 +29,11 @@
 <p>To install and configure SSL support on Tomcat 5, you need to follow
 these simple steps.  For more information, read the rest of this HOW-TO.</p>
 <ol>
-<li>Download JSSE 1.0.2 (or later) from
+<li>If you are running a 1.3 JVM, download JSSE 1.0.2 (or later) from
    <a href="http://java.sun.com/products/jsse/">http://java.sun.com/products/jsse/</a>
    and either make it an <em>installed extension</em> on the system, or else
    set an environment variable <code>JSSE_HOME</code> that points at the
-   directory into which you installed JSSE.</li><br/><br/>
+   directory into which you installed JSSE.  </li><br/><br/>
 <li>Create a certificate keystore by executing the following command:
 <p>Windows:</p>
 <source>
@@ -275,10 +275,8 @@ file installed with Tomcat.  It will look something like this:</p>
 &lt;Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
            port="8443" minProcessors="5" maxProcessors="75"
            enableLookups="true" disableUploadTimeout="true"
-           acceptCount="100" debug="0" scheme="https" secure="true"&gt;
-  &lt;Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
-           clientAuth="false" protocol="TLS"/&gt;
-&lt;/Connector&gt;
+           acceptCount="100" debug="0" scheme="https" secure="true";
+           clientAuth="false" sslprotocol="TLS"/&gt;
 --&gt;
 </source>
 
@@ -305,21 +303,14 @@ numbers lower than 1024 on many operating systems.</p>
   that SSL is required, as required by the Servlet 2.4 Specification.</p>
   </em></blockquote>
 
-<p>You will notice a <code>Factory</code> element nested inside the
-<code>Connector</code> element.  This is where the "socket factory" used
-by Tomcat, whenever it needs a socket on the corresponding port number,
-is configured.  You may need to add or change the following attribute
+<p>There are addional option used to configure the SSL protocol.
+  You may need to add or change the following attribute
 values, depending on how you configured your keystore earlier:</p>
 
 <table border="1">
   <tr>
     <th>Attribute</th>
     <th>Description</th>
-  </tr>
-  <tr>
-    <td><code>className</code></td>
-    <td>The fully qualified class name of the Java class that implements
-        this socket factory.  Do not change the default value.</td>
   </tr>
   <tr>
     <td><code>clientAuth</code></td>
@@ -342,9 +333,14 @@ values, depending on how you configured your keystore earlier:</p>
         password than the one Tomcat expects (<code>changeit</code>).</td>
   </tr>
   <tr>
-    <td><code>protocol</code></td>
+    <td><code>sslProtocol</code></td>
     <td>The encryption/decryption protocol to be used on this socket.
         Do not change the default value.</td>
+  </tr>
+  <tr>
+    <td><code>ciphers</code></td>
+    <td>The comma separated list of encryption ciphers that this socket is 
+        allowed to use.  By default, any available cipher is allowed.</td>
   </tr>
 </table>
 

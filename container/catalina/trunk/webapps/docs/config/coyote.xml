@@ -234,9 +234,9 @@
 
   <p>The only element that may be embedded inside a <strong>Connector</strong>
   element is a <strong>Factory</strong> element, which is used to configure
-  a server socket factory component.  See
-  <a href="#SSL Support">SSL Support</a> for more information about when
-  this is required.</p>
+  a server socket factory component.  This element is never required, but
+  is still supported for backwards compatibility with earlier version of
+  Tomcat.</p>
 
 </section>
 
@@ -295,22 +295,15 @@
   <subsection name="SSL Support">
 
   <p>You can enable SSL support for a particular instance of this
-  <strong>Connector</strong> by nesting an appropriate
-  <code>&lt;Factory&gt;</code> element inside, to set up the required
-  SSL socket factory.  This element supports the following attributes:</p>
+  <strong>Connector</strong> by setting the <code>secure</code> attribute to
+  <code>true</code>.  In addition, you may need to configure the following 
+  attributes:</p>
 
   <attributes>
 
     <attribute name="algorithm" required="false">
       <p>The certificate encoding algorithm to be used.  If not
       specified, the default value is <code>SunX509</code>.</p>
-    </attribute>
-
-    <attribute name="className" required="true">
-      <p>The fully qualified class name of the SSL server socket
-      factory implementation class.  You must specify
-      <code>org.apache.coyote.tomcat5.CoyoteServerSocketFactory</code> here.
-      </p>
     </attribute>
 
     <attribute name="clientAuth" required="false">
@@ -340,9 +333,14 @@
       If not specified, the default value is "<code>JKS</code>".</p>
     </attribute>
 
-    <attribute name="protocol" required="false">
+    <attribute name="sslProtocol" required="false">
       <p>The version of the SSL protocol to use.  If not specified,
       the default is "<code>TLS</code>".</p>
+    </attribute>
+ 
+    <attribute name="ciphers" required="false">
+      <p>A comma seperated list of the encryption ciphers that may be used.
+      If not specified, then any available cipher may be used.</p>
     </attribute>
 
   </attributes>
