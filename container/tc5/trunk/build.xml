@@ -8,9 +8,6 @@
   <property file="${user.home}/build.properties"/>
   <property file="build.properties"/>
   
-  <!-- If not set explicitely in one of the user overrides, set it here 
-    -->
-
   <property file="build.properties.default"/>
 
   <!-- Project Properties -->
@@ -137,6 +134,8 @@
           todir="${tomcat.build}/common/lib"/>
 
     <copy todir="${tomcat.build}/common/lib" file="${commons-logging-api.jar}" />
+    <copy todir="${tomcat.build}/common/lib" file="${jmx.jar}" />
+    <copy todir="${tomcat.build}/common/lib" file="${jmx-tools.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-logging.jar}" />
     <copy todir="${tomcat.build}/server/lib" file="${commons-modeler.jar}" />
   </target>
@@ -144,7 +143,6 @@
   <!-- ====================== Build all components =================== -->
   <target name="build-servletapi" unless="servletapi.build.notrequired" >
     <echo>========== Building: ${servlet-api.jar}</echo>
-    <mkdir dir="${servlet-api.dist}" />
     <ant dir="${api.home}/jsr154" target="dist" >
         <property name="servlet-api.dist" value="${servlet-api.home}" />
     </ant>
@@ -397,6 +395,15 @@
           description="Builds catalina">
     <echo>========== Building: catalina </echo>
 
+    <ant dir="${catalina.home}/catalina" target="build-static">
+        <property name="catalina.build" value="${tomcat.build}" />
+        <property name="classes.dir" value="${tomcat.build}/classes" />
+        <property name="tomcat-util.jar"
+                 value="${tomcat.build}/server/lib/tomcat-util.jar"/>
+        <property name="catalina.deploy" value="${tomcat.build}" />
+        <property name="flags.hide" value="true" />
+    </ant>
+
     <ant dir="${catalina.home}/catalina" target="catalina-jars">
         <!-- in-place building -->
         <property name="catalina.build" value="${tomcat.build}" />
@@ -473,7 +480,6 @@
 
   <target name="build-depends" depends="init"
           description="Builds various dependent components">
-
     <antcall target="build-servletapi"/>
     <antcall target="build-jspapi"/>
 
@@ -571,25 +577,22 @@
 
   <target name="embed" description="Create a set of jars for embeded tomcat" > 
     <!-- Generic libraries ( share ?) -->
+    <copy todir="embed/lib" file="${commons-logging.jar}"/>
+    <copy todir="embed/lib" file="${commons-digester.jar}"/>
+    <copy todir="embed/lib" file="${commons-modeler.jar}"/>
+    <copy todir="embed/lib" file="${commons-beanutils.jar}"/>
+    <copy todir="embed/lib" file="${commons-collections.jar}"/>
+    <copy todir="embed/lib" file="${jmx.jar}"/>
+    <copy todir="embed/lib" file="${jmx-tools.jar}"/>
+
     <copy todir="embed/lib">
       <fileset dir="build/server/lib">
-        <include name="commons-logging.jar"/>
-        <include name="commons-modeler.jar"/>
-        <include name="commons-digester.jar"/>
-        <include name="commons-beanutils.jar"/>
         <include name="tomcat-util.jar"/>
-      </fileset>
-      <fileset dir="build/common/lib">
-        <include name="commons-collections.jar"/>
       </fileset>
       <fileset dir="${ant.home}/lib">
         <include name="ant.jar"/>
       </fileset>
     </copy>
-    <copy todir="embed/lib" file="${commons-beanutils.jar}" />
-    
-    <!-- JMX -->
-    <copy todir="embed/lib" file="${jmx.jar}" />
     
     <!-- Connector -->
     <copy todir="embed/lib">
@@ -1363,6 +1366,14 @@
     <available file="${destfile}" property="exist"/>
   </target>
 
+  <target name="testsrc">
+    <echo message="Testing  for ${destfile} versus ${cvs.base}/${location}/src"/>
+    <uptodate property="exist"
+              targetfile="${destfile}">
+      <srcfiles dir="${cvs.base}/${location}/src" includes="**" />
+    </uptodate>
+  </target>
+
   <target name="downloadgz" unless="exist" depends="setproxy,testexist">
     <!-- Download and extract the package -->
     <get src="${sourcefile}" dest="${base.path}/file.tar.gz" />
@@ -1386,7 +1397,18 @@
     <get src="${sourcefile}" dest="${destfile}" />
   </target>
 
-  <target name="cvsbuild" unless="exist" depends="testexist">
+  <target name="cvsbuild" unless="exist" depends="testsrc">
+    <!-- cvs checkout for all source should be done in "update" -->
+    <!-- build the distribution -->
+    <ant dir="${cvs.base}/${location}" target="dist">
+    </ant>
+    <mkdir dir="${subdir}" />
+    <copy todir="${subdir}" >
+      <fileset dir="${cvs.base}/${location}/dist" includes="**" />
+    </copy>
+  </target>
+
+  <target name="cvsbuild.old" unless="exist" depends="testexist">
     <!-- cvs checkout and ant dist + copy of jar file -->
     <echo message="cvs co ${location} ${cvstag} and ant dist in ${subdir}"/>
     <mkdir dir="${base.path}/tmp"/>
@@ -1409,19 +1431,22 @@
           description="Update or checkout required sources from CVS">
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-tomcat-catalina" 
-         dest=".."/>
+         dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-tomcat-jasper" 
-         dest=".."/>
+         dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-tomcat-connectors" 
-         dest=".."/>
+         dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-servletapi-5" 
-         dest=".."/>
+         dest="${cvs.base}"/>
+    <cvs cvsroot="${cvsroot}" quiet="true"
+         command="checkout -P ${cvstag} ${commons-daemon.cvs.loc}"
+         dest="${cvs.base}"/>
     <cvs cvsroot="${cvsroot}" quiet="true"
          command="checkout -P ${cvstag} jakarta-commons" 
-         dest=".."/>
+         dest="${cvs.base}"/>
   </target>
 
 
