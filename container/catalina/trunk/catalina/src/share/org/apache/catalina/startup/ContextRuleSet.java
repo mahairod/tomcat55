@@ -117,13 +117,14 @@ public class ContextRuleSet extends RuleSetBase {
     public void addRuleInstances(Digester digester) {
 
         if (create) {
-                digester.addObjectCreate(prefix + "Context",
-                        "org.apache.catalina.core.StandardContext",
-                "className");
+            digester.addObjectCreate(prefix + "Context",
+                    "org.apache.catalina.core.StandardContext", "className");
+            digester.addSetProperties(prefix + "Context");
+        } else {
+            digester.addRule(prefix + "Context", new SetContextPropertiesRule());
         }
-        digester.addSetProperties(prefix + "Context");
-            digester.addRule(prefix + "Context",
-                             new CopyParentClassLoaderRule());
+        digester.addRule(prefix + "Context",
+                         new CopyParentClassLoaderRule());
         if (create) {
             digester.addRule(prefix + "Context",
                              new LifecycleListenerRule
