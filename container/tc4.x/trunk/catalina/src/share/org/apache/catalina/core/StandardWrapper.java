@@ -785,24 +785,39 @@ public final class StandardWrapper
             log(sm.getString("standardWrapper.jasperLoader", getName()));
         }
 
+        // Set the context class loader
+        if (classLoader != null) {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
+
 	// Load the specified servlet class from the appropriate class loader
 	Class classClass = null;
 	try {
-	    if (classLoader != null)
+	    if (classLoader != null) {
 		classClass = classLoader.loadClass(actualClass);
-	    else
+	    } else {
 		classClass = Class.forName(actualClass);
+            }
 	} catch (ClassNotFoundException e) {
 	    unavailable(null);
+            // Restore the context ClassLoader
+	    if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
 	    throw new ServletException
 		(sm.getString("standardWrapper.missingClass", actualClass),
 		 e);
 	}
 	if (classClass == null) {
-	    unavailable(null);
-	    throw new ServletException
-		(sm.getString("standardWrapper.missingClass", actualClass));
-	}
+            unavailable(null);
+            if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
+            throw new ServletException
+                (sm.getString("standardWrapper.missingClass", actualClass));
+        }
 
 	// Instantiate and initialize an instance of the servlet class itself
 	Servlet servlet = null;
@@ -810,10 +825,20 @@ public final class StandardWrapper
 	    servlet = (Servlet) classClass.newInstance();
 	} catch (ClassCastException e) {
 	    unavailable(null);
+            // Restore the context ClassLoader
+	    if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
 	    throw new ServletException
 		(sm.getString("standardWrapper.notServlet", actualClass), e);
 	} catch (Throwable e) {
 	    unavailable(null);
+            // Restore the context ClassLoader
+	    if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
 	    throw new ServletException
 		(sm.getString("standardWrapper.instantiate", actualClass), e);
 	}
@@ -829,7 +854,6 @@ public final class StandardWrapper
 	try {
 	    instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_INIT_EVENT,
 					      servlet);
-            Thread.currentThread().setContextClassLoader(classLoader);
 	    servlet.init(facade);
 	    instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT,
 					      servlet);
@@ -852,8 +876,11 @@ public final class StandardWrapper
 	    throw new ServletException
 		(sm.getString("standardWrapper.initException", getName()), f);
 	} finally {
-            // restore the context ClassLoader
-            Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+            // Restore the context ClassLoader
+            if (classLoader != null) {
+                Thread.currentThread().setContextClassLoader
+                    (oldCtxClassLoader);
+            }
         }
 
 	// Register our newly initialized instance
