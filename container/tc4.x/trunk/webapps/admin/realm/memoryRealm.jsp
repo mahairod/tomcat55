@@ -43,7 +43,7 @@
             <controls:action selected="true"> ----<bean:message key="actions.available.actions"/>---- </controls:action>
             <controls:action> --------------------------------- </controls:action>
             <logic:notEqual name="memoryRealmForm" property="adminAction" value="Create">              
-                <logic:notEqual name="userDatabaseRealmForm" property="allowDeletion" value="false">  
+                <logic:notEqual name="memoryRealmForm" property="allowDeletion" value="false">  
                 <controls:action url='<%= "/DeleteRealm.do?select=" + 
                                         URLEncoder.encode(thisObjectName) %>'>  
                 <bean:message key="actions.realms.delete"/> 
