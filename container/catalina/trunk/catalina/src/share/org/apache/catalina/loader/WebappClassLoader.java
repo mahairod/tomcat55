@@ -1432,26 +1432,31 @@ public class WebappClassLoader
 
         started = false;
 
-        int length = jarFiles.length;
+        int length = files.length;
+        for (int i = 0; i < length; i++) {
+            files[i] = null;
+        }
+
+        length = jarFiles.length;
         for (int i = 0; i < length; i++) {
             try {
                 jarFiles[i].close();
-                jarFiles[i] = null;
             } catch (IOException e) {
                 // Ignore
             }
+            jarFiles[i] = null;
         }
 
         notFoundResources.clear();
         resourceEntries.clear();
-        repositories = new String[0];
-        files = new File[0];
-        jarFiles = new JarFile[0];
-        jarRealFiles = new File[0];
+        repositories = null;
+        files = null;
+        jarFiles = null;
+        jarRealFiles = null;
         jarPath = null;
-        jarNames = new String[0];
-        lastModifiedDates = new long[0];
-        paths = new String[0];
+        jarNames = null;
+        lastModifiedDates = null;
+        paths = null;
         hasExternalRepositories = false;
 
         permissionList.clear();
