@@ -874,6 +874,20 @@ public class Connector
 
     }
 
+    
+    protected ObjectName createObjectName(String domain, String type)
+            throws MalformedObjectNameException {
+        String encodedAddr = null;
+        if (getProperty("address") != null) {
+            encodedAddr = URLEncoder.encode(getProperty("address").toString());
+        }
+        String addSuffix = (getProperty("address") == null) ? "" : ",address="
+                + encodedAddr;
+        ObjectName _oname = new ObjectName(domain + ":type=" + type + ",port="
+                + getPort() + addSuffix);
+        return _oname;
+    }
+    
     /**
      * Initialize this connector (create ServerSocket here!)
      */
@@ -881,7 +895,8 @@ public class Connector
         throws LifecycleException
     {
         if (initialized) {
-            log.info(sm.getString("coyoteConnector.alreadyInitialized"));
+            if(log.isInfoEnabled())
+                log.info(sm.getString("coyoteConnector.alreadyInitialized"));
            return;
         }
 
@@ -891,20 +906,15 @@ public class Connector
             try {
                 // we are loaded directly, via API - and no name was given to us
                 StandardEngine cb=(StandardEngine)container;
-                String encodedAddr = null;
-                if (getProperty("address") != null) {
-                    encodedAddr = URLEncoder.encode(getProperty("address").toString());
-                }
-                String addSuffix=(getProperty("address")==null) ?"": ",address=" + encodedAddr;
-                oname=new ObjectName(cb.getName() + ":type=Connector,port="+
-                        getPort() + addSuffix);
+                oname = createObjectName(cb.getName(), "Connector");
                 Registry.getRegistry(null, null)
                     .registerComponent(this, oname, null);
                 controller=oname;
             } catch (Exception e) {
                 log.error( "Error registering connector ", e);
             }
-            log.debug("Creating name for connector " + oname);
+            if(log.isDebugEnabled())
+                log.debug("Creating name for connector " + oname);
         }
 
         // Initializa adapter
@@ -962,8 +972,9 @@ public class Connector
             initialize();
 
         // Validate and update our current state
-        if (started) {
-            log.info(sm.getString("coyoteConnector.alreadyStarted"));
+        if (started ) {
+            if(log.isInfoEnabled())
+                log.info(sm.getString("coyoteConnector.alreadyStarted"));
             return;
         }
         lifecycle.fireLifecycleEvent(START_EVENT, null);
@@ -975,14 +986,14 @@ public class Connector
             // We are registred - register the adapter as well.
             try {
                 Registry.getRegistry(null, null).registerComponent
-                    (protocolHandler, this.domain + ":type=protocolHandler,className="
-                     + protocolHandlerClassName, null);
+                    (protocolHandler, createObjectName(this.domain,"ProtocolHandler"), null);
             } catch (Exception ex) {
                 log.error(sm.getString
                           ("coyoteConnector.protocolRegistrationFailed"), ex);
             }
         } else {
-            log.info(sm.getString
+            if(log.isInfoEnabled())
+                log.info(sm.getString
                      ("coyoteConnector.cannotRegisterProtocol"));
         }
 
@@ -999,8 +1010,12 @@ public class Connector
             //mapperListener.setEngine( service.getContainer().getName() );
             mapperListener.init();
             try {
+                ObjectName mapperOname = createObjectName(this.domain,"Mapper");
+                if (log.isDebugEnabled())
+                    log.debug(sm.getString(
+                            "coyoteConnector.MapperRegistration", mapperOname));
                 Registry.getRegistry(null, null).registerComponent
-                    (mapper, this.domain + ":type=Mapper", "Mapper");
+                    (mapper, createObjectName(this.domain,"Mapper"), "Mapper");
             } catch (Exception ex) {
                 log.error(sm.getString
                         ("coyoteConnector.protocolRegistrationFailed"), ex);
@@ -1026,14 +1041,14 @@ public class Connector
         started = false;
 
         try {
+            mapperListener.destroy();
             Registry.getRegistry(null, null).unregisterComponent
-                (new ObjectName(domain,"type", "Mapper"));
+                (createObjectName(this.domain,"Mapper"));
             Registry.getRegistry(null, null).unregisterComponent
-                (new ObjectName(domain
-                 + ":type=protocolHandler,className="
-                 + protocolHandlerClassName));
+                (createObjectName(this.domain,"ProtocolHandler"));
         } catch (MalformedObjectNameException e) {
-            log.info( "Error unregistering mapper ", e);
+            log.error( sm.getString
+                    ("coyoteConnector.protocolUnregistrationFailed"), e);
         }
         try {
             protocolHandler.destroy();
@@ -1098,7 +1113,8 @@ public class Connector
             ObjectName parentName=new ObjectName( domain + ":" +
                     "type=Service");
             
-            log.debug("Adding to " + parentName );
+            if(log.isDebugEnabled())
+                log.debug("Adding to " + parentName );
             if( mserver.isRegistered(parentName )) {
                 mserver.invoke(parentName, "addConnector", new Object[] { this },
                         new String[] {"org.apache.catalina.connector.Connector"});
@@ -1111,13 +1127,15 @@ public class Connector
             ObjectName engName=new ObjectName( domain + ":" + "type=Engine");
             if( mserver.isRegistered(engName )) {
                 Object obj=mserver.getAttribute(engName, "managedResource");
-                log.debug("Found engine " + obj + " " + obj.getClass());
+                if(log.isDebugEnabled())
+                      log.debug("Found engine " + obj + " " + obj.getClass());
                 container=(Container)obj;
                 
                 // Internal initialize - we now have the Engine
                 initialize();
                 
-                log.debug("Initialized");
+                if(log.isDebugEnabled())
+                    log.debug("Initialized");
                 // As a side effect we'll get the container field set
                 // Also initialize will be called
                 return;
@@ -1130,7 +1148,8 @@ public class Connector
     public void init() throws Exception {
 
         if( this.getService() != null ) {
-            log.debug( "Already configured" );
+            if(log.isDebugEnabled())
+                 log.debug( "Already configured" );
             return;
         }
         if( container==null ) {
@@ -1140,7 +1159,8 @@ public class Connector
 
     public void destroy() throws Exception {
         if( oname!=null && controller==oname ) {
-            log.debug("Unregister itself " + oname );
+            if(log.isDebugEnabled())
+                 log.debug("Unregister itself " + oname );
             Registry.getRegistry(null, null).unregisterComponent(oname);
         }
         if( getService() == null)
