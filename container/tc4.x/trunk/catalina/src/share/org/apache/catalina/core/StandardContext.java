@@ -2255,6 +2255,13 @@ public class StandardContext
 	// Stop accepting requests temporarily
 	setPaused(true);
 
+        if (isUseNaming()) {
+            try {
+                ContextBindings.bindThread(this, this);
+            } catch (NamingException e) {
+            }
+        }
+
 	// Shut down the current version of all active servlets
 	Container children[] = findChildren();
 	for (int i = 0; i < children.length; i++) {
@@ -2269,6 +2276,10 @@ public class StandardContext
 		}
 	    }
 	}
+
+        if (isUseNaming()) {
+            ContextBindings.unbindThread(this, this);
+        }
 
         // Unload sessions to persistent storage, if supported
         try {
@@ -2355,6 +2366,16 @@ public class StandardContext
             ok = false;
         }
 
+        if (isUseNaming()) {
+            try {
+                ContextBindings.bindThread(this, this);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+                ok = false;
+            }
+        }
+
         // Restart our currently defined servlets
 	for (int i = 0; i < children.length; i++) {
             if (!ok)
@@ -2371,6 +2392,10 @@ public class StandardContext
 		}
 	    }
 	}
+
+        if (isUseNaming()) {
+            ContextBindings.unbindThread(this, this);
+        }
 
         DirContextURLStreamHandler.unbind();
 
@@ -3226,6 +3251,16 @@ public class StandardContext
             list.add(wrapper);
         }
 
+        if (isUseNaming()) {
+            try {
+                ContextBindings.bindThread(this, this);
+            } catch (NamingException e) {
+                log(sm.getString("standardContext.namingInitFailed",
+                                 getName()));
+                ok = false;
+            }
+        }
+
         // Load the collected "load on startup" servlets
         if (debug >= 1)
             log("Loading " + map.size() + " load-on-startup servlets");
@@ -3246,6 +3281,10 @@ public class StandardContext
                     ok = false;
                 }
             }
+        }
+
+        if (isUseNaming()) {
+            ContextBindings.unbindThread(this, this);
         }
 
         DirContextURLStreamHandler.unbind();
