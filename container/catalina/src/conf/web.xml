@@ -157,6 +157,10 @@
   <!--                       dumped to a file? [false]                      -->
   <!--                       False if suppressSmap is true                  -->
   <!--                                                                      -->
+  <!--   genStrAsCharArray   Should text strings be generated as char       -->
+  <!--                       arrays, to improve performance in some cases?  -->
+  <!--                       [false]                                        -->
+  <!--                                                                      -->
   <!--   scratchdir          What scratch directory should we use when      -->
   <!--                       compiling JSP pages?  [default work directory  -->
   <!--                       for the current web application]               -->
