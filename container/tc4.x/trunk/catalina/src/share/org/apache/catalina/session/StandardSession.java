@@ -1448,6 +1448,8 @@ class StandardSession
             else if (value instanceof Serializable) {
                 saveNames.add(keys[i]);
                 saveValues.add(value);
+            } else {
+                removeAttribute(keys[i]);
             }
         }
 
