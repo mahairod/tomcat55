@@ -18,7 +18,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td align="left" valign="middle"> 
-        <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" width="430" height="120"></div>
+        <div class="masthead-title-text" align="left"><img src="images/TomcatBanner.jpg" height="120"></div>
       </td>
       <form method='post' action='/admin/commitChanges.do' target='_self'>
       <td align="right" valign="middle"> 

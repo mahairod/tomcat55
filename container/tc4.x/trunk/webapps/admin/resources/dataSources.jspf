@@ -30,7 +30,7 @@
         <td><div align="left" class="table-normal-text">
           <html:link page='<%= "/resources/setUpDataSource.do?objectName=" + 
                                URLEncoder.encode(dataSource) %>'>
-            <controls:attribute name="dataSource" attribute="name"/>
+            <controls:attribute name="dataSource" attribute="url"/>
           </html:link>
         </div></td>
         <td><div align="left" class="table-normal-text">&nbsp;
