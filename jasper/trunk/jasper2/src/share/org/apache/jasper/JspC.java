@@ -863,7 +863,7 @@ public class JspC implements Options {
             if (webxmlLevel >= ALL_WEBXML) {
                 mapout.write(Localizer.getMessage("jspc.webxml.header"));
                 mapout.flush();
-            } else if (webxmlLevel>= INC_WEBXML) {
+            } else if ((webxmlLevel>= INC_WEBXML) && !addWebXmlMappings) {
                 mapout.write(Localizer.getMessage("jspc.webinc.header"));
                 mapout.flush();
             }
@@ -881,7 +881,7 @@ public class JspC implements Options {
                 mappingout.writeTo(mapout);
                 if (webxmlLevel >= ALL_WEBXML) {
                     mapout.write(Localizer.getMessage("jspc.webxml.footer"));
-                } else if (webxmlLevel >= INC_WEBXML) {
+                } else if ((webxmlLevel >= INC_WEBXML) && !addWebXmlMappings) {
                     mapout.write(Localizer.getMessage("jspc.webinc.footer"));
                 }
                 mapout.close();
