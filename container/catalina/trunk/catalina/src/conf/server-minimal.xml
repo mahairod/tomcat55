@@ -3,18 +3,9 @@
     <!-- Used by Manager webapp -->
     <Resource name="UserDatabase" auth="Container"
               type="org.apache.catalina.UserDatabase"
-      description="User database that can be updated and saved">
-    </Resource>
-    <ResourceParams name="UserDatabase">
-      <parameter> 
-        <name>factory</name>
-        <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
-      </parameter>
-      <parameter>
-        <name>pathname</name>
-        <value>conf/tomcat-users.xml</value>
-      </parameter>
-    </ResourceParams>
+       description="User database that can be updated and saved"
+           factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+          pathname="conf/tomcat-users.xml" />
   </GlobalNamingResources>
 
   <Service name="Catalina">
