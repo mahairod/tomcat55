@@ -30,6 +30,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 import org.apache.catalina.Container;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
@@ -710,6 +712,8 @@ public class JDBCStore
                 log(sm.getString(getStoreName()+".SQLException", e));
             } catch (IOException e) {
                 ;
+            } catch (ConcurrentModificationException e) {
+                log(sm.getString(getStoreName()+".ConcurrentModificationException", e));
             } finally {
                 if(bis != null) {
                     bis.close();
