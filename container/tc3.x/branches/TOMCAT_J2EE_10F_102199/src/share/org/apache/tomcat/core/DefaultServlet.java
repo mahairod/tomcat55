@@ -511,12 +511,32 @@ public class DefaultServlet extends HttpServlet {
 
         absPath = FilePathUtil.patch(absPath);
 
-	if (! absPath.equals(canPath)) {
-	    response.sendError(response.SC_NOT_FOUND);
+	if (File.separatorChar  == '\\') { 
+		// On Windows check ignore case....
+		if(!absPath.equalsIgnoreCase(canPath)) {
+		    response.sendError(response.SC_NOT_FOUND);
+		    return;
+		}
+	} else {
+		// The following code on Non Windows disallows ../ 
+		// in the path but also disallows symlinks.... 
+		// 
+		// if(!absPath.equals(canPath)) {
+	    	// response.sendError(response.SC_NOT_FOUND);
+	    	// return;
+		// }
+		// instead lets look for ".." in the absolute path
+		// and disallow only that. 
+		// Why should we loose out on symbolic links?
+		//
 
-	    return;
+		if(absPath.indexOf("..") != -1) {
+		    // We have .. in the path...
+		    response.sendError(response.SC_NOT_FOUND);
+		    return;
+		}
 	}
-	
+
 	Vector dirs = new Vector();
 	Vector files = new Vector();
 	String[] fileNames = file.list();
