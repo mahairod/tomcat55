@@ -285,7 +285,9 @@ public final class ContextConfig
                 } catch (IOException e) {
                     log.error(sm.getString("contextConfig.applicationClose"), e);
                 }
+                webDigester.clear();
                 webDigester.push(null);
+                webDigester.setErrorHandler(null);
             }
         }
         webRuleSet.recycle();
