@@ -1,0 +1,193 @@
+                     Apache Tomcat Version 4.0
+                     =========================
+                            Release Notes
+                            =============
+
+$Id$
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+release candidate release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+
+
+============
+NEW FEATURES:
+============
+
+
+--------------------
+General New Features:
+--------------------
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Generic Bug Fixes:
+------------------
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+WebdavServlet:  The protocol name is no longer hard coded when parsing a
+destination header, which fixes problems when using https.
+
+StandardManager:  Catch and log exceptions thrown by session.expire() when
+sessions are being timed out.  Previously, any such exception would terminate
+the thread that checks for timed out sessions.
+
+StandardWrapperValve:  Do not set a character encoding on the default page
+created for an HTTP status code.  This was causing problems for Netscape
+Navigator when handling 302 redirects.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+Parser:  Fix a bug that was causing null pointer exceptions in
+JakartaCommentGenerator.
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$CATALINA_HOME/jasper" directory to the "$CATALINA_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$CATALINA_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$CATALINA_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+* Make sure you do *not* place an XML parser in your Java system extensions
+  directory ($JAVA_HOME/jre/lib/ext), or modify the startup scripts to include
+  such a parser in the CLASSPATH under which Tomcat executes.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+
+---------------------
+Tomcat 4.0 and Apache:
+---------------------
+
+The binary distribution for Tomcat 4.0 includes the most recent stable version
+of the WARP connector, which is the Tomcat component that talks to mod_webapp
+inside Apache 1.3.  The current state of this support is summarized as follows:
+
+* The mod_webapp connector is configured based on the contents of the
+  web.xml file for your web application.  The only required per-webapp
+  configuration information in your Apache 1.3 httpd.conf file is
+  something like this:
+
+    WebAppDeploy examples   warpConnection   /examples/
+
+  which causes mod_webapp to automatically recognize all of your servlet
+  mappings, security constraints, and other configuration elements.
+
+* The final version of the mod_webapp connector will be released separately
+  when remaining bugs are fixed.  If any changes are necessary to the Java
+  end of the connector, they will be packaged in a single JAR file (warp.jar)
+  to be installed into $CATALINA_HOME/server/lib of the Tomcat 4.0 final
+  release.
+
+
+-------------------------------------
+Tomcat 4.0 and JNI Based Applications:
+-------------------------------------
+
+Applications that require native libraries must ensure that the libraries have
+been loaded prior to use.  Typically, this is done with a call like:
+
+  static {
+    System.loadLibrary("path-to-library-file");
+  }
+
+in some class.  However, the application must also ensure that the library is
+not loaded more than once.  If the above code were placed in a class inside
+the web application (i.e. under /WEB-INF/classes or /WEB-INF/lib), and the
+application were reloaded, the loadLibrary() call would be attempted a second
+time.
+
+To avoid this problem, place classes that load native libraries outside of the
+web application, and ensure that the loadLibrary() call is executed only once
+during the lifetime of a particular JVM.
+
+
+-------------------------
+JSP Command Line Compiles:
+-------------------------
+
+Tomcat 4.0 includes a command-line utility (jspc.bat or jscp.sh) to precompile
+individual JSP pages, or all JSP pages in an application.  If the page(s) you
+are compiling include references to custom tag libraries, you MUST use the
+"-webapp" command line option so that the entire web application (including
+all the required tag library descriptors and JAR files) is available to the
+compiler.
+
+
