@@ -789,22 +789,37 @@ public abstract class Node {
 	private TagData tagData;
 	private String tagHandlerPoolName;
 	private TagInfo tagInfo;
+	private Class tagHandlerClass;
 	private VariableInfo[] varInfos;
 	private int customNestingLevel;
 	private boolean hasUnnestedIdAttribute;
         private ChildInfo childInfo;
+	private boolean implementsIterationTag;
+	private boolean implementsBodyTag;
+	private boolean implementsTryCatchFinally;
+	private boolean implementsSimpleTag;
 
 	public CustomTag(Attributes attrs, Mark start, String name,
 			 String prefix, String shortName,
-			 TagInfo tagInfo, Node parent) {
+			 TagInfo tagInfo, Class tagHandlerClass, Node parent) {
 	    super(attrs, start, parent);
 	    this.name = name;
 	    this.prefix = prefix;
 	    this.shortName = shortName;
 	    this.tagInfo = tagInfo;
+	    this.tagHandlerClass = tagHandlerClass;
 	    this.customNestingLevel = computeCustomNestingLevel();
 	    this.hasUnnestedIdAttribute = determineHasUnnestedIdAttribute();
             this.childInfo = new ChildInfo();
+
+	    this.implementsIterationTag = 
+		IterationTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsBodyTag =
+		BodyTag.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsTryCatchFinally = 
+		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
+	    this.implementsSimpleTag = 
+		SimpleTag.class.isAssignableFrom(tagHandlerClass);
 	}
 
 	public void accept(Visitor v) throws JasperException {
@@ -863,6 +878,26 @@ public abstract class Node {
 
 	public TagInfo getTagInfo() {
 	    return tagInfo;
+	}
+
+	public Class getTagHandlerClass() {
+	    return tagHandlerClass;
+	}
+
+	public boolean implementsIterationTag() {
+	    return implementsIterationTag;
+	}
+
+	public boolean implementsBodyTag() {
+	    return implementsBodyTag;
+	}
+
+	public boolean implementsTryCatchFinally() {
+	    return implementsTryCatchFinally;
+	}
+
+	public boolean implementsSimpleTag() {
+	    return implementsSimpleTag;
 	}
 
 	public TagVariableInfo[] getTagVariableInfos() {

@@ -866,6 +866,7 @@ public class Parser {
      * CustomActionScriptlessContent ::= ScriptlessOptionalBody
      */
     private boolean parseCustomTag(Node parent) throws JasperException {
+
 	if (reader.peekChar() != '<') {
 	    return false;
 	}
@@ -892,7 +893,15 @@ public class Parser {
 	if (tagInfo == null) {
 	    err.jspError(start, "jsp.error.bad_tag", shortTagName, prefix);
 	}
-        
+	Class tagHandlerClass = null;
+	try {
+	    tagHandlerClass
+		= ctxt.getClassLoader().loadClass(tagInfo.getTagClassName());
+	} catch (Exception e) {
+	    err.jspError(start, "jsp.error.unable.loadclass", shortTagName,
+			 prefix);
+	}
+
         // Parse 'CustomActionBody' production:
         // At this point we are committed - if anything fails, we produce
         // a translation error.
@@ -904,7 +913,7 @@ public class Parser {
         // Parse 'CustomActionEnd' production:
 	if (reader.matches("/>")) {
 	    new Node.CustomTag(attrs, start, tagName, prefix, shortTagName,
-			       tagInfo, parent);
+			       tagInfo, tagHandlerClass, parent);
 	    return true;
 	}
 	
@@ -919,7 +928,8 @@ public class Parser {
             shortTagName).getBodyContent();
 
 	Node tagNode = new Node.CustomTag(attrs, start, tagName, prefix,
-					  shortTagName, tagInfo, parent);
+					  shortTagName, tagInfo,
+					  tagHandlerClass, parent);
 	parseOptionalBody( tagNode, tagName, bc );
 
 	return true;

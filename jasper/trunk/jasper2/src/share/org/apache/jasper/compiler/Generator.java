@@ -196,15 +196,16 @@ public class Generator {
 	     * already contained in it.
 	     */
 	    public void visit(Node.CustomTag n) throws JasperException {
-		
-		String name = createTagHandlerPoolName(n.getPrefix(),
-						       n.getShortName(),
-						       n.getAttributes());
-		n.setTagHandlerPoolName(name);
-		if (!names.contains(name)) {
-		    names.add(name);
-		}
 
+		if (!n.implementsSimpleTag()) {
+		    String name = createTagHandlerPoolName(n.getPrefix(),
+							   n.getShortName(),
+							   n.getAttributes());
+		    n.setTagHandlerPoolName(name);
+		    if (!names.contains(name)) {
+			names.add(name);
+		    }
+		}
 		visitBody(n);
 	    }
 
@@ -1453,11 +1454,9 @@ public class Generator {
 	    TagHandlerInfo handlerInfo = (TagHandlerInfo)
 		handlerInfosByShortName.get(n.getShortName());
 	    if (handlerInfo == null) {
-		handlerInfo = new TagHandlerInfo(
-		                            n,
-					    n.getTagInfo().getTagClassName(),
-					    ctxt.getClassLoader(),
-					    err);
+		handlerInfo = new TagHandlerInfo(n,
+						 n.getTagHandlerClass(),
+						 err);
 		handlerInfosByShortName.put(n.getShortName(), handlerInfo);
 	    }
 
@@ -1467,22 +1466,14 @@ public class Generator {
 	    String tagEvalVar = "_jspx_eval_" + baseVar;
 	    String tagHandlerVar = "_jspx_th_" + baseVar;
 
-	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
-	    boolean implementsIterationTag = 
-		IterationTag.class.isAssignableFrom(tagHandlerClass);
-	    boolean implementsBodyTag = 
-		BodyTag.class.isAssignableFrom(tagHandlerClass);
-	    boolean implementsTryCatchFinally = 
-		TryCatchFinally.class.isAssignableFrom(tagHandlerClass);
-	    boolean implementsSimpleTag = 
-		SimpleTag.class.isAssignableFrom(tagHandlerClass);
+	    Class tagHandlerClass = n.getTagHandlerClass();
 
 	    // If the tag contains no scripting element, generate its codes
 	    // to a method.
 	    ServletWriter outSave = null;
 	    MethodsBuffer methodsBufferSave = null;
             Node.ChildInfo ci = n.getChildInfo();
-	    if (implementsSimpleTag
+	    if (n.implementsSimpleTag()
 		    || (ci.isScriptless() && !ci.hasScriptingVars())) {
 		// The tag handler and its body code can reside in a separate
 		// method if it is scriptless and does not have any scripting
@@ -1532,17 +1523,14 @@ public class Generator {
                 generateLocalVariables( out, n );
             }
 
-	    if (implementsSimpleTag) {
-		generateCustomDoTag(n, handlerInfo, tagHandlerVar,
-				    implementsTryCatchFinally);
+	    if (n.implementsSimpleTag()) {
+		generateCustomDoTag(n, handlerInfo, tagHandlerVar);
 	    } else {
 		/*
 		 * Classic tag handler: Generate code for start element, body,
 		 * and end element
 		 */
-		generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar,
-				    implementsIterationTag, implementsBodyTag,
-				    implementsTryCatchFinally);
+		generateCustomStart(n, handlerInfo, tagHandlerVar, tagEvalVar);
 
 		// visit body
 		String tmpParent = parent;
@@ -1553,12 +1541,10 @@ public class Generator {
 		parent = tmpParent;
 		isSimpleTagHandler = tmpIsSimpleTagHandler;
 
-		generateCustomEnd(n, tagHandlerVar, tagEvalVar,
-				  implementsIterationTag, implementsBodyTag,
-				  implementsTryCatchFinally);
+		generateCustomEnd(n, tagHandlerVar, tagEvalVar);
 	    }
 
-	    if (implementsSimpleTag
+	    if (n.implementsSimpleTag()
 		    || (ci.isScriptless() && !ci.hasScriptingVars())) {
 		// Generate end of method
 		if (methodNesting > 0) {
@@ -1700,10 +1686,7 @@ public class Generator {
 	private void generateCustomStart(Node.CustomTag n,
 					 TagHandlerInfo handlerInfo,
 					 String tagHandlerVar,
-					 String tagEvalVar,
-					 boolean implementsIterationTag,
-					 boolean implementsBodyTag,
-					 boolean implementsTryCatchFinally)
+					 String tagEvalVar)
 	                    throws JasperException {
 
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
@@ -1745,7 +1728,7 @@ public class Generator {
 
 	    generateSetters(n, tagHandlerVar, handlerInfo, false);
 	    
-            if (implementsTryCatchFinally) {
+            if (n.implementsTryCatchFinally()) {
                 out.printil("try {");
                 out.pushIndent();
             }
@@ -1756,7 +1739,7 @@ public class Generator {
 	    out.println(".doStartTag();");
 
 	    // Synchronize AT_BEGIN and NESTED scripting variables
-	    if (!implementsBodyTag) {
+	    if (!n.implementsBodyTag()) {
 		syncScriptingVariables(n, VariableInfo.AT_BEGIN);
 		syncScriptingVariables(n, VariableInfo.NESTED);
 	    }
@@ -1767,7 +1750,7 @@ public class Generator {
 		out.println(" != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {");
 		out.pushIndent();
 		
-		if (implementsBodyTag) {
+		if (n.implementsBodyTag()) {
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE) {");
@@ -1787,7 +1770,7 @@ public class Generator {
 		    out.printil("}");
 		}
 		
-		if (implementsIterationTag) {
+		if (n.implementsIterationTag()) {
 		    out.printil("do {");
 		    out.pushIndent();
 		}
@@ -1796,21 +1779,18 @@ public class Generator {
 	
 	private void generateCustomEnd(Node.CustomTag n,
 				       String tagHandlerVar,
-				       String tagEvalVar,
-				       boolean implementsIterationTag,
-				       boolean implementsBodyTag,
-				       boolean implementsTryCatchFinally) {
+				       String tagEvalVar) {
 
 	    VariableInfo[] varInfos = n.getVariableInfos();
 	    TagVariableInfo[] tagVarInfos = n.getTagVariableInfos();
 
-	    if ((n.getBody() != null) && implementsIterationTag) {
+	    if ((n.getBody() != null) && n.implementsIterationTag()) {
 		out.printin("int evalDoAfterBody = ");
 		out.print(tagHandlerVar);
 		out.println(".doAfterBody();");
 
 		// Synchronize AT_BEGIN and NESTED scripting variables
-		if (implementsBodyTag) {
+		if (n.implementsBodyTag()) {
 		    syncScriptingVariables(n, VariableInfo.AT_BEGIN);
 		    syncScriptingVariables(n, VariableInfo.NESTED);
 		}
@@ -1825,7 +1805,7 @@ public class Generator {
 	    }
 
 	    if (n.getBody() != null) {
-		if (implementsBodyTag) {
+		if (n.implementsBodyTag()) {
 		    out.printin("if (");
 		    out.print(tagEvalVar);
 		    out.println(" != javax.servlet.jsp.tagext.Tag.EVAL_BODY_INCLUDE)");
@@ -1850,7 +1830,7 @@ public class Generator {
 	    syncScriptingVariables(n, VariableInfo.AT_END);
 
 	    // TryCatchFinally
-	    if (implementsTryCatchFinally) {
+	    if (n.implementsTryCatchFinally()) {
                 out.popIndent(); // try
 		out.printil("} catch (Throwable _jspx_exception) {");
 		out.pushIndent();
@@ -1870,7 +1850,7 @@ public class Generator {
 		out.println(");");
 	    }
 
-	    if (implementsTryCatchFinally) {
+	    if (n.implementsTryCatchFinally()) {
                 out.popIndent();
                 out.println("}");
 	    }
@@ -1884,8 +1864,7 @@ public class Generator {
 
 	private void generateCustomDoTag(Node.CustomTag n,
 					 TagHandlerInfo handlerInfo,
-					 String tagHandlerVar,
-					 boolean implementsTryCatchFinally)
+					 String tagHandlerVar)
 	                    throws JasperException {
 
 	    Class tagHandlerClass = handlerInfo.getTagHandlerClass();
@@ -1914,7 +1893,7 @@ public class Generator {
 
 	    generateSetters(n, tagHandlerVar, handlerInfo, true);
 
-            if (implementsTryCatchFinally) {
+            if (n.implementsTryCatchFinally()) {
                 out.printil("try {");
                 out.pushIndent();
             }
@@ -1957,7 +1936,7 @@ public class Generator {
 	    syncScriptingVariables(n, VariableInfo.AT_END);
 
 	    // TryCatchFinally
-	    if (implementsTryCatchFinally) {
+	    if (n.implementsTryCatchFinally()) {
                 out.popIndent(); // try
 		out.printil("} catch (Throwable _jspx_exception) {");
 		out.pushIndent();
@@ -2596,23 +2575,15 @@ public class Generator {
 	/**
 	 * Constructor.
 	 *
-	 * @param n The custom tag whose tag handler is to be loaded and
+	 * @param n The custom tag whose tag handler class is to be
 	 * introspected
-	 * @param tagClassName Name of tag handler class to load
-	 * @param loader Class loader to use
+	 * @param tagHandlerClass Tag handler class
 	 * @param err Error dispatcher
 	 */
-	TagHandlerInfo(Node n, String tagClassName, ClassLoader loader,
-		       ErrorDispatcher err) throws JasperException {
-
-	    // Load the tag handler class with the given name
-	    tagHandlerClass = null;
-	    try {
-		tagHandlerClass = loader.loadClass(tagClassName);
-	    } catch (Exception e) {
-		err.jspError(n, "jsp.error.unable.loadclass", tagClassName, e);
-	    }
-
+	TagHandlerInfo(Node n, Class tagHandlerClass, ErrorDispatcher err)
+	    throws JasperException
+	{
+	    this.tagHandlerClass = tagHandlerClass;
 	    this.methodMaps = new Hashtable();
 	    this.propertyEditorMaps = new Hashtable();
 
@@ -2636,7 +2607,7 @@ public class Generator {
 		}
 	    } catch (IntrospectionException ie) {
 		err.jspError(n, "jsp.error.introspect.taghandler",
-			     tagClassName, ie);
+			     tagHandlerClass.getName(), ie);
 	    }
 	}
 
