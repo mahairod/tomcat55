@@ -772,6 +772,14 @@ public class ApacheConfig  extends BaseInterceptor {
                     mod_jk.println("#");                        
                     mod_jk.println("JkMount " + path +"/servlet/* " + JkMount[jkConnector]);
                     mod_jk.println("JkMount " + path +"/*.jsp " + JkMount[jkConnector]);
+		    mod_jk.println("# The following line mounts the " +
+				   "form-based authenticator for the "+
+				   path+" context");
+		    mod_jk.println("#");
+		    mod_jk.println("JkMount " + path +
+				   "/*j_security_check" +
+				   JkMount[jkConnector]);
+
 
 
                     // Deny serving any files from WEB-INF
