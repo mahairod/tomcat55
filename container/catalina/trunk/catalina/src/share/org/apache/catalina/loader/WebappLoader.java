@@ -545,6 +545,18 @@ public class WebappLoader
 
     }
 
+    public String[] getRepositories() {
+        return ((String[])repositories.clone());
+    }
+
+    public String getRepositoriesString() {
+        StringBuffer sb=new StringBuffer();
+        for( int i=0; i<repositories.length ; i++ ) {
+            sb.append( repositories[i]).append(":");
+        }
+        return sb.toString();
+    }
+
 
     /**
      * Has the internal repository associated with this Loader been modified,
