@@ -62,21 +62,12 @@ import org.apache.catalina.util.StringManager;
  *
  * This us an NIO adaptation of the default AccessLogValve. 
  * 
- * <IMPLEMENTATION NOTE>
- *      The backgroundProcessorDelay is currently not used when flusing the
- *      <code>ByteBuffer</code> since setting that value affect all others
- *      component.
- *
- *      An AccessWriterThread is used instead, which times out after 5 minutes.
- *      
- * </IMPLEMENTATIOn NOTE>
- *
  * @author Jean-Francois Arcand
  */
 
 public final class ByteBufferAccessLogValve
     extends ValveBase
-    implements Lifecycle, Runnable {
+    implements Lifecycle {
 
 
     // ----------------------------------------------------------- Constructors
@@ -125,7 +116,7 @@ public final class ByteBufferAccessLogValve
      * The descriptive information about this implementation.
      */
     protected static final String info =
-        "org.apache.catalina.valves.AccessLogValve/1.0";
+        "org.apache.catalina.valves.ByteBufferAccessLogValve/1.0";
 
 
     /**
@@ -291,12 +282,6 @@ public final class ByteBufferAccessLogValve
     
     
     /**
-     * The background writerThread.
-     */
-    private Thread writerThread = null;   
-    
-    
-    /**
      * The background writerThread completion semaphore.
      */
     private boolean threadDone = false;
@@ -331,12 +316,6 @@ public final class ByteBufferAccessLogValve
      * The default byte buffer size. Default is 16k
      */
     protected int directByteBufferSize = 16 * 1024;
-    
-    
-    /**
-     * The interval (in seconds) between writting the log.
-     */
-    private int writeInterval = 5 * 60;
     
     
     /**
@@ -381,21 +360,6 @@ public final class ByteBufferAccessLogValve
     }
     
     
-    /**
-     * Return writerThread interval (seconds)
-     */
-    public int getWriterInterval() {        
-        return this.writeInterval;     
-    }
-
-        
-    /**
-     * Set writerthread interval (seconds)
-     */
-    public void setWriterInterval(int t) {
-        this.writeInterval = t;
-    }
-
     // ------------------------------------------------------------- Properties
 
 
@@ -722,7 +686,7 @@ public final class ByteBufferAccessLogValve
                 } else {
                     currentByteBuffer = viewBuffer1;
                 }
-                // Now we can store the results since the currentCharBuffer 
+                // Now we can store the results since the currentByteBuffer 
                 // is empty.
                 currentByteBuffer.put(bytesToWrite);
             }
@@ -994,8 +958,6 @@ public final class ByteBufferAccessLogValve
         dateStamp = dateFormatter.format(new Date());
 
         open();
-        
-        threadStart();
 
     }
 
@@ -1018,9 +980,6 @@ public final class ByteBufferAccessLogValve
         started = false;
 
         close();
-        
-        threadStop();
-
     }
     
     
@@ -1030,77 +989,6 @@ public final class ByteBufferAccessLogValve
      * throwables will be caught and logged.
      */
     public void backgroundProcess() {
-        // XXX Shoud the backgroud thread be used here?
-        // log();
+        log();
     }
-    
-    
-    /**
-     * The background writerThread that checks for write the log.
-     */
-    public void run() {
-
-        // Loop until the termination semaphore is set
-        while (!threadDone) {
-            threadWait();
-            log();
-        }
-    }
-    
-    
-    /**
-     * Sleep for the duration specified by the <code>writeInterval</code>
-     * property.
-     */
-    private void threadWait() {
-
-        synchronized(lock){
-            try {
-                lock.wait(writeInterval * 1000L);
-            } catch (InterruptedException e) {
-                ;
-            }
-        }
-
-    }
-
-        
-   /**
-     * Start the background writerThread that will periodically write access log
-     */
-    private void threadStart() {
-
-        if (writerThread != null)
-            return;
-
-        threadDone = false;
-        String threadName = "AccessLogWriter";
-        writerThread = new Thread(this, threadName);
-        writerThread.setDaemon(true);
-        writerThread.start();
-
-    }
-
-
-    /**
-     * Stop the background writerThread that is periodically write logs
-     */
-    private void threadStop() {
-
-        if (writerThread == null)
-            return;
-
-        threadDone = true;
-        writerThread.interrupt();
-        try {
-            writerThread.join();
-        } catch (InterruptedException e) {
-            ;
-        }
-
-        writerThread = null;
-
-    }
-    
-    
 }
