@@ -86,6 +86,7 @@ import org.apache.catalina.security.SecurityClassLoad;
  * class path and therefore not visible to application level classes.
  *
  * @author Craig R. McClanahan
+ * @author Remy Maucherat
  * @version $Revision$ $Date$
  */
 
@@ -358,9 +359,11 @@ public final class Bootstrap {
         try {
             String command = args[0];
             if (command.equals("startd")) {
+                args[0] = "start";
                 daemon.load(args);
                 daemon.start();
             } else if (command.equals("stopd")) {
+                args[0] = "stop";
                 daemon.stop();
             } else if (command.equals("start")) {
                 daemon.setAwait(true);
