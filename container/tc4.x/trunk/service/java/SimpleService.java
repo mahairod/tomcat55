@@ -153,7 +153,7 @@ public class SimpleService implements Service, Runnable {
         this.server.close();
 
         /* Wait for the main thread to exit and dump a message */
-        this.thread.join();
+        this.thread.join(5000);
         System.err.println("SimpleService: stopped");
     }
 
