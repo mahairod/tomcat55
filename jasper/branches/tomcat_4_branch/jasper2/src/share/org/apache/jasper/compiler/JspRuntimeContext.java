@@ -303,9 +303,9 @@ public final class JspRuntimeContext implements Runnable {
      * registered with this class for JSP's.
      */
     private void checkCompile() {
-        Iterator it = jsps.values().iterator();
-        while (it.hasNext()) {
-            JspServletWrapper jsw = (JspServletWrapper)it.next();
+        Object [] wrappers = jsps.values().toArray();
+        for (int i = 0; i < wrappers.length; i++ ) {
+            JspServletWrapper jsw = (JspServletWrapper)wrappers[i];
             JspCompilationContext ctxt = jsw.getJspEngineContext();
             // JspServletWrapper also synchronizes on this when
             // it detects it has to do a reload
@@ -512,7 +512,11 @@ public final class JspRuntimeContext implements Runnable {
 
             // Check for included files which are newer than the
             // JSP which uses them.
-            checkCompile();
+            try {
+                checkCompile();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
         
     }
