@@ -1354,7 +1354,7 @@ are supported by this implementation:</p>
     <code>LoginModule</code> class and associated <code>Principal</code> classes. The
     default value is <code>true</code>, which is backwards-compatible with the way 
     Tomcat 4 works. To load classes using the container's classloader, specify
-    <code>true</code>.</p>
+    <code>false</code>.</p>
   </attribute>
 
 </attributes>
