@@ -441,7 +441,11 @@ public class StandardSession
      * a value associated with the session, do not affect the access time.
      */
     public long getLastAccessedTime() {
+        if ( !isValid ) {
+            throw new IllegalStateException(
+                sm.getString("standardSession.getLastAccessedTime"));
 
+        }
         return (this.lastAccessedTime);
 
     }
