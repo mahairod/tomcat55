@@ -40,6 +40,9 @@
       <fix>
         <bug>32502</bug>: Memory leak in DigestAuthenticator. (yoavs)
       </fix>
+      <fix>
+        <bug>32137</bug>: Possible thread-safety issue in RealmBase. (yoavs)
+      </fix>
     </changelog>
   </subsection>
 

@@ -346,22 +346,6 @@ public abstract class RealmBase
                                   String nOnce, String nc, String cnonce,
                                   String qop, String realm,
                                   String md5a2) {
-
-        /*
-          System.out.println("Digest : " + clientDigest);
-
-          System.out.println("************ Digest info");
-          System.out.println("Username:" + username);
-          System.out.println("ClientSigest:" + clientDigest);
-          System.out.println("nOnce:" + nOnce);
-          System.out.println("nc:" + nc);
-          System.out.println("cnonce:" + cnonce);
-          System.out.println("qop:" + qop);
-          System.out.println("realm:" + realm);
-          System.out.println("md5a2:" + md5a2);
-        */
-
-
         String md5a1 = getDigest(username, realm);
         if (md5a1 == null)
             return null;
@@ -380,8 +364,11 @@ public abstract class RealmBase
             }
         }
 
-        String serverDigest =
-            md5Encoder.encode(md5Helper.digest(valueBytes));
+        String serverDigest = null;
+        // Bugzilla 32137
+        synchronized(md5Helper) {
+            serverDigest = md5Encoder.encode(md5Helper.digest(valueBytes));
+        }
 
         if (serverDigest.equals(clientDigest))
             return getPrincipal(username);
@@ -1105,8 +1092,12 @@ public abstract class RealmBase
             }
         }
 
-        byte[] digest =
-            md5Helper.digest(valueBytes);
+        byte[] digest = null;
+        // Bugzilla 32137
+        synchornized(md5Helper) {
+            digest = md5Helper.digest(valueBytes);
+        }
+
         return md5Encoder.encode(digest);
     }
 
