@@ -197,13 +197,6 @@ struts.jar=${struts.lib}/struts.jar
 struts.loc=http://www.apache.org/dist/jakarta/struts/binaries/jakarta-struts-1.1-rc1.tar.gz
 
 
-# ----- Tyrex Data Source, version 1.0 -----
-tyrex.home=${base.path}/tyrex-1.0
-tyrex.lib=${tyrex.home}
-tyrex.jar=${tyrex.lib}/tyrex-1.0.jar
-tyrex.loc=http://telia.dl.sourceforge.net/sourceforge/tyrex/tyrex-1.0.jar
-
-
 # --------------------------------------------------
 #                OPTIONAL LIBRARIES
 # --------------------------------------------------
