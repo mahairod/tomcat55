@@ -18,6 +18,7 @@
   <property name="jtc.project"           value="jakarta-tomcat-connectors" />
   <property name="jtc.final.name"        value="${jtc.project}-${version}" />
   <property name="jtc.final-src.name"    value="${jtc.project}-${version}-src" />
+  <property name="servlet.doc"    		 value="${servlet.home}/docs/api" />
 
   <!-- Build Defaults -->
   <property name="catalina.build"   value="${basedir}/catalina/build"/>
@@ -212,7 +213,7 @@
     </copy>
     <mkdir  dir="${tomcat.dist}/webapps/tomcat-docs/servletapi"/>
     <copy todir="${tomcat.dist}/webapps/tomcat-docs/servletapi">
-      <fileset dir="${servlet.home}/docs/api" />
+      <fileset dir="${servlet.doc}" />
     </copy>
   </target>
 
