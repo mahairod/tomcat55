@@ -383,6 +383,10 @@ final class HttpServletResponseFacade  implements HttpServletResponse
 	    String file = url.getFile();
 	    if ((file == null) || !file.startsWith(contextPath))
 		return (false);
+	    // XXX endsWith() ? However, that confilicts with
+	    // the ;charset= attribute.
+	    if(file.indexOf(";jsessionid=" + session.getId()) >= 0)
+		return (false); // Already encoded
 	}
 
 	// This URL belongs to our web application, so it is encodeable
