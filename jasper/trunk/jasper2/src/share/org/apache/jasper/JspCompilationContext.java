@@ -170,6 +170,17 @@ public class JspCompilationContext {
         this.loader = loader;
     }
 
+    public ClassLoader getJspLoader() {
+        if( jspLoader == null ) {
+            jspLoader = new JasperLoader
+            (new URL[] {baseUrl},
+                    getClassLoader(),
+                    rctxt.getPermissionCollection(),
+                    rctxt.getCodeSource());
+        }
+        return jspLoader;
+    }
+
     /** ---------- Input/Output  ---------- */
     
     /**
@@ -566,11 +577,7 @@ public class JspCompilationContext {
         throws JasperException, FileNotFoundException
     {
         try {
-            jspLoader = new JasperLoader
-                (new URL[] {baseUrl},
-                 getClassLoader(),
-                 rctxt.getPermissionCollection(),
-                 rctxt.getCodeSource());
+            getJspLoader();
             
             String name;
             if (isTagFile()) {

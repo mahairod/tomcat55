@@ -87,7 +87,7 @@ public class JDTCompiler extends org.apache.jasper.compiler.Compiler {
         final String targetClassName = 
             ((packageName.length() != 0) ? (packageName + ".") : "") 
                     + ctxt.getServletClassName();
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        final ClassLoader classLoader = ctxt.getJspLoader();
         String[] fileNames = new String[] {sourceFile};
         String[] classNames = new String[] {targetClassName};
         final ArrayList problemList = new ArrayList();
