@@ -92,7 +92,7 @@ public class Generator {
 
     private ServletWriter out;
     private MethodsBuffer methodsBuffer;
-    private HelperClassBuffer helperClassBuffer;
+    private FragmentHelperClass fragmentHelperClass;
     private ErrorDispatcher err;
     private BeanRepository beanInfo;
     private JspCompilationContext ctxt;
@@ -707,7 +707,7 @@ public class Generator {
 
 	private ServletWriter out;
 	private MethodsBuffer methodsBuffer;
-        private HelperClassBuffer helperClassBuffer;
+	private FragmentHelperClass fragmentHelperClass;
 	private int methodNesting;
 
 	/**
@@ -715,11 +715,11 @@ public class Generator {
 	 */
 	public GenerateVisitor(ServletWriter out, 
             MethodsBuffer methodsBuffer, 
-            HelperClassBuffer helperClassBuffer ) 
+            FragmentHelperClass fragmentHelperClass ) 
         {
 	    this.out = out;
 	    this.methodsBuffer = methodsBuffer;
-            this.helperClassBuffer = helperClassBuffer;
+	    this.fragmentHelperClass = fragmentHelperClass;
 	    methodNesting = 0;
 	    handlerInfos = new Hashtable();
 	    tagVarNumbers = new Hashtable();
@@ -2362,18 +2362,19 @@ public class Generator {
             // generate a low-overhead JspFragment that just echoes its
             // body.  The implementation of this fragment can come from
             // the org.apache.jasper.runtime package as a support class.
-            int id = helperClassBuffer.getFragmentId();
-            helperClassBuffer.openFragment( n );
+            FragmentHelperClass.Fragment fragment = 
+                fragmentHelperClass.openFragment( n );
             ServletWriter outSave = out;
-            out = helperClassBuffer.getOut();
+	    out = fragment.getMethodsBuffer().getOut();
             visitBody( n );
             out = outSave;
-            helperClassBuffer.closeFragment();
+	    fragmentHelperClass.closeFragment( fragment );
             // XXX - Need to change pageContext to jspContext if
             // we're not in a place where pageContext is defined (e.g.
             // in a fragment or in a tag file.
-	    out.print( "new " + helperClassBuffer.getClassName() + 
-                "( " + id + ", pageContext, " + tagHandlerVar + ")" );
+	    out.print( "new " + fragmentHelperClass.getClassName() + 
+		       "( " + fragment.getId() + ", pageContext, " + 
+		       tagHandlerVar + ")" );
 	}
         
         /**
@@ -2510,9 +2511,9 @@ public class Generator {
 	out.print(methodsBuffer.toString());
         
         // Append the helper class
-        if( helperClassBuffer.isUsed() ) {
-            helperClassBuffer.generatePostamble();
-            out.print(helperClassBuffer.toString());
+        if( fragmentHelperClass.isUsed() ) {
+            fragmentHelperClass.generatePostamble();
+            out.printMultiLn(fragmentHelperClass.toString());
         }
 
 	// generate class definition for JspxState
@@ -2533,7 +2534,7 @@ public class Generator {
 	methodsBuffer = new MethodsBuffer();
 	err = compiler.getErrorDispatcher();
 	ctxt = compiler.getCompilationContext();
-        helperClassBuffer = new HelperClassBuffer( 
+	fragmentHelperClass = new FragmentHelperClass( 
             ctxt.getServletClassName() + "Helper" );
         pageInfo = compiler.getPageInfo();
 	beanInfo = pageInfo.getBeanRepository();
@@ -2557,9 +2558,9 @@ public class Generator {
 	    gen.compileTagHandlerPoolList(page);
 	}
 	gen.generatePreamble(page);
-        gen.helperClassBuffer.generatePreamble();
+	gen.fragmentHelperClass.generatePreamble();
 	page.visit(gen.new GenerateVisitor(out, gen.methodsBuffer, 
-            gen.helperClassBuffer));
+            gen.fragmentHelperClass));
 	gen.generatePostamble(page);
     }
 
@@ -2653,19 +2654,39 @@ public class Generator {
     }
 
     /**
-     * Keeps a separate buffer for helper classes.
+     * Keeps track of the generated Fragment Helper Class
      */
-    private static class HelperClassBuffer 
-        extends MethodsBuffer 
-    {
+    private static class FragmentHelperClass {
+        
+        private static class Fragment {
+            private MethodsBuffer methodsBuffer;
+            private int id;
+            
+            public Fragment( int id ) {
+                this.id = id;
+                methodsBuffer = new MethodsBuffer();
+            }
+            
+            public MethodsBuffer getMethodsBuffer() {
+                return this.methodsBuffer;
+            }
+            
+            public int getId() {
+                return this.id;
+            }
+        }
+        
         // True if the helper class should be generated.
         private boolean used = false;
         
-        private int numFragments = 0;
+        private ArrayList fragments = new ArrayList();
         
         private String className;
+
+        // Buffer for entire helper class
+        private MethodsBuffer classBuffer = new MethodsBuffer();
         
-	public HelperClassBuffer( String className ) {
+	public FragmentHelperClass( String className ) {
             this.className = className;
 	}
         
@@ -2677,14 +2698,13 @@ public class Generator {
             return this.used;
         }
         
-        public int getFragmentId() {
-            return this.numFragments;
-        }
-        
         public void generatePreamble() {
+	    ServletWriter out = this.classBuffer.getOut();
             out.println();
             out.pushIndent();
-            out.printil( "static class " + className );
+            // Note: cannot be static, as we need to reference things like
+	    // _jspx_meth_*
+	    out.printil( "class " + className );
             out.printil( "    extends " +
                 "org.apache.jasper.runtime.JspFragmentHelper" );
             out.printil( "{" );
@@ -2698,28 +2718,53 @@ public class Generator {
             out.printil( "}" );
         }
         
-        public void openFragment( Node parent ) 
+	public Fragment openFragment( Node parent ) 
             throws JasperException 
         {
+            Fragment result = new Fragment( fragments.size() );
+            fragments.add( result );
             this.used = true;
-            out.printil( "public void invoke" + numFragments + "( " +
+
+            ServletWriter out = result.getMethodsBuffer().getOut();
+            out.pushIndent();
+            out.pushIndent();
+            // XXX - Returns boolean because if a tag is invoked from
+            // within this fragment, the Generator sometimes might
+            // generate code like "return true".  This is ignored for now,
+            // meaning only the fragment is skipped.  The JSR-152
+            // expert group is currently discussing what to do in this case.
+            // See comment in closeFragment()
+            out.printil( "public boolean invoke" + result.getId() + "( " +
                 "java.io.Writer out, java.util.Map params ) " );
             out.pushIndent();
-            out.printil( "throws javax.servlet.jsp.JspException, " +
-                "java.io.IOException" );
+            // Note: Throwable required because methods like _jspx_meth_*
+            // throw Throwable.
+            out.printil( "throws Throwable" );
             out.popIndent();
             out.printil( "{" );
             out.pushIndent();
             generateLocalVariables( out, parent );
+            
+            return result;
         }
         
-        public void closeFragment() {
+        public void closeFragment( Fragment fragment ) {
+            ServletWriter out = fragment.getMethodsBuffer().getOut();
+            // XXX - See comment in openFragment()
+            out.printil( "return false;" );
             out.popIndent();
             out.printil( "}" );
-            this.numFragments++;
         }
         
         public void generatePostamble() {
+            ServletWriter out = this.classBuffer.getOut();
+            // Generate all fragment methods:
+            for( int i = 0; i < fragments.size(); i++ ) {
+                Fragment fragment = (Fragment)fragments.get( i );
+                out.printMultiLn( fragment.getMethodsBuffer().toString() );
+            }
+            
+            // Generate postamble:
             out.printil( "public void invoke( java.io.Writer out, " +
 			 "java.util.Map params )" );
             out.pushIndent();
@@ -2744,7 +2789,7 @@ public class Generator {
             out.pushIndent();
             out.printil( "switch( this.discriminator ) {" );
             out.pushIndent();
-            for( int i = 0; i < numFragments; i++ ) {
+	    for( int i = 0; i < fragments.size(); i++ ) {
                 out.printil( "case " + i + ":" );
                 out.pushIndent();
                 out.printil( "invoke" + i + "( out, params );" );
@@ -2755,7 +2800,7 @@ public class Generator {
             out.printil( "}" ); // switch
             out.popIndent();
             out.printil( "}" ); // try
-            out.printil( "catch( java.io.IOException e ) {" );
+	    out.printil( "catch( Throwable e ) {" );
             out.pushIndent();
             out.printil( "throw new javax.servlet.jsp.JspException( e );" );
             out.popIndent();
@@ -2775,6 +2820,10 @@ public class Generator {
             out.popIndent();
             out.printil( "}" ); // helper class
             out.popIndent();
+        }
+        
+        public String toString() {
+            return classBuffer.toString();
         }
     }
 }
