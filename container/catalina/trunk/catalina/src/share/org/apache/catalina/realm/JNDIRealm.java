@@ -193,6 +193,17 @@ public class JNDIRealm extends RealmBase {
      */
     protected String contextFactory = "com.sun.jndi.ldap.LdapCtxFactory";
 
+    
+    /**
+     * How aliases should be dereferenced during search operations.
+     */
+    protected String derefAliases = null;
+
+    /**
+     * Constant that holds the name of the environment property for specifying 
+     * the manner in which aliases should be dereferenced.
+     */
+    public final static String DEREF_ALIASES = "java.naming.ldap.derefAliases";
 
     /**
      * Descriptive information about this Realm implementation.
@@ -443,6 +454,21 @@ public class JNDIRealm extends RealmBase {
 
     }
 
+    /**
+     * Return the derefAliases setting to be used.
+     */
+    public java.lang.String getDerefAliases() {
+        return derefAliases;
+    }  
+    
+    /**
+     * Set the value for derefAliases to be used when searching the directory.
+     * 
+     * @param derefAliases New value of property derefAliases.
+     */
+    public void setDerefAliases(java.lang.String derefAliases) {
+      this.derefAliases = derefAliases;
+    }
 
     /**
      * Return the protocol to be used.
@@ -1505,6 +1531,8 @@ public class JNDIRealm extends RealmBase {
             env.put(Context.SECURITY_PROTOCOL, protocol);
         if (referrals != null)
             env.put(Context.REFERRAL, referrals);
+        if (derefAliases != null)
+            env.put(JNDIRealm.DEREF_ALIASES, derefAliases);
 
         return env;
 
