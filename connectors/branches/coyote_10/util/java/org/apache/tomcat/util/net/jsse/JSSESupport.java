@@ -108,9 +108,13 @@ class JSSESupport implements SSLSupport {
     }
 
     protected java.security.cert.X509Certificate [] 
-	getX509Certificates(SSLSession session) throws IOException {
+        getX509Certificates(SSLSession session) throws IOException {
         X509Certificate jsseCerts[] = null;
-	jsseCerts = session.getPeerCertificateChain();
+        try {
+            jsseCerts = session.getPeerCertificateChain();
+        } catch(Exception iex) {
+            // swallow to avoid inflating logs
+        }
 
 	if(jsseCerts == null)
 	    jsseCerts = new X509Certificate[0];
