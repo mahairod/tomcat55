@@ -102,48 +102,73 @@ import java.security.cert.CertificateException;
 public class CoyoteServerSocketFactory
     implements org.apache.catalina.net.ServerSocketFactory {
 
+    private String algorithm = null;
+    private boolean clientAuth = false;
+    private String keystoreFile =
+        System.getProperty("user.home") + File.separator + ".keystore";
+    private String randomFile =
+        System.getProperty("user.home") + File.separator + "random.pem";
+    private String rootFile =
+        System.getProperty("user.home") + File.separator + "root.pem";
+    private String keystorePass = "changeit";
+    private String keystoreType = "JKS";
+    private String protocol = "TLS";
+    private String sslImplementation = null;
+    private String cipherSuites;
 
     // ------------------------------------------------------------- Properties
 
-
     /**
-     * Certificate encoding algorithm to be used.
+     * Gets the certificate encoding algorithm to be used.
+     *
+     * @return Certificate encoding algorithm
      */
-    private String algorithm = null;
-
     public String getAlgorithm() {
         return (this.algorithm);
     }
 
+    /**
+     * Sets the certificate encoding algorithm to be used.
+     *
+     * @param algorithm Certificate encoding algorithm
+     */
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
 
-
     /**
-     * Should we require client authentication?
+     * Provides information about whether client authentication is enforced.
+     *
+     * @return true if client authentication is enforced, false otherwise
      */
-    private boolean clientAuth = false;
-
     public boolean getClientAuth() {
         return (this.clientAuth);
     }
 
+    /**
+     * Sets the requirement of client authentication.
+     *
+     * @param clientAuth true if client authentication is enforced, false
+     * otherwise
+     */
     public void setClientAuth(boolean clientAuth) {
         this.clientAuth = clientAuth;
     }
 
-
     /**
-     * Pathname to the key store file to be used.
+     * Gets the pathname to the keystore file.
+     *
+     * @return Pathname to the keystore file
      */
-    private String keystoreFile =
-        System.getProperty("user.home") + File.separator + ".keystore";
-
     public String getKeystoreFile() {
         return (this.keystoreFile);
     }
 
+    /**
+     * Sets the pathname to the keystore file.
+     *
+     * @param keystoreFile Pathname to the keystore file
+     */
     public void setKeystoreFile(String keystoreFile) {
       
         File file = new File(keystoreFile);
@@ -154,15 +179,19 @@ public class CoyoteServerSocketFactory
     }
 
     /**
-     * Pathname to the random file to be used.
+     * Gets the pathname to the random file.
+     *
+     * @return Pathname to the random file
      */
-    private String randomFile =
-        System.getProperty("user.home") + File.separator + "random.pem";
-
     public String getRandomFile() {
         return (this.randomFile);
     }
 
+    /**
+     * Sets the pathname to the random file.
+     *
+     * @param randomFile Pathname to the random file
+     */
     public void setRandomFile(String randomFile) {
       
         File file = new File(randomFile);
@@ -173,15 +202,19 @@ public class CoyoteServerSocketFactory
     }
 
     /**
-     * Pathname to the root list to be used.
+     * Gets the pathname to the root list.
+     *
+     * @return Pathname to the root list
      */
-    private String rootFile =
-        System.getProperty("user.home") + File.separator + "root.pem";
-
     public String getRootFile() {
         return (this.rootFile);
     }
 
+    /**
+     * Sets the pathname to the root list.
+     *
+     * @param rootFile Pathname to the root list
+     */
     public void setRootFile(String rootFile) {
       
         File file = new File(rootFile);
@@ -192,60 +225,99 @@ public class CoyoteServerSocketFactory
     }
      
     /**
-     * Password for accessing the key store file.
+     * Gets the keystore password.
+     *
+     * @return Keystore password
      */
-    private String keystorePass = "changeit";
-
     public String getKeystorePass() {
         return (this.keystorePass);
     }
 
+    /**
+     * Sets the keystore password.
+     *
+     * @param keystorePass Keystore password
+     */
     public void setKeystorePass(String keystorePass) {
         this.keystorePass = keystorePass;
     }
 
-
     /**
-     * Storeage type of the key store file to be used.
+     * Gets the keystore type.
+     *
+     * @return Keystore type
      */
-    private String keystoreType = "JKS";
-
     public String getKeystoreType() {
         return (this.keystoreType);
     }
 
+    /**
+     * Sets the keystore type.
+     *
+     * @param keystoreType Keystore type
+     */
     public void setKeystoreType(String keystoreType) {
         this.keystoreType = keystoreType;
     }
 
-
     /**
-     * SSL protocol variant to use.
+     * Gets the SSL protocol variant to be used.
+     *
+     * @return SSL protocol variant
      */
-    private String protocol = "TLS";
-
     public String getProtocol() {
         return (this.protocol);
     }
 
+    /**
+     * Sets the SSL protocol variant to be used.
+     *
+     * @param protocol SSL protocol variant
+     */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
 
-
     /**
-     * SSL implementation to use.
+     * Gets the name of the SSL implementation to be used.
+     *
+     * @return SSL implementation name
      */
-    private String sslImplementation = null;
-
     public String getSSLImplementation() {
         return (this.sslImplementation);
     }
 
+    /**
+     * Sets the name of the SSL implementation to be used.
+     *
+     * @param sslImplementation SSL implementation name
+     */
     public void setSSLImplementation(String sslImplementation) {
         this.sslImplementation = sslImplementation;
     }
 
+    /**
+     * Gets the list of SSL cipher suites that are to be enabled
+     *
+     * @return Comma-separated list of SSL cipher suites, or null if all
+     * cipher suites supported by the underlying SSL implementation are being
+     * enabled
+     */
+    public String getCiphers() {
+	return this.cipherSuites;
+    }
+
+    /**
+     * Sets the SSL cipher suites that are to be enabled.
+     *
+     * Only those SSL cipher suites that are actually supported by
+     * the underlying SSL implementation will be enabled.
+     *
+     * @param ciphers Comma-separated list of SSL cipher suites
+     */
+    public void setCiphers(String ciphers) {
+	this.cipherSuites = ciphers;
+    }
 
 
     // --------------------------------------------------------- Public Methods
