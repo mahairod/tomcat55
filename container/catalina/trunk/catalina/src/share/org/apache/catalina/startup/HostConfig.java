@@ -557,8 +557,11 @@ public class HostConfig
         try {
             Context context = null;
             synchronized (digester) {
-                context = (Context) digester.parse(contextXml);
-                digester.reset();
+                try {
+                    context = (Context) digester.parse(contextXml);
+                } finally {
+                    digester.reset();
+                }
             }
             if (context instanceof Lifecycle) {
                 Class clazz = Class.forName(host.getConfigClass());

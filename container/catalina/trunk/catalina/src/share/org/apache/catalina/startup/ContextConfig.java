@@ -294,7 +294,6 @@ public final class ContextConfig
                 if( url!=null ) {
                     InputSource is = new InputSource(url.toExternalForm());
                     is.setByteStream(stream);
-                    webDigester.clear();
                     if (context instanceof StandardContext) {
                         ((StandardContext) context).setReplaceWelcomeFiles(true);
                     }
@@ -326,7 +325,6 @@ public final class ContextConfig
                 } catch (IOException e) {
                     log.error(sm.getString("contextConfig.applicationClose"), e);
                 }
-                webDigester.push(null);
             }
         }
         webRuleSet.recycle();
@@ -616,9 +614,7 @@ public final class ContextConfig
                 
                 if (context instanceof StandardContext)
                     ((StandardContext) context).setReplaceWelcomeFiles(true);
-                digester.clear();
                 digester.setClassLoader(this.getClass().getClassLoader());
-                //log.info( "Using cl: " + webDigester.getClassLoader());
                 digester.setUseContextClassLoader(false);
                 digester.push(context);
                 digester.setErrorHandler(new ContextErrorHandler());
@@ -705,9 +701,7 @@ public final class ContextConfig
         synchronized (contextDigester) {
             try {
                 source.setByteStream(stream);
-                contextDigester.clear();
                 contextDigester.setClassLoader(this.getClass().getClassLoader());
-                //log.info( "Using cl: " + webDigester.getClassLoader());
                 contextDigester.setUseContextClassLoader(false);
                 contextDigester.push(context.getParent());
                 contextDigester.push(context);

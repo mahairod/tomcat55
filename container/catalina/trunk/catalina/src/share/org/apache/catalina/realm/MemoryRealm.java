@@ -298,10 +298,11 @@ public class MemoryRealm  extends RealmBase {
             synchronized (digester) {
                 digester.push(this);
                 digester.parse(file);
-                digester.reset();
             }
         } catch (Exception e) {
             throw new LifecycleException("memoryRealm.readXml", e);
+        } finally {
+            digester.reset();
         }
 
         // Perform normal superclass initialization
