@@ -234,7 +234,7 @@ of Tomcat 4.0.
   the JNDI directory, parallel to "jndi.jar".
 
 
-(11) Steps (12)-(23) are optional, but are necessary to build a complete binary
+(11) Steps (12)-(24) are optional, but are necessary to build a complete binary
      distribution of Tomcat 4.0. Set the "full.dist" property to "on" in the
      build.properties file (see step (23)) to build a complete distribution.
      Regular contributors to Tomcat are encouraged to use the complete build 
@@ -411,7 +411,26 @@ source factory.
   distribution resides in its own directory.
 
 
-(24) Customize Build Properties For This Subproject
+(24) Download and Install the Commons Daemon Binary Distribution
+
+NOTE:  This step is only required if you wish to build the classes needed to
+run Tomcat as a native operating system daemon using commons-daemon.
+
+* Download a binary distribution of version 20020219 or later from:
+
+    http://jakarta.apache.org/builds/jakarta-commons/nightly/commons-daemon
+
+  On a Windows platform, you will need:
+    commons-daemon-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    commons-daemon-YYYYMMDD.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(25) Customize Build Properties For This Subproject
 
 Most Jakarta subprojects allow you to customize Ant properties (with default
 values defined in the "build.xml" file.  This is done by creating a text file
@@ -435,7 +454,7 @@ repository.  This file is local to your own development environment, and
 each developer will have their own version.
 
 
-(25) Build A Binary Distribution
+(26) Build A Binary Distribution
 
 Open a command line shell, and issue the following commands:
 
@@ -443,8 +462,15 @@ Open a command line shell, and issue the following commands:
   ant -projecthelp
 
 If everything is installed correctly, you should see a list of the Ant
-"targets" that represent different commands you might wish to build.  By
-convention, the "dist" target creates a complete binary distribution.  To
+"targets" that represent different commands you might wish to build.
+
+You can check that all dependencies are correctly installed by using 
+the following commands:
+
+  cd ${tomcat.source}
+  ant detect
+
+By convention, the "dist" target creates a complete binary distribution.  To
 execute it, type the following commands:
 
   cd ${tomcat.source}
