@@ -68,6 +68,7 @@
   <target name="build-prepare">
 
     <available classname="junit.framework.TestCase" property="junit.present" />
+    <available classname="tyrex.tm.Tyrex" property="tyrex.present"/>
 
     <mkdir dir="${catalina.build}"/>
     <mkdir dir="${catalina.build}/bin"/>
@@ -85,7 +86,11 @@
 
 
   <!-- =================== BUILD: Copy Static Files ======================= -->
-  <target name="build-static" depends="build-prepare">
+  <target name="copy-tyrex" depends="build-prepare" if="tyrex.present">
+    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+  </target>
+
+  <target name="build-static" depends="build-prepare,copy-tyrex">
 
     <!-- Executable Commands -->
     <copy todir="${catalina.build}/bin">
@@ -117,7 +122,6 @@
     <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
     <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
-    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
 
     <!-- Configuration Files -->
     <copy todir="${catalina.build}/conf">
@@ -155,6 +159,7 @@
       <classpath refid="catalina.classpath" />
       <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
       <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
+      <exclude name="**/Tyrex*.java" unless="tyrex.present"/>
     </javac>
 
     <!-- Copy static resource files -->
