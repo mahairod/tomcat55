@@ -22,7 +22,7 @@
  *    the documentation and/or other materials provided with the
  *    distribution.
  *
- * 3. The end-UserDatabase documentation included with the redistribution, if
+ * 3. The end-user documentation included with the redistribution, if
  *    any, must include the following acknowlegement:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
@@ -59,12 +59,23 @@
  *
  */
 
+
 package org.apache.webapp.admin.resources;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -76,33 +87,28 @@ import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.MBeanInfo;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 import org.apache.webapp.admin.ApplicationServlet;
 
 
 /**
- * <p>Implementation of <strong>Action</strong> that sets up and stashes
- * a <code>UserDatabaseForm</code> bean in request scope.  The form bean will have
- * a null <code>objectName</code> property if this form represents a UserDatabase
- * being added, or a non-null value for an existing UserDatabase.</p>
+ * <p>Implementation of <strong>Action</strong> that saves a new or
+ * updated User database entry.</p>
  *
  * @author Manveen Kaur
  * @version $Revision$ $Date$
  * @since 4.1
  */
 
-public final class SetUpUserDatabaseAction extends Action {
+public final class SaveUserDatabaseAction extends Action {
+
 
     // ----------------------------------------------------- Instance Variables
+
+    /**
+     * The MessageResources we will be retrieving messages from.
+     */
+    private MessageResources resources = null;
 
 
     /**
@@ -110,12 +116,12 @@ public final class SetUpUserDatabaseAction extends Action {
      */
     private MBeanServer mserver = null;
 
+    public static String USERDB_RESOURCE_TYPE = "org.apache.catalina.UserDatabase";
 
-    /**
-     * The MessageResources we will be retrieving messages from.
+    /*
+     * Only one implementation of factory allowed to start with.
      */
-    private MessageResources resources = null;
-
+    public static String USERDB_FACTORY = "org.apache.catalina.users.MemoryUserDatabaseFactory";
 
     // --------------------------------------------------------- Public Methods
 
@@ -151,52 +157,95 @@ public final class SetUpUserDatabaseAction extends Action {
         HttpSession session = request.getSession();
         Locale locale = (Locale) session.getAttribute(Action.LOCALE_KEY);
 
-        // Set up the form bean based on the creating or editing state
-        String objectName = request.getParameter("objectName");
-        
-        UserDatabaseForm userDatabaseForm = new UserDatabaseForm();
-        userDatabaseForm.setFactory
-                            (SaveUserDatabaseAction.USERDB_FACTORY);
-        userDatabaseForm.setType
-                            (SaveUserDatabaseAction.USERDB_RESOURCE_TYPE);            
+        // Has this transaction been cancelled?
+        if (isCancelled(request)) {
+            return (mapping.findForward("List UserDatabases Setup"));
+        }
 
+        // Check the transaction token
+        if (!isTokenValid(request)) {
+            response.sendError
+                (HttpServletResponse.SC_BAD_REQUEST,
+                 resources.getMessage(locale, "users.error.token"));
+            return (null);
+        }
+
+        // Perform any extra validation that is required
+        UserDatabaseForm userDatabaseForm = (UserDatabaseForm) form;
+        String objectName = userDatabaseForm.getObjectName();
+
+        // Perform an "Add UserDatabase" transaction
         if (objectName == null) {
-            userDatabaseForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.userdb.create"));
-            userDatabaseForm.setObjectName(null);
-        } else {
-            userDatabaseForm.setNodeLabel
-                (resources.getMessage(locale, "resources.actions.userdb.edit"));
-            userDatabaseForm.setObjectName(objectName);
-                           
-            String attribute = null;
+
+            String signature[] = new String[2];
+            signature[0] = "java.lang.String";
+            signature[1] = "java.lang.String";
+
+            Object params[] = new Object[2];
+            params[0] = userDatabaseForm.getName();
+            params[1] = USERDB_RESOURCE_TYPE;     
+           
+            ObjectName oname = null;
+
             try {
-                ObjectName oname = new ObjectName(objectName);
-                attribute = "name";
-                userDatabaseForm.setName
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "pathname";
-                userDatabaseForm.setPath
-                    ((String) mserver.getAttribute(oname, attribute));
-                attribute = "description";
-                userDatabaseForm.setDescription
-                    ((String) mserver.getAttribute(oname, attribute));
+
+                // Construct the MBean Name for the naming source
+                oname = new ObjectName(ResourceUtils.NAMINGRESOURCES_TYPE);
+
+                // Create the new object and associated MBean
+                objectName = (String) mserver.invoke(oname, "addResource",
+                                                     params, signature);
+                                     
             } catch (Exception e) {
+
                 getServlet().log
-                    (resources.getMessage(locale,
-                        "users.error.attribute.get", attribute), e);
+                    (resources.getMessage(locale, "users.error.invoke",
+                                          "addResource"), e);
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                     resources.getMessage
-                         (locale, "users.error.attribute.get", attribute));
+                     resources.getMessage(locale, "users.error.invoke",
+                                          "addResource"));
                 return (null);
-            } 
+            }
+
         }
+        
+        // Perform an "Update User database" transaction
+        String attribute = null;
+        try {
             
-        // Stash the form bean and forward to the display page
-        saveToken(request);
-        request.setAttribute("userDatabaseForm", userDatabaseForm);
-        return (mapping.findForward("UserDatabase"));
+            ObjectName oname = new ObjectName(objectName);
+
+            attribute = "pathname";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, userDatabaseForm.getPath()));
+            attribute = "factory";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, userDatabaseForm.getFactory()));
+            attribute = "description";
+            mserver.setAttribute
+                (oname,
+                 new Attribute(attribute, userDatabaseForm.getDescription()));
+
+        } catch (Exception e) {
+
+            getServlet().log
+                (resources.getMessage(locale, "users.error.set.attribute",
+                                      attribute), e);
+            response.sendError
+                (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                 resources.getMessage(locale, "users.error.set.attribute",
+                                      attribute));
+            return (null);
+
+        }
+        
+        // Proceed to the list entries screen
+        return (mapping.findForward("UserDatabases List Setup"));
 
     }
+
+
 }

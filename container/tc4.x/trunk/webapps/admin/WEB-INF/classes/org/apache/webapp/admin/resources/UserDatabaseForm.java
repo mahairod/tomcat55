@@ -117,6 +117,32 @@ public final class UserDatabaseForm extends BaseForm {
     }
 
     /**
+     * The type of the resource.
+     */
+    private String type = null;
+
+    public String getType() {
+        return (this.type);
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * The factory that implements the user database entry.
+     */
+    private String factory = null;
+
+    public String getFactory() {
+        return (this.factory);
+    }
+
+    public void setFactory(String factory) {
+        this.factory = factory;
+    }
+
+    /**
      * The description of the associated entry.
      */
     private String description = null;
@@ -141,7 +167,9 @@ public final class UserDatabaseForm extends BaseForm {
 
         super.reset(mapping, request);
         name = null;
+        type = null;
         path = null;
+        factory = null;
         description = null;
 
     }

@@ -198,7 +198,7 @@ public final class SaveEnvEntryAction extends Action {
                 response.sendError
                     (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                      resources.getMessage(locale, "users.error.invoke",
-                                          "createUser"));
+                                          "addEnvironment"));
                 return (null);
             }
 
